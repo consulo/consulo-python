@@ -28,7 +28,7 @@ public class ArgumentListAnnotator extends PyAnnotator {
 	public void visitPyArgumentList(PyArgumentList node) {
 		PyExpression[] arguments = node.getArguments();
 		boolean hadKeywordArguments = false;
-		Set keywords = new HashSet();
+		Set<String> keywords = new HashSet<String>();
 		for (PyExpression argument : arguments)
 			if ((argument instanceof PyKeywordArgument)) {
 				hadKeywordArguments = true;
