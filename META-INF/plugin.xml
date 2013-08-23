@@ -1,0 +1,25 @@
+<idea-plugin version="2" url="http://pythonid.dev.java.net">
+	<name>Pythonid</name>
+	<id>Pythonid</id>
+	<description>Smart editing for Python scripts</description>
+	<version>0.1.1</version>
+	<vendor url="http://pythonid.dev.java.net" logo="/ru/yole/pythonid/python.png">Dmitry
+		Jemerov, Keith Lea
+	</vendor>
+	<idea-version since-build="4192" until-build="4999"/>
+	<change-notes>Initial release (re-upload). Implemented features: syntax and error
+		highlighting, folding and structure view, basic auto-indent,
+		basic navigation, rename and find usages (within a single file).
+	</change-notes>
+
+	<application-components>
+		<component>
+			<implementation-class>
+				ru.yole.pythonid.PythonSupportLoader
+			</implementation-class>
+		</component>
+		<component>
+			<implementation-class>ru.yole.pythonid.editor.PythonEditorHelper</implementation-class>
+		</component>
+	</application-components>
+</idea-plugin>
