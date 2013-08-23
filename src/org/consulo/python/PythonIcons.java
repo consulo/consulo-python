@@ -10,4 +10,5 @@ import javax.swing.*;
  */
 public interface PythonIcons {
 	Icon PythonFileType = IconLoader.findIcon("/icons/python.png");
+	Icon PythonRun = IconLoader.findIcon("/icons/pythonRun.png");
 }

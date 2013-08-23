@@ -4,13 +4,6 @@
 	<description>Smart editing for Python scripts</description>
 	<vendor>Dmitry Jemerov(http://pythonid.dev.java.net), Keith Lea(http://pythonid.dev.java.net), Consulo Org</vendor>
 
-
-<!--	<application-components>
-		<component>
-			<implementation-class>org.consulo.python.editor.PythonEditorHelper</implementation-class>
-		</component>
-	</application-components>    -->
-
 	<extensions defaultExtensionNs="com.intellij">
 		<lang.commenter language="PYTHON" implementationClass="org.consulo.python.PythonCommenter" />
 		<lang.parserDefinition language="PYTHON" implementationClass="org.consulo.python.PythonParserDefinition" />
@@ -21,6 +14,8 @@
 		<lang.braceMatcher language="PYTHON" implementationClass="org.consulo.python.PyBraceMatcher" />
 		<annotator language="PYTHON" implementationClass="org.consulo.python.validation.PyAnnotatingVisitor" />
 		<syntaxHighlighter key="PYTHON" implementationClass="org.consulo.python.PyHighligher" />
+
+		<configurationType implementation="org.consulo.python.run.PythonRunConfigurationType" />
 
 		<applicationService serviceInterface="org.consulo.python.psi.PyElementGenerator" serviceImplementation="org.consulo.python.psi.impl.PyElementGeneratorImpl" />
 
