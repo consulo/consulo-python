@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.yole.pythonid.PythonLanguage;
 
 public abstract interface PyElementEx extends PyElement {
+	@Override
 	@NotNull
 	public abstract PythonLanguage getLanguage();
 }

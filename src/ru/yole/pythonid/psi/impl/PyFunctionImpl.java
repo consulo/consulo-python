@@ -35,12 +35,14 @@ public class PyFunctionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	@Nullable
 	public String getName() {
 		ASTNode node = getNameNode();
 		return node != null ? node.getText() : null;
 	}
 
+	@Override
 	public PsiElement setName(String name) throws IncorrectOperationException {
 		ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
 		getNode().replaceChild(getNameNode(), nameElement);
@@ -51,11 +53,13 @@ public class PyFunctionImpl extends PyElementImpl
 		return Icons.METHOD_ICON;
 	}
 
+	@Override
 	@Nullable
 	public ASTNode getNameNode() {
 		return getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
 	}
 
+	@Override
 	@NotNull
 	public PyParameterList getParameterList() {
 		PyParameterList tmp14_11 = ((PyParameterList) childToPsiNotNull(getPyElementTypes().PARAMETER_LIST));
@@ -63,6 +67,7 @@ public class PyFunctionImpl extends PyElementImpl
 		return tmp14_11;
 	}
 
+	@Override
 	@NotNull
 	public PyStatementList getStatementList() {
 		PyStatementList tmp14_11 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LIST));
@@ -70,6 +75,7 @@ public class PyFunctionImpl extends PyElementImpl
 		return tmp14_11;
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyFunction(this);
 	}
@@ -85,11 +91,13 @@ public class PyFunctionImpl extends PyElementImpl
 		return processor.execute(this, substitutor);
 	}
 
+	@Override
 	public int getTextOffset() {
 		ASTNode name = getNameNode();
 		return name != null ? name.getStartOffset() : super.getTextOffset();
 	}
 
+	@Override
 	public void delete() throws IncorrectOperationException {
 		ASTNode node = getNode();
 		node.getTreeParent().removeChild(node);

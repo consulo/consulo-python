@@ -32,10 +32,12 @@ public class PyTupleExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyTupleExpression(this);
 	}
 
+	@Override
 	@NotNull
 	public PyExpression[] getElements() {
 		PyExpression[] tmp17_14 = ((PyExpression[]) childrenToPsi(getPyElementTypes().EXPRESSIONS, PyExpression.EMPTY_ARRAY));

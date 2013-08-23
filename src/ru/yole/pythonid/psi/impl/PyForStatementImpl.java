@@ -34,10 +34,12 @@ public class PyForStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyForStatement(this);
 	}
 
+	@Override
 	@NotNull
 	public PyStatementList getStatementList() {
 		PyStatementList tmp15_12 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LISTS, 0));
@@ -45,6 +47,7 @@ public class PyForStatementImpl extends PyElementImpl
 		return tmp15_12;
 	}
 
+	@Override
 	@Nullable
 	public PyStatementList getElseStatementList() {
 		PyStatementList result = (PyStatementList) childToPsi(getPyElementTypes().STATEMENT_LISTS, 1);
@@ -52,11 +55,13 @@ public class PyForStatementImpl extends PyElementImpl
 		return result;
 	}
 
+	@Override
 	@Nullable
 	public PyExpression getTargetExpression() {
 		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);
 	}
 
+	@Override
 	@Nullable
 	public PyExpression getLoopExpression() {
 		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 1);

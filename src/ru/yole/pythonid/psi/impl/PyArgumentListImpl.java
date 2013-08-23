@@ -34,10 +34,12 @@ public class PyArgumentListImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyArgumentList(this);
 	}
 
+	@Override
 	@PsiCached
 	@NotNull
 	public PyExpression[] getArguments() {
@@ -46,6 +48,7 @@ public class PyArgumentListImpl extends PyElementImpl
 		return tmp17_14;
 	}
 
+	@Override
 	@PsiCached
 	@Nullable
 	public PyKeywordArgument getKeywordArgument(String name) {
@@ -61,6 +64,7 @@ public class PyArgumentListImpl extends PyElementImpl
 		return null;
 	}
 
+	@Override
 	public void addArgument(PyExpression arg) {
 		PyUtil.ensureWritable(this);
 
@@ -87,6 +91,7 @@ public class PyArgumentListImpl extends PyElementImpl
 		}
 	}
 
+	@Override
 	public void addArgumentFirst(PyExpression arg) {
 		PyUtil.ensureWritable(this);
 		ASTNode node = getNode();
@@ -157,6 +162,7 @@ public class PyArgumentListImpl extends PyElementImpl
 		}
 	}
 
+	@Override
 	public void addArgumentAfter(PyExpression argument, @Nullable PyExpression afterThis) {
 		PyUtil.ensureWritable(this);
 		if (afterThis == null) {
@@ -203,6 +209,7 @@ public class PyArgumentListImpl extends PyElementImpl
 		}
 	}
 
+	@Override
 	protected void deletePyChild(PyElementImpl element)
 			throws IncorrectOperationException {
 		if (Arrays.asList(getArguments()).contains(element)) {

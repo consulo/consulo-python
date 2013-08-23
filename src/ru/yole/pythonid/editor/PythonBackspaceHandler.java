@@ -33,6 +33,7 @@ public class PythonBackspaceHandler extends EditorActionHandler {
 		this._oldHandler = oldHandler;
 	}
 
+	@Override
 	public void execute(Editor editor, DataContext dataContext) {
 		if ((!handleSmartBackspace(editor, dataContext)) &&
 				(this._oldHandler != null))

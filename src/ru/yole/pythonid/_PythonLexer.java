@@ -174,10 +174,12 @@ class _PythonLexer
 		return map;
 	}
 
+	@Override
 	public final int getTokenStart() {
 		return this.zzStartRead;
 	}
 
+	@Override
 	public final int getTokenEnd() {
 		return getTokenStart() + yylength();
 	}
@@ -197,10 +199,12 @@ class _PythonLexer
 		return true;
 	}
 
+	@Override
 	public final int yystate() {
 		return this.zzLexicalState;
 	}
 
+	@Override
 	public final void yybegin(int newState) {
 		this.zzLexicalState = newState;
 	}
@@ -240,6 +244,7 @@ class _PythonLexer
 			this.zzEOFDone = true;
 	}
 
+	@Override
 	public IElementType advance()
 			throws IOException {
 		int zzEndReadL = this.zzEndRead;

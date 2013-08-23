@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ArgumentListAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyArgumentList(PyArgumentList node) {
 		PyExpression[] arguments = node.getArguments();
 		boolean hadKeywordArguments = false;

@@ -30,6 +30,7 @@ public class PythonReferenceProviderRegistryImpl
 		implements PythonReferenceProviderRegistry {
 	private final Set<PsiReferenceProvider> providers = new CopyOnWriteArraySet();
 
+	@Override
 	public PsiReference[] getPythonReferences(PyElement element) {
 		List list = new ArrayList();
 		for (PsiReferenceProvider provider : this.providers) {
@@ -38,10 +39,12 @@ public class PythonReferenceProviderRegistryImpl
 		return (PsiReference[]) list.toArray(new PsiReference[list.size()]);
 	}
 
+	@Override
 	public void registerReferenceProvider(PsiReferenceProvider provider) {
 		this.providers.add(provider);
 	}
 
+	@Override
 	public void unregisterReferenceProvider(PsiReferenceProvider provider) {
 		this.providers.remove(provider);
 	}

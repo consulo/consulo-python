@@ -28,20 +28,24 @@ public class PyCallExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyCallExpression(this);
 	}
 
+	@Override
 	@PsiCached
 	public PyReferenceExpression getCalledFunctionReference() {
 		return (PyReferenceExpression) PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
 	}
 
+	@Override
 	@PsiCached
 	public PyArgumentList getArgumentList() {
 		return (PyArgumentList) PsiTreeUtil.getChildOfType(this, PyArgumentList.class);
 	}
 
+	@Override
 	public void addArgument(PyExpression expression) {
 		PyExpression[] arguments = getArgumentList().getArguments();
 		try {
@@ -51,6 +55,7 @@ public class PyCallExpressionImpl extends PyElementImpl
 		}
 	}
 
+	@Override
 	public String toString() {
 		return "PyCallExpression: " + getCalledFunctionReference().getReferencedName();
 	}

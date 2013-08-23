@@ -22,11 +22,13 @@ import ru.yole.pythonid.psi.PyContinueStatement;
 import ru.yole.pythonid.psi.PyTryFinallyStatement;
 
 public class BreakContinueAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyBreakStatement(PyBreakStatement node) {
 		if (node.getContainingElement(node.getLanguage().getElementTypes().LOOPS) == null)
 			getHolder().createErrorAnnotation(node, "'break' outside of loop");
 	}
 
+	@Override
 	public void visitPyContinueStatement(PyContinueStatement node) {
 		if (node.getContainingElement(node.getLanguage().getElementTypes().LOOPS) == null) {
 			getHolder().createErrorAnnotation(node, "'continue' outside of loop");

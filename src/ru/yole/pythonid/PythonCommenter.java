@@ -17,22 +17,33 @@
 package ru.yole.pythonid;
 
 import com.intellij.lang.Commenter;
+import org.jetbrains.annotations.Nullable;
 
-public class PythonCommenter
-		implements Commenter {
+public class PythonCommenter implements Commenter {
+	@Override
 	public String getLineCommentPrefix() {
 		return "#";
 	}
 
-	public boolean isLineCommentPrefixOnZeroColumn() {
-		return false;
-	}
-
+	@Override
 	public String getBlockCommentPrefix() {
 		return null;
 	}
 
+	@Override
 	public String getBlockCommentSuffix() {
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public String getCommentedBlockCommentPrefix() {
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public String getCommentedBlockCommentSuffix() {
 		return null;
 	}
 }

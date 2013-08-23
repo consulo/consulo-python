@@ -28,6 +28,7 @@ public class PyBraceMatcher
 		this.PAIRS = new BracePair[]{new BracePair('(', tokenTypes.LPAR, ')', tokenTypes.RPAR, false), new BracePair('[', tokenTypes.LBRACKET, ']', tokenTypes.RBRACKET, false), new BracePair('{', tokenTypes.LBRACE, '}', tokenTypes.RBRACE, true)};
 	}
 
+	@Override
 	public BracePair[] getPairs() {
 		return this.PAIRS;
 	}

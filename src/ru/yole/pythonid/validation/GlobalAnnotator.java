@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GlobalAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyGlobalStatement(PyGlobalStatement node) {
 		PyFunction function = (PyFunction) node.getContainingElement(PyFunction.class);
 		if (function != null) {

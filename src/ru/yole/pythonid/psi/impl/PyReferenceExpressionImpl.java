@@ -38,10 +38,12 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	public PsiElement getElement() {
 		return this;
 	}
 
+	@Override
 	@NotNull
 	public PsiReference[] getReferences() {
 		List refs = new ArrayList(Arrays.asList(super.getReferences()));
@@ -51,10 +53,12 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return tmp41_38;
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyReferenceExpression(this);
 	}
 
+	@Override
 	@PsiCached
 	@Nullable
 	public PyExpression getQualifier() {
@@ -62,12 +66,14 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return (PyExpression) (nodes.length == 1 ? nodes[0].getPsi() : null);
 	}
 
+	@Override
 	public TextRange getRangeInElement() {
 		ASTNode nameElement = getNameElement();
 		int startOffset = nameElement != null ? nameElement.getStartOffset() : getNode().getTextRange().getEndOffset();
 		return new TextRange(startOffset - getNode().getStartOffset(), getTextLength());
 	}
 
+	@Override
 	@PsiCached
 	@Nullable
 	public String getReferencedName() {
@@ -81,6 +87,7 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
 	}
 
+	@Override
 	@Nullable
 	public PsiElement resolve() {
 		String referencedName = getReferencedName();
@@ -114,10 +121,12 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return tmp73_70;
 	}
 
+	@Override
 	public String getCanonicalText() {
 		return null;
 	}
 
+	@Override
 	public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
 		ASTNode nameElement = getNameElement();
 		if (nameElement != null) {
@@ -127,10 +136,12 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return this;
 	}
 
+	@Override
 	public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException {
 		return null;
 	}
 
+	@Override
 	public boolean isReferenceTo(PsiElement element) {
 		if (((element instanceof PsiNamedElement)) &&
 				(Comparing.equal(getReferencedName(), ((PsiNamedElement) element).getName()))) {
@@ -140,6 +151,7 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return false;
 	}
 
+	@Override
 	public Object[] getVariants() {
 		if (getQualifier() != null) {
 			return new Object[0];
@@ -150,6 +162,7 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return processor.getResult();
 	}
 
+	@Override
 	public boolean isSoft() {
 		return false;
 	}
@@ -176,15 +189,18 @@ public class PyReferenceExpressionImpl extends PyElementImpl
 		return processor.execute(this, substitutor);
 	}
 
+	@Override
 	public boolean shouldHighlightIfUnresolved() {
 		return false;
 	}
 
+	@Override
 	@Nullable
 	public String getUnresolvedDescription() {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		return "PyReferenceExpression: " + getReferencedName();
 	}

@@ -49,6 +49,7 @@ public class PyHighligher extends SyntaxHighlighterBase {
 
 	final TextAttributesKey PY_DOT = TextAttributesKey.createTextAttributesKey("PY.DOT", HighlighterColors.JAVA_DOT.getDefaultAttributes());
 
+	@Override
 	@NotNull
 	public Lexer getHighlightingLexer() {
 		void tmp11_8 = new PythonLexer(this.language);
@@ -85,6 +86,7 @@ public class PyHighligher extends SyntaxHighlighterBase {
 		keys1.put(tokenTypes.BAD_CHARACTER, HighlighterColors.BAD_CHARACTER);
 	}
 
+	@Override
 	@NotNull
 	public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
 		TextAttributesKey[] tmp15_12 = pack((TextAttributesKey) keys1.get(tokenType));

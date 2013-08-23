@@ -49,6 +49,7 @@ public class PyFileImpl extends PsiFileBase
 		this.fileType = pythonFileType;
 	}
 
+	@Override
 	@NotNull
 	public FileType getFileType() {
 		FileType tmp4_1 = this.fileType;
@@ -56,6 +57,7 @@ public class PyFileImpl extends PsiFileBase
 		return tmp4_1;
 	}
 
+	@Override
 	public String toString() {
 		return "PyFile:" + getName();
 	}
@@ -64,6 +66,7 @@ public class PyFileImpl extends PsiFileBase
 		return this.fileType.getIcon();
 	}
 
+	@Override
 	public void accept(PsiElementVisitor visitor) {
 		if ((visitor instanceof PyElementVisitor))
 			((PyElementVisitor) visitor).visitPyFile(this);
@@ -81,16 +84,19 @@ public class PyFileImpl extends PsiFileBase
 		return true;
 	}
 
+	@Override
 	@Nullable
 	public <T extends PyElement> T getContainingElement(Class<T> aClass) {
 		return null;
 	}
 
+	@Override
 	@Nullable
 	public PyElement getContainingElement(TokenSet tokenSet) {
 		return null;
 	}
 
+	@Override
 	@PsiCached
 	public List<PyStatement> getStatements() {
 		List stmts = new ArrayList();
@@ -103,6 +109,7 @@ public class PyFileImpl extends PsiFileBase
 		return stmts;
 	}
 
+	@Override
 	public AbstractPythonLanguage getPyLanguage() {
 		return (AbstractPythonLanguage) getLanguage();
 	}

@@ -38,10 +38,12 @@ public class PyListCompExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyListCompExpression(this);
 	}
 
+	@Override
 	@PsiCached
 	public PyExpression getResultExpression() {
 		ASTNode[] exprs = getNode().getChildren(getLanguage().getElementTypes().EXPRESSIONS);
@@ -49,6 +51,7 @@ public class PyListCompExpressionImpl extends PyElementImpl
 		return exprs.length == 0 ? null : (PyExpression) exprs[0].getPsi();
 	}
 
+	@Override
 	@PsiCached
 	public List<PyListCompExpression.ListCompComponent> getComponents() {
 		ASTNode node = getNode().getFirstChildNode();
@@ -61,6 +64,7 @@ public class PyListCompExpressionImpl extends PyElementImpl
 			if (type == tokenTypes.IF_KEYWORD) {
 				final PyExpression test = (PyExpression) next.getPsi();
 				list.add(new PyListCompExpression.IfComponent() {
+					@Override
 					public PyExpression getTest() {
 						return test;
 					}
@@ -71,10 +75,12 @@ public class PyListCompExpressionImpl extends PyElementImpl
 				final PyExpression variable = (PyExpression) next.getPsi();
 				final PyExpression iterated = (PyExpression) next2.getPsi();
 				list.add(new PyListCompExpression.ForComponent() {
+					@Override
 					public PyExpression getIteratorVariable() {
 						return variable;
 					}
 
+					@Override
 					public PyExpression getIteratedList() {
 						return iterated;
 					}

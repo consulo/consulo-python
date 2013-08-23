@@ -33,10 +33,12 @@ public class PyStatementListImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyStatementList(this);
 	}
 
+	@Override
 	@PsiCached
 	public PyStatement[] getStatements() {
 		return (PyStatement[]) childrenToPsi(getPyElementTypes().STATEMENTS, PyStatement.EMPTY_ARRAY);

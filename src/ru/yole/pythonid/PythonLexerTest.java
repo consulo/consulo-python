@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 public class PythonLexerTest extends TestCase {
 	private PythonLanguageImpl language;
 
+	@Override
 	protected void setUp()
 			throws Exception {
 		try {

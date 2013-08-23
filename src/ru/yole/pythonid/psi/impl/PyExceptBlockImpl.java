@@ -31,20 +31,24 @@ public class PyExceptBlockImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyExceptBlock(this);
 	}
 
+	@Override
 	@Nullable
 	public PyExpression getExceptClass() {
 		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);
 	}
 
+	@Override
 	@Nullable
 	public PyExpression getTarget() {
 		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 1);
 	}
 
+	@Override
 	@NotNull
 	public PyStatementList getStatementList() {
 		PyStatementList tmp14_11 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LIST));

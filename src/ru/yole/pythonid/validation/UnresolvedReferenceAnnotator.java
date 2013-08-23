@@ -23,6 +23,7 @@ import ru.yole.pythonid.psi.PsiReferenceEx;
 import ru.yole.pythonid.psi.PyElement;
 
 public class UnresolvedReferenceAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyElement(PyElement node) {
 		super.visitPyElement(node);
 

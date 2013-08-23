@@ -34,6 +34,7 @@ public class PythonFoldingBuilder
 		this.language = language;
 	}
 
+	@Override
 	public FoldingDescriptor[] buildFoldRegions(ASTNode node, Document document) {
 		List descriptors = new ArrayList();
 		appendDescriptors(node, descriptors);
@@ -62,10 +63,12 @@ public class PythonFoldingBuilder
 		}
 	}
 
+	@Override
 	public String getPlaceholderText(ASTNode node) {
 		return "...";
 	}
 
+	@Override
 	public boolean isCollapsedByDefault(ASTNode node) {
 		return false;
 	}

@@ -27,6 +27,7 @@ public class PyGeneratorExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyGeneratorExpression(this);
 	}

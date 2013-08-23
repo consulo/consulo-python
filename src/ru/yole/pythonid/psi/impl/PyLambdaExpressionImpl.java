@@ -27,6 +27,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyLambdaExpression(this);
 	}

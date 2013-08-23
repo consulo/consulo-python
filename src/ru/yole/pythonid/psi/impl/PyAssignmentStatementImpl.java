@@ -31,10 +31,12 @@ public class PyAssignmentStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyAssignmentStatement(this);
 	}
 
+	@Override
 	@PsiCached
 	public PyExpression[] getTargets() {
 		ASTNode[] nodes = getNode().getChildren(getPyElementTypes().EXPRESSIONS);
@@ -43,6 +45,7 @@ public class PyAssignmentStatementImpl extends PyElementImpl
 		return (PyExpression[]) nodesToPsi(targets, PyExpression.EMPTY_ARRAY);
 	}
 
+	@Override
 	@PsiCached
 	@Nullable
 	public PyExpression getAssignedValue() {

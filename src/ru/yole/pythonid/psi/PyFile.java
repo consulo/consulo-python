@@ -24,6 +24,7 @@ import ru.yole.pythonid.PythonLanguage;
 import java.util.List;
 
 public abstract interface PyFile extends PyElement, PsiFile {
+	@Override
 	@NotNull
 	public abstract FileType getFileType();
 

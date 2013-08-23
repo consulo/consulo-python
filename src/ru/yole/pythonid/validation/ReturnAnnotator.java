@@ -19,6 +19,7 @@ package ru.yole.pythonid.validation;
 import ru.yole.pythonid.psi.*;
 
 public class ReturnAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyReturnStatement(PyReturnStatement node) {
 		PyFunction function = (PyFunction) node.getContainingElement(PyFunction.class);
 		if (function == null) {
@@ -33,6 +34,7 @@ public class ReturnAnnotator extends PyAnnotator {
 		}
 	}
 
+	@Override
 	public void visitPyYieldStatement(PyYieldStatement node) {
 		PyFunction function = (PyFunction) node.getContainingElement(PyFunction.class);
 		if (function == null) {
@@ -52,10 +54,12 @@ public class ReturnAnnotator extends PyAnnotator {
 			return this._haveYield;
 		}
 
+		@Override
 		public void visitPyYieldStatement(PyYieldStatement node) {
 			this._haveYield = true;
 		}
 
+		@Override
 		public void visitPyElement(PyElement node) {
 			if (!this._haveYield)
 				node.acceptChildren(this);

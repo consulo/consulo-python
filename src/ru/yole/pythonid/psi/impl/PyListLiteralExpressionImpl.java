@@ -30,10 +30,12 @@ public class PyListLiteralExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyListLiteralExpression(this);
 	}
 
+	@Override
 	@PsiCached
 	@NotNull
 	public PyExpression[] getElements() {
@@ -42,6 +44,7 @@ public class PyListLiteralExpressionImpl extends PyElementImpl
 		return tmp17_14;
 	}
 
+	@Override
 	public PsiElement add(PsiElement psiElement)
 			throws IncorrectOperationException {
 		PyUtil.ensureWritable(this);
@@ -58,6 +61,7 @@ public class PyListLiteralExpressionImpl extends PyElementImpl
 			throw new IncorrectOperationException("Element must be PyExpression: " + psiElement);
 	}
 
+	@Override
 	public PsiElement addAfter(PsiElement psiElement, PsiElement afterThis)
 			throws IncorrectOperationException {
 		PyUtil.ensureWritable(this);
@@ -66,6 +70,7 @@ public class PyListLiteralExpressionImpl extends PyElementImpl
 		return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, (PyExpression) afterThis, (PyExpression) psiElement);
 	}
 
+	@Override
 	public PsiElement addBefore(PsiElement psiElement, PsiElement beforeThis)
 			throws IncorrectOperationException {
 		PyUtil.ensureWritable(this);
@@ -73,6 +78,7 @@ public class PyListLiteralExpressionImpl extends PyElementImpl
 		return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, null, (PyExpression) psiElement);
 	}
 
+	@Override
 	protected void deletePyChild(PyElementImpl element)
 			throws IncorrectOperationException {
 		PyUtil.ensureWritable(this);
@@ -92,6 +98,7 @@ public class PyListLiteralExpressionImpl extends PyElementImpl
 		}
 	}
 
+	@Override
 	@Nullable
 	protected Class<? extends PsiElement> getValidChildClass() {
 		return PyExpression.class;

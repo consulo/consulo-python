@@ -31,30 +31,36 @@ public class PyParameterImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	@Nullable
 	public String getName() {
 		ASTNode node = getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
 		return node != null ? node.getText() : null;
 	}
 
+	@Override
 	public PsiElement setName(String name) throws IncorrectOperationException {
 		ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
 		getNode().replaceChild(getNode().getFirstChildNode(), nameElement);
 		return this;
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyParameter(this);
 	}
 
+	@Override
 	public boolean isPositionalContainer() {
 		return getNode().findChildByType(getPyTokenTypes().MULT) != null;
 	}
 
+	@Override
 	public boolean isKeywordContainer() {
 		return getNode().findChildByType(getPyTokenTypes().EXP) != null;
 	}
 
+	@Override
 	@Nullable
 	public PyExpression getDefaultValue() {
 		ASTNode[] nodes = getNode().getChildren(getPyElementTypes().EXPRESSIONS);

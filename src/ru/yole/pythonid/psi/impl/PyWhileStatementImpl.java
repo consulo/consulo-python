@@ -33,10 +33,12 @@ public class PyWhileStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyWhileStatement(this);
 	}
 
+	@Override
 	@NotNull
 	public PyStatementList getStatementList() {
 		PyStatementList tmp15_12 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LISTS, 0));
@@ -44,6 +46,7 @@ public class PyWhileStatementImpl extends PyElementImpl
 		return tmp15_12;
 	}
 
+	@Override
 	@Nullable
 	public PyStatementList getElseStatementList() {
 		return (PyStatementList) childToPsi(getPyElementTypes().STATEMENT_LISTS, 1);

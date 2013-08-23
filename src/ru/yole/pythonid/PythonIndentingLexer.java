@@ -56,6 +56,7 @@ public class PythonIndentingLexer extends PythonLexer {
 			this._braceLevel -= 1;
 	}
 
+	@Override
 	public IElementType getTokenType() {
 		if (this._tokenQueue.size() > 0) {
 			return ((PendingToken) this._tokenQueue.get(0)).getType();
@@ -63,6 +64,7 @@ public class PythonIndentingLexer extends PythonLexer {
 		return super.getTokenType();
 	}
 
+	@Override
 	public int getTokenStart() {
 		if (this._tokenQueue.size() > 0) {
 			return ((PendingToken) this._tokenQueue.get(0)).getStart();
@@ -70,6 +72,7 @@ public class PythonIndentingLexer extends PythonLexer {
 		return super.getTokenStart();
 	}
 
+	@Override
 	public int getTokenEnd() {
 		if (this._tokenQueue.size() > 0) {
 			return ((PendingToken) this._tokenQueue.get(0)).getEnd();
@@ -89,6 +92,7 @@ public class PythonIndentingLexer extends PythonLexer {
 		}
 	}
 
+	@Override
 	public void advance() {
 		if (this._tokenQueue.size() > 0) {
 			this._tokenQueue.remove(0);

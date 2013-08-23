@@ -27,6 +27,7 @@ public class PyContinueStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyContinueStatement(this);
 	}

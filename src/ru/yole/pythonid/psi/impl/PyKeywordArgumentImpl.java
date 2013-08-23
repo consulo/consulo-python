@@ -31,6 +31,7 @@ public class PyKeywordArgumentImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	@PsiCached
 	@Nullable
 	public String getKeyword() {
@@ -38,20 +39,24 @@ public class PyKeywordArgumentImpl extends PyElementImpl
 		return node != null ? node.getText() : null;
 	}
 
+	@Override
 	@PsiCached
 	public ASTNode getKeywordNode() {
 		return getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
 	}
 
+	@Override
 	@PsiCached
 	public PyExpression getValueExpression() {
 		return (PyExpression) PsiTreeUtil.getChildOfType(this, PyExpression.class);
 	}
 
+	@Override
 	public String toString() {
 		return getClass().getSimpleName() + ": " + getKeyword();
 	}
 
+	@Override
 	@Nullable
 	protected Class<? extends PsiElement> getValidChildClass() {
 		return PyExpression.class;

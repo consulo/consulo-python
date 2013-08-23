@@ -28,10 +28,12 @@ public class PyAugAssignmentStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyAugAssignmentStatement(this);
 	}
 
+	@Override
 	public PyExpression getTarget() {
 		PyExpression target = (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);
 		if (target == null) {

@@ -29,6 +29,7 @@ public class PythonLexer extends FlexAdapter {
 		getFlex().setLanguage(this.language);
 	}
 
+	@Override
 	public _PythonLexer getFlex() {
 		return (_PythonLexer) super.getFlex();
 	}

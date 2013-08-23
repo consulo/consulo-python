@@ -32,16 +32,19 @@ public class PyTargetExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyTargetExpression(this);
 	}
 
+	@Override
 	@Nullable
 	public String getName() {
 		ASTNode node = getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
 		return node != null ? node.getText() : null;
 	}
 
+	@Override
 	public PsiElement setName(String name) throws IncorrectOperationException {
 		ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
 		getNode().replaceChild(getNode().getFirstChildNode(), nameElement);

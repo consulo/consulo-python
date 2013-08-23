@@ -20,6 +20,7 @@ import ru.yole.pythonid.psi.PyExceptBlock;
 import ru.yole.pythonid.psi.PyTryExceptStatement;
 
 public class TryExceptAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyTryExceptStatement(PyTryExceptStatement node) {
 		PyExceptBlock[] exceptBlocks = node.getExceptBlocks();
 		boolean haveDefaultExcept = false;

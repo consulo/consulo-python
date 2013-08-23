@@ -21,6 +21,7 @@ import ru.yole.pythonid.psi.PyParameter;
 import ru.yole.pythonid.psi.PyParameterList;
 
 public class ParameterListAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyParameterList(PyParameterList node) {
 		HashSet parameterNames = new HashSet();
 		PyParameter[] parameters = node.getParameters();

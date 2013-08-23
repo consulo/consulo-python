@@ -32,14 +32,17 @@ public class PythonFindUsagesProvider
 		this.language = language;
 	}
 
+	@Override
 	public boolean canFindUsagesFor(PsiElement psiElement) {
 		return ((psiElement instanceof PsiNamedElement)) || ((psiElement instanceof PyReferenceExpression));
 	}
 
+	@Override
 	public String getHelpId(PsiElement psiElement) {
 		return null;
 	}
 
+	@Override
 	@NotNull
 	public String getType(PsiElement element) {
 		if ((element instanceof PyParameter)) {
@@ -67,6 +70,7 @@ public class PythonFindUsagesProvider
 		return tmp105_103;
 	}
 
+	@Override
 	@NotNull
 	public String getDescriptiveName(PsiElement element) {
 		if ((element instanceof PsiNamedElement)) {
@@ -90,6 +94,7 @@ public class PythonFindUsagesProvider
 		return tmp87_85;
 	}
 
+	@Override
 	@NotNull
 	public String getNodeText(PsiElement element, boolean useFullName) {
 		String tmp5_2 = getDescriptiveName(element);
@@ -107,6 +112,7 @@ public class PythonFindUsagesProvider
 		return false;
 	}
 
+	@Override
 	public WordsScanner getWordsScanner() {
 		return new PyWordsScanner(this.language);
 	}

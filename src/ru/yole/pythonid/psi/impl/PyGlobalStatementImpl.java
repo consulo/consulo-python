@@ -37,10 +37,12 @@ public class PyGlobalStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyGlobalStatement(this);
 	}
 
+	@Override
 	@NotNull
 	public PyReferenceExpression[] getGlobals() {
 		PyReferenceExpression[] tmp14_11 = ((PyReferenceExpression[]) childrenToPsi(this.REFERENCES, PyReferenceExpression.EMPTY_ARRAY));

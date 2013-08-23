@@ -29,10 +29,12 @@ public class PyReturnStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyReturnStatement(this);
 	}
 
+	@Override
 	@Nullable
 	public PyExpression getExpression() {
 		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);

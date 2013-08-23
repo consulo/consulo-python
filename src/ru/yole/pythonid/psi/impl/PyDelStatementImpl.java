@@ -29,10 +29,12 @@ public class PyDelStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyDelStatement(this);
 	}
 
+	@Override
 	@Nullable
 	public PyExpression[] getTargets() {
 		return (PyExpression[]) childrenToPsi(getPyElementTypes().EXPRESSIONS, PyExpression.EMPTY_ARRAY);

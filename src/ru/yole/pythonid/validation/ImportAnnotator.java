@@ -21,6 +21,7 @@ import ru.yole.pythonid.psi.PyFromImportStatement;
 import ru.yole.pythonid.psi.PyFunction;
 
 public class ImportAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyFromImportStatement(PyFromImportStatement node) {
 		if ((node.isStarImport()) && (
 				(node.getContainingElement(PyFunction.class) != null) || (node.getContainingElement(PyClass.class) != null))) {

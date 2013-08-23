@@ -30,18 +30,22 @@ public class PythonSupportLoader
 		return (PythonSupportLoader) app.getComponent(PythonSupportLoader.class);
 	}
 
+	@Override
 	public String getComponentName() {
 		return "Python support loader";
 	}
 
+	@Override
 	public void initComponent() {
 		ApplicationManager.getApplication().runWriteAction(new Runnable() {
+			@Override
 			public void run() {
 				FileTypeManager.getInstance().registerFileType(PythonSupportLoader.PYTHON, new String[]{"py"});
 			}
 		});
 	}
 
+	@Override
 	public void disposeComponent() {
 	}
 }

@@ -70,6 +70,7 @@ public class PyBlock
 		return tmp4_1;
 	}
 
+	@Override
 	@NotNull
 	public TextRange getTextRange() {
 		TextRange tmp9_4 = this._node.getTextRange();
@@ -77,6 +78,7 @@ public class PyBlock
 		return tmp9_4;
 	}
 
+	@Override
 	@NotNull
 	public List<Block> getSubBlocks() {
 		if (this._subBlocks == null)
@@ -151,22 +153,26 @@ public class PyBlock
 			}
 	}
 
+	@Override
 	@Nullable
 	public Wrap getWrap() {
 		return this._wrap;
 	}
 
+	@Override
 	@Nullable
 	public Indent getIndent() {
 		assert (this._indent != null);
 		return this._indent;
 	}
 
+	@Override
 	@Nullable
 	public Alignment getAlignment() {
 		return this._alignment;
 	}
 
+	@Override
 	@Nullable
 	public Spacing getSpacing(Block child1, Block child2) {
 		ASTNode childNode1 = ((PyBlock) child1).getNode();
@@ -178,6 +184,7 @@ public class PyBlock
 		return null;
 	}
 
+	@Override
 	@NotNull
 	public ChildAttributes getChildAttributes(int newChildIndex) {
 		PyBlock insertAfterBlock = (PyBlock) this._subBlocks.get(newChildIndex - 1);
@@ -248,6 +255,7 @@ public class PyBlock
 		return lastChild;
 	}
 
+	@Override
 	public boolean isIncomplete() {
 		ASTNode lastChild = getLastNonSpaceChild(this._node, false);
 		if ((lastChild != null) && (lastChild.getElementType() == this._elementTypes.STATEMENT_LIST)) {
@@ -260,6 +268,7 @@ public class PyBlock
 		return false;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		return this._node.getFirstChildNode() == null;
 	}

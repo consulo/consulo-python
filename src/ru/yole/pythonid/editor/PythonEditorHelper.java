@@ -30,17 +30,20 @@ public class PythonEditorHelper
 		this._actionManager = actionManager;
 	}
 
+	@Override
 	@NonNls
 	public String getComponentName() {
 		return "PythonEditorHelper";
 	}
 
+	@Override
 	public void initComponent() {
 		this._oldBackspaceHandler = this._actionManager.getActionHandler("EditorBackSpace");
 		PythonBackspaceHandler handler = new PythonBackspaceHandler(this._oldBackspaceHandler);
 		this._actionManager.setActionHandler("EditorBackSpace", handler);
 	}
 
+	@Override
 	public void disposeComponent() {
 		this._actionManager.setActionHandler("EditorBackSpace", this._oldBackspaceHandler);
 	}

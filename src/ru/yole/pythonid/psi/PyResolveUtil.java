@@ -68,6 +68,7 @@ public class PyResolveUtil {
 			return null;
 		}
 
+		@Override
 		public void handleEvent(PsiScopeProcessor.Event event, Object associated) {
 		}
 	}
@@ -105,6 +106,7 @@ public class PyResolveUtil {
 			return null;
 		}
 
+		@Override
 		public void handleEvent(PsiScopeProcessor.Event event, Object associated) {
 		}
 	}
@@ -145,6 +147,7 @@ public class PyResolveUtil {
 			return null;
 		}
 
+		@Override
 		public void handleEvent(PsiScopeProcessor.Event event, Object associated) {
 		}
 	}

@@ -45,6 +45,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		this.language = language;
 	}
 
+	@Override
 	@NotNull
 	public AbstractPythonLanguage getLanguage() {
 		AbstractPythonLanguage tmp4_1 = this.language;
@@ -52,6 +53,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		return tmp4_1;
 	}
 
+	@Override
 	public String toString() {
 		String className = getClass().getName();
 		int pos = className.lastIndexOf('.');
@@ -64,6 +66,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		return className;
 	}
 
+	@Override
 	public PsiReference getReference() {
 		PsiReference[] refs = getReferences();
 		PsiReference result;
@@ -77,6 +80,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		return result;
 	}
 
+	@Override
 	@NotNull
 	public PsiReference[] getReferences() {
 		PsiReference[] tmp19_14 = getLanguage().getReferenceProviderRegistry().getPythonReferences((PyElement) getOriginalElement());
@@ -84,6 +88,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		return tmp19_14;
 	}
 
+	@Override
 	public void accept(PsiElementVisitor visitor) {
 		if ((visitor instanceof PyElementVisitor))
 			acceptPyVisitor((PyElementVisitor) visitor);
@@ -151,6 +156,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		return tmp21_20;
 	}
 
+	@Override
 	@Nullable
 	public <T extends PyElement> T getContainingElement(Class<T> aClass) {
 		PsiElement parent = getParent();
@@ -163,6 +169,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		return null;
 	}
 
+	@Override
 	@Nullable
 	public PyElement getContainingElement(TokenSet tokenSet) {
 		PsiElement parent = getParent();
@@ -176,6 +183,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		return null;
 	}
 
+	@Override
 	public void delete() throws IncorrectOperationException {
 		PsiElement parent = getParent();
 		if ((parent instanceof PyElementImpl)) {
@@ -186,6 +194,7 @@ public class PyElementImpl extends ASTWrapperPsiElement
 		}
 	}
 
+	@Override
 	public PsiElement replace(PsiElement element) throws IncorrectOperationException {
 		PsiElement parent = getParent();
 		if ((parent instanceof PyElementImpl)) {

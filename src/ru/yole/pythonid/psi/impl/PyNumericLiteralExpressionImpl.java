@@ -38,10 +38,12 @@ public class PyNumericLiteralExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyNumericLiteralExpression(this);
 	}
 
+	@Override
 	public Long getLongValue() {
 		BigInteger value = getBigIntegerValue();
 		long longValue = value.longValue();
@@ -51,6 +53,7 @@ public class PyNumericLiteralExpressionImpl extends PyElementImpl
 		return null;
 	}
 
+	@Override
 	public BigInteger getBigIntegerValue() {
 		ASTNode node = getNode();
 		String text = node.getText();
@@ -61,6 +64,7 @@ public class PyNumericLiteralExpressionImpl extends PyElementImpl
 		return getBigDecimalValue().toBigInteger();
 	}
 
+	@Override
 	public BigDecimal getBigDecimalValue() {
 		ASTNode node = getNode();
 		String text = node.getText();

@@ -39,6 +39,7 @@ public class EvaluatedTextRange {
 		return this.value;
 	}
 
+	@Override
 	public String toString() {
 		return "EvaluatedTextRange[" + this.range + "]: " + this.value;
 	}

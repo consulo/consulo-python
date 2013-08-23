@@ -39,10 +39,12 @@ public class PyTryExceptStatementImpl extends PyElementImpl
 		this.EXCEPT_BLOCKS = TokenSet.create(new IElementType[]{language.getElementTypes().EXCEPT_BLOCK});
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyTryExceptStatement(this);
 	}
 
+	@Override
 	@NotNull
 	public PyStatementList getTryStatementList() {
 		PyStatementList tmp18_15 = ((PyStatementList) childToPsiNotNull(getLanguage().getElementTypes().STATEMENT_LISTS, 0));
@@ -50,6 +52,7 @@ public class PyTryExceptStatementImpl extends PyElementImpl
 		return tmp18_15;
 	}
 
+	@Override
 	@NotNull
 	public PyExceptBlock[] getExceptBlocks() {
 		PyExceptBlock[] tmp14_11 = ((PyExceptBlock[]) childrenToPsi(this.EXCEPT_BLOCKS, PyExceptBlock.EMPTY_ARRAY));
@@ -57,6 +60,7 @@ public class PyTryExceptStatementImpl extends PyElementImpl
 		return tmp14_11;
 	}
 
+	@Override
 	@Nullable
 	public PyStatementList getElseStatementList() {
 		return (PyStatementList) childToPsi(getLanguage().getElementTypes().STATEMENT_LISTS, 1);

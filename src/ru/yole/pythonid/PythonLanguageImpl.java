@@ -53,6 +53,7 @@ public class PythonLanguageImpl extends AbstractPythonLanguage {
 	public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
 		if ((psiFile instanceof PyFileImpl)) {
 			return new TreeBasedStructureViewBuilder() {
+				@Override
 				public StructureViewModel createStructureViewModel() {
 					return new PyStructureViewModel((PyElement) psiFile);
 				}
@@ -63,6 +64,7 @@ public class PythonLanguageImpl extends AbstractPythonLanguage {
 
 	public FormattingModelBuilder getFormattingModelBuilder() {
 		return new FormattingModelBuilder() {
+			@Override
 			@NotNull
 			public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
 				if (PythonLanguageImpl.DUMP_FORMATTING_AST) {
@@ -88,10 +90,12 @@ public class PythonLanguageImpl extends AbstractPythonLanguage {
 		};
 	}
 
+	@Override
 	public FileType getFileType() {
 		return PyUtil.findPythonFileType();
 	}
 
+	@Override
 	public IFileElementType getFileElementType() {
 		return this.ELTYPE_FILE;
 	}

@@ -32,10 +32,12 @@ public class PyParameterListImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyParameterList(this);
 	}
 
+	@Override
 	public PyParameter[] getParameters() {
 		ASTNode[] nodes = getNode().getChildren(this.PARAMETER_FILTER);
 		PyParameter[] params = new PyParameter[nodes.length];

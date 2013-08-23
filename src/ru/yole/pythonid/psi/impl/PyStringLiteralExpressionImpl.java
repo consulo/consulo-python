@@ -58,10 +58,12 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyStringLiteralExpression(this);
 	}
 
+	@Override
 	public List<TextRange> getStringValueTextRanges() {
 		if (this.valueTextRanges == null) {
 			int elStart = getTextRange().getStartOffset();
@@ -77,6 +79,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
 		return this.valueTextRanges;
 	}
 
+	@Override
 	public List<EvaluatedTextRange> getStringValueCharacterRanges() {
 		int elStart = getTextRange().getStartOffset();
 		List ranges = new ArrayList(100);
@@ -90,6 +93,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
 		return Collections.unmodifiableList(ranges);
 	}
 
+	@Override
 	public List<ASTNode> getStringNodes() {
 		return Arrays.asList(getNode().getChildren(TokenSet.create(new IElementType[]{getPyTokenTypes().STRING_LITERAL})));
 	}
@@ -101,6 +105,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
 		return m;
 	}
 
+	@Override
 	public String getStringValue() {
 		if (this.stringValue == null) {
 			StringBuilder out = new StringBuilder();
@@ -172,6 +177,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl
 		return ranges;
 	}
 
+	@Override
 	public String toString() {
 		return super.toString() + ": " + getStringValue();
 	}

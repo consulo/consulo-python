@@ -37,20 +37,24 @@ public class PyBinaryExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyBinaryExpression(this);
 	}
 
+	@Override
 	@PsiCached
 	public PyExpression getLeftExpression() {
 		return (PyExpression) PsiTreeUtil.getChildOfType(this, PyExpression.class);
 	}
 
+	@Override
 	@PsiCached
 	public PyExpression getRightExpression() {
 		return (PyExpression) PsiTreeUtil.getNextSiblingOfType(getLeftExpression(), PyExpression.class);
 	}
 
+	@Override
 	@PsiCached
 	public List<PyElementType> getOperator() {
 		List list = new ArrayList(3);
@@ -65,6 +69,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl
 		return list;
 	}
 
+	@Override
 	@PsiCached
 	public boolean isOperator(String chars) {
 		ASTNode child = getNode().getFirstChildNode();
@@ -79,6 +84,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl
 		return buf.toString().equals(chars);
 	}
 
+	@Override
 	public PyExpression getOppositeExpression(PyExpression expression) throws IllegalArgumentException {
 		PyExpression right = getRightExpression();
 		PyExpression left = getLeftExpression();
@@ -91,6 +97,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl
 		throw new IllegalArgumentException("expression " + expression + " is neither left exp or right exp");
 	}
 
+	@Override
 	protected void deletePyChild(PyElementImpl element)
 			throws IncorrectOperationException {
 		PyExpression left = getLeftExpression();
@@ -103,6 +110,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl
 			throw new IncorrectOperationException("Element " + element + " is neither left expression or right expression");
 	}
 
+	@Override
 	@Nullable
 	protected Class<? extends PsiElement> getValidChildClass() {
 		return PyElement.class;

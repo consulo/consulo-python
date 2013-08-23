@@ -37,6 +37,7 @@ public class PyElementTypeImpl extends PyElementType {
 		this._psiElementClass = psiElementClass;
 	}
 
+	@Override
 	public Class<? extends PsiElement> getElementClass() {
 		return this._psiElementClass;
 	}
@@ -54,6 +55,7 @@ public class PyElementTypeImpl extends PyElementType {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return "Py:" + super.toString();
 	}

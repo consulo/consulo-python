@@ -23,6 +23,7 @@ import ru.yole.pythonid.psi.*;
 import ru.yole.pythonid.psi.impl.PyFileImpl;
 
 public class DocStringAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyExpressionStatement(PyExpressionStatement node) {
 		PsiElement parent = node.getParent();
 		if (((parent instanceof PyFileImpl)) && (parent.getChildren()[0] == node)) {

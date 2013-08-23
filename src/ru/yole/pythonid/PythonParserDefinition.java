@@ -59,6 +59,7 @@ public class PythonParserDefinition
 		return tmp11_8;
 	}
 
+	@Override
 	public IFileElementType getFileNodeType() {
 		return this.language.getFileElementType();
 	}
@@ -92,6 +93,7 @@ public class PythonParserDefinition
 		return this.language.getFileCreator().createFile(project, name, text);
 	}
 
+	@Override
 	@NotNull
 	public PsiElement createElement(ASTNode node) {
 		IElementType type = node.getElementType();

@@ -27,10 +27,12 @@ public class PyFromImportStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyFromImportStatement(this);
 	}
 
+	@Override
 	public boolean isStarImport() {
 		return getNode().findChildByType(getPyTokenTypes().MULT) != null;
 	}

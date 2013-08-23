@@ -34,26 +34,32 @@ public class PyStructureViewModel extends TextEditorBasedStructureViewModel {
 		this._root = root;
 	}
 
+	@Override
 	public StructureViewTreeElement getRoot() {
 		return new PyStructureViewElement(this._root);
 	}
 
+	@Override
 	public Grouper[] getGroupers() {
 		return new Grouper[0];
 	}
 
+	@Override
 	public Sorter[] getSorters() {
 		return new Sorter[]{Sorter.ALPHA_SORTER};
 	}
 
+	@Override
 	public Filter[] getFilters() {
 		return new Filter[0];
 	}
 
+	@Override
 	protected PsiFile getPsiFile() {
 		return this._root.getContainingFile();
 	}
 
+	@Override
 	protected Class[] getSuitableClasses() {
 		return new Class[]{PyFunction.class, PyClass.class};
 	}

@@ -29,6 +29,7 @@ public class PyExpressionStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	@NotNull
 	public PyExpression getExpression() {
 		PyExpression tmp15_12 = ((PyExpression) childToPsiNotNull(getPyElementTypes().EXPRESSIONS, 0));
@@ -36,6 +37,7 @@ public class PyExpressionStatementImpl extends PyElementImpl
 		return tmp15_12;
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyExpressionStatement(this);
 	}

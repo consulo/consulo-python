@@ -27,6 +27,7 @@ public class PyParenthesizedExpressionImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyParenthesizedExpression(this);
 	}

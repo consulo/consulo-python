@@ -37,25 +37,31 @@ public class PyStructureViewElement
 		this._element = element;
 	}
 
+	@Override
 	public PyElement getValue() {
 		return this._element;
 	}
 
+	@Override
 	public void navigate(boolean requestFocus) {
 		((NavigationItem) this._element).navigate(requestFocus);
 	}
 
+	@Override
 	public boolean canNavigate() {
 		return ((NavigationItem) this._element).canNavigate();
 	}
 
+	@Override
 	public boolean canNavigateToSource() {
 		return ((NavigationItem) this._element).canNavigateToSource();
 	}
 
+	@Override
 	public StructureViewTreeElement[] getChildren() {
 		final List childrenElements = new ArrayList();
 		this._element.acceptChildren(new PyElementVisitor() {
+			@Override
 			public void visitElement(PsiElement element) {
 				if (((element instanceof PsiNamedElement)) && (((PsiNamedElement) element).getName() != null)) {
 					childrenElements.add((PyElementEx) element);
@@ -63,6 +69,7 @@ public class PyStructureViewElement
 					element.acceptChildren(this);
 			}
 
+			@Override
 			public void visitPyParameter(PyParameter node) {
 			}
 		});
@@ -74,8 +81,10 @@ public class PyStructureViewElement
 		return children;
 	}
 
+	@Override
 	public ItemPresentation getPresentation() {
 		return new ItemPresentation() {
+			@Override
 			public String getPresentableText() {
 				if ((PyStructureViewElement.this._element instanceof PyFunction)) {
 					PsiElement[] children = PyStructureViewElement.this._element.getChildren();
@@ -112,11 +121,13 @@ public class PyStructureViewElement
 				return null;
 			}
 
+			@Override
 			@Nullable
 			public String getLocationString() {
 				return null;
 			}
 
+			@Override
 			public Icon getIcon(boolean open) {
 				return PyStructureViewElement.this._element.getIcon(4);
 			}

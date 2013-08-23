@@ -32,6 +32,7 @@ public class PyAnnotatingVisitor
 		this._annotators = annotators;
 	}
 
+	@Override
 	public void annotate(PsiElement psiElement, AnnotationHolder holder) {
 		for (Class cls : this._annotators) {
 			PyAnnotator annotator;

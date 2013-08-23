@@ -75,6 +75,7 @@ public abstract class AbstractPythonLanguage extends PythonLanguage {
 		return new PyBraceMatcher(this);
 	}
 
+	@Override
 	@NotNull
 	public PyAnnotatingVisitor getAnnotator() {
 		void tmp11_8 = new PyAnnotatingVisitor(this._annotators);
@@ -82,6 +83,7 @@ public abstract class AbstractPythonLanguage extends PythonLanguage {
 		return tmp11_8;
 	}
 
+	@Override
 	public PythonReferenceProviderRegistry getReferenceProviderRegistry() {
 		return this.refProviders;
 	}
@@ -99,28 +101,35 @@ public abstract class AbstractPythonLanguage extends PythonLanguage {
 
 	public abstract IFileElementType getFileElementType();
 
+	@Override
 	public PyElementGenerator getElementGenerator() {
 		return this.elementGenerator;
 	}
 
+	@Override
 	public PyTokenTypes getTokenTypes() {
 		return this.tokenTypes;
 	}
 
+	@Override
 	public PyElementTypes getElementTypes() {
 		return this.elementTypes;
 	}
 
+	@Override
 	public FileCreator getFileCreator() {
 		return new FileCreator() {
+			@Override
 			public PsiFile createFile(Project project, VirtualFile file) {
 				return new PyFileImpl(project, file, AbstractPythonLanguage.this, AbstractPythonLanguage.this.getFileType());
 			}
 
+			@Override
 			public PsiFile createFile(Project project, String name, CharSequence text) {
 				return new PyFileImpl(project, name, text, AbstractPythonLanguage.this, AbstractPythonLanguage.this.getFileType());
 			}
 
+			@Override
 			public PsiFile createDummyFile(Project project, String contents) {
 				ParserDefinition def = AbstractPythonLanguage.this.getParserDefinition();
 				assert (def != null);

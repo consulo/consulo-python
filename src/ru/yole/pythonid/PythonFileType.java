@@ -30,6 +30,7 @@ public class PythonFileType extends LanguageFileType {
 		this._icon = IconLoader.getIcon("python.png");
 	}
 
+	@Override
 	@NotNull
 	public String getName() {
 		String tmp2_0 = "Python";
@@ -37,6 +38,7 @@ public class PythonFileType extends LanguageFileType {
 		return tmp2_0;
 	}
 
+	@Override
 	@NotNull
 	public String getDescription() {
 		String tmp2_0 = "Python script";
@@ -44,6 +46,7 @@ public class PythonFileType extends LanguageFileType {
 		return tmp2_0;
 	}
 
+	@Override
 	@NotNull
 	public String getDefaultExtension() {
 		String tmp2_0 = "py";
@@ -51,6 +54,7 @@ public class PythonFileType extends LanguageFileType {
 		return tmp2_0;
 	}
 
+	@Override
 	public Icon getIcon() {
 		return this._icon;
 	}

@@ -38,10 +38,12 @@ public class PyIfStatementImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyIfStatement(this);
 	}
 
+	@Override
 	@NotNull
 	public PyExpression[] getConditions() {
 		PyExpression[] tmp17_14 = ((PyExpression[]) childrenToPsi(getPyElementTypes().EXPRESSIONS, PyExpression.EMPTY_ARRAY));
@@ -49,6 +51,7 @@ public class PyIfStatementImpl extends PyElementImpl
 		return tmp17_14;
 	}
 
+	@Override
 	@NotNull
 	public PyStatementList[] getStatementLists() {
 		PyElementTypes eltypes = getLanguage().getElementTypes();
@@ -67,6 +70,7 @@ public class PyIfStatementImpl extends PyElementImpl
 		return tmp107_106;
 	}
 
+	@Override
 	@Nullable
 	public PyStatementList getElseStatementList() {
 		ASTNode[] conditions = getNode().getChildren(getPyElementTypes().EXPRESSIONS);

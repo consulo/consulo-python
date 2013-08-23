@@ -19,28 +19,33 @@ package ru.yole.pythonid.validation;
 import ru.yole.pythonid.psi.*;
 
 public class AssignTargetAnnotator extends PyAnnotator {
+	@Override
 	public void visitPyAssignmentStatement(PyAssignmentStatement node) {
 		ExprVisitor visitor = new ExprVisitor(Operation.Assign);
 		for (PyExpression expr : node.getTargets())
 			expr.accept(visitor);
 	}
 
+	@Override
 	public void visitPyAugAssignmentStatement(PyAugAssignmentStatement node) {
 		node.getTarget().accept(new ExprVisitor(Operation.AugAssign));
 	}
 
+	@Override
 	public void visitPyDelStatement(PyDelStatement node) {
 		ExprVisitor visitor = new ExprVisitor(Operation.Delete);
 		for (PyExpression expr : node.getTargets())
 			expr.accept(visitor);
 	}
 
+	@Override
 	public void visitPyExceptBlock(PyExceptBlock node) {
 		PyExpression target = node.getTarget();
 		if (target != null)
 			target.accept(new ExprVisitor(Operation.Except));
 	}
 
+	@Override
 	public void visitPyForStatement(PyForStatement node) {
 		PyExpression target = node.getTargetExpression();
 		if (target != null)
@@ -54,30 +59,36 @@ public class AssignTargetAnnotator extends PyAnnotator {
 			this._op = op;
 		}
 
+		@Override
 		public void visitPyReferenceExpression(PyReferenceExpression node) {
 			String referencedName = node.getReferencedName();
 			if ((referencedName != null) && (referencedName.equals("None")))
 				AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, this._op == AssignTargetAnnotator.Operation.Delete ? "deleting None" : "assignment to None");
 		}
 
+		@Override
 		public void visitPyTargetExpression(PyTargetExpression node) {
 			String targetName = node.getName();
 			if ((targetName != null) && (targetName.equals("None")))
 				AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, this._op == AssignTargetAnnotator.Operation.Delete ? "deleting None" : "assignment to None");
 		}
 
+		@Override
 		public void visitPyCallExpression(PyCallExpression node) {
 			AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, this._op == AssignTargetAnnotator.Operation.Delete ? "can't delete function call" : "can't assign to function call");
 		}
 
+		@Override
 		public void visitPyGeneratorExpression(PyGeneratorExpression node) {
 			AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, this._op == AssignTargetAnnotator.Operation.AugAssign ? "augmented assign to generator expression not possible" : "assign to generator expression not possible");
 		}
 
+		@Override
 		public void visitPyBinaryExpression(PyBinaryExpression node) {
 			AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, "can't assign to operator");
 		}
 
+		@Override
 		public void visitPyTupleExpression(PyTupleExpression node) {
 			if (node.getElements().length == 0) {
 				AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, "can't assign to ()");
@@ -87,6 +98,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
 				node.acceptChildren(this);
 		}
 
+		@Override
 		public void visitPyParenthesizedExpression(PyParenthesizedExpression node) {
 			if (this._op == AssignTargetAnnotator.Operation.AugAssign) {
 				AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, "augmented assign to tuple literal or generator expression not possible");
@@ -94,6 +106,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
 				node.acceptChildren(this);
 		}
 
+		@Override
 		public void visitPyListLiteralExpression(PyListLiteralExpression node) {
 			if (node.getElements().length == 0) {
 				AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, "can't assign to []");
@@ -103,14 +116,17 @@ public class AssignTargetAnnotator extends PyAnnotator {
 				node.acceptChildren(this);
 		}
 
+		@Override
 		public void visitPyListCompExpression(PyListCompExpression node) {
 			AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, this._op == AssignTargetAnnotator.Operation.AugAssign ? "augmented assign to list comprehension not possible" : "can't assign to list comprehension");
 		}
 
+		@Override
 		public void visitPyNumericLiteralExpression(PyNumericLiteralExpression node) {
 			checkLiteral(node);
 		}
 
+		@Override
 		public void visitPyStringLiteralExpression(PyStringLiteralExpression node) {
 			checkLiteral(node);
 		}
@@ -119,6 +135,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
 			AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, "can't assign to literal");
 		}
 
+		@Override
 		public void visitPyLambdaExpression(PyLambdaExpression node) {
 			AssignTargetAnnotator.this.getHolder().createErrorAnnotation(node, "can't assign to lambda");
 		}

@@ -37,12 +37,14 @@ public class PyClassImpl extends PyElementImpl
 		super(astNode, language);
 	}
 
+	@Override
 	public PsiElement setName(String name) throws IncorrectOperationException {
 		ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
 		getNode().replaceChild(findNameIdentifier(), nameElement);
 		return this;
 	}
 
+	@Override
 	@Nullable
 	public String getName() {
 		ASTNode node = findNameIdentifier();
@@ -57,10 +59,12 @@ public class PyClassImpl extends PyElementImpl
 		return Icons.CLASS_ICON;
 	}
 
+	@Override
 	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
 		pyVisitor.visitPyClass(this);
 	}
 
+	@Override
 	@NotNull
 	public PyStatementList getStatementList() {
 		PyStatementList tmp17_14 = ((PyStatementList) childToPsiNotNull(getLanguage().getElementTypes().STATEMENT_LIST));
@@ -72,6 +76,7 @@ public class PyClassImpl extends PyElementImpl
 		return processor.execute(this, substitutor);
 	}
 
+	@Override
 	public int getTextOffset() {
 		ASTNode name = findNameIdentifier();
 		return name != null ? name.getStartOffset() : super.getTextOffset();
