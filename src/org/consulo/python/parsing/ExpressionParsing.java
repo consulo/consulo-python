@@ -306,6 +306,10 @@ public class ExpressionParsing extends Parsing {
 					keywordArgMarker.done(org.consulo.python.PyElementTypes.KEYWORD_ARGUMENT_EXPRESSION);
 				} else {
 					keywordArgMarker.rollbackTo();
+
+					if (!parseSingleExpression(builder, false)) {
+						builder.error("expression expected");
+					}
 				}
 			} else if (!parseSingleExpression(builder, false)) {
 				builder.error("expression expected");
