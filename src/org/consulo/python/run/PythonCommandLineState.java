@@ -6,6 +6,8 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.projectRoots.Sdk;
+import org.consulo.python.sdk.PythonSdkType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,8 +25,14 @@ public class PythonCommandLineState extends CommandLineState {
 	@NotNull
 	@Override
 	protected ProcessHandler startProcess() throws ExecutionException {
+		Sdk sdk = myPythonRunConfiguration.getSdk();
+
+		if(sdk == null) {
+			throw new ExecutionException("No sdk");
+		}
+
 		GeneralCommandLine commandLine = new GeneralCommandLine();
-		commandLine.setExePath("I:\\Programs\\play-1.2.5\\python\\python.exe");
+		commandLine.setExePath(PythonSdkType.getInstance().getExecutableFile(sdk));
 		commandLine.addParameter(myPythonRunConfiguration.SCRIPT_NAME);
 		commandLine.getParametersList().addParametersString(myPythonRunConfiguration.PARAMETERS);
 		commandLine.setWorkDirectory(myPythonRunConfiguration.WORKING_DIRECTORY);

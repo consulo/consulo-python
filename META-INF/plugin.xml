@@ -17,6 +17,8 @@
 
 		<configurationType implementation="org.consulo.python.run.PythonRunConfigurationType" />
 
+		<sdkType implementation="org.consulo.python.sdk.PythonSdkType" />
+
 		<applicationService serviceInterface="org.consulo.python.psi.PyElementGenerator" serviceImplementation="org.consulo.python.psi.impl.PyElementGeneratorImpl" />
 
 		<fileTypeFactory implementation="org.consulo.python.PythonFileTypeFactory" />
