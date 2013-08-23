@@ -1,25 +1,29 @@
-<idea-plugin version="2" url="http://pythonid.dev.java.net">
-	<name>Pythonid</name>
-	<id>Pythonid</id>
+<idea-plugin version="2">
+	<id>org.consulo.python</id>
+	<name>Python</name>
 	<description>Smart editing for Python scripts</description>
-	<version>0.1.1</version>
-	<vendor url="http://pythonid.dev.java.net" logo="/ru/yole/pythonid/python.png">Dmitry
-		Jemerov, Keith Lea
-	</vendor>
-	<idea-version since-build="4192" until-build="4999"/>
-	<change-notes>Initial release (re-upload). Implemented features: syntax and error
-		highlighting, folding and structure view, basic auto-indent,
-		basic navigation, rename and find usages (within a single file).
-	</change-notes>
+	<vendor>Dmitry Jemerov(http://pythonid.dev.java.net), Keith Lea(http://pythonid.dev.java.net), Consulo Org</vendor>
 
-	<application-components>
+
+<!--	<application-components>
 		<component>
-			<implementation-class>
-				ru.yole.pythonid.PythonSupportLoader
-			</implementation-class>
+			<implementation-class>org.consulo.python.editor.PythonEditorHelper</implementation-class>
 		</component>
-		<component>
-			<implementation-class>ru.yole.pythonid.editor.PythonEditorHelper</implementation-class>
-		</component>
-	</application-components>
+	</application-components>    -->
+
+	<extensions defaultExtensionNs="com.intellij">
+		<lang.commenter language="PYTHON" implementationClass="org.consulo.python.PythonCommenter" />
+		<lang.parserDefinition language="PYTHON" implementationClass="org.consulo.python.PythonParserDefinition" />
+		<lang.findUsagesProvider language="PYTHON" implementationClass="org.consulo.python.PythonFindUsagesProvider" />
+		<lang.foldingBuilder language="PYTHON" implementationClass="org.consulo.python.PythonFoldingBuilder" />
+		<lang.psiStructureViewFactory language="PYTHON" implementationClass="org.consulo.python.structureView.PyStructureViewFactory" />
+		<lang.formatter language="PYTHON" implementationClass="org.consulo.python.formatter.PythonFormattingModelBuilder" />
+		<lang.braceMatcher language="PYTHON" implementationClass="org.consulo.python.PyBraceMatcher" />
+		<annotator language="PYTHON" implementationClass="org.consulo.python.validation.PyAnnotatingVisitor" />
+		<syntaxHighlighter key="PYTHON" implementationClass="org.consulo.python.PyHighligher" />
+
+		<applicationService serviceInterface="org.consulo.python.psi.PyElementGenerator" serviceImplementation="org.consulo.python.psi.impl.PyElementGeneratorImpl" />
+
+		<fileTypeFactory implementation="org.consulo.python.PythonFileTypeFactory" />
+	</extensions>
 </idea-plugin>
