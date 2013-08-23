@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyPrintTarget extends PyElementEx
-{
+public abstract interface PyPrintTarget extends PyElementEx {
 }

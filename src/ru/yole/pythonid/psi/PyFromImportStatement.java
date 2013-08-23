@@ -16,7 +16,6 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyFromImportStatement extends PyStatement
-{
-  public abstract boolean isStarImport();
+public abstract interface PyFromImportStatement extends PyStatement {
+	public abstract boolean isStarImport();
 }

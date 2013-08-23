@@ -20,35 +20,35 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExceptBlock;
 import ru.yole.pythonid.psi.PyExpression;
 import ru.yole.pythonid.psi.PyStatementList;
 
 public class PyExceptBlockImpl extends PyElementImpl
-  implements PyExceptBlock
-{
-  public PyExceptBlockImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyExceptBlock {
+	public PyExceptBlockImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyExceptBlock(this);
-  }
-  @Nullable
-  public PyExpression getExceptClass() {
-    return (PyExpression)childToPsi(getPyElementTypes().EXPRESSIONS, 0);
-  }
-  @Nullable
-  public PyExpression getTarget() {
-    return (PyExpression)childToPsi(getPyElementTypes().EXPRESSIONS, 1);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyExceptBlock(this);
+	}
 
-  @NotNull
-  public PyStatementList getStatementList()
-  {
-    PyStatementList tmp14_11 = ((PyStatementList)childToPsiNotNull(getPyElementTypes().STATEMENT_LIST)); if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp14_11;
-  }
+	@Nullable
+	public PyExpression getExceptClass() {
+		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);
+	}
+
+	@Nullable
+	public PyExpression getTarget() {
+		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 1);
+	}
+
+	@NotNull
+	public PyStatementList getStatementList() {
+		PyStatementList tmp14_11 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LIST));
+		if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp14_11;
+	}
 }

@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyPassStatement;
 
 public class PyPassStatementImpl extends PyElementImpl
-  implements PyPassStatement
-{
-  public PyPassStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyPassStatement {
+	public PyPassStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

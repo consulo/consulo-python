@@ -17,24 +17,23 @@
 package ru.yole.pythonid;
 
 import com.intellij.lexer.FlexAdapter;
+
 import java.io.Reader;
 
-public class PythonLexer extends FlexAdapter
-{
-  private PythonLanguage language;
+public class PythonLexer extends FlexAdapter {
+	private PythonLanguage language;
 
-  public PythonLexer(PythonLanguage language)
-  {
-    super(new _PythonLexer((Reader)null));
-    this.language = language;
-    getFlex().setLanguage(this.language);
-  }
+	public PythonLexer(PythonLanguage language) {
+		super(new _PythonLexer((Reader) null));
+		this.language = language;
+		getFlex().setLanguage(this.language);
+	}
 
-  public _PythonLexer getFlex() {
-    return (_PythonLexer)super.getFlex();
-  }
+	public _PythonLexer getFlex() {
+		return (_PythonLexer) super.getFlex();
+	}
 
-  public PythonLanguage getLanguage() {
-    return this.language;
-  }
+	public PythonLanguage getLanguage() {
+		return this.language;
+	}
 }

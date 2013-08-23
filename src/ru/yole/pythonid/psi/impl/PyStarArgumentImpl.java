@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyStarArgument;
 
 public class PyStarArgumentImpl extends PyElementImpl
-  implements PyStarArgument
-{
-  public PyStarArgumentImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyStarArgument {
+	public PyStarArgumentImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

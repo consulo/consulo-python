@@ -16,7 +16,6 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyParameterList extends PyElementEx
-{
-  public abstract PyParameter[] getParameters();
+public abstract interface PyParameterList extends PyElementEx {
+	public abstract PyParameter[] getParameters();
 }

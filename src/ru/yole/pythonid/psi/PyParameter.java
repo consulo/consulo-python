@@ -19,12 +19,11 @@ package ru.yole.pythonid.psi;
 import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyParameter extends PyElementEx, PsiNamedElement
-{
-  public abstract boolean isPositionalContainer();
+public abstract interface PyParameter extends PyElementEx, PsiNamedElement {
+	public abstract boolean isPositionalContainer();
 
-  public abstract boolean isKeywordContainer();
+	public abstract boolean isKeywordContainer();
 
-  @Nullable
-  public abstract PyExpression getDefaultValue();
+	@Nullable
+	public abstract PyExpression getDefaultValue();
 }

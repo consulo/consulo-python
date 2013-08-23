@@ -18,23 +18,20 @@ package ru.yole.pythonid.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyTokenTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyFromImportStatement;
 
 public class PyFromImportStatementImpl extends PyElementImpl
-  implements PyFromImportStatement
-{
-  public PyFromImportStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyFromImportStatement {
+	public PyFromImportStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyFromImportStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyFromImportStatement(this);
+	}
 
-  public boolean isStarImport() {
-    return getNode().findChildByType(getPyTokenTypes().MULT) != null;
-  }
+	public boolean isStarImport() {
+		return getNode().findChildByType(getPyTokenTypes().MULT) != null;
+	}
 }

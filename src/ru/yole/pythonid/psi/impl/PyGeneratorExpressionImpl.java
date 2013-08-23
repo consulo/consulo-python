@@ -22,14 +22,12 @@ import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyGeneratorExpression;
 
 public class PyGeneratorExpressionImpl extends PyElementImpl
-  implements PyGeneratorExpression
-{
-  public PyGeneratorExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyGeneratorExpression {
+	public PyGeneratorExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyGeneratorExpression(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyGeneratorExpression(this);
+	}
 }

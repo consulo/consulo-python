@@ -23,68 +23,55 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
-import ru.yole.pythonid.psi.PsiCached;
-import ru.yole.pythonid.psi.PyAssignmentStatement;
-import ru.yole.pythonid.psi.PyClass;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyExpression;
-import ru.yole.pythonid.psi.PyFunction;
-import ru.yole.pythonid.psi.PyGlobalStatement;
+import ru.yole.pythonid.psi.*;
 
 public class PyAssignmentStatementImpl extends PyElementImpl
-  implements PyAssignmentStatement
-{
-  public PyAssignmentStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyAssignmentStatement {
+	public PyAssignmentStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-  {
-    pyVisitor.visitPyAssignmentStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyAssignmentStatement(this);
+	}
 
-  @PsiCached
-  public PyExpression[] getTargets()
-  {
-    ASTNode[] nodes = getNode().getChildren(getPyElementTypes().EXPRESSIONS);
-    ASTNode[] targets = new ASTNode[nodes.length - 1];
-    System.arraycopy(nodes, 0, targets, 0, nodes.length - 1);
-    return (PyExpression[])nodesToPsi(targets, PyExpression.EMPTY_ARRAY);
-  }
-  @PsiCached
-  @Nullable
-  public PyExpression getAssignedValue() { PsiElement child = getLastChild();
-    while ((child != null) && (!(child instanceof PyExpression))) {
-      child = child.getPrevSibling();
-    }
-    return (PyExpression)child;
-  }
+	@PsiCached
+	public PyExpression[] getTargets() {
+		ASTNode[] nodes = getNode().getChildren(getPyElementTypes().EXPRESSIONS);
+		ASTNode[] targets = new ASTNode[nodes.length - 1];
+		System.arraycopy(nodes, 0, targets, 0, nodes.length - 1);
+		return (PyExpression[]) nodesToPsi(targets, PyExpression.EMPTY_ARRAY);
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    if (lastParent != null) {
-      return true;
-    }
+	@PsiCached
+	@Nullable
+	public PyExpression getAssignedValue() {
+		PsiElement child = getLastChild();
+		while ((child != null) && (!(child instanceof PyExpression))) {
+			child = child.getPrevSibling();
+		}
+		return (PyExpression) child;
+	}
 
-    if ((PsiTreeUtil.getParentOfType(this, PyFunction.class) == null) && (PsiTreeUtil.getParentOfType(place, PyFunction.class) != null))
-    {
-      if (PsiTreeUtil.getParentOfType(this, PyClass.class) != null) {
-        return true;
-      }
-      if (PsiTreeUtil.getParentOfType(place, PyGlobalStatement.class) == null)
-      {
-        return true;
-      }
-    }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		if (lastParent != null) {
+			return true;
+		}
 
-    for (PyExpression expression : getTargets()) {
-      if (!expression.processDeclarations(processor, substitutor, lastParent, place))
-      {
-        return false;
-      }
-    }
-    return true;
-  }
+		if ((PsiTreeUtil.getParentOfType(this, PyFunction.class) == null) && (PsiTreeUtil.getParentOfType(place, PyFunction.class) != null)) {
+			if (PsiTreeUtil.getParentOfType(this, PyClass.class) != null) {
+				return true;
+			}
+			if (PsiTreeUtil.getParentOfType(place, PyGlobalStatement.class) == null) {
+				return true;
+			}
+		}
+
+		for (PyExpression expression : getTargets()) {
+			if (!expression.processDeclarations(processor, substitutor, lastParent, place)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

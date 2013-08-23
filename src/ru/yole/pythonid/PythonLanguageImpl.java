@@ -26,12 +26,10 @@ import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IFileElementType;
-import java.io.PrintStream;
 import org.jetbrains.annotations.NotNull;
 import ru.yole.pythonid.formatter.PyBlock;
 import ru.yole.pythonid.psi.PyElement;
@@ -39,64 +37,62 @@ import ru.yole.pythonid.psi.PyUtil;
 import ru.yole.pythonid.psi.impl.PyFileImpl;
 import ru.yole.pythonid.structureView.PyStructureViewModel;
 
-public class PythonLanguageImpl extends AbstractPythonLanguage
-{
-  private static boolean DUMP_FORMATTING_AST = false;
+public class PythonLanguageImpl extends AbstractPythonLanguage {
+	private static boolean DUMP_FORMATTING_AST = false;
 
-  public final IFileElementType ELTYPE_FILE = new IFileElementType(this);
+	public final IFileElementType ELTYPE_FILE = new IFileElementType(this);
 
-  protected PythonLanguageImpl() {
-    super("YolePython");
-  }
+	protected PythonLanguageImpl() {
+		super("YolePython");
+	}
 
-  public FoldingBuilder getFoldingBuilder()
-  {
-    return new PythonFoldingBuilder(this);
-  }
+	public FoldingBuilder getFoldingBuilder() {
+		return new PythonFoldingBuilder(this);
+	}
 
-  public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile)
-  {
-    if ((psiFile instanceof PyFileImpl)) {
-      return new TreeBasedStructureViewBuilder() {
-        public StructureViewModel createStructureViewModel() {
-          return new PyStructureViewModel((PyElement)psiFile);
-        }
-      };
-    }
-    return super.getStructureViewBuilder(psiFile);
-  }
+	public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
+		if ((psiFile instanceof PyFileImpl)) {
+			return new TreeBasedStructureViewBuilder() {
+				public StructureViewModel createStructureViewModel() {
+					return new PyStructureViewModel((PyElement) psiFile);
+				}
+			};
+		}
+		return super.getStructureViewBuilder(psiFile);
+	}
 
-  public FormattingModelBuilder getFormattingModelBuilder()
-  {
-    return new FormattingModelBuilder() {
-      @NotNull
-      public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) { if (PythonLanguageImpl.DUMP_FORMATTING_AST) {
-          ASTNode fileNode = element.getContainingFile().getNode();
-          System.out.println("AST tree for " + element.getContainingFile().getName() + ":");
-          printAST(fileNode, 0);
-        }
-        FormattingModel tmp97_94 = FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), new PyBlock(PythonLanguageImpl.this, element.getNode(), null, Indent.getNoneIndent(), null, settings), settings); if (tmp97_94 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp97_94;
-      }
+	public FormattingModelBuilder getFormattingModelBuilder() {
+		return new FormattingModelBuilder() {
+			@NotNull
+			public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
+				if (PythonLanguageImpl.DUMP_FORMATTING_AST) {
+					ASTNode fileNode = element.getContainingFile().getNode();
+					System.out.println("AST tree for " + element.getContainingFile().getName() + ":");
+					printAST(fileNode, 0);
+				}
+				FormattingModel tmp97_94 = FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), new PyBlock(PythonLanguageImpl.this, element.getNode(), null, Indent.getNoneIndent(), null, settings), settings);
+				if (tmp97_94 == null) throw new IllegalStateException("@NotNull method must not return null");
+				return tmp97_94;
+			}
 
-      private void printAST(ASTNode node, int indent)
-      {
-        while (node != null) {
-          for (int i = 0; i < indent; i++) {
-            System.out.print(" ");
-          }
-          System.out.println(node.toString() + " " + node.getTextRange().toString());
-          printAST(node.getFirstChildNode(), indent + 2);
-          node = node.getTreeNext();
-        }
-      }
-    };
-  }
+			private void printAST(ASTNode node, int indent) {
+				while (node != null) {
+					for (int i = 0; i < indent; i++) {
+						System.out.print(" ");
+					}
+					System.out.println(node.toString() + " " + node.getTextRange().toString());
+					printAST(node.getFirstChildNode(), indent + 2);
+					node = node.getTreeNext();
+				}
+			}
+		};
+	}
 
-  public FileType getFileType() {
-    return PyUtil.findPythonFileType();
-  }
+	public FileType getFileType() {
+		return PyUtil.findPythonFileType();
+	}
 
-  public IFileElementType getFileElementType() {
-    return this.ELTYPE_FILE;
-  }
+	public IFileElementType getFileElementType() {
+		return this.ELTYPE_FILE;
+	}
 }

@@ -16,56 +16,49 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import ru.yole.pythonid.psi.PyElement;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyFunction;
-import ru.yole.pythonid.psi.PyReturnStatement;
-import ru.yole.pythonid.psi.PyTryFinallyStatement;
-import ru.yole.pythonid.psi.PyYieldStatement;
+import ru.yole.pythonid.psi.*;
 
-public class ReturnAnnotator extends PyAnnotator
-{
-  public void visitPyReturnStatement(PyReturnStatement node)
-  {
-    PyFunction function = (PyFunction)node.getContainingElement(PyFunction.class);
-    if (function == null) {
-      getHolder().createErrorAnnotation(node, "'return' outside of function");
-      return;
-    }
-    if (node.getExpression() != null) {
-      YieldVisitor visitor = new YieldVisitor(null);
-      function.acceptChildren(visitor);
-      if (visitor.haveYield())
-        getHolder().createErrorAnnotation(node, "'return' with argument inside generator");
-    }
-  }
+public class ReturnAnnotator extends PyAnnotator {
+	public void visitPyReturnStatement(PyReturnStatement node) {
+		PyFunction function = (PyFunction) node.getContainingElement(PyFunction.class);
+		if (function == null) {
+			getHolder().createErrorAnnotation(node, "'return' outside of function");
+			return;
+		}
+		if (node.getExpression() != null) {
+			YieldVisitor visitor = new YieldVisitor(null);
+			function.acceptChildren(visitor);
+			if (visitor.haveYield())
+				getHolder().createErrorAnnotation(node, "'return' with argument inside generator");
+		}
+	}
 
-  public void visitPyYieldStatement(PyYieldStatement node)
-  {
-    PyFunction function = (PyFunction)node.getContainingElement(PyFunction.class);
-    if (function == null) {
-      getHolder().createErrorAnnotation(node, "'yield' outside of function");
-    }
-    if (node.getContainingElement(PyTryFinallyStatement.class) != null)
-      getHolder().createErrorAnnotation(node, "'yield' not allowed in a 'try' block with a 'finally' clause");
-  }
+	public void visitPyYieldStatement(PyYieldStatement node) {
+		PyFunction function = (PyFunction) node.getContainingElement(PyFunction.class);
+		if (function == null) {
+			getHolder().createErrorAnnotation(node, "'yield' outside of function");
+		}
+		if (node.getContainingElement(PyTryFinallyStatement.class) != null)
+			getHolder().createErrorAnnotation(node, "'yield' not allowed in a 'try' block with a 'finally' clause");
+	}
 
-  private class YieldVisitor extends PyElementVisitor
-  {
-    private boolean _haveYield = false;
+	private class YieldVisitor extends PyElementVisitor {
+		private boolean _haveYield = false;
 
-    private YieldVisitor() {  } 
-    public boolean haveYield() { return this._haveYield; }
+		private YieldVisitor() {
+		}
 
-    public void visitPyYieldStatement(PyYieldStatement node)
-    {
-      this._haveYield = true;
-    }
+		public boolean haveYield() {
+			return this._haveYield;
+		}
 
-    public void visitPyElement(PyElement node) {
-      if (!this._haveYield)
-        node.acceptChildren(this);
-    }
-  }
+		public void visitPyYieldStatement(PyYieldStatement node) {
+			this._haveYield = true;
+		}
+
+		public void visitPyElement(PyElement node) {
+			if (!this._haveYield)
+				node.acceptChildren(this);
+		}
+	}
 }

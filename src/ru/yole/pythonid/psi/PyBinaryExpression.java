@@ -16,20 +16,20 @@
 
 package ru.yole.pythonid.psi;
 
-import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyBinaryExpression extends PyExpression
-{
-  public abstract PyExpression getLeftExpression();
+import java.util.List;
 
-  @Nullable
-  public abstract PyExpression getRightExpression();
+public abstract interface PyBinaryExpression extends PyExpression {
+	public abstract PyExpression getLeftExpression();
 
-  public abstract List<PyElementType> getOperator();
+	@Nullable
+	public abstract PyExpression getRightExpression();
 
-  public abstract boolean isOperator(String paramString);
+	public abstract List<PyElementType> getOperator();
 
-  public abstract PyExpression getOppositeExpression(PyExpression paramPyExpression)
-    throws IllegalArgumentException;
+	public abstract boolean isOperator(String paramString);
+
+	public abstract PyExpression getOppositeExpression(PyExpression paramPyExpression)
+			throws IllegalArgumentException;
 }

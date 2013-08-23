@@ -18,7 +18,6 @@ package ru.yole.pythonid.psi;
 
 import com.intellij.psi.PsiStatement;
 
-public abstract interface PyStatement extends PsiStatement, PyElementEx
-{
-  public static final PyStatement[] EMPTY_ARRAY = new PyStatement[0];
+public abstract interface PyStatement extends PsiStatement, PyElementEx {
+	public static final PyStatement[] EMPTY_ARRAY = new PyStatement[0];
 }

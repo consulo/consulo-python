@@ -21,14 +21,13 @@ import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyFunction extends PsiNamedElement, PyElementEx
-{
-  @Nullable
-  public abstract ASTNode getNameNode();
+public abstract interface PyFunction extends PsiNamedElement, PyElementEx {
+	@Nullable
+	public abstract ASTNode getNameNode();
 
-  @NotNull
-  public abstract PyParameterList getParameterList();
+	@NotNull
+	public abstract PyParameterList getParameterList();
 
-  @NotNull
-  public abstract PyStatementList getStatementList();
+	@NotNull
+	public abstract PyStatementList getStatementList();
 }

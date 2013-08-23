@@ -18,13 +18,12 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyReferenceExpression extends PsiReferenceEx, PyExpression
-{
-  public static final PyReferenceExpression[] EMPTY_ARRAY = new PyReferenceExpression[0];
+public abstract interface PyReferenceExpression extends PsiReferenceEx, PyExpression {
+	public static final PyReferenceExpression[] EMPTY_ARRAY = new PyReferenceExpression[0];
 
-  @Nullable
-  public abstract String getReferencedName();
+	@Nullable
+	public abstract String getReferencedName();
 
-  @Nullable
-  public abstract PyExpression getQualifier();
+	@Nullable
+	public abstract PyExpression getQualifier();
 }

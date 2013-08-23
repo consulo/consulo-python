@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.validation;
 
-public class StopCurrentAnnotatorException extends RuntimeException
-{
+public class StopCurrentAnnotatorException extends RuntimeException {
 }

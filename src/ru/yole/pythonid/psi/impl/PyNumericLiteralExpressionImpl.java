@@ -18,113 +18,107 @@ package ru.yole.pythonid.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Nullable;
+import ru.yole.pythonid.AbstractPythonLanguage;
+import ru.yole.pythonid.psi.PyElementVisitor;
+import ru.yole.pythonid.psi.PyNumericLiteralExpression;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.jetbrains.annotations.Nullable;
-import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyNumericLiteralExpression;
 
 public class PyNumericLiteralExpressionImpl extends PyElementImpl
-  implements PyNumericLiteralExpression
-{
-  private static final Pattern PATTERN_INT = Pattern.compile("(?:([1-9]\\d*)|(0)|(0[0-7]+)|(?:0x([0-9a-f]+)))L?", 2);
+		implements PyNumericLiteralExpression {
+	private static final Pattern PATTERN_INT = Pattern.compile("(?:([1-9]\\d*)|(0)|(0[0-7]+)|(?:0x([0-9a-f]+)))L?", 2);
 
-  private static final Pattern PATTERN_FLOAT = Pattern.compile("((\\d+)(?:\\.(\\d+)?)?|\\.(\\d+))(e(\\+|-)?(\\d))?", 2);
+	private static final Pattern PATTERN_FLOAT = Pattern.compile("((\\d+)(?:\\.(\\d+)?)?|\\.(\\d+))(e(\\+|-)?(\\d))?", 2);
 
-  public PyNumericLiteralExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+	public PyNumericLiteralExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyNumericLiteralExpression(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyNumericLiteralExpression(this);
+	}
 
-  public Long getLongValue() {
-    BigInteger value = getBigIntegerValue();
-    long longValue = value.longValue();
-    if (BigInteger.valueOf(longValue).equals(value)) {
-      return Long.valueOf(longValue);
-    }
-    return null;
-  }
+	public Long getLongValue() {
+		BigInteger value = getBigIntegerValue();
+		long longValue = value.longValue();
+		if (BigInteger.valueOf(longValue).equals(value)) {
+			return Long.valueOf(longValue);
+		}
+		return null;
+	}
 
-  public BigInteger getBigIntegerValue()
-  {
-    ASTNode node = getNode();
-    String text = node.getText();
-    IElementType type = node.getElementType();
-    if (type == getPyElementTypes().INTEGER_LITERAL_EXPRESSION) {
-      return getBigIntegerValue(text);
-    }
-    return getBigDecimalValue().toBigInteger();
-  }
+	public BigInteger getBigIntegerValue() {
+		ASTNode node = getNode();
+		String text = node.getText();
+		IElementType type = node.getElementType();
+		if (type == getPyElementTypes().INTEGER_LITERAL_EXPRESSION) {
+			return getBigIntegerValue(text);
+		}
+		return getBigDecimalValue().toBigInteger();
+	}
 
-  public BigDecimal getBigDecimalValue()
-  {
-    ASTNode node = getNode();
-    String text = node.getText();
-    IElementType type = node.getElementType();
-    if (type == getPyElementTypes().INTEGER_LITERAL_EXPRESSION) {
-      return new BigDecimal(getBigIntegerValue(text));
-    }
-    Matcher m = PATTERN_FLOAT.matcher(text);
-    boolean matches = m.matches();
-    assert (matches);
+	public BigDecimal getBigDecimalValue() {
+		ASTNode node = getNode();
+		String text = node.getText();
+		IElementType type = node.getElementType();
+		if (type == getPyElementTypes().INTEGER_LITERAL_EXPRESSION) {
+			return new BigDecimal(getBigIntegerValue(text));
+		}
+		Matcher m = PATTERN_FLOAT.matcher(text);
+		boolean matches = m.matches();
+		assert (matches);
 
-    if (m.group(2) != null) {
-      BigDecimal whole = new BigDecimal(m.group(2));
-      String fractionStr = m.group(3);
-      BigDecimal fraction = BigDecimal.ZERO;
-      if (fractionStr != null) {
-        fraction = new BigDecimal("0." + fractionStr);
-      }
-      whole = whole.add(fraction);
-    }
-    else
-    {
-      BigDecimal whole;
-      if (m.group(4) != null)
-        whole = new BigDecimal("0." + m.group(4));
-      else
-        throw new IllegalStateException("Cannot parse BigDecimal for " + text);
-    }
-    BigDecimal whole;
-    if (m.group(5) != null) {
-      String sign = m.group(6);
-      if (sign == null) sign = "+";
-      String exp = m.group(7);
-      whole = whole.multiply(new BigDecimal("1e" + sign + exp));
-    }
-    return whole;
-  }
-  @Nullable
-  private static BigInteger getBigIntegerValue(String text) {
-    Matcher m = PATTERN_INT.matcher(text);
-    if (!m.matches()) return null;
-    int radix;
-    if (m.group(1) != null) {
-      radix = 10; } else {
-      if (m.group(2) != null)
-        return BigInteger.ZERO;
-      int radix;
-      if (m.group(3) != null) {
-        radix = 8;
-      }
-      else
-      {
-        int radix;
-        if (m.group(4) != null)
-          radix = 16;
-        else
-          throw new IllegalStateException("No radix found: " + text);
-      }
-    }
-    int radix;
-    return new BigInteger(text, radix);
-  }
+		if (m.group(2) != null) {
+			BigDecimal whole = new BigDecimal(m.group(2));
+			String fractionStr = m.group(3);
+			BigDecimal fraction = BigDecimal.ZERO;
+			if (fractionStr != null) {
+				fraction = new BigDecimal("0." + fractionStr);
+			}
+			whole = whole.add(fraction);
+		} else {
+			BigDecimal whole;
+			if (m.group(4) != null)
+				whole = new BigDecimal("0." + m.group(4));
+			else
+				throw new IllegalStateException("Cannot parse BigDecimal for " + text);
+		}
+		BigDecimal whole;
+		if (m.group(5) != null) {
+			String sign = m.group(6);
+			if (sign == null) sign = "+";
+			String exp = m.group(7);
+			whole = whole.multiply(new BigDecimal("1e" + sign + exp));
+		}
+		return whole;
+	}
+
+	@Nullable
+	private static BigInteger getBigIntegerValue(String text) {
+		Matcher m = PATTERN_INT.matcher(text);
+		if (!m.matches()) return null;
+		int radix;
+		if (m.group(1) != null) {
+			radix = 10;
+		} else {
+			if (m.group(2) != null)
+				return BigInteger.ZERO;
+			int radix;
+			if (m.group(3) != null) {
+				radix = 8;
+			} else {
+				int radix;
+				if (m.group(4) != null)
+					radix = 16;
+				else
+					throw new IllegalStateException("No radix found: " + text);
+			}
+		}
+		int radix;
+		return new BigInteger(text, radix);
+	}
 }

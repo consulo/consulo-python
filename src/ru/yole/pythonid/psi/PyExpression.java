@@ -16,7 +16,6 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyExpression extends PyElementEx
-{
-  public static final PyExpression[] EMPTY_ARRAY = new PyExpression[0];
+public abstract interface PyExpression extends PyElementEx {
+	public static final PyExpression[] EMPTY_ARRAY = new PyExpression[0];
 }

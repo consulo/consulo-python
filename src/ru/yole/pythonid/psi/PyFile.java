@@ -18,17 +18,17 @@ package ru.yole.pythonid.psi;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiFile;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import ru.yole.pythonid.PythonLanguage;
 
-public abstract interface PyFile extends PyElement, PsiFile
-{
-  @NotNull
-  public abstract FileType getFileType();
+import java.util.List;
 
-  @PsiCached
-  public abstract List<PyStatement> getStatements();
+public abstract interface PyFile extends PyElement, PsiFile {
+	@NotNull
+	public abstract FileType getFileType();
 
-  public abstract PythonLanguage getPyLanguage();
+	@PsiCached
+	public abstract List<PyStatement> getStatements();
+
+	public abstract PythonLanguage getPyLanguage();
 }

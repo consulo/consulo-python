@@ -24,57 +24,49 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyTokenTypes;
-import ru.yole.pythonid.psi.PyAssignmentStatement;
-import ru.yole.pythonid.psi.PyElementGenerator;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyExpression;
-import ru.yole.pythonid.psi.PyStatement;
-import ru.yole.pythonid.psi.PyTargetExpression;
+import ru.yole.pythonid.psi.*;
 
 public class PyTargetExpressionImpl extends PyElementImpl
-  implements PyTargetExpression
-{
-  public PyTargetExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyTargetExpression {
+	public PyTargetExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyTargetExpression(this);
-  }
-  @Nullable
-  public String getName() {
-    ASTNode node = getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
-    return node != null ? node.getText() : null;
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyTargetExpression(this);
+	}
 
-  public PsiElement setName(String name) throws IncorrectOperationException {
-    ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
-    getNode().replaceChild(getNode().getFirstChildNode(), nameElement);
-    return this;
-  }
+	@Nullable
+	public String getName() {
+		ASTNode node = getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
+		return node != null ? node.getText() : null;
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    PsiElement parent = getParent();
-    if (((parent instanceof PyStatement)) && (lastParent == null) && (PsiTreeUtil.isAncestor(parent, place, true))) {
-      return true;
-    }
+	public PsiElement setName(String name) throws IncorrectOperationException {
+		ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
+		getNode().replaceChild(getNode().getFirstChildNode(), nameElement);
+		return this;
+	}
 
-    if ((getParent() instanceof PyAssignmentStatement)) {
-      PsiElement placeParent = place.getParent();
-      while ((placeParent != null) && ((placeParent instanceof PyExpression))) {
-        placeParent = placeParent.getParent();
-      }
-      if (placeParent == getParent()) {
-        return true;
-      }
-    }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		PsiElement parent = getParent();
+		if (((parent instanceof PyStatement)) && (lastParent == null) && (PsiTreeUtil.isAncestor(parent, place, true))) {
+			return true;
+		}
 
-    if (this == place) {
-      return true;
-    }
-    return processor.execute(this, substitutor);
-  }
+		if ((getParent() instanceof PyAssignmentStatement)) {
+			PsiElement placeParent = place.getParent();
+			while ((placeParent != null) && ((placeParent instanceof PyExpression))) {
+				placeParent = placeParent.getParent();
+			}
+			if (placeParent == getParent()) {
+				return true;
+			}
+		}
+
+		if (this == place) {
+			return true;
+		}
+		return processor.execute(this, substitutor);
+	}
 }

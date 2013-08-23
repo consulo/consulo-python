@@ -18,6 +18,5 @@ package ru.yole.pythonid.psi;
 
 import com.intellij.psi.PsiNamedElement;
 
-public abstract interface PyTargetExpression extends PyExpression, PsiNamedElement
-{
+public abstract interface PyTargetExpression extends PyExpression, PsiNamedElement {
 }

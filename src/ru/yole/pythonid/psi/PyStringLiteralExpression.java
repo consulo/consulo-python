@@ -18,16 +18,16 @@ package ru.yole.pythonid.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import java.util.List;
 import ru.yole.pythonid.psi.impl.EvaluatedTextRange;
 
-public abstract interface PyStringLiteralExpression extends PyLiteralExpression
-{
-  public abstract String getStringValue();
+import java.util.List;
 
-  public abstract List<TextRange> getStringValueTextRanges();
+public abstract interface PyStringLiteralExpression extends PyLiteralExpression {
+	public abstract String getStringValue();
 
-  public abstract List<EvaluatedTextRange> getStringValueCharacterRanges();
+	public abstract List<TextRange> getStringValueTextRanges();
 
-  public abstract List<ASTNode> getStringNodes();
+	public abstract List<EvaluatedTextRange> getStringValueCharacterRanges();
+
+	public abstract List<ASTNode> getStringNodes();
 }

@@ -18,8 +18,7 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract interface PyTupleExpression extends PyExpression
-{
-  @NotNull
-  public abstract PyExpression[] getElements();
+public abstract interface PyTupleExpression extends PyExpression {
+	@NotNull
+	public abstract PyExpression[] getElements();
 }

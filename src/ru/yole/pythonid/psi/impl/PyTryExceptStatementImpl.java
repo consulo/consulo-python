@@ -25,65 +25,62 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExceptBlock;
 import ru.yole.pythonid.psi.PyStatementList;
 import ru.yole.pythonid.psi.PyTryExceptStatement;
 
 public class PyTryExceptStatementImpl extends PyElementImpl
-  implements PyTryExceptStatement
-{
-  private TokenSet EXCEPT_BLOCKS;
+		implements PyTryExceptStatement {
+	private TokenSet EXCEPT_BLOCKS;
 
-  public PyTryExceptStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-    this.EXCEPT_BLOCKS = TokenSet.create(new IElementType[] { language.getElementTypes().EXCEPT_BLOCK });
-  }
+	public PyTryExceptStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+		this.EXCEPT_BLOCKS = TokenSet.create(new IElementType[]{language.getElementTypes().EXCEPT_BLOCK});
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-  {
-    pyVisitor.visitPyTryExceptStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyTryExceptStatement(this);
+	}
 
-  @NotNull
-  public PyStatementList getTryStatementList()
-  {
-    PyStatementList tmp18_15 = ((PyStatementList)childToPsiNotNull(getLanguage().getElementTypes().STATEMENT_LISTS, 0)); if (tmp18_15 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp18_15;
-  }
+	@NotNull
+	public PyStatementList getTryStatementList() {
+		PyStatementList tmp18_15 = ((PyStatementList) childToPsiNotNull(getLanguage().getElementTypes().STATEMENT_LISTS, 0));
+		if (tmp18_15 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp18_15;
+	}
 
-  @NotNull
-  public PyExceptBlock[] getExceptBlocks()
-  {
-    PyExceptBlock[] tmp14_11 = ((PyExceptBlock[])childrenToPsi(this.EXCEPT_BLOCKS, PyExceptBlock.EMPTY_ARRAY)); if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp14_11;
-  }
+	@NotNull
+	public PyExceptBlock[] getExceptBlocks() {
+		PyExceptBlock[] tmp14_11 = ((PyExceptBlock[]) childrenToPsi(this.EXCEPT_BLOCKS, PyExceptBlock.EMPTY_ARRAY));
+		if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp14_11;
+	}
 
-  @Nullable
-  public PyStatementList getElseStatementList() {
-    return (PyStatementList)childToPsi(getLanguage().getElementTypes().STATEMENT_LISTS, 1);
-  }
+	@Nullable
+	public PyStatementList getElseStatementList() {
+		return (PyStatementList) childToPsi(getLanguage().getElementTypes().STATEMENT_LISTS, 1);
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    if (lastParent != null) {
-      return true;
-    }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		if (lastParent != null) {
+			return true;
+		}
 
-    if (!getTryStatementList().processDeclarations(processor, substitutor, null, place)) {
-      return false;
-    }
+		if (!getTryStatementList().processDeclarations(processor, substitutor, null, place)) {
+			return false;
+		}
 
-    for (PyExceptBlock block : getExceptBlocks()) {
-      if (!block.processDeclarations(processor, substitutor, null, place)) {
-        return false;
-      }
-    }
+		for (PyExceptBlock block : getExceptBlocks()) {
+			if (!block.processDeclarations(processor, substitutor, null, place)) {
+				return false;
+			}
+		}
 
-    PyStatementList elseStatementList = getElseStatementList();
-    if (elseStatementList != null) {
-      return elseStatementList.processDeclarations(processor, substitutor, null, place);
-    }
-    return true;
-  }
+		PyStatementList elseStatementList = getElseStatementList();
+		if (elseStatementList != null) {
+			return elseStatementList.processDeclarations(processor, substitutor, null, place);
+		}
+		return true;
+	}
 }

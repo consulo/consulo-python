@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PySliceExpression;
 
 public class PySliceExpressionImpl extends PyElementImpl
-  implements PySliceExpression
-{
-  public PySliceExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PySliceExpression {
+	public PySliceExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

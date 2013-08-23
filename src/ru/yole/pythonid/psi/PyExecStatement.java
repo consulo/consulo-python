@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyExecStatement extends PyStatement
-{
+public abstract interface PyExecStatement extends PyStatement {
 }

@@ -19,8 +19,7 @@ package ru.yole.pythonid.psi;
 import org.jetbrains.annotations.NotNull;
 import ru.yole.pythonid.PythonLanguage;
 
-public abstract interface PyElementEx extends PyElement
-{
-  @NotNull
-  public abstract PythonLanguage getLanguage();
+public abstract interface PyElementEx extends PyElement {
+	@NotNull
+	public abstract PythonLanguage getLanguage();
 }

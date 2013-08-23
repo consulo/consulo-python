@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyExecStatement;
 
 public class PyExecStatementImpl extends PyElementImpl
-  implements PyExecStatement
-{
-  public PyExecStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyExecStatement {
+	public PyExecStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

@@ -19,16 +19,14 @@ package ru.yole.pythonid.validation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import ru.yole.pythonid.psi.PyElementVisitor;
 
-public abstract class PyAnnotator extends PyElementVisitor
-{
-  private AnnotationHolder _holder;
+public abstract class PyAnnotator extends PyElementVisitor {
+	private AnnotationHolder _holder;
 
-  public AnnotationHolder getHolder()
-  {
-    return this._holder;
-  }
+	public AnnotationHolder getHolder() {
+		return this._holder;
+	}
 
-  public void setHolder(AnnotationHolder holder) {
-    this._holder = holder;
-  }
+	public void setHolder(AnnotationHolder holder) {
+		this._holder = holder;
+	}
 }

@@ -18,14 +18,11 @@ package ru.yole.pythonid;
 
 import com.intellij.lang.ASTNode;
 
-public abstract class PyNodeVisitor
-{
-  public final void visit(ASTNode node)
-  {
-    visitElement(node);
-  }
+public abstract class PyNodeVisitor {
+	public final void visit(ASTNode node) {
+		visitElement(node);
+	}
 
-  public void visitElement(ASTNode node)
-  {
-  }
+	public void visitElement(ASTNode node) {
+	}
 }

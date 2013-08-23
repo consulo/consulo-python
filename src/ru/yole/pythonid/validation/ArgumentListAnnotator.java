@@ -16,32 +16,29 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import java.util.HashSet;
-import java.util.Set;
 import ru.yole.pythonid.psi.PyArgumentList;
 import ru.yole.pythonid.psi.PyExpression;
 import ru.yole.pythonid.psi.PyKeywordArgument;
 
-public class ArgumentListAnnotator extends PyAnnotator
-{
-  public void visitPyArgumentList(PyArgumentList node)
-  {
-    PyExpression[] arguments = node.getArguments();
-    boolean hadKeywordArguments = false;
-    Set keywords = new HashSet();
-    for (PyExpression argument : arguments)
-      if ((argument instanceof PyKeywordArgument)) {
-        hadKeywordArguments = true;
-        PyKeywordArgument keyArgument = (PyKeywordArgument)argument;
-        String keyword = keyArgument.getKeyword();
-        if (!keywords.add(keyword)) {
-          getHolder().createErrorAnnotation(keyArgument.getKeywordNode(), "duplicate keyword argument");
-        }
+import java.util.HashSet;
+import java.util.Set;
 
-      }
-      else if (hadKeywordArguments) {
-        getHolder().createErrorAnnotation(argument, "non-keyword arg after keyword arg");
-      }
-  }
+public class ArgumentListAnnotator extends PyAnnotator {
+	public void visitPyArgumentList(PyArgumentList node) {
+		PyExpression[] arguments = node.getArguments();
+		boolean hadKeywordArguments = false;
+		Set keywords = new HashSet();
+		for (PyExpression argument : arguments)
+			if ((argument instanceof PyKeywordArgument)) {
+				hadKeywordArguments = true;
+				PyKeywordArgument keyArgument = (PyKeywordArgument) argument;
+				String keyword = keyArgument.getKeyword();
+				if (!keywords.add(keyword)) {
+					getHolder().createErrorAnnotation(keyArgument.getKeywordNode(), "duplicate keyword argument");
+				}
+
+			} else if (hadKeywordArguments) {
+				getHolder().createErrorAnnotation(argument, "non-keyword arg after keyword arg");
+			}
+	}
 }

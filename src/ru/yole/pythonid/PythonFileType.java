@@ -22,35 +22,36 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class PythonFileType extends LanguageFileType
-{
-  private Icon _icon;
+public class PythonFileType extends LanguageFileType {
+	private Icon _icon;
 
-  public PythonFileType()
-  {
-    super(new PythonLanguageImpl());
-    this._icon = IconLoader.getIcon("python.png");
-  }
+	public PythonFileType() {
+		super(new PythonLanguageImpl());
+		this._icon = IconLoader.getIcon("python.png");
+	}
 
-  @NotNull
-  public String getName()
-  {
-    String tmp2_0 = "Python"; if (tmp2_0 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp2_0;
-  }
+	@NotNull
+	public String getName() {
+		String tmp2_0 = "Python";
+		if (tmp2_0 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp2_0;
+	}
 
-  @NotNull
-  public String getDescription()
-  {
-    String tmp2_0 = "Python script"; if (tmp2_0 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp2_0;
-  }
+	@NotNull
+	public String getDescription() {
+		String tmp2_0 = "Python script";
+		if (tmp2_0 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp2_0;
+	}
 
-  @NotNull
-  public String getDefaultExtension()
-  {
-    String tmp2_0 = "py"; if (tmp2_0 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp2_0;
-  }
+	@NotNull
+	public String getDefaultExtension() {
+		String tmp2_0 = "py";
+		if (tmp2_0 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp2_0;
+	}
 
-  public Icon getIcon() {
-    return this._icon;
-  }
+	public Icon getIcon() {
+		return this._icon;
+	}
 }

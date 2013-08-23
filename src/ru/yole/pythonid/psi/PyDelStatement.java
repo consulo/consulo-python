@@ -18,8 +18,7 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyDelStatement extends PyStatement
-{
-  @Nullable
-  public abstract PyExpression[] getTargets();
+public abstract interface PyDelStatement extends PyStatement {
+	@Nullable
+	public abstract PyExpression[] getTargets();
 }

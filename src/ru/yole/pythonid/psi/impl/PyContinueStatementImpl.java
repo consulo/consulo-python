@@ -22,14 +22,12 @@ import ru.yole.pythonid.psi.PyContinueStatement;
 import ru.yole.pythonid.psi.PyElementVisitor;
 
 public class PyContinueStatementImpl extends PyElementImpl
-  implements PyContinueStatement
-{
-  public PyContinueStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyContinueStatement {
+	public PyContinueStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyContinueStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyContinueStatement(this);
+	}
 }

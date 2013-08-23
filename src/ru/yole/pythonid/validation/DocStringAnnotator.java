@@ -16,46 +16,33 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.psi.PsiElement;
-import ru.yole.pythonid.PyTokenTypes;
-import ru.yole.pythonid.PythonLanguage;
-import ru.yole.pythonid.psi.PyClass;
-import ru.yole.pythonid.psi.PyExpression;
-import ru.yole.pythonid.psi.PyExpressionStatement;
-import ru.yole.pythonid.psi.PyFunction;
-import ru.yole.pythonid.psi.PyLiteralExpression;
-import ru.yole.pythonid.psi.PyStatementList;
+import ru.yole.pythonid.psi.*;
 import ru.yole.pythonid.psi.impl.PyFileImpl;
 
-public class DocStringAnnotator extends PyAnnotator
-{
-  public void visitPyExpressionStatement(PyExpressionStatement node)
-  {
-    PsiElement parent = node.getParent();
-    if (((parent instanceof PyFileImpl)) && (parent.getChildren()[0] == node)) {
-      annotateDocStringStmt(node);
-    }
-    else if (((parent instanceof PyStatementList)) && (parent.getChildren()[0] == node)) {
-      PsiElement stmtParent = parent.getParent();
-      if (((stmtParent instanceof PyFunction)) || ((stmtParent instanceof PyClass)))
-        annotateDocStringStmt(node);
-    }
-  }
+public class DocStringAnnotator extends PyAnnotator {
+	public void visitPyExpressionStatement(PyExpressionStatement node) {
+		PsiElement parent = node.getParent();
+		if (((parent instanceof PyFileImpl)) && (parent.getChildren()[0] == node)) {
+			annotateDocStringStmt(node);
+		} else if (((parent instanceof PyStatementList)) && (parent.getChildren()[0] == node)) {
+			PsiElement stmtParent = parent.getParent();
+			if (((stmtParent instanceof PyFunction)) || ((stmtParent instanceof PyClass)))
+				annotateDocStringStmt(node);
+		}
+	}
 
-  private void annotateDocStringStmt(PyExpressionStatement stmt)
-  {
-    PyExpression expr = stmt.getExpression();
-    if ((expr instanceof PyLiteralExpression)) {
-      PyLiteralExpression litExpr = (PyLiteralExpression)expr;
-      PsiElement elt = litExpr.getFirstChild();
-      if ((elt != null) && (elt.getNode().getElementType() == stmt.getLanguage().getTokenTypes().STRING_LITERAL)) {
-        Annotation ann = getHolder().createInfoAnnotation(elt, null);
-        ann.setTextAttributes(HighlighterColors.JAVA_DOC_COMMENT);
-      }
-    }
-  }
+	private void annotateDocStringStmt(PyExpressionStatement stmt) {
+		PyExpression expr = stmt.getExpression();
+		if ((expr instanceof PyLiteralExpression)) {
+			PyLiteralExpression litExpr = (PyLiteralExpression) expr;
+			PsiElement elt = litExpr.getFirstChild();
+			if ((elt != null) && (elt.getNode().getElementType() == stmt.getLanguage().getTokenTypes().STRING_LITERAL)) {
+				Annotation ann = getHolder().createInfoAnnotation(elt, null);
+				ann.setTextAttributes(HighlighterColors.JAVA_DOC_COMMENT);
+			}
+		}
+	}
 }

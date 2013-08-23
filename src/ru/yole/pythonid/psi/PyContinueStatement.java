@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyContinueStatement extends PyStatement
-{
+public abstract interface PyContinueStatement extends PyStatement {
 }

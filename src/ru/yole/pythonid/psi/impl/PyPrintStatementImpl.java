@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyPrintStatement;
 
 public class PyPrintStatementImpl extends PyElementImpl
-  implements PyPrintStatement
-{
-  public PyPrintStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyPrintStatement {
+	public PyPrintStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

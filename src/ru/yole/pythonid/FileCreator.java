@@ -20,11 +20,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public abstract interface FileCreator
-{
-  public abstract PsiFile createFile(Project paramProject, VirtualFile paramVirtualFile);
+public abstract interface FileCreator {
+	public abstract PsiFile createFile(Project paramProject, VirtualFile paramVirtualFile);
 
-  public abstract PsiFile createFile(Project paramProject, String paramString, CharSequence paramCharSequence);
+	public abstract PsiFile createFile(Project paramProject, String paramString, CharSequence paramCharSequence);
 
-  public abstract PsiFile createDummyFile(Project paramProject, String paramString);
+	public abstract PsiFile createDummyFile(Project paramProject, String paramString);
 }

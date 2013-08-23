@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyDictLiteralExpression;
 
 public class PyDictLiteralExpressionImpl extends PyElementImpl
-  implements PyDictLiteralExpression
-{
-  public PyDictLiteralExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyDictLiteralExpression {
+	public PyDictLiteralExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

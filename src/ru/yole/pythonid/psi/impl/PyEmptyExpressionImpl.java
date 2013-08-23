@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyEmptyExpression;
 
 public class PyEmptyExpressionImpl extends PyElementImpl
-  implements PyEmptyExpression
-{
-  public PyEmptyExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyEmptyExpression {
+	public PyEmptyExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

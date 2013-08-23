@@ -19,11 +19,10 @@ package ru.yole.pythonid.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyTryFinallyStatement extends PyStatement
-{
-  @NotNull
-  public abstract PyStatementList getTryStatementList();
+public abstract interface PyTryFinallyStatement extends PyStatement {
+	@NotNull
+	public abstract PyStatementList getTryStatementList();
 
-  @Nullable
-  public abstract PyStatementList getFinallyStatementList();
+	@Nullable
+	public abstract PyStatementList getFinallyStatementList();
 }

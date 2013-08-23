@@ -19,10 +19,9 @@ package ru.yole.pythonid.psi;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PsiReferenceEx extends PsiReference
-{
-  public abstract boolean shouldHighlightIfUnresolved();
+public abstract interface PsiReferenceEx extends PsiReference {
+	public abstract boolean shouldHighlightIfUnresolved();
 
-  @Nullable
-  public abstract String getUnresolvedDescription();
+	@Nullable
+	public abstract String getUnresolvedDescription();
 }

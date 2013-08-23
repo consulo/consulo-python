@@ -19,11 +19,10 @@ package ru.yole.pythonid.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyWhileStatement extends PyLoopStatement
-{
-  @NotNull
-  public abstract PyStatementList getStatementList();
+public abstract interface PyWhileStatement extends PyLoopStatement {
+	@NotNull
+	public abstract PyStatementList getStatementList();
 
-  @Nullable
-  public abstract PyStatementList getElseStatementList();
+	@Nullable
+	public abstract PyStatementList getElseStatementList();
 }

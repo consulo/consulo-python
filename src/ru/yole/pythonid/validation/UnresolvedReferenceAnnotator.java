@@ -18,38 +18,33 @@ package ru.yole.pythonid.validation;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import ru.yole.pythonid.psi.PsiReferenceEx;
 import ru.yole.pythonid.psi.PyElement;
 
-public class UnresolvedReferenceAnnotator extends PyAnnotator
-{
-  public void visitPyElement(PyElement node)
-  {
-    super.visitPyElement(node);
+public class UnresolvedReferenceAnnotator extends PyAnnotator {
+	public void visitPyElement(PyElement node) {
+		super.visitPyElement(node);
 
-    for (PsiReference reference : node.getReferences())
-      if ((!reference.isSoft()) && 
-        (reference.resolve() == null)) {
-        String text = reference.getElement().getText();
-        String description;
-        String description;
-        if ((reference instanceof PsiReferenceEx)) {
-          PsiReferenceEx expression = (PsiReferenceEx)reference;
-          if (!expression.shouldHighlightIfUnresolved()) {
-            continue;
-          }
-          description = expression.getUnresolvedDescription();
-        } else {
-          description = "Unresolved reference '" + reference.getRangeInElement().substring(text) + "'";
-        }
+		for (PsiReference reference : node.getReferences())
+			if ((!reference.isSoft()) &&
+					(reference.resolve() == null)) {
+				String text = reference.getElement().getText();
+				String description;
+				String description;
+				if ((reference instanceof PsiReferenceEx)) {
+					PsiReferenceEx expression = (PsiReferenceEx) reference;
+					if (!expression.shouldHighlightIfUnresolved()) {
+						continue;
+					}
+					description = expression.getUnresolvedDescription();
+				} else {
+					description = "Unresolved reference '" + reference.getRangeInElement().substring(text) + "'";
+				}
 
-        Annotation annotation = getHolder().createErrorAnnotation(reference.getRangeInElement().shiftRight(reference.getElement().getTextRange().getStartOffset()), description);
+				Annotation annotation = getHolder().createErrorAnnotation(reference.getRangeInElement().shiftRight(reference.getElement().getTextRange().getStartOffset()), description);
 
-        annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
-      }
-  }
+				annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+			}
+	}
 }

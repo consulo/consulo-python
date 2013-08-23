@@ -19,14 +19,13 @@ package ru.yole.pythonid.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyIfStatement extends PyStatement
-{
-  @NotNull
-  public abstract PyExpression[] getConditions();
+public abstract interface PyIfStatement extends PyStatement {
+	@NotNull
+	public abstract PyExpression[] getConditions();
 
-  @NotNull
-  public abstract PyStatementList[] getStatementLists();
+	@NotNull
+	public abstract PyStatementList[] getStatementLists();
 
-  @Nullable
-  public abstract PyStatementList getElseStatementList();
+	@Nullable
+	public abstract PyStatementList getElseStatementList();
 }

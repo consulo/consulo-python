@@ -19,26 +19,24 @@ package ru.yole.pythonid.psi.impl;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExpression;
 import ru.yole.pythonid.psi.PyExpressionStatement;
 
 public class PyExpressionStatementImpl extends PyElementImpl
-  implements PyExpressionStatement
-{
-  public PyExpressionStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyExpressionStatement {
+	public PyExpressionStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  @NotNull
-  public PyExpression getExpression()
-  {
-    PyExpression tmp15_12 = ((PyExpression)childToPsiNotNull(getPyElementTypes().EXPRESSIONS, 0)); if (tmp15_12 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp15_12;
-  }
+	@NotNull
+	public PyExpression getExpression() {
+		PyExpression tmp15_12 = ((PyExpression) childToPsiNotNull(getPyElementTypes().EXPRESSIONS, 0));
+		if (tmp15_12 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp15_12;
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyExpressionStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyExpressionStatement(this);
+	}
 }

@@ -19,22 +19,20 @@ package ru.yole.pythonid;
 import com.intellij.lang.Commenter;
 
 public class PythonCommenter
-  implements Commenter
-{
-  public String getLineCommentPrefix()
-  {
-    return "#";
-  }
+		implements Commenter {
+	public String getLineCommentPrefix() {
+		return "#";
+	}
 
-  public boolean isLineCommentPrefixOnZeroColumn() {
-    return false;
-  }
+	public boolean isLineCommentPrefixOnZeroColumn() {
+		return false;
+	}
 
-  public String getBlockCommentPrefix() {
-    return null;
-  }
+	public String getBlockCommentPrefix() {
+		return null;
+	}
 
-  public String getBlockCommentSuffix() {
-    return null;
-  }
+	public String getBlockCommentSuffix() {
+		return null;
+	}
 }

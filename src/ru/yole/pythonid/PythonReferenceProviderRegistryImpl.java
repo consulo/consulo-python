@@ -18,32 +18,31 @@ package ru.yole.pythonid;
 
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProvider;
+import ru.yole.pythonid.psi.PyElement;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import ru.yole.pythonid.psi.PyElement;
 
 public class PythonReferenceProviderRegistryImpl
-  implements PythonReferenceProviderRegistry
-{
-  private final Set<PsiReferenceProvider> providers = new CopyOnWriteArraySet();
+		implements PythonReferenceProviderRegistry {
+	private final Set<PsiReferenceProvider> providers = new CopyOnWriteArraySet();
 
-  public PsiReference[] getPythonReferences(PyElement element)
-  {
-    List list = new ArrayList();
-    for (PsiReferenceProvider provider : this.providers) {
-      Collections.addAll(list, provider.getReferencesByElement(element));
-    }
-    return (PsiReference[])list.toArray(new PsiReference[list.size()]);
-  }
+	public PsiReference[] getPythonReferences(PyElement element) {
+		List list = new ArrayList();
+		for (PsiReferenceProvider provider : this.providers) {
+			Collections.addAll(list, provider.getReferencesByElement(element));
+		}
+		return (PsiReference[]) list.toArray(new PsiReference[list.size()]);
+	}
 
-  public void registerReferenceProvider(PsiReferenceProvider provider) {
-    this.providers.add(provider);
-  }
+	public void registerReferenceProvider(PsiReferenceProvider provider) {
+		this.providers.add(provider);
+	}
 
-  public void unregisterReferenceProvider(PsiReferenceProvider provider) {
-    this.providers.remove(provider);
-  }
+	public void unregisterReferenceProvider(PsiReferenceProvider provider) {
+		this.providers.remove(provider);
+	}
 }

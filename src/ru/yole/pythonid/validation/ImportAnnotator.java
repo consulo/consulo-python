@@ -16,19 +16,15 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
 import ru.yole.pythonid.psi.PyClass;
 import ru.yole.pythonid.psi.PyFromImportStatement;
 import ru.yole.pythonid.psi.PyFunction;
 
-public class ImportAnnotator extends PyAnnotator
-{
-  public void visitPyFromImportStatement(PyFromImportStatement node)
-  {
-    if ((node.isStarImport()) && (
-      (node.getContainingElement(PyFunction.class) != null) || (node.getContainingElement(PyClass.class) != null)))
-    {
-      getHolder().createWarningAnnotation(node, "import * only allowed at module level");
-    }
-  }
+public class ImportAnnotator extends PyAnnotator {
+	public void visitPyFromImportStatement(PyFromImportStatement node) {
+		if ((node.isStarImport()) && (
+				(node.getContainingElement(PyFunction.class) != null) || (node.getContainingElement(PyClass.class) != null))) {
+			getHolder().createWarningAnnotation(node, "import * only allowed at module level");
+		}
+	}
 }

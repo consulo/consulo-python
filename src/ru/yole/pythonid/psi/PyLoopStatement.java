@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyLoopStatement extends PyStatement
-{
+public abstract interface PyLoopStatement extends PyStatement {
 }

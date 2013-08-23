@@ -18,8 +18,7 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract interface PyGlobalStatement extends PyStatement
-{
-  @NotNull
-  public abstract PyReferenceExpression[] getGlobals();
+public abstract interface PyGlobalStatement extends PyStatement {
+	@NotNull
+	public abstract PyReferenceExpression[] getGlobals();
 }

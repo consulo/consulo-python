@@ -23,57 +23,57 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExpression;
 import ru.yole.pythonid.psi.PyForStatement;
 import ru.yole.pythonid.psi.PyStatementList;
 
 public class PyForStatementImpl extends PyElementImpl
-  implements PyForStatement
-{
-  public PyForStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyForStatement {
+	public PyForStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyForStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyForStatement(this);
+	}
 
-  @NotNull
-  public PyStatementList getStatementList()
-  {
-    PyStatementList tmp15_12 = ((PyStatementList)childToPsiNotNull(getPyElementTypes().STATEMENT_LISTS, 0)); if (tmp15_12 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp15_12;
-  }
-  @Nullable
-  public PyStatementList getElseStatementList() {
-    PyStatementList result = (PyStatementList)childToPsi(getPyElementTypes().STATEMENT_LISTS, 1);
+	@NotNull
+	public PyStatementList getStatementList() {
+		PyStatementList tmp15_12 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LISTS, 0));
+		if (tmp15_12 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp15_12;
+	}
 
-    return result;
-  }
-  @Nullable
-  public PyExpression getTargetExpression() {
-    return (PyExpression)childToPsi(getPyElementTypes().EXPRESSIONS, 0);
-  }
-  @Nullable
-  public PyExpression getLoopExpression() {
-    return (PyExpression)childToPsi(getPyElementTypes().EXPRESSIONS, 1);
-  }
+	@Nullable
+	public PyStatementList getElseStatementList() {
+		PyStatementList result = (PyStatementList) childToPsi(getPyElementTypes().STATEMENT_LISTS, 1);
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    if (lastParent != null) {
-      return true;
-    }
+		return result;
+	}
 
-    if (!getStatementList().processDeclarations(processor, substitutor, null, place)) {
-      return false;
-    }
-    PyStatementList elseList = getElseStatementList();
-    if (elseList != null) {
-      return elseList.processDeclarations(processor, substitutor, null, place);
-    }
-    return true;
-  }
+	@Nullable
+	public PyExpression getTargetExpression() {
+		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);
+	}
+
+	@Nullable
+	public PyExpression getLoopExpression() {
+		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 1);
+	}
+
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		if (lastParent != null) {
+			return true;
+		}
+
+		if (!getStatementList().processDeclarations(processor, substitutor, null, place)) {
+			return false;
+		}
+		PyStatementList elseList = getElseStatementList();
+		if (elseList != null) {
+			return elseList.processDeclarations(processor, substitutor, null, place);
+		}
+		return true;
+	}
 }

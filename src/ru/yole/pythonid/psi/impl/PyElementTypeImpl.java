@@ -19,46 +19,42 @@ package ru.yole.pythonid.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
-import java.lang.reflect.Constructor;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.PythonLanguage;
 import ru.yole.pythonid.psi.PyElementType;
 
-public class PyElementTypeImpl extends PyElementType
-{
-  private Class<? extends PsiElement> _psiElementClass;
-  private static final Class[] PARAMETER_TYPES = { ASTNode.class, AbstractPythonLanguage.class };
+public class PyElementTypeImpl extends PyElementType {
+	private Class<? extends PsiElement> _psiElementClass;
+	private static final Class[] PARAMETER_TYPES = {ASTNode.class, AbstractPythonLanguage.class};
 
-  public PyElementTypeImpl(String debugName, PythonLanguage language) {
-    super(debugName, language);
-  }
+	public PyElementTypeImpl(String debugName, PythonLanguage language) {
+		super(debugName, language);
+	}
 
-  public PyElementTypeImpl(String debugName, Class<? extends PsiElement> psiElementClass, PythonLanguage language)
-  {
-    this(debugName, language);
-    this._psiElementClass = psiElementClass;
-  }
+	public PyElementTypeImpl(String debugName, Class<? extends PsiElement> psiElementClass, PythonLanguage language) {
+		this(debugName, language);
+		this._psiElementClass = psiElementClass;
+	}
 
-  public Class<? extends PsiElement> getElementClass() {
-    return this._psiElementClass;
-  }
-  @Nullable
-  public PsiElement createElement(ASTNode node, Language language) {
-    if (this._psiElementClass == null) {
-      return null;
-    }
+	public Class<? extends PsiElement> getElementClass() {
+		return this._psiElementClass;
+	}
 
-    try
-    {
-      return (PsiElement)this._psiElementClass.getConstructor(PARAMETER_TYPES).newInstance(new Object[] { node, language });
-    }
-    catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-  }
+	@Nullable
+	public PsiElement createElement(ASTNode node, Language language) {
+		if (this._psiElementClass == null) {
+			return null;
+		}
 
-  public String toString() {
-    return "Py:" + super.toString();
-  }
+		try {
+			return (PsiElement) this._psiElementClass.getConstructor(PARAMETER_TYPES).newInstance(new Object[]{node, language});
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	public String toString() {
+		return "Py:" + super.toString();
+	}
 }

@@ -18,28 +18,25 @@ package ru.yole.pythonid.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyAugAssignmentStatement;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExpression;
 
 public class PyAugAssignmentStatementImpl extends PyElementImpl
-  implements PyAugAssignmentStatement
-{
-  public PyAugAssignmentStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyAugAssignmentStatement {
+	public PyAugAssignmentStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyAugAssignmentStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyAugAssignmentStatement(this);
+	}
 
-  public PyExpression getTarget() {
-    PyExpression target = (PyExpression)childToPsi(getPyElementTypes().EXPRESSIONS, 0);
-    if (target == null) {
-      throw new RuntimeException("Target missing in augmented assignment statement");
-    }
-    return target;
-  }
+	public PyExpression getTarget() {
+		PyExpression target = (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);
+		if (target == null) {
+			throw new RuntimeException("Target missing in augmented assignment statement");
+		}
+		return target;
+	}
 }

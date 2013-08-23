@@ -22,14 +22,12 @@ import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyParenthesizedExpression;
 
 public class PyParenthesizedExpressionImpl extends PyElementImpl
-  implements PyParenthesizedExpression
-{
-  public PyParenthesizedExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyParenthesizedExpression {
+	public PyParenthesizedExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyParenthesizedExpression(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyParenthesizedExpression(this);
+	}
 }

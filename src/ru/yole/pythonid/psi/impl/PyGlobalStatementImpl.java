@@ -24,38 +24,36 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExpression;
 import ru.yole.pythonid.psi.PyGlobalStatement;
 import ru.yole.pythonid.psi.PyReferenceExpression;
 
 public class PyGlobalStatementImpl extends PyElementImpl
-  implements PyGlobalStatement
-{
-  private TokenSet REFERENCES = TokenSet.create(new IElementType[] { getPyElementTypes().REFERENCE_EXPRESSION });
+		implements PyGlobalStatement {
+	private TokenSet REFERENCES = TokenSet.create(new IElementType[]{getPyElementTypes().REFERENCE_EXPRESSION});
 
-  public PyGlobalStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
-    super(astNode, language);
-  }
+	public PyGlobalStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyGlobalStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyGlobalStatement(this);
+	}
 
-  @NotNull
-  public PyReferenceExpression[] getGlobals()
-  {
-    PyReferenceExpression[] tmp14_11 = ((PyReferenceExpression[])childrenToPsi(this.REFERENCES, PyReferenceExpression.EMPTY_ARRAY)); if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp14_11;
-  }
+	@NotNull
+	public PyReferenceExpression[] getGlobals() {
+		PyReferenceExpression[] tmp14_11 = ((PyReferenceExpression[]) childrenToPsi(this.REFERENCES, PyReferenceExpression.EMPTY_ARRAY));
+		if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp14_11;
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    for (PyExpression expression : getGlobals()) {
-      if (!expression.processDeclarations(processor, substitutor, lastParent, place)) {
-        return false;
-      }
-    }
-    return true;
-  }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		for (PyExpression expression : getGlobals()) {
+			if (!expression.processDeclarations(processor, substitutor, lastParent, place)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

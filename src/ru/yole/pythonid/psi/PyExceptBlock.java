@@ -19,16 +19,15 @@ package ru.yole.pythonid.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyExceptBlock extends PyElementEx
-{
-  public static final PyExceptBlock[] EMPTY_ARRAY = new PyExceptBlock[0];
+public abstract interface PyExceptBlock extends PyElementEx {
+	public static final PyExceptBlock[] EMPTY_ARRAY = new PyExceptBlock[0];
 
-  @Nullable
-  public abstract PyExpression getExceptClass();
+	@Nullable
+	public abstract PyExpression getExceptClass();
 
-  @Nullable
-  public abstract PyExpression getTarget();
+	@Nullable
+	public abstract PyExpression getTarget();
 
-  @NotNull
-  public abstract PyStatementList getStatementList();
+	@NotNull
+	public abstract PyStatementList getStatementList();
 }

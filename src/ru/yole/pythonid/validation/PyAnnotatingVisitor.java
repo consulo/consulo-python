@@ -20,38 +20,36 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
+
 import java.util.Set;
 
 public class PyAnnotatingVisitor
-  implements Annotator
-{
-  private static final Logger LOGGER = Logger.getInstance(PyAnnotatingVisitor.class.getName());
-  private Set<? extends Class<? extends PyAnnotator>> _annotators;
+		implements Annotator {
+	private static final Logger LOGGER = Logger.getInstance(PyAnnotatingVisitor.class.getName());
+	private Set<? extends Class<? extends PyAnnotator>> _annotators;
 
-  public PyAnnotatingVisitor(Set<? extends Class<? extends PyAnnotator>> annotators)
-  {
-    this._annotators = annotators;
-  }
+	public PyAnnotatingVisitor(Set<? extends Class<? extends PyAnnotator>> annotators) {
+		this._annotators = annotators;
+	}
 
-  public void annotate(PsiElement psiElement, AnnotationHolder holder) {
-    for (Class cls : this._annotators) {
-      PyAnnotator annotator;
-      try {
-        annotator = (PyAnnotator)cls.newInstance();
-      } catch (InstantiationException e) {
-        LOGGER.error(e);
-        continue;
-      } catch (IllegalAccessException e) {
-        LOGGER.error(e);
-      }continue;
+	public void annotate(PsiElement psiElement, AnnotationHolder holder) {
+		for (Class cls : this._annotators) {
+			PyAnnotator annotator;
+			try {
+				annotator = (PyAnnotator) cls.newInstance();
+			} catch (InstantiationException e) {
+				LOGGER.error(e);
+				continue;
+			} catch (IllegalAccessException e) {
+				LOGGER.error(e);
+			}
+			continue;
 
-      annotator.setHolder(holder);
-      try {
-        psiElement.accept(annotator);
-      }
-      catch (StopCurrentAnnotatorException e)
-      {
-      }
-    }
-  }
+			annotator.setHolder(holder);
+			try {
+				psiElement.accept(annotator);
+			} catch (StopCurrentAnnotatorException e) {
+			}
+		}
+	}
 }

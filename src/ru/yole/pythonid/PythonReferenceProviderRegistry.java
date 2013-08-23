@@ -20,11 +20,10 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProvider;
 import ru.yole.pythonid.psi.PyElement;
 
-public abstract interface PythonReferenceProviderRegistry
-{
-  public abstract PsiReference[] getPythonReferences(PyElement paramPyElement);
+public abstract interface PythonReferenceProviderRegistry {
+	public abstract PsiReference[] getPythonReferences(PyElement paramPyElement);
 
-  public abstract void registerReferenceProvider(PsiReferenceProvider paramPsiReferenceProvider);
+	public abstract void registerReferenceProvider(PsiReferenceProvider paramPsiReferenceProvider);
 
-  public abstract void unregisterReferenceProvider(PsiReferenceProvider paramPsiReferenceProvider);
+	public abstract void unregisterReferenceProvider(PsiReferenceProvider paramPsiReferenceProvider);
 }

@@ -16,38 +16,32 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
-import ru.yole.pythonid.PyElementTypes;
-import ru.yole.pythonid.PythonLanguage;
 import ru.yole.pythonid.psi.PyBreakStatement;
 import ru.yole.pythonid.psi.PyContinueStatement;
 import ru.yole.pythonid.psi.PyTryFinallyStatement;
 
-public class BreakContinueAnnotator extends PyAnnotator
-{
-  public void visitPyBreakStatement(PyBreakStatement node)
-  {
-    if (node.getContainingElement(node.getLanguage().getElementTypes().LOOPS) == null)
-      getHolder().createErrorAnnotation(node, "'break' outside of loop");
-  }
+public class BreakContinueAnnotator extends PyAnnotator {
+	public void visitPyBreakStatement(PyBreakStatement node) {
+		if (node.getContainingElement(node.getLanguage().getElementTypes().LOOPS) == null)
+			getHolder().createErrorAnnotation(node, "'break' outside of loop");
+	}
 
-  public void visitPyContinueStatement(PyContinueStatement node)
-  {
-    if (node.getContainingElement(node.getLanguage().getElementTypes().LOOPS) == null) {
-      getHolder().createErrorAnnotation(node, "'continue' outside of loop");
-      return;
-    }
-    PyTryFinallyStatement tryStatement = (PyTryFinallyStatement)node.getContainingElement(PyTryFinallyStatement.class);
-    if (tryStatement != null) {
-      PsiElement parent = node.getParent();
-      while (parent != null) {
-        if (parent == tryStatement.getFinallyStatementList()) {
-          getHolder().createErrorAnnotation(node, "'continue' not allowed inside 'finally' clause");
-          break;
-        }
-        parent = parent.getParent();
-      }
-    }
-  }
+	public void visitPyContinueStatement(PyContinueStatement node) {
+		if (node.getContainingElement(node.getLanguage().getElementTypes().LOOPS) == null) {
+			getHolder().createErrorAnnotation(node, "'continue' outside of loop");
+			return;
+		}
+		PyTryFinallyStatement tryStatement = (PyTryFinallyStatement) node.getContainingElement(PyTryFinallyStatement.class);
+		if (tryStatement != null) {
+			PsiElement parent = node.getParent();
+			while (parent != null) {
+				if (parent == tryStatement.getFinallyStatementList()) {
+					getHolder().createErrorAnnotation(node, "'continue' not allowed inside 'finally' clause");
+					break;
+				}
+				parent = parent.getParent();
+			}
+		}
+	}
 }

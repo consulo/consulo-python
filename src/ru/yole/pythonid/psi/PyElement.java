@@ -20,11 +20,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyElement extends PsiElement
-{
-  @Nullable
-  public abstract <T extends PyElement> T getContainingElement(Class<T> paramClass);
+public abstract interface PyElement extends PsiElement {
+	@Nullable
+	public abstract <T extends PyElement> T getContainingElement(Class<T> paramClass);
 
-  @Nullable
-  public abstract PyElement getContainingElement(TokenSet paramTokenSet);
+	@Nullable
+	public abstract PyElement getContainingElement(TokenSet paramTokenSet);
 }

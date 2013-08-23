@@ -18,8 +18,7 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract interface PyAugAssignmentStatement extends PyStatement
-{
-  @NotNull
-  public abstract PyExpression getTarget();
+public abstract interface PyAugAssignmentStatement extends PyStatement {
+	@NotNull
+	public abstract PyExpression getTarget();
 }

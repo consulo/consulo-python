@@ -22,82 +22,76 @@ import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.Icons;
 import com.intellij.util.IncorrectOperationException;
-import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
-import ru.yole.pythonid.PyTokenTypes;
-import ru.yole.pythonid.psi.PyElementGenerator;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyFunction;
-import ru.yole.pythonid.psi.PyParameter;
-import ru.yole.pythonid.psi.PyParameterList;
-import ru.yole.pythonid.psi.PyStatementList;
+import ru.yole.pythonid.psi.*;
+
+import javax.swing.*;
 
 public class PyFunctionImpl extends PyElementImpl
-  implements PyFunction
-{
-  public PyFunctionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
-  @Nullable
-  public String getName() {
-    ASTNode node = getNameNode();
-    return node != null ? node.getText() : null;
-  }
+		implements PyFunction {
+	public PyFunctionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  public PsiElement setName(String name) throws IncorrectOperationException {
-    ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
-    getNode().replaceChild(getNameNode(), nameElement);
-    return this;
-  }
+	@Nullable
+	public String getName() {
+		ASTNode node = getNameNode();
+		return node != null ? node.getText() : null;
+	}
 
-  public Icon getIcon(int flags) {
-    return Icons.METHOD_ICON;
-  }
+	public PsiElement setName(String name) throws IncorrectOperationException {
+		ASTNode nameElement = getLanguage().getElementGenerator().createNameIdentifier(getProject(), name);
+		getNode().replaceChild(getNameNode(), nameElement);
+		return this;
+	}
 
-  @Nullable
-  public ASTNode getNameNode() {
-    return getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
-  }
+	public Icon getIcon(int flags) {
+		return Icons.METHOD_ICON;
+	}
 
-  @NotNull
-  public PyParameterList getParameterList()
-  {
-    PyParameterList tmp14_11 = ((PyParameterList)childToPsiNotNull(getPyElementTypes().PARAMETER_LIST)); if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp14_11;
-  }
+	@Nullable
+	public ASTNode getNameNode() {
+		return getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
+	}
 
-  @NotNull
-  public PyStatementList getStatementList()
-  {
-    PyStatementList tmp14_11 = ((PyStatementList)childToPsiNotNull(getPyElementTypes().STATEMENT_LIST)); if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp14_11;
-  }
+	@NotNull
+	public PyParameterList getParameterList() {
+		PyParameterList tmp14_11 = ((PyParameterList) childToPsiNotNull(getPyElementTypes().PARAMETER_LIST));
+		if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp14_11;
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyFunction(this);
-  }
+	@NotNull
+	public PyStatementList getStatementList() {
+		PyStatementList tmp14_11 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LIST));
+		if (tmp14_11 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp14_11;
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    if ((lastParent != null) && (lastParent.getParent() == this)) {
-      PyParameter[] params = getParameterList().getParameters();
-      for (PyParameter param : params) {
-        if (!processor.execute(param, substitutor)) return false;
-      }
-    }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyFunction(this);
+	}
 
-    return processor.execute(this, substitutor);
-  }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		if ((lastParent != null) && (lastParent.getParent() == this)) {
+			PyParameter[] params = getParameterList().getParameters();
+			for (PyParameter param : params) {
+				if (!processor.execute(param, substitutor)) return false;
+			}
+		}
 
-  public int getTextOffset() {
-    ASTNode name = getNameNode();
-    return name != null ? name.getStartOffset() : super.getTextOffset();
-  }
+		return processor.execute(this, substitutor);
+	}
 
-  public void delete() throws IncorrectOperationException {
-    ASTNode node = getNode();
-    node.getTreeParent().removeChild(node);
-  }
+	public int getTextOffset() {
+		ASTNode name = getNameNode();
+		return name != null ? name.getStartOffset() : super.getTextOffset();
+	}
+
+	public void delete() throws IncorrectOperationException {
+		ASTNode node = getNode();
+		node.getTreeParent().removeChild(node);
+	}
 }

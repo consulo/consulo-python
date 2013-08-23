@@ -18,25 +18,21 @@ package ru.yole.pythonid.psi;
 
 import java.util.List;
 
-public abstract interface PyListCompExpression extends PyExpression
-{
-  public abstract PyExpression getResultExpression();
+public abstract interface PyListCompExpression extends PyExpression {
+	public abstract PyExpression getResultExpression();
 
-  public abstract List<ListCompComponent> getComponents();
+	public abstract List<ListCompComponent> getComponents();
 
-  public static abstract interface ForComponent extends PyListCompExpression.ListCompComponent
-  {
-    public abstract PyExpression getIteratorVariable();
+	public static abstract interface ForComponent extends PyListCompExpression.ListCompComponent {
+		public abstract PyExpression getIteratorVariable();
 
-    public abstract PyExpression getIteratedList();
-  }
+		public abstract PyExpression getIteratedList();
+	}
 
-  public static abstract interface IfComponent extends PyListCompExpression.ListCompComponent
-  {
-    public abstract PyExpression getTest();
-  }
+	public static abstract interface IfComponent extends PyListCompExpression.ListCompComponent {
+		public abstract PyExpression getTest();
+	}
 
-  public static abstract interface ListCompComponent
-  {
-  }
+	public static abstract interface ListCompComponent {
+	}
 }

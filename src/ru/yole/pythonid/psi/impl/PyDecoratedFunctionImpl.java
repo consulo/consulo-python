@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyDecoratedFunction;
 
 public class PyDecoratedFunctionImpl extends PyElementImpl
-  implements PyDecoratedFunction
-{
-  public PyDecoratedFunctionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyDecoratedFunction {
+	public PyDecoratedFunctionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

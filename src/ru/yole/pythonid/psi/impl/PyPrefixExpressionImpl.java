@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyPrefixExpression;
 
 public class PyPrefixExpressionImpl extends PyElementImpl
-  implements PyPrefixExpression
-{
-  public PyPrefixExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyPrefixExpression {
+	public PyPrefixExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

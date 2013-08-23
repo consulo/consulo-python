@@ -19,17 +19,16 @@ package ru.yole.pythonid.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyArgumentList extends PyElementEx
-{
-  @NotNull
-  public abstract PyExpression[] getArguments();
+public abstract interface PyArgumentList extends PyElementEx {
+	@NotNull
+	public abstract PyExpression[] getArguments();
 
-  @Nullable
-  public abstract PyKeywordArgument getKeywordArgument(String paramString);
+	@Nullable
+	public abstract PyKeywordArgument getKeywordArgument(String paramString);
 
-  public abstract void addArgument(PyExpression paramPyExpression);
+	public abstract void addArgument(PyExpression paramPyExpression);
 
-  public abstract void addArgumentFirst(PyExpression paramPyExpression);
+	public abstract void addArgumentFirst(PyExpression paramPyExpression);
 
-  public abstract void addArgumentAfter(PyExpression paramPyExpression1, PyExpression paramPyExpression2);
+	public abstract void addArgumentAfter(PyExpression paramPyExpression1, PyExpression paramPyExpression2);
 }

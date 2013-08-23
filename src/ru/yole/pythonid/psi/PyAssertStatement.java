@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyAssertStatement extends PyStatement
-{
+public abstract interface PyAssertStatement extends PyStatement {
 }

@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyAssertStatement;
 
 public class PyAssertStatementImpl extends PyElementImpl
-  implements PyAssertStatement
-{
-  public PyAssertStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyAssertStatement {
+	public PyAssertStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

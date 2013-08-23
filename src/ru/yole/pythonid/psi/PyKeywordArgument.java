@@ -19,14 +19,13 @@ package ru.yole.pythonid.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyKeywordArgument extends PyExpression
-{
-  @Nullable
-  public abstract String getKeyword();
+public abstract interface PyKeywordArgument extends PyExpression {
+	@Nullable
+	public abstract String getKeyword();
 
-  @Nullable
-  public abstract PyExpression getValueExpression();
+	@Nullable
+	public abstract PyExpression getValueExpression();
 
-  @Nullable
-  public abstract ASTNode getKeywordNode();
+	@Nullable
+	public abstract ASTNode getKeywordNode();
 }

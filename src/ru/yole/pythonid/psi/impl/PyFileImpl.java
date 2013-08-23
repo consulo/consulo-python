@@ -25,91 +25,85 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.tree.TokenSet;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.PythonLanguage;
-import ru.yole.pythonid.psi.PsiCached;
-import ru.yole.pythonid.psi.PyElement;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyFile;
-import ru.yole.pythonid.psi.PyStatement;
+import ru.yole.pythonid.psi.*;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PyFileImpl extends PsiFileBase
-  implements PyFile
-{
-  private final FileType fileType;
+		implements PyFile {
+	private final FileType fileType;
 
-  public PyFileImpl(Project project, VirtualFile file, PythonLanguage language, FileType pythonFileType)
-  {
-    super(project, file, language);
-    this.fileType = pythonFileType;
-  }
+	public PyFileImpl(Project project, VirtualFile file, PythonLanguage language, FileType pythonFileType) {
+		super(project, file, language);
+		this.fileType = pythonFileType;
+	}
 
-  public PyFileImpl(Project project, String name, CharSequence text, PythonLanguage language, FileType pythonFileType)
-  {
-    super(project, name, text, language);
-    this.fileType = pythonFileType;
-  }
+	public PyFileImpl(Project project, String name, CharSequence text, PythonLanguage language, FileType pythonFileType) {
+		super(project, name, text, language);
+		this.fileType = pythonFileType;
+	}
 
-  @NotNull
-  public FileType getFileType()
-  {
-    FileType tmp4_1 = this.fileType; if (tmp4_1 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp4_1;
-  }
+	@NotNull
+	public FileType getFileType() {
+		FileType tmp4_1 = this.fileType;
+		if (tmp4_1 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp4_1;
+	}
 
-  public String toString() {
-    return "PyFile:" + getName();
-  }
+	public String toString() {
+		return "PyFile:" + getName();
+	}
 
-  public Icon getIcon(int i) {
-    return this.fileType.getIcon();
-  }
+	public Icon getIcon(int i) {
+		return this.fileType.getIcon();
+	}
 
-  public void accept(PsiElementVisitor visitor) {
-    if ((visitor instanceof PyElementVisitor))
-      ((PyElementVisitor)visitor).visitPyFile(this);
-    else
-      super.accept(visitor);
-  }
+	public void accept(PsiElementVisitor visitor) {
+		if ((visitor instanceof PyElementVisitor))
+			((PyElementVisitor) visitor).visitPyFile(this);
+		else
+			super.accept(visitor);
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    PsiElement[] children = getChildren();
-    for (PsiElement child : children) {
-      if (!child.processDeclarations(processor, substitutor, lastParent, place))
-      {
-        return false;
-      }
-    }
-    return true;
-  }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		PsiElement[] children = getChildren();
+		for (PsiElement child : children) {
+			if (!child.processDeclarations(processor, substitutor, lastParent, place)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-  @Nullable
-  public <T extends PyElement> T getContainingElement(Class<T> aClass) {
-    return null;
-  }
-  @Nullable
-  public PyElement getContainingElement(TokenSet tokenSet) {
-    return null;
-  }
+	@Nullable
+	public <T extends PyElement> T getContainingElement(Class<T> aClass) {
+		return null;
+	}
 
-  @PsiCached
-  public List<PyStatement> getStatements() {
-    List stmts = new ArrayList();
-    for (PsiElement child : getChildren()) {
-      if ((child instanceof PyStatement)) {
-        PyStatement statement = (PyStatement)child;
-        stmts.add(statement);
-      }
-    }
-    return stmts;
-  }
+	@Nullable
+	public PyElement getContainingElement(TokenSet tokenSet) {
+		return null;
+	}
 
-  public AbstractPythonLanguage getPyLanguage() {
-    return (AbstractPythonLanguage)getLanguage();
-  }
+	@PsiCached
+	public List<PyStatement> getStatements() {
+		List stmts = new ArrayList();
+		for (PsiElement child : getChildren()) {
+			if ((child instanceof PyStatement)) {
+				PyStatement statement = (PyStatement) child;
+				stmts.add(statement);
+			}
+		}
+		return stmts;
+	}
+
+	public AbstractPythonLanguage getPyLanguage() {
+		return (AbstractPythonLanguage) getLanguage();
+	}
 }

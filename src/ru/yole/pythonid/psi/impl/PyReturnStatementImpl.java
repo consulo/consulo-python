@@ -19,24 +19,22 @@ package ru.yole.pythonid.psi.impl;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExpression;
 import ru.yole.pythonid.psi.PyReturnStatement;
 
 public class PyReturnStatementImpl extends PyElementImpl
-  implements PyReturnStatement
-{
-  public PyReturnStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyReturnStatement {
+	public PyReturnStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyReturnStatement(this);
-  }
-  @Nullable
-  public PyExpression getExpression() {
-    return (PyExpression)childToPsi(getPyElementTypes().EXPRESSIONS, 0);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyReturnStatement(this);
+	}
+
+	@Nullable
+	public PyExpression getExpression() {
+		return (PyExpression) childToPsi(getPyElementTypes().EXPRESSIONS, 0);
+	}
 }

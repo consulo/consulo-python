@@ -20,10 +20,8 @@ import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-public class PyWordsScanner extends DefaultWordsScanner
-{
-  public PyWordsScanner(PythonLanguage language)
-  {
-    super(new PythonLexer(language), TokenSet.create(new IElementType[] { language.getTokenTypes().IDENTIFIER }), TokenSet.create(new IElementType[] { language.getTokenTypes().END_OF_LINE_COMMENT }), TokenSet.create(new IElementType[] { language.getTokenTypes().STRING_LITERAL }));
-  }
+public class PyWordsScanner extends DefaultWordsScanner {
+	public PyWordsScanner(PythonLanguage language) {
+		super(new PythonLexer(language), TokenSet.create(new IElementType[]{language.getTokenTypes().IDENTIFIER}), TokenSet.create(new IElementType[]{language.getTokenTypes().END_OF_LINE_COMMENT}), TokenSet.create(new IElementType[]{language.getTokenTypes().STRING_LITERAL}));
+	}
 }

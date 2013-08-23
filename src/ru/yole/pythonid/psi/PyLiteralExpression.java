@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyLiteralExpression extends PyExpression
-{
+public abstract interface PyLiteralExpression extends PyExpression {
 }

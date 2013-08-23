@@ -21,43 +21,45 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.PyTokenTypes;
-import ru.yole.pythonid.PythonLanguage;
 
-public class Parsing
-{
-  protected PyTokenTypes PyTokenTypes;
-  protected PyElementTypes PyElementTypes;
-  private ParsingContext context;
+public class Parsing {
+	protected PyTokenTypes PyTokenTypes;
+	protected PyElementTypes PyElementTypes;
+	private ParsingContext context;
 
-  protected Parsing(ParsingContext context)
-  {
-    this.context = context;
-    this.PyTokenTypes = context.getLanguage().getTokenTypes();
-    this.PyElementTypes = context.getLanguage().getElementTypes();
-  }
+	protected Parsing(ParsingContext context) {
+		this.context = context;
+		this.PyTokenTypes = context.getLanguage().getTokenTypes();
+		this.PyElementTypes = context.getLanguage().getElementTypes();
+	}
 
-  public ParsingContext getParsingContext() {
-    return this.context;
-  }
-  public ExpressionParsing getExpressionParser() {
-    return getParsingContext().getExpressionParser(); } 
-  public StatementParsing getStatementParser() { return getParsingContext().getStatementParser(); } 
-  public FunctionParsing getFunctionParser() { return getParsingContext().getFunctionParser(); }
+	public ParsingContext getParsingContext() {
+		return this.context;
+	}
 
-  protected static void checkMatches(PsiBuilder builder, IElementType token, String message) {
-    if (builder.getTokenType() == token) {
-      builder.advanceLexer();
-    }
-    else
-      builder.error(message);
-  }
+	public ExpressionParsing getExpressionParser() {
+		return getParsingContext().getExpressionParser();
+	}
 
-  protected static void checkMatches(PsiBuilder builder, TokenSet tokenSet, String message)
-  {
-    if (tokenSet.contains(builder.getTokenType())) {
-      builder.advanceLexer();
-    }
-    else
-      builder.error(message);
-  }
+	public StatementParsing getStatementParser() {
+		return getParsingContext().getStatementParser();
+	}
+
+	public FunctionParsing getFunctionParser() {
+		return getParsingContext().getFunctionParser();
+	}
+
+	protected static void checkMatches(PsiBuilder builder, IElementType token, String message) {
+		if (builder.getTokenType() == token) {
+			builder.advanceLexer();
+		} else
+			builder.error(message);
+	}
+
+	protected static void checkMatches(PsiBuilder builder, TokenSet tokenSet, String message) {
+		if (tokenSet.contains(builder.getTokenType())) {
+			builder.advanceLexer();
+		} else
+			builder.error(message);
+	}
 }

@@ -20,18 +20,15 @@ import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
 
 public class PyBraceMatcher
-  implements PairedBraceMatcher
-{
-  private final BracePair[] PAIRS;
+		implements PairedBraceMatcher {
+	private final BracePair[] PAIRS;
 
-  public PyBraceMatcher(PythonLanguage language)
-  {
-    PyTokenTypes tokenTypes = language.getTokenTypes();
-    this.PAIRS = new BracePair[] { new BracePair('(', tokenTypes.LPAR, ')', tokenTypes.RPAR, false), new BracePair('[', tokenTypes.LBRACKET, ']', tokenTypes.RBRACKET, false), new BracePair('{', tokenTypes.LBRACE, '}', tokenTypes.RBRACE, true) };
-  }
+	public PyBraceMatcher(PythonLanguage language) {
+		PyTokenTypes tokenTypes = language.getTokenTypes();
+		this.PAIRS = new BracePair[]{new BracePair('(', tokenTypes.LPAR, ')', tokenTypes.RPAR, false), new BracePair('[', tokenTypes.LBRACKET, ']', tokenTypes.RBRACKET, false), new BracePair('{', tokenTypes.LBRACE, '}', tokenTypes.RBRACE, true)};
+	}
 
-  public BracePair[] getPairs()
-  {
-    return this.PAIRS;
-  }
+	public BracePair[] getPairs() {
+		return this.PAIRS;
+	}
 }

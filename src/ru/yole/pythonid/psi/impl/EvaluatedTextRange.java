@@ -18,31 +18,28 @@ package ru.yole.pythonid.psi.impl;
 
 import com.intellij.openapi.util.TextRange;
 
-public class EvaluatedTextRange
-{
-  private TextRange range;
-  private String value;
+public class EvaluatedTextRange {
+	private TextRange range;
+	private String value;
 
-  public EvaluatedTextRange(TextRange range, String value)
-  {
-    this.range = range;
-    this.value = value;
-  }
+	public EvaluatedTextRange(TextRange range, String value) {
+		this.range = range;
+		this.value = value;
+	}
 
-  public EvaluatedTextRange(TextRange range, char value) {
-    this(range, new String(new char[] { value }));
-  }
+	public EvaluatedTextRange(TextRange range, char value) {
+		this(range, new String(new char[]{value}));
+	}
 
-  public TextRange getRange() {
-    return this.range;
-  }
+	public TextRange getRange() {
+		return this.range;
+	}
 
-  public String getValue() {
-    return this.value;
-  }
+	public String getValue() {
+		return this.value;
+	}
 
-  public String toString()
-  {
-    return "EvaluatedTextRange[" + this.range + "]: " + this.value;
-  }
+	public String toString() {
+		return "EvaluatedTextRange[" + this.range + "]: " + this.value;
+	}
 }

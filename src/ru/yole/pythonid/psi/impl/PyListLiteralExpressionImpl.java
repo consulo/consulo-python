@@ -22,91 +22,79 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
-import ru.yole.pythonid.psi.PsiCached;
-import ru.yole.pythonid.psi.PyElementGenerator;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyExpression;
-import ru.yole.pythonid.psi.PyListLiteralExpression;
-import ru.yole.pythonid.psi.PyUtil;
+import ru.yole.pythonid.psi.*;
 
 public class PyListLiteralExpressionImpl extends PyElementImpl
-  implements PyListLiteralExpression
-{
-  public PyListLiteralExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyListLiteralExpression {
+	public PyListLiteralExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-  {
-    pyVisitor.visitPyListLiteralExpression(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyListLiteralExpression(this);
+	}
 
-  @PsiCached
-  @NotNull
-  public PyExpression[] getElements()
-  {
-    PyExpression[] tmp17_14 = ((PyExpression[])childrenToPsi(getPyElementTypes().EXPRESSIONS, PyExpression.EMPTY_ARRAY)); if (tmp17_14 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp17_14;
-  }
+	@PsiCached
+	@NotNull
+	public PyExpression[] getElements() {
+		PyExpression[] tmp17_14 = ((PyExpression[]) childrenToPsi(getPyElementTypes().EXPRESSIONS, PyExpression.EMPTY_ARRAY));
+		if (tmp17_14 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp17_14;
+	}
 
-  public PsiElement add(PsiElement psiElement)
-    throws IncorrectOperationException
-  {
-    PyUtil.ensureWritable(this);
-    checkPyExpression(psiElement);
-    PyExpression element = (PyExpression)psiElement;
-    PyExpression[] els = getElements();
-    PyExpression lastArg = els.length == 0 ? null : els[(els.length - 1)];
-    return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, lastArg, element);
-  }
+	public PsiElement add(PsiElement psiElement)
+			throws IncorrectOperationException {
+		PyUtil.ensureWritable(this);
+		checkPyExpression(psiElement);
+		PyExpression element = (PyExpression) psiElement;
+		PyExpression[] els = getElements();
+		PyExpression lastArg = els.length == 0 ? null : els[(els.length - 1)];
+		return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, lastArg, element);
+	}
 
-  private void checkPyExpression(PsiElement psiElement)
-    throws IncorrectOperationException
-  {
-    if (!(psiElement instanceof PyExpression))
-      throw new IncorrectOperationException("Element must be PyExpression: " + psiElement);
-  }
+	private void checkPyExpression(PsiElement psiElement)
+			throws IncorrectOperationException {
+		if (!(psiElement instanceof PyExpression))
+			throw new IncorrectOperationException("Element must be PyExpression: " + psiElement);
+	}
 
-  public PsiElement addAfter(PsiElement psiElement, PsiElement afterThis)
-    throws IncorrectOperationException
-  {
-    PyUtil.ensureWritable(this);
-    checkPyExpression(psiElement);
-    checkPyExpression(afterThis);
-    return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, (PyExpression)afterThis, (PyExpression)psiElement);
-  }
+	public PsiElement addAfter(PsiElement psiElement, PsiElement afterThis)
+			throws IncorrectOperationException {
+		PyUtil.ensureWritable(this);
+		checkPyExpression(psiElement);
+		checkPyExpression(afterThis);
+		return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, (PyExpression) afterThis, (PyExpression) psiElement);
+	}
 
-  public PsiElement addBefore(PsiElement psiElement, PsiElement beforeThis)
-    throws IncorrectOperationException
-  {
-    PyUtil.ensureWritable(this);
-    checkPyExpression(psiElement);
-    return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, null, (PyExpression)psiElement);
-  }
+	public PsiElement addBefore(PsiElement psiElement, PsiElement beforeThis)
+			throws IncorrectOperationException {
+		PyUtil.ensureWritable(this);
+		checkPyExpression(psiElement);
+		return getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, null, (PyExpression) psiElement);
+	}
 
-  protected void deletePyChild(PyElementImpl element)
-    throws IncorrectOperationException
-  {
-    PyUtil.ensureWritable(this);
-    if ((element instanceof PyExpression)) {
-      PyExpression expression = (PyExpression)element;
-      ASTNode node = getNode();
-      ASTNode exprNode = expression.getNode();
-      ASTNode next = getNextComma(exprNode);
-      ASTNode prev = getPrevComma(exprNode);
-      node.removeChild(exprNode);
-      if (next != null)
-        node.removeChild(next);
-      else if (prev != null)
-        node.removeChild(prev);
-    }
-    else {
-      super.deletePyChild(element);
-    }
-  }
+	protected void deletePyChild(PyElementImpl element)
+			throws IncorrectOperationException {
+		PyUtil.ensureWritable(this);
+		if ((element instanceof PyExpression)) {
+			PyExpression expression = (PyExpression) element;
+			ASTNode node = getNode();
+			ASTNode exprNode = expression.getNode();
+			ASTNode next = getNextComma(exprNode);
+			ASTNode prev = getPrevComma(exprNode);
+			node.removeChild(exprNode);
+			if (next != null)
+				node.removeChild(next);
+			else if (prev != null)
+				node.removeChild(prev);
+		} else {
+			super.deletePyChild(element);
+		}
+	}
 
-  @Nullable
-  protected Class<? extends PsiElement> getValidChildClass() { return PyExpression.class; }
+	@Nullable
+	protected Class<? extends PsiElement> getValidChildClass() {
+		return PyExpression.class;
+	}
 
 }

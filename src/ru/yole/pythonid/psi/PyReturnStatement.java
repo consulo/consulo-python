@@ -18,8 +18,7 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyReturnStatement extends PyStatement
-{
-  @Nullable
-  public abstract PyExpression getExpression();
+public abstract interface PyReturnStatement extends PyStatement {
+	@Nullable
+	public abstract PyExpression getExpression();
 }

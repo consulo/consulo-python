@@ -22,112 +22,104 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
+import org.jetbrains.annotations.Nullable;
+import ru.yole.pythonid.psi.*;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-import ru.yole.pythonid.psi.PyElement;
-import ru.yole.pythonid.psi.PyElementEx;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyFunction;
-import ru.yole.pythonid.psi.PyParameter;
-import ru.yole.pythonid.psi.PyParameterList;
 
 public class PyStructureViewElement
-  implements StructureViewTreeElement<PyElement>
-{
-  private PyElement _element;
+		implements StructureViewTreeElement<PyElement> {
+	private PyElement _element;
 
-  public PyStructureViewElement(PyElement element)
-  {
-    this._element = element;
-  }
+	public PyStructureViewElement(PyElement element) {
+		this._element = element;
+	}
 
-  public PyElement getValue() {
-    return this._element;
-  }
+	public PyElement getValue() {
+		return this._element;
+	}
 
-  public void navigate(boolean requestFocus) {
-    ((NavigationItem)this._element).navigate(requestFocus);
-  }
+	public void navigate(boolean requestFocus) {
+		((NavigationItem) this._element).navigate(requestFocus);
+	}
 
-  public boolean canNavigate() {
-    return ((NavigationItem)this._element).canNavigate();
-  }
+	public boolean canNavigate() {
+		return ((NavigationItem) this._element).canNavigate();
+	}
 
-  public boolean canNavigateToSource() {
-    return ((NavigationItem)this._element).canNavigateToSource();
-  }
+	public boolean canNavigateToSource() {
+		return ((NavigationItem) this._element).canNavigateToSource();
+	}
 
-  public StructureViewTreeElement[] getChildren() {
-    final List childrenElements = new ArrayList();
-    this._element.acceptChildren(new PyElementVisitor() {
-      public void visitElement(PsiElement element) {
-        if (((element instanceof PsiNamedElement)) && (((PsiNamedElement)element).getName() != null)) {
-          childrenElements.add((PyElementEx)element);
-        }
-        else
-          element.acceptChildren(this);
-      }
+	public StructureViewTreeElement[] getChildren() {
+		final List childrenElements = new ArrayList();
+		this._element.acceptChildren(new PyElementVisitor() {
+			public void visitElement(PsiElement element) {
+				if (((element instanceof PsiNamedElement)) && (((PsiNamedElement) element).getName() != null)) {
+					childrenElements.add((PyElementEx) element);
+				} else
+					element.acceptChildren(this);
+			}
 
-      public void visitPyParameter(PyParameter node)
-      {
-      }
-    });
-    StructureViewTreeElement[] children = new StructureViewTreeElement[childrenElements.size()];
-    for (int i = 0; i < children.length; i++) {
-      children[i] = new PyStructureViewElement((PyElement)childrenElements.get(i));
-    }
+			public void visitPyParameter(PyParameter node) {
+			}
+		});
+		StructureViewTreeElement[] children = new StructureViewTreeElement[childrenElements.size()];
+		for (int i = 0; i < children.length; i++) {
+			children[i] = new PyStructureViewElement((PyElement) childrenElements.get(i));
+		}
 
-    return children;
-  }
+		return children;
+	}
 
-  public ItemPresentation getPresentation() {
-    return new ItemPresentation() {
-      public String getPresentableText() {
-        if ((PyStructureViewElement.this._element instanceof PyFunction)) {
-          PsiElement[] children = PyStructureViewElement.this._element.getChildren();
-          if ((children.length > 0) && ((children[0] instanceof PyParameterList))) {
-            PyParameterList argList = (PyParameterList)children[0];
-            StringBuilder result = new StringBuilder(((PsiNamedElement)PyStructureViewElement.this._element).getName());
-            result.append("(");
-            boolean first = true;
-            for (PsiElement e : argList.getChildren()) {
-              if ((e instanceof PyParameter)) {
-                if (first) {
-                  first = false;
-                }
-                else {
-                  result.append(",");
-                }
-                PyParameter p = (PyParameter)e;
-                if (p.isPositionalContainer()) {
-                  result.append("*");
-                }
-                else if (p.isKeywordContainer()) {
-                  result.append("**");
-                }
-                result.append(p.getName());
-              }
-            }
-            result.append(")");
-            return result.toString();
-          }
-        }
-        return ((PsiNamedElement)PyStructureViewElement.this._element).getName();
-      }
-      @Nullable
-      public TextAttributesKey getTextAttributesKey() {
-        return null;
-      }
-      @Nullable
-      public String getLocationString() {
-        return null;
-      }
+	public ItemPresentation getPresentation() {
+		return new ItemPresentation() {
+			public String getPresentableText() {
+				if ((PyStructureViewElement.this._element instanceof PyFunction)) {
+					PsiElement[] children = PyStructureViewElement.this._element.getChildren();
+					if ((children.length > 0) && ((children[0] instanceof PyParameterList))) {
+						PyParameterList argList = (PyParameterList) children[0];
+						StringBuilder result = new StringBuilder(((PsiNamedElement) PyStructureViewElement.this._element).getName());
+						result.append("(");
+						boolean first = true;
+						for (PsiElement e : argList.getChildren()) {
+							if ((e instanceof PyParameter)) {
+								if (first) {
+									first = false;
+								} else {
+									result.append(",");
+								}
+								PyParameter p = (PyParameter) e;
+								if (p.isPositionalContainer()) {
+									result.append("*");
+								} else if (p.isKeywordContainer()) {
+									result.append("**");
+								}
+								result.append(p.getName());
+							}
+						}
+						result.append(")");
+						return result.toString();
+					}
+				}
+				return ((PsiNamedElement) PyStructureViewElement.this._element).getName();
+			}
 
-      public Icon getIcon(boolean open) {
-        return PyStructureViewElement.this._element.getIcon(4);
-      }
-    };
-  }
+			@Nullable
+			public TextAttributesKey getTextAttributesKey() {
+				return null;
+			}
+
+			@Nullable
+			public String getLocationString() {
+				return null;
+			}
+
+			public Icon getIcon(boolean open) {
+				return PyStructureViewElement.this._element.getIcon(4);
+			}
+		};
+	}
 }

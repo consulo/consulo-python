@@ -22,30 +22,29 @@ import com.intellij.openapi.fileTypes.FileType;
 import org.jetbrains.annotations.NotNull;
 import ru.yole.pythonid.psi.PyElementGenerator;
 
-public abstract class PythonLanguage extends Language
-{
-  PythonLanguage(String id)
-  {
-    super(id);
-  }
+public abstract class PythonLanguage extends Language {
+	PythonLanguage(String id) {
+		super(id);
+	}
 
-  PythonLanguage(String ID, String[] mimeTypes) {
-    super(ID, mimeTypes);
-  }
-  @NotNull
-  public Annotator getAnnotator() {
-    throw new IllegalStateException();
-  }
+	PythonLanguage(String ID, String[] mimeTypes) {
+		super(ID, mimeTypes);
+	}
 
-  public abstract PythonReferenceProviderRegistry getReferenceProviderRegistry();
+	@NotNull
+	public Annotator getAnnotator() {
+		throw new IllegalStateException();
+	}
 
-  public abstract PyTokenTypes getTokenTypes();
+	public abstract PythonReferenceProviderRegistry getReferenceProviderRegistry();
 
-  public abstract PyElementTypes getElementTypes();
+	public abstract PyTokenTypes getTokenTypes();
 
-  public abstract FileType getFileType();
+	public abstract PyElementTypes getElementTypes();
 
-  public abstract FileCreator getFileCreator();
+	public abstract FileType getFileType();
 
-  public abstract PyElementGenerator getElementGenerator();
+	public abstract FileCreator getFileCreator();
+
+	public abstract PyElementGenerator getElementGenerator();
 }

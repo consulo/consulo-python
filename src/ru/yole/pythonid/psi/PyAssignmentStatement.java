@@ -18,10 +18,9 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyAssignmentStatement extends PyStatement
-{
-  public abstract PyExpression[] getTargets();
+public abstract interface PyAssignmentStatement extends PyStatement {
+	public abstract PyExpression[] getTargets();
 
-  @Nullable
-  public abstract PyExpression getAssignedValue();
+	@Nullable
+	public abstract PyExpression getAssignedValue();
 }

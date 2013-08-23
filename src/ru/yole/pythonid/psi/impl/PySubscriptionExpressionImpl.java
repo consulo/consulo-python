@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PySubscriptionExpression;
 
 public class PySubscriptionExpressionImpl extends PyElementImpl
-  implements PySubscriptionExpression
-{
-  public PySubscriptionExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PySubscriptionExpression {
+	public PySubscriptionExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

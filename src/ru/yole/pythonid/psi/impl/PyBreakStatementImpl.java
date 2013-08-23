@@ -22,14 +22,12 @@ import ru.yole.pythonid.psi.PyBreakStatement;
 import ru.yole.pythonid.psi.PyElementVisitor;
 
 public class PyBreakStatementImpl extends PyElementImpl
-  implements PyBreakStatement
-{
-  public PyBreakStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyBreakStatement {
+	public PyBreakStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyBreakStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyBreakStatement(this);
+	}
 }

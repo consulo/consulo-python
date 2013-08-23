@@ -16,87 +16,77 @@
 
 package ru.yole.pythonid.formatter;
 
-import com.intellij.formatting.Alignment;
-import com.intellij.formatting.Block;
-import com.intellij.formatting.Indent;
-import com.intellij.formatting.Wrap;
-import com.intellij.formatting.WrapType;
+import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import java.util.ArrayList;
-import java.util.List;
 import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.PyNodeVisitor;
 import ru.yole.pythonid.PyTokenTypes;
 import ru.yole.pythonid.PythonLanguage;
 
-public class SubBlockVisitor extends PyNodeVisitor
-{
-  private PythonLanguage language;
-  private CodeStyleSettings _settings;
-  private List<Block> _blocks = new ArrayList();
+import java.util.ArrayList;
+import java.util.List;
 
-  public SubBlockVisitor(PythonLanguage language, CodeStyleSettings settings) {
-    this.language = language;
-    this._settings = settings;
-  }
+public class SubBlockVisitor extends PyNodeVisitor {
+	private PythonLanguage language;
+	private CodeStyleSettings _settings;
+	private List<Block> _blocks = new ArrayList();
 
-  public List<Block> getBlocks() {
-    return this._blocks;
-  }
+	public SubBlockVisitor(PythonLanguage language, CodeStyleSettings settings) {
+		this.language = language;
+		this._settings = settings;
+	}
 
-  public void visitElement(ASTNode node) {
-    ASTNode child = node.getFirstChildNode();
-    Alignment align1 = Alignment.createAlignment();
-    Alignment align2 = Alignment.createAlignment();
-    IElementType parentType = node.getElementType();
-    PyTokenTypes tokenTypes = this.language.getTokenTypes();
-    PyElementTypes elementTypes = this.language.getElementTypes();
+	public List<Block> getBlocks() {
+		return this._blocks;
+	}
 
-    while (child != null) {
-      IElementType childType = child.getElementType();
-      if ((!tokenTypes.WHITESPACE.contains(childType)) && (childType != TokenType.WHITE_SPACE) && (child.getTextRange().getLength() > 0))
-      {
-        Wrap wrap = null;
-        Indent childIndent = Indent.getNoneIndent();
-        Alignment childAlignment = null;
-        if (childType == elementTypes.STATEMENT_LIST) {
-          ASTNode prevNode = child.getTreePrev();
-          if ((prevNode != null) && (prevNode.getElementType() == TokenType.WHITE_SPACE)) {
-            String prevNodeText = prevNode.getText();
-            if (prevNodeText.indexOf('\n') >= 0) {
-              childIndent = Indent.getNormalIndent();
-            }
-          }
-        }
-        if (parentType == elementTypes.LIST_LITERAL_EXPRESSION) {
-          wrap = Wrap.createWrap(WrapType.NORMAL, true);
-          if ((childType == tokenTypes.LBRACKET) || (childType == tokenTypes.RBRACKET))
-          {
-            childAlignment = align2;
-          }
-          else childAlignment = align1;
-        }
+	public void visitElement(ASTNode node) {
+		ASTNode child = node.getFirstChildNode();
+		Alignment align1 = Alignment.createAlignment();
+		Alignment align2 = Alignment.createAlignment();
+		IElementType parentType = node.getElementType();
+		PyTokenTypes tokenTypes = this.language.getTokenTypes();
+		PyElementTypes elementTypes = this.language.getElementTypes();
 
-        if (parentType == elementTypes.ARGUMENT_LIST) {
-          if ((childType == tokenTypes.LPAR) || (childType == tokenTypes.RPAR))
-            childAlignment = align2;
-          else {
-            childAlignment = align1;
-          }
-        }
-        if ((parentType == elementTypes.LIST_LITERAL_EXPRESSION) || (parentType == elementTypes.ARGUMENT_LIST))
-        {
-          childIndent = Indent.getContinuationIndent();
-        }
+		while (child != null) {
+			IElementType childType = child.getElementType();
+			if ((!tokenTypes.WHITESPACE.contains(childType)) && (childType != TokenType.WHITE_SPACE) && (child.getTextRange().getLength() > 0)) {
+				Wrap wrap = null;
+				Indent childIndent = Indent.getNoneIndent();
+				Alignment childAlignment = null;
+				if (childType == elementTypes.STATEMENT_LIST) {
+					ASTNode prevNode = child.getTreePrev();
+					if ((prevNode != null) && (prevNode.getElementType() == TokenType.WHITE_SPACE)) {
+						String prevNodeText = prevNode.getText();
+						if (prevNodeText.indexOf('\n') >= 0) {
+							childIndent = Indent.getNormalIndent();
+						}
+					}
+				}
+				if (parentType == elementTypes.LIST_LITERAL_EXPRESSION) {
+					wrap = Wrap.createWrap(WrapType.NORMAL, true);
+					if ((childType == tokenTypes.LBRACKET) || (childType == tokenTypes.RBRACKET)) {
+						childAlignment = align2;
+					} else childAlignment = align1;
+				}
 
-        this._blocks.add(new PyBlock(child, childAlignment, childIndent, wrap, this._settings));
-      }
-      child = child.getTreeNext();
-    }
-  }
+				if (parentType == elementTypes.ARGUMENT_LIST) {
+					if ((childType == tokenTypes.LPAR) || (childType == tokenTypes.RPAR))
+						childAlignment = align2;
+					else {
+						childAlignment = align1;
+					}
+				}
+				if ((parentType == elementTypes.LIST_LITERAL_EXPRESSION) || (parentType == elementTypes.ARGUMENT_LIST)) {
+					childIndent = Indent.getContinuationIndent();
+				}
+
+				this._blocks.add(new PyBlock(child, childAlignment, childIndent, wrap, this._settings));
+			}
+			child = child.getTreeNext();
+		}
+	}
 }

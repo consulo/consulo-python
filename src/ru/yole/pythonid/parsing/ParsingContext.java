@@ -18,34 +18,32 @@ package ru.yole.pythonid.parsing;
 
 import ru.yole.pythonid.PythonLanguage;
 
-public class ParsingContext
-{
-  private PythonLanguage language;
-  private StatementParsing stmtParser;
-  private ExpressionParsing expressionParser;
-  private FunctionParsing functionParser;
+public class ParsingContext {
+	private PythonLanguage language;
+	private StatementParsing stmtParser;
+	private ExpressionParsing expressionParser;
+	private FunctionParsing functionParser;
 
-  public ParsingContext(PythonLanguage language)
-  {
-    this.language = language;
-    this.stmtParser = new StatementParsing(this);
-    this.expressionParser = new ExpressionParsing(this);
-    this.functionParser = new FunctionParsing(this);
-  }
+	public ParsingContext(PythonLanguage language) {
+		this.language = language;
+		this.stmtParser = new StatementParsing(this);
+		this.expressionParser = new ExpressionParsing(this);
+		this.functionParser = new FunctionParsing(this);
+	}
 
-  public PythonLanguage getLanguage() {
-    return this.language;
-  }
+	public PythonLanguage getLanguage() {
+		return this.language;
+	}
 
-  public StatementParsing getStatementParser() {
-    return this.stmtParser;
-  }
+	public StatementParsing getStatementParser() {
+		return this.stmtParser;
+	}
 
-  public ExpressionParsing getExpressionParser() {
-    return this.expressionParser;
-  }
+	public ExpressionParsing getExpressionParser() {
+		return this.expressionParser;
+	}
 
-  public FunctionParsing getFunctionParser() {
-    return this.functionParser;
-  }
+	public FunctionParsing getFunctionParser() {
+		return this.functionParser;
+	}
 }

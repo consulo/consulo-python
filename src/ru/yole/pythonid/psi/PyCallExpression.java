@@ -16,11 +16,10 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyCallExpression extends PyExpression
-{
-  public abstract PyReferenceExpression getCalledFunctionReference();
+public abstract interface PyCallExpression extends PyExpression {
+	public abstract PyReferenceExpression getCalledFunctionReference();
 
-  public abstract PyArgumentList getArgumentList();
+	public abstract PyArgumentList getArgumentList();
 
-  public abstract void addArgument(PyExpression paramPyExpression);
+	public abstract void addArgument(PyExpression paramPyExpression);
 }

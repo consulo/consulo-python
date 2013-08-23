@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyPrintTarget;
 
 public class PyPrintTargetImpl extends PyElementImpl
-  implements PyPrintTarget
-{
-  public PyPrintTargetImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyPrintTarget {
+	public PyPrintTargetImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

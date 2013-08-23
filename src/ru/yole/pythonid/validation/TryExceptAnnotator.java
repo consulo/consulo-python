@@ -16,22 +16,19 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
 import ru.yole.pythonid.psi.PyExceptBlock;
 import ru.yole.pythonid.psi.PyTryExceptStatement;
 
-public class TryExceptAnnotator extends PyAnnotator
-{
-  public void visitPyTryExceptStatement(PyTryExceptStatement node)
-  {
-    PyExceptBlock[] exceptBlocks = node.getExceptBlocks();
-    boolean haveDefaultExcept = false;
-    for (PyExceptBlock block : exceptBlocks) {
-      if (haveDefaultExcept) {
-        getHolder().createErrorAnnotation(block, "default 'except': must be last");
-      }
-      if (block.getExceptClass() == null)
-        haveDefaultExcept = true;
-    }
-  }
+public class TryExceptAnnotator extends PyAnnotator {
+	public void visitPyTryExceptStatement(PyTryExceptStatement node) {
+		PyExceptBlock[] exceptBlocks = node.getExceptBlocks();
+		boolean haveDefaultExcept = false;
+		for (PyExceptBlock block : exceptBlocks) {
+			if (haveDefaultExcept) {
+				getHolder().createErrorAnnotation(block, "default 'except': must be last");
+			}
+			if (block.getExceptClass() == null)
+				haveDefaultExcept = true;
+		}
+	}
 }

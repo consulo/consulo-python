@@ -20,49 +20,38 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.psi.PsiCached;
-import ru.yole.pythonid.psi.PyArgumentList;
-import ru.yole.pythonid.psi.PyCallExpression;
-import ru.yole.pythonid.psi.PyElementGenerator;
-import ru.yole.pythonid.psi.PyElementVisitor;
-import ru.yole.pythonid.psi.PyExpression;
-import ru.yole.pythonid.psi.PyReferenceExpression;
+import ru.yole.pythonid.psi.*;
 
 public class PyCallExpressionImpl extends PyElementImpl
-  implements PyCallExpression
-{
-  public PyCallExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyCallExpression {
+	public PyCallExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyCallExpression(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyCallExpression(this);
+	}
 
-  @PsiCached
-  public PyReferenceExpression getCalledFunctionReference() {
-    return (PyReferenceExpression)PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
-  }
+	@PsiCached
+	public PyReferenceExpression getCalledFunctionReference() {
+		return (PyReferenceExpression) PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
+	}
 
-  @PsiCached
-  public PyArgumentList getArgumentList() {
-    return (PyArgumentList)PsiTreeUtil.getChildOfType(this, PyArgumentList.class);
-  }
+	@PsiCached
+	public PyArgumentList getArgumentList() {
+		return (PyArgumentList) PsiTreeUtil.getChildOfType(this, PyArgumentList.class);
+	}
 
-  public void addArgument(PyExpression expression) {
-    PyExpression[] arguments = getArgumentList().getArguments();
-    try {
-      getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, arguments.length == 0 ? null : arguments[(arguments.length - 1)], expression);
-    }
-    catch (IncorrectOperationException e1)
-    {
-      throw new IllegalArgumentException(e1);
-    }
-  }
+	public void addArgument(PyExpression expression) {
+		PyExpression[] arguments = getArgumentList().getArguments();
+		try {
+			getLanguage().getElementGenerator().insertItemIntoList(getProject(), this, arguments.length == 0 ? null : arguments[(arguments.length - 1)], expression);
+		} catch (IncorrectOperationException e1) {
+			throw new IllegalArgumentException(e1);
+		}
+	}
 
-  public String toString()
-  {
-    return "PyCallExpression: " + getCalledFunctionReference().getReferencedName();
-  }
+	public String toString() {
+		return "PyCallExpression: " + getCalledFunctionReference().getReferencedName();
+	}
 }

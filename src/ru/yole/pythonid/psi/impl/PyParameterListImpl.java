@@ -20,30 +20,28 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyParameter;
 import ru.yole.pythonid.psi.PyParameterList;
 
 public class PyParameterListImpl extends PyElementImpl
-  implements PyParameterList
-{
-  private final TokenSet PARAMETER_FILTER = TokenSet.create(new IElementType[] { getPyElementTypes().FORMAL_PARAMETER });
+		implements PyParameterList {
+	private final TokenSet PARAMETER_FILTER = TokenSet.create(new IElementType[]{getPyElementTypes().FORMAL_PARAMETER});
 
-  public PyParameterListImpl(ASTNode astNode, AbstractPythonLanguage language) {
-    super(astNode, language);
-  }
+	public PyParameterListImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyParameterList(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyParameterList(this);
+	}
 
-  public PyParameter[] getParameters() {
-    ASTNode[] nodes = getNode().getChildren(this.PARAMETER_FILTER);
-    PyParameter[] params = new PyParameter[nodes.length];
-    for (int i = 0; i < params.length; i++) {
-      params[i] = ((PyParameter)nodes[i].getPsi());
-    }
-    return params;
-  }
+	public PyParameter[] getParameters() {
+		ASTNode[] nodes = getNode().getChildren(this.PARAMETER_FILTER);
+		PyParameter[] params = new PyParameter[nodes.length];
+		for (int i = 0; i < params.length; i++) {
+			params[i] = ((PyParameter) nodes[i].getPsi());
+		}
+		return params;
+	}
 }

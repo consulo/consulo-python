@@ -16,37 +16,31 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import ru.yole.pythonid.psi.*;
+
 import java.util.HashSet;
 import java.util.Set;
-import ru.yole.pythonid.psi.PyFunction;
-import ru.yole.pythonid.psi.PyGlobalStatement;
-import ru.yole.pythonid.psi.PyParameter;
-import ru.yole.pythonid.psi.PyParameterList;
-import ru.yole.pythonid.psi.PyReferenceExpression;
 
-public class GlobalAnnotator extends PyAnnotator
-{
-  public void visitPyGlobalStatement(PyGlobalStatement node)
-  {
-    PyFunction function = (PyFunction)node.getContainingElement(PyFunction.class);
-    if (function != null) {
-      PyParameterList paramList = function.getParameterList();
-      PyParameter[] params = paramList.getParameters();
-      Set paramNames = new HashSet();
-      for (PyParameter param : params) {
-        paramNames.add(param.getName());
-      }
-      for (PyReferenceExpression expr : node.getGlobals()) {
-        if (paramNames.contains(expr.getReferencedName())) {
-          getHolder().createErrorAnnotation(expr.getTextRange(), "name is used as both global and parameter");
-        }
-        PsiElement resolvedElement = expr.resolve();
-        if ((resolvedElement != null) && (PsiTreeUtil.isAncestor(function, resolvedElement, true)))
-          getHolder().createWarningAnnotation(expr.getTextRange(), "name '" + expr.getReferencedName() + "' is assigned to before global declaration");
-      }
-    }
-  }
+public class GlobalAnnotator extends PyAnnotator {
+	public void visitPyGlobalStatement(PyGlobalStatement node) {
+		PyFunction function = (PyFunction) node.getContainingElement(PyFunction.class);
+		if (function != null) {
+			PyParameterList paramList = function.getParameterList();
+			PyParameter[] params = paramList.getParameters();
+			Set paramNames = new HashSet();
+			for (PyParameter param : params) {
+				paramNames.add(param.getName());
+			}
+			for (PyReferenceExpression expr : node.getGlobals()) {
+				if (paramNames.contains(expr.getReferencedName())) {
+					getHolder().createErrorAnnotation(expr.getTextRange(), "name is used as both global and parameter");
+				}
+				PsiElement resolvedElement = expr.resolve();
+				if ((resolvedElement != null) && (PsiTreeUtil.isAncestor(function, resolvedElement, true)))
+					getHolder().createWarningAnnotation(expr.getTextRange(), "name '" + expr.getReferencedName() + "' is assigned to before global declaration");
+			}
+		}
+	}
 }

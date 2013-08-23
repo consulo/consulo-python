@@ -16,16 +16,16 @@
 
 package ru.yole.pythonid.psi;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyNumericLiteralExpression extends PyLiteralExpression
-{
-  @Nullable
-  public abstract Long getLongValue();
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
-  public abstract BigInteger getBigIntegerValue();
+public abstract interface PyNumericLiteralExpression extends PyLiteralExpression {
+	@Nullable
+	public abstract Long getLongValue();
 
-  public abstract BigDecimal getBigDecimalValue();
+	public abstract BigInteger getBigIntegerValue();
+
+	public abstract BigDecimal getBigDecimalValue();
 }

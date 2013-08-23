@@ -18,8 +18,7 @@ package ru.yole.pythonid.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract interface PyExpressionStatement extends PyStatement
-{
-  @NotNull
-  public abstract PyExpression getExpression();
+public abstract interface PyExpressionStatement extends PyStatement {
+	@NotNull
+	public abstract PyExpression getExpression();
 }

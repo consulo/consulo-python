@@ -22,28 +22,26 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import org.jetbrains.annotations.NonNls;
 
 public class PythonEditorHelper
-  implements ApplicationComponent
-{
-  private EditorActionManager _actionManager;
-  private EditorActionHandler _oldBackspaceHandler;
+		implements ApplicationComponent {
+	private EditorActionManager _actionManager;
+	private EditorActionHandler _oldBackspaceHandler;
 
-  public PythonEditorHelper(EditorActionManager actionManager)
-  {
-    this._actionManager = actionManager;
-  }
-  @NonNls
-  public String getComponentName() {
-    return "PythonEditorHelper";
-  }
+	public PythonEditorHelper(EditorActionManager actionManager) {
+		this._actionManager = actionManager;
+	}
 
-  public void initComponent() {
-    this._oldBackspaceHandler = this._actionManager.getActionHandler("EditorBackSpace");
-    PythonBackspaceHandler handler = new PythonBackspaceHandler(this._oldBackspaceHandler);
-    this._actionManager.setActionHandler("EditorBackSpace", handler);
-  }
+	@NonNls
+	public String getComponentName() {
+		return "PythonEditorHelper";
+	}
 
-  public void disposeComponent()
-  {
-    this._actionManager.setActionHandler("EditorBackSpace", this._oldBackspaceHandler);
-  }
+	public void initComponent() {
+		this._oldBackspaceHandler = this._actionManager.getActionHandler("EditorBackSpace");
+		PythonBackspaceHandler handler = new PythonBackspaceHandler(this._oldBackspaceHandler);
+		this._actionManager.setActionHandler("EditorBackSpace", handler);
+	}
+
+	public void disposeComponent() {
+		this._actionManager.setActionHandler("EditorBackSpace", this._oldBackspaceHandler);
+	}
 }

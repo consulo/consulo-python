@@ -23,46 +23,44 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyStatementList;
 import ru.yole.pythonid.psi.PyTryFinallyStatement;
 
 public class PyTryFinallyStatementImpl extends PyElementImpl
-  implements PyTryFinallyStatement
-{
-  public PyTryFinallyStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyTryFinallyStatement {
+	public PyTryFinallyStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyTryFinallyStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyTryFinallyStatement(this);
+	}
 
-  @NotNull
-  public PyStatementList getTryStatementList()
-  {
-    PyStatementList tmp15_12 = ((PyStatementList)childToPsiNotNull(getPyElementTypes().STATEMENT_LISTS, 0)); if (tmp15_12 == null) throw new IllegalStateException("@NotNull method must not return null"); return tmp15_12;
-  }
-  @Nullable
-  public PyStatementList getFinallyStatementList() {
-    return (PyStatementList)childToPsi(getPyElementTypes().STATEMENT_LISTS, 1);
-  }
+	@NotNull
+	public PyStatementList getTryStatementList() {
+		PyStatementList tmp15_12 = ((PyStatementList) childToPsiNotNull(getPyElementTypes().STATEMENT_LISTS, 0));
+		if (tmp15_12 == null) throw new IllegalStateException("@NotNull method must not return null");
+		return tmp15_12;
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    if (lastParent != null) {
-      return true;
-    }
+	@Nullable
+	public PyStatementList getFinallyStatementList() {
+		return (PyStatementList) childToPsi(getPyElementTypes().STATEMENT_LISTS, 1);
+	}
 
-    if (!getTryStatementList().processDeclarations(processor, substitutor, null, place)) {
-      return false;
-    }
-    PyStatementList list = getFinallyStatementList();
-    if (list != null) {
-      return list.processDeclarations(processor, substitutor, null, place);
-    }
-    return true;
-  }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		if (lastParent != null) {
+			return true;
+		}
+
+		if (!getTryStatementList().processDeclarations(processor, substitutor, null, place)) {
+			return false;
+		}
+		PyStatementList list = getFinallyStatementList();
+		if (list != null) {
+			return list.processDeclarations(processor, substitutor, null, place);
+		}
+		return true;
+	}
 }

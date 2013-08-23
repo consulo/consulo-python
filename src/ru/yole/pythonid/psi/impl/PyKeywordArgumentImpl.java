@@ -21,41 +21,39 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyTokenTypes;
 import ru.yole.pythonid.psi.PsiCached;
 import ru.yole.pythonid.psi.PyExpression;
 import ru.yole.pythonid.psi.PyKeywordArgument;
 
 public class PyKeywordArgumentImpl extends PyElementImpl
-  implements PyKeywordArgument
-{
-  public PyKeywordArgumentImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
-  @PsiCached
-  @Nullable
-  public String getKeyword() {
-    ASTNode node = getKeywordNode();
-    return node != null ? node.getText() : null;
-  }
+		implements PyKeywordArgument {
+	public PyKeywordArgumentImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  @PsiCached
-  public ASTNode getKeywordNode() {
-    return getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
-  }
+	@PsiCached
+	@Nullable
+	public String getKeyword() {
+		ASTNode node = getKeywordNode();
+		return node != null ? node.getText() : null;
+	}
 
-  @PsiCached
-  public PyExpression getValueExpression() {
-    return (PyExpression)PsiTreeUtil.getChildOfType(this, PyExpression.class);
-  }
+	@PsiCached
+	public ASTNode getKeywordNode() {
+		return getNode().findChildByType(getPyTokenTypes().IDENTIFIER);
+	}
 
-  public String toString()
-  {
-    return getClass().getSimpleName() + ": " + getKeyword();
-  }
-  @Nullable
-  protected Class<? extends PsiElement> getValidChildClass() {
-    return PyExpression.class;
-  }
+	@PsiCached
+	public PyExpression getValueExpression() {
+		return (PyExpression) PsiTreeUtil.getChildOfType(this, PyExpression.class);
+	}
+
+	public String toString() {
+		return getClass().getSimpleName() + ": " + getKeyword();
+	}
+
+	@Nullable
+	protected Class<? extends PsiElement> getValidChildClass() {
+		return PyExpression.class;
+	}
 }

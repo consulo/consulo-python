@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyKeyValueExpression;
 
 public class PyKeyValueExpressionImpl extends PyElementImpl
-  implements PyKeyValueExpression
-{
-  public PyKeyValueExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyKeyValueExpression {
+	public PyKeyValueExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

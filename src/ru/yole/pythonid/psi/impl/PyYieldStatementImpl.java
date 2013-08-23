@@ -22,14 +22,12 @@ import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyYieldStatement;
 
 public class PyYieldStatementImpl extends PyElementImpl
-  implements PyYieldStatement
-{
-  public PyYieldStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyYieldStatement {
+	public PyYieldStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyYieldStatement(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyYieldStatement(this);
+	}
 }

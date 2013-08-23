@@ -24,28 +24,27 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyElementGenerator
-{
-  public abstract ASTNode createNameIdentifier(Project paramProject, String paramString);
+public abstract interface PyElementGenerator {
+	public abstract ASTNode createNameIdentifier(Project paramProject, String paramString);
 
-  public abstract PyStringLiteralExpression createStringLiteralAlreadyEscaped(Project paramProject, String paramString);
+	public abstract PyStringLiteralExpression createStringLiteralAlreadyEscaped(Project paramProject, String paramString);
 
-  public abstract PyStringLiteralExpression createStringLiteralFromString(Project paramProject, @NotNull PsiFile paramPsiFile, String paramString);
+	public abstract PyStringLiteralExpression createStringLiteralFromString(Project paramProject, @NotNull PsiFile paramPsiFile, String paramString);
 
-  public abstract PyListLiteralExpression createListLiteral(Project paramProject);
+	public abstract PyListLiteralExpression createListLiteral(Project paramProject);
 
-  public abstract PyKeywordArgument createKeywordArgument(Project paramProject, String paramString, @Nullable PyExpression paramPyExpression);
+	public abstract PyKeywordArgument createKeywordArgument(Project paramProject, String paramString, @Nullable PyExpression paramPyExpression);
 
-  public abstract ASTNode createComma(Project paramProject);
+	public abstract ASTNode createComma(Project paramProject);
 
-  public abstract PsiElement insertItemIntoList(Project paramProject, PyElement paramPyElement, @Nullable PyExpression paramPyExpression1, PyExpression paramPyExpression2)
-    throws IncorrectOperationException;
+	public abstract PsiElement insertItemIntoList(Project paramProject, PyElement paramPyElement, @Nullable PyExpression paramPyExpression1, PyExpression paramPyExpression2)
+			throws IncorrectOperationException;
 
-  public abstract PyBinaryExpression createBinaryExpression(Project paramProject, String paramString, PyExpression paramPyExpression1, PyExpression paramPyExpression2);
+	public abstract PyBinaryExpression createBinaryExpression(Project paramProject, String paramString, PyExpression paramPyExpression1, PyExpression paramPyExpression2);
 
-  public abstract PyCallExpression createCallExpression(Project paramProject, String paramString);
+	public abstract PyCallExpression createCallExpression(Project paramProject, String paramString);
 
-  public abstract PyExpressionStatement createExpressionStatement(Project paramProject, PyExpression paramPyExpression);
+	public abstract PyExpressionStatement createExpressionStatement(Project paramProject, PyExpression paramPyExpression);
 
-  public abstract void setStringValue(PyStringLiteralExpression paramPyStringLiteralExpression, String paramString);
+	public abstract void setStringValue(PyStringLiteralExpression paramPyStringLiteralExpression, String paramString);
 }

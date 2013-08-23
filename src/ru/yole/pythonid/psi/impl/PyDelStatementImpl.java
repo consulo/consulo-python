@@ -19,24 +19,22 @@ package ru.yole.pythonid.psi.impl;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.Nullable;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PyDelStatement;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyExpression;
 
 public class PyDelStatementImpl extends PyElementImpl
-  implements PyDelStatement
-{
-  public PyDelStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyDelStatement {
+	public PyDelStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyDelStatement(this);
-  }
-  @Nullable
-  public PyExpression[] getTargets() {
-    return (PyExpression[])childrenToPsi(getPyElementTypes().EXPRESSIONS, PyExpression.EMPTY_ARRAY);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyDelStatement(this);
+	}
+
+	@Nullable
+	public PyExpression[] getTargets() {
+		return (PyExpression[]) childrenToPsi(getPyElementTypes().EXPRESSIONS, PyExpression.EMPTY_ARRAY);
+	}
 }

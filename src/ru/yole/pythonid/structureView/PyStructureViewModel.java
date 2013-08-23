@@ -26,37 +26,35 @@ import ru.yole.pythonid.psi.PyClass;
 import ru.yole.pythonid.psi.PyElement;
 import ru.yole.pythonid.psi.PyFunction;
 
-public class PyStructureViewModel extends TextEditorBasedStructureViewModel
-{
-  private PyElement _root;
+public class PyStructureViewModel extends TextEditorBasedStructureViewModel {
+	private PyElement _root;
 
-  public PyStructureViewModel(PyElement root)
-  {
-    super(root.getContainingFile());
-    this._root = root;
-  }
+	public PyStructureViewModel(PyElement root) {
+		super(root.getContainingFile());
+		this._root = root;
+	}
 
-  public StructureViewTreeElement getRoot() {
-    return new PyStructureViewElement(this._root);
-  }
+	public StructureViewTreeElement getRoot() {
+		return new PyStructureViewElement(this._root);
+	}
 
-  public Grouper[] getGroupers() {
-    return new Grouper[0];
-  }
+	public Grouper[] getGroupers() {
+		return new Grouper[0];
+	}
 
-  public Sorter[] getSorters() {
-    return new Sorter[] { Sorter.ALPHA_SORTER };
-  }
+	public Sorter[] getSorters() {
+		return new Sorter[]{Sorter.ALPHA_SORTER};
+	}
 
-  public Filter[] getFilters() {
-    return new Filter[0];
-  }
+	public Filter[] getFilters() {
+		return new Filter[0];
+	}
 
-  protected PsiFile getPsiFile() {
-    return this._root.getContainingFile();
-  }
+	protected PsiFile getPsiFile() {
+		return this._root.getContainingFile();
+	}
 
-  protected Class[] getSuitableClasses() {
-    return new Class[] { PyFunction.class, PyClass.class };
-  }
+	protected Class[] getSuitableClasses() {
+		return new Class[]{PyFunction.class, PyClass.class};
+	}
 }

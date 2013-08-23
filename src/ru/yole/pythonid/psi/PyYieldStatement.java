@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyYieldStatement extends PyStatement
-{
+public abstract interface PyYieldStatement extends PyStatement {
 }

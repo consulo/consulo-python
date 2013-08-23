@@ -16,9 +16,8 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyStatementList extends PyElementEx
-{
-  public static final PyStatementList[] EMPTY_ARRAY = new PyStatementList[0];
+public abstract interface PyStatementList extends PyElementEx {
+	public static final PyStatementList[] EMPTY_ARRAY = new PyStatementList[0];
 
-  public abstract PyStatement[] getStatements();
+	public abstract PyStatement[] getStatements();
 }

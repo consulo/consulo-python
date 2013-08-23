@@ -19,14 +19,13 @@ package ru.yole.pythonid.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract interface PyTryExceptStatement extends PyStatement
-{
-  @NotNull
-  public abstract PyStatementList getTryStatementList();
+public abstract interface PyTryExceptStatement extends PyStatement {
+	@NotNull
+	public abstract PyStatementList getTryStatementList();
 
-  @NotNull
-  public abstract PyExceptBlock[] getExceptBlocks();
+	@NotNull
+	public abstract PyExceptBlock[] getExceptBlocks();
 
-  @Nullable
-  public abstract PyStatementList getElseStatementList();
+	@Nullable
+	public abstract PyStatementList getElseStatementList();
 }

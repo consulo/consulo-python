@@ -22,12 +22,10 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class PyElementType extends IElementType
-{
-  public PyElementType(@NotNull @NonNls String ???, @NotNull Language arg2)
-  {
-    super(debugName, language);
-  }
+public abstract class PyElementType extends IElementType {
+	public PyElementType(@NotNull @NonNls String???, @NotNull Language arg2) {
+		super(debugName, language);
+	}
 
-  public abstract Class<? extends PsiElement> getElementClass();
+	public abstract Class<? extends PsiElement> getElementClass();
 }

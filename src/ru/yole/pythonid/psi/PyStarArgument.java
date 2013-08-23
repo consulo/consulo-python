@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyStarArgument extends PyExpression
-{
+public abstract interface PyStarArgument extends PyExpression {
 }

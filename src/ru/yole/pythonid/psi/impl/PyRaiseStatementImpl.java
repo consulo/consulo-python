@@ -21,10 +21,8 @@ import ru.yole.pythonid.AbstractPythonLanguage;
 import ru.yole.pythonid.psi.PyRaiseStatement;
 
 public class PyRaiseStatementImpl extends PyElementImpl
-  implements PyRaiseStatement
-{
-  public PyRaiseStatementImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyRaiseStatement {
+	public PyRaiseStatementImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 }

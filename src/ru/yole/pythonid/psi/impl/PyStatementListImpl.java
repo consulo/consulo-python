@@ -22,56 +22,51 @@ import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import ru.yole.pythonid.AbstractPythonLanguage;
-import ru.yole.pythonid.PyElementTypes;
 import ru.yole.pythonid.psi.PsiCached;
 import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyStatement;
 import ru.yole.pythonid.psi.PyStatementList;
 
 public class PyStatementListImpl extends PyElementImpl
-  implements PyStatementList
-{
-  public PyStatementListImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyStatementList {
+	public PyStatementListImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyStatementList(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyStatementList(this);
+	}
 
-  @PsiCached
-  public PyStatement[] getStatements() {
-    return (PyStatement[])childrenToPsi(getPyElementTypes().STATEMENTS, PyStatement.EMPTY_ARRAY);
-  }
+	@PsiCached
+	public PyStatement[] getStatements() {
+		return (PyStatement[]) childrenToPsi(getPyElementTypes().STATEMENTS, PyStatement.EMPTY_ARRAY);
+	}
 
-  public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place)
-  {
-    PsiElement parent = getParent();
-    if (((parent instanceof PyStatement)) && (lastParent == null) && (PsiTreeUtil.isAncestor(parent, place, true))) {
-      return true;
-    }
+	public boolean processDeclarations(PsiScopeProcessor processor, PsiSubstitutor substitutor, PsiElement lastParent, PsiElement place) {
+		PsiElement parent = getParent();
+		if (((parent instanceof PyStatement)) && (lastParent == null) && (PsiTreeUtil.isAncestor(parent, place, true))) {
+			return true;
+		}
 
-    PyStatement[] statements = getStatements();
-    if (lastParent != null)
-    {
-      for (int i = 0; i < statements.length; i++) {
-        if (statements[i] == lastParent) {
-          for (int j = i - 1; j >= 0; j--) {
-            if (!statements[j].processDeclarations(processor, substitutor, lastParent, place)) {
-              return false;
-            }
-          }
-          return true;
-        }
-      }
-    }
+		PyStatement[] statements = getStatements();
+		if (lastParent != null) {
+			for (int i = 0; i < statements.length; i++) {
+				if (statements[i] == lastParent) {
+					for (int j = i - 1; j >= 0; j--) {
+						if (!statements[j].processDeclarations(processor, substitutor, lastParent, place)) {
+							return false;
+						}
+					}
+					return true;
+				}
+			}
+		}
 
-    for (PyStatement statement : getStatements()) {
-      if (!statement.processDeclarations(processor, substitutor, lastParent, place)) {
-        return false;
-      }
-    }
-    return true;
-  }
+		for (PyStatement statement : getStatements()) {
+			if (!statement.processDeclarations(processor, substitutor, lastParent, place)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

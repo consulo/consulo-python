@@ -22,14 +22,12 @@ import ru.yole.pythonid.psi.PyElementVisitor;
 import ru.yole.pythonid.psi.PyLambdaExpression;
 
 public class PyLambdaExpressionImpl extends PyElementImpl
-  implements PyLambdaExpression
-{
-  public PyLambdaExpressionImpl(ASTNode astNode, AbstractPythonLanguage language)
-  {
-    super(astNode, language);
-  }
+		implements PyLambdaExpression {
+	public PyLambdaExpressionImpl(ASTNode astNode, AbstractPythonLanguage language) {
+		super(astNode, language);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyLambdaExpression(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+		pyVisitor.visitPyLambdaExpression(this);
+	}
 }

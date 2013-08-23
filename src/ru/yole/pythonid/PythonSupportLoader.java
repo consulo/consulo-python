@@ -22,29 +22,26 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 
 public class PythonSupportLoader
-  implements ApplicationComponent
-{
-  public static final PythonFileType PYTHON = new PythonFileType();
+		implements ApplicationComponent {
+	public static final PythonFileType PYTHON = new PythonFileType();
 
-  public static PythonSupportLoader getInstance() {
-    Application app = ApplicationManager.getApplication();
-    return (PythonSupportLoader)app.getComponent(PythonSupportLoader.class);
-  }
+	public static PythonSupportLoader getInstance() {
+		Application app = ApplicationManager.getApplication();
+		return (PythonSupportLoader) app.getComponent(PythonSupportLoader.class);
+	}
 
-  public String getComponentName() {
-    return "Python support loader";
-  }
+	public String getComponentName() {
+		return "Python support loader";
+	}
 
-  public void initComponent() {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run() {
-        FileTypeManager.getInstance().registerFileType(PythonSupportLoader.PYTHON, new String[] { "py" });
-      }
-    });
-  }
+	public void initComponent() {
+		ApplicationManager.getApplication().runWriteAction(new Runnable() {
+			public void run() {
+				FileTypeManager.getInstance().registerFileType(PythonSupportLoader.PYTHON, new String[]{"py"});
+			}
+		});
+	}
 
-  public void disposeComponent()
-  {
-  }
+	public void disposeComponent() {
+	}
 }

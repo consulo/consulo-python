@@ -16,6 +16,5 @@
 
 package ru.yole.pythonid.psi;
 
-public abstract interface PyGeneratorExpression extends PyExpression
-{
+public abstract interface PyGeneratorExpression extends PyExpression {
 }

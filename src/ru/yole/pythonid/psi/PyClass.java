@@ -19,8 +19,7 @@ package ru.yole.pythonid.psi;
 import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 
-public abstract interface PyClass extends PsiNamedElement, PyElementEx
-{
-  @NotNull
-  public abstract PyStatementList getStatementList();
+public abstract interface PyClass extends PsiNamedElement, PyElementEx {
+	@NotNull
+	public abstract PyStatementList getStatementList();
 }

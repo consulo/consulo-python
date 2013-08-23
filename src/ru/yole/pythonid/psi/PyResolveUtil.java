@@ -16,152 +16,136 @@
 
 package ru.yole.pythonid.psi;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiSubstitutor;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.scope.PsiScopeProcessor.Event;
-import java.util.ArrayList;
-import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public class PyResolveUtil
-{
-  @Nullable
-  public static PsiElement treeWalkUp(PsiScopeProcessor processor, PsiElement elt, PsiElement lastParent, PsiElement place)
-  {
-    if (elt == null) return null;
+import java.util.ArrayList;
+import java.util.List;
 
-    PsiElement cur = elt;
-    do {
-      if ((!cur.processDeclarations(processor, PsiSubstitutor.EMPTY, cur == elt ? lastParent : null, place)) && 
-        ((processor instanceof ResolveProcessor))) {
-        return ((ResolveProcessor)processor).getResult();
-      }
+public class PyResolveUtil {
+	@Nullable
+	public static PsiElement treeWalkUp(PsiScopeProcessor processor, PsiElement elt, PsiElement lastParent, PsiElement place) {
+		if (elt == null) return null;
 
-      if ((cur instanceof PsiFile)) break;
-      cur = cur.getPrevSibling();
-    }while (cur != null);
+		PsiElement cur = elt;
+		do {
+			if ((!cur.processDeclarations(processor, PsiSubstitutor.EMPTY, cur == elt ? lastParent : null, place)) &&
+					((processor instanceof ResolveProcessor))) {
+				return ((ResolveProcessor) processor).getResult();
+			}
 
-    return treeWalkUp(processor, elt.getContext(), elt, place);
-  }
+			if ((cur instanceof PsiFile)) break;
+			cur = cur.getPrevSibling();
+		} while (cur != null);
 
-  public static class VariantsProcessor
-    implements PsiScopeProcessor
-  {
-    private List<PsiElement> _names = new ArrayList();
+		return treeWalkUp(processor, elt.getContext(), elt, place);
+	}
 
-    public PsiElement[] getResult()
-    {
-      return (PsiElement[])this._names.toArray(new PsiElement[this._names.size()]);
-    }
+	public static class VariantsProcessor
+			implements PsiScopeProcessor {
+		private List<PsiElement> _names = new ArrayList();
 
-    public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
-      if ((element instanceof PsiNamedElement)) {
-        this._names.add(element);
-      }
-      else if ((element instanceof PyReferenceExpression)) {
-        PyReferenceExpression expr = (PyReferenceExpression)element;
-        String referencedName = expr.getReferencedName();
-        if (referencedName != null) {
-          this._names.add(element);
-        }
-      }
+		public PsiElement[] getResult() {
+			return (PsiElement[]) this._names.toArray(new PsiElement[this._names.size()]);
+		}
 
-      return true;
-    }
+		public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
+			if ((element instanceof PsiNamedElement)) {
+				this._names.add(element);
+			} else if ((element instanceof PyReferenceExpression)) {
+				PyReferenceExpression expr = (PyReferenceExpression) element;
+				String referencedName = expr.getReferencedName();
+				if (referencedName != null) {
+					this._names.add(element);
+				}
+			}
 
-    public <T> T getHint(Class<T> hintClass) {
-      return null;
-    }
+			return true;
+		}
 
-    public void handleEvent(PsiScopeProcessor.Event event, Object associated)
-    {
-    }
-  }
+		public <T> T getHint(Class<T> hintClass) {
+			return null;
+		}
 
-  public static class MultiResolveProcessor
-    implements PsiScopeProcessor
-  {
-    private String _name;
-    private List<ResolveResult> _results = new ArrayList();
+		public void handleEvent(PsiScopeProcessor.Event event, Object associated) {
+		}
+	}
 
-    public MultiResolveProcessor(String name) {
-      this._name = name;
-    }
+	public static class MultiResolveProcessor
+			implements PsiScopeProcessor {
+		private String _name;
+		private List<ResolveResult> _results = new ArrayList();
 
-    public ResolveResult[] getResults() {
-      return (ResolveResult[])this._results.toArray(new ResolveResult[this._results.size()]);
-    }
+		public MultiResolveProcessor(String name) {
+			this._name = name;
+		}
 
-    public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
-      if ((element instanceof PsiNamedElement)) {
-        if (this._name.equals(((PsiNamedElement)element).getName())) {
-          this._results.add(new PsiElementResolveResult(element));
-        }
-      }
-      else if ((element instanceof PyReferenceExpression)) {
-        PyReferenceExpression expr = (PyReferenceExpression)element;
-        String referencedName = expr.getReferencedName();
-        if ((referencedName != null) && (referencedName.equals(this._name))) {
-          this._results.add(new PsiElementResolveResult(element));
-        }
-      }
+		public ResolveResult[] getResults() {
+			return (ResolveResult[]) this._results.toArray(new ResolveResult[this._results.size()]);
+		}
 
-      return true;
-    }
+		public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
+			if ((element instanceof PsiNamedElement)) {
+				if (this._name.equals(((PsiNamedElement) element).getName())) {
+					this._results.add(new PsiElementResolveResult(element));
+				}
+			} else if ((element instanceof PyReferenceExpression)) {
+				PyReferenceExpression expr = (PyReferenceExpression) element;
+				String referencedName = expr.getReferencedName();
+				if ((referencedName != null) && (referencedName.equals(this._name))) {
+					this._results.add(new PsiElementResolveResult(element));
+				}
+			}
 
-    public <T> T getHint(Class<T> hintClass) {
-      return null;
-    }
+			return true;
+		}
 
-    public void handleEvent(PsiScopeProcessor.Event event, Object associated)
-    {
-    }
-  }
+		public <T> T getHint(Class<T> hintClass) {
+			return null;
+		}
 
-  public static class ResolveProcessor
-    implements PsiScopeProcessor
-  {
-    private String _name;
-    private PsiElement _result = null;
+		public void handleEvent(PsiScopeProcessor.Event event, Object associated) {
+		}
+	}
 
-    public ResolveProcessor(String name) {
-      this._name = name;
-    }
+	public static class ResolveProcessor
+			implements PsiScopeProcessor {
+		private String _name;
+		private PsiElement _result = null;
 
-    public PsiElement getResult() {
-      return this._result;
-    }
+		public ResolveProcessor(String name) {
+			this._name = name;
+		}
 
-    public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
-      if ((element instanceof PsiNamedElement)) {
-        if (this._name.equals(((PsiNamedElement)element).getName())) {
-          this._result = element;
-          return false;
-        }
-      }
-      else if ((element instanceof PyReferenceExpression)) {
-        PyReferenceExpression expr = (PyReferenceExpression)element;
-        String referencedName = expr.getReferencedName();
-        if ((referencedName != null) && (referencedName.equals(this._name))) {
-          this._result = element;
-          return false;
-        }
-      }
+		public PsiElement getResult() {
+			return this._result;
+		}
 
-      return true;
-    }
-    @Nullable
-    public <T> T getHint(Class<T> hintClass) {
-      return null;
-    }
+		public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
+			if ((element instanceof PsiNamedElement)) {
+				if (this._name.equals(((PsiNamedElement) element).getName())) {
+					this._result = element;
+					return false;
+				}
+			} else if ((element instanceof PyReferenceExpression)) {
+				PyReferenceExpression expr = (PyReferenceExpression) element;
+				String referencedName = expr.getReferencedName();
+				if ((referencedName != null) && (referencedName.equals(this._name))) {
+					this._result = element;
+					return false;
+				}
+			}
 
-    public void handleEvent(PsiScopeProcessor.Event event, Object associated)
-    {
-    }
-  }
+			return true;
+		}
+
+		@Nullable
+		public <T> T getHint(Class<T> hintClass) {
+			return null;
+		}
+
+		public void handleEvent(PsiScopeProcessor.Event event, Object associated) {
+		}
+	}
 }

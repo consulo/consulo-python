@@ -24,216 +24,193 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.Nullable;
+import ru.yole.pythonid.PyTokenTypes;
+import ru.yole.pythonid.PythonLanguage;
+import ru.yole.pythonid.psi.*;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Formatter;
-import org.jetbrains.annotations.Nullable;
-import ru.yole.pythonid.FileCreator;
-import ru.yole.pythonid.PyTokenTypes;
-import ru.yole.pythonid.PythonLanguage;
-import ru.yole.pythonid.psi.PyBinaryExpression;
-import ru.yole.pythonid.psi.PyCallExpression;
-import ru.yole.pythonid.psi.PyElement;
-import ru.yole.pythonid.psi.PyElementGenerator;
-import ru.yole.pythonid.psi.PyExpression;
-import ru.yole.pythonid.psi.PyExpressionStatement;
-import ru.yole.pythonid.psi.PyKeywordArgument;
-import ru.yole.pythonid.psi.PyListLiteralExpression;
-import ru.yole.pythonid.psi.PyReferenceExpression;
-import ru.yole.pythonid.psi.PyStringLiteralExpression;
-import ru.yole.pythonid.psi.PyUtil;
 
 public class PyElementGeneratorImpl
-  implements PyElementGenerator
-{
-  private final PythonLanguage language;
+		implements PyElementGenerator {
+	private final PythonLanguage language;
 
-  public PyElementGeneratorImpl(PythonLanguage language)
-  {
-    this.language = language;
-  }
+	public PyElementGeneratorImpl(PythonLanguage language) {
+		this.language = language;
+	}
 
-  public ASTNode createNameIdentifier(Project project, String name) {
-    PsiFile dummyFile = createDummyFile(project, name);
-    PyExpressionStatement expressionStatement = (PyExpressionStatement)dummyFile.getFirstChild();
+	public ASTNode createNameIdentifier(Project project, String name) {
+		PsiFile dummyFile = createDummyFile(project, name);
+		PyExpressionStatement expressionStatement = (PyExpressionStatement) dummyFile.getFirstChild();
 
-    PyReferenceExpression refExpression = (PyReferenceExpression)expressionStatement.getFirstChild();
+		PyReferenceExpression refExpression = (PyReferenceExpression) expressionStatement.getFirstChild();
 
-    return refExpression.getNode().getFirstChildNode();
-  }
+		return refExpression.getNode().getFirstChildNode();
+	}
 
-  private PsiFile createDummyFile(Project project, String contents) {
-    return this.language.getFileCreator().createDummyFile(project, contents);
-  }
+	private PsiFile createDummyFile(Project project, String contents) {
+		return this.language.getFileCreator().createDummyFile(project, contents);
+	}
 
-  public PyStringLiteralExpression createStringLiteralAlreadyEscaped(Project project, String str)
-  {
-    PsiFile dummyFile = createDummyFile(project, str);
-    PyExpressionStatement expressionStatement = (PyExpressionStatement)dummyFile.getFirstChild();
+	public PyStringLiteralExpression createStringLiteralAlreadyEscaped(Project project, String str) {
+		PsiFile dummyFile = createDummyFile(project, str);
+		PyExpressionStatement expressionStatement = (PyExpressionStatement) dummyFile.getFirstChild();
 
-    return (PyStringLiteralExpression)expressionStatement.getFirstChild();
-  }
+		return (PyStringLiteralExpression) expressionStatement.getFirstChild();
+	}
 
-  public PyStringLiteralExpression createStringLiteralFromString(Project project, @Nullable PsiFile destination, String unescaped)
-  {
-    boolean useDouble = !unescaped.contains("\"");
-    boolean useMulti = unescaped.matches(".*(\r|\n).*");
-    String quotes;
-    String quotes;
-    if (useMulti)
-      quotes = useDouble ? "\"\"\"" : "'''";
-    else {
-      quotes = useDouble ? "\"" : "'";
-    }
-    StringBuilder buf = new StringBuilder(unescaped.length() * 2);
-    buf.append(quotes);
-    VirtualFile vfile = destination == null ? null : destination.getVirtualFile();
-    Charset charset;
-    Charset charset;
-    if (vfile == null)
-      charset = Charset.forName("US-ASCII");
-    else {
-      charset = vfile.getCharset();
-    }
-    CharsetEncoder encoder = charset.newEncoder();
-    Formatter formatter = new Formatter(buf);
-    boolean unicode = false;
-    for (int i = 0; i < unescaped.length(); i++) {
-      int c = unescaped.codePointAt(i);
-      if ((c == 34) && (useDouble))
-        buf.append("\\\"");
-      else if ((c == 39) && (!useDouble))
-        buf.append("\\'");
-      else if (((c == 13) || (c == 10)) && (!useMulti)) {
-        if (c == 13) buf.append("\\r");
-        else if (c == 10) buf.append("\\n"); 
-      }
-      else if (!encoder.canEncode(new String(Character.toChars(c)))) {
-        if (c <= 255) {
-          formatter.format("\\x%02x", new Object[] { Integer.valueOf(c) });
-        } else if (c < 65535) {
-          unicode = true;
-          formatter.format("\\u%04x", new Object[] { Integer.valueOf(c) });
-        } else {
-          unicode = true;
-          formatter.format("\\U%08x", new Object[] { Integer.valueOf(c) });
-        }
-      }
-      else buf.appendCodePoint(c);
-    }
+	public PyStringLiteralExpression createStringLiteralFromString(Project project, @Nullable PsiFile destination, String unescaped) {
+		boolean useDouble = !unescaped.contains("\"");
+		boolean useMulti = unescaped.matches(".*(\r|\n).*");
+		String quotes;
+		String quotes;
+		if (useMulti)
+			quotes = useDouble ? "\"\"\"" : "'''";
+		else {
+			quotes = useDouble ? "\"" : "'";
+		}
+		StringBuilder buf = new StringBuilder(unescaped.length() * 2);
+		buf.append(quotes);
+		VirtualFile vfile = destination == null ? null : destination.getVirtualFile();
+		Charset charset;
+		Charset charset;
+		if (vfile == null)
+			charset = Charset.forName("US-ASCII");
+		else {
+			charset = vfile.getCharset();
+		}
+		CharsetEncoder encoder = charset.newEncoder();
+		Formatter formatter = new Formatter(buf);
+		boolean unicode = false;
+		for (int i = 0; i < unescaped.length(); i++) {
+			int c = unescaped.codePointAt(i);
+			if ((c == 34) && (useDouble))
+				buf.append("\\\"");
+			else if ((c == 39) && (!useDouble))
+				buf.append("\\'");
+			else if (((c == 13) || (c == 10)) && (!useMulti)) {
+				if (c == 13) buf.append("\\r");
+				else if (c == 10) buf.append("\\n");
+			} else if (!encoder.canEncode(new String(Character.toChars(c)))) {
+				if (c <= 255) {
+					formatter.format("\\x%02x", new Object[]{Integer.valueOf(c)});
+				} else if (c < 65535) {
+					unicode = true;
+					formatter.format("\\u%04x", new Object[]{Integer.valueOf(c)});
+				} else {
+					unicode = true;
+					formatter.format("\\U%08x", new Object[]{Integer.valueOf(c)});
+				}
+			} else buf.appendCodePoint(c);
+		}
 
-    buf.append(quotes);
-    if (unicode) buf.insert(0, "u");
+		buf.append(quotes);
+		if (unicode) buf.insert(0, "u");
 
-    return createStringLiteralAlreadyEscaped(project, buf.toString());
-  }
+		return createStringLiteralAlreadyEscaped(project, buf.toString());
+	}
 
-  public PyListLiteralExpression createListLiteral(Project project) {
-    PsiFile dummyFile = createDummyFile(project, "[]");
-    PyExpressionStatement expressionStatement = (PyExpressionStatement)dummyFile.getFirstChild();
+	public PyListLiteralExpression createListLiteral(Project project) {
+		PsiFile dummyFile = createDummyFile(project, "[]");
+		PyExpressionStatement expressionStatement = (PyExpressionStatement) dummyFile.getFirstChild();
 
-    return (PyListLiteralExpression)expressionStatement.getFirstChild();
-  }
+		return (PyListLiteralExpression) expressionStatement.getFirstChild();
+	}
 
-  public PyKeywordArgument createKeywordArgument(Project project, String keyword, @Nullable PyExpression expression)
-  {
-    PsiFile dummyFile = createDummyFile(project, "xyz(" + keyword + " = 0)");
+	public PyKeywordArgument createKeywordArgument(Project project, String keyword, @Nullable PyExpression expression) {
+		PsiFile dummyFile = createDummyFile(project, "xyz(" + keyword + " = 0)");
 
-    PyExpressionStatement expressionStatement = (PyExpressionStatement)dummyFile.getFirstChild();
+		PyExpressionStatement expressionStatement = (PyExpressionStatement) dummyFile.getFirstChild();
 
-    PyCallExpression call = (PyCallExpression)expressionStatement.getFirstChild();
+		PyCallExpression call = (PyCallExpression) expressionStatement.getFirstChild();
 
-    PyKeywordArgument keywordArg = (PyKeywordArgument)call.getArgumentList().getArguments()[0];
+		PyKeywordArgument keywordArg = (PyKeywordArgument) call.getArgumentList().getArguments()[0];
 
-    ASTNode valNode = keywordArg.getValueExpression().getNode();
-    ASTNode valParent = valNode.getTreeParent();
-    if (expression == null)
-      valParent.removeChild(valNode);
-    else {
-      valParent.replaceChild(valNode, expression.getNode().copyElement());
-    }
-    return keywordArg;
-  }
+		ASTNode valNode = keywordArg.getValueExpression().getNode();
+		ASTNode valParent = valNode.getTreeParent();
+		if (expression == null)
+			valParent.removeChild(valNode);
+		else {
+			valParent.replaceChild(valNode, expression.getNode().copyElement());
+		}
+		return keywordArg;
+	}
 
-  public ASTNode createComma(Project project) {
-    PsiFile dummyFile = createDummyFile(project, "[0,]");
-    PyExpressionStatement expressionStatement = (PyExpressionStatement)dummyFile.getFirstChild();
+	public ASTNode createComma(Project project) {
+		PsiFile dummyFile = createDummyFile(project, "[0,]");
+		PyExpressionStatement expressionStatement = (PyExpressionStatement) dummyFile.getFirstChild();
 
-    ASTNode zero = expressionStatement.getFirstChild().getNode().getFirstChildNode().getTreeNext();
+		ASTNode zero = expressionStatement.getFirstChild().getNode().getFirstChildNode().getTreeNext();
 
-    return zero.getTreeNext().copyElement();
-  }
+		return zero.getTreeNext().copyElement();
+	}
 
-  public PsiElement insertItemIntoList(Project project, PyElement list, @Nullable PyExpression afterThis, PyExpression toInsert)
-    throws IncorrectOperationException
-  {
-    ASTNode add = toInsert.getNode().copyElement();
-    if (afterThis == null) {
-      ASTNode exprNode = list.getNode();
-      PyTokenTypes tokenTypes = ((PythonLanguage)list.getLanguage()).getTokenTypes();
-      ASTNode[] closingTokens = exprNode.getChildren(TokenSet.create(new IElementType[] { tokenTypes.LBRACKET, tokenTypes.LPAR }));
+	public PsiElement insertItemIntoList(Project project, PyElement list, @Nullable PyExpression afterThis, PyExpression toInsert)
+			throws IncorrectOperationException {
+		ASTNode add = toInsert.getNode().copyElement();
+		if (afterThis == null) {
+			ASTNode exprNode = list.getNode();
+			PyTokenTypes tokenTypes = ((PythonLanguage) list.getLanguage()).getTokenTypes();
+			ASTNode[] closingTokens = exprNode.getChildren(TokenSet.create(new IElementType[]{tokenTypes.LBRACKET, tokenTypes.LPAR}));
 
-      if (closingTokens.length == 0)
-      {
-        exprNode.addChild(add);
-      } else {
-        ASTNode next = PyUtil.getNextNonWhitespace(closingTokens[(closingTokens.length - 1)]);
-        if (next != null) {
-          ASTNode comma = createComma(project);
-          exprNode.addChild(comma, next);
-          exprNode.addChild(add, comma);
-        } else {
-          exprNode.addChild(add);
-        }
-      }
-    }
-    else {
-      ASTNode lastArgNode = afterThis.getNode();
-      ASTNode comma = createComma(project);
-      ASTNode parent = lastArgNode.getTreeParent();
-      ASTNode afterLast = lastArgNode.getTreeNext();
-      if (afterLast == null)
-        parent.addChild(add);
-      else {
-        parent.addChild(add, afterLast);
-      }
-      parent.addChild(comma, add);
-    }
-    return add.getPsi();
-  }
+			if (closingTokens.length == 0) {
+				exprNode.addChild(add);
+			} else {
+				ASTNode next = PyUtil.getNextNonWhitespace(closingTokens[(closingTokens.length - 1)]);
+				if (next != null) {
+					ASTNode comma = createComma(project);
+					exprNode.addChild(comma, next);
+					exprNode.addChild(add, comma);
+				} else {
+					exprNode.addChild(add);
+				}
+			}
+		} else {
+			ASTNode lastArgNode = afterThis.getNode();
+			ASTNode comma = createComma(project);
+			ASTNode parent = lastArgNode.getTreeParent();
+			ASTNode afterLast = lastArgNode.getTreeNext();
+			if (afterLast == null)
+				parent.addChild(add);
+			else {
+				parent.addChild(add, afterLast);
+			}
+			parent.addChild(comma, add);
+		}
+		return add.getPsi();
+	}
 
-  public PyBinaryExpression createBinaryExpression(Project project, String s, PyExpression expr, PyExpression listLiteral)
-  {
-    PsiFile dummyFile = createDummyFile(project, "a " + s + " b");
-    PyExpressionStatement expressionStatement = (PyExpressionStatement)dummyFile.getFirstChild();
+	public PyBinaryExpression createBinaryExpression(Project project, String s, PyExpression expr, PyExpression listLiteral) {
+		PsiFile dummyFile = createDummyFile(project, "a " + s + " b");
+		PyExpressionStatement expressionStatement = (PyExpressionStatement) dummyFile.getFirstChild();
 
-    PyBinaryExpression binExpr = (PyBinaryExpression)expressionStatement.getExpression();
+		PyBinaryExpression binExpr = (PyBinaryExpression) expressionStatement.getExpression();
 
-    ASTNode binnode = binExpr.getNode();
-    binnode.replaceChild(binExpr.getLeftExpression().getNode(), expr.getNode().copyElement());
+		ASTNode binnode = binExpr.getNode();
+		binnode.replaceChild(binExpr.getLeftExpression().getNode(), expr.getNode().copyElement());
 
-    binnode.replaceChild(binExpr.getRightExpression().getNode(), listLiteral.getNode().copyElement());
+		binnode.replaceChild(binExpr.getRightExpression().getNode(), listLiteral.getNode().copyElement());
 
-    return binExpr;
-  }
+		return binExpr;
+	}
 
-  public PyCallExpression createCallExpression(Project project, String functionName)
-  {
-    PsiFile dummyFile = createDummyFile(project, functionName + "()");
-    return (PyCallExpression)dummyFile.getFirstChild().getFirstChild();
-  }
+	public PyCallExpression createCallExpression(Project project, String functionName) {
+		PsiFile dummyFile = createDummyFile(project, functionName + "()");
+		return (PyCallExpression) dummyFile.getFirstChild().getFirstChild();
+	}
 
-  public PyExpressionStatement createExpressionStatement(Project project, PyExpression expr)
-  {
-    PsiFile dummyFile = createDummyFile(project, "x");
-    PyExpressionStatement stmt = (PyExpressionStatement)dummyFile.getFirstChild();
-    stmt.getNode().replaceChild(stmt.getExpression().getNode(), expr.getNode());
-    return stmt;
-  }
+	public PyExpressionStatement createExpressionStatement(Project project, PyExpression expr) {
+		PsiFile dummyFile = createDummyFile(project, "x");
+		PyExpressionStatement stmt = (PyExpressionStatement) dummyFile.getFirstChild();
+		stmt.getNode().replaceChild(stmt.getExpression().getNode(), expr.getNode());
+		return stmt;
+	}
 
-  public void setStringValue(PyStringLiteralExpression string, String value) {
-    ASTNode strNode = string.getNode();
-    Project project = string.getProject();
-    strNode.getTreeParent().replaceChild(strNode, createStringLiteralFromString(project, string.getContainingFile(), value).getNode());
-  }
+	public void setStringValue(PyStringLiteralExpression string, String value) {
+		ASTNode strNode = string.getNode();
+		Project project = string.getProject();
+		strNode.getTreeParent().replaceChild(strNode, createStringLiteralFromString(project, string.getContainingFile(), value).getNode());
+	}
 }

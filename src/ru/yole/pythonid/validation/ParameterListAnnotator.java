@@ -16,43 +16,38 @@
 
 package ru.yole.pythonid.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.util.containers.HashSet;
 import ru.yole.pythonid.psi.PyParameter;
 import ru.yole.pythonid.psi.PyParameterList;
 
-public class ParameterListAnnotator extends PyAnnotator
-{
-  public void visitPyParameterList(PyParameterList node)
-  {
-    HashSet parameterNames = new HashSet();
-    PyParameter[] parameters = node.getParameters();
-    boolean hadPositionalContainer = false; boolean hadKeywordContainer = false;
-    boolean hadDefaultValue = false;
-    for (PyParameter parameter : parameters) {
-      if (parameterNames.contains(parameter.getName())) {
-        getHolder().createErrorAnnotation(parameter, "duplicate parameter name");
-      }
-      parameterNames.add(parameter.getName());
-      if (parameter.isPositionalContainer()) {
-        if (hadKeywordContainer) {
-          getHolder().createErrorAnnotation(parameter, "* parameter after ** paremeter");
-        }
-        hadPositionalContainer = true;
-      }
-      else if (parameter.isKeywordContainer()) {
-        hadKeywordContainer = true;
-      }
-      else {
-        if ((hadPositionalContainer) || (hadKeywordContainer)) {
-          getHolder().createErrorAnnotation(parameter, "regular parameter after * or ** parameter");
-        }
-        if (parameter.getDefaultValue() != null) {
-          hadDefaultValue = true;
-        }
-        else if (hadDefaultValue)
-          getHolder().createErrorAnnotation(parameter, "non-default parameter follows default parameter");
-      }
-    }
-  }
+public class ParameterListAnnotator extends PyAnnotator {
+	public void visitPyParameterList(PyParameterList node) {
+		HashSet parameterNames = new HashSet();
+		PyParameter[] parameters = node.getParameters();
+		boolean hadPositionalContainer = false;
+		boolean hadKeywordContainer = false;
+		boolean hadDefaultValue = false;
+		for (PyParameter parameter : parameters) {
+			if (parameterNames.contains(parameter.getName())) {
+				getHolder().createErrorAnnotation(parameter, "duplicate parameter name");
+			}
+			parameterNames.add(parameter.getName());
+			if (parameter.isPositionalContainer()) {
+				if (hadKeywordContainer) {
+					getHolder().createErrorAnnotation(parameter, "* parameter after ** paremeter");
+				}
+				hadPositionalContainer = true;
+			} else if (parameter.isKeywordContainer()) {
+				hadKeywordContainer = true;
+			} else {
+				if ((hadPositionalContainer) || (hadKeywordContainer)) {
+					getHolder().createErrorAnnotation(parameter, "regular parameter after * or ** parameter");
+				}
+				if (parameter.getDefaultValue() != null) {
+					hadDefaultValue = true;
+				} else if (hadDefaultValue)
+					getHolder().createErrorAnnotation(parameter, "non-default parameter follows default parameter");
+			}
+		}
+	}
 }
