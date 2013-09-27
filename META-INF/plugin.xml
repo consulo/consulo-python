@@ -5,22 +5,19 @@
 	<vendor>Dmitry Jemerov(http://pythonid.dev.java.net), Keith Lea(http://pythonid.dev.java.net), Consulo Org</vendor>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<lang.commenter language="PYTHON" implementationClass="org.consulo.python.PythonCommenter" />
-		<lang.parserDefinition language="PYTHON" implementationClass="org.consulo.python.PythonParserDefinition" />
-		<lang.findUsagesProvider language="PYTHON" implementationClass="org.consulo.python.PythonFindUsagesProvider" />
-		<lang.foldingBuilder language="PYTHON" implementationClass="org.consulo.python.PythonFoldingBuilder" />
-		<lang.psiStructureViewFactory language="PYTHON" implementationClass="org.consulo.python.structureView.PyStructureViewFactory" />
-		<lang.formatter language="PYTHON" implementationClass="org.consulo.python.formatter.PythonFormattingModelBuilder" />
-		<lang.braceMatcher language="PYTHON" implementationClass="org.consulo.python.PyBraceMatcher" />
-		<annotator language="PYTHON" implementationClass="org.consulo.python.validation.PyAnnotatingVisitor" />
-		<syntaxHighlighter key="PYTHON" implementationClass="org.consulo.python.PyHighligher" />
-
-		<configurationType implementation="org.consulo.python.run.PythonRunConfigurationType" />
-
-		<sdkType implementation="org.consulo.python.sdk.PythonSdkType" />
-
-		<applicationService serviceInterface="org.consulo.python.psi.PyElementGenerator" serviceImplementation="org.consulo.python.psi.impl.PyElementGeneratorImpl" />
-
-		<fileTypeFactory implementation="org.consulo.python.PythonFileTypeFactory" />
+		<lang.commenter language="PYTHON" implementationClass="org.consulo.python.PythonCommenter"/>
+		<lang.parserDefinition language="PYTHON" implementationClass="org.consulo.python.PythonParserDefinition"/>
+		<lang.findUsagesProvider language="PYTHON" implementationClass="org.consulo.python.PythonFindUsagesProvider"/>
+		<lang.foldingBuilder language="PYTHON" implementationClass="org.consulo.python.PythonFoldingBuilder"/>
+		<lang.psiStructureViewFactory language="PYTHON" implementationClass="org.consulo.python.structureView.PyStructureViewFactory"/>
+		<lang.formatter language="PYTHON" implementationClass="org.consulo.python.formatter.PythonFormattingModelBuilder"/>
+		<lang.braceMatcher language="PYTHON" implementationClass="org.consulo.python.PyBraceMatcher"/>
+		<annotator language="PYTHON" implementationClass="org.consulo.python.validation.PyAnnotatingVisitor"/>
+		<syntaxHighlighter key="PYTHON" implementationClass="org.consulo.python.PyHighligher"/>
+		<configurationType implementation="org.consulo.python.run.PythonRunConfigurationType"/>
+		<moduleExtensionProvider key="python" allow-mixin="true" implementationClass="org.consulo.python.module.extension.PyModuleExtensionProvider"/>
+		<sdkType implementation="org.consulo.python.sdk.PythonSdkType"/>
+		<applicationService serviceInterface="org.consulo.python.psi.PyElementGenerator" serviceImplementation="org.consulo.python.psi.impl.PyElementGeneratorImpl"/>
+		<fileTypeFactory implementation="org.consulo.python.PythonFileTypeFactory"/>
 	</extensions>
 </idea-plugin>
