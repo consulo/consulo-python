@@ -1,23 +1,18 @@
 package com.jetbrains.python.inspections;
 
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.PlatformUtils;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  *
@@ -49,7 +44,7 @@ public class PyInterpreterInspection extends PyInspection {
     @Override
     public void visitPyFile(PyFile node) {
       super.visitPyFile(node);
-      if (PlatformUtils.isPyCharm()) {
+      /*if (PlatformUtils.isPyCharm()) {
         final Module module = ModuleUtilCore.findModuleForPsiElement(node);
         if (module != null) {
           final Sdk sdk = PythonSdkType.findPythonSdk(module);
@@ -60,7 +55,7 @@ public class PyInterpreterInspection extends PyInspection {
             registerProblem(node, "Invalid Python interpreter selected for the project", new ConfigureInterpreterFix());
           }
         }
-      }
+      } */
     }
   }
 
