@@ -3,10 +3,10 @@ package org.consulo.python.module.extension;
 import javax.swing.Icon;
 
 import org.consulo.module.extension.ModuleExtensionProvider;
-import org.consulo.python.PythonIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.Module;
+import icons.PythonIcons;
 
 /**
  * @author VISTALL
@@ -18,7 +18,7 @@ public class PyModuleExtensionProvider implements ModuleExtensionProvider<PyModu
 	@Override
 	public Icon getIcon()
 	{
-		return PythonIcons.Python;
+		return PythonIcons.Python.Python;
 	}
 
 	@NotNull

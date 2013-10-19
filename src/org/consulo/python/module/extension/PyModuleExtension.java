@@ -1,10 +1,10 @@
 package org.consulo.python.module.extension;
 
 import org.consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
-import org.consulo.python.sdk.PythonSdkType;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.jetbrains.python.sdk.PythonSdkType;
 
 /**
  * @author VISTALL

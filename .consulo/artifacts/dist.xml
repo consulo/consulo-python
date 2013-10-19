@@ -6,9 +6,11 @@
         <element id="directory" name="lib">
           <element id="zip-archive" name="python.jar">
             <element id="module-output" name="consulo-python" />
-            <element id="directory" name="META-INF">
-              <element id="dir-copy" path="$PROJECT_DIR$/META-INF" />
-            </element>
+            <element id="module-production-resource-output" name="python-impl" />
+            <element id="module-output" name="python-psi-api" />
+            <element id="module-production-resource-output" name="python-psi-api" />
+            <element id="module-output" name="python-impl" />
+            <element id="module-production-resource-output" name="consulo-python" />
           </element>
         </element>
       </element>
