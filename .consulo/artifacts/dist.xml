@@ -14,6 +14,7 @@
             <element id="module-output" name="python-debugger" />
           </element>
         </element>
+        <element id="dir-copy" path="$PROJECT_DIR$/dist" />
       </element>
     </root>
   </artifact>

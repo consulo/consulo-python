@@ -4,6 +4,7 @@
 	<description>Smart editing for Python scripts</description>
 	<version>3.0.1</version>
 	<depends>org.consulo.java</depends>
+	<depends>com.intellij.spellchecker</depends>
 	<resource-bundle>com.jetbrains.python.PyBundle</resource-bundle>
 
 	<vendor url="http://www.jetbrains.com/pycharm/">JetBrains, Keith Lea</vendor>

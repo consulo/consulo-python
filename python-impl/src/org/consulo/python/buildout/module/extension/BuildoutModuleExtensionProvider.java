@@ -25,7 +25,7 @@ public class BuildoutModuleExtensionProvider implements ModuleExtensionProvider<
 	@Override
 	public String getName()
 	{
-		return "Python";
+		return "Buildout";
 	}
 
 	@NotNull
