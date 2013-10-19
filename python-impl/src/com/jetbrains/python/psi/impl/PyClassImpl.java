@@ -124,11 +124,6 @@ public class PyClassImpl extends PyPresentableElementImpl<PyClassStub> implement
   }
 
   @Override
-  public Icon getIcon(int flags) {
-    return PlatformIcons.CLASS_ICON;
-  }
-
-  @Override
   protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
     pyVisitor.visitPyClass(this);
   }

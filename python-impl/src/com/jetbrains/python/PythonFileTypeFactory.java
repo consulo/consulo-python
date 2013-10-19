@@ -1,19 +1,25 @@
 package com.jetbrains.python;
 
-import com.intellij.ide.highlighter.XmlFileType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.jetbrains.pyqt.QtUIFileType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
-public class PythonFileTypeFactory extends FileTypeFactory {
-  public void createFileTypes(@NonNls @NotNull final FileTypeConsumer consumer) {
-    consumer.consume(PythonFileType.INSTANCE, "py;pyw;");
-    consumer.consume(QtUIFileType.INSTANCE, "ui");
-    consumer.consume(XmlFileType.INSTANCE, "qrc");
-  }
+public class PythonFileTypeFactory extends FileTypeFactory
+{
+	@Override
+	public void createFileTypes(@NonNls @NotNull final FileTypeConsumer consumer)
+	{
+		consumer.consume(PythonFileType.INSTANCE, "py;pyw;");
+		consumer.consume(QtUIFileType.INSTANCE, "ui");
+		/*FileType xmlFileType = FileTypeManager.getInstance().findFileTypeByName("XML");
+		if(xmlFileType != null)
+		{
+			consumer.consume(xmlFileType, "qrc");
+		}      */
+	}
 }

@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
@@ -24,6 +25,7 @@ import com.intellij.util.messages.MessageBus;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.sdk.PythonSdkType;
+import org.consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,8 +93,8 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     if (file != null) {
       final List<OrderEntry> orderEntries = ProjectRootManager.getInstance(project).getFileIndex().getOrderEntriesForFile(file);
       for (OrderEntry orderEntry : orderEntries) {
-        if (orderEntry instanceof JdkOrderEntry) {
-          return ((JdkOrderEntry)orderEntry).getJdk();
+        if (orderEntry instanceof SdkOrderEntry) {
+          return ((SdkOrderEntry)orderEntry).getSdk();
         }
       }
     }
@@ -104,7 +106,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
       return LanguageLevel.FORCE_LANGUAGE_LEVEL;
     }
 
-    final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+    final Sdk sdk = ModuleUtilCore.getSdk(module, PyModuleExtension.class);
     return PythonSdkType.getLanguageLevelForSdk(sdk);
   }
 

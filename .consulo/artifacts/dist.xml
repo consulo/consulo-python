@@ -11,6 +11,7 @@
             <element id="module-production-resource-output" name="python-psi-api" />
             <element id="module-output" name="python-impl" />
             <element id="module-production-resource-output" name="consulo-python" />
+            <element id="module-output" name="python-debugger" />
           </element>
         </element>
       </element>

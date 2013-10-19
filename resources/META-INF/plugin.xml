@@ -1,16 +1,18 @@
 <idea-plugin version="2" xmlns:xi="http://www.w3.org/2001/XInclude" url="http://confluence.jetbrains.com/display/PYH/">
-	<!-- Components and extensions declared in this file work ONLY in Python plugin, not in standalone PyCharm.
-		   Anything related to Python/Java integration must go in this file. -->
-
-	<id>PythonCore</id>
-	<name>Python Community Edition</name>
-	<idea-version since-build="130.0" until-build="133.0"/>
+	<id>org.consulo.python</id>
+	<name>Python</name>
 	<description>Smart editing for Python scripts</description>
 	<version>3.0.1</version>
-	<depends>com.intellij.modules.java</depends>
+	<depends>org.consulo.java</depends>
+	<resource-bundle>com.jetbrains.python.PyBundle</resource-bundle>
 
+	<vendor url="http://www.jetbrains.com/pycharm/">JetBrains, Keith Lea</vendor>
 
-	<vendor url="http://www.jetbrains.com/pycharm/" logo="/com/jetbrains/python/python.png">JetBrains, Keith Lea</vendor>
-	<xi:include href="/resources/META-INF/python-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
-	<xi:include href="/resources/META-INF/python-plugin-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+	<xi:include href="/META-INF/python-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+	<xi:include href="/META-INF/python-plugin-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+	<extensions defaultExtensionNs="com.intellij">
+		<moduleExtensionProvider key="python" implementationClass="org.consulo.python.module.extension.PyModuleExtensionProvider"/>
+		<moduleExtensionProvider key="py-buildout" parent-key="python" implementationClass="org.consulo.python.buildout.module.extension.BuildoutModuleExtensionProvider"/>
+	</extensions>
 </idea-plugin>

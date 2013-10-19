@@ -1,5 +1,8 @@
 package com.jetbrains.python.psi.impl;
 
+import javax.swing.Icon;
+
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -8,8 +11,6 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
-
-import javax.swing.*;
 
 /**
  * @author yole
@@ -35,7 +36,7 @@ public abstract class PyPresentableElementImpl<T extends StubElement> extends Py
       }
 
       public Icon getIcon(final boolean open) {
-        return PyPresentableElementImpl.this.getIcon(0);
+        return IconDescriptorUpdaters.getIcon(PyPresentableElementImpl.this, 0);
       }
     };
   }

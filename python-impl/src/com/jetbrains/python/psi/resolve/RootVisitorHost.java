@@ -1,5 +1,11 @@
 package com.jetbrains.python.psi.resolve;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -9,12 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author yole
@@ -94,7 +94,7 @@ public class RootVisitorHost {
 
       if (rootFile != null && !visitor.visitRoot(rootFile, null, null, true)) return false;
       contentRoots.add(rootFile);
-      for (VirtualFile folder : entry.getSourceFolderFiles()) {
+      for (VirtualFile folder : entry.getFolderFiles(ContentFolderType.PRODUCTION)) {
         if (!visitor.visitRoot(folder, rootModel.getModule(), null, true)) return false;
       }
     }
@@ -106,7 +106,7 @@ public class RootVisitorHost {
     Collections.addAll(allRoots, entry.getFiles(OrderRootType.SOURCES));
     Collections.addAll(allRoots, entry.getFiles(OrderRootType.CLASSES));
     Module module = entry instanceof ModuleOrderEntry ? ((ModuleOrderEntry) entry).getModule() : null;
-    Sdk sdk = entry instanceof JdkOrderEntry ? ((JdkOrderEntry) entry).getJdk() : null;
+    Sdk sdk = entry instanceof SdkOrderEntry ? ((SdkOrderEntry) entry).getSdk() : null;
     for (VirtualFile root : allRoots) {
       if (!visitor.visitRoot(root, module, sdk, false)) {
         return false;

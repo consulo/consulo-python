@@ -1,5 +1,15 @@
 package com.jetbrains.python.documentation;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import javax.swing.JComponent;
+import javax.swing.JTable;
+
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -8,15 +18,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.AddEditRemovePanel;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.PlatformUtils;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * @author yole
@@ -39,7 +40,7 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
   @Nls
   @Override
   public String getDisplayName() {
-    return PlatformUtils.isPyCharm() ? "External Documentation" : "Python External Documentation";
+    return "Python External Documentation";
   }
 
   @Override

@@ -1,16 +1,26 @@
 package com.jetbrains.python.run;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
+import org.consulo.python.module.extension.PyModuleExtension;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.application.options.ModuleListCellRenderer;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.util.PathMappingsComponent;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.SdkListCellRenderer;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesAlphaComparator;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
@@ -20,18 +30,7 @@ import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.PathMappingSettings;
-import com.jetbrains.python.sdk.PreferredSdkComparator;
 import com.jetbrains.python.sdk.PySdkUtil;
-import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author yole
@@ -41,11 +40,8 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
   private TextFieldWithBrowseButton myWorkingDirectoryTextField;
   private EnvironmentVariablesComponent myEnvsComponent;
   private RawCommandLineEditor myInterpreterOptionsTextField;
-  private JComboBox myInterpreterComboBox;
-  private JRadioButton myUseModuleSdkRadioButton;
   private JComboBox myModuleComboBox;
   private JPanel myMainPanel;
-  private JRadioButton myUseSpecifiedSdkRadioButton;
   private JBLabel myPythonInterpreterJBLabel;
   private JBLabel myInterpreterOptionsJBLabel;
   private JBLabel myWorkingDirectoryJBLabel;
@@ -65,7 +61,6 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
     myModuleComboBox.setModel(new CollectionComboBoxModel(validModules, selection));
     myModuleComboBox.setRenderer(new ModuleListCellRenderer());
 
-    myInterpreterComboBox.setRenderer(new SdkListCellRenderer("<Project Default>"));
     myWorkingDirectoryTextField.addBrowseFolderListener("Select Working Directory", "", data.getProject(),
                                                   FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
@@ -74,9 +69,6 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         updateControls();
       }
     };
-    myUseSpecifiedSdkRadioButton.addActionListener(listener);
-    myUseModuleSdkRadioButton.addActionListener(listener);
-    myInterpreterComboBox.addActionListener(listener);
     myModuleComboBox.addActionListener(listener);
 
     setAnchor(myEnvsComponent.getLabel());
@@ -105,8 +97,6 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
   }
 
   private void updateControls() {
-    myModuleComboBox.setEnabled(myUseModuleSdkRadioButton.isSelected());
-    myInterpreterComboBox.setEnabled(myUseSpecifiedSdkRadioButton.isSelected());
     myPathMappingsComponent.setVisible(PySdkUtil.isRemote(getSelectedSdk()));
   }
 
@@ -116,16 +106,6 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
 
   @Override
   public void subscribe() {
-  }
-
-  @Override
-  public void addInterpreterComboBoxActionListener(ActionListener listener) {
-    myInterpreterComboBox.addActionListener(listener);
-  }
-
-  @Override
-  public void removeInterpreterComboBoxActionListener(ActionListener listener) {
-    myInterpreterComboBox.removeActionListener(listener);
   }
 
   public String getInterpreterOptions() {
@@ -146,23 +126,11 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
 
   @Nullable
   public String getSdkHome() {
-    Sdk selectedSdk = (Sdk)myInterpreterComboBox.getSelectedItem();
-    return selectedSdk == null ? null : selectedSdk.getHomePath();
+    return null;
   }
 
   public void setSdkHome(String sdkHome) {
-    List<Sdk> sdkList = new ArrayList<Sdk>();
-    sdkList.add(null);
-    final List<Sdk> allSdks = PythonSdkType.getAllSdks();
-    Collections.sort(allSdks, new PreferredSdkComparator());
-    Sdk selection = null;
-    for (Sdk sdk : allSdks) {
-      String homePath = sdk.getHomePath();
-      if (homePath != null && sdkHome != null && FileUtil.pathsEqual(homePath, sdkHome)) selection = sdk;
-      sdkList.add(sdk);
-    }
 
-    myInterpreterComboBox.setModel(new CollectionComboBoxModel(sdkList, selection));
   }
 
   public Module getModule() {
@@ -174,16 +142,10 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
   }
 
   public boolean isUseModuleSdk() {
-    return myUseModuleSdkRadioButton.isSelected();
+    return true;
   }
 
   public void setUseModuleSdk(boolean useModuleSdk) {
-    if (useModuleSdk) {
-      myUseModuleSdkRadioButton.setSelected(true);
-    }
-    else {
-      myUseSpecifiedSdkRadioButton.setSelected(true);
-    }
     updateControls();
   }
 
@@ -216,13 +178,9 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
   private Sdk getSelectedSdk() {
     if (isUseModuleSdk()) {
       Module module = getModule();
-      return module == null ? null : ModuleRootManager.getInstance(module).getSdk();
-    }
-    Sdk sdk = (Sdk)myInterpreterComboBox.getSelectedItem();
-    if (sdk == null) {
-      return ProjectRootManager.getInstance(myProject).getProjectSdk();
-    }
-    return sdk;
+      return module == null ? null : ModuleUtilCore.getSdk(module, PyModuleExtension.class);
+	}
+    return null;
   }
 
   @Override

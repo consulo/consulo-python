@@ -1,5 +1,11 @@
 package com.jetbrains.python.highlighting;
 
+import java.util.Map;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.application.options.colors.InspectionColorSettingsPage;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -10,13 +16,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.psi.codeStyle.DisplayPriority;
 import com.intellij.psi.codeStyle.DisplayPrioritySortable;
-import com.intellij.util.PlatformUtils;
 import com.jetbrains.python.PythonFileType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.util.Map;
 
 /**
  * @author yole
@@ -119,6 +119,6 @@ public class PythonColorsPage implements ColorSettingsPage, InspectionColorSetti
 
   @Override
   public DisplayPriority getPriority() {
-    return PlatformUtils.isPyCharm() ? DisplayPriority.KEY_LANGUAGE_SETTINGS : DisplayPriority.LANGUAGE_SETTINGS;
+    return DisplayPriority.LANGUAGE_SETTINGS;
   }
 }

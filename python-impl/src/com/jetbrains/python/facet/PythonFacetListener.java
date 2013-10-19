@@ -1,16 +1,14 @@
 package com.jetbrains.python.facet;
 
-import com.intellij.facet.Facet;
-import com.intellij.facet.FacetManager;
-import com.intellij.facet.FacetManagerAdapter;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.intellij.util.messages.MessageBusConnection;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
+@Deprecated
 public class PythonFacetListener implements ModuleComponent {
   private MessageBusConnection myConnection;
   private final Module myModule;
@@ -21,7 +19,7 @@ public class PythonFacetListener implements ModuleComponent {
 
   public void initComponent() {
     myConnection = myModule.getMessageBus().connect();
-    myConnection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+   /* myConnection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       @Override
       public void beforeFacetRemoved(@NotNull Facet facet) {
         if (facet instanceof LibraryContributingFacet) {
@@ -35,7 +33,7 @@ public class PythonFacetListener implements ModuleComponent {
           ((LibraryContributingFacet) facet).updateLibrary();
         }
       }
-    });
+    }); */
   }
 
   public void projectOpened() {

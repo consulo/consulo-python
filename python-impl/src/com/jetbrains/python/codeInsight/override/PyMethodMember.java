@@ -1,18 +1,24 @@
 package com.jetbrains.python.codeInsight.override;
 
+import java.util.List;
+
+import javax.swing.JTree;
+
 import com.intellij.codeInsight.generation.ClassMember;
 import com.intellij.codeInsight.generation.MemberChooserObject;
 import com.intellij.codeInsight.generation.PsiElementMemberChooserObject;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.util.Function;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-
-import javax.swing.*;
-import java.util.List;
 
 /**
  * @author Alexey.Ivanov
@@ -37,7 +43,7 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
   }
 
   public PyMethodMember(final PyElement element) {
-    super(element, trimUnderscores(buildNameFor(element)), element.getIcon(0));
+    super(element, trimUnderscores(buildNameFor(element)), IconDescriptorUpdaters.getIcon(element, 0));
     myFullName = buildNameFor(element);
   }
 
@@ -55,6 +61,6 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
   @Override
   public void renderTreeNode(SimpleColoredComponent component, JTree tree) {
     component.append(myFullName, getTextAttributes(tree));
-    component.setIcon(getPsiElement().getIcon(0));
+    component.setIcon(IconDescriptorUpdaters.getIcon(getPsiElement(), 0));
   }
 }

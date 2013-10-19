@@ -1,7 +1,9 @@
 package com.jetbrains.python;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
@@ -18,7 +20,6 @@ import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyFileElementType;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.impl.PyFileImpl;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -36,7 +37,7 @@ public class PythonParserDefinition implements ParserDefinition {
   }
 
   @NotNull
-  public Lexer createLexer(Project project) {
+  public Lexer createLexer(Project project, LanguageVersion languageVersion) {
     return new PythonIndentingLexer();
   }
 
@@ -45,22 +46,22 @@ public class PythonParserDefinition implements ParserDefinition {
   }
 
   @NotNull
-  public TokenSet getWhitespaceTokens() {
+  public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return myWhitespaceTokens;
   }
 
   @NotNull
-  public TokenSet getCommentTokens() {
+  public TokenSet getCommentTokens(LanguageVersion languageVersion) {
     return myCommentTokens;
   }
 
   @NotNull
-  public TokenSet getStringLiteralElements() {
+  public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return myStringLiteralTokens;
   }
 
   @NotNull
-  public PsiParser createParser(Project project) {
+  public PsiParser createParser(Project project, LanguageVersion languageVersion) {
     return new PyParser();
   }
 

@@ -1,18 +1,18 @@
 package com.jetbrains.python.debugger;
 
+import java.io.File;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 
 public class PyLocalPositionConverter implements PyPositionConverter {
@@ -118,7 +118,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
       VirtualFile jarFile = getLocalFileSystem().findFileByPath(jarPath);
       if (jarFile != null) {
         String innerPath = file.substring(ind + 4);
-        final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(jarFile);
+        final VirtualFile jarRoot = ArchiveVfsUtil.getJarRootForLocalFile(jarFile);
         if (jarRoot != null) {
           return jarRoot.findFileByRelativePath(innerPath);
         }

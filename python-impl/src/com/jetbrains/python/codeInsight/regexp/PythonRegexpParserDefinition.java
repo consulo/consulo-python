@@ -1,15 +1,20 @@
 package com.jetbrains.python.codeInsight.regexp;
 
+import java.util.EnumSet;
+
+import org.intellij.lang.regexp.RegExpCapability;
+import org.intellij.lang.regexp.RegExpFile;
+import org.intellij.lang.regexp.RegExpLexer;
+import org.intellij.lang.regexp.RegExpParser;
+import org.intellij.lang.regexp.RegExpParserDefinition;
+import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
-import org.intellij.lang.regexp.*;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumSet;
 
 /**
  * @author yole
@@ -21,12 +26,12 @@ public class PythonRegexpParserDefinition extends RegExpParserDefinition {
                                                                       RegExpCapability.OMIT_NUMBERS_IN_QUANTIFIERS);
 
   @NotNull
-  public Lexer createLexer(Project project) {
+  public Lexer createLexer(Project project, LanguageVersion languageVersion) {
     return new RegExpLexer(CAPABILITIES);
   }
 
   @Override
-  public PsiParser createParser(Project project) {
+  public PsiParser createParser(Project project, LanguageVersion languageVersion) {
     return new RegExpParser(CAPABILITIES);
   }
 

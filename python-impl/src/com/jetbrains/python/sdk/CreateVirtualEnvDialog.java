@@ -1,7 +1,20 @@
 package com.jetbrains.python.sdk;
 
-import com.intellij.facet.ui.FacetEditorValidator;
-import com.intellij.facet.ui.FacetValidatorsManager;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -10,8 +23,8 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
+import com.intellij.openapi.projectRoots.impl.SdkImpl;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -20,30 +33,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.LocationNameFieldsBinding;
 import com.intellij.remotesdk.RemoteSdkDataHolder;
 import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.PathUtil;
-import com.intellij.util.PlatformUtils;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.packaging.PyPackageManagerImpl;
 import com.jetbrains.python.packaging.PyPackageService;
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor;
 import com.jetbrains.python.ui.IdeaDialog;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class CreateVirtualEnvDialog extends IdeaDialog {
   private JPanel myMainPanel;
@@ -75,7 +72,7 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
     if (sdkHome != null) {
       final String name =
         SdkConfigurationUtil.createUniqueSdkName(PythonSdkType.getInstance(), sdkHome.getPath(), allSdks);
-      final ProjectJdkImpl sdk = new ProjectJdkImpl(name, PythonSdkType.getInstance());
+      final SdkImpl sdk = new SdkImpl(name, PythonSdkType.getInstance());
       sdk.setHomePath(sdkHome.getPath());
       callback.virtualEnvCreated(sdk, associateWithProject, makeActive);
     }
@@ -109,7 +106,7 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
     updateSdkList(allSdks, suggestedBaseSdk);
 
     myMakeAvailableToAllProjectsCheckbox.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
-    if (project == null || project.isDefault() || !PlatformUtils.isPyCharm()) {
+    if (project == null || project.isDefault()) {
       myMakeAvailableToAllProjectsCheckbox.setSelected(true);
       myMakeAvailableToAllProjectsCheckbox.setVisible(false);
       mySetAsProjectInterpreterCheckbox.setSelected(false);
@@ -141,14 +138,7 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
     addUpdater(myName);
     new LocationNameFieldsBinding(project, myDestination, myName, myInitialPath, "Select Location for Virtual Environment");
 
-    registerValidators(new FacetValidatorsManager() {
-      public void registerValidator(FacetEditorValidator validator, JComponent... componentsToWatch) {
-      }
 
-      public void validate() {
-        checkValid();
-      }
-    });
     myMainPanel.setPreferredSize(new Dimension(300, 50));
     checkValid();
   }
@@ -183,42 +173,6 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
 
     setOKActionEnabled(true);
     setErrorText(null);
-  }
-
-  private void registerValidators(final FacetValidatorsManager validatorsManager) {
-    myDestination.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-      @Override
-      protected void textChanged(DocumentEvent e) {
-        validatorsManager.validate();
-      }
-    });
-
-    mySdkCombo.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent event) {
-        validatorsManager.validate();
-      }
-    });
-
-    myDestination.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent event) {
-        validatorsManager.validate();
-      }
-    });
-    myName.addCaretListener(new CaretListener() {
-      @Override
-      public void caretUpdate(CaretEvent event) {
-        validatorsManager.validate();
-      }
-    });
-
-    myDestination.getTextField().addCaretListener(new CaretListener() {
-      @Override
-      public void caretUpdate(CaretEvent event) {
-        validatorsManager.validate();
-      }
-    });
   }
 
   private void updateSdkList(final List<Sdk> allSdks, @Nullable Sdk initialSelection) {

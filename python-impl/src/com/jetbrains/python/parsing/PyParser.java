@@ -1,12 +1,13 @@
 package com.jetbrains.python.parsing;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.psi.LanguageLevel;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -26,7 +27,7 @@ public class PyParser implements PsiParser {
   }
 
   @NotNull
-  public ASTNode parse(IElementType root, PsiBuilder builder) {
+  public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion) {
     long start = System.currentTimeMillis();
     final PsiBuilder.Marker rootMarker = builder.mark();
     ParsingContext context = createParsingContext(builder, myLanguageLevel, myFutureFlag);

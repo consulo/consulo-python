@@ -1,5 +1,11 @@
 package com.jetbrains.python.run;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.consulo.python.buildout.module.extension.BuildoutModuleExtension;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunContentExecutor;
@@ -8,6 +14,7 @@ import com.intellij.execution.configurations.ParamsGroup;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
@@ -16,15 +23,9 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.NotNullFunction;
-import com.jetbrains.python.buildout.BuildoutFacet;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Base class for tasks which are run from PyCharm with results displayed in a toolwindow (manage.py, setup.py, Sphinx etc).
@@ -138,7 +139,7 @@ public class PythonTask {
     PythonCommandLineState.initPythonPath(cmd, true, pythonPath, homePath);
 
     PythonSdkType.patchCommandLineForVirtualenv(cmd, homePath, true);
-    BuildoutFacet facet = BuildoutFacet.getInstance(myModule);
+    BuildoutModuleExtension facet = ModuleUtilCore.getExtension(myModule, BuildoutModuleExtension.class);
     if (facet != null) {
       facet.patchCommandLineForBuildout(cmd);
     }

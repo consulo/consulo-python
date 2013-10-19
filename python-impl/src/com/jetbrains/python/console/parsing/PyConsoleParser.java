@@ -1,6 +1,8 @@
 package com.jetbrains.python.console.parsing;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.PyTokenTypes;
@@ -8,7 +10,6 @@ import com.jetbrains.python.parsing.ParsingContext;
 import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.parsing.StatementParsing;
 import com.jetbrains.python.psi.LanguageLevel;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author traff
@@ -30,7 +31,7 @@ public class PyConsoleParser extends PyParser{
 
   @NotNull
   @Override
-  public ASTNode parse(IElementType root, PsiBuilder builder) {
+  public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion) {
     final PsiBuilder.Marker rootMarker = builder.mark();
 
     myIPythonStartSymbol = myPythonConsoleData.isIPythonEnabled() && startsWithIPythonSpecialSymbol(builder);

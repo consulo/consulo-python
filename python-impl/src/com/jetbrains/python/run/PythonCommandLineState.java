@@ -1,5 +1,18 @@
 package com.jetbrains.python.run;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.consulo.compiler.CompilerPathsManager;
+import org.consulo.module.extension.ModuleExtension;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.execution.DefaultExecutionResult;
@@ -19,18 +32,21 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.facet.Facet;
-import com.intellij.facet.FacetManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ContentFolderType;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.util.containers.HashMap;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.console.PyDebugConsoleBuilder;
@@ -44,393 +60,460 @@ import com.jetbrains.python.sdk.PythonSdkAdditionalData;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.JythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.*;
 
 /**
  * @author Leonid Shalupov
  */
-public abstract class PythonCommandLineState extends CommandLineState {
+public abstract class PythonCommandLineState extends CommandLineState
+{
 
-  // command line has a number of fixed groups of parameters; patchers should only operate on them and not the raw list.
+	// command line has a number of fixed groups of parameters; patchers should only operate on them and not the raw list.
 
-  public static final String GROUP_EXE_OPTIONS = "Exe Options";
-  public static final String GROUP_DEBUGGER = "Debugger";
-  public static final String GROUP_SCRIPT = "Script";
-  private final AbstractPythonRunConfiguration myConfig;
-  private final List<Filter> myFilters;
-  private Boolean myMultiprocessDebug = null;
+	public static final String GROUP_EXE_OPTIONS = "Exe Options";
+	public static final String GROUP_DEBUGGER = "Debugger";
+	public static final String GROUP_SCRIPT = "Script";
+	private final AbstractPythonRunConfiguration myConfig;
+	private final List<Filter> myFilters;
+	private Boolean myMultiprocessDebug = null;
 
-  public boolean isDebug() {
-    return PyDebugRunner.PY_DEBUG_RUNNER.equals(getEnvironment().getRunnerId());
-  }
+	public PythonCommandLineState(AbstractPythonRunConfiguration runConfiguration, ExecutionEnvironment env, List<Filter> filters)
+	{
+		super(env);
+		myConfig = runConfiguration;
+		myFilters = Lists.newArrayList(filters);
+		addDefaultFilters();
+	}
 
-  public static ServerSocket createServerSocket() throws ExecutionException {
-    final ServerSocket serverSocket;
-    try {
-      //noinspection SocketOpenedButNotSafelyClosed
-      serverSocket = new ServerSocket(0);
-    }
-    catch (IOException e) {
-      throw new ExecutionException("Failed to find free socket port", e);
-    }
-    return serverSocket;
-  }
+	public static ServerSocket createServerSocket() throws ExecutionException
+	{
+		final ServerSocket serverSocket;
+		try
+		{
+			//noinspection SocketOpenedButNotSafelyClosed
+			serverSocket = new ServerSocket(0);
+		}
+		catch(IOException e)
+		{
+			throw new ExecutionException("Failed to find free socket port", e);
+		}
+		return serverSocket;
+	}
 
-  public PythonCommandLineState(AbstractPythonRunConfiguration runConfiguration, ExecutionEnvironment env, List<Filter> filters) {
-    super(env);
-    myConfig = runConfiguration;
-    myFilters = Lists.newArrayList(filters);
-    addDefaultFilters();
-  }
+	/**
+	 * Creates a number of parameter groups in the command line:
+	 * GROUP_EXE_OPTIONS, GROUP_DEBUGGER, GROUP_SCRIPT.
+	 * These are necessary for command line patchers to work properly.
+	 *
+	 * @param commandLine
+	 */
+	public static void createStandardGroupsIn(GeneralCommandLine commandLine)
+	{
+		ParametersList params = commandLine.getParametersList();
+		params.addParamsGroup(GROUP_EXE_OPTIONS);
+		params.addParamsGroup(GROUP_DEBUGGER);
+		params.addParamsGroup(GROUP_SCRIPT);
+	}
 
-  protected void addDefaultFilters() {
-    myFilters.add(new UrlFilter());
-  }
+	protected static void addCommonEnvironmentVariables(Map<String, String> env)
+	{
+		PythonEnvUtil.setPythonUnbuffered(env);
+		env.put("PYCHARM_HOSTED", "1");
+	}
 
-  @Nullable
-  public PythonSdkFlavor getSdkFlavor() {
-    return PythonSdkFlavor.getFlavor(myConfig.getInterpreterPath());
-  }
+	public static void initPythonPath(GeneralCommandLine commandLine, boolean passParentEnvs, List<String> pathList, final String interpreterPath)
+	{
+		final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(interpreterPath);
+		if(flavor != null)
+		{
+			flavor.initPythonPath(commandLine, pathList);
+		}
+		else
+		{
+			PythonSdkFlavor.initPythonPath(commandLine.getEnvironment(), passParentEnvs, pathList);
+		}
+	}
 
-  @NotNull
-  @Override
-  public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-    return execute(executor, (CommandLinePatcher[])null);
-  }
+	public static List<String> getAddedPaths(Sdk pythonSdk)
+	{
+		List<String> pathList = new ArrayList<String>();
+		final SdkAdditionalData sdkAdditionalData = pythonSdk.getSdkAdditionalData();
+		if(sdkAdditionalData instanceof PythonSdkAdditionalData)
+		{
+			final Set<VirtualFile> addedPaths = ((PythonSdkAdditionalData) sdkAdditionalData).getAddedPathFiles();
+			for(VirtualFile file : addedPaths)
+			{
+				addToPythonPath(file, pathList);
+			}
+		}
+		return pathList;
+	}
 
-  public ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException {
-    final ProcessHandler processHandler = startProcess(patchers);
-    final ConsoleView console = createAndAttachConsole(myConfig.getProject(), processHandler, executor);
+	private static void addToPythonPath(VirtualFile file, Collection<String> pathList)
+	{
+		if(file.getFileSystem() instanceof JarFileSystem)
+		{
+			final VirtualFile realFile = ArchiveVfsUtil.getVirtualFileForJar(file);
+			if(realFile != null)
+			{
+				addIfNeeded(realFile, pathList);
+			}
+		}
+		else
+		{
+			addIfNeeded(file, pathList);
+		}
+	}
 
-    List<AnAction> actions = Lists.newArrayList(createActions(console, processHandler));
+	private static void addIfNeeded(@NotNull final VirtualFile file, @NotNull final Collection<String> pathList)
+	{
+		addIfNeeded(pathList, file.getPath());
+	}
 
-    return new DefaultExecutionResult(console, processHandler, actions.toArray(new AnAction[actions.size()]));
-  }
+	protected static void addIfNeeded(Collection<String> pathList, String path)
+	{
+		final Set<String> vals = Sets.newHashSet(pathList);
+		final String filePath = FileUtil.toSystemDependentName(path);
+		if(!vals.contains(filePath))
+		{
+			pathList.add(filePath);
+		}
+	}
 
-  @NotNull
-  protected ConsoleView createAndAttachConsole(Project project, ProcessHandler processHandler, Executor executor)
-    throws ExecutionException {
-    final ConsoleView consoleView = createConsoleBuilder(project).filters(myFilters).getConsole();
-    consoleView.attachToProcess(processHandler);
-    return consoleView;
-  }
+	@NotNull
+	public static Collection<String> collectPythonPath(@Nullable Module module)
+	{
+		return collectPythonPath(module, true, true);
+	}
 
-  private TextConsoleBuilder createConsoleBuilder(Project project) {
-    if (isDebug()) {
-      return new PyDebugConsoleBuilder(project, PythonSdkType.findSdkByPath(myConfig.getInterpreterPath()));
-    }
-    else {
-      return TextConsoleBuilderFactory.getInstance().createBuilder(project);
-    }
-  }
+	@NotNull
+	public static Collection<String> collectPythonPath(@Nullable Module module, boolean addContentRoots, boolean addSourceRoots)
+	{
+		Collection<String> pythonPathList = Sets.newLinkedHashSet();
+		if(module != null)
+		{
+			Set<Module> dependencies = new HashSet<Module>();
+			ModuleUtil.getDependencies(module, dependencies);
 
-  @Override
-  @NotNull
-  protected ProcessHandler startProcess() throws ExecutionException {
-    return startProcess(null);
-  }
+			if(addContentRoots)
+			{
+				addRoots(pythonPathList, ModuleRootManager.getInstance(module).getContentRoots());
+				for(Module dependency : dependencies)
+				{
+					addRoots(pythonPathList, ModuleRootManager.getInstance(dependency).getContentRoots());
+				}
+			}
+			if(addSourceRoots)
+			{
+				addRoots(pythonPathList, ModuleRootManager.getInstance(module).getSourceRoots());
+				for(Module dependency : dependencies)
+				{
+					addRoots(pythonPathList, ModuleRootManager.getInstance(dependency).getSourceRoots());
+				}
+			}
 
-  /**
-   * Patches the command line parameters applying patchers from first to last, and then runs it.
-   *
-   * @param patchers any number of patchers; any patcher may be null, and the whole argument may be null.
-   * @return handler of the started process
-   * @throws ExecutionException
-   */
-  protected ProcessHandler startProcess(CommandLinePatcher... patchers) throws ExecutionException {
+			addLibrariesFromModule(module, pythonPathList);
+			addRootsFromModule(module, pythonPathList);
+			for(Module dependency : dependencies)
+			{
+				addLibrariesFromModule(dependency, pythonPathList);
+				addRootsFromModule(dependency, pythonPathList);
+			}
+		}
+		return pythonPathList;
+	}
+
+	private static void addLibrariesFromModule(Module module, Collection<String> list)
+	{
+		final OrderEntry[] entries = ModuleRootManager.getInstance(module).getOrderEntries();
+		for(OrderEntry entry : entries)
+		{
+			if(entry instanceof LibraryOrderEntry)
+			{
+				final String name = ((LibraryOrderEntry) entry).getLibraryName();
+				if(name != null && name.endsWith(LibraryContributingFacet.PYTHON_FACET_LIBRARY_NAME_SUFFIX))
+				{
+					// skip libraries from Python facet
+					continue;
+				}
+				for(VirtualFile root : ((LibraryOrderEntry) entry).getRootFiles(OrderRootType.CLASSES))
+				{
+					addToPythonPath(root, list);
+				}
+			}
+		}
+	}
+
+	private static void addRootsFromModule(Module module, Collection<String> pythonPathList)
+	{
+
+		// for Jython
+		final CompilerPathsManager extension = CompilerPathsManager.getInstance(module.getProject());
+		final VirtualFile path = extension.getCompilerOutput(module, ContentFolderType.PRODUCTION);
+		if(path != null)
+		{
+			pythonPathList.add(path.getPath());
+		}
+		final VirtualFile pathForTests = extension.getCompilerOutput(module, ContentFolderType.TEST);
+		if(pathForTests != null)
+		{
+			pythonPathList.add(pathForTests.getPath());
+		}
+
+		ModuleExtension[] extensions = ModuleRootManager.getInstance(module).getExtensions();
+		for(ModuleExtension moduleExtension : extensions)
+		{
+			if(moduleExtension instanceof PythonPathContributingFacet)
+			{
+				List<String> more_paths = ((PythonPathContributingFacet) moduleExtension).getAdditionalPythonPath();
+				if(more_paths != null)
+				{
+					pythonPathList.addAll(more_paths);
+				}
+			}
+		}
+	}
+
+	private static void addRoots(Collection<String> pythonPathList, VirtualFile[] roots)
+	{
+		for(VirtualFile root : roots)
+		{
+			addToPythonPath(root, pythonPathList);
+		}
+	}
+
+	public boolean isDebug()
+	{
+		return PyDebugRunner.PY_DEBUG_RUNNER.equals(getEnvironment().getRunnerId());
+	}
+
+	protected void addDefaultFilters()
+	{
+		myFilters.add(new UrlFilter());
+	}
+
+	@Nullable
+	public PythonSdkFlavor getSdkFlavor()
+	{
+		return PythonSdkFlavor.getFlavor(myConfig.getInterpreterPath());
+	}
+
+	@NotNull
+	@Override
+	public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException
+	{
+		return execute(executor, (CommandLinePatcher[]) null);
+	}
+
+	public ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException
+	{
+		final ProcessHandler processHandler = startProcess(patchers);
+		final ConsoleView console = createAndAttachConsole(myConfig.getProject(), processHandler, executor);
+
+		List<AnAction> actions = Lists.newArrayList(createActions(console, processHandler));
+
+		return new DefaultExecutionResult(console, processHandler, actions.toArray(new AnAction[actions.size()]));
+	}
+
+	@NotNull
+	protected ConsoleView createAndAttachConsole(Project project, ProcessHandler processHandler, Executor executor) throws ExecutionException
+	{
+		final ConsoleView consoleView = createConsoleBuilder(project).filters(myFilters).getConsole();
+		consoleView.attachToProcess(processHandler);
+		return consoleView;
+	}
+
+	private TextConsoleBuilder createConsoleBuilder(Project project)
+	{
+		if(isDebug())
+		{
+			return new PyDebugConsoleBuilder(project, PythonSdkType.findSdkByPath(myConfig.getInterpreterPath()));
+		}
+		else
+		{
+			return TextConsoleBuilderFactory.getInstance().createBuilder(project);
+		}
+	}
+
+	@Override
+	@NotNull
+	protected ProcessHandler startProcess() throws ExecutionException
+	{
+		return startProcess(null);
+	}
+
+	/**
+	 * Patches the command line parameters applying patchers from first to last, and then runs it.
+	 *
+	 * @param patchers any number of patchers; any patcher may be null, and the whole argument may be null.
+	 * @return handler of the started process
+	 * @throws ExecutionException
+	 */
+	protected ProcessHandler startProcess(CommandLinePatcher... patchers) throws ExecutionException
+	{
 
 
-    GeneralCommandLine commandLine = generateCommandLine(patchers);
+		GeneralCommandLine commandLine = generateCommandLine(patchers);
 
-    // Extend command line
-    RunnerSettings runnerSettings = getRunnerSettings();
-    String runnerId = getEnvironment().getRunnerId();
-    if (runnerId != null) {
-      PythonRunConfigurationExtensionsManager.getInstance().patchCommandLine(myConfig, runnerSettings, commandLine, runnerId);
-    }
+		// Extend command line
+		RunnerSettings runnerSettings = getRunnerSettings();
+		String runnerId = getEnvironment().getRunnerId();
+		if(runnerId != null)
+		{
+			PythonRunConfigurationExtensionsManager.getInstance().patchCommandLine(myConfig, runnerSettings, commandLine, runnerId);
+		}
 
-    Sdk sdk = PythonSdkType.findSdkByPath(myConfig.getInterpreterPath());
-
-
-    final ProcessHandler processHandler;
-    if (PySdkUtil.isRemote(sdk)) {
-      assert sdk != null;
-      processHandler =
-        createRemoteProcessStarter().startRemoteProcess(sdk, commandLine, myConfig.getProject(), myConfig.getMappingSettings());
-    }
-    else {
-      processHandler = doCreateProcess(commandLine);
-      ProcessTerminatedListener.attach(processHandler);
-    }
-
-    // attach extensions
-    PythonRunConfigurationExtensionsManager.getInstance().attachExtensionsToProcess(myConfig, processHandler, getRunnerSettings());
-
-    return processHandler;
-  }
-
-  protected PyRemoteProcessStarter createRemoteProcessStarter() {
-    return new PyRemoteProcessStarter();
-  }
+		Sdk sdk = PythonSdkType.findSdkByPath(myConfig.getInterpreterPath());
 
 
-  public GeneralCommandLine generateCommandLine(CommandLinePatcher[] patchers) throws ExecutionException {
-    GeneralCommandLine commandLine = generateCommandLine();
-    if (patchers != null) {
-      for (CommandLinePatcher patcher : patchers) {
-        if (patcher != null) patcher.patchCommandLine(commandLine);
-      }
-    }
-    return commandLine;
-  }
+		final ProcessHandler processHandler;
+		if(PySdkUtil.isRemote(sdk))
+		{
+			assert sdk != null;
+			processHandler = createRemoteProcessStarter().startRemoteProcess(sdk, commandLine, myConfig.getProject(), myConfig.getMappingSettings());
+		}
+		else
+		{
+			processHandler = doCreateProcess(commandLine);
+			ProcessTerminatedListener.attach(processHandler);
+		}
 
-  protected ProcessHandler doCreateProcess(GeneralCommandLine commandLine) throws ExecutionException {
-    return PythonProcessRunner.createProcess(commandLine);
-  }
+		// attach extensions
+		PythonRunConfigurationExtensionsManager.getInstance().attachExtensionsToProcess(myConfig, processHandler, getRunnerSettings());
 
-  public GeneralCommandLine generateCommandLine() throws ExecutionException {
-    GeneralCommandLine commandLine = new GeneralCommandLine();
+		return processHandler;
+	}
 
-    setRunnerPath(commandLine);
+	protected PyRemoteProcessStarter createRemoteProcessStarter()
+	{
+		return new PyRemoteProcessStarter();
+	}
 
-    // define groups
-    createStandardGroupsIn(commandLine);
+	public GeneralCommandLine generateCommandLine(CommandLinePatcher[] patchers) throws ExecutionException
+	{
+		GeneralCommandLine commandLine = generateCommandLine();
+		if(patchers != null)
+		{
+			for(CommandLinePatcher patcher : patchers)
+			{
+				if(patcher != null)
+				{
+					patcher.patchCommandLine(commandLine);
+				}
+			}
+		}
+		return commandLine;
+	}
 
-    buildCommandLineParameters(commandLine);
+	protected ProcessHandler doCreateProcess(GeneralCommandLine commandLine) throws ExecutionException
+	{
+		return PythonProcessRunner.createProcess(commandLine);
+	}
 
-    initEnvironment(commandLine);
-    return commandLine;
-  }
+	public GeneralCommandLine generateCommandLine() throws ExecutionException
+	{
+		GeneralCommandLine commandLine = new GeneralCommandLine();
 
-  /**
-   * Creates a number of parameter groups in the command line:
-   * GROUP_EXE_OPTIONS, GROUP_DEBUGGER, GROUP_SCRIPT.
-   * These are necessary for command line patchers to work properly.
-   *
-   * @param commandLine
-   */
-  public static void createStandardGroupsIn(GeneralCommandLine commandLine) {
-    ParametersList params = commandLine.getParametersList();
-    params.addParamsGroup(GROUP_EXE_OPTIONS);
-    params.addParamsGroup(GROUP_DEBUGGER);
-    params.addParamsGroup(GROUP_SCRIPT);
-  }
+		setRunnerPath(commandLine);
 
-  protected void initEnvironment(GeneralCommandLine commandLine) {
-    Map<String, String> env = myConfig.getEnvs();
-    if (env == null) {
-      env = new HashMap<String, String>();
-    }
-    else {
-      env = new HashMap<String, String>(env);
-    }
+		// define groups
+		createStandardGroupsIn(commandLine);
 
-    addPredefinedEnvironmentVariables(env, myConfig.isPassParentEnvs());
-    addCommonEnvironmentVariables(env);
+		buildCommandLineParameters(commandLine);
 
-    commandLine.getEnvironment().clear();
-    commandLine.getEnvironment().putAll(env);
-    commandLine.setPassParentEnvironment(myConfig.isPassParentEnvs());
+		initEnvironment(commandLine);
+		return commandLine;
+	}
 
-    buildPythonPath(commandLine, myConfig.isPassParentEnvs());
-  }
+	protected void initEnvironment(GeneralCommandLine commandLine)
+	{
+		Map<String, String> env = myConfig.getEnvs();
+		if(env == null)
+		{
+			env = new HashMap<String, String>();
+		}
+		else
+		{
+			env = new HashMap<String, String>(env);
+		}
 
-  protected static void addCommonEnvironmentVariables(Map<String, String> env) {
-    PythonEnvUtil.setPythonUnbuffered(env);
-    env.put("PYCHARM_HOSTED", "1");
-  }
+		addPredefinedEnvironmentVariables(env, myConfig.isPassParentEnvs());
+		addCommonEnvironmentVariables(env);
 
-  public void addPredefinedEnvironmentVariables(Map<String, String> envs, boolean passParentEnvs) {
-    final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(myConfig.getInterpreterPath());
-    if (flavor != null) {
-      flavor.addPredefinedEnvironmentVariables(envs);
-    }
-  }
+		commandLine.getEnvironment().clear();
+		commandLine.getEnvironment().putAll(env);
+		commandLine.setPassParentEnvironment(myConfig.isPassParentEnvs());
 
-  private void buildPythonPath(GeneralCommandLine commandLine, boolean passParentEnvs) {
-    Sdk pythonSdk = PythonSdkType.findSdkByPath(myConfig.getInterpreterPath());
-    if (pythonSdk != null) {
-      List<String> pathList = Lists.newArrayList(getAddedPaths(pythonSdk));
-      pathList.addAll(collectPythonPath());
-      initPythonPath(commandLine, passParentEnvs, pathList, myConfig.getInterpreterPath());
-    }
-  }
+		buildPythonPath(commandLine, myConfig.isPassParentEnvs());
+	}
 
-  public static void initPythonPath(GeneralCommandLine commandLine,
-                                    boolean passParentEnvs,
-                                    List<String> pathList,
-                                    final String interpreterPath) {
-    final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(interpreterPath);
-    if (flavor != null) {
-      flavor.initPythonPath(commandLine, pathList);
-    }
-    else {
-      PythonSdkFlavor.initPythonPath(commandLine.getEnvironment(), passParentEnvs, pathList);
-    }
-  }
+	public void addPredefinedEnvironmentVariables(Map<String, String> envs, boolean passParentEnvs)
+	{
+		final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(myConfig.getInterpreterPath());
+		if(flavor != null)
+		{
+			flavor.addPredefinedEnvironmentVariables(envs);
+		}
+	}
 
-  public static List<String> getAddedPaths(Sdk pythonSdk) {
-    List<String> pathList = new ArrayList<String>();
-    final SdkAdditionalData sdkAdditionalData = pythonSdk.getSdkAdditionalData();
-    if (sdkAdditionalData instanceof PythonSdkAdditionalData) {
-      final Set<VirtualFile> addedPaths = ((PythonSdkAdditionalData)sdkAdditionalData).getAddedPathFiles();
-      for (VirtualFile file : addedPaths) {
-        addToPythonPath(file, pathList);
-      }
-    }
-    return pathList;
-  }
+	private void buildPythonPath(GeneralCommandLine commandLine, boolean passParentEnvs)
+	{
+		Sdk pythonSdk = PythonSdkType.findSdkByPath(myConfig.getInterpreterPath());
+		if(pythonSdk != null)
+		{
+			List<String> pathList = Lists.newArrayList(getAddedPaths(pythonSdk));
+			pathList.addAll(collectPythonPath());
+			initPythonPath(commandLine, passParentEnvs, pathList, myConfig.getInterpreterPath());
+		}
+	}
 
-  private static void addToPythonPath(VirtualFile file, Collection<String> pathList) {
-    if (file.getFileSystem() instanceof JarFileSystem) {
-      final VirtualFile realFile = JarFileSystem.getInstance().getVirtualFileForJar(file);
-      if (realFile != null) {
-        addIfNeeded(realFile, pathList);
-      }
-    }
-    else {
-      addIfNeeded(file, pathList);
-    }
-  }
+	protected Collection<String> collectPythonPath()
+	{
+		final Module module = myConfig.getModule();
+		Set<String> pythonPath = Sets.newHashSet(collectPythonPath(module, myConfig.addContentRoots(), myConfig.addSourceRoots()));
 
-  private static void addIfNeeded(@NotNull final VirtualFile file, @NotNull final Collection<String> pathList) {
-    addIfNeeded(pathList, file.getPath());
-  }
+		if(isDebug() && getSdkFlavor() instanceof JythonSdkFlavor)
+		{ //that fixes Jython problem changing sys.argv on execfile, see PY-8164
+			pythonPath.add(PythonHelpersLocator.getHelperPath("pycharm"));
+			pythonPath.add(PythonHelpersLocator.getHelperPath("pydev"));
+		}
 
-  protected static void addIfNeeded(Collection<String> pathList, String path) {
-    final Set<String> vals = Sets.newHashSet(pathList);
-    final String filePath = FileUtil.toSystemDependentName(path);
-    if (!vals.contains(filePath)) {
-      pathList.add(filePath);
-    }
-  }
+		return pythonPath;
+	}
 
-  protected Collection<String> collectPythonPath() {
-    final Module module = myConfig.getModule();
-    Set<String> pythonPath = Sets.newHashSet(collectPythonPath(module, myConfig.addContentRoots(), myConfig.addSourceRoots()));
+	protected void setRunnerPath(GeneralCommandLine commandLine) throws ExecutionException
+	{
+		String interpreterPath = getInterpreterPath();
+		commandLine.setExePath(FileUtil.toSystemDependentName(interpreterPath));
+	}
 
-    if (isDebug() && getSdkFlavor() instanceof JythonSdkFlavor) { //that fixes Jython problem changing sys.argv on execfile, see PY-8164
-      pythonPath.add(PythonHelpersLocator.getHelperPath("pycharm"));
-      pythonPath.add(PythonHelpersLocator.getHelperPath("pydev"));
-    }
+	protected String getInterpreterPath() throws ExecutionException
+	{
+		String interpreterPath = myConfig.getInterpreterPath();
+		if(interpreterPath == null)
+		{
+			throw new ExecutionException("Cannot find Python interpreter for this run configuration");
+		}
+		return interpreterPath;
+	}
 
-    return pythonPath;
-  }
+	protected void buildCommandLineParameters(GeneralCommandLine commandLine)
+	{
+	}
 
-  @NotNull
-  public static Collection<String> collectPythonPath(@Nullable Module module) {
-    return collectPythonPath(module, true, true);
-  }
+	public boolean isMultiprocessDebug()
+	{
+		if(myMultiprocessDebug != null)
+		{
+			return myMultiprocessDebug;
+		}
+		else
+		{
+			return PyDebuggerOptionsProvider.getInstance(myConfig.getProject()).isAttachToSubprocess();
+		}
+	}
 
-  @NotNull
-  public static Collection<String> collectPythonPath(@Nullable Module module, boolean addContentRoots,
-                                                     boolean addSourceRoots) {
-    Collection<String> pythonPathList = Sets.newLinkedHashSet();
-    if (module != null) {
-      Set<Module> dependencies = new HashSet<Module>();
-      ModuleUtil.getDependencies(module, dependencies);
-
-      if (addContentRoots) {
-        addRoots(pythonPathList, ModuleRootManager.getInstance(module).getContentRoots());
-        for (Module dependency : dependencies) {
-          addRoots(pythonPathList, ModuleRootManager.getInstance(dependency).getContentRoots());
-        }
-      }
-      if (addSourceRoots) {
-        addRoots(pythonPathList, ModuleRootManager.getInstance(module).getSourceRoots());
-        for (Module dependency : dependencies) {
-          addRoots(pythonPathList, ModuleRootManager.getInstance(dependency).getSourceRoots());
-        }
-      }
-
-      addLibrariesFromModule(module, pythonPathList);
-      addRootsFromModule(module, pythonPathList);
-      for (Module dependency : dependencies) {
-        addLibrariesFromModule(dependency, pythonPathList);
-        addRootsFromModule(dependency, pythonPathList);
-      }
-    }
-    return pythonPathList;
-  }
-
-  private static void addLibrariesFromModule(Module module, Collection<String> list) {
-    final OrderEntry[] entries = ModuleRootManager.getInstance(module).getOrderEntries();
-    for (OrderEntry entry : entries) {
-      if (entry instanceof LibraryOrderEntry) {
-        final String name = ((LibraryOrderEntry)entry).getLibraryName();
-        if (name != null && name.endsWith(LibraryContributingFacet.PYTHON_FACET_LIBRARY_NAME_SUFFIX)) {
-          // skip libraries from Python facet
-          continue;
-        }
-        for (VirtualFile root : ((LibraryOrderEntry)entry).getRootFiles(OrderRootType.CLASSES)) {
-          addToPythonPath(root, list);
-        }
-      }
-    }
-  }
-
-  private static void addRootsFromModule(Module module, Collection<String> pythonPathList) {
-
-    // for Jython
-    final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(module);
-    if (extension != null) {
-      final VirtualFile path = extension.getCompilerOutputPath();
-      if (path != null) {
-        pythonPathList.add(path.getPath());
-      }
-      final VirtualFile pathForTests = extension.getCompilerOutputPathForTests();
-      if (pathForTests != null) {
-        pythonPathList.add(pathForTests.getPath());
-      }
-    }
-
-    //additional paths from facets (f.e. buildout)
-    final Facet[] facets = FacetManager.getInstance(module).getAllFacets();
-    for (Facet facet : facets) {
-      if (facet instanceof PythonPathContributingFacet) {
-        List<String> more_paths = ((PythonPathContributingFacet)facet).getAdditionalPythonPath();
-        if (more_paths != null) pythonPathList.addAll(more_paths);
-      }
-    }
-  }
-
-  private static void addRoots(Collection<String> pythonPathList, VirtualFile[] roots) {
-    for (VirtualFile root : roots) {
-      addToPythonPath(root, pythonPathList);
-    }
-  }
-
-  protected void setRunnerPath(GeneralCommandLine commandLine) throws ExecutionException {
-    String interpreterPath = getInterpreterPath();
-    commandLine.setExePath(FileUtil.toSystemDependentName(interpreterPath));
-  }
-
-  protected String getInterpreterPath() throws ExecutionException {
-    String interpreterPath = myConfig.getInterpreterPath();
-    if (interpreterPath == null) {
-      throw new ExecutionException("Cannot find Python interpreter for this run configuration");
-    }
-    return interpreterPath;
-  }
-
-  protected void buildCommandLineParameters(GeneralCommandLine commandLine) {
-  }
-
-  public boolean isMultiprocessDebug() {
-    if (myMultiprocessDebug != null) {
-      return myMultiprocessDebug;
-    }
-    else {
-      return PyDebuggerOptionsProvider.getInstance(myConfig.getProject()).isAttachToSubprocess();
-    }
-  }
-
-  public void setMultiprocessDebug(boolean multiprocessDebug) {
-    myMultiprocessDebug = multiprocessDebug;
-  }
+	public void setMultiprocessDebug(boolean multiprocessDebug)
+	{
+		myMultiprocessDebug = multiprocessDebug;
+	}
 }

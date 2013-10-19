@@ -1,5 +1,21 @@
 package com.jetbrains.python.structureView;
 
+import static com.intellij.openapi.util.text.StringUtil.join;
+import static com.intellij.openapi.util.text.StringUtil.notNullize;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
@@ -10,15 +26,16 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Function;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyParameterList;
+import com.jetbrains.python.psi.PyTargetExpression;
 import icons.PythonIcons;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.*;
-
-import static com.intellij.openapi.util.text.StringUtil.join;
-import static com.intellij.openapi.util.text.StringUtil.notNullize;
 
 /**
  * Handles nodes in Structure View.
@@ -265,7 +282,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
       @Nullable
       @Override
       public Icon getIcon(boolean open) {
-        Icon normal_icon = myElement.getIcon(0);
+        Icon normal_icon = IconDescriptorUpdaters.getIcon(myElement, 0);
         if (myIcon != null) normal_icon = myIcon; // override normal
         if (myVisibility == Visibility.NORMAL) {
           return normal_icon;

@@ -1,10 +1,9 @@
 package com.jetbrains.python.run;
 
-import com.intellij.ui.PanelWithAnchor;
-import org.jetbrains.annotations.NonNls;
+import javax.swing.JComponent;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import org.jetbrains.annotations.NonNls;
+import com.intellij.ui.PanelWithAnchor;
 
 /**
  * @author yole
@@ -15,8 +14,4 @@ public interface AbstractPyCommonOptionsForm extends AbstractPythonRunConfigurat
   JComponent getMainPanel();
 
   void subscribe();
-
-  void addInterpreterComboBoxActionListener(ActionListener listener);
-
-  void removeInterpreterComboBoxActionListener(ActionListener listener);
 }

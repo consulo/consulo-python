@@ -1,6 +1,9 @@
 package com.jetbrains.python.buildout.config;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
@@ -13,8 +16,6 @@ import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.buildout.config.lexer.BuildoutCfgFlexLexer;
 import com.jetbrains.python.buildout.config.psi.BuildoutCfgASTFactory;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author traff
@@ -23,12 +24,12 @@ public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCf
   private final BuildoutCfgASTFactory astFactory = new BuildoutCfgASTFactory();
 
   @NotNull
-  public Lexer createLexer(final Project project) {
+  public Lexer createLexer(final Project project, LanguageVersion languageVersion) {
     return new BuildoutCfgFlexLexer();
   }
 
   @Nullable
-  public PsiParser createParser(final Project project) {
+  public PsiParser createParser(final Project project, LanguageVersion languageVersion) {
     return new BuildoutCfgParser();
   }
 
@@ -37,17 +38,17 @@ public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCf
   }
 
   @NotNull
-  public TokenSet getWhitespaceTokens() {
+  public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return TokenSet.create(WHITESPACE);
   }
 
   @NotNull
-  public TokenSet getCommentTokens() {
+  public TokenSet getCommentTokens(LanguageVersion languageVersion) {
     return TokenSet.create(COMMENT);
   }
 
   @NotNull
-  public TokenSet getStringLiteralElements() {
+  public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return TokenSet.create(TEXT);
   }
 

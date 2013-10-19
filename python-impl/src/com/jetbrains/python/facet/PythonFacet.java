@@ -1,29 +1,14 @@
 package com.jetbrains.python.facet;
 
-import com.intellij.facet.Facet;
-import com.intellij.facet.FacetType;
-import com.intellij.facet.FacetTypeId;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author yole
  */
-public class PythonFacet extends Facet<PythonFacetConfiguration> implements LibraryContributingFacet {
-  public static final FacetTypeId<PythonFacet> ID = new FacetTypeId<PythonFacet>("python");
+@Deprecated
+public class PythonFacet implements LibraryContributingFacet {
 
-  public PythonFacet(@NotNull final FacetType facetType, @NotNull final Module module, final @NotNull String name, @NotNull final PythonFacetConfiguration configuration,
-                     Facet underlyingFacet) {
-    super(facetType, module, name, configuration, underlyingFacet);
-  }
 
   public void updateLibrary() {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+   /* ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         final Module module = getModule();
         final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
@@ -69,11 +54,11 @@ public class PythonFacet extends Facet<PythonFacetConfiguration> implements Libr
           model.dispose();
         }
       }
-    });
+    });  */
   }
 
   public void removeLibrary() {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+   /* ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run()  {
         final Module module = getModule();
         final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
@@ -93,7 +78,7 @@ public class PythonFacet extends Facet<PythonFacetConfiguration> implements Libr
         }
         model.commit();
       }
-    });
+    });  */
   }
 
   public static String getFacetLibraryName(final String sdkName) {

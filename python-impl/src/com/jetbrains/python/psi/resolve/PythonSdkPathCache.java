@@ -1,21 +1,21 @@
 package com.jetbrains.python.psi.resolve;
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.WeakHashMap;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author yole
@@ -61,20 +61,20 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
     }, this);
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVirtualFileAdapter(), this);
     if (!project.isDisposed()) {
-      project.getMessageBus().connect(this).subscribe(ProjectJdkTable.JDK_TABLE_TOPIC, new ProjectJdkTable.Listener() {
+      project.getMessageBus().connect(this).subscribe(SdkTable.SDK_TABLE_TOPIC, new SdkTable.Listener() {
         @Override
-        public void jdkAdded(Sdk jdk) {
+        public void sdkAdded(Sdk jdk) {
         }
 
         @Override
-        public void jdkRemoved(Sdk jdk) {
+        public void sdkRemoved(Sdk jdk) {
           if (jdk == sdk) {
             Disposer.dispose(PythonSdkPathCache.this);
           }
         }
 
         @Override
-        public void jdkNameChanged(Sdk jdk, String previousName) {
+        public void sdkNameChanged(Sdk jdk, String previousName) {
         }
       });
       Disposer.register(project, this);

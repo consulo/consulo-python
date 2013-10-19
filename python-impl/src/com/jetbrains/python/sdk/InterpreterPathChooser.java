@@ -1,5 +1,15 @@
 package com.jetbrains.python.sdk;
 
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -21,15 +31,6 @@ import com.intellij.util.NullableConsumer;
 import com.intellij.util.SystemProperties;
 import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 /**
 * @author yole
@@ -145,7 +146,7 @@ public class InterpreterPathChooser extends BaseListPopupStep<String> {
     }
     Sdk sdk = SdkConfigurationUtil.setupSdk(myExistingSdks,
                                             LocalFileSystem.getInstance().findFileByPath(filePath),
-                                            PythonSdkType.getInstance(), false, null, null);
+                                            PythonSdkType.getInstance(), false, false, null, null);
     myCallback.consume(sdk);
   }
 

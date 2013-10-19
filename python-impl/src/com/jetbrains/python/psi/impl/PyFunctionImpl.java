@@ -97,26 +97,6 @@ public class PyFunctionImpl extends PyPresentableElementImpl<PyFunctionStub> imp
     return this;
   }
 
-  @Override
-  public Icon getIcon(int flags) {
-    if (isValid()) {
-      final Property property = getProperty();
-      if (property != null) {
-        if (property.getGetter().valueOrNull() == this) {
-          return PythonIcons.Python.PropertyGetter;
-        }
-        if (property.getSetter().valueOrNull() == this) {
-          return PythonIcons.Python.PropertySetter;
-        }
-        if (property.getDeleter().valueOrNull() == this) {
-          return PythonIcons.Python.PropertyDeleter;
-        }
-        return PlatformIcons.PROPERTY_ICON;
-      }
-    }
-    return PlatformIcons.METHOD_ICON;
-  }
-
   @Nullable
   public ASTNode getNameNode() {
     return getNode().findChildByType(PyTokenTypes.IDENTIFIER);

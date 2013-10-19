@@ -1,7 +1,16 @@
 package com.jetbrains.python.codeInsight.imports;
 
+import java.awt.Component;
+import java.awt.Font;
+import java.util.List;
+
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.hint.QuestionAction;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.Result;
@@ -14,17 +23,22 @@ import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReference;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
 import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyFromImportStatement;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyQualifiedExpression;
 
 /**
  * Turns an unqualified unresolved identifier into qualified and resolvable.
@@ -217,7 +231,7 @@ public class ImportFromExistingAction implements QuestionAction {
       clear();
 
       ImportCandidateHolder item = (ImportCandidateHolder)value;
-      setIcon(item.getImportable().getIcon(0));
+      setIcon(IconDescriptorUpdaters.getIcon(item.getImportable(), 0));
       String item_name = item.getPresentableText(myName);
       append(item_name, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 

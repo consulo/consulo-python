@@ -1,11 +1,16 @@
 package com.jetbrains.python.testing;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.consulo.python.module.extension.PyModuleExtension;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupActivity;
@@ -17,16 +22,17 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.PythonModuleTypeBase;
 import com.jetbrains.python.documentation.DocStringFormat;
 import com.jetbrains.python.documentation.PyDocumentationSettings;
 import com.jetbrains.python.packaging.PyPackageUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyDocStringOwner;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyImportElement;
+import com.jetbrains.python.psi.PyKeywordArgument;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Detects test runner and docstring format
@@ -41,7 +47,7 @@ public class PyTestRunnerUpdater implements StartupActivity {
     }
 
     for (Module m: ModuleManager.getInstance(project).getModules()) {
-      if (ModuleType.get(m) instanceof PythonModuleTypeBase) {
+      if (ModuleUtilCore.getExtension(m, PyModuleExtension.class) != null) {
         updateIntegratedTools(m, 10000);
         break;
       }

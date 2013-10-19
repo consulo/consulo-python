@@ -1,11 +1,16 @@
 package com.jetbrains.python.refactoring.classes.ui;
 
+import java.awt.Component;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JList;
+
+import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.openapi.util.Iconable;
 import com.jetbrains.python.psi.PyClass;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * @author Dennis.Ushakov
@@ -41,7 +46,7 @@ public class PyClassCellRenderer extends DefaultListCellRenderer {
     if (showReadOnly) {
       flags |= Iconable.ICON_FLAG_READ_STATUS;
     }
-    Icon icon = aClass.getIcon(flags);
+    Icon icon = IconDescriptorUpdaters.getIcon(aClass, flags);
     if(icon != null) {
       cellRendererComponent.setIcon(icon);
     }

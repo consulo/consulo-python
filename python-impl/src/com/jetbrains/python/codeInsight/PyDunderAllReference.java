@@ -1,7 +1,15 @@
 package com.jetbrains.python.codeInsight;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -15,13 +23,6 @@ import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.impl.LightNamedElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author yole
@@ -60,7 +61,7 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
           final String name = ((PsiNamedElement)element).getName();
           if (name != null && PyUtil.getInitialUnderscores(name) == 0 && !seenNames.contains(name)) {
             seenNames.add(name);
-            result.add(LookupElementBuilder.create((PsiNamedElement) element).withIcon(element.getIcon(0)));
+            result.add(LookupElementBuilder.create((PsiNamedElement) element).withIcon(IconDescriptorUpdaters.getIcon(element, 0)));
           }
         }
         else if (element instanceof PyImportElement) {

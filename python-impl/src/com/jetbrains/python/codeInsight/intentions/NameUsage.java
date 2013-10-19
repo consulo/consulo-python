@@ -1,5 +1,12 @@
 package com.jetbrains.python.codeInsight.intentions;
 
+import java.awt.Font;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -10,11 +17,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.usages.TextChunk;
 import com.intellij.usages.UsagePresentation;
 import com.intellij.usages.rules.PsiElementUsage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * Simplistic usage object for demonstration of name clashes, etc.
@@ -58,7 +60,7 @@ class NameUsage implements PsiElementUsage {
     return new UsagePresentation() {
       @Nullable
       public Icon getIcon() {
-        return myElement.isValid() ? myElement.getIcon(0) : null;
+        return myElement.isValid() ? IconDescriptorUpdaters.getIcon(myElement, 0) : null;
       }
 
       @NotNull

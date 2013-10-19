@@ -1,22 +1,27 @@
 package com.jetbrains.python.facet;
 
-import com.intellij.ide.highlighter.ArchiveFileType;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.OrderEntryUtil;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.highlighter.ArchiveFileType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModifiableModelsProvider;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.OrderEntryUtil;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 
 /**
  * @author yole
@@ -69,7 +74,7 @@ public class FacetLibraryConfigurator {
       for (String dir : paths) {
         VirtualFile pathEntry = LocalFileSystem.getInstance().findFileByPath(dir);
         if (pathEntry != null && !pathEntry.isDirectory() && pathEntry.getFileType() instanceof ArchiveFileType) {
-          pathEntry = JarFileSystem.getInstance().getJarRootForLocalFile(pathEntry);
+          pathEntry = ArchiveVfsUtil.getJarRootForLocalFile(pathEntry);
         }
         // buildout includes source root of project in paths; don't add it as library home
         if (pathEntry != null && roots.contains(pathEntry)) {

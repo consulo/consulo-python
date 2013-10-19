@@ -19,178 +19,207 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 /**
  * @author Dennis.Ushakov
  */
-public class PyDynamicMember {
-  private String myName;
-  private final boolean myResolveToInstance;
-  private final Function<PsiElement, PyType> myTypeCallback;
-  private final String myTypeName;
+public class PyDynamicMember
+{
+	private final boolean myResolveToInstance;
+	private final Function<PsiElement, PyType> myTypeCallback;
+	private final String myTypeName;
+	private final PsiElement myTarget;
+	boolean myFunction = false;
+	private String myName;
+	private PyPsiPath myPsiPath;
 
-  private final PsiElement myTarget;
-  private PyPsiPath myPsiPath;
+	public PyDynamicMember(@NotNull final String name, @NotNull final String type, final boolean resolveToInstance)
+	{
+		myName = name;
+		myResolveToInstance = resolveToInstance;
+		myTypeName = type;
 
-  boolean myFunction = false;
+		myTarget = null;
+		myTypeCallback = null;
+	}
 
-  public PyDynamicMember(@NotNull final String name, @NotNull final String type, final boolean resolveToInstance) {
-    myName = name;
-    myResolveToInstance = resolveToInstance;
-    myTypeName = type;
+	public PyDynamicMember(@NotNull final String name)
+	{
+		myName = name;
+		myResolveToInstance = false;
+		myTypeName = null;
 
-    myTarget = null;
-    myTypeCallback = null;
-  }
+		myTarget = null;
+		myTypeCallback = null;
+	}
 
-  public PyDynamicMember(@NotNull final String name) {
-    myName = name;
-    myResolveToInstance = false;
-    myTypeName = null;
+	public PyDynamicMember(@NotNull final String name, @NotNull final String type, final Function<PsiElement, PyType> typeCallback)
+	{
+		myName = name;
 
-    myTarget = null;
-    myTypeCallback = null;
-  }
+		myResolveToInstance = false;
+		myTypeName = type;
 
-  public PyDynamicMember(@NotNull final String name,
-                         @NotNull final String type,
-                         final Function<PsiElement, PyType> typeCallback) {
-    myName = name;
+		myTarget = null;
+		myTypeCallback = typeCallback;
+	}
 
-    myResolveToInstance = false;
-    myTypeName = type;
+	public PyDynamicMember(@NotNull final String name, @Nullable final PsiElement target)
+	{
+		myName = name;
+		myTarget = target;
+		myResolveToInstance = false;
+		myTypeName = null;
+		myTypeCallback = null;
+	}
 
-    myTarget = null;
-    myTypeCallback = typeCallback;
-  }
+	public PyDynamicMember resolvesTo(String moduleQName)
+	{
+		myPsiPath = new PyPsiPath.ToFile(moduleQName);
+		return this;
+	}
 
-  public PyDynamicMember(@NotNull final String name, @Nullable final PsiElement target) {
-    myName = name;
-    myTarget = target;
-    myResolveToInstance = false;
-    myTypeName = null;
-    myTypeCallback = null;
-  }
+	public PyDynamicMember resolvesToClass(String classQName)
+	{
+		myPsiPath = new PyPsiPath.ToClassQName(classQName);
+		return this;
+	}
 
-  public PyDynamicMember resolvesTo(String moduleQName) {
-    myPsiPath = new PyPsiPath.ToFile(moduleQName);
-    return this;
-  }
+	public PyDynamicMember toClass(String name)
+	{
+		myPsiPath = new PyPsiPath.ToClass(myPsiPath, name);
+		return this;
+	}
 
-  public PyDynamicMember resolvesToClass(String classQName) {
-    myPsiPath = new PyPsiPath.ToClassQName(classQName);
-    return this;
-  }
+	public PyDynamicMember toFunction(String name)
+	{
+		myPsiPath = new PyPsiPath.ToFunction(myPsiPath, name);
+		return this;
+	}
 
-  public PyDynamicMember toClass(String name) {
-    myPsiPath = new PyPsiPath.ToClass(myPsiPath, name);
-    return this;
-  }
+	public PyDynamicMember toFunctionRecursive(String name)
+	{
+		myPsiPath = new PyPsiPath.ToFunctionRecursive(myPsiPath, name);
+		return this;
+	}
 
-  public PyDynamicMember toFunction(String name) {
-    myPsiPath = new PyPsiPath.ToFunction(myPsiPath, name);
-    return this;
-  }
+	public PyDynamicMember toClassAttribute(String name)
+	{
+		myPsiPath = new PyPsiPath.ToClassAttribute(myPsiPath, name);
+		return this;
+	}
 
-  public PyDynamicMember toFunctionRecursive(String name) {
-    myPsiPath = new PyPsiPath.ToFunctionRecursive(myPsiPath, name);
-    return this;
-  }
+	public PyDynamicMember toCall(String name, String... args)
+	{
+		myPsiPath = new PyPsiPath.ToCall(myPsiPath, name, args);
+		return this;
+	}
 
-  public PyDynamicMember toClassAttribute(String name) {
-    myPsiPath = new PyPsiPath.ToClassAttribute(myPsiPath, name);
-    return this;
-  }
+	public PyDynamicMember toAssignment(String assignee)
+	{
+		myPsiPath = new PyPsiPath.ToAssignment(myPsiPath, assignee);
+		return this;
+	}
 
-  public PyDynamicMember toCall(String name, String... args) {
-    myPsiPath = new PyPsiPath.ToCall(myPsiPath, name, args);
-    return this;
-  }
+	public PyDynamicMember toPsiElement(final PsiElement psiElement)
+	{
+		myPsiPath = new PyPsiPath()
+		{
 
-  public PyDynamicMember toAssignment(String assignee) {
-    myPsiPath = new PyPsiPath.ToAssignment(myPsiPath, assignee);
-    return this;
-  }
+			@Override
+			public PsiElement resolve(PsiElement module)
+			{
+				return psiElement;
+			}
+		};
+		return this;
+	}
 
-  public PyDynamicMember toPsiElement(final PsiElement psiElement) {
-    myPsiPath = new PyPsiPath() {
+	public String getName()
+	{
+		return myName;
+	}
 
-      @Override
-      public PsiElement resolve(PsiElement module) {
-        return psiElement;
-      }
-    };
-    return this;
-  }
+	public Icon getIcon()
+	{
+		if(myTarget != null)
+		{
+			return IconDescriptorUpdaters.getIcon(myTarget, 0);
+		}
+		return AllIcons.Nodes.Method;
+	}
 
-  public String getName() {
-    return myName;
-  }
+	@Nullable
+	public PsiElement resolve(@NotNull PsiElement context)
+	{
+		if(myTarget != null)
+		{
+			return myTarget;
+		}
+		PyClass targetClass = myTypeName != null && myTypeName.indexOf('.') > 0 ? PyPsiFacade.getInstance(context.getProject()).findClass(myTypeName) : null;
+		final PsiElement resolveTarget = findResolveTarget(context);
+		if(resolveTarget instanceof PyFunction)
+		{
+			return resolveTarget;
+		}
+		if(resolveTarget != null || targetClass != null)
+		{
+			return new MyInstanceElement(targetClass, context, resolveTarget);
+		}
+		return null;
+	}
 
-  public Icon getIcon() {
-    if (myTarget != null) {
-      return IconDescriptorUpdaters.getIcon(myTarget, 0);
-    }
-    return AllIcons.Nodes.Method;
-  }
+	@Nullable
+	private PsiElement findResolveTarget(@NotNull PsiElement context)
+	{
+		if(myPsiPath != null)
+		{
+			return myPsiPath.resolve(context);
+		}
+		return null;
+	}
 
-  @Nullable
-  public PsiElement resolve(@NotNull PsiElement context) {
-    if (myTarget != null) {
-      return myTarget;
-    }
-    PyClass targetClass =
-      myTypeName != null && myTypeName.indexOf('.') > 0 ? PyPsiFacade.getInstance(context.getProject()).findClass(myTypeName) : null;
-    final PsiElement resolveTarget = findResolveTarget(context);
-    if (resolveTarget instanceof PyFunction) {
-      return resolveTarget;
-    }
-    if (resolveTarget != null || targetClass != null) {
-      return new MyInstanceElement(targetClass, context, resolveTarget);
-    }
-    return null;
-  }
+	@Nullable
+	public String getShortType()
+	{
+		if(myTypeName == null)
+		{
+			return null;
+		}
+		int pos = myTypeName.lastIndexOf('.');
+		return myTypeName.substring(pos + 1);
+	}
 
-  @Nullable
-  private PsiElement findResolveTarget(@NotNull PsiElement context) {
-    if (myPsiPath != null) {
-      return myPsiPath.resolve(context);
-    }
-    return null;
-  }
+	public PyDynamicMember asFunction()
+	{
+		myFunction = true;
+		return this;
+	}
 
-  @Nullable
-  public String getShortType() {
-    if (myTypeName == null) {
-      return null;
-    }
-    int pos = myTypeName.lastIndexOf('.');
-    return myTypeName.substring(pos + 1);
-  }
+	public boolean isFunction()
+	{
+		return myFunction;
+	}
 
-  public PyDynamicMember asFunction() {
-    myFunction = true;
-    return this;
-  }
+	private class MyInstanceElement extends ASTWrapperPsiElement implements PyTypedElement
+	{
+		private final PyClass myClass;
+		private final PsiElement myContext;
 
-  public boolean isFunction() {
-    return myFunction;
-  }
+		public MyInstanceElement(PyClass clazz, PsiElement context, PsiElement resolveTarget)
+		{
+			super(resolveTarget != null ? resolveTarget.getNode() : clazz.getNode());
+			myClass = clazz;
+			myContext = context;
+		}
 
-  private class MyInstanceElement extends ASTWrapperPsiElement implements PyTypedElement {
-    private final PyClass myClass;
-    private final PsiElement myContext;
-
-    public MyInstanceElement(PyClass clazz, PsiElement context, PsiElement resolveTarget) {
-      super(resolveTarget != null ? resolveTarget.getNode() : clazz.getNode());
-      myClass = clazz;
-      myContext = context;
-    }
-
-    public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
-      if (myTypeCallback != null) {
-        return myTypeCallback.fun(myContext);
-      }
-      else if (myClass != null) {
-        return PyPsiFacade.getInstance(getProject()).createClassType(myClass, !myResolveToInstance);
-      }
-      return null;
-    }
-  }
+		public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+		{
+			if(myTypeCallback != null)
+			{
+				return myTypeCallback.fun(myContext);
+			}
+			else if(myClass != null)
+			{
+				return PyPsiFacade.getInstance(getProject()).createClassType(myClass, !myResolveToInstance);
+			}
+			return null;
+		}
+	}
 }

@@ -29,6 +29,7 @@
       </module>
       <module name="python-impl" dirurl="file://$PROJECT_DIR$/python-impl">
         <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+        <extension id="lombok" />
         <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
         <content url="file://$MODULE_DIR$">
           <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
@@ -67,6 +68,15 @@
           <library name="consulo:Regexp">
             <CLASSES>
               <root url="jar://$APPLICATION_HOME_DIR$/plugins/regexp/lib/regexp.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES />
+          </library>
+        </orderEntry>
+        <orderEntry type="module-library">
+          <library name="consulo:Spellchecker">
+            <CLASSES>
+              <root url="jar://$APPLICATION_HOME_DIR$/plugins/spellchecker/lib/spellchecker.jar!/" />
             </CLASSES>
             <DOCUMENTATION />
             <SOURCES />

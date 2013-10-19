@@ -1,11 +1,22 @@
 package com.jetbrains.python.psi.resolve;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.Function;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.python.PyNames;
@@ -13,14 +24,17 @@ import com.jetbrains.python.codeInsight.completion.PyClassInsertHandler;
 import com.jetbrains.python.codeInsight.completion.PyFunctionInsertHandler;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.NameDefiner;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.*;
 
 /**
  * @author yole
@@ -141,11 +155,11 @@ public class CompletionVariantsProcessor extends VariantsProcessor {
     if (PyUtil.isClassPrivateName(name) && !PyUtil.inSameFile(element, myContext)) {
       return;
     }
-    myVariants.put(name, setupItem(LookupElementBuilder.create(element, name).withIcon(element.getIcon(0))));
+    myVariants.put(name, setupItem(LookupElementBuilder.create(element, name).withIcon(IconDescriptorUpdaters.getIcon(element, 0))));
   }
 
   protected void addImportedElement(String referencedName, NameDefiner definer, PyElement expr) {
-    Icon icon = expr.getIcon(0);
+    Icon icon = IconDescriptorUpdaters.getIcon(expr, 0);
     // things like PyTargetExpression cannot have a general icon, but here we only have variables
     if (icon == null) icon = PlatformIcons.VARIABLE_ICON;
     LookupElementBuilder lookupItem = setupItem(LookupElementBuilder.create(expr, referencedName).withIcon(icon));

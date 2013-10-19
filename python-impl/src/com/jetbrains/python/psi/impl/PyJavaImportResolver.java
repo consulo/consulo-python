@@ -1,13 +1,13 @@
 package com.jetbrains.python.psi.impl;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiJavaPackage;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -18,7 +18,7 @@ public class PyJavaImportResolver implements PyImportResolver {
     String fqn = name.toString();
     final JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(context.getProject());
     if (psiFacade == null) return null;
-    final PsiPackage aPackage = psiFacade.findPackage(fqn);
+    final PsiJavaPackage aPackage = psiFacade.findPackage(fqn);
     if (aPackage != null) {
       return aPackage;
     }

@@ -1,8 +1,9 @@
 package com.jetbrains.python.psi;
 
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.NavigatablePsiElement;
 
-public interface PyElement extends NavigatablePsiElement {
+public interface PyElement extends NavigatablePsiElement{
 
   /**
    * An empty array to return cheaply without allocating it anew.

@@ -1,5 +1,10 @@
 package com.jetbrains.python.codeInsight.regexp;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
@@ -8,14 +13,14 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.python.codeInsight.PyInjectionUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyKeywordArgument;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author yole
@@ -49,7 +54,7 @@ public class PythonRegexpInjector implements MultiHostInjector {
   }
 
   @Override
-  public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
+  public void injectLanguages(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     final PsiElement contextParent = context.getParent();
     if (PyInjectionUtil.isLargestStringLiteral(context) && contextParent instanceof PyArgumentList) {
       final PyExpression[] args = ((PyArgumentList)contextParent).getArguments();
@@ -71,13 +76,6 @@ public class PythonRegexpInjector implements MultiHostInjector {
         }
       }
     }
-  }
-
-  @NotNull
-  @Override
-  public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(PyStringLiteralExpression.class, PyParenthesizedExpression.class, PyBinaryExpression.class,
-                         PyCallExpression.class);
   }
 
   private static boolean isVerbose(@NotNull PyCallExpression call) {

@@ -1,5 +1,29 @@
 package com.jetbrains.python.sdk.skeletons;
 
+import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
+
+import java.awt.Component;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.event.HyperlinkEvent;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.notification.Notification;
@@ -18,9 +42,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.io.ZipUtil;
@@ -34,19 +58,6 @@ import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.sdk.InvalidSdkException;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
 
 /**
  * Handles a refresh of SDK's skeletons.
@@ -278,7 +289,7 @@ public class PySkeletonRefresher {
     if (myPregeneratedSkeletons != null && oldOrNonExisting) {
       indicate("Unpacking pregenerated skeletons...");
       try {
-        final VirtualFile jar = JarFileSystem.getInstance().getVirtualFileForJar(myPregeneratedSkeletons);
+        final VirtualFile jar = ArchiveVfsUtil.getVirtualFileForJar(myPregeneratedSkeletons);
         if (jar != null) {
           ZipUtil.extract(new File(jar.getPath()),
                           new File(getSkeletonsPath()), null);
@@ -807,7 +818,7 @@ public class PySkeletonRefresher {
         LOG.info("Could not find pregenerated skeletons in VFS");
         return null;
       }
-      return JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
+      return ArchiveVfsUtil.getJarRootForLocalFile(virtualFile);
     }
     else {
       LOG.info("Not found pregenerated skeletons at " + f.getPath());

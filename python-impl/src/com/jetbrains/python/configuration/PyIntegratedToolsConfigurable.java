@@ -1,21 +1,24 @@
 package com.jetbrains.python.configuration;
 
+import java.util.List;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.facet.impl.ui.FacetErrorPanel;
-import com.intellij.facet.ui.FacetConfigurationQuickFix;
-import com.intellij.facet.ui.FacetEditorValidator;
-import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.NonDefaultProjectConfigurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -25,24 +28,14 @@ import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.FileContentUtilCore;
-import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.ReSTService;
 import com.jetbrains.python.documentation.DocStringFormat;
 import com.jetbrains.python.documentation.PyDocumentationSettings;
-import com.jetbrains.python.packaging.*;
-import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.packaging.PyPackageRequirementsSettings;
+import com.jetbrains.python.packaging.PyPackageUtil;
 import com.jetbrains.python.testing.PythonTestConfigurationsModel;
 import com.jetbrains.python.testing.TestRunnerService;
-import com.jetbrains.python.testing.VFSTestFrameworkListener;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * User: catherine
@@ -94,7 +87,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable, No
     }
   }
 
-  private void initErrorValidation() {
+ /* private void initErrorValidation() {
     final FacetErrorPanel facetErrorPanel = new FacetErrorPanel();
     myErrorPanel.add(facetErrorPanel.getComponent(), BorderLayout.CENTER);
 
@@ -151,7 +144,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable, No
         ui.install(Collections.singletonList(new PyRequirement(name)), Collections.<String>emptyList());
       }
     };
-  }
+  }    */
 
 
   @Nls
@@ -172,7 +165,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable, No
                                                 TestRunnerService.getInstance(myModule).getProjectConfiguration(), myModule);
 
     updateConfigurations();
-    initErrorValidation();
+    //initErrorValidation();
     return myMainPanel;
   }
 

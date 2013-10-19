@@ -1,7 +1,20 @@
 package com.jetbrains.python.psi.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaPackage;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
 import com.intellij.util.Processor;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
@@ -10,11 +23,6 @@ import com.jetbrains.python.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author yole
@@ -25,8 +33,8 @@ public class PyJavaTypeProvider extends PyTypeProviderBase {
     if (referenceTarget instanceof PsiClass) {
       return new PyJavaClassType((PsiClass) referenceTarget, true);
     }
-    if (referenceTarget instanceof PsiPackage) {
-      return new PyJavaPackageType((PsiPackage) referenceTarget, anchor == null ? null : ModuleUtil.findModuleForPsiElement(anchor));
+    if (referenceTarget instanceof PsiJavaPackage) {
+      return new PyJavaPackageType((PsiJavaPackage) referenceTarget, anchor == null ? null : ModuleUtil.findModuleForPsiElement(anchor));
     }
     if (referenceTarget instanceof PsiMethod) {
       PsiMethod method = (PsiMethod) referenceTarget;
