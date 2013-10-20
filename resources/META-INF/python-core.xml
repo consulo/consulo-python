@@ -640,12 +640,12 @@
       <keyboard-shortcut keymap="NetBeans 6.5" first-keystroke="ctrl alt E" replace-all="true"/>
     </action>
 
-    <action id="NewPythonFile" class="com.jetbrains.python.actions.CreatePythonFileAction">
-      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewXml"/>
+    <action id="NewPythonFile" class="com.jetbrains.python.actions.CreatePythonFileAction" require-module-extensions="python">
+      <add-to-group group-id="NewGroup1"/>
     </action>
 
     <action id="NewPythonPackage" class="com.jetbrains.python.actions.CreatePackageAction" text="Python Package"
-            description="Create a new directory and __init__.py inside it" icon="AllIcons.Nodes.Package">
+            description="Create a new directory and __init__.py inside it" icon="AllIcons.Nodes.Package" require-module-extensions="python">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
 

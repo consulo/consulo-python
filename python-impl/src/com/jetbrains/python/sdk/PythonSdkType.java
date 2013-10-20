@@ -73,7 +73,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.NullableConsumer;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.codeInsight.userSkeletons.PyUserSkeletonsUtil;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -909,9 +908,17 @@ public class PythonSdkType extends SdkType
 		return ModuleUtilCore.getSdk(module, PyModuleExtension.class);
 	}
 
+	@NotNull
 	public Icon getIcon()
 	{
 		return PythonIcons.Python.Python;
+	}
+
+	@Nullable
+	@Override
+	public Icon getGroupIcon()
+	{
+		return getIcon();
 	}
 
 	@NotNull
@@ -919,11 +926,6 @@ public class PythonSdkType extends SdkType
 	public String getHelpTopic()
 	{
 		return "reference.project.structure.sdk.python";
-	}
-
-	public Icon getIconForAddAction()
-	{
-		return PythonFileType.INSTANCE.getIcon();
 	}
 
 	@NonNls

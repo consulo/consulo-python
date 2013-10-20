@@ -10,7 +10,6 @@ import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -47,7 +46,7 @@ public class CreatePackageAction extends DumbAwareAction {
         }
       }
     };
-    Messages.showInputDialog(project, IdeBundle.message("prompt.enter.new.package.name"),
+    Messages.showInputDialog(project, IdeBundle.message("prompt.enter.a.new.package.name"),
                                       IdeBundle.message("title.new.package"),
                                       Messages.getQuestionIcon(), "", validator);
     final PsiFileSystemItem result = validator.getCreatedElement();
@@ -85,7 +84,7 @@ public class CreatePackageAction extends DumbAwareAction {
 
   @Override
   public void update(AnActionEvent e) {
-    boolean enabled = isEnabled(e);
+    boolean enabled = isEnabled(e) && e.getPresentation().isEnabled();
     e.getPresentation().setVisible(enabled);
     e.getPresentation().setEnabled(enabled);
   }
