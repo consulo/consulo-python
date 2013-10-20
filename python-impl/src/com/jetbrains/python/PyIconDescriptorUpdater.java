@@ -51,15 +51,18 @@ public class PyIconDescriptorUpdater implements IconDescriptorUpdater
 				{
 					icon = PythonIcons.Python.PropertyGetter;
 				}
-				if(property.getSetter().valueOrNull() == this)
+				else if(property.getSetter().valueOrNull() == this)
 				{
 					icon = PythonIcons.Python.PropertySetter;
 				}
-				if(property.getDeleter().valueOrNull() == this)
+				else if(property.getDeleter().valueOrNull() == this)
 				{
 					icon = PythonIcons.Python.PropertyDeleter;
 				}
-				icon = PlatformIcons.PROPERTY_ICON;
+				else
+				{
+					icon = PlatformIcons.PROPERTY_ICON;
+				}
 			}
 			if(icon != null)
 			{

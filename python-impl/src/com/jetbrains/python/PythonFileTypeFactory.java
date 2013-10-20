@@ -16,10 +16,5 @@ public class PythonFileTypeFactory extends FileTypeFactory
 	{
 		consumer.consume(PythonFileType.INSTANCE, "py;pyw;");
 		consumer.consume(QtUIFileType.INSTANCE, "ui");
-		/*FileType xmlFileType = FileTypeManager.getInstance().findFileTypeByName("XML");
-		if(xmlFileType != null)
-		{
-			consumer.consume(xmlFileType, "qrc");
-		}      */
 	}
 }

@@ -82,6 +82,17 @@
             <SOURCES />
           </library>
         </orderEntry>
+        <orderEntry type="module-library">
+          <library name="consulo:XML">
+            <CLASSES>
+              <root url="jar://$APPLICATION_HOME_DIR$/plugins/xml/lib/xml-dom.jar!/" />
+              <root url="jar://$APPLICATION_HOME_DIR$/plugins/xml/lib/xml-intellilang.jar!/" />
+              <root url="jar://$APPLICATION_HOME_DIR$/plugins/xml/lib/xml.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES />
+          </library>
+        </orderEntry>
       </module>
       <module name="python-debugger" dirurl="file://$PROJECT_DIR$/python-debugger">
         <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="" language-level-name="" special-dir-location="MODULE_DIR" />
