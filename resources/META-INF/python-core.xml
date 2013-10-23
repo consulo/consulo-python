@@ -654,7 +654,8 @@
     </action>
 
     <action id="CleanPyc" class="com.jetbrains.python.actions.CleanPycAction" text="Clean .pyc"
-            description="Delete compiled bytecode files in selected directory and its subdirectories">
+            description="Delete compiled bytecode files in selected directory and its subdirectories"
+			require-module-extensions="python">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
     </action>
 

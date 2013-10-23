@@ -5,6 +5,7 @@
 	<version>3.0.1</version>
 	<depends>org.consulo.java</depends>
 	<depends>com.intellij.spellchecker</depends>
+	<depends optional="true" config-file="python-rest.plugin.xml">org.jetbrains.plugins.rest</depends>
 	<depends optional="true" config-file="com.intellij.xml.xml">com.intellij.xml</depends>
 	<resource-bundle>com.jetbrains.python.PyBundle</resource-bundle>
 

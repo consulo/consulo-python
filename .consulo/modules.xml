@@ -3,7 +3,7 @@
   <component name="ModuleManager">
     <modules>
       <module name="consulo-python" dirurl="file://$PROJECT_DIR$">
-        <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="MODULE_DIR" />
+        <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
         <extension id="lombok" />
         <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
         <content url="file://$MODULE_DIR$">
@@ -16,6 +16,7 @@
         <orderEntry type="module" module-name="python-impl" />
         <orderEntry type="module" module-name="python-psi-api" />
         <orderEntry type="module" module-name="python-rest" />
+        <orderEntry type="module" module-name="python-debugger" />
       </module>
       <module name="python-psi-api" dirurl="file://$PROJECT_DIR$/python-psi-api">
         <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
