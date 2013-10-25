@@ -5,7 +5,7 @@
       <module name="consulo-python" dirurl="file://$PROJECT_DIR$">
         <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
         <extension id="lombok" />
-        <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
+        <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" custom-plugin-dir-url="H:\github.com\consulo\consulo-python\dep" />
         <content url="file://$MODULE_DIR$">
           <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
@@ -17,6 +17,28 @@
         <orderEntry type="module" module-name="python-psi-api" />
         <orderEntry type="module" module-name="python-rest" />
         <orderEntry type="module" module-name="python-debugger" />
+        <orderEntry type="module-library">
+          <library name="consulo:Spellchecker">
+            <CLASSES>
+              <root url="jar://$MODULE_DIR$/dep/spellchecker/lib/spellchecker.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES />
+          </library>
+        </orderEntry>
+        <orderEntry type="module-library">
+          <library name="consulo:XML">
+            <CLASSES>
+              <root url="jar://$MODULE_DIR$/dep/xml/lib/jsr173_1.0_api.jar!/" />
+              <root url="jar://$MODULE_DIR$/dep/xml/lib/resolver.jar!/" />
+              <root url="jar://$MODULE_DIR$/dep/xml/lib/xbean.jar!/" />
+              <root url="jar://$MODULE_DIR$/dep/xml/lib/xerces.jar!/" />
+              <root url="jar://$MODULE_DIR$/dep/xml/lib/xml.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES />
+          </library>
+        </orderEntry>
       </module>
       <module name="python-psi-api" dirurl="file://$PROJECT_DIR$/python-psi-api">
         <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
@@ -117,6 +139,17 @@
           </library>
         </orderEntry>
         <orderEntry type="module" module-name="python-impl" />
+      </module>
+      <module name="jython" dirurl="file://$PROJECT_DIR$/jython">
+        <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+        <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
+        <content url="file://$MODULE_DIR$">
+          <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
+          <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
+        </content>
+        <orderEntry type="module-extension-sdk" extension-id="java" />
+        <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
+        <orderEntry type="sourceFolder" forTests="false" />
       </module>
     </modules>
   </component>
