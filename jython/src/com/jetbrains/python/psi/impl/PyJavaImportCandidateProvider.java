@@ -16,8 +16,10 @@
 
 package com.jetbrains.python.psi.impl;
 
+import org.consulo.jython.module.extension.JythonModuleExtension;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -32,18 +34,27 @@ import com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider;
 /**
  * @author yole
  */
-public class PyJavaImportCandidateProvider implements PyImportCandidateProvider {
-  @Override
-  public void addImportCandidates(PsiReference reference, String name, AutoImportQuickFix quickFix) {
-    final PsiElement element = reference.getElement();
-    final Project project = element.getProject();
-    Module module = ModuleUtil.findModuleForPsiElement(element);
-    GlobalSearchScope scope = module == null ? ProjectScope.getAllScope(project) : module.getModuleWithDependenciesAndLibrariesScope(false);
-    PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
-    final PsiClass[] classesByName = cache.getClassesByName(name, scope);
-    for (PsiClass psiClass : classesByName) {
-      final QualifiedName packageQName = QualifiedName.fromDottedString(psiClass.getQualifiedName()).removeLastComponent();
-      quickFix.addImport(psiClass, psiClass.getContainingFile(), packageQName);
-    }
-  }
+public class PyJavaImportCandidateProvider implements PyImportCandidateProvider
+{
+	@Override
+	public void addImportCandidates(PsiReference reference, String name, AutoImportQuickFix quickFix)
+	{
+		final PsiElement element = reference.getElement();
+		final Project project = element.getProject();
+		Module module = ModuleUtil.findModuleForPsiElement(element);
+
+		if(module != null && ModuleUtilCore.getExtension(module, JythonModuleExtension.class) == null)
+		{
+			return;
+		}
+
+		GlobalSearchScope scope = module == null ? ProjectScope.getAllScope(project) : module.getModuleWithDependenciesAndLibrariesScope(false);
+		PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
+		final PsiClass[] classesByName = cache.getClassesByName(name, scope);
+		for(PsiClass psiClass : classesByName)
+		{
+			final QualifiedName packageQName = QualifiedName.fromDottedString(psiClass.getQualifiedName()).removeLastComponent();
+			quickFix.addImport(psiClass, psiClass.getContainingFile(), packageQName);
+		}
+	}
 }

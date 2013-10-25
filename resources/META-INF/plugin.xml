@@ -6,15 +6,65 @@
 	<depends>com.intellij.spellchecker</depends>
 	<depends optional="true" config-file="python-rest.plugin.xml">org.jetbrains.plugins.rest</depends>
 	<depends optional="true" config-file="com.intellij.xml.xml">com.intellij.xml</depends>
+	<depends>com.intellij.regexp</depends>
 	<resource-bundle>com.jetbrains.python.PyBundle</resource-bundle>
 
-	<vendor url="http://www.jetbrains.com/pycharm/">JetBrains, Keith Lea</vendor>
+	<vendor>JetBrains, Keith Lea</vendor>
 
 	<xi:include href="/META-INF/python-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
-	<xi:include href="/META-INF/python-plugin-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+	<xi:include href="/META-INF/actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+	<extensionPoints>
+		<extensionPoint name="importResolver" interface="com.jetbrains.python.psi.impl.PyImportResolver"/>
+		<extensionPoint name="sdkFlavor" interface="com.jetbrains.python.sdk.flavors.PythonSdkFlavor" />
+		<extensionPoint name="typeProvider" interface="com.jetbrains.python.psi.impl.PyTypeProvider"/>
+		<extensionPoint name="pySuperMethodsSearch" interface="com.intellij.util.QueryExecutor"/>
+		<extensionPoint name="pyClassInheritorsSearch" interface="com.intellij.util.QueryExecutor"/>
+		<extensionPoint name="pyClassMembersProvider" interface="com.jetbrains.python.psi.types.PyClassMembersProvider"/>
+		<extensionPoint name="pyModuleMembersProvider" interface="com.jetbrains.python.psi.types.PyModuleMembersProvider"/>
+		<extensionPoint name="pyOverridingMethodsSearch" interface="com.intellij.util.QueryExecutor"/>
+		<extensionPoint name="runnableScriptFilter" interface="com.jetbrains.python.run.RunnableScriptFilter"/>
+		<extensionPoint name="runnableUnitTestFilter" interface="com.jetbrains.python.testing.RunnableUnitTestFilter"/>
+		<extensionPoint name="unresolvedReferenceQuickFixProvider"
+						interface="com.jetbrains.python.inspections.PyUnresolvedReferenceQuickFixProvider"/>
+		<extensionPoint name="dumbAnnotator" interface="com.jetbrains.python.validation.PyAnnotator"/>
+		<extensionPoint name="inspectionExtension" interface="com.jetbrains.python.inspections.PyInspectionExtension"/>
+		<extensionPoint name="customTargetExpressionStubType"
+						interface="com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType"/>
+		<extensionPoint name="knownDecoratorProvider" interface="com.jetbrains.python.psi.PyKnownDecoratorProvider"/>
+		<extensionPoint name="documentationLinkProvider" interface="com.jetbrains.python.documentation.PythonDocumentationLinkProvider"/>
+		<extensionPoint name="importCandidateProvider" interface="com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider"/>
+		<extensionPoint name="dialectsTokenSetContributor" interface="com.jetbrains.python.PythonDialectsTokenSetContributor"/>
+		<extensionPoint name="runConfigurationExtension" interface="com.jetbrains.python.run.PythonRunConfigurationExtension"/>
+		<extensionPoint name="visitorFilter" beanClass="com.intellij.lang.LanguageExtensionPoint"/>
+		<extensionPoint name="remoteInterpreterManager" interface="com.jetbrains.python.remote.PythonRemoteInterpreterManager"/>
+		<extensionPoint name="keywordArgumentProvider" interface="com.jetbrains.python.psi.impl.PyKeywordArgumentProvider"/>
+		<extensionPoint name="canonicalPathProvider" interface="com.jetbrains.python.psi.resolve.PyCanonicalPathProvider"/>
+		<extensionPoint name="templateContextProvider" interface="com.jetbrains.python.templateLanguages.TemplateContextProvider"/>
+		<extensionPoint name="pyReferenceResolveProvider" interface="com.jetbrains.python.psi.resolve.PyReferenceResolveProvider"/>
+		<extensionPoint name="breakpointHandler" interface="com.jetbrains.python.debugger.PyBreakpointHandlerFactory"/>
+		<extensionPoint name="consoleOptionsProvider" interface="com.jetbrains.python.console.PyConsoleOptionsProvider"/>
+	</extensionPoints>
+
+	<application-components>
+		<component>
+			<implementation-class>com.jetbrains.python.facet.PythonSdkTableListener</implementation-class>
+		</component>
+	</application-components>
+
+	<module-components>
+		<component>
+			<implementation-class>com.jetbrains.python.facet.PythonFacetListener</implementation-class>
+		</component>
+	</module-components>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<projectStructureDetector implementation="com.jetbrains.python.module.PyProjectStructureDetector"/>
+		<applicationService serviceInterface="com.jetbrains.python.run.PyCommonOptionsFormFactory"
+							serviceImplementation="com.jetbrains.python.run.PyPluginCommonOptionsFormFactory"/>
+
 		<moduleExtensionProvider key="python" implementationClass="org.consulo.python.module.extension.PyModuleExtensionProvider"/>
+
 		<moduleExtensionProvider key="py-buildout" parent-key="python" implementationClass="org.consulo.python.buildout.module.extension.BuildoutModuleExtensionProvider"/>
 	</extensions>
 </idea-plugin>

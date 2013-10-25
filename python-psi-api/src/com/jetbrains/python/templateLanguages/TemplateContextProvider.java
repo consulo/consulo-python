@@ -15,12 +15,12 @@
  */
 package com.jetbrains.python.templateLanguages;
 
+import java.util.Collection;
+
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * Returns the list of variables which are available in the context for a template.
@@ -28,7 +28,7 @@ import java.util.Collection;
  * @author yole
  */
 public interface TemplateContextProvider {
-  ExtensionPointName<TemplateContextProvider> EP_NAME = ExtensionPointName.create("Pythonid.templateContextProvider");
+  ExtensionPointName<TemplateContextProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.templateContextProvider");
 
   /**
    * Returns the context for a template. The lookup string of each returned LookupElement in the returned list is the visible

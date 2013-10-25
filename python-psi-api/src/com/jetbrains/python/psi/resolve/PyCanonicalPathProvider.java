@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.psi.resolve;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.QualifiedName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Allows to provide a custom qualified name when a specific symbol is going to be imported into a specific file.
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * @author yole
  */
 public interface PyCanonicalPathProvider {
-  ExtensionPointName<PyCanonicalPathProvider> EP_NAME = ExtensionPointName.create("Pythonid.canonicalPathProvider");
+  ExtensionPointName<PyCanonicalPathProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.canonicalPathProvider");
 
   /**
    * Allows to provide a custom qualified name when a specific symbol is going to be imported into a specific file.

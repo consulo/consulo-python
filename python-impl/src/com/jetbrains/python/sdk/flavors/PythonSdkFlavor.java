@@ -16,10 +16,26 @@
 
 package com.jetbrains.python.sdk.flavors;
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.util.SystemInfo;
@@ -29,223 +45,263 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import com.intellij.util.PatternUtil;
 import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.run.PythonProcessHandler;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkAdditionalData;
 import icons.PythonIcons;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * @author yole
  */
-public abstract class PythonSdkFlavor {
-  private static final Logger LOG = Logger.getInstance(PythonSdkFlavor.class);
+public abstract class PythonSdkFlavor
+{
+	public static final ExtensionPointName<PythonSdkFlavor> EP_NAME = ExtensionPointName.create("org.consulo.python.sdkFlavor");
+	private static final Logger LOG = Logger.getInstance(PythonSdkFlavor.class);
 
-  public static Collection<String> appendSystemPythonPath(@NotNull Collection<String> pythonPath) {
-    return appendSystemEnvPaths(pythonPath, PythonEnvUtil.PYTHONPATH);
-  }
+	public static Collection<String> appendSystemPythonPath(@NotNull Collection<String> pythonPath)
+	{
+		return appendSystemEnvPaths(pythonPath, PythonEnvUtil.PYTHONPATH);
+	}
 
-  protected static Collection<String> appendSystemEnvPaths(@NotNull Collection<String> pythonPath, String envname) {
-    String syspath = System.getenv(envname);
-    if (syspath != null) {
-      pythonPath.addAll(Lists.newArrayList(syspath.split(File.pathSeparator)));
-    }
-    return pythonPath;
-  }
+	protected static Collection<String> appendSystemEnvPaths(@NotNull Collection<String> pythonPath, String envname)
+	{
+		String syspath = System.getenv(envname);
+		if(syspath != null)
+		{
+			pythonPath.addAll(Lists.newArrayList(syspath.split(File.pathSeparator)));
+		}
+		return pythonPath;
+	}
 
+	public static void initPythonPath(@NotNull Map<String, String> envs, boolean passParentEnvs, @NotNull Collection<String> pythonPathList)
+	{
+		if(passParentEnvs && !envs.containsKey(PythonEnvUtil.PYTHONPATH))
+		{
+			pythonPathList = appendSystemPythonPath(pythonPathList);
+		}
+		PythonEnvUtil.addToPythonPath(envs, pythonPathList);
+	}
 
-  public static void initPythonPath(@NotNull Map<String, String> envs, boolean passParentEnvs, @NotNull Collection<String> pythonPathList) {
-    if (passParentEnvs && !envs.containsKey(PythonEnvUtil.PYTHONPATH)) {
-      pythonPathList = appendSystemPythonPath(pythonPathList);
-    }
-    PythonEnvUtil.addToPythonPath(envs, pythonPathList);
-  }
+	public static List<PythonSdkFlavor> getApplicableFlavors()
+	{
+		List<PythonSdkFlavor> result = new ArrayList<PythonSdkFlavor>();
 
-  public Collection<String> suggestHomePaths() {
-    return Collections.emptyList();
-  }
+		if(SystemInfo.isWindows)
+		{
+			result.add(WinPythonSdkFlavor.INSTANCE);
+		}
+		else if(SystemInfo.isMac)
+		{
+			result.add(MacPythonSdkFlavor.INSTANCE);
+		}
+		else if(SystemInfo.isUnix)
+		{
+			result.add(UnixPythonSdkFlavor.INSTANCE);
+		}
 
-  public static List<PythonSdkFlavor> getApplicableFlavors() {
-    List<PythonSdkFlavor> result = new ArrayList<PythonSdkFlavor>();
+		Collections.addAll(result, EP_NAME.getExtensions());
 
-    if (SystemInfo.isWindows) {
-      result.add(WinPythonSdkFlavor.INSTANCE);
-    }
-    else if (SystemInfo.isMac) {
-      result.add(MacPythonSdkFlavor.INSTANCE);
-    }
-    else if (SystemInfo.isUnix) {
-      result.add(UnixPythonSdkFlavor.INSTANCE);
-    }
+		return result;
+	}
 
-    result.addAll(getPlatformIndependentFlavors());
+	@Nullable
+	public static PythonSdkFlavor getFlavor(Sdk sdk)
+	{
+		final SdkAdditionalData data = sdk.getSdkAdditionalData();
+		if(data instanceof PythonSdkAdditionalData)
+		{
+			PythonSdkFlavor flavor = ((PythonSdkAdditionalData) data).getFlavor();
+			if(flavor != null)
+			{
+				return flavor;
+			}
+		}
+		return getFlavor(sdk.getHomePath());
+	}
 
-    return result;
-  }
+	@Nullable
+	public static PythonSdkFlavor getFlavor(@Nullable String sdkPath)
+	{
+		if(sdkPath == null)
+		{
+			return null;
+		}
 
+		for(PythonSdkFlavor flavor : getApplicableFlavors())
+		{
+			if(flavor.isValidSdkHome(sdkPath))
+			{
+				return flavor;
+			}
+		}
+		return null;
+	}
 
-  public static List<PythonSdkFlavor> getPlatformIndependentFlavors() {
-    List<PythonSdkFlavor> result = Lists.newArrayList();
-    result.add(JythonSdkFlavor.INSTANCE);
-    result.add(IronPythonSdkFlavor.INSTANCE);
-    result.add(PyPySdkFlavor.INSTANCE);
-    result.add(VirtualEnvSdkFlavor.INSTANCE);
-    result.add(PyRemoteSdkFlavor.INSTANCE);
-    result.add(MayaSdkFlavor.INSTANCE);
+	@Nullable
+	public static PythonSdkFlavor getPlatformIndependentFlavor(@Nullable final String sdkPath)
+	{
+		if(sdkPath == null)
+		{
+			return null;
+		}
 
-    return result;
-  }
+		for(PythonSdkFlavor flavor : EP_NAME.getExtensions())
+		{
+			if(flavor.isValidSdkHome(sdkPath))
+			{
+				return flavor;
+			}
+		}
+		return null;
+	}
 
-  @Nullable
-  public static PythonSdkFlavor getFlavor(Sdk sdk) {
-    final SdkAdditionalData data = sdk.getSdkAdditionalData();
-    if (data instanceof PythonSdkAdditionalData) {
-      PythonSdkFlavor flavor = ((PythonSdkAdditionalData)data).getFlavor();
-      if (flavor != null) {
-        return flavor;
-      }
-    }
-    return getFlavor(sdk.getHomePath());
-  }
+	@Nullable
+	protected static String getVersionFromOutput(String sdkHome, String version_opt, String version_regexp)
+	{
+		String run_dir = new File(sdkHome).getParent();
+		final ProcessOutput process_output = PySdkUtil.getProcessOutput(run_dir, new String[]{
+				sdkHome,
+				version_opt
+		});
 
-  @Nullable
-  public static PythonSdkFlavor getFlavor(@Nullable String sdkPath) {
-    if (sdkPath == null) return null;
+		return getVersionFromOutput(version_regexp, process_output);
+	}
 
-    for (PythonSdkFlavor flavor : getApplicableFlavors()) {
-      if (flavor.isValidSdkHome(sdkPath)) {
-        return flavor;
-      }
-    }
-    return null;
-  }
+	@Nullable
+	private static String getVersionFromOutput(String version_regexp, ProcessOutput process_output)
+	{
+		if(process_output.getExitCode() != 0)
+		{
+			String err = process_output.getStderr();
+			if(StringUtil.isEmpty(err))
+			{
+				err = process_output.getStdout();
+			}
+			LOG.warn("Couldn't get interpreter version: process exited with code " + process_output.getExitCode() + "\n" + err);
+			return null;
+		}
+		Pattern pattern = Pattern.compile(version_regexp);
+		final String result = PatternUtil.getFirstMatch(process_output.getStderrLines(), pattern);
+		if(result != null)
+		{
+			return result;
+		}
+		return PatternUtil.getFirstMatch(process_output.getStdoutLines(), pattern);
+	}
 
-  @Nullable
-  public static PythonSdkFlavor getPlatformIndependentFlavor(@Nullable final String sdkPath) {
-    if (sdkPath == null) return null;
+	public static void addToEnv(final String key, String value, Map<String, String> envs)
+	{
+		PythonEnvUtil.addPathToEnv(envs, key, value);
+	}
 
-    for (PythonSdkFlavor flavor : getPlatformIndependentFlavors()) {
-      if (flavor.isValidSdkHome(sdkPath)) {
-        return flavor;
-      }
-    }
-    return null;
-  }
+	public Collection<String> suggestHomePaths()
+	{
+		return Collections.emptyList();
+	}
 
-  /**
-   * Checks if the path is the name of a Python interpreter of this flavor.
-   *
-   * @param path path to check.
-   * @return true if paths points to a valid home.
-   */
-  public boolean isValidSdkHome(String path) {
-    File file = new File(path);
-    return file.isFile() && isValidSdkPath(file);
-  }
+	/**
+	 * Checks if the path is the name of a Python interpreter of this flavor.
+	 *
+	 * @param path path to check.
+	 * @return true if paths points to a valid home.
+	 */
+	public boolean isValidSdkHome(String path)
+	{
+		File file = new File(path);
+		return file.isFile() && isValidSdkPath(file);
+	}
 
-  public boolean isValidSdkPath(@NotNull File file) {
-    return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("python");
-  }
+	public boolean isValidSdkPath(@NotNull File file)
+	{
+		return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("python");
+	}
 
-  public String getVersionString(String sdkHome) {
-    return getVersionStringFromOutput(getVersionFromOutput(sdkHome, getVersionOption(), getVersionRegexp()));
-  }
+	public String getVersionString(String sdkHome)
+	{
+		return getVersionStringFromOutput(getVersionFromOutput(sdkHome, getVersionOption(), getVersionRegexp()));
+	}
 
-  public String getVersionStringFromOutput(String version) {
-    return version;
-  }
+	public String getVersionStringFromOutput(String version)
+	{
+		return version;
+	}
 
+	public String getVersionRegexp()
+	{
+		return "(Python \\S+).*";
+	}
 
-  public String getVersionRegexp() {
-    return "(Python \\S+).*";
-  }
+	public String getVersionOption()
+	{
+		return "-V";
+	}
 
-  public String getVersionOption() {
-    return "-V";
-  }
+	@Nullable
+	public String getVersionFromOutput(ProcessOutput processOutput)
+	{
+		return getVersionFromOutput(getVersionRegexp(), processOutput);
+	}
 
-  @Nullable
-  public String getVersionFromOutput(ProcessOutput processOutput) {
-    return getVersionFromOutput(getVersionRegexp(), processOutput);
-  }
+	public Collection<String> getExtraDebugOptions()
+	{
+		return Collections.emptyList();
+	}
 
-  @Nullable
-  protected static String getVersionFromOutput(String sdkHome, String version_opt, String version_regexp) {
-    String run_dir = new File(sdkHome).getParent();
-    final ProcessOutput process_output = PySdkUtil.getProcessOutput(run_dir, new String[]{sdkHome, version_opt});
+	public void initPythonPath(GeneralCommandLine cmd, Collection<String> path)
+	{
+		initPythonPath(path, cmd.getEnvironment());
+	}
 
-    return getVersionFromOutput(version_regexp, process_output);
-  }
+	public ProcessHandler createProcessHandler(GeneralCommandLine commandLine, boolean withMediator) throws ExecutionException
+	{
+		return PythonProcessHandler.createDefaultProcessHandler(commandLine, withMediator);
+	}
 
-  @Nullable
-  private static String getVersionFromOutput(String version_regexp, ProcessOutput process_output) {
-    if (process_output.getExitCode() != 0) {
-      String err = process_output.getStderr();
-      if (StringUtil.isEmpty(err)) {
-        err = process_output.getStdout();
-      }
-      LOG.warn("Couldn't get interpreter version: process exited with code " + process_output.getExitCode() + "\n" + err
-      );
-      return null;
-    }
-    Pattern pattern = Pattern.compile(version_regexp);
-    final String result = PatternUtil.getFirstMatch(process_output.getStderrLines(), pattern);
-    if (result != null) {
-      return result;
-    }
-    return PatternUtil.getFirstMatch(process_output.getStdoutLines(), pattern);
-  }
+	@SuppressWarnings({"MethodMayBeStatic"})
+	public void addPredefinedEnvironmentVariables(Map<String, String> envs)
+	{
+		Charset defaultCharset = EncodingManager.getInstance().getDefaultCharset();
+		if(defaultCharset != null)
+		{
+			final String encoding = defaultCharset.name();
+			PythonEnvUtil.setPythonIOEncoding(envs, encoding);
+		}
+	}
 
-  public Collection<String> getExtraDebugOptions() {
-    return Collections.emptyList();
-  }
+	@NotNull
+	public abstract String getName();
 
-  public void initPythonPath(GeneralCommandLine cmd, Collection<String> path) {
-    initPythonPath(path, cmd.getEnvironment());
-  }
+	public LanguageLevel getLanguageLevel(Sdk sdk)
+	{
+		final String version = sdk.getVersionString();
+		final String prefix = getName() + " ";
+		if(version != null && version.startsWith(prefix))
+		{
+			return LanguageLevel.fromPythonVersion(version.substring(prefix.length()));
+		}
+		return LanguageLevel.getDefault();
+	}
 
-  public static void addToEnv(final String key, String value, Map<String, String> envs) {
-    PythonEnvUtil.addPathToEnv(envs, key, value);
-  }
+	public Icon getIcon()
+	{
+		return PythonIcons.Python.Python;
+	}
 
-  @SuppressWarnings({"MethodMayBeStatic"})
-  public void addPredefinedEnvironmentVariables(Map<String, String> envs) {
-    Charset defaultCharset = EncodingManager.getInstance().getDefaultCharset();
-    if (defaultCharset != null) {
-      final String encoding = defaultCharset.name();
-      PythonEnvUtil.setPythonIOEncoding(envs, encoding);
-    }
-  }
+	public void initPythonPath(Collection<String> path, Map<String, String> env)
+	{
+		path = appendSystemPythonPath(path);
+		addToEnv(PythonEnvUtil.PYTHONPATH, StringUtil.join(path, File.pathSeparator), env);
+	}
 
-  @NotNull
-  public abstract String getName();
+	public VirtualFile getSdkPath(VirtualFile path)
+	{
+		return path;
+	}
 
-  public LanguageLevel getLanguageLevel(Sdk sdk) {
-    final String version = sdk.getVersionString();
-    final String prefix = getName() + " ";
-    if (version != null && version.startsWith(prefix)) {
-      return LanguageLevel.fromPythonVersion(version.substring(prefix.length()));
-    }
-    return LanguageLevel.getDefault();
-  }
-
-  public Icon getIcon() {
-    return PythonIcons.Python.Python;
-  }
-
-  public void initPythonPath(Collection<String> path, Map<String, String> env) {
-    path = appendSystemPythonPath(path);
-    addToEnv(PythonEnvUtil.PYTHONPATH, StringUtil.join(path, File.pathSeparator), env);
-  }
-
-  public VirtualFile getSdkPath(VirtualFile path) {
-    return path;
-  }
+	@NotNull
+	public Collection<String> collectDebugPythonPath()
+	{
+		return Collections.emptyList();
+	}
 }

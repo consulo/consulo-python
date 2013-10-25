@@ -46,7 +46,7 @@ public class PyOverridingMethodsSearch extends ExtensibleQueryFactory<PyFunction
   }
 
   private PyOverridingMethodsSearch() {
-    super("Pythonid");
+    super("org.consulo.python");
   }
 
   public static Query<PyFunction> search(PyFunction function, boolean checkDeep) {

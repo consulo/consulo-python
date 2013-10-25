@@ -16,12 +16,12 @@
 
 package com.jetbrains.python.sdk.flavors;
 
+import java.util.Collection;
+
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.remotesdk.RemoteFile;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * @author traff
@@ -31,8 +31,6 @@ public class PyRemoteSdkFlavor extends CPythonSdkFlavor {
   }
 
   private final static String[] NAMES = new String[]{"python", "jython", "pypy", "python.exe", "jython.bat", "pypy.exe"};
-
-  public static PyRemoteSdkFlavor INSTANCE = new PyRemoteSdkFlavor();
 
   @Override
   public Collection<String> suggestHomePaths() {

@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.run;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.Location;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Filters out Python scripts for which it doesn't make sense to run the standard Python configuration,
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public interface RunnableScriptFilter {
-  ExtensionPointName<RunnableScriptFilter> EP_NAME = ExtensionPointName.create("Pythonid.runnableScriptFilter");
+  ExtensionPointName<RunnableScriptFilter> EP_NAME = ExtensionPointName.create("org.consulo.python.runnableScriptFilter");
 
   boolean isRunnableScript(PsiFile script, @NotNull Module module, Location location);
 }

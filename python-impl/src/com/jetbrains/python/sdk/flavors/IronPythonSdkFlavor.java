@@ -16,14 +16,19 @@
 
 package com.jetbrains.python.sdk.flavors;
 
+import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.text.StringUtil;
 import icons.PythonIcons;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.io.File;
-import java.util.*;
 
 /**
  * @author yole
@@ -31,8 +36,6 @@ import java.util.*;
 public class IronPythonSdkFlavor extends PythonSdkFlavor {
   private IronPythonSdkFlavor() {
   }
-
-  public static IronPythonSdkFlavor INSTANCE = new IronPythonSdkFlavor();
 
   @Override
   public Collection<String> suggestHomePaths() {

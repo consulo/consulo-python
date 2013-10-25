@@ -48,8 +48,7 @@ public class PythonIcons {
 
     }
     public static final Icon Dotnet = load("/icons/com/jetbrains/python/dotnet.png"); // 16x16
-    public static final Icon Jython = load("/icons/com/jetbrains/python/jython.png"); // 16x16
-    
+
     public static class Nodes {
       public static final Icon Cyan_dot = load("/icons/com/jetbrains/python/nodes/cyan-dot.png"); // 16x16
       public static final Icon Lock = load("/icons/com/jetbrains/python/nodes/lock.png"); // 16x16

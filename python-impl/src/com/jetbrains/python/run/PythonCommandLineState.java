@@ -64,7 +64,6 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.util.containers.HashMap;
-import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.console.PyDebugConsoleBuilder;
 import com.jetbrains.python.debugger.PyDebugRunner;
 import com.jetbrains.python.debugger.PyDebuggerOptionsProvider;
@@ -74,7 +73,6 @@ import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkAdditionalData;
 import com.jetbrains.python.sdk.PythonSdkType;
-import com.jetbrains.python.sdk.flavors.JythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 
 /**
@@ -487,10 +485,10 @@ public abstract class PythonCommandLineState extends CommandLineState
 		final Module module = myConfig.getModule();
 		Set<String> pythonPath = Sets.newHashSet(collectPythonPath(module, myConfig.addContentRoots(), myConfig.addSourceRoots()));
 
-		if(isDebug() && getSdkFlavor() instanceof JythonSdkFlavor)
-		{ //that fixes Jython problem changing sys.argv on execfile, see PY-8164
-			pythonPath.add(PythonHelpersLocator.getHelperPath("pycharm"));
-			pythonPath.add(PythonHelpersLocator.getHelperPath("pydev"));
+		PythonSdkFlavor sdkFlavor = getSdkFlavor();
+		if(sdkFlavor != null && isDebug())
+		{
+			pythonPath.addAll(sdkFlavor.collectDebugPythonPath());
 		}
 
 		return pythonPath;

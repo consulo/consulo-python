@@ -16,19 +16,19 @@
 
 package com.jetbrains.python.psi.types;
 
+import java.util.Collection;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyDynamicMember;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * @author Dennis.Ushakov
  */
 public interface PyClassMembersProvider {
-  ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create("Pythonid.pyClassMembersProvider");
+  ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.pyClassMembersProvider");
 
   @NotNull
   Collection<PyDynamicMember> getMembers(PyClassType clazz, @Nullable PsiElement location);

@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.psi.search;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.searches.ExtensibleQueryFactory;
 import com.intellij.util.Query;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author yole
@@ -71,7 +71,7 @@ public class PySuperMethodsSearch extends ExtensibleQueryFactory<PsiElement, PyS
   }
 
   private PySuperMethodsSearch() {
-    super("Pythonid");
+    super("org.consulo.python");
   }
 
   public static Query<PsiElement> search(final PyFunction derivedMethod) {

@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.validation;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -24,13 +25,12 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.impl.PyFileImpl;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class PyDumbAwareAnnotator implements Annotator, DumbAware {
-  public static ExtensionPointName<PyAnnotator> EP_NAME = ExtensionPointName.create("Pythonid.dumbAnnotator");
+  public static ExtensionPointName<PyAnnotator> EP_NAME = ExtensionPointName.create("org.consulo.python.dumbAnnotator");
   private final PyAnnotator[] myAnnotators;
 
   public PyDumbAwareAnnotator() {

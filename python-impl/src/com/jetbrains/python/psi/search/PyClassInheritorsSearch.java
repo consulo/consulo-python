@@ -45,7 +45,7 @@ public class PyClassInheritorsSearch extends ExtensibleQueryFactory<PyClass, PyC
   }
 
   private PyClassInheritorsSearch() {
-    super("Pythonid");
+    super("org.consulo.python");
   }
 
   public static Query<PyClass> search(final PyClass superClass, final boolean checkDeepInheritance) {

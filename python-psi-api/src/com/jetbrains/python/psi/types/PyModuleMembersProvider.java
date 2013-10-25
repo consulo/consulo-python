@@ -16,6 +16,10 @@
 
 package com.jetbrains.python.psi.types;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -23,16 +27,12 @@ import com.jetbrains.python.codeInsight.PyDynamicMember;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyPsiFacade;
 import com.jetbrains.python.psi.resolve.PointInImport;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author yole
  */
 public abstract class PyModuleMembersProvider {
-  public static final ExtensionPointName<PyModuleMembersProvider> EP_NAME = ExtensionPointName.create("Pythonid.pyModuleMembersProvider");
+  public static final ExtensionPointName<PyModuleMembersProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.pyModuleMembersProvider");
 
   public Collection<PyDynamicMember> getMembers(PyFile module, PointInImport point) {
     final VirtualFile vFile = module.getVirtualFile();

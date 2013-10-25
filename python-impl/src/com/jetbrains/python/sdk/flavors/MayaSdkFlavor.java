@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.sdk.flavors;
 
+import java.io.File;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.PythonIcons;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.io.File;
 
 /**
  * @author traff
@@ -30,8 +31,6 @@ import java.io.File;
 public class MayaSdkFlavor extends PythonSdkFlavor {
   private MayaSdkFlavor() {
   }
-
-  public static MayaSdkFlavor INSTANCE = new MayaSdkFlavor();
 
   public boolean isValidSdkHome(String path) {
     File file = new File(path);

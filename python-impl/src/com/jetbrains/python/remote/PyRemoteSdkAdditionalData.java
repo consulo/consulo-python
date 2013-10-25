@@ -16,6 +16,14 @@
 
 package com.jetbrains.python.remote;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.remotesdk.RemoteSdkAdditionalData;
@@ -24,13 +32,6 @@ import com.jetbrains.python.sdk.PythonSdkAdditionalData;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.UnixPythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.WinPythonSdkFlavor;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author traff
@@ -286,8 +287,8 @@ public final class PyRemoteSdkAdditionalData extends PythonSdkAdditionalData imp
     else {
       result.add(UnixPythonSdkFlavor.INSTANCE);
     }
-    result.addAll(PythonSdkFlavor.getPlatformIndependentFlavors());
 
+	Collections.addAll(result, PythonSdkFlavor.EP_NAME.getExtensions());
     return result;
   }
 

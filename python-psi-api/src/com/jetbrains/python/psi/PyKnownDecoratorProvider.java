@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.psi;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.extensions.ExtensionPointName;
 
 /**
  * @author yole
  */
 public interface PyKnownDecoratorProvider {
-  ExtensionPointName<PyKnownDecoratorProvider> EP_NAME = ExtensionPointName.create("Pythonid.knownDecoratorProvider");
+  ExtensionPointName<PyKnownDecoratorProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.knownDecoratorProvider");
 
   @Nullable
   String toKnownDecorator(String decoratorName);

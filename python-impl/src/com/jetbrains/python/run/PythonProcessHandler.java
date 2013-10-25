@@ -16,35 +16,53 @@
 
 package com.jetbrains.python.run;
 
+import java.nio.charset.Charset;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.KillableColoredProcessHandler;
-import org.jetbrains.annotations.NotNull;
-
-import java.nio.charset.Charset;
+import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.RunnerMediator;
+import com.intellij.openapi.util.SystemInfo;
 
 /**
  * @author traff
  */
-public class PythonProcessHandler extends KillableColoredProcessHandler {
-  protected PythonProcessHandler(@NotNull Process process, @NotNull GeneralCommandLine commandLine) {
-    super(process, commandLine.getCommandLineString());
-  }
+public class PythonProcessHandler extends KillableColoredProcessHandler
+{
+	protected PythonProcessHandler(@NotNull Process process, @NotNull GeneralCommandLine commandLine)
+	{
+		super(process, commandLine.getCommandLineString());
+	}
 
-  public PythonProcessHandler(Process process, String commandLine, @NotNull Charset charset) {
-    super(process, commandLine, charset);
-  }
+	public PythonProcessHandler(Process process, String commandLine, @NotNull Charset charset)
+	{
+		super(process, commandLine, charset);
+	}
 
-  @Override
-  protected boolean shouldDestroyProcessRecursively() {
-    return true;
-  }
+	public static PythonProcessHandler createProcessHandler(GeneralCommandLine commandLine) throws ExecutionException
+	{
+		Process p = commandLine.createProcess();
 
-  public static PythonProcessHandler createProcessHandler(GeneralCommandLine commandLine)
-    throws ExecutionException {
+		return new PythonProcessHandler(p, commandLine);
+	}
 
-    Process p = commandLine.createProcess();
+	public static ProcessHandler createDefaultProcessHandler(GeneralCommandLine commandLine, boolean withMediator) throws ExecutionException
+	{
+		if(withMediator && SystemInfo.isWindows)
+		{
+			return RunnerMediator.getInstance().createProcess(commandLine);
+		}
+		else
+		{
+			return PythonProcessHandler.createProcessHandler(commandLine);
+		}
+	}
 
-    return new PythonProcessHandler(p, commandLine);
-  }
+	@Override
+	protected boolean shouldDestroyProcessRecursively()
+	{
+		return true;
+	}
 }

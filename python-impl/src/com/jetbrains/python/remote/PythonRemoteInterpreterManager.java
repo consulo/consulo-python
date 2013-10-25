@@ -16,6 +16,13 @@
 
 package com.jetbrains.python.remote;
 
+import java.awt.Component;
+import java.util.Collection;
+import java.util.List;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
@@ -35,20 +42,13 @@ import com.intellij.util.NullableConsumer;
 import com.intellij.util.PathMappingSettings;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.sdk.skeletons.PySkeletonGenerator;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author traff
  */
 public abstract class PythonRemoteInterpreterManager {
   public final static ExtensionPointName<PythonRemoteInterpreterManager> EP_NAME =
-    ExtensionPointName.create("Pythonid.remoteInterpreterManager");
+    ExtensionPointName.create("org.consulo.python.remoteInterpreterManager");
   public static final String WEB_DEPLOYMENT_PLUGIN_IS_DISABLED =
     "Remote interpreter can't be executed. Please enable the Remote Hosts Access plugin.";
 

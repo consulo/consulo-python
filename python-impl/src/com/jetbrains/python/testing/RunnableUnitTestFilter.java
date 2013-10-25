@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.testing;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Filters out Python unit tests for which it doesn't make sense to run the standard unit test configuration,
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public interface RunnableUnitTestFilter {
-  ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create("Pythonid.runnableUnitTestFilter");
+  ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create("org.consulo.python.runnableUnitTestFilter");
 
   boolean isRunnableUnitTest(PsiFile script, @NotNull Module module);
 }

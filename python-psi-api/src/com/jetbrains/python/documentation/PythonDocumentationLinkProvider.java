@@ -16,16 +16,16 @@
 
 package com.jetbrains.python.documentation;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
 public interface PythonDocumentationLinkProvider {
-  ExtensionPointName<PythonDocumentationLinkProvider> EP_NAME = ExtensionPointName.create("Pythonid.documentationLinkProvider");
+  ExtensionPointName<PythonDocumentationLinkProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.documentationLinkProvider");
 
   @Nullable
   String getExternalDocumentationUrl(PsiElement element, PsiElement originalElement);

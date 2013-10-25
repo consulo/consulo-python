@@ -16,19 +16,19 @@
 
 package com.jetbrains.python.psi.resolve;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyQualifiedExpression;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  *
  * User : ktisha
  */
 public interface PyReferenceResolveProvider {
-  ExtensionPointName<PyReferenceResolveProvider> EP_NAME = ExtensionPointName.create("Pythonid.pyReferenceResolveProvider");
+  ExtensionPointName<PyReferenceResolveProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.pyReferenceResolveProvider");
 
   /**
    * Allows to provide a custom resolve result for qualified expression

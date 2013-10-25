@@ -19,6 +19,14 @@
         </element>
         <element id="dir-copy" path="$PROJECT_DIR$/dist" />
       </element>
+      <element id="directory" name="jython">
+        <element id="directory" name="lib">
+          <element id="zip-archive" name="jython.jar">
+            <element id="module-output" name="jython" />
+            <element id="module-production-resource-output" name="jython" />
+          </element>
+        </element>
+      </element>
     </root>
   </artifact>
 </component>

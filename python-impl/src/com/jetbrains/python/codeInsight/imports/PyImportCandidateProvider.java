@@ -23,7 +23,7 @@ import com.intellij.psi.PsiReference;
  * @author yole
  */
 public interface PyImportCandidateProvider {
-  ExtensionPointName<PyImportCandidateProvider> EP_NAME = ExtensionPointName.create("Pythonid.importCandidateProvider");
+  ExtensionPointName<PyImportCandidateProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.importCandidateProvider");
 
   void addImportCandidates(PsiReference reference, String name, AutoImportQuickFix quickFix);
 }
