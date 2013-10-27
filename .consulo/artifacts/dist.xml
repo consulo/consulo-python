@@ -16,6 +16,10 @@
           <element id="zip-archive" name="python-rest.jar">
             <element id="module-output" name="python-rest" />
           </element>
+          <element id="zip-archive" name="python-intelliLang.jar">
+            <element id="module-output" name="python-intelliLang" />
+            <element id="module-production-resource-output" name="python-intelliLang" />
+          </element>
         </element>
         <element id="dir-copy" path="$PROJECT_DIR$/dist" />
       </element>

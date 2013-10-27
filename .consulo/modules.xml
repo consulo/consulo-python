@@ -150,6 +150,36 @@
           </library>
         </orderEntry>
       </module>
+      <module name="python-intelliLang" dirurl="file://$PROJECT_DIR$/python-intelliLang">
+        <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+        <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" custom-plugin-dir-url="file://$MODULE_DIR$/../dep" />
+        <content url="file://$MODULE_DIR$">
+          <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
+          <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
+        </content>
+        <orderEntry type="module-extension-sdk" extension-id="java" />
+        <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
+        <orderEntry type="sourceFolder" forTests="false" />
+        <orderEntry type="module-library">
+          <library name="consulo:IntelliLang">
+            <CLASSES>
+              <root url="jar://$MODULE_DIR$/../dep/intelliLang/lib/intelliLang.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES />
+          </library>
+        </orderEntry>
+        <orderEntry type="module-library">
+          <library name="consulo:Regexp">
+            <CLASSES>
+              <root url="jar://$MODULE_DIR$/../dep/regexp/lib/regexp.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES />
+          </library>
+        </orderEntry>
+        <orderEntry type="module" module-name="python-impl" />
+      </module>
     </modules>
   </component>
 </project>
