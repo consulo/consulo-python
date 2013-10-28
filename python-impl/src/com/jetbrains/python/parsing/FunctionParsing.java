@@ -18,10 +18,9 @@ package com.jetbrains.python.parsing;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
-
-import static com.jetbrains.python.PyBundle.message;
 
 /**
  * @author yole
@@ -49,11 +48,11 @@ public class FunctionParsing extends Parsing {
       myBuilder.advanceLexer();
     }
     else {
-      myBuilder.error(message("PARSE.expected.func.name"));
+      myBuilder.error(PyBundle.message("PARSE.expected.func.name"));
     }
     parseParameterList();
     parseReturnTypeAnnotation();
-    checkMatches(PyTokenTypes.COLON, message("PARSE.expected.colon"));
+    checkMatches(PyTokenTypes.COLON, PyBundle.message("PARSE.expected.colon"));
     getStatementParser().parseSuite(functionMarker, getFunctionType(), myContext.emptyParsingScope().withFunction(true));
   }
 
@@ -63,7 +62,7 @@ public class FunctionParsing extends Parsing {
       nextToken();
       if (matchToken(PyTokenTypes.GT)) {
         if (!myContext.getExpressionParser().parseSingleExpression(false)) {
-          myBuilder.error(message("PARSE.expected.expression"));
+          myBuilder.error(PyBundle.message("PARSE.expected.expression"));
         }
         maybeReturnAnnotation.done(PyElementTypes.ANNOTATION);
       }
@@ -88,7 +87,7 @@ public class FunctionParsing extends Parsing {
       else { // empty arglist node, so we always have it
         myBuilder.mark().done(PyElementTypes.ARGUMENT_LIST);
       }
-      checkMatches(PyTokenTypes.STATEMENT_BREAK, message("PARSE.expected.statement.break"));
+      checkMatches(PyTokenTypes.STATEMENT_BREAK, PyBundle.message("PARSE.expected.statement.break"));
       decoratorMarker.done(PyElementTypes.DECORATOR_CALL);
       decorated = true;
     }
@@ -105,7 +104,7 @@ public class FunctionParsing extends Parsing {
       getStatementParser().parseClassDeclaration(endMarker, scope);
     }
     else {
-      myBuilder.error(message("PARSE.expected.@.or.def"));
+      myBuilder.error(PyBundle.message("PARSE.expected.@.or.def"));
       PsiBuilder.Marker parameterList = myBuilder.mark(); // To have non-empty parameters list at all the time.
       parameterList.done(PyElementTypes.PARAMETER_LIST);
       endMarker.done(getFunctionType());
@@ -115,7 +114,7 @@ public class FunctionParsing extends Parsing {
   public void parseParameterList() {
     final PsiBuilder.Marker parameterList;
     if (myBuilder.getTokenType() != PyTokenTypes.LPAR) {
-      myBuilder.error(message("PARSE.expected.lpar"));
+      myBuilder.error(PyBundle.message("PARSE.expected.lpar"));
       parameterList = myBuilder.mark(); // To have non-empty parameters list at all the time.
       parameterList.done(PyElementTypes.PARAMETER_LIST);
       return;
@@ -141,7 +140,7 @@ public class FunctionParsing extends Parsing {
           myBuilder.advanceLexer();
         }
         else {
-          myBuilder.error(message("PARSE.expected.comma.lpar.rpar"));
+          myBuilder.error(PyBundle.message("PARSE.expected.comma.lpar.rpar"));
           break;
         }
       }
@@ -193,7 +192,7 @@ public class FunctionParsing extends Parsing {
         PsiBuilder.Marker annotationMarker = myBuilder.mark();
         nextToken();
         if (!getExpressionParser().parseSingleExpression(false)) {
-          myBuilder.error(message("PARSE.expected.expression"));
+          myBuilder.error(PyBundle.message("PARSE.expected.expression"));
         }
         annotationMarker.done(PyElementTypes.ANNOTATION);
       }
@@ -203,7 +202,7 @@ public class FunctionParsing extends Parsing {
           while(!atAnyOfTokens(endToken, PyTokenTypes.LINE_BREAK, PyTokenTypes.COMMA, null)) {
             nextToken();
           }
-          invalidElements.error(message("PARSE.expected.expression"));
+          invalidElements.error(PyBundle.message("PARSE.expected.expression"));
         }
       }
       parameter.done(PyElementTypes.NAMED_PARAMETER);
@@ -217,7 +216,7 @@ public class FunctionParsing extends Parsing {
       while (!atToken(endToken) && !atToken(PyTokenTypes.LINE_BREAK) && !atToken(PyTokenTypes.COMMA) && !atToken(null)) {
         nextToken();
       }
-      invalidElements.error(message("PARSE.expected.formal.param.name"));
+      invalidElements.error(PyBundle.message("PARSE.expected.formal.param.name"));
       return false;
     }
     return true;
@@ -241,7 +240,7 @@ public class FunctionParsing extends Parsing {
         break;
       }
       if (myBuilder.getTokenType() != PyTokenTypes.COMMA) {
-        myBuilder.error(message("PARSE.expected.comma.lpar.rpar"));
+        myBuilder.error(PyBundle.message("PARSE.expected.comma.lpar.rpar"));
         break;
       }
       myBuilder.advanceLexer();

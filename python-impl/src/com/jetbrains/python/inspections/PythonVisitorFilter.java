@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.inspections;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.LanguageExtension;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : catherine
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * check if we should visit element
  */
 public interface PythonVisitorFilter {
-  LanguageExtension<PythonVisitorFilter> INSTANCE = new LanguageExtension<PythonVisitorFilter>("Pythonid.visitorFilter");
+  LanguageExtension<PythonVisitorFilter> INSTANCE = new LanguageExtension<PythonVisitorFilter>("org.consulo.python.visitorFilter");
 
   boolean isSupported(@NotNull Class visitorClass, @NotNull PsiFile file);
 }
