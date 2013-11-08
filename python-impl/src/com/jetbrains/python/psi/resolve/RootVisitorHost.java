@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
+import org.mustbe.consulo.roots.ContentFolderScopes;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -110,7 +111,7 @@ public class RootVisitorHost {
 
       if (rootFile != null && !visitor.visitRoot(rootFile, null, null, true)) return false;
       contentRoots.add(rootFile);
-      for (VirtualFile folder : entry.getFolderFiles(ContentFolderType.PRODUCTION)) {
+      for (VirtualFile folder : entry.getFolderFiles(ContentFolderScopes.production())) {
         if (!visitor.visitRoot(folder, rootModel.getModule(), null, true)) return false;
       }
     }

@@ -29,6 +29,8 @@ import org.consulo.compiler.CompilerPathsManager;
 import org.consulo.module.extension.ModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.roots.impl.ProductionContentFolderTypeProvider;
+import org.mustbe.consulo.roots.impl.TestContentFolderTypeProvider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.execution.DefaultExecutionResult;
@@ -54,7 +56,6 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import com.intellij.openapi.roots.ContentFolderType;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
@@ -262,12 +263,12 @@ public abstract class PythonCommandLineState extends CommandLineState
 
 		// for Jython
 		final CompilerPathsManager extension = CompilerPathsManager.getInstance(module.getProject());
-		final VirtualFile path = extension.getCompilerOutput(module, ContentFolderType.PRODUCTION);
+		final VirtualFile path = extension.getCompilerOutput(module, ProductionContentFolderTypeProvider.getInstance());
 		if(path != null)
 		{
 			pythonPathList.add(path.getPath());
 		}
-		final VirtualFile pathForTests = extension.getCompilerOutput(module, ContentFolderType.TEST);
+		final VirtualFile pathForTests = extension.getCompilerOutput(module, TestContentFolderTypeProvider.getInstance());
 		if(pathForTests != null)
 		{
 			pythonPathList.add(pathForTests.getPath());
