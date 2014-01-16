@@ -1,10 +1,12 @@
 <idea-plugin version="2">
 	<id>org.consulo.jython</id>
 	<name>Jython</name>
+	<category>Language Extension</category>
 	<depends>org.consulo.python</depends>
 	<depends>org.consulo.java</depends>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
 		<completion.contributor language="Python" implementationClass="com.jetbrains.python.psi.impl.PyConstructorArgumentCompletionContributor"/>
 
 		<moduleExtensionProvider key="jython" parent-key="java" implementationClass="org.consulo.jython.module.extension.JythonModuleExtensionProvider" />

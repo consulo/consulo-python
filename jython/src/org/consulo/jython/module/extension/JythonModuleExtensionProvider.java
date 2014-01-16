@@ -30,13 +30,6 @@ public class JythonModuleExtensionProvider implements ModuleExtensionProvider<Jy
 
 	@NotNull
 	@Override
-	public Class<JythonModuleExtension> getImmutableClass()
-	{
-		return JythonModuleExtension.class;
-	}
-
-	@NotNull
-	@Override
 	public JythonModuleExtension createImmutable(@NotNull String s, @NotNull Module module)
 	{
 		return new JythonModuleExtension(s, module);

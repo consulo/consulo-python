@@ -46,13 +46,6 @@ public class BuildoutModuleExtensionProvider implements ModuleExtensionProvider<
 
 	@NotNull
 	@Override
-	public Class<BuildoutModuleExtension> getImmutableClass()
-	{
-		return BuildoutModuleExtension.class;
-	}
-
-	@NotNull
-	@Override
 	public BuildoutModuleExtension createImmutable(@NotNull String s, @NotNull Module module)
 	{
 		return new BuildoutModuleExtension(s, module);

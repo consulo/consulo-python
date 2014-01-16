@@ -30,13 +30,6 @@ public class PyModuleExtensionProvider implements ModuleExtensionProvider<PyModu
 
 	@NotNull
 	@Override
-	public Class<PyModuleExtension> getImmutableClass()
-	{
-		return PyModuleExtension.class;
-	}
-
-	@NotNull
-	@Override
 	public PyModuleExtension createImmutable(@NotNull String s, @NotNull Module module)
 	{
 		return new PyModuleExtension(s, module);

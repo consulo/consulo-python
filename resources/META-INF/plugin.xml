@@ -9,6 +9,7 @@
 	<depends optional="true" config-file="intellilang-python-support.xml">org.intellij.intelliLang</depends>
 	<depends>com.intellij.regexp</depends>
 	<resource-bundle>com.jetbrains.python.PyBundle</resource-bundle>
+	<category>Custom Language</category>
 
 	<vendor>JetBrains, Keith Lea</vendor>
 

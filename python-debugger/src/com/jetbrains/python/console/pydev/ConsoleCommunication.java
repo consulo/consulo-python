@@ -1,30 +1,47 @@
 package com.jetbrains.python.console.pydev;
 
-import com.intellij.util.Function;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import com.intellij.util.Function;
 
 /**
  * @author traff
  */
 public interface ConsoleCommunication {
-  @NotNull
-  List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception;
+	@NotNull
+	List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception;
 
-  String getDescription(String text) throws Exception;
+	String getDescription(String text) throws Exception;
 
-  boolean isWaitingForInput();
+	boolean isWaitingForInput();
 
-  boolean isExecuting();
+	boolean isExecuting();
 
-  void execInterpreter(String s, Function<InterpreterResponse, Object> callback);
+	void execInterpreter(ConsoleCodeFragment code, Function<InterpreterResponse, Object> callback);
 
-  void interrupt();
+	void interrupt();
 
-  void addCommunicationListener(ConsoleCommunicationListener listener);
+	void addCommunicationListener(ConsoleCommunicationListener listener);
 
-  void notifyCommandExecuted();
-  void notifyInputRequested();
+	void notifyCommandExecuted(boolean more);
+	void notifyInputRequested();
 
+	class ConsoleCodeFragment {
+		private final String myText;
+		private final boolean myIsSingleLine;
+
+		public ConsoleCodeFragment(String text, boolean isSingleLine) {
+			myText = text;
+			myIsSingleLine = isSingleLine;
+		}
+
+		public String getText() {
+			return myText;
+		}
+
+		public boolean isSingleLine() {
+			return myIsSingleLine;
+		}
+	}
 }

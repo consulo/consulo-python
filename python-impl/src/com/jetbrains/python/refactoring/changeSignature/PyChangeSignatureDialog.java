@@ -16,6 +16,22 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.editor.Document;
@@ -54,16 +70,6 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.refactoring.introduce.IntroduceValidator;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * User : ktisha
@@ -313,7 +319,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
               .setDefaultInSignature(myDefaultInSignature.isSelected());
           }
         });
-        myDefaultInSignature.addChangeListener(mySignatureUpdater);
+        myDefaultInSignature.addChangeListener(getSignatureUpdater());
         myDefaultInSignature.setEnabled(item.parameter.getOldIndex() == -1);
         defaultValuePanel.add(myDefaultInSignature, BorderLayout.EAST);
         return defaultValuePanel;
@@ -329,7 +335,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
         defaultValuePanel.add(defaultValueLabel);
         defaultValuePanel.add(myDefaultValueEditor);
         myDefaultValueEditor.setPreferredWidth(t.getWidth() / 2);
-        myDefaultValueEditor.addDocumentListener(mySignatureUpdater);
+        myDefaultValueEditor.addDocumentListener(getSignatureUpdater());
         return defaultValuePanel;
       }
 
@@ -351,7 +357,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
           }
         });
 
-        myNameEditor.addDocumentListener(mySignatureUpdater);
+        myNameEditor.addDocumentListener(getSignatureUpdater());
         return namePanel;
       }
 
