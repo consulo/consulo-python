@@ -37,8 +37,8 @@ public class PyModuleExtensionProvider implements ModuleExtensionProvider<PyModu
 
 	@NotNull
 	@Override
-	public PyMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module, @NotNull PyModuleExtension moduleExtension)
+	public PyMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module)
 	{
-		return new PyMutableModuleExtension(s, module, moduleExtension);
+		return new PyMutableModuleExtension(s, module);
 	}
 }

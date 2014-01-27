@@ -33,12 +33,9 @@ import com.intellij.openapi.roots.ModifiableRootModel;
  */
 public class PyMutableModuleExtension extends PyModuleExtension implements MutableModuleExtensionWithSdk<PyModuleExtension>
 {
-	private PyModuleExtension myModuleExtension;
-
-	public PyMutableModuleExtension(@NotNull String id, @NotNull Module module, @NotNull PyModuleExtension moduleExtension)
+	public PyMutableModuleExtension(@NotNull String id, @NotNull Module module)
 	{
 		super(id, module);
-		myModuleExtension = moduleExtension;
 	}
 
 	@Nullable
@@ -62,14 +59,8 @@ public class PyMutableModuleExtension extends PyModuleExtension implements Mutab
 	}
 
 	@Override
-	public boolean isModified()
+	public boolean isModified(@NotNull PyModuleExtension extension)
 	{
-		return isModifiedImpl(myModuleExtension);
-	}
-
-	@Override
-	public void commit()
-	{
-		myModuleExtension.commit(this);
+		return isModifiedImpl(extension);
 	}
 }

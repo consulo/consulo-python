@@ -53,8 +53,8 @@ public class BuildoutModuleExtensionProvider implements ModuleExtensionProvider<
 
 	@NotNull
 	@Override
-	public BuildoutMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module, @NotNull BuildoutModuleExtension buildoutModuleExtension)
+	public BuildoutMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module)
 	{
-		return new BuildoutMutableModuleExtension(s, module, buildoutModuleExtension);
+		return new BuildoutMutableModuleExtension(s, module);
 	}
 }

@@ -14,12 +14,9 @@ import com.intellij.openapi.roots.ModifiableRootModel;
  */
 public class JythonMutableModuleExtension extends JythonModuleExtension implements MutableModuleExtension<JythonModuleExtension>
 {
-	private JythonModuleExtension myJythonModuleExtension;
-
-	public JythonMutableModuleExtension(@NotNull String id, @NotNull Module module, JythonModuleExtension jythonModuleExtension)
+	public JythonMutableModuleExtension(@NotNull String id, @NotNull Module module)
 	{
 		super(id, module);
-		myJythonModuleExtension = jythonModuleExtension;
 	}
 
 	@Nullable
@@ -36,14 +33,8 @@ public class JythonMutableModuleExtension extends JythonModuleExtension implemen
 	}
 
 	@Override
-	public boolean isModified()
+	public boolean isModified(@NotNull JythonModuleExtension extension)
 	{
-		return isEnabled() != myJythonModuleExtension.isEnabled();
-	}
-
-	@Override
-	public void commit()
-	{
-		myJythonModuleExtension.commit(this);
+		return isEnabled() != extension.isEnabled();
 	}
 }

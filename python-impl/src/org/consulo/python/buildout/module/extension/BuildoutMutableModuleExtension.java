@@ -32,12 +32,9 @@ import com.jetbrains.python.buildout.BuildoutConfigPanel;
  */
 public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>
 {
-	private BuildoutModuleExtension myOriginalExtension;
-
-	public BuildoutMutableModuleExtension(@NotNull String id, @NotNull Module module, BuildoutModuleExtension buildoutModuleExtension)
+	public BuildoutMutableModuleExtension(@NotNull String id, @NotNull Module module)
 	{
 		super(id, module);
-		myOriginalExtension = buildoutModuleExtension;
 	}
 
 	@Nullable
@@ -54,19 +51,13 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 	}
 
 	@Override
-	public boolean isModified()
+	public boolean isModified(@NotNull BuildoutModuleExtension extension)
 	{
-		return myIsEnabled != myOriginalExtension.isEnabled() || !Comparing.strEqual(myScriptName, myOriginalExtension.getScriptName());
+		return myIsEnabled != extension.isEnabled() || !Comparing.strEqual(myScriptName, extension.getScriptName());
 	}
 
 	public void setScriptName(String s)
 	{
 		myScriptName = s;
-	}
-
-	@Override
-	public void commit()
-	{
-		myOriginalExtension.commit(this);
 	}
 }

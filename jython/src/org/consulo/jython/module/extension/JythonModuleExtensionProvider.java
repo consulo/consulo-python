@@ -37,8 +37,8 @@ public class JythonModuleExtensionProvider implements ModuleExtensionProvider<Jy
 
 	@NotNull
 	@Override
-	public JythonMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module, @NotNull JythonModuleExtension jythonModuleExtension)
+	public JythonMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module)
 	{
-		return new JythonMutableModuleExtension(s, module, jythonModuleExtension);
+		return new JythonMutableModuleExtension(s, module);
 	}
 }
