@@ -19,6 +19,7 @@ package com.jetbrains.rest.completion;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.or;
 
+import org.consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -26,8 +27,8 @@ import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
@@ -51,7 +52,7 @@ public class SphinxDirectiveCompletionContributor extends CompletionContributor 
          protected void addCompletions(@NotNull CompletionParameters parameters,
                                        ProcessingContext context,
                                        @NotNull CompletionResultSet result) {
-           Sdk sdk = ProjectRootManager.getInstance(parameters.getPosition().getProject()).getProjectSdk();
+           Sdk sdk = ModuleUtilCore.getSdk(parameters.getOriginalFile(), PyModuleExtension.class);
            if (sdk != null) {
              String sphinx = RestPythonUtil.findQuickStart(sdk);
              if (sphinx != null) {

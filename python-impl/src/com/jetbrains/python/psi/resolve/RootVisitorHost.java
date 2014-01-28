@@ -86,7 +86,7 @@ public class RootVisitorHost {
 
     // out-of-project file or non-file(e.g. console) - use roots of SDK assigned to project
     if (orderEntries == null) {
-      final Sdk sdk = ProjectRootManager.getInstance(file.getProject()).getProjectSdk();
+      final Sdk sdk = null;
       if (sdk != null) {
         visitSdkRoots(sdk, visitor);
       }

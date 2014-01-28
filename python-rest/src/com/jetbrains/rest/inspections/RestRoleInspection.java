@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
+import org.consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableSet;
@@ -30,7 +31,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.JDOMExternalizableStringList;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -138,7 +138,7 @@ public class RestRoleInspection extends RestInspection {
       if (RestUtil.PREDEFINED_ROLES.contains(node.getText()) || myIgnoredRoles.contains(node.getRoleName()))
         return;
 
-      Sdk sdk = ProjectRootManager.getInstance(node.getProject()).getProjectSdk();
+      Sdk sdk = ModuleUtilCore.getSdk(node, PyModuleExtension.class);
       if (sdk != null) {
         String sphinx = RestPythonUtil.findQuickStart(sdk);
         if (sphinx != null) {

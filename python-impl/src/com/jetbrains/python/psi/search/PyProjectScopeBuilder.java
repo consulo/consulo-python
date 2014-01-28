@@ -16,6 +16,12 @@
 
 package com.jetbrains.python.psi.search;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -23,18 +29,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.ProjectAndLibrariesScope;
+import com.intellij.psi.search.ProjectScope;
+import com.intellij.psi.search.ProjectScopeBuilderImpl;
+import com.intellij.psi.search.ProjectScopeImpl;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -93,7 +97,7 @@ public class PyProjectScopeBuilder extends ProjectScopeBuilderImpl {
    * @return the resulting scope
    */
   public static GlobalSearchScope excludeSdkTestsScope(Project project) {
-    final Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
+    final Sdk sdk = null;
     // TODO cache the scope in project userdata (update when SDK paths change or different project SDK is selected)
     GlobalSearchScope scope = excludeSdkTestsScope(project, sdk);
     return scope != null ? ProjectScope.getAllScope(project).intersectWith(scope) : ProjectScope.getAllScope(project);
