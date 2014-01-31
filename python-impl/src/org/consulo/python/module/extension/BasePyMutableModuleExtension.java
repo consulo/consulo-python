@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2013-2014 must-be.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ import com.intellij.openapi.roots.ModifiableRootModel;
  * @author VISTALL
  * @since 27.09.13.
  */
-public class PyMutableModuleExtension extends PyModuleExtension implements MutableModuleExtensionWithSdk<PyModuleExtension>
+public class BasePyMutableModuleExtension extends BasePyModuleExtension implements MutableModuleExtensionWithSdk<BasePyModuleExtension>
 {
-	public PyMutableModuleExtension(@NotNull String id, @NotNull Module module)
+	public BasePyMutableModuleExtension(@NotNull String id, @NotNull Module module)
 	{
 		super(id, module);
 	}
@@ -59,7 +59,7 @@ public class PyMutableModuleExtension extends PyModuleExtension implements Mutab
 	}
 
 	@Override
-	public boolean isModified(@NotNull PyModuleExtension extension)
+	public boolean isModified(@NotNull BasePyModuleExtension extension)
 	{
 		return isModifiedImpl(extension);
 	}

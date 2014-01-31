@@ -505,6 +505,9 @@
     <moduleService serviceInterface="com.jetbrains.python.packaging.PyPackageRequirementsSettings"
                    serviceImplementation="com.jetbrains.python.packaging.PyPackageRequirementsSettings"/>
 
+	<listOfElements name="pythonExtensions">
+		<add>python</add>
+	</listOfElements>
   </extensions>
 
   <extensions defaultExtensionNs="org.consulo.python">
@@ -615,12 +618,12 @@
       <keyboard-shortcut keymap="NetBeans 6.5" first-keystroke="ctrl alt E" replace-all="true"/>
     </action>
 
-    <action id="NewPythonFile" class="com.jetbrains.python.actions.CreatePythonFileAction" require-module-extensions="python">
+    <action id="NewPythonFile" class="com.jetbrains.python.actions.CreatePythonFileAction" require-module-extensions="@@pythonExtensions">
       <add-to-group group-id="NewGroup1"/>
     </action>
 
     <action id="NewPythonPackage" class="com.jetbrains.python.actions.CreatePackageAction" text="Python Package"
-            description="Create a new directory and __init__.py inside it" icon="AllIcons.Nodes.Package" require-module-extensions="python">
+            description="Create a new directory and __init__.py inside it" icon="AllIcons.Nodes.Package" require-module-extensions="@@pythonExtensions">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
 
@@ -630,7 +633,7 @@
 
     <action id="CleanPyc" class="com.jetbrains.python.actions.CleanPycAction" text="Clean .pyc"
             description="Delete compiled bytecode files in selected directory and its subdirectories"
-			require-module-extensions="python">
+			require-module-extensions="@@pythonExtensions">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
     </action>
 

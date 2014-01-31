@@ -16,12 +16,26 @@
 
 package org.consulo.python.module.extension;
 
-import org.consulo.module.extension.ModuleExtensionWithSdk;
+import org.consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
+import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.SdkType;
+import com.jetbrains.python.sdk.PythonSdkType;
 
 /**
  * @author VISTALL
- * @since 27.09.13.
+ * @since 31.01.14
  */
-public interface PyModuleExtension<T extends PyModuleExtension<T>> extends ModuleExtensionWithSdk<T>
+public class BasePyModuleExtension extends ModuleExtensionWithSdkImpl<BasePyModuleExtension> implements PyModuleExtension<BasePyModuleExtension>
 {
+	public BasePyModuleExtension(@NotNull String id, @NotNull Module module)
+	{
+		super(id, module);
+	}
+
+	@Override
+	public Class<? extends SdkType> getSdkTypeClass()
+	{
+		return PythonSdkType.class;
+	}
 }

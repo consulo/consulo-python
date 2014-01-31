@@ -2,17 +2,20 @@ package org.consulo.jython.module.extension;
 
 import javax.swing.JComponent;
 
-import org.consulo.module.extension.MutableModuleExtension;
+import org.consulo.module.extension.MutableModuleExtensionWithSdk;
+import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
+import org.consulo.module.extension.ui.ModuleExtensionWithSdkPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 
 /**
  * @author VISTALL
  * @since 25.10.13.
  */
-public class JythonMutableModuleExtension extends JythonModuleExtension implements MutableModuleExtension<JythonModuleExtension>
+public class JythonMutableModuleExtension extends JythonModuleExtension implements MutableModuleExtensionWithSdk<JythonModuleExtension>
 {
 	public JythonMutableModuleExtension(@NotNull String id, @NotNull Module module)
 	{
@@ -23,7 +26,7 @@ public class JythonMutableModuleExtension extends JythonModuleExtension implemen
 	@Override
 	public JComponent createConfigurablePanel(@NotNull ModifiableRootModel modifiableRootModel, @Nullable Runnable runnable)
 	{
-		return null;
+		return wrapToNorth(new ModuleExtensionWithSdkPanel(this, runnable));
 	}
 
 	@Override
@@ -35,6 +38,13 @@ public class JythonMutableModuleExtension extends JythonModuleExtension implemen
 	@Override
 	public boolean isModified(@NotNull JythonModuleExtension extension)
 	{
-		return isEnabled() != extension.isEnabled();
+		return isModifiedImpl(extension);
+	}
+
+	@NotNull
+	@Override
+	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
+	{
+		return (MutableModuleInheritableNamedPointer<Sdk>) super.getInheritableSdk();
 	}
 }

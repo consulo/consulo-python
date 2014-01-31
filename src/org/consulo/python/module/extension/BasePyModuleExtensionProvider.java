@@ -12,7 +12,7 @@ import icons.PythonIcons;
  * @author VISTALL
  * @since 27.09.13.
  */
-public class PyModuleExtensionProvider implements ModuleExtensionProvider<PyModuleExtension, PyMutableModuleExtension>
+public class BasePyModuleExtensionProvider implements ModuleExtensionProvider<BasePyModuleExtension, BasePyMutableModuleExtension>
 {
 	@Nullable
 	@Override
@@ -30,15 +30,15 @@ public class PyModuleExtensionProvider implements ModuleExtensionProvider<PyModu
 
 	@NotNull
 	@Override
-	public PyModuleExtension createImmutable(@NotNull String s, @NotNull Module module)
+	public BasePyModuleExtension createImmutable(@NotNull String s, @NotNull Module module)
 	{
-		return new PyModuleExtension(s, module);
+		return new BasePyModuleExtension(s, module);
 	}
 
 	@NotNull
 	@Override
-	public PyMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module)
+	public BasePyMutableModuleExtension createMutable(@NotNull String s, @NotNull Module module)
 	{
-		return new PyMutableModuleExtension(s, module);
+		return new BasePyMutableModuleExtension(s, module);
 	}
 }
