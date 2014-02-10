@@ -553,7 +553,6 @@
     <pyModuleMembersProvider implementation="com.jetbrains.numpy.codeInsight.NumpyModuleMembersProvider"/>
     <typeProvider implementation="com.jetbrains.numpy.codeInsight.NumpyDocStringTypeProvider"/>
 
-	<sdkFlavor implementation="com.jetbrains.python.sdk.flavors.IronPythonSdkFlavor" />
 	<sdkFlavor implementation="com.jetbrains.python.sdk.flavors.PyPySdkFlavor" />
 	<sdkFlavor implementation="com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor" />
 	<sdkFlavor implementation="com.jetbrains.python.sdk.flavors.PyRemoteSdkFlavor" />
