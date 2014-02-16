@@ -16,6 +16,20 @@
 
 package com.jetbrains.python.debugger;
 
+import static javax.swing.SwingUtilities.invokeLater;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.execution.process.ProcessEvent;
@@ -36,7 +50,11 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.remotesdk.RemoteProcessHandlerBase;
-import com.intellij.xdebugger.*;
+import com.intellij.xdebugger.XDebugProcess;
+import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebugSessionAdapter;
+import com.intellij.xdebugger.XDebuggerBundle;
+import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
@@ -45,18 +63,13 @@ import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.debugger.pydev.*;
+import com.jetbrains.python.debugger.pydev.MultiProcessDebugger;
+import com.jetbrains.python.debugger.pydev.ProcessDebugger;
+import com.jetbrains.python.debugger.pydev.RemoteDebugger;
+import com.jetbrains.python.debugger.pydev.RemoteDebuggerCloseListener;
+import com.jetbrains.python.debugger.pydev.ResumeOrStepCommand;
 import com.jetbrains.python.remote.RemoteDebuggableProcessHandler;
 import com.jetbrains.python.run.PythonProcessHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static javax.swing.SwingUtilities.invokeLater;
 
 /**
  * @author yole
@@ -298,7 +311,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
   private void handshake() throws PyDebuggerException {
     String remoteVersion = myDebugger.handshake();
-    String currentBuild = ApplicationInfo.getInstance().getBuild().asStringWithoutProductCode();
+    String currentBuild = ApplicationInfo.getInstance().getBuild().asString();
     if ("@@BUILD_NUMBER@@".equals(remoteVersion)) {
       remoteVersion = currentBuild;
     }
@@ -312,7 +325,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
     if (remoteVersion != null) {
       if (!remoteVersion.equals(currentBuild)) {
-        printToConsole("Warning: wrong debugger version. Use pycharm-debugger.egg from PyCharm installation folder.\n",
+        printToConsole("Warning: wrong debugger version. Use pycharm-debugger.egg from Consulo installation folder.\n",
                        ConsoleViewContentType.ERROR_OUTPUT);
       }
     }
