@@ -18,8 +18,8 @@ package org.consulo.python.module.extension;
 
 import org.consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.jetbrains.python.sdk.PythonSdkType;
 
 /**
@@ -28,7 +28,7 @@ import com.jetbrains.python.sdk.PythonSdkType;
  */
 public class BasePyModuleExtension extends ModuleExtensionWithSdkImpl<BasePyModuleExtension> implements PyModuleExtension<BasePyModuleExtension>
 {
-	public BasePyModuleExtension(@NotNull String id, @NotNull Module module)
+	public BasePyModuleExtension(@NotNull String id, @NotNull ModifiableRootModel module)
 	{
 		super(id, module);
 	}

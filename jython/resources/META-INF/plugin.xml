@@ -9,7 +9,12 @@
 		<errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
 		<completion.contributor language="Python" implementationClass="com.jetbrains.python.psi.impl.PyConstructorArgumentCompletionContributor"/>
 
-		<moduleExtensionProvider key="jython" parent-key="java" implementationClass="org.consulo.jython.module.extension.JythonModuleExtensionProvider" />
+		<moduleExtensionProvider key="jython"
+								 parentKey="java"
+								 name="Jython"
+								 icon="/icons/jython.png"
+								 immutableClass="org.consulo.jython.module.extension.JythonModuleExtension"
+								 mutableClass="org.consulo.jython.module.extension.JythonMutableModuleExtension" />
 		<addTo.listOfElements name="pythonExtensions">jython</addTo.listOfElements>
 	</extensions>
 
