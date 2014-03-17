@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>org.consulo.jython</id>
 	<name>Jython</name>
-	<category>Language Extension</category>
+	<category>Language Extensions</category>
 	<depends>org.consulo.python</depends>
 	<depends>org.consulo.java</depends>
 
