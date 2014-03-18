@@ -16,17 +16,15 @@
 
 package com.jetbrains.python;
 
+import java.io.File;
+
+import org.jetbrains.annotations.NonNls;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.PathUtil;
-import org.jetbrains.annotations.NonNls;
-
-import java.io.File;
 
 public class PythonHelpersLocator {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.PythonHelpersLocator");
-
-  private static final String COMMUNITY_SUFFIX = "-community";
 
   private PythonHelpersLocator() {
   }
@@ -42,10 +40,6 @@ public class PythonHelpersLocator {
       LOG.assertTrue(jarFile.exists(), "jar file cannot be null");
       File pluginBaseDir = jarFile.getParentFile().getParentFile();
       return new File(pluginBaseDir, "helpers");
-    }
-
-    if (jarPath.endsWith(COMMUNITY_SUFFIX)) {
-      jarPath = jarPath.substring(0, jarPath.length() - COMMUNITY_SUFFIX.length());
     }
 
     return new File(jarPath + "-helpers");
