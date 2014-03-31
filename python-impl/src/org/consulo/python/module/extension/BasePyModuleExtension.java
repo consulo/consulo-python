@@ -33,6 +33,7 @@ public class BasePyModuleExtension extends ModuleExtensionWithSdkImpl<BasePyModu
 		super(id, module);
 	}
 
+	@NotNull
 	@Override
 	public Class<? extends SdkType> getSdkTypeClass()
 	{

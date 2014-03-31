@@ -18,8 +18,9 @@ public class JythonModuleExtension extends ModuleExtensionWithSdkImpl<JythonModu
 		super(id, module);
 	}
 
+	@NotNull
 	@Override
-	protected Class<? extends SdkType> getSdkTypeClass()
+	public Class<? extends SdkType> getSdkTypeClass()
 	{
 		return PythonSdkType.class;
 	}
