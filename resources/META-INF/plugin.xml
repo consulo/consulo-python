@@ -48,18 +48,6 @@
 		<extensionPoint name="consoleOptionsProvider" interface="com.jetbrains.python.console.PyConsoleOptionsProvider"/>
 	</extensionPoints>
 
-	<application-components>
-		<component>
-			<implementation-class>com.jetbrains.python.facet.PythonSdkTableListener</implementation-class>
-		</component>
-	</application-components>
-
-	<module-components>
-		<component>
-			<implementation-class>com.jetbrains.python.facet.PythonFacetListener</implementation-class>
-		</component>
-	</module-components>
-
 	<extensions defaultExtensionNs="com.intellij">
 		<projectStructureDetector implementation="com.jetbrains.python.module.PyProjectStructureDetector"/>
 		<applicationService serviceInterface="com.jetbrains.python.run.PyCommonOptionsFormFactory"
