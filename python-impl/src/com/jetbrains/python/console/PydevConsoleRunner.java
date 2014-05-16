@@ -16,6 +16,21 @@
 
 package com.jetbrains.python.console;
 
+import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonIOEncoding;
+import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonUnbuffered;
+
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.apache.xmlrpc.XmlRpcException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Maps;
 import com.intellij.execution.ExecutionException;
@@ -24,15 +39,20 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.console.ConsoleHistoryController;
 import com.intellij.execution.console.LanguageConsoleView;
+import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
 import com.intellij.execution.process.CommandLineArgumentsProvider;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory;
-import com.intellij.execution.runners.ConsoleExecuteActionHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -62,34 +82,17 @@ import com.intellij.util.IJSwingUtilities;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.NetUtils;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.xdebugger.impl.frame.XStandaloneVariablesView;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.console.completion.PydevConsoleElement;
 import com.jetbrains.python.console.parsing.PythonConsoleData;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
-import com.jetbrains.python.console.pydev.ConsoleCommunicationListener;
-import com.jetbrains.python.debugger.PyDebuggerEditorsProvider;
 import com.jetbrains.python.debugger.PySourcePosition;
-import com.jetbrains.python.debugger.PyStackFrame;
-import com.jetbrains.python.debugger.PyStackFrameInfo;
 import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.run.ProcessRunner;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.run.PythonTracebackFilter;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import org.apache.xmlrpc.XmlRpcException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
-
-import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonIOEncoding;
-import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonUnbuffered;
 
 /**
  * @author oleg
@@ -566,7 +569,7 @@ public class PydevConsoleRunner extends AbstractConsoleRunnerWithHistory<PythonC
 
   @NotNull
   @Override
-  protected ConsoleExecuteActionHandler createConsoleExecuteActionHandler() {
+  protected ProcessBackedConsoleExecuteActionHandler createExecuteActionHandler() {
     myConsoleExecuteActionHandler =
       new PydevConsoleExecuteActionHandler(getConsoleView(), getProcessHandler(), myPydevConsoleCommunication);
     myConsoleExecuteActionHandler.setEnabled(false);
