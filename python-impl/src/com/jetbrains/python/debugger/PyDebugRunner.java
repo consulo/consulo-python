@@ -16,15 +16,25 @@
 
 package com.jetbrains.python.debugger;
 
+import java.io.File;
+import java.net.ServerSocket;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.ParametersList;
+import com.intellij.execution.configurations.ParamsGroup;
+import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.console.LanguageConsoleBuilder;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
-import com.intellij.execution.runners.LanguageConsoleBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
@@ -46,181 +56,210 @@ import com.jetbrains.python.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.run.CommandLinePatcher;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.net.ServerSocket;
-import java.util.List;
 
 /**
  * @author yole
  */
-public class PyDebugRunner extends GenericProgramRunner {
-  public static final String PY_DEBUG_RUNNER = "PyDebugRunner";
+public class PyDebugRunner extends GenericProgramRunner
+{
+	public static final String PY_DEBUG_RUNNER = "PyDebugRunner";
 
-  public static final String DEBUGGER_MAIN = "pydev/pydevd.py";
-  public static final String CLIENT_PARAM = "--client";
-  public static final String PORT_PARAM = "--port";
-  public static final String FILE_PARAM = "--file";
-  public static final String PYCHARM_PROJECT_ROOTS = "PYCHARM_PROJECT_ROOTS";
-  public static final String GEVENT_SUPPORT = "GEVENT_SUPPORT";
+	public static final String DEBUGGER_MAIN = "pydev/pydevd.py";
+	public static final String CLIENT_PARAM = "--client";
+	public static final String PORT_PARAM = "--port";
+	public static final String FILE_PARAM = "--file";
+	public static final String PYCHARM_PROJECT_ROOTS = "PYCHARM_PROJECT_ROOTS";
+	public static final String GEVENT_SUPPORT = "GEVENT_SUPPORT";
 
-  @NotNull
-  public String getRunnerId() {
-    return PY_DEBUG_RUNNER;
-  }
+	@NotNull
+	public String getRunnerId()
+	{
+		return PY_DEBUG_RUNNER;
+	}
 
-  public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-    return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
-           profile instanceof AbstractPythonRunConfiguration &&
-           ((AbstractPythonRunConfiguration)profile).canRunWithCoverage();
-  }
+	public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile)
+	{
+		return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
+				profile instanceof AbstractPythonRunConfiguration &&
+				((AbstractPythonRunConfiguration) profile).canRunWithCoverage();
+	}
 
-  protected RunContentDescriptor doExecute(final Project project, RunProfileState profileState,
-                                           RunContentDescriptor contentToReuse,
-                                           ExecutionEnvironment env) throws ExecutionException {
-    FileDocumentManager.getInstance().saveAllDocuments();
+	protected RunContentDescriptor doExecute(
+			final Project project,
+			RunProfileState profileState,
+			RunContentDescriptor contentToReuse,
+			ExecutionEnvironment env) throws ExecutionException
+	{
+		FileDocumentManager.getInstance().saveAllDocuments();
 
-    final PythonCommandLineState pyState = (PythonCommandLineState)profileState;
-    final ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
-    final int serverLocalPort = serverSocket.getLocalPort();
-    RunProfile profile = env.getRunProfile();
-    final ExecutionResult result = pyState.execute(env.getExecutor(), createCommandLinePatchers(project, pyState, profile, serverLocalPort));
+		final PythonCommandLineState pyState = (PythonCommandLineState) profileState;
+		final ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
+		final int serverLocalPort = serverSocket.getLocalPort();
+		RunProfile profile = env.getRunProfile();
+		final ExecutionResult result = pyState.execute(env.getExecutor(), createCommandLinePatchers(project, pyState, profile, serverLocalPort));
 
-    final XDebugSession session = XDebuggerManager.getInstance(project).
-      startSession(this, env, contentToReuse, new XDebugProcessStarter() {
-        @NotNull
-        public XDebugProcess start(@NotNull final XDebugSession session) {
-          PyDebugProcess pyDebugProcess =
-            new PyDebugProcess(session, serverSocket, result.getExecutionConsole(), result.getProcessHandler(),
-                               pyState.isMultiprocessDebug());
+		final XDebugSession session = XDebuggerManager.getInstance(project).
+				startSession(this, env, contentToReuse, new XDebugProcessStarter()
+				{
+					@NotNull
+					public XDebugProcess start(@NotNull final XDebugSession session)
+					{
+						PyDebugProcess pyDebugProcess = new PyDebugProcess(session, serverSocket, result.getExecutionConsole(),
+								result.getProcessHandler(), pyState.isMultiprocessDebug());
 
-          createConsoleCommunicationAndSetupActions(project, result, pyDebugProcess);
-
-
-          return pyDebugProcess;
-        }
-      });
-    return session.getRunContentDescriptor();
-  }
-
-  public static int findIndex(List<String> paramList, String paramName) {
-    for (int i = 0; i < paramList.size(); i++) {
-      if (paramName.equals(paramList.get(i))) {
-        return i + 1;
-      }
-    }
-    return -1;
-  }
-
-  protected static void createConsoleCommunicationAndSetupActions(@NotNull final Project project,
-                                                                  @NotNull final ExecutionResult result,
-                                                                  @NotNull PyDebugProcess debugProcess) {
-    ExecutionConsole console = result.getExecutionConsole();
-    ProcessHandler processHandler = result.getProcessHandler();
-
-    if (console instanceof PythonDebugLanguageConsoleView) {
-      PythonConsoleView pythonConsoleView = ((PythonDebugLanguageConsoleView)console).getPydevConsoleView();
+						createConsoleCommunicationAndSetupActions(project, result, pyDebugProcess);
 
 
-      ConsoleCommunication consoleCommunication = new PythonDebugConsoleCommunication(project, debugProcess);
-      pythonConsoleView.setConsoleCommunication(consoleCommunication);
+						return pyDebugProcess;
+					}
+				});
+		return session.getRunContentDescriptor();
+	}
 
-      PydevDebugConsoleExecuteActionHandler consoleExecuteActionHandler = new PydevDebugConsoleExecuteActionHandler(pythonConsoleView,
-                                                                                                                    processHandler,
-                                                                                                                    consoleCommunication);
+	public static int findIndex(List<String> paramList, String paramName)
+	{
+		for(int i = 0; i < paramList.size(); i++)
+		{
+			if(paramName.equals(paramList.get(i)))
+			{
+				return i + 1;
+			}
+		}
+		return -1;
+	}
 
-      pythonConsoleView.setExecutionHandler(consoleExecuteActionHandler);
+	protected static void createConsoleCommunicationAndSetupActions(
+			@NotNull final Project project,
+			@NotNull final ExecutionResult result,
+			@NotNull PyDebugProcess debugProcess)
+	{
+		ExecutionConsole console = result.getExecutionConsole();
+		ProcessHandler processHandler = result.getProcessHandler();
 
-      debugProcess.getSession().addSessionListener(consoleExecuteActionHandler);
-      new LanguageConsoleBuilder().console(pythonConsoleView).processHandler(processHandler).initActions(consoleExecuteActionHandler, "py");
-    }
-  }
-
-  @Nullable
-  private static CommandLinePatcher createRunConfigPatcher(RunProfileState state, RunProfile profile) {
-    CommandLinePatcher runConfigPatcher = null;
-    if (state instanceof PythonCommandLineState && profile instanceof AbstractPythonRunConfiguration) {
-      runConfigPatcher = (AbstractPythonRunConfiguration)profile;
-    }
-    return runConfigPatcher;
-  }
-
-  public static CommandLinePatcher[] createCommandLinePatchers(final Project project, final PythonCommandLineState state,
-                                                               RunProfile profile,
-                                                               final int serverLocalPort) {
-    return new CommandLinePatcher[]{createDebugServerPatcher(project, state, serverLocalPort), createRunConfigPatcher(state, profile)};
-  }
-
-  private static CommandLinePatcher createDebugServerPatcher(final Project project,
-                                                             final PythonCommandLineState pyState,
-                                                             final int serverLocalPort) {
-    return new CommandLinePatcher() {
-      public void patchCommandLine(GeneralCommandLine commandLine) {
+		if(console instanceof PythonDebugLanguageConsoleView)
+		{
+			PythonConsoleView pythonConsoleView = ((PythonDebugLanguageConsoleView) console).getPydevConsoleView();
 
 
-        // script name is the last parameter; all other params are for python interpreter; insert just before name
-        final ParametersList parametersList = commandLine.getParametersList();
+			ConsoleCommunication consoleCommunication = new PythonDebugConsoleCommunication(project, debugProcess);
+			pythonConsoleView.setConsoleCommunication(consoleCommunication);
 
-        @SuppressWarnings("ConstantConditions") @NotNull
-        ParamsGroup debugParams = parametersList.getParamsGroup(PythonCommandLineState.GROUP_DEBUGGER);
+			PydevDebugConsoleExecuteActionHandler consoleExecuteActionHandler = new PydevDebugConsoleExecuteActionHandler(pythonConsoleView,
+					processHandler, consoleCommunication);
 
-        @SuppressWarnings("ConstantConditions") @NotNull
-        ParamsGroup exeParams = parametersList.getParamsGroup(PythonCommandLineState.GROUP_EXE_OPTIONS);
+			pythonConsoleView.setExecutionHandler(consoleExecuteActionHandler);
 
-        final PythonSdkFlavor flavor = pyState.getSdkFlavor();
-        if (flavor != null) {
-          for (String option : flavor.getExtraDebugOptions()) {
-            exeParams.addParameter(option);
-          }
-        }
+			debugProcess.getSession().addSessionListener(consoleExecuteActionHandler);
+			new LanguageConsoleBuilder(pythonConsoleView).processHandler(processHandler).initActions(consoleExecuteActionHandler, "py");
+		}
+	}
 
-        fillDebugParameters(project, debugParams, serverLocalPort, pyState, commandLine);
-      }
-    };
-  }
+	@Nullable
+	private static CommandLinePatcher createRunConfigPatcher(RunProfileState state, RunProfile profile)
+	{
+		CommandLinePatcher runConfigPatcher = null;
+		if(state instanceof PythonCommandLineState && profile instanceof AbstractPythonRunConfiguration)
+		{
+			runConfigPatcher = (AbstractPythonRunConfiguration) profile;
+		}
+		return runConfigPatcher;
+	}
 
-  private static void fillDebugParameters(@NotNull Project project,
-                                          @NotNull ParamsGroup debugParams,
-                                          int serverLocalPort,
-                                          @NotNull PythonCommandLineState pyState,
-                                          @NotNull GeneralCommandLine generalCommandLine) {
-    debugParams.addParameter(PythonHelpersLocator.getHelperPath(DEBUGGER_MAIN));
-    if (pyState.isMultiprocessDebug()) {
-      debugParams.addParameter("--multiproc");
-    }
+	public static CommandLinePatcher[] createCommandLinePatchers(
+			final Project project,
+			final PythonCommandLineState state,
+			RunProfile profile,
+			final int serverLocalPort)
+	{
+		return new CommandLinePatcher[]{
+				createDebugServerPatcher(project, state, serverLocalPort),
+				createRunConfigPatcher(state, profile)
+		};
+	}
 
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      debugParams.addParameter("--DEBUG");
-    }
+	private static CommandLinePatcher createDebugServerPatcher(final Project project, final PythonCommandLineState pyState,
+			final int serverLocalPort)
+	{
+		return new CommandLinePatcher()
+		{
+			public void patchCommandLine(GeneralCommandLine commandLine)
+			{
 
-    if (PyDebuggerOptionsProvider.getInstance(project).isSaveCallSignatures()) {
-      debugParams.addParameter("--save-signatures");
-      addProjectRootsToEnv(project, generalCommandLine);
-    }
 
-    if (PyDebuggerOptionsProvider.getInstance(project).isSupportGeventDebugging()) {
-      generalCommandLine.getEnvironment().put(GEVENT_SUPPORT, "True");
-    }
+				// script name is the last parameter; all other params are for python interpreter; insert just before name
+				final ParametersList parametersList = commandLine.getParametersList();
 
-    final String[] debuggerArgs = new String[]{
-      CLIENT_PARAM, "127.0.0.1",
-      PORT_PARAM, String.valueOf(serverLocalPort),
-      FILE_PARAM
-    };
-    for (String s : debuggerArgs) {
-      debugParams.addParameter(s);
-    }
-  }
+				@SuppressWarnings("ConstantConditions") @NotNull ParamsGroup debugParams = parametersList.getParamsGroup(PythonCommandLineState
+						.GROUP_DEBUGGER);
 
-  private static void addProjectRootsToEnv(@NotNull Project project, @NotNull GeneralCommandLine commandLine) {
+				@SuppressWarnings("ConstantConditions") @NotNull ParamsGroup exeParams = parametersList.getParamsGroup(PythonCommandLineState
+						.GROUP_EXE_OPTIONS);
 
-    List<String> roots = Lists.newArrayList();
-    for (VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots()) {
-      roots.add(contentRoot.getPath());
-    }
+				final PythonSdkFlavor flavor = pyState.getSdkFlavor();
+				if(flavor != null)
+				{
+					for(String option : flavor.getExtraDebugOptions())
+					{
+						exeParams.addParameter(option);
+					}
+				}
 
-    commandLine.getEnvironment().put(PYCHARM_PROJECT_ROOTS, StringUtil.join(roots, File.pathSeparator));
-  }
+				fillDebugParameters(project, debugParams, serverLocalPort, pyState, commandLine);
+			}
+		};
+	}
+
+	private static void fillDebugParameters(
+			@NotNull Project project,
+			@NotNull ParamsGroup debugParams,
+			int serverLocalPort,
+			@NotNull PythonCommandLineState pyState,
+			@NotNull GeneralCommandLine generalCommandLine)
+	{
+		debugParams.addParameter(PythonHelpersLocator.getHelperPath(DEBUGGER_MAIN));
+		if(pyState.isMultiprocessDebug())
+		{
+			debugParams.addParameter("--multiproc");
+		}
+
+		if(ApplicationManager.getApplication().isUnitTestMode())
+		{
+			debugParams.addParameter("--DEBUG");
+		}
+
+		if(PyDebuggerOptionsProvider.getInstance(project).isSaveCallSignatures())
+		{
+			debugParams.addParameter("--save-signatures");
+			addProjectRootsToEnv(project, generalCommandLine);
+		}
+
+		if(PyDebuggerOptionsProvider.getInstance(project).isSupportGeventDebugging())
+		{
+			generalCommandLine.getEnvironment().put(GEVENT_SUPPORT, "True");
+		}
+
+		final String[] debuggerArgs = new String[]{
+				CLIENT_PARAM,
+				"127.0.0.1",
+				PORT_PARAM,
+				String.valueOf(serverLocalPort),
+				FILE_PARAM
+		};
+		for(String s : debuggerArgs)
+		{
+			debugParams.addParameter(s);
+		}
+	}
+
+	private static void addProjectRootsToEnv(@NotNull Project project, @NotNull GeneralCommandLine commandLine)
+	{
+
+		List<String> roots = Lists.newArrayList();
+		for(VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots())
+		{
+			roots.add(contentRoot.getPath());
+		}
+
+		commandLine.getEnvironment().put(PYCHARM_PROJECT_ROOTS, StringUtil.join(roots, File.pathSeparator));
+	}
 }
