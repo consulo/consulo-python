@@ -1,7 +1,6 @@
 package org.mustbe.consulo.ironPython.module.extension;
 
 import org.consulo.module.extension.MutableModuleInheritableNamedPointer;
-import org.consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.module.extension.DotNetModuleExtension;
@@ -18,7 +17,8 @@ import com.jetbrains.python.sdk.PythonSdkType;
  * @author VISTALL
  * @since 11.02.14
  */
-public class IronPythonModuleExtension extends ChildLayeredModuleExtensionImpl<IronPythonModuleExtension> implements PyModuleExtension<IronPythonModuleExtension>
+public class IronPythonModuleExtension extends ChildLayeredModuleExtensionImpl<IronPythonModuleExtension> implements
+		BaseIronPythonModuleExtension<IronPythonModuleExtension>
 {
 	public IronPythonModuleExtension(@NotNull String id, @NotNull ModifiableRootModel modifiableRootModel)
 	{
