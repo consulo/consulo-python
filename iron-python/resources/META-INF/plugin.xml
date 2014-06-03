@@ -1,0 +1,22 @@
+<idea-plugin version="2">
+	<id>org.mustbe.consulo.iron-python</id>
+	<name>IronPython</name>
+	<category>Language Extension</category>
+	<depends>org.consulo.python</depends>
+	<depends config-file="org.mustbe.consulo.microsoft.dotnet.xml" optional="true">org.mustbe.consulo.microsoft.dotnet</depends>
+
+	<extensions defaultExtensionNs="com.intellij">
+		<errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+		<completion.contributor language="Python"
+								implementationClass="org.mustbe.consulo.ironPython.psi.impl.PyConstructorArgumentCompletionContributor"/>
+
+		<addTo.listOfElements name="pythonExtensions">iron-python</addTo.listOfElements>
+	</extensions>
+
+	<extensions defaultExtensionNs="org.consulo.python">
+		<importResolver implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetImportResolver"/>
+		<typeProvider implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetTypeProvider"/>
+		<pySuperMethodsSearch implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetSuperMethodsSearchExecutor"/>
+		<importCandidateProvider implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetImportCandidateProvider"/>
+	</extensions>
+</idea-plugin>
