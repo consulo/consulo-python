@@ -16,15 +16,16 @@
 
 package com.jetbrains.python.configuration;
 
-import com.intellij.application.options.ModuleAwareProjectConfigurable;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.NonDefaultProjectConfigurable;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vlan
+ *
+ * TODO [VISTALL] move it to python module extension settings
  */
 public class PyIntegratedToolsModulesConfigurable extends ModuleAwareProjectConfigurable implements NonDefaultProjectConfigurable {
   public PyIntegratedToolsModulesConfigurable(@NotNull Project project) {
