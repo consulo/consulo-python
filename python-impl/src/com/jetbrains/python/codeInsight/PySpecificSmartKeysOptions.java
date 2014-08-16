@@ -16,17 +16,35 @@
 
 package com.jetbrains.python.codeInsight;
 
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.options.BeanConfigurable;
-import com.intellij.openapi.options.UnnamedConfigurable;
+import com.intellij.openapi.options.Configurable;
 
 /**
  * @author yole
  */
-public class PySpecificSmartKeysOptions extends BeanConfigurable<PyCodeInsightSettings> implements UnnamedConfigurable {
-  public PySpecificSmartKeysOptions() {
-    super(PyCodeInsightSettings.getInstance());
-    checkBox("INSERT_BACKSLASH_ON_WRAP", "Insert backslash when pressing Enter inside a statement");
-    checkBox("INSERT_SELF_FOR_METHODS", "Insert 'self' when defining a method");
-    checkBox("INSERT_TYPE_DOCSTUB", "Insert 'type' and 'rtype' to the documentation comment stub");
-  }
+public class PySpecificSmartKeysOptions extends BeanConfigurable<PyCodeInsightSettings> implements Configurable
+{
+	public PySpecificSmartKeysOptions()
+	{
+		super(PyCodeInsightSettings.getInstance());
+		checkBox("INSERT_BACKSLASH_ON_WRAP", "Insert backslash when pressing Enter inside a statement");
+		checkBox("INSERT_SELF_FOR_METHODS", "Insert 'self' when defining a method");
+		checkBox("INSERT_TYPE_DOCSTUB", "Insert 'type' and 'rtype' to the documentation comment stub");
+	}
+
+	@Nls
+	@Override
+	public String getDisplayName()
+	{
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public String getHelpTopic()
+	{
+		return null;
+	}
 }

@@ -362,7 +362,10 @@
 
     <applicationService serviceInterface="com.jetbrains.python.codeInsight.PyCodeInsightSettings"
                         serviceImplementation="com.jetbrains.python.codeInsight.PyCodeInsightSettings"/>
-    <autoImportOptionsProvider instance="com.jetbrains.python.codeInsight.imports.PyAutoImportOptions"/>
+    <applicationConfigurable id="editor.preferences.import.python"
+							 parentId="editor.preferences.import"
+							 displayName="Python"
+							 instance="com.jetbrains.python.codeInsight.imports.PyAutoImportConfigurable"/>
 
     <defaultLiveTemplatesProvider implementation="com.jetbrains.python.codeInsight.liveTemplates.PyDefaultLiveTemplatesProvider"/>
 
@@ -415,8 +418,10 @@
 
     <problemFileHighlightFilter implementation="com.jetbrains.python.codeInsight.PyProblemFileHighlightFilter"/>
 
-    <editorSmartKeysConfigurable instance="com.jetbrains.python.codeInsight.PySmartKeysOptions"/>
-    <editorSmartKeysConfigurable instance="com.jetbrains.python.codeInsight.PySpecificSmartKeysOptions"/>
+    <applicationConfigurable id="editor.preferences.smartKeys.python"
+							 parentId="editor.preferences.smartKeys"
+							 displayName="Python"
+							 instance="com.jetbrains.python.codeInsight.PySpecificSmartKeysOptions"/>
 
     <psi.referenceContributor implementation="com.jetbrains.python.codeInsight.PyStdReferenceContributor"/>
 
