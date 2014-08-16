@@ -367,7 +367,7 @@
 							 displayName="Python"
 							 instance="com.jetbrains.python.codeInsight.imports.PyAutoImportConfigurable"/>
 
-    <defaultLiveTemplatesProvider implementation="com.jetbrains.python.codeInsight.liveTemplates.PyDefaultLiveTemplatesProvider"/>
+	<bundleLiveTemplateSet path="/liveTemplates/Python" />
 
     <completion.contributor language="Python"
                             implementationClass="com.jetbrains.python.codeInsight.completion.PyClassNameCompletionContributor"/>
