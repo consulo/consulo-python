@@ -4,7 +4,7 @@ import org.consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
 import org.consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootLayer;
 import com.jetbrains.python.sdk.PythonSdkType;
 
 /**
@@ -13,7 +13,7 @@ import com.jetbrains.python.sdk.PythonSdkType;
  */
 public class JythonModuleExtension extends ModuleExtensionWithSdkImpl<JythonModuleExtension> implements PyModuleExtension<JythonModuleExtension>
 {
-	public JythonModuleExtension(@NotNull String id, @NotNull ModifiableRootModel module)
+	public JythonModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
 	{
 		super(id, module);
 	}

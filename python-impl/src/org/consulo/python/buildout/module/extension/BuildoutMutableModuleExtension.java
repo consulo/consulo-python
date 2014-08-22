@@ -21,7 +21,7 @@ import javax.swing.JComponent;
 import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.util.Comparing;
 import com.jetbrains.python.buildout.BuildoutConfigPanel;
 
@@ -31,7 +31,7 @@ import com.jetbrains.python.buildout.BuildoutConfigPanel;
  */
 public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>
 {
-	public BuildoutMutableModuleExtension(@NotNull String id, @NotNull ModifiableRootModel module)
+	public BuildoutMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
 	{
 		super(id, module);
 	}

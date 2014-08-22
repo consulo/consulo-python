@@ -24,7 +24,7 @@ import org.consulo.module.extension.ui.ModuleExtensionWithSdkPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootLayer;
 
 /**
  * @author VISTALL
@@ -32,7 +32,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
  */
 public class BasePyMutableModuleExtension extends BasePyModuleExtension implements MutableModuleExtensionWithSdk<BasePyModuleExtension>
 {
-	public BasePyMutableModuleExtension(@NotNull String id, @NotNull ModifiableRootModel module)
+	public BasePyMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
 	{
 		super(id, module);
 	}

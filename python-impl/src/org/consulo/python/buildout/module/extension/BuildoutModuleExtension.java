@@ -37,7 +37,7 @@ import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.ParamsGroup;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootLayer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -68,7 +68,7 @@ public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleE
 	protected String myScriptName;
 	protected List<String> myPaths;
 
-	public BuildoutModuleExtension(@NotNull String id, @NotNull ModifiableRootModel module)
+	public BuildoutModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
