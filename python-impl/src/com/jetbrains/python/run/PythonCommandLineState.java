@@ -59,7 +59,7 @@ import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.types.BinariesOrderRootType;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -250,7 +250,7 @@ public abstract class PythonCommandLineState extends CommandLineState
 					// skip libraries from Python facet
 					continue;
 				}
-				for(VirtualFile root : ((LibraryOrderEntry) entry).getRootFiles(OrderRootType.CLASSES))
+				for(VirtualFile root : entry.getFiles(BinariesOrderRootType.getInstance()))
 				{
 					addToPythonPath(root, list);
 				}
