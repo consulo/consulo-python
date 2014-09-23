@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetNamespaceAsElement;
-import org.mustbe.consulo.dotnet.resolve.DotNetPsiFacade;
+import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -59,11 +59,11 @@ public class PyDotNetNamespaceType implements PyType
 			@NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
 	{
 		Project project = myPackage.getProject();
-		DotNetPsiFacade facade = DotNetPsiFacade.getInstance(project);
+		DotNetPsiSearcher facade = DotNetPsiSearcher.getInstance(project);
 		String childName = myPackage.getPresentableQName() + "." + name;
 		GlobalSearchScope scope = getScope(project);
 		ResolveResultList result = new ResolveResultList();
-		final DotNetTypeDeclaration[] classes = facade.findTypes(childName, scope, -1);
+		final DotNetTypeDeclaration[] classes = facade.findTypes(childName, scope);
 		for(DotNetTypeDeclaration aClass : classes)
 		{
 			result.poke(aClass, RatedResolveResult.RATE_NORMAL);

@@ -19,7 +19,7 @@ package org.mustbe.consulo.ironPython.psi.impl;
 import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetNamespaceAsElement;
-import org.mustbe.consulo.dotnet.resolve.DotNetPsiFacade;
+import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
 import org.mustbe.consulo.ironPython.module.extension.BaseIronPythonModuleExtension;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -40,11 +40,7 @@ public class PyDotNetImportResolver implements PyImportResolver
 	public PsiElement resolveImportReference(QualifiedName name, QualifiedNameResolveContext context)
 	{
 		String fqn = name.toString();
-		final DotNetPsiFacade psiFacade = DotNetPsiFacade.getInstance(context.getProject());
-		if(psiFacade == null)
-		{
-			return null;
-		}
+		final DotNetPsiSearcher psiFacade = DotNetPsiSearcher.getInstance(context.getProject());
 
 		Module module = context.getModule();
 		if(module != null && ModuleUtilCore.getExtension(module, BaseIronPythonModuleExtension.class) != null)
@@ -56,7 +52,7 @@ public class PyDotNetImportResolver implements PyImportResolver
 				return aPackage;
 			}
 
-			final DotNetTypeDeclaration aClass = psiFacade.findType(fqn, scope, -1);
+			final DotNetTypeDeclaration aClass = psiFacade.findType(fqn, scope);
 			if(aClass != null)
 			{
 				return aClass;
