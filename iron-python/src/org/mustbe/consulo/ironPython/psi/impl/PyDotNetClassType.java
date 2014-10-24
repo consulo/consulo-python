@@ -164,7 +164,7 @@ public class PyDotNetClassType implements PyClassLikeType
 		final List<PyClassLikeType> result = new ArrayList<PyClassLikeType>();
 		for(DotNetTypeRef typeRef : myClass.getExtendTypeRefs())
 		{
-			PsiElement resolve = typeRef.resolve(myClass);
+			PsiElement resolve = typeRef.resolve(myClass).getElement();
 			if(resolve instanceof DotNetTypeDeclaration)
 			{
 				result.add(new PyDotNetClassType((DotNetTypeDeclaration) resolve, myDefinition));

@@ -74,7 +74,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 	@Nullable
 	public static PyType asPyType(DotNetTypeRef type, PsiElement scope)
 	{
-		PsiElement resolve = type.resolve(scope);
+		PsiElement resolve = type.resolve(scope).getElement();
 		if(resolve instanceof DotNetTypeDeclaration)
 		{
 			return new PyDotNetClassType((DotNetTypeDeclaration) resolve, false);
@@ -109,7 +109,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 					if(javaIndex < psiParameters.length)
 					{
 						DotNetTypeRef paramType = psiParameters[javaIndex].toTypeRef(true);
-						PsiElement resolve = paramType.resolve(psiElement);
+						PsiElement resolve = paramType.resolve(psiElement).getElement();
 						if(resolve instanceof DotNetTypeDeclaration)
 						{
 							superMethodParameterTypes.add(new PyDotNetClassType((DotNetTypeDeclaration) resolve, false));
