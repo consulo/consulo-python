@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,71 +13,89 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.resolve;
-
-import com.intellij.openapi.vfs.*;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileAdapter;
+import com.intellij.openapi.vfs.VirtualFileCopyEvent;
+import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileMoveEvent;
+import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.QualifiedName;
+
 /**
  * @author yole
  */
-public abstract class PythonPathCache {
-  private final Map<QualifiedName, List<PsiElement>> myCache = new HashMap<QualifiedName, List<PsiElement>>();
-  private final Map<VirtualFile, List<QualifiedName>> myQNameCache = new HashMap<VirtualFile, List<QualifiedName>>();
+public abstract class PythonPathCache
+{
+	private final Map<QualifiedName, List<PsiElement>> myCache = new HashMap<QualifiedName, List<PsiElement>>();
+	private final Map<VirtualFile, List<QualifiedName>> myQNameCache = new HashMap<VirtualFile, List<QualifiedName>>();
 
-  protected void clearCache() {
-    myCache.clear();
-    myQNameCache.clear();
-  }
+	public void clearCache()
+	{
+		myCache.clear();
+		myQNameCache.clear();
+	}
 
-  public synchronized List<PsiElement> get(QualifiedName qualifiedName) {
-    return myCache.get(qualifiedName);
-  }
+	public synchronized List<PsiElement> get(QualifiedName qualifiedName)
+	{
+		return myCache.get(qualifiedName);
+	}
 
-  public synchronized void put(QualifiedName qualifiedName, List<PsiElement> results) {
-    myCache.put(qualifiedName, results);
-  }
+	public synchronized void put(QualifiedName qualifiedName, List<PsiElement> results)
+	{
+		myCache.put(qualifiedName, results);
+	}
 
-  public synchronized List<QualifiedName> getNames(VirtualFile vFile) {
-    return myQNameCache.get(vFile);
-  }
-  
-  public synchronized void putNames(VirtualFile vFile, List<QualifiedName> qNames) {
-    myQNameCache.put(vFile, qNames);
-  }
+	public synchronized List<QualifiedName> getNames(VirtualFile vFile)
+	{
+		return myQNameCache.get(vFile);
+	}
 
-  protected class MyVirtualFileAdapter extends VirtualFileAdapter {
-    @Override
-    public void fileCreated(VirtualFileEvent event) {
-      clearCache();
-    }
+	public synchronized void putNames(VirtualFile vFile, List<QualifiedName> qNames)
+	{
+		myQNameCache.put(vFile, qNames);
+	}
 
-    @Override
-    public void fileDeleted(VirtualFileEvent event) {
-      clearCache();
-    }
+	protected class MyVirtualFileAdapter extends VirtualFileAdapter
+	{
+		@Override
+		public void fileCreated(@NotNull VirtualFileEvent event)
+		{
+			clearCache();
+		}
 
-    @Override
-    public void fileMoved(VirtualFileMoveEvent event) {
-      clearCache();
-    }
+		@Override
+		public void fileDeleted(@NotNull VirtualFileEvent event)
+		{
+			clearCache();
+		}
 
-    @Override
-    public void fileCopied(VirtualFileCopyEvent event) {
-      clearCache();
-    }
+		@Override
+		public void fileMoved(@NotNull VirtualFileMoveEvent event)
+		{
+			clearCache();
+		}
 
-    @Override
-    public void propertyChanged(VirtualFilePropertyEvent event) {
-      if (event.getPropertyName().equals(VirtualFile.PROP_NAME)) {
-        clearCache();
-      }
-    }
-  }
+		@Override
+		public void fileCopied(@NotNull VirtualFileCopyEvent event)
+		{
+			clearCache();
+		}
+
+		@Override
+		public void propertyChanged(@NotNull VirtualFilePropertyEvent event)
+		{
+			if(event.getPropertyName().equals(VirtualFile.PROP_NAME))
+			{
+				clearCache();
+			}
+		}
+	}
 }

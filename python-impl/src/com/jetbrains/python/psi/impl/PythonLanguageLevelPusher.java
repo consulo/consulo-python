@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.consulo.python.module.extension.PyModuleExtension;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.FilePropertyPusher;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
+import com.intellij.openapi.roots.types.BinariesOrderRootType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,193 +48,287 @@ import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.containers.WeakHashMap;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.messages.MessageBus;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.resolve.PythonSdkPathCache;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.consulo.python.module.extension.PyModuleExtension;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * @author yole
  */
-public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLevel> {
-  private final Map<Module, Sdk> myModuleSdks = new WeakHashMap<Module, Sdk>();
+public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLevel>
+{
+	private final Map<Module, Sdk> myModuleSdks = new WeakHashMap<Module, Sdk>();
 
-  public static void pushLanguageLevel(final Project project) {
-    PushedFilePropertiesUpdater.getInstance(project).pushAll(new PythonLanguageLevelPusher());
-  }
+	public static void pushLanguageLevel(final Project project)
+	{
+		PushedFilePropertiesUpdater.getInstance(project).pushAll(new PythonLanguageLevelPusher());
+	}
 
-  public void initExtra(@NotNull Project project, @NotNull MessageBus bus, @NotNull Engine languageLevelUpdater) {
-    final Module[] modules = ModuleManager.getInstance(project).getModules();
-    Set<Sdk> usedSdks = new HashSet<Sdk>();
-    for (Module module : modules) {
-      final Sdk sdk = PythonSdkType.findPythonSdk(module);
-      myModuleSdks.put(module, sdk);
-      if (sdk != null && !usedSdks.contains(sdk)) {
-        usedSdks.add(sdk);
-        updateSdkLanguageLevel(project, sdk);
-      }
-    }
-  }
+	@Override
+	public void initExtra(@NotNull Project project, @NotNull MessageBus bus, @NotNull Engine languageLevelUpdater)
+	{
+		final Module[] modules = ModuleManager.getInstance(project).getModules();
+		Set<Sdk> usedSdks = new HashSet<Sdk>();
+		for(Module module : modules)
+		{
+			if(isPythonModule(module))
+			{
+				final Sdk sdk = PythonSdkType.findPythonSdk(module);
+				myModuleSdks.put(module, sdk);
+				if(sdk != null && !usedSdks.contains(sdk))
+				{
+					usedSdks.add(sdk);
+					updateSdkLanguageLevel(project, sdk);
+				}
+			}
+		}
+	}
 
-  @NotNull
-  public Key<LanguageLevel> getFileDataKey() {
-    return LanguageLevel.KEY;
-  }
+	@Override
+	@NotNull
+	public Key<LanguageLevel> getFileDataKey()
+	{
+		return LanguageLevel.KEY;
+	}
 
-  public boolean pushDirectoriesOnly() {
-    return true;
-  }
+	@Override
+	public boolean pushDirectoriesOnly()
+	{
+		return true;
+	}
 
-  @NotNull
-  public LanguageLevel getDefaultValue() {
-    return LanguageLevel.getDefault();
-  }
+	@Override
+	@NotNull
+	public LanguageLevel getDefaultValue()
+	{
+		return LanguageLevel.getDefault();
+	}
 
-  public LanguageLevel getImmediateValue(@NotNull Project project, @Nullable VirtualFile file) {
-    if (ApplicationManager.getApplication().isUnitTestMode() && LanguageLevel.FORCE_LANGUAGE_LEVEL != null) {
-      return LanguageLevel.FORCE_LANGUAGE_LEVEL;
-    }
-    if (file == null) return null;
+	@Override
+	public LanguageLevel getImmediateValue(@NotNull Project project, @Nullable VirtualFile file)
+	{
+		return getFileLanguageLevel(project, file);
+	}
 
-    final Module module = ModuleUtil.findModuleForFile(file, project);
-    if (module != null) {
-      return getImmediateValue(module);
-    }
-    final Sdk sdk = findSdk(project, file);
-    if (sdk != null) {
-      return PythonSdkType.getLanguageLevelForSdk(sdk);
-    }
-    return null;
-  }
+	public static LanguageLevel getFileLanguageLevel(@NotNull Project project, @Nullable VirtualFile file)
+	{
+		if(ApplicationManager.getApplication().isUnitTestMode() && LanguageLevel.FORCE_LANGUAGE_LEVEL != null)
+		{
+			return LanguageLevel.FORCE_LANGUAGE_LEVEL;
+		}
+		if(file == null)
+		{
+			return null;
+		}
+		final Sdk sdk = getFileSdk(project, file);
+		return PythonSdkType.getLanguageLevelForSdk(sdk);
+	}
 
-  @Nullable
-  private static Sdk findSdk(Project project, VirtualFile file) {
-    if (file != null) {
-      final List<OrderEntry> orderEntries = ProjectRootManager.getInstance(project).getFileIndex().getOrderEntriesForFile(file);
-      for (OrderEntry orderEntry : orderEntries) {
-        if (orderEntry instanceof SdkOrderEntry) {
-          return ((SdkOrderEntry)orderEntry).getSdk();
-        }
-      }
-    }
-    return null;
-  }
+	@Nullable
+	private static Sdk getFileSdk(@NotNull Project project, @NotNull VirtualFile file)
+	{
+		final Module module = ModuleUtilCore.findModuleForFile(file, project);
+		if(module != null)
+		{
+			final Sdk sdk = PythonSdkType.findPythonSdk(module);
+			if(sdk != null)
+			{
+				return sdk;
+			}
+		}
+		return null;
+	}
 
-  public LanguageLevel getImmediateValue(@NotNull Module module) {
-    if (ApplicationManager.getApplication().isUnitTestMode() && LanguageLevel.FORCE_LANGUAGE_LEVEL != null) {
-      return LanguageLevel.FORCE_LANGUAGE_LEVEL;
-    }
+	@Override
+	public LanguageLevel getImmediateValue(@NotNull Module module)
+	{
+		if(ApplicationManager.getApplication().isUnitTestMode() && LanguageLevel.FORCE_LANGUAGE_LEVEL != null)
+		{
+			return LanguageLevel.FORCE_LANGUAGE_LEVEL;
+		}
 
-    final Sdk sdk = ModuleUtilCore.getSdk(module, PyModuleExtension.class);
-    return PythonSdkType.getLanguageLevelForSdk(sdk);
-  }
+		final Sdk sdk = PythonSdkType.findPythonSdk(module);
+		return PythonSdkType.getLanguageLevelForSdk(sdk);
+	}
 
-  public boolean acceptsFile(@NotNull VirtualFile file) {
-    return false;
-  }
+	@Override
+	public boolean acceptsFile(@NotNull VirtualFile file)
+	{
+		return false;
+	}
 
-  @Override
-  public boolean acceptsDirectory(@NotNull VirtualFile file, @NotNull Project project) {
-    return true;
-  }
+	@Override
+	public boolean acceptsDirectory(@NotNull VirtualFile file, @NotNull Project project)
+	{
+		return true;
+	}
 
-  private static final FileAttribute PERSISTENCE = new FileAttribute("python_language_level_persistence", 2, true);
+	private static final FileAttribute PERSISTENCE = new FileAttribute("python_language_level_persistence", 2, true);
 
-  public void persistAttribute(@NotNull VirtualFile fileOrDir, @NotNull LanguageLevel level) throws IOException {
-    final DataInputStream iStream = PERSISTENCE.readAttribute(fileOrDir);
-    if (iStream != null) {
-      try {
-        final int oldLevelOrdinal = DataInputOutputUtil.readINT(iStream);
-        if (oldLevelOrdinal == level.ordinal()) return;
-      }
-      finally {
-        iStream.close();
-      }
-    }
+	@Override
+	public void persistAttribute(@NotNull Project project, @NotNull VirtualFile fileOrDir, @NotNull LanguageLevel level) throws IOException
+	{
+		final DataInputStream iStream = PERSISTENCE.readAttribute(fileOrDir);
+		if(iStream != null)
+		{
+			try
+			{
+				final int oldLevelOrdinal = DataInputOutputUtil.readINT(iStream);
+				if(oldLevelOrdinal == level.ordinal())
+				{
+					return;
+				}
+			}
+			finally
+			{
+				iStream.close();
+			}
+		}
 
-    final DataOutputStream oStream = PERSISTENCE.writeAttribute(fileOrDir);
-    DataInputOutputUtil.writeINT(oStream, level.ordinal());
-    oStream.close();
+		final DataOutputStream oStream = PERSISTENCE.writeAttribute(fileOrDir);
+		DataInputOutputUtil.writeINT(oStream, level.ordinal());
+		oStream.close();
 
-    for (VirtualFile child : fileOrDir.getChildren()) {
-      if (!child.isDirectory() && PythonFileType.INSTANCE.equals(child.getFileType())) {
-        FileBasedIndex.getInstance().requestReindex(child);
-      }
-    }
-  }
+		for(VirtualFile child : fileOrDir.getChildren())
+		{
+			final FileType fileType = FileTypeRegistry.getInstance().getFileTypeByFileName(child.getName());
+			if(!child.isDirectory() && PythonFileType.INSTANCE.equals(fileType))
+			{
+				clearSdkPathCache(child);
+				PushedFilePropertiesUpdater.getInstance(project).filePropertiesChanged(child);
+			}
+		}
+	}
 
-  public void afterRootsChanged(@NotNull Project project) {
-    Set<Sdk> updatedSdks = new HashSet<Sdk>();
-    final Module[] modules = ModuleManager.getInstance(project).getModules();
-    boolean needReparseOpenFiles = false;
-    for (Module module : modules) {
-      Sdk newSdk = PythonSdkType.findPythonSdk(module);
-      if (myModuleSdks.containsKey(module)) {
-        Sdk oldSdk = myModuleSdks.get(module);
-        if ((newSdk != null || oldSdk != null) && newSdk != oldSdk) {
-          needReparseOpenFiles = true;
-        }
-      }
-      myModuleSdks.put(module, newSdk);
-      if (newSdk != null && !updatedSdks.contains(newSdk)) {
-        updatedSdks.add(newSdk);
-        updateSdkLanguageLevel(project, newSdk);
-      }
-    }
-    if (needReparseOpenFiles) {
-      FileContentUtil.reparseFiles(project, Collections.<VirtualFile>emptyList(), true);
-    }
-  }
+	private static void clearSdkPathCache(@NotNull final VirtualFile child)
+	{
+		final Project[] projects = ProjectManager.getInstance().getOpenProjects();
+		for(Project project : projects)
+		{
+			final Sdk sdk = getFileSdk(project, child);
+			if(sdk != null)
+			{
+				final PythonSdkPathCache pathCache = PythonSdkPathCache.getInstance(project, sdk);
+				pathCache.clearCache();
+			}
+		}
+	}
 
-  private void updateSdkLanguageLevel(Project project, Sdk sdk) {
-    final LanguageLevel languageLevel = PythonSdkType.getLanguageLevelForSdk(sdk);
-    final VirtualFile[] files = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
-    for (VirtualFile file : files) {
-      if (file.isValid()) {
-        VirtualFile parent = file.getParent();
-        boolean suppressSizeLimit = false;
-        if (parent != null && parent.getName().equals(PythonSdkType.SKELETON_DIR_NAME)) {
-          suppressSizeLimit = true;
-        }
-        markRecursively(project, file, languageLevel, suppressSizeLimit);
-      }
-    }
-  }
+	@Override
+	public void afterRootsChanged(@NotNull final Project project)
+	{
+		Set<Sdk> updatedSdks = new HashSet<Sdk>();
+		final Module[] modules = ModuleManager.getInstance(project).getModules();
+		boolean needReparseOpenFiles = false;
+		for(Module module : modules)
+		{
+			if(isPythonModule(module))
+			{
+				Sdk newSdk = PythonSdkType.findPythonSdk(module);
+				if(myModuleSdks.containsKey(module))
+				{
+					Sdk oldSdk = myModuleSdks.get(module);
+					if((newSdk != null || oldSdk != null) && newSdk != oldSdk)
+					{
+						needReparseOpenFiles = true;
+					}
+				}
+				myModuleSdks.put(module, newSdk);
+				if(newSdk != null && !updatedSdks.contains(newSdk))
+				{
+					updatedSdks.add(newSdk);
+					updateSdkLanguageLevel(project, newSdk);
+				}
+			}
+		}
+		if(needReparseOpenFiles)
+		{
+			FileContentUtil.reparseFiles(project, Collections.<VirtualFile>emptyList(), true);
+		}
+	}
 
-  private void markRecursively(final Project project,
-                               @NotNull VirtualFile file,
-                               final LanguageLevel languageLevel,
-                               final boolean suppressSizeLimit) {
-    final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
-      @Override
-      public boolean visitFile(@NotNull VirtualFile file) {
-        if (fileTypeManager.isFileIgnored(file)) {
-          return false;
-        }
-        if (file.isDirectory()) {
-          PushedFilePropertiesUpdater.findAndUpdateValue(project, file, PythonLanguageLevelPusher.this, languageLevel);
-        }
-        if (suppressSizeLimit) {
-          SingleRootFileViewProvider.doNotCheckFileSizeLimit(file);
-        }
-        return true;
-      }
-    });
-  }
+	private static boolean isPythonModule(@NotNull final Module module)
+	{
+		return ModuleUtilCore.getExtension(module, PyModuleExtension.class) != null;
+	}
 
-  public static void setForcedLanguageLevel(final Project project, @Nullable LanguageLevel languageLevel) {
-    LanguageLevel.FORCE_LANGUAGE_LEVEL = languageLevel;
-    pushLanguageLevel(project);
-  }
+	private void updateSdkLanguageLevel(final Project project, final Sdk sdk)
+	{
+		final LanguageLevel languageLevel = PythonSdkType.getLanguageLevelForSdk(sdk);
+		final VirtualFile[] files = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+		final Application application = ApplicationManager.getApplication();
+		application.executeOnPooledThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				application.runReadAction(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						if(project != null && project.isDisposed())
+						{
+							return;
+						}
+						for(VirtualFile file : files)
+						{
+							if(file.isValid())
+							{
+								VirtualFile parent = file.getParent();
+								boolean suppressSizeLimit = false;
+								if(parent != null && parent.getName().equals(PythonSdkType.SKELETON_DIR_NAME))
+								{
+									suppressSizeLimit = true;
+								}
+								markRecursively(project, file, languageLevel, suppressSizeLimit);
+							}
+						}
+					}
+				});
+			}
+		});
+	}
+
+	private void markRecursively(final Project project,
+			@NotNull final VirtualFile file,
+			final LanguageLevel languageLevel,
+			final boolean suppressSizeLimit)
+	{
+		final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+		VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor()
+		{
+			@Override
+			public boolean visitFile(@NotNull VirtualFile file)
+			{
+				if(fileTypeManager.isFileIgnored(file))
+				{
+					return false;
+				}
+				if(file.isDirectory())
+				{
+					PushedFilePropertiesUpdater.getInstance(project).findAndUpdateValue(file, PythonLanguageLevelPusher.this, languageLevel);
+				}
+				if(suppressSizeLimit)
+				{
+					SingleRootFileViewProvider.doNotCheckFileSizeLimit(file);
+				}
+				return true;
+			}
+		});
+	}
+
+	public static void setForcedLanguageLevel(final Project project, @Nullable LanguageLevel languageLevel)
+	{
+		LanguageLevel.FORCE_LANGUAGE_LEVEL = languageLevel;
+		pushLanguageLevel(project);
+	}
+
+	public void flushLanguageLevelCache()
+	{
+		myModuleSdks.clear();
+	}
 }
