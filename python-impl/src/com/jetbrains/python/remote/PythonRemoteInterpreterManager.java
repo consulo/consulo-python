@@ -23,6 +23,7 @@ import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.DeprecationInfo;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
@@ -46,6 +47,8 @@ import com.jetbrains.python.sdk.skeletons.PySkeletonGenerator;
 /**
  * @author traff
  */
+@Deprecated
+@DeprecationInfo(value = "We dont have remote hosts plugin", until = "2.0")
 public abstract class PythonRemoteInterpreterManager {
   public final static ExtensionPointName<PythonRemoteInterpreterManager> EP_NAME =
     ExtensionPointName.create("org.consulo.python.remoteInterpreterManager");
