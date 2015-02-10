@@ -90,7 +90,7 @@ public class InterpreterPathChooser extends BaseListPopupStep<String>
 	{
 		List<String> paths = new ArrayList<String>();
 		Collection<String> sdkHomes = PythonSdkType.getInstance().suggestHomePaths();
-		for(String sdkHome : PythonSdkUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, existingSdks))
+		for(String sdkHome : PySdkUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, existingSdks))
 		{
 			paths.add(FileUtil.getLocationRelativeToUserHome(sdkHome));
 		}
@@ -158,7 +158,7 @@ public class InterpreterPathChooser extends BaseListPopupStep<String>
 			@Override
 			public void run()
 			{
-				PythonSdkUtil.createSdk(myProject, myExistingSdks, myCallback, PythonSdkType.getInstance());
+				PySdkUtil.createSdk(myProject, myExistingSdks, myCallback, PythonSdkType.getInstance());
 			}
 		}, ModalityState.any());
 	}
