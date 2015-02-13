@@ -84,7 +84,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.remotesdk.RemoteSdkData;
 import com.intellij.remotesdk.RemoteSdkDataHolder;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.NullableConsumer;
 import com.jetbrains.python.PyBundle;
@@ -154,7 +153,7 @@ public class PythonSdkType extends SdkType
 
 	public static PythonSdkType getInstance()
 	{
-		return SdkType.findInstance(PythonSdkType.class);
+		return EP_NAME.findExtension(PythonSdkType.class);
 	}
 
 	/**
@@ -176,6 +175,7 @@ public class PythonSdkType extends SdkType
 	{
 		return new TreeSet<String>(new Comparator<String>()
 		{
+			@Override
 			public int compare(String o1, String o2)
 			{
 				return findDigits(o1).compareTo(findDigits(o2));
@@ -187,6 +187,7 @@ public class PythonSdkType extends SdkType
 	{
 		int pos = StringUtil.findFirst(s, new CharFilter()
 		{
+			@Override
 			public boolean accept(char ch)
 			{
 				return Character.isDigit(ch);
@@ -409,6 +410,7 @@ public class PythonSdkType extends SdkType
 		final Task.Modal setupTask = new Task.Modal(project, "Setting up library files for " + sdk.getName(), false)
 		{
 			// TODO: make this a backgroundable task. see #setupSdkPaths(final Sdk sdk) and its modificator handling
+			@Override
 			public void run(@NotNull final ProgressIndicator indicator)
 			{
 				sdkModificator.removeAllRoots();
@@ -924,6 +926,7 @@ public class PythonSdkType extends SdkType
 		return ModuleUtilCore.getSdk(module, PyModuleExtension.class);
 	}
 
+	@Override
 	@NotNull
 	public Icon getIcon()
 	{
@@ -944,24 +947,7 @@ public class PythonSdkType extends SdkType
 		return "reference.project.structure.sdk.python";
 	}
 
-	@NonNls
-	@Nullable
-	public String suggestHomePath()
-	{
-		for(PythonSdkFlavor flavor : PythonSdkFlavor.getApplicableFlavors())
-		{
-			TreeSet<String> candidates = createVersionSet();
-			candidates.addAll(flavor.suggestHomePaths());
-			if(!candidates.isEmpty())
-			{
-				// return latest version
-				String[] candidateArray = ArrayUtil.toStringArray(candidates);
-				return candidateArray[candidateArray.length - 1];
-			}
-		}
-		return null;
-	}
-
+	@NotNull
 	@Override
 	public Collection<String> suggestHomePaths()
 	{
@@ -973,6 +959,7 @@ public class PythonSdkType extends SdkType
 		return candidates;
 	}
 
+	@Override
 	public boolean isValidSdkHome(@Nullable final String path)
 	{
 		return PythonSdkFlavor.getFlavor(path) != null;
@@ -984,6 +971,7 @@ public class PythonSdkType extends SdkType
 		final boolean is_windows = SystemInfo.isWindows;
 		FileChooserDescriptor result = new FileChooserDescriptor(true, false, false, false, false, false)
 		{
+			@Override
 			public void validateSelectedFiles(VirtualFile[] files) throws Exception
 			{
 				if(files.length != 0)
@@ -1023,11 +1011,13 @@ public class PythonSdkType extends SdkType
 		return result;
 	}
 
+	@Override
 	public boolean supportsCustomCreateUI()
 	{
 		return true;
 	}
 
+	@Override
 	public void showCustomCreateUI(SdkModel sdkModel, final JComponent parentComponent, final Consumer<Sdk> sdkCreatedCallback)
 	{
 		Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(parentComponent));
@@ -1067,18 +1057,21 @@ public class PythonSdkType extends SdkType
 		return null;
 	}
 
+	@Override
 	public String suggestSdkName(final String currentSdkName, final String sdkHome)
 	{
 		String name = getVersionString(sdkHome);
 		return suggestSdkNameFromVersion(sdkHome, name);
 	}
 
+	@Override
 	@Nullable
 	public AdditionalDataConfigurable createAdditionalDataConfigurable(final SdkModel sdkModel, final SdkModificator sdkModificator)
 	{
 		return null;
 	}
 
+	@Override
 	public void saveAdditionalData(final SdkAdditionalData additionalData, final Element additional)
 	{
 		if(additionalData instanceof PythonSdkAdditionalData)
@@ -1126,6 +1119,7 @@ public class PythonSdkType extends SdkType
 		{
 			ApplicationManager.getApplication().invokeLater(new Runnable()
 			{
+				@Override
 				public void run()
 				{
 					Messages.showWarningDialog("Failed to convert Python SDK '" + sdk_name + "'\nplease delete and re-create it", "Converting Python SDK");
@@ -1135,6 +1129,7 @@ public class PythonSdkType extends SdkType
 		return success;
 	}
 
+	@Override
 	@NonNls
 	public String getPresentableName()
 	{
@@ -1157,6 +1152,7 @@ public class PythonSdkType extends SdkType
 		return path;
 	}
 
+	@Override
 	public void setupSdkPaths(@NotNull final Sdk sdk)
 	{
 		final Project project;
@@ -1177,6 +1173,7 @@ public class PythonSdkType extends SdkType
 		setupSdkPaths(sdk, project, ownerComponent);
 	}
 
+	@Override
 	@Nullable
 	public String getVersionString(final String sdkHome)
 	{
@@ -1184,11 +1181,13 @@ public class PythonSdkType extends SdkType
 		return flavor != null ? flavor.getVersionString(sdkHome) : null;
 	}
 
+	@Override
 	public boolean isRootTypeApplicable(final OrderRootType type)
 	{
 		return type == OrderRootType.CLASSES;
 	}
 
+	@Override
 	public boolean sdkHasValidPath(@NotNull Sdk sdk)
 	{
 		if(PySdkUtil.isRemote(sdk))

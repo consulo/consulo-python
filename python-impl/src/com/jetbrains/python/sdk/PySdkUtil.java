@@ -49,6 +49,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.remotesdk.RemoteCredentials;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NullableConsumer;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 
 /**
@@ -288,7 +289,7 @@ public class PySdkUtil
 		{
 			descriptor.putUserData(PathChooserDialog.NATIVE_MAC_CHOOSER_SHOW_HIDDEN_FILES, Boolean.TRUE);
 		}
-		String suggestedPath = sdkTypes[0].suggestHomePath();
+		String suggestedPath = ContainerUtil.getFirstItem(sdkTypes[0].suggestHomePaths());
 		VirtualFile suggestedDir = suggestedPath == null ? null : LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName
 				(suggestedPath));
 		FileChooser.chooseFiles(descriptor, project, suggestedDir, new FileChooser.FileChooserConsumer()
