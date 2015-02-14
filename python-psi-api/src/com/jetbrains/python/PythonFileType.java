@@ -16,26 +16,27 @@
 
 package com.jetbrains.python;
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.VirtualFile;
-import icons.PythonPsiApiIcons;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.Language;
+import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.text.CharSequenceReader;
+import icons.PythonPsiApiIcons;
 
 /**
  * @author yole
@@ -84,7 +85,7 @@ public class PythonFileType extends LanguageFileType {
   }
 
   @Override
-  public Charset extractCharsetFromFileContent(@Nullable Project project, @Nullable VirtualFile file, @NotNull String content) {
+  public Charset extractCharsetFromFileContent(@Nullable Project project, @Nullable VirtualFile file, @NotNull CharSequence content) {
     final String charsetName = getCharsetFromEncodingDeclaration(content);
     if (charsetName == null) {
       return null;
@@ -101,12 +102,12 @@ public class PythonFileType extends LanguageFileType {
   }
 
   @Nullable
-  public static String getCharsetFromEncodingDeclaration(String content) {
-    if (content == null || content.isEmpty()) {
+  public static String getCharsetFromEncodingDeclaration(CharSequence content) {
+    if (content == null || content.length() == 0) {
       return null;
     }
     try {
-      final BufferedReader reader = new BufferedReader(new StringReader(content));
+      final BufferedReader reader = new BufferedReader(new CharSequenceReader(content));
       try {
         for (int i = 0; i < 2; i++) {
           final String line = reader.readLine();
