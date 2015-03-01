@@ -49,7 +49,6 @@
 	</extensionPoints>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<projectStructureDetector implementation="com.jetbrains.python.module.PyProjectStructureDetector"/>
 		<applicationService serviceInterface="com.jetbrains.python.run.PyCommonOptionsFormFactory"
 							serviceImplementation="com.jetbrains.python.run.PyPluginCommonOptionsFormFactory"/>
 
