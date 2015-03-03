@@ -51,6 +51,7 @@ import com.intellij.remotesdk.RemoteSdkDataHolder;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.packaging.PyPackageManagerImpl;
@@ -73,7 +74,7 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
     void virtualEnvCreated(Sdk sdk, boolean associateWithProject, boolean setAsProjectInterpreter);
   }
 
-  private static void setupVirtualEnvSdk(List<Sdk> allSdks,
+  private static void setupVirtualEnvSdk(Sdk[] allSdks,
                                          final String path,
                                          boolean associateWithProject,
                                          final boolean makeActive,
@@ -96,7 +97,7 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
 
   public CreateVirtualEnvDialog(Project project,
                                 boolean isNewProject,
-                                final List<Sdk> allSdks,
+                                final Sdk[] allSdks,
                                 @Nullable Sdk suggestedBaseSdk) {
     super(project);
     setupDialog(project, isNewProject, allSdks, suggestedBaseSdk);
@@ -104,18 +105,18 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
 
   public CreateVirtualEnvDialog(Component owner,
                                 boolean isNewProject,
-                                final List<Sdk> allSdks,
+                                final Sdk[] allSdks,
                                 @Nullable Sdk suggestedBaseSdk) {
     super(owner);
     setupDialog(null, isNewProject, allSdks, suggestedBaseSdk);
   }
 
-  private void setupDialog(Project project, boolean isNewProject, List<Sdk> allSdks, @Nullable Sdk suggestedBaseSdk) {
+  private void setupDialog(Project project, boolean isNewProject, Sdk[] allSdks, @Nullable Sdk suggestedBaseSdk) {
     myProject = project;
     init();
     setTitle("Create Virtual Environment");
-    if (suggestedBaseSdk == null && allSdks.size() > 0) {
-      List<Sdk> sortedSdks = new ArrayList<Sdk>(allSdks);
+    if (suggestedBaseSdk == null && allSdks.length > 0) {
+      List<Sdk> sortedSdks = ContainerUtil.newArrayList(allSdks);
       Collections.sort(sortedSdks, new PreferredSdkComparator());
       suggestedBaseSdk = sortedSdks.get(0);
     }
@@ -191,7 +192,7 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
     setErrorText(null);
   }
 
-  private void updateSdkList(final List<Sdk> allSdks, @Nullable Sdk initialSelection) {
+  private void updateSdkList(final Sdk[] allSdks, @Nullable Sdk initialSelection) {
     mySdkCombo.setRenderer(new PySdkListCellRenderer());
     List<Sdk> baseSdks = new ArrayList<Sdk>();
     for (Sdk s : allSdks) {
@@ -252,7 +253,7 @@ public class CreateVirtualEnvDialog extends IdeaDialog {
     return myName;
   }
 
-  public void createVirtualEnv(final List<Sdk> allSdks, final VirtualEnvCallback callback) {
+  public void createVirtualEnv(final Sdk[] allSdks, final VirtualEnvCallback callback) {
     final ProgressManager progman = ProgressManager.getInstance();
     final Sdk basicSdk = getSdk();
     final Task.Modal createTask = new Task.Modal(myProject, "Creating virtual environment for " + basicSdk.getName(), false) {

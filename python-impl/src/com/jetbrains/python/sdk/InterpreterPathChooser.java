@@ -194,19 +194,18 @@ public class InterpreterPathChooser extends BaseListPopupStep<String>
 	private void createVirtualEnvSdk()
 	{
 		final CreateVirtualEnvDialog dialog;
-		final List<Sdk> allSdks = Arrays.asList(myExistingSdks);
 		if(myProject != null)
 		{
-			dialog = new CreateVirtualEnvDialog(myProject, false, allSdks, null);
+			dialog = new CreateVirtualEnvDialog(myProject, false, myExistingSdks, null);
 		}
 		else
 		{
-			dialog = new CreateVirtualEnvDialog(myOwnerComponent, false, allSdks, null);
+			dialog = new CreateVirtualEnvDialog(myOwnerComponent, false, myExistingSdks, null);
 		}
 		dialog.show();
 		if(dialog.isOK())
 		{
-			dialog.createVirtualEnv(allSdks, new CreateVirtualEnvDialog.VirtualEnvCallback()
+			dialog.createVirtualEnv(myExistingSdks, new CreateVirtualEnvDialog.VirtualEnvCallback()
 			{
 				@Override
 				public void virtualEnvCreated(Sdk sdk, boolean associateWithProject, boolean setAsProjectInterpreter)
