@@ -227,6 +227,11 @@ public abstract class PythonSdkFlavor
 		return version;
 	}
 
+	public boolean allowCreateVirtualEnv()
+	{
+		return true;
+	}
+
 	public String getVersionRegexp()
 	{
 		return "(Python \\S+).*";

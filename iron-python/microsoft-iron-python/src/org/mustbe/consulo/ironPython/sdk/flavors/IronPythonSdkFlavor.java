@@ -37,10 +37,6 @@ import icons.PythonIcons;
  */
 public class IronPythonSdkFlavor extends PythonSdkFlavor
 {
-	private IronPythonSdkFlavor()
-	{
-	}
-
 	@Override
 	public Collection<String> suggestHomePaths()
 	{
@@ -89,6 +85,12 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 	public String getVersionRegexp()
 	{
 		return "\\w+ ([0-9\\.]+).*";
+	}
+
+	@Override
+	public boolean allowCreateVirtualEnv()
+	{
+		return false;
 	}
 
 	@Override

@@ -16,6 +16,10 @@
 
 package com.jetbrains.python.packaging.ui;
 
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -31,12 +35,7 @@ import com.jetbrains.python.packaging.PyPackage;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.packaging.PyPackageManagerImpl;
 import com.jetbrains.python.sdk.PythonSdkType;
-import com.jetbrains.python.sdk.flavors.IronPythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author yole
@@ -102,7 +101,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel {
               final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(selectedSdk);
               final boolean invalid = PythonSdkType.isInvalid(selectedSdk);
               boolean allowCreateVirtualEnv =
-                !(PythonSdkType.isRemote(selectedSdk) || flavor instanceof IronPythonSdkFlavor) &&
+                !(PythonSdkType.isRemote(selectedSdk) || flavor == null || !flavor.allowCreateVirtualEnv()) &&
                 !PythonSdkType.isVirtualEnv(selectedSdk) &&
                 myNotificationArea.hasLinkHandler(CREATE_VENV);
               final String createVirtualEnvLink = "<a href=\"" + CREATE_VENV + "\">create new VirtualEnv</a>";

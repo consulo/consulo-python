@@ -6,7 +6,8 @@
 								 name="IronPython"
 								 immutableClass="org.mustbe.consulo.ironPython.module.extension.IronPythonModuleExtension"
 								 mutableClass="org.mustbe.consulo.ironPython.module.extension.IronPythonMutableModuleExtension"/>
-
+	</extensions>
+	<extensions defaultExtensionNs="org.consulo.python">
 		<sdkFlavor implementation="org.mustbe.consulo.ironPython.sdk.flavors.IronPythonSdkFlavor"/>
 	</extensions>
 </idea-plugin>

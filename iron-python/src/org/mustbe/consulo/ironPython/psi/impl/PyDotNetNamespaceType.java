@@ -24,9 +24,12 @@ import org.jetbrains.annotations.Nullable;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetNamespaceAsElement;
 import org.mustbe.consulo.dotnet.resolve.DotNetPsiSearcher;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.ArrayUtil;
@@ -44,23 +47,25 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PyDotNetNamespaceType implements PyType
 {
-	private final DotNetNamespaceAsElement myPackage;
+	private final DotNetNamespaceAsElement myNamespaceAsElement;
 	@Nullable
 	private final Module myModule;
 
-	public PyDotNetNamespaceType(DotNetNamespaceAsElement aPackage, @Nullable Module module)
+	public PyDotNetNamespaceType(DotNetNamespaceAsElement aNamespaceAsElement, @Nullable Module module)
 	{
-		myPackage = aPackage;
+		myNamespaceAsElement = aNamespaceAsElement;
 		myModule = module;
 	}
 
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location,
-			@NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@NotNull String name,
+			@Nullable PyExpression location,
+			@NotNull AccessDirection direction,
+			@NotNull PyResolveContext resolveContext)
 	{
-		Project project = myPackage.getProject();
+		Project project = myNamespaceAsElement.getProject();
 		DotNetPsiSearcher facade = DotNetPsiSearcher.getInstance(project);
-		String childName = myPackage.getPresentableQName() + "." + name;
+		String childName = myNamespaceAsElement.getPresentableQName() + "." + name;
 		GlobalSearchScope scope = getScope(project);
 		ResolveResultList result = new ResolveResultList();
 		final DotNetTypeDeclaration[] classes = facade.findTypes(childName, scope);
@@ -86,21 +91,21 @@ public class PyDotNetNamespaceType implements PyType
 	{
 		List<Object> variants = new ArrayList<Object>();
 		final GlobalSearchScope scope = getScope(location.getProject());
- /*   final PsiClass[] classes = myPackage.getClasses(scope);
-	for (PsiClass psiClass : classes) {
-      variants.add(LookupElementBuilder.create(psiClass).withIcon(IconDescriptorUpdaters.getIcon(psiClass, 0)));
-    }
-    final PsiPackage[] subPackages = myPackage.getSubPackages(scope);
-    for (PsiPackage subPackage : subPackages) {
-      variants.add(LookupElementBuilder.create(subPackage).withIcon(IconDescriptorUpdaters.getIcon(subPackage, 0)));
-    }   */
+		PsiElement[] children = myNamespaceAsElement.getChildren(scope, DotNetNamespaceAsElement.ChildrenFilter.NONE);
+		for(PsiElement child : children)
+		{
+			if(child instanceof PsiNamedElement)
+			{
+				variants.add(LookupElementBuilder.create((PsiNamedElement) child).withIcon(IconDescriptorUpdaters.getIcon(child, 0)));
+			}
+		}
 		return ArrayUtil.toObjectArray(variants);
 	}
 
 	@Override
 	public String getName()
 	{
-		return myPackage.getPresentableQName();
+		return myNamespaceAsElement.getPresentableQName();
 	}
 
 	@Override

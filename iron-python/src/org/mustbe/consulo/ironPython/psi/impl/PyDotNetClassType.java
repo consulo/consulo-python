@@ -21,15 +21,19 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.dotnet.psi.DotNetNamedElement;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyQualifiedExpression;
-import com.jetbrains.python.psi.resolve.CompletionVariantsProcessor;
+import com.jetbrains.python.psi.impl.ResolveResultList;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyCallableParameter;
@@ -64,30 +68,31 @@ public class PyDotNetClassType implements PyClassLikeType
 	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location,
 			@NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext, boolean inherited)
 	{
-	/*final PsiMethod[] methods = myClass.findMethodsByName(name, inherited);
-		if(methods.length > 0)
+		ResolveResultList resultList = new ResolveResultList();
+		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
 		{
-			ResolveResultList resultList = new ResolveResultList();
-			for(PsiMethod method : methods)
+			String name1 = dotNetNamedElement.getName();
+			if(!name.equals(name1))
 			{
-				resultList.poke(method, RatedResolveResult.RATE_NORMAL);
+				continue;
 			}
-			return resultList;
+			resultList.poke(dotNetNamedElement, RatedResolveResult.RATE_NORMAL);
 		}
-		final PsiField field = myClass.findFieldByName(name, inherited);
-		if(field != null)
-		{
-			return ResolveResultList.to(field);
-		}   */
-		return null;
+		return resultList;
 	}
 
 	@Override
 	public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context)
 	{
-		final CompletionVariantsProcessor processor = new CompletionVariantsProcessor(location);
-		myClass.processDeclarations(processor, ResolveState.initial(), null, location);
-		return processor.getResult();
+		List<Object> variants = new ArrayList<Object>();
+		for(PsiElement child : myClass.getMembers())
+		{
+			if(child instanceof PsiNamedElement)
+			{
+				variants.add(LookupElementBuilder.create((PsiNamedElement) child).withIcon(IconDescriptorUpdaters.getIcon(child, 0)));
+			}
+		}
+		return ArrayUtil.toObjectArray(variants);
 	}
 
 	@Override

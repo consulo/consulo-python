@@ -549,9 +549,6 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
         hl_type = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
       }
 
-      if (GenerateBinaryStubsFix.isApplicable(reference)) {
-        actions.add(new GenerateBinaryStubsFix(reference));
-      }
       if (canonicalQName != null) {
         actions.add(new AddIgnoredIdentifierQuickFix(canonicalQName, false));
         if (canonicalQName.getComponentCount() > 1) {
