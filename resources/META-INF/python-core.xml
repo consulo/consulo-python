@@ -577,8 +577,6 @@
 
 		<treeStructureProvider implementation="com.jetbrains.python.projectView.PyTreeStructureProvider"/>
 
-		<project.converterProvider implementation="com.jetbrains.python.testing.converters.PythonTestConverterProvider"/>
-
 		<projectConfigurable instance="com.jetbrains.python.console.PyConsoleOptionsConfigurable"/>
 		<projectService serviceImplementation="com.jetbrains.python.console.PyConsoleOptions"/>
 
