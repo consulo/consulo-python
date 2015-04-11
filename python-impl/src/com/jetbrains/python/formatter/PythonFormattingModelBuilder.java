@@ -16,7 +16,20 @@
 
 package com.jetbrains.python.formatter;
 
-import com.intellij.formatting.*;
+import static com.jetbrains.python.PyElementTypes.*;
+import static com.jetbrains.python.PyTokenTypes.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.formatting.CustomFormattingModelBuilder;
+import com.intellij.formatting.FormatTextRanges;
+import com.intellij.formatting.FormattingMode;
+import com.intellij.formatting.FormattingModel;
+import com.intellij.formatting.FormattingModelBuilderEx;
+import com.intellij.formatting.FormattingModelDumper;
+import com.intellij.formatting.FormattingModelProvider;
+import com.intellij.formatting.Indent;
+import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.openapi.util.TextRange;
@@ -27,13 +40,9 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.Processor;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.PythonLanguage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static com.jetbrains.python.PyElementTypes.*;
-import static com.jetbrains.python.PyTokenTypes.*;
 
 /**
  * @author yole
@@ -147,9 +156,9 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilderEx, C
 
   private static TokenSet allButLambda() {
     final PythonLanguage pythonLanguage = PythonLanguage.getInstance();
-    return TokenSet.create(IElementType.enumerate(new IElementType.Predicate() {
+    return TokenSet.create(IElementType.enumerate(new Processor<IElementType>() {
       @Override
-      public boolean matches(IElementType type) {
+      public boolean process(IElementType type) {
         return type != LAMBDA_KEYWORD && type.getLanguage().isKindOf(pythonLanguage);
       }
     }));
