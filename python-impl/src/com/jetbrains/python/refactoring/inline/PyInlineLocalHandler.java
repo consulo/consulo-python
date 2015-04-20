@@ -16,7 +16,11 @@
 
 package com.jetbrains.python.refactoring.inline;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.lang.Language;
 import com.intellij.lang.refactoring.InlineActionHandler;
@@ -51,10 +55,6 @@ import com.jetbrains.python.psi.impl.PyAugAssignmentStatementImpl;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.refactoring.PyDefUseUtil;
 import com.jetbrains.python.refactoring.PyReplaceExpressionUtil;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Dennis.Ushakov
@@ -85,7 +85,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
     if (editor == null) {
       return;
     }
-    final PsiReference psiReference = TargetElementUtilBase.findReference(editor);
+    final PsiReference psiReference = TargetElementUtil.findReference(editor);
     PyReferenceExpression refExpr = null;
     if (psiReference != null) {
       final PsiElement refElement = psiReference.getElement();

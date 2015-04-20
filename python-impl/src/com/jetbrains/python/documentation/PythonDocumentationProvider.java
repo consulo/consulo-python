@@ -16,7 +16,25 @@
 
 package com.jetbrains.python.documentation;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import static com.jetbrains.python.documentation.DocumentationBuilderKit.$;
+import static com.jetbrains.python.documentation.DocumentationBuilderKit.BR;
+import static com.jetbrains.python.documentation.DocumentationBuilderKit.LReadableRepr;
+import static com.jetbrains.python.documentation.DocumentationBuilderKit.LSame1;
+import static com.jetbrains.python.documentation.DocumentationBuilderKit.LSame2;
+import static com.jetbrains.python.documentation.DocumentationBuilderKit.LinkWrapper;
+import static com.jetbrains.python.documentation.DocumentationBuilderKit.interleave;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.HeadMethod;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.lang.documentation.ExternalDocumentationProvider;
@@ -33,8 +51,15 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.Function;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
@@ -45,23 +70,13 @@ import com.jetbrains.python.debugger.PySignatureCacheManager;
 import com.jetbrains.python.debugger.PySignatureUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.psi.types.*;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.PyTypeParser;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.toolbox.ChainIterable;
 import com.jetbrains.python.toolbox.FP;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import static com.jetbrains.python.documentation.DocumentationBuilderKit.*;
 
 /**
  * Provides quick docs for classes, methods, and functions.
@@ -325,7 +340,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
     if (document == null) {
       return element;
     }
-    int newOffset = TargetElementUtilBase.adjustOffset(file, document, element.getTextOffset());
+    int newOffset = TargetElementUtil.adjustOffset(file, document, element.getTextOffset());
     PsiElement newElement = file.findElementAt(newOffset);
     return newElement != null ? newElement : element;
   }
