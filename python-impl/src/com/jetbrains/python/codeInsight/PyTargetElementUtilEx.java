@@ -21,10 +21,12 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.extensions.CompositeExtensionPointName;
 import com.intellij.codeInsight.TargetElementUtilEx;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyParameter;
 import com.jetbrains.python.psi.PyQualifiedExpression;
@@ -37,6 +39,13 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
  */
 public class PyTargetElementUtilEx extends TargetElementUtilEx.Adapter
 {
+	@Override
+	@CompositeExtensionPointName.BooleanBreakResult(breakValue = false)
+	public boolean includeSelfInGotoImplementation(@NotNull PsiElement element)
+	{
+		return element.getLanguage() != PythonLanguage.getInstance();
+	}
+
 	@Nullable
 	@Override
 	public PsiElement getReferenceOrReferencedElement(@NotNull PsiReference ref, @NotNull Set<String> flags)
