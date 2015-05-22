@@ -26,6 +26,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
+import com.intellij.openapi.projectRoots.SdkTableListener;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -77,20 +78,12 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
     }, this);
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVirtualFileAdapter(), this);
     if (!project.isDisposed()) {
-      project.getMessageBus().connect(this).subscribe(SdkTable.SDK_TABLE_TOPIC, new SdkTable.Listener() {
-        @Override
-        public void sdkAdded(Sdk jdk) {
-        }
-
+      project.getMessageBus().connect(this).subscribe(SdkTable.SDK_TABLE_TOPIC, new SdkTableListener.Adapter() {
         @Override
         public void sdkRemoved(Sdk jdk) {
           if (jdk == sdk) {
             Disposer.dispose(PythonSdkPathCache.this);
           }
-        }
-
-        @Override
-        public void sdkNameChanged(Sdk jdk, String previousName) {
         }
       });
       Disposer.register(project, this);
