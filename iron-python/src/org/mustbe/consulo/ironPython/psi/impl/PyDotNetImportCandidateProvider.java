@@ -16,13 +16,19 @@
 
 package org.mustbe.consulo.ironPython.psi.impl;
 
+import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
+import org.mustbe.consulo.dotnet.resolve.DotNetShortNameSearcher;
 import org.mustbe.consulo.ironPython.module.extension.BaseIronPythonModuleExtension;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.Processor;
+import com.intellij.util.indexing.IdFilter;
 import com.jetbrains.python.codeInsight.imports.AutoImportQuickFix;
 import com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider;
 
@@ -33,24 +39,36 @@ import com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider;
 public class PyDotNetImportCandidateProvider implements PyImportCandidateProvider
 {
 	@Override
-	public void addImportCandidates(PsiReference reference, String name, AutoImportQuickFix quickFix)
+	public void addImportCandidates(PsiReference reference, String name, final AutoImportQuickFix quickFix)
 	{
 		final PsiElement element = reference.getElement();
 		final Project project = element.getProject();
 		Module module = ModuleUtil.findModuleForPsiElement(element);
 
-		if(module != null && ModuleUtilCore.getExtension(module, BaseIronPythonModuleExtension.class) == null)
+		if(module == null)
 		{
 			return;
 		}
-	   /*
-		GlobalSearchScope scope = module == null ? ProjectScope.getAllScope(project) : module.getModuleWithDependenciesAndLibrariesScope(false);
-		DotNetPsiFacade cache = DotNetPsiFacade.getInstance(project);
-		final DotNetTypeDeclaration[] classesByName = cache.getClassesByName(name, scope);
-		for(PsiClass psiClass : classesByName)
+		if(ModuleUtilCore.getExtension(module, BaseIronPythonModuleExtension.class) == null)
 		{
-			final QualifiedName packageQName = QualifiedName.fromDottedString(psiClass.getQualifiedName()).removeLastComponent();
-			quickFix.addImport(psiClass, psiClass.getContainingFile(), packageQName);
-		}   */
+			return;
+		}
+
+		DotNetShortNameSearcher.getInstance(project).collectTypes(name, element.getResolveScope(), IdFilter.getProjectIdFilter(project, false),
+				new Processor<DotNetTypeDeclaration>()
+		{
+			@Override
+			public boolean process(DotNetTypeDeclaration typeDeclaration)
+			{
+				String presentableParentQName = typeDeclaration.getPresentableParentQName();
+				if(StringUtil.isEmpty(presentableParentQName))
+				{
+					return true;
+				}
+				final QualifiedName packageQName = QualifiedName.fromDottedString(typeDeclaration.getPresentableQName()).removeLastComponent();
+				quickFix.addImport(typeDeclaration, typeDeclaration.getContainingFile(), packageQName);
+				return true;
+			}
+		});
 	}
 }
