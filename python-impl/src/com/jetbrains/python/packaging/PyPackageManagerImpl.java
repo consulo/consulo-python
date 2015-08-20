@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.icons.AllIcons;
@@ -836,9 +837,8 @@ public class PyPackageManagerImpl extends PyPackageManager {
       final boolean canCreate = FileUtil.ensureCanCreateFile(new File(homePath));
       if (!canCreate && !SystemInfo.isWindows && askForSudo) {   //is system site interpreter --> we need sudo privileges
         try {
-          final ProcessOutput result = ExecUtil.sudoAndGetOutput(cmdline,
-                                                                 "Please enter your password to make changes in system packages: ",
-                                                                 workingDir);
+          final ProcessOutput result = ExecUtil.sudoAndGetOutput(new GeneralCommandLine(cmdline).withWorkDirectory(workingDir),
+                                                                 "Please enter your password to make changes in system packages: ");
           String message = result.getStderr();
           if (result.getExitCode() != 0) {
             final String stdout = result.getStdout();
