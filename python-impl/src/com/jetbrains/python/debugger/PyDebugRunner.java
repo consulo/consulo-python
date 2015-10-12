@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -84,22 +85,20 @@ public class PyDebugRunner extends GenericProgramRunner
 				((AbstractPythonRunConfiguration) profile).canRunWithCoverage();
 	}
 
-	protected RunContentDescriptor doExecute(
-			final Project project,
-			RunProfileState profileState,
-			RunContentDescriptor contentToReuse,
-			ExecutionEnvironment env) throws ExecutionException
+	@Nullable
+	@RequiredDispatchThread
+	protected RunContentDescriptor doExecute(@NotNull RunProfileState profileState, @NotNull ExecutionEnvironment env) throws ExecutionException
 	{
 		FileDocumentManager.getInstance().saveAllDocuments();
 
+		final Project project = env.getProject();
 		final PythonCommandLineState pyState = (PythonCommandLineState) profileState;
 		final ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
 		final int serverLocalPort = serverSocket.getLocalPort();
 		RunProfile profile = env.getRunProfile();
 		final ExecutionResult result = pyState.execute(env.getExecutor(), createCommandLinePatchers(project, pyState, profile, serverLocalPort));
 
-		final XDebugSession session = XDebuggerManager.getInstance(project).
-				startSession(this, env, contentToReuse, new XDebugProcessStarter()
+		final XDebugSession session = XDebuggerManager.getInstance(project).startSession(env, new XDebugProcessStarter()
 				{
 					@NotNull
 					public XDebugProcess start(@NotNull final XDebugSession session)
