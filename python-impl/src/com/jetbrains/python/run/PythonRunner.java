@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.run;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
@@ -26,8 +27,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -45,9 +44,7 @@ public class PythonRunner extends DefaultProgramRunner {
 
   @Override
   protected RunContentDescriptor doExecute(
-    Project project,
     RunProfileState state,
-    RunContentDescriptor contentToReuse,
     ExecutionEnvironment env
   ) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
@@ -62,7 +59,7 @@ public class PythonRunner extends DefaultProgramRunner {
     }
     if (executionResult == null) return null;
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
-    return contentBuilder.showRunContent(contentToReuse);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
+    return contentBuilder.showRunContent(env.getContentToReuse());
   }
 }
