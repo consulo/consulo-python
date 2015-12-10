@@ -20,8 +20,11 @@ import java.io.File;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -111,15 +114,23 @@ public class PyLocalPositionConverter implements PyPositionConverter
 
 	protected static int convertLocalLineToRemote(VirtualFile file, int line)
 	{
-		final Document document = FileDocumentManager.getInstance().getDocument(file);
-		if(document != null)
+		AccessToken lock = ApplicationManager.getApplication().acquireReadActionLock();
+		try
 		{
-			while(PyDebugSupportUtils.isContinuationLine(document, line))
+			final Document document = FileDocumentManager.getInstance().getDocument(file);
+			if(document != null)
 			{
-				line++;
+				while(PyDebugSupportUtils.isContinuationLine(document, line))
+				{
+					line++;
+				}
 			}
+			return line + 1;
 		}
-		return line + 1;
+		finally
+		{
+			lock.finish();
+		}
 	}
 
 	@Nullable
@@ -168,7 +179,7 @@ public class PyLocalPositionConverter implements PyPositionConverter
 			if(jarFile != null)
 			{
 				String innerPath = file.substring(ind + 4);
-				final VirtualFile jarRoot = ArchiveVfsUtil.getJarRootForLocalFile(jarFile);
+				final VirtualFile jarRoot = ArchiveVfsUtil.getArchiveRootForLocalFile(jarFile);
 				if(jarRoot != null)
 				{
 					return jarRoot.findFileByRelativePath(innerPath);
@@ -212,9 +223,16 @@ public class PyLocalPositionConverter implements PyPositionConverter
 		}
 	}
 
-	private static int convertRemoteLineToLocal(VirtualFile vFile, int line)
+	private static int convertRemoteLineToLocal(final VirtualFile vFile, int line)
 	{
-		final Document document = FileDocumentManager.getInstance().getDocument(vFile);
+		final Document document = ApplicationManager.getApplication().runReadAction(new Computable<Document>()
+		{
+			@Override
+			public Document compute()
+			{
+				return FileDocumentManager.getInstance().getDocument(vFile);
+			}
+		});
 		line--;
 		if(document != null)
 		{
