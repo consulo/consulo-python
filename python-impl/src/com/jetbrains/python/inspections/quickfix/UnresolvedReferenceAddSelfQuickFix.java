@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -26,37 +27,43 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
- *
+ * <p/>
  * QuickFix to add self to unresolved reference
  */
-public class UnresolvedReferenceAddSelfQuickFix implements LocalQuickFix, HighPriorityAction {
-  private PyReferenceExpression myElement;
-  private String myQualifier;
+public class UnresolvedReferenceAddSelfQuickFix implements LocalQuickFix, HighPriorityAction
+{
+	private PyReferenceExpression myElement;
+	private String myQualifier;
 
-  public UnresolvedReferenceAddSelfQuickFix(@NotNull final PyReferenceExpression element, @NotNull final String qualifier) {
-    myElement = element;
-    myQualifier = qualifier;
-  }
+	public UnresolvedReferenceAddSelfQuickFix(@NotNull final PyReferenceExpression element, @NotNull final String qualifier)
+	{
+		myElement = element;
+		myQualifier = qualifier;
+	}
 
-  @NotNull
-  public String getName() {
-    return PyBundle.message("QFIX.unresolved.reference", myElement.getText(), myQualifier);
-  }
+	@NotNull
+	public String getName()
+	{
+		return PyBundle.message("QFIX.unresolved.reference", myElement.getText(), myQualifier);
+	}
 
-  @NotNull
-  public String getFamilyName() {
-    return "Add qualifier";
-  }
+	@NotNull
+	public String getFamilyName()
+	{
+		return "Add qualifier";
+	}
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-    if (!FileModificationService.getInstance().preparePsiElementForWrite(myElement)) return;
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    PyExpression expression = elementGenerator.createExpressionFromText(LanguageLevel.forElement(myElement),
-                                                                        myQualifier + "." + myElement.getText());
-    myElement.replace(expression);
-  }
+	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	{
+		if(!FileModificationService.getInstance().preparePsiElementForWrite(myElement))
+		{
+			return;
+		}
+		PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+		PyExpression expression = elementGenerator.createExpressionFromText(LanguageLevel.forElement(myElement), myQualifier + "." + myElement.getText());
+		myElement.replace(expression);
+	}
 }
