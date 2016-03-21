@@ -30,14 +30,12 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import com.intellij.psi.codeStyle.DisplayPriority;
-import com.intellij.psi.codeStyle.DisplayPrioritySortable;
 import com.jetbrains.python.PythonFileType;
 
 /**
  * @author yole
  */
-public class PythonColorsPage implements ColorSettingsPage, InspectionColorSettingsPage, DisplayPrioritySortable {
+public class PythonColorsPage implements ColorSettingsPage, InspectionColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[] {
     new AttributesDescriptor("Keyword", PyHighlighter.PY_KEYWORD),
     new AttributesDescriptor("String (bytes)", PyHighlighter.PY_BYTE_STRING),
@@ -131,10 +129,5 @@ public class PythonColorsPage implements ColorSettingsPage, InspectionColorSetti
 
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ourTagToDescriptorMap;
-  }
-
-  @Override
-  public DisplayPriority getPriority() {
-    return DisplayPriority.LANGUAGE_SETTINGS;
   }
 }
