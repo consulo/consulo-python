@@ -31,7 +31,7 @@ public class PyLineBreakpointType extends XLineBreakpointTypeBase
 
 	public PyLineBreakpointType()
 	{
-		super("python-line-breakpoint", "Python Line Breakpoint", new PyDebuggerEditorsProvider());
+		super("python-line-breakpoint", "Python Line Breakpoints", new PyDebuggerEditorsProvider());
 	}
 
 @Override
