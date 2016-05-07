@@ -105,6 +105,7 @@
 		<runConfigurationProducer implementation="com.jetbrains.python.run.PythonRunConfigurationProducer"/>
 		<xdebugger.breakpointType implementation="com.jetbrains.python.debugger.PyLineBreakpointType"/>
 		<xdebugger.breakpointType implementation="com.jetbrains.python.debugger.PyExceptionBreakpointType"/>
+		<xdebugger.lineBreakpointTypeResolver filetype="Python" implementationClass="consulo.python.debugger.PyLineBreakpointTypeResolver" />
 
 		<configurationType implementation="com.jetbrains.python.testing.PythonTestConfigurationType"/>
 

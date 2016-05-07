@@ -445,7 +445,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     dropFrameCaches();
     if (isConnected() && !mySuspendedThreads.isEmpty()) {
       final PySourcePosition pyPosition = myPositionConverter.convertToPython(position);
-      String type = PyLineBreakpointType.ID;
+      String type = PyLineBreakpointType.getInstance().getId();
       final Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
       if (document != null) {
         for (XBreakpointType breakpointType : Extensions.getExtensions(XBreakpointType.EXTENSION_POINT_NAME)) {
