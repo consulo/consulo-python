@@ -58,7 +58,7 @@ public class PyDotNetMethodType implements PyCallableType
 	@Override
 	public PyType getCallType(@NotNull TypeEvalContext context, @Nullable PyQualifiedExpression callSite)
 	{
-		return PyDotNetTypeProvider.asPyType(myMethod.getReturnTypeRef(), callSite);
+		return PyDotNetTypeProvider.asPyType(myMethod.getReturnTypeRef());
 	}
 
 	@Nullable

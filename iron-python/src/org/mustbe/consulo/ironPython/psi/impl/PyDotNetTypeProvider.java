@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.psi.DotNetLikeMethodDeclaration;
 import org.mustbe.consulo.dotnet.psi.DotNetModifier;
 import org.mustbe.consulo.dotnet.psi.DotNetParameter;
@@ -66,15 +67,16 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 		}
 		if(referenceTarget instanceof DotNetVariable)
 		{
-			return asPyType(((DotNetVariable) referenceTarget).toTypeRef(true), referenceTarget);
+			return asPyType(((DotNetVariable) referenceTarget).toTypeRef(true));
 		}
 		return null;
 	}
 
 	@Nullable
-	public static PyType asPyType(DotNetTypeRef type, PsiElement scope)
+	@RequiredReadAction
+	public static PyType asPyType(DotNetTypeRef type)
 	{
-		PsiElement resolve = type.resolve(scope).getElement();
+		PsiElement resolve = type.resolve().getElement();
 		if(resolve instanceof DotNetTypeDeclaration)
 		{
 			return new PyDotNetClassType((DotNetTypeDeclaration) resolve, false);
@@ -99,6 +101,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 		PySuperMethodsSearch.search(func).forEach(new Processor<PsiElement>()
 		{
 			@Override
+			@RequiredReadAction
 			public boolean process(final PsiElement psiElement)
 			{
 				if(psiElement instanceof DotNetLikeMethodDeclaration)
@@ -109,7 +112,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 					if(javaIndex < psiParameters.length)
 					{
 						DotNetTypeRef paramType = psiParameters[javaIndex].toTypeRef(true);
-						PsiElement resolve = paramType.resolve(psiElement).getElement();
+						PsiElement resolve = paramType.resolve().getElement();
 						if(resolve instanceof DotNetTypeDeclaration)
 						{
 							superMethodParameterTypes.add(new PyDotNetClassType((DotNetTypeDeclaration) resolve, false));

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredReadAction;
 import org.mustbe.consulo.dotnet.psi.DotNetNamedElement;
 import org.mustbe.consulo.dotnet.psi.DotNetTypeDeclaration;
 import org.mustbe.consulo.dotnet.resolve.DotNetTypeRef;
@@ -111,7 +112,7 @@ public class PyDotNetClassType implements PyClassLikeType
 	@Override
 	public boolean isBuiltin(TypeEvalContext context)
 	{
-		return false;  // TODO: JDK's types could be considered built-in.
+		return false;
 	}
 
 	@Override
@@ -164,12 +165,13 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@NotNull
 	@Override
+	@RequiredReadAction
 	public List<PyClassLikeType> getSuperClassTypes(@NotNull TypeEvalContext context)
 	{
 		final List<PyClassLikeType> result = new ArrayList<PyClassLikeType>();
 		for(DotNetTypeRef typeRef : myClass.getExtendTypeRefs())
 		{
-			PsiElement resolve = typeRef.resolve(myClass).getElement();
+			PsiElement resolve = typeRef.resolve().getElement();
 			if(resolve instanceof DotNetTypeDeclaration)
 			{
 				result.add(new PyDotNetClassType((DotNetTypeDeclaration) resolve, myDefinition));
