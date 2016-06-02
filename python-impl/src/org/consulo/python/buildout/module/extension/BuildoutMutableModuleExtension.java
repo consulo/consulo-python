@@ -17,11 +17,14 @@
 package org.consulo.python.buildout.module.extension;
 
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.consulo.module.extension.MutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.RequiredDispatchThread;
 import com.intellij.openapi.roots.ModuleRootLayer;
+import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.Comparing;
 import com.jetbrains.python.buildout.BuildoutConfigPanel;
 
@@ -36,11 +39,14 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 		super(id, module);
 	}
 
+	@RequiredDispatchThread
 	@Nullable
 	@Override
 	public JComponent createConfigurablePanel(@Nullable Runnable runnable)
 	{
-		return wrapToNorth(new BuildoutConfigPanel(this));
+		JPanel panel = new JPanel(new VerticalFlowLayout(true, false));
+		panel.add(new BuildoutConfigPanel(this));
+		return panel;
 	}
 
 	@Override
