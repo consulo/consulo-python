@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -23,10 +25,15 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyParameter;
+import com.jetbrains.python.psi.PyParameterList;
+import com.jetbrains.python.psi.PySingleStarParameter;
+import com.jetbrains.python.psi.PyTupleParameter;
+import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -149,7 +156,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
   @Nullable
   @Override
   public PyFunction getContainingFunction() {
-    final PsiElement parent = getStubOrPsiParent();
+    final PsiElement parent = getParent();
     return parent instanceof PyFunction ? (PyFunction) parent : null;
   }
 }

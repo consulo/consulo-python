@@ -16,6 +16,14 @@
 
 package com.jetbrains.python.psi.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiElement;
@@ -36,14 +44,14 @@ import com.jetbrains.python.codeInsight.stdlib.PyStdlibTypeProvider;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.stubs.PyNamedParameterStub;
-import com.jetbrains.python.psi.types.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.jetbrains.python.psi.types.PyClassTypeImpl;
+import com.jetbrains.python.psi.types.PyCollectionType;
+import com.jetbrains.python.psi.types.PyCollectionTypeImpl;
+import com.jetbrains.python.psi.types.PyNoneType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.PyTypeParser;
+import com.jetbrains.python.psi.types.PyUnionType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
 /**
  * @author yole
@@ -176,7 +184,7 @@ public class PyNamedParameterImpl extends PyPresentableElementImpl<PyNamedParame
   }
 
   public PyType getType(@NotNull final TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
-    final PsiElement parent = getStubOrPsiParent();
+    final PsiElement parent = getParent();
     if (parent instanceof PyParameterList) {
       PyParameterList parameterList = (PyParameterList)parent;
       PyFunction func = parameterList.getContainingFunction();

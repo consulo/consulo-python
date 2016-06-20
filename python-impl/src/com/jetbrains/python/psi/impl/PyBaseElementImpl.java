@@ -60,6 +60,12 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		super(node);
 	}
 
+	@Override
+	public PsiElement getParent()
+	{
+		return getParentByStub();
+	}
+
 	private static void addReferences(int offset, PsiElement element, final Collection<PsiReference> outReferences, PyResolveContext resolveContext)
 	{
 		final PsiReference[] references;
