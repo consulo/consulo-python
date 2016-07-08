@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.consulo.lombok.annotations.Logger;
 import org.consulo.module.extension.impl.ModuleExtensionImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +51,7 @@ import com.jetbrains.python.facet.LibraryContributingFacet;
 import com.jetbrains.python.facet.PythonPathContributingFacet;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.sdk.PythonEnvUtil;
+import consulo.lombok.annotations.Logger;
 
 /**
  * @author VISTALL

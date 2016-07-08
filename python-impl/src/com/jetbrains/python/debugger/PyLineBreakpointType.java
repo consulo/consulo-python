@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.debugger;
 
-import org.consulo.lombok.annotations.LazyInstance;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
+import consulo.lombok.annotations.Lazy;
 
 public class PyLineBreakpointType extends XLineBreakpointTypeBase
 {
 	@NotNull
-	@LazyInstance
+	@Lazy
 	public static PyLineBreakpointType getInstance()
 	{
 		return EXTENSION_POINT_NAME.findExtension(PyLineBreakpointType.class);
@@ -34,7 +34,7 @@ public class PyLineBreakpointType extends XLineBreakpointTypeBase
 		super("python-line-breakpoint", "Python Line Breakpoints", new PyDebuggerEditorsProvider());
 	}
 
-@Override
+	@Override
 	public String getBreakpointsDialogHelpTopic()
 	{
 		return "reference.dialogs.breakpoints";

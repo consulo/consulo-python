@@ -16,8 +16,9 @@
 
 package com.jetbrains.python;
 
-import org.consulo.lombok.annotations.Bundle;
+import consulo.lombok.annotations.Bundle;
 
 @Bundle("com.jetbrains.python.PyBundle")
-public class PyBundle {
+public class PyBundle
+{
 }
