@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>org.mustbe.consulo.iron-python</id>
 	<name>IronPython</name>
-	<category>Language Extension</category>
+	<category>Language Extensions</category>
 	<depends>org.consulo.python</depends>
 	<depends config-file="org.mustbe.consulo.microsoft.dotnet.xml" optional="true">org.mustbe.consulo.dotnet.microsoft</depends>
 
