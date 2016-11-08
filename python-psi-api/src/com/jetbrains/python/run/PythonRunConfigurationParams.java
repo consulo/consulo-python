@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.run;
 
 /**
  * @author Leonid Shalupov
  */
-public interface PythonRunConfigurationParams {
-  AbstractPythonRunConfigurationParams getBaseParams();
+public interface PythonRunConfigurationParams
+{
+	AbstractPythonRunConfigurationParams getBaseParams();
 
-  String getScriptName();
+	String getScriptName();
 
-  void setScriptName(String scriptName);
+	void setScriptName(String scriptName);
 
-  String getScriptParameters();
+	String getScriptParameters();
 
-  void setScriptParameters(String scriptParameters);
+	void setScriptParameters(String scriptParameters);
+
+	boolean showCommandLineAfterwards();
+
+	void setShowCommandLineAfterwards(boolean showCommandLineAfterwards);
 }
 

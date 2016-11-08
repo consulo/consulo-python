@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.sdk.skeletons;
 
+import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
@@ -29,222 +42,258 @@ import com.intellij.util.Consumer;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.sdk.InvalidSdkException;
 import com.jetbrains.python.sdk.PySdkUtil;
+import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.util.*;
-
-import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
+import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 
 /**
  * @author traff
  */
-public class PySkeletonGenerator {
-  protected static final Logger LOG = Logger.getInstance("#" + PySkeletonGenerator.class.getName());
+public class PySkeletonGenerator
+{
 
-  protected final static int MINUTE = 60 * 1000;
+	protected static final Logger LOG = Logger.getInstance("#" + PySkeletonGenerator.class.getName());
+	protected static final int MINUTE = 60 * 1000;
+	protected static final String GENERATOR3 = "generator3.py";
 
-  protected final static String GENERATOR3 = "generator3.py";
+	private final String mySkeletonsPath;
+	@NotNull
+	private final Map<String, String> myEnv;
 
-  private final String mySkeletonsPath;
+	public void finishSkeletonsGeneration()
+	{
+	}
 
-  public void finishSkeletonsGeneration() {
-  }
+	public boolean exists(String name)
+	{
+		return new File(name).exists();
+	}
 
-  public boolean exists(String name) {
-    return new File(name).exists();
-  }
+	public static class ListBinariesResult
+	{
+		public final int generatorVersion;
+		public final Map<String, PySkeletonRefresher.PyBinaryItem> modules;
 
-  public static class ListBinariesResult {
-    public final int generatorVersion;
-    public final Map<String, PySkeletonRefresher.PyBinaryItem> modules;
+		public ListBinariesResult(int generatorVersion, Map<String, PySkeletonRefresher.PyBinaryItem> modules)
+		{
+			this.generatorVersion = generatorVersion;
+			this.modules = modules;
+		}
+	}
 
-    public ListBinariesResult(int generatorVersion, Map<String, PySkeletonRefresher.PyBinaryItem> modules) {
-      this.generatorVersion = generatorVersion;
-      this.modules = modules;
-    }
-  }
+	/**
+	 * @param skeletonPath  path where skeletons should be generated
+	 * @param pySdk         SDK
+	 * @param currentFolder current folder (some flavors may search for binary files there) or null if unknown
+	 */
+	public PySkeletonGenerator(String skeletonPath, @NotNull final Sdk pySdk, @Nullable final String currentFolder)
+	{
+		mySkeletonsPath = skeletonPath;
+		final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(pySdk);
+		if(flavor != null)
+		{
+			myEnv = new HashMap<>();
+			flavor.addPredefinedEnvironmentVariables(myEnv);
+		}
+		else
+		{
+			myEnv = Collections.emptyMap();
+		}
+	}
 
-  public PySkeletonGenerator(String skeletonPath) {
-    mySkeletonsPath = skeletonPath;
-  }
+	public String getSkeletonsPath()
+	{
+		return mySkeletonsPath;
+	}
 
-  public String getSkeletonsPath() {
-    return mySkeletonsPath;
-  }
+	public void prepare()
+	{
+	}
 
-  public void prepare() {
-  }
+	protected void generateSkeleton(String modname, String modfilename, List<String> assemblyRefs, String syspath, String sdkHomePath, Consumer<Boolean> resultConsumer) throws InvalidSdkException
+	{
 
-  protected void generateSkeleton(String modname,
-                                  String modfilename,
-                                  List<String> assemblyRefs,
-                                  String syspath,
-                                  String sdkHomePath,
-                                  Consumer<Boolean> resultConsumer)
-    throws InvalidSdkException {
+		final ProcessOutput genResult = runSkeletonGeneration(modname, modfilename, assemblyRefs, sdkHomePath, syspath);
 
-    final ProcessOutput genResult = runSkeletonGeneration(modname, modfilename, assemblyRefs, sdkHomePath,
-                                                          syspath);
+		if(genResult.getStderrLines().size() > 0)
+		{
+			StringBuilder sb = new StringBuilder("Skeleton for ");
+			sb.append(modname);
+			if(genResult.getExitCode() != 0)
+			{
+				sb.append(" failed on ");
+			}
+			else
+			{
+				sb.append(" had some minor errors on ");
+			}
+			sb.append(sdkHomePath).append(". stderr: --\n");
+			for(String err_line : genResult.getStderrLines())
+			{
+				sb.append(err_line).append("\n");
+			}
+			sb.append("--");
+			if(ApplicationManagerEx.getApplicationEx().isInternal())
+			{
+				LOG.warn(sb.toString());
+			}
+			else
+			{
+				LOG.info(sb.toString());
+			}
+		}
 
-    if (genResult.getStderrLines().size() > 0) {
-      StringBuilder sb = new StringBuilder("Skeleton for ");
-      sb.append(modname);
-      if (genResult.getExitCode() != 0) {
-        sb.append(" failed on ");
-      }
-      else {
-        sb.append(" had some minor errors on ");
-      }
-      sb.append(sdkHomePath).append(". stderr: --\n");
-      for (String err_line : genResult.getStderrLines()) {
-        sb.append(err_line).append("\n");
-      }
-      sb.append("--");
-      if (ApplicationManagerEx.getApplicationEx().isInternal()) {
-        LOG.warn(sb.toString());
-      }
-      else {
-        LOG.info(sb.toString());
-      }
-    }
+		resultConsumer.consume(genResult.getExitCode() == 0);
+	}
 
-    resultConsumer.consume(genResult.getExitCode() == 0);
-  }
+	public ProcessOutput runSkeletonGeneration(String modname, String modfilename, List<String> assemblyRefs, String binaryPath, String extraSyspath) throws InvalidSdkException
+	{
+		final String parent_dir = new File(binaryPath).getParent();
+		List<String> commandLine = new ArrayList<>();
+		commandLine.add(binaryPath);
+		commandLine.add(PythonHelpersLocator.getHelperPath(GENERATOR3));
+		commandLine.add("-d");
+		commandLine.add(getSkeletonsPath());
+		if(assemblyRefs != null && !assemblyRefs.isEmpty())
+		{
+			commandLine.add("-c");
+			commandLine.add(StringUtil.join(assemblyRefs, ";"));
+		}
+		if(ApplicationManagerEx.getApplicationEx().isInternal())
+		{
+			commandLine.add("-x");
+		}
+		if(!StringUtil.isEmpty(extraSyspath))
+		{
+			commandLine.add("-s");
+			commandLine.add(extraSyspath);
+		}
+		commandLine.add(modname);
+		if(modfilename != null)
+		{
+			commandLine.add(modfilename);
+		}
 
-  public ProcessOutput runSkeletonGeneration(String modname,
-                                             String modfilename,
-                                             List<String> assemblyRefs,
-                                             String binaryPath, String extraSyspath)
-    throws InvalidSdkException {
-    final String parent_dir = new File(binaryPath).getParent();
-    List<String> commandLine = new ArrayList<String>();
-    commandLine.add(binaryPath);
-    commandLine.add(PythonHelpersLocator.getHelperPath(GENERATOR3));
-    commandLine.add("-d");
-    commandLine.add(getSkeletonsPath());
-    if (assemblyRefs != null && !assemblyRefs.isEmpty()) {
-      commandLine.add("-c");
-      commandLine.add(StringUtil.join(assemblyRefs, ";"));
-    }
-    if (ApplicationManagerEx.getApplicationEx().isInternal()) {
-      commandLine.add("-x");
-    }
-    if (!StringUtil.isEmpty(extraSyspath)) {
-      commandLine.add("-s");
-      commandLine.add(extraSyspath);
-    }
-    commandLine.add(modname);
-    if (modfilename != null) {
-      commandLine.add(modfilename);
-    }
+		final Map<String, String> extraEnv = PythonSdkType.getVirtualEnvExtraEnv(binaryPath);
+		final Map<String, String> env = extraEnv != null ? PySdkUtil.mergeEnvVariables(myEnv, extraEnv) : myEnv;
 
-    return getProcessOutput(parent_dir, ArrayUtil.toStringArray(commandLine), PythonSdkType.getVirtualEnvAdditionalEnv(binaryPath),
-                            MINUTE * 10
-    );
-  }
+		return getProcessOutput(parent_dir, ArrayUtil.toStringArray(commandLine), env, MINUTE * 10);
+	}
 
-  protected ProcessOutput getProcessOutput(String homePath, String[] commandLine, String[] env, int timeout) throws InvalidSdkException {
-    return PySdkUtil.getProcessOutput(
-      homePath,
-      commandLine,
-      env,
-      timeout
-    );
-  }
+	protected ProcessOutput getProcessOutput(String homePath, String[] commandLine, Map<String, String> extraEnv, int timeout) throws InvalidSdkException
+	{
+		final Map<String, String> env = extraEnv != null ? new HashMap<>(extraEnv) : new HashMap<>();
+		PythonEnvUtil.setPythonDontWriteBytecode(env);
+		return PySdkUtil.getProcessOutput(homePath, commandLine, env, timeout);
+	}
 
-  public void generateBuiltinSkeletons(@NotNull Sdk sdk) throws InvalidSdkException {
-    //noinspection ResultOfMethodCallIgnored
-    new File(mySkeletonsPath).mkdirs();
-    String binaryPath = sdk.getHomePath();
-    if (binaryPath == null) throw new InvalidSdkException("Broken home path for " + sdk.getName());
+	public void generateBuiltinSkeletons(@NotNull Sdk sdk) throws InvalidSdkException
+	{
+		//noinspection ResultOfMethodCallIgnored
+		new File(mySkeletonsPath).mkdirs();
+		String binaryPath = sdk.getHomePath();
+		if(binaryPath == null)
+		{
+			throw new InvalidSdkException("Broken home path for " + sdk.getName());
+		}
 
-    long startTime = System.currentTimeMillis();
-    final ProcessOutput runResult = getProcessOutput(
-      new File(binaryPath).getParent(),
-      new String[]{
-        binaryPath,
-        PythonHelpersLocator.getHelperPath(GENERATOR3),
-        "-d", mySkeletonsPath, // output dir
-        "-b", // for builtins
-      },
-      PythonSdkType.getVirtualEnvAdditionalEnv(binaryPath), MINUTE * 5
-    );
-    runResult.checkSuccess(LOG);
-    LOG.info("Rebuilding builtin skeletons took " + (System.currentTimeMillis() - startTime) + " ms");
-  }
+		long startTime = System.currentTimeMillis();
+		final ProcessOutput runResult = getProcessOutput(new File(binaryPath).getParent(), new String[]{
+				binaryPath,
+				PythonHelpersLocator.getHelperPath(GENERATOR3),
+				"-d",
+				mySkeletonsPath,
+				// output dir
+				"-b",
+				// for builtins
+		}, PythonSdkType.getVirtualEnvExtraEnv(binaryPath), MINUTE * 5);
+		runResult.checkSuccess(LOG);
+		LOG.info("Rebuilding builtin skeletons took " + (System.currentTimeMillis() - startTime) + " ms");
+	}
 
-  @NotNull
-  public ListBinariesResult listBinaries(@NotNull Sdk sdk, @NotNull String extraSysPath) throws InvalidSdkException {
-    final String homePath = sdk.getHomePath();
-    final long startTime = System.currentTimeMillis();
-    if (homePath == null) throw new InvalidSdkException("Broken home path for " + sdk.getName());
-    final String parentDir = new File(homePath).getParent();
+	@NotNull
+	public ListBinariesResult listBinaries(@NotNull Sdk sdk, @NotNull String extraSysPath) throws InvalidSdkException
+	{
+		final String homePath = sdk.getHomePath();
+		final long startTime = System.currentTimeMillis();
+		if(homePath == null)
+		{
+			throw new InvalidSdkException("Broken home path for " + sdk.getName());
+		}
+		final String parentDir = new File(homePath).getParent();
 
-    List<String> cmd = new ArrayList<String>(Arrays.asList(homePath, PythonHelpersLocator.getHelperPath(GENERATOR3), "-v", "-L"));
-    if (!StringUtil.isEmpty(extraSysPath)) {
-      cmd.add("-s");
-      cmd.add(extraSysPath);
-    }
+		List<String> cmd = new ArrayList<>(Arrays.asList(homePath, PythonHelpersLocator.getHelperPath(GENERATOR3), "-v", "-L"));
+		if(!StringUtil.isEmpty(extraSysPath))
+		{
+			cmd.add("-s");
+			cmd.add(extraSysPath);
+		}
 
-    final ProcessOutput process = getProcessOutput(parentDir,
-                                                   ArrayUtil.toStringArray(cmd),
-                                                   PythonSdkType.getVirtualEnvAdditionalEnv(homePath),
-                                                   MINUTE * 4); // see PY-3898
+		final ProcessOutput process = getProcessOutput(parentDir, ArrayUtil.toStringArray(cmd), PythonSdkType.getVirtualEnvExtraEnv(homePath), MINUTE * 4); // see PY-3898
 
-    LOG.info("Retrieving binary module list took " + (System.currentTimeMillis() - startTime) + " ms");
-    if (process.getExitCode() != 0) {
-      final StringBuilder sb = new StringBuilder("failed to run ").append(GENERATOR3).append(" for ").append(homePath);
-      if (process.isTimeout()) {
-        sb.append(": timed out.");
-      }
-      else {
-        sb.append(", exit code ")
-          .append(process.getExitCode())
-          .append(", stderr: \n-----\n");
-        for (String line : process.getStderrLines()) {
-          sb.append(line).append("\n");
-        }
-        sb.append("-----");
-      }
-      throw new InvalidSdkException(sb.toString());
-    }
-    final List<String> lines = process.getStdoutLines();
-    if (lines.size() < 1) {
-      throw new InvalidSdkException("Empty output from " + GENERATOR3 + " for " + homePath);
-    }
-    final Iterator<String> iter = lines.iterator();
-    final int generatorVersion = fromVersionString(iter.next().trim());
-    final Map<String, PySkeletonRefresher.PyBinaryItem> binaries = Maps.newHashMap();
-    while (iter.hasNext()) {
-      final String line = iter.next();
-      int cutpos = line.indexOf('\t');
-      if (cutpos >= 0) {
-        String[] strs = line.split("\t");
-        String moduleName = strs[0];
-        String path = strs[1];
-        int length = Integer.parseInt(strs[2]);
-        int lastModified = Integer.parseInt(strs[3]);
+		LOG.info("Retrieving binary module list took " + (System.currentTimeMillis() - startTime) + " ms");
+		if(process.getExitCode() != 0)
+		{
+			final StringBuilder sb = new StringBuilder("failed to run ").append(GENERATOR3).append(" for ").append(homePath);
+			if(process.isTimeout())
+			{
+				sb.append(": timed out.");
+			}
+			else
+			{
+				sb.append(", exit code ").append(process.getExitCode()).append(", stderr: \n-----\n");
+				for(String line : process.getStderrLines())
+				{
+					sb.append(line).append("\n");
+				}
+				sb.append("-----");
+			}
+			throw new InvalidSdkException(sb.toString());
+		}
+		final List<String> lines = process.getStdoutLines();
+		if(lines.size() < 1)
+		{
+			throw new InvalidSdkException("Empty output from " + GENERATOR3 + " for " + homePath);
+		}
+		final Iterator<String> iter = lines.iterator();
+		final int generatorVersion = fromVersionString(iter.next().trim());
+		final Map<String, PySkeletonRefresher.PyBinaryItem> binaries = Maps.newHashMap();
+		while(iter.hasNext())
+		{
+			final String line = iter.next();
+			int cutpos = line.indexOf('\t');
+			if(cutpos >= 0)
+			{
+				String[] strs = line.split("\t");
+				String moduleName = strs[0];
+				String path = strs[1];
+				int length = Integer.parseInt(strs[2]);
+				int lastModified = Integer.parseInt(strs[3]);
 
-        binaries.put(moduleName, new PySkeletonRefresher.PyBinaryItem(moduleName, path, length, lastModified));
-      }
-      else {
-        LOG.error("Bad binaries line: '" + line + "', SDK " + homePath); // but don't die yet
-      }
-    }
-    return new ListBinariesResult(generatorVersion, binaries);
-  }
+				binaries.put(moduleName, new PySkeletonRefresher.PyBinaryItem(moduleName, path, length, lastModified));
+			}
+			else
+			{
+				LOG.error("Bad binaries line: '" + line + "', SDK " + homePath); // but don't die yet
+			}
+		}
+		return new ListBinariesResult(generatorVersion, binaries);
+	}
 
-  public boolean deleteOrLog(@NotNull File item) {
-    boolean deleted = item.delete();
-    if (!deleted) LOG.warn("Failed to delete skeleton file " + item.getAbsolutePath());
-    return deleted;
-  }
+	public boolean deleteOrLog(@NotNull File item)
+	{
+		boolean deleted = item.delete();
+		if(!deleted)
+		{
+			LOG.warn("Failed to delete skeleton file " + item.getAbsolutePath());
+		}
+		return deleted;
+	}
 
-  public void refreshGeneratedSkeletons() {
-    VirtualFile skeletonsVFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(getSkeletonsPath());
-    assert skeletonsVFile != null;
-    skeletonsVFile.refresh(false, true);
-  }
+	public void refreshGeneratedSkeletons()
+	{
+		VirtualFile skeletonsVFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(getSkeletonsPath());
+		assert skeletonsVFile != null;
+		skeletonsVFile.refresh(false, true);
+	}
 }

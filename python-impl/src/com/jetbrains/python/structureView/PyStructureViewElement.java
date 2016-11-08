@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.structureView;
 
-import static com.intellij.openapi.util.text.StringUtil.join;
-import static com.intellij.openapi.util.text.StringUtil.notNullize;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,8 +25,8 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
@@ -40,288 +35,333 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.util.Function;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyElementVisitor;
-import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.ide.IconDescriptorUpdaters;
 import icons.PythonIcons;
 
 /**
  * Handles nodes in Structure View.
+ *
  * @author yole
  */
-public class PyStructureViewElement implements StructureViewTreeElement {
+public class PyStructureViewElement implements StructureViewTreeElement
+{
 
-  protected enum Visibility {
-    NORMAL, // visible
-    INVISIBLE, // not visible: e.g. local to function
-    PRIVATE,  // "__foo" in a class
-    PROTECTED, // "_foo"
-    PREDEFINED // like "__init__"; only if really visible
-  }
+	protected enum Visibility
+	{
+		NORMAL, // visible
+		INVISIBLE, // not visible: e.g. local to function
+		PRIVATE,  // "__foo" in a class
+		PROTECTED, // "_foo"
+		PREDEFINED // like "__init__"; only if really visible
+	}
 
-  private PyElement myElement;
-  private Visibility myVisibility;
-  private Icon myIcon;
-  private boolean myInherited;
-  private boolean myField;
+	private PyElement myElement;
+	private Visibility myVisibility;
+	private Icon myIcon;
+	private boolean myInherited;
+	private boolean myField;
 
-  protected PyStructureViewElement(PyElement element, Visibility visibility, boolean inherited, boolean field) {
-    myElement = element;
-    myVisibility = visibility;
-    myInherited = inherited;
-    myField = field;
-  }
+	protected PyStructureViewElement(PyElement element, Visibility visibility, boolean inherited, boolean field)
+	{
+		myElement = element;
+		myVisibility = visibility;
+		myInherited = inherited;
+		myField = field;
+	}
 
-  public PyStructureViewElement(PyElement element) {
-    this(element, Visibility.NORMAL, false, false);
-  }
+	public PyStructureViewElement(PyElement element)
+	{
+		this(element, Visibility.NORMAL, false, false);
+	}
 
-  protected StructureViewTreeElement createChild(PyElement element, Visibility visibility, boolean inherited, boolean field) {
-    return new PyStructureViewElement(element, visibility, inherited, field);
-  }
+	protected StructureViewTreeElement createChild(PyElement element, Visibility visibility, boolean inherited, boolean field)
+	{
+		return new PyStructureViewElement(element, visibility, inherited, field);
+	}
 
-  @Override
-  public PyElement getValue() {
-    return myElement;
-  }
+	@Override
+	public PyElement getValue()
+	{
+		return myElement;
+	}
 
-  public boolean isInherited() {
-    return myInherited;
-  }
+	public boolean isInherited()
+	{
+		return myInherited;
+	}
 
-  public boolean isField() {
-    return myField;
-  }
+	public boolean isField()
+	{
+		return myField;
+	}
 
-  @Override
-  public void navigate(boolean requestFocus) {
-    myElement.navigate(requestFocus);
-  }
+	@Override
+	public void navigate(boolean requestFocus)
+	{
+		myElement.navigate(requestFocus);
+	}
 
-  @Override
-  public boolean canNavigate() {
-    return myElement.canNavigate();
-  }
+	@Override
+	public boolean canNavigate()
+	{
+		return myElement.canNavigate();
+	}
 
-  @Override
-  public boolean canNavigateToSource() {
-    return myElement.canNavigateToSource();
-  }
+	@Override
+	public boolean canNavigateToSource()
+	{
+		return myElement.canNavigateToSource();
+	}
 
-  public void setIcon(Icon icon) {
-    myIcon = icon;
-  }
+	public void setIcon(Icon icon)
+	{
+		myIcon = icon;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (o instanceof StructureViewTreeElement) {
-      final Object value = ((StructureViewTreeElement)o).getValue();
-      final String name = myElement.getName();
-      if (value instanceof PyElement && name != null) {
-        return name.equals(((PyElement)value).getName());
-      }
-    }
-    return false;
-  }
+	@Override
+	public boolean equals(Object o)
+	{
+		if(o instanceof StructureViewTreeElement)
+		{
+			final Object value = ((StructureViewTreeElement) o).getValue();
+			final String name = myElement.getName();
+			if(value instanceof PyElement && name != null)
+			{
+				return name.equals(((PyElement) value).getName());
+			}
+		}
+		return false;
+	}
 
-  @Override
-  public int hashCode() {
-    final String name = myElement.getName();
-    return name != null ? name.hashCode() : 0;
-  }
+	@Override
+	public int hashCode()
+	{
+		final String name = myElement.getName();
+		return name != null ? name.hashCode() : 0;
+	}
 
-  public StructureViewTreeElement[] getChildren() {
-    final Collection<StructureViewTreeElement> children = new ArrayList<StructureViewTreeElement>();
-    for (PyElement e : getElementChildren(myElement)) {
-      children.add(createChild(e, getElementVisibility(e), false, elementIsField(e)));
-    }
-    if (myElement instanceof PyClass && myElement.isValid()) {
-      for (PyClass c : ((PyClass)myElement).getAncestorClasses()) {
-        for (PyElement e: getElementChildren(c)) {
-          final StructureViewTreeElement inherited = createChild(e, getElementVisibility(e), true, elementIsField(e));
-          if (!children.contains(inherited)) {
-            children.add(inherited);
-          }
-        }
-      }
-    }
-    return children.toArray(new StructureViewTreeElement[children.size()]);
-  }
+	@NotNull
+	public StructureViewTreeElement[] getChildren()
+	{
+		final Collection<StructureViewTreeElement> children = new ArrayList<>();
+		for(PyElement e : getElementChildren(myElement))
+		{
+			children.add(createChild(e, getElementVisibility(e), false, elementIsField(e)));
+		}
+		PyPsiUtils.assertValid(myElement);
+		if(myElement instanceof PyClass)
+		{
+			for(PyClass c : ((PyClass) myElement).getAncestorClasses(null))
+			{
+				for(PyElement e : getElementChildren(c))
+				{
+					final StructureViewTreeElement inherited = createChild(e, getElementVisibility(e), true, elementIsField(e));
+					if(!children.contains(inherited))
+					{
+						children.add(inherited);
+					}
+				}
+			}
+		}
+		return children.toArray(new StructureViewTreeElement[children.size()]);
+	}
 
-  protected boolean elementIsField(PyElement element) {
-    return element instanceof PyTargetExpression && PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
-  }
+	protected boolean elementIsField(PyElement element)
+	{
+		return element instanceof PyTargetExpression && PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
+	}
 
-  private static Visibility getElementVisibility(PyElement element) {
-    if (!(element instanceof PyTargetExpression) && PsiTreeUtil.getParentOfType(element, PyFunction.class) != null) {
-      return Visibility.INVISIBLE;
-    }
-    else {
-      return getVisibilityByName(element.getName());
-    }
-  }
+	private static Visibility getElementVisibility(PyElement element)
+	{
+		if(!(element instanceof PyTargetExpression) && PsiTreeUtil.getParentOfType(element, PyFunction.class) != null)
+		{
+			return Visibility.INVISIBLE;
+		}
+		else
+		{
+			return getVisibilityByName(element.getName());
+		}
+	}
 
-  private Collection<PyElement> getElementChildren(final PyElement element) {
-    final Collection<PyElement> children = new ArrayList<PyElement>();
-    if (!element.isValid()) {
-      return children;
-    }
-    element.acceptChildren(new PyElementVisitor() {
-      @Override
-      public void visitElement(PsiElement e) {
-        if (isWorthyItem(e, element)) {
-          children.add((PyElement)e);
-        }
-        else {
-          e.acceptChildren(this);
-        }
-      }
-    });
-    if (element instanceof PyClass) {
-      final List<PyElement> attrs = getClassAttributes((PyClass)element);
-      final List<PyElement> filtered = new ArrayList<PyElement>();
-      final Set<String> names = new HashSet<String>();
-      for (PyElement attr : attrs) {
-        final String name = attr.getName();
-        if (attr.isValid() && !names.contains(name)) {
-          filtered.add(attr);
-        }
-        names.add(name);
-      }
-      final Comparator<PyElement> comparator = new Comparator<PyElement>() {
-        @Override
-        public int compare(PyElement e1, PyElement e2) {
-          final String n1 = e1.getName();
-          final String n2 = e2.getName();
-          return (n1 != null && n2 != null) ? n1.compareTo(n2) : 0;
-        }
-      };
-      Collections.sort(filtered, comparator);
-      children.addAll(filtered);
-    }
-    return children;
-  }
+	private Collection<PyElement> getElementChildren(final PyElement element)
+	{
+		final Collection<PyElement> children = new ArrayList<>();
+		PyPsiUtils.assertValid(element);
+		element.acceptChildren(new PyElementVisitor()
+		{
+			@Override
+			public void visitElement(PsiElement e)
+			{
+				if(isWorthyItem(e, element))
+				{
+					children.add((PyElement) e);
+				}
+				else
+				{
+					e.acceptChildren(this);
+				}
+			}
+		});
+		if(element instanceof PyClass)
+		{
+			final List<PyElement> attrs = getClassAttributes((PyClass) element);
+			final List<PyElement> filtered = new ArrayList<>();
+			final Set<String> names = new HashSet<>();
+			for(PyElement attr : attrs)
+			{
+				final String name = attr.getName();
+				PyPsiUtils.assertValid(attr);
+				if(!names.contains(name))
+				{
+					filtered.add(attr);
+				}
+				names.add(name);
+			}
+			final Comparator<PyElement> comparator = (e1, e2) -> {
+				final String n1 = e1.getName();
+				final String n2 = e2.getName();
+				return (n1 != null && n2 != null) ? n1.compareTo(n2) : 0;
+			};
+			Collections.sort(filtered, comparator);
+			children.addAll(filtered);
+		}
+		return children;
+	}
 
-  protected List<PyElement> getClassAttributes(PyClass cls) {
-    final List<PyElement> results = new ArrayList<PyElement>();
-    results.addAll(cls.getInstanceAttributes());
-    results.addAll(cls.getClassAttributes());
-    return results;
-  }
+	protected List<PyElement> getClassAttributes(PyClass cls)
+	{
+		final List<PyElement> results = new ArrayList<>();
+		results.addAll(cls.getInstanceAttributes());
+		results.addAll(cls.getClassAttributes());
+		return results;
+	}
 
-  private static Visibility getVisibilityByName(@Nullable String name) {
-    if (name != null) {
-      if (name.startsWith("__")) {
-        if (PyNames.UnderscoredAttributes.contains(name)) {
-          return Visibility.PREDEFINED;
-        }
-        else {
-          return Visibility.PRIVATE;
-        }
-      }
-      else if (name.startsWith("_")) {
-        return Visibility.PROTECTED;
-      }
-    }
-    return Visibility.NORMAL;
-  }
+	private static Visibility getVisibilityByName(@Nullable String name)
+	{
+		if(name != null)
+		{
+			if(name.startsWith("__"))
+			{
+				if(PyNames.UnderscoredAttributes.contains(name))
+				{
+					return Visibility.PREDEFINED;
+				}
+				else
+				{
+					return Visibility.PRIVATE;
+				}
+			}
+			else if(name.startsWith("_"))
+			{
+				return Visibility.PROTECTED;
+			}
+		}
+		return Visibility.NORMAL;
+	}
 
-  protected boolean isWorthyItem(@Nullable PsiElement element, @Nullable PsiElement parent) {
-    if (element instanceof PyClass || element instanceof PyFunction) {
-      return true;
-    }
-    if (!(parent instanceof PyClass) && (element instanceof PyTargetExpression) && ((PyTargetExpression)element).getQualifier() == null) {
-      PsiElement e = element.getParent();
-      if (e instanceof PyAssignmentStatement) {
-        e = e.getParent();
-        if (e instanceof PyFile) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
+	protected boolean isWorthyItem(@Nullable PsiElement element, @Nullable PsiElement parent)
+	{
+		if(element instanceof PyClass || element instanceof PyFunction)
+		{
+			return true;
+		}
+		if(!(parent instanceof PyClass) && (element instanceof PyTargetExpression) && !((PyTargetExpression) element).isQualified())
+		{
+			PsiElement e = element.getParent();
+			if(e instanceof PyAssignmentStatement)
+			{
+				e = e.getParent();
+				if(e instanceof PyFile)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-  @Override
-  public ItemPresentation getPresentation() {
-    return new ColoredItemPresentation() {
-      public String getPresentableText() {
-        final String unnamed = "<unnamed>";
-        if (myElement instanceof PyFunction) {
-          PyParameterList argList = ((PyFunction) myElement).getParameterList();
-          StringBuilder result = new StringBuilder(notNullize(myElement.getName(), unnamed));
-          result.append(argList.getPresentableText(true));
-          return result.toString();
-        }
-        else if (myElement instanceof PyClass && myElement.isValid()) {
-          PyClass c = (PyClass) myElement;
-          StringBuilder result = new StringBuilder(notNullize(c.getName(), unnamed));
-          PyExpression[] superClassExpressions = c.getSuperClassExpressions();
-          if (superClassExpressions.length > 0) {
-            result.append("(");
-            result.append(join(Arrays.asList(superClassExpressions), new Function<PyExpression, String>() {
-              public String fun(PyExpression expr) {
-                String name = expr.getText();
-                return notNullize(name, unnamed);
-              }
-            }, ", "));
-            result.append(")");
-          }
-          return result.toString();
-        }
-        return notNullize(myElement.getName(), unnamed);
-      }
+	@NotNull
+	@Override
+	public ItemPresentation getPresentation()
+	{
+		final ItemPresentation presentation = myElement.getPresentation();
+		return new ColoredItemPresentation()
+		{
+			@Nullable
+			@Override
+			public String getPresentableText()
+			{
+				if(myElement instanceof PyFile)
+				{
+					return myElement.getName();
+				}
+				return presentation != null ? presentation.getPresentableText() : PyNames.UNNAMED_ELEMENT;
+			}
 
-      @Nullable
-      @Override
-      public TextAttributesKey getTextAttributesKey() {
-        if (isInherited()) {
-          return CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES;
-        }
-        return null;
-      }
+			@Nullable
+			@Override
+			public TextAttributesKey getTextAttributesKey()
+			{
+				if(isInherited())
+				{
+					return CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES;
+				}
+				return null;
+			}
 
-      @Nullable
-      @Override
-      public String getLocationString() {
-        return null;
-      }
+			@Nullable
+			@Override
+			public String getLocationString()
+			{
+				return null;
+			}
 
-      @Nullable
-      @Override
-      public Icon getIcon(boolean open) {
-        Icon normal_icon = IconDescriptorUpdaters.getIcon(myElement, 0);
-        if (myIcon != null) normal_icon = myIcon; // override normal
-        if (myVisibility == Visibility.NORMAL) {
-          return normal_icon;
-        }
-        else {
-          LayeredIcon icon = new LayeredIcon(2);
-          icon.setIcon(normal_icon, 0);
-          Icon overlay = null;
-          if (myVisibility == Visibility.PRIVATE || myVisibility == Visibility.PROTECTED) {
-            overlay = PythonIcons.Python.Nodes.Lock;
-          }
-          else if (myVisibility == Visibility.PREDEFINED) {
-            overlay = PythonIcons.Python.Nodes.Cyan_dot;
-          }
-          else if (myVisibility == Visibility.INVISIBLE) {
-            overlay = PythonIcons.Python.Nodes.Red_inv_triangle;
-          }
-          if (overlay != null) {
-            icon.setIcon(overlay, 1);
-          }
-          return icon;
-        }
-      }
-    };
-  }
+			@Nullable
+			@Override
+			public Icon getIcon(boolean open)
+			{
+				Icon normal_icon = IconDescriptorUpdaters.getIcon(myElement, 0);
+				if(myIcon != null)
+				{
+					normal_icon = myIcon; // override normal
+				}
+				if(myVisibility == Visibility.NORMAL)
+				{
+					return normal_icon;
+				}
+				else
+				{
+					LayeredIcon icon = new LayeredIcon(2);
+					icon.setIcon(normal_icon, 0);
+					Icon overlay = null;
+					if(myVisibility == Visibility.PRIVATE || myVisibility == Visibility.PROTECTED)
+					{
+						overlay = PythonIcons.Python.Nodes.Lock;
+					}
+					else if(myVisibility == Visibility.PREDEFINED)
+					{
+						overlay = PythonIcons.Python.Nodes.Cyan_dot;
+					}
+					else if(myVisibility == Visibility.INVISIBLE)
+					{
+						overlay = PythonIcons.Python.Nodes.Red_inv_triangle;
+					}
+					if(overlay != null)
+					{
+						icon.setIcon(overlay, 1);
+					}
+					return icon;
+				}
+			}
+		};
+	}
 }

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.codeInsight.highlighting;
 
-import com.intellij.codeInsight.TargetElementUtil;
+import consulo.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerBase;
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerFactory;
 import com.intellij.openapi.editor.Editor;

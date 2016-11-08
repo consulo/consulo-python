@@ -2,7 +2,6 @@ package com.jetbrains.python.refactoring.classes;
 
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.refactoring.classes.pullUp.PyPullUpHelper;
 
 import java.util.Collections;
 

@@ -19,8 +19,6 @@ package com.jetbrains.python;
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.NotNull;
-import com.intellij.ide.IconDescriptor;
-import com.intellij.ide.IconDescriptorUpdater;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -30,6 +28,8 @@ import com.intellij.util.PlatformIcons;
 import com.jetbrains.python.psi.Property;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.ide.IconDescriptor;
+import consulo.ide.IconDescriptorUpdater;
 import icons.PythonIcons;
 
 /**

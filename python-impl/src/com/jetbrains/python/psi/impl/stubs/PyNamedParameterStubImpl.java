@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,45 +19,67 @@
  */
 package com.jetbrains.python.psi.impl.stubs;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.stubs.PyNamedParameterStub;
 
-public class PyNamedParameterStubImpl extends StubBase<PyNamedParameter> implements PyNamedParameterStub {
-  private final String myName;
-  private final boolean myPositionalContainer;
-  private final boolean myKeywordContainer;
-  private final boolean myHasDefaultValue;
+public class PyNamedParameterStubImpl extends StubBase<PyNamedParameter> implements PyNamedParameterStub
+{
+	private final String myName;
+	private final boolean myPositionalContainer;
+	private final boolean myKeywordContainer;
+	private final boolean myHasDefaultValue;
+	private final String myTypeCommentAnnotation;
 
-  public PyNamedParameterStubImpl(String name, boolean isPositionalContainer, boolean isKeywordContainer, boolean hasDefaultValue,
-                                  StubElement parent, IStubElementType stubElementType) {
-    super(parent, stubElementType);
-    myName = name;
-    myPositionalContainer = isPositionalContainer;
-    myKeywordContainer = isKeywordContainer;
-    myHasDefaultValue = hasDefaultValue;
-  }
+	public PyNamedParameterStubImpl(String name,
+			boolean isPositionalContainer,
+			boolean isKeywordContainer,
+			boolean hasDefaultValue,
+			@Nullable String typeCommentAnnotation,
+			StubElement parent,
+			IStubElementType stubElementType)
+	{
+		super(parent, stubElementType);
+		myName = name;
+		myPositionalContainer = isPositionalContainer;
+		myKeywordContainer = isKeywordContainer;
+		myHasDefaultValue = hasDefaultValue;
+		myTypeCommentAnnotation = typeCommentAnnotation;
+	}
 
-  public boolean isPositionalContainer() {
-    return myPositionalContainer;
-  }
+	public boolean isPositionalContainer()
+	{
+		return myPositionalContainer;
+	}
 
-  public boolean isKeywordContainer() {
-    return myKeywordContainer;
-  }
+	public boolean isKeywordContainer()
+	{
+		return myKeywordContainer;
+	}
 
-  public boolean hasDefaultValue() {
-    return myHasDefaultValue;
-  }
+	public boolean hasDefaultValue()
+	{
+		return myHasDefaultValue;
+	}
 
-  public String getName() {
-    return myName;
-  }
+	@Nullable
+	@Override
+	public String getTypeComment()
+	{
+		return myTypeCommentAnnotation;
+	}
 
-  @Override
-  public String toString() {
-    return "PyNamedParameterStub(" + myName + ")";
-  }
+	public String getName()
+	{
+		return myName;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "PyNamedParameterStub(" + myName + ")";
+	}
 }

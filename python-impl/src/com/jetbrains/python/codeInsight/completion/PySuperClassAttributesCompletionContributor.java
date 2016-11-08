@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,62 +13,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.codeInsight.completion;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.Lists;
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.codeInsight.completion.CompletionProvider;
 
 /**
  * @author traff
  */
-public class PySuperClassAttributesCompletionContributor extends CompletionContributor {
-  public PySuperClassAttributesCompletionContributor() {
-    extend(CompletionType.BASIC,
-           PlatformPatterns.psiElement()
-             .withParents(PyReferenceExpression.class, PyExpressionStatement.class, PyStatementList.class, PyClass.class),
-           new CompletionProvider<CompletionParameters>() {
-             @Override
-             protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
-                                           @NotNull CompletionResultSet result) {
-               PsiElement position = parameters.getOriginalPosition();
-               PyClass containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
+public class PySuperClassAttributesCompletionContributor extends CompletionContributor
+{
+	public PySuperClassAttributesCompletionContributor()
+	{
+		extend(CompletionType.BASIC, PlatformPatterns.psiElement().withParents(PyReferenceExpression.class, PyExpressionStatement.class, PyStatementList.class, PyClass.class), new
+				CompletionProvider()
+		{
+			@Override
+			public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result)
+			{
+				PsiElement position = parameters.getOriginalPosition();
+				PyClass containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
 
-               if (containingClass == null) {
-                 return;
-               }
-               for (PyTargetExpression expr : getSuperClassAttributes(containingClass)) {
-                 result.addElement(LookupElementBuilder.create(expr, expr.getName() + " = "));
-               }
-             }
-           }
-    );
-  }
+				if(containingClass == null)
+				{
+					return;
+				}
+				for(PyTargetExpression expr : getSuperClassAttributes(containingClass))
+				{
+					result.addElement(LookupElementBuilder.createWithSmartPointer(expr.getName() + " = ", expr));
+				}
+			}
+		});
+	}
 
-  public static List<PyTargetExpression> getSuperClassAttributes(@NotNull PyClass cls) {
-    List<PyTargetExpression> attrs = Lists.newArrayList();
-    List<String> seenNames = Lists.newArrayList();
-    for (PyTargetExpression expr : cls.getClassAttributes()) {
-      seenNames.add(expr.getName());
-    }
-    for (PyClass ancestor : cls.getAncestorClasses()) {
-      for (PyTargetExpression expr : ancestor.getClassAttributes()) {
-        if (!seenNames.contains(expr.getName())) {
-          seenNames.add(expr.getName());
-          attrs.add(expr);
-        }
-      }
-    }
-    return attrs;
-  }
+	public static List<PyTargetExpression> getSuperClassAttributes(@NotNull PyClass cls)
+	{
+		List<PyTargetExpression> attrs = Lists.newArrayList();
+		List<String> seenNames = Lists.newArrayList();
+		for(PyTargetExpression expr : cls.getClassAttributes())
+		{
+			seenNames.add(expr.getName());
+		}
+		for(PyClass ancestor : cls.getAncestorClasses(null))
+		{
+			for(PyTargetExpression expr : ancestor.getClassAttributes())
+			{
+				if(!seenNames.contains(expr.getName()))
+				{
+					seenNames.add(expr.getName());
+					attrs.add(expr);
+				}
+			}
+		}
+		return attrs;
+	}
 }

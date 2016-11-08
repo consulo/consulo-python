@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.codeInsight.completion;
 
+import static com.intellij.patterns.PlatformPatterns.psiElement;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.TailType;
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.psi.PsiElement;
@@ -29,51 +37,52 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+import consulo.codeInsight.completion.CompletionProvider;
 
 /**
  * @author yole
  */
-public class PySuperMethodCompletionContributor extends CompletionContributor {
-  public PySuperMethodCompletionContributor() {
-    extend(CompletionType.BASIC,
-           psiElement().afterLeafSkipping(psiElement().whitespace(), psiElement().withElementType(PyTokenTypes.DEF_KEYWORD)),
-           new CompletionProvider<CompletionParameters>() {
-             @Override
-             protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
-                                           @NotNull CompletionResultSet result) {
-               PsiElement position = parameters.getOriginalPosition();
-               PyClass containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
-               if (containingClass == null && position instanceof PsiWhiteSpace) {
-                 position = PsiTreeUtil.prevLeaf(position);
-                 containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
-               }
-               if (containingClass == null) {
-                 return;
-               }
-               Set<String> seenNames = new HashSet<String>();
-               for (PyFunction function : containingClass.getMethods()) {
-                 seenNames.add(function.getName());
-               }
-               LanguageLevel languageLevel = LanguageLevel.forElement(parameters.getOriginalFile());
-               seenNames.addAll(PyNames.getBuiltinMethods(languageLevel).keySet());
-               for (PyClass ancestor : containingClass.getAncestorClasses()) {
-                 for (PyFunction superMethod : ancestor.getMethods()) {
-                   if (!seenNames.contains(superMethod.getName())) {
-                     String text = superMethod.getName() + superMethod.getParameterList().getText();
-                     LookupElementBuilder element = LookupElementBuilder.create(text);
-                     result.addElement(TailTypeDecorator.withTail(element, TailType.CASE_COLON));
-                     seenNames.add(superMethod.getName());
-                   }
-                 }
-               }
-             }
-           });
-  }
+public class PySuperMethodCompletionContributor extends CompletionContributor
+{
+	public PySuperMethodCompletionContributor()
+	{
+		extend(CompletionType.BASIC, psiElement().afterLeafSkipping(psiElement().whitespace(), psiElement().withElementType(PyTokenTypes.DEF_KEYWORD)), new CompletionProvider()
+		{
+			@Override
+			public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result)
+			{
+				PsiElement position = parameters.getOriginalPosition();
+				PyClass containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
+				if(containingClass == null && position instanceof PsiWhiteSpace)
+				{
+					position = PsiTreeUtil.prevLeaf(position);
+					containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
+				}
+				if(containingClass == null)
+				{
+					return;
+				}
+				Set<String> seenNames = new HashSet<>();
+				for(PyFunction function : containingClass.getMethods())
+				{
+					seenNames.add(function.getName());
+				}
+				LanguageLevel languageLevel = LanguageLevel.forElement(parameters.getOriginalFile());
+				seenNames.addAll(PyNames.getBuiltinMethods(languageLevel).keySet());
+				for(PyClass ancestor : containingClass.getAncestorClasses(null))
+				{
+					for(PyFunction superMethod : ancestor.getMethods())
+					{
+						if(!seenNames.contains(superMethod.getName()))
+						{
+							String text = superMethod.getName() + superMethod.getParameterList().getText();
+							LookupElementBuilder element = LookupElementBuilder.create(text);
+							result.addElement(TailTypeDecorator.withTail(element, TailType.CASE_COLON));
+							seenNames.add(superMethod.getName());
+						}
+					}
+				}
+			}
+		});
+	}
 }

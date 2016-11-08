@@ -1,22 +1,21 @@
-<idea-plugin version="2">
-	<id>org.mustbe.consulo.iron-python</id>
+<idea-plugin>
+	<id>consulo.iron-python</id>
 	<name>IronPython</name>
 	<category>Language Extensions</category>
-	<depends>org.consulo.python</depends>
-	<depends config-file="org.mustbe.consulo.microsoft.dotnet.xml" optional="true">org.mustbe.consulo.dotnet.microsoft</depends>
+	<depends>consulo.python</depends>
+	<depends config-file="consulo.microsoft.dotnet.xml" optional="true">consulo.dotnet.microsoft</depends>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 		<completion.contributor language="Python"
-								implementationClass="org.mustbe.consulo.ironPython.psi.impl.PyConstructorArgumentCompletionContributor"/>
+								implementationClass="consulo.ironPython.psi.impl.PyConstructorArgumentCompletionContributor"/>
 
 		<addTo.listOfElements name="pythonExtensions">iron-python</addTo.listOfElements>
 	</extensions>
 
-	<extensions defaultExtensionNs="org.consulo.python">
-		<importResolver implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetImportResolver"/>
-		<typeProvider implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetTypeProvider"/>
-		<pySuperMethodsSearch implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetSuperMethodsSearchExecutor"/>
-		<importCandidateProvider implementation="org.mustbe.consulo.ironPython.psi.impl.PyDotNetImportCandidateProvider"/>
+	<extensions defaultExtensionNs="consulo.python">
+		<importResolver implementation="consulo.ironPython.psi.impl.PyDotNetImportResolver"/>
+		<typeProvider implementation="consulo.ironPython.psi.impl.PyDotNetTypeProvider"/>
+		<pySuperMethodsSearch implementation="consulo.ironPython.psi.impl.PyDotNetSuperMethodsSearchExecutor"/>
+		<importCandidateProvider implementation="consulo.ironPython.psi.impl.PyDotNetImportCandidateProvider"/>
 	</extensions>
 </idea-plugin>

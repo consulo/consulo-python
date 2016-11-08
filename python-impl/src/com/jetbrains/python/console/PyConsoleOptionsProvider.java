@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
  * @author yole
  */
 public interface PyConsoleOptionsProvider {
-  ExtensionPointName<PyConsoleOptionsProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.consoleOptionsProvider");
+  ExtensionPointName<PyConsoleOptionsProvider> EP_NAME = ExtensionPointName.create("consulo.python.consoleOptionsProvider");
 
   boolean isApplicableTo(Project project);
   String getName();

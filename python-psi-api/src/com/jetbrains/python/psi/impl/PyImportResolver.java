@@ -26,7 +26,7 @@ import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
  * @author yole
  */
 public interface PyImportResolver {
-  ExtensionPointName<PyImportResolver> EP_NAME = ExtensionPointName.create("org.consulo.python.importResolver");
+  ExtensionPointName<PyImportResolver> EP_NAME = ExtensionPointName.create("consulo.python.importResolver");
 
   @Nullable
   PsiElement resolveImportReference(QualifiedName name, QualifiedNameResolveContext context);

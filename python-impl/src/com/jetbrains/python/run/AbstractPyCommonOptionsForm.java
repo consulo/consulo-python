@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.run;
+
+import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 
@@ -24,10 +25,16 @@ import com.intellij.ui.PanelWithAnchor;
 /**
  * @author yole
  */
-public interface AbstractPyCommonOptionsForm extends AbstractPythonRunConfigurationParams, PanelWithAnchor {
-  @NonNls String EXPAND_PROPERTY_KEY = "ExpandEnvironmentPanel";
+public interface AbstractPyCommonOptionsForm extends AbstractPythonRunConfigurationParams, PanelWithAnchor
+{
+	@NonNls
+	String EXPAND_PROPERTY_KEY = "ExpandEnvironmentPanel";
 
-  JComponent getMainPanel();
+	JComponent getMainPanel();
 
-  void subscribe();
+	void subscribe();
+
+	void addInterpreterComboBoxActionListener(ActionListener listener);
+
+	void removeInterpreterComboBoxActionListener(ActionListener listener);
 }

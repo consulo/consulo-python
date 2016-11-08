@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
 import java.io.IOException;
@@ -35,12 +34,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.StubBuilder;
-import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
-import com.intellij.util.LanguageVersionUtil;
 import com.intellij.util.io.StringRef;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.console.PydevConsoleRunner;
@@ -52,6 +49,8 @@ import com.jetbrains.python.parsing.StatementParsing;
 import com.jetbrains.python.psi.impl.stubs.PyFileStubBuilder;
 import com.jetbrains.python.psi.impl.stubs.PyFileStubImpl;
 import com.jetbrains.python.psi.stubs.PyFileStub;
+import consulo.lang.LanguageVersion;
+import consulo.lang.util.LanguageVersionUtil;
 
 /**
  * @author yole
@@ -63,6 +62,102 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 	protected PyFileElementType(Language language)
 	{
 		super(language);
+	}
+
+	@Override
+	public StubBuilder getBuilder()
+	{
+		return new PyFileStubBuilder();
+	}
+
+	@Override
+	public int getStubVersion()
+	{
+		// Don't forget to update versions of indexes that use the updated stub-based elements
+		return 58;
+	}
+
+	@Nullable
+	@Override
+	public ASTNode parseContents(ASTNode node)
+	{
+		final LanguageLevel languageLevel = getLanguageLevel(node.getPsi());
+		if(PydevConsoleRunner.isPythonConsole(node))
+		{
+			return parseConsoleCode(node, PydevConsoleRunner.getPythonConsoleData(node));
+		}
+		else
+		{
+			final PsiElement psi = node.getPsi();
+			if(psi != null)
+			{
+				final Project project = psi.getProject();
+				final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
+				final Language language = getLanguage();
+				final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(language);
+				if(parserDefinition == null)
+				{
+					return null;
+				}
+				LanguageVersion<PythonLanguage> defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
+				final Lexer lexer = parserDefinition.createLexer(defaultVersion);
+				final PsiParser parser = parserDefinition.createParser(defaultVersion);
+				final PsiBuilder builder = factory.createBuilder(project, node, lexer, language, defaultVersion, node.getChars());
+				if(parser instanceof PyParser)
+				{
+					final PyParser pythonParser = (PyParser) parser;
+					pythonParser.setLanguageLevel(languageLevel);
+					if(languageLevel == LanguageLevel.PYTHON26 && psi.getContainingFile().getName().equals("__builtin__.py"))
+					{
+						pythonParser.setFutureFlag(StatementParsing.FUTURE.PRINT_FUNCTION);
+					}
+				}
+				return parser.parse(this, builder, defaultVersion).getFirstChildNode();
+			}
+			return null;
+		}
+	}
+
+	@Nullable
+	private ASTNode parseConsoleCode(@NotNull ASTNode node, PythonConsoleData consoleData)
+	{
+		final Lexer lexer = createConsoleLexer(node, consoleData);
+		final PsiElement psi = node.getPsi();
+		if(psi != null)
+		{
+			final Project project = psi.getProject();
+			final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
+			LanguageVersion<PythonLanguage> defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
+			final PsiBuilder builder = factory.createBuilder(project, node, lexer, getLanguage(), defaultVersion, node.getChars());
+			final PyParser parser = new PyConsoleParser(consoleData, getLanguageLevel(psi));
+
+			return parser.parse(this, builder, defaultVersion).getFirstChildNode();
+		}
+		return null;
+	}
+
+	@Nullable
+	private Lexer createConsoleLexer(ASTNode node, PythonConsoleData consoleData)
+	{
+		if(consoleData.isIPythonEnabled())
+		{
+			return new PythonConsoleLexer();
+		}
+		else
+		{
+			final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage());
+			if(parserDefinition == null)
+			{
+				return null;
+			}
+			final PsiElement psi = node.getPsi();
+			if(psi == null)
+			{
+				return null;
+			}
+			final Project project = psi.getProject();
+			return parserDefinition.createLexer(LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance()));
+		}
 	}
 
 	private static LanguageLevel getLanguageLevel(PsiElement psi)
@@ -78,6 +173,31 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 			return LanguageLevel.getDefault();
 		}
 		return ((PyFile) file).getLanguageLevel();
+	}
+
+	@NotNull
+	@Override
+	public String getExternalId()
+	{
+		return "python.FILE";
+	}
+
+	@Override
+	public void serialize(@NotNull PyFileStub stub, @NotNull StubOutputStream dataStream) throws IOException
+	{
+		writeNullableList(dataStream, stub.getDunderAll());
+		writeBitSet(dataStream, stub.getFutureFeatures());
+		dataStream.writeName(stub.getDeprecationMessage());
+	}
+
+	@NotNull
+	@Override
+	public PyFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException
+	{
+		List<String> all = readNullableList(dataStream);
+		BitSet future_features = readBitSet(dataStream);
+		StringRef deprecationMessage = dataStream.readName();
+		return new PyFileStubImpl(all, future_features, deprecationMessage);
 	}
 
 	private static BitSet readBitSet(StubInputStream dataStream) throws IOException
@@ -130,132 +250,12 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 		if(hasNames)
 		{
 			int size = dataStream.readVarInt();
-			names = new ArrayList<String>(size);
+			names = new ArrayList<>(size);
 			for(int i = 0; i < size; i++)
 			{
 				names.add(dataStream.readName().getString());
 			}
 		}
 		return names;
-	}
-
-	@Override
-	public StubBuilder getBuilder()
-	{
-		return new PyFileStubBuilder();
-	}
-
-	@Override
-	public int getStubVersion()
-	{
-		// Don't forget to update versions of indexes that use the updated stub-based elements
-		return 48;
-	}
-
-	@Nullable
-	@Override
-	public ASTNode parseContents(ASTNode chameleon)
-	{
-		final FileElement node = (FileElement) chameleon;
-		final LanguageLevel languageLevel = getLanguageLevel(node.getPsi());
-		if(PydevConsoleRunner.isPythonConsole(node))
-		{
-			return parseConsoleCode(node, PydevConsoleRunner.getPythonConsoleData(node));
-		}
-		else
-		{
-			final PsiElement psi = node.getPsi();
-			if(psi != null)
-			{
-				final Project project = psi.getProject();
-				final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-				final Language language = getLanguage();
-				final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(language);
-				if(parserDefinition == null)
-				{
-					return null;
-				}
-				final Lexer lexer = parserDefinition.createLexer(project, LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance()));
-				final PsiParser parser = parserDefinition.createParser(project, LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance()));
-				final PsiBuilder builder = factory.createBuilder(project, node, lexer, language, LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance()), node.getChars());
-				if(parser instanceof PyParser)
-				{
-					final PyParser pythonParser = (PyParser) parser;
-					pythonParser.setLanguageLevel(languageLevel);
-					if(languageLevel == LanguageLevel.PYTHON26 && psi.getContainingFile().getName().equals("__builtin__.py"))
-					{
-						pythonParser.setFutureFlag(StatementParsing.FUTURE.PRINT_FUNCTION);
-					}
-				}
-				return parser.parse(this, builder, LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance())).getFirstChildNode();
-			}
-			return null;
-		}
-	}
-
-	@Nullable
-	private ASTNode parseConsoleCode(@NotNull FileElement node, PythonConsoleData consoleData)
-	{
-		final Lexer lexer = createConsoleLexer(node, consoleData);
-		final PsiElement psi = node.getPsi();
-		if(psi != null)
-		{
-			final Project project = psi.getProject();
-			final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-			final PsiBuilder builder = factory.createBuilder(project, node, lexer, getLanguage(), LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance()), node.getChars());
-			final PyParser parser = new PyConsoleParser(consoleData);
-
-			return parser.parse(this, builder, LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance())).getFirstChildNode();
-		}
-		return null;
-	}
-
-	@Nullable
-	private Lexer createConsoleLexer(FileElement node, PythonConsoleData consoleData)
-	{
-		if(consoleData.isIPythonEnabled())
-		{
-			return new PythonConsoleLexer();
-		}
-		else
-		{
-			final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage());
-			if(parserDefinition == null)
-			{
-				return null;
-			}
-			final PsiElement psi = node.getPsi();
-			if(psi == null)
-			{
-				return null;
-			}
-			final Project project = psi.getProject();
-			return parserDefinition.createLexer(project, LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance()));
-		}
-	}
-
-	@NotNull
-	@Override
-	public String getExternalId()
-	{
-		return "python.FILE";
-	}
-
-	@Override
-	public void serialize(@NotNull PyFileStub stub, @NotNull StubOutputStream dataStream) throws IOException
-	{
-		writeNullableList(dataStream, stub.getDunderAll());
-		writeBitSet(dataStream, stub.getFutureFeatures());
-		dataStream.writeName(stub.getDeprecationMessage());
-	}
-
-	@NotNull
-	@Override
-	public PyFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException
-	{
-		List<String> all = readNullableList(dataStream);
-		BitSet future_features = readBitSet(dataStream);
-		StringRef deprecationMessage = dataStream.readName();
-		return new PyFileStubImpl(all, future_features, deprecationMessage);
 	}
 }

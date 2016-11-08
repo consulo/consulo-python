@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
-
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract part of a multipart statement.
  * User: dcheryasov
  * Date: Mar 16, 2009 4:34:59 AM
  */
-public interface PyStatementPart extends PyElement {
-  PyStatementPart[] EMPTY_ARRAY = new PyStatementPart[0];
-
-  /**
-   * @return the body of the part.
-   */
-  @Nullable
-  PyStatementList getStatementList();
+public interface PyStatementPart extends PyStatementListContainer
+{
+	PyStatementPart[] EMPTY_ARRAY = new PyStatementPart[0];
 }

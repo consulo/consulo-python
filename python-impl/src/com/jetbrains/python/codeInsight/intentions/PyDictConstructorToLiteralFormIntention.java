@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyDictLiteralExpression;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyKeywordArgument;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -37,68 +42,84 @@ import org.jetbrains.annotations.NotNull;
  * dict(foo) -> no transformation
  * dict(**foo) -> no transformation
  */
-public class PyDictConstructorToLiteralFormIntention extends BaseIntentionAction {
-  @NotNull
-  public String getFamilyName() {
-    return PyBundle.message("INTN.convert.dict.constructor.to.dict.literal");
-  }
+public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionAction
+{
+	@NotNull
+	public String getFamilyName()
+	{
+		return PyBundle.message("INTN.convert.dict.constructor.to.dict.literal");
+	}
 
-  @NotNull
-  public String getText() {
-    return PyBundle.message("INTN.convert.dict.constructor.to.dict.literal");
-  }
+	@NotNull
+	public String getText()
+	{
+		return PyBundle.message("INTN.convert.dict.constructor.to.dict.literal");
+	}
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    if (!(file instanceof PyFile)) {
-      return false;
-    }
+	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	{
+		if(!(file instanceof PyFile))
+		{
+			return false;
+		}
 
-    PyCallExpression expression =
-      PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
-    
-    if (expression != null && expression.isCalleeText("dict")) {
-      final TypeEvalContext context = TypeEvalContext.codeAnalysis(file);
-      PyType type = context.getType(expression);
-      if (type != null && type.isBuiltin(context)) {
-        PyExpression[] argumentList = expression.getArguments();
-        for (PyExpression argument : argumentList) {
-          if (!(argument instanceof PyKeywordArgument)) return false;
-        }
-        return true;
-      }
-    }
-    return false;
-  }
+		PyCallExpression expression = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    PyCallExpression expression =
-          PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    if (expression != null) {
-      replaceDictConstructor(expression, elementGenerator);
-    }
-  }
+		if(expression != null && expression.isCalleeText("dict"))
+		{
+			final TypeEvalContext context = TypeEvalContext.codeAnalysis(file.getProject(), file);
+			PyType type = context.getType(expression);
+			if(type != null && type.isBuiltin())
+			{
+				PyExpression[] argumentList = expression.getArguments();
+				for(PyExpression argument : argumentList)
+				{
+					if(!(argument instanceof PyKeywordArgument))
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 
-  private static void replaceDictConstructor(PyCallExpression expression, PyElementGenerator elementGenerator) {
-    PyExpression[] argumentList = expression.getArguments();
-    StringBuilder stringBuilder = new StringBuilder();
+	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	{
+		PyCallExpression expression = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
+		PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+		if(expression != null)
+		{
+			replaceDictConstructor(expression, elementGenerator);
+		}
+	}
 
-    int size = argumentList.length;
+	private static void replaceDictConstructor(PyCallExpression expression, PyElementGenerator elementGenerator)
+	{
+		PyExpression[] argumentList = expression.getArguments();
+		StringBuilder stringBuilder = new StringBuilder();
 
-    for (int i = 0; i != size; ++i) {
-      PyExpression argument = argumentList[i];
-      if (argument instanceof PyKeywordArgument) {
-        stringBuilder.append("'");
-        stringBuilder.append(((PyKeywordArgument)argument).getKeyword());
-        stringBuilder.append("' : ");
-        stringBuilder.append(((PyKeywordArgument)argument).getValueExpression().getText());
-        if (i != size-1)
-          stringBuilder.append(",");
-      }
+		int size = argumentList.length;
 
-    }
-    PyDictLiteralExpression dict = (PyDictLiteralExpression)elementGenerator.createFromText(LanguageLevel.forElement(expression), PyExpressionStatement.class,
-                                                "{" + stringBuilder.toString() + "}").getExpression();
-    expression.replace(dict);
-  }
+		for(int i = 0; i != size; ++i)
+		{
+			PyExpression argument = argumentList[i];
+			if(argument instanceof PyKeywordArgument)
+			{
+				stringBuilder.append("'");
+				stringBuilder.append(((PyKeywordArgument) argument).getKeyword());
+				stringBuilder.append("' : ");
+				stringBuilder.append(((PyKeywordArgument) argument).getValueExpression().getText());
+				if(i != size - 1)
+				{
+					stringBuilder.append(",");
+				}
+			}
+
+		}
+		PyDictLiteralExpression dict = (PyDictLiteralExpression) elementGenerator.createFromText(LanguageLevel.forElement(expression), PyExpressionStatement.class, "{" + stringBuilder.toString() +
+				"}").getExpression();
+		expression.replace(dict);
+	}
 }

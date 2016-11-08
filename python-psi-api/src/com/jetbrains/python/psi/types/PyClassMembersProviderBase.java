@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,44 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
-
-import com.intellij.psi.PsiElement;
-import com.jetbrains.python.codeInsight.PyDynamicMember;
-import com.jetbrains.python.psi.PyClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiElement;
+import com.jetbrains.python.codeInsight.PyCustomMember;
+import com.jetbrains.python.psi.PyClass;
+
 /**
  * @author yole
  */
-public class PyClassMembersProviderBase implements PyClassMembersProvider {
-  @NotNull
-  @Override
-  public Collection<PyDynamicMember> getMembers(PyClassType clazz, PsiElement location) {
-    return Collections.emptyList();
-  }
+public class PyClassMembersProviderBase implements PyClassMembersProvider
+{
+	@NotNull
+	@Override
+	public Collection<PyCustomMember> getMembers(PyClassType clazz, PsiElement location, TypeEvalContext typeEvalContext)
+	{
+		return Collections.emptyList();
+	}
 
-  @Override
-  public PsiElement resolveMember(PyClassType clazz, String name, PsiElement location) {
-    final Collection<PyDynamicMember> members = getMembers(clazz, location);
-    return resolveMemberByName(members, clazz, name);
-  }
+	@Override
+	public PsiElement resolveMember(PyClassType clazz, String name, PsiElement location, TypeEvalContext context)
+	{
+		final Collection<PyCustomMember> members = getMembers(clazz, location, context);
+		return resolveMemberByName(members, clazz, name);
+	}
 
-  @Nullable
-  public static PsiElement resolveMemberByName(Collection<PyDynamicMember> members,
-                                               PyClassType clazz,
-                                               String name) {
-    final PyClass pyClass = clazz.getPyClass();
-    for (PyDynamicMember member : members) {
-      if (member.getName().equals(name)) {
-        return member.resolve(pyClass);
-      }
-    }
-    return null;
-  }
+	@Nullable
+	public static PsiElement resolveMemberByName(Collection<PyCustomMember> members, PyClassType clazz, String name)
+	{
+		final PyClass pyClass = clazz.getPyClass();
+		for(PyCustomMember member : members)
+		{
+			if(member.getName().equals(name))
+			{
+				return member.resolve(pyClass);
+			}
+		}
+		return null;
+	}
 }

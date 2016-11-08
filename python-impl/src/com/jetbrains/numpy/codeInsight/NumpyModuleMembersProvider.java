@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,19 @@
  */
 package com.jetbrains.numpy.codeInsight;
 
-import com.jetbrains.python.codeInsight.PyDynamicMember;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.types.PyModuleMembersProvider;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.QualifiedName;
+import com.jetbrains.python.codeInsight.PyCustomMember;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyPsiFacade;
+import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
+import com.jetbrains.python.psi.types.PyModuleMembersProvider;
 
 /**
  * Provides 'numpy' module dynamic members for numeric types.
@@ -30,23 +35,91 @@ import java.util.List;
  * @author avereshchagin
  * @author vlan
  */
-public class NumpyModuleMembersProvider extends PyModuleMembersProvider {
-  private static final String[] NUMERIC_TYPES = {
-    "int8", "int16", "int32", "int64", "int128",
-    "uint8", "uint16", "uint32", "uint64", "uint128",
-    "float16", "float32", "float64", "float80", "float96", "float128", "float256",
-    "complex32", "complex64", "complex128", "complex160", "complex192", "complex256", "complex512"
-  };
+public class NumpyModuleMembersProvider extends PyModuleMembersProvider
+{
+	private static final String[] NUMERIC_TYPES = {
+			"int8",
+			"int16",
+			"int32",
+			"int64",
+			"int128",
+			"uint8",
+			"uint16",
+			"uint32",
+			"uint64",
+			"uint128",
+			"float16",
+			"float32",
+			"float64",
+			"float80",
+			"float96",
+			"float128",
+			"float256",
+			"complex32",
+			"complex64",
+			"complex128",
+			"complex160",
+			"complex192",
+			"complex256",
+			"complex512",
+			"double"
+	};
+	private static final String[] PYTHON_TYPES = {
+			"int_",
+			"bool_",
+			"float_",
+			"cfloat",
+			"string_",
+			"str_",
+			"unicode_",
+			"object_",
+			"complex_",
+			"bytes_",
+			"byte",
+			"ubyte",
+			"void",
+			"short",
+			"ushort",
+			"intc",
+			"uintc",
+			"intp",
+			"uintp",
+			"uint",
+			"longlong",
+			"ulonglong",
+			"single",
+			"csingle",
+			"longfloat",
+			"clongfloat"
+	};
 
-  @Override
-  protected Collection<PyDynamicMember> getMembersByQName(PyFile module, String qName) {
-    if ("numpy".equals(qName)) {
-      final List<PyDynamicMember> members = new ArrayList<PyDynamicMember>();
-      for (String type : NUMERIC_TYPES) {
-        members.add(new PyDynamicMember(type, "numpy.core.multiarray.dtype", false));
-      }
-      return members;
-    }
-    return Collections.emptyList();
-  }
+	private static String DTYPE = "numpy.core.multiarray.dtype";
+
+	@Override
+	protected Collection<PyCustomMember> getMembersByQName(PyFile module, String qName)
+	{
+		if("numpy".equals(qName))
+		{
+			final List<PyCustomMember> members = new ArrayList<>();
+			for(String type : NUMERIC_TYPES)
+			{
+				members.add(new PyCustomMember(type, DTYPE, false));
+			}
+			for(String type : PYTHON_TYPES)
+			{
+				members.add(new PyCustomMember(type, DTYPE, false));
+			}
+			addTestingModule(module, members);
+			return members;
+		}
+		return Collections.emptyList();
+	}
+
+	private static void addTestingModule(PyFile module, List<PyCustomMember> members)
+	{
+		PyPsiFacade psiFacade = PyPsiFacade.getInstance(module.getProject());
+		final QualifiedNameResolver resolver = psiFacade.qualifiedNameResolver(QualifiedName.fromDottedString("numpy.testing")).withPlainDirectories().fromElement(module);
+		PsiElement testingModule = PyUtil.turnDirIntoInit(resolver.firstResult());
+		members.add(new PyCustomMember("testing", testingModule));
+	}
 }

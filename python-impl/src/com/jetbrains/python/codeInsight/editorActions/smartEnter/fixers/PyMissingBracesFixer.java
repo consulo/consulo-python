@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyDictLiteralExpression;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyListLiteralExpression;
+import com.jetbrains.python.psi.PySetLiteralExpression;
+import com.jetbrains.python.psi.PySliceExpression;
+import com.jetbrains.python.psi.PySubscriptionExpression;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,21 +34,33 @@ import com.jetbrains.python.psi.*;
  * Date:   15.04.2010
  * Time:   17:55:46
  */
-public class PyMissingBracesFixer implements PyFixer {
-  public void apply(Editor editor, PySmartEnterProcessor processor, PsiElement psiElement) throws IncorrectOperationException {
-    if (psiElement instanceof PySetLiteralExpression || psiElement instanceof PyDictLiteralExpression) {
-      PsiElement lastChild = PyUtil.getFirstNonCommentBefore(psiElement.getLastChild());
-      if (lastChild != null && !"}".equals(lastChild.getText())) {
-        editor.getDocument().insertString(lastChild.getTextRange().getEndOffset(), "}");
-      }
-    }
-    else if (psiElement instanceof PyListLiteralExpression ||
-             psiElement instanceof PySliceExpression ||
-             psiElement instanceof PySubscriptionExpression) {
-      PsiElement lastChild = PyUtil.getFirstNonCommentBefore(psiElement.getLastChild());
-      if (lastChild != null && !"]".equals(lastChild.getText())) {
-        editor.getDocument().insertString(lastChild.getTextRange().getEndOffset(), "]");
-      }
-    }
-  }
+public class PyMissingBracesFixer extends PyFixer<PyElement>
+{
+	public PyMissingBracesFixer()
+	{
+		super(PyElement.class);
+	}
+
+	@Override
+	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyElement psiElement) throws IncorrectOperationException
+	{
+		if(psiElement instanceof PySetLiteralExpression || psiElement instanceof PyDictLiteralExpression)
+		{
+			final PsiElement lastChild = PyPsiUtils.getPrevNonCommentSibling(psiElement.getLastChild(), false);
+			if(lastChild != null && !"}".equals(lastChild.getText()))
+			{
+				editor.getDocument().insertString(lastChild.getTextRange().getEndOffset(), "}");
+			}
+		}
+		else if(psiElement instanceof PyListLiteralExpression ||
+				psiElement instanceof PySliceExpression ||
+				psiElement instanceof PySubscriptionExpression)
+		{
+			final PsiElement lastChild = PyPsiUtils.getPrevNonCommentSibling(psiElement.getLastChild(), false);
+			if(lastChild != null && !"]".equals(lastChild.getText()))
+			{
+				editor.getDocument().insertString(lastChild.getTextRange().getEndOffset(), "]");
+			}
+		}
+	}
 }

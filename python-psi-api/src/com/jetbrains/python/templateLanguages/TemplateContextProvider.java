@@ -28,7 +28,7 @@ import com.intellij.psi.PsiFile;
  * @author yole
  */
 public interface TemplateContextProvider {
-  ExtensionPointName<TemplateContextProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.templateContextProvider");
+  ExtensionPointName<TemplateContextProvider> EP_NAME = ExtensionPointName.create("consulo.python.templateContextProvider");
 
   /**
    * Returns the context for a template. The lookup string of each returned LookupElement in the returned list is the visible

@@ -19,11 +19,9 @@ package com.jetbrains.python;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -36,6 +34,7 @@ import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyFileElementType;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.impl.PyFileImpl;
+import consulo.lang.LanguageVersion;
 
 /**
  * @author yole
@@ -53,7 +52,7 @@ public class PythonParserDefinition implements ParserDefinition {
   }
 
   @NotNull
-  public Lexer createLexer(Project project, LanguageVersion languageVersion) {
+  public Lexer createLexer(LanguageVersion languageVersion) {
     return new PythonIndentingLexer();
   }
 
@@ -77,7 +76,7 @@ public class PythonParserDefinition implements ParserDefinition {
   }
 
   @NotNull
-  public PsiParser createParser(Project project, LanguageVersion languageVersion) {
+  public PsiParser createParser(LanguageVersion languageVersion) {
     return new PyParser();
   }
 

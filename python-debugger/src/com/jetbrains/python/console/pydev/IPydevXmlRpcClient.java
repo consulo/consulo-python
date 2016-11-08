@@ -8,15 +8,18 @@ import org.apache.xmlrpc.XmlRpcException;
  *
  * @author Fabio
  */
-public interface IPydevXmlRpcClient {
+public interface IPydevXmlRpcClient
+{
 
-    /**
-     * @param command the command to be executed in the server
-     * @param args the arguments passed to the command
-     * @param
-     * @return the result from executing the command
-     *
-     * @throws XmlRpcException
-     */
-    Object execute(String command, Object[] args) throws XmlRpcException;
+	/**
+	 * @param command the command to be executed in the server
+	 * @param args    the arguments passed to the command
+	 * @param
+	 * @return the result from executing the command
+	 * @throws XmlRpcException
+	 */
+	Object execute(String command, Object[] args) throws XmlRpcException;
+
+	Object execute(String command, Object[] args, long timeoutMillis) throws XmlRpcException;
+
 }

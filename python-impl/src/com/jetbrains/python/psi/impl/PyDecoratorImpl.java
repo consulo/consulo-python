@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
-
-import java.util.List;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -27,19 +24,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.python.FunctionParameter;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.psi.Callable;
+import com.jetbrains.python.nameResolver.FQNamesProvider;
 import com.jetbrains.python.psi.PyArgumentList;
+import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyDecorator;
-import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.resolve.PyResolveUtil;
 import com.jetbrains.python.psi.stubs.PyDecoratorStub;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
@@ -58,12 +55,6 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	public PyDecoratorImpl(PyDecoratorStub stub)
 	{
 		super(stub, PyElementTypes.DECORATOR_CALL);
-	}
-
-	@Override
-	public PsiElement getParent()
-	{
-		return getParentByStub();
 	}
 
 	/**
@@ -89,15 +80,15 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		{
 			PyReferenceExpression ref = (PyReferenceExpression) node.getPsi();
 			PsiElement target = ref.getReference().resolve();
-			return PyBuiltinCache.getInstance(this).hasInBuiltins(target);
+			return PyBuiltinCache.getInstance(this).isBuiltin(target);
 		}
 		return false;
 	}
 
 	public boolean hasArgumentList()
 	{
-		ASTNode arglist_node = getNode().findChildByType(PyElementTypes.ARGUMENT_LIST);
-		return (arglist_node != null) && (arglist_node.findChildByType(PyTokenTypes.LPAR) != null);
+		final ASTNode arglistNode = getNode().findChildByType(PyElementTypes.ARGUMENT_LIST);
+		return (arglistNode != null) && (arglistNode.findChildByType(PyTokenTypes.LPAR) != null);
 	}
 
 	public QualifiedName getQualifiedName()
@@ -109,15 +100,10 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		}
 		else
 		{
-			PyReferenceExpression node = PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
+			final PyReferenceExpression node = PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
 			if(node != null)
 			{
-				List<PyExpression> parts = PyResolveUtil.unwindQualifiers(node);
-				if(parts != null)
-				{
-					//Collections.reverse(parts);
-					return PyQualifiedNameFactory.fromReferenceChain(parts);
-				}
+				return node.asQualifiedName();
 			}
 			return null;
 		}
@@ -156,7 +142,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	public <T extends PsiElement> T getArgument(int index, Class<T> argClass)
 	{
 		PyExpression[] args = getArguments();
-		return args.length >= index && argClass.isInstance(args[index]) ? argClass.cast(args[index]) : null;
+		return args.length > index && argClass.isInstance(args[index]) ? argClass.cast(args[index]) : null;
 	}
 
 	@Override
@@ -168,6 +154,13 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 			return argClass.isInstance(argument) ? argClass.cast(argument) : null;
 		}
 		return getArgument(index, argClass);
+	}
+
+	@Nullable
+	@Override
+	public <T extends PsiElement> T getArgument(@NotNull final FunctionParameter parameter, @NotNull final Class<T> argClass)
+	{
+		return PyCallExpressionHelper.getArgument(parameter, argClass, this);
 	}
 
 	@Override
@@ -201,8 +194,22 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		return callee;
 	}
 
+	@NotNull
 	@Override
-	public Callable resolveCalleeFunction(PyResolveContext resolveContext)
+	public PyArgumentsMapping mapArguments(@NotNull PyResolveContext resolveContext)
+	{
+		return PyCallExpressionHelper.mapArguments(this, resolveContext, 0);
+	}
+
+	@NotNull
+	@Override
+	public PyArgumentsMapping mapArguments(@NotNull PyResolveContext resolveContext, int implicitOffset)
+	{
+		return PyCallExpressionHelper.mapArguments(this, resolveContext, implicitOffset);
+	}
+
+	@Override
+	public PyCallable resolveCalleeFunction(PyResolveContext resolveContext)
 	{
 		return PyCallExpressionHelper.resolveCalleeFunction(this, resolveContext);
 	}
@@ -213,6 +220,13 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	}
 
 	@Override
+	public boolean isCallee(@NotNull final FQNamesProvider... name)
+	{
+		return PyCallExpressionHelper.isCallee(this, name);
+	}
+
+
+	@Override
 	public String toString()
 	{
 		return "PyDecorator: @" + PyUtil.getReadableRepr(getCallee(), true); //getCalledFunctionReference().getReferencedName();
@@ -221,11 +235,11 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
 	{
 		final ASTNode node = getNode();
-		final ASTNode name_node = node.findChildByType(PyTokenTypes.IDENTIFIER);
-		if(name_node != null)
+		final ASTNode nameNode = node.findChildByType(PyTokenTypes.IDENTIFIER);
+		if(nameNode != null)
 		{
-			final ASTNode nameElement = PyElementGenerator.getInstance(getProject()).createNameIdentifier(name);
-			node.replaceChild(name_node, nameElement);
+			final ASTNode nameElement = PyUtil.createNewName(this, name);
+			node.replaceChild(nameNode, nameElement);
 			return this;
 		}
 		else

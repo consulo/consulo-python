@@ -30,7 +30,7 @@ import com.jetbrains.python.psi.impl.PyFileImpl;
  * @author yole
  */
 public class PyDumbAwareAnnotator implements Annotator, DumbAware {
-  public static ExtensionPointName<PyAnnotator> EP_NAME = ExtensionPointName.create("org.consulo.python.dumbAnnotator");
+  public static ExtensionPointName<PyAnnotator> EP_NAME = ExtensionPointName.create("consulo.python.dumbAnnotator");
   private final PyAnnotator[] myAnnotators;
 
   public PyDumbAwareAnnotator() {

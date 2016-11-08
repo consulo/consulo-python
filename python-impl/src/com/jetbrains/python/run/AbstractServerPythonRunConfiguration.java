@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,46 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.run;
 
-import com.intellij.execution.configuration.AbstractRunConfiguration;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 
 /**
  * @author traff
  */
-abstract public class AbstractServerPythonRunConfiguration<T extends AbstractRunConfiguration> extends AbstractPythonRunConfiguration<T>{
-  @NonNls private static final String LAUNCH_JAVASCRIPT_DEBUGGER = "launchJavascriptDebuger";
-  private boolean myLaunchJavascriptDebugger;
+abstract public class AbstractServerPythonRunConfiguration<T extends AbstractServerPythonRunConfiguration> extends AbstractPythonRunConfiguration<T>
+{
+	@NonNls
+	private static final String LAUNCH_JAVASCRIPT_DEBUGGER = "launchJavascriptDebuger";
+	private boolean myLaunchJavascriptDebugger;
 
-  public AbstractServerPythonRunConfiguration(final Project project, final ConfigurationFactory factory) {
-    super(project, factory);
-  }
+	public AbstractServerPythonRunConfiguration(final Project project, final ConfigurationFactory factory)
+	{
+		super(project, factory);
+	}
 
-  @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    super.readExternal(element);
-    setLaunchJavascriptDebugger(Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, LAUNCH_JAVASCRIPT_DEBUGGER)));
-  }
+	@Override
+	public void readExternal(Element element) throws InvalidDataException
+	{
+		super.readExternal(element);
+		setLaunchJavascriptDebugger(Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, LAUNCH_JAVASCRIPT_DEBUGGER)));
+	}
 
-  @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    super.writeExternal(element);
-    JDOMExternalizerUtil.writeField(element, LAUNCH_JAVASCRIPT_DEBUGGER, Boolean.toString(isLaunchJavascriptDebugger()));
-  }
+	@Override
+	public void writeExternal(Element element) throws WriteExternalException
+	{
+		super.writeExternal(element);
+		JDOMExternalizerUtil.writeField(element, LAUNCH_JAVASCRIPT_DEBUGGER, Boolean.toString(isLaunchJavascriptDebugger()));
+	}
 
-  public boolean isLaunchJavascriptDebugger() {
-    return myLaunchJavascriptDebugger;
-  }
+	public boolean isLaunchJavascriptDebugger()
+	{
+		return myLaunchJavascriptDebugger;
+	}
 
-  public void setLaunchJavascriptDebugger(boolean launchJavascriptDebugger) {
-    myLaunchJavascriptDebugger = launchJavascriptDebugger;
-  }
+	public void setLaunchJavascriptDebugger(boolean launchJavascriptDebugger)
+	{
+		myLaunchJavascriptDebugger = launchJavascriptDebugger;
+	}
 }

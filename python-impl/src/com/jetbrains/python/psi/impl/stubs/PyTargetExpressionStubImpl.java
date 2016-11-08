@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,90 +13,111 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl.stubs;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyTargetExpression;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
-public class PyTargetExpressionStubImpl extends StubBase<PyTargetExpression> implements PyTargetExpressionStub {
-  private final String myName;
-  private final InitializerType myInitializerType;
-  private final QualifiedName myInitializer;
-  private final boolean myQualified;
-  @Nullable private final String myDocString;
+public class PyTargetExpressionStubImpl extends StubBase<PyTargetExpression> implements PyTargetExpressionStub
+{
+	private final String myName;
+	private final InitializerType myInitializerType;
+	private final QualifiedName myInitializer;
+	private final boolean myQualified;
+	private final String myTypeComment;
 
-  private final CustomTargetExpressionStub myCustomStub;
+	@Nullable
+	private final String myDocString;
+	private final CustomTargetExpressionStub myCustomStub;
 
-  public PyTargetExpressionStubImpl(String name,
-                                    @Nullable String docString,
-                                    CustomTargetExpressionStub customStub,
-                                    StubElement parent) {
-    super(parent, PyElementTypes.TARGET_EXPRESSION);
-    myName = name;
-    myInitializerType = InitializerType.Custom;
-    myInitializer = null;
-    myQualified = false;
-    myCustomStub = customStub;
-    myDocString = docString;
-  }
-  
-  public PyTargetExpressionStubImpl(final String name, @Nullable String docString, final InitializerType initializerType,
-                                    final QualifiedName initializer,
-                                    final boolean qualified,
-                                    final StubElement parentStub) {
-    super(parentStub, PyElementTypes.TARGET_EXPRESSION);
-    myName = name;
-    assert initializerType != InitializerType.Custom;
-    myInitializerType = initializerType;
-    myInitializer = initializer;
-    myQualified = qualified;
-    myCustomStub = null;
-    myDocString = docString;
-  }
+	public PyTargetExpressionStubImpl(String name, @Nullable String docString, @Nullable String typeComment, CustomTargetExpressionStub customStub, StubElement parent)
+	{
+		super(parent, PyElementTypes.TARGET_EXPRESSION);
+		myName = name;
+		myTypeComment = typeComment;
+		myInitializerType = InitializerType.Custom;
+		myInitializer = null;
+		myQualified = false;
+		myCustomStub = customStub;
+		myDocString = docString;
+	}
 
-  public String getName() {
-    return myName;
-  }
+	public PyTargetExpressionStubImpl(final String name,
+			@Nullable String docString,
+			final InitializerType initializerType,
+			final QualifiedName initializer,
+			final boolean qualified,
+			@Nullable String typeComment,
+			final StubElement parentStub)
+	{
+		super(parentStub, PyElementTypes.TARGET_EXPRESSION);
+		myName = name;
+		myTypeComment = typeComment;
+		assert initializerType != InitializerType.Custom;
+		myInitializerType = initializerType;
+		myInitializer = initializer;
+		myQualified = qualified;
+		myCustomStub = null;
+		myDocString = docString;
+	}
 
-  public InitializerType getInitializerType() {
-    return myInitializerType;
-  }
+	public String getName()
+	{
+		return myName;
+	}
 
-  public QualifiedName getInitializer() {
-    return myInitializer;
-  }
+	public InitializerType getInitializerType()
+	{
+		return myInitializerType;
+	}
 
-  @Override
-  public boolean isQualified() {
-    return myQualified;
-  }
+	public QualifiedName getInitializer()
+	{
+		return myInitializer;
+	}
 
-  @Nullable
-  @Override
-  public <T extends CustomTargetExpressionStub> T getCustomStub(Class<T> stubClass) {
-    if (stubClass.isInstance(myCustomStub)) {
-      return stubClass.cast(myCustomStub);
-    }
-    return null;
-  }
+	@Override
+	public boolean isQualified()
+	{
+		return myQualified;
+	}
 
-  @Nullable
-  @Override
-  public String getDocString() {
-    return myDocString;
-  }
+	@Nullable
+	@Override
+	public <T extends CustomTargetExpressionStub> T getCustomStub(Class<T> stubClass)
+	{
+		if(stubClass.isInstance(myCustomStub))
+		{
+			return stubClass.cast(myCustomStub);
+		}
+		return null;
+	}
 
-  @Override
-  public String toString() {
-    return "PyTargetExpressionStub(name=" + myName + ")";
-  }
+	@Nullable
+	@Override
+	public String getDocString()
+	{
+		return myDocString;
+	}
+
+	@Nullable
+	@Override
+	public String getTypeComment()
+	{
+		return myTypeComment;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "PyTargetExpressionStub(name=" + myName + ")";
+	}
 }

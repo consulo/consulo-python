@@ -41,7 +41,7 @@ public class PySuperTypesHierarchyTreeStructure extends HierarchyTreeStructure
 	@NotNull
 	protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor)
 	{
-		final List<PyHierarchyNodeDescriptor> res = new ArrayList<PyHierarchyNodeDescriptor>();
+		final List<PyHierarchyNodeDescriptor> res = new ArrayList<>();
 		if(descriptor instanceof PyHierarchyNodeDescriptor)
 		{
 			final PyHierarchyNodeDescriptor pyDescriptor = (PyHierarchyNodeDescriptor) descriptor;
@@ -49,7 +49,7 @@ public class PySuperTypesHierarchyTreeStructure extends HierarchyTreeStructure
 			if(element instanceof PyClass)
 			{
 				final PyClass cls = (PyClass) element;
-				final PyClass[] superClasses = cls.getSuperClasses();
+				final PyClass[] superClasses = cls.getSuperClasses(null);
 				for(PyClass superClass : superClasses)
 				{
 					res.add(new PyHierarchyNodeDescriptor(descriptor, superClass, false));

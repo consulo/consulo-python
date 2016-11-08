@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.inspections;
 
 import java.util.List;
@@ -26,39 +25,61 @@ import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
 /**
  * @author yole
  */
-public abstract class PyInspectionExtension {
-  public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create("org.consulo.python.inspectionExtension");
+public abstract class PyInspectionExtension
+{
+	public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create("consulo.python.inspectionExtension");
 
-  public boolean ignoreUnused(PsiElement local) {
-    return false;
-  }
+	public boolean ignoreUnused(PsiElement local)
+	{
+		return false;
+	}
 
-  public boolean ignoreMissingDocstring(PyDocStringOwner docStringOwner) {
-    return false;
-  }
+	public boolean ignoreMissingDocstring(PyDocStringOwner docStringOwner)
+	{
+		return false;
+	}
 
-  public List<String> getFunctionParametersFromUsage(PsiElement elt) {
-    return null;
-  }
+	public List<String> getFunctionParametersFromUsage(PsiElement elt)
+	{
+		return null;
+	}
 
-  public boolean ignoreMethodParameters(@NotNull PyFunction function) {
-    return false;
-  }
+	public boolean ignoreMethodParameters(@NotNull PyFunction function)
+	{
+		return false;
+	}
 
-  public boolean ignorePackageNameInRequirements(@NotNull PyQualifiedExpression importedExpression) {
-    return false;
-  }
+	public boolean ignorePackageNameInRequirements(@NotNull PyQualifiedExpression importedExpression)
+	{
+		return false;
+	}
 
-  public boolean ignoreUnresolvedReference(@NotNull PyElement node, @NotNull PsiReference reference) {
-    return false;
-  }
+	public boolean ignoreUnresolvedReference(@NotNull PyElement node, @NotNull PsiReference reference)
+	{
+		return false;
+	}
 
-  public boolean ignoreUnresolvedMember(@NotNull PyType type, @NotNull String name) {
-    return false;
-  }
+	public boolean ignoreUnresolvedMember(@NotNull PyType type, @NotNull String name)
+	{
+		return false;
+	}
+
+	/**
+	 * Returns true if access to protected (the one started with "_") symbol should not be treated as violation.
+	 *
+	 * @param expression access expression i.e. "_foo"
+	 * @param context    type eval to be used
+	 * @return true if ignore
+	 */
+	public boolean ignoreProtectedSymbol(@NotNull final PyReferenceExpression expression, @NotNull final TypeEvalContext context)
+	{
+		return false;
+	}
 }

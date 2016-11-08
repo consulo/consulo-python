@@ -18,9 +18,8 @@ package com.jetbrains.python.testing;
 
 import javax.swing.Icon;
 
-import org.consulo.python.module.extension.PyModuleExtension;
+import consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
-import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
@@ -32,6 +31,7 @@ import com.jetbrains.python.testing.doctest.PythonDocTestRunConfiguration;
 import com.jetbrains.python.testing.nosetest.PythonNoseTestRunConfiguration;
 import com.jetbrains.python.testing.pytest.PyTestRunConfiguration;
 import com.jetbrains.python.testing.unittest.PythonUnitTestRunConfiguration;
+import consulo.module.extension.ModuleExtensionHelper;
 import icons.PythonIcons;
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,73 +13,100 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
-import com.jetbrains.python.toolbox.Substring;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import com.jetbrains.python.toolbox.Substring;
 
 /**
  * @author vlan
  */
-public interface StructuredDocString {
-  String getDescription();
+public interface StructuredDocString
+{
 
-  String getSummary();
+	String getSummary();
 
-  @Nullable
-  Substring getTagValue(String... tagNames);
+	@NotNull
+	String getDescription(); // for formatter
 
-  @Nullable
-  Substring getTagValue(String tagName, @NotNull String argName);
+	@NotNull
+	List<String> getParameters();
 
-  @Nullable
-  Substring getTagValue(String[] tagNames, @NotNull String argName);
+	/**
+	 * @return all names of parameters mentioned in the docstring as substrings.
+	 */
+	@NotNull
+	List<Substring> getParameterSubstrings();
 
-  List<Substring> getTagArguments(String... tagNames);
+	/**
+	 * @param paramName {@code null} can be used for unnamed parameters descriptors, e.g. in docstring following class attribute
+	 * @return {@code null} if specified parameter was omitted in the docstring completely, empty string if there was place for its type,
+	 * but it was unfilled and trimmed type text otherwise.
+	 */
+	@Nullable
+	String getParamType(@Nullable String paramName);
 
-  List<Substring> getParameterSubstrings();
+	/**
+	 * @param paramName {@code null} can be used for unnamed parameters descriptors, e.g. in docstring following class attribute
+	 * @return {@code null} if specified parameter was omitted in the docstring completely, empty substring if there was place for its type,
+	 * but it was unfilled and trimmed type substring otherwise.
+	 */
+	@Nullable
+	Substring getParamTypeSubstring(@Nullable String paramName);
 
-  @Nullable
-  Substring getParamByNameAndKind(@NotNull String name, String kind);
+	/**
+	 * @param paramName {@code null} can be used for unnamed parameters descriptors, e.g. in docstring following class attribute
+	 */
+	@Nullable
+	String getParamDescription(@Nullable String paramName);
 
-  List<String> getParameters();
+	/**
+	 * Keyword arguments are those arguments that usually don't exist in function signature,
+	 * but are passed e.g. via {@code **kwargs} mechanism.
+	 */
+	@NotNull
+	List<String> getKeywordArguments();
 
-  List<String> getKeywordArguments();
+	@NotNull
+	List<Substring> getKeywordArgumentSubstrings();
 
-  @Nullable
-  String getReturnType();
+	// getKeywordArgumentType(name)
+	// getKeywordArgumentTypeString(name)
+	@Nullable
+	String getKeywordArgumentDescription(@Nullable String paramName);
 
-  @Nullable
-  String getReturnDescription();
+	/**
+	 * @return {@code null} if return type was omitted in the docstring completely, empty string if there was place for its type,
+	 * but it was unfilled and trimmed type text otherwise.
+	 */
+	@Nullable
+	String getReturnType();
 
-  @Nullable
-  String getParamType(@Nullable String paramName);
+	/**
+	 * @return {@code null} if return type was omitted in the docstring completely, empty substring if there was place for its type,
+	 * but it was unfilled and trimmed type substring otherwise.
+	 */
+	@Nullable
+	Substring getReturnTypeSubstring();
 
-  @Nullable
-  String getParamDescription(@Nullable String paramName);
+	@Nullable
+	String getReturnDescription(); // for formatter
 
-  @Nullable
-  String getKeywordArgumentDescription(@Nullable String paramName);
+	@NotNull
+	List<String> getRaisedExceptions(); // for formatter
 
-  List<String> getRaisedExceptions();
+	@Nullable
+	String getRaisedExceptionDescription(@Nullable String exceptionName); // for formatter
 
-  @Nullable
-  String getRaisedExceptionDescription(@Nullable String exceptionName);
+	// getAttributes
+	// getAttributeSubstrings
+	// getAttributeType(name)
+	// getAttributeTypeSubstring(name)
+	@Nullable
+	String getAttributeDescription(); // for formatter
 
-  @Nullable
-  String getAttributeDescription();
-
-  List<String> getAdditionalTags();
-
-  List<Substring> getKeywordArgumentSubstrings();
-
-  @Nullable
-  Substring getReturnTypeSubstring();
-
-  @Nullable
-  Substring getParamTypeSubstring(@Nullable String paramName);
+	// Tags related methods
 }

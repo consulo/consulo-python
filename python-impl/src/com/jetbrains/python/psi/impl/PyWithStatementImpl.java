@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,57 +13,82 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
-
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.PyWithItem;
+import com.jetbrains.python.psi.PyWithStatement;
+
 /**
  * @author yole
  */
-public class PyWithStatementImpl extends PyElementImpl implements PyWithStatement {
-  private static final TokenSet WITH_ITEM = TokenSet.create(PyElementTypes.WITH_ITEM);
+public class PyWithStatementImpl extends PyElementImpl implements PyWithStatement
+{
+	private static final TokenSet WITH_ITEM = TokenSet.create(PyElementTypes.WITH_ITEM);
 
-  public PyWithStatementImpl(ASTNode astNode) {
-    super(astNode);
-  }
+	public PyWithStatementImpl(ASTNode astNode)
+	{
+		super(astNode);
+	}
 
-  protected void acceptPyVisitor(final PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyWithStatement(this);
-  }
+	protected void acceptPyVisitor(final PyElementVisitor pyVisitor)
+	{
+		pyVisitor.visitPyWithStatement(this);
+	}
 
-  @NotNull
-  public Iterable<PyElement> iterateNames() {
-    PyWithItem[] items = PsiTreeUtil.getChildrenOfType(this, PyWithItem.class);
-    List<PyElement> result = new ArrayList<PyElement>();
-    if (items != null) {
-      for (PyWithItem item : items) {
-        PyExpression targetExpression = item.getTarget();
-        result.addAll(PyUtil.flattenedParensAndTuples(targetExpression));
-      }
-    }
-    return result;
-  }
+	@NotNull
+	public List<PsiNamedElement> getNamedElements()
+	{
+		PyWithItem[] items = PsiTreeUtil.getChildrenOfType(this, PyWithItem.class);
+		List<PsiNamedElement> result = new ArrayList<>();
+		if(items != null)
+		{
+			for(PyWithItem item : items)
+			{
+				PyExpression targetExpression = item.getTarget();
+				final List<PyExpression> expressions = PyUtil.flattenedParensAndTuples(targetExpression);
+				for(PyExpression expression : expressions)
+				{
+					if(expression instanceof PsiNamedElement)
+					{
+						result.add((PsiNamedElement) expression);
+					}
+				}
+			}
+		}
+		return result;
+	}
 
-  public PsiElement getElementNamed(final String the_name) {
-    PyElement named_elt = IterHelper.findName(iterateNames(), the_name);
-    return named_elt;
-  }
+	@Nullable
+	public PsiNamedElement getNamedElement(@NotNull final String the_name)
+	{
+		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
+	}
 
-  public boolean mustResolveOutside() {
-    return false;
-  }
+	public PyWithItem[] getWithItems()
+	{
+		return childrenToPsi(WITH_ITEM, PyWithItem.EMPTY_ARRAY);
+	}
 
-  public PyWithItem[] getWithItems() {
-    return childrenToPsi(WITH_ITEM, PyWithItem.EMPTY_ARRAY); 
-  }
+	@Override
+	@NotNull
+	public PyStatementList getStatementList()
+	{
+		final PyStatementList statementList = childToPsi(PyElementTypes.STATEMENT_LIST);
+		assert statementList != null : "Statement list missing for with statement " + getText();
+		return statementList;
+	}
 }

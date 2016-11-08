@@ -8,6 +8,8 @@ ERROR_NO_PIP = 2
 ERROR_NO_SETUPTOOLS = 3
 ERROR_EXCEPTION = 4
 
+os.putenv("PIP_REQUIRE_VIRTUALENV", "false")
+
 def exit(retcode):
     major, minor, micro, release, serial = sys.version_info
     version = major * 10 + minor
@@ -31,9 +33,9 @@ def error(message, retcode):
 
 
 def error_no_pip():
-    tb = sys.exc_traceback
+    type, value, tb = sys.exc_info()
     if tb is not None and tb.tb_next is None:
-        error("Python package management tool 'pip' not found", ERROR_NO_PIP)
+        error("Python packaging tool 'pip' not found", ERROR_NO_PIP)
     else:
         error(traceback.format_exc(), ERROR_EXCEPTION)
 
@@ -42,12 +44,62 @@ def do_list():
     try:
         import pkg_resources
     except ImportError:
-        error("Python package management tool 'setuptools' or 'distribute' not found", ERROR_NO_SETUPTOOLS)
+        error("Python packaging tool 'setuptools' not found", ERROR_NO_SETUPTOOLS)
     for pkg in pkg_resources.working_set:
-        requires = ':'.join([str(x) for x in pkg.requires()])
+        try:
+            requirements = pkg.requires()
+        except Exception:
+            requirements = []
+        requires = ':'.join([str(x) for x in requirements])
         sys.stdout.write('\t'.join([pkg.project_name, pkg.version, pkg.location, requires])+chr(10))
     sys.stdout.flush()
 
+
+def do_get_versions(urls, req):
+    if req is not None:
+        for version in VersionsFinder(urls).get_versions(req):
+            if len(version) > 2:
+                sys.stdout.write(version[2] + chr(10))
+        sys.stdout.flush()
+
+
+
+def do_get_latest_version(urls, req):
+    try:
+        from pip.index import PackageFinder, Link
+    except ImportError:
+        error_no_pip()
+
+    class VersionsFinder(PackageFinder):
+        def __init__(self, index_urls, *args, **kwargs):
+            super(VersionsFinder, self).__init__([], index_urls, *args, **kwargs)
+
+        def get_versions(self, req):
+            class Req:
+                def __init__(self, name):
+                    self.name = name
+
+            def mkurl_pypi_url(url):
+                loc = os.path.join(url, req)
+                if not loc.endswith('/'):
+                    loc += '/'
+                return loc
+
+            locations = [mkurl_pypi_url(url) for url in self.index_urls] + self.find_links
+            locations = [Link(url, trusted=True) for url in locations]
+
+            versions = []
+            for page in self._get_pages(locations, Req(req)):
+                versions.extend(self._package_versions(page.links, req.lower()))
+
+            return sorted(list(versions), reverse=True)
+    if req is not None:
+        for version in VersionsFinder(urls).get_versions(req):
+            if len(version) > 2:
+                sys.stdout.write(version[2] + chr(10))
+                sys.stdout.flush()
+                return
+    return ""
 
 def do_install(pkgs):
     try:
@@ -70,24 +122,29 @@ def do_pyvenv(path, system_site_packages):
         import venv
     except ImportError:
         error("Standard Python 'venv' module not found", ERROR_EXCEPTION)
+    # In Python >= 3.4 venv.create() has a new parameter with_pip=False
+    # that allows to automatically install setuptools and pip with the module
+    # ensurepip. Unfortunately, we cannot use this parameter and have to
+    # bootstrap these packages ourselves, since some distributions of CPython
+    # on Ubuntu don't include ensurepip.
     venv.create(path, system_site_packages=system_site_packages)
 
 
-def untarDirectory(name):
+def do_untar(name):
     import tempfile
 
     directory_name = tempfile.mkdtemp("pycharm-management")
 
     import tarfile
 
-    filename = name + ".tar.gz"
-    tar = tarfile.open(filename)
+    tar = tarfile.open(name)
     for item in tar:
         tar.extract(item, directory_name)
 
     sys.stdout.write(directory_name+chr(10))
     sys.stdout.flush()
     return 0
+
 
 def mkdtemp_ifneeded():
     try:
@@ -113,6 +170,10 @@ def main():
             if len(sys.argv) != 2:
                 usage()
             do_list()
+        elif cmd == 'latestVersion':
+            if len(sys.argv) < 4:
+                usage()
+            do_get_latest_version(sys.argv[3:], sys.argv[2])
         elif cmd == 'install':
             if len(sys.argv) < 2:
                 usage()
@@ -131,7 +192,7 @@ def main():
             if len(sys.argv) < 2:
                 usage()
             name = sys.argv[2]
-            retcode = untarDirectory(name)
+            retcode = do_untar(name)
         elif cmd == 'uninstall':
             if len(sys.argv) < 2:
                 usage()

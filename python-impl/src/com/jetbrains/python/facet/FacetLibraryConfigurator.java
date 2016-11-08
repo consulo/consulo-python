@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
-import com.intellij.ide.highlighter.ArchiveFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -37,7 +36,8 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
+import consulo.fileTypes.ArchiveFileType;
+import consulo.vfs.util.ArchiveVfsUtil;
 
 /**
  * @author yole

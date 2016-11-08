@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,73 +13,98 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.console;
 
-import com.intellij.execution.console.LanguageConsoleImpl;
+import java.nio.charset.Charset;
+
+import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.python.run.PythonProcessHandler;
 
-import java.nio.charset.Charset;
-
 /**
- * @author oleg
+ * @author traff
  */
-public class PyConsoleProcessHandler extends PythonProcessHandler {
-  private final PythonConsoleView myConsoleView;
-  private final PydevConsoleCommunication myPydevConsoleCommunication;
+public class PyConsoleProcessHandler extends PythonProcessHandler
+{
+	private final PythonConsoleView myConsoleView;
+	private final PydevConsoleCommunication myPydevConsoleCommunication;
 
-  public PyConsoleProcessHandler(final Process process,
-                                 PythonConsoleView consoleView,
-                                 PydevConsoleCommunication pydevConsoleCommunication, final String commandLine,
-                                 final Charset charset) {
-    super(process, commandLine, charset);
-    myConsoleView = consoleView;
-    myPydevConsoleCommunication = pydevConsoleCommunication;
-  }
+	public PyConsoleProcessHandler(final Process process, PythonConsoleView consoleView, PydevConsoleCommunication pydevConsoleCommunication, @NotNull String commandLine, final Charset charset)
+	{
+		super(process, commandLine, charset);
+		myConsoleView = consoleView;
+		myPydevConsoleCommunication = pydevConsoleCommunication;
 
-  @Override
-  public void coloredTextAvailable(final String text, final Key attributes) {
-    final String string = PyConsoleUtil.processPrompts(getConsole(), StringUtil.convertLineSeparators(text));
+		Disposer.register(consoleView, new Disposable()
+		{
+			@Override
+			public void dispose()
+			{
+				if(!isProcessTerminated())
+				{
+					destroyProcess();
+				}
+			}
+		});
+	}
 
-    myConsoleView.print(string, attributes);
-  }
+	@Override
+	public void coloredTextAvailable(final String text, final Key attributes)
+	{
+		String string = PyConsoleUtil.processPrompts(myConsoleView, StringUtil.convertLineSeparators(text));
 
-  @Override
-  protected void closeStreams() {
-    doCloseCommunication();
-    super.closeStreams();
-  }
+		myConsoleView.print(string, attributes);
 
-  @Override
-  public boolean isSilentlyDestroyOnClose() {
-    return !myPydevConsoleCommunication.isExecuting();
-  }
+		notifyColoredListeners(text, attributes);
+	}
 
-  private void doCloseCommunication() {
-    if (myPydevConsoleCommunication != null) {
+	@Override
+	protected void closeStreams()
+	{
+		doCloseCommunication();
+		super.closeStreams();
+	}
 
-      UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            myPydevConsoleCommunication.close();
-            Thread.sleep(300);
-          }
-          catch (Exception e1) {
-            // Ignore
-          }
-        }
-      });
+	@Override
+	public boolean isSilentlyDestroyOnClose()
+	{
+		return !myPydevConsoleCommunication.isExecuting();
+	}
 
-      // waiting for REPL communication before destroying process handler
-    }
-  }
+	@Override
+	protected boolean shouldKillProcessSoftly()
+	{
+		return false;
+	}
 
-  private LanguageConsoleImpl getConsole() {
-    return myConsoleView.getConsole();
-  }
+	private void doCloseCommunication()
+	{
+		if(myPydevConsoleCommunication != null)
+		{
+
+			UIUtil.invokeAndWaitIfNeeded(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					try
+					{
+						myPydevConsoleCommunication.close();
+						Thread.sleep(300);
+					}
+					catch(Exception e1)
+					{
+						// Ignore
+					}
+				}
+			});
+
+			// waiting for REPL communication before destroying process handler
+		}
+	}
 }
 

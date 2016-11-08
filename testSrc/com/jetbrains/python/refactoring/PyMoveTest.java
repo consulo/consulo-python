@@ -12,7 +12,6 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
-import com.jetbrains.python.refactoring.move.PyMoveClassOrFunctionProcessor;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;

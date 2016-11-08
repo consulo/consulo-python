@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,50 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.findUsages;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author yole
  */
-public class PyClassFindUsagesHandler extends FindUsagesHandler {
-  private final PyClass myClass;
+public class PyClassFindUsagesHandler extends FindUsagesHandler
+{
+	private final PyClass myClass;
 
-  public PyClassFindUsagesHandler(@NotNull PyClass psiElement) {
-    super(psiElement);
-    myClass = psiElement;
-  }
+	public PyClassFindUsagesHandler(@NotNull PyClass psiElement)
+	{
+		super(psiElement);
+		myClass = psiElement;
+	}
 
-  @NotNull
-  @Override
-  public PsiElement[] getSecondaryElements() {
-    final PyFunction initMethod = myClass.findMethodByName(PyNames.INIT, false);
-    if (initMethod != null) {
-      return new PsiElement[] { initMethod };
-    }
-    return PsiElement.EMPTY_ARRAY;
-  }
+	@NotNull
+	@Override
+	public PsiElement[] getSecondaryElements()
+	{
+		final PyFunction initMethod = myClass.findMethodByName(PyNames.INIT, false, null);
+		if(initMethod != null)
+		{
+			return new PsiElement[]{initMethod};
+		}
+		return PsiElement.EMPTY_ARRAY;
+	}
 
-  @Override
-  protected boolean isSearchForTextOccurencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile) {
-    return true;
-  }
+	@Override
+	protected boolean isSearchForTextOccurrencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile)
+	{
+		return true;
+	}
 
-  @Override
-  protected Collection<String> getStringsToSearch(PsiElement element) {
-    if (element instanceof PyFunction && PyNames.INIT.equals(((PyFunction) element).getName())) {
-      return Collections.emptyList();
-    }
-    return super.getStringsToSearch(element);
-  }
+	@Override
+	protected Collection<String> getStringsToSearch(@NotNull PsiElement element)
+	{
+		if(element instanceof PyFunction && PyNames.INIT.equals(((PyFunction) element).getName()))
+		{
+			return Collections.emptyList();
+		}
+		return super.getStringsToSearch(element);
+	}
 }

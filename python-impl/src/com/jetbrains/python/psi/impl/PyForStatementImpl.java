@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,50 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.jetbrains.python.PyElementTypes;
-import com.jetbrains.python.psi.*;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
+import com.google.common.collect.Lists;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiNamedElement;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyElsePart;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyForPart;
+import com.jetbrains.python.psi.PyForStatement;
+import com.jetbrains.python.psi.PyUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
+public class PyForStatementImpl extends PyPartitionedElementImpl implements PyForStatement
+{
+	public PyForStatementImpl(ASTNode astNode)
+	{
+		super(astNode);
+	}
 
-public class PyForStatementImpl extends PyPartitionedElementImpl implements PyForStatement {
-  public PyForStatementImpl(ASTNode astNode) {
-    super(astNode);
-  }
+	@Override
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
+	{
+		pyVisitor.visitPyForStatement(this);
+	}
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyForStatement(this);
-  }
+	public PyElsePart getElsePart()
+	{
+		return (PyElsePart) getPart(PyElementTypes.ELSE_PART);
+	}
 
-  public PyElsePart getElsePart() {
-    return (PyElsePart)getPart(PyElementTypes.ELSE_PART);
-  }
+	@NotNull
+	public PyForPart getForPart()
+	{
+		return findNotNullChildByClass(PyForPart.class);
+	}
 
-  @NotNull
-  public PyForPart getForPart() {
-    return findNotNullChildByClass(PyForPart.class);
-  }
+	@NotNull
+	public List<PsiNamedElement> getNamedElements()
+	{
+		PyExpression tgt = getForPart().getTarget();
+		final List<PyExpression> expressions = PyUtil.flattenedParensAndStars(tgt);
+		final List<PsiNamedElement> results = Lists.newArrayList();
+		for(PyExpression expression : expressions)
+		{
+			if(expression instanceof PsiNamedElement)
+			{
+				results.add((PsiNamedElement) expression);
+			}
+		}
+		return results;
+	}
 
-  @NotNull
-  public Iterable<PyElement> iterateNames() {
-    PyExpression tgt = getForPart().getTarget();
-    if (tgt instanceof PyReferenceExpression) return Collections.<PyElement>singleton(tgt);
-    else {
-      return new ArrayList<PyElement>(PyUtil.flattenedParensAndStars(tgt));
-    }
-  }
-
-  public PyElement getElementNamed(final String the_name) {
-    return IterHelper.findName(iterateNames(), the_name);
-  }
-
-  public boolean mustResolveOutside() {
-    return false; 
-  }
+	@Override
+	public boolean isAsync()
+	{
+		return getNode().findChildByType(PyTokenTypes.ASYNC_KEYWORD) != null;
+	}
 }

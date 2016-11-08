@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,59 +13,121 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
 
-import com.intellij.openapi.project.Project;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.stubs.PyClassNameIndex;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyPsiFacade;
 
 /**
  * @author yole
  */
-public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectionType {
-  private final PyType myElementType;
+public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectionType
+{
+	@NotNull
+	private final List<PyType> myElementTypes;
 
-  public PyCollectionTypeImpl(@NotNull PyClass source, boolean isDefinition, PyType elementType) {
-    super(source, isDefinition);
-    myElementType = elementType;
-  }
+	public PyCollectionTypeImpl(@NotNull PyClass source, boolean isDefinition, @NotNull List<PyType> elementTypes)
+	{
+		super(source, isDefinition);
+		myElementTypes = elementTypes;
+	}
 
-  @Override
-  public PyType getElementType(TypeEvalContext context) {
-    return myElementType;
-  }
 
-  @Nullable
-  public static PyCollectionTypeImpl createTypeByQName(@NotNull Project project, String classQualifiedName, boolean isDefinition,
-                                                       PyType elementType) {
-    PyClass pyClass = PyClassNameIndex.findClass(classQualifiedName, project);
-    if (pyClass == null) {
-      return null;
-    }
-    return new PyCollectionTypeImpl(pyClass, isDefinition, elementType);
-  }
+	@Nullable
+	@Override
+	public PyType getReturnType(@NotNull final TypeEvalContext context)
+	{
+		if(isDefinition())
+		{
+			return new PyCollectionTypeImpl(getPyClass(), false, myElementTypes);
+		}
+		return null;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof PyCollectionType)) return false;
-    if (!super.equals(o)) return false;
+	@Nullable
+	@Override
+	public PyType getCallType(@NotNull final TypeEvalContext context, @Nullable final PyCallSiteExpression callSite)
+	{
+		return getReturnType(context);
+	}
 
-    PyCollectionType type = (PyCollectionType)o;
+	@NotNull
+	@Override
+	public List<PyType> getElementTypes(@NotNull TypeEvalContext context)
+	{
+		return myElementTypes;
+	}
 
-    final TypeEvalContext context = TypeEvalContext.codeInsightFallback();
-    if (myElementType != null ? !myElementType.equals(type.getElementType(context)) : type.getElementType(context) != null) return false;
+	@Nullable
+	public static PyCollectionTypeImpl createTypeByQName(@NotNull final PsiElement anchor,
+			@NotNull final String classQualifiedName,
+			final boolean isDefinition,
+			@NotNull final List<PyType> elementTypes)
+	{
+		final PyClass pyClass = PyPsiFacade.getInstance(anchor.getProject()).createClassByQName(classQualifiedName, anchor);
+		if(pyClass == null)
+		{
+			return null;
+		}
+		return new PyCollectionTypeImpl(pyClass, isDefinition, elementTypes);
+	}
 
-    return true;
-  }
+	@Override
+	public PyClassType toInstance()
+	{
+		return myIsDefinition ? withUserDataCopy(new PyCollectionTypeImpl(myClass, false, myElementTypes)) : this;
+	}
 
-  @Override
-  public int hashCode() {
-    int result = super.hashCode();
-    result = 31 * result + (myElementType != null ? myElementType.hashCode() : 0);
-    return result;
-  }
+	@Override
+	public boolean equals(Object o)
+	{
+		if(this == o)
+		{
+			return true;
+		}
+		if(o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+		if(!super.equals(o))
+		{
+			return false;
+		}
+
+		final PyCollectionTypeImpl that = (PyCollectionTypeImpl) o;
+
+		if(!myElementTypes.equals(that.myElementTypes))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = super.hashCode();
+		result = 31 * result;
+		for(PyType type : myElementTypes)
+		{
+			result += type != null ? type.hashCode() : 0;
+		}
+		return result;
+	}
+
+	@Nullable
+	@Override
+	public PyType getIteratedItemType()
+	{
+		// TODO: Select the parameter type that matches T in Iterable[T]
+		return ContainerUtil.getFirstItem(myElementTypes);
+	}
 }

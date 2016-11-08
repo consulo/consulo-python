@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
@@ -42,6 +42,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyReferenceOwner;
+import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
@@ -60,37 +61,6 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		super(node);
 	}
 
-	@Override
-	public PsiElement getParent()
-	{
-		return getParentByStub();
-	}
-
-	private static void addReferences(int offset, PsiElement element, final Collection<PsiReference> outReferences, PyResolveContext resolveContext)
-	{
-		final PsiReference[] references;
-		if(element instanceof PyReferenceOwner)
-		{
-			final PsiPolyVariantReference reference = ((PyReferenceOwner) element).getReference(resolveContext);
-			references = reference == null ? PsiReference.EMPTY_ARRAY : new PsiReference[]{reference};
-		}
-		else
-		{
-			references = element.getReferences();
-		}
-		for(final PsiReference reference : references)
-		{
-			for(TextRange range : ReferenceRange.getRanges(reference))
-			{
-				assert range != null : reference;
-				if(range.containsOffset(offset))
-				{
-					outReferences.add(reference);
-				}
-			}
-		}
-	}
-
 	@NotNull
 	@Override
 	public PythonLanguage getLanguage()
@@ -107,15 +77,13 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		{
 			className = className.substring(pos + 1);
 		}
-		if(className.endsWith("Impl"))
-		{
-			className = className.substring(0, className.length() - 4);
-		}
+		className = StringUtil.trimEnd(className, "Impl");
 		return className;
 	}
 
 	public void accept(@NotNull PsiElementVisitor visitor)
 	{
+		PyUtil.verboseOnly(() -> PyPsiUtils.assertValid(this));
 		if(visitor instanceof PyElementVisitor)
 		{
 			acceptPyVisitor(((PyElementVisitor) visitor));
@@ -163,6 +131,14 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		return (T) node.getPsi();
 	}
 
+	@Nullable
+	protected <T extends PyElement> T childToPsi(@NotNull TokenSet elTypes)
+	{
+		final ASTNode node = getNode().findChildByType(elTypes);
+		//noinspection unchecked
+		return node != null ? (T) node.getPsi() : null;
+	}
+
 	@NotNull
 	protected <T extends PyElement> T childToPsiNotNull(TokenSet filterSet, int index)
 	{
@@ -206,9 +182,10 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		}
 		offset = getTextRange().getStartOffset() + offset - element.getTextRange().getStartOffset();
 
-		List<PsiReference> referencesList = new ArrayList<PsiReference>();
+		List<PsiReference> referencesList = new ArrayList<>();
 		final PsiFile file = element.getContainingFile();
-		final PyResolveContext resolveContext = file != null ? PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(file)) : PyResolveContext.defaultContext();
+		final PyResolveContext resolveContext = file != null ? PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(file.getProject(), file)) : PyResolveContext
+				.defaultContext();
 		while(element != null)
 		{
 			addReferences(offset, element, referencesList, resolveContext);
@@ -229,5 +206,30 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 			return referencesList.get(0);
 		}
 		return new PsiMultiReference(referencesList.toArray(new PsiReference[referencesList.size()]), referencesList.get(referencesList.size() - 1).getElement());
+	}
+
+	private static void addReferences(int offset, PsiElement element, final Collection<PsiReference> outReferences, PyResolveContext resolveContext)
+	{
+		final PsiReference[] references;
+		if(element instanceof PyReferenceOwner)
+		{
+			final PsiPolyVariantReference reference = ((PyReferenceOwner) element).getReference(resolveContext);
+			references = reference == null ? PsiReference.EMPTY_ARRAY : new PsiReference[]{reference};
+		}
+		else
+		{
+			references = element.getReferences();
+		}
+		for(final PsiReference reference : references)
+		{
+			for(TextRange range : ReferenceRange.getRanges(reference))
+			{
+				assert range != null : reference;
+				if(range.containsOffset(offset))
+				{
+					outReferences.add(reference);
+				}
+			}
+		}
 	}
 }

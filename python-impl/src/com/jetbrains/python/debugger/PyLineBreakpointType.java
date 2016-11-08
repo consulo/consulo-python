@@ -22,6 +22,8 @@ import consulo.lombok.annotations.Lazy;
 
 public class PyLineBreakpointType extends XLineBreakpointTypeBase
 {
+	public static final String ID = "python-line";
+
 	@NotNull
 	@Lazy
 	public static PyLineBreakpointType getInstance()
@@ -31,7 +33,7 @@ public class PyLineBreakpointType extends XLineBreakpointTypeBase
 
 	public PyLineBreakpointType()
 	{
-		super("python-line-breakpoint", "Python Line Breakpoints", new PyDebuggerEditorsProvider());
+		super(ID, "Python Line Breakpoints", new PyDebuggerEditorsProvider());
 	}
 
 	@Override

@@ -16,14 +16,18 @@
 
 package com.jetbrains.python.codeInsight.completion;
 
-import com.intellij.codeInsight.completion.*;
+import static com.intellij.patterns.PlatformPatterns.psiElement;
+
+import org.jetbrains.annotations.NotNull;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.psi.PyParameterList;
-import org.jetbrains.annotations.NotNull;
-
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+import consulo.codeInsight.completion.CompletionProvider;
 
 /**
  * @author yole
@@ -38,7 +42,8 @@ public class PyParameterCompletionContributor extends CompletionContributor {
            new ParameterCompletionProvider("kwargs"));
   }
 
-  private static class ParameterCompletionProvider extends CompletionProvider<CompletionParameters> {
+  private static class ParameterCompletionProvider implements CompletionProvider
+  {
     private String myName;
 
     private ParameterCompletionProvider(String name) {
@@ -46,7 +51,7 @@ public class PyParameterCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    protected void addCompletions(@NotNull CompletionParameters parameters,
+	public void addCompletions(@NotNull CompletionParameters parameters,
                                   ProcessingContext context,
                                   @NotNull CompletionResultSet result) {
       result.addElement(LookupElementBuilder.create(myName).withIcon(AllIcons.Nodes.Parameter));

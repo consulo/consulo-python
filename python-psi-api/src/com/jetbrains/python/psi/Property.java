@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.psi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.toolbox.Maybe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Describes a property, result of either a call to property() or application of @property and friends.
@@ -36,19 +36,19 @@ public interface Property {
    * @return the setter: a method or null if defined, or something else callable if undefined.
    */
   @NotNull
-  Maybe<Callable> getSetter();
+  Maybe<PyCallable> getSetter();
 
   /**
    * @return the getter: a method or null if defined, or something else callable if undefined.
    */
   @NotNull
-  Maybe<Callable> getGetter();
+  Maybe<PyCallable> getGetter();
 
   /**
    * @return the deleter: a method or null if defined, or something else callable if undefined.
    */
   @NotNull
-  Maybe<Callable> getDeleter();
+  Maybe<PyCallable> getDeleter();
 
   /**
    * @return doc string as known to property() call. If null, see getter's doc.
@@ -67,7 +67,7 @@ public interface Property {
    * @return getter, setter, or deleter.
    */
   @NotNull
-  Maybe<Callable> getByDirection(@NotNull AccessDirection direction);
+  Maybe<PyCallable> getByDirection(@NotNull AccessDirection direction);
 
   /**
    * Get the return type of the property getter.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyExceptPartStub;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author dcheryasov
  */
-public interface PyExceptPart extends PyElement, StubBasedPsiElement<PyExceptPartStub>, NameDefiner, PyStatementPart {
-  PyExceptPart[] EMPTY_ARRAY = new PyExceptPart[0];
+public interface PyExceptPart extends PyElement, StubBasedPsiElement<PyExceptPartStub>, PyNamedElementContainer, PyStatementPart
+{
+	PyExceptPart[] EMPTY_ARRAY = new PyExceptPart[0];
 
-  @Nullable
-  PyExpression getExceptClass();
+	@Nullable
+	PyExpression getExceptClass();
 
-  @Nullable
-  PyExpression getTarget();
+	@Nullable
+	PyExpression getTarget();
 }

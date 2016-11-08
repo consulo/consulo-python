@@ -28,7 +28,7 @@ import com.intellij.psi.util.QualifiedName;
  * @author yole
  */
 public interface PyCanonicalPathProvider {
-  ExtensionPointName<PyCanonicalPathProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.canonicalPathProvider");
+  ExtensionPointName<PyCanonicalPathProvider> EP_NAME = ExtensionPointName.create("consulo.python.canonicalPathProvider");
 
   /**
    * Allows to provide a custom qualified name when a specific symbol is going to be imported into a specific file.

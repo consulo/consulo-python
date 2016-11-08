@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,48 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.parsing;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.PsiBuilder;
 import com.jetbrains.python.psi.LanguageLevel;
 
-public class ParsingContext {
-  private final StatementParsing stmtParser;
-  private final ExpressionParsing expressionParser;
-  private final FunctionParsing functionParser;
-  private final PsiBuilder myBuilder;
-  private final LanguageLevel myLanguageLevel;
+public class ParsingContext
+{
+	private final StatementParsing stmtParser;
+	private final ExpressionParsing expressionParser;
+	private final FunctionParsing functionParser;
+	private final PsiBuilder myBuilder;
+	private final LanguageLevel myLanguageLevel;
+	private final Deque<ParsingScope> myScopes;
 
-  public ParsingContext(final PsiBuilder builder, LanguageLevel languageLevel, StatementParsing.FUTURE futureFlag) {
-    myBuilder = builder;
-    myLanguageLevel = languageLevel;
-    stmtParser = new StatementParsing(this, futureFlag);
-    expressionParser = new ExpressionParsing(this);
-    functionParser = new FunctionParsing(this);
-  }
+	public ParsingContext(final PsiBuilder builder, LanguageLevel languageLevel, StatementParsing.FUTURE futureFlag)
+	{
+		myBuilder = builder;
+		myLanguageLevel = languageLevel;
+		stmtParser = new StatementParsing(this, futureFlag);
+		expressionParser = new ExpressionParsing(this);
+		functionParser = new FunctionParsing(this);
+		myScopes = new ArrayDeque<>();
+		myScopes.push(emptyParsingScope());
+	}
 
-  public StatementParsing getStatementParser() {
-    return stmtParser;
-  }
+	@NotNull
+	public ParsingScope popScope()
+	{
+		return myScopes.pop();
+	}
 
-  public ExpressionParsing getExpressionParser() {
-    return expressionParser;
-  }
+	public void pushScope(@NotNull ParsingScope scope)
+	{
+		myScopes.push(scope);
+	}
 
-  public FunctionParsing getFunctionParser() {
-    return functionParser;
-  }
+	@NotNull
+	public ParsingScope getScope()
+	{
+		return myScopes.peek();
+	}
 
-  public PsiBuilder getBuilder() {
-    return myBuilder;
-  }
+	public StatementParsing getStatementParser()
+	{
+		return stmtParser;
+	}
 
-  public LanguageLevel getLanguageLevel() {
-    return myLanguageLevel;
-  }
+	public ExpressionParsing getExpressionParser()
+	{
+		return expressionParser;
+	}
 
-  public ParsingScope emptyParsingScope() {
-    return new ParsingScope();
-  }
+	public FunctionParsing getFunctionParser()
+	{
+		return functionParser;
+	}
+
+	public PsiBuilder getBuilder()
+	{
+		return myBuilder;
+	}
+
+	public LanguageLevel getLanguageLevel()
+	{
+		return myLanguageLevel;
+	}
+
+	public ParsingScope emptyParsingScope()
+	{
+		return new ParsingScope();
+	}
 }

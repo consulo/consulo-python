@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,65 +13,86 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.parsing;
 
 /**
  * @author vlan
  */
-public class ParsingScope {
-  private boolean myFunction = false;
-  private boolean myClass = false;
-  private boolean mySuite = false;
-  private boolean myAfterSemicolon = false;
+public class ParsingScope
+{
+	private boolean myFunction = false;
+	private boolean myClass = false;
+	private boolean mySuite = false;
+	private boolean myAfterSemicolon = false;
+	private boolean myAsync = false;
 
-  public ParsingScope withFunction(boolean flag) {
-    final ParsingScope result = copy();
-    result.myFunction = flag;
-    return result;
-  }
+	protected ParsingScope()
+	{
+	}
 
-  public ParsingScope withClass(boolean flag) {
-    final ParsingScope result = copy();
-    result.myClass = flag;
-    return result;
-  }
+	public ParsingScope withFunction(boolean async)
+	{
+		final ParsingScope result = copy();
+		result.myFunction = true;
+		result.myAsync = async;
+		return result;
+	}
 
-  public ParsingScope withSuite(boolean flag) {
-    final ParsingScope result = copy();
-    result.mySuite = flag;
-    return result;
-  }
+	public ParsingScope withClass()
+	{
+		final ParsingScope result = copy();
+		result.myClass = true;
+		return result;
+	}
 
-  public boolean isFunction() {
-    return myFunction;
-  }
+	public ParsingScope withSuite()
+	{
+		final ParsingScope result = copy();
+		result.mySuite = true;
+		return result;
+	}
 
-  public boolean isClass() {
-    return myClass;
-  }
+	public boolean isFunction()
+	{
+		return myFunction;
+	}
 
-  public boolean isSuite() {
-    return mySuite;
-  }
+	public boolean isClass()
+	{
+		return myClass;
+	}
 
-  public boolean isAfterSemicolon() {
-    return myAfterSemicolon;
-  }
+	public boolean isSuite()
+	{
+		return mySuite;
+	}
 
-  public void setAfterSemicolon(boolean value) {
-    myAfterSemicolon = value;
-  }
+	public boolean isAsync()
+	{
+		return myAsync;
+	}
 
-  protected ParsingScope createInstance() {
-    return new ParsingScope();
-  }
+	public boolean isAfterSemicolon()
+	{
+		return myAfterSemicolon;
+	}
 
-  protected ParsingScope copy() {
-    final ParsingScope result = createInstance();
-    result.myFunction = myFunction;
-    result.myClass = myClass;
-    result.mySuite = mySuite;
-    return result;
-  }
+	public void setAfterSemicolon(boolean value)
+	{
+		myAfterSemicolon = value;
+	}
+
+	protected ParsingScope createInstance()
+	{
+		return new ParsingScope();
+	}
+
+	protected ParsingScope copy()
+	{
+		final ParsingScope result = createInstance();
+		result.myFunction = myFunction;
+		result.myClass = myClass;
+		result.mySuite = mySuite;
+		return result;
+	}
 }

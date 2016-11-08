@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author yole
  */
-public interface PySequenceExpression extends PyExpression{
-  @NotNull
-  PyExpression[] getElements();
+public interface PySequenceExpression extends PyExpression
+{
+	@NotNull
+	PyExpression[] getElements();
+
+	/**
+	 * Calling {@link #getElements()} may take too much time in case of large literals with thousands of elements. If you only need to
+	 * know whether collection is empty, use this method instead.
+	 *
+	 * @return true if sequence expression contains no elements
+	 */
+	boolean isEmpty();
 }

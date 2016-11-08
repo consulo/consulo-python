@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
-public interface PyCollectionType extends PyType {
-  @Nullable
-  PyType getElementType(TypeEvalContext context);
+public interface PyCollectionType extends PyType
+{
+	@NotNull
+	List<PyType> getElementTypes(@NotNull TypeEvalContext context);
+
+	@Nullable
+	PyType getIteratedItemType();
 }

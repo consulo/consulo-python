@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.resolve;
 
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyQualifiedExpression;
 
 /**
- *
  * User : ktisha
  */
-public interface PyReferenceResolveProvider {
-  ExtensionPointName<PyReferenceResolveProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.pyReferenceResolveProvider");
+public interface PyReferenceResolveProvider
+{
+	ExtensionPointName<PyReferenceResolveProvider> EP_NAME = ExtensionPointName.create("consulo.python.pyReferenceResolveProvider");
 
-  /**
-   * Allows to provide a custom resolve result for qualified expression
-   */
-  @NotNull
-  List<RatedResolveResult> resolveName(@NotNull final PyQualifiedExpression element,
-                                       @NotNull final List<PsiElement> definers);
+	/**
+	 * Allows to provide a custom resolve result for qualified expression
+	 */
+	@NotNull
+	List<RatedResolveResult> resolveName(@NotNull final PyQualifiedExpression element);
 }

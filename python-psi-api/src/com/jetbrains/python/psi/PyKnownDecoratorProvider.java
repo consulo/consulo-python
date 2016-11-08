@@ -23,7 +23,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
  * @author yole
  */
 public interface PyKnownDecoratorProvider {
-  ExtensionPointName<PyKnownDecoratorProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.knownDecoratorProvider");
+  ExtensionPointName<PyKnownDecoratorProvider> EP_NAME = ExtensionPointName.create("consulo.python.knownDecoratorProvider");
 
   @Nullable
   String toKnownDecorator(String decoratorName);

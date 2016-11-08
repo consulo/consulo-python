@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyListLiteralExpression;
+import com.jetbrains.python.psi.PyParenthesizedExpression;
+import com.jetbrains.python.psi.PySetLiteralExpression;
 import com.jetbrains.python.psi.PyStarExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.PyTupleExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,21 +37,45 @@ import org.jetbrains.annotations.Nullable;
  * Date: 27.02.2010
  * Time: 14:27:28
  */
-public class PyStarExpressionImpl extends PyElementImpl implements PyStarExpression {
-  public PyStarExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
+public class PyStarExpressionImpl extends PyElementImpl implements PyStarExpression
+{
+	public PyStarExpressionImpl(ASTNode astNode)
+	{
+		super(astNode);
+	}
 
-  @Nullable
-  public PyExpression getExpression() {
-    return PsiTreeUtil.getChildOfType(this, PyExpression.class);
-  }
+	@Nullable
+	public PyExpression getExpression()
+	{
+		return PsiTreeUtil.getChildOfType(this, PyExpression.class);
+	}
 
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
-    return null;
-  }
+	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	{
+		return null;
+	}
 
-  public void acceptPyVisitor(PyElementVisitor visitor) {
-    visitor.visitPyStarExpression(this);
-  }
+	public void acceptPyVisitor(PyElementVisitor visitor)
+	{
+		visitor.visitPyStarExpression(this);
+	}
+
+	public boolean isAssignmentTarget()
+	{
+		return getExpression() instanceof PyTargetExpression;
+	}
+
+	public boolean isUnpacking()
+	{
+		if(isAssignmentTarget())
+		{
+			return false;
+		}
+		PsiElement parent = getParent();
+		while(parent instanceof PyParenthesizedExpression)
+		{
+			parent = parent.getParent();
+		}
+		return parent instanceof PyTupleExpression || parent instanceof PyListLiteralExpression || parent instanceof PySetLiteralExpression;
+	}
 }

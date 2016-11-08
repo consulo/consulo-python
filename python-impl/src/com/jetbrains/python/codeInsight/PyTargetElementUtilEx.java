@@ -21,18 +21,18 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.extensions.CompositeExtensionPointName;
-import com.intellij.codeInsight.TargetElementUtilEx;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyParameter;
-import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyReferenceOwner;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import consulo.codeInsight.TargetElementUtilEx;
+import consulo.extensions.CompositeExtensionPointName;
 
 /**
  * @author yole
@@ -57,11 +57,11 @@ public class PyTargetElementUtilEx extends TargetElementUtilEx.Adapter
 
 		final PsiElement element = ref.getElement();
 		PsiElement result = ref.resolve();
-		Set<PsiElement> visited = new HashSet<PsiElement>();
+		Set<PsiElement> visited = new HashSet<>();
 		visited.add(result);
-		while(result instanceof PyReferenceExpression || result instanceof PyTargetExpression)
+		while(result instanceof PyReferenceOwner && (result instanceof PyReferenceExpression || result instanceof PyTargetExpression))
 		{
-			PsiElement nextResult = ((PyQualifiedExpression) result).getReference(PyResolveContext.noImplicits()).resolve();
+			PsiElement nextResult = ((PyReferenceOwner) result).getReference(PyResolveContext.noImplicits()).resolve();
 			if(nextResult != null && !visited.contains(nextResult) &&
 					PsiTreeUtil.getParentOfType(element, ScopeOwner.class) == PsiTreeUtil.getParentOfType(result, ScopeOwner.class) &&
 					(nextResult instanceof PyReferenceExpression || nextResult instanceof PyTargetExpression || nextResult instanceof PyParameter))

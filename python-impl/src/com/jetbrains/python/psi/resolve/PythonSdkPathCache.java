@@ -26,13 +26,13 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
-import com.intellij.openapi.projectRoots.SdkTableListener;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.WeakHashMap;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
+import consulo.bundle.SdkTableListener;
 
 /**
  * @author yole

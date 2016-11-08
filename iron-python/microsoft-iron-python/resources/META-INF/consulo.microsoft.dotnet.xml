@@ -1,0 +1,13 @@
+<idea-plugin>
+	<extensions defaultExtensionNs="com.intellij">
+		<moduleExtensionProvider key="iron-python"
+								 parentKey="microsoft-dotnet"
+								 icon="/icons/dotnet.png"
+								 name="IronPython"
+								 immutableClass="consulo.ironPython.module.extension.IronPythonModuleExtension"
+								 mutableClass="consulo.ironPython.module.extension.IronPythonMutableModuleExtension"/>
+	</extensions>
+	<extensions defaultExtensionNs="consulo.python">
+		<sdkFlavor implementation="consulo.ironPython.sdk.flavors.IronPythonSdkFlavor"/>
+	</extensions>
+</idea-plugin>

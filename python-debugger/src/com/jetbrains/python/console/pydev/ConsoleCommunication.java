@@ -8,7 +8,8 @@ import com.intellij.util.Function;
 /**
  * @author traff
  */
-public interface ConsoleCommunication {
+public interface ConsoleCommunication
+{
 	@NotNull
 	List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception;
 
@@ -18,6 +19,8 @@ public interface ConsoleCommunication {
 
 	boolean isExecuting();
 
+	boolean needsMore();
+
 	void execInterpreter(ConsoleCodeFragment code, Function<InterpreterResponse, Object> callback);
 
 	void interrupt();
@@ -25,22 +28,27 @@ public interface ConsoleCommunication {
 	void addCommunicationListener(ConsoleCommunicationListener listener);
 
 	void notifyCommandExecuted(boolean more);
+
 	void notifyInputRequested();
 
-	class ConsoleCodeFragment {
+	class ConsoleCodeFragment
+	{
 		private final String myText;
 		private final boolean myIsSingleLine;
 
-		public ConsoleCodeFragment(String text, boolean isSingleLine) {
+		public ConsoleCodeFragment(String text, boolean isSingleLine)
+		{
 			myText = text;
 			myIsSingleLine = isSingleLine;
 		}
 
-		public String getText() {
+		public String getText()
+		{
 			return myText;
 		}
 
-		public boolean isSingleLine() {
+		public boolean isSingleLine()
+		{
 			return myIsSingleLine;
 		}
 	}

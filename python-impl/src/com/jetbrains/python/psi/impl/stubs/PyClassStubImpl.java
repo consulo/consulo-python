@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,56 +13,93 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl.stubs;
 
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import com.jetbrains.python.psi.PyClass;
 import com.intellij.psi.util.QualifiedName;
+import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.stubs.PyClassStub;
-
-import java.util.List;
 
 /**
  * @author max
  */
-public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub {
-  private final String myName;
-  private final QualifiedName[] mySuperClasses;
-  private final List<String> mySlots;
-  private final String myDocString;
+public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
+{
 
-  public PyClassStubImpl(final String name, StubElement parentStub, final QualifiedName[] superClasses, final List<String> slots,
-                         String docString, IStubElementType stubElementType) {
-    super(parentStub, stubElementType);
-    myName = name;
-    mySuperClasses = superClasses;
-    mySlots = slots;
-    myDocString = docString;
-  }
+	@Nullable
+	private final String myName;
 
-  public String getName() {
-    return myName;
-  }
+	@NotNull
+	private final Map<QualifiedName, QualifiedName> mySuperClasses;
 
-  public QualifiedName[] getSuperClasses() {
-    return mySuperClasses;
-  }
+	@Nullable
+	private final QualifiedName myMetaClass;
 
-  @Override
-  public List<String> getSlots() {
-    return mySlots;
-  }
+	@Nullable
+	private final List<String> mySlots;
 
-  @Override
-  public String getDocString() {
-    return myDocString;
-  }
+	@Nullable
+	private final String myDocString;
 
-  @Override
-  public String toString() {
-    return "PyClassStub(" + myName + ")";
-  }
+	public PyClassStubImpl(@Nullable String name,
+			@Nullable StubElement parentStub,
+			@NotNull Map<QualifiedName, QualifiedName> superClasses,
+			@Nullable QualifiedName metaClass,
+			@Nullable List<String> slots,
+			@Nullable String docString,
+			@NotNull IStubElementType stubElementType)
+	{
+		super(parentStub, stubElementType);
+		myName = name;
+		mySuperClasses = superClasses;
+		myMetaClass = metaClass;
+		mySlots = slots;
+		myDocString = docString;
+	}
+
+	@Nullable
+	public String getName()
+	{
+		return myName;
+	}
+
+	@NotNull
+	public Map<QualifiedName, QualifiedName> getSuperClasses()
+	{
+		return mySuperClasses;
+	}
+
+	@Nullable
+	@Override
+	public QualifiedName getMetaClass()
+	{
+		return myMetaClass;
+	}
+
+	@Nullable
+	@Override
+	public List<String> getSlots()
+	{
+		return mySlots;
+	}
+
+	@Nullable
+	@Override
+	public String getDocString()
+	{
+		return myDocString;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "PyClassStub(" + myName + ")";
+	}
 }

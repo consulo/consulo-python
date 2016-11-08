@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.rest.sphinx;
 
+import static com.jetbrains.python.sdk.PythonEnvUtil.resetHomePathChanges;
 import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonIOEncoding;
 import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonUnbuffered;
 
 import java.awt.Dimension;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.consulo.python.buildout.module.extension.BuildoutModuleExtension;
+import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
@@ -44,150 +45,172 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.python.PythonHelper;
 import com.jetbrains.python.ReSTService;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.run.PythonProcessRunner;
 import com.jetbrains.python.run.PythonTracebackFilter;
 import com.jetbrains.python.sdk.PythonSdkType;
-import com.jetbrains.rest.RestPythonUtil;
 
 /**
  * User : catherine
  * base command for the sphinx actions
  * asks for the "Sphinx documentation sources"
  */
-public class SphinxBaseCommand {
+public class SphinxBaseCommand
+{
 
-  protected boolean setWorkDir(Module module) {
-    final ReSTService service = ReSTService.getInstance(module);
-    String workDir = service.getWorkdir();
-    if (workDir.isEmpty()) {
-      AskForWorkDir dialog = new AskForWorkDir(module.getProject());
-      dialog.show();
-      if(!dialog.isOK())
-        return false;
-      service.setWorkdir(dialog.getInputFile());
-    }
-    return true;
-  }
+	protected boolean setWorkDir(Module module)
+	{
+		final ReSTService service = ReSTService.getInstance(module);
+		String workDir = service.getWorkdir();
+		if(workDir.isEmpty())
+		{
+			AskForWorkDir dialog = new AskForWorkDir(module.getProject());
+			if(!dialog.showAndGet())
+			{
+				return false;
+			}
+			service.setWorkdir(dialog.getInputFile());
+		}
+		return true;
+	}
 
-  public static class AskForWorkDir extends DialogWrapper {
-    private TextFieldWithBrowseButton myInputFile;
-    private JPanel myPanel;
+	public static class AskForWorkDir extends DialogWrapper
+	{
+		private TextFieldWithBrowseButton myInputFile;
+		private JPanel myPanel;
 
-    private AskForWorkDir(Project project) {
-      super(project);
+		private AskForWorkDir(Project project)
+		{
+			super(project);
 
-      setTitle("Set Sphinx Working Directory: ");
-      init();
-      VirtualFile baseDir =  project.getBaseDir();
-      String path = baseDir != null? baseDir.getPath() : "";
-      myInputFile.setText(path);
-      myInputFile.setEditable(false);
-      myInputFile.addBrowseFolderListener("Choose sphinx working directory (containing makefile): ", null, project,
-                                          FileChooserDescriptorFactory.createSingleFolderDescriptor());
+			setTitle("Set Sphinx Working Directory: ");
+			init();
+			VirtualFile baseDir = project.getBaseDir();
+			String path = baseDir != null ? baseDir.getPath() : "";
+			myInputFile.setText(path);
+			myInputFile.setEditable(false);
+			myInputFile.addBrowseFolderListener("Choose sphinx working directory (containing makefile): ", null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-      myPanel.setPreferredSize(new Dimension(600, 20));
-    }
+			myPanel.setPreferredSize(new Dimension(600, 20));
+		}
 
-    @Override
-    protected JComponent createCenterPanel() {
-      return myPanel;
-    }
+		@Override
+		protected JComponent createCenterPanel()
+		{
+			return myPanel;
+		}
 
-    public String getInputFile() {
-      return myInputFile.getText();
-    }
-  }
+		public String getInputFile()
+		{
+			return myInputFile.getText();
+		}
+	}
 
-  public void execute(@NotNull final Module module) {
-    final Project project = module.getProject();
+	public void execute(@NotNull final Module module)
+	{
+		final Project project = module.getProject();
 
-    try {
-      if (!setWorkDir(module)) return;
-      final ProcessHandler process = createProcess(module);
-      new RunContentExecutor(project, process)
-        .withFilter(new PythonTracebackFilter(project))
-        .withTitle("reStructuredText")
-        .withRerun(new Runnable() {
-          @Override
-          public void run() {
-            execute(module);
-          }
-        })
-        .withAfterCompletion(getAfterTask(module))
-        .run();
-    }
-    catch (ExecutionException e) {
-      Messages.showErrorDialog(e.getMessage(), "ReStructuredText Error");
-    }
-  }
+		try
+		{
+			if(!setWorkDir(module))
+			{
+				return;
+			}
+			final ProcessHandler process = createProcess(module);
+			new RunContentExecutor(project, process).withFilter(new PythonTracebackFilter(project)).withTitle("reStructuredText").withRerun(() -> execute(module)).withAfterCompletion(getAfterTask
+					(module)).run();
+		}
+		catch(ExecutionException e)
+		{
+			Messages.showErrorDialog(e.getMessage(), "ReStructuredText Error");
+		}
+	}
 
-  @Nullable
-  protected Runnable getAfterTask(final Module module) {
-    return new Runnable() {
-      public void run() {
-        final ReSTService service = ReSTService.getInstance(module);
-        LocalFileSystem.getInstance().refreshAndFindFileByPath(service.getWorkdir());
-      }
-    };
-  }
+	@Nullable
+	protected Runnable getAfterTask(final Module module)
+	{
+		return () -> {
+			final ReSTService service = ReSTService.getInstance(module);
+			LocalFileSystem.getInstance().refreshAndFindFileByPath(service.getWorkdir());
+		};
+	}
 
-  private ProcessHandler createProcess(Module module) throws ExecutionException {
-    GeneralCommandLine commandLine = createCommandLine(module, Collections.<String>emptyList());
-    ProcessHandler handler = PythonProcessRunner.createProcess(commandLine);
-    ProcessTerminatedListener.attach(handler);
-    return handler;
-  }
+	private ProcessHandler createProcess(Module module) throws ExecutionException
+	{
+		GeneralCommandLine commandLine = createCommandLine(module, Collections.<String>emptyList());
+		ProcessHandler handler = PythonProcessRunner.createProcess(commandLine, false);
+		ProcessTerminatedListener.attach(handler);
+		return handler;
+	}
 
-  protected GeneralCommandLine createCommandLine(Module module, List<String> params) throws ExecutionException {
-    GeneralCommandLine cmd = new GeneralCommandLine();
+	protected GeneralCommandLine createCommandLine(Module module, List<String> params) throws ExecutionException
+	{
+		Sdk sdk = PythonSdkType.findPythonSdk(module);
+		if(sdk == null)
+		{
+			throw new ExecutionException("No sdk specified");
+		}
 
-    Sdk sdk = PythonSdkType.findPythonSdk(module);
-    if (sdk == null) {
-      throw new ExecutionException("No sdk specified");
-    }
+		ReSTService service = ReSTService.getInstance(module);
 
-    ReSTService service = ReSTService.getInstance(module);
-    cmd.setWorkDirectory(service.getWorkdir().isEmpty()? module.getProject().getBaseDir().getPath(): service.getWorkdir());
-    PythonCommandLineState.createStandardGroupsIn(cmd);
-    ParamsGroup script_params = cmd.getParametersList().getParamsGroup(PythonCommandLineState.GROUP_SCRIPT);
-    assert script_params != null;
+		String sdkHomePath = sdk.getHomePath();
 
-    String commandPath = getCommandPath(sdk);
-    if (commandPath == null) {
-      throw new ExecutionException("Cannot find sphinx-quickstart.");
-    }
-    cmd.setExePath(commandPath);
+		GeneralCommandLine cmd = new GeneralCommandLine();
+		if(sdkHomePath != null)
+		{
+			final String runnerName = "sphinx-quickstart" + (SystemInfo.isWindows ? ".exe" : "");
+			String executablePath = PythonSdkType.getExecutablePath(sdkHomePath, runnerName);
+			if(executablePath != null)
+			{
+				cmd.setExePath(executablePath);
+			}
+			else
+			{
+				cmd = PythonHelper.LOAD_ENTRY_POINT.newCommandLine(sdkHomePath, Lists.<String>newArrayList());
+			}
+		}
 
-    if (params != null) {
-      for (String p : params) {
-        script_params.addParameter(p);
-      }
-    }
+		cmd.setWorkDirectory(service.getWorkdir().isEmpty() ? module.getProject().getBaseDir().getPath() : service.getWorkdir());
+		PythonCommandLineState.createStandardGroups(cmd);
+		ParamsGroup scriptParams = cmd.getParametersList().getParamsGroup(PythonCommandLineState.GROUP_SCRIPT);
+		assert scriptParams != null;
 
-    cmd.setPassParentEnvironment(true);
-    setPythonIOEncoding(cmd.getEnvironment(), "utf-8");
-    setPythonUnbuffered(cmd.getEnvironment());
+		if(params != null)
+		{
+			for(String p : params)
+			{
+				scriptParams.addParameter(p);
+			}
+		}
 
-    List<String> pathList = Lists.newArrayList(PythonCommandLineState.getAddedPaths(sdk));
-    pathList.addAll(PythonCommandLineState.collectPythonPath(module));
+		final Map<String, String> env = cmd.getEnvironment();
+		setPythonIOEncoding(env, "utf-8");
+		setPythonUnbuffered(env);
+		if(sdkHomePath != null)
+		{
+			resetHomePathChanges(sdkHomePath, env);
+		}
+		env.put("PYCHARM_EP_DIST", "Sphinx");
+		env.put("PYCHARM_EP_NAME", "sphinx-quickstart");
 
-    PythonCommandLineState.initPythonPath(cmd, true, pathList, sdk.getHomePath());
+		List<String> pathList = Lists.newArrayList(PythonCommandLineState.getAddedPaths(sdk));
+		pathList.addAll(PythonCommandLineState.collectPythonPath(module));
 
-    PythonSdkType.patchCommandLineForVirtualenv(cmd, sdk.getHomePath(), true);
-    BuildoutModuleExtension facet = ModuleUtilCore.getExtension(module, BuildoutModuleExtension.class);
-    if (facet != null) {
-      facet.patchCommandLineForBuildout(cmd);
-    }
+		PythonCommandLineState.initPythonPath(cmd, true, pathList, sdkHomePath);
 
-    return cmd;
-  }
+		PythonSdkType.patchCommandLineForVirtualenv(cmd, sdkHomePath, true);
+		BuildoutModuleExtension facet = ModuleUtilCore.getExtension(module, BuildoutModuleExtension.class);
+		if(facet != null)
+		{
+			facet.patchCommandLineForBuildout(cmd);
+		}
 
-  @Nullable
-  private static String getCommandPath(Sdk sdk) {
-    return RestPythonUtil.findQuickStart(sdk);
-  }
+		return cmd;
+	}
+
 }

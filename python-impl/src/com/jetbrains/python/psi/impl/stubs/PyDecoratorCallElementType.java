@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,53 +13,73 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl.stubs;
 
+import java.io.IOException;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.jetbrains.python.psi.PyStubElementType;
-import com.jetbrains.python.psi.PyDecorator;
-import com.jetbrains.python.psi.impl.PyDecoratorImpl;
 import com.intellij.psi.util.QualifiedName;
+import com.jetbrains.python.psi.PyDecorator;
+import com.jetbrains.python.psi.PyStubElementType;
+import com.jetbrains.python.psi.impl.PyDecoratorImpl;
 import com.jetbrains.python.psi.stubs.PyDecoratorStub;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
+import com.jetbrains.python.psi.stubs.PyDecoratorStubIndex;
 
 /**
  * Actual serialized data of a decorator call.
  * User: dcheryasov
  * Date: Dec 18, 2008 9:09:57 PM
  */
-public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStub, PyDecorator>  {
-  public PyDecoratorCallElementType() {
-    super("DECORATOR_CALL");
-  }
+public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStub, PyDecorator>
+{
+	public PyDecoratorCallElementType()
+	{
+		super("DECORATOR_CALL");
+	}
 
-  public PsiElement createElement(@NotNull ASTNode node) {
-    return new PyDecoratorImpl(node);
-  }
+	@NotNull
+	public PsiElement createElement(@NotNull ASTNode node)
+	{
+		return new PyDecoratorImpl(node);
+	}
 
-  public PyDecorator createPsi(@NotNull PyDecoratorStub stub) {
-    return new PyDecoratorImpl(stub);
-  }
+	public PyDecorator createPsi(@NotNull PyDecoratorStub stub)
+	{
+		return new PyDecoratorImpl(stub);
+	}
 
-  public PyDecoratorStub createStub(@NotNull PyDecorator psi, StubElement parentStub) {
-    return new PyDecoratorStubImpl(psi.getQualifiedName(), parentStub);
-  }
+	@NotNull
+	public PyDecoratorStub createStub(@NotNull PyDecorator psi, StubElement parentStub)
+	{
+		return new PyDecoratorStubImpl(psi.getQualifiedName(), parentStub);
+	}
 
-  public void serialize(@NotNull PyDecoratorStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-    QualifiedName.serialize(stub.getQualifiedName(), dataStream);
-  }
+	public void serialize(@NotNull PyDecoratorStub stub, @NotNull StubOutputStream dataStream) throws IOException
+	{
+		QualifiedName.serialize(stub.getQualifiedName(), dataStream);
+	}
 
-  @NotNull
-  public PyDecoratorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-    QualifiedName q_name = QualifiedName.deserialize(dataStream);
-    return new PyDecoratorStubImpl(q_name, parentStub);
-  }
+	@Override
+	public void indexStub(@NotNull final PyDecoratorStub stub, @NotNull final IndexSink sink)
+	{
+		// Index decorators stub by name (todo: index by FQDN as well!)
+		final QualifiedName qualifiedName = stub.getQualifiedName();
+		if(qualifiedName != null)
+		{
+			sink.occurrence(PyDecoratorStubIndex.KEY, qualifiedName.toString());
+		}
+	}
 
+	@NotNull
+	public PyDecoratorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException
+	{
+		QualifiedName q_name = QualifiedName.deserialize(dataStream);
+		return new PyDecoratorStubImpl(q_name, parentStub);
+	}
 }

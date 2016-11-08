@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
 import java.util.Collections;
@@ -27,8 +26,8 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.PyCallSiteExpression;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyCallableParameter;
@@ -39,57 +38,71 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 /**
  * @author yole
  */
-public class PyJavaMethodType implements PyCallableType {
-  private final PsiMethod myMethod;
+public class PyJavaMethodType implements PyCallableType
+{
+	private final PsiMethod myMethod;
 
-  public PyJavaMethodType(PsiMethod method) {
-    myMethod = method;
-  }
+	public PyJavaMethodType(PsiMethod method)
+	{
+		myMethod = method;
+	}
 
-  @Override
-  public boolean isCallable() {
-    return true;
-  }
+	@Override
+	public boolean isCallable()
+	{
+		return true;
+	}
 
-  @Nullable
-  @Override
-  public PyType getCallType(@NotNull TypeEvalContext context, @Nullable PyQualifiedExpression callSite) {
-    return PyJavaTypeProvider.asPyType(myMethod.getReturnType());
-  }
+	@Nullable
+	@Override
+	public PyType getReturnType(@NotNull TypeEvalContext context)
+	{
+		return PyJavaTypeProvider.asPyType(myMethod.getReturnType());
+	}
 
-  @Nullable
-  @Override
-  public List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context) {
-    return null;
-  }
+	@Nullable
+	@Override
+	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	{
+		return getReturnType(context);
+	}
 
-  @Nullable
-  @Override
-  public List<? extends RatedResolveResult> resolveMember(@NotNull String name,
-                                                          @Nullable PyExpression location,
-                                                          @NotNull AccessDirection direction,
-                                                          @NotNull PyResolveContext resolveContext) {
-    return Collections.emptyList();
-  }
+	@Nullable
+	@Override
+	public List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context)
+	{
+		return null;
+	}
 
-  @Override
-  public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
+	@Nullable
+	@Override
+	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	{
+		return Collections.emptyList();
+	}
 
-  @Nullable
-  @Override
-  public String getName() {
-    final PsiClass cls = myMethod.getContainingClass();
-    return "Java method(" + (cls != null ? cls.getQualifiedName() : cls) + "." + myMethod.getName() + ")";
-  }
+	@Override
+	public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context)
+	{
+		return ArrayUtil.EMPTY_OBJECT_ARRAY;
+	}
 
-  @Override
-  public boolean isBuiltin(TypeEvalContext context) {
-    return false;
-  }
+	@Nullable
+	@Override
+	public String getName()
+	{
+		final PsiClass cls = myMethod.getContainingClass();
+		return "Java method(" + (cls != null ? cls.getQualifiedName() : cls) + "." + myMethod.getName() + ")";
+	}
 
-  @Override
-  public void assertValid(String message) {
-  }
+	@Override
+	public boolean isBuiltin()
+	{
+		return false;
+	}
+
+	@Override
+	public void assertValid(String message)
+	{
+	}
 }

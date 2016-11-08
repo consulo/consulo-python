@@ -28,7 +28,7 @@ import com.jetbrains.python.psi.PyFunction;
  * @author yole
  */
 public interface PyKeywordArgumentProvider {
-  ExtensionPointName<PyKeywordArgumentProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.keywordArgumentProvider");
+  ExtensionPointName<PyKeywordArgumentProvider> EP_NAME = ExtensionPointName.create("consulo.python.keywordArgumentProvider");
 
   List<String> getKeywordArguments(PyFunction function, PyCallExpression callExpr);
 }

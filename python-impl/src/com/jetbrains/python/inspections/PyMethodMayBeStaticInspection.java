@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.inspections;
 
+import java.util.List;
+import java.util.Locale;
+
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -28,106 +33,164 @@ import com.jetbrains.python.inspections.quickfix.PyMakeMethodStaticQuickFix;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.search.PyOverridingMethodsSearch;
 import com.jetbrains.python.psi.search.PySuperMethodsSearch;
-import com.jetbrains.python.testing.PythonUnitTestUtil;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * User: ktisha
- *
  */
-public class PyMethodMayBeStaticInspection extends PyInspection {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.method.may.be.static");
-  }
+public class PyMethodMayBeStaticInspection extends PyInspection
+{
+	@Nls
+	@NotNull
+	@Override
+	public String getDisplayName()
+	{
+		return PyBundle.message("INSP.NAME.method.may.be.static");
+	}
 
-  @NotNull
-  @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
-    return new Visitor(holder, session);
-  }
+	@NotNull
+	@Override
+	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	{
+		return new Visitor(holder, session);
+	}
 
 
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
+	private static class Visitor extends PyInspectionVisitor
+	{
+		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		{
+			super(holder, session);
+		}
 
-    @Override
-    public void visitPyFunction(PyFunction node) {
-      if (PyNames.getBuiltinMethods(LanguageLevel.forElement(node)).containsKey(node.getName())) return;
-      final PyClass containingClass = node.getContainingClass();
-      if (containingClass == null) return;
-      if (PythonUnitTestUtil.isUnitTestCaseClass(containingClass)) return;
-      final Collection<PsiElement> supers = PySuperMethodsSearch.search(node).findAll();
-      if (!supers.isEmpty()) return;
-      final Collection<PyFunction> overrides = PyOverridingMethodsSearch.search(node, true).findAll();
-      if (!overrides.isEmpty()) return;
-      if (PyUtil.isDecoratedAsAbstract(node) || node.getModifier() != null) return;
-      final Property property = containingClass.findPropertyByCallable(node);
-      if (property != null) return;
+		@Override
+		public void visitPyFunction(PyFunction node)
+		{
+			if(PyNames.getBuiltinMethods(LanguageLevel.forElement(node)).containsKey(node.getName()))
+			{
+				return;
+			}
+			final PyClass containingClass = node.getContainingClass();
+			if(containingClass == null)
+			{
+				return;
+			}
+			final PsiElement firstSuper = PySuperMethodsSearch.search(node, myTypeEvalContext).findFirst();
+			if(firstSuper != null)
+			{
+				return;
+			}
+			final PyFunction firstOverride = PyOverridingMethodsSearch.search(node, true).findFirst();
+			if(firstOverride != null)
+			{
+				return;
+			}
+			final PyDecoratorList decoratorList = node.getDecoratorList();
+			if(decoratorList != null)
+			{
+				return;
+			}
+			if(node.getModifier() != null)
+			{
+				return;
+			}
+			final Property property = containingClass.findPropertyByCallable(node);
+			if(property != null)
+			{
+				return;
+			}
+			final List<PyAssignmentStatement> attributes = node.findAttributes();
+			if(!attributes.isEmpty())
+			{
+				return;
+			}
+			if(isTestElement(node))
+			{
+				return;
+			}
 
-      final PyStatementList statementList = node.getStatementList();
-      if (statementList == null) return;
+			final PyStatementList statementList = node.getStatementList();
+			final PyStatement[] statements = statementList.getStatements();
 
-      final PyStatement[] statements = statementList.getStatements();
+			if(statements.length == 1 && statements[0] instanceof PyPassStatement)
+			{
+				return;
+			}
 
-      if (statements.length == 1 && statements[0] instanceof PyPassStatement) return;
+			final PyParameter[] parameters = node.getParameterList().getParameters();
 
-      final PyParameter[] parameters = node.getParameterList().getParameters();
+			final String selfName;
+			if(parameters.length > 0)
+			{
+				final String name = parameters[0].getName();
+				selfName = name != null ? name : parameters[0].getText();
+			}
+			else
+			{
+				selfName = PyNames.CANONICAL_SELF;
+			}
 
-      final String selfName;
-      if (parameters.length > 0) {
-        final String name = parameters[0].getName();
-        selfName = name != null ? name : parameters[0].getText();
-      }
-      else {
-        selfName = PyNames.CANONICAL_SELF;
-      }
+			final boolean[] mayBeStatic = {true};
+			PyRecursiveElementVisitor visitor = new PyRecursiveElementVisitor()
+			{
+				@Override
+				public void visitPyRaiseStatement(PyRaiseStatement node)
+				{
+					super.visitPyRaiseStatement(node);
+					final PyExpression[] expressions = node.getExpressions();
+					if(expressions.length == 1)
+					{
+						final PyExpression expression = expressions[0];
+						if(expression instanceof PyCallExpression)
+						{
+							final PyExpression callee = ((PyCallExpression) expression).getCallee();
+							if(callee != null && PyNames.NOT_IMPLEMENTED_ERROR.equals(callee.getText()))
+							{
+								mayBeStatic[0] = false;
+							}
+						}
+						else if(PyNames.NOT_IMPLEMENTED_ERROR.equals(expression.getText()))
+						{
+							mayBeStatic[0] = false;
+						}
+					}
+				}
 
-      final boolean[] mayBeStatic = {true};
-      PyRecursiveElementVisitor visitor = new PyRecursiveElementVisitor() {
-        @Override
-        public void visitPyRaiseStatement(PyRaiseStatement node) {
-          super.visitPyRaiseStatement(node);
-          final PyExpression[] expressions = node.getExpressions();
-          if (expressions.length == 1) {
-            final PyExpression expression = expressions[0];
-            if (expression instanceof PyCallExpression) {
-              final PyExpression callee = ((PyCallExpression)expression).getCallee();
-              if (callee != null && PyNames.NOT_IMPLEMENTED_ERROR.equals(callee.getText()))
-                mayBeStatic[0] = false;
-            }
-            else if (PyNames.NOT_IMPLEMENTED_ERROR.equals(expression.getText())) {
-              mayBeStatic[0] = false;
-            }
-          }
-        }
+				@Override
+				public void visitPyReferenceExpression(PyReferenceExpression node)
+				{
+					super.visitPyReferenceExpression(node);
+					if(selfName.equals(node.getName()))
+					{
+						mayBeStatic[0] = false;
+					}
+				}
 
-        @Override
-        public void visitPyReferenceExpression(PyReferenceExpression node) {
-          super.visitPyReferenceExpression(node);
-          if (selfName.equals(node.getName())) {
-            mayBeStatic[0] = false;
-          }
+				@Override
+				public void visitPyCallExpression(PyCallExpression node)
+				{
+					super.visitPyCallExpression(node);
+					if(LanguageLevel.forElement(node).isAtLeast(LanguageLevel.PYTHON30) && node.isCalleeText(PyNames.SUPER))
+					{
+						mayBeStatic[0] = false;
+					}
+				}
+			};
+			node.accept(visitor);
+			final PsiElement identifier = node.getNameIdentifier();
+			if(mayBeStatic[0] && identifier != null)
+			{
+				registerProblem(identifier, PyBundle.message("INSP.method.may.be.static"), ProblemHighlightType.WEAK_WARNING, null, new PyMakeMethodStaticQuickFix(), new
+						PyMakeFunctionFromMethodQuickFix());
+			}
+		}
+	}
 
-        }
+	private static boolean isTestElement(@NotNull PyFunction node)
+	{
+		final String methodName = node.getName();
+		final PyClass pyClass = node.getContainingClass();
+		final String className = pyClass == null ? null : pyClass.getName();
 
-      };
-      node.accept(visitor);
-      final PsiElement identifier = node.getNameIdentifier();
-      if (mayBeStatic[0] && identifier != null) {
-        registerProblem(identifier, PyBundle.message("INSP.method.may.be.static"), ProblemHighlightType.WEAK_WARNING,
-                        null, new PyMakeMethodStaticQuickFix(), new PyMakeFunctionFromMethodQuickFix());
-      }
-    }
-  }
+		return methodName != null && className != null && methodName.toLowerCase(Locale.getDefault()).startsWith("test") && className.toLowerCase(Locale.getDefault()).startsWith("test");
+	}
 }

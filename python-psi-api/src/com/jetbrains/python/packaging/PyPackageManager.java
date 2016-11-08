@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.packaging;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
+import java.util.List;
+import java.util.Set;
 
-import java.awt.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.ExecutionException;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.Key;
 
 /**
  * @author yole
  */
-public abstract class PyPackageManager {
-  public static PyPackageManager getInstance(Sdk sdk) {
-    return PyPackageManagers.getInstance().forSdk(sdk);
-  }
+public abstract class PyPackageManager
+{
+	public static final Key<Boolean> RUNNING_PACKAGING_TASKS = Key.create("PyPackageRequirementsInspection.RunningPackagingTasks");
 
-  /**
-   * Returns true if pip is installed for the specific interpreter; returns false if pip is not
-   * installed or if it is not currently known whether it's installed (e.g. for a remote interpreter).
-   *
-   * @return true if pip is known to be installed, false otherwise.
-   */
-  public abstract boolean hasPip();
-  public abstract void install(String requirementString) throws PyExternalProcessException;
-  public abstract void showInstallationError(Project project, String title, String description);
-  public abstract void showInstallationError(Component owner, String title, String description);
-  public abstract void refresh();
+	public static final String USE_USER_SITE = "--user";
+
+	@NotNull
+	public static PyPackageManager getInstance(@NotNull Sdk sdk)
+	{
+		return PyPackageManagers.getInstance().forSdk(sdk);
+	}
+
+	public abstract void installManagement() throws ExecutionException;
+
+	public abstract boolean hasManagement() throws ExecutionException;
+
+	public abstract void install(@NotNull String requirementString) throws ExecutionException;
+
+	public abstract void install(@NotNull List<PyRequirement> requirements, @NotNull List<String> extraArgs) throws ExecutionException;
+
+	public abstract void uninstall(@NotNull List<PyPackage> packages) throws ExecutionException;
+
+	public abstract void refresh();
+
+	@NotNull
+	public abstract String createVirtualEnv(@NotNull String destinationDir, boolean useGlobalSite) throws ExecutionException;
+
+	@Nullable
+	public abstract List<PyPackage> getPackages();
+
+	@NotNull
+	public abstract List<PyPackage> refreshAndGetPackages(boolean alwaysRefresh) throws ExecutionException;
+
+	@Nullable
+	public abstract List<PyRequirement> getRequirements(@NotNull Module module);
+
+	@NotNull
+	public abstract Set<PyPackage> getDependents(@NotNull PyPackage pkg) throws ExecutionException;
 }

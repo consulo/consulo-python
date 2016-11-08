@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.debugger;
 
 import com.intellij.execution.console.LanguageConsoleView;
@@ -25,39 +24,45 @@ import com.jetbrains.python.console.pydev.ConsoleCommunication;
 /**
  * @author traff
  */
-public class PydevDebugConsoleExecuteActionHandler extends PydevConsoleExecuteActionHandler implements XDebugSessionListener {
+public class PydevDebugConsoleExecuteActionHandler extends PydevConsoleExecuteActionHandler implements XDebugSessionListener
+{
 
-  public PydevDebugConsoleExecuteActionHandler(LanguageConsoleView consoleView,
-                                               ProcessHandler myProcessHandler,
-                                               ConsoleCommunication consoleCommunication) {
-    super(consoleView, myProcessHandler, consoleCommunication);
-  }
+	public PydevDebugConsoleExecuteActionHandler(LanguageConsoleView consoleView, ProcessHandler myProcessHandler, ConsoleCommunication consoleCommunication)
+	{
+		super(consoleView, myProcessHandler, consoleCommunication);
+	}
 
-  @Override
-  protected String getConsoleIsNotEnabledMessage() {
-    return "Pause the process to use command-line.";
-  }
+	@Override
+	protected String getConsoleIsNotEnabledMessage()
+	{
+		return "Pause the process to use command-line.";
+	}
 
-  @Override
-  public void sessionPaused() {
-    setEnabled(true);
-  }
+	@Override
+	public void sessionPaused()
+	{
+		setEnabled(true);
+	}
 
-  @Override
-  public void sessionResumed() {
-    setEnabled(false);
-  }
+	@Override
+	public void sessionResumed()
+	{
+		setEnabled(false);
+	}
 
-  @Override
-  public void sessionStopped() {
-    setEnabled(false);
-  }
+	@Override
+	public void sessionStopped()
+	{
+		setEnabled(false);
+	}
 
-  @Override
-  public void stackFrameChanged() {
-  }
+	@Override
+	public void stackFrameChanged()
+	{
+	}
 
-  @Override
-  public void beforeSessionResume() {
-  }
+	@Override
+	public void beforeSessionResume()
+	{
+	}
 }

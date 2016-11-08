@@ -56,7 +56,7 @@ import icons.PythonIcons;
  */
 public abstract class PythonSdkFlavor
 {
-	public static final ExtensionPointName<PythonSdkFlavor> EP_NAME = ExtensionPointName.create("org.consulo.python.sdkFlavor");
+	public static final ExtensionPointName<PythonSdkFlavor> EP_NAME = ExtensionPointName.create("consulo.python.sdkFlavor");
 	private static final Logger LOG = Logger.getInstance(PythonSdkFlavor.class);
 
 	public static Collection<String> appendSystemPythonPath(@NotNull Collection<String> pythonPath)
@@ -261,6 +261,12 @@ public abstract class PythonSdkFlavor
 	public ProcessHandler createProcessHandler(GeneralCommandLine commandLine, boolean withMediator) throws ExecutionException
 	{
 		return PythonProcessHandler.createDefaultProcessHandler(commandLine, withMediator);
+	}
+
+	public static void setupEncodingEnvs(Map<String, String> envs, @NotNull Charset charset)
+	{
+		final String encoding = charset.name();
+		PythonEnvUtil.setPythonIOEncoding(envs, encoding);
 	}
 
 	@SuppressWarnings({"MethodMayBeStatic"})

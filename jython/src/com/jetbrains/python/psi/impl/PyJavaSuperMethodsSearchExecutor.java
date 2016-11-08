@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,20 +31,28 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 /**
  * @author yole
  */
-public class PyJavaSuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters> {
-  public boolean execute(@NotNull final PySuperMethodsSearch.SearchParameters queryParameters, @NotNull final Processor<PsiElement> consumer) {
-    PyFunction func = queryParameters.getDerivedMethod();
-    PyClass containingClass = func.getContainingClass();
-    if (containingClass != null) {
-      for (PyClassLikeType type : containingClass.getSuperClassTypes(TypeEvalContext.codeInsightFallback())) {
-        if (type instanceof PyJavaClassType) {
-          final PsiClass psiClass = ((PyJavaClassType)type).getPsiClass();
-          PsiMethod[] methods = psiClass.findMethodsByName(func.getName(), true);
-          // the Python method actually does override/implement all of Java super methods with the same name
-          if (!ContainerUtil.process(methods, consumer)) return false;
-        }
-      }
-    }
-    return true;
-  }
+public class PyJavaSuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters>
+{
+	public boolean execute(@NotNull final PySuperMethodsSearch.SearchParameters queryParameters, @NotNull final Processor<PsiElement> consumer)
+	{
+		PyFunction func = queryParameters.getDerivedMethod();
+		PyClass containingClass = func.getContainingClass();
+		if(containingClass != null)
+		{
+			for(PyClassLikeType type : containingClass.getSuperClassTypes(TypeEvalContext.codeInsightFallback(containingClass.getProject())))
+			{
+				if(type instanceof PyJavaClassType)
+				{
+					final PsiClass psiClass = ((PyJavaClassType) type).getPsiClass();
+					PsiMethod[] methods = psiClass.findMethodsByName(func.getName(), true);
+					// the Python method actually does override/implement all of Java super methods with the same name
+					if(!ContainerUtil.process(methods, consumer))
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 }

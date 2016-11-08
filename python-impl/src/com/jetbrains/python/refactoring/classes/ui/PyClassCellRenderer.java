@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.refactoring.classes.ui;
 
 import java.awt.Component;
@@ -24,53 +23,57 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import org.jetbrains.annotations.Nullable;
-import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.openapi.util.Iconable;
 import com.jetbrains.python.psi.PyClass;
+import consulo.ide.IconDescriptorUpdaters;
 
 /**
  * @author Dennis.Ushakov
  */
-public class PyClassCellRenderer extends DefaultListCellRenderer {
-  private final boolean myShowReadOnly;
-  public PyClassCellRenderer() {
-    setOpaque(true);
-    myShowReadOnly = true;
-  }
+public class PyClassCellRenderer extends DefaultListCellRenderer
+{
+	private final boolean myShowReadOnly;
 
-  public PyClassCellRenderer(boolean showReadOnly) {
-    setOpaque(true);
-    myShowReadOnly = showReadOnly;
-  }
+	public PyClassCellRenderer()
+	{
+		setOpaque(true);
+		myShowReadOnly = true;
+	}
 
-  public Component getListCellRendererComponent(
-          JList list,
-          Object value,
-          int index,
-          boolean isSelected,
-          boolean cellHasFocus) {
-    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+	public PyClassCellRenderer(boolean showReadOnly)
+	{
+		setOpaque(true);
+		myShowReadOnly = showReadOnly;
+	}
 
-    return customizeRenderer(this, value, myShowReadOnly);
-  }
+	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+	{
+		super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-  public static JLabel customizeRenderer(final JLabel cellRendererComponent, final Object value, final boolean showReadOnly) {
-    PyClass aClass = (PyClass) value;
-    cellRendererComponent.setText(getClassText(aClass));
+		return customizeRenderer(value, myShowReadOnly);
+	}
 
-    int flags = Iconable.ICON_FLAG_VISIBILITY;
-    if (showReadOnly) {
-      flags |= Iconable.ICON_FLAG_READ_STATUS;
-    }
-    Icon icon = IconDescriptorUpdaters.getIcon(aClass, flags);
-    if(icon != null) {
-      cellRendererComponent.setIcon(icon);
-    }
-    return cellRendererComponent;
-  }
+	public JLabel customizeRenderer(final Object value, final boolean showReadOnly)
+	{
+		PyClass aClass = (PyClass) value;
+		setText(getClassText(aClass));
 
-  @Nullable
-  public static String getClassText(PyClass aClass) {
-    return aClass.getName();
-  }
+		int flags = Iconable.ICON_FLAG_VISIBILITY;
+		if(showReadOnly)
+		{
+			flags |= Iconable.ICON_FLAG_READ_STATUS;
+		}
+		Icon icon = IconDescriptorUpdaters.getIcon(aClass, flags);
+		if(icon != null)
+		{
+			setIcon(icon);
+		}
+		return this;
+	}
+
+	@Nullable
+	public static String getClassText(PyClass aClass)
+	{
+		return aClass.getName();
+	}
 }

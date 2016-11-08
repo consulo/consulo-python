@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,85 +13,124 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.resolve;
 
-import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 
 /**
  * @author yole
  */
-public class PyResolveContext {
-  private final boolean myAllowImplicits;
-  private final boolean myAllowProperties;
-  private final TypeEvalContext myTypeEvalContext;
+public class PyResolveContext
+{
+	private final boolean myAllowImplicits;
+	private final boolean myAllowProperties;
+	private final boolean myAllowRemote;
+	private final TypeEvalContext myTypeEvalContext;
 
-  private PyResolveContext(boolean allowImplicits, boolean allowProperties) {
-    myAllowImplicits = allowImplicits;
-    myAllowProperties = allowProperties;
-    myTypeEvalContext = null;
-  }
 
-  private PyResolveContext(boolean allowImplicits, boolean allowProperties, TypeEvalContext typeEvalContext) {
-    myAllowImplicits = allowImplicits;
-    myAllowProperties = allowProperties;
-    myTypeEvalContext = typeEvalContext;
-  }
+	private PyResolveContext(boolean allowImplicits, boolean allowProperties)
+	{
+		myAllowImplicits = allowImplicits;
+		myAllowProperties = allowProperties;
+		myTypeEvalContext = null;
+		myAllowRemote = false;
+	}
 
-  public boolean allowImplicits() {
-    return myAllowImplicits;
-  }
 
-  public boolean allowProperties() {
-    return myAllowProperties;
-  }
+	private PyResolveContext(boolean allowImplicits, boolean allowProperties, boolean allowRemote, TypeEvalContext typeEvalContext)
+	{
+		myAllowImplicits = allowImplicits;
+		myAllowProperties = allowProperties;
+		myAllowRemote = allowRemote;
+		myTypeEvalContext = typeEvalContext;
+	}
 
-  private static final PyResolveContext ourDefaultContext = new PyResolveContext(true, true);
-  private static final PyResolveContext ourNoImplicitsContext = new PyResolveContext(false, true);
-  private static final PyResolveContext ourNoPropertiesContext = new PyResolveContext(false, false);
+	public boolean allowImplicits()
+	{
+		return myAllowImplicits;
+	}
 
-  public static PyResolveContext defaultContext() {
-    return ourDefaultContext;
-  }
+	public boolean allowProperties()
+	{
+		return myAllowProperties;
+	}
 
-  public static PyResolveContext noImplicits() {
-    return ourNoImplicitsContext;
-  }
+	public boolean allowRemote()
+	{
+		return myAllowRemote;
+	}
 
-  public static PyResolveContext noProperties() {
-    return ourNoPropertiesContext;
-  }
+	private static final PyResolveContext ourDefaultContext = new PyResolveContext(true, true);
+	private static final PyResolveContext ourNoImplicitsContext = new PyResolveContext(false, true);
+	private static final PyResolveContext ourNoPropertiesContext = new PyResolveContext(false, false);
 
-  public PyResolveContext withTypeEvalContext(@NotNull TypeEvalContext context) {
-    return new PyResolveContext(myAllowImplicits, myAllowProperties, context);
-  }
+	public static PyResolveContext defaultContext()
+	{
+		return ourDefaultContext;
+	}
 
-  public PyResolveContext withoutImplicits() {
-    return new PyResolveContext(false, myAllowProperties, myTypeEvalContext);
-  }
+	public static PyResolveContext noImplicits()
+	{
+		return ourNoImplicitsContext;
+	}
 
-  public TypeEvalContext getTypeEvalContext() {
-    return myTypeEvalContext != null ? myTypeEvalContext : TypeEvalContext.codeInsightFallback();
-  }
+	public static PyResolveContext noProperties()
+	{
+		return ourNoPropertiesContext;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+	public PyResolveContext withTypeEvalContext(@NotNull TypeEvalContext context)
+	{
+		return new PyResolveContext(myAllowImplicits, myAllowProperties, myAllowRemote, context);
+	}
 
-    PyResolveContext that = (PyResolveContext)o;
+	public PyResolveContext withoutImplicits()
+	{
+		return new PyResolveContext(false, myAllowProperties, myAllowRemote, myTypeEvalContext);
+	}
 
-    if (myAllowImplicits != that.myAllowImplicits) return false;
-    if (myTypeEvalContext != null ? !myTypeEvalContext.equals(that.myTypeEvalContext) : that.myTypeEvalContext != null) return false;
+	public PyResolveContext withRemote()
+	{
+		return new PyResolveContext(myAllowImplicits, myAllowProperties, true, myTypeEvalContext);
+	}
 
-    return true;
-  }
+	public TypeEvalContext getTypeEvalContext()
+	{
+		return myTypeEvalContext != null ? myTypeEvalContext : TypeEvalContext.codeInsightFallback(null);
+	}
 
-  @Override
-  public int hashCode() {
-    int result = (myAllowImplicits ? 1 : 0);
-    result = 31 * result + (myTypeEvalContext != null ? myTypeEvalContext.hashCode() : 0);
-    return result;
-  }
+	@Override
+	public boolean equals(Object o)
+	{
+		if(this == o)
+		{
+			return true;
+		}
+		if(o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		PyResolveContext that = (PyResolveContext) o;
+
+		if(myAllowImplicits != that.myAllowImplicits)
+		{
+			return false;
+		}
+		if(myTypeEvalContext != null ? !myTypeEvalContext.equals(that.myTypeEvalContext) : that.myTypeEvalContext != null)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = (myAllowImplicits ? 1 : 0);
+		result = 31 * result + (myTypeEvalContext != null ? myTypeEvalContext.hashCode() : 0);
+		return result;
+	}
 }

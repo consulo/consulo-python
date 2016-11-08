@@ -28,7 +28,7 @@ import com.intellij.psi.PsiFile;
  * @author yole
  */
 public interface RunnableUnitTestFilter {
-  ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create("org.consulo.python.runnableUnitTestFilter");
+  ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create("consulo.python.runnableUnitTestFilter");
 
   boolean isRunnableUnitTest(PsiFile script, @NotNull Module module);
 }

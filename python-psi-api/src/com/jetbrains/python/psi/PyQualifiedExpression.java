@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,40 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.QualifiedName;
 
 /**
  * Represents a qualified expression, that is, of "a.b.c..." sort.
  * User: dcheryasov
  * Date: Oct 18, 2008
  */
-public interface PyQualifiedExpression extends PyExpression {
-  @Nullable
-  PyExpression getQualifier();
+public interface PyQualifiedExpression extends PyExpression
+{
+	@Nullable
+	PyExpression getQualifier();
 
-  /**
-   * Returns the name to the right of the qualifier.
-   *
-   * @return the name referenced by the expression.
-   */
-  @Nullable
-  String getReferencedName();
+	/**
+	 * Checks if the expression is qualified.
+	 * <p>
+	 * Unlike {@link #getQualifier()}, it may not require AST access.
+	 */
+	boolean isQualified();
 
-  /**
-   * Returns the element representing the name (to the right of the qualifier).
-   *
-   * @return the name element.
-   */
-  @Nullable
-  ASTNode getNameElement();
+	/**
+	 * Returns the qualified name for the expression if all the qualifiers are qualified expressions.
+	 */
+	@Nullable
+	QualifiedName asQualifiedName();
 
-  @NotNull
-  PsiPolyVariantReference getReference(PyResolveContext resolveContext);
+	/**
+	 * Returns the name to the right of the qualifier.
+	 *
+	 * @return the name referenced by the expression.
+	 */
+	@Nullable
+	String getReferencedName();
+
+	/**
+	 * Returns the element representing the name (to the right of the qualifier).
+	 *
+	 * @return the name element.
+	 */
+	@Nullable
+	ASTNode getNameElement();
 }

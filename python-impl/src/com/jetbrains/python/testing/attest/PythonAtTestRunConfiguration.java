@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.testing.attest;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RuntimeConfigurationException;
+import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -29,60 +34,69 @@ import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import com.jetbrains.python.testing.VFSTestFrameworkListener;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
  */
-public class PythonAtTestRunConfiguration extends AbstractPythonTestRunConfiguration
-                                          implements PythonAtTestRunConfigurationParams {
-  protected String myTitle = "Attest";
-  protected String myPluralTitle = "Attests";
-  public PythonAtTestRunConfiguration(Project project,
-                                      ConfigurationFactory configurationFactory) {
-    super(project, configurationFactory);
-  }
+public class PythonAtTestRunConfiguration extends AbstractPythonTestRunConfiguration implements PythonAtTestRunConfigurationParams
+{
+	protected String myTitle = "Attest";
+	protected String myPluralTitle = "Attests";
 
-  @Override
-  protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor() {
-    return new PythonAtTestRunConfigurationEditor(getProject(), this);
-  }
+	public PythonAtTestRunConfiguration(Project project, ConfigurationFactory configurationFactory)
+	{
+		super(project, configurationFactory);
+	}
 
-  @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
-    return new PythonAtTestCommandLineState(this, env);
-  }
+	@Override
+	protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor()
+	{
+		return new PythonAtTestRunConfigurationEditor(getProject(), this);
+	}
 
-  @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    super.readExternal(element);
-  }
+	@Override
+	public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException
+	{
+		return new PythonAtTestCommandLineState(this, env);
+	}
 
-  @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    super.writeExternal(element);
-  }
+	@Override
+	public void readExternal(Element element) throws InvalidDataException
+	{
+		super.readExternal(element);
+	}
 
-  @Override
-  protected String getTitle() {
-    return myTitle;
-  }
+	@Override
+	public void writeExternal(Element element) throws WriteExternalException
+	{
+		super.writeExternal(element);
+	}
 
-  @Override
-  protected String getPluralTitle() {
-    return myPluralTitle;
-  }
+	@Override
+	protected String getTitle()
+	{
+		return myTitle;
+	}
 
-  public static void copyParams(PythonAtTestRunConfigurationParams source, PythonAtTestRunConfigurationParams target) {
-    copyParams(source.getTestRunConfigurationParams(), target.getTestRunConfigurationParams());
-  }
+	@Override
+	protected String getPluralTitle()
+	{
+		return myPluralTitle;
+	}
 
-  @Override
-  public void checkConfiguration() throws RuntimeConfigurationException {
-    super.checkConfiguration();
-    Sdk sdkPath = PythonSdkType.findSdkByPath(getInterpreterPath());
-    if (sdkPath != null && !VFSTestFrameworkListener.getInstance().isAtTestInstalled(sdkPath))
-      throw new RuntimeConfigurationWarning(PyBundle.message("runcfg.testing.no.test.framework", "attest"));
-  }
+	public static void copyParams(PythonAtTestRunConfigurationParams source, PythonAtTestRunConfigurationParams target)
+	{
+		copyParams(source.getTestRunConfigurationParams(), target.getTestRunConfigurationParams());
+	}
+
+	@Override
+	public void checkConfiguration() throws RuntimeConfigurationException
+	{
+		super.checkConfiguration();
+		Sdk sdkPath = PythonSdkType.findSdkByPath(getInterpreterPath());
+		if(sdkPath != null && !VFSTestFrameworkListener.getInstance().isAtTestInstalled(sdkPath))
+		{
+			throw new RuntimeConfigurationWarning(PyBundle.message("runcfg.testing.no.test.framework", "attest"));
+		}
+	}
 }

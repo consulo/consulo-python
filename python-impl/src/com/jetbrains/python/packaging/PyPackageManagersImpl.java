@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,44 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.packaging;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.python.packaging.ui.PyCondaManagementService;
+import com.jetbrains.python.packaging.ui.PyPackageManagementService;
+import com.jetbrains.python.sdk.PythonSdkType;
 
 /**
  * @author yole
  */
-public class PyPackageManagersImpl extends PyPackageManagers {
-  private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<String, PyPackageManagerImpl>();
+public class PyPackageManagersImpl extends PyPackageManagers
+{
+	private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<>();
 
-  @Override
-  public synchronized PyPackageManager forSdk(Sdk sdk) {
-    final String name = sdk.getName();
-    PyPackageManagerImpl manager = myInstances.get(name);
-    if (manager == null) {
-      manager = new PyPackageManagerImpl(sdk);
-      myInstances.put(name, manager);
-    }
-    return manager;
-  }
+	@NotNull
+	public synchronized PyPackageManager forSdk(@NotNull final Sdk sdk)
+	{
+		final String key = PythonSdkType.getSdkKey(sdk);
+		PyPackageManagerImpl manager = myInstances.get(key);
+		if(manager == null)
+		{
+			if(PythonSdkType.isRemote(sdk))
+			{
+				manager = new PyRemotePackageManagerImpl(sdk);
+			}
+			else if(PyCondaPackageManagerImpl.isCondaVEnv(sdk) && PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory()) != null)
+			{
+				manager = new PyCondaPackageManagerImpl(sdk);
+			}
+			else
+			{
+				manager = new PyPackageManagerImpl(sdk);
+			}
+			if(sdkIsSetUp(sdk))
+			{
+				myInstances.put(key, manager);
+			}
+		}
+		return manager;
+	}
 
-  @Nullable
-  @Override
-  public List<PyRequirement> getRequirements(Module module) {
-    return PyPackageManagerImpl.getRequirements(module);
-  }
+	private static boolean sdkIsSetUp(@NotNull final Sdk sdk)
+	{
+		final VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
+		return roots.length != 0;
+	}
 
+	public PyPackageManagementService getManagementService(Project project, Sdk sdk)
+	{
+		if(PyCondaPackageManagerImpl.isCondaVEnv(sdk))
+		{
+			return new PyCondaManagementService(project, sdk);
+		}
+		return new PyPackageManagementService(project, sdk);
+	}
 
-  @Nullable
-  @Override
-  public List<PyRequirement> getRequirementsFromTxt(Module module) {
-    return PyPackageManagerImpl.getRequirementsFromTxt(module);
-  }
+	@Override
+	public void clearCache(@NotNull Sdk sdk)
+	{
+		final String key = PythonSdkType.getSdkKey(sdk);
+		if(myInstances.containsKey(key))
+		{
+			myInstances.remove(key);
+		}
+	}
 }

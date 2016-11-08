@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
+import static com.jetbrains.python.psi.PyUtil.sure;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
 import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,24 +33,32 @@ import com.jetbrains.python.psi.PyUtil;
  * Date:   22.04.2010
  * Time:   18:13:34
  */
-public class PyExceptFixer implements PyFixer {
-  public void apply(Editor editor, PySmartEnterProcessor processor, PsiElement psiElement) throws IncorrectOperationException {
-    if (psiElement instanceof PyExceptPart) {
-      PyExceptPart exceptPart = (PyExceptPart)psiElement;
-      final PsiElement colon = PyUtil.getChildByFilter(exceptPart, TokenSet.create(PyTokenTypes.COLON), 0);
-      if (colon == null) {
-        int offset = PyUtil.getChildByFilter(exceptPart,
-                                             TokenSet.create(PyTokenTypes.EXCEPT_KEYWORD), 0).getTextRange().getEndOffset();
-        final PyExpression exceptClass = exceptPart.getExceptClass();
-        if (exceptClass != null) {
-          offset = exceptClass.getTextRange().getEndOffset();
-        }
-        final PyExpression target = exceptPart.getTarget();
-        if (target != null) {
-          offset = target.getTextRange().getEndOffset();
-        }
-        editor.getDocument().insertString(offset, ":");
-      }
-    }
-  }
+public class PyExceptFixer extends PyFixer<PyExceptPart>
+{
+	public PyExceptFixer()
+	{
+		super(PyExceptPart.class);
+	}
+
+	@Override
+	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyExceptPart exceptPart) throws IncorrectOperationException
+	{
+		final PsiElement colon = PyPsiUtils.getFirstChildOfType(exceptPart, PyTokenTypes.COLON);
+		if(colon == null)
+		{
+			final PsiElement exceptToken = PyPsiUtils.getFirstChildOfType(exceptPart, PyTokenTypes.EXCEPT_KEYWORD);
+			int offset = sure(exceptToken).getTextRange().getEndOffset();
+			final PyExpression exceptClass = exceptPart.getExceptClass();
+			if(exceptClass != null)
+			{
+				offset = exceptClass.getTextRange().getEndOffset();
+			}
+			final PyExpression target = exceptPart.getTarget();
+			if(target != null)
+			{
+				offset = target.getTextRange().getEndOffset();
+			}
+			editor.getDocument().insertString(offset, ":");
+		}
+	}
 }

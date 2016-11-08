@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,46 +13,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.refactoring.classes.ui;
 
+import java.util.List;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.intellij.refactoring.ui.AbstractMemberSelectionTable;
 import com.intellij.ui.RowIcon;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.refactoring.classes.PyMemberInfo;
-
-import javax.swing.*;
-import java.util.List;
+import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 
 /**
  * @author Dennis.Ushakov
  */
-public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyElement, PyMemberInfo> {
-  public PyMemberSelectionTable(final List<PyMemberInfo> memberInfos,
-                                  final MemberInfoModel<PyElement, PyMemberInfo> model) {
-    super(memberInfos, model, null);
-  }
+public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyElement, PyMemberInfo<PyElement>>
+{
 
-  protected Object getAbstractColumnValue(PyMemberInfo memberInfo) {
-    return null;
-  }
+	private static final String ABSTRACT_TITLE = RefactoringBundle.message("make.abstract");
+	private final boolean mySupportAbstract;
 
-  protected boolean isAbstractColumnEditable(int rowIndex) {
-    return false;
-  }
+	public PyMemberSelectionTable(@NotNull final List<PyMemberInfo<PyElement>> memberInfos, @Nullable final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> model, final boolean supportAbstract)
+	{
+		super(memberInfos, model, (supportAbstract ? ABSTRACT_TITLE : null));
+		mySupportAbstract = supportAbstract;
+	}
 
-  protected void setVisibilityIcon(PyMemberInfo memberInfo, RowIcon icon) {}
+	@Nullable
+	@Override
+	protected Object getAbstractColumnValue(final PyMemberInfo<PyElement> memberInfo)
+	{
+		//TODO: Too many logic, move to presenters
+		return (mySupportAbstract && memberInfo.isChecked() && myMemberInfoModel.isAbstractEnabled(memberInfo)) ? memberInfo.isToAbstract() : null;
+	}
 
-  protected Icon getOverrideIcon(PyMemberInfo memberInfo) {
-    final PsiElement member = memberInfo.getMember();
-    Icon overrideIcon = EMPTY_OVERRIDE_ICON;
-    if (member instanceof PyFunction && memberInfo.getOverrides() != null && memberInfo.getOverrides()) {
-      overrideIcon = AllIcons.General.OverridingMethod;
-    }
-    return overrideIcon;
-  }
+	@Override
+	protected boolean isAbstractColumnEditable(final int rowIndex)
+	{
+		return mySupportAbstract && myMemberInfoModel.isAbstractEnabled(myMemberInfos.get(rowIndex));
+	}
+
+	@Override
+	protected void setVisibilityIcon(PyMemberInfo<PyElement> memberInfo, RowIcon icon)
+	{
+	}
+
+	@Override
+	protected Icon getOverrideIcon(PyMemberInfo<PyElement> memberInfo)
+	{
+		final PsiElement member = memberInfo.getMember();
+		Icon overrideIcon = EMPTY_OVERRIDE_ICON;
+		if(member instanceof PyFunction && memberInfo.getOverrides() != null && memberInfo.getOverrides())
+		{
+			overrideIcon = AllIcons.General.OverridingMethod;
+		}
+		return overrideIcon;
+	}
 }

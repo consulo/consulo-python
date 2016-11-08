@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,49 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.psi.PyUtil;
-import org.jetbrains.annotations.NotNull;
 import com.jetbrains.python.psi.PyAugAssignmentStatement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
-public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAugAssignmentStatement {
-  public PyAugAssignmentStatementImpl(ASTNode astNode) {
-    super(astNode);
-  }
+public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAugAssignmentStatement
+{
+	public PyAugAssignmentStatementImpl(ASTNode astNode)
+	{
+		super(astNode);
+	}
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyAugAssignmentStatement(this);
-  }
+	@Override
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
+	{
+		pyVisitor.visitPyAugAssignmentStatement(this);
+	}
 
-  @NotNull
-  public PyExpression getTarget() {
-    final PyExpression target = childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
-    if (target == null) {
-      throw new RuntimeException("Target missing in augmented assignment statement");
-    }
-    return target;
-  }
+	@NotNull
+	public PyExpression getTarget()
+	{
+		final PyExpression target = childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+		if(target == null)
+		{
+			throw new RuntimeException("Target missing in augmented assignment statement");
+		}
+		return target;
+	}
 
-  @Nullable
-  public PyExpression getValue() {
-    return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 1);
-  }
+	@Nullable
+	public PyExpression getValue()
+	{
+		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 1);
+	}
 
-  @Nullable
-  public PsiElement getOperation() {
-    return PyUtil.getChildByFilter(this, PyTokenTypes.AUG_ASSIGN_OPERATIONS, 0);
-  }
+	@Nullable
+	public PsiElement getOperation()
+	{
+		return PyPsiUtils.getChildByFilter(this, PyTokenTypes.AUG_ASSIGN_OPERATIONS, 0);
+	}
 }

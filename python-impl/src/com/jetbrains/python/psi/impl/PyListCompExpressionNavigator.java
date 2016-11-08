@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,35 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.python.psi.ComprhForComponent;
+import com.jetbrains.python.psi.PyComprehensionForComponent;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyListCompExpression;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author oleg
  */
-public class PyListCompExpressionNavigator {
-  private PyListCompExpressionNavigator() {
-  }
+public class PyListCompExpressionNavigator
+{
+	private PyListCompExpressionNavigator()
+	{
+	}
 
-  @Nullable
-  public static PyListCompExpression getPyListCompExpressionByVariable(final PsiElement element){
-    final PyListCompExpression listCompExpression = PsiTreeUtil.getParentOfType(element, PyListCompExpression.class, false);
-    if (listCompExpression == null){
-      return null;
-    }
-    for (ComprhForComponent component : listCompExpression.getForComponents()) {
-      final PyExpression variable = component.getIteratorVariable();
-      if (variable != null && PsiTreeUtil.isAncestor(variable, element, false)){
-        return listCompExpression;
-      }
-    }
-    return null;
-  }
+	@Nullable
+	public static PyListCompExpression getPyListCompExpressionByVariable(final PsiElement element)
+	{
+		final PyListCompExpression listCompExpression = PsiTreeUtil.getParentOfType(element, PyListCompExpression.class, false);
+		if(listCompExpression == null)
+		{
+			return null;
+		}
+		for(PyComprehensionForComponent component : listCompExpression.getForComponents())
+		{
+			final PyExpression variable = component.getIteratorVariable();
+			if(variable != null && PsiTreeUtil.isAncestor(variable, element, false))
+			{
+				return listCompExpression;
+			}
+		}
+		return null;
+	}
 }

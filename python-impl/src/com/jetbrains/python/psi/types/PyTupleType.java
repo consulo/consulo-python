@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,97 +13,155 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Function;
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.impl.PyBuiltinCache;
-import com.jetbrains.python.psi.impl.PyConstantExpressionEvaluator;
+import java.util.Collections;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.impl.PyBuiltinCache;
 
 /**
  * @author yole
  */
-public class PyTupleType extends PyClassTypeImpl implements PySubscriptableType {
-  private final PyType[] myElementTypes;
+public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
+{
 
-  PyTupleType(@NotNull PyClass tupleClass, PsiElement anchor, PyType[] elementTypes) {
-    super(tupleClass, false);
-    myElementTypes = elementTypes;
-  }
+	@NotNull
+	private final List<PyType> myElementTypes;
+	private final boolean myHomogeneous;
 
-  @Nullable
-  public static PyTupleType create(PsiElement anchor, PyType[] elementTypes) {
-    PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
-    if (tuple != null) {
-      return new PyTupleType(tuple, anchor, elementTypes);
-    }
-    return null;
-  }
+	@Nullable
+	public static PyTupleType create(@NotNull PsiElement anchor, @NotNull List<PyType> elementTypes)
+	{
+		final PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
+		if(tuple != null)
+		{
+			return new PyTupleType(tuple, elementTypes, false);
+		}
+		return null;
+	}
 
-  public PyTupleType(PyTupleType origin, PyType[] elementTypes) {
-    super(origin.getPyClass(), false);
-    myElementTypes = elementTypes;
-  }
+	@Nullable
+	public static PyTupleType createHomogeneous(@NotNull PsiElement anchor, @Nullable PyType elementType)
+	{
+		final PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
+		if(tuple != null)
+		{
+			return new PyTupleType(tuple, Collections.singletonList(elementType), true);
+		}
+		return null;
+	}
 
-  public String getName() {
-    return "(" + StringUtil.join(myElementTypes, new Function<PyType, String>() {
-      @Nullable
-      public String fun(PyType pyType) {
-        return pyType == null ? PyNames.UNKNOWN_TYPE : pyType.getName();
-      }
-    }, ", ") + ")";
-  }
+	public PyTupleType(@NotNull PyClass tupleClass, @NotNull List<PyType> elementTypes, boolean homogeneous)
+	{
+		super(tupleClass, false);
+		myElementTypes = elementTypes;
+		myHomogeneous = homogeneous;
+	}
 
-  @Override
-  public boolean isBuiltin(TypeEvalContext context) {
-    return true;
-  }
+	@NotNull
+	public String getName()
+	{
+		if(myHomogeneous)
+		{
+			return "(" + (getTypeName(getIteratedItemType())) + ", ...)";
+		}
+		return "(" + StringUtil.join(myElementTypes, PyTupleType::getTypeName, ", ") + ")";
+	}
 
-  public PyType getElementType(PyExpression index, TypeEvalContext context) {
-    final Object value = PyConstantExpressionEvaluator.evaluate(index);
-    if (value instanceof Integer) {
-      return getElementType(((Integer)value).intValue());
-    }
-    return null;
-  }
+	@Nullable
+	private static String getTypeName(@Nullable PyType type)
+	{
+		return type == null ? PyNames.UNKNOWN_TYPE : type.getName();
+	}
 
-  public PyType getElementType(int index) {
-    if (index >= 0 && index < myElementTypes.length) {
-      return myElementTypes[index];
-    }
-    return null;
-  }
+	@Override
+	public boolean isBuiltin()
+	{
+		return true;
+	}
 
-  public int getElementCount() {
-    return myElementTypes.length;
-  }
+	/**
+	 * Access elements by zero-based index.
+	 *
+	 * @param index an index of item
+	 * @return type of item
+	 */
+	@Nullable
+	public PyType getElementType(int index)
+	{
+		if(myHomogeneous)
+		{
+			return getIteratedItemType();
+		}
+		if(index >= 0 && index < myElementTypes.size())
+		{
+			return myElementTypes.get(index);
+		}
+		return null;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
+	public int getElementCount()
+	{
+		return myHomogeneous ? -1 : myElementTypes.size();
+	}
 
-    PyTupleType that = (PyTupleType)o;
+	public boolean isHomogeneous()
+	{
+		return myHomogeneous;
+	}
 
-    if (!Arrays.equals(myElementTypes, that.myElementTypes)) return false;
+	@Override
+	public boolean equals(Object o)
+	{
+		if(this == o)
+		{
+			return true;
+		}
+		if(o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+		if(!super.equals(o))
+		{
+			return false;
+		}
 
-    return true;
-  }
+		PyTupleType that = (PyTupleType) o;
 
-  @Override
-  public int hashCode() {
-    int result = super.hashCode();
-    result = 31 * result + (myElementTypes != null ? Arrays.hashCode(myElementTypes) : 0);
-    return result;
-  }
+		if(!myElementTypes.equals(that.myElementTypes))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = super.hashCode();
+		result = 31 * result + myElementTypes.hashCode();
+		return result;
+	}
+
+	@NotNull
+	@Override
+	public List<PyType> getElementTypes(@NotNull TypeEvalContext context)
+	{
+		return myElementTypes;
+	}
+
+	@Nullable
+	@Override
+	public PyType getIteratedItemType()
+	{
+		return PyUnionType.union(myElementTypes);
+	}
 }

@@ -37,6 +37,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.codeInsight.UnindentingInsertHandler;
 import com.jetbrains.python.documentation.doctest.PyDocstringFile;
 import com.jetbrains.python.psi.*;
+import consulo.codeInsight.completion.CompletionProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -379,8 +380,8 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
         .andNot(BEFORE_COND)
         .andNot(AFTER_QUALIFIER).andNot(IN_STRING_LITERAL)
       ,
-      new CompletionProvider<CompletionParameters>() {
-        protected void addCompletions(
+      new CompletionProvider() {
+		  public void addCompletions(
           @NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result
         ) {
           putKeywords(result, TailType.NONE, "def", "class", "for", "if", "while", "with");
@@ -403,8 +404,8 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
     extend(
       CompletionType.BASIC,
       inStatement,
-      new CompletionProvider<CompletionParameters>() {
-        protected void addCompletions(
+      new CompletionProvider() {
+		  public void addCompletions(
           @NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result
         ) {
           putKeywords(result, TailType.SPACE, "assert", "del", "exec", "from", "import", "raise");
@@ -489,8 +490,8 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
         //.andNot(RIGHT_AFTER_COLON)
       .andNot(AFTER_QUALIFIER).andNot(IN_STRING_LITERAL)
       ,
-      new CompletionProvider<CompletionParameters>() {
-        protected void addCompletions(
+      new CompletionProvider() {
+		  public void addCompletions(
           @NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result
         ) {
           putKeyword("except", UnindentingInsertHandler.INSTANCE, TailType.NONE, result);
@@ -653,7 +654,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
     addYieldFrom();
   }
 
-  private static class PyKeywordCompletionProvider extends CompletionProvider<CompletionParameters> {
+  private static class PyKeywordCompletionProvider implements CompletionProvider {
     private final String[] myKeywords;
     private final TailType myTailType;
     private final InsertHandler<PythonLookupElement> myInsertHandler;
@@ -672,7 +673,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
       myInsertHandler = insertHandler;
     }
 
-    protected void addCompletions(@NotNull final CompletionParameters parameters, final ProcessingContext context,
+    public void addCompletions(@NotNull final CompletionParameters parameters, final ProcessingContext context,
                                   @NotNull final CompletionResultSet result) {
       for (String s : myKeywords) {
         final PythonLookupElement element = new PythonLookupElement(s, true, null);

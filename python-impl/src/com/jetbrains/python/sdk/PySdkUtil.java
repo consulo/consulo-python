@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,43 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.sdk;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.PathChooserDialog;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.remotesdk.RemoteCredentials;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.NullableConsumer;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.remote.RemoteSdkAdditionalData;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.HashMap;
 
 /**
@@ -66,6 +56,7 @@ public class PySdkUtil
 
 	// Windows EOF marker, Ctrl+Z
 	public static final int SUBSTITUTE = 26;
+	public static final String PATH_ENV_VARIABLE = "PATH";
 
 	private PySdkUtil()
 	{
@@ -100,59 +91,48 @@ public class PySdkUtil
 		return getProcessOutput(homePath, command, null, timeout);
 	}
 
-	/**
-	 * Executes a process and returns its stdout and stderr outputs as lists of lines.
-	 * Waits for process for possibly limited duration.
-	 *
-	 * @param homePath process run directory
-	 * @param command  command to execute and its arguments
-	 * @param addEnv   items are prepended to same-named values of inherited process environment.
-	 * @param timeout  how many milliseconds to wait until the process terminates; non-positive means inifinity.
-	 * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
-	 */
 	@NotNull
-	public static ProcessOutput getProcessOutput(String homePath, @NonNls String[] command, @Nullable @NonNls String[] addEnv, final int timeout)
+	public static ProcessOutput getProcessOutput(String homePath, @NonNls String[] command, @Nullable @NonNls Map<String, String> extraEnv, final int timeout)
 	{
-		return getProcessOutput(homePath, command, addEnv, timeout, null, true);
+		return getProcessOutput(homePath, command, extraEnv, timeout, null, true);
 	}
 
-	/**
-	 * Executes a process and returns its stdout and stderr outputs as lists of lines.
-	 * Waits for process for possibly limited duration.
-	 *
-	 * @param homePath      process run directory
-	 * @param command       command to execute and its arguments
-	 * @param addEnv        items are prepended to same-named values of inherited process environment.
-	 * @param timeout       how many milliseconds to wait until the process terminates; non-positive means infinity.
-	 * @param stdin         the data to write to the process standard input stream
-	 * @param needEOFMarker
-	 * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
-	 */
 	@NotNull
 	public static ProcessOutput getProcessOutput(String homePath,
 			@NonNls String[] command,
-			@Nullable @NonNls String[] addEnv,
+			@Nullable @NonNls Map<String, String> extraEnv,
 			final int timeout,
 			@Nullable byte[] stdin,
 			boolean needEOFMarker)
 	{
-		final ProcessOutput failureOutput = new ProcessOutput();
+		return getProcessOutput(new GeneralCommandLine(command), homePath, extraEnv, timeout, stdin, needEOFMarker);
+	}
+
+	public static ProcessOutput getProcessOutput(@NotNull GeneralCommandLine cmd, @Nullable String homePath, @Nullable @NonNls Map<String, String> extraEnv, int timeout)
+	{
+		return getProcessOutput(cmd, homePath, extraEnv, timeout, null, true);
+	}
+
+	public static ProcessOutput getProcessOutput(@NotNull GeneralCommandLine cmd,
+			@Nullable String homePath,
+			@Nullable @NonNls Map<String, String> extraEnv,
+			int timeout,
+			@Nullable byte[] stdin,
+			boolean needEOFMarker)
+	{
 		if(homePath == null || !new File(homePath).exists())
 		{
-			return failureOutput;
+			return new ProcessOutput();
 		}
+		final Map<String, String> systemEnv = System.getenv();
+		final Map<String, String> expandedCmdEnv = mergeEnvVariables(systemEnv, cmd.getEnvironment());
+		final Map<String, String> env = extraEnv != null ? mergeEnvVariables(expandedCmdEnv, extraEnv) : expandedCmdEnv;
+		PythonEnvUtil.resetHomePathChanges(homePath, env);
 		try
 		{
-			List<String> commands = new ArrayList<String>();
-			if(SystemInfo.isWindows && StringUtil.endsWithIgnoreCase(command[0], ".bat"))
-			{
-				commands.add("cmd");
-				commands.add("/c");
-			}
-			Collections.addAll(commands, command);
-			String[] newEnv = buildAdditionalEnv(addEnv);
-			Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(commands), newEnv, new File(homePath));
-			CapturingProcessHandler processHandler = new CapturingProcessHandler(process);
+
+			final GeneralCommandLine commandLine = cmd.withWorkDirectory(homePath).withEnvironment(env);
+			final CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
 			if(stdin != null)
 			{
 				final OutputStream processInput = processHandler.getProcessInput();
@@ -170,86 +150,75 @@ public class PySdkUtil
 			}
 			return processHandler.runProcess(timeout);
 		}
-		catch(final IOException ex)
+		catch(ExecutionException e)
 		{
-			LOG.warn(ex);
-			return new ProcessOutput()
+			return getOutputForException(e);
+		}
+		catch(IOException e)
+		{
+			return getOutputForException(e);
+		}
+	}
+
+	private static ProcessOutput getOutputForException(final Exception e)
+	{
+		LOG.warn(e);
+		return new ProcessOutput()
+		{
+			@NotNull
+			@Override
+			public String getStderr()
 			{
-				@Override
-				public String getStderr()
+				String err = super.getStderr();
+				if(!StringUtil.isEmpty(err))
 				{
-					String err = super.getStderr();
-					if(!StringUtil.isEmpty(err))
-					{
-						err += "\n" + ex.getMessage();
-					}
-					else
-					{
-						err = ex.getMessage();
-					}
-					return err;
+					err += "\n" + e.getMessage();
 				}
-			};
-		}
-	}
-
-	private static String[] buildAdditionalEnv(String[] addEnv)
-	{
-		String[] newEnv = null;
-		if(addEnv != null)
-		{
-			Map<String, String> envMap = buildEnvMap(addEnv);
-			newEnv = new String[envMap.size()];
-			int i = 0;
-			for(Map.Entry<String, String> entry : envMap.entrySet())
-			{
-				newEnv[i] = entry.getKey() + "=" + entry.getValue();
-				i += 1;
+				else
+				{
+					err = e.getMessage();
+				}
+				return err;
 			}
-		}
-		return newEnv;
+		};
 	}
 
-	public static Map<String, String> buildEnvMap(String[] addEnv)
+	@NotNull
+	public static Map<String, String> mergeEnvVariables(@NotNull Map<String, String> environment, @NotNull Map<String, String> extraEnvironment)
 	{
-		Map<String, String> envMap = new HashMap<String, String>(System.getenv());
-		// turn additional ent into map
-		Map<String, String> addMap = new HashMap<String, String>();
-		for(String envItem : addEnv)
+		final Map<String, String> result = new HashMap<>(environment);
+		for(Map.Entry<String, String> entry : extraEnvironment.entrySet())
 		{
-			int pos = envItem.indexOf('=');
-			if(pos > 0)
+			final String name = entry.getKey();
+			if(PATH_ENV_VARIABLE.equals(name) || PythonEnvUtil.PYTHONPATH.equals(name))
 			{
-				String key = envItem.substring(0, pos);
-				String value = envItem.substring(pos + 1, envItem.length());
-				addMap.put(key, value);
+				PythonEnvUtil.addPathToEnv(result, name, entry.getValue());
 			}
 			else
 			{
-				LOG.warn(String.format("Invalid env value: '%s'", envItem));
+				result.put(name, entry.getValue());
 			}
 		}
-		// fuse old and new
-		for(Map.Entry<String, String> entry : addMap.entrySet())
-		{
-			final String key = entry.getKey();
-			final String value = entry.getValue();
-			final String oldValue = envMap.get(key);
-			if(oldValue != null)
-			{
-				envMap.put(key, value + oldValue);
-			}
-			else
-			{
-				envMap.put(key, value);
-			}
-		}
-		return envMap;
+		return result;
 	}
 
 	public static boolean isRemote(@Nullable Sdk sdk)
 	{
-		return sdk != null && sdk.getSdkAdditionalData() instanceof RemoteCredentials;
+		return sdk != null && sdk.getSdkAdditionalData() instanceof RemoteSdkAdditionalData;
+	}
+
+	public static String getUserSite()
+	{
+		if(SystemInfo.isWindows)
+		{
+			final String appdata = System.getenv("APPDATA");
+			return appdata + File.separator + "Python";
+		}
+		else
+		{
+			final String userHome = SystemProperties.getUserHome();
+			return userHome + File.separator + ".local";
+		}
 	}
 
 	public static boolean isElementInSkeletons(@NotNull final PsiElement element)
@@ -263,7 +232,7 @@ public class PySdkUtil
 				final Sdk sdk = PythonSdkType.getSdk(element);
 				if(sdk != null)
 				{
-					final VirtualFile skeletonsDir = PythonSdkType.findSkeletonsDir(sdk);
+					final VirtualFile skeletonsDir = findSkeletonsDir(sdk);
 					if(skeletonsDir != null && VfsUtilCore.isAncestor(skeletonsDir, virtualFile, false))
 					{
 						return true;
@@ -274,101 +243,39 @@ public class PySdkUtil
 		return false;
 	}
 
-	public static void createSdk(@Nullable final com.intellij.openapi.project.Project project,
-			final Sdk[] existingSdks,
-			final NullableConsumer<Sdk> onSdkCreatedCallBack,
-			final SdkType... sdkTypes)
+	public static String getRemoteSourcesLocalPath(String sdkHome)
 	{
-		if(sdkTypes.length == 0)
-		{
-			onSdkCreatedCallBack.consume(null);
-			return;
-		}
-		final FileChooserDescriptor descriptor = createCompositeDescriptor(sdkTypes);
-		if(SystemInfo.isMac)
-		{
-			descriptor.putUserData(PathChooserDialog.NATIVE_MAC_CHOOSER_SHOW_HIDDEN_FILES, Boolean.TRUE);
-		}
-		String suggestedPath = ContainerUtil.getFirstItem(sdkTypes[0].suggestHomePaths());
-		VirtualFile suggestedDir = suggestedPath == null ? null : LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName
-				(suggestedPath));
-		FileChooser.chooseFiles(descriptor, project, suggestedDir, new FileChooser.FileChooserConsumer()
-		{
-			@Override
-			public void consume(List<VirtualFile> selectedFiles)
-			{
-				for(SdkType sdkType : sdkTypes)
-				{
-					if(sdkType.isValidSdkHome(selectedFiles.get(0).getPath()))
-					{
-						onSdkCreatedCallBack.consume(SdkConfigurationUtil.setupSdk(existingSdks, selectedFiles.get(0), sdkType, false, false, null,
-								null));
-						return;
-					}
-				}
-				onSdkCreatedCallBack.consume(null);
-			}
+		String sep = File.separator;
 
-			@Override
-			public void cancelled()
-			{
-				onSdkCreatedCallBack.consume(null);
-			}
-		});
-	}
-
-	private static FileChooserDescriptor createCompositeDescriptor(final SdkType... sdkTypes)
-	{
-		FileChooserDescriptor descriptor0 = sdkTypes[0].getHomeChooserDescriptor();
-		FileChooserDescriptor descriptor = new FileChooserDescriptor(descriptor0.isChooseFiles(), descriptor0.isChooseFolders(),
-				descriptor0.isChooseJars(), descriptor0.isChooseJarsAsFiles(), descriptor0.isChooseJarContents(), descriptor0.isChooseMultiple())
-		{
-
-			@Override
-			public void validateSelectedFiles(final VirtualFile[] files) throws Exception
-			{
-				if(files.length > 0)
-				{
-					for(SdkType type : sdkTypes)
-					{
-						if(type.isValidSdkHome(files[0].getPath()))
-						{
-							return;
-						}
-					}
-				}
-				String message = files.length > 0 && files[0].isDirectory() ? ProjectBundle.message("sdk.configure.home.invalid.error",
-						sdkTypes[0].getPresentableName()) : ProjectBundle.message("sdk.configure.home.file.invalid.error",
-						sdkTypes[0].getPresentableName());
-				throw new Exception(message);
-			}
-		};
-		descriptor.setTitle(descriptor0.getTitle());
-		return descriptor;
-	}
-
-	public static List<String> filterExistingPaths(SdkType sdkType, Collection<String> sdkHomes, final Sdk[] sdks)
-	{
-		List<String> result = new ArrayList<String>();
-		for(String sdkHome : sdkHomes)
-		{
-			if(findByPath(sdkType, sdks, sdkHome) == null)
-			{
-				result.add(sdkHome);
-			}
-		}
-		return result;
+		String basePath = PathManager.getSystemPath();
+		return basePath +
+				File.separator +
+				PythonSdkType.REMOTE_SOURCES_DIR_NAME +
+				sep +
+				FileUtil.toSystemIndependentName(sdkHome).hashCode() +
+				sep;
 	}
 
 	@Nullable
-	private static Sdk findByPath(SdkType sdkType, Sdk[] sdks, String sdkHome)
+	public static VirtualFile findSkeletonsDir(@NotNull final Sdk sdk)
 	{
-		for(Sdk sdk : sdks)
+		return findLibraryDir(sdk, PythonSdkType.SKELETON_DIR_NAME, PythonSdkType.BUILTIN_ROOT_TYPE);
+	}
+
+	@Nullable
+	public static VirtualFile findAnyRemoteLibrary(@NotNull final Sdk sdk)
+	{
+		return findLibraryDir(sdk, PythonSdkType.REMOTE_SOURCES_DIR_NAME, OrderRootType.CLASSES);
+	}
+
+	private static VirtualFile findLibraryDir(Sdk sdk, String dirName, OrderRootType rootType)
+	{
+		final VirtualFile[] virtualFiles = sdk.getRootProvider().getFiles(rootType);
+		for(VirtualFile virtualFile : virtualFiles)
 		{
-			if(sdk.getSdkType() == sdkType && FileUtil.pathsEqual(FileUtil.toSystemIndependentName(sdk.getHomePath()),
-					FileUtil.toSystemIndependentName(sdkHome)))
+			if(virtualFile.isValid() && virtualFile.getPath().contains(dirName))
 			{
-				return sdk;
+				return virtualFile;
 			}
 		}
 		return null;

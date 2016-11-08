@@ -20,10 +20,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.consulo.python.module.extension.PyModuleExtension;
+import consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.application.Application;
@@ -37,9 +38,12 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleExtensionWithSdkOrderEntry;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.FilePropertyPusher;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
-import com.intellij.openapi.roots.types.BinariesOrderRootType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,6 +56,7 @@ import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.messages.MessageBus;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.PythonSdkPathCache;
 import com.jetbrains.python.sdk.PythonSdkType;
 
@@ -60,18 +65,19 @@ import com.jetbrains.python.sdk.PythonSdkType;
  */
 public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLevel>
 {
-	private final Map<Module, Sdk> myModuleSdks = new WeakHashMap<Module, Sdk>();
+	public static final Key<LanguageLevel> PYTHON_LANGUAGE_LEVEL = Key.create("PYTHON_LANGUAGE_LEVEL");
+
+	private final Map<Module, Sdk> myModuleSdks = new WeakHashMap<>();
 
 	public static void pushLanguageLevel(final Project project)
 	{
 		PushedFilePropertiesUpdater.getInstance(project).pushAll(new PythonLanguageLevelPusher());
 	}
 
-	@Override
 	public void initExtra(@NotNull Project project, @NotNull MessageBus bus, @NotNull Engine languageLevelUpdater)
 	{
 		final Module[] modules = ModuleManager.getInstance(project).getModules();
-		Set<Sdk> usedSdks = new HashSet<Sdk>();
+		Set<Sdk> usedSdks = new HashSet<>();
 		for(Module module : modules)
 		{
 			if(isPythonModule(module))
@@ -85,34 +91,33 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 				}
 			}
 		}
+		project.putUserData(PYTHON_LANGUAGE_LEVEL, PyUtil.guessLanguageLevel(project));
 	}
 
-	@Override
 	@NotNull
 	public Key<LanguageLevel> getFileDataKey()
 	{
 		return LanguageLevel.KEY;
 	}
 
-	@Override
 	public boolean pushDirectoriesOnly()
 	{
 		return true;
 	}
 
-	@Override
 	@NotNull
 	public LanguageLevel getDefaultValue()
 	{
 		return LanguageLevel.getDefault();
 	}
 
-	@Override
+	@Nullable
 	public LanguageLevel getImmediateValue(@NotNull Project project, @Nullable VirtualFile file)
 	{
 		return getFileLanguageLevel(project, file);
 	}
 
+	@Nullable
 	public static LanguageLevel getFileLanguageLevel(@NotNull Project project, @Nullable VirtualFile file)
 	{
 		if(ApplicationManager.getApplication().isUnitTestMode() && LanguageLevel.FORCE_LANGUAGE_LEVEL != null)
@@ -124,7 +129,11 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 			return null;
 		}
 		final Sdk sdk = getFileSdk(project, file);
-		return PythonSdkType.getLanguageLevelForSdk(sdk);
+		if(sdk != null)
+		{
+			return PythonSdkType.getLanguageLevelForSdk(sdk);
+		}
+		return PyUtil.guessLanguageLevelWithCaching(project);
 	}
 
 	@Nullable
@@ -138,11 +147,31 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 			{
 				return sdk;
 			}
+			return null;
+		}
+		else
+		{
+			return findSdkForFileOutsideTheProject(project, file);
+		}
+	}
+
+	@Nullable
+	private static Sdk findSdkForFileOutsideTheProject(Project project, VirtualFile file)
+	{
+		if(file != null)
+		{
+			final List<OrderEntry> orderEntries = ProjectRootManager.getInstance(project).getFileIndex().getOrderEntriesForFile(file);
+			for(OrderEntry orderEntry : orderEntries)
+			{
+				if(orderEntry instanceof ModuleExtensionWithSdkOrderEntry)
+				{
+					return ((ModuleExtensionWithSdkOrderEntry) orderEntry).getSdk();
+				}
+			}
 		}
 		return null;
 	}
 
-	@Override
 	public LanguageLevel getImmediateValue(@NotNull Module module)
 	{
 		if(ApplicationManager.getApplication().isUnitTestMode() && LanguageLevel.FORCE_LANGUAGE_LEVEL != null)
@@ -154,7 +183,6 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 		return PythonSdkType.getLanguageLevelForSdk(sdk);
 	}
 
-	@Override
 	public boolean acceptsFile(@NotNull VirtualFile file)
 	{
 		return false;
@@ -168,7 +196,6 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 
 	private static final FileAttribute PERSISTENCE = new FileAttribute("python_language_level_persistence", 2, true);
 
-	@Override
 	public void persistAttribute(@NotNull Project project, @NotNull VirtualFile fileOrDir, @NotNull LanguageLevel level) throws IOException
 	{
 		final DataInputStream iStream = PERSISTENCE.readAttribute(fileOrDir);
@@ -217,10 +244,9 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 		}
 	}
 
-	@Override
 	public void afterRootsChanged(@NotNull final Project project)
 	{
-		Set<Sdk> updatedSdks = new HashSet<Sdk>();
+		Set<Sdk> updatedSdks = new HashSet<>();
 		final Module[] modules = ModuleManager.getInstance(project).getModules();
 		boolean needReparseOpenFiles = false;
 		for(Module module : modules)
@@ -246,7 +272,13 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 		}
 		if(needReparseOpenFiles)
 		{
-			FileContentUtil.reparseFiles(project, Collections.<VirtualFile>emptyList(), true);
+			ApplicationManager.getApplication().invokeLater(() -> {
+				if(project.isDisposed())
+				{
+					return;
+				}
+				FileContentUtil.reparseFiles(project, Collections.<VirtualFile>emptyList(), true);
+			});
 		}
 	}
 
@@ -255,48 +287,34 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 		return ModuleUtilCore.getExtension(module, PyModuleExtension.class) != null;
 	}
 
-	private void updateSdkLanguageLevel(final Project project, final Sdk sdk)
+	private void updateSdkLanguageLevel(@NotNull final Project project, final Sdk sdk)
 	{
 		final LanguageLevel languageLevel = PythonSdkType.getLanguageLevelForSdk(sdk);
-		final VirtualFile[] files = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+		final VirtualFile[] files = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
 		final Application application = ApplicationManager.getApplication();
-		application.executeOnPooledThread(new Runnable()
-		{
-			@Override
-			public void run()
+		PyUtil.invalidateLanguageLevelCache(project);
+		application.executeOnPooledThread(() -> application.runReadAction(() -> {
+			if(project.isDisposed())
 			{
-				application.runReadAction(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						if(project != null && project.isDisposed())
-						{
-							return;
-						}
-						for(VirtualFile file : files)
-						{
-							if(file.isValid())
-							{
-								VirtualFile parent = file.getParent();
-								boolean suppressSizeLimit = false;
-								if(parent != null && parent.getName().equals(PythonSdkType.SKELETON_DIR_NAME))
-								{
-									suppressSizeLimit = true;
-								}
-								markRecursively(project, file, languageLevel, suppressSizeLimit);
-							}
-						}
-					}
-				});
+				return;
 			}
-		});
+			for(VirtualFile file : files)
+			{
+				if(file.isValid())
+				{
+					VirtualFile parent = file.getParent();
+					boolean suppressSizeLimit = false;
+					if(parent != null && parent.getName().equals(PythonSdkType.SKELETON_DIR_NAME))
+					{
+						suppressSizeLimit = true;
+					}
+					markRecursively(project, file, languageLevel, suppressSizeLimit);
+				}
+			}
+		}));
 	}
 
-	private void markRecursively(final Project project,
-			@NotNull final VirtualFile file,
-			final LanguageLevel languageLevel,
-			final boolean suppressSizeLimit)
+	private void markRecursively(final Project project, @NotNull final VirtualFile file, final LanguageLevel languageLevel, final boolean suppressSizeLimit)
 	{
 		final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
 		VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor()

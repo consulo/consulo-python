@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.validation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.CommonProblemDescriptorImpl;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -24,71 +28,71 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl;
 import com.intellij.codeInspection.ex.QuickFixWrapper;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author Alexey.Ivanov
  */
-public class UnsupportedFeatures extends CompatibilityVisitor {
+public class UnsupportedFeatures extends CompatibilityVisitor
+{
 
-  public UnsupportedFeatures() {
-    super(new ArrayList<LanguageLevel>());
-  }
+	public UnsupportedFeatures()
+	{
+		super(new ArrayList<>());
+	}
 
-  @Override
-  public void visitPyElement(PyElement node) {
-    setVersionsToProcess(Arrays.asList(getLanguageLevel(node)));
-  }
+	@Override
+	public void visitPyElement(PyElement node)
+	{
+		setVersionsToProcess(Arrays.asList(LanguageLevel.forElement(node)));
+	}
 
-  @Override
-  protected void registerProblem(@Nullable final PsiElement node, String message, LocalQuickFix localQuickFix, boolean asError) {
-    if (node == null) return;
-    registerProblem(node, node.getTextRange(), message, localQuickFix, asError);
-  }
+	@Override
+	protected void registerProblem(@NotNull PsiElement node, @NotNull TextRange range, @NotNull String message, @Nullable LocalQuickFix localQuickFix, boolean asError)
+	{
+		if(range.isEmpty())
+		{
+			return;
+		}
 
-  @Override
-  protected void registerProblem(PsiElement node, TextRange range, String message, LocalQuickFix localQuickFix, boolean asError) {
-    if (range.isEmpty()){
-      return;
-    }
-    if (localQuickFix != null)
-      if (asError)
-        getHolder().createErrorAnnotation(range, message).registerFix(createIntention(node, message, localQuickFix));
-      else
-        getHolder().createWarningAnnotation(range, message).registerFix(createIntention(node, message, localQuickFix));
-    else
-      if (asError)
-        getHolder().createErrorAnnotation(range, message);
-      else
-        getHolder().createWarningAnnotation(range, message);
-  }
+		if(localQuickFix != null)
+		{
+			if(asError)
+			{
+				getHolder().createErrorAnnotation(range, message).registerFix(createIntention(node, message, localQuickFix));
+			}
+			else
+			{
+				getHolder().createWarningAnnotation(range, message).registerFix(createIntention(node, message, localQuickFix));
+			}
+		}
+		else
+		{
+			if(asError)
+			{
+				getHolder().createErrorAnnotation(range, message);
+			}
+			else
+			{
+				getHolder().createWarningAnnotation(range, message);
+			}
+		}
+	}
 
-  @NotNull
-  private static LanguageLevel getLanguageLevel(PyElement node) {
-    VirtualFile virtualFile = node.getContainingFile().getVirtualFile();
-    if (virtualFile != null) {
-      return LanguageLevel.forFile(virtualFile);
-    }
-    return LanguageLevel.getDefault();
-  }
+	@NotNull
+	private static IntentionAction createIntention(@NotNull PsiElement node, @NotNull String message, @NotNull LocalQuickFix localQuickFix)
+	{
+		return createIntention(node, node.getTextRange(), message, localQuickFix);
+	}
 
-  private static IntentionAction createIntention(PsiElement node, String message, LocalQuickFix fix) {
-    return createIntention(node, node.getTextRange(), message, fix);
-  }
+	@NotNull
+	private static IntentionAction createIntention(@NotNull PsiElement node, @Nullable TextRange range, @NotNull String message, @NotNull LocalQuickFix localQuickFix)
+	{
+		final LocalQuickFix[] quickFixes = {localQuickFix};
+		final CommonProblemDescriptorImpl descr = new ProblemDescriptorImpl(node, node, message, quickFixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, range, true);
 
-  private static IntentionAction createIntention(PsiElement node, TextRange range, String message, LocalQuickFix fix) {
-    LocalQuickFix[] quickFixes = {fix};
-    CommonProblemDescriptorImpl descr = new ProblemDescriptorImpl(node, node, message,
-                                                                  quickFixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true,
-                                                                  range, true);
-    return QuickFixWrapper.wrap((ProblemDescriptor)descr, 0);
-  }
+		return QuickFixWrapper.wrap((ProblemDescriptor) descr, 0);
+	}
 }

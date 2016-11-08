@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
 
 import java.util.Collection;
@@ -22,17 +21,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.codeInsight.PyDynamicMember;
+import com.jetbrains.python.codeInsight.PyCustomMember;
 
 /**
  * @author Dennis.Ushakov
  */
-public interface PyClassMembersProvider {
-  ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.pyClassMembersProvider");
+public interface PyClassMembersProvider
+{
+	ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create("consulo.python.pyClassMembersProvider");
 
-  @NotNull
-  Collection<PyDynamicMember> getMembers(PyClassType clazz, @Nullable PsiElement location);
+	@NotNull
+	Collection<PyCustomMember> getMembers(final PyClassType clazz, PsiElement location, @Nullable TypeEvalContext typeEvalContext);
 
-  @Nullable
-  PsiElement resolveMember(PyClassType clazz, String name, @Nullable PsiElement location);
+	@Nullable
+	PsiElement resolveMember(PyClassType clazz, String name, @Nullable PsiElement location, @Nullable TypeEvalContext context);
 }

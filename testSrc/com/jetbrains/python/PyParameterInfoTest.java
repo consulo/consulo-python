@@ -13,7 +13,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
-import com.jetbrains.python.psi.CallArgumentsMapping;
 import com.jetbrains.python.psi.PyArgumentList;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;

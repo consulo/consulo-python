@@ -25,7 +25,7 @@ import com.intellij.util.Consumer;
  * @author yole
  */
 public interface PyUnresolvedReferenceQuickFixProvider {
-  ExtensionPointName<PyUnresolvedReferenceQuickFixProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.unresolvedReferenceQuickFixProvider");
+  ExtensionPointName<PyUnresolvedReferenceQuickFixProvider> EP_NAME = ExtensionPointName.create("consulo.python.unresolvedReferenceQuickFixProvider");
 
   void registerQuickFixes(PsiReference reference, Consumer<LocalQuickFix> fixConsumer);
 }

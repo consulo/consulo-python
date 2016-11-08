@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.rest.inspections;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import org.consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableSet;
@@ -30,7 +28,6 @@ import com.intellij.codeInspection.ui.ListEditForm;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.JDOMExternalizableStringList;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,7 +49,6 @@ import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.rest.RestBundle;
 import com.jetbrains.rest.RestFile;
-import com.jetbrains.rest.RestPythonUtil;
 import com.jetbrains.rest.RestTokenTypes;
 import com.jetbrains.rest.RestUtil;
 import com.jetbrains.rest.psi.RestDirectiveBlock;
@@ -61,117 +57,158 @@ import com.jetbrains.rest.quickfixes.AddIgnoredRoleFix;
 
 /**
  * User: catherine
- *
+ * <p>
  * Looks for using not defined roles
  */
-public class RestRoleInspection extends RestInspection {
-  public JDOMExternalizableStringList ignoredRoles = new JDOMExternalizableStringList();
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return RestBundle.message("INSP.role.not.defined");
-  }
+public class RestRoleInspection extends RestInspection
+{
+	public JDOMExternalizableStringList ignoredRoles = new JDOMExternalizableStringList();
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return false;
-  }
+	@Nls
+	@NotNull
+	@Override
+	public String getDisplayName()
+	{
+		return RestBundle.message("INSP.role.not.defined");
+	}
 
-  @NotNull
-  @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new Visitor(holder, ignoredRoles);
-  }
+	@Override
+	public boolean isEnabledByDefault()
+	{
+		return false;
+	}
 
-  private class Visitor extends RestInspectionVisitor {
-    private final ImmutableSet<String> myIgnoredRoles;
-    Set<String> mySphinxRoles = new HashSet<String>();
+	@NotNull
+	@Override
+	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly)
+	{
+		return new Visitor(holder, ignoredRoles);
+	}
 
-    public Visitor(final ProblemsHolder holder, List<String> ignoredRoles) {
-      super(holder);
-      myIgnoredRoles = ImmutableSet.copyOf(ignoredRoles);
-      Project project = holder.getProject();
-      final Module module = ModuleUtilCore.findModuleForPsiElement(holder.getFile());
-      if (module == null) return;
-      String dir = ReSTService.getInstance(module).getWorkdir();
-      if (!dir.isEmpty())
-        fillSphinxRoles(dir, project);
-    }
+	private class Visitor extends RestInspectionVisitor
+	{
+		private final ImmutableSet<String> myIgnoredRoles;
+		Set<String> mySphinxRoles = new HashSet<>();
 
-    private void fillSphinxRoles(String dir, Project project) {
-      VirtualFile config = LocalFileSystem.getInstance().findFileByPath((dir.endsWith("/")?dir:dir+"/")+"conf.py");
-      if (config == null) return;
+		public Visitor(final ProblemsHolder holder, List<String> ignoredRoles)
+		{
+			super(holder);
+			myIgnoredRoles = ImmutableSet.copyOf(ignoredRoles);
+			Project project = holder.getProject();
+			final Module module = ModuleUtilCore.findModuleForPsiElement(holder.getFile());
+			if(module == null)
+			{
+				return;
+			}
+			String dir = ReSTService.getInstance(module).getWorkdir();
+			if(!dir.isEmpty())
+			{
+				fillSphinxRoles(dir, project);
+			}
+		}
 
-      PsiFile configFile = PsiManager.getInstance(project).findFile(config);
-      if (configFile instanceof PyFile) {
-        PyFile file = (PyFile)configFile;
-        List<PyFunction> functions = file.getTopLevelFunctions();
-        for (PyFunction function : functions) {
-          if (!"setup".equals(function.getName())) continue;
-          PyStatementList stList = function.getStatementList();
-          if (stList != null) {
-            PyStatement[] statements = stList.getStatements();
-            for (PyElement statement : statements) {
-              if (statement instanceof PyExpressionStatement)
-                statement = ((PyExpressionStatement)statement).getExpression();
-              if (statement instanceof PyCallExpression) {
-                if (((PyCallExpression)statement).isCalleeText("add_role")) {
-                  PyExpression arg = ((PyCallExpression)statement).getArguments()[0];
-                  if (arg instanceof PyStringLiteralExpression)
-                    mySphinxRoles.add(((PyStringLiteralExpression)arg).getStringValue());
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+		private void fillSphinxRoles(String dir, Project project)
+		{
+			VirtualFile config = LocalFileSystem.getInstance().findFileByPath((dir.endsWith("/") ? dir : dir + "/") + "conf.py");
+			if(config == null)
+			{
+				return;
+			}
 
-    @Override
-    public void visitRole(final RestRole node) {
-      RestFile file = (RestFile)node.getContainingFile();
+			PsiFile configFile = PsiManager.getInstance(project).findFile(config);
+			if(configFile instanceof PyFile)
+			{
+				PyFile file = (PyFile) configFile;
+				List<PyFunction> functions = file.getTopLevelFunctions();
+				for(PyFunction function : functions)
+				{
+					if(!"setup".equals(function.getName()))
+					{
+						continue;
+					}
+					PyStatementList stList = function.getStatementList();
+					PyStatement[] statements = stList.getStatements();
+					for(PyElement statement : statements)
+					{
+						if(statement instanceof PyExpressionStatement)
+						{
+							statement = ((PyExpressionStatement) statement).getExpression();
+						}
+						if(statement instanceof PyCallExpression)
+						{
+							if(((PyCallExpression) statement).isCalleeText("add_role"))
+							{
+								PyExpression arg = ((PyCallExpression) statement).getArguments()[0];
+								if(arg instanceof PyStringLiteralExpression)
+								{
+									mySphinxRoles.add(((PyStringLiteralExpression) arg).getStringValue());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 
-      if (PsiTreeUtil.getParentOfType(node, RestDirectiveBlock.class) != null) return;
-      final PsiElement sibling = node.getNextSibling();
-      if (sibling == null || sibling.getNode().getElementType() != RestTokenTypes.INTERPRETED) return;
-      if (RestUtil.PREDEFINED_ROLES.contains(node.getText()) || myIgnoredRoles.contains(node.getRoleName()))
-        return;
+		@Override
+		public void visitRole(final RestRole node)
+		{
+			RestFile file = (RestFile) node.getContainingFile();
 
-      Sdk sdk = ModuleUtilCore.getSdk(node, PyModuleExtension.class);
-      if (sdk != null) {
-        String sphinx = RestPythonUtil.findQuickStart(sdk);
-        if (sphinx != null) {
-          if (RestUtil.SPHINX_ROLES.contains(node.getText()) || RestUtil.SPHINX_ROLES.contains(":py"+node.getText())
-             || mySphinxRoles.contains(node.getRoleName())) return;
-        }
-      }
+			if(PsiTreeUtil.getParentOfType(node, RestDirectiveBlock.class) != null)
+			{
+				return;
+			}
+			final PsiElement sibling = node.getNextSibling();
+			if(sibling == null || sibling.getNode().getElementType() != RestTokenTypes.INTERPRETED)
+			{
+				return;
+			}
+			if(RestUtil.PREDEFINED_ROLES.contains(node.getText()) || myIgnoredRoles.contains(node.getRoleName()))
+			{
+				return;
+			}
 
-      Set<String> definedRoles = new HashSet<String>();
+			if(RestUtil.SPHINX_ROLES.contains(node.getText()) || RestUtil.SPHINX_ROLES.contains(":py" + node.getText()) || mySphinxRoles.contains(node.getRoleName()))
+			{
+				return;
+			}
 
-      RestDirectiveBlock[] directives = PsiTreeUtil.getChildrenOfType(file, RestDirectiveBlock.class);
-      if (directives != null) {
-        for (RestDirectiveBlock block : directives) {
-          if (block.getDirectiveName().equals("role::")) {
-            PsiElement role = block.getFirstChild().getNextSibling();
-            if (role != null) {
-              String roleName = role.getText().trim();
-              int index = roleName.indexOf('(');
-              if (index != -1)
-                roleName = roleName.substring(0, index);
-              definedRoles.add(roleName);
-            }
-          }
-        }
-      }
-      if (definedRoles.contains(node.getRoleName())) return;
-      registerProblem(node, "Not defined role '" + node.getRoleName() + "'", new AddIgnoredRoleFix(node.getRoleName(), RestRoleInspection.this));
-    }
-  }
+			Set<String> definedRoles = new HashSet<>();
 
-  @Override
-  public JComponent createOptionsPanel() {
-    ListEditForm form = new ListEditForm("Ignore roles", ignoredRoles);
-    return form.getContentPanel();
-  }
+			RestDirectiveBlock[] directives = PsiTreeUtil.getChildrenOfType(file, RestDirectiveBlock.class);
+			if(directives != null)
+			{
+				for(RestDirectiveBlock block : directives)
+				{
+					if(block.getDirectiveName().equals("role::"))
+					{
+						PsiElement role = block.getFirstChild().getNextSibling();
+						if(role != null)
+						{
+							String roleName = role.getText().trim();
+							int index = roleName.indexOf('(');
+							if(index != -1)
+							{
+								roleName = roleName.substring(0, index);
+							}
+							definedRoles.add(roleName);
+						}
+					}
+				}
+			}
+			if(definedRoles.contains(node.getRoleName()))
+			{
+				return;
+			}
+			registerProblem(node, "Not defined role '" + node.getRoleName() + "'", new AddIgnoredRoleFix(node.getRoleName(), RestRoleInspection.this));
+		}
+	}
+
+	@Override
+	public JComponent createOptionsPanel()
+	{
+		ListEditForm form = new ListEditForm("Ignore roles", ignoredRoles);
+		return form.getContentPanel();
+	}
 }

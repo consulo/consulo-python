@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,47 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.util.QualifiedName;
+import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
-public interface PyImportElement extends PyElement, PyImportedNameDefiner, StubBasedPsiElement<PyImportElementStub> {
-  @Nullable
-  PyReferenceExpression getImportReferenceExpression();
+public interface PyImportElement extends PyElement, PyImportedNameDefiner, StubBasedPsiElement<PyImportElementStub>
+{
+	@Nullable
+	PyReferenceExpression getImportReferenceExpression();
 
-  @Nullable
-  QualifiedName getImportedQName();
+	@Nullable
+	QualifiedName getImportedQName();
 
-  @Nullable
-  PyTargetExpression getAsNameElement();
+	@Nullable
+	PyTargetExpression getAsNameElement();
 
-  @Nullable
-  String getAsName();
+	@Nullable
+	String getAsName();
 
-  /**
-   * @return name under which the element is visible, that is, "as name" is there is one, or just name.
-   */
-  @Nullable
-  String getVisibleName();
+	/**
+	 * @return name under which the element is visible, that is, "as name" is there is one, or just name.
+	 */
+	@Nullable
+	String getVisibleName();
 
-  PyStatement getContainingImportStatement();
-  
-  @Nullable
-  PsiElement getElementNamed(String name, boolean resolveImportElement);
+	PyStatement getContainingImportStatement();
 
-  /**
-   * Resolves the import element to the element being imported.
-   *
-   * @return the resolve result or null if the resolution failed.
-   */
-  @Nullable
-  PsiElement resolve();
+	@Nullable
+	PsiElement getElementNamed(String name, boolean resolveImportElement);
+
+	/**
+	 * @deprecated Use {@link #multiResolve()} instead.
+	 */
+	@Deprecated
+	@Nullable
+	PsiElement resolve();
+
+	/**
+	 * Resolves the import element to the elements being imported.
+	 */
+	@NotNull
+	List<RatedResolveResult> multiResolve();
 }

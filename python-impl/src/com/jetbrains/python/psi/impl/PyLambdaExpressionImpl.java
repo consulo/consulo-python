@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,79 +13,113 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.types.PyFunctionType;
+import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyLambdaExpression;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyParameterList;
+import com.jetbrains.python.psi.types.PyFunctionTypeImpl;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
-public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExpression {
-  public PyLambdaExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
+public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExpression
+{
+	public PyLambdaExpressionImpl(ASTNode astNode)
+	{
+		super(astNode);
+	}
 
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyLambdaExpression(this);
-  }
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
+	{
+		pyVisitor.visitPyLambdaExpression(this);
+	}
 
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
-    for (PyTypeProvider provider : Extensions.getExtensions(PyTypeProvider.EP_NAME)) {
-      final PyType type = provider.getCallableType(this, context);
-      if (type != null) {
-        return type;
-      }
-    }
-    return new PyFunctionType(this);
-  }
+	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	{
+		for(PyTypeProvider provider : Extensions.getExtensions(PyTypeProvider.EP_NAME))
+		{
+			final PyType type = provider.getCallableType(this, context);
+			if(type != null)
+			{
+				return type;
+			}
+		}
+		return new PyFunctionTypeImpl(this);
+	}
 
-  @NotNull
-  public PyParameterList getParameterList() {
-    final PyElement child = childToPsi(PyElementTypes.PARAMETER_LIST_SET, 0);
-    if (child == null) {
-      throw new RuntimeException("parameter list must not be null; text=" + getText());
-    }
-    //noinspection unchecked
-    return (PyParameterList)child;
-  }
+	@NotNull
+	public PyParameterList getParameterList()
+	{
+		final PyElement child = childToPsi(PyElementTypes.PARAMETER_LIST_SET, 0);
+		if(child == null)
+		{
+			throw new RuntimeException("parameter list must not be null; text=" + getText());
+		}
+		//noinspection unchecked
+		return (PyParameterList) child;
+	}
 
-  @Nullable
-  @Override
-  public PyType getReturnType(@NotNull TypeEvalContext context, @Nullable PyQualifiedExpression callSite) {
-    final PyExpression body = getBody();
-    if (body != null) return context.getType(body);
-    else return null;
-  }
+	@Nullable
+	@Override
+	public PyType getReturnType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	{
+		final PyExpression body = getBody();
+		return body != null ? context.getType(body) : null;
+	}
 
-  @Nullable
-  public PyExpression getBody() {
-    return PsiTreeUtil.getChildOfType(this, PyExpression.class);
-  }
+	@Nullable
+	@Override
+	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	{
+		return context.getReturnType(this);
+	}
 
-  public PyFunction asMethod() {
-    return null; // we're never a method
-  }
+	@Nullable
+	@Override
+	public PyType getCallType(@Nullable PyExpression receiver, @NotNull Map<PyExpression, PyNamedParameter> parameters, @NotNull TypeEvalContext context)
+	{
+		return context.getReturnType(this);
+	}
 
-  @Override
-  public void subtreeChanged() {
-    super.subtreeChanged();
-    ControlFlowCache.clear(this);
-  }
+	@Nullable
+	public PyExpression getBody()
+	{
+		return PsiTreeUtil.getChildOfType(this, PyExpression.class);
+	}
 
-  @Nullable
-  @Override
-  public String getQualifiedName() {
-    return null;
-  }
+	public PyFunction asMethod()
+	{
+		return null; // we're never a method
+	}
+
+	@Override
+	public void subtreeChanged()
+	{
+		super.subtreeChanged();
+		ControlFlowCache.clear(this);
+	}
+
+	@Nullable
+	@Override
+	public String getQualifiedName()
+	{
+		return null;
+	}
 }

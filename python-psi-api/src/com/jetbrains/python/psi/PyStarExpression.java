@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +20,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author: Alexey.Ivanov
  */
-public interface PyStarExpression extends PyExpression {
-  @Nullable
-  PyExpression getExpression();
+public interface PyStarExpression extends PyExpression
+{
+	@Nullable
+	PyExpression getExpression();
+
+	boolean isAssignmentTarget();
+
+	boolean isUnpacking();
 }

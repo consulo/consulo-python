@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.consulo.module.extension.ModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
@@ -43,6 +42,7 @@ import com.jetbrains.python.facet.PythonPathContributingFacet;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.impl.PyImportResolver;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.module.extension.ModuleExtension;
 
 /**
  * Resolves the specified qualified name in the specified context (module, all modules or a file) to a file or directory.

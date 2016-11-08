@@ -22,8 +22,8 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.consulo.python.buildout.module.extension.BuildoutModuleExtension;
-import org.consulo.python.buildout.module.extension.BuildoutMutableModuleExtension;
+import consulo.python.buildout.module.extension.BuildoutModuleExtension;
+import consulo.python.buildout.module.extension.BuildoutMutableModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;

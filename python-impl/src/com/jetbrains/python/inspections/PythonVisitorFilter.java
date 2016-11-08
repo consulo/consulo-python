@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
  * check if we should visit element
  */
 public interface PythonVisitorFilter {
-  LanguageExtension<PythonVisitorFilter> INSTANCE = new LanguageExtension<PythonVisitorFilter>("org.consulo.python.visitorFilter");
+  LanguageExtension<PythonVisitorFilter> INSTANCE = new LanguageExtension<PythonVisitorFilter>("consulo.python.visitorFilter");
 
   boolean isSupported(@NotNull Class visitorClass, @NotNull PsiFile file);
 }

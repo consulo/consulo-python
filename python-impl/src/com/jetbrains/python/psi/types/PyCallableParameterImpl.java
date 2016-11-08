@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,61 +13,73 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
 
-import com.jetbrains.python.psi.PyNamedParameter;
-import com.jetbrains.python.psi.PyParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.jetbrains.python.psi.PyNamedParameter;
+import com.jetbrains.python.psi.PyParameter;
 
 /**
  * @author vlan
  */
-public class PyCallableParameterImpl implements PyCallableParameter {
-  @Nullable private final String myName;
-  @Nullable private final PyType myType;
-  @Nullable private final PyParameter myElement;
+public class PyCallableParameterImpl implements PyCallableParameter
+{
+	@Nullable
+	private final String myName;
+	@Nullable
+	private final PyType myType;
+	@Nullable
+	private final PyParameter myElement;
 
-  public PyCallableParameterImpl(@Nullable String name, @Nullable PyType type) {
-    myName = name;
-    myType = type;
-    myElement = null;
-  }
+	public PyCallableParameterImpl(@Nullable String name, @Nullable PyType type)
+	{
+		myName = name;
+		myType = type;
+		myElement = null;
+	}
 
-  public PyCallableParameterImpl(@Nullable PyParameter element) {
-    myName = null;
-    myType = null;
-    myElement = element;
-  }
+	public PyCallableParameterImpl(@Nullable PyParameter element)
+	{
+		myName = null;
+		myType = null;
+		myElement = element;
+	}
 
-  @Nullable
-  @Override
-  public String getName() {
-    if (myName != null) {
-      return myName;
-    }
-    else if (myElement != null) {
-      return myElement.getName();
-    }
-    return null;
-  }
+	@Nullable
+	@Override
+	public String getName()
+	{
+		if(myName != null)
+		{
+			return myName;
+		}
+		else if(myElement != null)
+		{
+			return myElement.getName();
+		}
+		return null;
+	}
 
-  @Nullable
-  @Override
-  public PyType getType(@NotNull TypeEvalContext context) {
-    if (myType != null) {
-      return myType;
-    }
-    else if (myElement instanceof PyNamedParameter) {
-      return context.getType((PyNamedParameter)myElement);
-    }
-    return null;
-  }
+	@Nullable
+	@Override
+	public PyType getType(@NotNull TypeEvalContext context)
+	{
+		if(myType != null)
+		{
+			return myType;
+		}
+		else if(myElement instanceof PyNamedParameter)
+		{
+			return context.getType((PyNamedParameter) myElement);
+		}
+		return null;
+	}
 
-  @Nullable
-  @Override
-  public PyParameter getParameter() {
-    return myElement;
-  }
+	@Nullable
+	@Override
+	public PyParameter getParameter()
+	{
+		return myElement;
+	}
 }

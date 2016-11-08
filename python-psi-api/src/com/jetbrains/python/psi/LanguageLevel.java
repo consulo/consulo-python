@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,148 +13,181 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
-import com.intellij.injected.editor.VirtualFileWindow;
-import com.intellij.openapi.application.ApplicationManager;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.util.ArrayUtil;
 
 /**
  * @author yole
  */
-public enum LanguageLevel {
-  PYTHON24(24, false, true, false, false),
-  PYTHON25(25, false, true, false, false),
-  PYTHON26(26, true, true, false, false),
-  PYTHON27(27, true, true, true, false),
-  PYTHON30(30, true, false, false, true),
-  PYTHON31(31, true, false, true, true),
-  PYTHON32(32, true, false, true, true),
-  PYTHON33(33, true, false, true, true);
+public enum LanguageLevel
+{
+	PYTHON24(24, false, true, false, false),
+	PYTHON25(25, false, true, false, false),
+	PYTHON26(26, true, true, false, false),
+	PYTHON27(27, true, true, true, false),
+	PYTHON30(30, true, false, false, true),
+	PYTHON31(31, true, false, true, true),
+	PYTHON32(32, true, false, true, true),
+	PYTHON33(33, true, false, true, true),
+	PYTHON34(34, true, false, true, true),
+	PYTHON35(35, true, false, true, true),
+	PYTHON36(36, true, false, true, true);
 
-  public static LanguageLevel FORCE_LANGUAGE_LEVEL = null;
+	public static List<LanguageLevel> ALL_LEVELS = ImmutableList.copyOf(values());
 
-  public static LanguageLevel getDefault() {
-    return PYTHON26;
-  }
+	private static final LanguageLevel DEFAULT2 = PYTHON27;
+	private static final LanguageLevel DEFAULT3 = PYTHON35;
 
-  private final int myVersion;
+	public static LanguageLevel FORCE_LANGUAGE_LEVEL = null;
 
-  private final boolean myHasWithStatement;
-  private final boolean myHasPrintStatement;
-  private final boolean mySupportsSetLiterals;
-  private final boolean myIsPy3K;
+	@NotNull
+	public static LanguageLevel getDefault()
+	{
+		return DEFAULT2;
+	}
 
-  LanguageLevel(int version, boolean hasWithStatement, boolean hasPrintStatement, boolean supportsSetLiterals, boolean isPy3K) {
-    myVersion = version;
-    myHasWithStatement = hasWithStatement;
-    myHasPrintStatement = hasPrintStatement;
-    mySupportsSetLiterals = supportsSetLiterals;
-    myIsPy3K = isPy3K;
-  }
+	private final int myVersion;
 
-  /**
-   * @return an int where major and minor version are represented decimally: "version 2.5" is 25.
-   */
-  public int getVersion() {
-    return myVersion;
-  }
+	private final boolean myHasWithStatement;
+	private final boolean myHasPrintStatement;
+	private final boolean mySupportsSetLiterals;
+	private final boolean myIsPy3K;
 
-  public boolean hasWithStatement() {
-    return myHasWithStatement;
-  }
+	LanguageLevel(int version, boolean hasWithStatement, boolean hasPrintStatement, boolean supportsSetLiterals, boolean isPy3K)
+	{
+		myVersion = version;
+		myHasWithStatement = hasWithStatement;
+		myHasPrintStatement = hasPrintStatement;
+		mySupportsSetLiterals = supportsSetLiterals;
+		myIsPy3K = isPy3K;
+	}
 
-  public boolean hasPrintStatement() {
-    return myHasPrintStatement;
-  }
+	/**
+	 * @return an int where major and minor version are represented decimally: "version 2.5" is 25.
+	 */
+	public int getVersion()
+	{
+		return myVersion;
+	}
 
-  public boolean supportsSetLiterals() {
-    return mySupportsSetLiterals;
-  }
+	public boolean hasWithStatement()
+	{
+		return myHasWithStatement;
+	}
 
-  public boolean isPy3K() {
-    return myIsPy3K;
-  }
+	public boolean hasPrintStatement()
+	{
+		return myHasPrintStatement;
+	}
 
-  public boolean isOlderThan(@NotNull LanguageLevel other) {
-    return myVersion < other.myVersion;
-  }
+	public boolean supportsSetLiterals()
+	{
+		return mySupportsSetLiterals;
+	}
 
-  public boolean isAtLeast(@NotNull LanguageLevel other) {
-    return myVersion >= other.myVersion;
-  }
+	public boolean isPy3K()
+	{
+		return myIsPy3K;
+	}
 
-  public static LanguageLevel fromPythonVersion(@NotNull String pythonVersion) {
-    if (pythonVersion.startsWith("2.7")) {
-      return PYTHON27;
-    }
-    if (pythonVersion.startsWith("2.6")) {
-      return PYTHON26;
-    }
-    if (pythonVersion.startsWith("2.5")) {
-      return PYTHON25;
-    }
-    if (pythonVersion.startsWith("3")) {
-      if (pythonVersion.startsWith("3.0")) {
-        return PYTHON30;
-      }
-      if (pythonVersion.startsWith("3.1")) {
-        return PYTHON31;
-      }
-      if (pythonVersion.startsWith("3.2")) {
-        return PYTHON32;
-      }
-      return PYTHON33;
-    }
-    return PYTHON24;
-  }
+	public boolean isOlderThan(@NotNull LanguageLevel other)
+	{
+		return myVersion < other.myVersion;
+	}
 
-  public static final Key<LanguageLevel> KEY = new Key<LanguageLevel>("python.language.level");
+	public boolean isAtLeast(@NotNull LanguageLevel other)
+	{
+		return myVersion >= other.myVersion;
+	}
 
-  @NotNull
-  public static LanguageLevel forFile(@NotNull VirtualFile virtualFile) {
-    if (virtualFile instanceof VirtualFileWindow)
-      virtualFile = ((VirtualFileWindow)virtualFile).getDelegate();
+	public static LanguageLevel fromPythonVersion(@NotNull String pythonVersion)
+	{
+		if(pythonVersion.startsWith("2"))
+		{
+			if(pythonVersion.startsWith("2.4"))
+			{
+				return PYTHON24;
+			}
+			if(pythonVersion.startsWith("2.5"))
+			{
+				return PYTHON25;
+			}
+			if(pythonVersion.startsWith("2.6"))
+			{
+				return PYTHON26;
+			}
+			if(pythonVersion.startsWith("2.7"))
+			{
+				return PYTHON27;
+			}
+			return DEFAULT2;
+		}
+		if(pythonVersion.startsWith("3"))
+		{
+			if(pythonVersion.startsWith("3.0"))
+			{
+				return PYTHON30;
+			}
+			if(pythonVersion.startsWith("3.1"))
+			{
+				return PYTHON31;
+			}
+			if(pythonVersion.startsWith("3.2"))
+			{
+				return PYTHON32;
+			}
+			if(pythonVersion.startsWith("3.3"))
+			{
+				return PYTHON33;
+			}
+			if(pythonVersion.startsWith("3.4"))
+			{
+				return PYTHON34;
+			}
+			if(pythonVersion.startsWith("3.5"))
+			{
+				return PYTHON35;
+			}
+			if(pythonVersion.startsWith("3.6"))
+			{
+				return PYTHON36;
+			}
+			return DEFAULT3;
+		}
+		return getDefault();
+	}
 
-    // Most of the cases should be handled by this one, PyLanguageLevelPusher pushes folders only
-    final VirtualFile folder = virtualFile.getParent();
-    if (folder != null) {
-      final LanguageLevel level = folder.getUserData(KEY);
-      if (level != null) return level;
-    }
-    else {
-      // However this allows us to setup language level per file manually
-      // in case when it is LightVirtualFile
-      final LanguageLevel level = virtualFile.getUserData(KEY);
-      if (level != null) return level;
+	public static final Key<LanguageLevel> KEY = new Key<>("python.language.level");
 
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        final LanguageLevel languageLevel = FORCE_LANGUAGE_LEVEL;
-        if (languageLevel != null) {
-          return languageLevel;
-        }
-      }
-    }
+	@NotNull
+	public static LanguageLevel forElement(@NotNull PsiElement element)
+	{
+		final PsiFile containingFile = element.getContainingFile();
+		if(containingFile instanceof PyFile)
+		{
+			return ((PyFile) containingFile).getLanguageLevel();
+		}
+		return getDefault();
+	}
 
-    return getDefault();
-  }
+	@NotNull
+	public static LanguageLevel getLatest()
+	{
+		//noinspection ConstantConditions
+		return ArrayUtil.getLastElement(values());
+	}
 
-  @NotNull
-  public static LanguageLevel forElement(@NotNull PsiElement element) {
-    final PsiFile containingFile = element.getContainingFile();
-    if (containingFile instanceof PyFile) {
-      return ((PyFile) containingFile).getLanguageLevel();
-    }
-    return getDefault();
-  }
-
-  @Override
-  public String toString() {
-    return myVersion / 10 + "." + myVersion % 10;
-  }
+	@Override
+	public String toString()
+	{
+		return myVersion / 10 + "." + myVersion % 10;
+	}
 }

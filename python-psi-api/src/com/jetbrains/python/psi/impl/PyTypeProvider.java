@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.Callable;
+import com.jetbrains.python.psi.PyCallSiteExpression;
+import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
-import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
@@ -33,27 +33,28 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 /**
  * @author yole
  */
-public interface PyTypeProvider {
-  ExtensionPointName<PyTypeProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.typeProvider");
+public interface PyTypeProvider
+{
+	ExtensionPointName<PyTypeProvider> EP_NAME = ExtensionPointName.create("consulo.python.typeProvider");
 
-  @Nullable
-  PyType getReferenceExpressionType(PyReferenceExpression referenceExpression, TypeEvalContext context);
+	@Nullable
+	PyType getReferenceExpressionType(@NotNull PyReferenceExpression referenceExpression, @NotNull TypeEvalContext context);
 
-  @Nullable
-  PyType getReferenceType(@NotNull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor);
+	@Nullable
+	PyType getReferenceType(@NotNull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor);
 
-  @Nullable
-  PyType getParameterType(@NotNull PyNamedParameter param, @NotNull PyFunction func, @NotNull TypeEvalContext context);
+	@Nullable
+	Ref<PyType> getParameterType(@NotNull PyNamedParameter param, @NotNull PyFunction func, @NotNull TypeEvalContext context);
 
-  @Nullable
-  PyType getReturnType(@NotNull PyFunction function, @Nullable PyQualifiedExpression callSite, @NotNull TypeEvalContext context);
+	@Nullable
+	Ref<PyType> getReturnType(@NotNull PyCallable callable, @NotNull TypeEvalContext context);
 
-  @Nullable
-  PyType getIterationType(@NotNull PyClass iterable);
+	@Nullable
+	Ref<PyType> getCallType(@NotNull PyFunction function, @Nullable PyCallSiteExpression callSite, @NotNull TypeEvalContext context);
 
-  @Nullable
-  PyType getContextManagerVariableType(PyClass contextManager, PyExpression withExpression, TypeEvalContext context);
+	@Nullable
+	PyType getContextManagerVariableType(PyClass contextManager, PyExpression withExpression, TypeEvalContext context);
 
-  @Nullable
-  PyType getCallableType(@NotNull Callable callable, @NotNull TypeEvalContext context);
+	@Nullable
+	PyType getCallableType(@NotNull PyCallable callable, @NotNull TypeEvalContext context);
 }

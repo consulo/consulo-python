@@ -23,13 +23,12 @@ import org.intellij.lang.regexp.RegExpFile;
 import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpParser;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
+import consulo.lang.LanguageVersion;
 
 /**
  * @author yole
@@ -44,12 +43,12 @@ public class PythonVerboseRegexpParserDefinition extends PythonRegexpParserDefin
   }
 
   @NotNull
-  public Lexer createLexer(Project project, LanguageVersion languageVersion) {
+  public Lexer createLexer(LanguageVersion languageVersion) {
     return new RegExpLexer(VERBOSE_CAPABILITIES);
   }
 
   @Override
-  public PsiParser createParser(Project project, LanguageVersion languageVersion) {
+  public PsiParser createParser(LanguageVersion languageVersion) {
     return new RegExpParser(VERBOSE_CAPABILITIES);
   }
 

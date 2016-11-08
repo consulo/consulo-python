@@ -1,5 +1,5 @@
-<idea-plugin version="2" xmlns:xi="http://www.w3.org/2001/XInclude" url="http://confluence.jetbrains.com/display/PYH/">
-	<id>org.consulo.python</id>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" url="http://confluence.jetbrains.com/display/PYH/">
+	<id>consulo.python</id>
 	<name>Python</name>
 	<description>Smart editing for Python scripts</description>
 	<version>SNAPSHOT</version>
@@ -18,7 +18,7 @@
 
 	<extensionPoints>
 		<extensionPoint name="importResolver" interface="com.jetbrains.python.psi.impl.PyImportResolver"/>
-		<extensionPoint name="sdkFlavor" interface="com.jetbrains.python.sdk.flavors.PythonSdkFlavor" />
+		<extensionPoint name="sdkFlavor" interface="com.jetbrains.python.sdk.flavors.PythonSdkFlavor"/>
 		<extensionPoint name="typeProvider" interface="com.jetbrains.python.psi.impl.PyTypeProvider"/>
 		<extensionPoint name="pySuperMethodsSearch" interface="com.intellij.util.QueryExecutor"/>
 		<extensionPoint name="pyClassInheritorsSearch" interface="com.intellij.util.QueryExecutor"/>
@@ -46,6 +46,11 @@
 		<extensionPoint name="pyReferenceResolveProvider" interface="com.jetbrains.python.psi.resolve.PyReferenceResolveProvider"/>
 		<extensionPoint name="breakpointHandler" interface="com.jetbrains.python.debugger.PyBreakpointHandlerFactory"/>
 		<extensionPoint name="consoleOptionsProvider" interface="com.jetbrains.python.console.PyConsoleOptionsProvider"/>
+		<extensionPoint name="documentationQuickInfoProvider" interface="com.jetbrains.python.documentation.PythonDocumentationQuickInfoProvider"/>
+		<extensionPoint name="debugSessionFactory" interface="com.jetbrains.python.debugger.PyDebugSessionFactory"/>
+		<extensionPoint name="unresolvedReferenceSkipper" interface="com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenceSkipperExtPoint"/>
+		<extensionPoint name="pep8ProblemSuppressor" interface="com.jetbrains.python.validation.Pep8ProblemSuppressor"/>
+		<extensionPoint name="runConfigurationEditorExtension" interface="com.jetbrains.python.run.PyRunConfigurationEditorExtension"/>
 	</extensionPoints>
 
 	<extensions defaultExtensionNs="com.intellij">
@@ -55,14 +60,14 @@
 		<moduleExtensionProvider key="python"
 								 icon="/icons/com/jetbrains/python/python.png"
 								 name="Python"
-								 immutableClass="org.consulo.python.module.extension.BasePyModuleExtension"
-								 mutableClass="org.consulo.python.module.extension.BasePyMutableModuleExtension"/>
+								 immutableClass="consulo.python.module.extension.BasePyModuleExtension"
+								 mutableClass="consulo.python.module.extension.BasePyMutableModuleExtension"/>
 
 		<moduleExtensionProvider key="py-buildout"
 								 parentKey="python"
 								 icon="/icons/com/jetbrains/python/buildout/buildout.png"
 								 name="Buildout"
-								 immutableClass="org.consulo.python.buildout.module.extension.BuildoutModuleExtension"
-								 mutableClass="org.consulo.python.buildout.module.extension.BuildoutMutableModuleExtension"/>
+								 immutableClass="consulo.python.buildout.module.extension.BuildoutModuleExtension"
+								 mutableClass="consulo.python.buildout.module.extension.BuildoutMutableModuleExtension"/>
 	</extensions>
 </idea-plugin>

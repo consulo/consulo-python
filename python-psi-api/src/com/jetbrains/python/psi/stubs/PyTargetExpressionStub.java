@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,55 +13,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.psi.stubs.NamedStub;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.intellij.psi.util.QualifiedName;
-import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.stubs.NamedStub;
+import com.intellij.psi.util.QualifiedName;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 
 /**
  * @author yole
  */
-public interface PyTargetExpressionStub extends NamedStub<PyTargetExpression> {
-  enum InitializerType {
-    ReferenceExpression(1),
-    CallExpression(2),
-    Custom(3),
-    Other(0);
+public interface PyTargetExpressionStub extends NamedStub<PyTargetExpression>
+{
+	enum InitializerType
+	{
+		ReferenceExpression(1),
+		CallExpression(2),
+		Custom(3),
+		Other(0);
 
-    private int myIndex;
+		private final int myIndex;
 
-    InitializerType(int index) {
-      myIndex = index;
-    }
+		InitializerType(int index)
+		{
+			myIndex = index;
+		}
 
-    public int getIndex() {
-      return myIndex;
-    }
+		public int getIndex()
+		{
+			return myIndex;
+		}
 
-    public static InitializerType fromIndex(int index) {
-      switch (index) {
-        case 1: return ReferenceExpression;
-        case 2: return CallExpression;
-        case 3: return Custom;
-        default: return Other;
-      }
-    }
-  }
+		public static InitializerType fromIndex(int index)
+		{
+			switch(index)
+			{
+				case 1:
+					return ReferenceExpression;
+				case 2:
+					return CallExpression;
+				case 3:
+					return Custom;
+				default:
+					return Other;
+			}
+		}
+	}
 
-  InitializerType getInitializerType();
+	InitializerType getInitializerType();
 
-  @Nullable
-  QualifiedName getInitializer();
+	@Nullable
+	QualifiedName getInitializer();
 
-  boolean isQualified();
+	boolean isQualified();
 
-  @Nullable
-  <T extends CustomTargetExpressionStub> T getCustomStub(Class<T> stubClass);
+	@Nullable
+	<T extends CustomTargetExpressionStub> T getCustomStub(Class<T> stubClass);
 
-  @Nullable
-  String getDocString();
+	@Nullable
+	String getDocString();
+
+	@Nullable
+	String getTypeComment();
 }

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.buildout.config;
 
-import org.consulo.python.buildout.module.extension.BuildoutModuleExtension;
+import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;

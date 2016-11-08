@@ -23,5 +23,5 @@ import com.intellij.openapi.extensions.ExtensionPointName;
  * @author traff
  */
 public abstract class PythonRunConfigurationExtension extends RunConfigurationExtensionBase<AbstractPythonRunConfiguration> {
-  protected static final ExtensionPointName<PythonRunConfigurationExtension> EP_NAME = new ExtensionPointName<PythonRunConfigurationExtension>("org.consulo.python.runConfigurationExtension");
+  protected static final ExtensionPointName<PythonRunConfigurationExtension> EP_NAME = new ExtensionPointName<PythonRunConfigurationExtension>("consulo.python.runConfigurationExtension");
 }

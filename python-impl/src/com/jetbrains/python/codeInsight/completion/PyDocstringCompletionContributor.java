@@ -16,7 +16,15 @@
 
 package com.jetbrains.python.codeInsight.completion;
 
-import com.intellij.codeInsight.completion.*;
+import static com.intellij.patterns.PlatformPatterns.psiElement;
+
+import java.util.Collection;
+
+import org.jetbrains.annotations.NotNull;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -29,11 +37,7 @@ import com.jetbrains.python.documentation.PyDocumentationSettings;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+import consulo.codeInsight.completion.CompletionProvider;
 
 /**
  * User : ktisha
@@ -45,13 +49,14 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
            new IdentifierCompletionProvider());
   }
 
-  private static class IdentifierCompletionProvider extends CompletionProvider<CompletionParameters> {
+  private static class IdentifierCompletionProvider implements CompletionProvider
+  {
 
     private IdentifierCompletionProvider() {
     }
 
     @Override
-    protected void addCompletions(@NotNull CompletionParameters parameters,
+	public void addCompletions(@NotNull CompletionParameters parameters,
                                   ProcessingContext context,
                                   @NotNull CompletionResultSet result) {
       if (parameters.isAutoPopup()) return;

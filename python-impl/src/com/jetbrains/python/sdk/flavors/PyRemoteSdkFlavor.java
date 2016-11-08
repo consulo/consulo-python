@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,49 +13,81 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.sdk.flavors;
 
 import java.util.Collection;
 
+import javax.swing.Icon;
+
 import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.remotesdk.RemoteFile;
+import com.intellij.remote.RemoteFile;
+import icons.PythonIcons;
 
 /**
  * @author traff
  */
-public class PyRemoteSdkFlavor extends CPythonSdkFlavor {
-  private PyRemoteSdkFlavor() {
-  }
+public class PyRemoteSdkFlavor extends CPythonSdkFlavor
+{
+	private PyRemoteSdkFlavor()
+	{
+	}
 
-  private final static String[] NAMES = new String[]{"python", "jython", "pypy", "python.exe", "jython.bat", "pypy.exe"};
+	private final static String[] NAMES = new String[]{
+			"python",
+			"jython",
+			"pypy",
+			"python.exe",
+			"jython.bat",
+			"pypy.exe"
+	};
+	private final static String[] REMOTE_SDK_HOME_PREFIXES = new String[]{
+			"ssh:",
+			"vagrant:",
+			"docker:",
+			"docker-compose:"
+	};
 
-  @Override
-  public Collection<String> suggestHomePaths() {
-    return Lists.newArrayList();
-  }
+	public static PyRemoteSdkFlavor INSTANCE = new PyRemoteSdkFlavor();
 
-  @Override
-  public boolean isValidSdkHome(String path) {
-    return StringUtil.isNotEmpty(path) && path.startsWith("ssh:") && checkName(NAMES, getExecutableName(path));
-  }
+	@Override
+	public Collection<String> suggestHomePaths()
+	{
+		return Lists.newArrayList();
+	}
 
-  private static boolean checkName(String[] names, @Nullable String name) {
-    if (name == null) {
-      return false;
-    }
-    for (String n : names) {
-      if (name.startsWith(n)) {
-        return true;
-      }
-    }
-    return false;
-  }
+	@Override
+	public boolean isValidSdkHome(String path)
+	{
+		return StringUtil.isNotEmpty(path) && checkName(NAMES, getExecutableName(path)) && checkName(REMOTE_SDK_HOME_PREFIXES, path);
+	}
 
-  @Nullable
-  private static String getExecutableName(String path) {
-    return RemoteFile.detectSystemByPath(path).createRemoteFile(path).getName();
-  }
+	private static boolean checkName(String[] names, @Nullable String name)
+	{
+		if(name == null)
+		{
+			return false;
+		}
+		for(String n : names)
+		{
+			if(name.startsWith(n))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Nullable
+	private static String getExecutableName(String path)
+	{
+		return RemoteFile.createRemoteFile(path).getName();
+	}
+
+	@Override
+	public Icon getIcon()
+	{
+		return PythonIcons.Python.RemoteInterpreter;
+	}
 }

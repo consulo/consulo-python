@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,106 +13,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author traff
  */
-public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet {
-  private final PyStringLiteralExpression myStringLiteralExpression;
+public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet
+{
+	public static final Pattern DELIMITERS = Pattern.compile("\\\\|/");
+	private final PyStringLiteralExpression myStringLiteralExpression;
 
 
-  public PyStringLiteralFileReferenceSet(@NotNull PyStringLiteralExpression element) {
-    this(element, SystemInfo.isFileSystemCaseSensitive);
-  }
+	public PyStringLiteralFileReferenceSet(@NotNull PyStringLiteralExpression element)
+	{
+		this(element, SystemInfo.isFileSystemCaseSensitive);
+	}
 
-  public PyStringLiteralFileReferenceSet(@NotNull PyStringLiteralExpression element, boolean caseSensitive) {
-    this(element.getStringValue(), element, element.getStringValueTextRange().getStartOffset(), null, caseSensitive, true, new FileType[0]);
-  }
+	public PyStringLiteralFileReferenceSet(@NotNull PyStringLiteralExpression element, boolean caseSensitive)
+	{
+		this(element.getStringValue(), element, element.getStringValueTextRange().getStartOffset(), null, caseSensitive, true, FileType.EMPTY_ARRAY);
+	}
 
-  public PyStringLiteralFileReferenceSet(@NotNull String str,
-                                         @NotNull PyStringLiteralExpression element,
-                                         int startInElement,
-                                         PsiReferenceProvider provider,
-                                         boolean caseSensitive, boolean endingSlashNotAllowed, @Nullable FileType[] suitableFileTypes) {
-    super(str, element, startInElement, provider, caseSensitive, endingSlashNotAllowed,
-          suitableFileTypes);
-    myStringLiteralExpression = element;
-    reparse();
-  }
+	public PyStringLiteralFileReferenceSet(@NotNull String str,
+			@NotNull PyStringLiteralExpression element,
+			int startInElement,
+			PsiReferenceProvider provider,
+			boolean caseSensitive,
+			boolean endingSlashNotAllowed,
+			@Nullable FileType[] suitableFileTypes)
+	{
+		super(str, element, startInElement, provider, caseSensitive, endingSlashNotAllowed, suitableFileTypes);
+		myStringLiteralExpression = element;
+		reparse();
+	}
 
-  @Override
-  protected void reparse() {
-    //noinspection ConstantConditions
-    if (myStringLiteralExpression != null) {
-      MyTextRangeConsumer textRangeConsumer = new MyTextRangeConsumer(this);
+	@Override
+	protected void reparse()
+	{
+		//noinspection ConstantConditions
+		if(myStringLiteralExpression != null)
+		{
+			final List<FileReference> references = getFileReferences(myStringLiteralExpression);
+			myReferences = references.toArray(new FileReference[references.size()]);
+		}
+	}
 
-      myStringLiteralExpression.iterateCharacterRanges(textRangeConsumer);
-      textRangeConsumer.finish();
-
-      List<FileReference> referencesList = textRangeConsumer.myReferenceList;
-
-      myReferences = referencesList.toArray(new FileReference[referencesList.size()]);
-    }
-  }
-
-  private static class MyTextRangeConsumer implements PyStringLiteralExpression.TextRangeConsumer {
-    private final StringBuilder myItem = new StringBuilder();
-    private int myStartOffset = -1;
-    private int myIndex = 0;
-    private int myEndOffset = -1;
-    private final FileReferenceSet myFileReferenceSet;
-
-
-    private final List<FileReference> myReferenceList = new ArrayList<FileReference>();
-
-    private MyTextRangeConsumer(FileReferenceSet set) {
-      myFileReferenceSet = set;
-    }
-
-    @Override
-    public boolean process(int startOffset, int endOffset, String value) {
-      if ("\\".equals(value) || "/".equals(value)) {
-        addReference(startOffset);
-      }
-      else {
-        if (myStartOffset == -1) {
-          myStartOffset = startOffset;
-        }
-        myEndOffset = endOffset;
-        myItem.append(value);
-      }
-      return true;
-    }
-
-    private void addReference(int startOffset) {
-      if (myStartOffset != -1) {
-        final FileReference ref = myFileReferenceSet.createFileReference(
-          new TextRange(myStartOffset, startOffset),
-          myIndex++,
-          myItem.toString());
-        myReferenceList.add(ref);
-        myStartOffset = -1;
-        myItem.setLength(0);
-      }
-    }
-
-
-    public void finish() {
-      addReference(myEndOffset);
-    }
-  }
+	@NotNull
+	private List<FileReference> getFileReferences(@NotNull PyStringLiteralExpression expression)
+	{
+		final String value = expression.getStringValue();
+		final Matcher matcher = DELIMITERS.matcher(value);
+		int start = 0;
+		int index = 0;
+		final List<FileReference> results = new ArrayList<>();
+		while(matcher.find())
+		{
+			final String s = value.substring(start, matcher.start());
+			if(!s.isEmpty())
+			{
+				final TextRange range = TextRange.create(expression.valueOffsetToTextOffset(start), expression.valueOffsetToTextOffset(matcher.start()));
+				results.add(createFileReference(range, index++, s));
+			}
+			start = matcher.end();
+		}
+		final String s = value.substring(start);
+		if(!s.isEmpty())
+		{
+			final TextRange range = TextRange.create(expression.valueOffsetToTextOffset(start), expression.valueOffsetToTextOffset(value.length()));
+			results.add(createFileReference(range, index, s));
+		}
+		return results;
+	}
 }

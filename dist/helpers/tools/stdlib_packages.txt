@@ -6,6 +6,7 @@ argparse
 array
 ast
 asynchat
+asyncio
 asyncore
 atexit
 audiodev
@@ -68,8 +69,11 @@ dummy_thread
 dummy_threading
 email
 encodings
+ensurepip
+enum
 errno
 exceptions
+faulthandler
 fcntl
 filecmp
 fileinput
@@ -110,6 +114,7 @@ importlib
 imputil
 inspect
 io
+ipaddress
 itertools
 json
 keyword
@@ -133,6 +138,8 @@ MimeWriter
 mimify
 mmap
 modulefinder
+msilib
+msvcrt
 multifile
 multiprocessing
 mutex
@@ -150,6 +157,7 @@ os
 os2emxpath
 ossaudiodev
 parser
+pathlib
 pdb
 pickle
 pickletools
@@ -194,6 +202,7 @@ robotparser
 runpy
 sched
 select
+selectors
 sets
 sgmllib
 sha
@@ -219,6 +228,7 @@ sre_parse
 ssl
 stat
 statcache
+statistics
 statvfs
 string
 StringIO
@@ -254,10 +264,12 @@ token
 tokenize
 trace
 traceback
+tracemalloc
 tty
 turtle
 turtledemo
 types
+typing
 tzparse
 unicodedata
 unittest
@@ -274,6 +286,8 @@ warnings
 wave
 weakref
 webbrowser
+winreg
+winsound
 whichdb
 whrandom
 wsgiref
@@ -283,6 +297,7 @@ xmllib
 xmlrpc
 xmlrpclib
 xxsubtype
+zipapp
 zipfile
 zipimport
 zlib

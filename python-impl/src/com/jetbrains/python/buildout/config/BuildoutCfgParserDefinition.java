@@ -19,11 +19,9 @@ package com.jetbrains.python.buildout.config;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -32,6 +30,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.buildout.config.lexer.BuildoutCfgFlexLexer;
 import com.jetbrains.python.buildout.config.psi.BuildoutCfgASTFactory;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgFile;
+import consulo.lang.LanguageVersion;
 
 /**
  * @author traff
@@ -40,12 +39,12 @@ public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCf
   private final BuildoutCfgASTFactory astFactory = new BuildoutCfgASTFactory();
 
   @NotNull
-  public Lexer createLexer(final Project project, LanguageVersion languageVersion) {
+  public Lexer createLexer(LanguageVersion languageVersion) {
     return new BuildoutCfgFlexLexer();
   }
 
   @Nullable
-  public PsiParser createParser(final Project project, LanguageVersion languageVersion) {
+  public PsiParser createParser(LanguageVersion languageVersion) {
     return new BuildoutCfgParser();
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,45 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl.stubs;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.io.StringRef;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.stubs.PyFunctionStub;
-import org.jetbrains.annotations.Nullable;
 
-public class PyFunctionStubImpl extends StubBase<PyFunction> implements PyFunctionStub {
-  private final String myName;
-  private final String myDocString;
-  private final StringRef myDeprecationMessage;
+public class PyFunctionStubImpl extends StubBase<PyFunction> implements PyFunctionStub
+{
+	private final String myName;
+	private final String myDocString;
+	private final String myDeprecationMessage;
+	private final boolean myAsync;
+	private final String myTypeComment;
 
-  public PyFunctionStubImpl(final String name, final String docString, @Nullable final StringRef deprecationMessage,
-                            final StubElement parent, IStubElementType stubElementType) {
-    super(parent, stubElementType);
-    myName = name;
-    myDocString = docString;
-    myDeprecationMessage = deprecationMessage;
-  }
+	public PyFunctionStubImpl(@Nullable String name,
+			@Nullable String docString,
+			@Nullable String deprecationMessage,
+			boolean isAsync,
+			@Nullable String typeComment,
+			final StubElement parent,
+			@NotNull IStubElementType stubElementType)
+	{
+		super(parent, stubElementType);
+		myName = name;
+		myDocString = docString;
+		myDeprecationMessage = deprecationMessage;
+		myAsync = isAsync;
+		myTypeComment = typeComment;
+	}
 
-  public String getName() {
-    return myName;
-  }
+	@Nullable
+	@Override
+	public String getName()
+	{
+		return myName;
+	}
 
-  public String getDocString() {
-    return myDocString;
-  }
+	@Nullable
+	@Override
+	public String getDocString()
+	{
+		return myDocString;
+	}
 
-  @Override
-  public String getDeprecationMessage() {
-    return myDeprecationMessage == null ? null : myDeprecationMessage.getString();
-  }
+	@Nullable
+	@Override
+	public String getDeprecationMessage()
+	{
+		return myDeprecationMessage;
+	}
 
-  @Override
-  public String toString() {
-    return "PyFunctionStub(" + myName + ")";
-  }
+	@Nullable
+	@Override
+	public String getTypeComment()
+	{
+		return myTypeComment;
+	}
+
+	@Override
+	public boolean isAsync()
+	{
+		return myAsync;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "PyFunctionStub(" + myName + ")";
+	}
 }

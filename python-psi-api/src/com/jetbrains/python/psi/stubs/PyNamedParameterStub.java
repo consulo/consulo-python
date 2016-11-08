@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,18 @@
  */
 package com.jetbrains.python.psi.stubs;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.stubs.NamedStub;
 import com.jetbrains.python.psi.PyNamedParameter;
 
-public interface PyNamedParameterStub extends NamedStub<PyNamedParameter> {
-  boolean isPositionalContainer();
-  boolean isKeywordContainer();
-  boolean hasDefaultValue();
+public interface PyNamedParameterStub extends NamedStub<PyNamedParameter>
+{
+	boolean isPositionalContainer();
+
+	boolean isKeywordContainer();
+
+	boolean hasDefaultValue();
+
+	@Nullable
+	String getTypeComment();
 }

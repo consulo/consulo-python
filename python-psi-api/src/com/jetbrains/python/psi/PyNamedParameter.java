@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyNamedParameterStub;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a named parameter, as opposed to a tuple parameter.
  */
-public interface PyNamedParameter extends PyParameter, PsiNamedElement, PsiNameIdentifierOwner, PyExpression, StubBasedPsiElement<PyNamedParameterStub> {
-  boolean isPositionalContainer();
+public interface PyNamedParameter extends PyParameter, PsiNamedElement, PsiNameIdentifierOwner, PyExpression, PyTypeCommentOwner, StubBasedPsiElement<PyNamedParameterStub>
+{
+	boolean isPositionalContainer();
 
-  boolean isKeywordContainer();
+	boolean isKeywordContainer();
 
-  /**
-   * @param includeDefaultValue if true, include the default value after an " = ".
-   * @return Canonical representation of parameter. Includes asterisks for *param and **param, and name.
-   */
-  @NotNull
-  String getRepr(boolean includeDefaultValue);
+	/**
+	 * Parameter is considered "keyword-only" if it appears after named or unnamed positional vararg parameter.
+	 * See PEP-3102 for more details.
+	 *
+	 * @return whether this parameter is keyword-only
+	 */
+	boolean isKeywordOnly();
 
-  @Nullable
-  PyAnnotation getAnnotation();
+	/**
+	 * @param includeDefaultValue if true, include the default value after an " = ".
+	 * @return Canonical representation of parameter. Includes asterisks for *param and **param, and name.
+	 */
+	@NotNull
+	String getRepr(boolean includeDefaultValue);
+
+	@Nullable
+	PyAnnotation getAnnotation();
 }
 

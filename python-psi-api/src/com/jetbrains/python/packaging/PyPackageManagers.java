@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,38 +15,28 @@
  */
 package com.jetbrains.python.packaging;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import com.intellij.webcore.packaging.PackageManagementService;
 
 /**
  * @author yole
  */
-public abstract class PyPackageManagers {
-  public static PyPackageManagers getInstance() {
-    return ServiceManager.getService(PyPackageManagers.class);
-  }
+public abstract class PyPackageManagers
+{
 
-  public abstract PyPackageManager forSdk(Sdk sdk);
+	@NotNull
+	public static PyPackageManagers getInstance()
+	{
+		return ServiceManager.getService(PyPackageManagers.class);
+	}
 
-  /**
-   * Returns the list of requirements from 'requirements.txt' or 'setup.py' files in the specified module.
-   *
-   * @param module the module to check for requirements
-   * @return the list of requirements, or null if the module contains neither requirements.txt nor setup.py.
-   */
-  @Nullable
-  public abstract List<PyRequirement> getRequirements(Module module);
+	@NotNull
+	public abstract PyPackageManager forSdk(@NotNull Sdk sdk);
 
-  /**
-   * Returns the list of requirements from 'requirements.txt' file in the specified module.
-   *
-   * @param module the module to check for requirements
-   * @return the list of requirements, or null if the module does not contain a requirements.txt
-   */
-  @Nullable
-  public abstract List<PyRequirement> getRequirementsFromTxt(Module module);
+	public abstract PackageManagementService getManagementService(Project project, Sdk sdk);
+
+	public abstract void clearCache(@NotNull final Sdk sdk);
 }

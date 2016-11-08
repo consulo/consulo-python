@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,69 +13,78 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInspection.LocalInspectionToolSession;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyRaiseStatement;
+import com.jetbrains.python.psi.PyReferenceExpression;
 
 /**
  * @author Alexey.Ivanov
  */
-public class PyRaisingNewStyleClassInspection extends PyInspection {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.raising.new.style.class");
-  }
+public class PyRaisingNewStyleClassInspection extends PyInspection
+{
+	@Nls
+	@NotNull
+	@Override
+	public String getDisplayName()
+	{
+		return PyBundle.message("INSP.NAME.raising.new.style.class");
+	}
 
-  @NotNull
-  @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
-    return new Visitor(holder, session);
-  }
+	@NotNull
+	@Override
+	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	{
+		return new Visitor(holder, session);
+	}
 
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
+	private static class Visitor extends PyInspectionVisitor
+	{
+		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		{
+			super(holder, session);
+		}
 
-    @Override
-    public void visitPyRaiseStatement(PyRaiseStatement node) {
-      final VirtualFile virtualFile = node.getContainingFile().getVirtualFile();
-      if (virtualFile == null) {
-        return;
-      }
-      if (LanguageLevel.forFile(virtualFile).isAtLeast(LanguageLevel.PYTHON25)) {
-        return;
-      }
-      final PyExpression[] expressions = node.getExpressions();
-      if (expressions.length == 0) {
-        return;
-      }
-      final PyExpression expression = expressions[0];
-      if (expression instanceof PyCallExpression) {
-        final PyExpression callee = ((PyCallExpression)expression).getCallee();
-        if (callee instanceof PyReferenceExpression) {
-          final PsiElement psiElement = ((PyReferenceExpression)callee).getReference(resolveWithoutImplicits()).resolve();
-          if (psiElement instanceof PyClass) {
-            if (((PyClass)psiElement).isNewStyleClass()) {
-              registerProblem(expression, "Raising a new style class");
-            }
-          }
-        }
-      }
-    }
-  }
+		@Override
+		public void visitPyRaiseStatement(PyRaiseStatement node)
+		{
+			if(LanguageLevel.forElement(node).isAtLeast(LanguageLevel.PYTHON25))
+			{
+				return;
+			}
+			final PyExpression[] expressions = node.getExpressions();
+			if(expressions.length == 0)
+			{
+				return;
+			}
+			final PyExpression expression = expressions[0];
+			if(expression instanceof PyCallExpression)
+			{
+				final PyExpression callee = ((PyCallExpression) expression).getCallee();
+				if(callee instanceof PyReferenceExpression)
+				{
+					final PsiElement psiElement = ((PyReferenceExpression) callee).getReference(getResolveContext()).resolve();
+					if(psiElement instanceof PyClass)
+					{
+						if(((PyClass) psiElement).isNewStyleClass(null))
+						{
+							registerProblem(expression, "Raising a new style class");
+						}
+					}
+				}
+			}
+		}
+	}
 }

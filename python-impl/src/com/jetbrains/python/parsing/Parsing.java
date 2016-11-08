@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,94 +13,135 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.parsing;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
+import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.PyElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
-public class Parsing {
-  protected ParsingContext myContext;
-  protected PsiBuilder myBuilder;
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.parsing.Parsing");
+public class Parsing
+{
+	protected ParsingContext myContext;
+	protected PsiBuilder myBuilder;
+	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.parsing.Parsing");
 
-  protected Parsing(ParsingContext context) {
-    myContext = context;
-    myBuilder = context.getBuilder();
-  }
+	protected Parsing(ParsingContext context)
+	{
+		myContext = context;
+		myBuilder = context.getBuilder();
+	}
 
-  public ParsingContext getParsingContext() {
-    return myContext;
-  }
+	public ParsingContext getParsingContext()
+	{
+		return myContext;
+	}
 
-  public ExpressionParsing getExpressionParser() {
-    return getParsingContext().getExpressionParser();
-  }
+	public ExpressionParsing getExpressionParser()
+	{
+		return getParsingContext().getExpressionParser();
+	}
 
-  public StatementParsing getStatementParser() {
-    return getParsingContext().getStatementParser();
-  }
+	public StatementParsing getStatementParser()
+	{
+		return getParsingContext().getStatementParser();
+	}
 
-  public FunctionParsing getFunctionParser() {
-    return getParsingContext().getFunctionParser();
-  }
+	public FunctionParsing getFunctionParser()
+	{
+		return getParsingContext().getFunctionParser();
+	}
 
-  protected boolean checkMatches(final IElementType token, final String message) {
-    if (myBuilder.getTokenType() == token) {
-      myBuilder.advanceLexer();
-      return true;
-    }
-    myBuilder.error(message);
-    return false;
-  }
+	protected boolean checkMatches(final IElementType token, final String message)
+	{
+		if(myBuilder.getTokenType() == token)
+		{
+			myBuilder.advanceLexer();
+			return true;
+		}
+		myBuilder.error(message);
+		return false;
+	}
 
-  protected void assertCurrentToken(final PyElementType tokenType) {
-    LOG.assertTrue(myBuilder.getTokenType() == tokenType);
-  }
+	protected boolean parseIdentifierOrSkip(@NotNull IElementType... validSuccessiveTokens)
+	{
+		if(myBuilder.getTokenType() == PyTokenTypes.IDENTIFIER)
+		{
+			myBuilder.advanceLexer();
+			return true;
+		}
+		else
+		{
+			final PsiBuilder.Marker nameExpected = myBuilder.mark();
+			if(myBuilder.getTokenType() != PyTokenTypes.STATEMENT_BREAK && !atAnyOfTokens(validSuccessiveTokens))
+			{
+				myBuilder.advanceLexer();
+			}
+			nameExpected.error(PyBundle.message("PARSE.expected.identifier"));
+			return false;
+		}
+	}
 
-  protected boolean atToken(@Nullable final IElementType tokenType) {
-    return myBuilder.getTokenType() == tokenType;
-  }
+	protected void assertCurrentToken(final PyElementType tokenType)
+	{
+		LOG.assertTrue(myBuilder.getTokenType() == tokenType);
+	}
 
-  protected boolean atToken(@NotNull final IElementType tokenType, @NotNull String tokenText) {
-    return myBuilder.getTokenType() == tokenType && tokenText.equals(myBuilder.getTokenText());
-  }
+	protected boolean atToken(@Nullable final IElementType tokenType)
+	{
+		return myBuilder.getTokenType() == tokenType;
+	}
 
-  protected boolean atAnyOfTokens(final IElementType... tokenTypes) {
-    IElementType currentTokenType = myBuilder.getTokenType();
-    for (IElementType tokenType : tokenTypes) {
-      if (currentTokenType == tokenType) return true;
-    }
-    return false;
-  }
+	protected boolean atToken(@NotNull final IElementType tokenType, @NotNull String tokenText)
+	{
+		return myBuilder.getTokenType() == tokenType && tokenText.equals(myBuilder.getTokenText());
+	}
 
-  protected boolean matchToken(final IElementType tokenType) {
-    if (myBuilder.getTokenType() == tokenType) {
-      myBuilder.advanceLexer();
-      return true;      
-    }
-    return false;
-  }
+	protected boolean atAnyOfTokens(final IElementType... tokenTypes)
+	{
+		IElementType currentTokenType = myBuilder.getTokenType();
+		for(IElementType tokenType : tokenTypes)
+		{
+			if(currentTokenType == tokenType)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
-  protected void nextToken() {
-    myBuilder.advanceLexer();
-  }
+	protected boolean matchToken(final IElementType tokenType)
+	{
+		if(myBuilder.getTokenType() == tokenType)
+		{
+			myBuilder.advanceLexer();
+			return true;
+		}
+		return false;
+	}
 
-  protected static void buildTokenElement(IElementType type, PsiBuilder builder) {
-    final PsiBuilder.Marker marker = builder.mark();
-    builder.advanceLexer();
-    marker.done(type);
-  }
+	protected void nextToken()
+	{
+		myBuilder.advanceLexer();
+	}
 
-  protected IElementType getReferenceType() {
-    return PyElementTypes.REFERENCE_EXPRESSION;
-  }
+	protected static void buildTokenElement(IElementType type, PsiBuilder builder)
+	{
+		final PsiBuilder.Marker marker = builder.mark();
+		builder.advanceLexer();
+		marker.done(type);
+	}
+
+	protected IElementType getReferenceType()
+	{
+		return PyElementTypes.REFERENCE_EXPRESSION;
+	}
 }

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author yole
  */
-public interface PyLambdaExpression extends PyExpression, Callable, ScopeOwner {
+public interface PyLambdaExpression extends PyExpression, PyCallable, ScopeOwner {
   @Nullable
   PyExpression getBody();
 }

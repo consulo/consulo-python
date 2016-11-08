@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.consulo.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
@@ -39,71 +36,81 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.ide.IconDescriptorUpdaters;
 
 /**
  * @author yole
  */
-public class PyJavaPackageType implements PyType {
-  private final PsiJavaPackage myPackage;
-  @Nullable private final Module myModule;
+public class PyJavaPackageType implements PyType
+{
+	private final PsiJavaPackage myPackage;
+	@Nullable
+	private final Module myModule;
 
-  public PyJavaPackageType(PsiJavaPackage aPackage, @Nullable Module module) {
-    myPackage = aPackage;
-    myModule = module;
-  }
+	public PyJavaPackageType(PsiJavaPackage aPackage, @Nullable Module module)
+	{
+		myPackage = aPackage;
+		myModule = module;
+	}
 
-  @Override
-  public List<? extends RatedResolveResult> resolveMember(@NotNull String name,
-                                                          @Nullable PyExpression location,
-                                                          @NotNull AccessDirection direction,
-                                                          @NotNull PyResolveContext resolveContext) {
-    Project project = myPackage.getProject();
-    JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
-    String childName = myPackage.getQualifiedName() + "." + name;
-    GlobalSearchScope scope = getScope(project);
-    ResolveResultList result = new ResolveResultList();
-    final PsiClass[] classes = facade.findClasses(childName, scope);
-    for (PsiClass aClass : classes) {
-      result.poke(aClass, RatedResolveResult.RATE_NORMAL);
-    }
-    final PsiPackage psiPackage = facade.findPackage(childName);
-    if (psiPackage != null) {
-      result.poke(psiPackage, RatedResolveResult.RATE_NORMAL);
-    }
-    return result;
-  }
+	@Override
+	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	{
+		Project project = myPackage.getProject();
+		JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
+		String childName = myPackage.getQualifiedName() + "." + name;
+		GlobalSearchScope scope = getScope(project);
+		ResolveResultList result = new ResolveResultList();
+		final PsiClass[] classes = facade.findClasses(childName, scope);
+		for(PsiClass aClass : classes)
+		{
+			result.poke(aClass, RatedResolveResult.RATE_NORMAL);
+		}
+		final PsiJavaPackage psiPackage = facade.findPackage(childName);
+		if(psiPackage != null)
+		{
+			result.poke(psiPackage, RatedResolveResult.RATE_NORMAL);
+		}
+		return result;
+	}
 
-  private GlobalSearchScope getScope(Project project) {
-    return myModule != null ? myModule.getModuleWithDependenciesAndLibrariesScope(false) : ProjectScope.getAllScope(project);
-  }
+	private GlobalSearchScope getScope(Project project)
+	{
+		return myModule != null ? myModule.getModuleWithDependenciesAndLibrariesScope(false) : ProjectScope.getAllScope(project);
+	}
 
-  @Override
-  public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
-    List<Object> variants = new ArrayList<Object>();
-    final GlobalSearchScope scope = getScope(location.getProject());
-    final PsiClass[] classes = myPackage.getClasses(scope);
-    for (PsiClass psiClass : classes) {
-      variants.add(LookupElementBuilder.create(psiClass).withIcon(IconDescriptorUpdaters.getIcon(psiClass, 0)));
-    }
-    final PsiPackage[] subPackages = myPackage.getSubPackages(scope);
-    for (PsiPackage subPackage : subPackages) {
-      variants.add(LookupElementBuilder.create(subPackage).withIcon(IconDescriptorUpdaters.getIcon(subPackage, 0)));
-    }
-    return ArrayUtil.toObjectArray(variants);
-  }
+	@Override
+	public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context)
+	{
+		List<Object> variants = new ArrayList<>();
+		final GlobalSearchScope scope = getScope(location.getProject());
+		final PsiClass[] classes = myPackage.getClasses(scope);
+		for(PsiClass psiClass : classes)
+		{
+			variants.add(LookupElementBuilder.create(psiClass).withIcon(IconDescriptorUpdaters.getIcon(psiClass, 0)));
+		}
+		final PsiJavaPackage[] subPackages = myPackage.getSubPackages(scope);
+		for(PsiJavaPackage subPackage : subPackages)
+		{
+			variants.add(LookupElementBuilder.create(subPackage).withIcon(IconDescriptorUpdaters.getIcon(subPackage, 0)));
+		}
+		return ArrayUtil.toObjectArray(variants);
+	}
 
-  @Override
-  public String getName() {
-    return myPackage.getQualifiedName();
-  }
+	@Override
+	public String getName()
+	{
+		return myPackage.getQualifiedName();
+	}
 
-  @Override
-  public boolean isBuiltin(TypeEvalContext context) {
-    return false;
-  }
+	@Override
+	public boolean isBuiltin()
+	{
+		return false;
+	}
 
-  @Override
-  public void assertValid(String message) {
-  }
+	@Override
+	public void assertValid(String message)
+	{
+	}
 }

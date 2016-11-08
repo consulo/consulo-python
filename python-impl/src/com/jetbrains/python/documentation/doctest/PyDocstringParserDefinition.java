@@ -17,15 +17,14 @@
 package com.jetbrains.python.documentation.doctest;
 
 import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.LanguageVersion;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PythonParserDefinition;
+import consulo.lang.LanguageVersion;
 
 /**
  * User : ktisha
@@ -35,13 +34,13 @@ public class PyDocstringParserDefinition extends PythonParserDefinition {
                                                                                                 .getInstance());
 
   @NotNull
-  public Lexer createLexer(Project project, LanguageVersion languageVersion) {
+  public Lexer createLexer(LanguageVersion languageVersion) {
     return new PyDocstringLexer();
   }
 
   @NotNull
   @Override
-  public PsiParser createParser(Project project, LanguageVersion languageVersion) {
+  public PsiParser createParser(LanguageVersion languageVersion) {
     return new PyDocstringParser();
   }
 

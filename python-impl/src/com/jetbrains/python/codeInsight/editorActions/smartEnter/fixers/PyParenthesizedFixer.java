@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
@@ -28,13 +28,20 @@ import com.jetbrains.python.psi.PyParenthesizedExpression;
  * Date:   15.04.2010
  * Time:   17:42:08
  */
-public class PyParenthesizedFixer implements PyFixer {
-  public void apply(final Editor editor, final PySmartEnterProcessor processor, final PsiElement psiElement) throws IncorrectOperationException {
-    if (psiElement instanceof PyParenthesizedExpression) {
-      final PsiElement lastChild = psiElement.getLastChild();
-      if (lastChild != null && !")".equals(lastChild.getText())) {
-        editor.getDocument().insertString(psiElement.getTextRange().getEndOffset(), ")");
-      }
-    }
-  }
+public class PyParenthesizedFixer extends PyFixer<PyParenthesizedExpression>
+{
+	public PyParenthesizedFixer()
+	{
+		super(PyParenthesizedExpression.class);
+	}
+
+	@Override
+	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyParenthesizedExpression expression) throws IncorrectOperationException
+	{
+		final PsiElement lastChild = expression.getLastChild();
+		if(lastChild != null && !")".equals(lastChild.getText()))
+		{
+			editor.getDocument().insertString(expression.getTextRange().getEndOffset(), ")");
+		}
+	}
 }

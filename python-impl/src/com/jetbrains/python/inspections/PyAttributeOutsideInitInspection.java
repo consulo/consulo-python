@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.inspections;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -27,85 +33,111 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.impl.PyClassImpl;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.testing.PythonUnitTestUtil;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: ktisha
- *
+ * <p>
  * Inspection to detect situations, where instance attribute
  * defined outside __init__ function
  */
-public class PyAttributeOutsideInitInspection extends PyInspection {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.attribute.outside.init");
-  }
+public class PyAttributeOutsideInitInspection extends PyInspection
+{
+	@Nls
+	@NotNull
+	@Override
+	public String getDisplayName()
+	{
+		return PyBundle.message("INSP.NAME.attribute.outside.init");
+	}
 
-  @NotNull
-  @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
-    return new Visitor(holder, session);
-  }
+	@NotNull
+	@Override
+	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	{
+		return new Visitor(holder, session);
+	}
 
 
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
+	private static class Visitor extends PyInspectionVisitor
+	{
+		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		{
+			super(holder, session);
+		}
 
-    @Override
-    public void visitPyFunction(PyFunction node) {
-      final PyClass containingClass = node.getContainingClass();
-      if (containingClass == null) return;
-      if (!isApplicable(containingClass)) {
-        return;
-      }
-      final List<PyTargetExpression> classAttributes = containingClass.getClassAttributes();
+		@Override
+		public void visitPyFunction(PyFunction node)
+		{
+			final PyClass containingClass = node.getContainingClass();
+			if(containingClass == null)
+			{
+				return;
+			}
+			final String name = node.getName();
+			if(name != null && name.startsWith("_"))
+			{
+				return;
+			}
+			if(!isApplicable(containingClass, myTypeEvalContext))
+			{
+				return;
+			}
 
-      Map<String, PyTargetExpression> attributesInInit = new HashMap<String, PyTargetExpression>();
-      for (PyTargetExpression classAttr : classAttributes) {
-        attributesInInit.put(classAttr.getName(), classAttr);
-      }
+			final PyFunction.Modifier modifier = node.getModifier();
+			if(modifier != null)
+			{
+				return;
+			}
+			final List<PyTargetExpression> classAttributes = containingClass.getClassAttributes();
 
-      final PyFunction initMethod = containingClass.findMethodByName(PyNames.INIT, false);
-      if (initMethod != null) {
-        PyClassImpl.collectInstanceAttributes(initMethod, attributesInInit);
-      }
-      for (PyClass superClass : containingClass.getAncestorClasses(myTypeEvalContext)) {
-        final PyFunction superInit = superClass.findMethodByName(PyNames.INIT, false);
-        if (superInit != null)
-          PyClassImpl.collectInstanceAttributes(superInit, attributesInInit);
+			Map<String, PyTargetExpression> attributesInInit = new HashMap<>();
+			for(PyTargetExpression classAttr : classAttributes)
+			{
+				attributesInInit.put(classAttr.getName(), classAttr);
+			}
 
-        for (PyTargetExpression classAttr : superClass.getClassAttributes()) {
-          attributesInInit.put(classAttr.getName(), classAttr);
-        }
-      }
+			final PyFunction initMethod = containingClass.findMethodByName(PyNames.INIT, false, null);
+			if(initMethod != null)
+			{
+				PyClassImpl.collectInstanceAttributes(initMethod, attributesInInit);
+			}
+			for(PyClass superClass : containingClass.getAncestorClasses(myTypeEvalContext))
+			{
+				final PyFunction superInit = superClass.findMethodByName(PyNames.INIT, false, null);
+				if(superInit != null)
+				{
+					PyClassImpl.collectInstanceAttributes(superInit, attributesInInit);
+				}
 
-      Map<String, PyTargetExpression> attributes = new HashMap<String, PyTargetExpression>();
-      PyClassImpl.collectInstanceAttributes(node, attributes);
+				for(PyTargetExpression classAttr : superClass.getClassAttributes())
+				{
+					attributesInInit.put(classAttr.getName(), classAttr);
+				}
+			}
 
-      for (Map.Entry<String, PyTargetExpression> attribute : attributes.entrySet()) {
-        final Property property = containingClass.findProperty(attribute.getKey());
-        if (!attributesInInit.containsKey(attribute.getKey()) && property == null) {
-          registerProblem(attribute.getValue(), PyBundle.message("INSP.attribute.$0.outside.init", attribute.getKey()),
-                          new PyMoveAttributeToInitQuickFix());
-        }
-      }
-    }
-  }
+			Map<String, PyTargetExpression> attributes = new HashMap<>();
+			PyClassImpl.collectInstanceAttributes(node, attributes);
 
-  private static boolean isApplicable(@NotNull final PyClass containingClass) {
-    return !PythonUnitTestUtil.isUnitTestCaseClass(containingClass) && !containingClass.isSubclass("django.db.models.base.Model");
-  }
+			for(Map.Entry<String, PyTargetExpression> attribute : attributes.entrySet())
+			{
+				String attributeName = attribute.getKey();
+				if(attributeName == null)
+				{
+					continue;
+				}
+				final Property property = containingClass.findProperty(attributeName, true, null);
+				if(!attributesInInit.containsKey(attributeName) && property == null)
+				{
+					registerProblem(attribute.getValue(), PyBundle.message("INSP.attribute.$0.outside.init", attributeName), new PyMoveAttributeToInitQuickFix());
+				}
+			}
+		}
+	}
+
+	private static boolean isApplicable(@NotNull PyClass containingClass, @NotNull TypeEvalContext context)
+	{
+		return !PythonUnitTestUtil.isUnitTestCaseClass(containingClass) && !containingClass.isSubclass("django.db.models.base.Model", context);
+	}
 }

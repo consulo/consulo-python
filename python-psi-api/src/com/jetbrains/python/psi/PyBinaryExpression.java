@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiElement;
 
 /**
  * @author yole
  */
-public interface PyBinaryExpression extends PyQualifiedExpression, PyReferenceOwner {
-  PyExpression getLeftExpression();
-  @Nullable PyExpression getRightExpression();
+public interface PyBinaryExpression extends PyQualifiedExpression, PyCallSiteExpression, PyReferenceOwner
+{
+	PyExpression getLeftExpression();
 
-  @Nullable
-  PyElementType getOperator();
+	@Nullable
+	PyExpression getRightExpression();
 
-  @Nullable
-  PsiElement getPsiOperator();
+	@Nullable
+	PyElementType getOperator();
 
-  boolean isOperator(String chars);
+	@Nullable
+	PsiElement getPsiOperator();
 
-  PyExpression getOppositeExpression(PyExpression expression)
-      throws IllegalArgumentException;
+	boolean isOperator(String chars);
+
+	PyExpression getOppositeExpression(PyExpression expression) throws IllegalArgumentException;
 }

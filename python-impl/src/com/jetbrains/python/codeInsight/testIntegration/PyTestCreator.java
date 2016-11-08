@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.codeInsight.testIntegration;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -30,80 +32,112 @@ import com.intellij.testIntegration.TestCreator;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.codeInsight.imports.AddImportHelper;
-import com.jetbrains.python.psi.*;
-
-import java.util.List;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyUtil;
 
 /**
  * User: catherine
  */
-public class PyTestCreator implements TestCreator {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.codeInsight.testIntegration.PyTestCreator");
+public class PyTestCreator implements TestCreator
+{
+	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.codeInsight.testIntegration.PyTestCreator");
 
-  @Override
-  public boolean isAvailable(Project project, Editor editor, PsiFile file) {
-    CreateTestAction action = new CreateTestAction();
-    PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-    if (element != null)
-      return action.isAvailable(project, editor, element);
-    return false;
-  }
+	@Override
+	public boolean isAvailable(Project project, Editor editor, PsiFile file)
+	{
+		CreateTestAction action = new CreateTestAction();
+		PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
+		if(element != null)
+		{
+			return action.isAvailable(project, editor, element);
+		}
+		return false;
+	}
 
-  public void createTest(Project project, Editor editor, PsiFile file) {
-    try {
-      CreateTestAction action = new CreateTestAction();
-      PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-      if (action.isAvailable(project, editor, element)) {
-        action.invoke(project, editor, file.getContainingFile());
-      }
-    }
-    catch (IncorrectOperationException e) {
-      LOG.warn(e);
-    }
-  }
+	@Override
+	public void createTest(Project project, Editor editor, PsiFile file)
+	{
+		try
+		{
+			CreateTestAction action = new CreateTestAction();
+			PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
+			if(action.isAvailable(project, editor, element))
+			{
+				action.invoke(project, editor, file.getContainingFile());
+			}
+		}
+		catch(IncorrectOperationException e)
+		{
+			LOG.warn(e);
+		}
+	}
 
-  public static PsiFile generateTest(final Project project, final CreateTestDialog dialog) {
-    return PostprocessReformattingAspect.getInstance(project).postponeFormattingInside(new Computable<PsiFile>() {
-      public PsiFile compute() {
-        return ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>() {
-          public PsiFile compute() {
-            try {
-              IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
+	/**
+	 * Generates test, puts it into file and navigates to newly created class
+	 *
+	 * @return file with test
+	 */
+	static PsiFile generateTestAndNavigate(@NotNull final Project project, @NotNull final CreateTestDialog dialog)
+	{
+		return PostprocessReformattingAspect.getInstance(project).postponeFormattingInside(() -> ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>()
+		{
+			public PsiFile compute()
+			{
+				try
+				{
+					final PyElement testClass = generateTest(project, dialog);
+					testClass.navigate(false);
+					return testClass.getContainingFile();
+				}
+				catch(IncorrectOperationException e)
+				{
+					LOG.warn(e);
+					return null;
+				}
+			}
+		}));
+	}
 
-              String fileName = dialog.getFileName();
-              if (!fileName.endsWith(".py"))
-                fileName = fileName + "." + PythonFileType.INSTANCE.getDefaultExtension();
+	/**
+	 * Generates test, puts it into file and returns class element for test
+	 *
+	 * @return newly created test class
+	 */
+	@NotNull
+	static PyElement generateTest(@NotNull final Project project, @NotNull final CreateTestDialog dialog)
+	{
+		IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
 
-              StringBuilder fileText = new StringBuilder();
-              fileText.append("class ").append(dialog.getClassName()).append("(TestCase):\n  ");
-              List<String> methods = dialog.getMethods();
-              if (methods.size() == 0)
-                fileText.append("pass\n");
+		String fileName = dialog.getFileName();
+		if(!fileName.endsWith(".py"))
+		{
+			fileName = fileName + "." + PythonFileType.INSTANCE.getDefaultExtension();
+		}
 
-              for (String method : methods) {
-                fileText.append("def ").append(method).append("(self):\n    self.fail()\n\n  ");
-              }
+		StringBuilder fileText = new StringBuilder();
+		fileText.append("class ").append(dialog.getClassName()).append("(TestCase):\n\t");
+		List<String> methods = dialog.getMethods();
+		if(methods.size() == 0)
+		{
+			fileText.append("pass\n");
+		}
 
-              PsiFile psiFile = PyUtil.getOrCreateFile(
-                dialog.getTargetDir() + "/" + fileName, project);
-              AddImportHelper.addImportFrom(psiFile, null, "unittest", "TestCase", null, AddImportHelper.ImportPriority.BUILTIN);
+		for(String method : methods)
+		{
+			fileText.append("def ").append(method).append("(self):\n\tself.fail()\n\n\t");
+		}
 
-              PyElement createdClass = PyElementGenerator.getInstance(project).createFromText(
-                LanguageLevel.forElement(psiFile), PyClass.class,
-                                                           fileText.toString());
-              createdClass = (PyElement)psiFile.addAfter(createdClass, psiFile.getLastChild());
+		PsiFile psiFile = PyUtil.getOrCreateFile(dialog.getTargetDir() + "/" + fileName, project);
+		AddImportHelper.addOrUpdateFromImportStatement(psiFile, "unittest", "TestCase", null, AddImportHelper.ImportPriority.BUILTIN, null);
 
-              CodeStyleManager.getInstance(project).reformat(psiFile);
-              createdClass.navigate(false);
-              return psiFile;
-            }
-            catch (IncorrectOperationException e) {
-              LOG.warn(e);
-              return null;
-            }
-          }
-        });
-      }
-    });
-  }
+		PyElement createdClass = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.forElement(psiFile), PyClass.class, fileText.toString());
+		createdClass = (PyElement) psiFile.addAfter(createdClass, psiFile.getLastChild());
+
+		PostprocessReformattingAspect.getInstance(project).doPostponedFormatting(psiFile.getViewProvider());
+		CodeStyleManager.getInstance(project).reformat(psiFile);
+		return createdClass;
+	}
 }

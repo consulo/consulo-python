@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,74 +13,103 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.validation;
 
 import com.intellij.lang.annotation.Annotation;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.documentation.*;
+import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.documentation.docstrings.DocStringReferenceProvider;
+import com.jetbrains.python.documentation.docstrings.DocStringUtil;
+import com.jetbrains.python.documentation.docstrings.EpydocString;
+import com.jetbrains.python.documentation.docstrings.SphinxDocString;
 import com.jetbrains.python.highlighting.PyHighlighter;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyExpressionStatement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
 
 /**
  * Highlights doc strings in classes, functions, and files.
  */
-public class DocStringAnnotator extends PyAnnotator {
+public class DocStringAnnotator extends PyAnnotator
+{
 
-  @Override
-  public void visitPyFile(final PyFile node) {
-    annotateDocStringStmt(DocStringUtil.findDocStringExpression(node));
-  }
+	@Override
+	public void visitPyFile(final PyFile node)
+	{
+		annotateDocStringStmt(DocStringUtil.findDocStringExpression(node));
+	}
 
-  @Override
-  public void visitPyFunction(final PyFunction node) {
-    annotateDocStringStmt(DocStringUtil.findDocStringExpression(node.getStatementList()));
-  }
+	@Override
+	public void visitPyFunction(final PyFunction node)
+	{
+		annotateDocStringStmt(DocStringUtil.findDocStringExpression(node.getStatementList()));
+	}
 
-  @Override
-  public void visitPyClass(final PyClass node) {
-    annotateDocStringStmt(DocStringUtil.findDocStringExpression(node.getStatementList()));
-  }
+	@Override
+	public void visitPyClass(final PyClass node)
+	{
+		annotateDocStringStmt(DocStringUtil.findDocStringExpression(node.getStatementList()));
+	}
 
-  @Override
-  public void visitPyAssignmentStatement(PyAssignmentStatement node) {
-    if (node.isAssignmentTo(PyNames.DOC)) {
-      PyExpression right = node.getAssignedValue();
-      if (right instanceof PyStringLiteralExpression) {
-        Annotation ann = getHolder().createInfoAnnotation(right, null);
-        ann.setTextAttributes(PyHighlighter.PY_DOC_COMMENT);
-        annotateDocStringStmt((PyStringLiteralExpression)right);
-      }
-    }
-  }
+	@Override
+	public void visitPyAssignmentStatement(PyAssignmentStatement node)
+	{
+		if(node.isAssignmentTo(PyNames.DOC))
+		{
+			PyExpression right = node.getAssignedValue();
+			if(right instanceof PyStringLiteralExpression)
+			{
+				Annotation ann = getHolder().createInfoAnnotation(right, null);
+				ann.setTextAttributes(PyHighlighter.PY_DOC_COMMENT);
+				annotateDocStringStmt((PyStringLiteralExpression) right);
+			}
+		}
+	}
 
-  @Override
-  public void visitPyExpressionStatement(PyExpressionStatement node) {
-    if (node.getExpression() instanceof PyStringLiteralExpression &&
-        DocStringUtil.isVariableDocString((PyStringLiteralExpression)node.getExpression())) {
-      annotateDocStringStmt((PyStringLiteralExpression)node.getExpression());
-    }
-  }
+	@Override
+	public void visitPyExpressionStatement(PyExpressionStatement node)
+	{
+		if(node.getExpression() instanceof PyStringLiteralExpression && DocStringUtil.isVariableDocString((PyStringLiteralExpression) node.getExpression()))
+		{
+			annotateDocStringStmt((PyStringLiteralExpression) node.getExpression());
+		}
+	}
 
-  private void annotateDocStringStmt(final PyStringLiteralExpression stmt) {
-    if (stmt != null) {
-      final Module module = ModuleUtilCore.findModuleForPsiElement(stmt);
-      if (module == null) return;
-      final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(module);
-      if (!settings.isPlain(stmt.getContainingFile())) {
-        String[] tags = settings.isEpydocFormat(stmt.getContainingFile()) ? EpydocString.ALL_TAGS : SphinxDocString.ALL_TAGS;
-        int pos = 0;
-        while(true) {
-          TextRange textRange = DocStringReferenceProvider.findNextTag(stmt.getText(), pos, tags);
-          if (textRange == null) break;
-          Annotation annotation = getHolder().createInfoAnnotation(textRange.shiftRight(stmt.getTextRange().getStartOffset()), null);
-          annotation.setTextAttributes(PyHighlighter.PY_DOC_COMMENT_TAG);
-          pos = textRange.getEndOffset();
-        }
-      }
-    }
-  }
+	private void annotateDocStringStmt(final PyStringLiteralExpression stmt)
+	{
+		if(stmt != null)
+		{
+			final DocStringFormat format = DocStringUtil.getConfiguredDocStringFormat(stmt);
+			final String[] tags;
+			if(format == DocStringFormat.EPYTEXT)
+			{
+				tags = EpydocString.ALL_TAGS;
+			}
+			else if(format == DocStringFormat.REST)
+			{
+				tags = SphinxDocString.ALL_TAGS;
+			}
+			else
+			{
+				return;
+			}
+			int pos = 0;
+			while(true)
+			{
+				TextRange textRange = DocStringReferenceProvider.findNextTag(stmt.getText(), pos, tags);
+				if(textRange == null)
+				{
+					break;
+				}
+				Annotation annotation = getHolder().createInfoAnnotation(textRange.shiftRight(stmt.getTextRange().getStartOffset()), null);
+				annotation.setTextAttributes(PyHighlighter.PY_DOC_COMMENT_TAG);
+				pos = textRange.getEndOffset();
+			}
+		}
+	}
 }

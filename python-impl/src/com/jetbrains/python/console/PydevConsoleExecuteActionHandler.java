@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,30 @@
  */
 package com.jetbrains.python.console;
 
+import java.awt.Font;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.execution.console.LanguageConsoleView;
 import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorModificationUtil;
-import com.intellij.openapi.fileTypes.PlainTextLanguage;
+import com.intellij.openapi.editor.RangeMarker;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.impl.source.codeStyle.IndentHelperImpl;
-import com.intellij.util.Function;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.console.pydev.ConsoleCommunicationListener;
-import com.jetbrains.python.console.pydev.InterpreterResponse;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyElementGenerator;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyStatementList;
 
 /**
  * @author traff
@@ -48,272 +47,128 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 {
 	private final LanguageConsoleView myConsoleView;
 
-	private String myInMultilineStringState = null;
-	private StringBuilder myInputBuffer;
-	private int myCurrentIndentSize = 0;
-
-	private final ConsoleCommunication myConsoleCommunication;
+	private final ConsoleCommunication consoleCommunication;
+	private PyConsoleEnterHandler myEnterHandler = new PyConsoleEnterHandler();
 	private boolean myEnabled = false;
 
-	public PydevConsoleExecuteActionHandler(LanguageConsoleView consoleView, ProcessHandler myProcessHandler,
-			ConsoleCommunication consoleCommunication)
+	private int myIpythonInputPromptCount = 0;
+
+	public PydevConsoleExecuteActionHandler(LanguageConsoleView consoleView, ProcessHandler processHandler, ConsoleCommunication consoleCommunication)
 	{
-		super(myProcessHandler, false);
+		super(processHandler, false);
 		myConsoleView = consoleView;
-		myConsoleCommunication = consoleCommunication;
-		myConsoleCommunication.addCommunicationListener(this);
+		this.consoleCommunication = consoleCommunication;
+		this.consoleCommunication.addCommunicationListener(this);
+	}
+
+	public boolean isIpythonEnabled()
+	{
+		return PyConsoleUtil.getOrCreateIPythonData(myConsoleView.getVirtualFile()).isIPythonEnabled();
 	}
 
 	@Override
-	public void processLine(final String text)
+	public void processLine(@NotNull final String text)
 	{
-		processLine(text, false);
+		executeMultiLine(text);
 	}
 
-	public void processLine(@NotNull final String text, boolean execAnyway)
+	private void executeMultiLine(String text)
 	{
-		int indentBefore = myCurrentIndentSize;
-		if(text.isEmpty())
-		{
-			processOneLine(text);
-		}
-		else
-		{
-			if(StringUtil.countNewLines(text.trim()) > 0)
-			{
-				executeMultiLine(text);
-			}
-			else
-			{
-				processOneLine(text);
-			}
-		}
-		if(execAnyway && myCurrentIndentSize > 0 && indentBefore == 0)
-		{ //if code was indented and we need to exec anyway
-			finishExecution();
-		}
+		String commandText = !StringUtil.endsWithChar(text, '\n') ? text + "\n" : text;
+
+		sendLineToConsole(new ConsoleCommunication.ConsoleCodeFragment(commandText, checkSingleLine(text)));
 	}
 
-	private void executeMultiLine(@NotNull String text)
+	private boolean checkSingleLine(String text)
 	{
-		if(myInputBuffer == null)
-		{
-			myInputBuffer = new StringBuilder();
-		}
-
-		myInputBuffer.append(text);
-
-		final LanguageConsoleImpl console = myConsoleView.getConsole();
-		final Editor currentEditor = console.getConsoleEditor();
-
-		sendLineToConsole(new ConsoleCommunication.ConsoleCodeFragment(myInputBuffer.toString(), false), console, currentEditor);
+		PyFile pyFile = (PyFile) PyElementGenerator.getInstance(getProject()).createDummyFile(myConsoleView.getVirtualFile().getUserData(LanguageLevel.KEY), text);
+		return PsiTreeUtil.findChildOfAnyType(pyFile, PyStatementList.class) == null && pyFile.getStatements().size() < 2;
 	}
 
-	private void processOneLine(String line)
+	private void sendLineToConsole(@NotNull final ConsoleCommunication.ConsoleCodeFragment code)
 	{
-		int indentSize = IndentHelperImpl.getIndent(getProject(), PythonFileType.INSTANCE, line, false);
-		line = StringUtil.trimTrailing(line);
-		if(StringUtil.isEmptyOrSpaces(line))
+		ConsoleCommunication consoleComm = this.consoleCommunication;
+		if(!consoleCommunication.isWaitingForInput())
 		{
-			doProcessLine("\n");
+			executingPrompt();
 		}
-		else if(indentSize == 0 &&
-				indentSize < myCurrentIndentSize &&
-				!PyConsoleIndentUtil.shouldIndent(line) &&
-				!myConsoleCommunication.isWaitingForInput())
+		if(isIpythonEnabled() && !consoleComm.isWaitingForInput() && code.getText().length() != 0)
 		{
-			doProcessLine("\n");
-			doProcessLine(line);
+			++myIpythonInputPromptCount;
 		}
-		else
-		{
-			doProcessLine(line);
-		}
+
+		consoleComm.execInterpreter(code, interpreterResponse -> null);
 	}
 
-	public void doProcessLine(final String line)
+	public void inputReceived()
 	{
-		final LanguageConsoleImpl console = myConsoleView.getConsole();
-		final Editor currentEditor = console.getConsoleEditor();
-
-		if(myInputBuffer == null)
+		if(consoleCommunication instanceof PythonDebugConsoleCommunication)
 		{
-			myInputBuffer = new StringBuilder();
-		}
-
-		if(!StringUtil.isEmptyOrSpaces(line))
-		{
-			myInputBuffer.append(line);
-			if(!line.endsWith("\n"))
+			if(consoleCommunication.isWaitingForInput())
 			{
-				myInputBuffer.append("\n");
-			}
-		}
-
-		if(StringUtil.isEmptyOrSpaces(line) && StringUtil.isEmptyOrSpaces(myInputBuffer.toString()))
-		{
-			myInputBuffer.append("");
-		}
-
-		// multiline strings handling
-		if(myInMultilineStringState != null)
-		{
-			if(PyConsoleUtil.isDoubleQuoteMultilineStarts(line))
-			{
-				myInMultilineStringState = null;
-				// restore language
-				console.setLanguage(PythonLanguage.getInstance());
-				console.setPrompt(PyConsoleUtil.ORDINARY_PROMPT);
-			}
-			else
-			{
-				return;
-			}
-		}
-		else
-		{
-			if(PyConsoleUtil.isDoubleQuoteMultilineStarts(line))
-			{
-				myInMultilineStringState = PyConsoleUtil.DOUBLE_QUOTE_MULTILINE;
-			}
-			else if(PyConsoleUtil.isSingleQuoteMultilineStarts(line))
-			{
-				myInMultilineStringState = PyConsoleUtil.SINGLE_QUOTE_MULTILINE;
-			}
-			if(myInMultilineStringState != null)
-			{
-				// change language
-				console.setLanguage(PlainTextLanguage.INSTANCE);
-				console.setPrompt(PyConsoleUtil.INDENT_PROMPT);
-				return;
-			}
-		}
-
-		// Process line continuation
-		if(line.endsWith("\\"))
-		{
-			console.setPrompt(PyConsoleUtil.INDENT_PROMPT);
-			return;
-		}
-
-		if(!StringUtil.isEmptyOrSpaces(line))
-		{
-			int indent = IndentHelperImpl.getIndent(getProject(), PythonFileType.INSTANCE, line, false);
-			boolean flag = false;
-			if(PyConsoleIndentUtil.shouldIndent(line))
-			{
-				indent += getPythonIndent();
-				flag = true;
-			}
-			if((myCurrentIndentSize > 0 && indent > 0) || flag)
-			{
-				setCurrentIndentSize(indent);
-				indentEditor(currentEditor, indent);
-				more(console, currentEditor);
-
-				myConsoleCommunication.notifyCommandExecuted(true);
-				return;
-			}
-		}
-
-
-		sendLineToConsole(new ConsoleCommunication.ConsoleCodeFragment(myInputBuffer.toString(), true), console, currentEditor);
-	}
-
-	private void sendLineToConsole(@NotNull final ConsoleCommunication.ConsoleCodeFragment code, @NotNull final LanguageConsoleImpl console,
-			@NotNull final Editor currentEditor)
-	{
-		if(myConsoleCommunication != null)
-		{
-			final boolean waitedForInputBefore = myConsoleCommunication.isWaitingForInput();
-			if(myConsoleCommunication.isWaitingForInput())
-			{
-				myInputBuffer.setLength(0);
-			}
-			else
-			{
-				executingPrompt(console);
-			}
-			myConsoleCommunication.execInterpreter(code, new Function<InterpreterResponse, Object>()
-			{
-				public Object fun(final InterpreterResponse interpreterResponse)
+				((PythonDebugConsoleCommunication) consoleCommunication).waitingForInput = false;
+				LanguageConsoleView console = myConsoleView;
+				if(PyConsoleUtil.INPUT_PROMPT.equals(console.getPrompt()) || PyConsoleUtil.HELP_PROMPT.equals(console.getPrompt()))
 				{
-					// clear
-					myInputBuffer = null;
-					// Handle prompt
-					if(interpreterResponse.more)
-					{
-						more(console, currentEditor);
-						if(myCurrentIndentSize == 0)
-						{
-							// compute current indentation
-							setCurrentIndentSize(IndentHelperImpl.getIndent(getProject(), PythonFileType.INSTANCE, lastLine(code.getText()),
-									false) + getPythonIndent());
-							// In this case we can insert indent automatically
-							UIUtil.invokeLaterIfNeeded(new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									indentEditor(currentEditor, myCurrentIndentSize);
-								}
-							});
-						}
-					}
-					else
-					{
-						if(!myConsoleCommunication.isWaitingForInput())
-						{
-							ordinaryPrompt(console, currentEditor);
-						}
-						setCurrentIndentSize(0);
-					}
-
-					return null;
+					console.setPrompt(PyConsoleUtil.ORDINARY_PROMPT);
 				}
-			});
-			// After requesting input we got no call back to change prompt, change it manually
-			if(waitedForInputBefore && !myConsoleCommunication.isWaitingForInput())
-			{
-				console.setPrompt(PyConsoleUtil.ORDINARY_PROMPT);
-				PyConsoleUtil.scrollDown(currentEditor);
 			}
 		}
 	}
 
-	private static String lastLine(@NotNull String text)
+	private void inPrompt()
 	{
-		String[] lines = StringUtil.splitByLinesDontTrim(text);
-		return lines[lines.length - 1];
-	}
-
-	private void ordinaryPrompt(LanguageConsoleImpl console, Editor currentEditor)
-	{
-		if(!myConsoleCommunication.isExecuting())
+		if(ipythonEnabled())
 		{
-			if(!PyConsoleUtil.ORDINARY_PROMPT.equals(console.getPrompt()))
-			{
-				console.setPrompt(PyConsoleUtil.ORDINARY_PROMPT);
-				PyConsoleUtil.scrollDown(currentEditor);
-			}
+			ipythonInPrompt();
 		}
 		else
 		{
-			executingPrompt(console);
+			ordinaryPrompt();
 		}
 	}
 
-	private static void executingPrompt(LanguageConsoleImpl console)
+	private void ordinaryPrompt()
 	{
-		console.setPrompt(PyConsoleUtil.EXECUTING_PROMPT);
+		if(!PyConsoleUtil.ORDINARY_PROMPT.equals(myConsoleView.getPrompt()))
+		{
+			myConsoleView.setPrompt(PyConsoleUtil.ORDINARY_PROMPT);
+			PyConsoleUtil.scrollDown(myConsoleView.getCurrentEditor());
+		}
 	}
 
-	private static void more(LanguageConsoleImpl console, Editor currentEditor)
+	private boolean ipythonEnabled()
 	{
-		if(!PyConsoleUtil.INDENT_PROMPT.equals(console.getPrompt()))
+		return PyConsoleUtil.getOrCreateIPythonData(myConsoleView.getVirtualFile()).isIPythonEnabled();
+	}
+
+	private void ipythonInPrompt()
+	{
+		myConsoleView.setPromptAttributes(new ConsoleViewContentType("", ConsoleViewContentType.USER_INPUT_KEY)
 		{
-			console.setPrompt(PyConsoleUtil.INDENT_PROMPT);
-			PyConsoleUtil.scrollDown(currentEditor);
+			@Override
+			public TextAttributes getAttributes()
+			{
+				TextAttributes attrs = super.getAttributes();
+				attrs.setFontType(Font.PLAIN);
+				return attrs;
+			}
+		});
+		myConsoleView.setPrompt("In[" + myIpythonInputPromptCount + "]:");
+		PyConsoleUtil.scrollDown(myConsoleView.getCurrentEditor());
+	}
+
+	private void executingPrompt()
+	{
+		myConsoleView.setPrompt(PyConsoleUtil.EXECUTING_PROMPT);
+	}
+
+	private void more()
+	{
+		if(!PyConsoleUtil.INDENT_PROMPT.equals(myConsoleView.getPrompt()))
+		{
+			myConsoleView.setPrompt(PyConsoleUtil.INDENT_PROMPT);
+			PyConsoleUtil.scrollDown(myConsoleView.getCurrentEditor());
 		}
 	}
 
@@ -325,69 +180,16 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	@Override
 	public void commandExecuted(boolean more)
 	{
-		if(!more)
+		if(!more && !ipythonEnabled() && !consoleCommunication.isWaitingForInput())
 		{
-			final LanguageConsoleImpl console = myConsoleView.getConsole();
-			final Editor currentEditor = console.getConsoleEditor();
-
-			ordinaryPrompt(console, currentEditor);
+			ordinaryPrompt();
 		}
 	}
 
 	@Override
 	public void inputRequested()
 	{
-		final LanguageConsoleImpl console = myConsoleView.getConsole();
-		final Editor currentEditor = console.getConsoleEditor();
-
-		if(!PyConsoleUtil.INPUT_PROMPT.equals(console.getPrompt()) && !PyConsoleUtil.HELP_PROMPT.equals(console.getPrompt()))
-		{
-			console.setPrompt(PyConsoleUtil.INPUT_PROMPT);
-			PyConsoleUtil.scrollDown(currentEditor);
-		}
-		setCurrentIndentSize(1);
-	}
-
-	public void finishExecution()
-	{
-		final LanguageConsoleImpl console = myConsoleView.getConsole();
-		final Editor currentEditor = console.getConsoleEditor();
-
-		if(myInputBuffer != null)
-		{
-			processLine("\n");
-		}
-
-		cleanEditor(currentEditor);
-		//console.setPrompt(PyConsoleHighlightingUtil.ORDINARY_PROMPT);
-	}
-
-	public int getCurrentIndentSize()
-	{
-		return myCurrentIndentSize;
-	}
-
-	public void setCurrentIndentSize(int currentIndentSize)
-	{
-		myCurrentIndentSize = currentIndentSize;
-		VirtualFile file = getConsoleFile();
-		if(file != null)
-		{
-			PyConsoleUtil.setCurrentIndentSize(file, currentIndentSize);
-		}
-	}
-
-	@Nullable
-	private VirtualFile getConsoleFile()
-	{
-		if(myConsoleView != null)
-		{
-			return myConsoleView.getConsole().getFile().getVirtualFile();
-		}
-		else
-		{
-			return null;
-		}
+		updateConsoleState();
 	}
 
 	public int getPythonIndent()
@@ -395,33 +197,9 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 		return CodeStyleSettingsManager.getSettings(getProject()).getIndentSize(PythonFileType.INSTANCE);
 	}
 
-	private void indentEditor(final Editor editor, final int indentSize)
-	{
-		new WriteCommandAction(getProject())
-		{
-			@Override
-			protected void run(Result result) throws Throwable
-			{
-				EditorModificationUtil.insertStringAtCaret(editor, IndentHelperImpl.fillIndent(getProject(), PythonFileType.INSTANCE, indentSize));
-			}
-		}.execute();
-	}
-
-	private void cleanEditor(final Editor editor)
-	{
-		new WriteCommandAction(getProject())
-		{
-			@Override
-			protected void run(Result result) throws Throwable
-			{
-				editor.getDocument().setText("");
-			}
-		}.execute();
-	}
-
 	private Project getProject()
 	{
-		return myConsoleView.getConsole().getProject();
+		return myConsoleView.getProject();
 	}
 
 	public String getCantExecuteMessage()
@@ -441,51 +219,67 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	}
 
 	@Override
-	public void runExecuteAction(@NotNull LanguageConsoleImpl languageConsole)
+	public void runExecuteAction(@NotNull LanguageConsoleView console)
 	{
 		if(isEnabled())
 		{
 			if(!canExecuteNow())
 			{
-				HintManager.getInstance().showErrorHint(languageConsole.getConsoleEditor(), getPrevCommandRunningMessage());
+				HintManager.getInstance().showErrorHint(console.getConsoleEditor(), getPrevCommandRunningMessage());
 			}
 			else
 			{
-				doRunExecuteAction(languageConsole);
+				doRunExecuteAction(console);
 			}
 		}
 		else
 		{
-			HintManager.getInstance().showErrorHint(languageConsole.getConsoleEditor(), getConsoleIsNotEnabledMessage());
+			HintManager.getInstance().showErrorHint(console.getConsoleEditor(), getConsoleIsNotEnabledMessage());
 		}
 	}
 
-	private void doRunExecuteAction(LanguageConsoleImpl languageConsole)
+	private void doRunExecuteAction(LanguageConsoleView console)
 	{
-		if(shouldCopyToHistory(languageConsole))
+		Document doc = myConsoleView.getEditorDocument();
+		RangeMarker endMarker = doc.createRangeMarker(doc.getTextLength(), doc.getTextLength());
+		endMarker.setGreedyToLeft(false);
+		endMarker.setGreedyToRight(true);
+		boolean isComplete = myEnterHandler.handleEnterPressed(console.getConsoleEditor());
+		if(isComplete || consoleCommunication.isWaitingForInput())
 		{
-			copyToHistoryAndExecute(languageConsole);
-		}
-		else
-		{
-			final Document document = languageConsole.getConsoleEditor().getDocument();
-			processLine(document.getText());
+
+			if(endMarker.getEndOffset() - endMarker.getStartOffset() > 0)
+			{
+				ApplicationManager.getApplication().runWriteAction(() -> {
+					CommandProcessor.getInstance().runUndoTransparentAction(() -> {
+						doc.deleteString(endMarker.getStartOffset(), endMarker.getEndOffset());
+					});
+				});
+			}
+			if(shouldCopyToHistory(console))
+			{
+				copyToHistoryAndExecute(console);
+			}
+			else
+			{
+				processLine(myConsoleView.getConsoleEditor().getDocument().getText());
+			}
 		}
 	}
 
-	private static boolean shouldCopyToHistory(@NotNull LanguageConsoleImpl console)
+	private void copyToHistoryAndExecute(LanguageConsoleView console)
+	{
+		super.runExecuteAction(console);
+	}
+
+	private static boolean shouldCopyToHistory(@NotNull LanguageConsoleView console)
 	{
 		return !PyConsoleUtil.isPagingPrompt(console.getPrompt());
 	}
 
-	private void copyToHistoryAndExecute(LanguageConsoleImpl languageConsole)
-	{
-		super.runExecuteAction(languageConsole);
-	}
-
 	public boolean canExecuteNow()
 	{
-		return !myConsoleCommunication.isExecuting() || myConsoleCommunication.isWaitingForInput();
+		return !consoleCommunication.isExecuting() || consoleCommunication.isWaitingForInput();
 	}
 
 	protected String getConsoleIsNotEnabledMessage()
@@ -496,10 +290,52 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	protected void setEnabled(boolean flag)
 	{
 		myEnabled = flag;
+		updateConsoleState();
+	}
+
+	private void updateConsoleState()
+	{
+		if(!isEnabled())
+		{
+			executingPrompt();
+		}
+		else if(consoleCommunication.isWaitingForInput())
+		{
+			waitingForInputPrompt();
+		}
+		else if(canExecuteNow())
+		{
+			if(consoleCommunication.needsMore())
+			{
+				more();
+			}
+			else
+			{
+				inPrompt();
+			}
+		}
+		else
+		{
+			executingPrompt();
+		}
+	}
+
+	private void waitingForInputPrompt()
+	{
+		if(!PyConsoleUtil.INPUT_PROMPT.equals(myConsoleView.getPrompt()) && !PyConsoleUtil.HELP_PROMPT.equals(myConsoleView.getPrompt()))
+		{
+			myConsoleView.setPrompt(PyConsoleUtil.INPUT_PROMPT);
+			PyConsoleUtil.scrollDown(myConsoleView.getCurrentEditor());
+		}
 	}
 
 	public boolean isEnabled()
 	{
 		return myEnabled;
+	}
+
+	public ConsoleCommunication getConsoleCommunication()
+	{
+		return consoleCommunication;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,79 +13,115 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.debugger;
-
-import com.intellij.xdebugger.frame.XExecutionStack;
-import com.intellij.xdebugger.frame.XStackFrame;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.Icon;
 
-public class PyExecutionStack extends XExecutionStack {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.xdebugger.frame.XExecutionStack;
+import com.intellij.xdebugger.frame.XStackFrame;
 
-  private final PyDebugProcess myDebugProcess;
-  private final PyThreadInfo myThreadInfo;
-  private PyStackFrame myTopFrame;
 
-  public PyExecutionStack(@NotNull final PyDebugProcess debugProcess, @NotNull final PyThreadInfo threadInfo) {
-    super(threadInfo.getName());
-    myDebugProcess = debugProcess;
-    myThreadInfo = threadInfo;
-  }
+public class PyExecutionStack extends XExecutionStack
+{
 
-  @Override
-  public XStackFrame getTopFrame() {
-    if (myTopFrame == null) {
-      final List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
-      if (frames != null) {
-        myTopFrame = convert(myDebugProcess, frames.get(0));
-      }
-    }
-    return myTopFrame;
-  }
+	private final PyDebugProcess myDebugProcess;
+	private final PyThreadInfo myThreadInfo;
+	private PyStackFrame myTopFrame;
 
-  @Override
-  public void computeStackFrames(int firstFrameIndex, XStackFrameContainer container) {
-    if (myThreadInfo.getState() != PyThreadInfo.State.SUSPENDED) {
-      container.errorOccurred("Frames not available in non-suspended state");
-      return;
-    }
+	public PyExecutionStack(@NotNull final PyDebugProcess debugProcess, @NotNull final PyThreadInfo threadInfo)
+	{
+		super(threadInfo.getName());
+		myDebugProcess = debugProcess;
+		myThreadInfo = threadInfo;
+	}
 
-    final List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
-    if (frames != null && firstFrameIndex <= frames.size()) {
-      final List<PyStackFrame> xFrames = new LinkedList<PyStackFrame>();
-      for (int i = firstFrameIndex; i < frames.size(); i++) {
-        xFrames.add(convert(myDebugProcess, frames.get(i)));
-      }
-      container.addStackFrames(xFrames, true);
-    }
-    else {
-      container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
-    }
-  }
+	public PyExecutionStack(@NotNull final PyDebugProcess debugProcess, @NotNull final PyThreadInfo threadInfo, final @Nullable Icon icon)
+	{
+		super(threadInfo.getName(), icon);
+		myDebugProcess = debugProcess;
+		myThreadInfo = threadInfo;
+	}
 
-  private static PyStackFrame convert(final PyDebugProcess debugProcess, final PyStackFrameInfo frameInfo) {
-    return debugProcess.createStackFrame(frameInfo);
-  }
+	@Override
+	public PyStackFrame getTopFrame()
+	{
+		if(myTopFrame == null)
+		{
+			final List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
+			if(frames != null)
+			{
+				myTopFrame = convert(myDebugProcess, frames.get(0));
+			}
+		}
+		return myTopFrame;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public void computeStackFrames(int firstFrameIndex, XStackFrameContainer container)
+	{
+		if(myThreadInfo.getState() != PyThreadInfo.State.SUSPENDED)
+		{
+			container.errorOccurred("Frames not available in non-suspended state");
+			return;
+		}
 
-    PyExecutionStack that = (PyExecutionStack)o;
+		final List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
+		if(frames != null && firstFrameIndex <= frames.size())
+		{
+			final List<PyStackFrame> xFrames = new LinkedList<>();
+			for(int i = firstFrameIndex; i < frames.size(); i++)
+			{
+				xFrames.add(convert(myDebugProcess, frames.get(i)));
+			}
+			container.addStackFrames(xFrames, true);
+		}
+		else
+		{
+			container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+		}
+	}
 
-    if (myThreadInfo != null ? !myThreadInfo.equals(that.myThreadInfo) : that.myThreadInfo != null) return false;
+	private static PyStackFrame convert(final PyDebugProcess debugProcess, final PyStackFrameInfo frameInfo)
+	{
+		return debugProcess.createStackFrame(frameInfo);
+	}
 
-    return true;
-  }
+	@Override
+	public boolean equals(Object o)
+	{
+		if(this == o)
+		{
+			return true;
+		}
+		if(o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
 
-  @Override
-  public int hashCode() {
-    return myThreadInfo != null ? myThreadInfo.hashCode() : 0;
-  }
+		PyExecutionStack that = (PyExecutionStack) o;
+
+		if(myThreadInfo != null ? !myThreadInfo.equals(that.myThreadInfo) : that.myThreadInfo != null)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return myThreadInfo != null ? myThreadInfo.hashCode() : 0;
+	}
+
+	public String getThreadId()
+	{
+		return myThreadInfo.getId();
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.remote;
 
-import com.intellij.remotesdk.RemoteProcessHandlerBase;
-import com.jetbrains.python.debugger.PyDebugProcess;
-import com.jetbrains.python.debugger.PyPositionConverter;
+import com.jetbrains.python.debugger.PositionConverterProvider;
 
 /**
  * @author yole
  */
-public interface RemoteDebuggableProcessHandler extends RemoteProcessHandlerBase {
-  PyPositionConverter createPositionConverter(PyDebugProcess debugProcess);
+public interface RemoteDebuggableProcessHandler extends PyRemoteProcessControl, PositionConverterProvider
+{
 }

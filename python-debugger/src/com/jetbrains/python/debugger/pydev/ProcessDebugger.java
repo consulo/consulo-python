@@ -1,95 +1,95 @@
 package com.jetbrains.python.debugger.pydev;
 
-import com.intellij.xdebugger.frame.XValueChildrenList;
-import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.debugger.PyDebugValue;
-import com.jetbrains.python.debugger.PyDebuggerException;
-import com.jetbrains.python.debugger.PyThreadInfo;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.xdebugger.breakpoints.SuspendPolicy;
+import com.intellij.xdebugger.frame.XValueChildrenList;
+import com.jetbrains.python.console.pydev.PydevCompletionVariant;
+import com.jetbrains.python.debugger.ArrayChunk;
+import com.jetbrains.python.debugger.PyDebugValue;
+import com.jetbrains.python.debugger.PyDebuggerException;
+import com.jetbrains.python.debugger.PyReferringObjectsValue;
+import com.jetbrains.python.debugger.PyThreadInfo;
 
 /**
  * @author traff
  */
-public interface ProcessDebugger {
-  String handshake() throws PyDebuggerException;
+public interface ProcessDebugger
+{
+	String handshake() throws PyDebuggerException;
 
-  PyDebugValue evaluate(String threadId,
-                        String frameId,
-                        String expression, boolean execute) throws PyDebuggerException;
+	PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute) throws PyDebuggerException;
 
-  PyDebugValue evaluate(String threadId,
-                        String frameId,
-                        String expression,
-                        boolean execute,
-                        boolean trimResult)
-                                 throws PyDebuggerException;
+	PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute, boolean trimResult) throws PyDebuggerException;
 
-  void consoleExec(String threadId, String frameId, String expression, DebugCallback<String> callback);
+	void consoleExec(String threadId, String frameId, String expression, PyDebugCallback<String> callback);
 
-  XValueChildrenList loadFrame(String threadId, String frameId) throws PyDebuggerException;
+	XValueChildrenList loadFrame(String threadId, String frameId) throws PyDebuggerException;
 
-  // todo: don't generate temp variables for qualified expressions - just split 'em
-  XValueChildrenList loadVariable(String threadId, String frameId, PyDebugValue var) throws PyDebuggerException;
+	// todo: don't generate temp variables for qualified expressions - just split 'em
+	XValueChildrenList loadVariable(String threadId, String frameId, PyDebugValue var) throws PyDebuggerException;
 
-  PyDebugValue changeVariable(String threadId, String frameId, PyDebugValue var, String value)
-    throws PyDebuggerException;
+	ArrayChunk loadArrayItems(String threadId, String frameId, PyDebugValue var, int rowOffset, int colOffset, int rows, int cols, String format) throws PyDebuggerException;
 
-  @Nullable
-  String loadSource(String path);
+	void loadReferrers(String threadId, String frameId, PyReferringObjectsValue var, PyDebugCallback<XValueChildrenList> callback);
 
-  Collection<PyThreadInfo> getThreads();
+	PyDebugValue changeVariable(String threadId, String frameId, PyDebugValue var, String value) throws PyDebuggerException;
 
-  void execute(@NotNull AbstractCommand command);
+	@Nullable
+	String loadSource(String path);
 
-  void suspendAllThreads();
+	Collection<PyThreadInfo> getThreads();
 
-  void suspendThread(String threadId);
+	void execute(@NotNull AbstractCommand command);
 
-  /**
-   *  Disconnects current debug process. Closes all resources.
-   */
-  void close();
+	void suspendAllThreads();
 
-  boolean isConnected();
+	void suspendThread(String threadId);
 
-  void waitForConnect() throws Exception;
+	/**
+	 * Disconnects current debug process. Closes all resources.
+	 */
+	void close();
 
-  /**
-   * Disconnects currently connected process. After that it can wait for the next.
-   */
-  void disconnect();
+	boolean isConnected();
 
-  void run() throws PyDebuggerException;
+	void waitForConnect() throws Exception;
 
-  void smartStepInto(String threadId, String functionName);
+	/**
+	 * Disconnects currently connected process. After that it can wait for the next.
+	 */
+	void disconnect();
 
-  void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode);
+	void run() throws PyDebuggerException;
 
-  void setTempBreakpoint(String type, String file, int line);
+	void smartStepInto(String threadId, String functionName);
 
-  void removeTempBreakpoint(String file, int line);
+	void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode);
 
-  void setBreakpoint(String typeId, String file, int line, String condition, String logExpression);
+	void setTempBreakpoint(@NotNull String type, @NotNull String file, int line);
 
-  void removeBreakpoint(String typeId, String file, int line);
+	void removeTempBreakpoint(@NotNull String file, int line);
 
-  void addCloseListener(RemoteDebuggerCloseListener remoteDebuggerCloseListener);
+	void setBreakpoint(@NotNull String typeId, @NotNull String file, int line, @Nullable String condition, @Nullable String logExpression, @Nullable String funcName, @NotNull SuspendPolicy policy);
 
-  List<PydevCompletionVariant> getCompletions(String threadId, String frameId, String prefix);
+	void removeBreakpoint(@NotNull String typeId, @NotNull String file, int line);
 
-  void addExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
+	void setShowReturnValues(boolean isShowReturnValues);
 
-  void removeExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
+	void addCloseListener(RemoteDebuggerCloseListener remoteDebuggerCloseListener);
 
-  /**
-  * @author traff
-  */
-  interface DebugCallback<T> {
-    void ok(T value);
-    void error(PyDebuggerException exception);
-  }
+	List<PydevCompletionVariant> getCompletions(String threadId, String frameId, String prefix);
+
+	String getDescription(String threadId, String frameId, String cmd);
+
+
+	void addExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
+
+	void removeExceptionBreakpoint(ExceptionBreakpointCommandFactory factory);
+
+	void suspendOtherThreads(PyThreadInfo thread);
+
 }

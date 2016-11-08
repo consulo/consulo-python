@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import org.consulo.jython.JythonIcons;
+import consulo.jython.JythonIcons;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;

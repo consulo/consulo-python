@@ -29,7 +29,7 @@ import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
  * @author yole
  */
 public abstract class CustomTargetExpressionStubType<T extends CustomTargetExpressionStub> {
-  public static ExtensionPointName<CustomTargetExpressionStubType> EP_NAME = ExtensionPointName.create("org.consulo.python.customTargetExpressionStubType");
+  public static ExtensionPointName<CustomTargetExpressionStubType> EP_NAME = ExtensionPointName.create("consulo.python.customTargetExpressionStubType");
 
   @Nullable
   public abstract T createStub(PyTargetExpression psi);

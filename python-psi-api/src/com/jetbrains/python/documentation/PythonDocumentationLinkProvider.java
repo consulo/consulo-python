@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement;
  * @author yole
  */
 public interface PythonDocumentationLinkProvider {
-  ExtensionPointName<PythonDocumentationLinkProvider> EP_NAME = ExtensionPointName.create("org.consulo.python.documentationLinkProvider");
+  ExtensionPointName<PythonDocumentationLinkProvider> EP_NAME = ExtensionPointName.create("consulo.python.documentationLinkProvider");
 
   @Nullable
   String getExternalDocumentationUrl(PsiElement element, PsiElement originalElement);

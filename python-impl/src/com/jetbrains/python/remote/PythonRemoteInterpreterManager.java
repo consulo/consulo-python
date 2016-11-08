@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.remote;
 
 import java.awt.Component;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.DeprecationInfo;
+import com.google.common.base.Function;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
@@ -34,128 +34,185 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.remotesdk.RemoteInterpreterException;
-import com.intellij.remotesdk.RemoteSdkData;
-import com.intellij.remotesdk.RemoteSshProcess;
+import com.intellij.remote.RemoteConnectionCredentialsWrapper;
+import com.intellij.remote.RemoteCredentials;
+import com.intellij.remote.RemoteProcess;
+import com.intellij.remote.RemoteSdkCredentials;
+import com.intellij.remote.RemoteSdkCredentialsProducer;
+import com.intellij.remote.RemoteSdkException;
+import com.intellij.remote.RemoteSdkProperties;
+import com.intellij.remote.RemoteSshProcess;
 import com.intellij.util.NullableConsumer;
+import com.intellij.util.PathMapper;
 import com.intellij.util.PathMappingSettings;
 import com.jetbrains.python.PythonHelpersLocator;
+import com.jetbrains.python.console.PyConsoleProcessHandler;
+import com.jetbrains.python.console.PydevConsoleCommunication;
+import com.jetbrains.python.console.PythonConsoleView;
+import com.jetbrains.python.remote.PyRemotePathMapper.PyPathMappingType;
 import com.jetbrains.python.sdk.skeletons.PySkeletonGenerator;
+import consulo.annotations.DeprecationInfo;
 
 /**
  * @author traff
  */
 @Deprecated
 @DeprecationInfo(value = "We dont have remote hosts plugin", until = "2.0")
-public abstract class PythonRemoteInterpreterManager {
-  public final static ExtensionPointName<PythonRemoteInterpreterManager> EP_NAME =
-    ExtensionPointName.create("org.consulo.python.remoteInterpreterManager");
-  public static final String WEB_DEPLOYMENT_PLUGIN_IS_DISABLED =
-    "Remote interpreter can't be executed. Please enable the Remote Hosts Access plugin.";
+public abstract class PythonRemoteInterpreterManager
+{
+	public final static ExtensionPointName<PythonRemoteInterpreterManager> EP_NAME = ExtensionPointName.create("consulo.python.remoteInterpreterManager");
+	public static final String WEB_DEPLOYMENT_PLUGIN_IS_DISABLED = "Remote interpreter can't be executed. Please enable the Remote Hosts Access plugin."; //TODO: this message is incorrect
 
-  public abstract ProcessHandler startRemoteProcess(@Nullable Project project,
-                                                    @NotNull PyRemoteSdkData data,
-                                                    @NotNull GeneralCommandLine commandLine,
-                                                    @Nullable
-                                                    PathMappingSettings mappingSettings)
-    throws RemoteInterpreterException;
+	public final static Key<PathMapper> PATH_MAPPING_SETTINGS_KEY = Key.create("PATH_MAPPING_SETTINGS_KEY");
 
-  public abstract ProcessHandler startRemoteProcessWithPid(@Nullable Project project,
-                                                           @NotNull PyRemoteSdkData data,
-                                                           @NotNull GeneralCommandLine commandLine,
-                                                           @Nullable
-                                                           PathMappingSettings mappingSettings)
-    throws RemoteInterpreterException;
-
-  public abstract void addRemoteSdk(Project project, Component parentComponent, Collection<Sdk> existingSdks,
-                                    NullableConsumer<Sdk> sdkCallback);
+	public final static Key<PathMappingSettings> ADDITIONAL_MAPPINGS = Key.create("ADDITIONAL_MAPPINGS");
 
 
-  public abstract ProcessOutput runRemoteProcess(@Nullable Project project,
-                                                 RemoteSdkData data,
-                                                 String[] command,
-                                                 @Nullable String workingDir,
-                                                 boolean askForSudo)
-    throws RemoteInterpreterException;
+	/**
+	 * @deprecated use {@link com.jetbrains.python.run.PyRemoteProcessStarterManager#startRemoteProcess(Project, GeneralCommandLine, PythonRemoteInterpreterManager, PyRemoteSdkAdditionalDataBase,
+	 * PyRemotePathMapper)}
+	 */
+	@Deprecated
+	public abstract ProcessHandler startRemoteProcess(@Nullable Project project,
+			@NotNull PyRemoteSdkCredentials data,
+			@NotNull GeneralCommandLine commandLine,
+			@NotNull PyRemotePathMapper pathMapper) throws RemoteSdkException;
 
-  @NotNull
-  public abstract RemoteSshProcess createRemoteProcess(@Nullable Project project,
-                                                         @NotNull RemoteSdkData data,
-                                                         @NotNull GeneralCommandLine commandLine, boolean allocatePty)
-    throws RemoteInterpreterException;
+	/**
+	 * @deprecated use {@link com.jetbrains.python.run.PyRemoteProcessStarterManager#startRemoteProcess(Project, GeneralCommandLine, PythonRemoteInterpreterManager, PyRemoteSdkAdditionalDataBase,
+	 * PyRemotePathMapper)}
+	 */
+	@Deprecated
+	public abstract PyRemoteProcessHandlerBase startRemoteProcessWithPid(@Nullable Project project,
+			@NotNull PyRemoteSdkCredentials data,
+			@NotNull GeneralCommandLine commandLine,
+			@NotNull PyRemotePathMapper pathMapper) throws RemoteSdkException;
 
-  public abstract boolean editSdk(@NotNull Project project, @NotNull SdkModificator sdkModificator, Collection<Sdk> existingSdks);
+	public abstract void addRemoteSdk(Project project, Component parentComponent, Collection<Sdk> existingSdks, NullableConsumer<Sdk> sdkCallback);
 
-  public abstract PySkeletonGenerator createRemoteSkeletonGenerator(@Nullable Project project,
-                                                                    @Nullable Component ownerComponent,
-                                                                    @NotNull Sdk sdk,
-                                                                    String path);
 
-  public abstract boolean ensureCanWrite(@Nullable Object projectOrComponent, RemoteSdkData data, String path);
+	/**
+	 * @deprecated use {@link com.jetbrains.python.run.PyRemoteProcessStarterManager#executeRemoteProcess(Project, String[], String, PythonRemoteInterpreterManager, PyRemoteSdkAdditionalDataBase,
+	 * PyRemotePathMapper, boolean)}
+	 */
+	@Deprecated
+	public abstract ProcessOutput runRemoteProcess(@Nullable Project project,
+			RemoteSdkCredentials data,
+			@NotNull PyRemotePathMapper pathMapper,
+			String[] command,
+			@Nullable String workingDir,
+			boolean askForSudo) throws RemoteSdkException;
 
-  @Nullable
-  public abstract RemoteProjectSettings showRemoteProjectSettingsDialog(VirtualFile baseDir, RemoteSdkData data);
+	/**
+	 * @deprecated use {@link com.jetbrains.python.run.PyRemoteProcessStarterManager#executeRemoteProcess(Project, String[], String, PythonRemoteInterpreterManager, PyRemoteSdkAdditionalDataBase,
+	 * PyRemotePathMapper, boolean)}
+	 */
+	@Deprecated
+	public abstract ProcessOutput runRemoteProcess(@Nullable Project project,
+			RemoteSdkCredentials data,
+			@NotNull PyRemotePathMapper pathMapper,
+			String[] command,
+			@Nullable String workingDir,
+			boolean askForSudo,
+			String sdkHomePath) throws RemoteSdkException;
 
-  public abstract void createDeployment(Project project,
-                                        VirtualFile projectDir,
-                                        RemoteProjectSettings settings,
-                                        RemoteSdkData data);
+	@NotNull
+	public abstract RemoteSshProcess createRemoteProcess(@Nullable Project project,
+			@NotNull PyRemoteSdkCredentials data,
+			@NotNull PyRemotePathMapper pathMapper,
+			@NotNull GeneralCommandLine commandLine,
+			boolean allocatePty) throws RemoteSdkException;
 
-  public abstract void copyFromRemote(@NotNull Project project,
-                                      RemoteSdkData data,
-                                      List<PathMappingSettings.PathMapping> mappings);
+	public abstract boolean editSdk(@NotNull Project project, @NotNull SdkModificator sdkModificator, Collection<Sdk> existingSdks);
 
-  @Nullable
-  public static PythonRemoteInterpreterManager getInstance() {
-    if (EP_NAME.getExtensions().length > 0) {
-      return EP_NAME.getExtensions()[0];
-    }
-    else {
-      return null;
-    }
-  }
+	public abstract PySkeletonGenerator createRemoteSkeletonGenerator(@Nullable Project project, @Nullable Component ownerComponent, @NotNull Sdk sdk, String path) throws ExecutionException;
 
-  public static void addUnbuffered(ParamsGroup exeGroup) {
-    for (String param : exeGroup.getParametersList().getParameters()) {
-      if ("-u".equals(param)) {
-        return;
-      }
-    }
-    exeGroup.addParameter("-u");
-  }
+	public abstract boolean ensureCanWrite(@Nullable Object projectOrComponent, RemoteSdkCredentials data, String path);
 
-  public static String toSystemDependent(String path, boolean isWin) {
-    char separator = isWin ? '\\' : '/';
-    return FileUtil.toSystemIndependentName(path).replace('/', separator);
-  }
+	@Nullable
+	public abstract RemoteProjectSettings showRemoteProjectSettingsDialog(VirtualFile baseDir, RemoteSdkCredentials data);
 
-  public static void addHelpersMapping(@NotNull RemoteSdkData data, @Nullable PathMappingSettings newMappingSettings) {
-    if (newMappingSettings == null) {
-      newMappingSettings = new PathMappingSettings();
-    }
-    newMappingSettings.addMapping(PythonHelpersLocator.getHelpersRoot().getPath(), data.getHelpersPath());
-  }
+	public abstract void createDeployment(Project project, VirtualFile projectDir, RemoteProjectSettings settings, RemoteSdkCredentials data);
 
-  public abstract PathMappingSettings setupMappings(@Nullable Project project,
-                                                    @NotNull PyRemoteSdkData data,
-                                                    @Nullable PathMappingSettings mappingSettings);
+	public abstract void copyFromRemote(Sdk sdk, @NotNull Project project, RemoteSdkCredentials data, List<PathMappingSettings.PathMapping> mappings);
 
-  public abstract SdkAdditionalData loadRemoteSdkData(Sdk sdk, Element additional);
+	@Nullable
+	public static PythonRemoteInterpreterManager getInstance()
+	{
+		if(EP_NAME.getExtensions().length > 0)
+		{
+			return EP_NAME.getExtensions()[0];
+		}
+		else
+		{
+			return null;
+		}
+	}
 
-  public static class PyRemoteInterpreterExecutionException extends ExecutionException {
+	public static void addUnbuffered(ParamsGroup exeGroup)
+	{
+		for(String param : exeGroup.getParametersList().getParameters())
+		{
+			if("-u".equals(param))
+			{
+				return;
+			}
+		}
+		exeGroup.addParameter("-u");
+	}
 
-    public PyRemoteInterpreterExecutionException() {
-      super(WEB_DEPLOYMENT_PLUGIN_IS_DISABLED);
-    }
-  }
+	public static String toSystemDependent(String path, boolean isWin)
+	{
+		char separator = isWin ? '\\' : '/';
+		return FileUtil.toSystemIndependentName(path).replace('/', separator);
+	}
 
-  public static class PyRemoteInterpreterRuntimeException extends RuntimeException {
+	public static void addHelpersMapping(@NotNull RemoteSdkProperties data, @NotNull PyRemotePathMapper pathMapper)
+	{
+		pathMapper.addMapping(PythonHelpersLocator.getHelpersRoot().getPath(), data.getHelpersPath(), PyPathMappingType.HELPERS);
+	}
 
-    public PyRemoteInterpreterRuntimeException() {
-      super(WEB_DEPLOYMENT_PLUGIN_IS_DISABLED);
-    }
-  }
+	@NotNull
+	public abstract PyRemotePathMapper setupMappings(@Nullable Project project, @NotNull PyRemoteSdkAdditionalDataBase data, @Nullable PyRemotePathMapper pathMapper);
+
+	public abstract SdkAdditionalData loadRemoteSdkData(Sdk sdk, Element additional);
+
+	public abstract PyConsoleProcessHandler createConsoleProcessHandler(RemoteProcess process,
+			PythonConsoleView view,
+			PydevConsoleCommunication consoleCommunication,
+			String commandLine,
+			Charset charset,
+			PyRemotePathMapper pathMapper,
+			PyRemoteSocketToLocalHostProvider remoteSocketProvider);
+
+	@NotNull
+	public abstract RemoteSdkCredentialsProducer<PyRemoteSdkCredentials> getRemoteSdkCredentialsProducer(Function<RemoteCredentials, PyRemoteSdkCredentials> credentialsTransformer,
+			RemoteConnectionCredentialsWrapper connectionWrapper);
+
+	public abstract String getInterpreterVersion(@Nullable Project project, PyRemoteSdkAdditionalDataBase data) throws RemoteSdkException;
+
+	public abstract String[] chooseRemoteFiles(Project project, @NotNull PyRemoteSdkAdditionalDataBase data, boolean foldersOnly) throws ExecutionException, InterruptedException;
+
+	public static class PyRemoteInterpreterExecutionException extends ExecutionException
+	{
+
+		public PyRemoteInterpreterExecutionException()
+		{
+			super(WEB_DEPLOYMENT_PLUGIN_IS_DISABLED);
+		}
+	}
+
+	public static class PyRemoteInterpreterRuntimeException extends RuntimeException
+	{
+
+		public PyRemoteInterpreterRuntimeException()
+		{
+			super(WEB_DEPLOYMENT_PLUGIN_IS_DISABLED);
+		}
+	}
+
+	public abstract void runVagrant(@NotNull String vagrantFolder, @Nullable String machineName) throws ExecutionException;
 }
-

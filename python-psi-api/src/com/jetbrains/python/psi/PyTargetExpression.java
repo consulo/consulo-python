@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,51 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.util.QualifiedName;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
 public interface PyTargetExpression extends PyQualifiedExpression, PsiNamedElement, PsiNameIdentifierOwner, PyDocStringOwner,
-                                            StubBasedPsiElement<PyTargetExpressionStub> {
-  PyTargetExpression[] EMPTY_ARRAY = new PyTargetExpression[0];
+		PyQualifiedNameOwner, PyReferenceOwner, StubBasedPsiElement<PyTargetExpressionStub>,
+		PyPossibleClassMember, PyTypeCommentOwner, PyAnnotationOwner {
+	PyTargetExpression[] EMPTY_ARRAY = new PyTargetExpression[0];
 
-  /**
-   * Find the value that maps to this target expression in an enclosing assignment expression.
-   * Does not work with other expressions (e.g. if the target is in a 'for' loop).
-   *
-   * @return the expression assigned to target via an enclosing assignment expression, or null.
-   */
-  @Nullable
-  PyExpression findAssignedValue();
+	/**
+	 * Find the value that maps to this target expression in an enclosing assignment expression.
+	 * Does not work with other expressions (e.g. if the target is in a 'for' loop).
+	 *
+	 * Operates at the AST level.
+	 *
+	 * @return the expression assigned to target via an enclosing assignment expression, or null.
+	 */
+	@Nullable
+	PyExpression findAssignedValue();
 
-  @Nullable
-  QualifiedName getAssignedQName();
+	/**
+	 * Resolves the value that maps to this target expression in an enclosing assignment expression.
+	 *
+	 * This method does not access AST if underlying PSI is stub based and the context doesn't allow switching to AST.
+	 */
+	@Nullable
+	PsiElement resolveAssignedValue(@NotNull PyResolveContext resolveContext);
 
-  /**
-   * If the value assigned to the target expression is a call, returns the (unqualified and unresolved) name of the
-   * callee. Otherwise, returns null.
-   *
-   * @return the name of the callee or null if the assigned value is not a call.
-   */
-  @Nullable
-  QualifiedName getCalleeName();
+	/**
+	 * Returns the qualified name (if there is any) assigned to the expression.
+	 *
+	 * This method does not access AST if underlying PSI is stub based.
+	 */
+	@Nullable
+	QualifiedName getAssignedQName();
 
-  @NotNull
-  PsiReference getReference();
-  
-  @Nullable
-  PyClass getContainingClass();
+	/**
+	 * If the value assigned to the target expression is a call, returns the (unqualified and unresolved) name of the
+	 * callee. Otherwise, returns null.
+	 *
+	 * @return the name of the callee or null if the assigned value is not a call.
+	 */
+	@Nullable
+	QualifiedName getCalleeName();
 
-  boolean isQualified();
+	@NotNull
+	PsiReference getReference();
 }

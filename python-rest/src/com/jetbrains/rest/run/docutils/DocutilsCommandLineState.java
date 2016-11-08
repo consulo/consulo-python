@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,57 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.rest.run.docutils;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.python.HelperPackage;
+import com.jetbrains.python.PythonHelper;
 import com.jetbrains.rest.run.RestCommandLineState;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * User : catherine
  */
-public class DocutilsCommandLineState extends RestCommandLineState {
+public class DocutilsCommandLineState extends RestCommandLineState
+{
 
-  public DocutilsCommandLineState(DocutilsRunConfiguration configuration,
-                                  ExecutionEnvironment env) {
-    super(configuration, env);
-  }
+	public DocutilsCommandLineState(DocutilsRunConfiguration configuration, ExecutionEnvironment env)
+	{
+		super(configuration, env);
+	}
 
-  @Override
-  protected Runnable getAfterTask() {
-    return new Runnable() {
-      @Override
-      public void run() {
-        VirtualFile virtualFile = findOutput();
-        if (virtualFile != null) {
-          if (myConfiguration.openInBrowser()) {
-            BrowserUtil.browse(virtualFile);
-          }
-          else {
-            FileEditorManager.getInstance(myConfiguration.getProject()).openFile(virtualFile, true);
-          }
-        }
-      }
-    };
-  }
+	@Override
+	protected Runnable getAfterTask()
+	{
+		return () -> {
+			VirtualFile virtualFile = findOutput();
+			if(virtualFile != null)
+			{
+				if(myConfiguration.openInBrowser())
+				{
+					BrowserUtil.browse(virtualFile);
+				}
+				else
+				{
+					FileEditorManager.getInstance(myConfiguration.getProject()).openFile(virtualFile, true);
+				}
+			}
+		};
+	}
 
-  @Override
-  protected String getRunnerPath() {
-    return "rest_runners/rst2smth.py";
-  }
+	@Override
+	protected HelperPackage getRunner()
+	{
+		return PythonHelper.REST_RUNNER;
+	}
 
-  @Override
-  protected String getTask() {
-    return myConfiguration.getTask();
-  }
+	@Override
+	protected String getTask()
+	{
+		return myConfiguration.getTask();
+	}
 
-  @Override
-  @Nullable
-  protected String getKey() {
-    return null;
-  }
+	@Override
+	@Nullable
+	protected String getKey()
+	{
+		return null;
+	}
 }

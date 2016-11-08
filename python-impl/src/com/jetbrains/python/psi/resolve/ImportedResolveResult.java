@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.resolve;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.psi.PsiElement;
-
-import java.util.List;
+import com.jetbrains.python.psi.PyImportedNameDefiner;
 
 /**
  * @author yole
  */
-public class ImportedResolveResult extends RatedResolveResult {
-  private final List<PsiElement> myNameDefiners;
+public class ImportedResolveResult extends RatedResolveResult
+{
+	@Nullable
+	private final PyImportedNameDefiner myDefiner;
 
-  public ImportedResolveResult(PsiElement element, int rate, List<PsiElement> nameDefiners) {
-    super(rate, element);
-    myNameDefiners = nameDefiners;
-  }
+	public ImportedResolveResult(PsiElement element, int rate, @Nullable PyImportedNameDefiner definer)
+	{
+		super(rate, element);
+		myDefiner = definer;
+	}
 
-  public List<PsiElement> getNameDefiners() {
-    return myNameDefiners;
-  }
+	@Nullable
+	public PyImportedNameDefiner getDefiner()
+	{
+		return myDefiner;
+	}
 
-  @Override
-  public RatedResolveResult replace(PsiElement what) {
-    return new ImportedResolveResult(what, getRate(), myNameDefiners);
-  }
+	@Override
+	public RatedResolveResult replace(PsiElement what)
+	{
+		return new ImportedResolveResult(what, getRate(), myDefiner);
+	}
 }

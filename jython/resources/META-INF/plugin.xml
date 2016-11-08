@@ -1,24 +1,23 @@
-<idea-plugin version="2">
-	<id>org.consulo.jython</id>
+<idea-plugin>
+	<id>consulo.jython</id>
 	<name>Jython</name>
 	<category>Language Extensions</category>
-	<depends>org.consulo.python</depends>
-	<depends>org.consulo.java</depends>
+	<depends>consulo.python</depends>
+	<depends>consulo.java</depends>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
 		<completion.contributor language="Python" implementationClass="com.jetbrains.python.psi.impl.PyConstructorArgumentCompletionContributor"/>
 
 		<moduleExtensionProvider key="jython"
 								 parentKey="java"
 								 name="Jython"
 								 icon="/icons/jython.png"
-								 immutableClass="org.consulo.jython.module.extension.JythonModuleExtension"
-								 mutableClass="org.consulo.jython.module.extension.JythonMutableModuleExtension" />
+								 immutableClass="consulo.jython.module.extension.JythonModuleExtension"
+								 mutableClass="consulo.jython.module.extension.JythonMutableModuleExtension" />
 		<addTo.listOfElements name="pythonExtensions">jython</addTo.listOfElements>
 	</extensions>
 
-	<extensions defaultExtensionNs="org.consulo.python">
+	<extensions defaultExtensionNs="consulo.python">
 		<importResolver implementation="com.jetbrains.python.psi.impl.PyJavaImportResolver"/>
 		<typeProvider implementation="com.jetbrains.python.psi.impl.PyJavaTypeProvider"/>
 		<pySuperMethodsSearch implementation="com.jetbrains.python.psi.impl.PyJavaSuperMethodsSearchExecutor"/>

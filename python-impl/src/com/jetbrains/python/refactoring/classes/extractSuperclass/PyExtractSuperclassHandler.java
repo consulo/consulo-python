@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,62 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.refactoring.classes.extractSuperclass;
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.util.PsiNavigateUtil;
+import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyUtil;
-import com.jetbrains.python.refactoring.classes.PyClassMembersRefactoringSupport;
 import com.jetbrains.python.refactoring.classes.PyClassRefactoringHandler;
-import com.jetbrains.python.refactoring.classes.PyMemberInfo;
 import com.jetbrains.python.refactoring.classes.PyMemberInfoStorage;
-
-import java.util.Collection;
+import com.jetbrains.python.vp.Creator;
+import com.jetbrains.python.vp.ViewPresenterUtils;
 
 /**
  * @author Dennis.Ushakov
  */
-public class PyExtractSuperclassHandler extends PyClassRefactoringHandler {
-  public static final String REFACTORING_NAME = RefactoringBundle.message("extract.superclass.title");
+public class PyExtractSuperclassHandler extends PyClassRefactoringHandler
+{
+	public static final String REFACTORING_NAME = RefactoringBundle.message("extract.superclass.title");
 
-  @Override
-  protected void doRefactor(Project project, PsiElement element1, PsiElement element2, Editor editor, PsiFile file, DataContext dataContext) {
-    CommonRefactoringUtil.checkReadOnlyStatus(project, file);
 
-    final PyClass clazz = PyUtil.getContainingClassOrSelf(element1);
-    if (!inClass(clazz, project, editor, "refactoring.pull.up.error.cannot.perform.refactoring.not.inside.class")) return;
+	@Override
+	protected void doRefactorImpl(@NotNull final Project project, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull final Editor editor)
+	{
+		//TODO: Move to presenter
+		if(PyUtil.filterOutObject(infoStorage.getClassMemberInfos(classUnderRefactoring)).isEmpty())
+		{
+			CommonRefactoringUtil.showErrorHint(project, editor, PyBundle.message("refactoring.extract.super.class.no.members.allowed"), RefactoringBundle.message("extract.superclass.elements" +
+					".header"), null);
+			return;
+		}
 
-    final PyMemberInfoStorage infoStorage = PyClassMembersRefactoringSupport.getSelectedMemberInfos(clazz, element1, element2);
+		ViewPresenterUtils.linkViewWithPresenterAndLaunch(PyExtractSuperclassPresenter.class, PyExtractSuperclassView.class, new Creator<PyExtractSuperclassView, PyExtractSuperclassPresenter>()
+		{
+			@NotNull
+			@Override
+			public PyExtractSuperclassPresenter createPresenter(@NotNull final PyExtractSuperclassView view)
+			{
+				return new PyExtractSuperclassPresenterImpl(view, classUnderRefactoring, infoStorage);
+			}
 
-    if (ApplicationManagerEx.getApplicationEx().isUnitTestMode()) return;
+			@NotNull
+			@Override
+			public PyExtractSuperclassView createView(@NotNull final PyExtractSuperclassPresenter presenter)
+			{
+				return new PyExtractSuperclassViewSwingImpl(classUnderRefactoring, project, presenter);
+			}
+		});
+	}
 
-    final PyExtractSuperclassDialog dialog = new PyExtractSuperclassDialog(project, clazz, infoStorage);
-    dialog.show();
-    if(dialog.isOK()) {
-      extractWithHelper(clazz, dialog.getSelectedMemberInfos(), dialog.getSuperBaseName(), dialog.getTargetFile());
-    }
-  }
 
-  private static void extractWithHelper(PyClass clazz, Collection<PyMemberInfo> selectedMemberInfos, String superBaseName, String targetFile) {
-    PsiNavigateUtil.navigate(PyExtractSuperclassHelper.extractSuperclass(clazz, selectedMemberInfos, superBaseName, targetFile));
-  }
+	@Override
+	protected String getTitle()
+	{
+		return REFACTORING_NAME;
+	}
 
-  @Override
-  protected String getTitle() {
-    return REFACTORING_NAME;
-  }
-
-  @Override
-  protected String getHelpId() {
-    return "refactoring.extractSuperclass";
-  }
+	@Override
+	protected String getHelpId()
+	{
+		return "refactoring.extractSuperclass";
+	}
 }

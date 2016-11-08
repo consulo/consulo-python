@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
 
-import com.jetbrains.python.psi.PyQualifiedExpression;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import com.jetbrains.python.psi.PyCallSiteExpression;
 
 /**
  * A type instances of which can possibly be called. For example, a class definition can be called, and the result of a call is a class
@@ -28,27 +27,34 @@ import java.util.List;
  *
  * @author yole
  */
-public interface PyCallableType extends PyType {
-  /**
-   * Returns true if the type is callable.
-   */
-  boolean isCallable();
+public interface PyCallableType extends PyType
+{
+	/**
+	 * Returns true if the type is callable.
+	 */
+	boolean isCallable();
 
-  /**
-   * Returns the type which is the result of calling an instance of this type.
-   *
-   * @return the call result type or null if invalid.
-   * @param context
-   * @param callSite
-   */
-  @Nullable
-  PyType getCallType(@NotNull TypeEvalContext context, @Nullable PyQualifiedExpression callSite);
+	/**
+	 * Returns the return type of a function independent of a call site.
+	 * <p>
+	 * For example, it may return a generic type.
+	 *
+	 * @param context
+	 */
+	@Nullable
+	PyType getReturnType(@NotNull TypeEvalContext context);
 
-  /**
-   * Returns the list of parameter types.
-   *
-   * @return list of parameter info null if not applicable.
-   */
-  @Nullable
-  List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context);
+	/**
+	 * Returns the type which is the result of calling an instance of this type.
+	 */
+	@Nullable
+	PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite);
+
+	/**
+	 * Returns the list of parameter types.
+	 *
+	 * @return list of parameter info null if not applicable.
+	 */
+	@Nullable
+	List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,10 @@
  */
 package com.jetbrains.python.testing.unittest;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.Location;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -29,48 +33,61 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.testing.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
+import com.jetbrains.python.testing.PythonTestConfigurationProducer;
+import com.jetbrains.python.testing.PythonTestConfigurationType;
+import com.jetbrains.python.testing.PythonTestConfigurationsModel;
+import com.jetbrains.python.testing.TestRunnerService;
 
-import java.util.List;
+public class PythonUnitTestConfigurationProducer extends PythonTestConfigurationProducer
+{
+	public PythonUnitTestConfigurationProducer()
+	{
+		super(PythonTestConfigurationType.getInstance().PY_UNITTEST_FACTORY);
+	}
 
-public class PythonUnitTestConfigurationProducer extends PythonTestConfigurationProducer {
-  public PythonUnitTestConfigurationProducer() {
-    super(PythonTestConfigurationType.getInstance().PY_UNITTEST_FACTORY);
-  }
+	protected boolean isAvailable(@NotNull final Location location)
+	{
+		PsiElement element = location.getPsiElement();
+		final Module module = ModuleUtilCore.findModuleForPsiElement(element);
+		if(module == null)
+		{
+			return false;
+		}
+		if((TestRunnerService.getInstance(module).getProjectConfiguration().equals(PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME)))
+		{
+			return true;
+		}
+		return false;
+	}
 
-  protected boolean isAvailable(@NotNull final Location location) {
-    PsiElement element = location.getPsiElement();
-    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-    if (module == null) return false;
-    if ((TestRunnerService.getInstance(module).getProjectConfiguration().equals(
-      PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME))) {
-      return true;
-    }
-    return false;
-  }
+	@Override
+	protected boolean isTestFunction(@NotNull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
+	{
+		final boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
+		return isTestFunction || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration) configuration).isPureUnittest());
+	}
 
-  @Override
-  protected boolean isTestFunction(@NotNull final PyFunction pyFunction,
-                                   @Nullable final AbstractPythonTestRunConfiguration configuration) {
-    final boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
-    return isTestFunction || (configuration instanceof PythonUnitTestRunConfiguration &&
-           !((PythonUnitTestRunConfiguration)configuration).isPureUnittest());
-  }
+	@Override
+	protected boolean isTestClass(@NotNull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, TypeEvalContext context)
+	{
+		final boolean isTestClass = super.isTestClass(pyClass, configuration, context);
+		return isTestClass || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration) configuration).isPureUnittest());
+	}
 
-  @Override
-  protected boolean isTestClass(@NotNull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration) {
-    final boolean isTestClass = super.isTestClass(pyClass, configuration);
-    return isTestClass || (configuration instanceof PythonUnitTestRunConfiguration &&
-                           !((PythonUnitTestRunConfiguration)configuration).isPureUnittest());
-  }
-
-  @Override
-  protected boolean isTestFile(@NotNull final PyFile file) {
-    if (PyNames.SETUP_DOT_PY.equals(file.getName())) return true;
-    final List<PyStatement> testCases = getTestCaseClassesFromFile(file);
-    if (testCases.isEmpty()) return false;
-    return true;
-  }
+	@Override
+	protected boolean isTestFile(@NotNull final PyFile file)
+	{
+		if(PyNames.SETUP_DOT_PY.equals(file.getName()))
+		{
+			return true;
+		}
+		final List<PyStatement> testCases = getTestCaseClassesFromFile(file);
+		if(testCases.isEmpty())
+		{
+			return false;
+		}
+		return true;
+	}
 }

@@ -29,9 +29,9 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
-import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
+import consulo.vfs.util.ArchiveVfsUtil;
 
 
 public class PyLocalPositionConverter implements PyPositionConverter

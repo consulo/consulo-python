@@ -149,7 +149,7 @@ public class PyStringFormatInspection extends PyInspection {
           return inspectArguments((PyExpression)pyElement, problemTarget);
         }
         else if (rightExpression instanceof PyCallExpression) {
-          final Callable callable = ((PyCallExpression)rightExpression).resolveCalleeFunction(resolveContext);
+          final PyCallable callable = ((PyCallExpression)rightExpression).resolveCalleeFunction(resolveContext);
           // TODO: Switch to Callable.getReturnType()
           if (callable instanceof PyFunction && myTypeEvalContext.maySwitchToAST((PyFunction) callable)) {
             PyStatementList statementList = ((PyFunction)callable).getStatementList();

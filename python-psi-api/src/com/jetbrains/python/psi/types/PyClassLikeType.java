@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,36 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi.types;
 
-import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import java.util.List;
+import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import com.intellij.psi.PsiElement;
+import com.intellij.util.Processor;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyWithAncestors;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.resolve.RatedResolveResult;
 
 /**
  * @author vlan
  */
-public interface PyClassLikeType extends PyCallableType {
-  boolean isDefinition();
+public interface PyClassLikeType extends PyCallableType, PyWithAncestors
+{
+	boolean isDefinition();
 
-  PyClassLikeType toInstance();
+	PyClassLikeType toInstance();
 
-  @Nullable
-  String getClassQName();
+	@Nullable
+	String getClassQName();
 
-  @NotNull
-  List<PyClassLikeType> getSuperClassTypes(@NotNull TypeEvalContext context);
+	@NotNull
+	List<PyClassLikeType> getSuperClassTypes(@NotNull TypeEvalContext context);
 
-  @Nullable
-  List<? extends RatedResolveResult> resolveMember(@NotNull final String name, @Nullable PyExpression location,
-                                                   @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext,
-                                                   boolean inherited);
+	@Nullable
+	List<? extends RatedResolveResult> resolveMember(@NotNull final String name,
+			@Nullable PyExpression location,
+			@NotNull AccessDirection direction,
+			@NotNull PyResolveContext resolveContext,
+			boolean inherited);
 
-  boolean isValid();
+	// TODO: Pull to PyType at next iteration
+
+	/**
+	 * Visits all class members. This method is better then bare class since it uses type info and supports not only classes but
+	 * class-like structures as well. Consider using user-friendly wrapper {@link PyTypeUtil#getMembersOfType(PyClassLikeType, Class, TypeEvalContext)}
+	 *
+	 * @param processor visitor
+	 * @param inherited call on parents too
+	 * @param context   context to be used to resolve types
+	 * @see PyTypeUtil#getMembersOfType(PyClassLikeType, Class, TypeEvalContext)
+	 */
+	void visitMembers(@NotNull Processor<PsiElement> processor, boolean inherited, @NotNull TypeEvalContext context);
+
+	@NotNull
+	Set<String> getMemberNames(boolean inherited, @NotNull TypeEvalContext context);
+
+	boolean isValid();
+
+	@Nullable
+	PyClassLikeType getMetaClassType(@NotNull TypeEvalContext context, boolean inherited);
 }

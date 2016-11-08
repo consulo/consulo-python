@@ -26,7 +26,7 @@ import com.intellij.psi.tree.TokenSet;
  * @author vlan
  */
 public interface PythonDialectsTokenSetContributor {
-  ExtensionPointName<PythonDialectsTokenSetContributor> EP_NAME = ExtensionPointName.create("org.consulo.python.dialectsTokenSetContributor");
+  ExtensionPointName<PythonDialectsTokenSetContributor> EP_NAME = ExtensionPointName.create("consulo.python.dialectsTokenSetContributor");
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyStatement}.
