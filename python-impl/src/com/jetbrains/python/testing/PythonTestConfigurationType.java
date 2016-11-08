@@ -18,7 +18,6 @@ package com.jetbrains.python.testing;
 
 import javax.swing.Icon;
 
-import consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
@@ -26,12 +25,14 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.run.PythonConfigurationType;
 import com.jetbrains.python.testing.attest.PythonAtTestRunConfiguration;
 import com.jetbrains.python.testing.doctest.PythonDocTestRunConfiguration;
 import com.jetbrains.python.testing.nosetest.PythonNoseTestRunConfiguration;
 import com.jetbrains.python.testing.pytest.PyTestRunConfiguration;
 import com.jetbrains.python.testing.unittest.PythonUnitTestRunConfiguration;
 import consulo.module.extension.ModuleExtensionHelper;
+import consulo.python.module.extension.PyModuleExtension;
 import icons.PythonIcons;
 
 /**
@@ -39,7 +40,7 @@ import icons.PythonIcons;
  */
 public class PythonTestConfigurationType implements ConfigurationType
 {
-	public static final String ID = "tests";
+	public static final String ID = "PythonTestConfigurationType";
 
 	public final PythonDocTestConfigurationFactory PY_DOCTEST_FACTORY = new PythonDocTestConfigurationFactory(this);
 	public final PythonUnitTestConfigurationFactory PY_UNITTEST_FACTORY = new PythonUnitTestConfigurationFactory(this);
