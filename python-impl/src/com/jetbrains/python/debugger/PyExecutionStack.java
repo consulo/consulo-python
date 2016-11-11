@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.debugger;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -24,7 +24,6 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.xdebugger.frame.XExecutionStack;
-import com.intellij.xdebugger.frame.XStackFrame;
 
 
 public class PyExecutionStack extends XExecutionStack
@@ -63,7 +62,7 @@ public class PyExecutionStack extends XExecutionStack
 	}
 
 	@Override
-	public void computeStackFrames(int firstFrameIndex, XStackFrameContainer container)
+	public void computeStackFrames(XStackFrameContainer container)
 	{
 		if(myThreadInfo.getState() != PyThreadInfo.State.SUSPENDED)
 		{
@@ -72,19 +71,18 @@ public class PyExecutionStack extends XExecutionStack
 		}
 
 		final List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
-		if(frames != null && firstFrameIndex <= frames.size())
+		if(frames == null)
 		{
-			final List<PyStackFrame> xFrames = new LinkedList<>();
-			for(int i = firstFrameIndex; i < frames.size(); i++)
-			{
-				xFrames.add(convert(myDebugProcess, frames.get(i)));
-			}
-			container.addStackFrames(xFrames, true);
+			container.addStackFrames(Collections.emptyList(), true);
+			return;
 		}
-		else
+
+		final List<PyStackFrame> xFrames = new ArrayList<>(frames.size());
+		for(PyStackFrameInfo frame : frames)
 		{
-			container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+			xFrames.add(convert(myDebugProcess, frame));
 		}
+		container.addStackFrames(xFrames, true);
 	}
 
 	private static PyStackFrame convert(final PyDebugProcess debugProcess, final PyStackFrameInfo frameInfo)

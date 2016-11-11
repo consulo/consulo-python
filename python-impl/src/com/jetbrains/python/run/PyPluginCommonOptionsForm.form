@@ -35,7 +35,6 @@
               <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <labelLocation value="West"/>
               <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.labels.environment_variables"/>
             </properties>
           </component>
@@ -89,7 +88,7 @@
               <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.labels.interpreter"/>
             </properties>
           </component>
-          <component id="3f9aa" class="com.intellij.openapi.ui.ComboBox" binding="myInterpreterComboBox" default-binding="true">
+          <component id="8ee48" class="consulo.roots.ui.configuration.SdkComboBox" binding="myInterpreterComboBox" custom-create="true" default-binding="true">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -109,7 +108,6 @@
               <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <labelLocation value="West"/>
               <text value="Path mappings"/>
             </properties>
           </component>
