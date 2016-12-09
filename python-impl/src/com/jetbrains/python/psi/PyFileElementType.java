@@ -99,7 +99,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 				{
 					return null;
 				}
-				LanguageVersion<PythonLanguage> defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
+				LanguageVersion defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
 				final Lexer lexer = parserDefinition.createLexer(defaultVersion);
 				final PsiParser parser = parserDefinition.createParser(defaultVersion);
 				final PsiBuilder builder = factory.createBuilder(project, node, lexer, language, defaultVersion, node.getChars());
@@ -127,7 +127,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 		{
 			final Project project = psi.getProject();
 			final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-			LanguageVersion<PythonLanguage> defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
+			LanguageVersion defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
 			final PsiBuilder builder = factory.createBuilder(project, node, lexer, getLanguage(), defaultVersion, node.getChars());
 			final PyParser parser = new PyConsoleParser(consoleData, getLanguageLevel(psi));
 

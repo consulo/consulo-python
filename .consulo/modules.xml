@@ -4,8 +4,8 @@
     <modules>
       <module name="consulo-python" dirurl="file://$PROJECT_DIR$" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo SNAPSHOT" />
-          <extension id="java" sdk-module-name="" sdk-name="1.8" language-level-module-name="" language-level-name="JDK_1_8" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-name="Consulo SNAPSHOT" />
+          <extension id="java" sdk-name="1.8" language-level-name="JDK_1_8" />
           <extension id="lombok" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="EXCLUDED" url="file://$MODULE_DIR$/.consulo/sandbox" />
@@ -25,8 +25,8 @@
       </module>
       <module name="python-psi-api" dirurl="file://$PROJECT_DIR$/python-psi-api" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
@@ -38,8 +38,8 @@
       </module>
       <module name="python-impl" dirurl="file://$PROJECT_DIR$/python-impl" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" />
           <extension id="lombok" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
@@ -57,8 +57,8 @@
       </module>
       <module name="python-debugger" dirurl="file://$PROJECT_DIR$/python-debugger" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="MODULE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" special-dir-location="MODULE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>
@@ -69,8 +69,8 @@
       </module>
       <module name="python-rest" dirurl="file://$PROJECT_DIR$/python-rest" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>
@@ -83,8 +83,8 @@
       </module>
       <module name="jython" dirurl="file://$PROJECT_DIR$/jython" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
@@ -99,8 +99,8 @@
       </module>
       <module name="python-intelliLang" dirurl="file://$PROJECT_DIR$/python-intelliLang" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
@@ -115,8 +115,8 @@
       </module>
       <module name="iron-python" dirurl="file://$PROJECT_DIR$/iron-python" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
@@ -131,8 +131,8 @@
       </module>
       <module name="microsoft-iron-python" dirurl="file://$PROJECT_DIR$/iron-python/microsoft-iron-python" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="consulo-python" sdk-name="" />
-          <extension id="java" sdk-module-name="consulo-python" sdk-name="" language-level-module-name="consulo-python" language-level-name="" special-dir-location="SOURCE_DIR" />
+          <extension id="consulo-plugin" sdk-module-name="consulo-python" />
+          <extension id="java" sdk-module-name="consulo-python" language-level-module-name="consulo-python" />
           <extension id="lombok" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
