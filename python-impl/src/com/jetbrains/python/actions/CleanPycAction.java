@@ -33,7 +33,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
 import com.jetbrains.python.PyNames;
-import lombok.val;
 
 /**
  * @author yole
@@ -82,7 +81,7 @@ public class CleanPycAction extends AnAction
 		{
 			return;
 		}
-		val pycFiles = new ArrayList<File>();
+		List<File> pycFiles = new ArrayList<File>();
 		ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable()
 		{
 			@Override

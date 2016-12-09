@@ -77,7 +77,7 @@ import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkAdditionalData;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import consulo.compiler.CompilerPathsManager;
+import consulo.compiler.ModuleCompilerPathsManager;
 import consulo.module.extension.ModuleExtension;
 import consulo.roots.impl.ProductionContentFolderTypeProvider;
 import consulo.roots.impl.TestContentFolderTypeProvider;
@@ -547,13 +547,13 @@ public abstract class PythonCommandLineState extends CommandLineState
 	{
 
 		// for Jython
-		final CompilerPathsManager extension = CompilerPathsManager.getInstance(module.getProject());
-		final VirtualFile path = extension.getCompilerOutput(module, ProductionContentFolderTypeProvider.getInstance());
+		final ModuleCompilerPathsManager extension = ModuleCompilerPathsManager.getInstance(module);
+		final VirtualFile path = extension.getCompilerOutput(ProductionContentFolderTypeProvider.getInstance());
 		if(path != null)
 		{
 			pythonPathList.add(path.getPath());
 		}
-		final VirtualFile pathForTests = extension.getCompilerOutput(module, TestContentFolderTypeProvider.getInstance());
+		final VirtualFile pathForTests = extension.getCompilerOutput(TestContentFolderTypeProvider.getInstance());
 		if(pathForTests != null)
 		{
 			pythonPathList.add(pathForTests.getPath());

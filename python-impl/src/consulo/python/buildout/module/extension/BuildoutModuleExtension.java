@@ -52,8 +52,8 @@ import com.jetbrains.python.facet.LibraryContributingFacet;
 import com.jetbrains.python.facet.PythonPathContributingFacet;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.sdk.PythonEnvUtil;
-import consulo.extension.impl.ModuleExtensionImpl;
 import consulo.lombok.annotations.Logger;
+import consulo.module.extension.impl.ModuleExtensionImpl;
 import consulo.roots.ModuleRootLayer;
 
 /**

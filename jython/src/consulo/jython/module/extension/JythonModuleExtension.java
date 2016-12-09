@@ -1,10 +1,10 @@
 package consulo.jython.module.extension;
 
-import consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.jetbrains.python.sdk.PythonSdkType;
-import consulo.extension.impl.ModuleExtensionWithSdkImpl;
+import consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
+import consulo.python.module.extension.PyModuleExtension;
 import consulo.roots.ModuleRootLayer;
 
 /**

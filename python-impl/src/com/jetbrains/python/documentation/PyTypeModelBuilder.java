@@ -167,7 +167,7 @@ public class PyTypeModelBuilder
 		}
 	}
 
-	private static TypeModel _(String name)
+	private static TypeModel of(String name)
 	{
 		return new NamedType(name);
 	}
@@ -186,7 +186,7 @@ public class PyTypeModelBuilder
 			}
 			else
 			{
-				this.returnType = _(PyNames.UNKNOWN_TYPE);
+				this.returnType = of(PyNames.UNKNOWN_TYPE);
 			}
 			this.parameters = parameters;
 		}
@@ -235,7 +235,7 @@ public class PyTypeModelBuilder
 		}
 		if(myVisited.containsKey(type))
 		{ //already evaluating?
-			return type != null ? _(type.getName()) : _(PyNames.UNKNOWN_TYPE);
+			return type != null ? of(type.getName()) : of(PyNames.UNKNOWN_TYPE);
 		}
 		myVisited.put(type, null); //mark as evaluating
 
@@ -294,7 +294,7 @@ public class PyTypeModelBuilder
 		}
 		if(result == null)
 		{
-			result = type != null ? _(type.getName()) : _(PyNames.UNKNOWN_TYPE);
+			result = type != null ? of(type.getName()) : of(PyNames.UNKNOWN_TYPE);
 		}
 		myVisited.put(type, result);
 		return result;
