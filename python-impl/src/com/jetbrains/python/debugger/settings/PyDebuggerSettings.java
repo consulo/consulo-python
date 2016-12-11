@@ -133,12 +133,6 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
 		XmlSerializerUtil.copyBean(state, this);
 	}
 
-	@Override
-	public boolean isTargetedToProduct(@NotNull Configurable configurable)
-	{
-		return true;
-	}
-
 	@NotNull
 	@Override
 	public Collection<? extends Configurable> createConfigurables(@NotNull DebuggerSettingsCategory category)
