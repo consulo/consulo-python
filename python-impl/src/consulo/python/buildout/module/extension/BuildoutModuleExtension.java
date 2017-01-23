@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.ParamsGroup;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -52,7 +53,6 @@ import com.jetbrains.python.facet.LibraryContributingFacet;
 import com.jetbrains.python.facet.PythonPathContributingFacet;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.sdk.PythonEnvUtil;
-import consulo.lombok.annotations.Logger;
 import consulo.module.extension.impl.ModuleExtensionImpl;
 import consulo.roots.ModuleRootLayer;
 
@@ -60,9 +60,10 @@ import consulo.roots.ModuleRootLayer;
  * @author VISTALL
  * @since 20.10.13.
  */
-@Logger
 public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleExtension> implements PythonPathContributingFacet, LibraryContributingFacet
 {
+	private static final Logger LOGGER = Logger.getInstance(BuildoutModuleExtension.class);
+
 	@NotNull
 	public static List<VirtualFile> getExtraPathForAllOpenModules()
 	{

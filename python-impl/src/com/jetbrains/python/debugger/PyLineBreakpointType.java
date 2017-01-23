@@ -18,14 +18,12 @@ package com.jetbrains.python.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
-import consulo.lombok.annotations.Lazy;
 
 public class PyLineBreakpointType extends XLineBreakpointTypeBase
 {
 	public static final String ID = "python-line";
 
 	@NotNull
-	@Lazy
 	public static PyLineBreakpointType getInstance()
 	{
 		return EXTENSION_POINT_NAME.findExtension(PyLineBreakpointType.class);
