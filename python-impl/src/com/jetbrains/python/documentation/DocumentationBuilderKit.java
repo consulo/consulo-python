@@ -16,17 +16,17 @@
 
 package com.jetbrains.python.documentation;
 
-import com.intellij.codeInsight.documentation.DocumentationManager;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.jetbrains.annotations.NonNls;
+import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.toolbox.ChainIterable;
 import com.jetbrains.python.toolbox.FP;
-import org.jetbrains.annotations.NonNls;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 public class DocumentationBuilderKit {
   static final TagWrapper TagBold = new TagWrapper("b");
@@ -106,7 +106,7 @@ public class DocumentationBuilderKit {
 
     public Iterable<String> apply(Iterable<String> contents) {
       return new ChainIterable<String>()
-        .addItem("<a href=\"").addItem(DocumentationManager.PSI_ELEMENT_PROTOCOL).addItem(myLink).addItem("\">")
+        .addItem("<a href=\"").addItem(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL).addItem(myLink).addItem("\">")
         .add(contents).addItem("</a>")
       ;
     }
