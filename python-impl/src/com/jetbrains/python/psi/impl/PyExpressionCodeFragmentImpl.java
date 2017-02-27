@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
@@ -27,8 +29,6 @@ import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.testFramework.LightVirtualFile;
 import com.jetbrains.python.psi.PyExpressionCodeFragment;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * clone of JSExpressionCodeFragment
@@ -58,7 +58,7 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
   }
 
   public PsiElement getContext() {
-    return myContext;
+    return myContext != null && myContext.isValid() ? myContext : super.getContext();
   }
 
   @NotNull
