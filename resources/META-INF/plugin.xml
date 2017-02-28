@@ -51,6 +51,7 @@
 		<extensionPoint name="unresolvedReferenceSkipper" interface="com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenceSkipperExtPoint"/>
 		<extensionPoint name="pep8ProblemSuppressor" interface="com.jetbrains.python.validation.Pep8ProblemSuppressor"/>
 		<extensionPoint name="runConfigurationEditorExtension" interface="com.jetbrains.python.run.PyRunConfigurationEditorExtension"/>
+		<extensionPoint name="resolveResultRater" interface="com.jetbrains.python.psi.impl.PyResolveResultRater" />
 	</extensionPoints>
 
 	<extensions defaultExtensionNs="com.intellij">
