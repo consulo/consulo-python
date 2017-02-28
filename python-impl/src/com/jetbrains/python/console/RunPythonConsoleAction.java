@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.console;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
+import consulo.annotations.RequiredDispatchThread;
 import icons.PythonIcons;
 
 /**
@@ -38,6 +40,7 @@ public class RunPythonConsoleAction extends AnAction implements DumbAware
 		getTemplatePresentation().setIcon(PythonIcons.Python.PythonConsole);
 	}
 
+	@RequiredDispatchThread
 	@Override
 	public void update(final AnActionEvent e)
 	{
@@ -54,9 +57,14 @@ public class RunPythonConsoleAction extends AnAction implements DumbAware
 		}
 	}
 
-	public void actionPerformed(final AnActionEvent e)
+	@RequiredDispatchThread
+	public void actionPerformed(@NotNull final AnActionEvent e)
 	{
-		PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(e.getData(CommonDataKeys.PROJECT), e.getData(LangDataKeys.MODULE));
+		Project project = e.getRequiredData(CommonDataKeys.PROJECT);
+
+		PythonConsoleRunnerFactory runnerFactory = PythonConsoleRunnerFactory.getInstance();
+
+		PydevConsoleRunner runner = runnerFactory.createConsoleRunner(project, e.getData(LangDataKeys.MODULE));
 		runner.open();
 	}
 }

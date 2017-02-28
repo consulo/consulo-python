@@ -572,6 +572,8 @@
 		<applicationConfigurable instance="com.jetbrains.python.documentation.PythonDocumentationConfigurable"
 								 id="com.jetbrains.python.documentation.PythonDocumentationConfigurable"
 								 displayName="Python External Documentation"/>
+		<applicationService serviceInterface="com.jetbrains.python.console.PythonConsoleRunnerFactory"
+							serviceImplementation="com.jetbrains.python.console.PydevConsoleRunnerFactory"/>
 		<projectConfigurable instance="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable"
 							 id="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" displayName="Python Integrated Tools"
 							 nonDefaultProject="true"/>
