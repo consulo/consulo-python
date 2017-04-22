@@ -16,7 +16,6 @@
 package com.jetbrains.python.run;
 
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,13 +40,11 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.HideableDecorator;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.PathMappingSettings;
-import com.jetbrains.python.sdk.PreferredSdkComparator;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import consulo.python.module.extension.PyModuleExtension;
@@ -187,22 +184,7 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm
 
 	public void setSdkHome(String sdkHome)
 	{
-		List<Sdk> sdkList = new ArrayList<>();
-		sdkList.add(null);
-		final List<Sdk> allSdks = PythonSdkType.getAllSdks();
-		Collections.sort(allSdks, new PreferredSdkComparator());
-		Sdk selection = null;
-		for(Sdk sdk : allSdks)
-		{
-			String homePath = sdk.getHomePath();
-			if(homePath != null && sdkHome != null && FileUtil.pathsEqual(homePath, sdkHome))
-			{
-				selection = sdk;
-			}
-			sdkList.add(sdk);
-		}
-
-		myInterpreterComboBox.setModel(new CollectionComboBoxModel(sdkList, selection));
+		myInterpreterComboBox.setSelectedSdk(sdkHome);
 	}
 
 	public Module getModule()
@@ -279,7 +261,7 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm
 			Module module = getModule();
 			return module == null ? null : ModuleUtilCore.getSdk(module, PyModuleExtension.class);
 		}
-		Sdk sdk = (Sdk) myInterpreterComboBox.getSelectedItem();
+		Sdk sdk = myInterpreterComboBox.getSelectedSdk();
 		if(sdk == null)
 		{
 			return null;
