@@ -79,7 +79,7 @@ public class CreatePackageAction extends DumbAwareAction {
   }
 
   private static void createInitPy(PsiDirectory directory) {
-    final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
+    final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance(directory.getProject());
     final FileTemplate template = fileTemplateManager.getInternalTemplate("Python Script");
     if (directory.findFile(PyNames.INIT_DOT_PY) != null) {
       return;

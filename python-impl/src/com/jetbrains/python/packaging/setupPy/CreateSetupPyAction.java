@@ -16,6 +16,9 @@
 
 package com.jetbrains.python.packaging.setupPy;
 
+import java.util.Collection;
+import java.util.Properties;
+
 import com.intellij.ide.IdeView;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -27,7 +30,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -43,9 +45,6 @@ import com.intellij.util.SystemProperties;
 import com.jetbrains.python.packaging.PyPackageUtil;
 import com.jetbrains.python.psi.PyUtil;
 
-import java.util.Collection;
-import java.util.Properties;
-
 /**
  * @author yole
  */
@@ -54,14 +53,14 @@ public class CreateSetupPyAction extends CreateFromTemplateAction {
   private static final String EMAIL_PROPERTY = "python.packaging.author.email";
 
   public CreateSetupPyAction() {
-    super(FileTemplateManager.getInstance().getInternalTemplate("Setup Script"));
+    super(FileTemplateManager.getDefaultInstance().getInternalTemplate("Setup Script"));
     getTemplatePresentation().setText("Create setup.py");
   }
 
   @Override
   public FileTemplate getTemplate() {
     // to ensure changes are picked up, reload the template on every call (PY-6681)
-    return FileTemplateManager.getInstance().getInternalTemplate("Setup Script");
+    return FileTemplateManager.getDefaultInstance().getInternalTemplate("Setup Script");
   }
 
   @Override
@@ -77,8 +76,8 @@ public class CreateSetupPyAction extends CreateFromTemplateAction {
     if (project != null) {
       defaults.add("Package_name", project.getName());
       final PropertiesComponent properties = PropertiesComponent.getInstance();
-      defaults.add("Author", properties.getOrInit(AUTHOR_PROPERTY, SystemProperties.getUserName()));
-      defaults.add("Author_Email", properties.getOrInit(EMAIL_PROPERTY, ""));
+      defaults.add("Author", properties.getValue(AUTHOR_PROPERTY, SystemProperties.getUserName()));
+      defaults.add("Author_Email", properties.getValue(EMAIL_PROPERTY, ""));
       defaults.addPredefined("PackageList", getPackageList(dataContext));
       defaults.addPredefined("PackageDirs", getPackageDirs(dataContext));
     }

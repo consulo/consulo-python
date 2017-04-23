@@ -1653,7 +1653,7 @@ public class PyUtil
 			try
 			{
 				final VirtualFile baseDir = project.getBaseDir();
-				final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
+				final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance(project);
 				final FileTemplate template = fileTemplateManager.getInternalTemplate("Python Script");
 				final Properties properties = fileTemplateManager.getDefaultProperties();
 				properties.setProperty("NAME", FileUtil.getNameWithoutExtension(file.getName()));
