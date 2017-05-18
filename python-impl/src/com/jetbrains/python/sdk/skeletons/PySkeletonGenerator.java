@@ -28,10 +28,8 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
@@ -45,6 +43,7 @@ import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.util.SandboxUtil;
 
 /**
  * @author traff
@@ -133,7 +132,7 @@ public class PySkeletonGenerator
 				sb.append(err_line).append("\n");
 			}
 			sb.append("--");
-			if(ApplicationManagerEx.getApplicationEx().isInternal())
+			if(SandboxUtil.isInsideSandbox())
 			{
 				LOG.warn(sb.toString());
 			}
@@ -159,7 +158,7 @@ public class PySkeletonGenerator
 			commandLine.add("-c");
 			commandLine.add(StringUtil.join(assemblyRefs, ";"));
 		}
-		if(ApplicationManagerEx.getApplicationEx().isInternal())
+		if(SandboxUtil.isInsideSandbox())
 		{
 			commandLine.add("-x");
 		}

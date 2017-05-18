@@ -37,9 +37,6 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
-import com.intellij.openapi.application.ApplicationInfo;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -81,6 +78,7 @@ import com.jetbrains.python.sdk.PreferredSdkComparator;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.util.SandboxUtil;
 
 /**
  * @author yole
@@ -269,7 +267,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 				}
 			}
 		}
-		else if(((ApplicationInfoImpl) ApplicationInfo.getInstance()).isEAP())
+		else if(SandboxUtil.isInsideSandbox())
 		{
 			LOG.info("Error running pycodestyle.py: " + output.getStderr());
 		}
@@ -353,7 +351,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 					problemRange = new TextRange(offset, lineEndOffset);
 				}
 				final Annotation annotation;
-				final boolean inInternalMode = ApplicationManager.getApplication().isInternal();
+				final boolean inInternalMode = SandboxUtil.isInsideSandbox();
 				final String message = "PEP 8: " + (inInternalMode ? problem.myCode + " " : "") + problem.myDescription;
 				if(annotationResult.level == HighlightDisplayLevel.ERROR)
 				{
@@ -484,7 +482,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 			int column = Integer.parseInt(m.group(2));
 			return new Problem(line, column, m.group(3), m.group(4));
 		}
-		if(((ApplicationInfoImpl) ApplicationInfo.getInstance()).isEAP())
+		if(SandboxUtil.isInsideSandbox())
 		{
 			LOG.info("Failed to parse problem line from pycodestyle.py: " + s);
 		}
