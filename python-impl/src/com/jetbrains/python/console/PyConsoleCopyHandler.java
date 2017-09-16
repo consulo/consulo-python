@@ -53,11 +53,12 @@ public class PyConsoleCopyHandler extends EditorActionHandler
 		if(!RichCopySettings.getInstance().isEnabled())
 		{
 			myOriginalHandler.execute(editor, null, dataContext);
+			return;
 		}
-		if(editor.getUserData(ConsoleViewUtil.EDITOR_IS_CONSOLE_HISTORY_VIEW) != Boolean.TRUE)
+		if(editor.getUserData(ConsoleViewUtil.EDITOR_IS_CONSOLE_HISTORY_VIEW) != Boolean.TRUE || editor.getCaretModel().getAllCarets().size() != 1)
 		{
 			myOriginalHandler.execute(editor, null, dataContext);
-
+			return;
 		}
 		doCopyWithoutPrompt((EditorEx) editor);
 	}
