@@ -36,9 +36,9 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
-import com.intellij.openapi.wm.impl.content.ToolWindowContentUi;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import consulo.wm.impl.ToolWindowContentUI;
 
 /**
  * @author traff
@@ -118,7 +118,7 @@ public class PythonConsoleToolWindow
 
 	private static void setContent(ToolWindow toolWindow, RunContentDescriptor contentDescriptor)
 	{
-		toolWindow.getComponent().putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true");
+		toolWindow.getComponent().putClientProperty(ToolWindowContentUI.HIDE_ID_LABEL, "true");
 
 		Content content = toolWindow.getContentManager().findContent(contentDescriptor.getDisplayName());
 		if(content == null)
