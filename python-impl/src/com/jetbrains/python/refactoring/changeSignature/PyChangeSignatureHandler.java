@@ -76,7 +76,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		PsiElement element = findTargetMember(file, editor);
 		if(element == null)
 		{
-			element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+			element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
 		}
 		invokeOnElement(project, element, editor);
 	}
@@ -88,7 +88,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		{
 			return;
 		}
-		final Editor editor = dataContext == null ? null : CommonDataKeys.EDITOR.getData(dataContext);
+		final Editor editor = dataContext == null ? null : dataContext.getData(CommonDataKeys.EDITOR);
 		invokeOnElement(project, elements[0], editor);
 	}
 

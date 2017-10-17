@@ -359,7 +359,7 @@ public final class PythonSdkType extends SdkType
 
 	public void showCustomCreateUI(@NotNull SdkModel sdkModel, @NotNull final JComponent parentComponent, @NotNull final Consumer<Sdk> sdkCreatedCallback)
 	{
-		Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(parentComponent));
+		Project project = DataManager.getInstance().getDataContext(parentComponent).getData(CommonDataKeys.PROJECT);
 		final PointerInfo pointerInfo = MouseInfo.getPointerInfo();
 		if(pointerInfo == null)
 		{
@@ -618,11 +618,11 @@ public final class PythonSdkType extends SdkType
 		final Component ownerComponent = SoftReference.dereference(ownerComponentRef);
 		if(ownerComponent != null)
 		{
-			project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(ownerComponent));
+			project = DataManager.getInstance().getDataContext(ownerComponent).getData(CommonDataKeys.PROJECT);
 		}
 		else
 		{
-			project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
+			project = DataManager.getInstance().getDataContext().getData(CommonDataKeys.PROJECT);
 		}
 		PythonSdkUpdater.updateOrShowError(sdk, null, project, ownerComponent);
 	}

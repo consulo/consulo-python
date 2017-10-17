@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.refactoring.invertBoolean;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -29,7 +29,6 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyNamedParameter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : ktisha
@@ -39,7 +38,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
-    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+    PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
     if (element == null && editor != null && file != null) {
       element = file.findElementAt(editor.getCaretModel().getOffset());
     }

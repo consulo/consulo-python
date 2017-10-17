@@ -69,8 +69,8 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
 
 	public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext)
 	{
-		final PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
-		final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+		final PsiFile file = dataContext.getData(CommonDataKeys.PSI_FILE);
+		final Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
 		doRefactor(project, elements[0], elements[elements.length - 1], editor, file, dataContext);
 	}
 

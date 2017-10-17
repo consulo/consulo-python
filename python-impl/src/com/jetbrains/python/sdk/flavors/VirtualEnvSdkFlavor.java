@@ -68,7 +68,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor
 	@Override
 	public Collection<String> suggestHomePaths()
 	{
-		final Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
+		final Project project = DataManager.getInstance().getDataContext().getData(CommonDataKeys.PROJECT);
 		List<String> candidates = new ArrayList<>();
 		if(project != null)
 		{
