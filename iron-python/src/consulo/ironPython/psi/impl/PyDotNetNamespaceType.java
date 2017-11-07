@@ -17,6 +17,7 @@
 package consulo.ironPython.psi.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +91,7 @@ public class PyDotNetNamespaceType implements PyType
 	{
 		List<Object> variants = new ArrayList<Object>();
 		final GlobalSearchScope scope = getScope(location.getProject());
-		PsiElement[] children = myNamespaceAsElement.getChildren(scope, DotNetNamespaceAsElement.ChildrenFilter.NONE);
+		Collection<PsiElement> children = myNamespaceAsElement.getChildren(scope, DotNetNamespaceAsElement.ChildrenFilter.NONE);
 		for(PsiElement child : children)
 		{
 			if(child instanceof PsiNamedElement)
