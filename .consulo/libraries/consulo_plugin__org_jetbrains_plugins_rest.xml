@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="consulo-plugin: org.jetbrains.plugins.rest" type="consulo-plugin">
     <binaries>
-      <root url="jar://$PROJECT_DIR$/dep/org.jetbrains.plugins.rest/lib/rest.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dep/org.jetbrains.plugins.rest/lib/org.jetbrains.plugins.rest-2-SNAPSHOT.jar!/" />
     </binaries>
   </library>
 </component>
