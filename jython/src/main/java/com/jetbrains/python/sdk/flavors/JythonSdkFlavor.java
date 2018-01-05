@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import consulo.jython.JythonIcons;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -35,6 +34,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.run.JythonProcessHandler;
 import com.jetbrains.python.run.PythonCommandLineState;
+import consulo.jython.JythonIcons;
 
 /**
  * @author yole

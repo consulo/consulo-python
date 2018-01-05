@@ -1,9 +1,8 @@
 package com.jetbrains.jython;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.jetbrains.python.PythonTestUtil;
 import com.jetbrains.python.inspections.PyCallingNonCallableInspection;
-import com.jetbrains.python.inspections.PyUnresolvedReferencesInspection;
+import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 
 /**
  * @author yole
@@ -26,6 +25,6 @@ public class PyJythonHighlightingTest extends LightCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PythonTestUtil.getTestDataPath() + "/highlighting/jython/";
+    return "/highlighting/jython/";
   }
 }

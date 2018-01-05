@@ -47,6 +47,7 @@
 		<module>python-impl</module>
 		<module>python-rest</module>
 		<module>python-intelliLang</module>
+		<module>jython</module>
 		<module>plugin</module>
 	</modules>
 </project>

@@ -1,18 +1,24 @@
 package com.jetbrains.jython;
 
-import com.intellij.psi.*;
-import com.intellij.testFramework.ResolveTestCase;
+import com.intellij.psi.CommonClassNames;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.TestDataPath;
-import com.jetbrains.python.PythonTestUtil;
+import com.intellij.testFramework.UsefulTestCase;
+import consulo.psi.PsiPackage;
 import junit.framework.Assert;
 
 /**
  * @author yole
  */
 @TestDataPath("$CONTENT_ROOT/../testData/resolve/pyToJava/")
-public class PyToJavaResolveTest extends ResolveTestCase {
+public class PyToJavaResolveTest extends UsefulTestCase
+{
   private PsiElement resolve() throws Exception {
-    PsiReference ref = configureByFile(getTestName(false) + ".py");
+    PsiReference ref = null;//configureByFile(getTestName(false) + ".py");
     return ref.resolve();
   }
 
@@ -70,8 +76,8 @@ public class PyToJavaResolveTest extends ResolveTestCase {
     Assert.assertEquals("println", ((PsiMethod) target).getName());
   }
 
-  @Override
+
   protected String getTestDataPath() {
-    return PythonTestUtil.getTestDataPath() + "/resolve/pyToJava/";
+    return "/resolve/pyToJava/";
   }
 }
