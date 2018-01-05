@@ -55,7 +55,7 @@ public class PythonFileType extends LanguageFileType {
   }
 
   @NotNull
-  public String getName() {
+  public String getId() {
     return "Python";
   }
 

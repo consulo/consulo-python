@@ -16,6 +16,15 @@
 
 package com.jetbrains.python;
 
+import static com.intellij.openapi.util.text.StringUtil.endsWith;
+import static com.intellij.openapi.util.text.StringUtil.startsWith;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -23,20 +32,11 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.intellij.psi.util.QualifiedName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.intellij.openapi.util.text.StringUtil.endsWith;
-import static com.intellij.openapi.util.text.StringUtil.startsWith;
 
 /**
  * @author Alexei Orischenko
