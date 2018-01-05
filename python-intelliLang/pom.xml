@@ -17,13 +17,17 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>consulo</groupId>
-		<artifactId>arch.managment</artifactId>
+		<artifactId>arch.ide-provided</artifactId>
 		<version>2-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
+
+	<groupId>consulo.plugin</groupId>
+	<artifactId>consulo.python-python.intelliLang</artifactId>
+	<version>2-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
 	<repositories>
 		<repository>
@@ -36,17 +40,17 @@
 		</repository>
 	</repositories>
 
-	<groupId>consulo.plugin</groupId>
-	<artifactId>consulo.python.parent</artifactId>
-	<version>2-SNAPSHOT</version>
-	<packaging>pom</packaging>
-
-	<modules>
-		<module>python-psi-api</module>
-		<module>python-debugger</module>
-		<module>python-impl</module>
-		<module>python-rest</module>
-		<module>python-intelliLang</module>
-		<module>plugin</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>consulo.python-python.impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.intellij.intelliLang</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

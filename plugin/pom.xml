@@ -53,6 +53,7 @@
 						<dependency>com.intellij.regexp</dependency>
 						<dependency>com.intellij.spellchecker</dependency>
 						<dependency>org.jetbrains.plugins.rest</dependency>
+						<dependency>org.intellij.intelliLang</dependency>
 					</dependencies>
 					<packaging>
 						<skip>${dev.mode}</skip>
@@ -90,6 +91,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>consulo.python-python.rest</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>consulo.python-python.intelliLang</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
