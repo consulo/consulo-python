@@ -16,6 +16,9 @@
 
 package com.jetbrains.rest;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.InjectedLanguagePlaces;
@@ -23,9 +26,6 @@ import com.intellij.psi.LanguageInjector;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.jetbrains.python.documentation.doctest.PyDocstringLanguageDialect;
 import com.jetbrains.rest.psi.RestLine;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * User: ktisha

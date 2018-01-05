@@ -1,4 +1,4 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" url="http://confluence.jetbrains.com/display/PYH/">
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
 	<id>consulo.python</id>
 	<name>Python</name>
 	<description>Smart editing for Python scripts</description>
