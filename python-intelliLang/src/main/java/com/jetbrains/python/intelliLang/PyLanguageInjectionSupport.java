@@ -15,6 +15,13 @@
  */
 package com.jetbrains.python.intelliLang;
 
+import java.util.List;
+
+import org.intellij.plugins.intelliLang.inject.AbstractLanguageInjectionSupport;
+import org.intellij.plugins.intelliLang.inject.config.BaseInjection;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -22,13 +29,6 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.jetbrains.python.patterns.PythonPatterns;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import org.intellij.plugins.intelliLang.inject.AbstractLanguageInjectionSupport;
-import org.intellij.plugins.intelliLang.inject.config.BaseInjection;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * @author yole
