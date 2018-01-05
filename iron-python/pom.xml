@@ -25,7 +25,7 @@
 	</parent>
 
 	<groupId>consulo.plugin</groupId>
-	<artifactId>consulo.python</artifactId>
+	<artifactId>consulo.iron-python</artifactId>
 	<version>2-SNAPSHOT</version>
 	<packaging>consulo-plugin</packaging>
 
@@ -49,22 +49,6 @@
 				<extensions>true</extensions>
 				<configuration>
 					<repositoryChannel>nightly</repositoryChannel>
-					<dependencies>
-						<dependency>com.intellij.regexp</dependency>
-						<dependency>com.intellij.spellchecker</dependency>
-						<dependency>com.intellij.xml</dependency>
-						<dependency>org.jetbrains.plugins.rest</dependency>
-						<dependency>org.intellij.intelliLang</dependency>
-						<dependency>consulo.java</dependency>
-						<dependency>consulo.dotnet</dependency>
-						<dependency>consulo.dotnet.microsoft</dependency>
-					</dependencies>
-					<execution>
-						<pluginDirectories>
-							<pluginDirectory>${project.basedir}/../jython/target/consulo-plugin-extracted</pluginDirectory>
-							<pluginDirectory>${project.basedir}/../iron-python/target/consulo-plugin-extracted</pluginDirectory>
-						</pluginDirectories>
-					</execution>
 					<packaging>
 						<skip>${dev.mode}</skip>
 						<version>${build.number}</version>
@@ -85,39 +69,20 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>consulo.python-python.psi.api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>consulo.python-python.debugger</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>consulo.python-python.impl</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>consulo.python-python.rest</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>consulo.python-python.intelliLang</artifactId>
-			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>com.intellij.spellchecker</artifactId>
+			<artifactId>consulo.dotnet</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>com.intellij.regexp</artifactId>
+			<artifactId>consulo.dotnet.microsoft</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>

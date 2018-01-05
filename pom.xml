@@ -48,6 +48,7 @@
 		<module>python-rest</module>
 		<module>python-intelliLang</module>
 		<module>jython</module>
+		<module>iron-python</module>
 		<module>plugin</module>
 	</modules>
 </project>
