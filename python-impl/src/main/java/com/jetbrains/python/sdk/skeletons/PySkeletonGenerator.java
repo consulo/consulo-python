@@ -43,7 +43,7 @@ import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import consulo.util.SandboxUtil;
+import consulo.application.ApplicationProperties;
 
 /**
  * @author traff
@@ -132,7 +132,7 @@ public class PySkeletonGenerator
 				sb.append(err_line).append("\n");
 			}
 			sb.append("--");
-			if(SandboxUtil.isInsideSandbox())
+			if(ApplicationProperties.isInSandbox())
 			{
 				LOG.warn(sb.toString());
 			}
@@ -158,7 +158,7 @@ public class PySkeletonGenerator
 			commandLine.add("-c");
 			commandLine.add(StringUtil.join(assemblyRefs, ";"));
 		}
-		if(SandboxUtil.isInsideSandbox())
+		if(ApplicationProperties.isInSandbox())
 		{
 			commandLine.add("-x");
 		}

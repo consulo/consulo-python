@@ -78,6 +78,7 @@ import com.jetbrains.python.sdk.PreferredSdkComparator;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.application.ApplicationProperties;
 import consulo.util.SandboxUtil;
 
 /**
@@ -267,7 +268,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 				}
 			}
 		}
-		else if(SandboxUtil.isInsideSandbox())
+		else if(ApplicationProperties.isInSandbox())
 		{
 			LOG.info("Error running pycodestyle.py: " + output.getStderr());
 		}
@@ -351,7 +352,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 					problemRange = new TextRange(offset, lineEndOffset);
 				}
 				final Annotation annotation;
-				final boolean inInternalMode = SandboxUtil.isInsideSandbox();
+				final boolean inInternalMode = ApplicationProperties.isInSandbox();
 				final String message = "PEP 8: " + (inInternalMode ? problem.myCode + " " : "") + problem.myDescription;
 				if(annotationResult.level == HighlightDisplayLevel.ERROR)
 				{
