@@ -79,7 +79,6 @@ import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import consulo.application.ApplicationProperties;
-import consulo.util.SandboxUtil;
 
 /**
  * @author yole
@@ -483,7 +482,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 			int column = Integer.parseInt(m.group(2));
 			return new Problem(line, column, m.group(3), m.group(4));
 		}
-		if(SandboxUtil.isInsideSandbox())
+		if(ApplicationProperties.isInSandbox())
 		{
 			LOG.info("Failed to parse problem line from pycodestyle.py: " + s);
 		}
