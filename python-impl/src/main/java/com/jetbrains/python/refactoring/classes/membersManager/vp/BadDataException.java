@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager.vp;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * To be thrown when {@link com.jetbrains.python.refactoring.classes.membersManager.vp.MembersBasedViewSwingImpl} or its children
@@ -29,7 +29,7 @@ public class BadDataException extends Exception
 	/**
 	 * @param message what exactly is wrong with data
 	 */
-	public BadDataException(@NotNull final String message)
+	public BadDataException(@Nonnull final String message)
 	{
 		super(message);
 	}

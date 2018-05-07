@@ -18,12 +18,13 @@ package com.jetbrains.python.codeInsight.regexp;
 
 import java.util.EnumSet;
 
+import javax.annotation.Nonnull;
+
 import org.intellij.lang.regexp.RegExpCapability;
 import org.intellij.lang.regexp.RegExpFile;
 import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpParser;
 import org.intellij.lang.regexp.RegExpParserDefinition;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.FileViewProvider;
@@ -40,7 +41,7 @@ public class PythonRegexpParserDefinition extends RegExpParserDefinition {
                                                                       RegExpCapability.OCTAL_NO_LEADING_ZERO,
                                                                       RegExpCapability.OMIT_NUMBERS_IN_QUANTIFIERS);
 
-  @NotNull
+  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new RegExpLexer(CAPABILITIES);
   }

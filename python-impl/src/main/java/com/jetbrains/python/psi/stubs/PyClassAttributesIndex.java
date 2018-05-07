@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -21,14 +22,14 @@ public class PyClassAttributesIndex extends StringStubIndexExtension<PyClass>
 {
 	public static final StubIndexKey<String, PyClass> KEY = StubIndexKey.createIndexKey("Py.class.attributes");
 
-	@NotNull
+	@Nonnull
 	@Override
 	public StubIndexKey<String, PyClass> getKey()
 	{
 		return KEY;
 	}
 
-	public static Collection<PyClass> find(@NotNull String name, @NotNull Project project)
+	public static Collection<PyClass> find(@Nonnull String name, @Nonnull Project project)
 	{
 		return StubIndex.getElements(KEY, name, project, GlobalSearchScope.allScope(project), PyClass.class);
 	}
@@ -39,8 +40,8 @@ public class PyClassAttributesIndex extends StringStubIndexExtension<PyClass>
 	 * <p>
 	 * This method <b>must not</b> access the AST because it is being called during stub indexing.
 	 */
-	@NotNull
-	public static List<String> getAllDeclaredAttributeNames(@NotNull PyClass pyClass)
+	@Nonnull
+	public static List<String> getAllDeclaredAttributeNames(@Nonnull PyClass pyClass)
 	{
 		final List<PsiNamedElement> members = ContainerUtil.<PsiNamedElement>concat(pyClass.getInstanceAttributes(), pyClass.getClassAttributes(), Arrays.asList(pyClass.getMethods()));
 

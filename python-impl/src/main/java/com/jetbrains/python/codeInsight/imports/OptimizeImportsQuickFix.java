@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.codeInsight.imports;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -35,27 +35,27 @@ import com.jetbrains.python.psi.PyFile;
 public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction
 {
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getText()
 	{
 		return getName();
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return "Optimize imports";
 	}
 
 	@Override
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		return file instanceof PyFile;
 	}
 
 	@Override
-	public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		optimizeImports(project, file);
 	}
@@ -66,7 +66,7 @@ public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, 
 		return false;
 	}
 
-	public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		PsiElement element = descriptor.getPsiElement();
 		if(element == null)

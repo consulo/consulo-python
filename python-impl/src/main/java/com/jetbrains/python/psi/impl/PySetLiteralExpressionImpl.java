@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PySetLiteralExpression;
@@ -32,7 +32,7 @@ public class PySetLiteralExpressionImpl extends PySequenceExpressionImpl impleme
 		super(astNode);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		return PyBuiltinCache.getInstance(this).createLiteralCollectionType(this, "set", context);
 	}

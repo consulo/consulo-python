@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.types;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -37,19 +37,19 @@ public final class TypeEvalContextBasedCache<T>
 	/**
 	 * Lock to sync
 	 */
-	@NotNull
+	@Nonnull
 	private final Object myLock = new Object();
-	@NotNull
+	@Nonnull
 	private final CachedValue<Map<TypeEvalConstraints, T>> myCachedMapStorage;
 
-	@NotNull
+	@Nonnull
 	private final Function<TypeEvalContext, T> myProvider;
 
 	/**
 	 * @param manager       Cache manager to be used to store cache
 	 * @param valueProvider engine to create value based on context.
 	 */
-	public TypeEvalContextBasedCache(@NotNull final CachedValuesManager manager, @NotNull final Function<TypeEvalContext, T> valueProvider)
+	public TypeEvalContextBasedCache(@Nonnull final CachedValuesManager manager, @Nonnull final Function<TypeEvalContext, T> valueProvider)
 	{
 		myCachedMapStorage = manager.createCachedValue(new MapCreator<T>(), false);
 		myProvider = valueProvider;
@@ -61,8 +61,8 @@ public final class TypeEvalContextBasedCache<T>
 	 * @param context to be used as key
 	 * @return value
 	 */
-	@NotNull
-	public T getValue(@NotNull final TypeEvalContext context)
+	@Nonnull
+	public T getValue(@Nonnull final TypeEvalContext context)
 	{
 
 		// Map is not thread safe, and "getValue" is not atomic. I do not want several maps to be created.

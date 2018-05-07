@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -54,8 +54,8 @@ public class DeclarationConflictChecker
 	 * @param ignored    if an element defining the name is also listed here, ignore it.
 	 * @return a list of pairs (referring element, element that defines name).
 	 */
-	@NotNull
-	public static List<Pair<PsiElement, PsiElement>> findDefinitions(@NotNull String name, @NotNull Collection<PsiReference> references, @NotNull Set<PsiElement> ignored)
+	@Nonnull
+	public static List<Pair<PsiElement, PsiElement>> findDefinitions(@Nonnull String name, @Nonnull Collection<PsiReference> references, @Nonnull Set<PsiElement> ignored)
 	{
 		final List<Pair<PsiElement, PsiElement>> conflicts = new ArrayList<>();
 		for(PsiReference ref : references)

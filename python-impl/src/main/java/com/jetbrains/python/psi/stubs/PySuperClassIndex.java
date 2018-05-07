@@ -19,7 +19,7 @@ package com.jetbrains.python.psi.stubs;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.jetbrains.python.psi.PyClass;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public class PySuperClassIndex extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String, PyClass> KEY = StubIndexKey.createIndexKey("Py.class.super");
 
-  @NotNull
+  @Nonnull
   public StubIndexKey<String, PyClass> getKey() {
     return KEY;
   }

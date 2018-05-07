@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -27,7 +29,6 @@ import com.jetbrains.python.inspections.PyEncodingUtil;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * add missing encoding declaration
@@ -46,18 +47,18 @@ public class AddEncodingQuickFix implements LocalQuickFix {
     myEncodingFormatIndex = encodingFormatIndex;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.add.encoding");
   }
 
   @NonNls
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     PsiFile file = descriptor.getPsiElement().getContainingFile();
     if (file == null) return;
     PsiElement firstLine = file.getFirstChild();

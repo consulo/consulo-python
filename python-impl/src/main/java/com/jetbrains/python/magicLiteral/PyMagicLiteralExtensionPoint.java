@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.magicLiteral;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.jetbrains.python.psi.StringLiteralExpression;
 
@@ -35,12 +35,12 @@ public interface PyMagicLiteralExtensionPoint {
 	 * @param element element to check
 	 * @return true if magic.
 	 */
-	boolean isMagicLiteral(@NotNull StringLiteralExpression element);
+	boolean isMagicLiteral(@Nonnull StringLiteralExpression element);
 
 
 	/**
 	 * @return human-readable type of this literal. Actually, that is extension point name
 	 */
-	@NotNull
+	@Nonnull
 	String getLiteralType();
 }

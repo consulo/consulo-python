@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.xdebugger.frame.XExecutionStack;
 
 
@@ -33,14 +33,14 @@ public class PyExecutionStack extends XExecutionStack
 	private final PyThreadInfo myThreadInfo;
 	private PyStackFrame myTopFrame;
 
-	public PyExecutionStack(@NotNull final PyDebugProcess debugProcess, @NotNull final PyThreadInfo threadInfo)
+	public PyExecutionStack(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo)
 	{
 		super(threadInfo.getName());
 		myDebugProcess = debugProcess;
 		myThreadInfo = threadInfo;
 	}
 
-	public PyExecutionStack(@NotNull final PyDebugProcess debugProcess, @NotNull final PyThreadInfo threadInfo, final @Nullable Icon icon)
+	public PyExecutionStack(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo, final @Nullable Icon icon)
 	{
 		super(threadInfo.getName(), icon);
 		myDebugProcess = debugProcess;

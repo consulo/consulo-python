@@ -1,7 +1,7 @@
 package com.jetbrains.python.debugger.pydev;
 
 import com.jetbrains.python.debugger.PyDebuggerException;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.UnsupportedEncodingException;
 
@@ -10,9 +10,10 @@ public class ProtocolFrame {
 
   private final int myCommand;
   private final int mySequence;
-  private @NotNull final String myPayload;
+  private @Nonnull
+  final String myPayload;
 
-  public ProtocolFrame(final int command, final int sequence, @NotNull final String payload) throws PyDebuggerException {
+  public ProtocolFrame(final int command, final int sequence, @Nonnull final String payload) throws PyDebuggerException {
     myCommand = command;
     mySequence = sequence;
     myPayload = payload;
@@ -37,12 +38,12 @@ public class ProtocolFrame {
     return mySequence;
   }
 
-  @NotNull
+  @Nonnull
   public String getPayload() {
     return myPayload;
   }
 
-  @NotNull
+  @Nonnull
   public byte[] pack() throws UnsupportedEncodingException {
     final StringBuilder sb = new StringBuilder();
     sb.append(Integer.toString(myCommand));

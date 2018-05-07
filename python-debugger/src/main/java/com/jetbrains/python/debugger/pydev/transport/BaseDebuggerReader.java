@@ -6,7 +6,8 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.concurrent.Future;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.TimeoutUtil;
@@ -20,18 +21,18 @@ public abstract class BaseDebuggerReader extends BaseOutputReader
 {
 	private static final Logger LOG = Logger.getInstance(BaseDebuggerReader.class);
 
-	@NotNull
+	@Nonnull
 	private final RemoteDebugger myDebugger;
-	@NotNull
+	@Nonnull
 	private StringBuilder myTextBuilder = new StringBuilder();
 
-	public BaseDebuggerReader(@NotNull InputStream inputStream, @NotNull Charset charset, @NotNull RemoteDebugger debugger)
+	public BaseDebuggerReader(@Nonnull InputStream inputStream, @Nonnull Charset charset, @Nonnull RemoteDebugger debugger)
 	{
 		super(inputStream, charset);
 		myDebugger = debugger;
 	}
 
-	@NotNull
+	@Nonnull
 	protected RemoteDebugger getDebugger()
 	{
 		return myDebugger;
@@ -73,9 +74,9 @@ public abstract class BaseDebuggerReader extends BaseOutputReader
 
 	protected abstract void onCommunicationError();
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected Future<?> executeOnPooledThread(@NotNull Runnable runnable)
+	protected Future<?> executeOnPooledThread(@Nonnull Runnable runnable)
 	{
 		return ApplicationManager.getApplication().executeOnPooledThread(runnable);
 	}
@@ -101,7 +102,7 @@ public abstract class BaseDebuggerReader extends BaseOutputReader
 	}
 
 	@Override
-	protected void onTextAvailable(@NotNull String text)
+	protected void onTextAvailable(@Nonnull String text)
 	{
 		myTextBuilder.append(text);
 		if(text.contains("\n"))

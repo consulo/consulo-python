@@ -17,8 +17,8 @@ package com.jetbrains.python;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
@@ -51,7 +51,7 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 			PyElementTypes.SET_COMP_EXPRESSION, PyElementTypes.DICT_COMP_EXPRESSION, PyElementTypes.LIST_LITERAL_EXPRESSION, PyElementTypes.LIST_COMP_EXPRESSION, PyElementTypes.TUPLE_EXPRESSION);
 
 	@Override
-	protected void buildLanguageFoldRegions(@NotNull List<FoldingDescriptor> descriptors, @NotNull PsiElement root, @NotNull Document document, boolean quick)
+	protected void buildLanguageFoldRegions(@Nonnull List<FoldingDescriptor> descriptors, @Nonnull PsiElement root, @Nonnull Document document, boolean quick)
 	{
 		if(root instanceof PyFile && ((PyFile) root).getVirtualFile() instanceof LightVirtualFile)
 		{
@@ -233,7 +233,7 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 	}
 
 	@Override
-	protected String getLanguagePlaceholderText(@NotNull ASTNode node, @NotNull TextRange range)
+	protected String getLanguagePlaceholderText(@Nonnull ASTNode node, @Nonnull TextRange range)
 	{
 		if(isImport(node))
 		{
@@ -272,7 +272,7 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 	}
 
 	@Override
-	protected boolean isRegionCollapsedByDefault(@NotNull ASTNode node)
+	protected boolean isRegionCollapsedByDefault(@Nonnull ASTNode node)
 	{
 		if(isImport(node))
 		{
@@ -307,18 +307,18 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 	}
 
 	@Override
-	protected boolean isCustomFoldingCandidate(@NotNull ASTNode node)
+	protected boolean isCustomFoldingCandidate(@Nonnull ASTNode node)
 	{
 		return node.getElementType() == PyTokenTypes.END_OF_LINE_COMMENT;
 	}
 
 	@Override
-	protected boolean isCustomFoldingRoot(@NotNull ASTNode node)
+	protected boolean isCustomFoldingRoot(@Nonnull ASTNode node)
 	{
 		return node.getPsi() instanceof PyFile || node.getElementType() == PyElementTypes.STATEMENT_LIST;
 	}
 
-	private static boolean isImport(@NotNull ASTNode node)
+	private static boolean isImport(@Nonnull ASTNode node)
 	{
 		return PyElementTypes.IMPORT_STATEMENTS.contains(node.getElementType());
 	}

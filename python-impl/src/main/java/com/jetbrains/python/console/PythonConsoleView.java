@@ -18,10 +18,10 @@ package com.jetbrains.python.console;
 import java.awt.BorderLayout;
 import java.awt.Component;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
@@ -150,7 +150,7 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 		}
 	}
 
-	public void setExecutionHandler(@NotNull PydevConsoleExecuteActionHandler consoleExecuteActionHandler)
+	public void setExecutionHandler(@Nonnull PydevConsoleExecuteActionHandler consoleExecuteActionHandler)
 	{
 		myExecuteActionHandler = consoleExecuteActionHandler;
 	}
@@ -202,12 +202,12 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 	}
 
 	@Override
-	public void executeCode(final @NotNull String code, @Nullable final Editor editor)
+	public void executeCode(final @Nonnull String code, @Nullable final Editor editor)
 	{
 		myInitialized.doWhenDone(() -> ProgressManager.getInstance().run(new Task.Backgroundable(null, "Executing Code in Console...", false)
 		{
 			@Override
-			public void run(@NotNull final ProgressIndicator indicator)
+			public void run(@Nonnull final ProgressIndicator indicator)
 			{
 				long time = System.currentTimeMillis();
 				while(!myExecuteActionHandler.isEnabled() || !myExecuteActionHandler.canExecuteNow())
@@ -254,7 +254,7 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 		});
 	}
 
-	public void executeStatement(@NotNull String statement, @NotNull final Key attributes)
+	public void executeStatement(@Nonnull String statement, @Nonnull final Key attributes)
 	{
 		print(statement, outputTypeForAttributes(attributes));
 		myExecuteActionHandler.processLine(statement);
@@ -265,13 +265,13 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 		super.print(text, outputType);
 	}
 
-	public void print(String text, @NotNull final Key attributes)
+	public void print(String text, @Nonnull final Key attributes)
 	{
 		print(text, outputTypeForAttributes(attributes));
 	}
 
 	@Override
-	public void print(@NotNull String text, @NotNull final ConsoleViewContentType outputType)
+	public void print(@Nonnull String text, @Nonnull final ConsoleViewContentType outputType)
 	{
 		detectIPython(text, outputType);
 		if(PyConsoleUtil.detectIPythonEnd(text))
@@ -333,12 +333,12 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 		}
 	}
 
-	private boolean detectHyperlink(@NotNull String text)
+	private boolean detectHyperlink(@Nonnull String text)
 	{
 		return myIsIPythonOutput && text.startsWith("File:");
 	}
 
-	private void printHyperlink(@NotNull String text, @NotNull ConsoleViewContentType contentType)
+	private void printHyperlink(@Nonnull String text, @Nonnull ConsoleViewContentType contentType)
 	{
 		if(!StringUtil.isEmpty(text))
 		{
@@ -426,8 +426,8 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 			highlighter.putUserData(PyConsoleCopyHandler.PROMPT_LENGTH_MARKER, prompt.length() + 1);
 	}
 
-	@NotNull
-	protected String addTextRangeToHistory(@NotNull TextRange textRange, @NotNull EditorEx inputEditor, boolean preserveMarkup)
+	@Nonnull
+	protected String addTextRangeToHistory(@Nonnull TextRange textRange, @Nonnull EditorEx inputEditor, boolean preserveMarkup)
 	{
 		String text;
 		EditorHighlighter highlighter;
@@ -460,7 +460,7 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 	}
 
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected JComponent createCenterComponent()
 	{
@@ -535,7 +535,7 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 
 
 	@Override
-	public void setPromptAttributes(@NotNull ConsoleViewContentType textAttributes)
+	public void setPromptAttributes(@Nonnull ConsoleViewContentType textAttributes)
 	{
 		myPromptView.setPromptAttributes(textAttributes);
 	}

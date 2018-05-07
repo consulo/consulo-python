@@ -16,6 +16,9 @@
 
 package com.jetbrains.python.inspections;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.TextRange;
@@ -27,8 +30,6 @@ import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * User: catherine
@@ -38,22 +39,22 @@ import org.jetbrains.annotations.Nullable;
 public class PySingleQuotedDocstringInspection extends PyInspection {
 
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.single.quoted.docstring");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
   public static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
       super(holder, session);
     }
 

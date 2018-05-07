@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.surround.surrounders.statements;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.openapi.editor.Editor;
@@ -27,8 +29,8 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyIfStatement;
 import com.jetbrains.python.psi.PyStatementList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov
@@ -36,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public class PyWithIfSurrounder extends PyStatementSurrounder {
   @Override
   @Nullable
-  protected TextRange surroundStatement(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements)
+  protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
     throws IncorrectOperationException {
     PyIfStatement ifStatement = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyIfStatement.class, "if True:\n    ");
     final PsiElement parent = elements[0].getParent();

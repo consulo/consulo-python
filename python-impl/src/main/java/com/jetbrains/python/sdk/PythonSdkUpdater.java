@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -81,7 +81,7 @@ public class PythonSdkUpdater implements StartupActivity
 	 * Refreshes the SDKs of the modules for the open project after some delay.
 	 */
 	@Override
-	public void runActivity(@NotNull final Project project)
+	public void runActivity(@Nonnull final Project project)
 	{
 		final Application application = ApplicationManager.getApplication();
 		if(application.isUnitTestMode())
@@ -91,7 +91,7 @@ public class PythonSdkUpdater implements StartupActivity
 		EdtExecutorService.getScheduledExecutorInstance().schedule(() -> ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Python Paths", false)
 		{
 			@Override
-			public void run(@NotNull ProgressIndicator indicator)
+			public void run(@Nonnull ProgressIndicator indicator)
 			{
 				final Project project = getProject();
 				if(project.isDisposed())
@@ -120,7 +120,7 @@ public class PythonSdkUpdater implements StartupActivity
 	 *                       passed as an argument accessed from the AWT thread
 	 * @return false if there was an immediate problem updating the SDK. Other problems are reported as log entries and balloons.
 	 */
-	public static boolean update(@NotNull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable final Project project, @Nullable final Component ownerComponent)
+	public static boolean update(@Nonnull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable final Project project, @Nullable final Component ownerComponent)
 	{
 		final String key = PythonSdkType.getSdkKey(sdk);
 		synchronized(ourLock)
@@ -155,7 +155,7 @@ public class PythonSdkUpdater implements StartupActivity
 			ProgressManager.getInstance().run(new Task.Backgroundable(project, PyBundle.message("sdk.gen.updating.interpreter"), false)
 			{
 				@Override
-				public void run(@NotNull ProgressIndicator indicator)
+				public void run(@Nonnull ProgressIndicator indicator)
 				{
 					final Project project1 = getProject();
 					final Sdk sdkInsideTask = PythonSdkType.findSdkByKey(key);
@@ -245,7 +245,7 @@ public class PythonSdkUpdater implements StartupActivity
 	 *
 	 * @see {@link #update(Sdk, SdkModificator, Project, Component)}
 	 */
-	public static void updateOrShowError(@NotNull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project, @Nullable Component ownerComponent)
+	public static void updateOrShowError(@Nonnull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project, @Nullable Component ownerComponent)
 	{
 		final boolean success = update(sdk, sdkModificator, project, ownerComponent);
 		if(!success)
@@ -259,7 +259,7 @@ public class PythonSdkUpdater implements StartupActivity
 	 * <p>
 	 * May be invoked from any thread. May freeze the current thread while evaluating sys.path.
 	 */
-	private static boolean updateLocalSdkPaths(@NotNull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project)
+	private static boolean updateLocalSdkPaths(@Nonnull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project)
 	{
 		if(!PythonSdkType.isRemote(sdk))
 		{
@@ -289,7 +289,7 @@ public class PythonSdkUpdater implements StartupActivity
 	 * <p>
 	 * You may invoke it from any thread. Blocks until the commit is done in the AWT thread.
 	 */
-	private static void updateRemoteSdkPaths(@NotNull Sdk sdk, @Nullable Project project)
+	private static void updateRemoteSdkPaths(@Nonnull Sdk sdk, @Nullable Project project)
 	{
 		if(PythonSdkType.isRemote(sdk))
 		{
@@ -315,8 +315,8 @@ public class PythonSdkUpdater implements StartupActivity
 	/**
 	 * Returns all the paths for a local SDK.
 	 */
-	@NotNull
-	private static List<VirtualFile> getLocalSdkPaths(@NotNull Sdk sdk, @Nullable Project project) throws InvalidSdkException
+	@Nonnull
+	private static List<VirtualFile> getLocalSdkPaths(@Nonnull Sdk sdk, @Nullable Project project) throws InvalidSdkException
 	{
 		return ImmutableList.<VirtualFile>builder().addAll(filterRootPaths(sdk, evaluateSysPath(sdk), project)).addAll(getSkeletonsPaths(sdk)).addAll(getUserAddedPaths(sdk)).build();
 	}
@@ -326,8 +326,8 @@ public class PythonSdkUpdater implements StartupActivity
 	 * <p>
 	 * Requires the skeletons refresh steps to be run before it in order to get remote paths mappings in the additional SDK data.
 	 */
-	@NotNull
-	private static List<VirtualFile> getRemoteSdkPaths(@NotNull Sdk sdk, @Nullable Project project)
+	@Nonnull
+	private static List<VirtualFile> getRemoteSdkPaths(@Nonnull Sdk sdk, @Nullable Project project)
 	{
 		return ImmutableList.<VirtualFile>builder().addAll(getRemoteSdkMappedPaths(sdk, project)).addAll(getSkeletonsPaths(sdk)).addAll(getUserAddedPaths(sdk)).build();
 	}
@@ -335,8 +335,8 @@ public class PythonSdkUpdater implements StartupActivity
 	/**
 	 * Returns all the paths manually added to an SDK by the user.
 	 */
-	@NotNull
-	private static List<VirtualFile> getUserAddedPaths(@NotNull Sdk sdk)
+	@Nonnull
+	private static List<VirtualFile> getUserAddedPaths(@Nonnull Sdk sdk)
 	{
 		final SdkAdditionalData additionalData = sdk.getSdkAdditionalData();
 		final PythonSdkAdditionalData pythonAdditionalData = PyUtil.as(additionalData, PythonSdkAdditionalData.class);
@@ -348,8 +348,8 @@ public class PythonSdkUpdater implements StartupActivity
 	 * <p>
 	 * Returns all the existing paths except those manually excluded by the user.
 	 */
-	@NotNull
-	private static List<VirtualFile> getRemoteSdkMappedPaths(@NotNull Sdk sdk, @Nullable Project project)
+	@Nonnull
+	private static List<VirtualFile> getRemoteSdkMappedPaths(@Nonnull Sdk sdk, @Nullable Project project)
 	{
 		final SdkAdditionalData additionalData = sdk.getSdkAdditionalData();
 		if(additionalData instanceof PyRemoteSdkAdditionalDataBase)
@@ -368,8 +368,8 @@ public class PythonSdkUpdater implements StartupActivity
 	/**
 	 * Filters valid paths from an initial set of Python paths and returns them as virtual files.
 	 */
-	@NotNull
-	private static List<VirtualFile> filterRootPaths(@NotNull Sdk sdk, @NotNull List<String> paths, @Nullable Project project)
+	@Nonnull
+	private static List<VirtualFile> filterRootPaths(@Nonnull Sdk sdk, @Nonnull List<String> paths, @Nullable Project project)
 	{
 		final PythonSdkAdditionalData pythonAdditionalData = PyUtil.as(sdk.getSdkAdditionalData(), PythonSdkAdditionalData.class);
 		final Collection<VirtualFile> excludedPaths = pythonAdditionalData != null ? pythonAdditionalData.getExcludedPathFiles() : Collections.emptyList();
@@ -406,8 +406,8 @@ public class PythonSdkUpdater implements StartupActivity
 	/**
 	 * Returns the paths of the binary skeletons and user skeletons for an SDK.
 	 */
-	@NotNull
-	private static List<VirtualFile> getSkeletonsPaths(@NotNull Sdk sdk)
+	@Nonnull
+	private static List<VirtualFile> getSkeletonsPaths(@Nonnull Sdk sdk)
 	{
 		final List<VirtualFile> results = Lists.newArrayList();
 		final String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
@@ -429,8 +429,8 @@ public class PythonSdkUpdater implements StartupActivity
 		return results;
 	}
 
-	@NotNull
-	private static String getSdkPresentableName(@NotNull Sdk sdk)
+	@Nonnull
+	private static String getSdkPresentableName(@Nonnull Sdk sdk)
 	{
 		final String homePath = sdk.getHomePath();
 		final String name = sdk.getName();
@@ -448,8 +448,8 @@ public class PythonSdkUpdater implements StartupActivity
 	 * <p>
 	 * Returns all the existing paths except those manually excluded by the user.
 	 */
-	@NotNull
-	private static List<String> evaluateSysPath(@NotNull Sdk sdk) throws InvalidSdkException
+	@Nonnull
+	private static List<String> evaluateSysPath(@Nonnull Sdk sdk) throws InvalidSdkException
 	{
 		if(PythonSdkType.isRemote(sdk))
 		{
@@ -466,7 +466,7 @@ public class PythonSdkUpdater implements StartupActivity
 	 * <p>
 	 * You may invoke it from any thread. Blocks until the commit is done in the AWT thread.
 	 */
-	private static void commitSdkPathsIfChanged(@NotNull Sdk sdk, @Nullable final SdkModificator sdkModificator, @NotNull final List<VirtualFile> sdkPaths, boolean forceCommit)
+	private static void commitSdkPathsIfChanged(@Nonnull Sdk sdk, @Nullable final SdkModificator sdkModificator, @Nonnull final List<VirtualFile> sdkPaths, boolean forceCommit)
 	{
 		final String key = PythonSdkType.getSdkKey(sdk);
 		final SdkModificator modificatorToGetRoots = sdkModificator != null ? sdkModificator : sdk.getSdkModificator();
@@ -489,8 +489,8 @@ public class PythonSdkUpdater implements StartupActivity
 	/**
 	 * Returns unique Python SDKs for the open modules of the project.
 	 */
-	@NotNull
-	private static Set<Sdk> getPythonSdks(@NotNull Project project)
+	@Nonnull
+	private static Set<Sdk> getPythonSdks(@Nonnull Project project)
 	{
 		final Set<Sdk> pythonSdks = Sets.newLinkedHashSet();
 		for(Module module : ModuleManager.getInstance(project).getModules())

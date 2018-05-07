@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
@@ -38,7 +39,7 @@ import com.jetbrains.python.psi.PyUtil;
  */
 public abstract class PyClassRefactoringHandler implements RefactoringActionHandler, ElementsHandler
 {
-	public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext)
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext)
 	{
 		PsiElement element1 = null;
 		PsiElement element2 = null;
@@ -67,7 +68,7 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
 		doRefactor(project, element1, element2, editor, file, dataContext);
 	}
 
-	public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext)
+	public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext)
 	{
 		final PsiFile file = dataContext.getData(CommonDataKeys.PSI_FILE);
 		final Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
@@ -96,7 +97,7 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
 	}
 
 
-	protected abstract void doRefactorImpl(@NotNull final Project project, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull final Editor editor);
+	protected abstract void doRefactorImpl(@Nonnull final Project project, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final Editor editor);
 
 
 	protected boolean inClass(PyClass clazz, Project project, Editor editor, String errorMessageId)

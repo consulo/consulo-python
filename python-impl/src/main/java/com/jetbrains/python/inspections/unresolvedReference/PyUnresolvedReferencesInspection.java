@@ -25,12 +25,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -120,15 +121,15 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 	}
 
 	@Nls
-	@NotNull
+	@Nonnull
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.unresolved.refs");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, final boolean isOnTheFly, @NotNull final LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, final boolean isOnTheFly, @Nonnull final LocalInspectionToolSession session)
 	{
 		final Visitor visitor = new Visitor(holder, session, ignoredIdentifiers);
 		// buildVisitor() will be called on injected files in the same session - don't overwrite if we already have one
@@ -141,7 +142,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 	}
 
 	@Override
-	public void inspectionFinished(@NotNull LocalInspectionToolSession session, @NotNull ProblemsHolder holder)
+	public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder)
 	{
 		final Visitor visitor = session.getUserData(KEY);
 		assert visitor != null;
@@ -166,13 +167,13 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 		private final ImmutableSet<String> myIgnoredIdentifiers;
 		private volatile Boolean myIsEnabled = null;
 
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session, List<String> ignoredIdentifiers)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, List<String> ignoredIdentifiers)
 		{
 			super(holder, session);
 			myIgnoredIdentifiers = ImmutableSet.copyOf(ignoredIdentifiers);
 		}
 
-		public boolean isEnabled(@NotNull PsiElement anchor)
+		public boolean isEnabled(@Nonnull PsiElement anchor)
 		{
 			if(myIsEnabled == null)
 			{
@@ -236,7 +237,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			}
 		}
 
-		private boolean canHaveAttribute(@NotNull PyClass cls, @Nullable String attrName)
+		private boolean canHaveAttribute(@Nonnull PyClass cls, @Nullable String attrName)
 		{
 			final List<String> slots = cls.getOwnSlots();
 
@@ -301,7 +302,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			return null;
 		}
 
-		private static boolean isGuardedByHasattr(@NotNull final PyElement node, @NotNull final String name)
+		private static boolean isGuardedByHasattr(@Nonnull final PyElement node, @Nonnull final String name)
 		{
 			final String nodeName = node.getName();
 			if(nodeName != null)
@@ -418,7 +419,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			}
 		}
 
-		private void markTargetImportsAsUsed(@NotNull PsiPolyVariantReference reference)
+		private void markTargetImportsAsUsed(@Nonnull PsiPolyVariantReference reference)
 		{
 			final ResolveResult[] resolveResults = reference.multiResolve(false);
 			for(ResolveResult resolveResult : resolveResults)
@@ -555,7 +556,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			}
 		}
 
-		private void registerUnresolvedReferenceProblem(@NotNull PyElement node, @NotNull final PsiReference reference, @NotNull HighlightSeverity severity)
+		private void registerUnresolvedReferenceProblem(@Nonnull PyElement node, @Nonnull final PsiReference reference, @Nonnull HighlightSeverity severity)
 		{
 			if(reference instanceof DocStringTypeReference)
 			{
@@ -817,7 +818,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 		 * @param type    type
 		 * @return true if has one
 		 */
-		private static boolean isHasCustomMember(@NotNull final String refName, @NotNull final PyType type)
+		private static boolean isHasCustomMember(@Nonnull final String refName, @Nonnull final PyType type)
 		{
 			// TODO: check
 			return false;
@@ -828,8 +829,8 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 		 * Return the canonical qualified names for a reference (even for an unresolved one).
 		 * If reference is qualified and its qualifier has union type, all possible canonical names will be returned.
 		 */
-		@NotNull
-		private static List<QualifiedName> getCanonicalNames(@NotNull PsiReference reference, @NotNull TypeEvalContext context)
+		@Nonnull
+		private static List<QualifiedName> getCanonicalNames(@Nonnull PsiReference reference, @Nonnull TypeEvalContext context)
 		{
 			final PsiElement element = reference.getElement();
 			final List<QualifiedName> result = new SmartList<>();
@@ -944,7 +945,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			return null;
 		}
 
-		private boolean ignoreUnresolvedMemberForType(@NotNull PyType type, PsiReference reference, String name)
+		private boolean ignoreUnresolvedMemberForType(@Nonnull PyType type, PsiReference reference, String name)
 		{
 			if(type instanceof PyNoneType || PyTypeChecker.isUnknown(type))
 			{
@@ -1020,7 +1021,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			return false;
 		}
 
-		private static boolean hasUnresolvedDynamicMember(@NotNull final PyClassType type, PsiReference reference, @NotNull final String name, TypeEvalContext typeEvalContext)
+		private static boolean hasUnresolvedDynamicMember(@Nonnull final PyClassType type, PsiReference reference, @Nonnull final String name, TypeEvalContext typeEvalContext)
 		{
 			for(PyClassMembersProvider provider : Extensions.getExtensions(PyClassMembersProvider.EP_NAME))
 			{
@@ -1036,7 +1037,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			return false;
 		}
 
-		private boolean isDecoratedAsDynamic(@NotNull PyClass cls, boolean inherited)
+		private boolean isDecoratedAsDynamic(@Nonnull PyClass cls, boolean inherited)
 		{
 			if(inherited)
 			{
@@ -1458,7 +1459,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 	 * @param importNameDefiner unused import
 	 * @return true of one or more asks
 	 */
-	private static boolean importShouldBeSkippedByExtPoint(@NotNull final PyImportedNameDefiner importNameDefiner)
+	private static boolean importShouldBeSkippedByExtPoint(@Nonnull final PyImportedNameDefiner importNameDefiner)
 	{
 		for(final PyUnresolvedReferenceSkipperExtPoint skipper : PyUnresolvedReferenceSkipperExtPoint.EP_NAME.getExtensions())
 		{

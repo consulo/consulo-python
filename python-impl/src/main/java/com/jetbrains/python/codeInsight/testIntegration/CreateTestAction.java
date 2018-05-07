@@ -17,7 +17,8 @@ package com.jetbrains.python.codeInsight.testIntegration;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
@@ -40,14 +41,14 @@ import com.jetbrains.python.testing.pytest.PyTestUtil;
  */
 public class CreateTestAction extends PsiElementBaseIntentionAction
 {
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return CodeInsightBundle.message("intention.create.test");
 	}
 
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, @Nonnull PsiElement element)
 	{
 		PyClass psiClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
 
@@ -59,7 +60,7 @@ public class CreateTestAction extends PsiElementBaseIntentionAction
 	}
 
 	@Override
-	public void invoke(final @NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException
+	public void invoke(final @Nonnull Project project, Editor editor, @Nonnull PsiElement element) throws IncorrectOperationException
 	{
 		final PyFunction srcFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
 		final PyClass srcClass = PsiTreeUtil.getParentOfType(element, PyClass.class);

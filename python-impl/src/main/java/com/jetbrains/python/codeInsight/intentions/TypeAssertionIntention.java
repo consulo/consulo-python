@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.intentions;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateBuilder;
@@ -45,19 +46,19 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class TypeAssertionIntention extends PyBaseIntentionAction
 {
 
-	@NotNull
+	@Nonnull
 	public String getText()
 	{
 		return PyBundle.message("INTN.insert.assertion");
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.insert.assertion");
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -93,7 +94,7 @@ public class TypeAssertionIntention extends PyBaseIntentionAction
 	}
 
 	@Override
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
 		PyExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);

@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.testing;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.Location;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
@@ -33,7 +33,7 @@ import com.jetbrains.python.run.RunnableScriptFilter;
  */
 public class PythonUnitTestRunnableScriptFilter implements RunnableScriptFilter
 {
-	public boolean isRunnableScript(PsiFile script, @NotNull Module module, Location location, @Nullable final TypeEvalContext context)
+	public boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable final TypeEvalContext context)
 	{
 		return script instanceof PyFile && PythonUnitTestUtil.getTestCaseClassesFromFile(script, context).size() > 0 && !isIfNameMain(location) && TestRunnerService.getInstance(module)
 				.getProjectConfiguration().

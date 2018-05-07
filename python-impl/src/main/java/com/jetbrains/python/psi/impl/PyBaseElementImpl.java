@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
@@ -61,7 +61,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		super(node);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PythonLanguage getLanguage()
 	{
@@ -81,7 +81,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		return className;
 	}
 
-	public void accept(@NotNull PsiElementVisitor visitor)
+	public void accept(@Nonnull PsiElementVisitor visitor)
 	{
 		PyUtil.verboseOnly(() -> PyPsiUtils.assertValid(this));
 		if(visitor instanceof PyElementVisitor)
@@ -99,7 +99,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		pyVisitor.visitPyElement(this);
 	}
 
-	@NotNull
+	@Nonnull
 	protected <T extends PyElement> T[] childrenToPsi(TokenSet filterSet, T[] array)
 	{
 		final ASTNode[] nodes = getNode().getChildren(filterSet);
@@ -132,14 +132,14 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 	}
 
 	@Nullable
-	protected <T extends PyElement> T childToPsi(@NotNull TokenSet elTypes)
+	protected <T extends PyElement> T childToPsi(@Nonnull TokenSet elTypes)
 	{
 		final ASTNode node = getNode().findChildByType(elTypes);
 		//noinspection unchecked
 		return node != null ? (T) node.getPsi() : null;
 	}
 
-	@NotNull
+	@Nonnull
 	protected <T extends PyElement> T childToPsiNotNull(TokenSet filterSet, int index)
 	{
 		final PyElement child = childToPsi(filterSet, index);
@@ -151,7 +151,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		return (T) child;
 	}
 
-	@NotNull
+	@Nonnull
 	protected <T extends PyElement> T childToPsiNotNull(IElementType elType)
 	{
 		final PyElement child = childToPsi(elType);

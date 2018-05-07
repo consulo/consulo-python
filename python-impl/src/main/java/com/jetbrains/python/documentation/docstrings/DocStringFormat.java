@@ -18,8 +18,9 @@ package com.jetbrains.python.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,7 +41,7 @@ public enum DocStringFormat
 
 	public static final List<String> ALL_NAMES = getAllNames();
 
-	@NotNull
+	@Nonnull
 	private static List<String> getAllNames()
 	{
 		return Collections.unmodifiableList(ContainerUtil.map(values(), format -> format.getName()));
@@ -48,14 +49,14 @@ public enum DocStringFormat
 
 	public static final List<String> ALL_NAMES_BUT_PLAIN = getAllNamesButPlain();
 
-	@NotNull
+	@Nonnull
 	private static List<String> getAllNamesButPlain()
 	{
 		return Collections.unmodifiableList(ContainerUtil.mapNotNull(values(), format -> format == PLAIN ? null : format.getName()));
 	}
 
 	@Nullable
-	public static DocStringFormat fromName(@NotNull String name)
+	public static DocStringFormat fromName(@Nonnull String name)
 	{
 		for(DocStringFormat format : values())
 		{
@@ -67,8 +68,8 @@ public enum DocStringFormat
 		return null;
 	}
 
-	@NotNull
-	public static DocStringFormat fromNameOrPlain(@NotNull String name)
+	@Nonnull
+	public static DocStringFormat fromNameOrPlain(@Nonnull String name)
 	{
 		return ObjectUtils.notNull(fromName(name), PLAIN);
 	}
@@ -76,19 +77,19 @@ public enum DocStringFormat
 	private final String myName;
 	private final String myFormatterCommand;
 
-	DocStringFormat(@NotNull String name, @NotNull String formatterCommand)
+	DocStringFormat(@Nonnull String name, @Nonnull String formatterCommand)
 	{
 		myName = name;
 		myFormatterCommand = formatterCommand;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		return myName;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFormatterCommand()
 	{
 		return myFormatterCommand;

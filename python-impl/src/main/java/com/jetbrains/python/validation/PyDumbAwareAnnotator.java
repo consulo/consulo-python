@@ -16,7 +16,8 @@
 
 package com.jetbrains.python.validation;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -37,7 +38,7 @@ public class PyDumbAwareAnnotator implements Annotator, DumbAware {
     myAnnotators = Extensions.getExtensions(EP_NAME);
   }
 
-  public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+  public void annotate(@Nonnull PsiElement element, @Nonnull AnnotationHolder holder) {
     final PsiFile file = element.getContainingFile();
 
     for(PyAnnotator annotator: myAnnotators) {

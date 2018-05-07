@@ -16,7 +16,8 @@
 
 package com.jetbrains.python;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
@@ -28,7 +29,7 @@ import com.intellij.openapi.fileTypes.FileTypeFactory;
 public class PythonXmlFileTypeFactory extends FileTypeFactory
 {
 	@Override
-	public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer)
+	public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer)
 	{
 		fileTypeConsumer.consume(XmlFileType.INSTANCE, "qrc");
 	}

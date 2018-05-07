@@ -19,8 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.intellij.execution.ExecutionException;
@@ -64,7 +65,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 
 	class PyInstallPackageManagementFix implements PyExecutionFix
 	{
-		@NotNull
+		@Nonnull
 		@Override
 		public String getName()
 		{
@@ -72,7 +73,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 		}
 
 		@Override
-		public void run(@NotNull final Sdk sdk)
+		public void run(@Nonnull final Sdk sdk)
 		{
 			final PyPackageManagerUI ui = new PyPackageManagerUI(myProject, sdk, new PyPackageManagerUI.Listener()
 			{
@@ -204,7 +205,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 	}
 
 	@Override
-	protected boolean canInstallPackage(@NotNull final InstalledPackage pyPackage)
+	protected boolean canInstallPackage(@Nonnull final InstalledPackage pyPackage)
 	{
 		return installEnabled();
 	}

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -34,7 +34,7 @@ import com.jetbrains.python.psi.PyExpression;
 
 public class PyChangeBaseClassQuickFix implements LocalQuickFix
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public String getFamilyName()
 	{
@@ -42,7 +42,7 @@ public class PyChangeBaseClassQuickFix implements LocalQuickFix
 	}
 
 	@Override
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		PsiElement element = descriptor.getPsiElement();
 		final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);

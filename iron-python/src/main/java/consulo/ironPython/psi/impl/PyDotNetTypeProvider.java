@@ -19,8 +19,8 @@ package consulo.ironPython.psi.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -50,7 +50,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 {
 	@Override
 	@Nullable
-	public PyType getReferenceType(@NotNull final PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
+	public PyType getReferenceType(@Nonnull final PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(referenceTarget instanceof DotNetTypeDeclaration)
 		{
@@ -85,7 +85,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public Ref<PyType> getParameterType(@NotNull final PyNamedParameter param, @NotNull final PyFunction func, @NotNull TypeEvalContext context)
+	public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param, @Nonnull final PyFunction func, @Nonnull TypeEvalContext context)
 	{
 		if(!(param.getParent() instanceof PyParameterList))
 		{

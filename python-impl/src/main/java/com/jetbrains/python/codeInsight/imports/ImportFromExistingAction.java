@@ -19,10 +19,10 @@ import java.awt.Component;
 import java.awt.Font;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.codeInsight.hint.QuestionAction;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -75,7 +75,7 @@ public class ImportFromExistingAction implements QuestionAction
 	 * @param name         relevant name ot the target element (e.g. of identifier in an expression).
 	 * @param useQualified if True, use qualified "import modulename" instead of "from modulename import ...".
 	 */
-	public ImportFromExistingAction(@NotNull PsiElement target, @NotNull List<ImportCandidateHolder> sources, @NotNull String name, boolean useQualified, boolean importLocally)
+	public ImportFromExistingAction(@Nonnull PsiElement target, @Nonnull List<ImportCandidateHolder> sources, @Nonnull String name, boolean useQualified, boolean importLocally)
 	{
 		myTarget = target;
 		mySources = sources;
@@ -255,7 +255,7 @@ public class ImportFromExistingAction implements QuestionAction
 		new WriteCommandAction(src.getProject(), PyBundle.message("ACT.CMD.use.import"), myTarget.getContainingFile())
 		{
 			@Override
-			protected void run(@NotNull Result result) throws Throwable
+			protected void run(@Nonnull Result result) throws Throwable
 			{
 				doIt(item);
 			}

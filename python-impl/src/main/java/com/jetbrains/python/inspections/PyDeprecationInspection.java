@@ -16,8 +16,8 @@
 package com.jetbrains.python.inspections;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -39,23 +39,23 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 public class PyDeprecationInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return "Deprecated function, class or module";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, final boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, final boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
 
 	private static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}

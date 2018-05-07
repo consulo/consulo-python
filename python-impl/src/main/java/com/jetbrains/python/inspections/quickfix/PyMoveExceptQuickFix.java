@@ -17,7 +17,7 @@ package com.jetbrains.python.inspections.quickfix;
 
 import java.util.ArrayList;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -35,13 +35,13 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 public class PyMoveExceptQuickFix implements LocalQuickFix
 {
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("QFIX.NAME.move.except.up");
 	}
 
-	public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 	{
 		final PsiElement element = descriptor.getPsiElement();
 		final PyExceptPart part = PsiTreeUtil.getParentOfType(element, PyExceptPart.class);

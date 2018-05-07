@@ -16,12 +16,13 @@
 
 package com.jetbrains.python.codeInsight.editorActions.smartEnter;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.ex.EditorEx;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +35,7 @@ public class SmartEnterUtil {
     return EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_START_NEW_LINE);
   }
 
-  public static void plainEnter(@NotNull final Editor editor) {
+  public static void plainEnter(@Nonnull final Editor editor) {
     getEnterHandler().execute(editor, ((EditorEx) editor).getDataContext());
   }
 

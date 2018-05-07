@@ -22,7 +22,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * User: catherine
@@ -51,7 +51,7 @@ public class ReSTService implements PersistentStateComponent<ReSTService> {
     DOC_DIR = workDir;
   }
 
-  public static ReSTService getInstance(@NotNull Module module) {
+  public static ReSTService getInstance(@Nonnull Module module) {
     return ModuleServiceManager.getService(module, ReSTService.class);
   }
 

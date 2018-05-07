@@ -16,10 +16,11 @@
 
 package com.jetbrains.python.debugger;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
-import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -29,18 +30,18 @@ abstract public class ExceptionBreakpointHandler<T extends ExceptionBreakpointPr
 
   private final PyDebugProcess myDebugProcess;
 
-  public ExceptionBreakpointHandler(@NotNull final PyDebugProcess debugProcess, @NotNull Class<? extends XBreakpointType<XBreakpoint<T>, T>> breakpointTypeClass) {
+  public ExceptionBreakpointHandler(@Nonnull final PyDebugProcess debugProcess, @Nonnull Class<? extends XBreakpointType<XBreakpoint<T>, T>> breakpointTypeClass) {
     super(breakpointTypeClass);
     myDebugProcess = debugProcess;
   }
 
   @Override
-  public void registerBreakpoint(@NotNull XBreakpoint<T> breakpoint) {
+  public void registerBreakpoint(@Nonnull XBreakpoint<T> breakpoint) {
     myDebugProcess.addExceptionBreakpoint(breakpoint);
   }
 
   @Override
-  public void unregisterBreakpoint(@NotNull XBreakpoint<T> breakpoint, boolean temporary) {
+  public void unregisterBreakpoint(@Nonnull XBreakpoint<T> breakpoint, boolean temporary) {
     myDebugProcess.removeExceptionBreakpoint(breakpoint);
   }
 }

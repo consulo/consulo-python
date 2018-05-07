@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -42,14 +43,14 @@ import com.jetbrains.python.testing.pytest.PyTestUtil;
  */
 public class PyTestFinder implements TestFinder
 {
-	public PyDocStringOwner findSourceElement(@NotNull PsiElement element)
+	public PyDocStringOwner findSourceElement(@Nonnull PsiElement element)
 	{
 		return PsiTreeUtil.getParentOfType(element, PyClass.class, PyFunction.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Collection<PsiElement> findTestsForClass(@NotNull PsiElement element)
+	public Collection<PsiElement> findTestsForClass(@Nonnull PsiElement element)
 	{
 		PyDocStringOwner source = findSourceElement(element);
 		if(source == null)
@@ -101,9 +102,9 @@ public class PyTestFinder implements TestFinder
 		return TestFinderHelper.getSortedElements(classesWithProximities, true);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Collection<PsiElement> findClassesForTest(@NotNull PsiElement element)
+	public Collection<PsiElement> findClassesForTest(@Nonnull PsiElement element)
 	{
 		final PyFunction sourceFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
 		final PyClass source = PsiTreeUtil.getParentOfType(element, PyClass.class);
@@ -145,7 +146,7 @@ public class PyTestFinder implements TestFinder
 	}
 
 	@Override
-	public boolean isTest(@NotNull PsiElement element)
+	public boolean isTest(@Nonnull PsiElement element)
 	{
 		PyClass cl = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
 		if(cl != null)

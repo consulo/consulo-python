@@ -1,8 +1,9 @@
 package com.jetbrains.python.debugger;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.xdebugger.frame.XValueModifier;
-import org.jetbrains.annotations.NotNull;
 
 
 public class PyValueModifier extends XValueModifier {
@@ -16,7 +17,7 @@ public class PyValueModifier extends XValueModifier {
   }
 
   @Override
-  public void setValue(@NotNull final String expression, @NotNull final XModificationCallback callback) {
+  public void setValue(@Nonnull final String expression, @Nonnull final XModificationCallback callback) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
         try {

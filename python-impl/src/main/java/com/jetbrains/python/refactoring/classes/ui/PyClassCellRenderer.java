@@ -17,12 +17,12 @@ package com.jetbrains.python.refactoring.classes.ui;
 
 import java.awt.Component;
 
+import javax.annotation.Nullable;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.util.Iconable;
 import com.jetbrains.python.psi.PyClass;
 import consulo.ide.IconDescriptorUpdaters;

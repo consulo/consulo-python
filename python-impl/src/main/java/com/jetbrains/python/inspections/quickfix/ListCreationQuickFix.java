@@ -21,7 +21,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +41,17 @@ public class ListCreationQuickFix implements LocalQuickFix {
     myStatements.add(statement);
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.list.creation");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
     StringBuilder stringBuilder = new StringBuilder();
     final PyExpression assignedValue = myStatement.getAssignedValue();

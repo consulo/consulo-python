@@ -17,19 +17,19 @@ package com.jetbrains.python.packaging.requirement;
 
 import static com.intellij.webcore.packaging.PackageVersionComparator.VERSION_COMPARATOR;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.Pair;
 
 public class PyRequirementVersionSpec
 {
 
-	@NotNull
+	@Nonnull
 	private final PyRequirementRelation myRelation;
 
-	@NotNull
+	@Nonnull
 	private final String myVersion;
 
-	public PyRequirementVersionSpec(@NotNull PyRequirementRelation relation, @NotNull String version)
+	public PyRequirementVersionSpec(@Nonnull PyRequirementRelation relation, @Nonnull String version)
 	{
 		myRelation = relation;
 		myVersion = version;
@@ -63,19 +63,19 @@ public class PyRequirementVersionSpec
 		return 31 * myRelation.hashCode() + myVersion.hashCode();
 	}
 
-	@NotNull
+	@Nonnull
 	public PyRequirementRelation getRelation()
 	{
 		return myRelation;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getVersion()
 	{
 		return myVersion;
 	}
 
-	public boolean matches(@NotNull String version)
+	public boolean matches(@Nonnull String version)
 	{
 		switch(myRelation)
 		{
@@ -104,7 +104,7 @@ public class PyRequirementVersionSpec
 		}
 	}
 
-	private static Pair<String, String> splitIntoPublicAndLocalVersions(@NotNull String version)
+	private static Pair<String, String> splitIntoPublicAndLocalVersions(@Nonnull String version)
 	{
 		final String[] publicAndLocalVersions = version.split("\\+", 2);
 

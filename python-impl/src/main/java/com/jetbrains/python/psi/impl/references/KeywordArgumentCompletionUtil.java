@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Comparing;
@@ -44,7 +44,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 
 public class KeywordArgumentCompletionUtil
 {
-	public static void collectFunctionArgNames(PyElement element, List<LookupElement> ret, @NotNull final TypeEvalContext context)
+	public static void collectFunctionArgNames(PyElement element, List<LookupElement> ret, @Nonnull final TypeEvalContext context)
 	{
 		PyCallExpression callExpr = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
 		if(callExpr != null)
@@ -92,7 +92,7 @@ public class KeywordArgumentCompletionUtil
 	}
 
 	@Nullable
-	private static PyElement getElementByType(@NotNull final TypeEvalContext context, @NotNull final PyExpression callee)
+	private static PyElement getElementByType(@Nonnull final TypeEvalContext context, @Nonnull final PyExpression callee)
 	{
 		final PyType pyType = context.getType(callee);
 		if(pyType instanceof PyFunctionType)
@@ -106,17 +106,17 @@ public class KeywordArgumentCompletionUtil
 		return null;
 	}
 
-	private static PsiElement getElementByChain(@NotNull TypeEvalContext context, PyReferenceExpression callee)
+	private static PsiElement getElementByChain(@Nonnull TypeEvalContext context, PyReferenceExpression callee)
 	{
 		final PyResolveContext resolveContext = PyResolveContext.defaultContext().withTypeEvalContext(context);
 		final QualifiedResolveResult result = callee.followAssignmentsChain(resolveContext);
 		return result.getElement();
 	}
 
-	private static void fetchCallablesFromUnion(@NotNull final List<LookupElement> ret,
-			@NotNull final PyCallExpression callExpr,
-			@NotNull final PyUnionType unionType,
-			@NotNull final TypeEvalContext context)
+	private static void fetchCallablesFromUnion(@Nonnull final List<LookupElement> ret,
+			@Nonnull final PyCallExpression callExpr,
+			@Nonnull final PyUnionType unionType,
+			@Nonnull final TypeEvalContext context)
 	{
 		for(final PyType memberType : unionType.getMembers())
 		{
@@ -143,9 +143,9 @@ public class KeywordArgumentCompletionUtil
 		}
 	}
 
-	private static void fetchCallablesFromCallableType(@NotNull final List<LookupElement> ret,
-			@NotNull final PyCallExpression callExpr,
-			@NotNull final Iterable<PyCallableParameter> callableParameters)
+	private static void fetchCallablesFromCallableType(@Nonnull final List<LookupElement> ret,
+			@Nonnull final PyCallExpression callExpr,
+			@Nonnull final Iterable<PyCallableParameter> callableParameters)
 	{
 		final List<String> parameterNames = new ArrayList<>();
 		for(final PyCallableParameter callableParameter : callableParameters)
@@ -200,7 +200,7 @@ public class KeywordArgumentCompletionUtil
 		}
 	}
 
-	private static void addKeywordArgumentVariantsForCallable(@NotNull final PyCallExpression callExpr, @NotNull final List<LookupElement> ret, @NotNull final Collection<String> parameterNames)
+	private static void addKeywordArgumentVariantsForCallable(@Nonnull final PyCallExpression callExpr, @Nonnull final List<LookupElement> ret, @Nonnull final Collection<String> parameterNames)
 	{
 		for(final String parameterName : parameterNames)
 		{
@@ -208,12 +208,12 @@ public class KeywordArgumentCompletionUtil
 		}
 	}
 
-	private static void addKeywordArgumentVariantsForFunction(@NotNull final PyCallExpression callExpr,
-			@NotNull final List<LookupElement> ret,
-			@NotNull final Collection<PyCallable> visited,
-			@NotNull final PyFunction function,
-			@NotNull final List<PyParameter> parameters,
-			@NotNull final TypeEvalContext context)
+	private static void addKeywordArgumentVariantsForFunction(@Nonnull final PyCallExpression callExpr,
+			@Nonnull final List<LookupElement> ret,
+			@Nonnull final Collection<PyCallable> visited,
+			@Nonnull final PyFunction function,
+			@Nonnull final List<PyParameter> parameters,
+			@Nonnull final TypeEvalContext context)
 	{
 		boolean needSelf = function.getContainingClass() != null && function.getModifier() != PyFunction.Modifier.STATICMETHOD;
 		final KwArgParameterCollector collector = new KwArgParameterCollector(needSelf, ret);
@@ -328,7 +328,7 @@ public class KeywordArgumentCompletionUtil
 		private final PyParameter myKwArgs;
 		private boolean kwArgsTransit = true;
 
-		public KwArgFromStatementCallCollector(List<LookupElement> ret, @NotNull PyParameter kwArgs)
+		public KwArgFromStatementCallCollector(List<LookupElement> ret, @Nonnull PyParameter kwArgs)
 		{
 			myRet = ret;
 			this.myKwArgs = kwArgs;

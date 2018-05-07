@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.util.containers.MultiMap;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
@@ -26,7 +26,7 @@ import com.jetbrains.python.psi.PyRecursiveElementVisitor;
  */
 class PyRecursiveElementVisitorWithResult extends PyRecursiveElementVisitor
 {
-	@NotNull
+	@Nonnull
 	protected final MultiMap<PyClass, PyElement> myResult;
 
 	PyRecursiveElementVisitorWithResult()

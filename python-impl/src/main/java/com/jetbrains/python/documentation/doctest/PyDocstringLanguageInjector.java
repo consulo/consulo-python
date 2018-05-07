@@ -17,7 +17,7 @@ package com.jetbrains.python.documentation.doctest;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
@@ -37,7 +37,7 @@ import com.jetbrains.python.psi.PyStringLiteralUtil;
 public class PyDocstringLanguageInjector implements LanguageInjector
 {
 	@Override
-	public void getLanguagesToInject(@NotNull final PsiLanguageInjectionHost host, @NotNull final InjectedLanguagePlaces injectionPlacesRegistrar)
+	public void getLanguagesToInject(@Nonnull final PsiLanguageInjectionHost host, @Nonnull final InjectedLanguagePlaces injectionPlacesRegistrar)
 	{
 		if(!(host instanceof PyStringLiteralExpression))
 		{

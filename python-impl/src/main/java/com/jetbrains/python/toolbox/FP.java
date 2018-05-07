@@ -17,7 +17,7 @@
 package com.jetbrains.python.toolbox;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.*;
 
@@ -39,8 +39,8 @@ public class FP {
    * @param source list to process
    * @return list of mapped values.
    */
-  @NotNull
-  public static <S, R> Iterable<R> map(@NotNull final Lambda1<S, R> lambda, @NotNull final Iterable<S> source) {
+  @Nonnull
+  public static <S, R> Iterable<R> map(@Nonnull final Lambda1<S, R> lambda, @Nonnull final Iterable<S> source) {
 
     return new Iterable<R>() {
       final Iterator<S> feeder = source.iterator();
@@ -66,8 +66,8 @@ public class FP {
   /**
    * Convenience form of {@link #map(Lambda1, Iterable)}.
    */
-  @NotNull
-  public static <S, R> Iterable<R> map(@NotNull final Lambda1<S, R> lambda, @NotNull final S[] source) {
+  @Nonnull
+  public static <S, R> Iterable<R> map(@Nonnull final Lambda1<S, R> lambda, @Nonnull final S[] source) {
     return map(lambda, Arrays.asList(source));
   }
 
@@ -75,7 +75,7 @@ public class FP {
   /**
    * Same as {@link #map}, but non-lazy an returns a modifiable List.
    */
-  public static <S, R> List<R> mapList(@NotNull final Lambda1<S, R> lambda, @NotNull final Iterable<S> source) {
+  public static <S, R> List<R> mapList(@Nonnull final Lambda1<S, R> lambda, @Nonnull final Iterable<S> source) {
     List<R> ret = new ArrayList<R>(source instanceof Collection? ((Collection)source).size() : 10);
     for (R what : map(lambda, source)) ret.add(what);
     return ret;
@@ -91,7 +91,7 @@ public class FP {
    * @param <AccT> 'accumulator' type; can be same as ItemT, or reasonably different (consider ItemT=String and AccT=StringBuilder)
    * @return value of the accumulator after all the list is processed.
    */
-  public static <AccT, ItemT> AccT fold(@NotNull Lambda2<AccT, ItemT, AccT> lambda, @NotNull Iterable<ItemT> source, @NotNull final AccT unit) {
+  public static <AccT, ItemT> AccT fold(@Nonnull Lambda2<AccT, ItemT, AccT> lambda, @Nonnull Iterable<ItemT> source, @Nonnull final AccT unit) {
     AccT ret = unit;
     for (ItemT item : source) ret = lambda.apply(ret, item);
     return ret;
@@ -106,7 +106,7 @@ public class FP {
    * @param <AccT> 'accumulator' type
    * @return value of the accumulator after all the list is processed.
    */
-  public static <AccT, ItemT> AccT foldr(@NotNull Lambda2<ItemT, AccT, AccT> lambda, @NotNull Iterable<ItemT> source, @NotNull final AccT unit) {
+  public static <AccT, ItemT> AccT foldr(@Nonnull Lambda2<ItemT, AccT, AccT> lambda, @Nonnull Iterable<ItemT> source, @Nonnull final AccT unit) {
     AccT ret = unit;
     for (ItemT item : source) ret = lambda.apply(item, ret);
     return ret;

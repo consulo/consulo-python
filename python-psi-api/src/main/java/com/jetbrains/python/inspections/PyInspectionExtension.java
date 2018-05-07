@@ -17,7 +17,8 @@ package com.jetbrains.python.inspections;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -51,22 +52,22 @@ public abstract class PyInspectionExtension
 		return null;
 	}
 
-	public boolean ignoreMethodParameters(@NotNull PyFunction function)
+	public boolean ignoreMethodParameters(@Nonnull PyFunction function)
 	{
 		return false;
 	}
 
-	public boolean ignorePackageNameInRequirements(@NotNull PyQualifiedExpression importedExpression)
+	public boolean ignorePackageNameInRequirements(@Nonnull PyQualifiedExpression importedExpression)
 	{
 		return false;
 	}
 
-	public boolean ignoreUnresolvedReference(@NotNull PyElement node, @NotNull PsiReference reference)
+	public boolean ignoreUnresolvedReference(@Nonnull PyElement node, @Nonnull PsiReference reference)
 	{
 		return false;
 	}
 
-	public boolean ignoreUnresolvedMember(@NotNull PyType type, @NotNull String name)
+	public boolean ignoreUnresolvedMember(@Nonnull PyType type, @Nonnull String name)
 	{
 		return false;
 	}
@@ -78,7 +79,7 @@ public abstract class PyInspectionExtension
 	 * @param context    type eval to be used
 	 * @return true if ignore
 	 */
-	public boolean ignoreProtectedSymbol(@NotNull final PyReferenceExpression expression, @NotNull final TypeEvalContext context)
+	public boolean ignoreProtectedSymbol(@Nonnull final PyReferenceExpression expression, @Nonnull final TypeEvalContext context)
 	{
 		return false;
 	}

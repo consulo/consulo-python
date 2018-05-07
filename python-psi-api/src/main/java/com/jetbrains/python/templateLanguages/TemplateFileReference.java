@@ -31,8 +31,8 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiFileSystemItemUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.psi.WeakFileReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 
@@ -40,7 +40,7 @@ import java.util.Collection;
  * @author yole
  */
 public class TemplateFileReference extends WeakFileReference {
-  public TemplateFileReference(@NotNull FileReferenceSet fileReferenceSet, TextRange range, int index, String text) {
+  public TemplateFileReference(@Nonnull FileReferenceSet fileReferenceSet, TextRange range, int index, String text) {
     super(fileReferenceSet, range, index, text);
   }
 
@@ -51,7 +51,7 @@ public class TemplateFileReference extends WeakFileReference {
   }
 
   @Override
-  public PsiElement bindToElement(@NotNull PsiElement element, boolean absolute) throws IncorrectOperationException {
+  public PsiElement bindToElement(@Nonnull PsiElement element, boolean absolute) throws IncorrectOperationException {
     if (!(element instanceof PsiFileSystemItem)) {
       throw new IncorrectOperationException("Cannot bind to element, should be instanceof PsiFileSystemItem: " + element);
     }

@@ -1,6 +1,7 @@
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
@@ -18,7 +19,7 @@ public abstract class PySequenceExpressionImpl extends PyElementImpl implements 
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode child)
+	public void deleteChildInternal(@Nonnull ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getElements()))
 		{
@@ -27,7 +28,7 @@ public abstract class PySequenceExpressionImpl extends PyElementImpl implements 
 		super.deleteChildInternal(child);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyExpression[] getElements()
 	{
 		return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);

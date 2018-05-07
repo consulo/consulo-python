@@ -17,7 +17,7 @@
 package com.jetbrains.python.codeInsight;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.options.BeanConfigurable;
 import com.intellij.openapi.options.Configurable;
 

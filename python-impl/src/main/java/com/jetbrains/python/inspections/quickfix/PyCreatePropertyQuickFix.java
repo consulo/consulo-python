@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -42,13 +43,13 @@ public class PyCreatePropertyQuickFix implements LocalQuickFix
 		myAccessDirection = dir;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("QFIX.create.property");
 	}
 
-	public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 	{
 		final PsiElement element = descriptor.getPsiElement();
 		if(element instanceof PyQualifiedExpression)

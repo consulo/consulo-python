@@ -20,8 +20,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.*;
 
@@ -236,7 +236,7 @@ public class PyBlockEvaluator {
     return value instanceof List ? (List) value : null;
   }
 
-  @NotNull
+  @Nonnull
   public List<String> getValueAsStringList(String name) {
     Object value = myNamespace.get(name);
     if (value instanceof List) {
@@ -258,7 +258,7 @@ public class PyBlockEvaluator {
     return myVisitedFiles;
   }
 
-  @NotNull
+  @Nonnull
   public List<PyExpression> getDeclarations(String name) {
     List<PyExpression> expressions = myDeclarations.get(name);
     return expressions != null ? expressions : Collections.<PyExpression>emptyList();

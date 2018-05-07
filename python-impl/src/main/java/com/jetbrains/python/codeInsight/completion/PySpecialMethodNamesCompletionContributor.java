@@ -20,7 +20,8 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.AutoCompletionContext;
 import com.intellij.codeInsight.completion.AutoCompletionDecision;
@@ -64,7 +65,7 @@ public class PySpecialMethodNamesCompletionContributor extends CompletionContrib
 		extend(CompletionType.BASIC, psiElement().withLanguage(PythonLanguage.getInstance()).and(psiElement().inside(psiElement(PyFunction.class).inside(psiElement(PyClass.class)))).and(psiElement()
 				.afterLeaf("def")), new CompletionProvider()
 		{
-			public void addCompletions(@NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result)
+			public void addCompletions(@Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result)
 			{
 				LanguageLevel languageLevel = LanguageLevel.forElement(parameters.getOriginalFile());
 				for(Map.Entry<String, PyNames.BuiltinDescription> entry : PyNames.getBuiltinMethods(languageLevel).entrySet())

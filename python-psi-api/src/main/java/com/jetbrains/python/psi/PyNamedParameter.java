@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.StubBasedPsiElement;
@@ -43,7 +44,7 @@ public interface PyNamedParameter extends PyParameter, PsiNamedElement, PsiNameI
 	 * @param includeDefaultValue if true, include the default value after an " = ".
 	 * @return Canonical representation of parameter. Includes asterisks for *param and **param, and name.
 	 */
-	@NotNull
+	@Nonnull
 	String getRepr(boolean includeDefaultValue);
 
 	@Nullable

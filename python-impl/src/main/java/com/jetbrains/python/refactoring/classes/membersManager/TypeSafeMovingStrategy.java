@@ -18,7 +18,8 @@ package com.jetbrains.python.refactoring.classes.membersManager;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
@@ -31,13 +32,13 @@ import com.jetbrains.python.refactoring.classes.PyClassRefactoringUtil;
  */
 class TypeSafeMovingStrategy<T extends PyElement>
 {
-	@NotNull
+	@Nonnull
 	private final PyClass myFrom;
-	@NotNull
+	@Nonnull
 	private final MembersManager<T> myManager;
-	@NotNull
+	@Nonnull
 	private final Collection<PyMemberInfo<T>> myMemberInfoCollection;
-	@NotNull
+	@Nonnull
 	private final PyClass[] myTo;
 
 	/**
@@ -52,16 +53,16 @@ class TypeSafeMovingStrategy<T extends PyElement>
 			"unchecked",
 			"rawtypes"
 	}) //We check types at runtime
-	static void moveCheckingTypesAtRunTime(@NotNull final PyClass from,
-			@NotNull final MembersManager<?> manager,
-			@NotNull final Collection<PyMemberInfo<PyElement>> memberInfoCollection,
-			@NotNull final PyClass... to)
+	static void moveCheckingTypesAtRunTime(@Nonnull final PyClass from,
+			@Nonnull final MembersManager<?> manager,
+			@Nonnull final Collection<PyMemberInfo<PyElement>> memberInfoCollection,
+			@Nonnull final PyClass... to)
 	{
 		manager.checkElementTypes((Collection) MembersManager.fetchElements(memberInfoCollection));
 		new TypeSafeMovingStrategy(from, manager, memberInfoCollection, to).moveTyped();
 	}
 
-	private TypeSafeMovingStrategy(@NotNull final PyClass from, @NotNull final MembersManager<T> manager, @NotNull final Collection<PyMemberInfo<T>> memberInfoCollection, @NotNull final PyClass[] to)
+	private TypeSafeMovingStrategy(@Nonnull final PyClass from, @Nonnull final MembersManager<T> manager, @Nonnull final Collection<PyMemberInfo<T>> memberInfoCollection, @Nonnull final PyClass[] to)
 	{
 		myFrom = from;
 		myManager = manager;

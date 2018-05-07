@@ -29,12 +29,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.apache.xmlrpc.XmlRpcException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.lookup.LookupManager;
@@ -150,7 +151,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	private final String myTitle;
 	private final String myWorkingDir;
 	private final Consumer<String> myRerunAction;
-	@NotNull
+	@Nonnull
 	private Sdk mySdk;
 	private GeneralCommandLine myGeneralCommandLine;
 	protected int[] myPorts;
@@ -161,7 +162,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	private final PyConsoleType myConsoleType;
 	private Map<String, String> myEnvironmentVariables;
 	private String myCommandLine;
-	@NotNull
+	@Nonnull
 	private final PyConsoleOptions.PyConsoleSettings myConsoleSettings;
 	private String[] myStatementsToExecute = ArrayUtil.EMPTY_STRING_ARRAY;
 
@@ -173,13 +174,13 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	private String myConsoleTitle = null;
 	private PythonConsoleView myConsoleView;
 
-	public PydevConsoleRunnerImpl(@NotNull final Project project,
-			@NotNull Sdk sdk,
-			@NotNull final PyConsoleType consoleType,
+	public PydevConsoleRunnerImpl(@Nonnull final Project project,
+			@Nonnull Sdk sdk,
+			@Nonnull final PyConsoleType consoleType,
 			@Nullable final String workingDir,
 			Map<String, String> environmentVariables,
-			@NotNull PyConsoleOptions.PyConsoleSettings settingsProvider,
-			@NotNull Consumer<String> rerunAction,
+			@Nonnull PyConsoleOptions.PyConsoleSettings settingsProvider,
+			@Nonnull Consumer<String> rerunAction,
 			String... statementsToExecute)
 	{
 		myProject = project;
@@ -276,7 +277,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		ProgressManager.getInstance().run(new Task.Backgroundable(myProject, "Connecting to Console", false)
 		{
 			@Override
-			public void run(@NotNull final ProgressIndicator indicator)
+			public void run(@Nonnull final ProgressIndicator indicator)
 			{
 				indicator.setText("Connecting to console...");
 				connect(myStatementsToExecute);
@@ -300,7 +301,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		UIUtil.invokeLaterIfNeeded(() -> ProgressManager.getInstance().run(new Task.Backgroundable(myProject, "Connecting to Console", false)
 		{
 			@Override
-			public void run(@NotNull final ProgressIndicator indicator)
+			public void run(@Nonnull final ProgressIndicator indicator)
 			{
 				indicator.setText("Connecting to console...");
 				try
@@ -390,12 +391,12 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		return ports;
 	}
 
-	protected GeneralCommandLine createCommandLine(@NotNull final Sdk sdk, @NotNull final Map<String, String> environmentVariables, String workingDir, int[] ports)
+	protected GeneralCommandLine createCommandLine(@Nonnull final Sdk sdk, @Nonnull final Map<String, String> environmentVariables, String workingDir, int[] ports)
 	{
 		return doCreateConsoleCmdLine(sdk, environmentVariables, workingDir, ports, PythonHelper.CONSOLE);
 	}
 
-	@NotNull
+	@Nonnull
 	protected GeneralCommandLine doCreateConsoleCmdLine(Sdk sdk, Map<String, String> environmentVariables, String workingDir, int[] ports, PythonHelper helper)
 	{
 		GeneralCommandLine cmd = PythonCommandLineState.createPythonCommandLine(myProject, new PythonConsoleRunParams(myConsoleSettings, workingDir, sdk, environmentVariables), false, PtyCommandLine
@@ -658,9 +659,9 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		{
 			myConsoleTitle = new ConsoleTitleGen(myProject, myTitle)
 			{
-				@NotNull
+				@Nonnull
 				@Override
-				protected List<String> getActiveConsoles(@NotNull String consoleTitle)
+				protected List<String> getActiveConsoles(@Nonnull String consoleTitle)
 				{
 					PythonConsoleToolWindow toolWindow = PythonConsoleToolWindow.getInstance(myProject);
 					if(toolWindow != null && toolWindow.getToolWindow() != null)
@@ -992,7 +993,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	protected PydevConsoleExecuteActionHandler createExecuteActionHandler()
 	{
 		myConsoleExecuteActionHandler = new PydevConsoleExecuteActionHandler(myConsoleView, myProcessHandler, myPydevConsoleCommunication);
@@ -1063,7 +1064,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		new Task.Backgroundable(myProject, "Restarting Console", true)
 		{
 			@Override
-			public void run(@NotNull ProgressIndicator indicator)
+			public void run(@Nonnull ProgressIndicator indicator)
 			{
 				if(myProcessHandler != null)
 				{
@@ -1165,8 +1166,8 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		final XDebugSession session = XDebuggerManager.getInstance(myProject).
 				startSessionAndShowTab("Python Console Debugger", PythonIcons.Python.Python, null, true, new XDebugProcessStarter()
 				{
-					@NotNull
-					public XDebugProcess start(@NotNull final XDebugSession session)
+					@Nonnull
+					public XDebugProcess start(@Nonnull final XDebugSession session)
 					{
 						PythonDebugLanguageConsoleView debugConsoleView = new PythonDebugLanguageConsoleView(myProject, mySdk);
 
@@ -1237,7 +1238,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		private Sdk mySdk;
 		private Map<String, String> myEnvironmentVariables;
 
-		public PythonConsoleRunParams(@NotNull PyConsoleOptions.PyConsoleSettings consoleSettings, @NotNull String workingDir, @NotNull Sdk sdk, @NotNull Map<String, String> envs)
+		public PythonConsoleRunParams(@Nonnull PyConsoleOptions.PyConsoleSettings consoleSettings, @Nonnull String workingDir, @Nonnull Sdk sdk, @Nonnull Map<String, String> envs)
 		{
 			myConsoleSettings = consoleSettings;
 			myWorkingDir = workingDir;

@@ -20,8 +20,8 @@ import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.lang.BracePair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -38,7 +38,7 @@ public class PyBraceMatcher implements PairedBraceMatcher {
     return PAIRS;
   }
 
-  public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
+  public boolean isPairedBracesAllowedBeforeType(@Nonnull IElementType lbraceType, @Nullable IElementType contextType) {
     return
       PyTokenTypes.WHITESPACE_OR_LINEBREAK.contains(contextType) ||
       contextType == PyTokenTypes.END_OF_LINE_COMMENT ||

@@ -18,8 +18,9 @@ package com.jetbrains.python.psi.types;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyClass;
@@ -29,7 +30,7 @@ import com.jetbrains.python.psi.PyClass;
  */
 public class PyClassMembersProviderBase implements PyClassMembersProvider
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PyCustomMember> getMembers(PyClassType clazz, PsiElement location, TypeEvalContext typeEvalContext)
 	{

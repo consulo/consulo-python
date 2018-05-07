@@ -18,7 +18,8 @@ package com.jetbrains.python.console.completion;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
@@ -71,7 +72,7 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 		myAllowRemoteResolve = allowRemoteResolve;
 	}
 
-	@NotNull
+	@Nonnull
 	public ResolveResult[] multiResolve(boolean incompleteCode)
 	{
 		if(!myAllowRemoteResolve)
@@ -142,7 +143,7 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 		return pyStatement instanceof PyExpressionStatement ? ((PyExpressionStatement) pyStatement).getExpression() : null;
 	}
 
-	@NotNull
+	@Nonnull
 	public Object[] getVariants()
 	{
 		Map<String, LookupElement> variants = Maps.newHashMap();

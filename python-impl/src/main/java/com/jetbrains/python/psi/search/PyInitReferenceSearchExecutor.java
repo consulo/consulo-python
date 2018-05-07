@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.search;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
@@ -30,13 +32,12 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
-  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull final Processor<PsiReference> consumer) {
+  public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<PsiReference> consumer) {
     PsiElement element = queryParameters.getElementToSearch();
     if (!(element instanceof PyFunction)) {
       return;

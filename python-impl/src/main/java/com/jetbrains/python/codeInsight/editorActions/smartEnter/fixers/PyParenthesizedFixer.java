@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
@@ -36,7 +36,7 @@ public class PyParenthesizedFixer extends PyFixer<PyParenthesizedExpression>
 	}
 
 	@Override
-	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyParenthesizedExpression expression) throws IncorrectOperationException
+	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyParenthesizedExpression expression) throws IncorrectOperationException
 	{
 		final PsiElement lastChild = expression.getLastChild();
 		if(lastChild != null && !")".equals(lastChild.getText()))

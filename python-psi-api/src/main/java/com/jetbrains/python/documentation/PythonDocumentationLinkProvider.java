@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.documentation;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;

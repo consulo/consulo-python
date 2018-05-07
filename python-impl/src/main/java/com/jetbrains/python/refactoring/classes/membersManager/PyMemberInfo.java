@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.refactoring.classMembers.MemberInfoBase;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
@@ -26,7 +27,7 @@ import com.jetbrains.python.psi.PyElement;
  */
 public class PyMemberInfo<T extends PyElement> extends MemberInfoBase<T>
 {
-	@NotNull
+	@Nonnull
 	private final MembersManager<T> myMembersManager;
 	private final boolean myCouldBeAbstract;
 
@@ -39,11 +40,11 @@ public class PyMemberInfo<T extends PyElement> extends MemberInfoBase<T>
 	 *                        TODO: use primitive instead? "Implemeneted" has nothing to do with python duck-typing
 	 * @param membersManager  manager that knows how to handle this member
 	 */
-	PyMemberInfo(@NotNull final T member,
+	PyMemberInfo(@Nonnull final T member,
 			final boolean isStatic,
-			@NotNull final String displayName,
+			@Nonnull final String displayName,
 			@Nullable final Boolean overrides,
-			@NotNull final MembersManager<T> membersManager,
+			@Nonnull final MembersManager<T> membersManager,
 			final boolean couldBeAbstract)
 	{
 		super(member);
@@ -54,7 +55,7 @@ public class PyMemberInfo<T extends PyElement> extends MemberInfoBase<T>
 		myCouldBeAbstract = couldBeAbstract;
 	}
 
-	@NotNull
+	@Nonnull
 	MembersManager<T> getMembersManager()
 	{
 		return myMembersManager;
@@ -87,7 +88,7 @@ public class PyMemberInfo<T extends PyElement> extends MemberInfoBase<T>
 	 * @param destinationClass destination class to check
 	 * @return true if conflict.
 	 */
-	public boolean hasConflict(@NotNull final PyClass destinationClass)
+	public boolean hasConflict(@Nonnull final PyClass destinationClass)
 	{
 		return myMembersManager.hasConflict(getMember(), destinationClass);
 	}

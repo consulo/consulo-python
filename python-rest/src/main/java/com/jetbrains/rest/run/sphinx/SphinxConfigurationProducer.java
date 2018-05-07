@@ -31,8 +31,8 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.rest.RestFile;
 import com.jetbrains.rest.run.RestRunConfiguration;
 import com.jetbrains.rest.run.RestRunConfigurationType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -90,7 +90,7 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
   @Nullable
   @Override
   protected RunnerAndConfigurationSettings findExistingByElement(Location location,
-                                                                 @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
+                                                                 @Nonnull List<RunnerAndConfigurationSettings> existingConfigurations,
                                                                  ConfigurationContext context) {
     PsiElement element = location.getPsiElement();
     if (!(element instanceof PsiDirectory)) return null;

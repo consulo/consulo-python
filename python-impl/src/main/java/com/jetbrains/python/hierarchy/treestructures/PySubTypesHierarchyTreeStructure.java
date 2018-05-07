@@ -18,7 +18,7 @@ package com.jetbrains.python.hierarchy.treestructures;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
@@ -42,13 +42,13 @@ public class PySubTypesHierarchyTreeStructure extends HierarchyTreeStructure
 		super(project, baseDescriptor);
 	}
 
-	public PySubTypesHierarchyTreeStructure(@NotNull final PyClass cl)
+	public PySubTypesHierarchyTreeStructure(@Nonnull final PyClass cl)
 	{
 		super(cl.getProject(), new PyHierarchyNodeDescriptor(null, cl, true));
 	}
 
-	@NotNull
-	protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor)
+	@Nonnull
+	protected Object[] buildChildren(@Nonnull HierarchyNodeDescriptor descriptor)
 	{
 		final List<PyHierarchyNodeDescriptor> res = new ArrayList<PyHierarchyNodeDescriptor>();
 		final PsiElement element = ((PyHierarchyNodeDescriptor) descriptor).getPsiElement();

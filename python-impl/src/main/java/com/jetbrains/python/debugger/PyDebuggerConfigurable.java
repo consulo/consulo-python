@@ -20,7 +20,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -52,7 +52,7 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
     return "reference.idesettings.debugger.python";
   }
 
-  @NotNull
+  @Nonnull
   public String getId() {
     return getHelpTopic();
   }

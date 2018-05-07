@@ -27,7 +27,7 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.inspections.quickfix.RedundantParenthesesQuickFix;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 
@@ -41,17 +41,17 @@ public class PyRedundantParenthesesInspection extends PyInspection {
   public boolean myIgnorePercOperator = false;
   public boolean myIgnoreTupleInReturn = false;
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.redundant.parentheses");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session, myIgnorePercOperator, myIgnoreTupleInReturn);
   }
 
@@ -59,8 +59,8 @@ public class PyRedundantParenthesesInspection extends PyInspection {
     private final boolean myIgnorePercOperator;
     private final boolean myIgnoreTupleInReturn;
 
-    public Visitor(@NotNull ProblemsHolder holder,
-                   @NotNull LocalInspectionToolSession session,
+    public Visitor(@Nonnull ProblemsHolder holder,
+                   @Nonnull LocalInspectionToolSession session,
                    boolean ignorePercOperator,
                    boolean ignoreTupleInReturn) {
       super(holder, session);

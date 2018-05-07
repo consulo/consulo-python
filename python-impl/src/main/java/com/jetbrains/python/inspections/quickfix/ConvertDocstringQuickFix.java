@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -27,7 +29,6 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -36,17 +37,17 @@ import org.jetbrains.annotations.NotNull;
  * For consistency, always use """triple double quotes""" around docstrings.
  */
 public class ConvertDocstringQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.convert.single.quoted.docstring");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement expression = descriptor.getPsiElement();
     if (expression instanceof PyStringLiteralExpression && expression.isWritable()) {
       PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

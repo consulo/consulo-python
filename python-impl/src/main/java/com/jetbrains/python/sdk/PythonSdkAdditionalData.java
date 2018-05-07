@@ -20,10 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
@@ -151,7 +153,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData
 		}
 	}
 
-	public void save(@NotNull final Element rootElement)
+	public void save(@Nonnull final Element rootElement)
 	{
 		savePaths(rootElement, myAddedPaths, PATHS_ADDED_BY_USER_ROOT, PATH_ADDED_BY_USER);
 		savePaths(rootElement, myExcludedPaths, PATHS_REMOVED_BY_USER_ROOT, PATH_REMOVED_BY_USER);
@@ -178,7 +180,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData
 		return myFlavor;
 	}
 
-	@NotNull
+	@Nonnull
 	public static PythonSdkAdditionalData load(Sdk sdk, @Nullable Element element)
 	{
 		final PythonSdkAdditionalData data = new PythonSdkAdditionalData(PythonSdkFlavor.getFlavor(sdk.getHomePath()));
@@ -188,7 +190,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData
 		return data;
 	}
 
-	protected static void load(@Nullable Element element, @NotNull PythonSdkAdditionalData data)
+	protected static void load(@Nullable Element element, @Nonnull PythonSdkAdditionalData data)
 	{
 		data.setAddedPaths(collectPaths(loadStringsList(element, PATHS_ADDED_BY_USER_ROOT, PATH_ADDED_BY_USER)));
 		data.setExcludedPaths(collectPaths(loadStringsList(element, PATHS_REMOVED_BY_USER_ROOT, PATH_REMOVED_BY_USER)));
@@ -198,7 +200,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData
 		}
 	}
 
-	protected static Set<SimpleSdkRoot> collectPaths(@NotNull List<String> paths)
+	protected static Set<SimpleSdkRoot> collectPaths(@Nonnull List<String> paths)
 	{
 		final Set<SimpleSdkRoot> files = Sets.newHashSet();
 		for(String path : paths)
@@ -227,7 +229,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData
 		final List<String> paths = new LinkedList<String>();
 		if(element != null)
 		{
-			@NotNull final List list = element.getChildren(rootName);
+			@Nonnull final List list = element.getChildren(rootName);
 			for(Object o : list)
 			{
 				paths.add(((Element) o).getAttribute(attrName).getValue());

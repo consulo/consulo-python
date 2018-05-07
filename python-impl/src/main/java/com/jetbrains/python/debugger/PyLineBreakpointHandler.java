@@ -16,12 +16,12 @@
 
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 
 public class PyLineBreakpointHandler extends AbstractLineBreakpointHandler {
 
-  public PyLineBreakpointHandler(@NotNull final PyDebugProcess debugProcess) {
+  public PyLineBreakpointHandler(@Nonnull final PyDebugProcess debugProcess) {
     super(PyLineBreakpointType.class, debugProcess);
   }
 }

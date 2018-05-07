@@ -16,9 +16,9 @@
 
 package com.jetbrains.rest.run;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
@@ -54,7 +54,7 @@ public class RestRunConfigurationType implements ConfigurationType {
     return RestFileType.INSTANCE.getIcon();
   }
 
-  @NotNull
+  @Nonnull
   public String getId() {
     return myId;
   }
@@ -66,7 +66,7 @@ public class RestRunConfigurationType implements ConfigurationType {
   private static abstract class RestConfigurationFactory extends ConfigurationFactory {
     private final String myName;
 
-    public RestConfigurationFactory(@NotNull final ConfigurationType type, @NotNull String name) {
+    public RestConfigurationFactory(@Nonnull final ConfigurationType type, @Nonnull String name) {
       super(type);
       myName = name;
     }

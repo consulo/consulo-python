@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import java.io.IOException;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.stubs.StubInputStream;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
@@ -27,14 +27,14 @@ public class PyNamedTupleStubType extends CustomTargetExpressionStubType<PyNamed
 {
 	@Nullable
 	@Override
-	public PyNamedTupleStub createStub(@NotNull PyTargetExpression psi)
+	public PyNamedTupleStub createStub(@Nonnull PyTargetExpression psi)
 	{
 		return PyNamedTupleStubImpl.create(psi);
 	}
 
 	@Nullable
 	@Override
-	public PyNamedTupleStub deserializeStub(@NotNull StubInputStream stream) throws IOException
+	public PyNamedTupleStub deserializeStub(@Nonnull StubInputStream stream) throws IOException
 	{
 		return PyNamedTupleStubImpl.deserialize(stream);
 	}

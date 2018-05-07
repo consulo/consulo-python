@@ -28,8 +28,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunContentExecutor;
@@ -111,7 +111,7 @@ public class SphinxBaseCommand
 		}
 	}
 
-	public void execute(@NotNull final Module module)
+	public void execute(@Nonnull final Module module)
 	{
 		final Project project = module.getProject();
 

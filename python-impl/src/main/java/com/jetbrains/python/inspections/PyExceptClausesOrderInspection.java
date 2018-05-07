@@ -18,7 +18,7 @@ package com.jetbrains.python.inspections;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -38,16 +38,16 @@ import com.jetbrains.python.psi.PyTryExceptStatement;
 public class PyExceptClausesOrderInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.bad.except.clauses.order");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}

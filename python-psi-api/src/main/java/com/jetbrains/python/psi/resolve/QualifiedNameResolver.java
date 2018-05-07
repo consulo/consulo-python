@@ -20,8 +20,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -29,11 +29,11 @@ import java.util.List;
  * @author yole
  */
 public interface QualifiedNameResolver {
-  QualifiedNameResolver fromElement(@NotNull PsiElement foothold);
+  QualifiedNameResolver fromElement(@Nonnull PsiElement foothold);
 
-  QualifiedNameResolver fromModule(@NotNull Module module);
+  QualifiedNameResolver fromModule(@Nonnull Module module);
 
-  QualifiedNameResolver fromSdk(@NotNull Project project, @NotNull Sdk sdk);
+  QualifiedNameResolver fromSdk(@Nonnull Project project, @Nonnull Sdk sdk);
 
   QualifiedNameResolver withAllModules();
 
@@ -45,13 +45,13 @@ public interface QualifiedNameResolver {
 
   QualifiedNameResolver withPlainDirectories();
 
-  @NotNull
+  @Nonnull
   List<PsiElement> resultsAsList();
 
   @Nullable
   PsiElement firstResult();
 
-  @NotNull
+  @Nonnull
   <T extends PsiElement> List<T> resultsOfType(Class<T> clazz);
 
   @Nullable

@@ -16,11 +16,12 @@
 
 package com.jetbrains.python.debugger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author traff
@@ -32,13 +33,13 @@ public abstract class PySignatureCacheManager {
     return ServiceManager.getService(project, PySignatureCacheManager.class);
   }
 
-  public abstract void recordSignature(@NotNull PySignature signature);
+  public abstract void recordSignature(@Nonnull PySignature signature);
 
   @Nullable
-  public abstract String findParameterType(@NotNull PyFunction function, @NotNull String name);
+  public abstract String findParameterType(@Nonnull PyFunction function, @Nonnull String name);
 
   @Nullable
-  public abstract PySignature findSignature(@NotNull PyFunction function);
+  public abstract PySignature findSignature(@Nonnull PyFunction function);
 
   public abstract void clearCache();
 }

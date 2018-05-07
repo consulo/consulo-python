@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -26,7 +28,6 @@ import com.intellij.util.containers.Stack;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.editor.PythonEnterHandler;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -34,17 +35,17 @@ import org.jetbrains.annotations.NotNull;
  * QuickFix to remove all unnecessary backslashes in expression
  */
 public class RemoveUnnecessaryBackslashQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.remove.unnecessary.backslash");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement problemElement = descriptor.getPsiElement();
     if (problemElement != null) {
       PsiElement parent = PsiTreeUtil.getParentOfType(problemElement, PythonEnterHandler.IMPLICIT_WRAP_CLASSES);

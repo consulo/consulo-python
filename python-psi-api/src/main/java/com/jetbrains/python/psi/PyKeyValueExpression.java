@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public interface PyKeyValueExpression extends PyExpression {
   PyKeyValueExpression[] EMPTY_ARRAY = new PyKeyValueExpression[0]; 
 
-  @NotNull
+  @Nonnull
   PyExpression getKey();
 
   @Nullable

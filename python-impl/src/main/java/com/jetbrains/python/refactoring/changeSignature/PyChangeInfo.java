@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.Language;
 import com.intellij.refactoring.changeSignature.ChangeInfo;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyParameter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : ktisha
@@ -86,7 +87,7 @@ public class PyChangeInfo implements ChangeInfo {
   public PyFunction getMethod() {
     return myFunction;
   }
-  @NotNull
+  @Nonnull
   @Override
   public PyParameterInfo[] getNewParameters() {
     return myNewParameterInfo;

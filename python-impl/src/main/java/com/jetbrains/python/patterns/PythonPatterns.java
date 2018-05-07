@@ -17,7 +17,8 @@ package com.jetbrains.python.patterns;
 
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.patterns.InitialPatternCondition;
 import com.intellij.patterns.PlatformPatterns;

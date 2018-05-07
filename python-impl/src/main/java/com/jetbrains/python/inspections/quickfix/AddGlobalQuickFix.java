@@ -26,24 +26,24 @@ import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author oleg
  */
 public class AddGlobalQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.add.global");
   }
 
   @NonNls
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     PsiElement problemElt = descriptor.getPsiElement();
     if (problemElt instanceof PyReferenceExpression) {
       final PyReferenceExpression expression = (PyReferenceExpression)problemElt;

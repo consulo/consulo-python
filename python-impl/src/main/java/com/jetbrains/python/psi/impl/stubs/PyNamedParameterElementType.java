@@ -21,8 +21,9 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
@@ -47,30 +48,30 @@ public class PyNamedParameterElementType extends PyStubElementType<PyNamedParame
 		this("NAMED_PARAMETER");
 	}
 
-	public PyNamedParameterElementType(@NotNull @NonNls String debugName)
+	public PyNamedParameterElementType(@Nonnull @NonNls String debugName)
 	{
 		super(debugName);
 	}
 
-	public PyNamedParameter createPsi(@NotNull final PyNamedParameterStub stub)
+	public PyNamedParameter createPsi(@Nonnull final PyNamedParameterStub stub)
 	{
 		return new PyNamedParameterImpl(stub);
 	}
 
-	@NotNull
-	public PyNamedParameterStub createStub(@NotNull final PyNamedParameter psi, final StubElement parentStub)
+	@Nonnull
+	public PyNamedParameterStub createStub(@Nonnull final PyNamedParameter psi, final StubElement parentStub)
 	{
 		return new PyNamedParameterStubImpl(psi.getName(), psi.isPositionalContainer(), psi.isKeywordContainer(), psi.hasDefaultValue(), psi.getTypeCommentAnnotation(), parentStub,
 				getStubElementType());
 	}
 
-	@NotNull
-	public PsiElement createElement(@NotNull final ASTNode node)
+	@Nonnull
+	public PsiElement createElement(@Nonnull final ASTNode node)
 	{
 		return new PyNamedParameterImpl(node);
 	}
 
-	public void serialize(@NotNull final PyNamedParameterStub stub, @NotNull final StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull final PyNamedParameterStub stub, @Nonnull final StubOutputStream dataStream) throws IOException
 	{
 		dataStream.writeName(stub.getName());
 
@@ -91,8 +92,8 @@ public class PyNamedParameterElementType extends PyStubElementType<PyNamedParame
 		dataStream.writeName(stub.getTypeComment());
 	}
 
-	@NotNull
-	public PyNamedParameterStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException
+	@Nonnull
+	public PyNamedParameterStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(dataStream.readName());
 		byte flags = dataStream.readByte();

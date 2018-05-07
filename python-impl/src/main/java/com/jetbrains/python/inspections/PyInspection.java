@@ -17,8 +17,9 @@ package com.jetbrains.python.inspections;
 
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -30,7 +31,7 @@ import com.jetbrains.python.psi.impl.PyFileImpl;
 public abstract class PyInspection extends LocalInspectionTool
 {
 	@Pattern(VALID_ID_PATTERN)
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID()
 	{
@@ -39,14 +40,14 @@ public abstract class PyInspection extends LocalInspectionTool
 	}
 
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getGroupDisplayName()
 	{
 		return PyBundle.message("INSP.GROUP.python");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getShortName()
 	{
@@ -60,7 +61,7 @@ public abstract class PyInspection extends LocalInspectionTool
 	}
 
 	@Override
-	public boolean isSuppressedFor(@NotNull PsiElement element)
+	public boolean isSuppressedFor(@Nonnull PsiElement element)
 	{
 		final PsiFile file = element.getContainingFile();
 		if(file instanceof PyFileImpl && !((PyFileImpl) file).isAcceptedFor(this.getClass()))

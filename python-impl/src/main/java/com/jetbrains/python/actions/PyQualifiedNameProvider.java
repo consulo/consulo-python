@@ -17,7 +17,7 @@ package com.jetbrains.python.actions;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.ide.actions.QualifiedNameProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;

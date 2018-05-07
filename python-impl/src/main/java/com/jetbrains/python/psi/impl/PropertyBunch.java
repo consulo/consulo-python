@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.impl;
 
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.python.PyNames;
@@ -48,19 +48,19 @@ public abstract class PropertyBunch<MType>
 	protected String myDoc;
 	protected PyTargetExpression mySite;
 
-	@NotNull
+	@Nonnull
 	public Maybe<MType> getGetter()
 	{
 		return myGetter;
 	}
 
-	@NotNull
+	@Nonnull
 	public Maybe<MType> getSetter()
 	{
 		return mySetter;
 	}
 
-	@NotNull
+	@Nonnull
 	public Maybe<MType> getDeleter()
 	{
 		return myDeleter;
@@ -77,7 +77,7 @@ public abstract class PropertyBunch<MType>
 	 * @param ref a reference as an argument in property() call
 	 * @return value we want to store (resolved callable, name, etc)
 	 */
-	@NotNull
+	@Nonnull
 	protected abstract Maybe<MType> translate(@Nullable PyExpression ref);
 
 	@Nullable
@@ -105,7 +105,7 @@ public abstract class PropertyBunch<MType>
 		return null;
 	}
 
-	private static boolean isBuiltinFile(@NotNull PsiFile file)
+	private static boolean isBuiltinFile(@Nonnull PsiFile file)
 	{
 		final String name = file.getName();
 		return PyBuiltinCache.BUILTIN_FILE.equals(name) || PyBuiltinCache.BUILTIN_FILE_3K.equals(name);

@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import consulo.python.module.extension.PyModuleExtension;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.ExecutionBundle;
@@ -144,7 +146,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 		};
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public final SettingsEditor<T> getConfigurationEditor()
 	{
@@ -490,7 +492,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 * @return string spec or null if spec calculation is impossible
 	 */
 	@Nullable
-	public String getTestSpec(@NotNull final Location<?> location, @NotNull final AbstractTestProxy failedTest)
+	public String getTestSpec(@Nonnull final Location<?> location, @Nonnull final AbstractTestProxy failedTest)
 	{
 		PsiElement element = location.getPsiElement();
 		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
@@ -523,7 +525,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 * @return working directory to run, never null, does its best to guess which dir to use.
 	 * Unlike {@link #getWorkingDirectory()} it does not simply take directory from config.
 	 */
-	@NotNull
+	@Nonnull
 	public String getWorkingDirectorySafe()
 	{
 		final String result = StringUtil.isEmpty(myWorkingDirectory) ? getProject().getBasePath() : myWorkingDirectory;
@@ -568,7 +570,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	/**
 	 * Adds test specs (like method, class, script, etc) to list of runner parameters.
 	 */
-	public void addTestSpecsAsParameters(@NotNull final ParamsGroup paramsGroup, @NotNull final List<String> testSpecs)
+	public void addTestSpecsAsParameters(@Nonnull final ParamsGroup paramsGroup, @Nonnull final List<String> testSpecs)
 	{
 		// By default we simply add them as arguments
 		paramsGroup.addParameters(testSpecs);

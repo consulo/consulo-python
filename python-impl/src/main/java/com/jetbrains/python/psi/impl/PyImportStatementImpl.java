@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -61,7 +61,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		super(stub, nodeType);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyImportElement[] getImportElements()
 	{
 		final PyImportStatementStub stub = getStub();
@@ -79,7 +79,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode child)
+	public void deleteChildInternal(@Nonnull ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getImportElements()))
 		{
@@ -88,7 +88,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		super.deleteChildInternal(child);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getFullyQualifiedObjectNames()
 	{
@@ -101,8 +101,8 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	 * @param elements import elements
 	 * @return list of qualified names
 	 */
-	@NotNull
-	public static List<String> getImportElementNames(@NotNull final PyImportElement... elements)
+	@Nonnull
+	public static List<String> getImportElementNames(@Nonnull final PyImportElement... elements)
 	{
 		final List<String> result = new ArrayList<>(elements.length);
 		for(final PyImportElement element : elements)
@@ -116,7 +116,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		return result;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Iterable<PyElement> iterateNames()
 	{
@@ -124,9 +124,9 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		return resolved != null ? ImmutableList.<PyElement>of(resolved) : Collections.<PyElement>emptyList();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<RatedResolveResult> multiResolveName(@NotNull String name)
+	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
 	{
 		final PyImportElement[] elements = getImportElements();
 		if(elements.length == 1)

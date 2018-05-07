@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -37,11 +37,11 @@ import com.jetbrains.python.psi.resolve.RatedResolveResult;
  */
 public class PyStructuralType implements PyType
 {
-	@NotNull
+	@Nonnull
 	private final Set<String> myAttributes;
 	private final boolean myInferredFromUsages;
 
-	public PyStructuralType(@NotNull Set<String> attributes, boolean inferredFromUsages)
+	public PyStructuralType(@Nonnull Set<String> attributes, boolean inferredFromUsages)
 	{
 		myAttributes = attributes;
 		myInferredFromUsages = inferredFromUsages;
@@ -49,7 +49,7 @@ public class PyStructuralType implements PyType
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		return Collections.emptyList();
 	}

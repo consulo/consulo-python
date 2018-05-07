@@ -22,7 +22,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.impl.PyFileImpl;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class PyAnnotatingVisitor implements Annotator {
     }
   }
 
-  public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+  public void annotate(@Nonnull PsiElement psiElement, @Nonnull AnnotationHolder holder) {
     final PsiFile file = psiElement.getContainingFile();
     for(PyAnnotator annotator: myAnnotators) {
       if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(annotator.getClass())) continue;

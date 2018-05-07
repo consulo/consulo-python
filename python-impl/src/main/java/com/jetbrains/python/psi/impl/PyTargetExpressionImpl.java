@@ -22,10 +22,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.extensions.Extensions;
@@ -130,7 +130,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 		return getName();
 	}
 
-	public PsiElement setName(@NotNull String name) throws IncorrectOperationException
+	public PsiElement setName(@Nonnull String name) throws IncorrectOperationException
 	{
 		final ASTNode oldNameElement = getNameElement();
 		if(oldNameElement != null)
@@ -141,7 +141,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 		return this;
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		if(!TypeEvalStack.mayEvaluate(this))
 		{
@@ -369,7 +369,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 	}
 
 	@Nullable
-	private PyType getTypeFromIteration(@NotNull TypeEvalContext context)
+	private PyType getTypeFromIteration(@Nonnull TypeEvalContext context)
 	{
 		PyExpression target = null;
 		PyExpression source = null;
@@ -413,7 +413,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 	}
 
 	@Nullable
-	public static PyType getIterationType(@Nullable PyType iterableType, @Nullable PyExpression source, @NotNull PsiElement anchor, @NotNull TypeEvalContext context)
+	public static PyType getIterationType(@Nullable PyType iterableType, @Nullable PyExpression source, @Nonnull PsiElement anchor, @Nonnull TypeEvalContext context)
 	{
 		if(iterableType instanceof PyTupleType)
 		{
@@ -473,7 +473,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 	}
 
 	@Nullable
-	private static PyFunction findMethodByName(@NotNull PyType type, @NotNull String name, @NotNull TypeEvalContext context)
+	private static PyFunction findMethodByName(@Nonnull PyType type, @Nonnull String name, @Nonnull TypeEvalContext context)
 	{
 		final PyResolveContext resolveContext = PyResolveContext.defaultContext().withTypeEvalContext(context);
 		final List<? extends RatedResolveResult> results = type.resolveMember(name, null, AccessDirection.READ, resolveContext);
@@ -490,7 +490,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 	}
 
 	@Nullable
-	public static PyType getContextSensitiveType(@NotNull PyFunction function, @NotNull TypeEvalContext context, @Nullable PyExpression source)
+	public static PyType getContextSensitiveType(@Nonnull PyFunction function, @Nonnull TypeEvalContext context, @Nullable PyExpression source)
 	{
 		return function.getCallType(source, Collections.<PyExpression, PyNamedParameter>emptyMap(), context);
 	}
@@ -558,7 +558,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 
 	@Nullable
 	@Override
-	public PsiElement resolveAssignedValue(@NotNull PyResolveContext resolveContext)
+	public PsiElement resolveAssignedValue(@Nonnull PyResolveContext resolveContext)
 	{
 		final TypeEvalContext context = resolveContext.getTypeEvalContext();
 		if(context.maySwitchToAST(this))
@@ -676,14 +676,14 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiReference getReference()
 	{
 		return getReference(PyResolveContext.defaultContext());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiPolyVariantReference getReference(final PyResolveContext resolveContext)
 	{
@@ -694,7 +694,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 		return new PyTargetReference(this, resolveContext);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public SearchScope getUseScope()
 	{

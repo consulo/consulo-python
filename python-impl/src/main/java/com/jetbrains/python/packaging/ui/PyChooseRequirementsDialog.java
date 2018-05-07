@@ -19,11 +19,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -37,7 +37,7 @@ public class PyChooseRequirementsDialog extends DialogWrapper
 {
 	private final ElementsChooser<PyRequirement> myRequirementsChooser;
 
-	public PyChooseRequirementsDialog(@NotNull Project project, @NotNull List<PyRequirement> requirements)
+	public PyChooseRequirementsDialog(@Nonnull Project project, @Nonnull List<PyRequirement> requirements)
 	{
 		super(project, false);
 		setTitle("Choose Packages to Install");
@@ -45,7 +45,7 @@ public class PyChooseRequirementsDialog extends DialogWrapper
 		myRequirementsChooser = new ElementsChooser<PyRequirement>(true)
 		{
 			@Override
-			public String getItemText(@NotNull PyRequirement requirement)
+			public String getItemText(@Nonnull PyRequirement requirement)
 			{
 				return requirement.toString();
 			}

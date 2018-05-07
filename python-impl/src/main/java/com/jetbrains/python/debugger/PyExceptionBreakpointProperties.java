@@ -16,11 +16,12 @@
 
 package com.jetbrains.python.debugger;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.jetbrains.python.debugger.pydev.AddExceptionBreakpointCommand;
 import com.jetbrains.python.debugger.pydev.ExceptionBreakpointCommand;
 import com.jetbrains.python.debugger.pydev.RemoteDebugger;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author traff
@@ -38,7 +39,7 @@ public class PyExceptionBreakpointProperties extends ExceptionBreakpointProperti
   public PyExceptionBreakpointProperties() {
   }
 
-  public PyExceptionBreakpointProperties(@NotNull final String exception) {
+  public PyExceptionBreakpointProperties(@Nonnull final String exception) {
     myException = exception;
   }
 

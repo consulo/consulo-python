@@ -21,8 +21,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgFile;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgOption;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgSection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class BuildoutPsiUtil {
   private static final String DJANGO_RECIPE = "djangorecipe";
 
   @Nullable
-  public static BuildoutCfgSection getDjangoSection(@NotNull BuildoutCfgFile configFile) {
+  public static BuildoutCfgSection getDjangoSection(@Nonnull BuildoutCfgFile configFile) {
     List<String> parts = configFile.getParts();
     for (String part : parts) {
       final BuildoutCfgSection section = configFile.findSectionByName(part);
@@ -45,12 +45,12 @@ public class BuildoutPsiUtil {
     return null;
   }
 
-  public static boolean isInBuildoutSection(@NotNull PsiElement element) {
+  public static boolean isInBuildoutSection(@Nonnull PsiElement element) {
     BuildoutCfgSection section = PsiTreeUtil.getParentOfType(element, BuildoutCfgSection.class);
     return section != null && "buildout".equals(section.getHeaderName());
   }
 
-  public static boolean isAssignedTo(@NotNull PsiElement element, @NotNull String name) {
+  public static boolean isAssignedTo(@Nonnull PsiElement element, @Nonnull String name) {
     BuildoutCfgOption option = PsiTreeUtil.getParentOfType(element, BuildoutCfgOption.class);
     return (option != null && name.equals(option.getKey()));
   }

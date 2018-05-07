@@ -16,14 +16,15 @@
 
 package com.jetbrains.python.buildout.config.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author traff
  */
 public class BuildoutCfgKey extends BuildoutCfgPsiElement {
-  public BuildoutCfgKey(@NotNull final ASTNode node) {
+  public BuildoutCfgKey(@Nonnull final ASTNode node) {
     super(node);
   }
 

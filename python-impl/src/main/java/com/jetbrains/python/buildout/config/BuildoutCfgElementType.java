@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.buildout.config;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 
 public class BuildoutCfgElementType extends IElementType {
-    public BuildoutCfgElementType(@NotNull @NonNls String s) {
+    public BuildoutCfgElementType(@Nonnull @NonNls String s) {
         super(s, BuildoutCfgLanguage.INSTANCE);
     }
 }

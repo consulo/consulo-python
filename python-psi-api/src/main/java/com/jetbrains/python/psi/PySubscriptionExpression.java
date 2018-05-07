@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -27,10 +27,10 @@ public interface PySubscriptionExpression extends PyQualifiedExpression, PyCallS
 	/**
 	 * @return For <code>spam[x][y][n]</code> will return <code>spam</code> regardless number of its dimensions
 	 */
-	@NotNull
+	@Nonnull
 	PyExpression getRootOperand();
 
-	@NotNull
+	@Nonnull
 	PyExpression getOperand();
 
 	@Nullable

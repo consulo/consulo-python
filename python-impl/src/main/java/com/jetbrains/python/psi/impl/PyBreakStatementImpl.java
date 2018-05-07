@@ -16,12 +16,14 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -42,7 +44,7 @@ public class PyBreakStatementImpl extends PyElementImpl implements PyBreakStatem
   }
 
   @Nullable
-  private static PyLoopStatement getLoopStatement(@NotNull PsiElement element) {
+  private static PyLoopStatement getLoopStatement(@Nonnull PsiElement element) {
     final PyLoopStatement loop = PsiTreeUtil.getParentOfType(element, PyLoopStatement.class);
     if (loop instanceof PyStatementWithElse) {
       final PyStatementWithElse stmt = (PyStatementWithElse)loop;

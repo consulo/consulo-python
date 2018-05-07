@@ -23,8 +23,8 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * User: catherine
@@ -43,17 +43,17 @@ public class ChainedComparisonsQuickFix implements LocalQuickFix {
     getInnerRight = getInner;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.chained.comparison");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement expression = descriptor.getPsiElement();
     if (expression != null && expression.isWritable()) {
       if (expression instanceof PyBinaryExpression) {

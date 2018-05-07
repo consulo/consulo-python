@@ -19,9 +19,9 @@ package com.jetbrains.python.buildout.config;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import icons.PythonIcons;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
@@ -37,17 +37,17 @@ public class BuildoutCfgFileType extends LanguageFileType {
     super(BuildoutCfgLanguage.INSTANCE);
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return NAME;
   }
 
-  @NotNull
+  @Nonnull
   public String getDescription() {
     return DESCRIPTION;
   }
 
-  @NotNull
+  @Nonnull
   public String getDefaultExtension() {
     return DEFAULT_EXTENSION;
   }

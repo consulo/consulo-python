@@ -5,8 +5,8 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
 import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.lang.parameterInfo.ParameterInfoUIContextEx;
@@ -664,7 +664,7 @@ public class PyParameterInfoTest extends LightMarkedTestCase
 		}
 
 		@Override
-		@NotNull
+		@Nonnull
 		public Editor getEditor()
 		{
 			return myEditor;

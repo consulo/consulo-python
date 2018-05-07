@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.editor;
 
+import javax.annotation.Nullable;
+
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
@@ -28,7 +30,6 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Joins lines sanely.

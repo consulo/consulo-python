@@ -19,8 +19,8 @@ import java.util.List;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringBundle;
@@ -40,7 +40,7 @@ public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyEleme
 	private static final String ABSTRACT_TITLE = RefactoringBundle.message("make.abstract");
 	private final boolean mySupportAbstract;
 
-	public PyMemberSelectionTable(@NotNull final List<PyMemberInfo<PyElement>> memberInfos, @Nullable final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> model, final boolean supportAbstract)
+	public PyMemberSelectionTable(@Nonnull final List<PyMemberInfo<PyElement>> memberInfos, @Nullable final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> model, final boolean supportAbstract)
 	{
 		super(memberInfos, model, (supportAbstract ? ABSTRACT_TITLE : null));
 		mySupportAbstract = supportAbstract;

@@ -18,8 +18,9 @@ package com.jetbrains.python.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.jetbrains.python.psi.PyIndentUtil;
 import com.jetbrains.python.psi.StructuredDocString;
 import com.jetbrains.python.toolbox.Substring;
@@ -34,7 +35,7 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 	private final String mySummary;
 	private final String myDescription;
 
-	public PlainDocString(@NotNull Substring content)
+	public PlainDocString(@Nonnull Substring content)
 	{
 		super(content);
 		final int firstNonEmpty = consumeEmptyLines(0);
@@ -65,7 +66,7 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return mySummary;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription()
 	{
@@ -78,14 +79,14 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getParameters()
 	{
 		return Collections.emptyList();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<Substring> getParameterSubstrings()
 	{
@@ -113,14 +114,14 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getKeywordArguments()
 	{
 		return Collections.emptyList();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<Substring> getKeywordArgumentSubstrings()
 	{
@@ -155,7 +156,7 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getRaisedExceptions()
 	{

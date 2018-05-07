@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.openapi.ui.Messages;
@@ -41,7 +41,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory
 {
 	@Override
-	public boolean canFindUsages(@NotNull PsiElement element)
+	public boolean canFindUsages(@Nonnull PsiElement element)
 	{
 		return element instanceof PyClass ||
 				(element instanceof PyFile && PyUtil.isPackage((PyFile) element)) ||
@@ -52,7 +52,7 @@ public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory
 
 	@Nullable
 	@Override
-	public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages)
+	public FindUsagesHandler createFindUsagesHandler(@Nonnull PsiElement element, boolean forHighlightUsages)
 	{
 		if(element instanceof PyImportedModule)
 		{

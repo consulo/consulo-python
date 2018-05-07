@@ -16,8 +16,9 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
@@ -61,7 +62,7 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
     return myContext != null && myContext.isValid() ? myContext : super.getContext();
   }
 
-  @NotNull
+  @Nonnull
   public FileViewProvider getViewProvider() {
     if(myViewProvider != null) return myViewProvider;
     return super.getViewProvider();

@@ -17,8 +17,8 @@ package com.jetbrains.python.debugger.containerview;
 
 import javax.swing.tree.TreePath;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
@@ -37,7 +37,7 @@ public class PyViewNumericContainerAction extends XDebuggerTreeActionBase
 {
 
 	@Override
-	protected void perform(XValueNodeImpl node, @NotNull String nodeName, AnActionEvent e)
+	protected void perform(XValueNodeImpl node, @Nonnull String nodeName, AnActionEvent e)
 	{
 		Project p = e.getProject();
 		if(p != null && node != null && node.getValueContainer() instanceof PyDebugValue && node.isComputed())

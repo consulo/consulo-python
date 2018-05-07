@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.psi.PyIndentUtil;
 
@@ -38,22 +39,22 @@ public class NumpyDocStringBuilder extends SectionBasedDocStringBuilder
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	protected String getDefaultParametersHeader()
 	{
 		return "Parameters";
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	protected String getDefaultReturnsHeader()
 	{
 		return "Returns";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected SectionBasedDocStringBuilder startSection(@NotNull String title)
+	protected SectionBasedDocStringBuilder startSection(@Nonnull String title)
 	{
 		super.startSection(title);
 		addLine(StringUtil.capitalize(title));
@@ -61,9 +62,9 @@ public class NumpyDocStringBuilder extends SectionBasedDocStringBuilder
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addParameter(@NotNull String name, @Nullable String type, @NotNull String description)
+	public SectionBasedDocStringBuilder addParameter(@Nonnull String name, @Nullable String type, @Nonnull String description)
 	{
 		if(type != null)
 		{
@@ -80,9 +81,9 @@ public class NumpyDocStringBuilder extends SectionBasedDocStringBuilder
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, @NotNull String type, @NotNull String description)
+	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, @Nonnull String type, @Nonnull String description)
 	{
 		if(name != null)
 		{

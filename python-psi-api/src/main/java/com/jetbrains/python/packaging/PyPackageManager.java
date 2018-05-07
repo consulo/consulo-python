@@ -18,8 +18,9 @@ package com.jetbrains.python.packaging;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -34,8 +35,8 @@ public abstract class PyPackageManager
 
 	public static final String USE_USER_SITE = "--user";
 
-	@NotNull
-	public static PyPackageManager getInstance(@NotNull Sdk sdk)
+	@Nonnull
+	public static PyPackageManager getInstance(@Nonnull Sdk sdk)
 	{
 		return PyPackageManagers.getInstance().forSdk(sdk);
 	}
@@ -44,26 +45,26 @@ public abstract class PyPackageManager
 
 	public abstract boolean hasManagement() throws ExecutionException;
 
-	public abstract void install(@NotNull String requirementString) throws ExecutionException;
+	public abstract void install(@Nonnull String requirementString) throws ExecutionException;
 
-	public abstract void install(@NotNull List<PyRequirement> requirements, @NotNull List<String> extraArgs) throws ExecutionException;
+	public abstract void install(@Nonnull List<PyRequirement> requirements, @Nonnull List<String> extraArgs) throws ExecutionException;
 
-	public abstract void uninstall(@NotNull List<PyPackage> packages) throws ExecutionException;
+	public abstract void uninstall(@Nonnull List<PyPackage> packages) throws ExecutionException;
 
 	public abstract void refresh();
 
-	@NotNull
-	public abstract String createVirtualEnv(@NotNull String destinationDir, boolean useGlobalSite) throws ExecutionException;
+	@Nonnull
+	public abstract String createVirtualEnv(@Nonnull String destinationDir, boolean useGlobalSite) throws ExecutionException;
 
 	@Nullable
 	public abstract List<PyPackage> getPackages();
 
-	@NotNull
+	@Nonnull
 	public abstract List<PyPackage> refreshAndGetPackages(boolean alwaysRefresh) throws ExecutionException;
 
 	@Nullable
-	public abstract List<PyRequirement> getRequirements(@NotNull Module module);
+	public abstract List<PyRequirement> getRequirements(@Nonnull Module module);
 
-	@NotNull
-	public abstract Set<PyPackage> getDependents(@NotNull PyPackage pkg) throws ExecutionException;
+	@Nonnull
+	public abstract Set<PyPackage> getDependents(@Nonnull PyPackage pkg) throws ExecutionException;
 }

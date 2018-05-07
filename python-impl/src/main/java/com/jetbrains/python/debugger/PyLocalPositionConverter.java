@@ -18,8 +18,8 @@ package com.jetbrains.python.debugger;
 
 import java.io.File;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -85,8 +85,8 @@ public class PyLocalPositionConverter implements PyPositionConverter
 		}
 	}
 
-	@NotNull
-	final public PySourcePosition create(@NotNull final String filePath, final int line)
+	@Nonnull
+	final public PySourcePosition create(@Nonnull final String filePath, final int line)
 	{
 		File file = new File(filePath);
 
@@ -100,13 +100,13 @@ public class PyLocalPositionConverter implements PyPositionConverter
 		}
 	}
 
-	@NotNull
-	public final PySourcePosition convertToPython(@NotNull final XSourcePosition position)
+	@Nonnull
+	public final PySourcePosition convertToPython(@Nonnull final XSourcePosition position)
 	{
 		return convertToPython(convertFilePath(position.getFile().getPath()), convertLocalLineToRemote(position.getFile(), position.getLine()));
 	}
 
-	@NotNull
+	@Nonnull
 	protected PySourcePosition convertToPython(String filePath, int line)
 	{
 		return new PyLocalSourcePosition(filePath, line);
@@ -134,7 +134,7 @@ public class PyLocalPositionConverter implements PyPositionConverter
 	}
 
 	@Nullable
-	public XSourcePosition convertFromPython(@NotNull final PySourcePosition position)
+	public XSourcePosition convertFromPython(@Nonnull final PySourcePosition position)
 	{
 		return createXSourcePosition(getVirtualFile(position.getFile()), position.getLine());
 	}

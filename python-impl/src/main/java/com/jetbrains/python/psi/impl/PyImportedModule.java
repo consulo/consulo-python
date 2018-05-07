@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -35,9 +35,9 @@ public class PyImportedModule extends LightElement
 {
 	@Nullable
 	private PyImportElement myImportElement;
-	@NotNull
+	@Nonnull
 	private final PyFile myContainingFile;
-	@NotNull
+	@Nonnull
 	private final QualifiedName myImportedPrefix;
 
 	/**
@@ -46,7 +46,7 @@ public class PyImportedModule extends LightElement
 	 * @param importedPrefix qualified name to resolve
 	 * @see ResolveImportUtil
 	 */
-	public PyImportedModule(@Nullable PyImportElement importElement, @NotNull PyFile containingFile, @NotNull QualifiedName importedPrefix)
+	public PyImportedModule(@Nullable PyImportElement importElement, @Nonnull PyFile containingFile, @Nonnull QualifiedName importedPrefix)
 	{
 		super(containingFile.getManager(), PythonLanguage.getInstance());
 		myImportElement = importElement;
@@ -54,14 +54,14 @@ public class PyImportedModule extends LightElement
 		myImportedPrefix = importedPrefix;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PyFile getContainingFile()
 	{
 		return myContainingFile;
 	}
 
-	@NotNull
+	@Nonnull
 	public QualifiedName getImportedPrefix()
 	{
 		return myImportedPrefix;
@@ -72,7 +72,7 @@ public class PyImportedModule extends LightElement
 		return "import " + myImportedPrefix;
 	}
 
-	public void accept(@NotNull PsiElementVisitor visitor)
+	public void accept(@Nonnull PsiElementVisitor visitor)
 	{
 		visitor.visitElement(this);
 	}
@@ -88,7 +88,7 @@ public class PyImportedModule extends LightElement
 		return "PyImportedModule:" + myImportedPrefix;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiElement getNavigationElement()
 	{
@@ -129,7 +129,7 @@ public class PyImportedModule extends LightElement
 	}
 
 	@Nullable
-	private static PsiElement resolve(PyImportElement importElement, @NotNull final QualifiedName prefix)
+	private static PsiElement resolve(PyImportElement importElement, @Nonnull final QualifiedName prefix)
 	{
 		final PsiElement resolved = ResolveImportUtil.resolveImportElement(importElement, prefix);
 		final PsiElement packageInit = PyUtil.turnDirIntoInit(resolved);

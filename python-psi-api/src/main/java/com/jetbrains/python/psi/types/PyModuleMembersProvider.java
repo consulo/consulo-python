@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.types;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;

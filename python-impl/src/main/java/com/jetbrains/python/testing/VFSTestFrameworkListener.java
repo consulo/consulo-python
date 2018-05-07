@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -70,7 +72,7 @@ public class VFSTestFrameworkListener
 		messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener.Adapter()
 		{
 			@Override
-			public void after(@NotNull List<? extends VFileEvent> events)
+			public void after(@Nonnull List<? extends VFileEvent> events)
 			{
 				for(VFileEvent event : events)
 				{
@@ -121,7 +123,7 @@ public class VFSTestFrameworkListener
 		myQueue = new MergingUpdateQueue("TestFrameworkChecker", 5000, true, null, application, null, Alarm.ThreadToUse.POOLED_THREAD);
 	}
 
-	public void updateAllTestFrameworks(@NotNull Sdk sdk)
+	public void updateAllTestFrameworks(@Nonnull Sdk sdk)
 	{
 		final Map<String, Boolean> whichInstalled = checkTestFrameworksInstalled(sdk, PyNames.PY_TEST, PyNames.NOSE_TEST, PyNames.AT_TEST);
 		ApplicationManager.getApplication().invokeLater(() -> {
@@ -137,7 +139,7 @@ public class VFSTestFrameworkListener
 		});
 	}
 
-	private void scheduleTestFrameworkCheck(@NotNull Sdk sdk, @NotNull String testPackageName)
+	private void scheduleTestFrameworkCheck(@Nonnull Sdk sdk, @Nonnull String testPackageName)
 	{
 		myQueue.queue(new Update(Pair.create(sdk, testPackageName))
 		{
@@ -149,7 +151,7 @@ public class VFSTestFrameworkListener
 		});
 	}
 
-	private void checkFrameworkInstalledAndUpdateSettings(@Nullable Sdk sdk, @NotNull String testPackageName)
+	private void checkFrameworkInstalledAndUpdateSettings(@Nullable Sdk sdk, @Nonnull String testPackageName)
 	{
 		final Boolean installed = checkTestFrameworkInstalled(sdk, testPackageName);
 		if(installed != null)
@@ -163,13 +165,13 @@ public class VFSTestFrameworkListener
 	 * @return null if we can't be sure
 	 */
 	@Contract("null, _ -> null")
-	private Boolean checkTestFrameworkInstalled(@Nullable Sdk sdk, @NotNull String testPackageName)
+	private Boolean checkTestFrameworkInstalled(@Nullable Sdk sdk, @Nonnull String testPackageName)
 	{
 		return checkTestFrameworksInstalled(sdk, testPackageName).get(testPackageName);
 	}
 
-	@NotNull
-	private Map<String, Boolean> checkTestFrameworksInstalled(@Nullable Sdk sdk, @NotNull String... testPackageNames)
+	@Nonnull
+	private Map<String, Boolean> checkTestFrameworksInstalled(@Nullable Sdk sdk, @Nonnull String... testPackageNames)
 	{
 		final Map<String, Boolean> result = new HashMap<>();
 		if(sdk == null || StringUtil.isEmptyOrSpaces(sdk.getHomePath()))
@@ -193,12 +195,12 @@ public class VFSTestFrameworkListener
 		return result;
 	}
 
-	private void setPyTestInstalled(boolean installed, @NotNull String sdkHome)
+	private void setPyTestInstalled(boolean installed, @Nonnull String sdkHome)
 	{
 		myService.SDK_TO_PYTEST.put(sdkHome, installed);
 	}
 
-	public boolean isPyTestInstalled(@NotNull Sdk sdk)
+	public boolean isPyTestInstalled(@Nonnull Sdk sdk)
 	{
 		final Boolean isInstalled = myService.SDK_TO_PYTEST.get(sdk.getHomePath());
 		if(isInstalled == null)
@@ -209,12 +211,12 @@ public class VFSTestFrameworkListener
 		return isInstalled;
 	}
 
-	private void setNoseTestInstalled(boolean installed, @NotNull String sdkHome)
+	private void setNoseTestInstalled(boolean installed, @Nonnull String sdkHome)
 	{
 		myService.SDK_TO_NOSETEST.put(sdkHome, installed);
 	}
 
-	public boolean isNoseTestInstalled(@NotNull Sdk sdk)
+	public boolean isNoseTestInstalled(@Nonnull Sdk sdk)
 	{
 		final Boolean isInstalled = myService.SDK_TO_NOSETEST.get(sdk.getHomePath());
 		if(isInstalled == null)
@@ -225,12 +227,12 @@ public class VFSTestFrameworkListener
 		return isInstalled;
 	}
 
-	private void setAtTestInstalled(boolean installed, @NotNull String sdkHome)
+	private void setAtTestInstalled(boolean installed, @Nonnull String sdkHome)
 	{
 		myService.SDK_TO_ATTEST.put(sdkHome, installed);
 	}
 
-	public boolean isAtTestInstalled(@NotNull Sdk sdk)
+	public boolean isAtTestInstalled(@Nonnull Sdk sdk)
 	{
 		final Boolean isInstalled = myService.SDK_TO_ATTEST.get(sdk.getHomePath());
 		if(isInstalled == null)
@@ -241,7 +243,7 @@ public class VFSTestFrameworkListener
 		return isInstalled;
 	}
 
-	public void setTestFrameworkInstalled(boolean installed, @NotNull String sdkHome, @NotNull String name)
+	public void setTestFrameworkInstalled(boolean installed, @Nonnull String sdkHome, @Nonnull String name)
 	{
 		switch(name)
 		{

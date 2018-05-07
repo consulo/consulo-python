@@ -17,7 +17,8 @@ package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
 import static com.jetbrains.python.psi.PyUtil.sure;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
@@ -45,7 +46,7 @@ public class PyUnconditionalStatementPartFixer extends PyFixer<PyElement>
 	}
 
 	@Override
-	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyElement psiElement) throws IncorrectOperationException
+	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyElement psiElement) throws IncorrectOperationException
 	{
 		if(PyUtil.instanceOf(psiElement, PyElsePart.class, PyTryPart.class, PyFinallyPart.class))
 		{

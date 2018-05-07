@@ -17,7 +17,8 @@ package com.jetbrains.python.codeInsight.intentions;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -33,19 +34,19 @@ import com.jetbrains.python.psi.impl.PyStatementListImpl;
  */
 public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAction
 {
-	@NotNull
+	@Nonnull
 	public String getText()
 	{
 		return PyBundle.message("INTN.replace.list.comprehensions.with.for");
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.replace.list.comprehensions.with.for");
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -70,7 +71,7 @@ public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAct
 	}
 
 	@Override
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		PyListCompExpression expression = PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyListCompExpression.class);
 		if(expression == null)

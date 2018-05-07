@@ -15,9 +15,11 @@
  */
 package com.jetbrains.python.inspections;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -45,21 +47,21 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyBroadExceptionInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.too.broad.exception.clauses");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
 
-	public static boolean equalsException(@NotNull PyClass cls, @NotNull TypeEvalContext context)
+	public static boolean equalsException(@Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 	{
 		final PyType type = context.getType(cls);
 		return ("Exception".equals(cls.getName()) || "BaseException".equals(cls.getName())) && type != null && type.isBuiltin();
@@ -67,7 +69,7 @@ public class PyBroadExceptionInspection extends PyInspection
 
 	private static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}

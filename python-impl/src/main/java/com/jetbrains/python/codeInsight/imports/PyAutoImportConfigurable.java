@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;

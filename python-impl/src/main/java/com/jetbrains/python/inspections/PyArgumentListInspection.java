@@ -20,9 +20,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -52,15 +54,15 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyArgumentListInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.incorrect.call.arguments");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, final boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -164,7 +166,7 @@ public class PyArgumentListInspection extends PyInspection
 		inspectPyArgumentList(node, holder, context, 0);
 	}
 
-	private static boolean decoratedClassInitCall(@Nullable PyExpression callee, @NotNull PyFunction function)
+	private static boolean decoratedClassInitCall(@Nullable PyExpression callee, @Nonnull PyFunction function)
 	{
 		if(callee instanceof PyReferenceExpression && PyUtil.isInit(function))
 		{
@@ -208,7 +210,7 @@ public class PyArgumentListInspection extends PyInspection
 		}
 	}
 
-	private static Set<String> getDuplicateKeywordArguments(@NotNull PyArgumentList node)
+	private static Set<String> getDuplicateKeywordArguments(@Nonnull PyArgumentList node)
 	{
 		final Set<String> keywordArgumentNames = new HashSet<>();
 		final Set<String> results = new HashSet<>();
@@ -227,7 +229,7 @@ public class PyArgumentListInspection extends PyInspection
 		return results;
 	}
 
-	private static void highlightParametersMismatch(@NotNull PyArgumentList node, @NotNull ProblemsHolder holder, @NotNull PyCallExpression.PyArgumentsMapping mapping)
+	private static void highlightParametersMismatch(@Nonnull PyArgumentList node, @Nonnull ProblemsHolder holder, @Nonnull PyCallExpression.PyArgumentsMapping mapping)
 	{
 		final Set<String> duplicateKeywords = getDuplicateKeywordArguments(node);
 		for(PyExpression argument : mapping.getUnmappedArguments())

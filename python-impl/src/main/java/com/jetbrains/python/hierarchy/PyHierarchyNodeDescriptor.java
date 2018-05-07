@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.hierarchy;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import consulo.annotations.RequiredDispatchThread;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
@@ -36,7 +36,7 @@ import com.jetbrains.python.psi.PyFunction;
  */
 public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor
 {
-	public PyHierarchyNodeDescriptor(final NodeDescriptor parentDescriptor, @NotNull final PsiElement element, final boolean isBase)
+	public PyHierarchyNodeDescriptor(final NodeDescriptor parentDescriptor, @Nonnull final PsiElement element, final boolean isBase)
 	{
 		super(element.getProject(), parentDescriptor, element, isBase);
 	}

@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
@@ -59,17 +59,17 @@ public class PyJavaClassType implements PyClassLikeType
 	}
 
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@NotNull final String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull final String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		return resolveMember(name, location, direction, resolveContext, true);
 	}
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name,
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
 			@Nullable PyExpression location,
-			@NotNull AccessDirection direction,
-			@NotNull PyResolveContext resolveContext,
+			@Nonnull AccessDirection direction,
+			@Nonnull PyResolveContext resolveContext,
 			boolean inherited)
 	{
 		final PsiMethod[] methods = myClass.findMethodsByName(name, inherited);
@@ -128,7 +128,7 @@ public class PyJavaClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@NotNull TypeEvalContext context)
+	public PyType getReturnType(@Nonnull TypeEvalContext context)
 	{
 		if(myDefinition)
 		{
@@ -139,14 +139,14 @@ public class PyJavaClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
 	{
 		return getReturnType(context);
 	}
 
 	@Nullable
 	@Override
-	public List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context)
+	public List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
 	{
 		return null;
 	}
@@ -170,9 +170,9 @@ public class PyJavaClassType implements PyClassLikeType
 		return myClass.getQualifiedName();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<PyClassLikeType> getSuperClassTypes(@NotNull TypeEvalContext context)
+	public List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context)
 	{
 		final List<PyClassLikeType> result = new ArrayList<>();
 		for(PsiClass cls : myClass.getSupers())
@@ -183,7 +183,7 @@ public class PyJavaClassType implements PyClassLikeType
 	}
 
 	@Override
-	public void visitMembers(@NotNull final Processor<PsiElement> processor, final boolean inherited, @NotNull TypeEvalContext context)
+	public void visitMembers(@Nonnull final Processor<PsiElement> processor, final boolean inherited, @Nonnull TypeEvalContext context)
 	{
 		for(PsiMethod method : myClass.getAllMethods())
 		{
@@ -209,9 +209,9 @@ public class PyJavaClassType implements PyClassLikeType
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Set<String> getMemberNames(boolean inherited, @NotNull TypeEvalContext context)
+	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
 	{
 		final Set<String> result = new LinkedHashSet<>();
 
@@ -239,9 +239,9 @@ public class PyJavaClassType implements PyClassLikeType
 		return result;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<PyClassLikeType> getAncestorTypes(@NotNull final TypeEvalContext context)
+	public List<PyClassLikeType> getAncestorTypes(@Nonnull final TypeEvalContext context)
 	{
 		final List<PyClassLikeType> result = new ArrayList<>();
 
@@ -275,7 +275,7 @@ public class PyJavaClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyClassLikeType getMetaClassType(@NotNull TypeEvalContext context, boolean inherited)
+	public PyClassLikeType getMetaClassType(@Nonnull TypeEvalContext context, boolean inherited)
 	{
 		return null;
 	}

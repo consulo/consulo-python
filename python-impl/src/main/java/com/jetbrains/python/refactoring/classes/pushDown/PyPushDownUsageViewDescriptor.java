@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.refactoring.classes.pushDown;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.usageView.UsageViewBundle;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.jetbrains.python.psi.PyClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Dennis.Ushakov
@@ -35,7 +36,7 @@ public class PyPushDownUsageViewDescriptor implements UsageViewDescriptor {
     myClass = clazz;
   }
 
-  @NotNull
+  @Nonnull
   public PsiElement[] getElements() {
     return new PsiElement[] {myClass};
   }

@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -44,41 +44,41 @@ import com.jetbrains.python.psi.resolve.PyResolveUtil;
  */
 public class PyShadowingNamesInspection extends PyInspection
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return "Shadowing names from outer scopes";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
 
 	private static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
 
 		@Override
-		public void visitPyClass(@NotNull PyClass node)
+		public void visitPyClass(@Nonnull PyClass node)
 		{
 			processElement(node);
 		}
 
 		@Override
-		public void visitPyFunction(@NotNull PyFunction node)
+		public void visitPyFunction(@Nonnull PyFunction node)
 		{
 			processElement(node);
 		}
 
 		@Override
-		public void visitPyNamedParameter(@NotNull PyNamedParameter node)
+		public void visitPyNamedParameter(@Nonnull PyNamedParameter node)
 		{
 			if(node.isSelf())
 			{
@@ -88,7 +88,7 @@ public class PyShadowingNamesInspection extends PyInspection
 		}
 
 		@Override
-		public void visitPyTargetExpression(@NotNull PyTargetExpression node)
+		public void visitPyTargetExpression(@Nonnull PyTargetExpression node)
 		{
 			if(!node.isQualified())
 			{
@@ -96,7 +96,7 @@ public class PyShadowingNamesInspection extends PyInspection
 			}
 		}
 
-		private void processElement(@NotNull PsiNameIdentifierOwner element)
+		private void processElement(@Nonnull PsiNameIdentifierOwner element)
 		{
 			final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
 			if(owner instanceof PyClass)

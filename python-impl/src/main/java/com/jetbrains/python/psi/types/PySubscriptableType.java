@@ -17,7 +17,7 @@
 package com.jetbrains.python.psi.types;
 
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * @author yole

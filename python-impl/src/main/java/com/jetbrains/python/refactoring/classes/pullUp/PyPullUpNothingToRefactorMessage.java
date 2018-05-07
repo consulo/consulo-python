@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.pullUp;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.refactoring.RefactoringBundle;
@@ -31,11 +32,11 @@ import com.jetbrains.python.psi.PyClass;
 class PyPullUpNothingToRefactorMessage
 {
 
-	@NotNull
+	@Nonnull
 	private final Project myProject;
-	@NotNull
+	@Nonnull
 	private final Editor myEditor;
-	@NotNull
+	@Nonnull
 	private final PyClass myClassUnderRefactoring;
 
 	/**
@@ -43,7 +44,7 @@ class PyPullUpNothingToRefactorMessage
 	 * @param editor                editor to be used
 	 * @param classUnderRefactoring class user refactors
 	 */
-	PyPullUpNothingToRefactorMessage(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PyClass classUnderRefactoring)
+	PyPullUpNothingToRefactorMessage(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PyClass classUnderRefactoring)
 	{
 		myProject = project;
 		myEditor = editor;

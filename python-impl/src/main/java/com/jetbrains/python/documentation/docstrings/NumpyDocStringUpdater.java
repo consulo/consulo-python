@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.jetbrains.python.documentation.docstrings.SectionBasedDocString.Section;
 import com.jetbrains.python.toolbox.Substring;
 
@@ -24,24 +25,24 @@ import com.jetbrains.python.toolbox.Substring;
  */
 public class NumpyDocStringUpdater extends SectionBasedDocStringUpdater
 {
-	public NumpyDocStringUpdater(@NotNull SectionBasedDocString docString, @NotNull String minContentIndent)
+	public NumpyDocStringUpdater(@Nonnull SectionBasedDocString docString, @Nonnull String minContentIndent)
 	{
 		super(docString, minContentIndent);
 	}
 
 	@Override
-	protected void updateParamDeclarationWithType(@NotNull Substring nameSubstring, @NotNull String type)
+	protected void updateParamDeclarationWithType(@Nonnull Substring nameSubstring, @Nonnull String type)
 	{
 		insert(myOriginalDocString.getLine(nameSubstring.getEndLine()).trimRight().getEndOffset(), " : " + type);
 	}
 
 	@Override
-	protected int getSectionTitleLastLine(@NotNull Section section)
+	protected int getSectionTitleLastLine(@Nonnull Section section)
 	{
 		return getSectionStartLine(section) + 1;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected SectionBasedDocStringBuilder createBuilder()
 	{

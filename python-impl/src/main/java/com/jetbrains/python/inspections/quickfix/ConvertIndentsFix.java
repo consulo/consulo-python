@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeStyle.CodeStyleFacade;
@@ -25,7 +27,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -37,20 +38,20 @@ public class ConvertIndentsFix implements LocalQuickFix {
     myToSpaces = toSpaces;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return myToSpaces ? "Convert indents to spaces" : "Convert indents to tabs";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getFamilyName() {
     return "Convert indents";
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiFile file = descriptor.getPsiElement().getContainingFile();
     Document document = PsiDocumentManager.getInstance(project).getDocument(file);
     if (document != null) {

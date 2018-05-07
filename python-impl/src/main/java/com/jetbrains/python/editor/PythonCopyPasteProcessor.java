@@ -35,8 +35,8 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -132,8 +132,8 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return text;
   }
 
-  private static String getIndentText(@NotNull final PsiFile file,
-                                      @NotNull final Document document,
+  private static String getIndentText(@Nonnull final PsiFile file,
+                                      @Nonnull final Document document,
                                       int caretOffset,
                                       int lineNumber, int firstLineIndent) {
 
@@ -168,7 +168,7 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return indentText;
   }
 
-  private static int calculateIndentToRemove(@NotNull String text, @NotNull final CharFilter filter) {
+  private static int calculateIndentToRemove(@Nonnull String text, @Nonnull final CharFilter filter) {
     final List<String> strings = StringUtil.split(text, "\n", false);
     int minIndent = StringUtil.findFirst(text, filter);
     for (String  s : strings) {
@@ -179,7 +179,7 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return minIndent;
   }
 
-  private static boolean isApplicable(@NotNull final PsiFile file, @NotNull String text, int caretOffset) {
+  private static boolean isApplicable(@Nonnull final PsiFile file, @Nonnull String text, int caretOffset) {
     final boolean useTabs =
       CodeStyleSettingsManager.getSettings(file.getProject()).useTabCharacter(PythonFileType.INSTANCE);
     final PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
@@ -190,14 +190,14 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return false;
   }
 
-  private static boolean inStatementList(@NotNull final PsiFile file, int caretOffset) {
+  private static boolean inStatementList(@Nonnull final PsiFile file, int caretOffset) {
     final PsiElement element = file.findElementAt(caretOffset);
     return PsiTreeUtil.getParentOfType(element, PyStatementList.class) != null ||
            PsiTreeUtil.getParentOfType(element, PyFunction.class) != null ||
            PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
   }
 
-  private static boolean addLinebreak(@NotNull String text, @NotNull String toString, boolean useTabs) {
+  private static boolean addLinebreak(@Nonnull String text, @Nonnull String toString, boolean useTabs) {
     if ((text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1)
         && !text.endsWith("\n") && !StringUtil.isEmptyOrSpaces(toString))
       return true;

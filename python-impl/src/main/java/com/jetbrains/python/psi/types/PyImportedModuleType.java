@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiDirectory;
@@ -47,17 +47,17 @@ import com.jetbrains.python.psi.resolve.ResolveImportUtil;
  */
 public class PyImportedModuleType implements PyType
 {
-	@NotNull
+	@Nonnull
 	private PyImportedModule myImportedModule;
 
-	public PyImportedModuleType(@NotNull PyImportedModule importedModule)
+	public PyImportedModuleType(@Nonnull PyImportedModule importedModule)
 	{
 		myImportedModule = importedModule;
 	}
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		final PsiElement resolved = myImportedModule.resolve();
 		if(resolved != null)
@@ -125,7 +125,7 @@ public class PyImportedModuleType implements PyType
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	public PyImportedModule getImportedModule()
 	{
 		return myImportedModule;

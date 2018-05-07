@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.usageView.UsageInfo;
 import com.jetbrains.python.psi.PyClass;
 
@@ -27,16 +27,16 @@ import com.jetbrains.python.psi.PyClass;
  */
 class PyUsageInfo extends UsageInfo
 {
-	@NotNull
+	@Nonnull
 	private final PyClass myTo;
 
-	PyUsageInfo(@NotNull final PyClass to)
+	PyUsageInfo(@Nonnull final PyClass to)
 	{
 		super(to, true); //TODO: Make super generic and get rid of field?
 		myTo = to;
 	}
 
-	@NotNull
+	@Nonnull
 	public PyClass getTo()
 	{
 		return myTo;

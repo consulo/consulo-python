@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.templateLanguages.psi;
 
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A function call in a template file.

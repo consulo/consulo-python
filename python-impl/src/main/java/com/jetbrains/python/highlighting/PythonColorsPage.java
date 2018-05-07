@@ -18,10 +18,10 @@ package com.jetbrains.python.highlighting;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.application.options.colors.InspectionColorSettingsPage;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -77,7 +77,7 @@ public class PythonColorsPage implements ColorSettingsPage, InspectionColorSetti
     .put("kwarg", PyHighlighter.PY_KEYWORD_ARGUMENT)
     .build();
 
-  @NotNull
+  @Nonnull
   public String getDisplayName() {
     return "Python";
   }
@@ -86,24 +86,24 @@ public class PythonColorsPage implements ColorSettingsPage, InspectionColorSetti
     return PythonFileType.INSTANCE.getIcon();
   }
 
-  @NotNull
+  @Nonnull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
   }
 
-  @NotNull
+  @Nonnull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
+  @Nonnull
   public SyntaxHighlighter getHighlighter() {
     final SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(PythonFileType.INSTANCE, null, null);
     assert highlighter != null;
     return highlighter;
   }
 
-  @NotNull
+  @Nonnull
   public String getDemoText() {
     return
       "@<decorator>decorator</decorator>(param=1)\n" +

@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.navigation.NavigationUtil;
@@ -42,7 +43,7 @@ import com.jetbrains.python.psi.PyUtil;
 public class PyGotoSuperHandler implements CodeInsightActionHandler
 {
 
-	public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file)
+	public void invoke(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PsiFile file)
 	{
 		PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
 		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
@@ -96,7 +97,7 @@ public class PyGotoSuperHandler implements CodeInsightActionHandler
 		}
 	}
 
-	private static Collection<PyTargetExpression> getAllSuperAttributesByName(@NotNull final PyTargetExpression classAttr, PyClass pyClass)
+	private static Collection<PyTargetExpression> getAllSuperAttributesByName(@Nonnull final PyTargetExpression classAttr, PyClass pyClass)
 	{
 		final String name = classAttr.getName();
 		if(name == null)
@@ -115,7 +116,7 @@ public class PyGotoSuperHandler implements CodeInsightActionHandler
 		return result;
 	}
 
-	private static Collection<PyFunction> getAllSuperMethodsByName(@NotNull final PyFunction method, PyClass pyClass)
+	private static Collection<PyFunction> getAllSuperMethodsByName(@Nonnull final PyFunction method, PyClass pyClass)
 	{
 		final String name = method.getName();
 		if(name == null)

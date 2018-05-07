@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
@@ -70,7 +72,7 @@ public class PySdkUtil
 	 * @param command  command to execute and its arguments
 	 * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
 	 */
-	@NotNull
+	@Nonnull
 	public static ProcessOutput getProcessOutput(String homePath, @NonNls String[] command)
 	{
 		return getProcessOutput(homePath, command, -1);
@@ -85,19 +87,19 @@ public class PySdkUtil
 	 * @param timeout  how many milliseconds to wait until the process terminates; non-positive means inifinity.
 	 * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
 	 */
-	@NotNull
+	@Nonnull
 	public static ProcessOutput getProcessOutput(String homePath, @NonNls String[] command, final int timeout)
 	{
 		return getProcessOutput(homePath, command, null, timeout);
 	}
 
-	@NotNull
+	@Nonnull
 	public static ProcessOutput getProcessOutput(String homePath, @NonNls String[] command, @Nullable @NonNls Map<String, String> extraEnv, final int timeout)
 	{
 		return getProcessOutput(homePath, command, extraEnv, timeout, null, true);
 	}
 
-	@NotNull
+	@Nonnull
 	public static ProcessOutput getProcessOutput(String homePath,
 			@NonNls String[] command,
 			@Nullable @NonNls Map<String, String> extraEnv,
@@ -108,12 +110,12 @@ public class PySdkUtil
 		return getProcessOutput(new GeneralCommandLine(command), homePath, extraEnv, timeout, stdin, needEOFMarker);
 	}
 
-	public static ProcessOutput getProcessOutput(@NotNull GeneralCommandLine cmd, @Nullable String homePath, @Nullable @NonNls Map<String, String> extraEnv, int timeout)
+	public static ProcessOutput getProcessOutput(@Nonnull GeneralCommandLine cmd, @Nullable String homePath, @Nullable @NonNls Map<String, String> extraEnv, int timeout)
 	{
 		return getProcessOutput(cmd, homePath, extraEnv, timeout, null, true);
 	}
 
-	public static ProcessOutput getProcessOutput(@NotNull GeneralCommandLine cmd,
+	public static ProcessOutput getProcessOutput(@Nonnull GeneralCommandLine cmd,
 			@Nullable String homePath,
 			@Nullable @NonNls Map<String, String> extraEnv,
 			int timeout,
@@ -165,7 +167,7 @@ public class PySdkUtil
 		LOG.warn(e);
 		return new ProcessOutput()
 		{
-			@NotNull
+			@Nonnull
 			@Override
 			public String getStderr()
 			{
@@ -183,8 +185,8 @@ public class PySdkUtil
 		};
 	}
 
-	@NotNull
-	public static Map<String, String> mergeEnvVariables(@NotNull Map<String, String> environment, @NotNull Map<String, String> extraEnvironment)
+	@Nonnull
+	public static Map<String, String> mergeEnvVariables(@Nonnull Map<String, String> environment, @Nonnull Map<String, String> extraEnvironment)
 	{
 		final Map<String, String> result = new HashMap<>(environment);
 		for(Map.Entry<String, String> entry : extraEnvironment.entrySet())
@@ -221,7 +223,7 @@ public class PySdkUtil
 		}
 	}
 
-	public static boolean isElementInSkeletons(@NotNull final PsiElement element)
+	public static boolean isElementInSkeletons(@Nonnull final PsiElement element)
 	{
 		final PsiFile file = element.getContainingFile();
 		if(file != null)
@@ -257,13 +259,13 @@ public class PySdkUtil
 	}
 
 	@Nullable
-	public static VirtualFile findSkeletonsDir(@NotNull final Sdk sdk)
+	public static VirtualFile findSkeletonsDir(@Nonnull final Sdk sdk)
 	{
 		return findLibraryDir(sdk, PythonSdkType.SKELETON_DIR_NAME, PythonSdkType.BUILTIN_ROOT_TYPE);
 	}
 
 	@Nullable
-	public static VirtualFile findAnyRemoteLibrary(@NotNull final Sdk sdk)
+	public static VirtualFile findAnyRemoteLibrary(@Nonnull final Sdk sdk)
 	{
 		return findLibraryDir(sdk, PythonSdkType.REMOTE_SOURCES_DIR_NAME, OrderRootType.CLASSES);
 	}

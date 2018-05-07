@@ -21,8 +21,9 @@ import static com.jetbrains.python.psi.PyFunction.Modifier.STATICMETHOD;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -48,7 +49,7 @@ import com.jetbrains.python.psi.types.PyType;
 public class PyCallByClassInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
@@ -61,16 +62,16 @@ public class PyCallByClassInspection extends PyInspection
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public HighlightDisplayLevel getDefaultLevel()
 	{
 		return HighlightDisplayLevel.WEAK_WARNING;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}

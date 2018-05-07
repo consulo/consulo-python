@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Scanner;
@@ -34,11 +34,11 @@ public class PyConsoleIndentUtil {
   private PyConsoleIndentUtil() {
   }
 
-  public static String normalize(@NotNull String codeFragment) {
+  public static String normalize(@Nonnull String codeFragment) {
     return normalize(codeFragment, 0);
   }
 
-  public static String normalize(@NotNull String codeFragment, int addIndent) {
+  public static String normalize(@Nonnull String codeFragment, int addIndent) {
     Scanner s = new Scanner(codeFragment);
 
     List<String> lines = Lists.newArrayList();
@@ -150,7 +150,7 @@ public class PyConsoleIndentUtil {
     return result.toString();
   }
 
-  public static boolean shouldIndent(@NotNull String line) {
+  public static boolean shouldIndent(@Nonnull String line) {
     line = stripComments(line);
     return line.endsWith(":");
   }
@@ -163,7 +163,7 @@ public class PyConsoleIndentUtil {
     return line;
   }
 
-  public static boolean shouldSkipNext(@NotNull String line) {
+  public static boolean shouldSkipNext(@Nonnull String line) {
     line = stripComments(line);
     return line.endsWith(",");
   }

@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.math.BigInteger;
 import java.math.BigDecimal;
+
+import javax.annotation.Nullable;
 
 public interface PyNumericLiteralExpression extends PyLiteralExpression {
   /**

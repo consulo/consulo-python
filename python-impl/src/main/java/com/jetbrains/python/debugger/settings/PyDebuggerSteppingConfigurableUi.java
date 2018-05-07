@@ -19,11 +19,11 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.options.ConfigurableUi;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NonEmptyInputValidator;
@@ -65,7 +65,7 @@ public class PyDebuggerSteppingConfigurableUi implements ConfigurableUi<PyDebugg
 	}
 
 	@Override
-	public void reset(@NotNull PyDebuggerSettings settings)
+	public void reset(@Nonnull PyDebuggerSettings settings)
 	{
 		myLibrariesFilterCheckBox.setSelected(settings.isLibrariesFilterEnabled());
 		myStepFilterEnabledCheckBox.setSelected(settings.isSteppingFiltersEnabled());
@@ -74,14 +74,14 @@ public class PyDebuggerSteppingConfigurableUi implements ConfigurableUi<PyDebugg
 	}
 
 	@Override
-	public boolean isModified(@NotNull PyDebuggerSettings settings)
+	public boolean isModified(@Nonnull PyDebuggerSettings settings)
 	{
 		return myLibrariesFilterCheckBox.isSelected() != settings.isLibrariesFilterEnabled() || myStepFilterEnabledCheckBox.isSelected() != settings.isSteppingFiltersEnabled() ||
 				myPySteppingFilterEditor.isModified();
 	}
 
 	@Override
-	public void apply(@NotNull PyDebuggerSettings settings)
+	public void apply(@Nonnull PyDebuggerSettings settings)
 	{
 		settings.setLibrariesFilterEnabled(myLibrariesFilterCheckBox.isSelected());
 		settings.setSteppingFiltersEnabled(myStepFilterEnabledCheckBox.isSelected());
@@ -91,7 +91,7 @@ public class PyDebuggerSteppingConfigurableUi implements ConfigurableUi<PyDebugg
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public JComponent getComponent()
 	{
@@ -145,12 +145,12 @@ public class PyDebuggerSteppingConfigurableUi implements ConfigurableUi<PyDebugg
 	private class DialogEditor implements TableModelEditor.DialogItemEditor<PySteppingFilter>
 	{
 		@Override
-		public PySteppingFilter clone(@NotNull PySteppingFilter item, boolean forInPlaceEditing)
+		public PySteppingFilter clone(@Nonnull PySteppingFilter item, boolean forInPlaceEditing)
 		{
 			return new PySteppingFilter(item.isEnabled(), item.getFilter());
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public Class<PySteppingFilter> getItemClass()
 		{
@@ -158,7 +158,7 @@ public class PyDebuggerSteppingConfigurableUi implements ConfigurableUi<PyDebugg
 		}
 
 		@Override
-		public void edit(@NotNull PySteppingFilter item, @NotNull Function<PySteppingFilter, PySteppingFilter> mutator, boolean isAdd)
+		public void edit(@Nonnull PySteppingFilter item, @Nonnull Function<PySteppingFilter, PySteppingFilter> mutator, boolean isAdd)
 		{
 			String pattern = Messages.showInputDialog(myPanel, "Specify glob pattern ('*', '?' and '[seq]' allowed, semicolon ';' as name separator):", "Stepping Filter", null, item.getFilter(), new
 					NonEmptyInputValidator());
@@ -170,7 +170,7 @@ public class PyDebuggerSteppingConfigurableUi implements ConfigurableUi<PyDebugg
 		}
 
 		@Override
-		public void applyEdited(@NotNull PySteppingFilter oldItem, @NotNull PySteppingFilter newItem)
+		public void applyEdited(@Nonnull PySteppingFilter oldItem, @Nonnull PySteppingFilter newItem)
 		{
 			oldItem.setFilter(newItem.getFilter());
 		}

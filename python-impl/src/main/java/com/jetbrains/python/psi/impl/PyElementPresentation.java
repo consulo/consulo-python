@@ -15,10 +15,10 @@
  */
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,10 +33,10 @@ import consulo.ide.IconDescriptorUpdaters;
  */
 public class PyElementPresentation implements ColoredItemPresentation
 {
-	@NotNull
+	@Nonnull
 	private final PyElement myElement;
 
-	public PyElementPresentation(@NotNull PyElement element)
+	public PyElementPresentation(@Nonnull PyElement element)
 	{
 		myElement = element;
 	}
@@ -70,7 +70,7 @@ public class PyElementPresentation implements ColoredItemPresentation
 		return IconDescriptorUpdaters.getIcon(myElement, 0);
 	}
 
-	public static String getPackageForFile(@NotNull PsiFile containingFile)
+	public static String getPackageForFile(@Nonnull PsiFile containingFile)
 	{
 		final VirtualFile vFile = containingFile.getVirtualFile();
 

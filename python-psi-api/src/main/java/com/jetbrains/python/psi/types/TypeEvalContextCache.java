@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.types;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Project service to cache {@link TypeEvalContext}
@@ -36,6 +36,6 @@ public interface TypeEvalContextCache
 	 * @param standard context you want to use. Just instantiate it and pass here.
 	 * @return context from cache (the one equals by constraints to yours or the one you provided)
 	 */
-	@NotNull
-	TypeEvalContext getContext(@NotNull TypeEvalContext standard);
+	@Nonnull
+	TypeEvalContext getContext(@Nonnull TypeEvalContext standard);
 }

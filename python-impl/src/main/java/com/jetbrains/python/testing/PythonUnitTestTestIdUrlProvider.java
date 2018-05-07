@@ -18,7 +18,8 @@ package com.jetbrains.python.testing;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.Location;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -31,16 +32,16 @@ public class PythonUnitTestTestIdUrlProvider implements PythonTestLocator, DumbA
 
 	public static final PythonUnitTestTestIdUrlProvider INSTANCE = new PythonUnitTestTestIdUrlProvider();
 
-	@NotNull
+	@Nonnull
 	@Override
 	public final String getProtocolId()
 	{
 		return PROTOCOL_ID;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope)
+	public List<Location> getLocation(@Nonnull String protocol, @Nonnull String path, @Nonnull Project project, @Nonnull GlobalSearchScope scope)
 	{
 		if(!PROTOCOL_ID.equals(protocol))
 		{

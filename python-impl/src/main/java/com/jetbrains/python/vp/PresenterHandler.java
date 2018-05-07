@@ -18,7 +18,7 @@ package com.jetbrains.python.vp;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Wrapper for presenter.
@@ -33,7 +33,7 @@ class PresenterHandler<C> implements InvocationHandler
 	 */
 	private C realPresenter;
 
-	void setRealPresenter(@NotNull C realPresenter)
+	void setRealPresenter(@Nonnull C realPresenter)
 	{
 		this.realPresenter = realPresenter;
 	}

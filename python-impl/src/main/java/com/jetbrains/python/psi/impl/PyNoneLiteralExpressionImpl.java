@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.PyElementVisitor;
@@ -23,7 +25,6 @@ import com.jetbrains.python.psi.PyNoneLiteralExpression;
 import com.jetbrains.python.psi.types.PyNoneType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -33,7 +34,7 @@ public class PyNoneLiteralExpressionImpl extends PyElementImpl implements PyNone
     super(astNode);
   }
 
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
+  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     return PyNoneType.INSTANCE;
   }
 

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.psi.types;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiFile;
 
 /**

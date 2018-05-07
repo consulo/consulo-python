@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.refactoring.invertBoolean;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -37,7 +37,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
   static final String REFACTORING_NAME = RefactoringBundle.message("invert.boolean.title");
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
     PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
     if (element == null && editor != null && file != null) {
       element = file.findElementAt(editor.getCaretModel().getOffset());
@@ -56,7 +56,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext) {
     if (elements.length == 1) {
       final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(elements[0], PyAssignmentStatement.class);
       if (assignmentStatement != null) {
@@ -65,7 +65,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
     }
   }
 
-  private static void invoke(@NotNull final PsiElement element) {
+  private static void invoke(@Nonnull final PsiElement element) {
     new PyInvertBooleanDialog(element).show();
   }
 }

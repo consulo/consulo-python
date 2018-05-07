@@ -30,8 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
@@ -73,18 +73,18 @@ public class PyTypeParser
 		private final PsiElement myElement;
 		@Nullable
 		private final PyType myType;
-		@NotNull
+		@Nonnull
 		private final Map<TextRange, ? extends PyType> myTypes;
-		@NotNull
+		@Nonnull
 		private final Map<? extends PyType, TextRange> myFullRanges;
-		@NotNull
+		@Nonnull
 		private final Map<? extends PyType, PyImportElement> myImports;
 
 		ParseResult(@Nullable PsiElement element,
 				@Nullable PyType type,
-				@NotNull Map<TextRange, ? extends PyType> types,
-				@NotNull Map<? extends PyType, TextRange> fullRanges,
-				@NotNull Map<? extends PyType, PyImportElement> imports)
+				@Nonnull Map<TextRange, ? extends PyType> types,
+				@Nonnull Map<? extends PyType, TextRange> fullRanges,
+				@Nonnull Map<? extends PyType, PyImportElement> imports)
 		{
 			myElement = element;
 			myType = type;
@@ -93,7 +93,7 @@ public class PyTypeParser
 			myImports = imports;
 		}
 
-		ParseResult(@Nullable PsiElement element, @NotNull PyType type, @NotNull TextRange range)
+		ParseResult(@Nullable PsiElement element, @Nonnull PyType type, @Nonnull TextRange range)
 		{
 			this(element, type, ImmutableMap.of(range, type), ImmutableMap.of(type, range), ImmutableMap.<PyType, PyImportElement>of());
 		}
@@ -110,25 +110,25 @@ public class PyTypeParser
 			return myType;
 		}
 
-		@NotNull
+		@Nonnull
 		public Map<TextRange, ? extends PyType> getTypes()
 		{
 			return myTypes;
 		}
 
-		@NotNull
+		@Nonnull
 		public Map<? extends PyType, TextRange> getFullRanges()
 		{
 			return myFullRanges;
 		}
 
-		@NotNull
+		@Nonnull
 		public Map<? extends PyType, PyImportElement> getImports()
 		{
 			return myImports;
 		}
 
-		private ParseResult merge(@NotNull ParseResult result)
+		private ParseResult merge(@Nonnull ParseResult result)
 		{
 			final Map<TextRange, PyType> types = new HashMap<>();
 			final Map<PyType, TextRange> fullRanges = new HashMap<>();
@@ -153,7 +153,7 @@ public class PyTypeParser
 	 * @return null either if there was an error during parsing or if extracted type is equivalent to <tt>Any</tt> or <tt>undefined</tt>
 	 */
 	@Nullable
-	public static PyType getTypeByName(@Nullable final PsiElement anchor, @NotNull String type)
+	public static PyType getTypeByName(@Nullable final PsiElement anchor, @Nonnull String type)
 	{
 		return parse(anchor, type).getType();
 	}
@@ -161,8 +161,8 @@ public class PyTypeParser
 	/**
 	 * @param anchor should never be null or null will be returned
 	 */
-	@NotNull
-	public static ParseResult parse(@Nullable final PsiElement anchor, @NotNull String type)
+	@Nonnull
+	public static ParseResult parse(@Nullable final PsiElement anchor, @Nonnull String type)
 	{
 		PyPsiUtils.assertValid(anchor);
 		if(anchor == null)
@@ -328,8 +328,8 @@ public class PyTypeParser
 		}
 	}
 
-	@NotNull
-	public static ParseResult parsePep484FunctionTypeComment(@NotNull PsiElement anchor, @NotNull String text)
+	@Nonnull
+	public static ParseResult parsePep484FunctionTypeComment(@Nonnull PsiElement anchor, @Nonnull String text)
 	{
 		final ForwardDeclaration<ParseResult, PyElementType> typeExpr = ForwardDeclaration.create();
 
@@ -471,17 +471,17 @@ public class PyTypeParser
 
 	private static class MakeSimpleType implements Function<Pair<Token<PyElementType>, List<Token<PyElementType>>>, ParseResult>
 	{
-		@NotNull
+		@Nonnull
 		private final PsiElement myAnchor;
 
-		public MakeSimpleType(@NotNull PsiElement anchor)
+		public MakeSimpleType(@Nonnull PsiElement anchor)
 		{
 			myAnchor = anchor;
 		}
 
 		@Nullable
 		@Override
-		public ParseResult fun(@NotNull Pair<Token<PyElementType>, List<Token<PyElementType>>> value)
+		public ParseResult fun(@Nonnull Pair<Token<PyElementType>, List<Token<PyElementType>>> value)
 		{
 			final Token<PyElementType> first = value.getFirst();
 			final List<Token<PyElementType>> rest = value.getSecond();
@@ -558,7 +558,7 @@ public class PyTypeParser
 		}
 
 		@Nullable
-		private static PsiElement getElement(@NotNull PyType type)
+		private static PsiElement getElement(@Nonnull PyType type)
 		{
 			if(type instanceof PyModuleType)
 			{
@@ -579,12 +579,12 @@ public class PyTypeParser
 		}
 
 		@Nullable
-		private PyType resolveQualifierType(@NotNull List<Token<PyElementType>> tokens,
-				@NotNull PyFile file,
-				@NotNull TypeEvalContext context,
-				@NotNull Map<TextRange, PyType> types,
-				@NotNull Map<PyType, TextRange> fullRanges,
-				@NotNull Map<PyType, PyImportElement> imports)
+		private PyType resolveQualifierType(@Nonnull List<Token<PyElementType>> tokens,
+				@Nonnull PyFile file,
+				@Nonnull TypeEvalContext context,
+				@Nonnull Map<TextRange, PyType> types,
+				@Nonnull Map<PyType, TextRange> fullRanges,
+				@Nonnull Map<PyType, PyImportElement> imports)
 		{
 			if(tokens.isEmpty())
 			{
@@ -651,10 +651,10 @@ public class PyTypeParser
 		}
 
 		@Nullable
-		private PyType getImplicitlyResolvedType(@NotNull List<Token<PyElementType>> tokens,
-				@NotNull TypeEvalContext context,
-				@NotNull Map<TextRange, PyType> types,
-				@NotNull Map<PyType, TextRange> fullRanges,
+		private PyType getImplicitlyResolvedType(@Nonnull List<Token<PyElementType>> tokens,
+				@Nonnull TypeEvalContext context,
+				@Nonnull Map<TextRange, PyType> types,
+				@Nonnull Map<PyType, TextRange> fullRanges,
 				TextRange firstRange)
 		{
 			PyType type = null;
@@ -688,14 +688,14 @@ public class PyTypeParser
 			return type;
 		}
 
-		private static boolean allowResolveToType(@NotNull PyType type)
+		private static boolean allowResolveToType(@Nonnull PyType type)
 		{
 			return type instanceof PyClassLikeType || type instanceof PyModuleType || type instanceof PyImportedModuleType ||
 					type instanceof PyGenericType;
 		}
 
 		@Nullable
-		private ParseResult parseBuiltinType(@NotNull Token<PyElementType> token)
+		private ParseResult parseBuiltinType(@Nonnull Token<PyElementType> token)
 		{
 			final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(myAnchor);
 			final String name = token.getText().toString();
@@ -760,7 +760,7 @@ public class PyTypeParser
 		return token(PyTypeTokenTypes.OP, text);
 	}
 
-	private static List<Token<PyElementType>> tokenize(@NotNull String s)
+	private static List<Token<PyElementType>> tokenize(@Nonnull String s)
 	{
 		final List<Token<PyElementType>> tokens = new ArrayList<>();
 		final _PyTypeLexer lexer = new _PyTypeLexer(new StringReader(s));
@@ -794,7 +794,7 @@ public class PyTypeParser
 	{
 		@Nullable
 		@Override
-		public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+		public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 		{
 			return null;
 		}
@@ -829,17 +829,17 @@ public class PyTypeParser
 	{
 		private final List<PyCallableParameter> myParams;
 
-		public static ParameterListType fromParameterTypes(@NotNull Iterable<PyType> types)
+		public static ParameterListType fromParameterTypes(@Nonnull Iterable<PyType> types)
 		{
 			return new ParameterListType(ContainerUtil.map(types, type -> new PyCallableParameterImpl(null, type)));
 		}
 
-		private ParameterListType(@NotNull List<PyCallableParameter> types)
+		private ParameterListType(@Nonnull List<PyCallableParameter> types)
 		{
 			myParams = types;
 		}
 
-		@NotNull
+		@Nonnull
 		public List<PyCallableParameter> getCallableParameters()
 		{
 			return myParams;

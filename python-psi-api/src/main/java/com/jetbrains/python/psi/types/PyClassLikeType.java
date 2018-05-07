@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.types;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
 import com.jetbrains.python.psi.AccessDirection;
@@ -40,14 +40,14 @@ public interface PyClassLikeType extends PyCallableType, PyWithAncestors
 	@Nullable
 	String getClassQName();
 
-	@NotNull
-	List<PyClassLikeType> getSuperClassTypes(@NotNull TypeEvalContext context);
+	@Nonnull
+	List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context);
 
 	@Nullable
-	List<? extends RatedResolveResult> resolveMember(@NotNull final String name,
+	List<? extends RatedResolveResult> resolveMember(@Nonnull final String name,
 			@Nullable PyExpression location,
-			@NotNull AccessDirection direction,
-			@NotNull PyResolveContext resolveContext,
+			@Nonnull AccessDirection direction,
+			@Nonnull PyResolveContext resolveContext,
 			boolean inherited);
 
 	// TODO: Pull to PyType at next iteration
@@ -61,13 +61,13 @@ public interface PyClassLikeType extends PyCallableType, PyWithAncestors
 	 * @param context   context to be used to resolve types
 	 * @see PyTypeUtil#getMembersOfType(PyClassLikeType, Class, TypeEvalContext)
 	 */
-	void visitMembers(@NotNull Processor<PsiElement> processor, boolean inherited, @NotNull TypeEvalContext context);
+	void visitMembers(@Nonnull Processor<PsiElement> processor, boolean inherited, @Nonnull TypeEvalContext context);
 
-	@NotNull
-	Set<String> getMemberNames(boolean inherited, @NotNull TypeEvalContext context);
+	@Nonnull
+	Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context);
 
 	boolean isValid();
 
 	@Nullable
-	PyClassLikeType getMetaClassType(@NotNull TypeEvalContext context, boolean inherited);
+	PyClassLikeType getMetaClassType(@Nonnull TypeEvalContext context, boolean inherited);
 }

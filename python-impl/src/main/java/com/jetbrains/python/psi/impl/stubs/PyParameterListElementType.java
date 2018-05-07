@@ -30,7 +30,7 @@ import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.impl.PyParameterListImpl;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -43,24 +43,24 @@ public class PyParameterListElementType extends PyStubElementType<PyParameterLis
     super(debugName);
   }
 
-  public PyParameterList createPsi(@NotNull final PyParameterListStub stub) {
+  public PyParameterList createPsi(@Nonnull final PyParameterListStub stub) {
     return new PyParameterListImpl(stub);
   }
 
-  public PyParameterListStub createStub(@NotNull final PyParameterList psi, final StubElement parentStub) {
+  public PyParameterListStub createStub(@Nonnull final PyParameterList psi, final StubElement parentStub) {
     return new PyParameterListStubImpl(parentStub, getStubElementType());
   }
 
-  public PsiElement createElement(@NotNull final ASTNode node) {
+  public PsiElement createElement(@Nonnull final ASTNode node) {
     return new PyParameterListImpl(node);
   }
 
-  public void serialize(@NotNull final PyParameterListStub stub, @NotNull final StubOutputStream dataStream)
+  public void serialize(@Nonnull final PyParameterListStub stub, @Nonnull final StubOutputStream dataStream)
       throws IOException {
   }
 
-  @NotNull
-  public PyParameterListStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub)
+  @Nonnull
+  public PyParameterListStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub)
       throws IOException {
     return new PyParameterListStubImpl(parentStub, getStubElementType());
   }

@@ -18,7 +18,7 @@ package com.jetbrains.python.run;
 import java.io.File;
 
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -66,7 +66,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 		return new PythonRunConfigurationEditor(this);
 	}
 
-	public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException
+	public RunProfileState getState(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment env) throws ExecutionException
 	{
 		return new PythonScriptCommandLineState(this, env);
 	}
@@ -166,7 +166,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 				return new RefactoringElementAdapter()
 				{
 					@Override
-					public void elementRenamedOrMoved(@NotNull PsiElement newElement)
+					public void elementRenamedOrMoved(@Nonnull PsiElement newElement)
 					{
 						VirtualFile virtualFile = ((PsiFile) newElement).getVirtualFile();
 						if(virtualFile != null)
@@ -176,7 +176,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 					}
 
 					@Override
-					public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName)
+					public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName)
 					{
 						updateScriptName(oldQualifiedName);
 					}

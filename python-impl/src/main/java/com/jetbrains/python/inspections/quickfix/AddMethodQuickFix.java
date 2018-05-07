@@ -17,7 +17,8 @@ package com.jetbrains.python.inspections.quickfix;
 
 import static com.jetbrains.python.psi.PyUtil.sure;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.TemplateBuilder;
@@ -63,19 +64,19 @@ public class AddMethodQuickFix implements LocalQuickFix
 		myReplaceUsage = replaceUsage;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		return PyBundle.message("QFIX.NAME.add.method.$0.to.class.$1", myIdentifier, myClassName);
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return "Add method to class";
 	}
 
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		try
 		{
@@ -175,7 +176,7 @@ public class AddMethodQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static PyClassType getClassType(@NotNull final PsiElement problemElement)
+	private static PyClassType getClassType(@Nonnull final PsiElement problemElement)
 	{
 		if((problemElement instanceof PyQualifiedExpression))
 		{
@@ -191,7 +192,7 @@ public class AddMethodQuickFix implements LocalQuickFix
 		return pyClass != null ? new PyClassTypeImpl(pyClass, false) : null;
 	}
 
-	private static void showTemplateBuilder(@NotNull PyFunction method)
+	private static void showTemplateBuilder(@Nonnull PyFunction method)
 	{
 		method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
 		final PsiFile file = method.getContainingFile();

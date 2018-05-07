@@ -17,8 +17,8 @@ package com.jetbrains.python.codeInsight.intentions;
 
 import static com.jetbrains.python.psi.PyUtil.as;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
@@ -45,7 +45,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public abstract class TypeIntention extends PyBaseIntentionAction
 {
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile) || file instanceof PyDocstringFile)
 		{
@@ -141,7 +141,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction
 		return parameter == null || parameter.isSelf() ? null : parameter;
 	}
 
-	private boolean isAvailableForReturn(@NotNull final PsiElement elementAt)
+	private boolean isAvailableForReturn(@Nonnull final PsiElement elementAt)
 	{
 		return resolvesToFunction(elementAt, new Function<PyFunction, Boolean>()
 		{
@@ -153,7 +153,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction
 		});
 	}
 
-	static boolean resolvesToFunction(@NotNull PsiElement elementAt, Function<PyFunction, Boolean> isAvailableForFunction)
+	static boolean resolvesToFunction(@Nonnull PsiElement elementAt, Function<PyFunction, Boolean> isAvailableForFunction)
 	{
 		final PyFunction parentFunction = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
 		if(parentFunction != null)
@@ -208,7 +208,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction
 		return false;
 	}
 
-	protected boolean isReturnTypeDefined(@NotNull PyFunction function)
+	protected boolean isReturnTypeDefined(@Nonnull PyFunction function)
 	{
 		return false;
 	}
@@ -256,7 +256,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction
 		return PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
 	}
 
-	protected static PyResolveContext getResolveContext(@NotNull PsiElement origin)
+	protected static PyResolveContext getResolveContext(@Nonnull PsiElement origin)
 	{
 		return PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(origin.getProject(), origin.getContainingFile()));
 	}

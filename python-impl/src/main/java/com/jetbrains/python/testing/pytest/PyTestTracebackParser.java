@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.testing.pytest;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.util.Pair;
 import com.jetbrains.python.traceBackParsers.LinkInTrace;
 import com.jetbrains.python.traceBackParsers.TraceBackParser;
@@ -30,7 +31,7 @@ public final class PyTestTracebackParser implements TraceBackParser
 
 	@Nullable
 	@Override
-	public LinkInTrace findLinkInTrace(@NotNull final String line)
+	public LinkInTrace findLinkInTrace(@Nonnull final String line)
 	{
 		final PyFilesStateMachine quoteMachine = new PyFilesStateMachine(true);
 		final PyFilesStateMachine spaceMachine = new PyFilesStateMachine(false);
@@ -63,8 +64,8 @@ public final class PyTestTracebackParser implements TraceBackParser
 		return null;
 	}
 
-	@NotNull
-	private static LinkInTrace createLinkInTrace(@NotNull final PyFilesStateMachine machine)
+	@Nonnull
+	private static LinkInTrace createLinkInTrace(@Nonnull final PyFilesStateMachine machine)
 	{
 		final Pair<String, String> fileAndLine = machine.getFileAndLine();
 		final int start = machine.getStart();

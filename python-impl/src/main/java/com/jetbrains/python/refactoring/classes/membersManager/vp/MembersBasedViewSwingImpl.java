@@ -18,10 +18,10 @@ package com.jetbrains.python.refactoring.classes.membersManager.vp;
 import java.awt.BorderLayout;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
 import com.google.common.base.Preconditions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -50,24 +50,24 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	/**
 	 * Panel to be displayed on the top
 	 */
-	@NotNull
+	@Nonnull
 	protected final JPanel myTopPanel;
 	/**
 	 * Panel to be displayed at the center
 	 */
-	@NotNull
+	@Nonnull
 	protected final JComponent myCenterPanel;
 
 	/**
 	 * Presenter
 	 */
-	@NotNull
+	@Nonnull
 	protected final P myPresenter;
 
 	/**
 	 * Panel with members
 	 */
-	@NotNull
+	@Nonnull
 	protected final PyMemberSelectionPanel myPyMemberSelectionPanel;
 
 	private boolean myConfigured;
@@ -79,7 +79,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	 * @param title           window title
 	 * @param supportAbstract supports "abstract" column?
 	 */
-	protected MembersBasedViewSwingImpl(@NotNull final Project project, @NotNull final P presenter, @NotNull final String title, final boolean supportAbstract)
+	protected MembersBasedViewSwingImpl(@Nonnull final Project project, @Nonnull final P presenter, @Nonnull final String title, final boolean supportAbstract)
 	{
 		super(project, true);
 		myTopPanel = new JPanel(new BorderLayout());
@@ -91,7 +91,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 
 
 	@Override
-	public boolean showConflictsDialog(@NotNull final MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @NotNull final Collection<PyMemberInfo<?>> dependenciesConflicts)
+	public boolean showConflictsDialog(@Nonnull final MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @Nonnull final Collection<PyMemberInfo<?>> dependenciesConflicts)
 	{
 		Preconditions.checkArgument(!(duplicatesConflict.isEmpty() && dependenciesConflicts.isEmpty()), "Can't show dialog for empty conflicts");
 		final DialogWrapper conflictsDialog = new MembersConflictDialog(myProject, duplicatesConflict, dependenciesConflicts);
@@ -99,7 +99,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	}
 
 	@Override
-	public void showError(@NotNull final String message)
+	public void showError(@Nonnull final String message)
 	{
 		Messages.showErrorDialog(getContentPane(), message);
 	}
@@ -116,7 +116,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 		myPresenter.okClicked();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected JComponent createNorthPanel()
 	{
@@ -135,7 +135,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 		return myCenterPanel;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PyMemberInfo<PyElement>> getSelectedMemberInfos()
 	{
@@ -143,13 +143,13 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	}
 
 	@Override
-	public void invokeRefactoring(@NotNull final BaseRefactoringProcessor processor)
+	public void invokeRefactoring(@Nonnull final BaseRefactoringProcessor processor)
 	{
 		super.invokeRefactoring(processor);
 	}
 
 	@Override
-	public void configure(@NotNull final C configInfo)
+	public void configure(@Nonnull final C configInfo)
 	{
 		Preconditions.checkArgument(!myConfigured, "Already configured");
 		myConfigured = true;

@@ -39,8 +39,8 @@ import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.impl.references.PyReferenceImpl;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.*;
 
@@ -51,20 +51,20 @@ import java.util.*;
  */
 public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return PyBundle.message("QFIX.rename.unresolved.reference");
   }
 
   @Override
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("QFIX.rename.unresolved.reference");
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     final PsiElement element = descriptor.getPsiElement();
     final PyReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
     if (referenceExpression == null) return;
@@ -107,8 +107,8 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
   }
 
 
-  private static List<PyReferenceExpression> collectExpressionsToRename(@NotNull final PyReferenceExpression expression,
-                                                                        @NotNull final ScopeOwner parentScope) {
+  private static List<PyReferenceExpression> collectExpressionsToRename(@Nonnull final PyReferenceExpression expression,
+                                                                        @Nonnull final ScopeOwner parentScope) {
 
     final List<PyReferenceExpression> result = new ArrayList<PyReferenceExpression>();
     PyRecursiveElementVisitor visitor = new PyRecursiveElementVisitor() {
@@ -126,7 +126,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
   }
 
   @Nullable
-  private static Editor getEditor(@NotNull final Project project, @NotNull final PsiFile file, int offset) {
+  private static Editor getEditor(@Nonnull final Project project, @Nonnull final PsiFile file, int offset) {
     final VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile != null) {
     return FileEditorManager.getInstance(project).openTextEditor(
@@ -136,7 +136,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
     return null;
   }
 
-  private static LookupElement[] collectLookupItems(@NotNull final ScopeOwner parentScope) {
+  private static LookupElement[] collectLookupItems(@Nonnull final ScopeOwner parentScope) {
     Set<LookupElement> items = new LinkedHashSet<LookupElement>();
 
     final Collection<String> usedNames = PyRefactoringUtil.collectUsedNames(parentScope);

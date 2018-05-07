@@ -28,8 +28,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -91,9 +91,9 @@ public class PyPep8NamingInspection extends PyInspection
 	public boolean ignoreOverriddenFunctions = true;
 	public final List<String> ignoredBaseClasses = Lists.newArrayList("unittest.TestCase", "unittest.case.TestCase");
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -174,7 +174,7 @@ public class PyPep8NamingInspection extends PyInspection
 			}
 		}
 
-		private void registerAndAddRenameAndIgnoreErrorQuickFixes(@Nullable final PsiElement node, @NotNull final String errorCode)
+		private void registerAndAddRenameAndIgnoreErrorQuickFixes(@Nullable final PsiElement node, @Nonnull final String errorCode)
 		{
 			if(getHolder() != null && getHolder().isOnTheFly())
 			{
@@ -228,12 +228,12 @@ public class PyPep8NamingInspection extends PyInspection
 			}
 		}
 
-		private boolean isOverriddenMethod(@NotNull PyFunction function)
+		private boolean isOverriddenMethod(@Nonnull PyFunction function)
 		{
 			return PySuperMethodsSearch.search(function, myTypeEvalContext).findFirst() != null;
 		}
 
-		private boolean isIgnoredOrHasIgnoredAncestor(@NotNull PyClass pyClass)
+		private boolean isIgnoredOrHasIgnoredAncestor(@Nonnull PyClass pyClass)
 		{
 			final Set<String> blackList = Sets.newHashSet(ignoredBaseClasses);
 			if(blackList.contains(pyClass.getQualifiedName()))
@@ -343,7 +343,7 @@ public class PyPep8NamingInspection extends PyInspection
 	{
 		private final List<String> myBaseClassNames;
 
-		public IgnoreBaseClassQuickFix(@NotNull PyClass baseClass, @NotNull TypeEvalContext context)
+		public IgnoreBaseClassQuickFix(@Nonnull PyClass baseClass, @Nonnull TypeEvalContext context)
 		{
 			myBaseClassNames = new ArrayList<>();
 			ContainerUtil.addIfNotNull(getBaseClassNames(), baseClass.getQualifiedName());
@@ -353,7 +353,7 @@ public class PyPep8NamingInspection extends PyInspection
 			}
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -361,7 +361,7 @@ public class PyPep8NamingInspection extends PyInspection
 		}
 
 		@Override
-		public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 		{
 			final JBList list = new JBList(getBaseClassNames());
 			final Runnable updateBlackList = () -> {
@@ -399,7 +399,7 @@ public class PyPep8NamingInspection extends PyInspection
 		}
 
 		@Nls
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -407,7 +407,7 @@ public class PyPep8NamingInspection extends PyInspection
 		}
 
 		@Override
-		public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 		{
 			final PsiFile file = descriptor.getStartElement().getContainingFile();
 			InspectionProjectProfileManager.getInstance(project).getInspectionProfile().modifyProfile(model -> {

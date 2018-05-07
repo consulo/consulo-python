@@ -20,9 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Output;
@@ -79,8 +81,8 @@ public class PythonTask
 		this(module, runTabTitle, PythonSdkType.findPythonSdk(module));
 	}
 
-	@NotNull
-	public static PythonTask create(@NotNull final Module module, @NotNull final String runTabTitle, @NotNull final Sdk sdk)
+	@Nonnull
+	public static PythonTask create(@Nonnull final Module module, @Nonnull final String runTabTitle, @Nonnull final Sdk sdk)
 	{
 		// Ctor throws checked exception which is not good, so this wrapper saves user from dumb code
 		try
@@ -301,7 +303,7 @@ public class PythonTask
 	 * @return stdout
 	 * @throws ExecutionException in case of error. Consider using {@link com.intellij.execution.util.ExecutionErrorDialog}
 	 */
-	@NotNull
+	@Nonnull
 	public final String runNoConsole() throws ExecutionException
 	{
 

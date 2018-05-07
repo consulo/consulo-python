@@ -1,6 +1,7 @@
 package com.jetbrains.python.findUsages;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.jetbrains.python.psi.PyTargetExpression;
 
@@ -9,7 +10,7 @@ import com.jetbrains.python.psi.PyTargetExpression;
  */
 public class PyTargetExpressionFindUsagesHandler extends FindUsagesHandler
 {
-	public PyTargetExpressionFindUsagesHandler(@NotNull PyTargetExpression psiElement)
+	public PyTargetExpressionFindUsagesHandler(@Nonnull PyTargetExpression psiElement)
 	{
 		super(psiElement);
 	}

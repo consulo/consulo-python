@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -26,42 +28,41 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class ReformatFix implements IntentionAction, LocalQuickFix, HighPriorityAction {
-  @NotNull
+  @Nonnull
   @Override
   public String getText() {
     return "Reformat file";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return getText();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getFamilyName() {
     return getText();
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     CodeStyleManager.getInstance(project).reformat(descriptor.getPsiElement().getContainingFile());
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     return true;
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
       return;
     }

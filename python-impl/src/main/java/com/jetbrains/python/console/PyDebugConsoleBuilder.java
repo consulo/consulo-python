@@ -23,9 +23,10 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.jetbrains.python.run.PythonTracebackFilter;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+
+import javax.annotation.Nullable;
 
 /**
  * @author traff

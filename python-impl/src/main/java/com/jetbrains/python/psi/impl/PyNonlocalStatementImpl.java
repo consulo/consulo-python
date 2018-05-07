@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyNonlocalStatement;
 import com.jetbrains.python.psi.PyTargetExpression;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -38,7 +39,7 @@ public class PyNonlocalStatementImpl extends PyElementImpl implements PyNonlocal
     visitor.visitPyNonlocalStatement(this);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public PyTargetExpression[] getVariables() {
     return childrenToPsi(TARGET_EXPRESSION_SET, PyTargetExpression.EMPTY_ARRAY);

@@ -17,8 +17,9 @@ package com.jetbrains.python.refactoring.classes.pullUp;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
@@ -31,7 +32,7 @@ import com.jetbrains.python.refactoring.classes.membersManager.PyMembersRefactor
 class PyPullUpProcessor extends PyMembersRefactoringBaseProcessor
 {
 
-	PyPullUpProcessor(@NotNull final PyClass from, @NotNull final PyClass to, @NotNull final Collection<PyMemberInfo<PyElement>> membersToMove)
+	PyPullUpProcessor(@Nonnull final PyClass from, @Nonnull final PyClass to, @Nonnull final Collection<PyMemberInfo<PyElement>> membersToMove)
 	{
 		super(from.getProject(), membersToMove, from, to);
 	}

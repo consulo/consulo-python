@@ -28,7 +28,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFile;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -42,7 +42,7 @@ public class CreateClassQuickFix implements LocalQuickFix {
     myAnchor = anchor;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     if (myAnchor instanceof PyFile) {
       return "Create class '" + myClassName + "' in module " + ((PyFile)myAnchor).getName();
@@ -50,12 +50,12 @@ public class CreateClassQuickFix implements LocalQuickFix {
     return "Create class '" + myClassName + "'";
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return "Create Class";
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement anchor = myAnchor;
     if (!anchor.isValid()) {
       return;

@@ -24,7 +24,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.Application;
@@ -127,13 +128,13 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.Family.toggle.import.alias");
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -146,7 +147,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction
 	}
 
 	@Override
-	public void doInvoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		// sanity check: isAvailable must have set it.
 		final IntentionState state = IntentionState.fromContext(editor, file);
@@ -204,7 +205,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction
 				final ScopeOwner scope = PsiTreeUtil.getParentOfType(state.myImportElement, ScopeOwner.class);
 				PsiTreeUtil.processElements(scope, new PsiElementProcessor()
 				{
-					public boolean execute(@NotNull PsiElement element)
+					public boolean execute(@Nonnull PsiElement element)
 					{
 						getReferences(element);
 						if(element instanceof PyStringLiteralExpression)
@@ -221,7 +222,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction
 										final ScopeOwner scopeOwner = (ScopeOwner) first;
 										PsiTreeUtil.processElements(scopeOwner, new PsiElementProcessor()
 										{
-											public boolean execute(@NotNull PsiElement element)
+											public boolean execute(@Nonnull PsiElement element)
 											{
 												getReferences(element);
 												return true;

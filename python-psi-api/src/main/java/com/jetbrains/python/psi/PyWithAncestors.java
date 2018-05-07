@@ -17,7 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
@@ -31,6 +31,6 @@ public interface PyWithAncestors
 	/**
 	 * Returns types of all ancestors from the hierarchy.
 	 */
-	@NotNull
-	List<PyClassLikeType> getAncestorTypes(@NotNull TypeEvalContext context);
+	@Nonnull
+	List<PyClassLikeType> getAncestorTypes(@Nonnull TypeEvalContext context);
 }

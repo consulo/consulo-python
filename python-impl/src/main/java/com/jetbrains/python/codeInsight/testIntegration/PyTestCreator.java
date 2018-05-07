@@ -17,7 +17,8 @@ package com.jetbrains.python.codeInsight.testIntegration;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -80,7 +81,7 @@ public class PyTestCreator implements TestCreator
 	 *
 	 * @return file with test
 	 */
-	static PsiFile generateTestAndNavigate(@NotNull final Project project, @NotNull final CreateTestDialog dialog)
+	static PsiFile generateTestAndNavigate(@Nonnull final Project project, @Nonnull final CreateTestDialog dialog)
 	{
 		return PostprocessReformattingAspect.getInstance(project).postponeFormattingInside(() -> ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>()
 		{
@@ -106,8 +107,8 @@ public class PyTestCreator implements TestCreator
 	 *
 	 * @return newly created test class
 	 */
-	@NotNull
-	static PyElement generateTest(@NotNull final Project project, @NotNull final CreateTestDialog dialog)
+	@Nonnull
+	static PyElement generateTest(@Nonnull final Project project, @Nonnull final CreateTestDialog dialog)
 	{
 		IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
 

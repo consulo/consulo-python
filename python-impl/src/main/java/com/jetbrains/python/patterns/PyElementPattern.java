@@ -16,10 +16,11 @@
 
 package com.jetbrains.python.patterns;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.patterns.InitialPatternCondition;
 import com.intellij.patterns.PsiElementPattern;
 import com.jetbrains.python.psi.PyElement;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -29,7 +30,7 @@ public class PyElementPattern<T extends PyElement, Self extends PyElementPattern
     super(aClass);
   }
 
-  public PyElementPattern(@NotNull final InitialPatternCondition<T> condition) {
+  public PyElementPattern(@Nonnull final InitialPatternCondition<T> condition) {
     super(condition);
   }
 
@@ -38,7 +39,7 @@ public class PyElementPattern<T extends PyElement, Self extends PyElementPattern
       super(aClass);
     }
 
-    public Capture(@NotNull final InitialPatternCondition<T> condition) {
+    public Capture(@Nonnull final InitialPatternCondition<T> condition) {
       super(condition);
     }
   }

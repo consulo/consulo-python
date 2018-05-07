@@ -20,7 +20,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.*;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +37,12 @@ public class CollectionElementNameMacro extends Macro {
     return "collectionElementName()";
   }
 
-  @NotNull
+  @Nonnull
   public String getDefaultValue() {
     return "a";
   }
 
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(@Nonnull Expression[] params, ExpressionContext context) {
     if (params.length != 1) {
       return null;
     }
@@ -73,7 +73,7 @@ public class CollectionElementNameMacro extends Macro {
     return result == null ? param : result;
   }
 
-  public LookupElement[] calculateLookupItems(@NotNull Expression[] params, ExpressionContext context) {
+  public LookupElement[] calculateLookupItems(@Nonnull Expression[] params, ExpressionContext context) {
     Result result = calculateResult(params, context);
     if (result == null) {
       return null;

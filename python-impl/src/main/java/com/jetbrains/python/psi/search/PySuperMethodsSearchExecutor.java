@@ -18,7 +18,8 @@ package com.jetbrains.python.psi.search;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
@@ -38,7 +39,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PySuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters>
 {
 	@Override
-	public boolean execute(@NotNull final PySuperMethodsSearch.SearchParameters queryParameters, @NotNull final Processor<PsiElement> consumer)
+	public boolean execute(@Nonnull final PySuperMethodsSearch.SearchParameters queryParameters, @Nonnull final Processor<PsiElement> consumer)
 	{
 		final PyFunction func = queryParameters.getDerivedMethod();
 		final String name = func.getName();

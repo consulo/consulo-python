@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.lexer.PythonLexer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public class PythonNamesValidator implements NamesValidator {
   private static final PythonLexer ourLexer = new PythonLexer();
 
-  public synchronized boolean isKeyword(@NotNull final String name, final Project project) {
+  public synchronized boolean isKeyword(@Nonnull final String name, final Project project) {
     try {
       ourLexer.start(name);
       if (!PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens().contains(ourLexer.getTokenType())) {
@@ -43,7 +43,7 @@ public class PythonNamesValidator implements NamesValidator {
     }
   }
 
-  public synchronized boolean isIdentifier(@NotNull final String name, final Project project) {
+  public synchronized boolean isIdentifier(@Nonnull final String name, final Project project) {
     try {
       ourLexer.start(name);
       if (ourLexer.getTokenType() != PyTokenTypes.IDENTIFIER) {

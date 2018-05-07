@@ -18,8 +18,8 @@ package com.jetbrains.python.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.psi.PyIndentUtil;
 import com.jetbrains.python.toolbox.Substring;
@@ -32,7 +32,7 @@ public abstract class DocStringLineParser
 	protected final List<Substring> myLines;
 	protected final Substring myDocStringContent;
 
-	protected DocStringLineParser(@NotNull Substring content)
+	protected DocStringLineParser(@Nonnull Substring content)
 	{
 		myDocStringContent = content;
 		myLines = Collections.unmodifiableList(content.splitLines());
@@ -43,7 +43,7 @@ public abstract class DocStringLineParser
 		return PyIndentUtil.getLineIndentSize(getLine(lineNum));
 	}
 
-	@NotNull
+	@Nonnull
 	public String getLineIndent(int lineNum)
 	{
 		return PyIndentUtil.getLineIndent(getLine(lineNum)).toString();
@@ -59,7 +59,7 @@ public abstract class DocStringLineParser
 		return StringUtil.isEmptyOrSpaces(getLine(lineNum));
 	}
 
-	@NotNull
+	@Nonnull
 	public Substring getLine(int lineNum)
 	{
 		return myLines.get(lineNum);
@@ -76,13 +76,13 @@ public abstract class DocStringLineParser
 		return myLines.size();
 	}
 
-	@NotNull
+	@Nonnull
 	public List<Substring> getLines()
 	{
 		return myLines;
 	}
 
-	@NotNull
+	@Nonnull
 	public Substring getDocStringContent()
 	{
 		return myDocStringContent;

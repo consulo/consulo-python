@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.validation;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -40,5 +40,5 @@ public interface Pep8ProblemSuppressor
 	 * @param targetElement PSI element found in the place of a problem on which annotation is going be attached in the editor
 	 * @return whether notification about this problem should be hidden in the editor
 	 */
-	boolean isProblemSuppressed(@NotNull Pep8ExternalAnnotator.Problem problem, @NotNull PsiFile file, @Nullable PsiElement targetElement);
+	boolean isProblemSuppressed(@Nonnull Pep8ExternalAnnotator.Problem problem, @Nonnull PsiFile file, @Nullable PsiElement targetElement);
 }

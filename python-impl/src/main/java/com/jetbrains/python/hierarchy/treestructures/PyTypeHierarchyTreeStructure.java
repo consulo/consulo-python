@@ -17,7 +17,8 @@ package com.jetbrains.python.hierarchy.treestructures;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.jetbrains.python.hierarchy.PyHierarchyNodeDescriptor;
 import com.jetbrains.python.psi.PyClass;
@@ -28,13 +29,13 @@ import com.jetbrains.python.psi.PyUtil;
  */
 public class PyTypeHierarchyTreeStructure extends PySubTypesHierarchyTreeStructure
 {
-	public PyTypeHierarchyTreeStructure(@NotNull final PyClass cl)
+	public PyTypeHierarchyTreeStructure(@Nonnull final PyClass cl)
 	{
 		super(cl.getProject(), buildHierarchyElement(cl));
 		setBaseElement(myBaseDescriptor);
 	}
 
-	private static PyHierarchyNodeDescriptor buildHierarchyElement(@NotNull final PyClass cl)
+	private static PyHierarchyNodeDescriptor buildHierarchyElement(@Nonnull final PyClass cl)
 	{
 		PyHierarchyNodeDescriptor descriptor = null;
 		List<PyClass> superClasses = PyUtil.getAllSuperClasses(cl);

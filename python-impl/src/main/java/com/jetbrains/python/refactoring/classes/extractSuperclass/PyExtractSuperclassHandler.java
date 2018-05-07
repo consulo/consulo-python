@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.extractSuperclass;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.refactoring.RefactoringBundle;
@@ -37,7 +38,7 @@ public class PyExtractSuperclassHandler extends PyClassRefactoringHandler
 
 
 	@Override
-	protected void doRefactorImpl(@NotNull final Project project, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull final Editor editor)
+	protected void doRefactorImpl(@Nonnull final Project project, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final Editor editor)
 	{
 		//TODO: Move to presenter
 		if(PyUtil.filterOutObject(infoStorage.getClassMemberInfos(classUnderRefactoring)).isEmpty())
@@ -49,16 +50,16 @@ public class PyExtractSuperclassHandler extends PyClassRefactoringHandler
 
 		ViewPresenterUtils.linkViewWithPresenterAndLaunch(PyExtractSuperclassPresenter.class, PyExtractSuperclassView.class, new Creator<PyExtractSuperclassView, PyExtractSuperclassPresenter>()
 		{
-			@NotNull
+			@Nonnull
 			@Override
-			public PyExtractSuperclassPresenter createPresenter(@NotNull final PyExtractSuperclassView view)
+			public PyExtractSuperclassPresenter createPresenter(@Nonnull final PyExtractSuperclassView view)
 			{
 				return new PyExtractSuperclassPresenterImpl(view, classUnderRefactoring, infoStorage);
 			}
 
-			@NotNull
+			@Nonnull
 			@Override
-			public PyExtractSuperclassView createView(@NotNull final PyExtractSuperclassPresenter presenter)
+			public PyExtractSuperclassView createView(@Nonnull final PyExtractSuperclassPresenter presenter)
 			{
 				return new PyExtractSuperclassViewSwingImpl(classUnderRefactoring, project, presenter);
 			}

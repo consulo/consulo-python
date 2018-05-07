@@ -19,14 +19,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -89,21 +90,21 @@ public class PyMethodParametersInspection extends PyInspection
 	}
 
 	@Nls
-	@NotNull
+	@Nonnull
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.problematic.first.parameter");
 	}
 
-	@NotNull
+	@Nonnull
 	public HighlightDisplayLevel getDefaultLevel()
 	{
 		return HighlightDisplayLevel.WEAK_WARNING;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -112,7 +113,7 @@ public class PyMethodParametersInspection extends PyInspection
 	{
 		private Ref<PsiElement> myPossibleZopeRef = null;
 
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}

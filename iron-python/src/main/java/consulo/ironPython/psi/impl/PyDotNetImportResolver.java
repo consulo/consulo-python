@@ -16,7 +16,7 @@
 
 package consulo.ironPython.psi.impl;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import consulo.ironPython.module.extension.BaseIronPythonModuleExtension;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;

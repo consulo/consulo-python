@@ -19,10 +19,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
@@ -65,7 +65,7 @@ public class PythonConsoleToolWindow
 		myProject = project;
 	}
 
-	public static PythonConsoleToolWindow getInstance(@NotNull Project project)
+	public static PythonConsoleToolWindow getInstance(@Nonnull Project project)
 	{
 		return project.getComponent(PythonConsoleToolWindow.class);
 	}
@@ -76,7 +76,7 @@ public class PythonConsoleToolWindow
 	}
 
 
-	public void init(final @NotNull ToolWindow toolWindow, final @NotNull RunContentDescriptor contentDescriptor)
+	public void init(final @Nonnull ToolWindow toolWindow, final @Nonnull RunContentDescriptor contentDescriptor)
 	{
 		setContent(toolWindow, contentDescriptor);
 
@@ -86,7 +86,7 @@ public class PythonConsoleToolWindow
 		}
 	}
 
-	private void doInit(@NotNull final ToolWindow toolWindow)
+	private void doInit(@Nonnull final ToolWindow toolWindow)
 	{
 		myInitialized = true;
 
@@ -95,7 +95,7 @@ public class PythonConsoleToolWindow
 		((ToolWindowManagerEx) ToolWindowManager.getInstance(myProject)).addToolWindowManagerListener(new ToolWindowManagerListener()
 		{
 			@Override
-			public void toolWindowRegistered(@NotNull String id)
+			public void toolWindowRegistered(@Nonnull String id)
 			{
 			}
 
@@ -150,7 +150,7 @@ public class PythonConsoleToolWindow
 		setContent(getToolWindow(myProject), contentDescriptor);
 	}
 
-	private static Content createContent(final @NotNull RunContentDescriptor contentDescriptor)
+	private static Content createContent(final @Nonnull RunContentDescriptor contentDescriptor)
 	{
 		SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
 
@@ -207,7 +207,7 @@ public class PythonConsoleToolWindow
 	}
 
 
-	public void activate(@NotNull Runnable runnable)
+	public void activate(@Nonnull Runnable runnable)
 	{
 		getToolWindow(myProject).activate(runnable);
 	}

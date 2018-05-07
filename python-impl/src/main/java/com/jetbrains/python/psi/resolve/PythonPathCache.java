@@ -19,7 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileCopyEvent;
@@ -66,31 +67,31 @@ public abstract class PythonPathCache
 	protected class MyVirtualFileAdapter extends VirtualFileAdapter
 	{
 		@Override
-		public void fileCreated(@NotNull VirtualFileEvent event)
+		public void fileCreated(@Nonnull VirtualFileEvent event)
 		{
 			clearCache();
 		}
 
 		@Override
-		public void fileDeleted(@NotNull VirtualFileEvent event)
+		public void fileDeleted(@Nonnull VirtualFileEvent event)
 		{
 			clearCache();
 		}
 
 		@Override
-		public void fileMoved(@NotNull VirtualFileMoveEvent event)
+		public void fileMoved(@Nonnull VirtualFileMoveEvent event)
 		{
 			clearCache();
 		}
 
 		@Override
-		public void fileCopied(@NotNull VirtualFileCopyEvent event)
+		public void fileCopied(@Nonnull VirtualFileCopyEvent event)
 		{
 			clearCache();
 		}
 
 		@Override
-		public void propertyChanged(@NotNull VirtualFilePropertyEvent event)
+		public void propertyChanged(@Nonnull VirtualFilePropertyEvent event)
 		{
 			if(event.getPropertyName().equals(VirtualFile.PROP_NAME))
 			{

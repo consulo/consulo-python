@@ -20,8 +20,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,11 +31,11 @@ import java.util.List;
  * @author yole
  */
 public class PyKeywordArgumentReference extends PsiReferenceBase.Poly<PyKeywordArgument> {
-  public PyKeywordArgumentReference(@NotNull PyKeywordArgument element, TextRange textRange) {
+  public PyKeywordArgumentReference(@Nonnull PyKeywordArgument element, TextRange textRange) {
     super(element, textRange, true);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     final String keyword = myElement.getKeyword();
@@ -87,7 +87,7 @@ public class PyKeywordArgumentReference extends PsiReferenceBase.Poly<PyKeywordA
     return null;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Object[] getVariants() {
     return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.

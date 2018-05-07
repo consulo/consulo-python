@@ -25,7 +25,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,9 +36,9 @@ import java.util.Set;
 public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesCollector {
   private static final String GROUP_ID = "py-interpreter";
 
-  @NotNull
+  @Nonnull
   @Override
-  public Set<UsageDescriptor> getProjectUsages(@NotNull Project project) throws CollectUsagesException {
+  public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException {
     Set<UsageDescriptor> result = new HashSet<UsageDescriptor>();
     for(Module m: ModuleManager.getInstance(project).getModules()) {
       Sdk pythonSdk = PythonSdkType.findPythonSdk(m);
@@ -52,7 +52,7 @@ public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesColle
     return result;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public GroupDescriptor getGroupId() {
     return GroupDescriptor.create(GROUP_ID);

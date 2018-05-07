@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -52,13 +53,13 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyStringConcatenationToFormatIntention extends PyBaseIntentionAction
 {
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.string.concatenation.to.format");
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -120,7 +121,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
 		return true;
 	}
 
-	private static Collection<PyExpression> getSimpleExpressions(@NotNull PyBinaryExpression expression)
+	private static Collection<PyExpression> getSimpleExpressions(@Nonnull PyBinaryExpression expression)
 	{
 		List<PyExpression> res = new ArrayList<>();
 		if(expression.getLeftExpression() instanceof PyBinaryExpression)
@@ -142,7 +143,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
 		return res;
 	}
 
-	private static Collection<PyElementType> getOperators(@NotNull PyBinaryExpression expression)
+	private static Collection<PyElementType> getOperators(@Nonnull PyBinaryExpression expression)
 	{
 		List<PyElementType> res = new ArrayList<>();
 		if(expression.getLeftExpression() instanceof PyBinaryExpression)
@@ -157,7 +158,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
 		return res;
 	}
 
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		PsiElement element = PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyBinaryExpression.class);
 

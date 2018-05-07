@@ -16,6 +16,9 @@
 
 package com.jetbrains.python.testing.nosetest;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.execution.Location;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -24,8 +27,6 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.testing.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PythonNoseTestConfigurationProducer extends
                                                  PythonTestConfigurationProducer {
@@ -33,7 +34,7 @@ public class PythonNoseTestConfigurationProducer extends
     super(PythonTestConfigurationType.getInstance().PY_NOSETEST_FACTORY);
   }
 
-  protected boolean isAvailable(@NotNull final Location location) {
+  protected boolean isAvailable(@Nonnull final Location location) {
     final PsiElement element = location.getPsiElement();
     Module module = location.getModule();
     if (module == null) {
@@ -47,7 +48,7 @@ public class PythonNoseTestConfigurationProducer extends
   }
 
   @Override
-  protected boolean isTestFunction(@NotNull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration) {
+  protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration) {
     return PythonUnitTestUtil.isTestCaseFunction(pyFunction, false);
   }
 }

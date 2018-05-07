@@ -16,10 +16,11 @@
 
 package com.jetbrains.python.psi.stubs;
 
+import javax.annotation.Nullable;
+
 import com.intellij.psi.stubs.StubElement;
 import com.jetbrains.python.psi.PyImportElement;
 import com.intellij.psi.util.QualifiedName;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole

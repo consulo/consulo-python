@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.reference.SoftReference;
 import com.jetbrains.python.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.codeInsight.dataflow.scope.impl.ScopeImpl;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -38,7 +38,7 @@ public class ControlFlowCache {
     scopeOwner.putUserData(SCOPE_KEY, null);
   }
 
-  public static ControlFlow getControlFlow(@NotNull ScopeOwner element) {
+  public static ControlFlow getControlFlow(@Nonnull ScopeOwner element) {
     SoftReference<ControlFlow> ref = element.getUserData(CONTROL_FLOW_KEY);
     ControlFlow flow = ref != null ? ref.get() : null;
     if (flow == null) {
@@ -48,8 +48,8 @@ public class ControlFlowCache {
     return flow;
   }
 
-  @NotNull
-  public static Scope getScope(@NotNull ScopeOwner element) {
+  @Nonnull
+  public static Scope getScope(@Nonnull ScopeOwner element) {
     SoftReference<Scope> ref = element.getUserData(SCOPE_KEY);
     Scope scope = ref != null ? ref.get() : null;
     if (scope == null) {

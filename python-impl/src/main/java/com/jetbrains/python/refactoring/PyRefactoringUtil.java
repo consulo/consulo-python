@@ -30,8 +30,8 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import com.jetbrains.python.findUsages.PyFindUsagesHandlerFactory;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.*;
 
@@ -42,14 +42,14 @@ import java.util.*;
  * Time: 7:07:02 PM
  */
 public class PyRefactoringUtil {
-  @NotNull
-  public static List<PsiElement> getOccurrences(@NotNull final PsiElement pattern, @Nullable final PsiElement context) {
+  @Nonnull
+  public static List<PsiElement> getOccurrences(@Nonnull final PsiElement pattern, @Nullable final PsiElement context) {
     if (context == null) {
       return Collections.emptyList();
     }
     final List<PsiElement> occurrences = new ArrayList<PsiElement>();
     final PyElementVisitor visitor = new PyElementVisitor() {
-      public void visitElement(@NotNull final PsiElement element) {
+      public void visitElement(@Nonnull final PsiElement element) {
         if (element instanceof PyParameter) {
           return;
         }
@@ -81,10 +81,10 @@ public class PyRefactoringUtil {
   }
 
   @Nullable
-  public static PyExpression getSelectedExpression(@NotNull final Project project,
-                                                   @NotNull PsiFile file,
-                                                   @NotNull final PsiElement element1,
-                                                   @NotNull final PsiElement element2) {
+  public static PyExpression getSelectedExpression(@Nonnull final Project project,
+                                                   @Nonnull PsiFile file,
+                                                   @Nonnull final PsiElement element1,
+                                                   @Nonnull final PsiElement element2) {
     PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
     if (parent != null && !(parent instanceof PyElement)) {
       parent = PsiTreeUtil.getParentOfType(parent, PyElement.class);
@@ -134,7 +134,7 @@ public class PyRefactoringUtil {
     return null;
   }
 
-  @NotNull
+  @Nonnull
   public static Collection<String> collectUsedNames(@Nullable final PsiElement scope) {
     if (!(scope instanceof PyClass) && !(scope instanceof PyFile) && !(scope instanceof PyFunction)) {
       return Collections.emptyList();
@@ -147,12 +147,12 @@ public class PyRefactoringUtil {
     };
     scope.acceptChildren(new PyRecursiveElementVisitor() {
       @Override
-      public void visitPyTargetExpression(@NotNull final PyTargetExpression node) {
+      public void visitPyTargetExpression(@Nonnull final PyTargetExpression node) {
         variables.add(node.getName());
       }
 
       @Override
-      public void visitPyNamedParameter(@NotNull final PyNamedParameter node) {
+      public void visitPyNamedParameter(@Nonnull final PyNamedParameter node) {
         variables.add(node.getName());
       }
 
@@ -162,12 +162,12 @@ public class PyRefactoringUtil {
       }
 
       @Override
-      public void visitPyFunction(@NotNull final PyFunction node) {
+      public void visitPyFunction(@Nonnull final PyFunction node) {
         variables.add(node.getName());
       }
 
       @Override
-      public void visitPyClass(@NotNull final PyClass node) {
+      public void visitPyClass(@Nonnull final PyClass node) {
         variables.add(node.getName());
       }
     });
@@ -175,7 +175,7 @@ public class PyRefactoringUtil {
   }
 
   @Nullable
-  public static PsiElement findExpressionInRange(@NotNull final PsiFile file, int startOffset, int endOffset) {
+  public static PsiElement findExpressionInRange(@Nonnull final PsiFile file, int startOffset, int endOffset) {
     PsiElement element1 = file.findElementAt(startOffset);
     PsiElement element2 = file.findElementAt(endOffset - 1);
     if (element1 instanceof PsiWhiteSpace) {
@@ -192,8 +192,8 @@ public class PyRefactoringUtil {
     return getSelectedExpression(file.getProject(), file, element1, element2);
   }
 
-  @NotNull
-  public static PsiElement[] findStatementsInRange(@NotNull final PsiFile file, int startOffset, int endOffset) {
+  @Nonnull
+  public static PsiElement[] findStatementsInRange(@Nonnull final PsiFile file, int startOffset, int endOffset) {
     PsiElement element1 = file.findElementAt(startOffset);
     PsiElement element2 = file.findElementAt(endOffset - 1);
     if (element1 instanceof PsiWhiteSpace) {
@@ -287,8 +287,8 @@ public class PyRefactoringUtil {
     return Comparing.strEqual(firstName, secondName) && firstParams.length == secondParams.length;
   }
 
-  @NotNull
-  public static List<UsageInfo> findUsages(@NotNull PsiNamedElement element, boolean forHighlightUsages) {
+  @Nonnull
+  public static List<UsageInfo> findUsages(@Nonnull PsiNamedElement element, boolean forHighlightUsages) {
     final List<UsageInfo> usages = new ArrayList<UsageInfo>();
     final FindUsagesHandler handler = new PyFindUsagesHandlerFactory().createFindUsagesHandler(element, forHighlightUsages);
     assert handler != null;

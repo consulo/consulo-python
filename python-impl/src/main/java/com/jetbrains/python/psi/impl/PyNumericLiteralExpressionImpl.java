@@ -21,8 +21,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyNumericLiteralExpression;
 import com.jetbrains.python.psi.types.PyType;
@@ -141,7 +141,7 @@ public class PyNumericLiteralExpressionImpl extends PyElementImpl
     return new BigInteger(text, radix);
   }
 
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
+  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     ASTNode node = getNode();
     IElementType type = node.getElementType();
     if (type == PyElementTypes.INTEGER_LITERAL_EXPRESSION) {

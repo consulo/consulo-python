@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.console;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.FoldingModel;
@@ -124,7 +124,7 @@ public class PyConsoleStartFolding extends DocumentAdapter implements ConsoleCom
 	}
 
 	@Override
-	public void onFoldRegionStateChange(@NotNull FoldRegion region)
+	public void onFoldRegionStateChange(@Nonnull FoldRegion region)
 	{
 		if(region.equals(myStartFoldRegion) && region.isExpanded())
 		{

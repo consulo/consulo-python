@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.editor;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.editorActions.BackspaceHandler;
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
 import com.intellij.injected.editor.EditorWindow;
@@ -27,18 +29,17 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.jetbrains.python.psi.PyFile;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
   @Override
-  public Result preprocessEnter(@NotNull PsiFile file,
-                                @NotNull Editor editor,
-                                @NotNull Ref<Integer> caretOffset,
-                                @NotNull Ref<Integer> caretAdvance,
-                                @NotNull DataContext dataContext,
+  public Result preprocessEnter(@Nonnull PsiFile file,
+                                @Nonnull Editor editor,
+                                @Nonnull Ref<Integer> caretOffset,
+                                @Nonnull Ref<Integer> caretAdvance,
+                                @Nonnull DataContext dataContext,
                                 EditorActionHandler originalHandler) {
     int offset = caretOffset.get();
     if (editor instanceof EditorWindow) {

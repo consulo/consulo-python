@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -26,7 +28,6 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFromImportStatement;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -34,17 +35,17 @@ import org.jetbrains.annotations.NotNull;
  * QuickFix to add 'from __future__ import with_statement'' if python version is less than 2.6
  */
 public class UnresolvedRefAddFutureImportQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.unresolved.reference.add.future");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
     PyFile file = (PyFile)element.getContainingFile();
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;

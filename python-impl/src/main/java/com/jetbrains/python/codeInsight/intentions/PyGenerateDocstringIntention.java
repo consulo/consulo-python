@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.codeInsight.intentions;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -43,20 +44,20 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction
 {
 	private String myText;
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.doc.string.stub");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getText()
 	{
 		return myText;
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile) || file instanceof PyDocstringFile)
 		{
@@ -101,7 +102,7 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction
 		}
 	}
 
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
 		PyFunction function = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
@@ -114,7 +115,7 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction
 		generateDocstring(function, editor);
 	}
 
-	public static void generateDocstring(@NotNull PyDocStringOwner docStringOwner, @Nullable Editor editor)
+	public static void generateDocstring(@Nonnull PyDocStringOwner docStringOwner, @Nullable Editor editor)
 	{
 		if(!DocStringUtil.ensureNotPlainDocstringFormat(docStringOwner))
 		{

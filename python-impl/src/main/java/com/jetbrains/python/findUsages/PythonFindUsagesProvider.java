@@ -16,23 +16,24 @@
 
 package com.jetbrains.python.findUsages;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class PythonFindUsagesProvider implements FindUsagesProvider {
-  public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
+  public boolean canFindUsagesFor(@Nonnull PsiElement psiElement) {
     return psiElement instanceof PsiNamedElement || psiElement instanceof PyReferenceExpression;
   }
 
-  public String getHelpId(@NotNull PsiElement psiElement) {
+  public String getHelpId(@Nonnull PsiElement psiElement) {
     if (psiElement instanceof PyClass) {
       return "reference.dialogs.findUsages.class";
     }
@@ -45,8 +46,8 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     return null;
   }
 
-  @NotNull
-  public String getType(@NotNull PsiElement element) {
+  @Nonnull
+  public String getType(@Nonnull PsiElement element) {
     if (element instanceof PyNamedParameter) return "parameter";  //TODO: replace strings to messages
     if (element instanceof PyFunction) {
       if (((PyFunction) element).getContainingClass() != null) {
@@ -69,8 +70,8 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     return "";
   }
 
-  @NotNull
-  public String getDescriptiveName(@NotNull PsiElement element) {
+  @Nonnull
+  public String getDescriptiveName(@Nonnull PsiElement element) {
     if (element instanceof PsiNamedElement) {
       final String name = ((PsiNamedElement)element).getName();
       return name == null ? "<unnamed>" : name;
@@ -85,8 +86,8 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     return "";
   }
 
-  @NotNull
-  public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
+  @Nonnull
+  public String getNodeText(@Nonnull PsiElement element, boolean useFullName) {
     if (element instanceof PyNamedParameter) {
       StringBuilder result = new StringBuilder(((PyNamedParameter)element).getName());
       final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);

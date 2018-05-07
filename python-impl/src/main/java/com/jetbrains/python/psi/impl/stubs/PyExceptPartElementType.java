@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.impl.PyExceptPartImpl;
 import com.jetbrains.python.psi.stubs.PyExceptPartStub;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -38,27 +38,27 @@ public class PyExceptPartElementType extends PyStubElementType<PyExceptPartStub,
   }
 
   @Override
-  public PsiElement createElement(@NotNull ASTNode node) {
+  public PsiElement createElement(@Nonnull ASTNode node) {
     return new PyExceptPartImpl(node);
   }
 
   @Override
-  public PyExceptPart createPsi(@NotNull PyExceptPartStub stub) {
+  public PyExceptPart createPsi(@Nonnull PyExceptPartStub stub) {
     return new PyExceptPartImpl(stub);
   }
 
   @Override
-  public PyExceptPartStub createStub(@NotNull PyExceptPart psi, StubElement parentStub) {
+  public PyExceptPartStub createStub(@Nonnull PyExceptPart psi, StubElement parentStub) {
     return new PyExceptPartStubImpl(parentStub);
   }
 
   @Override
-  public void serialize(@NotNull PyExceptPartStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@Nonnull PyExceptPartStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PyExceptPartStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PyExceptPartStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new PyExceptPartStubImpl(parentStub);
   }
 }

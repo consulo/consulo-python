@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.refactoring.surround;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.surroundWith.SurroundDescriptor;
 import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.refactoring.surround.surrounders.statements.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,7 +42,7 @@ public class PyStatementSurroundDescriptor implements SurroundDescriptor {
     new PyWithTryFinallySurrounder()
   };
 
-  @NotNull
+  @Nonnull
   public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     final PsiElement[] statements = PyRefactoringUtil.findStatementsInRange(file, startOffset, endOffset);
     if (statements.length == 0) {
@@ -50,7 +51,7 @@ public class PyStatementSurroundDescriptor implements SurroundDescriptor {
     return statements;
   }
 
-  @NotNull
+  @Nonnull
   public Surrounder[] getSurrounders() {
     return SURROUNDERS;
   }

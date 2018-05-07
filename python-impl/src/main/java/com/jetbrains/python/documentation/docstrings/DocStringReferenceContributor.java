@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
 
@@ -25,7 +25,7 @@ import com.intellij.psi.PsiReferenceRegistrar;
 public class DocStringReferenceContributor extends PsiReferenceContributor
 {
 	@Override
-	public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar)
+	public void registerReferenceProviders(@Nonnull PsiReferenceRegistrar registrar)
 	{
 		registrar.registerReferenceProvider(DocStringTagCompletionContributor.DOCSTRING_PATTERN, new DocStringReferenceProvider());
 	}

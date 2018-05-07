@@ -17,6 +17,8 @@ package com.jetbrains.python.refactoring.classes.extractSuperclass;
 
 import java.awt.BorderLayout;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -24,8 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
@@ -43,14 +43,14 @@ class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtra
 {
 
 	private static final String FILE_OR_DIRECTORY = RefactoringBundle.message("extract.superclass.elements.header");
-	@NotNull
+	@Nonnull
 	private final JTextArea myExtractedSuperNameField = new JTextArea();
-	@NotNull
+	@Nonnull
 	private final FileChooserDescriptor myFileChooserDescriptor;
-	@NotNull
+	@Nonnull
 	private final TextFieldWithBrowseButton myTargetDirField;
 
-	PyExtractSuperclassViewSwingImpl(@NotNull final PyClass classUnderRefactoring, @NotNull final Project project, @NotNull final PyExtractSuperclassPresenter presenter)
+	PyExtractSuperclassViewSwingImpl(@Nonnull final PyClass classUnderRefactoring, @Nonnull final Project project, @Nonnull final PyExtractSuperclassPresenter presenter)
 	{
 		super(project, presenter, RefactoringBundle.message("extract.superclass.from"), true);
 		setTitle(PyExtractSuperclassHandler.REFACTORING_NAME);
@@ -108,21 +108,21 @@ class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtra
 	}
 
 	@Override
-	public void configure(@NotNull final PyExtractSuperclassInitializationInfo configInfo)
+	public void configure(@Nonnull final PyExtractSuperclassInitializationInfo configInfo)
 	{
 		super.configure(configInfo);
 		myFileChooserDescriptor.setRoots(configInfo.getRoots());
 		myTargetDirField.setText(configInfo.getDefaultFilePath());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getModuleFile()
 	{
 		return myTargetDirField.getText();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getSuperClassName()
 	{

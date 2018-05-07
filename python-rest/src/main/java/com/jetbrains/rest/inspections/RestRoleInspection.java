@@ -21,7 +21,7 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.ui.ListEditForm;
@@ -65,7 +65,7 @@ public class RestRoleInspection extends RestInspection
 	public JDOMExternalizableStringList ignoredRoles = new JDOMExternalizableStringList();
 
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
@@ -78,9 +78,9 @@ public class RestRoleInspection extends RestInspection
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
 	{
 		return new Visitor(holder, ignoredRoles);
 	}

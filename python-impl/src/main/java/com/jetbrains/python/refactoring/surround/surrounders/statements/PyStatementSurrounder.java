@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.surround.surrounders.statements;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -23,8 +25,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,15 +37,15 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PyStatementSurrounder implements Surrounder {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.refactoring.surround.surrounders.statements.PyStatementSurrounder");
 
-  public boolean isApplicable(@NotNull PsiElement[] elements) {
+  public boolean isApplicable(@Nonnull PsiElement[] elements) {
     return true;
   }
 
   @Nullable
-  protected abstract TextRange surroundStatement(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements)
+  protected abstract TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
     throws IncorrectOperationException;
 
-  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements)
+  public TextRange surroundElements(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
     throws IncorrectOperationException {
     return surroundStatement(project, editor, elements);
   }

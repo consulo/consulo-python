@@ -23,8 +23,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -56,13 +57,13 @@ public class PythonStringUtil {
    *
    * @return string without heading and trailing pair of ' or "
    */
-  @NotNull
-  public static String getStringValue(@NotNull String s) {
+  @Nonnull
+  public static String getStringValue(@Nonnull String s) {
     return getStringValueTextRange(s).substring(s);
   }
 
 
-  public static TextRange getStringValueTextRange(@NotNull String s) {
+  public static TextRange getStringValueTextRange(@Nonnull String s) {
     final Pair<String, String> quotes = getQuotes(s);
     if (quotes != null) {
       return TextRange.create(quotes.getFirst().length(), s.length() - quotes.getSecond().length());
@@ -70,7 +71,7 @@ public class PythonStringUtil {
     return TextRange.allOf(s);
   }
 
-  @NotNull
+  @Nonnull
   public static String removeFirstPrefix(@Nullable String s, String separator) {
     if (s != null) {
       int pos = s.indexOf(separator);
@@ -81,7 +82,7 @@ public class PythonStringUtil {
     return "";
   }
 
-  @NotNull
+  @Nonnull
   public static String removeLastSuffix(@Nullable String s, String separator) {
     if (s != null) {
       int pos = s.lastIndexOf(separator);
@@ -119,7 +120,7 @@ public class PythonStringUtil {
     return false;
   }
 
-  @NotNull
+  @Nonnull
   public static String getFirstPrefix(String s, String separator) {
     if (s != null) {
       int pos = s.indexOf(separator);
@@ -168,7 +169,7 @@ public class PythonStringUtil {
   }
 
 
-  public static TextRange lastSuffixTextRange(@NotNull String text, String separator) {
+  public static TextRange lastSuffixTextRange(@Nonnull String text, String separator) {
     int offset = text.lastIndexOf(separator) + 1;
     int length = text.length() - offset;
 
@@ -199,7 +200,7 @@ public class PythonStringUtil {
    *         UR"unicode raw string" -> (UR", ")
    */
   @Nullable
-  public static Pair<String, String> getQuotes(@NotNull final String text) {
+  public static Pair<String, String> getQuotes(@Nonnull final String text) {
     boolean start = true;
     int pos = 0;
     for (int i = 0; i < text.length(); i++) {
@@ -228,7 +229,7 @@ public class PythonStringUtil {
   }
 
   @Nullable
-  private static Pair<String, String> getQuotes(@NotNull String text, @NotNull String prefix, @NotNull String quote) {
+  private static Pair<String, String> getQuotes(@Nonnull String text, @Nonnull String prefix, @Nonnull String quote) {
     final int length = text.length();
     final int n = quote.length();
     if (length >= 2 * n && text.startsWith(quote) && text.endsWith(quote)) {

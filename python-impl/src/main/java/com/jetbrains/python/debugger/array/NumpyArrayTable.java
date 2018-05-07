@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.debugger.array;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebugValue;
@@ -32,7 +33,7 @@ public final class NumpyArrayTable extends NumericContainerViewTable
 
 	private ArrayTableCellRenderer myArrayTableCellRenderer;
 
-	public NumpyArrayTable(@NotNull Project project, @NotNull ViewNumericContainerDialog dialog, @NotNull PyDebugValue value)
+	public NumpyArrayTable(@Nonnull Project project, @Nonnull ViewNumericContainerDialog dialog, @Nonnull PyDebugValue value)
 	{
 		super(project, dialog, value);
 	}

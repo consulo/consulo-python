@@ -17,7 +17,8 @@ package com.jetbrains.python.refactoring.classes.membersManager;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringBundle;
@@ -43,15 +44,15 @@ public class MembersConflictDialog extends ConflictsDialog
 	 *                              at new destination. If user wants to move method, that uses field "bar" which would not be available at new class,
 	 *                              pass [bar] field
 	 */
-	public MembersConflictDialog(@NotNull final Project project, @NotNull final MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @NotNull final Collection<PyMemberInfo<?>>
+	public MembersConflictDialog(@Nonnull final Project project, @Nonnull final MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @Nonnull final Collection<PyMemberInfo<?>>
 			dependenciesConflicts)
 	{
 		super(project, convertDescription(duplicatesConflict, dependenciesConflicts), null, true, false);
 	}
 
-	@NotNull
-	private static MultiMap<PsiElement, String> convertDescription(@NotNull final MultiMap<PyClass, PyMemberInfo<?>> duplicateConflictDescriptions,
-			@NotNull final Collection<PyMemberInfo<?>> dependenciesConflicts)
+	@Nonnull
+	private static MultiMap<PsiElement, String> convertDescription(@Nonnull final MultiMap<PyClass, PyMemberInfo<?>> duplicateConflictDescriptions,
+			@Nonnull final Collection<PyMemberInfo<?>> dependenciesConflicts)
 	{
 		final MultiMap<PsiElement, String> result = new MultiMap<>();
 		for(final PyClass aClass : duplicateConflictDescriptions.keySet())

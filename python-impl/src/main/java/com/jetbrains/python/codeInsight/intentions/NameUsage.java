@@ -20,8 +20,8 @@ import java.awt.Font;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import consulo.ide.IconDescriptorUpdaters;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.openapi.editor.Document;
@@ -71,7 +71,7 @@ class NameUsage implements PsiElementUsage {
     return null;
   }
 
-  @NotNull
+  @Nonnull
   public UsagePresentation getPresentation() {
     return new UsagePresentation() {
       @Nullable
@@ -79,7 +79,7 @@ class NameUsage implements PsiElementUsage {
         return myElement.isValid() ? IconDescriptorUpdaters.getIcon(myElement, 0) : null;
       }
 
-      @NotNull
+      @Nonnull
       public TextChunk[] getText() {
         if (myElement.isValid()) {
           TextChunk[] chunks = new TextChunk[3];
@@ -99,7 +99,7 @@ class NameUsage implements PsiElementUsage {
         else return new TextChunk[]{new TextChunk(SLANTED, "?")}; 
       }
 
-      @NotNull
+      @Nonnull
       public String getPlainText() {
         return myElement.getText();
       }

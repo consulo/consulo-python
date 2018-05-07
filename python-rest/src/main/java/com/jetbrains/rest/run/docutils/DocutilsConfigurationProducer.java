@@ -31,8 +31,8 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.rest.RestFileType;
 import com.jetbrains.rest.run.RestRunConfiguration;
 import com.jetbrains.rest.run.RestRunConfigurationType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -93,7 +93,7 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
   @Nullable
   @Override
   protected RunnerAndConfigurationSettings findExistingByElement(Location location,
-                                                                 @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
+                                                                 @Nonnull List<RunnerAndConfigurationSettings> existingConfigurations,
                                                                  ConfigurationContext context) {
     PsiFile script = location.getPsiElement().getContainingFile();
     if (script == null) {

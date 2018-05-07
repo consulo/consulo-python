@@ -17,8 +17,8 @@ package com.jetbrains.python.documentation.docstrings;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.jetbrains.python.toolbox.Substring;
 
 /**
@@ -29,20 +29,20 @@ public class TagBasedDocStringUpdater extends DocStringUpdater<TagBasedDocString
 
 	private final String myTagPrefix;
 
-	public TagBasedDocStringUpdater(@NotNull TagBasedDocString docString, @NotNull String tagPrefix, @NotNull String minContentIndent)
+	public TagBasedDocStringUpdater(@Nonnull TagBasedDocString docString, @Nonnull String tagPrefix, @Nonnull String minContentIndent)
 	{
 		super(docString, minContentIndent);
 		myTagPrefix = tagPrefix;
 	}
 
-	@NotNull
+	@Nonnull
 	private TagBasedDocStringBuilder createBuilder()
 	{
 		return new TagBasedDocStringBuilder(myTagPrefix);
 	}
 
 	@Override
-	public final void addParameter(@NotNull String name, @Nullable String type)
+	public final void addParameter(@Nonnull String name, @Nullable String type)
 	{
 		if(type != null)
 		{
@@ -68,7 +68,7 @@ public class TagBasedDocStringUpdater extends DocStringUpdater<TagBasedDocString
 	}
 
 	@Override
-	public void removeParameter(@NotNull String name)
+	public void removeParameter(@Nonnull String name)
 	{
 		final List<Substring> nameSubs = myOriginalDocString.getParameterSubstrings();
 		for(Substring sub : nameSubs)
@@ -82,7 +82,7 @@ public class TagBasedDocStringUpdater extends DocStringUpdater<TagBasedDocString
 		}
 	}
 
-	private void insertTagLine(@NotNull DocStringBuilder lineBuilder)
+	private void insertTagLine(@Nonnull DocStringBuilder lineBuilder)
 	{
 		final int firstLineWithTag = findFirstLineWithTag();
 		if(firstLineWithTag >= 0)

@@ -20,7 +20,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -48,7 +48,7 @@ public class PythonDebugConsoleCommunication extends AbstractConsoleCommunicatio
 		myDebugProcess = debugProcess;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception
 	{

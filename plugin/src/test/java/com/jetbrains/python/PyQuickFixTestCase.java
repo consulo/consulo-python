@@ -3,7 +3,7 @@ package com.jetbrains.python;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.python.fixtures.PyTestCase;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 
@@ -35,7 +35,7 @@ public abstract class PyQuickFixTestCase extends PyTestCase {
     myFixture.checkHighlighting(true, false, false);
   }
 
-  protected void doMultifilesTest(@NotNull final Class inspectionClass, @NotNull final String hint, @NotNull final String[] files) {
+  protected void doMultifilesTest(@Nonnull final Class inspectionClass, @Nonnull final String hint, @Nonnull final String[] files) {
     final String testFileName = getTestName(true);
     myFixture.enableInspections(inspectionClass);
     String [] filenames = Arrays.copyOf(files, files.length + 1);

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.packaging;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -27,16 +28,16 @@ import com.intellij.webcore.packaging.PackageManagementService;
 public abstract class PyPackageManagers
 {
 
-	@NotNull
+	@Nonnull
 	public static PyPackageManagers getInstance()
 	{
 		return ServiceManager.getService(PyPackageManagers.class);
 	}
 
-	@NotNull
-	public abstract PyPackageManager forSdk(@NotNull Sdk sdk);
+	@Nonnull
+	public abstract PyPackageManager forSdk(@Nonnull Sdk sdk);
 
 	public abstract PackageManagementService getManagementService(Project project, Sdk sdk);
 
-	public abstract void clearCache(@NotNull final Sdk sdk);
+	public abstract void clearCache(@Nonnull final Sdk sdk);
 }

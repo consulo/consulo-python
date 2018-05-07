@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -26,8 +28,8 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -58,7 +60,7 @@ public class PyKeywordArgumentImpl extends PyElementImpl implements PyKeywordArg
     return getClass().getSimpleName() + ": " + getKeyword();
   }
 
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
+  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     final PyExpression e = getValueExpression();
     return e != null ? context.getType(e) : null;
   }
@@ -78,7 +80,7 @@ public class PyKeywordArgumentImpl extends PyElementImpl implements PyKeywordArg
   }
 
   @Override
-  public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+  public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException {
     PyElementGenerator generator = PyElementGenerator.getInstance(getProject());
     PyExpression expression = getValueExpression();
     PyKeywordArgument keywordArgument = generator.createKeywordArgument(LanguageLevel.forElement(this), name,

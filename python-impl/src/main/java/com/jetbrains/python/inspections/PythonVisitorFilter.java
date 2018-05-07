@@ -16,7 +16,8 @@
 
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.LanguageExtension;
 import com.intellij.psi.PsiFile;
 
@@ -29,5 +30,5 @@ import com.intellij.psi.PsiFile;
 public interface PythonVisitorFilter {
   LanguageExtension<PythonVisitorFilter> INSTANCE = new LanguageExtension<PythonVisitorFilter>("consulo.python.visitorFilter");
 
-  boolean isSupported(@NotNull Class visitorClass, @NotNull PsiFile file);
+  boolean isSupported(@Nonnull Class visitorClass, @Nonnull PsiFile file);
 }

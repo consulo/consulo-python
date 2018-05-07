@@ -3,8 +3,8 @@ package com.jetbrains.python.debugger.pydev;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.xdebugger.breakpoints.SuspendPolicy;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
@@ -43,7 +43,7 @@ public interface ProcessDebugger
 
 	Collection<PyThreadInfo> getThreads();
 
-	void execute(@NotNull AbstractCommand command);
+	void execute(@Nonnull AbstractCommand command);
 
 	void suspendAllThreads();
 
@@ -69,13 +69,13 @@ public interface ProcessDebugger
 
 	void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode);
 
-	void setTempBreakpoint(@NotNull String type, @NotNull String file, int line);
+	void setTempBreakpoint(@Nonnull String type, @Nonnull String file, int line);
 
-	void removeTempBreakpoint(@NotNull String file, int line);
+	void removeTempBreakpoint(@Nonnull String file, int line);
 
-	void setBreakpoint(@NotNull String typeId, @NotNull String file, int line, @Nullable String condition, @Nullable String logExpression, @Nullable String funcName, @NotNull SuspendPolicy policy);
+	void setBreakpoint(@Nonnull String typeId, @Nonnull String file, int line, @Nullable String condition, @Nullable String logExpression, @Nullable String funcName, @Nonnull SuspendPolicy policy);
 
-	void removeBreakpoint(@NotNull String typeId, @NotNull String file, int line);
+	void removeBreakpoint(@Nonnull String typeId, @Nonnull String file, int line);
 
 	void setShowReturnValues(boolean isShowReturnValues);
 

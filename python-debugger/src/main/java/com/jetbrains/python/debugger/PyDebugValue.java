@@ -3,10 +3,10 @@ package com.jetbrains.python.debugger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.google.common.base.Strings;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
@@ -47,7 +47,7 @@ public class PyDebugValue extends XNamedValue
 
 	private final boolean myErrorOnEval;
 
-	public PyDebugValue(@NotNull final String name,
+	public PyDebugValue(@Nonnull final String name,
 			final String type,
 			String typeQualifier,
 			final String value,
@@ -60,7 +60,7 @@ public class PyDebugValue extends XNamedValue
 		this(name, type, typeQualifier, value, container, isReturnedVal, isIPythonHidden, errorOnEval, null, frameAccessor);
 	}
 
-	public PyDebugValue(@NotNull final String name,
+	public PyDebugValue(@Nonnull final String name,
 			final String type,
 			String typeQualifier,
 			final String value,
@@ -183,7 +183,7 @@ public class PyDebugValue extends XNamedValue
 		return wrapWithPrefix(getName());
 	}
 
-	private static String removeId(@NotNull String name)
+	private static String removeId(@Nonnull String name)
 	{
 		if(name.indexOf('(') != -1)
 		{
@@ -193,7 +193,7 @@ public class PyDebugValue extends XNamedValue
 		return name;
 	}
 
-	private static String removeLeadingZeros(@NotNull String name)
+	private static String removeLeadingZeros(@Nonnull String name)
 	{
 		//bugs.python.org/issue15254: "0" prefix for octal
 		while(name.length() > 1 && name.startsWith("0"))
@@ -208,13 +208,13 @@ public class PyDebugValue extends XNamedValue
 		return "__len__".equals(name);
 	}
 
-	private static boolean isCollection(@NotNull PyDebugValue parent)
+	private static boolean isCollection(@Nonnull PyDebugValue parent)
 	{
 		String type = parent.getType();
 		return type.equals("dict") || type.equals("list");
 	}
 
-	private static String getChildNamePresentation(@NotNull PyDebugValue parent, @NotNull String childName)
+	private static String getChildNamePresentation(@Nonnull PyDebugValue parent, @Nonnull String childName)
 	{
 		if(isCollection(parent))
 		{
@@ -254,7 +254,7 @@ public class PyDebugValue extends XNamedValue
 	}
 
 	@Override
-	public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place)
+	public void computePresentation(@Nonnull XValueNode node, @Nonnull XValuePlace place)
 	{
 		String value = PyTypeHandler.format(this);
 		setFullValueEvaluator(node, value);
@@ -291,7 +291,7 @@ public class PyDebugValue extends XNamedValue
 	}
 
 	@Override
-	public void computeChildren(@NotNull final XCompositeNode node)
+	public void computeChildren(@Nonnull final XCompositeNode node)
 	{
 		if(node.isObsolete())
 		{
@@ -404,7 +404,7 @@ public class PyDebugValue extends XNamedValue
 	}
 
 	@Override
-	public void computeSourcePosition(@NotNull XNavigatable navigatable)
+	public void computeSourcePosition(@Nonnull XNavigatable navigatable)
 	{
 		if(myParent == null)
 		{
@@ -425,7 +425,7 @@ public class PyDebugValue extends XNamedValue
 	private static final Pattern IS_TYPE_DECLARATION = Pattern.compile("<(?:class|type)\\s*'(?<TYPE>.*?)'>");
 
 	@Override
-	public void computeTypeSourcePosition(@NotNull XNavigatable navigatable)
+	public void computeTypeSourcePosition(@Nonnull XNavigatable navigatable)
 	{
 
 		String lookupType = getDeclaringType();

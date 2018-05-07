@@ -16,11 +16,12 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author oleg

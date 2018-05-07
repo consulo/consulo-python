@@ -21,7 +21,7 @@ import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PySetCompExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -31,7 +31,7 @@ public class PySetCompExpressionImpl extends PyComprehensionElementImpl implemen
     super(astNode);
   }
 
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
+  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     return PyBuiltinCache.getInstance(this).getSetType();
   }
 

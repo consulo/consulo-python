@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyElementVisitor;
@@ -34,7 +34,7 @@ public class PyTypeDeclarationStatementImpl extends PyElementImpl implements PyT
 		super(astNode);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PyExpression getTarget()
 	{

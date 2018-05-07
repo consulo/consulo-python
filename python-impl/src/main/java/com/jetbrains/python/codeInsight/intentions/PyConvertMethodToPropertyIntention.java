@@ -27,7 +27,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +36,17 @@ import java.util.List;
  * User: ktisha
  */
 public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.convert.method.to.property");
   }
 
-  @NotNull
+  @Nonnull
   public String getText() {
     return PyBundle.message("INTN.convert.method.to.property");
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
@@ -78,7 +78,7 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
     return available[0];
   }
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     final PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
     PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
     if (problemFunction == null) return;

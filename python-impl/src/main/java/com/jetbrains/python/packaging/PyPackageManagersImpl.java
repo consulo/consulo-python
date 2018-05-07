@@ -18,7 +18,8 @@ package com.jetbrains.python.packaging;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderRootType;
@@ -34,8 +35,8 @@ public class PyPackageManagersImpl extends PyPackageManagers
 {
 	private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<>();
 
-	@NotNull
-	public synchronized PyPackageManager forSdk(@NotNull final Sdk sdk)
+	@Nonnull
+	public synchronized PyPackageManager forSdk(@Nonnull final Sdk sdk)
 	{
 		final String key = PythonSdkType.getSdkKey(sdk);
 		PyPackageManagerImpl manager = myInstances.get(key);
@@ -61,7 +62,7 @@ public class PyPackageManagersImpl extends PyPackageManagers
 		return manager;
 	}
 
-	private static boolean sdkIsSetUp(@NotNull final Sdk sdk)
+	private static boolean sdkIsSetUp(@Nonnull final Sdk sdk)
 	{
 		final VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
 		return roots.length != 0;
@@ -77,7 +78,7 @@ public class PyPackageManagersImpl extends PyPackageManagers
 	}
 
 	@Override
-	public void clearCache(@NotNull Sdk sdk)
+	public void clearCache(@Nonnull Sdk sdk)
 	{
 		final String key = PythonSdkType.getSdkKey(sdk);
 		if(myInstances.containsKey(key))

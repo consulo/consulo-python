@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.impl;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -51,7 +51,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 		pyVisitor.visitPyLambdaExpression(this);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		for(PyTypeProvider provider : Extensions.getExtensions(PyTypeProvider.EP_NAME))
 		{
@@ -64,7 +64,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 		return new PyFunctionTypeImpl(this);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyParameterList getParameterList()
 	{
 		final PyElement child = childToPsi(PyElementTypes.PARAMETER_LIST_SET, 0);
@@ -78,7 +78,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getReturnType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		final PyExpression body = getBody();
 		return body != null ? context.getType(body) : null;
@@ -86,14 +86,14 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 
 	@Nullable
 	@Override
-	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
 	{
 		return context.getReturnType(this);
 	}
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nullable PyExpression receiver, @NotNull Map<PyExpression, PyNamedParameter> parameters, @NotNull TypeEvalContext context)
+	public PyType getCallType(@Nullable PyExpression receiver, @Nonnull Map<PyExpression, PyNamedParameter> parameters, @Nonnull TypeEvalContext context)
 	{
 		return context.getReturnType(this);
 	}

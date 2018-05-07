@@ -18,7 +18,7 @@ package com.jetbrains.python.codeInsight.completion;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -51,9 +51,9 @@ public class PyParameterCompletionContributor extends CompletionContributor {
     }
 
     @Override
-	public void addCompletions(@NotNull CompletionParameters parameters,
+	public void addCompletions(@Nonnull CompletionParameters parameters,
                                   ProcessingContext context,
-                                  @NotNull CompletionResultSet result) {
+                                  @Nonnull CompletionResultSet result) {
       result.addElement(LookupElementBuilder.create(myName).withIcon(AllIcons.Nodes.Parameter));
     }
   }

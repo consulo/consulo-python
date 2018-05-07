@@ -17,8 +17,9 @@ package com.jetbrains.python.psi.types;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -39,7 +40,7 @@ public class PyNoneType implements PyType  // TODO must extend ClassType. It's a
 	}
 
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@NotNull final String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull final String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		return null;
 	}

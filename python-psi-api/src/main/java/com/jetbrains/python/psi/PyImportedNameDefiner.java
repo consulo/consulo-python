@@ -17,7 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 
 /**
@@ -32,12 +33,12 @@ public interface PyImportedNameDefiner extends PyElement
 	 * <p>
 	 * TODO: Make the semantics of the returned elements clearer.
 	 */
-	@NotNull
+	@Nonnull
 	Iterable<PyElement> iterateNames();
 
 	/**
 	 * Return the resolved PSI element available via this imported name definer.
 	 */
-	@NotNull
-	List<RatedResolveResult> multiResolveName(@NotNull String name);
+	@Nonnull
+	List<RatedResolveResult> multiResolveName(@Nonnull String name);
 }

@@ -17,8 +17,9 @@ package com.jetbrains.python.run;
 
 import java.io.File;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
@@ -109,7 +110,7 @@ public class PythonRunConfigurationProducer extends RunConfigurationProducer<Pyt
 		return scriptName.equals(path) || path.equals(new File(workingDirectory, scriptName).getAbsolutePath());
 	}
 
-	private static boolean isAvailable(@NotNull final Location location, @Nullable final PsiFile script)
+	private static boolean isAvailable(@Nonnull final Location location, @Nullable final PsiFile script)
 	{
 		if(script == null || script.getFileType() != PythonFileType.INSTANCE)
 		{

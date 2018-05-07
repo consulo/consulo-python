@@ -19,8 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
@@ -69,22 +70,22 @@ public class RemoteDebugger implements ProcessDebugger
 
 	private final List<RemoteDebuggerCloseListener> myCloseListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 
-	@NotNull
+	@Nonnull
 	private final DebuggerTransport myDebuggerTransport;
 
-	public RemoteDebugger(@NotNull IPyDebugProcess debugProcess, @NotNull String host, int port)
+	public RemoteDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull String host, int port)
 	{
 		myDebugProcess = debugProcess;
 		myDebuggerTransport = new ClientModeDebuggerTransport(debugProcess, this, host, port);
 	}
 
-	public RemoteDebugger(@NotNull IPyDebugProcess debugProcess, @NotNull ServerSocket socket, int timeout)
+	public RemoteDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull ServerSocket socket, int timeout)
 	{
 		myDebugProcess = debugProcess;
 		myDebuggerTransport = new ServerModeDebuggerTransport(this, socket, timeout);
 	}
 
-	protected RemoteDebugger(@NotNull IPyDebugProcess debugProcess, @NotNull DebuggerTransport debuggerTransport)
+	protected RemoteDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull DebuggerTransport debuggerTransport)
 	{
 		myDebugProcess = debugProcess;
 		myDebuggerTransport = debuggerTransport;
@@ -375,7 +376,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void execute(@NotNull final AbstractCommand command)
+	public void execute(@Nonnull final AbstractCommand command)
 	{
 		if(command instanceof ResumeOrStepCommand)
 		{
@@ -451,7 +452,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setTempBreakpoint(@NotNull String type, @NotNull String file, int line)
+	public void setTempBreakpoint(@Nonnull String type, @Nonnull String file, int line)
 	{
 		final SetBreakpointCommand command = new SetBreakpointCommand(this, type, file, line);
 		execute(command);  // set temp. breakpoint
@@ -459,7 +460,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeTempBreakpoint(@NotNull String file, int line)
+	public void removeTempBreakpoint(@Nonnull String file, int line)
 	{
 		String type = myTempBreakpoints.get(Pair.create(file, line));
 		if(type != null)
@@ -474,13 +475,13 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setBreakpoint(@NotNull String typeId,
-			@NotNull String file,
+	public void setBreakpoint(@Nonnull String typeId,
+			@Nonnull String file,
 			int line,
 			@Nullable String condition,
 			@Nullable String logExpression,
 			@Nullable String funcName,
-			@NotNull SuspendPolicy policy)
+			@Nonnull SuspendPolicy policy)
 	{
 		final SetBreakpointCommand command = new SetBreakpointCommand(this, typeId, file, line, condition, logExpression, funcName, policy);
 		execute(command);
@@ -488,7 +489,7 @@ public class RemoteDebugger implements ProcessDebugger
 
 
 	@Override
-	public void removeBreakpoint(@NotNull String typeId, @NotNull String file, int line)
+	public void removeBreakpoint(@Nonnull String typeId, @Nonnull String file, int line)
 	{
 		final RemoveBreakpointCommand command = new RemoveBreakpointCommand(this, typeId, file, line);
 		execute(command);
@@ -502,7 +503,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	// for DebuggerReader only
-	public void processResponse(@NotNull final String line)
+	public void processResponse(@Nonnull final String line)
 	{
 		try
 		{

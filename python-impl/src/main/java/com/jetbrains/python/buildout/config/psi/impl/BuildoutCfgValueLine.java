@@ -23,7 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiReference;
 import com.jetbrains.python.buildout.config.psi.BuildoutPsiUtil;
 import com.jetbrains.python.buildout.config.ref.BuildoutPartReference;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * @author traff
  */
 public class BuildoutCfgValueLine extends BuildoutCfgPsiElement {
-  public BuildoutCfgValueLine(@NotNull final ASTNode node) {
+  public BuildoutCfgValueLine(@Nonnull final ASTNode node) {
     super(node);
   }
 
@@ -40,7 +40,7 @@ public class BuildoutCfgValueLine extends BuildoutCfgPsiElement {
     return "BuildoutCfgValue:" + getNode().getElementType().toString();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public PsiReference[] getReferences() {
     if (BuildoutPsiUtil.isInBuildoutSection(this) && BuildoutPsiUtil.isAssignedTo(this, "parts")) {

@@ -17,7 +17,8 @@ package com.jetbrains.python.codeInsight.completion;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -46,7 +47,7 @@ public class PySuperClassAttributesCompletionContributor extends CompletionContr
 				CompletionProvider()
 		{
 			@Override
-			public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result)
+			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
 			{
 				PsiElement position = parameters.getOriginalPosition();
 				PyClass containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
@@ -63,7 +64,7 @@ public class PySuperClassAttributesCompletionContributor extends CompletionContr
 		});
 	}
 
-	public static List<PyTargetExpression> getSuperClassAttributes(@NotNull PyClass cls)
+	public static List<PyTargetExpression> getSuperClassAttributes(@Nonnull PyClass cls)
 	{
 		List<PyTargetExpression> attrs = Lists.newArrayList();
 		List<String> seenNames = Lists.newArrayList();

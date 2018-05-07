@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.refactoring.changeSignature;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -71,7 +71,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	}
 
 	@Override
-	public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext)
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext)
 	{
 		PsiElement element = findTargetMember(file, editor);
 		if(element == null)
@@ -82,7 +82,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	}
 
 	@Override
-	public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, @Nullable DataContext dataContext)
+	public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, @Nullable DataContext dataContext)
 	{
 		if(elements.length != 1)
 		{
@@ -148,13 +148,13 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		dialog.show();
 	}
 
-	private static void showCannotRefactorErrorHint(@NotNull Project project, @Nullable Editor editor, @NotNull String details)
+	private static void showCannotRefactorErrorHint(@Nonnull Project project, @Nullable Editor editor, @Nonnull String details)
 	{
 		final String message = RefactoringBundle.getCannotRefactorMessage(details);
 		CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, REFACTORING_NAME);
 	}
 
-	private static boolean isNotUnderSourceRoot(@NotNull final Project project, @Nullable final PsiFile psiFile)
+	private static boolean isNotUnderSourceRoot(@Nonnull final Project project, @Nullable final PsiFile psiFile)
 	{
 		if(psiFile == null)
 		{

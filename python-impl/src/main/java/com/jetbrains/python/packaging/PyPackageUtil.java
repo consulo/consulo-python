@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -70,13 +70,13 @@ public class PyPackageUtil
 	public static final String DISTRIBUTE = "distribute";
 	private static final Logger LOG = Logger.getInstance(PyPackageUtil.class);
 
-	@NotNull
+	@Nonnull
 	private static final String REQUIRES = "requires";
 
-	@NotNull
+	@Nonnull
 	private static final String INSTALL_REQUIRES = "install_requires";
 
-	@NotNull
+	@Nonnull
 	private static final String[] SETUP_PY_REQUIRES_KWARGS_NAMES = new String[]{
 			REQUIRES,
 			INSTALL_REQUIRES,
@@ -84,20 +84,20 @@ public class PyPackageUtil
 			"tests_require"
 	};
 
-	@NotNull
+	@Nonnull
 	private static final String DEPENDENCY_LINKS = "dependency_links";
 
 	private PyPackageUtil()
 	{
 	}
 
-	public static boolean hasSetupPy(@NotNull Module module)
+	public static boolean hasSetupPy(@Nonnull Module module)
 	{
 		return findSetupPy(module) != null;
 	}
 
 	@Nullable
-	public static PyFile findSetupPy(@NotNull Module module)
+	public static PyFile findSetupPy(@Nonnull Module module)
 	{
 		for(VirtualFile root : PyUtil.getSourceRoots(module))
 		{
@@ -114,13 +114,13 @@ public class PyPackageUtil
 		return null;
 	}
 
-	public static boolean hasRequirementsTxt(@NotNull Module module)
+	public static boolean hasRequirementsTxt(@Nonnull Module module)
 	{
 		return findRequirementsTxt(module) != null;
 	}
 
 	@Nullable
-	public static VirtualFile findRequirementsTxt(@NotNull Module module)
+	public static VirtualFile findRequirementsTxt(@Nonnull Module module)
 	{
 		final String requirementsPath = PyPackageRequirementsSettings.getInstance(module).getRequirementsPath();
 		if(!requirementsPath.isEmpty())
@@ -144,7 +144,7 @@ public class PyPackageUtil
 	}
 
 	@Nullable
-	private static PyListLiteralExpression findSetupPyInstallRequires(@NotNull Module module, @Nullable PyCallExpression setupCall)
+	private static PyListLiteralExpression findSetupPyInstallRequires(@Nonnull Module module, @Nullable PyCallExpression setupCall)
 	{
 		if(setupCall == null)
 		{
@@ -156,7 +156,7 @@ public class PyPackageUtil
 	}
 
 	@Nullable
-	public static List<PyRequirement> findSetupPyRequires(@NotNull Module module)
+	public static List<PyRequirement> findSetupPyRequires(@Nonnull Module module)
 	{
 		final PyCallExpression setupCall = findSetupCall(module);
 
@@ -171,16 +171,16 @@ public class PyPackageUtil
 		return mergeSetupPyRequirements(requirementsFromRequires, requirementsFromLinks);
 	}
 
-	@NotNull
-	private static List<PyRequirement> getSetupPyRequiresFromArguments(@NotNull Module module, @NotNull PyCallExpression setupCall, @NotNull String... argumentNames)
+	@Nonnull
+	private static List<PyRequirement> getSetupPyRequiresFromArguments(@Nonnull Module module, @Nonnull PyCallExpression setupCall, @Nonnull String... argumentNames)
 	{
 		return PyRequirement.fromText(Stream.of(argumentNames).map(setupCall::getKeywordArgument).map(requires -> resolveRequiresValue(module, requires)).filter(requires -> requires != null).flatMap
 				(requires -> Stream.of(requires.getElements())).filter(PyStringLiteralExpression.class::isInstance).map(requirement -> ((PyStringLiteralExpression) requirement).getStringValue())
 				.collect(Collectors.joining("\n")));
 	}
 
-	@NotNull
-	private static List<PyRequirement> mergeSetupPyRequirements(@NotNull List<PyRequirement> requirementsFromRequires, @NotNull List<PyRequirement> requirementsFromLinks)
+	@Nonnull
+	private static List<PyRequirement> mergeSetupPyRequirements(@Nonnull List<PyRequirement> requirementsFromRequires, @Nonnull List<PyRequirement> requirementsFromLinks)
 	{
 		if(!requirementsFromLinks.isEmpty())
 		{
@@ -199,7 +199,7 @@ public class PyPackageUtil
 	}
 
 	@Nullable
-	private static PyListLiteralExpression resolveRequiresValue(@NotNull Module module, @Nullable PyExpression requires)
+	private static PyListLiteralExpression resolveRequiresValue(@Nonnull Module module, @Nullable PyExpression requires)
 	{
 		if(requires instanceof PyListLiteralExpression)
 		{
@@ -219,8 +219,8 @@ public class PyPackageUtil
 		return null;
 	}
 
-	@NotNull
-	public static List<String> getPackageNames(@NotNull Module module)
+	@Nonnull
+	public static List<String> getPackageNames(@Nonnull Module module)
 	{
 		// TODO: Cache found module packages, clear cache on module updates
 		final List<String> packageNames = new ArrayList<>();
@@ -237,14 +237,14 @@ public class PyPackageUtil
 		return packageNames;
 	}
 
-	@NotNull
-	public static String requirementsToString(@NotNull List<PyRequirement> requirements)
+	@Nonnull
+	public static String requirementsToString(@Nonnull List<PyRequirement> requirements)
 	{
 		return StringUtil.join(requirements, requirement -> String.format("'%s'", requirement.toString()), ", ");
 	}
 
 	@Nullable
-	public static PyCallExpression findSetupCall(@NotNull PyFile file)
+	public static PyCallExpression findSetupCall(@Nonnull PyFile file)
 	{
 		final Ref<PyCallExpression> result = new Ref<>(null);
 		file.acceptChildren(new PyRecursiveElementVisitor()
@@ -273,18 +273,18 @@ public class PyPackageUtil
 	}
 
 	@Nullable
-	public static PyCallExpression findSetupCall(@NotNull Module module)
+	public static PyCallExpression findSetupCall(@Nonnull Module module)
 	{
 		return Optional.ofNullable(findSetupPy(module)).map(PyPackageUtil::findSetupCall).orElse(null);
 	}
 
-	private static void collectPackageNames(@NotNull final Project project, @NotNull final VirtualFile root, @NotNull final List<String> results)
+	private static void collectPackageNames(@Nonnull final Project project, @Nonnull final VirtualFile root, @Nonnull final List<String> results)
 	{
 		final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 		VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor()
 		{
 			@Override
-			public boolean visitFile(@NotNull VirtualFile file)
+			public boolean visitFile(@Nonnull VirtualFile file)
 			{
 				if(!fileIndex.isExcluded(file) && file.isDirectory() && file.findChild(PyNames.INIT_DOT_PY) != null)
 				{
@@ -312,7 +312,7 @@ public class PyPackageUtil
 	}
 
 	@Nullable
-	public static List<PyPackage> refreshAndGetPackagesModally(@NotNull Sdk sdk)
+	public static List<PyPackage> refreshAndGetPackagesModally(@Nonnull Sdk sdk)
 	{
 		final Ref<List<PyPackage>> packagesRef = Ref.create();
 		@SuppressWarnings("ThrowableInstanceNeverThrown") final Throwable callStacktrace = new Throwable();
@@ -347,7 +347,7 @@ public class PyPackageUtil
 	 * @param isUpdating flag indicating whether another refresh is already running
 	 * @return whether packages were refreshed successfully, e.g. this update wasn't cancelled because of another refresh in progress
 	 */
-	public static boolean updatePackagesSynchronouslyWithGuard(@NotNull PyPackageManager manager, @NotNull AtomicBoolean isUpdating)
+	public static boolean updatePackagesSynchronouslyWithGuard(@Nonnull PyPackageManager manager, @Nonnull AtomicBoolean isUpdating)
 	{
 		assert !ApplicationManager.getApplication().isDispatchThread();
 		if(!isUpdating.compareAndSet(false, true))
@@ -374,7 +374,7 @@ public class PyPackageUtil
 
 
 	@Nullable
-	public static PyPackage findPackage(@NotNull List<PyPackage> packages, @NotNull String name)
+	public static PyPackage findPackage(@Nonnull List<PyPackage> packages, @Nonnull String name)
 	{
 		for(PyPackage pkg : packages)
 		{
@@ -386,13 +386,13 @@ public class PyPackageUtil
 		return null;
 	}
 
-	public static boolean hasManagement(@NotNull List<PyPackage> packages)
+	public static boolean hasManagement(@Nonnull List<PyPackage> packages)
 	{
 		return (findPackage(packages, SETUPTOOLS) != null || findPackage(packages, DISTRIBUTE) != null) || findPackage(packages, PIP) != null;
 	}
 
 	@Nullable
-	public static List<PyRequirement> getRequirementsFromTxt(@NotNull Module module)
+	public static List<PyRequirement> getRequirementsFromTxt(@Nonnull Module module)
 	{
 		final VirtualFile requirementsTxt = findRequirementsTxt(module);
 		if(requirementsTxt != null)
@@ -402,7 +402,7 @@ public class PyPackageUtil
 		return null;
 	}
 
-	public static void addRequirementToTxtOrSetupPy(@NotNull Module module, @NotNull String requirementName, @NotNull LanguageLevel languageLevel)
+	public static void addRequirementToTxtOrSetupPy(@Nonnull Module module, @Nonnull String requirementName, @Nonnull LanguageLevel languageLevel)
 	{
 		final VirtualFile requirementsTxt = findRequirementsTxt(module);
 		if(requirementsTxt != null && requirementsTxt.isWritable())
@@ -447,7 +447,7 @@ public class PyPackageUtil
 	}
 
 	@Nullable
-	private static PyKeywordArgument generateRequiresKwarg(@NotNull PyFile setupPy, @NotNull String requirementName, @NotNull LanguageLevel languageLevel, @NotNull PyElementGenerator generator)
+	private static PyKeywordArgument generateRequiresKwarg(@Nonnull PyFile setupPy, @Nonnull String requirementName, @Nonnull LanguageLevel languageLevel, @Nonnull PyElementGenerator generator)
 	{
 		final String keyword = SetupTaskIntrospector.usesSetuptools(setupPy) ? INSTALL_REQUIRES : REQUIRES;
 		final String text = String.format("foo(%s=['%s'])", keyword, requirementName);

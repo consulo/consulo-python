@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
@@ -37,27 +39,27 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyTargetExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * User: ktisha
  */
 public class PyRenameElementQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return "Rename element";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getFamilyName() {
     return "Rename element";
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     final PsiElement element = descriptor.getPsiElement();
     final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
                                              (PsiNameIdentifierOwner)element :
@@ -92,7 +94,7 @@ public class PyRenameElementQuickFix implements LocalQuickFix {
     return null;
   }
 
-  private static void renameInUnitTestMode(@NotNull Project project, @NotNull PsiNameIdentifierOwner nameOwner,
+  private static void renameInUnitTestMode(@Nonnull Project project, @Nonnull PsiNameIdentifierOwner nameOwner,
                                            @Nullable Editor editor) {
     final PsiElement substitution = RenamePsiElementProcessor.forElement(nameOwner).substituteElementToRename(nameOwner, editor);
     if (substitution != null) {

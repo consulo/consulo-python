@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.testing.pytest;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.Pair;
 
 /**
@@ -182,7 +183,7 @@ final class PyFilesStateMachine
 	/**
 	 * @return when machine is in {@link PyFilesStateMachineState#FINISHED} use this method to get file and line number
 	 */
-	@NotNull
+	@Nonnull
 	Pair<String, String> getFileAndLine()
 	{
 		return Pair.create(myFileName.toString(), myLineNumber.toString());

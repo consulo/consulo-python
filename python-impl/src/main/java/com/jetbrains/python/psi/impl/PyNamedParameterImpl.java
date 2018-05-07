@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.extensions.Extensions;
@@ -116,7 +116,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 		return node == null ? null : node.getPsi();
 	}
 
-	public PsiElement setName(@NotNull String name) throws IncorrectOperationException
+	public PsiElement setName(@Nonnull String name) throws IncorrectOperationException
 	{
 		final ASTNode oldNameIdentifier = getNameIdentifierNode();
 		if(oldNameIdentifier != null)
@@ -210,7 +210,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 		return getDefaultValue() != null;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getRepr(boolean includeDefaultValue)
 	{
 		StringBuilder sb = new StringBuilder();
@@ -261,7 +261,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 		return null; // we're not a tuple
 	}
 
-	public PyType getType(@NotNull final TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull final TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		final PsiElement parent = getParentByStub();
 		if(parent instanceof PyParameterList)
@@ -365,8 +365,8 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 		return new PyElementPresentation(this);
 	}
 
-	@NotNull
-	private Set<String> collectUsedAttributes(@NotNull final TypeEvalContext context)
+	@Nonnull
+	private Set<String> collectUsedAttributes(@Nonnull final TypeEvalContext context)
 	{
 		final Set<String> result = new LinkedHashSet<>();
 		final ScopeOwner owner = ScopeUtil.getScopeOwner(this);
@@ -470,7 +470,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 	}
 
 	@Nullable
-	private PyNamedParameter getParameterByCallArgument(@NotNull PsiElement element, @NotNull TypeEvalContext context)
+	private PyNamedParameter getParameterByCallArgument(@Nonnull PsiElement element, @Nonnull TypeEvalContext context)
 	{
 		final PyArgumentList argumentList = PsiTreeUtil.getParentOfType(element, PyArgumentList.class);
 		if(argumentList != null)
@@ -515,7 +515,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 		return null;
 	}
 
-	private static void processLocalCalls(@NotNull PyFunction function, @NotNull Processor<PyCallExpression> processor)
+	private static void processLocalCalls(@Nonnull PyFunction function, @Nonnull Processor<PyCallExpression> processor)
 	{
 		final PsiFile file = function.getContainingFile();
 		final String name = function.getName();
@@ -544,7 +544,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 		return super.toString() + "('" + getName() + "')";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public SearchScope getUseScope()
 	{

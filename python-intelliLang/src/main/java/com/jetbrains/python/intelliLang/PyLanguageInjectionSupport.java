@@ -17,11 +17,12 @@ package com.jetbrains.python.intelliLang;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.intellij.plugins.intelliLang.inject.AbstractLanguageInjectionSupport;
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -36,13 +37,13 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 public class PyLanguageInjectionSupport extends AbstractLanguageInjectionSupport {
   @NonNls private static final String SUPPORT_ID = "python";
 
-  @NotNull
+  @Nonnull
   @Override
   public String getId() {
     return SUPPORT_ID;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Class[] getPatternClasses() {
     return new Class[] { PythonPatterns.class };
@@ -62,7 +63,7 @@ public class PyLanguageInjectionSupport extends AbstractLanguageInjectionSupport
   public BaseInjection createInjection(Element element) {
     // This is how DefaultLanguageInjector gets its injection ranges
     return new BaseInjection(getId()) {
-      @NotNull
+      @Nonnull
       @Override
       public List<TextRange> getInjectedArea(PsiElement element) {
         if (element instanceof PyStringLiteralExpression) {

@@ -18,7 +18,7 @@ package com.jetbrains.python;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -28,25 +28,25 @@ import com.intellij.openapi.projectRoots.Sdk;
  */
 public interface HelperPackage
 {
-	void addToPythonPath(@NotNull Map<String, String> environment);
+	void addToPythonPath(@Nonnull Map<String, String> environment);
 
 	/**
 	 * @return entry (directory or ZIP archive) that will be added to <tt>PYTHONPATH</tt> environment variable before the process is started.
 	 */
-	@NotNull
+	@Nonnull
 	String getPythonPathEntry();
 
-	void addToGroup(@NotNull ParamsGroup group, @NotNull GeneralCommandLine cmd);
+	void addToGroup(@Nonnull ParamsGroup group, @Nonnull GeneralCommandLine cmd);
 
 	/**
 	 * @return the first parameter passed to Python interpreter that indicates which script to run. For scripts started as modules it's
 	 * module name with <tt>-m</tt> flag, like <tt>-mpackage.module.name</tt>, and for average helpers it's full path to the script.
 	 */
-	@NotNull
+	@Nonnull
 	String asParamString();
 
-	@NotNull
-	GeneralCommandLine newCommandLine(@NotNull String sdkPath, @NotNull List<String> parameters);
+	@Nonnull
+	GeneralCommandLine newCommandLine(@Nonnull String sdkPath, @Nonnull List<String> parameters);
 
 	/**
 	 * Version-sensitive version of {@link #newCommandLine(String, List)}. It adds additional directories with libraries inside python-helpers
@@ -57,6 +57,6 @@ public interface HelperPackage
 	 * @param parameters additional command line parameters of this helper
 	 * @return instance {@link GeneralCommandLine} used to start the process
 	 */
-	@NotNull
-	GeneralCommandLine newCommandLine(@NotNull Sdk pythonSdk, @NotNull List<String> parameters);
+	@Nonnull
+	GeneralCommandLine newCommandLine(@Nonnull Sdk pythonSdk, @Nonnull List<String> parameters);
 }

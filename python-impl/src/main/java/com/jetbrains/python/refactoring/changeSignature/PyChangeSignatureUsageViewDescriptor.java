@@ -21,7 +21,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.ui.UsageViewDescriptorAdapter;
 import com.intellij.usageView.UsageInfo;
 import com.jetbrains.python.PyBundle;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +41,7 @@ public class PyChangeSignatureUsageViewDescriptor extends UsageViewDescriptorAda
     myDeclarationsElements = PsiUtilCore.toPsiElementArray(declarationsElements);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public PsiElement[] getElements() {
     return myDeclarationsElements;

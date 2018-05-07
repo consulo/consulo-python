@@ -16,12 +16,13 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyContinueStatement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyLoopStatement;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole

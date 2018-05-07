@@ -17,8 +17,8 @@ package com.jetbrains.python.codeInsight;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.icons.AllIcons;
@@ -68,7 +68,7 @@ public class PyCustomMember extends UserDataHolderBase
 	private Icon myIcon = AllIcons.Nodes.Method;
 	private PyCustomMemberTypeInfo<?> myCustomTypeInfo;
 
-	public PyCustomMember(@NotNull final String name, @Nullable final String type, final boolean resolveToInstance)
+	public PyCustomMember(@Nonnull final String name, @Nullable final String type, final boolean resolveToInstance)
 	{
 		myName = name;
 		myResolveToInstance = resolveToInstance;
@@ -78,7 +78,7 @@ public class PyCustomMember extends UserDataHolderBase
 		myTypeCallback = null;
 	}
 
-	public PyCustomMember(@NotNull final String name)
+	public PyCustomMember(@Nonnull final String name)
 	{
 		myName = name;
 		myResolveToInstance = false;
@@ -88,7 +88,7 @@ public class PyCustomMember extends UserDataHolderBase
 		myTypeCallback = null;
 	}
 
-	public PyCustomMember(@NotNull final String name, @Nullable final String type, final Function<PsiElement, PyType> typeCallback)
+	public PyCustomMember(@Nonnull final String name, @Nullable final String type, final Function<PsiElement, PyType> typeCallback)
 	{
 		myName = name;
 
@@ -99,7 +99,7 @@ public class PyCustomMember extends UserDataHolderBase
 		myTypeCallback = typeCallback;
 	}
 
-	public PyCustomMember(@NotNull final String name, @Nullable final PsiElement target, @Nullable String typeName)
+	public PyCustomMember(@Nonnull final String name, @Nullable final PsiElement target, @Nullable String typeName)
 	{
 		myName = name;
 		myTarget = target;
@@ -108,7 +108,7 @@ public class PyCustomMember extends UserDataHolderBase
 		myTypeCallback = null;
 	}
 
-	public PyCustomMember(@NotNull final String name, @Nullable final PsiElement target)
+	public PyCustomMember(@Nonnull final String name, @Nullable final PsiElement target)
 	{
 		this(name, target, null);
 	}
@@ -128,7 +128,7 @@ public class PyCustomMember extends UserDataHolderBase
 	/**
 	 * Force resolving to {@link MyInstanceElement} even if element is function
 	 */
-	@NotNull
+	@Nonnull
 	public final PyCustomMember alwaysResolveToCustomElement()
 	{
 		myAlwaysResolveToCustomElement = true;
@@ -200,7 +200,7 @@ public class PyCustomMember extends UserDataHolderBase
 	}
 
 	@Nullable
-	public PsiElement resolve(@NotNull final PsiElement context)
+	public PsiElement resolve(@Nonnull final PsiElement context)
 	{
 
 		if(myTarget != null)
@@ -237,7 +237,7 @@ public class PyCustomMember extends UserDataHolderBase
 	}
 
 	@Nullable
-	private PsiElement findResolveTarget(@NotNull PsiElement context)
+	private PsiElement findResolveTarget(@Nonnull PsiElement context)
 	{
 		if(myPsiPath != null)
 		{
@@ -274,7 +274,7 @@ public class PyCustomMember extends UserDataHolderBase
 	 * @param reference reference to check
 	 * @return true if reference points to it
 	 */
-	public final boolean isReferenceToMe(@NotNull final PsiReference reference)
+	public final boolean isReferenceToMe(@Nonnull final PsiReference reference)
 	{
 		final PsiElement element = reference.resolve();
 		if(!(element instanceof MyInstanceElement))
@@ -287,7 +287,7 @@ public class PyCustomMember extends UserDataHolderBase
 	/**
 	 * @param icon icon to use (will be used method icon otherwise)
 	 */
-	public PyCustomMember withIcon(@NotNull final Icon icon)
+	public PyCustomMember withIcon(@Nonnull final Icon icon)
 	{
 		myIcon = icon;
 		return this;
@@ -299,7 +299,7 @@ public class PyCustomMember extends UserDataHolderBase
 	 *
 	 * @param customInfo custom info to add
 	 */
-	public PyCustomMember withCustomTypeInfo(@NotNull final PyCustomMemberTypeInfo<?> customInfo)
+	public PyCustomMember withCustomTypeInfo(@Nonnull final PyCustomMemberTypeInfo<?> customInfo)
 	{
 		Preconditions.checkState(myTypeName != null, "Cant add custom type info if no type provided");
 		myCustomTypeInfo = customInfo;
@@ -323,7 +323,7 @@ public class PyCustomMember extends UserDataHolderBase
 			return PyCustomMember.this;
 		}
 
-		public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+		public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 		{
 			if(myTypeCallback != null)
 			{

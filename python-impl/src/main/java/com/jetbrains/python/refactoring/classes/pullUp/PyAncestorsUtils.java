@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -35,7 +36,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 class PyAncestorsUtils extends NotNullPredicate<PyClass>
 {
-	@NotNull
+	@Nonnull
 	private final Set<VirtualFile> mySourceRoots;
 
 	/**
@@ -44,20 +45,20 @@ class PyAncestorsUtils extends NotNullPredicate<PyClass>
 	 * @param pyClass class to  find parents for
 	 * @return list of parents
 	 */
-	@NotNull
-	static Collection<PyClass> getAncestorsUnderUserControl(@NotNull final PyClass pyClass)
+	@Nonnull
+	static Collection<PyClass> getAncestorsUnderUserControl(@Nonnull final PyClass pyClass)
 	{
 		final List<PyClass> allAncestors = pyClass.getAncestorClasses(TypeEvalContext.userInitiated(pyClass.getProject(), pyClass.getContainingFile()));
 		return Collections2.filter(allAncestors, new PyAncestorsUtils(PyUtil.getSourceRoots(pyClass)));
 	}
 
-	private PyAncestorsUtils(@NotNull final Collection<VirtualFile> sourceRoots)
+	private PyAncestorsUtils(@Nonnull final Collection<VirtualFile> sourceRoots)
 	{
 		mySourceRoots = Sets.newHashSet(sourceRoots);
 	}
 
 	@Override
-	public boolean applyNotNull(@NotNull final PyClass input)
+	public boolean applyNotNull(@Nonnull final PyClass input)
 	{
 		return VfsUtilCore.isUnder(input.getContainingFile().getVirtualFile(), mySourceRoots);
 	}

@@ -22,8 +22,9 @@ package com.jetbrains.python.psi.stubs;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.stubs.NamedStub;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.PyClass;
@@ -34,7 +35,7 @@ public interface PyClassStub extends NamedStub<PyClass>
 	/**
 	 * @return a {@code Map} which contains imported class names as keys and their original names as values
 	 */
-	@NotNull
+	@Nonnull
 	Map<QualifiedName, QualifiedName> getSuperClasses();
 
 	@Nullable

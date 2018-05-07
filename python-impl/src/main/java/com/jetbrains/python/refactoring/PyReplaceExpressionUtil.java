@@ -22,8 +22,8 @@ import static com.jetbrains.python.inspections.PyStringFormatParser.parsePercent
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -65,7 +65,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	 * @param newExpr new expression to substitute with
 	 * @return whether new expression should be wrapped in parenthesis to preserve original semantics
 	 */
-	public static boolean isNeedParenthesis(@NotNull final PyElement oldExpr, @NotNull final PyElement newExpr)
+	public static boolean isNeedParenthesis(@Nonnull final PyElement oldExpr, @Nonnull final PyElement newExpr)
 	{
 		final PyElement parentExpr = (PyElement) oldExpr.getParent();
 		if(parentExpr instanceof PyArgumentList)
@@ -98,7 +98,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	}
 
 	@Nullable
-	private static PyExpression getLeastPrioritySide(@NotNull PyBinaryExpression expression)
+	private static PyExpression getLeastPrioritySide(@Nonnull PyBinaryExpression expression)
 	{
 		if(expression.isOperator("**"))
 		{
@@ -110,7 +110,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		}
 	}
 
-	public static PsiElement replaceExpression(@NotNull final PsiElement oldExpression, @NotNull final PsiElement newExpression)
+	public static PsiElement replaceExpression(@Nonnull final PsiElement oldExpression, @Nonnull final PsiElement newExpression)
 	{
 		final Pair<PsiElement, TextRange> data = oldExpression.getUserData(SELECTION_BREAKS_AST_NODE);
 		if(data != null)
@@ -136,7 +136,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	}
 
 	@Nullable
-	private static PsiElement replaceSubstringInStringLiteral(@NotNull PyStringLiteralExpression oldExpression, @NotNull PsiElement newExpression, @NotNull TextRange textRange)
+	private static PsiElement replaceSubstringInStringLiteral(@Nonnull PyStringLiteralExpression oldExpression, @Nonnull PsiElement newExpression, @Nonnull TextRange textRange)
 	{
 		final String fullText = oldExpression.getText();
 		final Pair<String, String> detectedQuotes = PyStringLiteralUtil.getQuotes(fullText);
@@ -308,7 +308,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		return newExpression;
 	}
 
-	private static PsiElement replaceSubstringWithoutFormatting(@NotNull PyStringLiteralExpression oldExpression, @NotNull String prefix, @NotNull String suffix, @NotNull String newText)
+	private static PsiElement replaceSubstringWithoutFormatting(@Nonnull PyStringLiteralExpression oldExpression, @Nonnull String prefix, @Nonnull String suffix, @Nonnull String newText)
 	{
 		// 'foobar' -> '%sbar' % s
 		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
@@ -335,11 +335,11 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		return newElement.findElementAt(pos);
 	}
 
-	private static PsiElement replaceSubstringWithConcatFormatting(@NotNull PyStringLiteralExpression oldExpression,
-			@NotNull Pair<String, String> quotes,
-			@NotNull String prefix,
-			@NotNull String suffix,
-			@NotNull String newText,
+	private static PsiElement replaceSubstringWithConcatFormatting(@Nonnull PyStringLiteralExpression oldExpression,
+			@Nonnull Pair<String, String> quotes,
+			@Nonnull String prefix,
+			@Nonnull String suffix,
+			@Nonnull String newText,
 			boolean hasSubstitutions)
 	{
 		// 'foobar' + 'baz' -> s + 'bar' + 'baz'
@@ -373,13 +373,13 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		return newElement.findElementAt(pos);
 	}
 
-	private static PsiElement replaceSubstringWithNewStyleFormatting(@NotNull PyStringLiteralExpression oldExpression,
-			@NotNull TextRange textRange,
-			@NotNull String prefix,
-			@NotNull String suffix,
-			@NotNull PyArgumentList newStyleFormatValue,
-			@NotNull String newText,
-			@NotNull List<PyStringFormatParser.SubstitutionChunk> substitutions)
+	private static PsiElement replaceSubstringWithNewStyleFormatting(@Nonnull PyStringLiteralExpression oldExpression,
+			@Nonnull TextRange textRange,
+			@Nonnull String prefix,
+			@Nonnull String suffix,
+			@Nonnull PyArgumentList newStyleFormatValue,
+			@Nonnull String newText,
+			@Nonnull List<PyStringFormatParser.SubstitutionChunk> substitutions)
 	{
 		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
 		final LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
@@ -444,7 +444,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		}
 	}
 
-	private static int getPositionInRanges(@NotNull List<TextRange> ranges, @NotNull TextRange range)
+	private static int getPositionInRanges(@Nonnull List<TextRange> ranges, @Nonnull TextRange range)
 	{
 		final int end = range.getEndOffset();
 		final int size = ranges.size();
@@ -459,7 +459,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		return size;
 	}
 
-	private static boolean containsStringFormatting(@NotNull List<PyStringFormatParser.SubstitutionChunk> substitutions, @NotNull TextRange range)
+	private static boolean containsStringFormatting(@Nonnull List<PyStringFormatParser.SubstitutionChunk> substitutions, @Nonnull TextRange range)
 	{
 		final List<TextRange> ranges = PyStringFormatParser.substitutionsToRanges(substitutions);
 		for(TextRange r : ranges)
@@ -478,7 +478,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		return parent instanceof PyBinaryExpression && ((PyBinaryExpression) parent).isOperator("+");
 	}
 
-	private static boolean isNotAssociative(@NotNull final PyBinaryExpression binaryExpression)
+	private static boolean isNotAssociative(@Nonnull final PyBinaryExpression binaryExpression)
 	{
 		final IElementType opType = getOperationType(binaryExpression);
 		return COMPARISON_OPERATIONS.contains(opType) || binaryExpression instanceof PySliceExpression ||
@@ -564,7 +564,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	}
 
 	@Nullable
-	private static IElementType getOperationType(@NotNull final PyElement expr)
+	private static IElementType getOperationType(@Nonnull final PyElement expr)
 	{
 		if(expr instanceof PyBinaryExpression)
 		{

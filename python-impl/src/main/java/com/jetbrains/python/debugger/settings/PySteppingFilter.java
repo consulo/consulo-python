@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.debugger.settings;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 
@@ -23,7 +23,7 @@ public class PySteppingFilter
 {
 	private boolean myIsEnabled;
 	private
-	@NotNull
+	@Nonnull
 	String myFilter;
 
 	public PySteppingFilter()
@@ -32,7 +32,7 @@ public class PySteppingFilter
 		myFilter = "";
 	}
 
-	public PySteppingFilter(boolean isEnabled, @NotNull String filter)
+	public PySteppingFilter(boolean isEnabled, @Nonnull String filter)
 	{
 		myIsEnabled = isEnabled;
 		myFilter = filter;
@@ -48,14 +48,14 @@ public class PySteppingFilter
 		myIsEnabled = enabled;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFilter()
 	{
 		return myFilter;
 	}
 
-	@NotNull
-	public String getAbsolutePlatformIndependentFilter(@NotNull Project project)
+	@Nonnull
+	public String getAbsolutePlatformIndependentFilter(@Nonnull Project project)
 	{
 		StringBuilder resultFilter = new StringBuilder();
 		final String[] filters = myFilter.split(PyDebuggerSettings.FILTERS_DIVIDER);
@@ -70,7 +70,7 @@ public class PySteppingFilter
 		return resultFilter.toString().replace('\\', '/');
 	}
 
-	public void setFilter(@NotNull String filter)
+	public void setFilter(@Nonnull String filter)
 	{
 		myFilter = filter;
 	}

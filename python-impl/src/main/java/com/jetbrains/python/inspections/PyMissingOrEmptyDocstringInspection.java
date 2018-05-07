@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.ASTNode;
@@ -36,14 +37,14 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
  */
 public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspection
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public Visitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public Visitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session)
 		{
 			@Override
-			protected void checkDocString(@NotNull PyDocStringOwner node)
+			protected void checkDocString(@Nonnull PyDocStringOwner node)
 			{
 				final PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
 				if(docStringExpression == null)

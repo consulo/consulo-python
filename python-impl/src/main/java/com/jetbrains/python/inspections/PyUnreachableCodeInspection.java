@@ -30,7 +30,7 @@ import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,21 +40,21 @@ import java.util.List;
  */
 public class PyUnreachableCodeInspection extends PyInspection {
   @Nls
-  @NotNull
+  @Nonnull
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.unreachable.code");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
   public static class Visitor extends PyInspectionVisitor {
-    public Visitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
+    public Visitor(@Nonnull ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
       super(holder, session);
     }
 
@@ -82,7 +82,7 @@ public class PyUnreachableCodeInspection extends PyInspection {
     }
   }
 
-  public static boolean hasAnyInterruptedControlFlowPaths(@NotNull PsiElement element) {
+  public static boolean hasAnyInterruptedControlFlowPaths(@Nonnull PsiElement element) {
     final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
     if (owner != null) {
       final ControlFlow flow = ControlFlowCache.getControlFlow(owner);

@@ -1,8 +1,8 @@
 package com.jetbrains.python.console.pydev;
 
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.Nullable;
 import com.intellij.icons.AllIcons;
 
 public class PyCodeCompletionImages {

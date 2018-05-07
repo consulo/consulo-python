@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -54,7 +54,7 @@ public class DocstringQuickFix implements LocalQuickFix
 		myUnexpectedParamName = unexpectedParamName;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		if(myMissingParam != null)
@@ -76,13 +76,13 @@ public class DocstringQuickFix implements LocalQuickFix
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return "Fix docstring";
 	}
 
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyDocStringOwner.class);
 		if(docStringOwner == null)
@@ -114,7 +114,7 @@ public class DocstringQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void addEmptyDocstring(@NotNull PyDocStringOwner docStringOwner)
+	private static void addEmptyDocstring(@Nonnull PyDocStringOwner docStringOwner)
 	{
 		if(docStringOwner instanceof PyFunction || docStringOwner instanceof PyClass && ((PyClass) docStringOwner).findInitOrNew(false, null) != null)
 		{

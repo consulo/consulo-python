@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.resolve;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyImportedNameDefiner;
 

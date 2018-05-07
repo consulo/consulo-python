@@ -17,7 +17,7 @@
 package com.jetbrains.python;
 
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static com.jetbrains.python.PyElementTypes.*;
 import static com.jetbrains.python.PyTokenTypes.*;
@@ -26,7 +26,7 @@ import static com.jetbrains.python.PyTokenTypes.*;
  * @author vlan
  */
 public class PythonTokenSetContributor extends PythonDialectsTokenSetContributorBase {
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getStatementTokens() {
     return TokenSet.create(EXPRESSION_STATEMENT, ASSIGNMENT_STATEMENT, AUG_ASSIGNMENT_STATEMENT, ASSERT_STATEMENT,
@@ -36,7 +36,7 @@ public class PythonTokenSetContributor extends PythonDialectsTokenSetContributor
                            WHILE_STATEMENT, NONLOCAL_STATEMENT, CLASS_DECLARATION, FUNCTION_DECLARATION);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getExpressionTokens() {
     return TokenSet.create(EMPTY_EXPRESSION, REFERENCE_EXPRESSION, INTEGER_LITERAL_EXPRESSION, FLOAT_LITERAL_EXPRESSION,
@@ -49,7 +49,7 @@ public class PythonTokenSetContributor extends PythonDialectsTokenSetContributor
                            SET_LITERAL_EXPRESSION, SET_COMP_EXPRESSION, DICT_COMP_EXPRESSION, STAR_EXPRESSION);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getNameDefinerTokens() {
     // FROM_IMPORT_STATEMENT is not exactly a NameDefiner but needed anyway in mypackage/__init__.py, 'from mypackage.foo import bar' makes
@@ -62,7 +62,7 @@ public class PythonTokenSetContributor extends PythonDialectsTokenSetContributor
                            FROM_IMPORT_STATEMENT);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getKeywordTokens() {
     return TokenSet.create(
@@ -77,26 +77,26 @@ public class PythonTokenSetContributor extends PythonDialectsTokenSetContributor
       NONE_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, NONLOCAL_KEYWORD, DEBUG_KEYWORD);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getParameterTokens() {
     return TokenSet.create(NAMED_PARAMETER, TUPLE_PARAMETER, SINGLE_STAR_PARAMETER);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getFunctionDeclarationTokens() {
     return TokenSet.create(FUNCTION_DECLARATION);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getUnbalancedBracesRecoveryTokens() {
     return TokenSet.create(DEF_KEYWORD, CLASS_KEYWORD, RETURN_KEYWORD, WITH_KEYWORD, WHILE_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD,
                            RAISE_KEYWORD, TRY_KEYWORD, EXCEPT_KEYWORD, FINALLY_KEYWORD);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getReferenceExpressionTokens() {
     return TokenSet.create(REFERENCE_EXPRESSION);

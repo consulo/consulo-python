@@ -17,9 +17,10 @@ package com.jetbrains.python.testing;
 
 import java.io.File;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RefactoringListenerProvider;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -67,7 +68,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 		super(project, configurationFactory);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getWorkingDirectorySafe()
 	{
@@ -345,7 +346,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 				return new RefactoringElementAdapter()
 				{
 					@Override
-					protected void elementRenamedOrMoved(@NotNull PsiElement newElement)
+					protected void elementRenamedOrMoved(@Nonnull PsiElement newElement)
 					{
 						String newPath = FileUtil.toSystemDependentName(((PsiDirectory) newElement).getVirtualFile().getPath());
 						setWorkingDirectory(newPath);
@@ -356,7 +357,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 					}
 
 					@Override
-					public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName)
+					public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName)
 					{
 						final String systemDependant = FileUtil.toSystemDependentName(oldQualifiedName);
 						setWorkingDirectory(systemDependant);
@@ -387,7 +388,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 				return new RefactoringElementAdapter()
 				{
 					@Override
-					protected void elementRenamedOrMoved(@NotNull PsiElement newElement)
+					protected void elementRenamedOrMoved(@Nonnull PsiElement newElement)
 					{
 						VirtualFile virtualFile = ((PsiFile) newElement).getVirtualFile();
 						if(virtualFile != null)
@@ -397,7 +398,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 					}
 
 					@Override
-					public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName)
+					public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName)
 					{
 						myScriptName = FileUtil.toSystemDependentName(oldQualifiedName);
 					}
@@ -409,13 +410,13 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 				return new RefactoringElementAdapter()
 				{
 					@Override
-					protected void elementRenamedOrMoved(@NotNull PsiElement newElement)
+					protected void elementRenamedOrMoved(@Nonnull PsiElement newElement)
 					{
 						myClassName = ((PyClass) newElement).getName();
 					}
 
 					@Override
-					public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName)
+					public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName)
 					{
 						myClassName = oldQualifiedName;
 					}
@@ -430,13 +431,13 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 					return new RefactoringElementAdapter()
 					{
 						@Override
-						protected void elementRenamedOrMoved(@NotNull PsiElement newElement)
+						protected void elementRenamedOrMoved(@Nonnull PsiElement newElement)
 						{
 							myMethodName = ((PyFunction) newElement).getName();
 						}
 
 						@Override
-						public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName)
+						public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName)
 						{
 							final int methodIdx = oldQualifiedName.indexOf("#") + 1;
 							if(methodIdx > 0 && methodIdx < oldQualifiedName.length())

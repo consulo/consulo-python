@@ -31,14 +31,14 @@ import com.intellij.util.Processor;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
 public class PyStringReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
-  public void processQuery(@NotNull final ReferencesSearch.SearchParameters params,
-                           @NotNull final Processor<PsiReference> consumer) {
+  public void processQuery(@Nonnull final ReferencesSearch.SearchParameters params,
+                           @Nonnull final Processor<PsiReference> consumer) {
     final PsiElement element = params.getElementToSearch();
     if (!(element instanceof PyElement) && !(element instanceof PsiDirectory)) {
       return;

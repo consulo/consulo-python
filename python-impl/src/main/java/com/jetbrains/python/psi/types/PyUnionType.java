@@ -24,8 +24,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.NullableFunction;
@@ -49,7 +49,7 @@ public class PyUnionType implements PyType
 	}
 
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		SmartList<RatedResolveResult> ret = new SmartList<>();
 		boolean allNulls = true;
@@ -209,7 +209,7 @@ public class PyUnionType implements PyType
 	 * @return union with excluded types
 	 */
 	@Nullable
-	public PyType exclude(@Nullable PyType type, @NotNull TypeEvalContext context)
+	public PyType exclude(@Nullable PyType type, @Nonnull TypeEvalContext context)
 	{
 		final List<PyType> members = new ArrayList<>();
 		for(PyType m : getMembers())
@@ -233,7 +233,7 @@ public class PyUnionType implements PyType
 	}
 
 	@Nullable
-	public PyType excludeNull(@NotNull TypeEvalContext context)
+	public PyType excludeNull(@Nonnull TypeEvalContext context)
 	{
 		return exclude(null, context);
 	}

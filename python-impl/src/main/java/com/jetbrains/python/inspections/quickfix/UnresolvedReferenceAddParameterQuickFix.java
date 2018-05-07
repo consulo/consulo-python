@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
@@ -30,7 +32,6 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: ktisha
@@ -43,17 +44,17 @@ public class UnresolvedReferenceAddParameterQuickFix implements LocalQuickFix {
     myName = name;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.unresolved.reference.add.param.$0", myName);
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("QFIX.unresolved.reference.add.param");
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     final PsiElement element = descriptor.getPsiElement();
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
     PyNamedParameter parameter = elementGenerator.createParameter(element.getText() + "=None");

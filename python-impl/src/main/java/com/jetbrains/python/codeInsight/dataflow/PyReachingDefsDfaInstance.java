@@ -29,7 +29,7 @@ import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.impl.PyExceptPartNavigator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -104,7 +104,7 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable> 
     return map;
   }
 
-  @NotNull
+  @Nonnull
   public DFAMap<ScopeVariable> initial() {
     return INITIAL_MAP;
   }

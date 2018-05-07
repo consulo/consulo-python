@@ -20,7 +20,8 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -56,9 +57,9 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
     }
 
     @Override
-	public void addCompletions(@NotNull CompletionParameters parameters,
+	public void addCompletions(@Nonnull CompletionParameters parameters,
                                   ProcessingContext context,
-                                  @NotNull CompletionResultSet result) {
+                                  @Nonnull CompletionResultSet result) {
       if (parameters.isAutoPopup()) return;
       final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyDocStringOwner.class);
       if (docStringOwner != null) {
@@ -95,7 +96,7 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
   }
 
   @Override
-  public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
+  public boolean invokeAutoPopup(@Nonnull PsiElement position, char typeChar) {
     return false;
   }
 }

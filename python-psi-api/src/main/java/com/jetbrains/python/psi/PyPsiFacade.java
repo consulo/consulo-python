@@ -18,8 +18,8 @@ package com.jetbrains.python.psi;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -50,21 +50,21 @@ public abstract class PyPsiFacade
 	@Nullable
 	public abstract PyClass findClass(String qName);
 
-	@NotNull
-	public abstract PyClassType createClassType(@NotNull PyClass pyClass, boolean isDefinition);
+	@Nonnull
+	public abstract PyClassType createClassType(@Nonnull PyClass pyClass, boolean isDefinition);
 
 	@Nullable
-	public abstract PyType createUnionType(@NotNull Collection<PyType> members);
+	public abstract PyType createUnionType(@Nonnull Collection<PyType> members);
 
 	@Nullable
-	public abstract PyType createTupleType(@NotNull List<PyType> members, @NotNull PsiElement anchor);
+	public abstract PyType createTupleType(@Nonnull List<PyType> members, @Nonnull PsiElement anchor);
 
 	@Nullable
-	public abstract PyType parseTypeAnnotation(@NotNull String annotation, @NotNull PsiElement anchor);
+	public abstract PyType parseTypeAnnotation(@Nonnull String annotation, @Nonnull PsiElement anchor);
 
 	@Nullable
-	public abstract PyClass createClassByQName(@NotNull String qName, @NotNull PsiElement anchor);
+	public abstract PyClass createClassByQName(@Nonnull String qName, @Nonnull PsiElement anchor);
 
 	@Nullable
-	public abstract String findShortestImportableName(@NotNull VirtualFile targetFile, @NotNull PsiElement anchor);
+	public abstract String findShortestImportableName(@Nonnull VirtualFile targetFile, @Nonnull PsiElement anchor);
 }

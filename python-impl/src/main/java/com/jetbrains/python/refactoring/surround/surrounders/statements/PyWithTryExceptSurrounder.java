@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.surround.surrounders.statements;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
@@ -28,8 +30,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 public class PyWithTryExceptSurrounder extends PyStatementSurrounder {
   @Override
   @Nullable
-  protected TextRange surroundStatement(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements)
+  protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
     throws IncorrectOperationException {
     PyTryExceptStatement tryStatement = PyElementGenerator.getInstance(project).
       createFromText(LanguageLevel.getDefault(), PyTryExceptStatement.class, getTemplate());

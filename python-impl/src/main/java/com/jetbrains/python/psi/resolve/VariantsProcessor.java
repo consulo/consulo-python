@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.resolve;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -71,7 +71,7 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 
 
 	@Override
-	public boolean execute(@NotNull PsiElement element, @NotNull ResolveState substitutor)
+	public boolean execute(@Nonnull PsiElement element, @Nonnull ResolveState substitutor)
 	{
 		if(myNodeFilter != null && !myNodeFilter.value(element))
 		{
@@ -180,13 +180,13 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 
 	@Override
 	@Nullable
-	public <T> T getHint(@NotNull Key<T> hintKey)
+	public <T> T getHint(@Nonnull Key<T> hintKey)
 	{
 		return null;
 	}
 
 	@Override
-	public void handleEvent(@NotNull Event event, Object associated)
+	public void handleEvent(@Nonnull Event event, Object associated)
 	{
 	}
 

@@ -16,21 +16,23 @@
 
 package com.jetbrains.python.refactoring.rename;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
 public class RenamePyVariableProcessor extends RenamePyElementProcessor {
   @Override
-  public boolean canProcessElement(@NotNull PsiElement element) {
+  public boolean canProcessElement(@Nonnull PsiElement element) {
     // extension ordering in python-plugin-common.xml ensures that classes and functions are handled by their own processors
     return element instanceof PyElement && !(element instanceof PyReferenceExpression);
   }

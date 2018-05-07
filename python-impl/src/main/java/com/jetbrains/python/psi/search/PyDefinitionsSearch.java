@@ -16,7 +16,8 @@
 
 package com.jetbrains.python.psi.search;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.searches.DefinitionsScopedSearch;
 import com.intellij.util.Processor;
@@ -32,7 +33,7 @@ import com.jetbrains.python.psi.PyTargetExpression;
  */
 public class PyDefinitionsSearch implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters>
 {
-	public boolean execute(@NotNull final DefinitionsScopedSearch.SearchParameters parameters, @NotNull final Processor<PsiElement> consumer)
+	public boolean execute(@Nonnull final DefinitionsScopedSearch.SearchParameters parameters, @Nonnull final Processor<PsiElement> consumer)
 	{
 		PsiElement element = parameters.getElement();
 		if(element instanceof PyClass)

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.sdk;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Ref;
 import com.intellij.remote.RemoteCredentialsHolder;

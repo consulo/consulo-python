@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
@@ -34,21 +35,21 @@ import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersViewIni
  */
 class PyPullUpViewInitializationInfo extends MembersViewInitializationInfo
 {
-	@NotNull
+	@Nonnull
 	private final Collection<PyClass> myParents;
 
 	/**
 	 * @param parents list of possible parents to display.
 	 */
-	PyPullUpViewInitializationInfo(@NotNull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
-			@NotNull final List<PyMemberInfo<PyElement>> memberInfos,
-			@NotNull final Collection<PyClass> parents)
+	PyPullUpViewInitializationInfo(@Nonnull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
+			@Nonnull final List<PyMemberInfo<PyElement>> memberInfos,
+			@Nonnull final Collection<PyClass> parents)
 	{
 		super(memberInfoModel, memberInfos);
 		myParents = new ArrayList<>(parents);
 	}
 
-	@NotNull
+	@Nonnull
 	public Collection<PyClass> getParents()
 	{
 		return Collections.unmodifiableCollection(myParents);

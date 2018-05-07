@@ -19,8 +19,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.base.Preconditions;
 import com.intellij.openapi.application.ApplicationManager;
 
@@ -37,7 +38,7 @@ class ViewHandler<C> implements InvocationHandler
 	 */
 	private C realView;
 
-	public void setRealView(@NotNull C realView)
+	public void setRealView(@Nonnull C realView)
 	{
 		this.realView = realView;
 	}
@@ -60,17 +61,17 @@ class ViewHandler<C> implements InvocationHandler
 	 */
 	private static class Invoker implements Runnable
 	{
-		@NotNull
+		@Nonnull
 		private final Method method;
 		@Nullable
 		private final Object[] args;
-		@NotNull
+		@Nonnull
 		private final Object target;
 
 		private InvocationTargetException exception;
 		private Object result;
 
-		private Invoker(@NotNull Object target, @NotNull Method method, @Nullable Object[] args)
+		private Invoker(@Nonnull Object target, @Nonnull Method method, @Nullable Object[] args)
 		{
 			this.target = target;
 			this.method = method;

@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
@@ -64,10 +64,10 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name,
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
 			@Nullable PyExpression location,
-			@NotNull AccessDirection direction,
-			@NotNull PyResolveContext resolveContext,
+			@Nonnull AccessDirection direction,
+			@Nonnull PyResolveContext resolveContext,
 			boolean inherited)
 	{
 		final List<? extends RatedResolveResult> classMembers = super.resolveMember(name, location, direction, resolveContext, inherited);
@@ -109,7 +109,7 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 
 	@Nullable
 	@Override
-	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
 	{
 		if(myDefinitionLevel > 0)
 		{
@@ -130,9 +130,9 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 		return "PyNamedTupleType: " + myName;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Set<String> getMemberNames(boolean inherited, @NotNull TypeEvalContext context)
+	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
 	{
 		final Set<String> result = super.getMemberNames(inherited, context);
 		result.addAll(myFields);
@@ -145,7 +145,7 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 		return myFields.size();
 	}
 
-	@NotNull
+	@Nonnull
 	public List<String> getElementNames()
 	{
 		return Collections.unmodifiableList(myFields);

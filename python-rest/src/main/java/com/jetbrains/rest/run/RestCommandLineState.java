@@ -17,7 +17,7 @@ package com.jetbrains.rest.run;
 
 import javax.swing.SwingUtilities;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;

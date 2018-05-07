@@ -28,9 +28,9 @@ import com.intellij.ui.StringComboboxEditor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.Collection;
@@ -58,9 +58,9 @@ public class PyIntroduceDialog extends DialogWrapper {
   private final PyExpression myExpression;
   private final String myHelpId;
 
-  public PyIntroduceDialog(@NotNull final Project project,
-                           @NotNull final String caption,
-                           @NotNull final IntroduceValidator validator,
+  public PyIntroduceDialog(@Nonnull final Project project,
+                           @Nonnull final String caption,
+                           @Nonnull final IntroduceValidator validator,
                            final String helpId,
                            final IntroduceOperation operation) {
     super(project, true);

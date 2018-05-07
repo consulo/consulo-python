@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.pushDown;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
@@ -33,23 +34,23 @@ import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersViewIni
  */
 public class PyPushDownPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPushDownView, MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements PyPushDownPresenter
 {
-	@NotNull
+	@Nonnull
 	private final Project myProject;
 
-	public PyPushDownPresenterImpl(@NotNull final Project project, @NotNull final PyPushDownView view, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage)
+	public PyPushDownPresenterImpl(@Nonnull final Project project, @Nonnull final PyPushDownView view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage)
 	{
 		super(view, classUnderRefactoring, infoStorage, new UsedByDependencyMemberInfoModel<>(classUnderRefactoring));
 		myProject = project;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public BaseRefactoringProcessor createProcessor()
 	{
 		return new PyPushDownProcessor(myProject, myView.getSelectedMemberInfos(), myClassUnderRefactoring);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected Iterable<? extends PyClass> getDestClassesToCheckConflicts()
 	{

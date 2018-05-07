@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.intellij.codeInsight.controlflow.ControlFlowUtil;
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -59,7 +61,7 @@ public class PyPropertyDefinitionInspection extends PyInspection
 {
 
 	@Nls
-	@NotNull
+	@Nonnull
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.property.definition");
@@ -67,9 +69,9 @@ public class PyPropertyDefinitionInspection extends PyInspection
 
 	private static final ImmutableList<String> SUFFIXES = ImmutableList.of(PyNames.SETTER, PyNames.DELETER);
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -371,7 +373,7 @@ public class PyPropertyDefinitionInspection extends PyInspection
 			}
 		}
 
-		private void checkReturnValueAllowed(@NotNull PyCallable callable, @NotNull PsiElement beingChecked, boolean allowed, @NotNull String message)
+		private void checkReturnValueAllowed(@Nonnull PyCallable callable, @Nonnull PsiElement beingChecked, boolean allowed, @Nonnull String message)
 		{
 			if(callable instanceof PyFunction)
 			{
@@ -399,7 +401,7 @@ public class PyPropertyDefinitionInspection extends PyInspection
 			}
 		}
 
-		private static boolean someFlowHasExitPoint(@NotNull PyFunction function, @NotNull Predicate<PsiElement> exitPointPredicate)
+		private static boolean someFlowHasExitPoint(@Nonnull PyFunction function, @Nonnull Predicate<PsiElement> exitPointPredicate)
 		{
 			final Ref<Boolean> result = new Ref<>(false);
 

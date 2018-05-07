@@ -22,10 +22,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -105,9 +105,9 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 
 	public PythonSdkDetailsStep(@Nullable final Project project,
 			@Nullable final DialogWrapper moreDialog,
-			@NotNull final Component ownerComponent,
-			@NotNull final Sdk[] existingSdks,
-			@NotNull final NullableConsumer<Sdk> sdkAddedCallback)
+			@Nonnull final Component ownerComponent,
+			@Nonnull final Sdk[] existingSdks,
+			@Nonnull final NullableConsumer<Sdk> sdkAddedCallback)
 	{
 		super(null, getAvailableOptions(moreDialog != null));
 		myProject = project;
@@ -282,8 +282,8 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 	}
 
 	@Nullable
-	public static Sdk setupSdk(@NotNull Sdk[] allSdks,
-			@NotNull VirtualFile homeDir,
+	public static Sdk setupSdk(@Nonnull Sdk[] allSdks,
+			@Nonnull VirtualFile homeDir,
 			final SdkType sdkType,
 			final boolean silent,
 			@Nullable final SdkAdditionalData additionalData,
@@ -311,7 +311,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 		return sdk;
 	}
 
-	public static SdkImpl createSdk(@NotNull Sdk[] allSdks, @NotNull VirtualFile homeDir, SdkType sdkType, @Nullable SdkAdditionalData additionalData, @Nullable String customSdkSuggestedName)
+	public static SdkImpl createSdk(@Nonnull Sdk[] allSdks, @Nonnull VirtualFile homeDir, SdkType sdkType, @Nullable SdkAdditionalData additionalData, @Nullable String customSdkSuggestedName)
 	{
 		final List<Sdk> sdksList = Arrays.asList(allSdks);
 
@@ -359,14 +359,14 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 	}
 
 	@Nullable
-	public static VirtualFile getSuggestedSdkRoot(@NotNull SdkType sdkType)
+	public static VirtualFile getSuggestedSdkRoot(@Nonnull SdkType sdkType)
 	{
 		final String homePath = ContainerUtil.getFirstItem(sdkType.suggestHomePaths());
 		return homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);
 	}
 
-	@NotNull
-	public static List<String> filterExistingPaths(@NotNull SdkType sdkType, Collection<String> sdkHomes, final Sdk[] sdks)
+	@Nonnull
+	public static List<String> filterExistingPaths(@Nonnull SdkType sdkType, Collection<String> sdkHomes, final Sdk[] sdks)
 	{
 		List<String> result = new ArrayList<>();
 		for(String sdkHome : sdkHomes)
@@ -380,7 +380,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 	}
 
 	@Nullable
-	private static Sdk findByPath(@NotNull SdkType sdkType, @NotNull Sdk[] sdks, @NotNull String sdkHome)
+	private static Sdk findByPath(@Nonnull SdkType sdkType, @Nonnull Sdk[] sdks, @Nonnull String sdkHome)
 	{
 		for(Sdk sdk : sdks)
 		{
@@ -394,7 +394,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	private AbstractCreateVirtualEnvDialog.VirtualEnvCallback getVEnvCallback()
 	{
 		return new CreateVirtualEnvDialog.VirtualEnvCallback()

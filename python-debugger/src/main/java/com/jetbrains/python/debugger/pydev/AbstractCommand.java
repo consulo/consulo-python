@@ -1,6 +1,7 @@
 package com.jetbrains.python.debugger.pydev;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.jetbrains.python.debugger.PyDebuggerException;
 
@@ -64,14 +65,14 @@ public abstract class AbstractCommand<T>
 	public static final String TAB_CHAR = "@_@TAB_CHAR@_@";
 
 
-	@NotNull
+	@Nonnull
 	private final RemoteDebugger myDebugger;
 	private final int myCommandCode;
 
 	private final ResponseProcessor<T> myResponseProcessor;
 
 
-	protected AbstractCommand(@NotNull final RemoteDebugger debugger, final int commandCode)
+	protected AbstractCommand(@Nonnull final RemoteDebugger debugger, final int commandCode)
 	{
 		myDebugger = debugger;
 		myCommandCode = commandCode;
@@ -88,7 +89,7 @@ public abstract class AbstractCommand<T>
 		return myResponseProcessor;
 	}
 
-	@NotNull
+	@Nonnull
 	public final String getPayload()
 	{
 		Payload payload = new Payload();
@@ -253,7 +254,7 @@ public abstract class AbstractCommand<T>
 		return command == ERROR;
 	}
 
-	@NotNull
+	@Nonnull
 	public RemoteDebugger getDebugger()
 	{
 		return myDebugger;

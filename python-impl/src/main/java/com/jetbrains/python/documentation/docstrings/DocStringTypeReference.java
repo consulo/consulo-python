@@ -18,8 +18,8 @@ package com.jetbrains.python.documentation.docstrings;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.openapi.util.TextRange;
@@ -59,12 +59,12 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 {
 	@Nullable
 	private PyType myType;
-	@NotNull
+	@Nonnull
 	private TextRange myFullRange;
 	@Nullable
 	private final PyImportElement myImportElement;
 
-	public DocStringTypeReference(PsiElement element, TextRange range, @NotNull TextRange fullRange, @Nullable PyType type, @Nullable PyImportElement importElement)
+	public DocStringTypeReference(PsiElement element, TextRange range, @Nonnull TextRange fullRange, @Nullable PyType type, @Nullable PyImportElement importElement)
 	{
 		super(element, range);
 		myFullRange = fullRange;
@@ -74,7 +74,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 
 	@Nullable
 	@Override
-	public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
+	public PsiElement bindToElement(@Nonnull PsiElement element) throws IncorrectOperationException
 	{
 		if(element.equals(resolve()))
 		{
@@ -118,7 +118,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 		return super.isReferenceTo(element);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ResolveResult[] multiResolve(boolean incompleteCode)
 	{
@@ -150,7 +150,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 		return results.toArray(ResolveResult.EMPTY_ARRAY);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{
@@ -158,7 +158,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 		return ArrayUtil.EMPTY_OBJECT_ARRAY;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<Object> collectTypeVariants()
 	{
 		final PsiFile file = myElement.getContainingFile();

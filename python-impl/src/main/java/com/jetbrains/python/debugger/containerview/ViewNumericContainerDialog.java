@@ -17,10 +17,10 @@ package com.jetbrains.python.debugger.containerview;
 
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
 import javax.swing.Action;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 
@@ -31,7 +31,7 @@ public class ViewNumericContainerDialog extends DialogWrapper
 {
 	private final JComponent myMainPanel;
 
-	ViewNumericContainerDialog(@NotNull Project project, Function<ViewNumericContainerDialog, JComponent> tableSupplier)
+	ViewNumericContainerDialog(@Nonnull Project project, Function<ViewNumericContainerDialog, JComponent> tableSupplier)
 	{
 		super(project, false);
 		setModal(false);
@@ -48,7 +48,7 @@ public class ViewNumericContainerDialog extends DialogWrapper
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	protected Action[] createActions()
 	{
 		return new Action[]{getCancelAction()};

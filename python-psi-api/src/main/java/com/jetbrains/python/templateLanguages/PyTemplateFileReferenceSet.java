@@ -26,7 +26,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyStringLiteralFileReferenceSet;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +39,7 @@ public class PyTemplateFileReferenceSet extends PyStringLiteralFileReferenceSet 
     super(element, false);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Collection<PsiFileSystemItem> computeDefaultContexts() {
     List<PsiFileSystemItem> contexts = ContainerUtil.newArrayList();

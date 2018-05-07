@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.psi;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
@@ -29,7 +30,7 @@ import com.jetbrains.python.PythonFileType;
  */
 public abstract class PyStubElementType<StubT extends StubElement, PsiT extends PyElement> extends IStubElementType<StubT, PsiT>
 {
-	public PyStubElementType(@NotNull @NonNls String debugName)
+	public PyStubElementType(@Nonnull @NonNls String debugName)
 	{
 		super(debugName, PythonFileType.INSTANCE.getLanguage());
 	}
@@ -40,14 +41,14 @@ public abstract class PyStubElementType<StubT extends StubElement, PsiT extends 
 		return "Py:" + super.toString();
 	}
 
-	@NotNull
-	public abstract PsiElement createElement(@NotNull final ASTNode node);
+	@Nonnull
+	public abstract PsiElement createElement(@Nonnull final ASTNode node);
 
-	public void indexStub(@NotNull final StubT stub, @NotNull final IndexSink sink)
+	public void indexStub(@Nonnull final StubT stub, @Nonnull final IndexSink sink)
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	public String getExternalId()
 	{
 		return "py." + super.toString();

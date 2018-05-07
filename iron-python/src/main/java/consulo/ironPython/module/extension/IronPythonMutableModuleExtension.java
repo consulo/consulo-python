@@ -1,10 +1,10 @@
 package consulo.ironPython.module.extension;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import consulo.annotations.RequiredDispatchThread;
@@ -19,12 +19,12 @@ import consulo.roots.ModuleRootLayer;
  */
 public class IronPythonMutableModuleExtension extends IronPythonModuleExtension implements MutableModuleExtensionWithSdk<IronPythonModuleExtension>
 {
-	public IronPythonMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
+	public IronPythonMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -34,7 +34,7 @@ public class IronPythonMutableModuleExtension extends IronPythonModuleExtension 
 	@RequiredDispatchThread
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@NotNull Runnable runnable)
+	public JComponent createConfigurablePanel(@Nonnull Runnable runnable)
 	{
 		JPanel panel = new JPanel(new VerticalFlowLayout(true, false));
 		panel.add(ModuleExtensionSdkBoxBuilder.createAndDefine(this, runnable).build());
@@ -48,7 +48,7 @@ public class IronPythonMutableModuleExtension extends IronPythonModuleExtension 
 	}
 
 	@Override
-	public boolean isModified(@NotNull IronPythonModuleExtension extension)
+	public boolean isModified(@Nonnull IronPythonModuleExtension extension)
 	{
 		return isModifiedImpl(extension);
 	}

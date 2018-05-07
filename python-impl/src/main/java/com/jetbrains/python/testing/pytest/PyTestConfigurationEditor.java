@@ -28,7 +28,7 @@ import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.run.PyCommonOptionsFormFactory;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -103,7 +103,7 @@ public class PyTestConfigurationEditor extends SettingsEditor<PyTestRunConfigura
     s.useParam(myParametersCheckBox.isSelected());
   }
 
-  @NotNull
+  @Nonnull
   protected JComponent createEditor() {
     return myRootPanel;
   }

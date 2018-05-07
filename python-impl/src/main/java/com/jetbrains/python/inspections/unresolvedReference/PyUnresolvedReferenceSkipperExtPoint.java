@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.inspections.unresolvedReference;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.jetbrains.python.psi.PyImportedNameDefiner;
 
@@ -28,7 +29,7 @@ import com.jetbrains.python.psi.PyImportedNameDefiner;
  */
 public interface PyUnresolvedReferenceSkipperExtPoint
 {
-	@NotNull
+	@Nonnull
 	ExtensionPointName<PyUnresolvedReferenceSkipperExtPoint> EP_NAME = ExtensionPointName.create("consulo.python.unresolvedReferenceSkipper");
 
 	/**
@@ -37,5 +38,5 @@ public interface PyUnresolvedReferenceSkipperExtPoint
 	 * @param importNameDefiner unused import
 	 * @return true if should be skipped
 	 */
-	boolean unusedImportShouldBeSkipped(@NotNull PyImportedNameDefiner importNameDefiner);
+	boolean unusedImportShouldBeSkipped(@Nonnull PyImportedNameDefiner importNameDefiner);
 }

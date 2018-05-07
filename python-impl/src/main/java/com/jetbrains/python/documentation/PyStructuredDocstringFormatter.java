@@ -21,8 +21,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessOutput;
@@ -59,7 +60,7 @@ public class PyStructuredDocstringFormatter
 	 *                  Supposedly result of {@link PyStringLiteralExpression#getStringValue()}.
 	 */
 	@Nullable
-	public static List<String> formatDocstring(@NotNull final PsiElement element, @NotNull final String docstring)
+	public static List<String> formatDocstring(@Nonnull final PsiElement element, @Nonnull final String docstring)
 	{
 		Module module = ModuleUtilCore.findModuleForPsiElement(element);
 		if(module == null)
@@ -107,7 +108,7 @@ public class PyStructuredDocstringFormatter
 	}
 
 	@Nullable
-	private static String runExternalTool(@NotNull final Module module, @NotNull final DocStringFormat format, @NotNull final String docstring)
+	private static String runExternalTool(@Nonnull final Module module, @Nonnull final DocStringFormat format, @Nonnull final String docstring)
 	{
 		final Sdk sdk;
 		final String missingInterpreterMessage;
@@ -152,7 +153,7 @@ public class PyStructuredDocstringFormatter
 		return output.getStdout();
 	}
 
-	private static String formatStructuredDocString(@NotNull final StructuredDocString docString)
+	private static String formatStructuredDocString(@Nonnull final StructuredDocString docString)
 	{
 		final StringBuilder result = new StringBuilder();
 
@@ -220,7 +221,7 @@ public class PyStructuredDocstringFormatter
 		return result.toString();
 	}
 
-	private static void formatParameterDescriptions(@NotNull final StructuredDocString docString, @NotNull final StringBuilder result, boolean keyword)
+	private static void formatParameterDescriptions(@Nonnull final StructuredDocString docString, @Nonnull final StringBuilder result, boolean keyword)
 	{
 		final List<String> parameters = keyword ? docString.getKeywordArguments() : docString.getParameters();
 		if(parameters.size() > 0)

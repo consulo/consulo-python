@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.userSkeletons;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyCallable;
@@ -33,7 +33,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 {
 	@Override
-	public Ref<PyType> getParameterType(@NotNull PyNamedParameter param, @NotNull PyFunction func, @NotNull TypeEvalContext context)
+	public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context)
 	{
 		final String name = param.getName();
 		if(name != null)
@@ -57,7 +57,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 
 	@Nullable
 	@Override
-	public Ref<PyType> getReturnType(@NotNull PyCallable callable, @NotNull TypeEvalContext context)
+	public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
 	{
 		final PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
 		if(callableSkeleton != null)
@@ -72,7 +72,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public PyType getReferenceType(@NotNull PsiElement target, TypeEvalContext context, @Nullable PsiElement anchor)
+	public PyType getReferenceType(@Nonnull PsiElement target, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(target instanceof PyTargetExpression)
 		{
@@ -87,7 +87,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 
 	@Nullable
 	@Override
-	public PyType getCallableType(@NotNull PyCallable callable, @NotNull TypeEvalContext context)
+	public PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
 	{
 		final PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
 		if(callableSkeleton != null)

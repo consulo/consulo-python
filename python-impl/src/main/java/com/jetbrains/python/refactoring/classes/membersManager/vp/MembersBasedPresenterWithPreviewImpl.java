@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager.vp;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
@@ -42,7 +43,7 @@ public abstract class MembersBasedPresenterWithPreviewImpl<T extends MembersBase
 	 * @param infoStorage           info storage
 	 * @param model                 Member model (to be used for dependencies checking)
 	 */
-	protected MembersBasedPresenterWithPreviewImpl(@NotNull final T view, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull final M model)
+	protected MembersBasedPresenterWithPreviewImpl(@Nonnull final T view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final M model)
 	{
 		super(view, classUnderRefactoring, infoStorage, model);
 	}
@@ -62,6 +63,6 @@ public abstract class MembersBasedPresenterWithPreviewImpl<T extends MembersBase
 	/**
 	 * @return processor for refactoring
 	 */
-	@NotNull
+	@Nonnull
 	public abstract BaseRefactoringProcessor createProcessor();
 }

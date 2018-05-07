@@ -22,9 +22,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.annotation.Nonnull;
 import javax.swing.JTable;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.RangeMarker;
@@ -53,7 +53,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 	protected ColoredCellRenderer myTableCellRenderer;
 	protected AsyncArrayTableModel myPagingModel;
 
-	public NumericContainerViewTable(@NotNull Project project, @NotNull ViewNumericContainerDialog dialog, @NotNull PyDebugValue value)
+	public NumericContainerViewTable(@Nonnull Project project, @Nonnull ViewNumericContainerDialog dialog, @Nonnull PyDebugValue value)
 	{
 		myProject = project;
 		myDialog = dialog;
@@ -84,7 +84,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 	}
 
 
-	private void initUi(@NotNull final ArrayChunk chunk, final boolean inPlace)
+	private void initUi(@Nonnull final ArrayChunk chunk, final boolean inPlace)
 	{
 		myPagingModel = createTableModel(Math.min(chunk.getRows(), ROWS_IN_DEFAULT_VIEW), Math.min(chunk.getColumns(), COLUMNS_IN_DEFAULT_VIEW));
 		myPagingModel.addToCache(chunk);
@@ -157,8 +157,8 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 		});
 	}
 
-	@NotNull
-	private static NumericContainerRendererForm createForm(@NotNull Project project, KeyListener resliceCallback, KeyAdapter formatCallback)
+	@Nonnull
+	private static NumericContainerRendererForm createForm(@Nonnull Project project, KeyListener resliceCallback, KeyAdapter formatCallback)
 	{
 		return new NumericContainerRendererForm(project, resliceCallback, formatCallback);
 	}
@@ -275,7 +275,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 
 
 	@Override
-	public final String correctStringValue(@NotNull Object value)
+	public final String correctStringValue(@Nonnull Object value)
 	{
 		if(value instanceof String)
 		{

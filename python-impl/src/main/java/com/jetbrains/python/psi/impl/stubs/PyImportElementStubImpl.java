@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.jetbrains.python.psi.PyImportElement;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * @author yole

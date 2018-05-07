@@ -22,7 +22,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class TestRunnerService implements PersistentStateComponent<TestRunnerSer
     PROJECT_TEST_RUNNER = projectConfiguration;
   }
 
-  public static TestRunnerService getInstance(@NotNull Module module) {
+  public static TestRunnerService getInstance(@Nonnull Module module) {
     return ModuleServiceManager.getService(module, TestRunnerService.class);
   }
 

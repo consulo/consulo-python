@@ -16,8 +16,8 @@
 
 package com.jetbrains.rest;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.util.LayerDescriptor;
@@ -38,7 +38,7 @@ import com.jetbrains.python.PythonFileType;
 public class RestEditorHighlighter extends LayeredLexerEditorHighlighter
 {
 
-	public RestEditorHighlighter(@NotNull EditorColorsScheme scheme, @Nullable Project project, @Nullable VirtualFile file)
+	public RestEditorHighlighter(@Nonnull EditorColorsScheme scheme, @Nullable Project project, @Nullable VirtualFile file)
 	{
 		super(SyntaxHighlighterFactory.getSyntaxHighlighter(RestLanguage.INSTANCE, project, file), scheme);
 

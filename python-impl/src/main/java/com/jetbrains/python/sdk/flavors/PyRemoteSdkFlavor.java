@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.remote.RemoteFile;

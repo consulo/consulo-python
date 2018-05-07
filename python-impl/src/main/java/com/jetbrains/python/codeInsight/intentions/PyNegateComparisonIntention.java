@@ -26,7 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,12 +59,12 @@ public class PyNegateComparisonIntention extends BaseIntentionAction {
     invertedComparasions.put(PyTokenTypes.NE_OLD, PyTokenTypes.EQEQ);
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.negate.comparison");
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
@@ -83,7 +83,7 @@ public class PyNegateComparisonIntention extends BaseIntentionAction {
     return false;
   }
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
 
     PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
     PyBinaryExpression binaryExpression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);

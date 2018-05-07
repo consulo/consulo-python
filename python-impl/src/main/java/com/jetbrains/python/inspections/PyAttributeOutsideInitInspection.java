@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -45,16 +47,16 @@ import com.jetbrains.python.testing.PythonUnitTestUtil;
 public class PyAttributeOutsideInitInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.attribute.outside.init");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -62,7 +64,7 @@ public class PyAttributeOutsideInitInspection extends PyInspection
 
 	private static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -136,7 +138,7 @@ public class PyAttributeOutsideInitInspection extends PyInspection
 		}
 	}
 
-	private static boolean isApplicable(@NotNull PyClass containingClass, @NotNull TypeEvalContext context)
+	private static boolean isApplicable(@Nonnull PyClass containingClass, @Nonnull TypeEvalContext context)
 	{
 		return !PythonUnitTestUtil.isUnitTestCaseClass(containingClass) && !containingClass.isSubclass("django.db.models.base.Model", context);
 	}

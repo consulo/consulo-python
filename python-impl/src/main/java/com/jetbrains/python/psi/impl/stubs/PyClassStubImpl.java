@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.impl.stubs;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
@@ -36,7 +36,7 @@ public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
 	@Nullable
 	private final String myName;
 
-	@NotNull
+	@Nonnull
 	private final Map<QualifiedName, QualifiedName> mySuperClasses;
 
 	@Nullable
@@ -50,11 +50,11 @@ public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
 
 	public PyClassStubImpl(@Nullable String name,
 			@Nullable StubElement parentStub,
-			@NotNull Map<QualifiedName, QualifiedName> superClasses,
+			@Nonnull Map<QualifiedName, QualifiedName> superClasses,
 			@Nullable QualifiedName metaClass,
 			@Nullable List<String> slots,
 			@Nullable String docString,
-			@NotNull IStubElementType stubElementType)
+			@Nonnull IStubElementType stubElementType)
 	{
 		super(parentStub, stubElementType);
 		myName = name;
@@ -70,7 +70,7 @@ public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
 		return myName;
 	}
 
-	@NotNull
+	@Nonnull
 	public Map<QualifiedName, QualifiedName> getSuperClasses()
 	{
 		return mySuperClasses;

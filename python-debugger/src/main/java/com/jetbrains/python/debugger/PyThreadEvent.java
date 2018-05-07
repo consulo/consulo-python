@@ -1,27 +1,27 @@
 package com.jetbrains.python.debugger;
 
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class PyThreadEvent extends PyConcurrencyEvent
 {
 	private final
-	@NotNull
+	@Nonnull
 	String myParentThreadId;
 
-	public PyThreadEvent(Long time, @NotNull String threadId, @NotNull String name, boolean isAsyncio)
+	public PyThreadEvent(Long time, @Nonnull String threadId, @Nonnull String name, boolean isAsyncio)
 	{
 		super(time, threadId, name, isAsyncio);
 		myParentThreadId = "";
 	}
 
-	public PyThreadEvent(long time, @NotNull String threadId, @NotNull String name, @NotNull String parentThreadId, boolean isAsyncio)
+	public PyThreadEvent(long time, @Nonnull String threadId, @Nonnull String name, @Nonnull String parentThreadId, boolean isAsyncio)
 	{
 		super(time, threadId, name, isAsyncio);
 		myParentThreadId = parentThreadId;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getEventActionName()
 	{
@@ -46,7 +46,7 @@ public class PyThreadEvent extends PyConcurrencyEvent
 		return sb.toString();
 	}
 
-	@NotNull
+	@Nonnull
 	public String getParentThreadId()
 	{
 		return myParentThreadId;

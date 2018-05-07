@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Abstract function parameter; may cover either a named parameter or a tuple of parameters.

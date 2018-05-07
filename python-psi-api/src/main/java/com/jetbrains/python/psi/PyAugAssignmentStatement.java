@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 
 /**
@@ -24,7 +25,7 @@ import com.intellij.psi.PsiElement;
  */
 public interface PyAugAssignmentStatement extends PyStatement
 {
-	@NotNull
+	@Nonnull
 	PyExpression getTarget();
 
 	@Nullable

@@ -15,9 +15,10 @@
  */
 package com.jetbrains.python.debugger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -32,10 +33,10 @@ public abstract class PyDebugSessionFactory
 {
 	public static final ExtensionPointName<PyDebugSessionFactory> EP_NAME = ExtensionPointName.create("consulo.python.debugSessionFactory");
 
-	protected abstract boolean appliesTo(@NotNull Sdk sdk);
+	protected abstract boolean appliesTo(@Nonnull Sdk sdk);
 
-	@NotNull
-	public abstract XDebugSession createSession(@NotNull PyDebugRunner runner, @NotNull PythonCommandLineState state, @NotNull ExecutionEnvironment environment) throws ExecutionException;
+	@Nonnull
+	public abstract XDebugSession createSession(@Nonnull PyDebugRunner runner, @Nonnull PythonCommandLineState state, @Nonnull ExecutionEnvironment environment) throws ExecutionException;
 
 	@Contract("null -> null")
 	@Nullable

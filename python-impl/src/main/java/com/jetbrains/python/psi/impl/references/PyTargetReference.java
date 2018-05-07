@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.impl.references;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.ResolveResult;
@@ -26,7 +28,6 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -36,7 +37,7 @@ public class PyTargetReference extends PyReferenceImpl {
     super(element, context);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     final ResolveResult[] results = super.multiResolve(incompleteCode);
@@ -56,7 +57,7 @@ public class PyTargetReference extends PyReferenceImpl {
     return new ResolveResult[] { new PsiElementResolveResult(myElement) };
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Object[] getVariants() {
     final PyImportElement importElement = PsiTreeUtil.getParentOfType(myElement, PyImportElement.class);

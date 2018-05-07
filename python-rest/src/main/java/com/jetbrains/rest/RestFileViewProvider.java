@@ -27,7 +27,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.jetbrains.python.PythonLanguage;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Set;
 
@@ -43,14 +43,14 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
     super(manager, virtualFile, physical);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Language getBaseLanguage() {
     return RestLanguage.INSTANCE;
   }
 
   @Override
-  @NotNull
+  @Nonnull
   public Language getTemplateDataLanguage() {
     return PythonLanguage.getInstance();
   }
@@ -61,7 +61,7 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   }
 
   @Override
-  @NotNull
+  @Nonnull
   public Set<Language> getLanguages() {
     if (myLanguages == null) {
       myLanguages = Sets.newLinkedHashSet();
@@ -76,7 +76,7 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   }
 
   @Override
-  protected PsiFile createFile(@NotNull final Language lang) {
+  protected PsiFile createFile(@Nonnull final Language lang) {
     ParserDefinition def = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
     if (def == null) return null;
     if (lang == getTemplateDataLanguage()) {

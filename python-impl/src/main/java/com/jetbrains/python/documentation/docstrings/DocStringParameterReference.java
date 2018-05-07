@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.Pair;
@@ -99,7 +99,7 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 	}
 
 	@Nullable
-	private PsiElement resolveGlobalVariable(@NotNull PyFile owner)
+	private PsiElement resolveGlobalVariable(@Nonnull PyFile owner)
 	{
 		for(PyTargetExpression assignment : owner.getTopLevelAttributes())
 		{
@@ -126,7 +126,7 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 	}
 
 	@Nullable
-	private PsiElement resolveClassVariable(@NotNull final PyClass owner)
+	private PsiElement resolveClassVariable(@Nonnull final PyClass owner)
 	{
 		final List<PyTargetExpression> attributes = owner.getClassAttributes();
 		for(PyTargetExpression element : attributes)
@@ -162,7 +162,7 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{
@@ -170,7 +170,7 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 		return ArrayUtil.EMPTY_OBJECT_ARRAY;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<PyNamedParameter> collectParameterVariants()
 	{
 		PyDocStringOwner owner = PsiTreeUtil.getParentOfType(getElement(), PyDocStringOwner.class);

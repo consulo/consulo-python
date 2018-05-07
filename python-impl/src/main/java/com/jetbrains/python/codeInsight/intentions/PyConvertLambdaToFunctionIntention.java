@@ -34,7 +34,7 @@ import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.refactoring.introduce.IntroduceValidator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,17 +45,17 @@ import java.util.List;
  */
 public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.convert.lambda.to.function");
   }
 
-  @NotNull
+  @Nonnull
   public String getText() {
     return PyBundle.message("INTN.convert.lambda.to.function");
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
@@ -73,7 +73,7 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
     return false;
   }
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     PyLambdaExpression lambdaExpression = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
     if (lambdaExpression != null) {
       String name = "function";

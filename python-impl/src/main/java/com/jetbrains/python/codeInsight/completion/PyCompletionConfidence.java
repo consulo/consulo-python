@@ -25,7 +25,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.ThreeState;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -33,15 +33,15 @@ import java.util.List;
  * @author yole
  */
 public class PyCompletionConfidence extends CompletionConfidence {
-  @NotNull
+  @Nonnull
   @Override
-  public ThreeState shouldFocusLookup(@NotNull CompletionParameters parameters) {
+  public ThreeState shouldFocusLookup(@Nonnull CompletionParameters parameters) {
     return ThreeState.UNSURE;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public ThreeState shouldSkipAutopopup(@NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
+  public ThreeState shouldSkipAutopopup(@Nonnull PsiElement contextElement, @Nonnull PsiFile psiFile, int offset) {
     ASTNode node = contextElement.getNode();
     if (node != null) {
       if (node.getElementType() == PyTokenTypes.FLOAT_LITERAL) {

@@ -19,8 +19,9 @@ package com.jetbrains.python.codeInsight;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -41,14 +42,14 @@ public class PyTargetElementUtilEx extends TargetElementUtilEx.Adapter
 {
 	@Override
 	@CompositeExtensionPointName.BooleanBreakResult(breakValue = false)
-	public boolean includeSelfInGotoImplementation(@NotNull PsiElement element)
+	public boolean includeSelfInGotoImplementation(@Nonnull PsiElement element)
 	{
 		return element.getLanguage() != PythonLanguage.getInstance();
 	}
 
 	@Nullable
 	@Override
-	public PsiElement getReferenceOrReferencedElement(@NotNull PsiReference ref, @NotNull Set<String> flags)
+	public PsiElement getReferenceOrReferencedElement(@Nonnull PsiReference ref, @Nonnull Set<String> flags)
 	{
 		if(!flags.contains(ELEMENT_NAME_ACCEPTED))
 		{

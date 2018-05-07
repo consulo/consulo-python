@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger.pydev;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 public abstract class LineBreakpointCommand extends AbstractCommand
 {
 	private final String myType;
-	@NotNull
+	@Nonnull
 	protected final String myFile;
 	protected final int myLine;
 
 
-	public LineBreakpointCommand(@NotNull RemoteDebugger debugger, String type, int commandCode, @NotNull final String file, final int line)
+	public LineBreakpointCommand(@Nonnull RemoteDebugger debugger, String type, int commandCode, @Nonnull final String file, final int line)
 	{
 		super(debugger, commandCode);
 		myType = type;

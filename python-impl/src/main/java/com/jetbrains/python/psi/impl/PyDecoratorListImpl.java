@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.PyElementTypes;
@@ -23,7 +25,6 @@ import com.jetbrains.python.psi.PyDecorator;
 import com.jetbrains.python.psi.PyDecoratorList;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author dcheryasov
@@ -43,7 +44,7 @@ public class PyDecoratorListImpl extends PyBaseElementImpl<PyDecoratorListStub> 
     super(stub, PyElementTypes.DECORATOR_LIST);
   }
 
-  @NotNull
+  @Nonnull
   public PyDecorator[] getDecorators() {
     final PyDecorator[] decoarray = new PyDecorator[0];
     return getStubOrPsiChildren(PyElementTypes.DECORATOR_CALL, decoarray);

@@ -16,7 +16,8 @@
 
 package com.jetbrains.python;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.tree.TokenSet;
 
@@ -31,48 +32,48 @@ public interface PythonDialectsTokenSetContributor {
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyStatement}.
    */
-  @NotNull
+  @Nonnull
   TokenSet getStatementTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyExpression}.
    */
-  @NotNull
+  @Nonnull
   TokenSet getExpressionTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.NameDefiner}.
    */
-  @NotNull
+  @Nonnull
   TokenSet getNameDefinerTokens();
 
   /**
    * Returns element types that are language keywords.
    */
-  @NotNull
+  @Nonnull
   TokenSet getKeywordTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyParameter}.
    */
-  @NotNull
+  @Nonnull
   TokenSet getParameterTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyFunction}.
    */
-  @NotNull
+  @Nonnull
   TokenSet getFunctionDeclarationTokens();
 
   /**
    * Returns element types that can be used as unbalanced braces recovery tokens in the lexer.
    */
-  @NotNull
+  @Nonnull
   TokenSet getUnbalancedBracesRecoveryTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyReferenceExpression}.
    */
-  @NotNull
+  @Nonnull
   TokenSet getReferenceExpressionTokens();
 }

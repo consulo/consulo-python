@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -68,7 +68,7 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
 		return child != null ? child.getPsi() : null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PyElementType getOperator()
 	{
@@ -89,7 +89,7 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
 		return getReference(PyResolveContext.noImplicits());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiPolyVariantReference getReference(PyResolveContext context)
 	{
@@ -97,7 +97,7 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
 	}
 
 	@Override
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		if(getOperator() == PyTokenTypes.NOT_KEYWORD)
 		{
@@ -170,7 +170,7 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
 	}
 
 	@Nullable
-	private static PyType getGeneratorReturnType(@Nullable PyType type, @NotNull TypeEvalContext context)
+	private static PyType getGeneratorReturnType(@Nullable PyType type, @Nonnull TypeEvalContext context)
 	{
 		if(type instanceof PyClassLikeType && type instanceof PyCollectionType)
 		{

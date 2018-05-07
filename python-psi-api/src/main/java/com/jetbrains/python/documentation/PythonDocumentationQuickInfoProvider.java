@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.documentation;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 
@@ -36,5 +37,5 @@ public interface PythonDocumentationQuickInfoProvider
 	 * @return info (if exists) or null (if another provider should be checked)
 	 */
 	@Nullable
-	String getQuickInfo(@NotNull PsiElement originalElement);
+	String getQuickInfo(@Nonnull PsiElement originalElement);
 }

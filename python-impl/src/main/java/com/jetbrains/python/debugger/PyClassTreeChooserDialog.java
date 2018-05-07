@@ -22,8 +22,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.stubs.PyClassNameIndex;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Collection;
@@ -38,7 +38,7 @@ public class PyClassTreeChooserDialog extends AbstractTreeClassChooserDialog<PyC
     super(title, project, scope, PyClass.class, classFilter, initialClass);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   protected List<PyClass> getClassesByName(String name,
                                            boolean checkBoxState,

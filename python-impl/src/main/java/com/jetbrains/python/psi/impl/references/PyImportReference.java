@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
@@ -105,7 +105,7 @@ public class PyImportReference extends PyReferenceImpl
 		return super.getUnresolvedDescription();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected List<RatedResolveResult> resolveInner()
 	{
@@ -114,7 +114,7 @@ public class PyImportReference extends PyReferenceImpl
 		return qname == null ? Collections.<RatedResolveResult>emptyList() : ResolveImportUtil.resolveNameInImportStatement(parent, qname);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{
@@ -222,10 +222,10 @@ public class PyImportReference extends PyReferenceImpl
 		private final PsiFile myCurrentFile;
 		private final Set<String> myNamesAlready;
 		private final List<Object> myObjects;
-		@NotNull
+		@Nonnull
 		private final TypeEvalContext myContext;
 
-		public ImportVariantCollector(@NotNull TypeEvalContext context)
+		public ImportVariantCollector(@Nonnull TypeEvalContext context)
 		{
 			myContext = context;
 			PsiFile currentFile = myElement.getContainingFile();
@@ -344,7 +344,7 @@ public class PyImportReference extends PyReferenceImpl
 			}
 		}
 
-		private void addImportedNames(@NotNull PyImportElement[] importElements)
+		private void addImportedNames(@Nonnull PyImportElement[] importElements)
 		{
 			for(PyImportElement element : importElements)
 			{

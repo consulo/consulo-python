@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.formatter;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.GenericLineWrapPositionStrategy;
 import com.intellij.openapi.project.Project;
@@ -26,8 +28,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import com.jetbrains.python.psi.StringLiteralExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -51,7 +53,7 @@ public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy 
   }
 
   @Override
-  protected boolean canUseOffset(@NotNull Document document, int offset, boolean virtual) {
+  protected boolean canUseOffset(@Nonnull Document document, int offset, boolean virtual) {
     if (virtual) {
       return true;
     }
@@ -69,7 +71,7 @@ public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy 
   }
 
   @Override
-  public int calculateWrapPosition(@NotNull Document document,
+  public int calculateWrapPosition(@Nonnull Document document,
                                    @Nullable Project project,
                                    int startOffset,
                                    int endOffset,

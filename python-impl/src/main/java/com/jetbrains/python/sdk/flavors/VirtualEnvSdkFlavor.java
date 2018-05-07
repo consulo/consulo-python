@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
@@ -146,7 +146,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor
 		return roots;
 	}
 
-	private static void addEnvsFolder(@NotNull final List<VirtualFile> roots, @Nullable final VirtualFile condaFolder)
+	private static void addEnvsFolder(@Nonnull final List<VirtualFile> roots, @Nullable final VirtualFile condaFolder)
 	{
 		if(condaFolder != null)
 		{
@@ -248,7 +248,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor
 	}
 
 	@Override
-	public boolean isValidSdkPath(@NotNull File file)
+	public boolean isValidSdkPath(@Nonnull File file)
 	{
 		if(!super.isValidSdkPath(file))
 		{

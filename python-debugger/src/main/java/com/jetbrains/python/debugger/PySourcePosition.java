@@ -1,8 +1,8 @@
 package com.jetbrains.python.debugger;
 
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class PySourcePosition {
 
@@ -56,7 +56,7 @@ public abstract class PySourcePosition {
     return "PySourcePosition(" + file + ":" + line + ")";
   }
 
-  public static boolean isWindowsPath(@NotNull String path) {
+  public static boolean isWindowsPath(@Nonnull String path) {
     return path.contains("\\") || (path.length() > 1 && path.charAt(1) == ':');
   }
 }

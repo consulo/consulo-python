@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.WriteAction;
@@ -66,7 +66,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler
 		super(new IntroduceFieldValidator(), RefactoringBundle.message("introduce.field.title"));
 	}
 
-	public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext)
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext)
 	{
 		final IntroduceOperation operation = new IntroduceOperation(project, editor, file, null);
 		operation.addAvailableInitPlace(InitPlace.CONSTRUCTOR);
@@ -179,7 +179,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler
 
 	@Nullable
 	@Override
-	protected PsiElement addDeclaration(@NotNull PsiElement expression, @NotNull PsiElement declaration, @NotNull IntroduceOperation operation)
+	protected PsiElement addDeclaration(@Nonnull PsiElement expression, @Nonnull PsiElement declaration, @Nonnull IntroduceOperation operation)
 	{
 		final PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
 		PsiElement anchor = PyUtil.getContainingClassOrSelf(expr);
@@ -197,7 +197,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler
 		return PyIntroduceVariableHandler.doIntroduceVariable(expression, declaration, operation.getOccurrences(), operation.isReplaceAll());
 	}
 
-	private static boolean inConstructor(@NotNull PsiElement expression)
+	private static boolean inConstructor(@Nonnull PsiElement expression)
 	{
 		final PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
 		PyClass clazz = PyUtil.getContainingClassOrSelf(expr);
@@ -231,7 +231,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected List<PsiElement> getOccurrences(PsiElement element, @NotNull PyExpression expression)
+	protected List<PsiElement> getOccurrences(PsiElement element, @Nonnull PyExpression expression)
 	{
 		if(isAssignedLocalVariable(element))
 		{

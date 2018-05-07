@@ -25,8 +25,8 @@ import com.jetbrains.python.psi.PySliceItem;
 import com.jetbrains.python.psi.types.PyTupleType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -38,7 +38,7 @@ public class PySliceExpressionImpl extends PyElementImpl implements PySliceExpre
 
   @Nullable
   @Override
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
+  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     final PyType type = context.getType(getOperand());
     // TODO: Currently we don't evaluate the static range of the slice, so we have to return a generic tuple type without elements
     if (type instanceof PyTupleType) {
@@ -47,7 +47,7 @@ public class PySliceExpressionImpl extends PyElementImpl implements PySliceExpre
     return type;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public PyExpression getOperand() {
     return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);

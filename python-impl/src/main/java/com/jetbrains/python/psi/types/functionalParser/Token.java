@@ -16,34 +16,38 @@
 
 package com.jetbrains.python.psi.types.functionalParser;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.TextRange;
-import org.jetbrains.annotations.NotNull;
 
 /**
 * @author vlan
 */
 public class Token<T> {
-  @NotNull private final CharSequence myText;
-  @NotNull private final TextRange myRange;
-  @NotNull private final T myType;
+  @Nonnull
+  private final CharSequence myText;
+  @Nonnull
+  private final TextRange myRange;
+  @Nonnull
+  private final T myType;
 
-  public Token(@NotNull T type, @NotNull CharSequence text, @NotNull TextRange range) {
+  public Token(@Nonnull T type, @Nonnull CharSequence text, @Nonnull TextRange range) {
     myText = text;
     myRange = range;
     myType = type;
   }
 
-  @NotNull
+  @Nonnull
   public T getType() {
     return myType;
   }
 
-  @NotNull
+  @Nonnull
   public CharSequence getText() {
     return myText;
   }
 
-  @NotNull
+  @Nonnull
   public TextRange getRange() {
     return myRange;
   }

@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -26,7 +28,6 @@ import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -38,17 +39,17 @@ import org.jetbrains.annotations.NotNull;
  * {a: 3, b: 5} -> no transformation
  */
 public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction {
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.convert.dict.literal.to.dict.constructor");
   }
 
-  @NotNull
+  @Nonnull
   public String getText() {
     return PyBundle.message("INTN.convert.dict.literal.to.dict.constructor");
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
@@ -74,7 +75,7 @@ public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction
     return false;
   }
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     PyDictLiteralExpression dictExpression =
       PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyDictLiteralExpression.class);
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

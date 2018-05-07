@@ -16,7 +16,7 @@
 package com.jetbrains.python.inspections.quickfix;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.editorActions.fillParagraph.FillParagraphAction;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
@@ -34,7 +34,7 @@ public class PyFillParagraphFix extends BaseIntentionAction implements HighPrior
 	}
 
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getFamilyName()
 	{
@@ -42,13 +42,13 @@ public class PyFillParagraphFix extends BaseIntentionAction implements HighPrior
 	}
 
 	@Override
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		return true;
 	}
 
 	@Override
-	public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		final FillParagraphAction action = new FillParagraphAction();
 		action.actionPerformedImpl(project, editor);

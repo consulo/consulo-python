@@ -17,7 +17,7 @@ package com.jetbrains.python.console;
 
 import java.awt.Font;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.execution.console.LanguageConsoleView;
 import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
@@ -67,7 +67,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	}
 
 	@Override
-	public void processLine(@NotNull final String text)
+	public void processLine(@Nonnull final String text)
 	{
 		executeMultiLine(text);
 	}
@@ -85,7 +85,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 		return PsiTreeUtil.findChildOfAnyType(pyFile, PyStatementList.class) == null && pyFile.getStatements().size() < 2;
 	}
 
-	private void sendLineToConsole(@NotNull final ConsoleCommunication.ConsoleCodeFragment code)
+	private void sendLineToConsole(@Nonnull final ConsoleCommunication.ConsoleCodeFragment code)
 	{
 		ConsoleCommunication consoleComm = this.consoleCommunication;
 		if(!consoleCommunication.isWaitingForInput())
@@ -219,7 +219,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	}
 
 	@Override
-	public void runExecuteAction(@NotNull LanguageConsoleView console)
+	public void runExecuteAction(@Nonnull LanguageConsoleView console)
 	{
 		if(isEnabled())
 		{
@@ -272,7 +272,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 		super.runExecuteAction(console);
 	}
 
-	private static boolean shouldCopyToHistory(@NotNull LanguageConsoleView console)
+	private static boolean shouldCopyToHistory(@Nonnull LanguageConsoleView console)
 	{
 		return !PyConsoleUtil.isPagingPrompt(console.getPrompt());
 	}

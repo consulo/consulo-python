@@ -23,7 +23,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
 
   public AbstractLineBreakpointHandler(
     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> breakpointTypeClass,
-    @NotNull final PyDebugProcess debugProcess) {
+    @Nonnull final PyDebugProcess debugProcess) {
     super(breakpointTypeClass);
     myDebugProcess = debugProcess;
   }
@@ -50,7 +50,7 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
     }
   }
 
-  public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+  public void registerBreakpoint(@Nonnull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
     final XSourcePosition position = breakpoint.getSourcePosition();
     if (position != null) {
       myDebugProcess.addBreakpoint(myDebugProcess.getPositionConverter().convertToPython(position), breakpoint);
@@ -58,7 +58,7 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
     }
   }
 
-  public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
+  public void unregisterBreakpoint(@Nonnull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
     final XSourcePosition position = myBreakPointPositions.get(breakpoint);
     if (position != null) {
       myDebugProcess.removeBreakpoint(myDebugProcess.getPositionConverter().convertToPython(position));

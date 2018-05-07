@@ -17,7 +17,8 @@ package com.jetbrains.python.refactoring.introduce.constant;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -53,7 +54,7 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected PsiElement addDeclaration(@NotNull final PsiElement expression, @NotNull final PsiElement declaration, @NotNull final IntroduceOperation operation)
+	protected PsiElement addDeclaration(@Nonnull final PsiElement expression, @Nonnull final PsiElement declaration, @Nonnull final IntroduceOperation operation)
 	{
 		final PsiElement anchor = expression.getContainingFile();
 		assert anchor instanceof PyFile;
@@ -61,7 +62,7 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected Collection<String> generateSuggestedNames(@NotNull final PyExpression expression)
+	protected Collection<String> generateSuggestedNames(@Nonnull final PyExpression expression)
 	{
 		Collection<String> names = new HashSet<>();
 		for(String name : super.generateSuggestedNames(expression))

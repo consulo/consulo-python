@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.controlflow.Instruction;
@@ -82,7 +82,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 	protected final PyQualifiedExpression myElement;
 	protected final PyResolveContext myContext;
 
-	public PyReferenceImpl(PyQualifiedExpression element, @NotNull PyResolveContext context)
+	public PyReferenceImpl(PyQualifiedExpression element, @Nonnull PyResolveContext context)
 	{
 		myElement = element;
 		myContext = context;
@@ -133,7 +133,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 	 * @see PsiPolyVariantReference#multiResolve(boolean)
 	 */
 	@Override
-	@NotNull
+	@Nonnull
 	public ResolveResult[] multiResolve(final boolean incompleteCode)
 	{
 		if(USE_CACHE)
@@ -149,7 +149,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 
 	// sorts and modifies results of resolveInner
 
-	@NotNull
+	@Nonnull
 	private ResolveResult[] multiResolveInner()
 	{
 		final String referencedName = myElement.getReferencedName();
@@ -203,8 +203,8 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 		return ret.toArray(new ResolveResult[ret.size()]);
 	}
 
-	@NotNull
-	private static ResolveResultList resolveToLatestDefs(@NotNull List<Instruction> instructions, @NotNull PsiElement element, @NotNull String name, @NotNull TypeEvalContext context)
+	@Nonnull
+	private static ResolveResultList resolveToLatestDefs(@Nonnull List<Instruction> instructions, @Nonnull PsiElement element, @Nonnull String name, @Nonnull TypeEvalContext context)
 	{
 		final ResolveResultList ret = new ResolveResultList();
 		for(Instruction instruction : instructions)
@@ -286,7 +286,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 	 * @return resolution result.
 	 * @see #resolve()
 	 */
-	@NotNull
+	@Nonnull
 	protected List<RatedResolveResult> resolveInner()
 	{
 		final ResolveResultList ret = new ResolveResultList();
@@ -355,8 +355,8 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 		return resultsFromProcessor;
 	}
 
-	protected List<RatedResolveResult> getResultsFromProcessor(@NotNull String referencedName,
-			@NotNull PyResolveProcessor processor,
+	protected List<RatedResolveResult> getResultsFromProcessor(@Nonnull String referencedName,
+			@Nonnull PyResolveProcessor processor,
 			@Nullable PsiElement realContext,
 			@Nullable PsiElement resolveRoof)
 	{
@@ -456,7 +456,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 		return resolveByReferenceResolveProviders();
 	}
 
-	private static boolean allInOwnScopeComprehensions(@NotNull Collection<PsiElement> elements)
+	private static boolean allInOwnScopeComprehensions(@Nonnull Collection<PsiElement> elements)
 	{
 		for(PsiElement element : elements)
 		{
@@ -468,7 +468,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	private ResolveResultList resolveByReferenceResolveProviders()
 	{
 		final ResolveResultList results = new ResolveResultList();
@@ -525,7 +525,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 		return realContext.getContainingFile();
 	}
 
-	public static int getRate(PsiElement elt, @NotNull TypeEvalContext context)
+	public static int getRate(PsiElement elt, @Nonnull TypeEvalContext context)
 	{
 		int rate;
 		if(elt instanceof PyTargetExpression && context.maySwitchToAST(elt))
@@ -556,7 +556,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public String getCanonicalText()
 	{
 		return getRangeInElement().substring(getElement().getText());
@@ -577,7 +577,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 
 	@Override
 	@Nullable
-	public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException
+	public PsiElement bindToElement(@Nonnull PsiElement element) throws IncorrectOperationException
 	{
 		return null;
 	}
@@ -711,7 +711,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 	}
 
 	@Nullable
-	private static PsiElement findContainer(@NotNull PsiElement element)
+	private static PsiElement findContainer(@Nonnull PsiElement element)
 	{
 		final PyElement parent = PsiTreeUtil.getParentOfType(element, ScopeOwner.class, PyComprehensionElement.class);
 		if(parent instanceof PyListCompExpression && LanguageLevel.forElement(element).isOlderThan(LanguageLevel.PYTHON30))
@@ -721,7 +721,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 		return parent;
 	}
 
-	private static boolean containsDeclaration(@NotNull PyComprehensionElement comprehensionElement, @NotNull String variableName)
+	private static boolean containsDeclaration(@Nonnull PyComprehensionElement comprehensionElement, @Nonnull String variableName)
 	{
 		for(PyComprehensionForComponent forComponent : comprehensionElement.getForComponents())
 		{
@@ -799,7 +799,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public Object[] getVariants()
 	{
 		final List<LookupElement> ret = Lists.newArrayList();
@@ -849,7 +849,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 	/**
 	 * Throws away fake elements used for completion internally.
 	 */
-	protected List<LookupElement> getOriginalElements(@NotNull CompletionVariantsProcessor processor)
+	protected List<LookupElement> getOriginalElements(@Nonnull CompletionVariantsProcessor processor)
 	{
 		final List<LookupElement> ret = Lists.newArrayList();
 		for(LookupElement item : processor.getResultList())
@@ -925,8 +925,8 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference
 		private static final int MAX_NESTING_LEVEL = 30;
 
 		@Override
-		@NotNull
-		public ResolveResult[] resolve(@NotNull final PyReferenceImpl ref, final boolean incompleteCode)
+		@Nonnull
+		public ResolveResult[] resolve(@Nonnull final PyReferenceImpl ref, final boolean incompleteCode)
 		{
 			if(myNesting.get().getAndIncrement() >= MAX_NESTING_LEVEL)
 			{

@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.types;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.jetbrains.python.psi.PyCallSiteExpression;
 
 /**
@@ -42,13 +42,13 @@ public interface PyCallableType extends PyType
 	 * @param context
 	 */
 	@Nullable
-	PyType getReturnType(@NotNull TypeEvalContext context);
+	PyType getReturnType(@Nonnull TypeEvalContext context);
 
 	/**
 	 * Returns the type which is the result of calling an instance of this type.
 	 */
 	@Nullable
-	PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite);
+	PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite);
 
 	/**
 	 * Returns the list of parameter types.
@@ -56,5 +56,5 @@ public interface PyCallableType extends PyType
 	 * @return list of parameter info null if not applicable.
 	 */
 	@Nullable
-	List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context);
+	List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context);
 }

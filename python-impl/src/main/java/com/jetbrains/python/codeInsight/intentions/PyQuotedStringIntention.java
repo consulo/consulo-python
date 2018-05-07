@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -28,7 +30,6 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -36,12 +37,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PyQuotedStringIntention extends BaseIntentionAction {
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.quoted.string");
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
@@ -74,7 +75,7 @@ public class PyQuotedStringIntention extends BaseIntentionAction {
     return false;
   }
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     PyStringLiteralExpression string = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
     if (string != null) {

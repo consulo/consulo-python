@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.PyTupleParameter;
 import com.jetbrains.python.psi.impl.PyTupleParameterImpl;
 import com.jetbrains.python.psi.stubs.PyTupleParameterStub;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -38,25 +38,25 @@ public class PyTupleParameterElementType extends PyStubElementType<PyTupleParame
     super("TUPLE_PARAMETER");
   }
 
-  public PsiElement createElement(@NotNull final ASTNode node) {
+  public PsiElement createElement(@Nonnull final ASTNode node) {
     return new PyTupleParameterImpl(node);
   }
 
-  public PyTupleParameter createPsi(@NotNull PyTupleParameterStub stub) {
+  public PyTupleParameter createPsi(@Nonnull PyTupleParameterStub stub) {
     return new PyTupleParameterImpl(stub);
   }
 
-  public PyTupleParameterStub createStub(@NotNull PyTupleParameter psi, StubElement parentStub) {
+  public PyTupleParameterStub createStub(@Nonnull PyTupleParameter psi, StubElement parentStub) {
     return new PyTupleParameterStubImpl(psi.hasDefaultValue(), parentStub);
   }
 
-  @NotNull
-  public PyTupleParameterStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @Nonnull
+  public PyTupleParameterStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
     boolean hasDefaultValue = dataStream.readBoolean();
     return new PyTupleParameterStubImpl(hasDefaultValue, parentStub);
   }
 
-  public void serialize(@NotNull PyTupleParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@Nonnull PyTupleParameterStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
     dataStream.writeBoolean(stub.hasDefaultValue());
   }
 }

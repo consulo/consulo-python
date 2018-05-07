@@ -18,10 +18,10 @@ package com.jetbrains.python.run;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.Disposer;
@@ -31,7 +31,7 @@ import com.intellij.openapi.util.Disposer;
  */
 public class PythonExtendedConfigurationEditor<T extends AbstractPythonRunConfiguration<T>> extends SettingsEditor<T>
 {
-	@NotNull
+	@Nonnull
 	private final SettingsEditor<T> myMainSettingsEditor;
 
 	private PyRunConfigurationEditorExtension myCurrentEditor;
@@ -40,7 +40,7 @@ public class PythonExtendedConfigurationEditor<T extends AbstractPythonRunConfig
 
 	private JPanel mySettingsPlaceholder;
 
-	public PythonExtendedConfigurationEditor(@NotNull SettingsEditor<T> editor)
+	public PythonExtendedConfigurationEditor(@Nonnull SettingsEditor<T> editor)
 	{
 		myMainSettingsEditor = editor;
 
@@ -112,7 +112,7 @@ public class PythonExtendedConfigurationEditor<T extends AbstractPythonRunConfig
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected JComponent createEditor()
 	{
@@ -125,8 +125,8 @@ public class PythonExtendedConfigurationEditor<T extends AbstractPythonRunConfig
 		return mySettingsPlaceholder;
 	}
 
-	@NotNull
-	public static <T extends AbstractPythonRunConfiguration<T>> PythonExtendedConfigurationEditor<T> create(@NotNull SettingsEditor<T> editor)
+	@Nonnull
+	public static <T extends AbstractPythonRunConfiguration<T>> PythonExtendedConfigurationEditor<T> create(@Nonnull SettingsEditor<T> editor)
 	{
 		return new PythonExtendedConfigurationEditor<>(editor);
 	}

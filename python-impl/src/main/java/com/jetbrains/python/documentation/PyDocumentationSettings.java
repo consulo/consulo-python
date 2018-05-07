@@ -17,8 +17,8 @@ package com.jetbrains.python.documentation;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -44,12 +44,12 @@ public class PyDocumentationSettings implements PersistentStateComponent<PyDocum
 {
 	public static final DocStringFormat DEFAULT_DOCSTRING_FORMAT = DocStringFormat.REST;
 
-	public static PyDocumentationSettings getInstance(@NotNull Module module)
+	public static PyDocumentationSettings getInstance(@Nonnull Module module)
 	{
 		return ModuleServiceManager.getService(module, PyDocumentationSettings.class);
 	}
 
-	@NotNull
+	@Nonnull
 	private DocStringFormat myDocStringFormat = DEFAULT_DOCSTRING_FORMAT;
 	private boolean myAnalyzeDoctest = true;
 
@@ -63,20 +63,20 @@ public class PyDocumentationSettings implements PersistentStateComponent<PyDocum
 		return isFormat(file, DocStringFormat.PLAIN);
 	}
 
-	private boolean isFormat(@Nullable PsiFile file, @NotNull DocStringFormat format)
+	private boolean isFormat(@Nullable PsiFile file, @Nonnull DocStringFormat format)
 	{
 		return file instanceof PyFile ? getFormatForFile(file) == format : myDocStringFormat == format;
 	}
 
-	@NotNull
-	public DocStringFormat getFormatForFile(@NotNull PsiFile file)
+	@Nonnull
+	public DocStringFormat getFormatForFile(@Nonnull PsiFile file)
 	{
 		final DocStringFormat fileFormat = getFormatFromDocformatAttribute(file);
 		return fileFormat != null && fileFormat != DocStringFormat.PLAIN ? fileFormat : myDocStringFormat;
 	}
 
 	@Nullable
-	public static DocStringFormat getFormatFromDocformatAttribute(@NotNull PsiFile file)
+	public static DocStringFormat getFormatFromDocformatAttribute(@Nonnull PsiFile file)
 	{
 		if(file instanceof PyFile)
 		{
@@ -102,13 +102,13 @@ public class PyDocumentationSettings implements PersistentStateComponent<PyDocum
 	}
 
 	@Transient
-	@NotNull
+	@Nonnull
 	public DocStringFormat getFormat()
 	{
 		return myDocStringFormat;
 	}
 
-	public void setFormat(@NotNull DocStringFormat format)
+	public void setFormat(@Nonnull DocStringFormat format)
 	{
 		myDocStringFormat = format;
 	}
@@ -116,14 +116,14 @@ public class PyDocumentationSettings implements PersistentStateComponent<PyDocum
 	// Legacy name of the field to preserve settings format
 	@SuppressWarnings("unused")
 	@OptionTag("myDocStringFormat")
-	@NotNull
+	@Nonnull
 	public String getFormatName()
 	{
 		return myDocStringFormat.getName();
 	}
 
 	@SuppressWarnings("unused")
-	public void setFormatName(@NotNull String name)
+	public void setFormatName(@Nonnull String name)
 	{
 		myDocStringFormat = DocStringFormat.fromNameOrPlain(name);
 	}

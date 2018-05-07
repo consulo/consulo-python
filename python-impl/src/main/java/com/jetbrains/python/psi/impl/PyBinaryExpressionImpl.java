@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -125,7 +125,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode child)
+	public void deleteChildInternal(@Nonnull ASTNode child)
 	{
 		PyExpression left = getLeftExpression();
 		PyExpression right = getRightExpression();
@@ -143,21 +143,21 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiPolyVariantReference getReference()
 	{
 		return getReference(PyResolveContext.noImplicits());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiPolyVariantReference getReference(PyResolveContext context)
 	{
 		return new PyOperatorReference(this, context);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		if(isOperator("and") || isOperator("or"))
 		{

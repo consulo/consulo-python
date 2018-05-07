@@ -22,7 +22,7 @@ import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.util.PlatformIcons;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author vlan
@@ -44,7 +44,7 @@ public class PyFieldsFilter implements Filter {
     return true;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return ID;
@@ -55,7 +55,7 @@ public class PyFieldsFilter implements Filter {
     return getName();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public ActionPresentation getPresentation() {
     return new ActionPresentationData(IdeBundle.message("action.structureview.show.fields"), null, PlatformIcons.FIELD_ICON);

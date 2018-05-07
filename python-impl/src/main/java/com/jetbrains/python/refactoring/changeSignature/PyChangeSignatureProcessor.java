@@ -21,7 +21,7 @@ import com.intellij.refactoring.changeSignature.ChangeSignatureProcessorBase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -42,7 +42,7 @@ public class PyChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     return new PyChangeInfo(method, parameterInfo, newName);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
     return new PyChangeSignatureUsageViewDescriptor(usages);

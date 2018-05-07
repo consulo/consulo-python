@@ -36,8 +36,8 @@ import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,21 +50,21 @@ import java.util.List;
  */
 public class PyRedeclarationInspection extends PyInspection {
   @Nls
-  @NotNull
+  @Nonnull
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.redeclaration");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
   private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
       super(holder, session);
     }
 
@@ -90,11 +90,11 @@ public class PyRedeclarationInspection extends PyInspection {
       }
     }
 
-    private static boolean isConditional(@NotNull PsiElement node) {
+    private static boolean isConditional(@Nonnull PsiElement node) {
       return PsiTreeUtil.getParentOfType(node, PyIfStatement.class, PyConditionalExpression.class, PyTryExceptStatement.class) != null;
     }
 
-    private static boolean isDecorated(@NotNull PyDecoratable node) {
+    private static boolean isDecorated(@Nonnull PyDecoratable node) {
       boolean isDecorated = false;
       final PyDecoratorList decoratorList = node.getDecoratorList();
       if (decoratorList != null) {
@@ -106,7 +106,7 @@ public class PyRedeclarationInspection extends PyInspection {
       return isDecorated;
     }
 
-    private void processElement(@NotNull final PsiNameIdentifierOwner element) {
+    private void processElement(@Nonnull final PsiNameIdentifierOwner element) {
       if (isConditional(element)) {
         return;
       }
@@ -166,7 +166,7 @@ public class PyRedeclarationInspection extends PyInspection {
       }
     }
 
-    private static boolean suggestRename(@NotNull PsiNameIdentifierOwner element, @NotNull PsiElement originalElement) {
+    private static boolean suggestRename(@Nonnull PsiNameIdentifierOwner element, @Nonnull PsiElement originalElement) {
       // Target expressions in the same scope are treated as the same variable
       if ((element instanceof PyTargetExpression) && originalElement instanceof PyTargetExpression) {
         return false;

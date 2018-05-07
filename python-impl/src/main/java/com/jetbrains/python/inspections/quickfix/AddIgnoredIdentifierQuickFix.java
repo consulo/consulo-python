@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -33,17 +34,17 @@ public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityA
 {
 	public static final String END_WILDCARD = ".*";
 
-	@NotNull
+	@Nonnull
 	private final QualifiedName myIdentifier;
 	private final boolean myIgnoreAllAttributes;
 
-	public AddIgnoredIdentifierQuickFix(@NotNull QualifiedName identifier, boolean ignoreAllAttributes)
+	public AddIgnoredIdentifierQuickFix(@Nonnull QualifiedName identifier, boolean ignoreAllAttributes)
 	{
 		myIdentifier = identifier;
 		myIgnoreAllAttributes = ignoreAllAttributes;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getName()
 	{
@@ -57,7 +58,7 @@ public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityA
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getFamilyName()
 	{
@@ -65,7 +66,7 @@ public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityA
 	}
 
 	@Override
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		final PsiElement context = descriptor.getPsiElement();
 		InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();

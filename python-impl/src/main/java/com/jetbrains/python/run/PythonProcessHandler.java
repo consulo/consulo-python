@@ -18,7 +18,8 @@ package com.jetbrains.python.run;
 
 import java.nio.charset.Charset;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.KillableColoredProcessHandler;
@@ -31,12 +32,12 @@ import com.intellij.openapi.util.SystemInfo;
  */
 public class PythonProcessHandler extends KillableColoredProcessHandler
 {
-	protected PythonProcessHandler(@NotNull Process process, @NotNull GeneralCommandLine commandLine)
+	protected PythonProcessHandler(@Nonnull Process process, @Nonnull GeneralCommandLine commandLine)
 	{
 		super(process, commandLine.getCommandLineString());
 	}
 
-	public PythonProcessHandler(Process process, String commandLine, @NotNull Charset charset)
+	public PythonProcessHandler(Process process, String commandLine, @Nonnull Charset charset)
 	{
 		super(process, commandLine, charset);
 	}

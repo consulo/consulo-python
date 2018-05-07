@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.types;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyNames;
@@ -32,12 +32,12 @@ import com.jetbrains.python.psi.impl.PyBuiltinCache;
 public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 {
 
-	@NotNull
+	@Nonnull
 	private final List<PyType> myElementTypes;
 	private final boolean myHomogeneous;
 
 	@Nullable
-	public static PyTupleType create(@NotNull PsiElement anchor, @NotNull List<PyType> elementTypes)
+	public static PyTupleType create(@Nonnull PsiElement anchor, @Nonnull List<PyType> elementTypes)
 	{
 		final PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
 		if(tuple != null)
@@ -48,7 +48,7 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 	}
 
 	@Nullable
-	public static PyTupleType createHomogeneous(@NotNull PsiElement anchor, @Nullable PyType elementType)
+	public static PyTupleType createHomogeneous(@Nonnull PsiElement anchor, @Nullable PyType elementType)
 	{
 		final PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
 		if(tuple != null)
@@ -58,14 +58,14 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 		return null;
 	}
 
-	public PyTupleType(@NotNull PyClass tupleClass, @NotNull List<PyType> elementTypes, boolean homogeneous)
+	public PyTupleType(@Nonnull PyClass tupleClass, @Nonnull List<PyType> elementTypes, boolean homogeneous)
 	{
 		super(tupleClass, false);
 		myElementTypes = elementTypes;
 		myHomogeneous = homogeneous;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		if(myHomogeneous)
@@ -151,9 +151,9 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 		return result;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<PyType> getElementTypes(@NotNull TypeEvalContext context)
+	public List<PyType> getElementTypes(@Nonnull TypeEvalContext context)
 	{
 		return myElementTypes;
 	}

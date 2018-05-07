@@ -19,7 +19,7 @@ package com.jetbrains.python.testing.nosetest;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 
@@ -41,7 +41,7 @@ public class PythonNoseTestRunConfigurationEditor extends SettingsEditor<PythonN
     PythonNoseTestRunConfiguration.copyParams(myForm, config);
   }
 
-  @NotNull
+  @Nonnull
   protected JComponent createEditor() {
     return myForm.getPanel();
   }

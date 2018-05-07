@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
@@ -40,7 +41,7 @@ public class PythonFoldingSettings implements PersistentStateComponent<PythonFol
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	public static PythonFoldingSettings getInstance()
 	{
 		return ServiceManager.getService(PythonFoldingSettings.class);

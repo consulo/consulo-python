@@ -29,7 +29,7 @@ import com.jetbrains.python.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.run.PyCommonOptionsFormData;
 import com.jetbrains.python.run.PyCommonOptionsFormFactory;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -123,9 +123,9 @@ public class PyConsoleSpecificOptionsPanel {
     myConsoleSettings = optionsProvider;
   }
 
-  @NotNull
-  public static Document createDocument(@NotNull final Project project,
-                                        @NotNull String text) {
+  @Nonnull
+  public static Document createDocument(@Nonnull final Project project,
+                                        @Nonnull String text) {
     text = text.trim();
     final PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(project, "start_script.py", text, true);
 

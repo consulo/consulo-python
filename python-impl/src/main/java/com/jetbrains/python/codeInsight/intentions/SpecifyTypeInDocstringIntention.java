@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.codeInsight.intentions;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -50,20 +51,20 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention
 {
 	private String myText = PyBundle.message("INTN.specify.type");
 
-	@NotNull
+	@Nonnull
 	public String getText()
 	{
 		return myText;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.specify.type");
 	}
 
 	@Override
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		final PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
 		final PyExpression problemElement = getProblemElement(elementAt);
@@ -87,7 +88,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention
 		}
 	}
 
-	private static void generateDocstring(@Nullable PyNamedParameter param, @NotNull PyFunction pyFunction)
+	private static void generateDocstring(@Nullable PyNamedParameter param, @Nonnull PyFunction pyFunction)
 	{
 		if(!DocStringUtil.ensureNotPlainDocstringFormat(pyFunction))
 		{
@@ -127,7 +128,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention
 	}
 
 	@Override
-	protected boolean isParamTypeDefined(@NotNull PyParameter parameter)
+	protected boolean isParamTypeDefined(@Nonnull PyParameter parameter)
 	{
 		final PyFunction pyFunction = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
 		if(pyFunction != null)
@@ -144,7 +145,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention
 	}
 
 	@Override
-	protected boolean isReturnTypeDefined(@NotNull PyFunction function)
+	protected boolean isReturnTypeDefined(@Nonnull PyFunction function)
 	{
 		final StructuredDocString structuredDocString = function.getStructuredDocString();
 		return structuredDocString != null && structuredDocString.getReturnType() != null;

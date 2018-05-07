@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -50,7 +50,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 
 	private ThreadRegistry myThreadRegistry = new ThreadRegistry();
 
-	public MultiProcessDebugger(@NotNull final IPyDebugProcess debugProcess, @NotNull final ServerSocket serverSocket, final int timeoutInMillis)
+	public MultiProcessDebugger(@Nonnull final IPyDebugProcess debugProcess, @Nonnull final ServerSocket serverSocket, final int timeoutInMillis)
 	{
 		myDebugProcess = debugProcess;
 
@@ -229,8 +229,8 @@ public class MultiProcessDebugger implements ProcessDebugger
 		debugger(threadId).loadReferrers(threadId, frameId, var, callback);
 	}
 
-	@NotNull
-	private ProcessDebugger debugger(@NotNull String threadId)
+	@Nonnull
+	private ProcessDebugger debugger(@Nonnull String threadId)
 	{
 		ProcessDebugger debugger = myThreadRegistry.getDebugger(threadId);
 		if(debugger != null)
@@ -284,7 +284,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 			return myThreadIdToDebugger.get(threadId);
 		}
 
-		public static String threadName(@NotNull String name, @NotNull String id)
+		public static String threadName(@Nonnull String name, @Nonnull String id)
 		{
 			int indx = id.indexOf("_", id.indexOf("_") + 1);
 			if(indx != -1)
@@ -392,7 +392,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 
 
 	@Override
-	public void execute(@NotNull AbstractCommand command)
+	public void execute(@Nonnull AbstractCommand command)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -434,7 +434,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setTempBreakpoint(@NotNull String type, @NotNull String file, int line)
+	public void setTempBreakpoint(@Nonnull String type, @Nonnull String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -443,7 +443,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeTempBreakpoint(@NotNull String file, int line)
+	public void removeTempBreakpoint(@Nonnull String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -452,13 +452,13 @@ public class MultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setBreakpoint(@NotNull String typeId,
-			@NotNull String file,
+	public void setBreakpoint(@Nonnull String typeId,
+			@Nonnull String file,
 			int line,
 			@Nullable String condition,
 			@Nullable String logExpression,
 			@Nullable String funcName,
-			@NotNull SuspendPolicy policy)
+			@Nonnull SuspendPolicy policy)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -467,7 +467,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeBreakpoint(@NotNull String typeId, @NotNull String file, int line)
+	public void removeBreakpoint(@Nonnull String typeId, @Nonnull String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -490,7 +490,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 		private final MultiProcessDebugger myMultiProcessDebugger;
 		private ServerSocket myServerSocket;
 
-		public DebuggerProcessAcceptor(@NotNull MultiProcessDebugger multiProcessDebugger, @NotNull ServerSocket serverSocket)
+		public DebuggerProcessAcceptor(@Nonnull MultiProcessDebugger multiProcessDebugger, @Nonnull ServerSocket serverSocket)
 		{
 			myMultiProcessDebugger = multiProcessDebugger;
 			myServerSocket = serverSocket;
@@ -546,7 +546,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 			}
 		}
 
-		private void addCloseListener(@NotNull final RemoteDebugger debugger)
+		private void addCloseListener(@Nonnull final RemoteDebugger debugger)
 		{
 			debugger.addCloseListener(new RemoteDebuggerCloseListener()
 			{

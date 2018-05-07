@@ -16,17 +16,17 @@
 
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The 'try/except/else/finally' statement.
  */
 public interface PyTryExceptStatement extends PyStatementWithElse {
-  @NotNull
+  @Nonnull
   PyTryPart getTryPart();
 
-  @NotNull
+  @Nonnull
   PyExceptPart[] getExceptParts();
 
   @Nullable

@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.resolve;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyQualifiedExpression;
@@ -33,9 +33,9 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PythonBuiltinReferenceResolveProvider implements PyReferenceResolveProvider
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public List<RatedResolveResult> resolveName(@NotNull PyQualifiedExpression element)
+	public List<RatedResolveResult> resolveName(@Nonnull PyQualifiedExpression element)
 	{
 		final List<RatedResolveResult> result = new ArrayList<>();
 		final PsiElement realContext = PyPsiUtils.getRealContext(element);

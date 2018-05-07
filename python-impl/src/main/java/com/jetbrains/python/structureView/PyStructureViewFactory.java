@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.structureView;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
@@ -33,7 +33,7 @@ public class PyStructureViewFactory implements PsiStructureViewFactory {
     return new TreeBasedStructureViewBuilder() {
 
       @Override
-      @NotNull
+      @Nonnull
       public StructureViewModel createStructureViewModel(Editor editor) {
         return new PyStructureViewModel(psiFile);
       }

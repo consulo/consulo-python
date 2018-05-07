@@ -17,7 +17,7 @@ package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
 import static com.jetbrains.python.psi.PyUtil.sure;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -41,7 +41,7 @@ public class PyClassFixer extends PyFixer<PyClass>
 		super(PyClass.class);
 	}
 
-	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyClass pyClass) throws IncorrectOperationException
+	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyClass pyClass) throws IncorrectOperationException
 	{
 		final PsiElement colon = PyPsiUtils.getFirstChildOfType(pyClass, PyTokenTypes.COLON);
 		if(colon == null)

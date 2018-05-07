@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 import javax.swing.Icon;
 import javax.swing.JList;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
@@ -131,7 +131,7 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object>
 		}
 	}
 
-	private String shortenName(@NotNull String name)
+	private String shortenName(@Nonnull String name)
 	{
 		final Matcher matcher = PYTHON_PATTERN.matcher(name);
 		if(matcher.matches())

@@ -17,11 +17,11 @@ package com.jetbrains.python.run;
 
 import java.awt.BorderLayout;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
@@ -73,7 +73,7 @@ public class PythonRunConfigurationForm implements PythonRunConfigurationParams,
 		{
 
 			@Override
-			protected void onFileChosen(@NotNull VirtualFile chosenFile)
+			protected void onFileChosen(@Nonnull VirtualFile chosenFile)
 			{
 				super.onFileChosen(chosenFile);
 				myCommonOptionsForm.setWorkingDirectory(chosenFile.getParent().getPath());

@@ -17,7 +17,8 @@ package com.jetbrains.python.refactoring.classes.membersManager.vp;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.util.containers.MultiMap;
 import com.jetbrains.python.psi.PyClass;
@@ -45,14 +46,14 @@ public interface MembersBasedView<C extends MembersViewInitializationInfo>
 	 *                              pass [bar] field
 	 * @return true if user's choice is "continue". False if "cancel"
 	 */
-	boolean showConflictsDialog(@NotNull MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @NotNull Collection<PyMemberInfo<?>> dependenciesConflicts);
+	boolean showConflictsDialog(@Nonnull MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @Nonnull Collection<PyMemberInfo<?>> dependenciesConflicts);
 
 	/**
 	 * Displays error message
 	 *
 	 * @param message message to display
 	 */
-	void showError(@NotNull String message);
+	void showError(@Nonnull String message);
 
 	/**
 	 * Configures view and <strong>must</strong> be called once, before {@link #initAndShow()}
@@ -61,12 +62,12 @@ public interface MembersBasedView<C extends MembersViewInitializationInfo>
 	 *
 	 * @param configInfo configuration info
 	 */
-	void configure(@NotNull C configInfo);
+	void configure(@Nonnull C configInfo);
 
 	/**
 	 * @return collection of member infos user selected
 	 */
-	@NotNull
+	@Nonnull
 	Collection<PyMemberInfo<PyElement>> getSelectedMemberInfos();
 
 	/**
@@ -75,7 +76,7 @@ public interface MembersBasedView<C extends MembersViewInitializationInfo>
 	 *
 	 * @param processor refactoring processor
 	 */
-	void invokeRefactoring(@NotNull BaseRefactoringProcessor processor);
+	void invokeRefactoring(@Nonnull BaseRefactoringProcessor processor);
 
 	/**
 	 * Displays dialog. Be sure to run {@link #configure(MembersViewInitializationInfo)} first

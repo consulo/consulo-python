@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.console;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.console.LanguageConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -108,44 +108,44 @@ public class PyConsoleUtil
 	}
 
 
-	public static boolean detectIPythonImported(@NotNull String text, final ConsoleViewContentType outputType)
+	public static boolean detectIPythonImported(@Nonnull String text, final ConsoleViewContentType outputType)
 	{
 		return text.contains("PyDev console: using IPython ") && outputType == ConsoleViewContentType.ERROR_OUTPUT;
 	}
 
-	public static boolean detectSourcePrinting(@NotNull String text)
+	public static boolean detectSourcePrinting(@Nonnull String text)
 	{
 		return text.contains("Source:");
 	}
 
-	public static boolean detectIPythonStart(@NotNull String text)
+	public static boolean detectIPythonStart(@Nonnull String text)
 	{
 		return text.contains("IPython-->");
 	}
 
-	public static boolean detectIPythonEnd(@NotNull String text)
+	public static boolean detectIPythonEnd(@Nonnull String text)
 	{
 		return text.contains("<--IPython");
 	}
 
-	public static boolean detectIPythonAutomagicOn(@NotNull String text)
+	public static boolean detectIPythonAutomagicOn(@Nonnull String text)
 	{
 		return text.contains("Automagic is ON, % prefix NOT needed for magic functions.");
 	}
 
-	public static boolean detectIPythonAutomagicOff(@NotNull String text)
+	public static boolean detectIPythonAutomagicOff(@Nonnull String text)
 	{
 		return text.contains("Automagic is OFF, % prefix IS needed for magic functions.");
 	}
 
-	public static void markIPython(@NotNull VirtualFile file)
+	public static void markIPython(@Nonnull VirtualFile file)
 	{
 		PythonConsoleData consoleData = getOrCreateIPythonData(file);
 		consoleData.setIPythonEnabled(true);
 	}
 
-	@NotNull
-	public static PythonConsoleData getOrCreateIPythonData(@NotNull VirtualFile file)
+	@Nonnull
+	public static PythonConsoleData getOrCreateIPythonData(@Nonnull VirtualFile file)
 	{
 		PythonConsoleData consoleData = file.getUserData(PYTHON_CONSOLE_DATA);
 		if(consoleData == null)
@@ -156,13 +156,13 @@ public class PyConsoleUtil
 		return consoleData;
 	}
 
-	public static void setIPythonAutomagic(@NotNull VirtualFile file, boolean detected)
+	public static void setIPythonAutomagic(@Nonnull VirtualFile file, boolean detected)
 	{
 		PythonConsoleData consoleData = getOrCreateIPythonData(file);
 		consoleData.setIPythonAutomagic(detected);
 	}
 
-	public static void setCurrentIndentSize(@NotNull VirtualFile file, int indentSize)
+	public static void setCurrentIndentSize(@Nonnull VirtualFile file, int indentSize)
 	{
 		PythonConsoleData consoleData = getOrCreateIPythonData(file);
 		consoleData.setIndentSize(indentSize);

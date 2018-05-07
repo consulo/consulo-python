@@ -29,8 +29,8 @@ import com.jetbrains.python.psi.PyConditionalStatementPart;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyExpression;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -46,17 +46,17 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
   public boolean ignoreComparisonToZero = true;
 
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.check.can.be.simplified");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session, ignoreComparisonToZero);
   }
 
@@ -70,7 +70,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
   private static class Visitor extends PyInspectionVisitor {
     private final boolean myIgnoreComparisonToZero;
 
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session, boolean ignoreComparisonToZero) {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, boolean ignoreComparisonToZero) {
       super(holder, session);
       myIgnoreComparisonToZero = ignoreComparisonToZero;
     }
@@ -89,7 +89,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
     private final boolean myIgnoreComparisonToZero;
 
     public PyBinaryExpressionVisitor(@Nullable ProblemsHolder holder,
-                                     @NotNull LocalInspectionToolSession session,
+                                     @Nonnull LocalInspectionToolSession session,
                                      boolean ignoreComparisonToZero) {
       super(holder, session);
       myIgnoreComparisonToZero = ignoreComparisonToZero;
@@ -112,7 +112,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
       }
     }
 
-    private static boolean operandsEqualTo(@NotNull PyBinaryExpression expr, @NotNull Collection<String> literals) {
+    private static boolean operandsEqualTo(@Nonnull PyBinaryExpression expr, @Nonnull Collection<String> literals) {
       final String leftExpressionText = expr.getLeftExpression().getText();
       final PyExpression rightExpression = expr.getRightExpression();
       final String rightExpressionText = rightExpression != null ? rightExpression.getText() : null;

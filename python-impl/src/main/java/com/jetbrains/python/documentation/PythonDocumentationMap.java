@@ -24,8 +24,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.intellij.psi.util.QualifiedName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -182,7 +182,7 @@ public class PythonDocumentationMap implements PersistentStateComponent<PythonDo
   }
 
   @Nullable
-  private static String transformPattern(@NotNull String urlPattern, QualifiedName moduleQName, @Nullable PsiNamedElement element,
+  private static String transformPattern(@Nonnull String urlPattern, QualifiedName moduleQName, @Nullable PsiNamedElement element,
                                          String pyVersion) {
     Map<String, String> macros = new HashMap<String, String>();
     macros.put("element.name", element == null ? null : element.getName());
@@ -210,7 +210,7 @@ public class PythonDocumentationMap implements PersistentStateComponent<PythonDo
   }
 
   @Nullable
-  private static String transformPattern(@NotNull String urlPattern, Map<String, String> macroValues) {
+  private static String transformPattern(@Nonnull String urlPattern, Map<String, String> macroValues) {
     for (Map.Entry<String, String> entry : macroValues.entrySet()) {
       if (entry.getValue() == null) {
         if (urlPattern.contains("{" + entry.getKey())) {

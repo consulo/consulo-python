@@ -27,7 +27,7 @@ import com.jetbrains.python.psi.impl.PyReferenceExpressionImpl;
 import com.jetbrains.python.psi.impl.references.PyImportReference;
 import com.jetbrains.python.psi.impl.references.PyQualifiedReference;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -39,7 +39,7 @@ public class PyDocReferenceExpression extends PyReferenceExpressionImpl {
     super(astNode);
   }
 
-  @NotNull
+  @Nonnull
   public PsiPolyVariantReference getReference(PyResolveContext context) {
     final PyExpression qualifier = getQualifier();
     if (qualifier != null) {

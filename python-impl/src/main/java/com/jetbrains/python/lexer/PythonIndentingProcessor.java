@@ -24,8 +24,8 @@ import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import gnu.trove.TIntStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,7 +185,7 @@ public class PythonIndentingProcessor extends MergingLexerAdapter {
   }
 
   @Override
-  public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+  public void start(@Nonnull CharSequence buffer, int startOffset, int endOffset, int initialState) {
     checkStartState(startOffset, initialState);
     super.start(buffer, startOffset, endOffset, initialState);
     setStartState();

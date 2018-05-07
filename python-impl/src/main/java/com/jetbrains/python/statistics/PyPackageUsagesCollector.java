@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.internal.statistic.AbstractApplicationUsagesCollector;
 import com.intellij.internal.statistic.CollectUsagesException;
 import com.intellij.internal.statistic.beans.GroupDescriptor;
@@ -42,9 +42,9 @@ public class PyPackageUsagesCollector extends AbstractApplicationUsagesCollector
 {
 	private static final String GROUP_ID = "py-packages";
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Set<UsageDescriptor> getProjectUsages(@NotNull Project project) throws CollectUsagesException
+	public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException
 	{
 		final Set<UsageDescriptor> result = new HashSet<>();
 		for(final Module m : ModuleManager.getInstance(project).getModules())
@@ -72,7 +72,7 @@ public class PyPackageUsagesCollector extends AbstractApplicationUsagesCollector
 		return result;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public GroupDescriptor getGroupId()
 	{

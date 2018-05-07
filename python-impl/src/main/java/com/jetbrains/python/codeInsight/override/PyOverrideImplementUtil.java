@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.codeInsight.CodeInsightUtilCore;
@@ -60,7 +60,7 @@ public class PyOverrideImplementUtil
 {
 
 	@Nullable
-	public static PyClass getContextClass(@NotNull final Editor editor, @NotNull final PsiFile file)
+	public static PyClass getContextClass(@Nonnull final Editor editor, @Nonnull final PsiFile file)
 	{
 		int offset = editor.getCaretModel().getOffset();
 		PsiElement element = file.findElementAt(offset);
@@ -83,7 +83,7 @@ public class PyOverrideImplementUtil
 		return pyClass;
 	}
 
-	public static void chooseAndOverrideMethods(final Project project, @NotNull final Editor editor, @NotNull final PyClass pyClass)
+	public static void chooseAndOverrideMethods(final Project project, @Nonnull final Editor editor, @Nonnull final PyClass pyClass)
 	{
 
 
@@ -92,7 +92,7 @@ public class PyOverrideImplementUtil
 	}
 
 
-	private static void chooseAndOverrideOrImplementMethods(final Project project, @NotNull final Editor editor, @NotNull final PyClass pyClass)
+	private static void chooseAndOverrideOrImplementMethods(final Project project, @Nonnull final Editor editor, @Nonnull final PyClass pyClass)
 	{
 		PyPsiUtils.assertValid(pyClass);
 		ApplicationManager.getApplication().assertReadAccessAllowed();
@@ -106,11 +106,11 @@ public class PyOverrideImplementUtil
 		chooseAndOverrideOrImplementMethods(project, editor, pyClass, result, "Select Methods to Override", false);
 	}
 
-	public static void chooseAndOverrideOrImplementMethods(@NotNull final Project project,
-			@NotNull final Editor editor,
-			@NotNull final PyClass pyClass,
-			@NotNull final Collection<PyFunction> superFunctions,
-			@NotNull final String title,
+	public static void chooseAndOverrideOrImplementMethods(@Nonnull final Project project,
+			@Nonnull final Editor editor,
+			@Nonnull final PyClass pyClass,
+			@Nonnull final Collection<PyFunction> superFunctions,
+			@Nonnull final String title,
 			final boolean implement)
 	{
 		List<PyMethodMember> elements = new ArrayList<>();
@@ -141,7 +141,7 @@ public class PyOverrideImplementUtil
 				{
 					@Nullable
 					@Override
-					public Iterable<TextRange> matchingFragments(@NotNull String pattern, @NotNull String text)
+					public Iterable<TextRange> matchingFragments(@Nonnull String pattern, @Nonnull String text)
 					{
 						return super.matchingFragments(PyMethodMember.trimUnderscores(pattern), text);
 					}
@@ -167,14 +167,14 @@ public class PyOverrideImplementUtil
 		}
 		new WriteCommandAction(pyClass.getProject(), pyClass.getContainingFile())
 		{
-			protected void run(@NotNull final Result result) throws Throwable
+			protected void run(@Nonnull final Result result) throws Throwable
 			{
 				write(pyClass, membersToOverride, editor, implement);
 			}
 		}.execute();
 	}
 
-	private static void write(@NotNull final PyClass pyClass, @NotNull final List<PyMethodMember> newMembers, @NotNull final Editor editor, boolean implement)
+	private static void write(@Nonnull final PyClass pyClass, @Nonnull final List<PyMethodMember> newMembers, @Nonnull final Editor editor, boolean implement)
 	{
 		final PyStatementList statementList = pyClass.getStatementList();
 		final int offset = editor.getCaretModel().getOffset();
@@ -321,7 +321,7 @@ public class PyOverrideImplementUtil
 		return pyFunctionBuilder;
 	}
 
-	public static boolean raisesNotImplementedError(@NotNull PyFunction function)
+	public static boolean raisesNotImplementedError(@Nonnull PyFunction function)
 	{
 		PyStatementList statementList = function.getStatementList();
 		IfVisitor visitor = new IfVisitor();
@@ -350,8 +350,8 @@ public class PyOverrideImplementUtil
 	/**
 	 * Returns all super functions available through MRO.
 	 */
-	@NotNull
-	public static List<PyFunction> getAllSuperFunctions(@NotNull PyClass pyClass, @NotNull TypeEvalContext context)
+	@Nonnull
+	public static List<PyFunction> getAllSuperFunctions(@Nonnull PyClass pyClass, @Nonnull TypeEvalContext context)
 	{
 		final Map<String, PyFunction> functions = Maps.newLinkedHashMap();
 		for(final PyClassLikeType type : pyClass.getAncestorTypes(context))

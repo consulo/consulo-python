@@ -20,8 +20,8 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -38,12 +38,12 @@ public interface PyReferenceExpression extends PyQualifiedExpression, PyReferenc
    *
    * @param resolveContext the resolve context
    */
-  @NotNull
+  @Nonnull
   QualifiedResolveResult followAssignmentsChain(PyResolveContext resolveContext);
 
   @Nullable
   QualifiedName asQualifiedName();
 
-  @NotNull
+  @Nonnull
   PsiPolyVariantReference getReference();
 }

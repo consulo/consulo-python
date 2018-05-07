@@ -18,8 +18,8 @@ package com.jetbrains.python.testing.pytest;
 import java.io.File;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
@@ -123,7 +123,7 @@ public class PyTestConfigurationProducer extends PythonTestConfigurationProducer
 	}
 
 	@Nullable
-	private static String getKeywords(@NotNull final PsiElement element, @NotNull final Sdk sdk)
+	private static String getKeywords(@Nonnull final PsiElement element, @Nonnull final Sdk sdk)
 	{
 		final PyFunction pyFunction = findTestFunction(element);
 		final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);

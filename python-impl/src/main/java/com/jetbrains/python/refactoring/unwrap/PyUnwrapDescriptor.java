@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
+import javax.annotation.Nullable;
+
 import com.intellij.codeInsight.unwrap.UnwrapDescriptorBase;
 import com.intellij.codeInsight.unwrap.Unwrapper;
 import com.intellij.openapi.editor.Editor;
@@ -23,7 +25,6 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.PyUtil;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * user : ktisha

@@ -20,9 +20,11 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -77,9 +79,9 @@ public abstract class PythonRemoteInterpreterManager
 	 */
 	@Deprecated
 	public abstract ProcessHandler startRemoteProcess(@Nullable Project project,
-			@NotNull PyRemoteSdkCredentials data,
-			@NotNull GeneralCommandLine commandLine,
-			@NotNull PyRemotePathMapper pathMapper) throws RemoteSdkException;
+			@Nonnull PyRemoteSdkCredentials data,
+			@Nonnull GeneralCommandLine commandLine,
+			@Nonnull PyRemotePathMapper pathMapper) throws RemoteSdkException;
 
 	/**
 	 * @deprecated use {@link com.jetbrains.python.run.PyRemoteProcessStarterManager#startRemoteProcess(Project, GeneralCommandLine, PythonRemoteInterpreterManager, PyRemoteSdkAdditionalDataBase,
@@ -87,9 +89,9 @@ public abstract class PythonRemoteInterpreterManager
 	 */
 	@Deprecated
 	public abstract PyRemoteProcessHandlerBase startRemoteProcessWithPid(@Nullable Project project,
-			@NotNull PyRemoteSdkCredentials data,
-			@NotNull GeneralCommandLine commandLine,
-			@NotNull PyRemotePathMapper pathMapper) throws RemoteSdkException;
+			@Nonnull PyRemoteSdkCredentials data,
+			@Nonnull GeneralCommandLine commandLine,
+			@Nonnull PyRemotePathMapper pathMapper) throws RemoteSdkException;
 
 	public abstract void addRemoteSdk(Project project, Component parentComponent, Collection<Sdk> existingSdks, NullableConsumer<Sdk> sdkCallback);
 
@@ -101,7 +103,7 @@ public abstract class PythonRemoteInterpreterManager
 	@Deprecated
 	public abstract ProcessOutput runRemoteProcess(@Nullable Project project,
 			RemoteSdkCredentials data,
-			@NotNull PyRemotePathMapper pathMapper,
+			@Nonnull PyRemotePathMapper pathMapper,
 			String[] command,
 			@Nullable String workingDir,
 			boolean askForSudo) throws RemoteSdkException;
@@ -113,22 +115,22 @@ public abstract class PythonRemoteInterpreterManager
 	@Deprecated
 	public abstract ProcessOutput runRemoteProcess(@Nullable Project project,
 			RemoteSdkCredentials data,
-			@NotNull PyRemotePathMapper pathMapper,
+			@Nonnull PyRemotePathMapper pathMapper,
 			String[] command,
 			@Nullable String workingDir,
 			boolean askForSudo,
 			String sdkHomePath) throws RemoteSdkException;
 
-	@NotNull
+	@Nonnull
 	public abstract RemoteSshProcess createRemoteProcess(@Nullable Project project,
-			@NotNull PyRemoteSdkCredentials data,
-			@NotNull PyRemotePathMapper pathMapper,
-			@NotNull GeneralCommandLine commandLine,
+			@Nonnull PyRemoteSdkCredentials data,
+			@Nonnull PyRemotePathMapper pathMapper,
+			@Nonnull GeneralCommandLine commandLine,
 			boolean allocatePty) throws RemoteSdkException;
 
-	public abstract boolean editSdk(@NotNull Project project, @NotNull SdkModificator sdkModificator, Collection<Sdk> existingSdks);
+	public abstract boolean editSdk(@Nonnull Project project, @Nonnull SdkModificator sdkModificator, Collection<Sdk> existingSdks);
 
-	public abstract PySkeletonGenerator createRemoteSkeletonGenerator(@Nullable Project project, @Nullable Component ownerComponent, @NotNull Sdk sdk, String path) throws ExecutionException;
+	public abstract PySkeletonGenerator createRemoteSkeletonGenerator(@Nullable Project project, @Nullable Component ownerComponent, @Nonnull Sdk sdk, String path) throws ExecutionException;
 
 	public abstract boolean ensureCanWrite(@Nullable Object projectOrComponent, RemoteSdkCredentials data, String path);
 
@@ -137,7 +139,7 @@ public abstract class PythonRemoteInterpreterManager
 
 	public abstract void createDeployment(Project project, VirtualFile projectDir, RemoteProjectSettings settings, RemoteSdkCredentials data);
 
-	public abstract void copyFromRemote(Sdk sdk, @NotNull Project project, RemoteSdkCredentials data, List<PathMappingSettings.PathMapping> mappings);
+	public abstract void copyFromRemote(Sdk sdk, @Nonnull Project project, RemoteSdkCredentials data, List<PathMappingSettings.PathMapping> mappings);
 
 	@Nullable
 	public static PythonRemoteInterpreterManager getInstance()
@@ -170,13 +172,13 @@ public abstract class PythonRemoteInterpreterManager
 		return FileUtil.toSystemIndependentName(path).replace('/', separator);
 	}
 
-	public static void addHelpersMapping(@NotNull RemoteSdkProperties data, @NotNull PyRemotePathMapper pathMapper)
+	public static void addHelpersMapping(@Nonnull RemoteSdkProperties data, @Nonnull PyRemotePathMapper pathMapper)
 	{
 		pathMapper.addMapping(PythonHelpersLocator.getHelpersRoot().getPath(), data.getHelpersPath(), PyPathMappingType.HELPERS);
 	}
 
-	@NotNull
-	public abstract PyRemotePathMapper setupMappings(@Nullable Project project, @NotNull PyRemoteSdkAdditionalDataBase data, @Nullable PyRemotePathMapper pathMapper);
+	@Nonnull
+	public abstract PyRemotePathMapper setupMappings(@Nullable Project project, @Nonnull PyRemoteSdkAdditionalDataBase data, @Nullable PyRemotePathMapper pathMapper);
 
 	public abstract SdkAdditionalData loadRemoteSdkData(Sdk sdk, Element additional);
 
@@ -188,13 +190,13 @@ public abstract class PythonRemoteInterpreterManager
 			PyRemotePathMapper pathMapper,
 			PyRemoteSocketToLocalHostProvider remoteSocketProvider);
 
-	@NotNull
+	@Nonnull
 	public abstract RemoteSdkCredentialsProducer<PyRemoteSdkCredentials> getRemoteSdkCredentialsProducer(Function<RemoteCredentials, PyRemoteSdkCredentials> credentialsTransformer,
 			RemoteConnectionCredentialsWrapper connectionWrapper);
 
 	public abstract String getInterpreterVersion(@Nullable Project project, PyRemoteSdkAdditionalDataBase data) throws RemoteSdkException;
 
-	public abstract String[] chooseRemoteFiles(Project project, @NotNull PyRemoteSdkAdditionalDataBase data, boolean foldersOnly) throws ExecutionException, InterruptedException;
+	public abstract String[] chooseRemoteFiles(Project project, @Nonnull PyRemoteSdkAdditionalDataBase data, boolean foldersOnly) throws ExecutionException, InterruptedException;
 
 	public static class PyRemoteInterpreterExecutionException extends ExecutionException
 	{
@@ -214,5 +216,5 @@ public abstract class PythonRemoteInterpreterManager
 		}
 	}
 
-	public abstract void runVagrant(@NotNull String vagrantFolder, @Nullable String machineName) throws ExecutionException;
+	public abstract void runVagrant(@Nonnull String vagrantFolder, @Nullable String machineName) throws ExecutionException;
 }

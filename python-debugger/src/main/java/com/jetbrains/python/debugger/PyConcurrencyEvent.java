@@ -18,33 +18,33 @@ package com.jetbrains.python.debugger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 
 public abstract class PyConcurrencyEvent
 {
 	protected final
-	@NotNull
+	@Nonnull
 	String myThreadId;
 	protected final
-	@NotNull
+	@Nonnull
 	String myPid;
 	protected final
-	@NotNull
+	@Nonnull
 	String myName;
 	protected
-	@NotNull
+	@Nonnull
 	EventType myType;
 	protected
-	@NotNull
+	@Nonnull
 	String myFileName;
 	protected
-	@NotNull
+	@Nonnull
 	Integer myLine;
 	protected final boolean myIsAsyncio;
 	protected long myTime; // microseconds
 	protected
-	@NotNull
+	@Nonnull
 	List<PyStackFrameInfo> myFrames;
 
 	public enum EventType
@@ -52,7 +52,7 @@ public abstract class PyConcurrencyEvent
 		CREATE, ACQUIRE_BEGIN, ACQUIRE_END, RELEASE, START, JOIN, STOP
 	}
 
-	public PyConcurrencyEvent(long time, @NotNull String threadId, @NotNull String name, boolean isAsyncio)
+	public PyConcurrencyEvent(long time, @Nonnull String threadId, @Nonnull String name, boolean isAsyncio)
 	{
 		myTime = time;
 		myThreadId = threadId;
@@ -65,46 +65,46 @@ public abstract class PyConcurrencyEvent
 		myFrames = new ArrayList<>();
 	}
 
-	public void setType(@NotNull EventType type)
+	public void setType(@Nonnull EventType type)
 	{
 		myType = type;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getThreadId()
 	{
 		return myThreadId;
 	}
 
-	@NotNull
+	@Nonnull
 	public EventType getType()
 	{
 		return myType;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getThreadName()
 	{
 		return myName;
 	}
 
-	@NotNull
+	@Nonnull
 	public abstract String getEventActionName();
 
 	public abstract boolean isThreadEvent();
 
-	public void setFileName(@NotNull String fileName)
+	public void setFileName(@Nonnull String fileName)
 	{
 		myFileName = fileName;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFileName()
 	{
 		return myFileName;
 	}
 
-	public void setLine(@NotNull Integer line)
+	public void setLine(@Nonnull Integer line)
 	{
 		myLine = line;
 	}
@@ -119,25 +119,25 @@ public abstract class PyConcurrencyEvent
 		myTime = time;
 	}
 
-	@NotNull
+	@Nonnull
 	public Integer getLine()
 	{
 		return myLine;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getPid()
 	{
 		return myPid;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<PyStackFrameInfo> getFrames()
 	{
 		return myFrames;
 	}
 
-	public void setFrames(@NotNull List<PyStackFrameInfo> frames)
+	public void setFrames(@Nonnull List<PyStackFrameInfo> frames)
 	{
 		myFrames = frames;
 	}

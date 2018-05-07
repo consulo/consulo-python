@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -26,7 +28,6 @@ import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,17 +36,17 @@ import org.jetbrains.annotations.NotNull;
  * Time:   22:00:49
  */
 public class ComparisonWithNoneQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.replace.equality");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement problemElement = descriptor.getPsiElement();
     if (problemElement instanceof PyBinaryExpression) {
       PyBinaryExpression binaryExpression = (PyBinaryExpression)problemElement;

@@ -16,8 +16,9 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nullable;
+
 import consulo.jython.module.extension.JythonModuleExtension;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.JavaPsiFacade;

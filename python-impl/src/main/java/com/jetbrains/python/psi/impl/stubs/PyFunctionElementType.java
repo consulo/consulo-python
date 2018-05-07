@@ -17,8 +17,9 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -47,24 +48,24 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 		this("FUNCTION_DECLARATION");
 	}
 
-	public PyFunctionElementType(@NotNull @NonNls String debugName)
+	public PyFunctionElementType(@Nonnull @NonNls String debugName)
 	{
 		super(debugName);
 	}
 
-	@NotNull
-	public PsiElement createElement(@NotNull final ASTNode node)
+	@Nonnull
+	public PsiElement createElement(@Nonnull final ASTNode node)
 	{
 		return new PyFunctionImpl(node);
 	}
 
-	public PyFunction createPsi(@NotNull final PyFunctionStub stub)
+	public PyFunction createPsi(@Nonnull final PyFunctionStub stub)
 	{
 		return new PyFunctionImpl(stub);
 	}
 
-	@NotNull
-	public PyFunctionStub createStub(@NotNull final PyFunction psi, final StubElement parentStub)
+	@Nonnull
+	public PyFunctionStub createStub(@Nonnull final PyFunction psi, final StubElement parentStub)
 	{
 		PyFunctionImpl function = (PyFunctionImpl) psi;
 		String message = function.extractDeprecationMessage();
@@ -73,7 +74,7 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 		return new PyFunctionStubImpl(psi.getName(), PyPsiUtils.strValue(docStringExpression), message, function.isAsync(), typeComment, parentStub, getStubElementType());
 	}
 
-	public void serialize(@NotNull final PyFunctionStub stub, @NotNull final StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull final PyFunctionStub stub, @Nonnull final StubOutputStream dataStream) throws IOException
 	{
 		dataStream.writeName(stub.getName());
 		dataStream.writeUTFFast(StringUtil.notNullize(stub.getDocString()));
@@ -82,8 +83,8 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 		dataStream.writeName(stub.getTypeComment());
 	}
 
-	@NotNull
-	public PyFunctionStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException
+	@Nonnull
+	public PyFunctionStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(dataStream.readName());
 		String docString = dataStream.readUTFFast();
@@ -94,7 +95,7 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 				.getString(), parentStub, getStubElementType());
 	}
 
-	public void indexStub(@NotNull final PyFunctionStub stub, @NotNull final IndexSink sink)
+	public void indexStub(@Nonnull final PyFunctionStub stub, @Nonnull final IndexSink sink)
 	{
 		final String name = stub.getName();
 		if(name != null)

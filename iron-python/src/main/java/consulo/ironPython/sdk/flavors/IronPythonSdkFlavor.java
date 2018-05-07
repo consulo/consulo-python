@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
@@ -70,7 +70,7 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 	}
 
 	@Override
-	public boolean isValidSdkPath(@NotNull File file)
+	public boolean isValidSdkPath(@Nonnull File file)
 	{
 		final String name = file.getName();
 		return name.equals("ipy.exe") || name.equals("ipy64.exe");
@@ -117,7 +117,7 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 		addToEnv("IRONPYTHONPATH", StringUtil.join(path, File.pathSeparator), env);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getName()
 	{

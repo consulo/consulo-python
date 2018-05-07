@@ -18,8 +18,8 @@ package com.jetbrains.python.refactoring.inline;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.controlflow.Instruction;
 import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.lang.Language;
@@ -110,7 +110,7 @@ public class PyInlineLocalHandler extends InlineActionHandler
 		invoke(project, editor, (PyTargetExpression) element, refExpr);
 	}
 
-	private static void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PyTargetExpression local, @Nullable PyReferenceExpression refExpr)
+	private static void invoke(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PyTargetExpression local, @Nullable PyReferenceExpression refExpr)
 	{
 		if(!CommonRefactoringUtil.checkReadOnlyStatus(project, local))
 		{
@@ -348,8 +348,8 @@ public class PyInlineLocalHandler extends InlineActionHandler
 		return ((PyAugAssignmentStatement) def).getTarget();
 	}
 
-	@NotNull
-	private static PyExpression prepareValue(@NotNull PyStatement def, @NotNull String localName, @NotNull Project project)
+	@Nonnull
+	private static PyExpression prepareValue(@Nonnull PyStatement def, @Nonnull String localName, @Nonnull Project project)
 	{
 		final PyExpression value = getValue(def);
 		assert value != null;

@@ -18,8 +18,8 @@ package com.jetbrains.python.run;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
@@ -130,9 +130,9 @@ public class PythonScriptCommandLineState extends PythonCommandLineState
 
 		private CommandLinePatcher[] myPatchers;
 
-		public PythonScriptWithConsoleRunner(@NotNull Project project,
-				@NotNull Sdk sdk,
-				@NotNull PyConsoleType consoleType,
+		public PythonScriptWithConsoleRunner(@Nonnull Project project,
+				@Nonnull Sdk sdk,
+				@Nonnull PyConsoleType consoleType,
 				@Nullable String workingDir,
 				Map<String, String> environmentVariables,
 				CommandLinePatcher[] patchers,
@@ -152,7 +152,7 @@ public class PythonScriptCommandLineState extends PythonCommandLineState
 		}
 
 		@Override
-		protected GeneralCommandLine createCommandLine(@NotNull Sdk sdk, @NotNull Map<String, String> environmentVariables, String workingDir, int[] ports)
+		protected GeneralCommandLine createCommandLine(@Nonnull Sdk sdk, @Nonnull Map<String, String> environmentVariables, String workingDir, int[] ports)
 		{
 			GeneralCommandLine consoleCmdLine = doCreateConsoleCmdLine(sdk, environmentVariables, workingDir, ports, PythonHelper.RUN_IN_CONSOLE);
 

@@ -24,7 +24,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class BuildoutCfgColorsPage implements ColorSettingsPage {
     //ourTagToDescriptorMap.put("comment", DjangoTemplateHighlighterColors.DJANGO_COMMENT);
   }
 
-  @NotNull
+  @Nonnull
   public String getDisplayName() {
     return "Buildout config";
   }
@@ -56,24 +56,24 @@ public class BuildoutCfgColorsPage implements ColorSettingsPage {
     return BuildoutCfgFileType.INSTANCE.getIcon();
   }
 
-  @NotNull
+  @Nonnull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
   }
 
-  @NotNull
+  @Nonnull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
+  @Nonnull
   public SyntaxHighlighter getHighlighter() {
     final SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(BuildoutCfgFileType.INSTANCE, null, null);
     assert highlighter != null;
     return highlighter;
   }
 
-  @NotNull
+  @Nonnull
   public String getDemoText() {
     return
       "; Buildout config\n"+

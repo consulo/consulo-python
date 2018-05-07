@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -67,12 +67,12 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 			"return",
 			"returns"
 	};
-	@NotNull
+	@Nonnull
 	private final String myTagPrefix;
 
 	public static String TYPE = "type";
 
-	protected TagBasedDocString(@NotNull Substring docStringText, @NotNull String tagPrefix)
+	protected TagBasedDocString(@Nonnull Substring docStringText, @Nonnull String tagPrefix)
 	{
 		super(docStringText);
 		myTagPrefix = tagPrefix;
@@ -96,7 +96,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 
 	public abstract List<String> getAdditionalTags();
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription()
 	{
@@ -117,7 +117,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 		return "";
 	}
 
-	@NotNull
+	@Nonnull
 	private Map<Substring, Substring> getTagValuesMap(String key)
 	{
 		Map<Substring, Substring> map = myArgTagValues.get(key);
@@ -226,14 +226,14 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	}
 
 	@Nullable
-	public Substring getTagValue(String tagName, @NotNull String argName)
+	public Substring getTagValue(String tagName, @Nonnull String argName)
 	{
 		final Map<Substring, Substring> argValues = myArgTagValues.get(tagName);
 		return argValues != null ? argValues.get(new Substring(argName)) : null;
 	}
 
 	@Nullable
-	public Substring getTagValue(String[] tagNames, @NotNull String argName)
+	public Substring getTagValue(String[] tagNames, @Nonnull String argName)
 	{
 		for(String tagName : tagNames)
 		{
@@ -259,7 +259,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 		return Collections.emptyList();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<Substring> getParameterSubstrings()
 	{

@@ -22,8 +22,8 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
@@ -68,7 +68,7 @@ public interface PydevConsoleRunner
 
 
 	@Nullable
-	static PyRemotePathMapper getPathMapper(@NotNull Project project, Sdk sdk, PyConsoleOptions.PyConsoleSettings consoleSettings)
+	static PyRemotePathMapper getPathMapper(@Nonnull Project project, Sdk sdk, PyConsoleOptions.PyConsoleSettings consoleSettings)
 	{
 		if(PySdkUtil.isRemote(sdk))
 		{
@@ -88,8 +88,8 @@ public interface PydevConsoleRunner
 		return null;
 	}
 
-	@NotNull
-	static Pair<Sdk, Module> findPythonSdkAndModule(@NotNull Project project, @Nullable Module contextModule)
+	@Nonnull
+	static Pair<Sdk, Module> findPythonSdkAndModule(@Nonnull Project project, @Nullable Module contextModule)
 	{
 		Sdk sdk = null;
 		Module module = null;
@@ -178,7 +178,7 @@ public interface PydevConsoleRunner
 		return command.replace(PydevConsoleRunnerImpl.WORKING_DIR_ENV, path);
 	}
 
-	static Map<String, String> addDefaultEnvironments(Sdk sdk, Map<String, String> envs, @NotNull Project project)
+	static Map<String, String> addDefaultEnvironments(Sdk sdk, Map<String, String> envs, @Nonnull Project project)
 	{
 		setCorrectStdOutEncoding(envs, project);
 
@@ -192,7 +192,7 @@ public interface PydevConsoleRunner
 	 * @param envs    map of envs to add variable
 	 * @param project current project
 	 */
-	static void setCorrectStdOutEncoding(@NotNull Map<String, String> envs, @NotNull Project project)
+	static void setCorrectStdOutEncoding(@Nonnull Map<String, String> envs, @Nonnull Project project)
 	{
 		final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
 		final String encoding = defaultCharset.name();
@@ -206,7 +206,7 @@ public interface PydevConsoleRunner
 	 * @param commandLine command line
 	 * @param project     current project
 	 */
-	static void setCorrectStdOutEncoding(@NotNull GeneralCommandLine commandLine, @NotNull Project project)
+	static void setCorrectStdOutEncoding(@Nonnull GeneralCommandLine commandLine, @Nonnull Project project)
 	{
 		final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
 		commandLine.setCharset(defaultCharset);

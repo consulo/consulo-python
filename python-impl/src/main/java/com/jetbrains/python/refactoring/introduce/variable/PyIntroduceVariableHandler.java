@@ -17,7 +17,8 @@ package com.jetbrains.python.refactoring.introduce.variable;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
@@ -36,7 +37,7 @@ public class PyIntroduceVariableHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected PsiElement addDeclaration(@NotNull final PsiElement expression, @NotNull final PsiElement declaration, @NotNull IntroduceOperation operation)
+	protected PsiElement addDeclaration(@Nonnull final PsiElement expression, @Nonnull final PsiElement declaration, @Nonnull IntroduceOperation operation)
 	{
 		return doIntroduceVariable(expression, declaration, operation.getOccurrences(), operation.isReplaceAll());
 	}

@@ -16,12 +16,14 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyStatementPart;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Common parts functionality.
@@ -33,7 +35,7 @@ public class PyPartitionedElementImpl extends PyElementImpl {
     super(astNode);
   }
 
-  @NotNull
+  @Nonnull
   PyStatementPart[] getParts() {
     return childrenToPsi(PyElementTypes.PARTS, PyStatementPart.EMPTY_ARRAY);
   }
@@ -45,7 +47,7 @@ public class PyPartitionedElementImpl extends PyElementImpl {
     return (PyStatementPart)n.getPsi();
   }
 
-  @NotNull
+  @Nonnull
   protected PyStatementPart getPartNotNull(PyElementType which) {
     ASTNode n = getNode().findChildByType(which);
     assert n != null;

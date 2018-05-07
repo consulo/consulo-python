@@ -19,7 +19,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolder;
@@ -31,15 +32,15 @@ import com.intellij.openapi.util.UserDataHolder;
  */
 public class PyCustomMemberTypeInfo<K>
 {
-	@NotNull
+	@Nonnull
 	private final Map<Key<K>, K> myCustomInfo = new HashMap<>();
 
-	public PyCustomMemberTypeInfo(@NotNull final Key<K> key, @NotNull final K value)
+	public PyCustomMemberTypeInfo(@Nonnull final Key<K> key, @Nonnull final K value)
 	{
 		this(Collections.singleton(Pair.create(key, value)));
 	}
 
-	public PyCustomMemberTypeInfo(@NotNull final Iterable<Pair<Key<K>, K>> customInfo)
+	public PyCustomMemberTypeInfo(@Nonnull final Iterable<Pair<Key<K>, K>> customInfo)
 	{
 		for(final Pair<Key<K>, K> pair : customInfo)
 		{
@@ -47,12 +48,12 @@ public class PyCustomMemberTypeInfo<K>
 		}
 	}
 
-	public PyCustomMemberTypeInfo(@NotNull final Map<Key<K>, K> customInfo)
+	public PyCustomMemberTypeInfo(@Nonnull final Map<Key<K>, K> customInfo)
 	{
 		myCustomInfo.putAll(customInfo);
 	}
 
-	void fill(@NotNull final UserDataHolder typeToFill)
+	void fill(@Nonnull final UserDataHolder typeToFill)
 	{
 		for(final Map.Entry<Key<K>, K> entry : myCustomInfo.entrySet())
 		{

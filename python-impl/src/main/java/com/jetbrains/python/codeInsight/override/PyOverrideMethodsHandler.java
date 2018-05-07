@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.override;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -33,7 +34,7 @@ public class PyOverrideMethodsHandler implements LanguageCodeInsightActionHandle
 		return (file instanceof PyFile) && (PyOverrideImplementUtil.getContextClass(editor, file) != null);
 	}
 
-	public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file)
+	public void invoke(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile file)
 	{
 		PyClass aClass = PyOverrideImplementUtil.getContextClass(editor, file);
 		if(aClass != null)

@@ -17,7 +17,8 @@ package com.jetbrains.python.codeInsight.completion;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -65,7 +66,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 {
 
 	@Override
-	public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result)
+	public void fillCompletionVariants(@Nonnull CompletionParameters parameters, @Nonnull CompletionResultSet result)
 	{
 		if(parameters.isExtendedCompletion())
 		{
@@ -178,7 +179,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 
 	private static final InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new PyFunctionInsertHandler()
 	{
-		public void handleInsert(@NotNull final InsertionContext context, @NotNull final LookupElement item)
+		public void handleInsert(@Nonnull final InsertionContext context, @Nonnull final LookupElement item)
 		{
 			int tailOffset = context.getTailOffset() - 1;
 			super.handleInsert(context, item);  // adds parentheses, modifies tail offset
@@ -223,7 +224,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		new WriteCommandAction(context.getProject(), context.getFile())
 		{
 			@Override
-			protected void run(@NotNull Result result) throws Throwable
+			protected void run(@Nonnull Result result) throws Throwable
 			{
 				AddImportHelper.addImport(PyUtil.as(item.getPsiElement(), PsiNamedElement.class), context.getFile(), (PyElement) ref.getElement());
 			}

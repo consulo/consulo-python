@@ -22,7 +22,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
@@ -83,7 +84,7 @@ public enum PythonHelper implements HelperPackage
 	public static final String PY3_HELPER_DEPENDENCIES_DIR = "py3only";
 	public static final String PY2_HELPER_DEPENDENCIES_DIR = "py2only";
 
-	@NotNull
+	@Nonnull
 	private static PathHelperPackage findModule(String moduleEntryPoint, String path, boolean asModule)
 	{
 		if(getHelperFile(path + ".zip").isFile())
@@ -126,28 +127,28 @@ public enum PythonHelper implements HelperPackage
 		}
 
 		@Override
-		public void addToPythonPath(@NotNull Map<String, String> environment)
+		public void addToPythonPath(@Nonnull Map<String, String> environment)
 		{
 			PythonEnvUtil.addToPythonPath(environment, getPythonPathEntry());
 		}
 
 		@Override
-		public void addToGroup(@NotNull ParamsGroup group, @NotNull GeneralCommandLine cmd)
+		public void addToGroup(@Nonnull ParamsGroup group, @Nonnull GeneralCommandLine cmd)
 		{
 			addToPythonPath(cmd.getEnvironment());
 			group.addParameter(asParamString());
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String asParamString()
 		{
 			return FileUtil.toSystemDependentName(myPath.getAbsolutePath());
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
-		public GeneralCommandLine newCommandLine(@NotNull String sdkPath, @NotNull List<String> parameters)
+		public GeneralCommandLine newCommandLine(@Nonnull String sdkPath, @Nonnull List<String> parameters)
 		{
 			final List<String> args = Lists.newArrayList();
 			args.add(sdkPath);
@@ -160,9 +161,9 @@ public enum PythonHelper implements HelperPackage
 			return cmd;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
-		public GeneralCommandLine newCommandLine(@NotNull Sdk pythonSdk, @NotNull List<String> parameters)
+		public GeneralCommandLine newCommandLine(@Nonnull Sdk pythonSdk, @Nonnull List<String> parameters)
 		{
 			final String sdkHomePath = pythonSdk.getHomePath();
 			assert sdkHomePath != null;
@@ -187,14 +188,14 @@ public enum PythonHelper implements HelperPackage
 			this.myModuleName = moduleName;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String asParamString()
 		{
 			return "-m" + myModuleName;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getPythonPathEntry()
 		{
@@ -218,13 +219,13 @@ public enum PythonHelper implements HelperPackage
 		}
 
 		@Override
-		public void addToPythonPath(@NotNull Map<String, String> environment)
+		public void addToPythonPath(@Nonnull Map<String, String> environment)
 		{
 			PythonEnvUtil.setPythonDontWriteBytecode(environment);
 			super.addToPythonPath(environment);
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getPythonPathEntry()
 		{
@@ -233,7 +234,7 @@ public enum PythonHelper implements HelperPackage
 	}
 
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getPythonPathEntry()
 	{
@@ -241,34 +242,34 @@ public enum PythonHelper implements HelperPackage
 	}
 
 	@Override
-	public void addToPythonPath(@NotNull Map<String, String> environment)
+	public void addToPythonPath(@Nonnull Map<String, String> environment)
 	{
 		myModule.addToPythonPath(environment);
 	}
 
 	@Override
-	public void addToGroup(@NotNull ParamsGroup group, @NotNull GeneralCommandLine cmd)
+	public void addToGroup(@Nonnull ParamsGroup group, @Nonnull GeneralCommandLine cmd)
 	{
 		myModule.addToGroup(group, cmd);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String asParamString()
 	{
 		return myModule.asParamString();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public GeneralCommandLine newCommandLine(@NotNull String sdkPath, @NotNull List<String> parameters)
+	public GeneralCommandLine newCommandLine(@Nonnull String sdkPath, @Nonnull List<String> parameters)
 	{
 		return myModule.newCommandLine(sdkPath, parameters);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public GeneralCommandLine newCommandLine(@NotNull Sdk pythonSdk, @NotNull List<String> parameters)
+	public GeneralCommandLine newCommandLine(@Nonnull Sdk pythonSdk, @Nonnull List<String> parameters)
 	{
 		return myModule.newCommandLine(pythonSdk, parameters);
 	}

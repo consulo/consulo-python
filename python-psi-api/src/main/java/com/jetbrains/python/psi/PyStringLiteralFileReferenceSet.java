@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
@@ -37,18 +38,18 @@ public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet
 	private final PyStringLiteralExpression myStringLiteralExpression;
 
 
-	public PyStringLiteralFileReferenceSet(@NotNull PyStringLiteralExpression element)
+	public PyStringLiteralFileReferenceSet(@Nonnull PyStringLiteralExpression element)
 	{
 		this(element, SystemInfo.isFileSystemCaseSensitive);
 	}
 
-	public PyStringLiteralFileReferenceSet(@NotNull PyStringLiteralExpression element, boolean caseSensitive)
+	public PyStringLiteralFileReferenceSet(@Nonnull PyStringLiteralExpression element, boolean caseSensitive)
 	{
 		this(element.getStringValue(), element, element.getStringValueTextRange().getStartOffset(), null, caseSensitive, true, FileType.EMPTY_ARRAY);
 	}
 
-	public PyStringLiteralFileReferenceSet(@NotNull String str,
-			@NotNull PyStringLiteralExpression element,
+	public PyStringLiteralFileReferenceSet(@Nonnull String str,
+			@Nonnull PyStringLiteralExpression element,
 			int startInElement,
 			PsiReferenceProvider provider,
 			boolean caseSensitive,
@@ -71,8 +72,8 @@ public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet
 		}
 	}
 
-	@NotNull
-	private List<FileReference> getFileReferences(@NotNull PyStringLiteralExpression expression)
+	@Nonnull
+	private List<FileReference> getFileReferences(@Nonnull PyStringLiteralExpression expression)
 	{
 		final String value = expression.getStringValue();
 		final Matcher matcher = DELIMITERS.matcher(value);

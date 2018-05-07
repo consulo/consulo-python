@@ -18,8 +18,8 @@ package com.jetbrains.python.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.jetbrains.python.toolbox.Substring;
 
 /**
@@ -51,7 +51,7 @@ public class SphinxDocString extends TagBasedDocString
 			":exception"
 	};
 
-	public SphinxDocString(@NotNull final Substring docstringText)
+	public SphinxDocString(@Nonnull final Substring docstringText)
 	{
 		super(docstringText, ":");
 	}
@@ -62,14 +62,14 @@ public class SphinxDocString extends TagBasedDocString
 		return s != null ? s.concatTrimmedLines(" ") : null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getParameters()
 	{
 		return toUniqueStrings(getParameterSubstrings());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getKeywordArguments()
 	{
@@ -112,7 +112,7 @@ public class SphinxDocString extends TagBasedDocString
 		return concatTrimmedLines(getTagValue(RETURN_TAGS));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getRaisedExceptions()
 	{
@@ -142,7 +142,7 @@ public class SphinxDocString extends TagBasedDocString
 		return Collections.emptyList();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<Substring> getKeywordArgumentSubstrings()
 	{
@@ -161,7 +161,7 @@ public class SphinxDocString extends TagBasedDocString
 		return paramName == null ? getTagValue("type") : getTagValue("type", paramName);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription()
 	{

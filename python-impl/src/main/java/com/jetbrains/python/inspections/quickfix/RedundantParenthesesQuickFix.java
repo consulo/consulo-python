@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -25,7 +27,6 @@ import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyParenthesizedExpression;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -33,17 +34,17 @@ import org.jetbrains.annotations.NotNull;
  * QuickFix to remove redundant parentheses from if/while/except statement
  */
 public class RedundantParenthesesQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.redundant.parentheses");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
     PsiElement binaryExpression = ((PyParenthesizedExpression)element).getContainedExpression();
     PyBinaryExpression parent = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class);

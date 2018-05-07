@@ -1,6 +1,7 @@
 package consulo.ironPython.module.extension;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.projectRoots.SdkType;
 import com.jetbrains.python.sdk.PythonSdkType;
 import consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
@@ -12,12 +13,12 @@ import consulo.roots.ModuleRootLayer;
  */
 public class IronPythonModuleExtension extends ModuleExtensionWithSdkImpl<IronPythonModuleExtension> implements BaseIronPythonModuleExtension<IronPythonModuleExtension>
 {
-	public IronPythonModuleExtension(@NotNull String id, @NotNull ModuleRootLayer modifiableRootModel)
+	public IronPythonModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer modifiableRootModel)
 	{
 		super(id, modifiableRootModel);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Class<? extends SdkType> getSdkTypeClass()
 	{

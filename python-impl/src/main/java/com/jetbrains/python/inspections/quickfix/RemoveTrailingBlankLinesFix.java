@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -32,7 +33,7 @@ import com.intellij.util.IncorrectOperationException;
  */
 public class RemoveTrailingBlankLinesFix implements LocalQuickFix, IntentionAction, HighPriorityAction
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public String getText()
 	{
@@ -40,13 +41,13 @@ public class RemoveTrailingBlankLinesFix implements LocalQuickFix, IntentionActi
 	}
 
 	@Override
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		return true;
 	}
 
 	@Override
-	public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		removeTrailingBlankLines(file);
 	}
@@ -57,7 +58,7 @@ public class RemoveTrailingBlankLinesFix implements LocalQuickFix, IntentionActi
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getFamilyName()
 	{
@@ -65,7 +66,7 @@ public class RemoveTrailingBlankLinesFix implements LocalQuickFix, IntentionActi
 	}
 
 	@Override
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		removeTrailingBlankLines(descriptor.getPsiElement().getContainingFile());
 	}

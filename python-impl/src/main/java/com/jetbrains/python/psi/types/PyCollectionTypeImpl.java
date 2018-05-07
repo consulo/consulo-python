@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.types;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.psi.PyCallSiteExpression;
@@ -30,10 +30,10 @@ import com.jetbrains.python.psi.PyPsiFacade;
  */
 public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectionType
 {
-	@NotNull
+	@Nonnull
 	private final List<PyType> myElementTypes;
 
-	public PyCollectionTypeImpl(@NotNull PyClass source, boolean isDefinition, @NotNull List<PyType> elementTypes)
+	public PyCollectionTypeImpl(@Nonnull PyClass source, boolean isDefinition, @Nonnull List<PyType> elementTypes)
 	{
 		super(source, isDefinition);
 		myElementTypes = elementTypes;
@@ -42,7 +42,7 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@NotNull final TypeEvalContext context)
+	public PyType getReturnType(@Nonnull final TypeEvalContext context)
 	{
 		if(isDefinition())
 		{
@@ -53,23 +53,23 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 
 	@Nullable
 	@Override
-	public PyType getCallType(@NotNull final TypeEvalContext context, @Nullable final PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull final TypeEvalContext context, @Nullable final PyCallSiteExpression callSite)
 	{
 		return getReturnType(context);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<PyType> getElementTypes(@NotNull TypeEvalContext context)
+	public List<PyType> getElementTypes(@Nonnull TypeEvalContext context)
 	{
 		return myElementTypes;
 	}
 
 	@Nullable
-	public static PyCollectionTypeImpl createTypeByQName(@NotNull final PsiElement anchor,
-			@NotNull final String classQualifiedName,
+	public static PyCollectionTypeImpl createTypeByQName(@Nonnull final PsiElement anchor,
+			@Nonnull final String classQualifiedName,
 			final boolean isDefinition,
-			@NotNull final List<PyType> elementTypes)
+			@Nonnull final List<PyType> elementTypes)
 	{
 		final PyClass pyClass = PyPsiFacade.getInstance(anchor.getProject()).createClassByQName(classQualifiedName, anchor);
 		if(pyClass == null)

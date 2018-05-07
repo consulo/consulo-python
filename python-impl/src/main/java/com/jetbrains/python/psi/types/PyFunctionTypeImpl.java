@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -50,10 +50,10 @@ import com.jetbrains.python.psi.resolve.RatedResolveResult;
  */
 public class PyFunctionTypeImpl implements PyFunctionType
 {
-	@NotNull
+	@Nonnull
 	private final PyCallable myCallable;
 
-	public PyFunctionTypeImpl(@NotNull PyCallable callable)
+	public PyFunctionTypeImpl(@Nonnull PyCallable callable)
 	{
 		myCallable = callable;
 	}
@@ -66,21 +66,21 @@ public class PyFunctionTypeImpl implements PyFunctionType
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@NotNull TypeEvalContext context)
+	public PyType getReturnType(@Nonnull TypeEvalContext context)
 	{
 		return context.getReturnType(myCallable);
 	}
 
 	@Nullable
 	@Override
-	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
 	{
 		return myCallable.getCallType(context, callSite);
 	}
 
 	@Nullable
 	@Override
-	public List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context)
+	public List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
 	{
 		final List<PyCallableParameter> result = new ArrayList<>();
 		for(PyParameter parameter : myCallable.getParameterList().getParameters())
@@ -91,7 +91,7 @@ public class PyFunctionTypeImpl implements PyFunctionType
 	}
 
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		final PyClassType delegate = selectFakeType(location, resolveContext.getTypeEvalContext());
 		if(delegate == null)
@@ -126,7 +126,7 @@ public class PyFunctionTypeImpl implements PyFunctionType
 	 * language level. Will fallback to fake function type.
 	 */
 	@Nullable
-	private PyClassTypeImpl selectFakeType(@Nullable PyExpression location, @NotNull TypeEvalContext context)
+	private PyClassTypeImpl selectFakeType(@Nullable PyExpression location, @Nonnull TypeEvalContext context)
 	{
 		final String fakeClassName;
 		if(location instanceof PyReferenceExpression && isBoundMethodReference((PyReferenceExpression) location, context))
@@ -140,7 +140,7 @@ public class PyFunctionTypeImpl implements PyFunctionType
 		return PyBuiltinCache.getInstance(getCallable()).getObjectType(fakeClassName);
 	}
 
-	private boolean isBoundMethodReference(@NotNull PyReferenceExpression location, @NotNull TypeEvalContext context)
+	private boolean isBoundMethodReference(@Nonnull PyReferenceExpression location, @Nonnull TypeEvalContext context)
 	{
 		final PyFunction function = as(getCallable(), PyFunction.class);
 		final boolean isNonStaticMethod = function != null && function.getContainingClass() != null && function.getModifier() != STATICMETHOD;
@@ -209,14 +209,14 @@ public class PyFunctionTypeImpl implements PyFunctionType
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public PyCallable getCallable()
 	{
 		return myCallable;
 	}
 
 	@Nullable
-	public static String getParameterName(@NotNull PyNamedParameter namedParameter)
+	public static String getParameterName(@Nonnull PyNamedParameter namedParameter)
 	{
 		String name = namedParameter.getName();
 		if(namedParameter.isPositionalContainer())

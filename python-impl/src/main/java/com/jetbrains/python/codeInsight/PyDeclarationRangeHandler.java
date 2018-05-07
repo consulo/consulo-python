@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.codeInsight;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.hint.DeclarationRangeHandler;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
@@ -24,15 +26,14 @@ import com.jetbrains.python.psi.PyArgumentList;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyParameterList;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class PyDeclarationRangeHandler implements DeclarationRangeHandler {
-  @NotNull
+  @Nonnull
   @Override
-  public TextRange getDeclarationRange(@NotNull PsiElement container) {
+  public TextRange getDeclarationRange(@Nonnull PsiElement container) {
     int start = container.getTextRange().getStartOffset();
     if (container instanceof PyFunction) {
       PyParameterList parameterList = ((PyFunction)container).getParameterList();

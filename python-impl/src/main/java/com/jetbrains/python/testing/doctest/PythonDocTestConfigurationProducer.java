@@ -21,8 +21,8 @@ package com.jetbrains.python.testing.doctest;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.Location;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -48,25 +48,25 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
 	}
 
 	@Override
-	protected boolean isTestFunction(@NotNull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
+	protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
 	{
 		return PythonDocTestUtil.isDocTestFunction(pyFunction);
 	}
 
 	@Override
-	protected boolean isTestClass(@NotNull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, @Nullable final TypeEvalContext context)
+	protected boolean isTestClass(@Nonnull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, @Nullable final TypeEvalContext context)
 	{
 		return PythonDocTestUtil.isDocTestClass(pyClass);
 	}
 
 	@Override
-	protected boolean isTestFile(@NotNull PyFile file)
+	protected boolean isTestFile(@Nonnull PyFile file)
 	{
 		final List<PyElement> testCases = PythonDocTestUtil.getDocTestCasesFromFile(file);
 		return !testCases.isEmpty();
 	}
 
-	protected boolean isAvailable(@NotNull final Location location)
+	protected boolean isAvailable(@Nonnull final Location location)
 	{
 		final Module module = location.getModule();
 		if(!isPythonModule(module))
@@ -113,7 +113,7 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
 	}
 
 	@Override
-	protected boolean isTestFolder(@NotNull VirtualFile virtualFile, @NotNull Project project)
+	protected boolean isTestFolder(@Nonnull VirtualFile virtualFile, @Nonnull Project project)
 	{
 		return false;
 	}

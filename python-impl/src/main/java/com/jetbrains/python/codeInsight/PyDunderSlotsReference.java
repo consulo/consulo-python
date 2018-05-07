@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
@@ -35,7 +36,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PyDunderSlotsReference extends PsiReferenceBase<PyStringLiteralExpression> implements PsiReferenceEx
 {
-	public PyDunderSlotsReference(@NotNull PyStringLiteralExpression element)
+	public PyDunderSlotsReference(@Nonnull PyStringLiteralExpression element)
 	{
 		super(element, element.getStringValueTextRanges().get(0));
 	}
@@ -67,7 +68,7 @@ public class PyDunderSlotsReference extends PsiReferenceBase<PyStringLiteralExpr
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{

@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -50,7 +50,7 @@ public class PyStarExpressionImpl extends PyElementImpl implements PyStarExpress
 		return PsiTreeUtil.getChildOfType(this, PyExpression.class);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		return null;
 	}

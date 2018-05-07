@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.packaging;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.projectRoots.Sdk;
 
 /**
@@ -23,8 +23,8 @@ import com.intellij.openapi.projectRoots.Sdk;
  */
 public interface PyExecutionFix
 {
-	@NotNull
+	@Nonnull
 	String getName();
 
-	void run(@NotNull Sdk sdk);
+	void run(@Nonnull Sdk sdk);
 }

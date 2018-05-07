@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
@@ -32,16 +33,16 @@ import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 public class MembersViewInitializationInfo
 {
 
-	@NotNull
+	@Nonnull
 	private final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> myMemberInfoModel;
-	@NotNull
+	@Nonnull
 	private final Collection<PyMemberInfo<PyElement>> myMemberInfos;
 
 	/**
 	 * @param memberInfoModel model to be used in members panel
 	 * @param memberInfos     members to displau
 	 */
-	public MembersViewInitializationInfo(@NotNull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel, @NotNull final Collection<PyMemberInfo<PyElement>> memberInfos)
+	public MembersViewInitializationInfo(@Nonnull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel, @Nonnull final Collection<PyMemberInfo<PyElement>> memberInfos)
 	{
 		myMemberInfos = new ArrayList<>(memberInfos);
 		myMemberInfoModel = memberInfoModel;
@@ -50,7 +51,7 @@ public class MembersViewInitializationInfo
 	/**
 	 * @return model to be used in members panel
 	 */
-	@NotNull
+	@Nonnull
 	public MemberInfoModel<PyElement, PyMemberInfo<PyElement>> getMemberInfoModel()
 	{
 		return myMemberInfoModel;
@@ -59,7 +60,7 @@ public class MembersViewInitializationInfo
 	/**
 	 * @return members to display
 	 */
-	@NotNull
+	@Nonnull
 	public Collection<PyMemberInfo<PyElement>> getMemberInfos()
 	{
 		return Collections.unmodifiableCollection(myMemberInfos);

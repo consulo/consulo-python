@@ -30,8 +30,8 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PythonStringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -90,7 +90,7 @@ public class TemplateFileReferenceSet extends FileReferenceSet {
     }
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Collection<PsiFileSystemItem> computeDefaultContexts() {
     List<PsiFileSystemItem> contexts = ContainerUtil.newArrayList();

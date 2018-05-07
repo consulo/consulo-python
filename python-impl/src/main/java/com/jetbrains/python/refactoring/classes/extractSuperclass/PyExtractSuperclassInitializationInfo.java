@@ -17,7 +17,8 @@ package com.jetbrains.python.refactoring.classes.extractSuperclass;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.jetbrains.python.psi.PyElement;
@@ -32,32 +33,32 @@ import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersViewIni
 class PyExtractSuperclassInitializationInfo extends MembersViewInitializationInfo
 {
 
-	@NotNull
+	@Nonnull
 	private final String myDefaultFilePath;
-	@NotNull
+	@Nonnull
 	private final VirtualFile[] myRoots;
 
 	/**
 	 * @param defaultFilePath module file path to display. User will be able to change it later.
 	 * @param roots           virtual files where user may add new module
 	 */
-	PyExtractSuperclassInitializationInfo(@NotNull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
-			@NotNull final Collection<PyMemberInfo<PyElement>> memberInfos,
-			@NotNull final String defaultFilePath,
-			@NotNull final VirtualFile... roots)
+	PyExtractSuperclassInitializationInfo(@Nonnull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
+			@Nonnull final Collection<PyMemberInfo<PyElement>> memberInfos,
+			@Nonnull final String defaultFilePath,
+			@Nonnull final VirtualFile... roots)
 	{
 		super(memberInfoModel, memberInfos);
 		myDefaultFilePath = defaultFilePath;
 		myRoots = roots.clone();
 	}
 
-	@NotNull
+	@Nonnull
 	public String getDefaultFilePath()
 	{
 		return myDefaultFilePath;
 	}
 
-	@NotNull
+	@Nonnull
 	public VirtualFile[] getRoots()
 	{
 		return myRoots.clone();

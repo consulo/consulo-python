@@ -21,8 +21,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.controlflow.ControlFlow;
 import com.intellij.codeInsight.controlflow.ControlFlowUtil;
@@ -52,7 +53,7 @@ public class PyDefUseUtil
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	public static List<Instruction> getLatestDefs(ScopeOwner block, String varName, PsiElement anchor, boolean acceptTypeAssertions, boolean acceptImplicitImports)
 	{
 		final ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
@@ -134,7 +135,7 @@ public class PyDefUseUtil
 		return element instanceof PyElement ? ((PyElement) element).getName() : null;
 	}
 
-	@NotNull
+	@Nonnull
 	public static PsiElement[] getPostRefs(ScopeOwner block, PyTargetExpression var, PyExpression anchor)
 	{
 		final ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);

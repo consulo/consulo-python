@@ -22,8 +22,8 @@ package com.jetbrains.python.testing.unittest;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.Location;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -47,7 +47,7 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 		super(PythonTestConfigurationType.getInstance().PY_UNITTEST_FACTORY);
 	}
 
-	protected boolean isAvailable(@NotNull final Location location)
+	protected boolean isAvailable(@Nonnull final Location location)
 	{
 		PsiElement element = location.getPsiElement();
 		final Module module = ModuleUtilCore.findModuleForPsiElement(element);
@@ -63,21 +63,21 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 	}
 
 	@Override
-	protected boolean isTestFunction(@NotNull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
+	protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
 	{
 		final boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
 		return isTestFunction || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration) configuration).isPureUnittest());
 	}
 
 	@Override
-	protected boolean isTestClass(@NotNull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, TypeEvalContext context)
+	protected boolean isTestClass(@Nonnull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, TypeEvalContext context)
 	{
 		final boolean isTestClass = super.isTestClass(pyClass, configuration, context);
 		return isTestClass || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration) configuration).isPureUnittest());
 	}
 
 	@Override
-	protected boolean isTestFile(@NotNull final PyFile file)
+	protected boolean isTestFile(@Nonnull final PyFile file)
 	{
 		if(PyNames.SETUP_DOT_PY.equals(file.getName()))
 		{

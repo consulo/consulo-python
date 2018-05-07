@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.psi.types;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Function;
 
@@ -29,20 +30,20 @@ import com.intellij.util.Function;
 final class TypeEvalContextCacheImpl implements TypeEvalContextCache
 {
 
-	@NotNull
+	@Nonnull
 	private static final Function<TypeEvalContext, TypeEvalContext> VALUE_PROVIDER = new MyValueProvider();
-	@NotNull
+	@Nonnull
 	private final TypeEvalContextBasedCache<TypeEvalContext> myCache;
 
-	TypeEvalContextCacheImpl(@NotNull final CachedValuesManager manager)
+	TypeEvalContextCacheImpl(@Nonnull final CachedValuesManager manager)
 	{
 		myCache = new TypeEvalContextBasedCache<>(manager, VALUE_PROVIDER);
 	}
 
 
-	@NotNull
+	@Nonnull
 	@Override
-	public TypeEvalContext getContext(@NotNull final TypeEvalContext standard)
+	public TypeEvalContext getContext(@Nonnull final TypeEvalContext standard)
 	{
 		return myCache.getValue(standard);
 	}

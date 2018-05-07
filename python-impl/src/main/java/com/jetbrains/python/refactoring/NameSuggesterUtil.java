@@ -17,7 +17,7 @@
 package com.jetbrains.python.refactoring;
 
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,14 +33,14 @@ public class NameSuggesterUtil {
   private NameSuggesterUtil() {
   }
 
-  private static String deleteNonLetterFromString(@NotNull final String string) {
+  private static String deleteNonLetterFromString(@Nonnull final String string) {
     Pattern pattern = Pattern.compile("[^a-zA-Z_]+");
     Matcher matcher = pattern.matcher(string);
     return matcher.replaceAll("_");
   }
 
-  @NotNull
-  public static Collection<String> generateNames(@NotNull String name) {
+  @Nonnull
+  public static Collection<String> generateNames(@Nonnull String name) {
     name = StringUtil.decapitalize(deleteNonLetterFromString(StringUtil.unquoteString(name.replace('.', '_'))));
     if (name.startsWith("get")) {
       name = name.substring(3);
@@ -68,7 +68,7 @@ public class NameSuggesterUtil {
     return reversed;
   }
 
-  public static Collection<String> generateNamesByType(@NotNull String name) {
+  public static Collection<String> generateNamesByType(@Nonnull String name) {
     final Collection<String> possibleNames = new LinkedHashSet<String>();
     name = StringUtil.decapitalize(deleteNonLetterFromString(name.replace('.', '_')));
     name = toUnderscoreCase(name);
@@ -77,8 +77,8 @@ public class NameSuggesterUtil {
     return possibleNames;
   }
 
-  @NotNull
-  public static String toUnderscoreCase(@NotNull final String name) {
+  @Nonnull
+  public static String toUnderscoreCase(@Nonnull final String name) {
     StringBuilder buffer = new StringBuilder();
     final int length = name.length();
 

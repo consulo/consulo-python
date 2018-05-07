@@ -20,9 +20,10 @@ import com.jetbrains.python.psi.PyBoolLiteralExpression;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyNumericLiteralExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
-import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole

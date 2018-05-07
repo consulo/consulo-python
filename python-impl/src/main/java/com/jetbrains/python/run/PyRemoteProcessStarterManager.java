@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.run;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessOutput;
@@ -34,25 +34,25 @@ public interface PyRemoteProcessStarterManager
 {
 	ExtensionPointName<PyRemoteProcessStarterManager> EP_NAME = ExtensionPointName.create("consulo.python.remoteProcessStarterManager");
 
-	boolean supports(@NotNull PyRemoteSdkAdditionalDataBase sdkAdditionalData);
+	boolean supports(@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData);
 
-	@NotNull
+	@Nonnull
 	PyRemoteProcessHandlerBase startRemoteProcess(@Nullable Project project,
-			@NotNull GeneralCommandLine commandLine,
-			@NotNull PythonRemoteInterpreterManager manager,
-			@NotNull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
-			@NotNull PyRemotePathMapper pathMapper) throws ExecutionException, InterruptedException;
+			@Nonnull GeneralCommandLine commandLine,
+			@Nonnull PythonRemoteInterpreterManager manager,
+			@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
+			@Nonnull PyRemotePathMapper pathMapper) throws ExecutionException, InterruptedException;
 
-	@NotNull
+	@Nonnull
 	ProcessOutput executeRemoteProcess(@Nullable Project project,
-			@NotNull String[] command,
+			@Nonnull String[] command,
 			@Nullable String workingDir,
-			@NotNull PythonRemoteInterpreterManager manager,
-			@NotNull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
-			@NotNull PyRemotePathMapper pathMapper,
+			@Nonnull PythonRemoteInterpreterManager manager,
+			@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
+			@Nonnull PyRemotePathMapper pathMapper,
 			boolean askForSudo,
 			boolean checkHelpers) throws ExecutionException, InterruptedException;
 
 
-	String getFullInterpreterPath(@NotNull PyRemoteSdkAdditionalDataBase sdkAdditionalData) throws ExecutionException, InterruptedException;
+	String getFullInterpreterPath(@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData) throws ExecutionException, InterruptedException;
 }

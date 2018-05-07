@@ -21,7 +21,7 @@ import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyDelStatement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -36,7 +36,7 @@ public class PyDelStatementImpl extends PyElementImpl implements PyDelStatement 
     pyVisitor.visitPyDelStatement(this);
   }
 
-  @NotNull
+  @Nonnull
   public PyExpression[] getTargets() {
     return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);
   }

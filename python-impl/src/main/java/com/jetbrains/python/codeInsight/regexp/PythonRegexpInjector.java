@@ -19,8 +19,9 @@ package com.jetbrains.python.codeInsight.regexp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
@@ -43,10 +44,11 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
  */
 public class PythonRegexpInjector implements MultiHostInjector {
   private static class RegexpMethodDescriptor {
-    @NotNull private final String methodName;
+    @Nonnull
+	private final String methodName;
     private final int argIndex;
 
-    private RegexpMethodDescriptor(@NotNull String methodName, int argIndex) {
+    private RegexpMethodDescriptor(@Nonnull String methodName, int argIndex) {
       this.methodName = methodName;
       this.argIndex = argIndex;
     }
@@ -65,12 +67,12 @@ public class PythonRegexpInjector implements MultiHostInjector {
     addMethod("subn");
   }
 
-  private void addMethod(@NotNull String name) {
+  private void addMethod(@Nonnull String name) {
     myDescriptors.add(new RegexpMethodDescriptor(name, 0));
   }
 
   @Override
-  public void injectLanguages(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
+  public void injectLanguages(@Nonnull MultiHostRegistrar registrar, @Nonnull PsiElement context) {
     final PsiElement contextParent = context.getParent();
     if (PyInjectionUtil.isLargestStringLiteral(context) && contextParent instanceof PyArgumentList) {
       final PyExpression[] args = ((PyArgumentList)contextParent).getArguments();
@@ -94,7 +96,7 @@ public class PythonRegexpInjector implements MultiHostInjector {
     }
   }
 
-  private static boolean isVerbose(@NotNull PyCallExpression call) {
+  private static boolean isVerbose(@Nonnull PyCallExpression call) {
     PyExpression[] arguments = call.getArguments();
     if (arguments.length <= 1) {
       return false;
@@ -119,7 +121,7 @@ public class PythonRegexpInjector implements MultiHostInjector {
     return false;
   }
 
-  private boolean isRegexpMethod(@NotNull PsiElement element, int index) {
+  private boolean isRegexpMethod(@Nonnull PsiElement element, int index) {
     if (!(element instanceof PyFunction)) {
       return false;
     }
@@ -132,7 +134,7 @@ public class PythonRegexpInjector implements MultiHostInjector {
     return false;
   }
 
-  private boolean canBeRegexpCall(@NotNull PyExpression callee) {
+  private boolean canBeRegexpCall(@Nonnull PyExpression callee) {
     String text = callee.getText();
     for (RegexpMethodDescriptor descriptor : myDescriptors) {
       if (text.endsWith(descriptor.methodName)) {

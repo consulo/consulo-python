@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.hierarchy;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.ide.hierarchy.HierarchyBrowser;
 import com.intellij.ide.hierarchy.HierarchyProvider;
 import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
@@ -38,7 +38,7 @@ import com.jetbrains.python.psi.PyClass;
 public class PyTypeHierachyProvider implements HierarchyProvider
 {
 	@Nullable
-	public PsiElement getTarget(@NotNull DataContext dataContext)
+	public PsiElement getTarget(@Nonnull DataContext dataContext)
 	{
 		PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
 		if(element == null)
@@ -57,13 +57,13 @@ public class PyTypeHierachyProvider implements HierarchyProvider
 		return element;
 	}
 
-	@NotNull
+	@Nonnull
 	public HierarchyBrowser createHierarchyBrowser(PsiElement target)
 	{
 		return new PyTypeHierarchyBrowser((PyClass) target);
 	}
 
-	public void browserActivated(@NotNull HierarchyBrowser hierarchyBrowser)
+	public void browserActivated(@Nonnull HierarchyBrowser hierarchyBrowser)
 	{
 		((PyTypeHierarchyBrowser) hierarchyBrowser).changeView(TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE);
 	}

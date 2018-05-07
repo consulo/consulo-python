@@ -17,7 +17,7 @@
 package com.jetbrains.python.packaging;
 
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +30,14 @@ public class PyExternalProcessException extends Exception {
   private static final Pattern WITH_CR_DELIMITER_PATTERN = Pattern.compile("(?<=\r|\n|\r\n)");
 
   private final int myRetcode;
-  @NotNull private String myName;
-  @NotNull private List<String> myArgs;
-  @NotNull private String myMessage;
+  @Nonnull
+  private String myName;
+  @Nonnull
+  private List<String> myArgs;
+  @Nonnull
+  private String myMessage;
 
-  public PyExternalProcessException(int retcode, @NotNull String name, @NotNull List<String> args, @NotNull String message) {
+  public PyExternalProcessException(int retcode, @Nonnull String name, @Nonnull List<String> args, @Nonnull String message) {
     super(String.format("External process error '%s %s':\n%s", name, StringUtil.join(args, " "), message));
     myRetcode = retcode;
     myName = name;
@@ -42,7 +45,7 @@ public class PyExternalProcessException extends Exception {
     myMessage = stripLinesWithoutLineFeeds(message);
   }
 
-  public PyExternalProcessException(int retcode, @NotNull String name, @NotNull List<String> args, @NotNull String message, Throwable cause) {
+  public PyExternalProcessException(int retcode, @Nonnull String name, @Nonnull List<String> args, @Nonnull String message, Throwable cause) {
     super(String.format("External process error '%s %s':\n%s", name, StringUtil.join(args, " "), message), cause);
     myRetcode = retcode;
     myName = name;
@@ -66,23 +69,23 @@ public class PyExternalProcessException extends Exception {
     return myRetcode;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return myName;
   }
 
-  @NotNull
+  @Nonnull
   public List<String> getArgs() {
     return myArgs;
   }
 
-  @NotNull
+  @Nonnull
   public String getMessage() {
     return myMessage;
   }
 
-  @NotNull
-  private static String stripLinesWithoutLineFeeds(@NotNull String s) {
+  @Nonnull
+  private static String stripLinesWithoutLineFeeds(@Nonnull String s) {
     final String[] lines = WITH_CR_DELIMITER_PATTERN.split(s);
     final List<String> result = new ArrayList<String>();
     for (String line : lines) {

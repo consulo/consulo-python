@@ -17,7 +17,8 @@ package com.jetbrains.python.codeInsight.completion;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -54,7 +55,7 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor
 		extend(CompletionType.BASIC, psiElement().inside(PySubscriptionExpression.class), new CompletionProvider()
 		{
 			@Override
-			public void addCompletions(@NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result)
+			public void addCompletions(@Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result)
 			{
 				final PsiElement original = parameters.getOriginalPosition();
 				final int offset = parameters.getOffset();
@@ -104,7 +105,7 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor
 	 * @param offset
 	 * @return
 	 */
-	private static CompletionResultSet createResult(@NotNull final PsiElement original, @NotNull final CompletionResultSet result, final int offset)
+	private static CompletionResultSet createResult(@Nonnull final PsiElement original, @Nonnull final CompletionResultSet result, final int offset)
 	{
 		PyStringLiteralExpression prevElement = PsiTreeUtil.getPrevSiblingOfType(original, PyStringLiteralExpression.class);
 		if(prevElement != null)

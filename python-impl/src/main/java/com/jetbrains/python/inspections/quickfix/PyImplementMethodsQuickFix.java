@@ -29,8 +29,8 @@ import com.jetbrains.python.codeInsight.override.PyOverrideImplementUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Set;
 
@@ -47,18 +47,18 @@ public class PyImplementMethodsQuickFix implements LocalQuickFix {
     myToImplement = toBeImplemented;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.NAME.implement.methods");
   }
 
   @NonNls
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     final Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
     if (editor != null)
       PyOverrideImplementUtil.chooseAndOverrideOrImplementMethods(project, editor, myClass, myToImplement, "Select Methods to Implement", true);

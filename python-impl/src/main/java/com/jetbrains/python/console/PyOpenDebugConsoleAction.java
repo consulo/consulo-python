@@ -17,7 +17,8 @@ package com.jetbrains.python.console;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -69,7 +70,7 @@ public class PyOpenDebugConsoleAction extends AnAction implements DumbAware
 	}
 
 
-	private static void selectRunningProcess(@NotNull DataContext dataContext, @NotNull Project project, final Consumer<PythonDebugLanguageConsoleView> consumer)
+	private static void selectRunningProcess(@Nonnull DataContext dataContext, @Nonnull Project project, final Consumer<PythonDebugLanguageConsoleView> consumer)
 	{
 		Collection<RunContentDescriptor> consoles = getConsoles(project);
 

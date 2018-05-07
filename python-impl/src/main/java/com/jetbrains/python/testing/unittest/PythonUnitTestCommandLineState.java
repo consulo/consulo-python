@@ -18,7 +18,8 @@ package com.jetbrains.python.testing.unittest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -53,7 +54,7 @@ public class PythonUnitTestCommandLineState extends PythonTestCommandLineStateBa
 		return PythonHelper.UT;
 	}
 
-	@NotNull
+	@Nonnull
 	protected List<String> getTestSpecs()
 	{
 		List<String> specs = new ArrayList<>();

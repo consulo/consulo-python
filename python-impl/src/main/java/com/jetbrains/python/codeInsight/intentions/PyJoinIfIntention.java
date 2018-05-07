@@ -27,8 +27,8 @@ import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -44,17 +44,17 @@ import java.util.List;
  *   #stuff here
  */
 public class PyJoinIfIntention extends BaseIntentionAction {
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.join.if");
   }
 
-  @NotNull
+  @Nonnull
   public String getText() {
     return PyBundle.message("INTN.join.if.text");
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
@@ -80,7 +80,7 @@ public class PyJoinIfIntention extends BaseIntentionAction {
     return false;
   }
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     PyIfStatement expression =
           PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyIfStatement.class);
     PyIfStatement ifStatement = getIfStatement(expression);

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.controlflow.Instruction;
@@ -72,7 +72,7 @@ public class ScopeImpl implements Scope
 		}
 	}
 
-	public ScopeVariable getDeclaredVariable(@NotNull final PsiElement anchorElement, @NotNull final String name) throws DFALimitExceededException
+	public ScopeVariable getDeclaredVariable(@Nonnull final PsiElement anchorElement, @Nonnull final String name) throws DFALimitExceededException
 	{
 		computeScopeVariables();
 		for(int i = 0; i < myFlow.length; i++)
@@ -165,7 +165,7 @@ public class ScopeImpl implements Scope
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<PyImportedNameDefiner> getImportedNameDefiners()
 	{
@@ -176,7 +176,7 @@ public class ScopeImpl implements Scope
 		return myImportedNameDefiners;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PsiNamedElement> getNamedElements(String name, boolean includeNestedGlobals)
 	{
@@ -205,7 +205,7 @@ public class ScopeImpl implements Scope
 		return Collections.emptyList();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PsiNamedElement> getNamedElements()
 	{
@@ -221,7 +221,7 @@ public class ScopeImpl implements Scope
 		return results;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PyTargetExpression> getTargetExpressions()
 	{

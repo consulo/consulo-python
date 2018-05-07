@@ -20,8 +20,8 @@ import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -39,7 +39,7 @@ public class PyFunctionNameMacro extends Macro {
 
   @Nullable
   @Override
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(@Nonnull Expression[] params, ExpressionContext context) {
     PsiElement place = context.getPsiElementAtStartOffset();
     PyFunction pyFunction = PsiTreeUtil.getParentOfType(place, PyFunction.class);
     if (pyFunction == null) {

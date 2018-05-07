@@ -30,9 +30,9 @@ import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +48,7 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
   // Persistent settings
   public List<String> ignoredNames = new ArrayList<String>();
 
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return "Shadowing built-ins";
@@ -60,45 +60,45 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
     return form.getContentPanel();
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session, ignoredNames);
   }
 
   private static class Visitor extends PyInspectionVisitor {
     private final Set<String> myIgnoredNames;
 
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session, @NotNull Collection<String> ignoredNames) {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, @Nonnull Collection<String> ignoredNames) {
       super(holder, session);
       myIgnoredNames = ImmutableSet.copyOf(ignoredNames);
     }
 
     @Override
-    public void visitPyClass(@NotNull PyClass node) {
+    public void visitPyClass(@Nonnull PyClass node) {
       processElement(node);
     }
 
     @Override
-    public void visitPyFunction(@NotNull PyFunction node) {
+    public void visitPyFunction(@Nonnull PyFunction node) {
       processElement(node);
     }
 
     @Override
-    public void visitPyNamedParameter(@NotNull PyNamedParameter node) {
+    public void visitPyNamedParameter(@Nonnull PyNamedParameter node) {
       processElement(node);
     }
 
     @Override
-    public void visitPyTargetExpression(@NotNull PyTargetExpression node) {
+    public void visitPyTargetExpression(@Nonnull PyTargetExpression node) {
       if (node.getQualifier() == null) {
         processElement(node);
       }
     }
 
-    private void processElement(@NotNull PsiNameIdentifierOwner element) {
+    private void processElement(@Nonnull PsiNameIdentifierOwner element) {
       final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
       if (owner instanceof PyClass) {
         return;
@@ -117,26 +117,27 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
     }
 
     private static class PyIgnoreBuiltinQuickFix implements LocalQuickFix, LowPriorityAction {
-      @NotNull private final String myName;
+      @Nonnull
+	  private final String myName;
 
-      private PyIgnoreBuiltinQuickFix(@NotNull String name) {
+      private PyIgnoreBuiltinQuickFix(@Nonnull String name) {
         myName = name;
       }
 
-      @NotNull
+      @Nonnull
       @Override
       public String getName() {
         return getFamilyName() + " \"" + myName + "\"";
       }
 
-      @NotNull
+      @Nonnull
       @Override
       public String getFamilyName() {
         return "Ignore shadowed built-in name";
       }
 
       @Override
-      public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+      public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         final PsiElement element = descriptor.getPsiElement();
         if (element != null) {
           final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();

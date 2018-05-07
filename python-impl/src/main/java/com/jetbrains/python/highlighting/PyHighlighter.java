@@ -28,7 +28,7 @@ import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.lexer.PyStringLiteralLexer;
 import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class PyHighlighter extends SyntaxHighlighterBase {
   private Map<IElementType, TextAttributesKey> keys;
   private final LanguageLevel myLanguageLevel;
 
-  @NotNull
+  @Nonnull
   public Lexer getHighlightingLexer() {
     LayeredLexer ret = new LayeredLexer(createHighlightingLexer(myLanguageLevel));
     ret.registerLayer(
@@ -155,7 +155,7 @@ public class PyHighlighter extends SyntaxHighlighterBase {
     keys.put(StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN, PY_INVALID_STRING_ESCAPE);
   }
 
-  @NotNull
+  @Nonnull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(keys.get(tokenType));
   }

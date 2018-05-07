@@ -17,8 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.jetbrains.python.FunctionParameter;
 
@@ -33,10 +33,10 @@ public interface PyArgumentList extends PyElement
 	/**
 	 * @return all argument list param expressions (keyword argument or nameless)
 	 */
-	@NotNull
+	@Nonnull
 	Collection<PyExpression> getArgumentExpressions();
 
-	@NotNull
+	@Nonnull
 	PyExpression[] getArguments();
 
 	@Nullable
@@ -51,7 +51,7 @@ public interface PyArgumentList extends PyElement
 	 *
 	 * @param arg argument to add
 	 */
-	void addArgument(@NotNull PyExpression arg);
+	void addArgument(@Nonnull PyExpression arg);
 
 	void addArgumentFirst(PyExpression arg);
 
@@ -74,5 +74,5 @@ public interface PyArgumentList extends PyElement
 	 * @return function parameter value expression or null if does not exist
 	 */
 	@Nullable
-	PyExpression getValueExpressionForParam(@NotNull FunctionParameter parameter);
+	PyExpression getValueExpressionForParam(@Nonnull FunctionParameter parameter);
 }

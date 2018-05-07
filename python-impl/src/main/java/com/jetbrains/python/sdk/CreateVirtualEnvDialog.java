@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.swing.JComboBox;
 
-import org.jetbrains.annotations.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.intellij.execution.ExecutionException;

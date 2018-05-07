@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -168,7 +168,7 @@ public class PyDocumentationBuilder
 		}
 	}
 
-	private void buildForKeyword(@NotNull final String name)
+	private void buildForKeyword(@Nonnull final String name)
 	{
 		try
 		{
@@ -197,7 +197,7 @@ public class PyDocumentationBuilder
 		}
 	}
 
-	private void buildFromParameter(@NotNull final TypeEvalContext context, @Nullable final PsiElement outerElement, @NotNull final PsiElement elementDefinition)
+	private void buildFromParameter(@Nonnull final TypeEvalContext context, @Nullable final PsiElement outerElement, @Nonnull final PsiElement elementDefinition)
 	{
 		myBody.addItem(combUp("Parameter " + PyUtil.getReadableRepr(elementDefinition, false)));
 		final boolean typeFromDocstringAdded = addTypeAndDescriptionFromDocstring((PyNamedParameter) elementDefinition);
@@ -243,7 +243,7 @@ public class PyDocumentationBuilder
 		}
 	}
 
-	private boolean buildFromProperty(PsiElement elementDefinition, @Nullable final PsiElement outerElement, @NotNull final TypeEvalContext context)
+	private boolean buildFromProperty(PsiElement elementDefinition, @Nullable final PsiElement outerElement, @Nonnull final TypeEvalContext context)
 	{
 		if(myOriginalElement == null)
 		{
@@ -318,8 +318,8 @@ public class PyDocumentationBuilder
 		return true;
 	}
 
-	@NotNull
-	private static String getAccessorKind(@NotNull final AccessDirection dir)
+	@Nonnull
+	private static String getAccessorKind(@Nonnull final AccessDirection dir)
 	{
 		final String accessorKind;
 		if(dir == AccessDirection.READ)
@@ -337,7 +337,7 @@ public class PyDocumentationBuilder
 		return accessorKind;
 	}
 
-	private void buildFromDocstring(@NotNull final PsiElement elementDefinition, boolean isProperty)
+	private void buildFromDocstring(@Nonnull final PsiElement elementDefinition, boolean isProperty)
 	{
 		PyClass pyClass = null;
 		final PyStringLiteralExpression docStringExpression = ((PyDocStringOwner) elementDefinition).getDocStringExpression();
@@ -421,13 +421,13 @@ public class PyDocumentationBuilder
 		return myElement;
 	}
 
-	private static PsiElement resolveWithoutImplicits(@NotNull PyReferenceExpression element)
+	private static PsiElement resolveWithoutImplicits(@Nonnull PyReferenceExpression element)
 	{
 		final QualifiedResolveResult resolveResult = element.followAssignmentsChain(PyResolveContext.noImplicits());
 		return resolveResult.isImplicit() ? null : resolveResult.getElement();
 	}
 
-	private void addInheritedDocString(@NotNull final PyFunction pyFunction, @Nullable final PyClass pyClass)
+	private void addInheritedDocString(@Nonnull final PyFunction pyFunction, @Nullable final PyClass pyClass)
 	{
 		boolean notFound = true;
 		final String methodName = pyFunction.getName();
@@ -523,7 +523,7 @@ public class PyDocumentationBuilder
 		}
 	}
 
-	private static void addFormattedDocString(@NotNull PsiElement element, @NotNull String docstring, @NotNull ChainIterable<String> formattedOutput, @NotNull ChainIterable<String> unformattedOutput)
+	private static void addFormattedDocString(@Nonnull PsiElement element, @Nonnull String docstring, @Nonnull ChainIterable<String> formattedOutput, @Nonnull ChainIterable<String> unformattedOutput)
 	{
 		final Project project = element.getProject();
 
@@ -575,7 +575,7 @@ public class PyDocumentationBuilder
 	 * @param parameter parameter of a function
 	 * @return true if type from docstring was added
 	 */
-	private boolean addTypeAndDescriptionFromDocstring(@NotNull final PyNamedParameter parameter)
+	private boolean addTypeAndDescriptionFromDocstring(@Nonnull final PyNamedParameter parameter)
 	{
 		final PyFunction function = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
 		if(function != null)
@@ -610,7 +610,7 @@ public class PyDocumentationBuilder
 		return false;
 	}
 
-	private static Pair<String, String> getTypeAndDescription(@Nullable final String docString, @NotNull final PyNamedParameter followed)
+	private static Pair<String, String> getTypeAndDescription(@Nullable final String docString, @Nonnull final PyNamedParameter followed)
 	{
 		String type = null;
 		String desc = null;
@@ -639,7 +639,7 @@ public class PyDocumentationBuilder
 		}
 	}
 
-	public static String[] removeCommonIndentation(@NotNull final String docstring)
+	public static String[] removeCommonIndentation(@Nonnull final String docstring)
 	{
 		// detect common indentation
 		final String[] lines = LineTokenizer.tokenize(docstring, false);
@@ -695,7 +695,7 @@ public class PyDocumentationBuilder
 		return ArrayUtil.toStringArray(result);
 	}
 
-	private void addModulePath(@NotNull PyFile followed)
+	private void addModulePath(@Nonnull PyFile followed)
 	{
 		// what to prepend to a module description?
 		final VirtualFile file = followed.getVirtualFile();
@@ -731,7 +731,7 @@ public class PyDocumentationBuilder
 			myPath = path;
 		}
 
-		public boolean visitRoot(@NotNull VirtualFile root, Module module, Sdk sdk, boolean isModuleSource)
+		public boolean visitRoot(@Nonnull VirtualFile root, Module module, Sdk sdk, boolean isModuleSource)
 		{
 			final String vpath = VfsUtilCore.urlToPath(root.getUrl());
 			if(myPath.startsWith(vpath))

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.intentions;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateBuilder;
@@ -61,20 +62,20 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention
 {
 	private String myText = PyBundle.message("INTN.specify.type.in.annotation");
 
-	@NotNull
+	@Nonnull
 	public String getText()
 	{
 		return myText;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.specify.type.in.annotation");
 	}
 
 	@Override
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!LanguageLevel.forElement(file).isPy3K())
 		{
@@ -84,7 +85,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention
 	}
 
 	@Override
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		final PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
 		final PyExpression problemElement = getProblemElement(elementAt);
@@ -107,7 +108,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention
 		}
 	}
 
-	static PyNamedParameter annotateParameter(Project project, Editor editor, @NotNull PyNamedParameter parameter, boolean createTemplate)
+	static PyNamedParameter annotateParameter(Project project, Editor editor, @Nonnull PyNamedParameter parameter, boolean createTemplate)
 	{
 		final PyExpression defaultParamValue = parameter.getDefaultValue();
 
@@ -158,7 +159,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention
 	}
 
 
-	static String returnType(@NotNull PyFunction function)
+	static String returnType(@Nonnull PyFunction function)
 	{
 		String returnType = PyNames.OBJECT;
 		final PySignature signature = PySignatureCacheManager.getInstance(function.getProject()).findSignature(function);
@@ -254,7 +255,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention
 	}
 
 	@Override
-	protected boolean isReturnTypeDefined(@NotNull PyFunction function)
+	protected boolean isReturnTypeDefined(@Nonnull PyFunction function)
 	{
 		return function.getAnnotation() != null;
 	}

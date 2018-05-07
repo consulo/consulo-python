@@ -20,8 +20,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -50,16 +51,16 @@ import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 public abstract class CompatibilityVisitor extends PyAnnotator
 {
 
-	@NotNull
+	@Nonnull
 	private static final Map<LanguageLevel, Set<String>> AVAILABLE_PREFIXES = Maps.newHashMap();
 
-	@NotNull
+	@Nonnull
 	private static final Set<String> DEFAULT_PREFIXES = Sets.newHashSet("R", "U", "B", "BR", "RB");
 
-	@NotNull
+	@Nonnull
 	protected static final String COMMON_MESSAGE = "Python version ";
 
-	@NotNull
+	@Nonnull
 	protected List<LanguageLevel> myVersionsToProcess;
 
 	static
@@ -74,7 +75,7 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON36, Sets.newHashSet("R", "U", "B", "BR", "RB", "F", "FR", "RF"));
 	}
 
-	public CompatibilityVisitor(@NotNull List<LanguageLevel> versionsToProcess)
+	public CompatibilityVisitor(@Nonnull List<LanguageLevel> versionsToProcess)
 	{
 		myVersionsToProcess = versionsToProcess;
 	}
@@ -528,7 +529,7 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 		}
 	}
 
-	private void checkAsyncKeyword(@NotNull PsiElement node)
+	private void checkAsyncKeyword(@Nonnull PsiElement node)
 	{
 		final ASTNode asyncNode = node.getNode().findChildByType(PyTokenTypes.ASYNC_KEYWORD);
 		if(asyncNode != null)
@@ -568,26 +569,26 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 		}
 	}
 
-	protected abstract void registerProblem(@NotNull PsiElement node, @NotNull TextRange range, @NotNull String message, @Nullable LocalQuickFix localQuickFix, boolean asError);
+	protected abstract void registerProblem(@Nonnull PsiElement node, @Nonnull TextRange range, @Nonnull String message, @Nullable LocalQuickFix localQuickFix, boolean asError);
 
-	protected void registerProblem(@NotNull PsiElement node, @NotNull String message, @Nullable LocalQuickFix localQuickFix)
+	protected void registerProblem(@Nonnull PsiElement node, @Nonnull String message, @Nullable LocalQuickFix localQuickFix)
 	{
 		registerProblem(node, node.getTextRange(), message, localQuickFix, true);
 	}
 
-	protected void registerProblem(@NotNull PsiElement node, @NotNull String message)
+	protected void registerProblem(@Nonnull PsiElement node, @Nonnull String message)
 	{
 		registerProblem(node, message, null);
 	}
 
-	protected void setVersionsToProcess(@NotNull List<LanguageLevel> versionsToProcess)
+	protected void setVersionsToProcess(@Nonnull List<LanguageLevel> versionsToProcess)
 	{
 		myVersionsToProcess = versionsToProcess;
 	}
 
-	protected void registerForAllMatchingVersions(@NotNull Predicate<LanguageLevel> levelPredicate,
-			@NotNull String suffix,
-			@NotNull Iterable<Pair<? extends PsiElement, TextRange>> nodesWithRanges,
+	protected void registerForAllMatchingVersions(@Nonnull Predicate<LanguageLevel> levelPredicate,
+			@Nonnull String suffix,
+			@Nonnull Iterable<Pair<? extends PsiElement, TextRange>> nodesWithRanges,
 			@Nullable LocalQuickFix localQuickFix,
 			boolean asError)
 	{
@@ -603,19 +604,19 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 		}
 	}
 
-	protected void registerForAllMatchingVersions(@NotNull Predicate<LanguageLevel> levelPredicate,
-			@NotNull String suffix,
-			@NotNull Iterable<? extends PsiElement> nodes,
+	protected void registerForAllMatchingVersions(@Nonnull Predicate<LanguageLevel> levelPredicate,
+			@Nonnull String suffix,
+			@Nonnull Iterable<? extends PsiElement> nodes,
 			@Nullable LocalQuickFix localQuickFix)
 	{
 		final List<Pair<? extends PsiElement, TextRange>> nodesWithRanges = ContainerUtil.map(nodes, node -> Pair.createNonNull(node, node.getTextRange()));
 		registerForAllMatchingVersions(levelPredicate, suffix, nodesWithRanges, localQuickFix, true);
 	}
 
-	protected void registerForAllMatchingVersions(@NotNull Predicate<LanguageLevel> levelPredicate,
-			@NotNull String suffix,
-			@NotNull PsiElement node,
-			@NotNull TextRange range,
+	protected void registerForAllMatchingVersions(@Nonnull Predicate<LanguageLevel> levelPredicate,
+			@Nonnull String suffix,
+			@Nonnull PsiElement node,
+			@Nonnull TextRange range,
 			@Nullable LocalQuickFix localQuickFix,
 			boolean asError)
 	{
@@ -623,24 +624,24 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 		registerForAllMatchingVersions(levelPredicate, suffix, nodesWithRanges, localQuickFix, asError);
 	}
 
-	protected void registerForAllMatchingVersions(@NotNull Predicate<LanguageLevel> levelPredicate,
-			@NotNull String suffix,
-			@NotNull PsiElement node,
+	protected void registerForAllMatchingVersions(@Nonnull Predicate<LanguageLevel> levelPredicate,
+			@Nonnull String suffix,
+			@Nonnull PsiElement node,
 			@Nullable LocalQuickFix localQuickFix,
 			boolean asError)
 	{
 		registerForAllMatchingVersions(levelPredicate, suffix, node, node.getTextRange(), localQuickFix, asError);
 	}
 
-	protected void registerForAllMatchingVersions(@NotNull Predicate<LanguageLevel> levelPredicate, @NotNull String suffix, @NotNull PsiElement node, @Nullable LocalQuickFix localQuickFix)
+	protected void registerForAllMatchingVersions(@Nonnull Predicate<LanguageLevel> levelPredicate, @Nonnull String suffix, @Nonnull PsiElement node, @Nullable LocalQuickFix localQuickFix)
 	{
 		registerForAllMatchingVersions(levelPredicate, suffix, node, node.getTextRange(), localQuickFix, true);
 	}
 
-	protected void registerOnFirstMatchingVersion(@NotNull Predicate<LanguageLevel> levelPredicate,
-			@NotNull String message,
-			@NotNull PsiElement node,
-			@NotNull TextRange range,
+	protected void registerOnFirstMatchingVersion(@Nonnull Predicate<LanguageLevel> levelPredicate,
+			@Nonnull String message,
+			@Nonnull PsiElement node,
+			@Nonnull TextRange range,
 			@Nullable LocalQuickFix localQuickFix)
 	{
 		if(myVersionsToProcess.stream().anyMatch(levelPredicate))
@@ -649,12 +650,12 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 		}
 	}
 
-	protected void registerOnFirstMatchingVersion(@NotNull Predicate<LanguageLevel> levelPredicate, @NotNull String message, @NotNull PsiElement node, @Nullable LocalQuickFix localQuickFix)
+	protected void registerOnFirstMatchingVersion(@Nonnull Predicate<LanguageLevel> levelPredicate, @Nonnull String message, @Nonnull PsiElement node, @Nullable LocalQuickFix localQuickFix)
 	{
 		registerOnFirstMatchingVersion(levelPredicate, message, node, node.getTextRange(), localQuickFix);
 	}
 
-	protected void registerOnFirstMatchingVersion(@NotNull Predicate<LanguageLevel> levelPredicate, @NotNull String message, @NotNull PsiElement node)
+	protected void registerOnFirstMatchingVersion(@Nonnull Predicate<LanguageLevel> levelPredicate, @Nonnull String message, @Nonnull PsiElement node)
 	{
 		registerOnFirstMatchingVersion(levelPredicate, message, node, node.getTextRange(), null);
 	}
@@ -665,7 +666,7 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 		registerOnFirstMatchingVersion(level -> level.isOlderThan(LanguageLevel.PYTHON30), "nonlocal keyword available only since py3", node);
 	}
 
-	private void highlightIncorrectArguments(@NotNull PyCallExpression callExpression)
+	private void highlightIncorrectArguments(@Nonnull PyCallExpression callExpression)
 	{
 		final Set<String> keywordArgumentNames = new HashSet<>();
 

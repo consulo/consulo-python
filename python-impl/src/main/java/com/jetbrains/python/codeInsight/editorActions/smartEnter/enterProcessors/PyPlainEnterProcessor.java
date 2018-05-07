@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.enterProcessors;
 
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
@@ -25,7 +27,6 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.PyStatementPart;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.

@@ -24,8 +24,8 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.buildout.config.BuildoutCfgFileType;
 import com.jetbrains.python.buildout.config.BuildoutCfgLanguage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +39,7 @@ public class BuildoutCfgFile extends PsiFileBase {
     super(viewProvider, BuildoutCfgLanguage.INSTANCE);
   }
 
-  @NotNull
+  @Nonnull
   public FileType getFileType() {
     return BuildoutCfgFileType.INSTANCE;
   }

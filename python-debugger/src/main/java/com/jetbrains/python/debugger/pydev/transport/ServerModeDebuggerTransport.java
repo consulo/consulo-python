@@ -6,7 +6,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
@@ -19,7 +20,7 @@ public class ServerModeDebuggerTransport extends BaseDebuggerTransport
 {
 	private static final Logger LOG = Logger.getInstance(ServerModeDebuggerTransport.class);
 
-	@NotNull
+	@Nonnull
 	private final ServerSocket myServerSocket;
 	private volatile DebuggerReader myDebuggerReader;
 
@@ -27,7 +28,7 @@ public class ServerModeDebuggerTransport extends BaseDebuggerTransport
 	private volatile Socket mySocket;
 	private int myConnectionTimeout;
 
-	public ServerModeDebuggerTransport(RemoteDebugger debugger, @NotNull ServerSocket socket, int connectionTimeout)
+	public ServerModeDebuggerTransport(RemoteDebugger debugger, @Nonnull ServerSocket socket, int connectionTimeout)
 	{
 		super(debugger);
 		myServerSocket = socket;
@@ -120,7 +121,7 @@ public class ServerModeDebuggerTransport extends BaseDebuggerTransport
 	}
 
 	@Override
-	public void messageReceived(@NotNull ProtocolFrame frame)
+	public void messageReceived(@Nonnull ProtocolFrame frame)
 	{
 		// do nothing
 	}
@@ -143,7 +144,7 @@ public class ServerModeDebuggerTransport extends BaseDebuggerTransport
 
 	public static class DebuggerReader extends BaseDebuggerReader
 	{
-		public DebuggerReader(@NotNull RemoteDebugger debugger, @NotNull InputStream stream) throws IOException
+		public DebuggerReader(@Nonnull RemoteDebugger debugger, @Nonnull InputStream stream) throws IOException
 		{
 			super(stream, CharsetToolkit.UTF8_CHARSET, debugger); //TODO: correct encoding?
 			start(getClass().getName());

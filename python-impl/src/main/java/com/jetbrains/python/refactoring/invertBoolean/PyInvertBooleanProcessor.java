@@ -31,7 +31,7 @@ import com.intellij.util.containers.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +48,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
   private final Map<UsageInfo, SmartPsiElementPointer> myToInvert = new HashMap<UsageInfo, SmartPsiElementPointer>();
   private final SmartPointerManager mySmartPointerManager;
 
-  public PyInvertBooleanProcessor(@NotNull final PsiElement namedElement, @NotNull final String newName) {
+  public PyInvertBooleanProcessor(@Nonnull final PsiElement namedElement, @Nonnull final String newName) {
     super(namedElement.getProject());
     myElement = namedElement;
     myNewName = newName;
@@ -57,7 +57,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  @NotNull
+  @Nonnull
   protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
     return new PyInvertBooleanUsageViewDescriptor(myElement);
   }
@@ -76,7 +76,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  @NotNull
+  @Nonnull
   protected UsageInfo[] findUsages() {
     final List<SmartPsiElementPointer> toInvert = new ArrayList<SmartPsiElementPointer>();
 
@@ -106,7 +106,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     return result.toArray(new UsageInfo[result.size()]);
   }
 
-  private void addRefsToInvert(@NotNull final List<SmartPsiElementPointer> toInvert, @NotNull final PsiElement psiElement) {
+  private void addRefsToInvert(@Nonnull final List<SmartPsiElementPointer> toInvert, @Nonnull final PsiElement psiElement) {
     final Collection<PsiReference> refs = ReferencesSearch.search(psiElement).findAll();
 
     for (PsiReference ref : refs) {
@@ -135,8 +135,8 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     }
   }
 
-  @NotNull
-  private static UsageInfo[] extractUsagesForElement(@NotNull final PsiElement element, @NotNull final UsageInfo[] usages) {
+  @Nonnull
+  private static UsageInfo[] extractUsagesForElement(@Nonnull final PsiElement element, @Nonnull final UsageInfo[] usages) {
     final ArrayList<UsageInfo> extractedUsages = new ArrayList<UsageInfo>(usages.length);
     for (UsageInfo usage : usages) {
       if (usage instanceof MoveRenameUsageInfo) {
@@ -173,8 +173,8 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     }
   }
 
-  @NotNull
-  private PyExpression invertExpression(@NotNull final PsiElement expression) {
+  @Nonnull
+  private PyExpression invertExpression(@Nonnull final PsiElement expression) {
     final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(myProject);
     if (expression instanceof PyBoolLiteralExpression) {
       final String value = ((PyBoolLiteralExpression)expression).getValue() ? PyNames.FALSE : PyNames.TRUE;

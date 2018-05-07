@@ -21,7 +21,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -37,7 +38,7 @@ import consulo.roots.ContentFolderScopes;
  * @author yole
  */
 public class RootVisitorHost {
-  public static void visitRoots(@NotNull final PsiElement elt, @NotNull final RootVisitor visitor) {
+  public static void visitRoots(@Nonnull final PsiElement elt, @Nonnull final RootVisitor visitor) {
     // real search
     final Module module = ModuleUtil.findModuleForPsiElement(elt);
     if (module != null) {
@@ -51,7 +52,7 @@ public class RootVisitorHost {
     }
   }
 
-  public static void visitRoots(@NotNull Module module, final boolean skipSdk, final RootVisitor visitor) {
+  public static void visitRoots(@Nonnull Module module, final boolean skipSdk, final RootVisitor visitor) {
     OrderEnumerator enumerator = OrderEnumerator.orderEntries(module).recursively();
     if (skipSdk) {
       enumerator = enumerator.withoutSdk();
@@ -93,7 +94,7 @@ public class RootVisitorHost {
     }
   }
 
-  public static boolean visitSdkRoots(@NotNull Sdk sdk, @NotNull RootVisitor visitor) {
+  public static boolean visitSdkRoots(@Nonnull Sdk sdk, @Nonnull RootVisitor visitor) {
     final VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
     for (VirtualFile root : roots) {
       if (!visitor.visitRoot(root, null, sdk, false)) {

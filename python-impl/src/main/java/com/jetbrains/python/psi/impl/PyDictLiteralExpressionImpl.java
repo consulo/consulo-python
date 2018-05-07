@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PyElementTypes;
@@ -34,13 +34,13 @@ public class PyDictLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		super(astNode);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyKeyValueExpression[] getElements()
 	{
 		return childrenToPsi(KEY_VALUE_EXPRESSIONS, PyKeyValueExpression.EMPTY_ARRAY);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		return PyBuiltinCache.getInstance(this).createLiteralCollectionType(this, "dict", context);
 	}

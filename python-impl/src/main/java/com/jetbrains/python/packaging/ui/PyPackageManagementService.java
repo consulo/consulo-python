@@ -25,9 +25,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunCanceledByUserException;
@@ -58,7 +60,7 @@ import com.jetbrains.python.sdk.PythonSdkType;
  */
 public class PyPackageManagementService extends PackageManagementServiceEx
 {
-	@NotNull
+	@Nonnull
 	private static final Pattern PATTERN_ERROR_LINE = Pattern.compile(".*error:.*", Pattern.CASE_INSENSITIVE);
 	@NonNls
 	private static final String TEXT_PREFIX = "<html><head>" +
@@ -75,7 +77,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	protected final Sdk mySdk;
 	protected final ExecutorService myExecutorService;
 
-	public PyPackageManagementService(@NotNull Project project, @NotNull Sdk sdk)
+	public PyPackageManagementService(@Nonnull Project project, @Nonnull Sdk sdk)
 	{
 		myProject = project;
 		mySdk = sdk;
@@ -83,7 +85,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		myExecutorService = AppExecutorUtil.createBoundedApplicationPoolExecutor("PyPackageManagementService pool", 4);
 	}
 
-	@NotNull
+	@Nonnull
 	public Sdk getSdk()
 	{
 		return mySdk;
@@ -115,7 +117,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		PyPackageService.getInstance().removeRepository(repositoryUrl);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<RepoPackage> getAllPackages() throws IOException
 	{
@@ -125,8 +127,8 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		return packages;
 	}
 
-	@NotNull
-	protected static List<RepoPackage> versionMapToPackageList(@NotNull Map<String, String> packageToVersionMap)
+	@Nonnull
+	protected static List<RepoPackage> versionMapToPackageList(@Nonnull Map<String, String> packageToVersionMap)
 	{
 		final boolean customRepoConfigured = !PyPackageService.getInstance().additionalRepositories.isEmpty();
 		final String url = customRepoConfigured ? PyPIPackageUtil.PYPI_LIST_URL : "";
@@ -138,7 +140,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		return packages;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<RepoPackage> reloadAllPackages() throws IOException
 	{
@@ -146,7 +148,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		return getAllPackages();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<RepoPackage> getAllPackagesCached()
 	{
@@ -159,7 +161,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		return !PythonSdkType.isVirtualEnv(mySdk);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getInstallToUserText()
 	{
@@ -183,7 +185,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		PyPackageService.getInstance().addSdkToUserSite(mySdk.getHomePath(), newValue);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<InstalledPackage> getInstalledPackages() throws IOException
 	{
@@ -203,7 +205,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	}
 
 	@Override
-	public void installPackage(@NotNull RepoPackage repoPackage, @Nullable String version, boolean forceUpgrade, @Nullable String extraOptions, @NotNull Listener listener, boolean installToUser)
+	public void installPackage(@Nonnull RepoPackage repoPackage, @Nullable String version, boolean forceUpgrade, @Nullable String extraOptions, @Nonnull Listener listener, boolean installToUser)
 	{
 		final String packageName = repoPackage.getName();
 		final String repository = PyPIPackageUtil.isPyPIRepository(repoPackage.getRepoUrl()) ? null : repoPackage.getRepoUrl();
@@ -264,7 +266,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	}
 
 	@Override
-	public void uninstallPackages(@NotNull List<InstalledPackage> installedPackages, @NotNull Listener listener)
+	public void uninstallPackages(@Nonnull List<InstalledPackage> installedPackages, @Nonnull Listener listener)
 	{
 		final String packageName = installedPackages.size() == 1 ? installedPackages.get(0).getName() : null;
 		final PyPackageManagerUI ui = new PyPackageManagerUI(myProject, mySdk, new PyPackageManagerUI.Listener()
@@ -300,7 +302,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	}
 
 	@Override
-	public void fetchPackageDetails(@NotNull String packageName, @NotNull CatchingConsumer<String, Exception> consumer)
+	public void fetchPackageDetails(@Nonnull String packageName, @Nonnull CatchingConsumer<String, Exception> consumer)
 	{
 		PyPIPackageUtil.INSTANCE.fillPackageDetails(packageName, new CatchingConsumer<PackageDetails.Info, Exception>()
 		{
@@ -318,7 +320,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		});
 	}
 
-	private static String formatPackageInfo(@NotNull PackageDetails.Info info)
+	private static String formatPackageInfo(@Nonnull PackageDetails.Info info)
 	{
 		final StringBuilder stringBuilder = new StringBuilder(TEXT_PREFIX);
 		final String description = info.getSummary();
@@ -359,13 +361,13 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	@NonNls
 	private static final String HTML_SUFFIX = "</a>";
 
-	@NotNull
+	@Nonnull
 	private static String composeHref(String vendorUrl)
 	{
 		return HTML_PREFIX + vendorUrl + "\">" + vendorUrl + HTML_SUFFIX;
 	}
 
-	private static boolean isCancelled(@NotNull List<ExecutionException> exceptions)
+	private static boolean isCancelled(@Nonnull List<ExecutionException> exceptions)
 	{
 		for(ExecutionException e : exceptions)
 		{
@@ -377,8 +379,8 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		return false;
 	}
 
-	@NotNull
-	private static ErrorDescription createDescription(@NotNull ExecutionException e, @Nullable Sdk sdk)
+	@Nonnull
+	private static ErrorDescription createDescription(@Nonnull ExecutionException e, @Nullable Sdk sdk)
 	{
 		if(e instanceof PyExecutionException)
 		{
@@ -397,7 +399,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	}
 
 	@Nullable
-	private static String findErrorSolution(@NotNull PyExecutionException e, @Nullable String cause, @Nullable Sdk sdk)
+	private static String findErrorSolution(@Nonnull PyExecutionException e, @Nullable String cause, @Nullable Sdk sdk)
 	{
 		if(cause != null)
 		{
@@ -423,13 +425,13 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 		return null;
 	}
 
-	private static boolean containsInOutput(@NotNull PyExecutionException e, @NotNull String text)
+	private static boolean containsInOutput(@Nonnull PyExecutionException e, @Nonnull String text)
 	{
 		return StringUtil.containsIgnoreCase(e.getStdout(), text) || StringUtil.containsIgnoreCase(e.getStderr(), text);
 	}
 
 	@Nullable
-	private static String findErrorCause(@NotNull String output)
+	private static String findErrorCause(@Nonnull String output)
 	{
 		final Matcher m = PATTERN_ERROR_LINE.matcher(output);
 		if(m.find())
@@ -441,7 +443,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	}
 
 	@Override
-	public void updatePackage(@NotNull InstalledPackage installedPackage, @Nullable String version, @NotNull Listener listener)
+	public void updatePackage(@Nonnull InstalledPackage installedPackage, @Nullable String version, @Nonnull Listener listener)
 	{
 		installPackage(new RepoPackage(installedPackage.getName(), null), null, true, null, listener, false);
 	}
@@ -456,7 +458,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	}
 
 	@Override
-	public void fetchLatestVersion(@NotNull InstalledPackage pkg, @NotNull CatchingConsumer<String, Exception> consumer)
+	public void fetchLatestVersion(@Nonnull InstalledPackage pkg, @Nonnull CatchingConsumer<String, Exception> consumer)
 	{
 		myExecutorService.submit(() -> {
 			try
@@ -473,7 +475,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx
 	}
 
 	@Override
-	public int compareVersions(@NotNull String version1, @NotNull String version2)
+	public int compareVersions(@Nonnull String version1, @Nonnull String version2)
 	{
 		if(PyRequirement.calculateVersionSpec(version2, PyRequirementRelation.EQ).matches(version1))
 		{

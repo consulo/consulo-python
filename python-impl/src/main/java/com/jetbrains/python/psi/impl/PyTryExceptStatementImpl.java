@@ -16,11 +16,12 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -37,7 +38,7 @@ public class PyTryExceptStatementImpl extends PyPartitionedElementImpl implement
     pyVisitor.visitPyTryExceptStatement(this);
   }
 
-  @NotNull
+  @Nonnull
   public PyExceptPart[] getExceptParts() {
     return childrenToPsi(EXCEPT_BLOCKS, PyExceptPart.EMPTY_ARRAY);
   }
@@ -46,7 +47,7 @@ public class PyTryExceptStatementImpl extends PyPartitionedElementImpl implement
     return (PyElsePart)getPart(PyElementTypes.ELSE_PART);
   }
 
-  @NotNull
+  @Nonnull
   public PyTryPart getTryPart() {
     return (PyTryPart)getPartNotNull(PyElementTypes.TRY_PART);
   }

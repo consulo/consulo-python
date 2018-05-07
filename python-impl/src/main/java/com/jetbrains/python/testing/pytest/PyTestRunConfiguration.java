@@ -33,7 +33,7 @@ import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import com.jetbrains.python.testing.VFSTestFrameworkListener;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -61,7 +61,7 @@ public class PyTestRunConfiguration extends AbstractPythonTestRunConfiguration i
     return new PyTestConfigurationEditor(getProject(), this);
   }
 
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException {
     return new PyTestCommandLineState(this, env);
   }
 

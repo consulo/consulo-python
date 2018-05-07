@@ -17,8 +17,9 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiElement;
@@ -62,7 +63,7 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 		super("TARGET_EXPRESSION");
 	}
 
-	public PyTargetExpressionElementType(@NotNull @NonNls String debugName)
+	public PyTargetExpressionElementType(@Nonnull @NonNls String debugName)
 	{
 		super(debugName);
 	}
@@ -76,19 +77,19 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 		return myCustomStubTypes;
 	}
 
-	@NotNull
-	public PsiElement createElement(@NotNull final ASTNode node)
+	@Nonnull
+	public PsiElement createElement(@Nonnull final ASTNode node)
 	{
 		return new PyTargetExpressionImpl(node);
 	}
 
-	public PyTargetExpression createPsi(@NotNull final PyTargetExpressionStub stub)
+	public PyTargetExpression createPsi(@Nonnull final PyTargetExpressionStub stub)
 	{
 		return new PyTargetExpressionImpl(stub);
 	}
 
-	@NotNull
-	public PyTargetExpressionStub createStub(@NotNull final PyTargetExpression psi, final StubElement parentStub)
+	@Nonnull
+	public PyTargetExpressionStub createStub(@Nonnull final PyTargetExpression psi, final StubElement parentStub)
 	{
 		final String name = psi.getName();
 		final PyExpression assignedValue = psi.findAssignedValue();
@@ -121,7 +122,7 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 		return new PyTargetExpressionStubImpl(name, docString, initializerType, initializer, psi.isQualified(), typeComment, parentStub);
 	}
 
-	public void serialize(@NotNull final PyTargetExpressionStub stub, @NotNull final StubOutputStream stream) throws IOException
+	public void serialize(@Nonnull final PyTargetExpressionStub stub, @Nonnull final StubOutputStream stream) throws IOException
 	{
 		stream.writeName(stub.getName());
 		final String docString = stub.getDocString();
@@ -141,8 +142,8 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 		}
 	}
 
-	@NotNull
-	public PyTargetExpressionStub deserialize(@NotNull final StubInputStream stream, final StubElement parentStub) throws IOException
+	@Nonnull
+	public PyTargetExpressionStub deserialize(@Nonnull final StubInputStream stream, final StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(stream.readName());
 		String docString = stream.readUTFFast();
@@ -198,7 +199,7 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 	}
 
 	@Override
-	public void indexStub(@NotNull PyTargetExpressionStub stub, @NotNull IndexSink sink)
+	public void indexStub(@Nonnull PyTargetExpressionStub stub, @Nonnull IndexSink sink)
 	{
 		String name = stub.getName();
 		if(name != null && PyUtil.getInitialUnderscores(name) == 0)

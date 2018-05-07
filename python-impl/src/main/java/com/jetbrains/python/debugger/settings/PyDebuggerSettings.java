@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SimpleConfigurable;
 import com.intellij.openapi.project.Project;
@@ -38,7 +38,7 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
 	private boolean myLibrariesFilterEnabled;
 	private boolean mySteppingFiltersEnabled;
 	private
-	@NotNull
+	@Nonnull
 	List<PySteppingFilter> mySteppingFilters;
 	public static final String FILTERS_DIVIDER = ";";
 	private boolean myWatchReturnValues = false;
@@ -95,14 +95,14 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
 		mySteppingFiltersEnabled = steppingFiltersEnabled;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<PySteppingFilter> getSteppingFilters()
 	{
 		return mySteppingFilters;
 	}
 
-	@NotNull
-	public String getSteppingFiltersForProject(@NotNull Project project)
+	@Nonnull
+	public String getSteppingFiltersForProject(@Nonnull Project project)
 	{
 		StringBuilder sb = new StringBuilder();
 		for(PySteppingFilter filter : mySteppingFilters)
@@ -115,7 +115,7 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
 		return sb.toString();
 	}
 
-	public void setSteppingFilters(@NotNull List<PySteppingFilter> steppingFilters)
+	public void setSteppingFilters(@Nonnull List<PySteppingFilter> steppingFilters)
 	{
 		mySteppingFilters = steppingFilters;
 	}
@@ -133,9 +133,9 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
 		XmlSerializerUtil.copyBean(state, this);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Collection<? extends Configurable> createConfigurables(@NotNull DebuggerSettingsCategory category)
+	public Collection<? extends Configurable> createConfigurables(@Nonnull DebuggerSettingsCategory category)
 	{
 		switch(category)
 		{

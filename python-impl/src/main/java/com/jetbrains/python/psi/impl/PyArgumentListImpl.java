@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Queues;
 import com.intellij.lang.ASTFactory;
@@ -63,7 +63,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public Collection<PyExpression> getArgumentExpressions()
 	{
 		final PyExpression[] arguments = getArguments();
@@ -83,7 +83,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 		return result;
 	}
 
-	@NotNull
+	@Nonnull
 	public PyExpression[] getArguments()
 	{
 		return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);
@@ -110,7 +110,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	}
 
 	@Override
-	public void addArgument(@NotNull final PyExpression arg)
+	public void addArgument(@Nonnull final PyExpression arg)
 	{
 		final PyElementGenerator generator = new PyElementGeneratorImpl(getProject());
 
@@ -160,7 +160,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	/**
 	 * @return parameters (as opposite to keyword arguments)
 	 */
-	@NotNull
+	@Nonnull
 	private Deque<PyExpression> getParameters()
 	{
 		final PyExpression[] childrenOfType = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
@@ -174,7 +174,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	/**
 	 * @return keyword arguments (as opposite to parameters)
 	 */
-	@NotNull
+	@Nonnull
 	private Deque<PyKeywordArgument> getKeyWordArguments()
 	{
 		return Queues.newArrayDeque(PsiTreeUtil.findChildrenOfType(this, PyKeywordArgument.class));
@@ -226,7 +226,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	/**
 	 * @return newly created comma
 	 */
-	@NotNull
+	@Nonnull
 	private ASTNode createComma()
 	{
 		return PyElementGenerator.getInstance(getProject()).createComma();
@@ -360,7 +360,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode node)
+	public void deleteChildInternal(@Nonnull ASTNode node)
 	{
 		if(ArrayUtil.contains(node.getPsi(), getArguments()))
 		{
@@ -372,7 +372,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	private static class NoKeyArguments extends NotNullPredicate<PyExpression>
 	{
 		@Override
-		protected boolean applyNotNull(@NotNull final PyExpression input)
+		protected boolean applyNotNull(@Nonnull final PyExpression input)
 		{
 			return (PsiTreeUtil.getParentOfType(input, PyKeywordArgument.class) == null) && !(input instanceof PyKeywordArgument);
 		}
@@ -380,7 +380,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 
 	@Nullable
 	@Override
-	public PyExpression getValueExpressionForParam(@NotNull final FunctionParameter parameter)
+	public PyExpression getValueExpressionForParam(@Nonnull final FunctionParameter parameter)
 	{
 		final String parameterName = parameter.getName();
 		if(parameterName != null)

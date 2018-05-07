@@ -18,7 +18,7 @@ package com.jetbrains.python.inspections;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.controlflow.ControlFlow;
 import com.intellij.codeInsight.controlflow.ControlFlowUtil;
 import com.intellij.codeInsight.controlflow.Instruction;
@@ -52,15 +52,15 @@ public class PyUnboundLocalVariableInspection extends PyInspection
 {
 	private static Key<Set<ScopeOwner>> LARGE_FUNCTIONS_KEY = Key.create("PyUnboundLocalVariableInspection.LargeFunctions");
 
-	@NotNull
+	@Nonnull
 	@Nls
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.unbound");
 	}
 
-	@NotNull
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull final LocalInspectionToolSession session)
+	@Nonnull
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull final LocalInspectionToolSession session)
 	{
 		session.putUserData(LARGE_FUNCTIONS_KEY, new HashSet<>());
 		return new Visitor(holder, session);
@@ -184,7 +184,7 @@ public class PyUnboundLocalVariableInspection extends PyInspection
 			}
 		}
 
-		private static boolean isFirstUnboundRead(@NotNull PyReferenceExpression node, @NotNull ScopeOwner owner)
+		private static boolean isFirstUnboundRead(@Nonnull PyReferenceExpression node, @Nonnull ScopeOwner owner)
 		{
 			final String nodeName = node.getReferencedName();
 			final Scope scope = ControlFlowCache.getScope(owner);

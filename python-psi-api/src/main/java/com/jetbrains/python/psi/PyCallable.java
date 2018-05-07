@@ -17,8 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
@@ -33,27 +33,27 @@ public interface PyCallable extends PyTypedElement, PyQualifiedNameOwner
 	/**
 	 * @return a list of parameters passed to this callable, possibly empty.
 	 */
-	@NotNull
+	@Nonnull
 	PyParameterList getParameterList();
 
 	/**
 	 * Returns the return type of the callable independent of a call site.
 	 */
 	@Nullable
-	PyType getReturnType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key);
+	PyType getReturnType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key);
 
 	/**
 	 * Returns the type of the call to the callable.
 	 */
 	@Nullable
-	PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite);
+	PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite);
 
 	/**
 	 * Returns the type of the call to the callable where the call site is specified by the optional receiver and the arguments to parameters
 	 * mapping.
 	 */
 	@Nullable
-	PyType getCallType(@Nullable PyExpression receiver, @NotNull Map<PyExpression, PyNamedParameter> parameters, @NotNull TypeEvalContext context);
+	PyType getCallType(@Nullable PyExpression receiver, @Nonnull Map<PyExpression, PyNamedParameter> parameters, @Nonnull TypeEvalContext context);
 
 	/**
 	 * @return a methods returns itself, non-method callables return null.

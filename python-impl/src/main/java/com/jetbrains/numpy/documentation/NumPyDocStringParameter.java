@@ -15,8 +15,8 @@
  */
 package com.jetbrains.numpy.documentation;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 /**
@@ -28,7 +28,7 @@ public class NumPyDocStringParameter {
   private final String myType;
   private final String myDescription;
 
-  public NumPyDocStringParameter(@NotNull String name, @Nullable String type, @Nullable String description) {
+  public NumPyDocStringParameter(@Nonnull String name, @Nullable String type, @Nullable String description) {
     myName = name;
     myType = type;
     myDescription = description;

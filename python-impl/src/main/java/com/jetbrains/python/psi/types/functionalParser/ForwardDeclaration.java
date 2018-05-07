@@ -17,7 +17,7 @@
 package com.jetbrains.python.psi.types.functionalParser;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -27,20 +27,20 @@ import java.util.List;
 public class ForwardDeclaration<R, T> extends FunctionalParserBase<R, T> {
   private FunctionalParser<R, T> myParser = null;
 
-  @NotNull
+  @Nonnull
   public static <R, T> ForwardDeclaration<R, T> create() {
     return new ForwardDeclaration<R, T>();
   }
 
-  @NotNull
-  public ForwardDeclaration<R, T> define(@NotNull FunctionalParser<R, T> parser) {
+  @Nonnull
+  public ForwardDeclaration<R, T> define(@Nonnull FunctionalParser<R, T> parser) {
     myParser = parser;
     return this;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public Pair<R, State> parse(@NotNull List<Token<T>> tokens, @NotNull State state) throws ParserException {
+  public Pair<R, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
     if (myParser != null) {
       return myParser.parse(tokens, state);
     }

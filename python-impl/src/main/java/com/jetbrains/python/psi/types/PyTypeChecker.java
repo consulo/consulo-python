@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.ArrayUtil;
@@ -48,7 +48,7 @@ public class PyTypeChecker
 	{
 	}
 
-	public static boolean match(@Nullable PyType expected, @Nullable PyType actual, @NotNull TypeEvalContext context)
+	public static boolean match(@Nullable PyType expected, @Nullable PyType actual, @Nonnull TypeEvalContext context)
 	{
 		return match(expected, actual, context, null, true);
 	}
@@ -64,12 +64,12 @@ public class PyTypeChecker
 	 * @param substitutions
 	 * @return
 	 */
-	public static boolean match(@Nullable PyType expected, @Nullable PyType actual, @NotNull TypeEvalContext context, @Nullable Map<PyGenericType, PyType> substitutions)
+	public static boolean match(@Nullable PyType expected, @Nullable PyType actual, @Nonnull TypeEvalContext context, @Nullable Map<PyGenericType, PyType> substitutions)
 	{
 		return match(expected, actual, context, substitutions, true);
 	}
 
-	private static boolean match(@Nullable PyType expected, @Nullable PyType actual, @NotNull TypeEvalContext context, @Nullable Map<PyGenericType, PyType> substitutions, boolean recursive)
+	private static boolean match(@Nullable PyType expected, @Nullable PyType actual, @Nonnull TypeEvalContext context, @Nullable Map<PyGenericType, PyType> substitutions, boolean recursive)
 	{
 		// TODO: subscriptable types?, module types?, etc.
 		if(actual instanceof PyClassType)
@@ -333,7 +333,7 @@ public class PyTypeChecker
 		return matchNumericTypes(expected, actual);
 	}
 
-	private static boolean consistsOfSameElementNumberTuples(@NotNull PyUnionType unionType, int elementCount)
+	private static boolean consistsOfSameElementNumberTuples(@Nonnull PyUnionType unionType, int elementCount)
 	{
 		for(PyType type : unionType.getMembers())
 		{
@@ -355,10 +355,10 @@ public class PyTypeChecker
 		return true;
 	}
 
-	private static boolean substituteExpectedElementsWithUnions(@NotNull PyTupleType expected,
+	private static boolean substituteExpectedElementsWithUnions(@Nonnull PyTupleType expected,
 			int elementCount,
-			@NotNull PyUnionType actual,
-			@NotNull TypeEvalContext context,
+			@Nonnull PyUnionType actual,
+			@Nonnull TypeEvalContext context,
 			@Nullable Map<PyGenericType, PyType> substitutions,
 			boolean recursive)
 	{
@@ -421,7 +421,7 @@ public class PyTypeChecker
 	}
 
 	@Nullable
-	public static PyType toNonWeakType(@Nullable PyType type, @NotNull TypeEvalContext context)
+	public static PyType toNonWeakType(@Nullable PyType type, @Nonnull TypeEvalContext context)
 	{
 		if(type instanceof PyUnionType)
 		{
@@ -434,14 +434,14 @@ public class PyTypeChecker
 		return type;
 	}
 
-	public static boolean hasGenerics(@Nullable PyType type, @NotNull TypeEvalContext context)
+	public static boolean hasGenerics(@Nullable PyType type, @Nonnull TypeEvalContext context)
 	{
 		final Set<PyGenericType> collected = new HashSet<>();
 		collectGenerics(type, context, collected, new HashSet<>());
 		return !collected.isEmpty();
 	}
 
-	private static void collectGenerics(@Nullable PyType type, @NotNull TypeEvalContext context, @NotNull Set<PyGenericType> collected, @NotNull Set<PyType> visited)
+	private static void collectGenerics(@Nullable PyType type, @Nonnull TypeEvalContext context, @Nonnull Set<PyGenericType> collected, @Nonnull Set<PyType> visited)
 	{
 		if(visited.contains(type))
 		{
@@ -496,7 +496,7 @@ public class PyTypeChecker
 	}
 
 	@Nullable
-	public static PyType substitute(@Nullable PyType type, @NotNull Map<PyGenericType, PyType> substitutions, @NotNull TypeEvalContext context)
+	public static PyType substitute(@Nullable PyType type, @Nonnull Map<PyGenericType, PyType> substitutions, @Nonnull TypeEvalContext context)
 	{
 		if(hasGenerics(type, context))
 		{
@@ -561,7 +561,7 @@ public class PyTypeChecker
 	}
 
 	@Nullable
-	public static Map<PyGenericType, PyType> unifyGenericCall(@Nullable PyExpression receiver, @NotNull Map<PyExpression, PyNamedParameter> arguments, @NotNull TypeEvalContext context)
+	public static Map<PyGenericType, PyType> unifyGenericCall(@Nullable PyExpression receiver, @Nonnull Map<PyExpression, PyNamedParameter> arguments, @Nonnull TypeEvalContext context)
 	{
 		final Map<PyGenericType, PyType> substitutions = unifyReceiver(receiver, context);
 		for(Map.Entry<PyExpression, PyNamedParameter> entry : arguments.entrySet())
@@ -581,8 +581,8 @@ public class PyTypeChecker
 		return substitutions;
 	}
 
-	@NotNull
-	public static Map<PyGenericType, PyType> unifyReceiver(@Nullable PyExpression receiver, @NotNull TypeEvalContext context)
+	@Nonnull
+	public static Map<PyGenericType, PyType> unifyReceiver(@Nullable PyExpression receiver, @Nonnull TypeEvalContext context)
 	{
 		final Map<PyGenericType, PyType> substitutions = new LinkedHashMap<>();
 		// Collect generic params of object type
@@ -619,7 +619,7 @@ public class PyTypeChecker
 		return substitutions;
 	}
 
-	private static boolean matchClasses(@Nullable PyClass superClass, @Nullable PyClass subClass, @NotNull TypeEvalContext context)
+	private static boolean matchClasses(@Nullable PyClass superClass, @Nullable PyClass subClass, @Nonnull TypeEvalContext context)
 	{
 		if(superClass == null ||
 				subClass == null ||
@@ -636,8 +636,8 @@ public class PyTypeChecker
 		}
 	}
 
-	@NotNull
-	public static List<AnalyzeCallResults> analyzeCallSite(@Nullable PyCallSiteExpression callSite, @NotNull TypeEvalContext context)
+	@Nonnull
+	public static List<AnalyzeCallResults> analyzeCallSite(@Nullable PyCallSiteExpression callSite, @Nonnull TypeEvalContext context)
 	{
 		if(callSite != null)
 		{
@@ -656,8 +656,8 @@ public class PyTypeChecker
 		return Collections.emptyList();
 	}
 
-	@NotNull
-	private static List<PyCallable> resolveCallee(@NotNull PyCallSiteExpression callSite, @NotNull TypeEvalContext context)
+	@Nonnull
+	private static List<PyCallable> resolveCallee(@Nonnull PyCallSiteExpression callSite, @Nonnull TypeEvalContext context)
 	{
 		final PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
 		if(callSite instanceof PyCallExpression)
@@ -724,7 +724,7 @@ public class PyTypeChecker
 	 * It is false otherwise.
 	 */
 	@Nullable
-	private static Boolean isUnionCallable(@NotNull final PyUnionType type)
+	private static Boolean isUnionCallable(@Nonnull final PyUnionType type)
 	{
 		for(final PyType member : type.getMembers())
 		{
@@ -741,7 +741,7 @@ public class PyTypeChecker
 		return false;
 	}
 
-	public static boolean overridesGetAttr(@NotNull PyClass cls, @NotNull TypeEvalContext context)
+	public static boolean overridesGetAttr(@Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 	{
 		PsiElement method = resolveClassMember(cls, PyNames.GETATTR, context);
 		if(method != null)
@@ -757,7 +757,7 @@ public class PyTypeChecker
 	}
 
 	@Nullable
-	private static PsiElement resolveClassMember(@NotNull PyClass cls, @NotNull String name, @NotNull TypeEvalContext context)
+	private static PsiElement resolveClassMember(@Nonnull PyClass cls, @Nonnull String name, @Nonnull TypeEvalContext context)
 	{
 		final PyType type = context.getType(cls);
 		if(type != null)
@@ -773,7 +773,7 @@ public class PyTypeChecker
 	}
 
 	@Nullable
-	public static PyType getTargetTypeFromTupleAssignment(@NotNull PyTargetExpression target, @NotNull PyTupleExpression parentTuple, @NotNull PyTupleType assignedTupleType)
+	public static PyType getTargetTypeFromTupleAssignment(@Nonnull PyTargetExpression target, @Nonnull PyTupleExpression parentTuple, @Nonnull PyTupleType assignedTupleType)
 	{
 		final int count = assignedTupleType.getElementCount();
 		final PyExpression[] elements = parentTuple.getElements();
@@ -808,11 +808,11 @@ public class PyTypeChecker
 		return null;
 	}
 
-	@NotNull
-	public static List<PyParameter> filterExplicitParameters(@NotNull List<PyParameter> parameters,
-			@NotNull PyCallable callable,
-			@NotNull PyCallSiteExpression callSite,
-			@NotNull PyResolveContext resolveContext)
+	@Nonnull
+	public static List<PyParameter> filterExplicitParameters(@Nonnull List<PyParameter> parameters,
+			@Nonnull PyCallable callable,
+			@Nonnull PyCallSiteExpression callSite,
+			@Nonnull PyResolveContext resolveContext)
 	{
 		final int implicitOffset;
 		if(callSite instanceof PyCallExpression)
@@ -839,8 +839,8 @@ public class PyTypeChecker
 		return parameters.subList(Math.min(implicitOffset, parameters.size()), parameters.size());
 	}
 
-	@NotNull
-	public static List<PyExpression> getArguments(@NotNull PyCallSiteExpression expr, @NotNull PsiElement resolved)
+	@Nonnull
+	public static List<PyExpression> getArguments(@Nonnull PyCallSiteExpression expr, @Nonnull PsiElement resolved)
 	{
 		if(expr instanceof PyCallExpression)
 		{
@@ -863,7 +863,7 @@ public class PyTypeChecker
 	}
 
 	@Nullable
-	public static PyExpression getReceiver(@NotNull PyCallSiteExpression expr, @NotNull PsiElement resolved)
+	public static PyExpression getReceiver(@Nonnull PyCallSiteExpression expr, @Nonnull PsiElement resolved)
 	{
 		if(expr instanceof PyCallExpression)
 		{
@@ -896,21 +896,21 @@ public class PyTypeChecker
 
 	public static class AnalyzeCallResults
 	{
-		@NotNull
+		@Nonnull
 		private final PyCallable myCallable;
 		@Nullable
 		private final PyExpression myReceiver;
-		@NotNull
+		@Nonnull
 		private final Map<PyExpression, PyNamedParameter> myArguments;
 
-		public AnalyzeCallResults(@NotNull PyCallable callable, @Nullable PyExpression receiver, @NotNull Map<PyExpression, PyNamedParameter> arguments)
+		public AnalyzeCallResults(@Nonnull PyCallable callable, @Nullable PyExpression receiver, @Nonnull Map<PyExpression, PyNamedParameter> arguments)
 		{
 			myCallable = callable;
 			myReceiver = receiver;
 			myArguments = arguments;
 		}
 
-		@NotNull
+		@Nonnull
 		public PyCallable getCallable()
 		{
 			return myCallable;
@@ -922,7 +922,7 @@ public class PyTypeChecker
 			return myReceiver;
 		}
 
-		@NotNull
+		@Nonnull
 		public Map<PyExpression, PyNamedParameter> getArguments()
 		{
 			return myArguments;

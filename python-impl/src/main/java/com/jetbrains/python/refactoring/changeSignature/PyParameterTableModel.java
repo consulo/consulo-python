@@ -35,8 +35,8 @@ import com.intellij.ui.EditorTextField;
 import com.intellij.util.ui.ColumnInfo;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyParameterList;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;

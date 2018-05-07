@@ -27,7 +27,7 @@ import com.intellij.usages.rules.PsiElementUsage;
 import com.intellij.usages.rules.UsageGroupingRule;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -38,7 +38,7 @@ public class PyFunctionGroupingRuleProvider implements FileStructureGroupRulePro
   }
 
   private static class PyFunctionGroupingRule implements UsageGroupingRule {
-    public UsageGroup groupUsage(@NotNull Usage usage) {
+    public UsageGroup groupUsage(@Nonnull Usage usage) {
       if (!(usage instanceof PsiElementUsage)) return null;
       final PsiElement psiElement = ((PsiElementUsage)usage).getElement();
       final PyFunction pyFunction = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class, false, PyClass.class);

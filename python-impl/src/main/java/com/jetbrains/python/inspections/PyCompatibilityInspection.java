@@ -25,13 +25,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -72,12 +73,12 @@ import com.jetbrains.python.validation.UnsupportedFeaturesUtil;
 public class PyCompatibilityInspection extends PyInspection
 {
 
-	@NotNull
+	@Nonnull
 	public static final List<String> BACKPORTED_PACKAGES = ImmutableList.<String>builder().add("enum").add("typing").build();
 
 	public static final int LATEST_INSPECTION_VERSION = 2;
 
-	@NotNull
+	@Nonnull
 	public static final List<LanguageLevel> DEFAULT_PYTHON_VERSIONS = ImmutableList.of(LanguageLevel.PYTHON27, LanguageLevel.getLatest());
 
 	// Legacy DefaultJDOMExternalizer requires public fields for proper serialization
@@ -96,7 +97,7 @@ public class PyCompatibilityInspection extends PyInspection
 	}
 
 	@Nullable
-	public static PyCompatibilityInspection getInstance(@NotNull PsiElement element)
+	public static PyCompatibilityInspection getInstance(@Nonnull PsiElement element)
 	{
 		final InspectionProfile inspectionProfile = InspectionProjectProfileManager.getInstance(element.getProject()).getInspectionProfile();
 		final String toolName = PyCompatibilityInspection.class.getSimpleName();
@@ -122,7 +123,7 @@ public class PyCompatibilityInspection extends PyInspection
 	}
 
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
@@ -152,9 +153,9 @@ public class PyCompatibilityInspection extends PyInspection
 		return versionPanel;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
 	{
 		return new Visitor(holder, updateVersionsToProcess());
 	}
@@ -171,7 +172,7 @@ public class PyCompatibilityInspection extends PyInspection
 		}
 
 		@Override
-		protected void registerProblem(@NotNull PsiElement element, @NotNull TextRange range, @NotNull String message, @Nullable LocalQuickFix quickFix, boolean asError)
+		protected void registerProblem(@Nonnull PsiElement element, @Nonnull TextRange range, @Nonnull String message, @Nullable LocalQuickFix quickFix, boolean asError)
 		{
 			if(element.getTextLength() == 0)
 			{
@@ -378,7 +379,7 @@ public class PyCompatibilityInspection extends PyInspection
 			warnAboutAsyncAndAwaitInPy35AndPy36(node);
 		}
 
-		private void warnAboutAsyncAndAwaitInPy35AndPy36(@NotNull PsiNameIdentifierOwner nameIdentifierOwner)
+		private void warnAboutAsyncAndAwaitInPy35AndPy36(@Nonnull PsiNameIdentifierOwner nameIdentifierOwner)
 		{
 			final PsiElement nameIdentifier = nameIdentifierOwner.getNameIdentifier();
 

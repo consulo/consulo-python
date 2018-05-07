@@ -17,16 +17,16 @@ package com.jetbrains.python.psi.types;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
 public interface PyCollectionType extends PyType
 {
-	@NotNull
-	List<PyType> getElementTypes(@NotNull TypeEvalContext context);
+	@Nonnull
+	List<PyType> getElementTypes(@Nonnull TypeEvalContext context);
 
 	@Nullable
 	PyType getIteratedItemType();

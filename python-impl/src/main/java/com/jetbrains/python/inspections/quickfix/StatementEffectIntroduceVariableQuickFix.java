@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
@@ -26,7 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -34,18 +35,18 @@ import org.jetbrains.annotations.NotNull;
  * Quickfix to introduce variable if statement seems to have no effect
  */
 public class StatementEffectIntroduceVariableQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.introduce.variable");
   }
 
   @NonNls
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     PsiElement expression = descriptor.getPsiElement();
     if (expression != null && expression.isValid()) {
       final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

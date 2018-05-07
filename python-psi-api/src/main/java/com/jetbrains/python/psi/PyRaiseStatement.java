@@ -16,12 +16,12 @@
 
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public interface PyRaiseStatement extends PyStatement {
-  @NotNull
+  @Nonnull
   PyExpression[] getExpressions();
 }

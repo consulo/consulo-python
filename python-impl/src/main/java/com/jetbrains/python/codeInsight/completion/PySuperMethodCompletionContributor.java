@@ -20,7 +20,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -49,7 +49,7 @@ public class PySuperMethodCompletionContributor extends CompletionContributor
 		extend(CompletionType.BASIC, psiElement().afterLeafSkipping(psiElement().whitespace(), psiElement().withElementType(PyTokenTypes.DEF_KEYWORD)), new CompletionProvider()
 		{
 			@Override
-			public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet result)
+			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
 			{
 				PsiElement position = parameters.getOriginalPosition();
 				PyClass containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);

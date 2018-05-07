@@ -22,26 +22,26 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
 * @author yole
 */
 public class ConfigureTemplateDirectoriesAction implements LocalQuickFix, LowPriorityAction {
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return "Configure template directories";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getFamilyName() {
     return getName();
   }
 
   @Override
-  public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {

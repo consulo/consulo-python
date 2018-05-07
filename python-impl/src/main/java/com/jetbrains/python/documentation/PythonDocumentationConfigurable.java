@@ -20,12 +20,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Sets;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -42,7 +43,7 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
   public static final String ID = "com.jetbrains.python.documentation.PythonDocumentationConfigurable";
   private PythonDocumentationPanel myPanel = new PythonDocumentationPanel();
 
-  @NotNull
+  @Nonnull
   @Override
   public String getId() {
     return ID;

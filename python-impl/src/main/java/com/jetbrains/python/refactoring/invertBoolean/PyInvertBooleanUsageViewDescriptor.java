@@ -21,7 +21,7 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.usageView.UsageViewBundle;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.usageView.UsageViewUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -33,7 +33,7 @@ public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor {
     myElement = element;
   }
 
-  @NotNull
+  @Nonnull
   public PsiElement[] getElements() {
     return new PsiElement[] {myElement};
   }

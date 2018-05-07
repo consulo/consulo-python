@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
@@ -28,8 +29,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.application.options.ModuleListCellRenderer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -53,13 +54,13 @@ import com.intellij.util.containers.ContainerUtil;
 @Deprecated
 public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurable> implements SearchableConfigurable, Configurable.NoScroll
 {
-	@NotNull
+	@Nonnull
 	private final Project myProject;
 	private final String myDisplayName;
 	private final String myHelpTopic;
 	private final Map<Module, T> myModuleConfigurables = new HashMap<Module, T>();
 
-	public ModuleAwareProjectConfigurable(@NotNull Project project, String displayName, String helpTopic)
+	public ModuleAwareProjectConfigurable(@Nonnull Project project, String displayName, String helpTopic)
 	{
 		myProject = project;
 		myDisplayName = displayName;
@@ -79,7 +80,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
 		return myHelpTopic;
 	}
 
-	protected boolean isSuitableForModule(@NotNull Module module)
+	protected boolean isSuitableForModule(@Nonnull Module module)
 	{
 		return true;
 	}
@@ -162,7 +163,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	protected abstract T createModuleConfigurable(Module module);
 
 	@Override
@@ -206,7 +207,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
 		myModuleConfigurables.clear();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getId()
 	{
@@ -219,7 +220,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	protected final Project getProject()
 	{
 		return myProject;

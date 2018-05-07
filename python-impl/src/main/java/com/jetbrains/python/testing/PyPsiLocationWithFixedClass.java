@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.testing;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.PsiLocation;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.psi.PyClass;
@@ -29,16 +30,16 @@ import com.jetbrains.python.psi.PyFunction;
  */
 public final class PyPsiLocationWithFixedClass extends PsiLocation<PyFunction>
 {
-	@NotNull
+	@Nonnull
 	private final PyClass myFixedClass;
 
-	PyPsiLocationWithFixedClass(@NotNull final Project project, @NotNull final PyFunction psiElement, @NotNull final PyClass fixedClass)
+	PyPsiLocationWithFixedClass(@Nonnull final Project project, @Nonnull final PyFunction psiElement, @Nonnull final PyClass fixedClass)
 	{
 		super(project, psiElement);
 		myFixedClass = fixedClass;
 	}
 
-	@NotNull
+	@Nonnull
 	public PyClass getFixedClass()
 	{
 		return myFixedClass;

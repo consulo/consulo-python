@@ -22,10 +22,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.Nonnull;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import org.jetbrains.annotations.NotNull;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -57,7 +57,7 @@ public class AsyncArrayTableModel extends AbstractTableModel
 	private LoadingCache<Pair<Integer, Integer>, ListenableFuture<ArrayChunk>> myChunkCache = CacheBuilder.newBuilder().build(new CacheLoader<Pair<Integer, Integer>, ListenableFuture<ArrayChunk>>()
 	{
 		@Override
-		public ListenableFuture<ArrayChunk> load(@NotNull final Pair<Integer, Integer> key) throws Exception
+		public ListenableFuture<ArrayChunk> load(@Nonnull final Pair<Integer, Integer> key) throws Exception
 		{
 
 			ListenableFutureTask<ArrayChunk> task = ListenableFutureTask.create(() -> {
@@ -188,7 +188,7 @@ public class AsyncArrayTableModel extends AbstractTableModel
 				myChunkCache.put(key, new ListenableFuture<ArrayChunk>()
 				{
 					@Override
-					public void addListener(@NotNull Runnable listener, @NotNull Executor executor)
+					public void addListener(@Nonnull Runnable listener, @Nonnull Executor executor)
 					{
 
 					}

@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.run;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.options.SettingsEditor;
 
@@ -27,15 +28,15 @@ public interface PyRunConfigurationEditorExtension
 {
 	ExtensionPointName<PyRunConfigurationEditorExtension> EP_NAME = ExtensionPointName.create("consulo.python.runConfigurationEditorExtension");
 
-	boolean accepts(@NotNull AbstractPythonRunConfiguration configuration);
+	boolean accepts(@Nonnull AbstractPythonRunConfiguration configuration);
 
-	@NotNull
-	SettingsEditor<AbstractPythonRunConfiguration> createEditor(@NotNull AbstractPythonRunConfiguration configuration);
+	@Nonnull
+	SettingsEditor<AbstractPythonRunConfiguration> createEditor(@Nonnull AbstractPythonRunConfiguration configuration);
 
 	class Factory
 	{
 		@Nullable
-		public static PyRunConfigurationEditorExtension getExtension(@NotNull AbstractPythonRunConfiguration<?> configuration)
+		public static PyRunConfigurationEditorExtension getExtension(@Nonnull AbstractPythonRunConfiguration<?> configuration)
 		{
 			PyRunConfigurationEditorExtension[] extensions = EP_NAME.getExtensions();
 			for(PyRunConfigurationEditorExtension extension : extensions)

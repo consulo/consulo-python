@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.testing;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.openapi.extensions.ExtensionPointName;
 
@@ -26,9 +27,9 @@ import com.intellij.openapi.extensions.ExtensionPointName;
  */
 public interface PythonTestLocator extends SMTestLocator
 {
-	@NotNull
+	@Nonnull
 	ExtensionPointName<PythonTestLocator> EP_NAME = ExtensionPointName.create("consulo.python.testLocator");
 
-	@NotNull
+	@Nonnull
 	String getProtocolId();
 }

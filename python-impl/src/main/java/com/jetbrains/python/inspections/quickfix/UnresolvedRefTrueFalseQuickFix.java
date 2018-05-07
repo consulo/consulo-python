@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -23,7 +25,6 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -40,17 +41,17 @@ public class UnresolvedRefTrueFalseQuickFix implements LocalQuickFix {
     newName = new String(charArray);
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.unresolved.reference.replace.$0", newName);
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return "Replace with True or False";
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
     PyExpression expression = elementGenerator.createExpressionFromText(newName);

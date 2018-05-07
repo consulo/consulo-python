@@ -35,10 +35,12 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -90,7 +92,7 @@ public class PySkeletonRefresher
 	private
 	@Nullable
 	final ProgressIndicator myIndicator;
-	@NotNull
+	@Nonnull
 	private final Sdk mySdk;
 	private String mySkeletonsPath;
 
@@ -126,7 +128,7 @@ public class PySkeletonRefresher
 		ourGeneratingCount += increment;
 	}
 
-	public static void refreshSkeletonsOfSdk(@Nullable Project project, Component ownerComponent, String skeletonsPath, @NotNull Sdk sdk) throws InvalidSdkException
+	public static void refreshSkeletonsOfSdk(@Nullable Project project, Component ownerComponent, String skeletonsPath, @Nonnull Sdk sdk) throws InvalidSdkException
 	{
 		final Map<String, List<String>> errors = new TreeMap<>();
 		final List<String> failedSdks = new SmartList<>();
@@ -185,7 +187,7 @@ public class PySkeletonRefresher
 		}
 	}
 
-	private static void logErrors(@NotNull final Map<String, List<String>> errors, @NotNull final List<String> failedSdks, @NotNull final String message)
+	private static void logErrors(@Nonnull final Map<String, List<String>> errors, @Nonnull final List<String> failedSdks, @Nonnull final String message)
 	{
 		LOG.warn(PyBundle.message("sdk.some.skeletons.failed"));
 		LOG.warn(message);
@@ -218,7 +220,7 @@ public class PySkeletonRefresher
 	 */
 	public PySkeletonRefresher(@Nullable Project project,
 			@Nullable Component ownerComponent,
-			@NotNull Sdk sdk,
+			@Nonnull Sdk sdk,
 			@Nullable String skeletonsPath,
 			@Nullable ProgressIndicator indicator,
 			@Nullable String folder) throws InvalidSdkException
@@ -271,7 +273,7 @@ public class PySkeletonRefresher
 		}
 	}
 
-	private static String calculateExtraSysPath(@NotNull final Sdk sdk, @Nullable final String skeletonsPath)
+	private static String calculateExtraSysPath(@Nonnull final Sdk sdk, @Nullable final String skeletonsPath)
 	{
 		final File skeletons = skeletonsPath != null ? new File(skeletonsPath) : null;
 
@@ -308,7 +310,7 @@ public class PySkeletonRefresher
 	 *
 	 * @return path name of skeleton dir for the SDK, guaranteed to be already created.
 	 */
-	@NotNull
+	@Nonnull
 	public String getSkeletonsPath() throws InvalidSdkException
 	{
 		if(mySkeletonsPath == null)
@@ -482,7 +484,7 @@ public class PySkeletonRefresher
 	}
 
 	@Nullable
-	public static SkeletonHeader readSkeletonHeader(@NotNull File file)
+	public static SkeletonHeader readSkeletonHeader(@Nonnull File file)
 	{
 		try
 		{
@@ -534,17 +536,17 @@ public class PySkeletonRefresher
 
 	public static class SkeletonHeader
 	{
-		@NotNull
+		@Nonnull
 		private final String myFile;
 		private final int myVersion;
 
-		public SkeletonHeader(@NotNull String binaryFile, int version)
+		public SkeletonHeader(@Nonnull String binaryFile, int version)
 		{
 			myFile = binaryFile;
 			myVersion = version;
 		}
 
-		@NotNull
+		@Nonnull
 		public String getBinaryFile()
 		{
 			return myFile;
@@ -1054,7 +1056,7 @@ public class PySkeletonRefresher
 	 * @param assemblyRefs   refs that generator wants to know in .net environment, if applicable
 	 * @param resultConsumer accepts true if generation completed successfully
 	 */
-	public void generateSkeleton(@NotNull String modname, @Nullable String modfilename, @Nullable List<String> assemblyRefs, Consumer<Boolean> resultConsumer) throws InvalidSdkException
+	public void generateSkeleton(@Nonnull String modname, @Nullable String modfilename, @Nullable List<String> assemblyRefs, Consumer<Boolean> resultConsumer) throws InvalidSdkException
 	{
 		mySkeletonsGenerator.generateSkeleton(modname, modfilename, assemblyRefs, getExtraSyspath(), mySdk.getHomePath(), resultConsumer);
 	}

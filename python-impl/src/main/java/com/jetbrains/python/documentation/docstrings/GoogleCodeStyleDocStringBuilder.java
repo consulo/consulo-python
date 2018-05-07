@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.psi.PyIndentUtil;
@@ -28,49 +29,49 @@ public class GoogleCodeStyleDocStringBuilder extends SectionBasedDocStringBuilde
 {
 	public static final String DEFAULT_CONTINUATION_INDENT = PyIndentUtil.FOUR_SPACES;
 
-	@NotNull
-	public static String getDefaultSectionIndent(@NotNull Project project)
+	@Nonnull
+	public static String getDefaultSectionIndent(@Nonnull Project project)
 	{
 		return PyIndentUtil.getIndentFromSettings(project);
 	}
 
-	@NotNull
-	public static GoogleCodeStyleDocStringBuilder forProject(@NotNull Project project)
+	@Nonnull
+	public static GoogleCodeStyleDocStringBuilder forProject(@Nonnull Project project)
 	{
 		return new GoogleCodeStyleDocStringBuilder(getDefaultSectionIndent(project));
 	}
 
-	public GoogleCodeStyleDocStringBuilder(@NotNull String sectionIndent)
+	public GoogleCodeStyleDocStringBuilder(@Nonnull String sectionIndent)
 	{
 		super(sectionIndent, DEFAULT_CONTINUATION_INDENT);
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	protected String getDefaultParametersHeader()
 	{
 		return "Args";
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	protected String getDefaultReturnsHeader()
 	{
 		return "Returns";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected SectionBasedDocStringBuilder startSection(@NotNull String title)
+	protected SectionBasedDocStringBuilder startSection(@Nonnull String title)
 	{
 		super.startSection(title);
 		addLine(StringUtil.capitalize(title) + ":");
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addParameter(@NotNull String name, @Nullable String type, @NotNull String description)
+	public SectionBasedDocStringBuilder addParameter(@Nonnull String name, @Nullable String type, @Nonnull String description)
 	{
 		if(type != null)
 		{
@@ -83,9 +84,9 @@ public class GoogleCodeStyleDocStringBuilder extends SectionBasedDocStringBuilde
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, @NotNull String type, @NotNull String description)
+	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, @Nonnull String type, @Nonnull String description)
 	{
 		if(name != null)
 		{

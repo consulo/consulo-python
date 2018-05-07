@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -26,7 +28,6 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Insert 'self' in a method that lacks any arguments
@@ -40,18 +41,18 @@ public class AddSelfQuickFix implements LocalQuickFix {
     myParamName = paramName;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.add.parameter.self", myParamName);
   }
 
   @NonNls
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return "Add parameter";
   }
 
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     PsiElement problem_elt = descriptor.getPsiElement();
     if (problem_elt instanceof PyParameterList) {
       final PyParameterList param_list = (PyParameterList)problem_elt;

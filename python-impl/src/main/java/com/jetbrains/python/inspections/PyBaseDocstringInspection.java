@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.jetbrains.python.psi.Property;
@@ -31,25 +31,25 @@ import com.jetbrains.python.testing.PythonUnitTestUtil;
  */
 public abstract class PyBaseDocstringInspection extends PyInspection
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public abstract Visitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session);
+	public abstract Visitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session);
 
 	protected static abstract class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
 
 		@Override
-		public final void visitPyFile(@NotNull PyFile node)
+		public final void visitPyFile(@Nonnull PyFile node)
 		{
 			checkDocString(node);
 		}
 
 		@Override
-		public final void visitPyFunction(@NotNull PyFunction node)
+		public final void visitPyFunction(@Nonnull PyFunction node)
 		{
 			if(PythonUnitTestUtil.isUnitTestCaseFunction(node))
 			{
@@ -73,7 +73,7 @@ public abstract class PyBaseDocstringInspection extends PyInspection
 		}
 
 		@Override
-		public final void visitPyClass(@NotNull PyClass node)
+		public final void visitPyClass(@Nonnull PyClass node)
 		{
 			if(PythonUnitTestUtil.isUnitTestCaseClass(node))
 			{
@@ -87,6 +87,6 @@ public abstract class PyBaseDocstringInspection extends PyInspection
 			checkDocString(node);
 		}
 
-		protected abstract void checkDocString(@NotNull PyDocStringOwner node);
+		protected abstract void checkDocString(@Nonnull PyDocStringOwner node);
 	}
 }

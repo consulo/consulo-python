@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.execution.Location;
@@ -203,12 +203,12 @@ public class PythonUnitTestUtil
 		return false;
 	}
 
-	public static boolean isTestCaseClass(@NotNull PyClass cls, @Nullable final TypeEvalContext context)
+	public static boolean isTestCaseClass(@Nonnull PyClass cls, @Nullable final TypeEvalContext context)
 	{
 		return isTestCaseClassWithContext(cls, PYTHON_TEST_QUALIFIED_CLASSES, context);
 	}
 
-	public static boolean isTestCaseClassWithContext(@NotNull PyClass cls, Set<String> testQualifiedNames, @Nullable TypeEvalContext context)
+	public static boolean isTestCaseClassWithContext(@Nonnull PyClass cls, Set<String> testQualifiedNames, @Nullable TypeEvalContext context)
 	{
 		final TypeEvalContext contextToUse = (context != null ? context : TypeEvalContext.codeInsightFallback(cls.getProject()));
 		for(PyClassLikeType type : cls.getAncestorTypes(contextToUse))
@@ -240,7 +240,7 @@ public class PythonUnitTestUtil
 		return false;
 	}
 
-	public static List<Location> findLocations(@NotNull final Project project, @NotNull String fileName, @Nullable String className, @Nullable String methodName)
+	public static List<Location> findLocations(@Nonnull final Project project, @Nonnull String fileName, @Nullable String className, @Nullable String methodName)
 	{
 		if(fileName.contains("%"))
 		{

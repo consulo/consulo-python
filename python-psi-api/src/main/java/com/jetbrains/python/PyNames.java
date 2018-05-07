@@ -21,9 +21,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -408,12 +410,12 @@ public class PyNames
 	 * @param name what to check
 	 * @return true iff name is not reserved and is a well-formed identifier.
 	 */
-	public static boolean isIdentifier(@NotNull @NonNls String name)
+	public static boolean isIdentifier(@Nonnull @NonNls String name)
 	{
 		return !isReserved(name) && isIdentifierString(name);
 	}
 
-	public static boolean isIdentifierString(@NotNull @NonNls String name)
+	public static boolean isIdentifierString(@Nonnull @NonNls String name)
 	{
 		return IDENTIFIER_PATTERN.matcher(name).matches();
 	}

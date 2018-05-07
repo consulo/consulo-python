@@ -22,7 +22,8 @@ import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.SPACES_BE
 import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.SPACES_OTHER;
 import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.SPACES_WITHIN;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
@@ -37,7 +38,7 @@ import com.jetbrains.python.PythonLanguage;
  */
 public class PyLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public Language getLanguage()
 	{
@@ -45,7 +46,7 @@ public class PyLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
 	}
 
 	@Override
-	public String getCodeSample(@NotNull SettingsType settingsType)
+	public String getCodeSample(@Nonnull SettingsType settingsType)
 	{
 		if(settingsType == SettingsType.SPACING_SETTINGS)
 		{
@@ -67,7 +68,7 @@ public class PyLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
 	}
 
 	@Override
-	public void customizeSettings(@NotNull CodeStyleSettingsCustomizable consumer, @NotNull SettingsType settingsType)
+	public void customizeSettings(@Nonnull CodeStyleSettingsCustomizable consumer, @Nonnull SettingsType settingsType)
 	{
 		if(settingsType == SettingsType.SPACING_SETTINGS)
 		{

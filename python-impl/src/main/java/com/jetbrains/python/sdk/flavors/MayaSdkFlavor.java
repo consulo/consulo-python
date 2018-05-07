@@ -18,9 +18,9 @@ package com.jetbrains.python.sdk.flavors;
 
 import java.io.File;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.PythonIcons;
@@ -41,7 +41,7 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
     return file.isDirectory() && file.getName().equals("Maya.app");
   }
 
-  public boolean isValidSdkPath(@NotNull File file) {
+  public boolean isValidSdkPath(@Nonnull File file) {
     String name = FileUtil.getNameWithoutExtension(file).toLowerCase();
     return name.startsWith("mayapy");
   }
@@ -50,7 +50,7 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
     return "--version";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return "MayaPy";

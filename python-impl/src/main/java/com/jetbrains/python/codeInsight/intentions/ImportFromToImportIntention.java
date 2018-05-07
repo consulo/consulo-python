@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
@@ -176,13 +176,13 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction
 		return dots;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.Family.convert.import.qualify");
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -247,7 +247,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction
 	}
 
 	@Override
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		InfoHolder info = InfoHolder.collect(getElementFromEditor(editor, file));
 		try
@@ -276,7 +276,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction
 			final List<PsiReference> star_references = new ArrayList<>();
 			PsiTreeUtil.processElements(file, new PsiElementProcessor()
 			{
-				public boolean execute(@NotNull PsiElement element)
+				public boolean execute(@Nonnull PsiElement element)
 				{
 					PyPsiUtils.assertValid(element);
 					if(element instanceof PyReferenceExpression && PsiTreeUtil.getParentOfType(element, PyImportElement.class) == null)

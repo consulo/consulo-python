@@ -18,10 +18,10 @@ package com.jetbrains.python.psi.impl;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -60,7 +60,7 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		super(stub, PyElementTypes.STAR_IMPORT_ELEMENT);
 	}
 
-	@NotNull
+	@Nonnull
 	public Iterable<PyElement> iterateNames()
 	{
 		if(getParent() instanceof PyFromImportStatement)
@@ -82,8 +82,8 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		return Collections.emptyList();
 	}
 
-	@NotNull
-	private static Iterable<PyElement> filterStarImportableNames(@NotNull Iterable<PyElement> declaredNames, @NotNull final PyFile file)
+	@Nonnull
+	private static Iterable<PyElement> filterStarImportableNames(@Nonnull Iterable<PyElement> declaredNames, @Nonnull final PyFile file)
 	{
 		return Iterables.filter(declaredNames, new Predicate<PyElement>()
 		{
@@ -96,14 +96,14 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		});
 	}
 
-	@NotNull
-	public List<RatedResolveResult> multiResolveName(@NotNull String name)
+	@Nonnull
+	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
 	{
 		return PyUtil.getParameterizedCachedValue(this, name, this::calculateMultiResolveName);
 	}
 
-	@NotNull
-	private List<RatedResolveResult> calculateMultiResolveName(@NotNull String name)
+	@Nonnull
+	private List<RatedResolveResult> calculateMultiResolveName(@Nonnull String name)
 	{
 		if(PyUtil.isClassPrivateName(name))
 		{

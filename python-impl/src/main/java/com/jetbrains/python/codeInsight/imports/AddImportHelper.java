@@ -23,8 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -76,8 +76,8 @@ public class AddImportHelper
 
 	private static final Comparator<PyImportStatementBase> IMPORT_NAMES_COMPARATOR = (import1, import2) -> ContainerUtil.compareLexicographically(getSortNames(import1), getSortNames(import2));
 
-	@NotNull
-	private static List<String> getSortNames(@NotNull PyImportStatementBase importStatement)
+	@Nonnull
+	private static List<String> getSortNames(@Nonnull PyImportStatementBase importStatement)
 	{
 		final List<String> result = new ArrayList<>();
 		final PyFromImportStatement fromImport = as(importStatement, PyFromImportStatement.class);
@@ -113,8 +113,8 @@ public class AddImportHelper
 	 *
 	 * @see ImportPriority
 	 */
-	@NotNull
-	public static Comparator<PyImportStatementBase> getSameGroupImportsComparator(@NotNull Project project)
+	@Nonnull
+	public static Comparator<PyImportStatementBase> getSameGroupImportsComparator(@Nonnull Project project)
 	{
 		final PyCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(project).getCustomSettings(PyCodeStyleSettings.class);
 		if(settings.OPTIMIZE_IMPORTS_SORT_BY_TYPE_FIRST)
@@ -141,7 +141,7 @@ public class AddImportHelper
 	{
 	}
 
-	public static void addLocalImportStatement(@NotNull PsiElement element, @NotNull String name)
+	public static void addLocalImportStatement(@Nonnull PsiElement element, @Nonnull String name)
 	{
 		final PyElementGenerator generator = PyElementGenerator.getInstance(element.getProject());
 		final LanguageLevel languageLevel = LanguageLevel.forElement(element);
@@ -154,7 +154,7 @@ public class AddImportHelper
 		}
 	}
 
-	public static void addLocalFromImportStatement(@NotNull PsiElement element, @NotNull String qualifier, @NotNull String name)
+	public static void addLocalFromImportStatement(@Nonnull PsiElement element, @Nonnull String qualifier, @Nonnull String name)
 	{
 		final PyElementGenerator generator = PyElementGenerator.getInstance(element.getProject());
 		final LanguageLevel languageLevel = LanguageLevel.forElement(element);
@@ -169,7 +169,7 @@ public class AddImportHelper
 	}
 
 	@Nullable
-	public static PsiElement getLocalInsertPosition(@NotNull PsiElement anchor)
+	public static PsiElement getLocalInsertPosition(@Nonnull PsiElement anchor)
 	{
 		return PsiTreeUtil.getParentOfType(anchor, PyStatement.class, false);
 	}
@@ -181,7 +181,7 @@ public class AddImportHelper
 	}
 
 	@Nullable
-	private static PsiElement getInsertPosition(@NotNull PsiElement insertParent, @Nullable PyImportStatementBase newImport, @Nullable ImportPriority priority)
+	private static PsiElement getInsertPosition(@Nonnull PsiElement insertParent, @Nullable PyImportStatementBase newImport, @Nullable ImportPriority priority)
 	{
 		PsiElement feeler = insertParent.getFirstChild();
 		if(feeler == null)
@@ -264,7 +264,7 @@ public class AddImportHelper
 		return seeker;
 	}
 
-	private static boolean shouldInsertBefore(@Nullable PyImportStatementBase newImport, @NotNull PyImportStatementBase existingImport, @NotNull ImportPriority priority)
+	private static boolean shouldInsertBefore(@Nullable PyImportStatementBase newImport, @Nonnull PyImportStatementBase existingImport, @Nonnull ImportPriority priority)
 	{
 		final ImportPriority existingImportPriority = getImportPriority(existingImport);
 		final int byPriority = priority.compareTo(existingImportPriority);
@@ -279,8 +279,8 @@ public class AddImportHelper
 		return getSameGroupImportsComparator(existingImport.getProject()).compare(newImport, existingImport) < 0;
 	}
 
-	@NotNull
-	public static ImportPriority getImportPriority(@NotNull PyImportStatementBase importStatement)
+	@Nonnull
+	public static ImportPriority getImportPriority(@Nonnull PyImportStatementBase importStatement)
 	{
 		final PsiElement resolved;
 		if(importStatement instanceof PyFromImportStatement)
@@ -333,8 +333,8 @@ public class AddImportHelper
 		return getImportPriority(importStatement, resolvedFileOrDir);
 	}
 
-	@NotNull
-	public static ImportPriority getImportPriority(@NotNull PsiElement importLocation, @NotNull PsiFileSystemItem toImport)
+	@Nonnull
+	public static ImportPriority getImportPriority(@Nonnull PsiElement importLocation, @Nonnull PsiFileSystemItem toImport)
 	{
 		final VirtualFile vFile = toImport.getVirtualFile();
 		if(vFile == null)
@@ -364,7 +364,7 @@ public class AddImportHelper
 	 *               will be inserted right after it.
 	 * @return whether import statement was actually added
 	 */
-	public static boolean addImportStatement(@NotNull PsiFile file, @NotNull String name, @Nullable String asName, @Nullable ImportPriority priority, @Nullable PsiElement anchor)
+	public static boolean addImportStatement(@Nonnull PsiFile file, @Nonnull String name, @Nullable String asName, @Nullable ImportPriority priority, @Nullable PsiElement anchor)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -418,9 +418,9 @@ public class AddImportHelper
 	 *               will be inserted right after it.
 	 * @see #addOrUpdateFromImportStatement
 	 */
-	public static void addFromImportStatement(@NotNull PsiFile file,
-			@NotNull String from,
-			@NotNull String name,
+	public static void addFromImportStatement(@Nonnull PsiFile file,
+			@Nonnull String from,
+			@Nonnull String name,
 			@Nullable String asName,
 			@Nullable ImportPriority priority,
 			@Nullable PsiElement anchor)
@@ -443,7 +443,7 @@ public class AddImportHelper
 	 * @see #addFromImportStatement(PsiFile, String, String, String, ImportPriority, PsiElement)
 	 * @see #addFromImportStatement
 	 */
-	public static void addFromImportStatement(@NotNull PsiFile file, @NotNull PyFromImportStatement newImport, @Nullable ImportPriority priority, @Nullable PsiElement anchor)
+	public static void addFromImportStatement(@Nonnull PsiFile file, @Nonnull PyFromImportStatement newImport, @Nullable ImportPriority priority, @Nullable PsiElement anchor)
 	{
 		try
 		{
@@ -500,9 +500,9 @@ public class AddImportHelper
 	 * @return whether import was actually added
 	 * @see #addFromImportStatement
 	 */
-	public static boolean addOrUpdateFromImportStatement(@NotNull PsiFile file,
-			@NotNull String from,
-			@NotNull String name,
+	public static boolean addOrUpdateFromImportStatement(@Nonnull PsiFile file,
+			@Nonnull String from,
+			@Nonnull String name,
 			@Nullable String asName,
 			@Nullable ImportPriority priority,
 			@Nullable PsiElement anchor)

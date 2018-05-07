@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.TemplateBuilder;
@@ -55,7 +55,7 @@ public class AddFieldQuickFix implements LocalQuickFix
 	private String myIdentifier;
 	private boolean replaceInitializer = false;
 
-	public AddFieldQuickFix(@NotNull final String identifier, @NotNull final String initializer, final String className, boolean replace)
+	public AddFieldQuickFix(@Nonnull final String identifier, @Nonnull final String initializer, final String className, boolean replace)
 	{
 		myIdentifier = identifier;
 		myInitializer = initializer;
@@ -63,13 +63,13 @@ public class AddFieldQuickFix implements LocalQuickFix
 		replaceInitializer = replace;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		return PyBundle.message("QFIX.NAME.add.field.$0.to.class.$1", myIdentifier, myClassName);
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return "Add field to class";
@@ -97,7 +97,7 @@ public class AddFieldQuickFix implements LocalQuickFix
 		return result;
 	}
 
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		// expect the descriptor to point to the unresolved identifier.
 		final PsiElement element = descriptor.getPsiElement();
@@ -126,7 +126,7 @@ public class AddFieldQuickFix implements LocalQuickFix
 		PyUtil.showBalloon(project, PyBundle.message("QFIX.failed.to.add.field"), MessageType.ERROR);
 	}
 
-	private static PyClassType getClassType(@NotNull final PsiElement element)
+	private static PyClassType getClassType(@Nonnull final PsiElement element)
 	{
 		if(element instanceof PyQualifiedExpression)
 		{
@@ -142,7 +142,7 @@ public class AddFieldQuickFix implements LocalQuickFix
 		return aClass != null ? new PyClassTypeImpl(aClass, false) : null;
 	}
 
-	private void showTemplateBuilder(PsiElement initStatement, @NotNull final PsiFile file)
+	private void showTemplateBuilder(PsiElement initStatement, @Nonnull final PsiFile file)
 	{
 		initStatement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(initStatement);
 		if(initStatement instanceof PyAssignmentStatement)

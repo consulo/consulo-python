@@ -24,7 +24,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.buildout.config.lexer.BuildoutCfgFlexLexer;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -85,12 +85,12 @@ public class BuildoutCfgSyntaxHighlighter extends SyntaxHighlighterBase implemen
   }
 
 
-  @NotNull
+  @Nonnull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));
   }
 
-  @NotNull
+  @Nonnull
   public Lexer getHighlightingLexer() {
     return new BuildoutCfgFlexLexer();
   }

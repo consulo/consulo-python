@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.psi.types;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.jetbrains.python.psi.PyCallable;
 
 /**
@@ -29,6 +30,6 @@ public interface PyFunctionType extends PyCallableType
 	/**
 	 * @return actual callable element line function or lambda
 	 */
-	@NotNull
+	@Nonnull
 	PyCallable getCallable();
 }

@@ -19,9 +19,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -44,16 +45,16 @@ import com.jetbrains.python.psi.types.PyClassType;
 public class PyArgumentEqualDefaultInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.argument.equal.default");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -66,7 +67,7 @@ public class PyArgumentEqualDefaultInspection extends PyInspection
 
 	private static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -198,7 +199,7 @@ public class PyArgumentEqualDefaultInspection extends PyInspection
 			return false;
 		}
 
-		private static boolean isBothInstanceOf(@NotNull final PyExpression key, @NotNull final PyExpression defaultValue, @NotNull final Class clazz)
+		private static boolean isBothInstanceOf(@Nonnull final PyExpression key, @Nonnull final PyExpression defaultValue, @Nonnull final Class clazz)
 		{
 			return clazz.isInstance(key) && clazz.isInstance(defaultValue);
 		}

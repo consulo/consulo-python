@@ -17,8 +17,9 @@ package com.jetbrains.python.refactoring.classes.pushDown;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.usageView.UsageViewBundle;
@@ -36,13 +37,13 @@ public class PyPushDownProcessor extends PyMembersRefactoringBaseProcessor
 
 	private static final String HEADER = RefactoringBundle.message("push.down.members.elements.header", "");
 
-	public PyPushDownProcessor(@NotNull final Project project, @NotNull final Collection<PyMemberInfo<PyElement>> membersToMove, @NotNull final PyClass from)
+	public PyPushDownProcessor(@Nonnull final Project project, @Nonnull final Collection<PyMemberInfo<PyElement>> membersToMove, @Nonnull final PyClass from)
 	{
 		super(project, membersToMove, from, getChildren(from));
 	}
 
-	@NotNull
-	private static PyClass[] getChildren(@NotNull final PyClass from)
+	@Nonnull
+	private static PyClass[] getChildren(@Nonnull final PyClass from)
 	{
 		final Collection<PyClass> all = getInheritors(from);
 		return all.toArray(new PyClass[all.size()]);
@@ -52,8 +53,8 @@ public class PyPushDownProcessor extends PyMembersRefactoringBaseProcessor
 	 * @param from class to check for inheritors
 	 * @return inheritors of class
 	 */
-	@NotNull
-	static Collection<PyClass> getInheritors(@NotNull final PyClass from)
+	@Nonnull
+	static Collection<PyClass> getInheritors(@Nonnull final PyClass from)
 	{
 		return PyClassInheritorsSearch.search(from, false).findAll();
 	}

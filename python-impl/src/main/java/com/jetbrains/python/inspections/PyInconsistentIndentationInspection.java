@@ -28,7 +28,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.inspections.quickfix.ConvertIndentsFix;
 import com.jetbrains.python.lexer.PythonIndentingLexer;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +38,14 @@ import java.util.List;
  */
 public class PyInconsistentIndentationInspection extends PyInspection {
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return "Inconsistent indentation";
   }
 
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
+  public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
     if (file.getLanguage() instanceof PythonLanguage) {
       return new IndentValidator(file, manager, isOnTheFly).invoke();
     }

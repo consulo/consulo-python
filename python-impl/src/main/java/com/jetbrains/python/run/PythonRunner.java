@@ -16,7 +16,8 @@
 
 package com.jetbrains.python.run;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
@@ -33,12 +34,12 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
  */
 public class PythonRunner extends DefaultProgramRunner {
 
-  @NotNull
+  @Nonnull
   public String getRunnerId() {
     return "PythonRunner";
   }
 
-  public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
+  public boolean canRun(@Nonnull final String executorId, @Nonnull final RunProfile profile) {
     return executorId.equals(DefaultRunExecutor.EXECUTOR_ID) && profile instanceof AbstractPythonRunConfiguration;
   }
 

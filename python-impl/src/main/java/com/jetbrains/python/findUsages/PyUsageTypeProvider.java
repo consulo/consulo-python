@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.findUsages;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.UsageTarget;
@@ -51,7 +51,7 @@ public class PyUsageTypeProvider implements UsageTypeProviderEx
 		return getUsageType(element, UsageTarget.EMPTY_ARRAY);
 	}
 
-	public UsageType getUsageType(PsiElement element, @NotNull UsageTarget[] targets)
+	public UsageType getUsageType(PsiElement element, @Nonnull UsageTarget[] targets)
 	{
 		if(element instanceof PyElement)
 		{

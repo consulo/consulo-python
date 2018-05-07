@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.project.Project;
@@ -51,7 +52,7 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
 {
 	private final NamesValidator myNamesValidator = LanguageNamesValidation.INSTANCE.forLanguage(PythonLanguage.getInstance());
 
-	PyExtractSuperclassPresenterImpl(@NotNull final PyExtractSuperclassView view, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage)
+	PyExtractSuperclassPresenterImpl(@Nonnull final PyExtractSuperclassView view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage)
 	{
 		super(view, classUnderRefactoring, infoStorage, new PyExtractSuperclassInfoModel(classUnderRefactoring));
 	}
@@ -114,7 +115,7 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
 		myView.initAndShow();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected String getCommandName()
 	{
@@ -127,7 +128,7 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
 		PyExtractSuperclassHelper.extractSuperclass(myClassUnderRefactoring, myView.getSelectedMemberInfos(), myView.getSuperClassName(), myView.getModuleFile());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected Iterable<? extends PyClass> getDestClassesToCheckConflicts()
 	{

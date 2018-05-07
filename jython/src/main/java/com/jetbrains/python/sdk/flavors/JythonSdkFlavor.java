@@ -22,9 +22,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
@@ -53,7 +53,7 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 		return PYTHON_PATH_PREFIX + StringUtil.join(appendSystemEnvPaths(path, JYTHONPATH), File.pathSeparator);
 	}
 
-	public boolean isValidSdkPath(@NotNull File file)
+	public boolean isValidSdkPath(@Nonnull File file)
 	{
 		return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("jython");
 	}
@@ -100,7 +100,7 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 		return JythonProcessHandler.createProcessHandler(commandLine);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<String> collectDebugPythonPath()
 	{
@@ -111,7 +111,7 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 		return list;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getName()
 	{

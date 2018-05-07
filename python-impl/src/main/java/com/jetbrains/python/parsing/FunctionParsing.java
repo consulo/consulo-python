@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.parsing;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
 import com.intellij.psi.tree.IElementType;
@@ -35,7 +36,7 @@ public class FunctionParsing extends Parsing
 		super(context);
 	}
 
-	public void parseFunctionDeclaration(@NotNull PsiBuilder.Marker endMarker, boolean async)
+	public void parseFunctionDeclaration(@Nonnull PsiBuilder.Marker endMarker, boolean async)
 	{
 		assertCurrentToken(PyTokenTypes.DEF_KEYWORD);
 		parseFunctionInnards(endMarker, async);
@@ -46,7 +47,7 @@ public class FunctionParsing extends Parsing
 		return FUNCTION_TYPE;
 	}
 
-	protected void parseFunctionInnards(@NotNull PsiBuilder.Marker functionMarker, boolean async)
+	protected void parseFunctionInnards(@Nonnull PsiBuilder.Marker functionMarker, boolean async)
 	{
 		myBuilder.advanceLexer();
 		parseIdentifierOrSkip(PyTokenTypes.LPAR);

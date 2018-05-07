@@ -20,8 +20,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyClass;
@@ -38,9 +39,9 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderBase implements PyOverridingAncestorsClassMembersProvider
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public Collection<PyCustomMember> getMembers(@NotNull PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
+	public Collection<PyCustomMember> getMembers(@Nonnull PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
 	{
 		final PyClass cls = classType.getPyClass();
 		final PyClass skeleton = PyUserSkeletonsUtil.getUserSkeleton(cls);
@@ -53,7 +54,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 
 	@Nullable
 	@Override
-	public PsiElement resolveMember(@NotNull PyClassType classType, @NotNull String name, PsiElement location, TypeEvalContext context)
+	public PsiElement resolveMember(@Nonnull PyClassType classType, @Nonnull String name, PsiElement location, TypeEvalContext context)
 	{
 		final PyClass cls = classType.getPyClass();
 		final PyClass skeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(cls, context);
@@ -64,7 +65,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 		return null;
 	}
 
-	public static PsiElement findClassMember(@NotNull PyClass cls, @NotNull String name, boolean isDefinition)
+	public static PsiElement findClassMember(@Nonnull PyClass cls, @Nonnull String name, boolean isDefinition)
 	{
 		final PyFunction function = cls.findMethodByName(name, false, null);
 		if(function != null)
@@ -92,7 +93,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 		return null;
 	}
 
-	public static Collection<PyCustomMember> getClassMembers(@NotNull PyClass cls, boolean isDefinition)
+	public static Collection<PyCustomMember> getClassMembers(@Nonnull PyClass cls, boolean isDefinition)
 	{
 		final List<PyCustomMember> result = new ArrayList<>();
 		for(PyFunction function : cls.getMethods())

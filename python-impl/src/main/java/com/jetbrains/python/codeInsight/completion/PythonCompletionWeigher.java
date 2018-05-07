@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.codeInsight.completion;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.completion.CompletionLocation;
 import com.intellij.codeInsight.completion.CompletionWeigher;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -23,7 +25,6 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.psi.util.PsiUtilCore;
 import com.jetbrains.python.PythonLanguage;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Weighs down items starting with two underscores.
@@ -35,7 +36,7 @@ public class PythonCompletionWeigher extends CompletionWeigher {
   @NonNls private static final String DOUBLE_UNDER = "__";
 
   @Override
-  public Comparable weigh(@NotNull final LookupElement element, @NotNull final CompletionLocation location) {
+  public Comparable weigh(@Nonnull final LookupElement element, @Nonnull final CompletionLocation location) {
     if (!PsiUtilCore.findLanguageFromElement(location.getCompletionParameters().getPosition()).isKindOf(PythonLanguage.getInstance())) {
       return 0;
     }

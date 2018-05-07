@@ -17,8 +17,9 @@ package com.jetbrains.python.testing.attest;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.intellij.execution.Location;
 import com.intellij.openapi.module.Module;
@@ -50,7 +51,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
 		super(PythonTestConfigurationType.getInstance().PY_ATTEST_FACTORY);
 	}
 
-	protected boolean isAvailable(@NotNull final Location location)
+	protected boolean isAvailable(@Nonnull final Location location)
 	{
 		final PsiElement element = location.getPsiElement();
 		Module module = location.getModule();
@@ -64,7 +65,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
 	}
 
 	@Override
-	protected boolean isTestClass(@NotNull final PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, @Nullable final TypeEvalContext context)
+	protected boolean isTestClass(@Nonnull final PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, @Nullable final TypeEvalContext context)
 	{
 		for(PyClassLikeType type : pyClass.getAncestorTypes(TypeEvalContext.codeInsightFallback(pyClass.getProject())))
 		{
@@ -76,7 +77,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
 		return false;
 	}
 
-	private static boolean hasTestFunction(@NotNull final PyClass pyClass)
+	private static boolean hasTestFunction(@Nonnull final PyClass pyClass)
 	{
 		PyFunction[] methods = pyClass.getMethods();
 		for(PyFunction function : methods)
@@ -97,7 +98,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
 		return false;
 	}
 
-	protected boolean isTestFunction(@NotNull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
+	protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
 	{
 		PyDecoratorList decorators = pyFunction.getDecoratorList();
 		if(decorators == null)
@@ -114,7 +115,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
 		return false;
 	}
 
-	protected List<PyStatement> getTestCaseClassesFromFile(@NotNull final PyFile file)
+	protected List<PyStatement> getTestCaseClassesFromFile(@Nonnull final PyFile file)
 	{
 		List<PyStatement> result = Lists.newArrayList();
 		for(PyClass cls : file.getTopLevelClasses())

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.NotNullPredicate;
 import com.jetbrains.python.psi.PyElement;
@@ -31,7 +31,7 @@ class NamelessFilter<T extends PyElement & PsiNamedElement> extends NotNullPredi
 {
 
 	@Override
-	public boolean applyNotNull(@NotNull final T input)
+	public boolean applyNotNull(@Nonnull final T input)
 	{
 		return input.getName() != null;
 	}

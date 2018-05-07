@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
@@ -116,7 +116,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return importSource.asQualifiedName();
 	}
 
-	@NotNull
+	@Nonnull
 	public PyImportElement[] getImportElements()
 	{
 		final PyFromImportStatementStub stub = getStub();
@@ -185,7 +185,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return findChildByType(PyTokenTypes.RPAR);
 	}
 
-	public boolean processDeclarations(@NotNull final PsiScopeProcessor processor, @NotNull final ResolveState state, final PsiElement lastParent, @NotNull final PsiElement place)
+	public boolean processDeclarations(@Nonnull final PsiScopeProcessor processor, @Nonnull final ResolveState state, final PsiElement lastParent, @Nonnull final PsiElement place)
 	{
 		// import is per-file
 		if(place.getContainingFile() != getContainingFile())
@@ -261,7 +261,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode child)
+	public void deleteChildInternal(@Nonnull ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getImportElements()))
 		{
@@ -276,7 +276,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return as(ContainerUtil.getFirstItem(resolveImportSourceCandidates()), PsiFileSystemItem.class);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<PsiElement> resolveImportSourceCandidates()
 	{
@@ -293,7 +293,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return ResolveImportUtil.resolveFromImportStatementSource(this, qName);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getFullyQualifiedObjectNames()
 	{
@@ -312,7 +312,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return result;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Iterable<PyElement> iterateNames()
 	{
@@ -320,9 +320,9 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return resolved != null ? ImmutableList.<PyElement>of(resolved) : Collections.<PyElement>emptyList();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<RatedResolveResult> multiResolveName(@NotNull String name)
+	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
 	{
 		final QualifiedName importSourceQName = getImportSourceQName();
 		if(importSourceQName != null && importSourceQName.endsWith(name))

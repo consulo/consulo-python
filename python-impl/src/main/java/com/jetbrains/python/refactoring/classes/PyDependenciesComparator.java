@@ -18,7 +18,8 @@ package com.jetbrains.python.refactoring.classes;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpressionStatement;
@@ -41,7 +42,7 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 	}
 
 	@Override
-	public int compare(@NotNull final PyElement o1, @NotNull final PyElement o2)
+	public int compare(@Nonnull final PyElement o1, @Nonnull final PyElement o2)
 	{
 		if(depends(o1, o2))
 		{
@@ -54,8 +55,8 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 		return getBlockType(o1).compareTo(getBlockType(o2));
 	}
 
-	@NotNull
-	private static BlockType getBlockType(@NotNull final PyElement statement)
+	@Nonnull
+	private static BlockType getBlockType(@Nonnull final PyElement statement)
 	{
 		for(BlockType type : BlockType.values())
 		{
@@ -71,7 +72,7 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 	/**
 	 * @return true if first param depends on second.
 	 */
-	public static boolean depends(@NotNull final PyElement o1, @NotNull final PyElement o2)
+	public static boolean depends(@Nonnull final PyElement o1, @Nonnull final PyElement o2)
 	{
 		final DependencyVisitor visitor = new DependencyVisitor(o2);
 		o1.accept(visitor);
@@ -88,10 +89,10 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 		METHOD(PyFunction.class),
 		OTHER(PyElement.class);
 
-		@NotNull
+		@Nonnull
 		private final Class<? extends PyElement> myClass;
 
-		BlockType(@NotNull final Class<? extends PyElement> aClass)
+		BlockType(@Nonnull final Class<? extends PyElement> aClass)
 		{
 			myClass = aClass;
 		}

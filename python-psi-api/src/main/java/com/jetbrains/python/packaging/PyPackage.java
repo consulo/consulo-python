@@ -18,8 +18,8 @@ package com.jetbrains.python.packaging;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -30,13 +30,13 @@ public class PyPackage extends InstalledPackage {
   private final String myLocation;
   private final List<PyRequirement> myRequirements;
 
-  public PyPackage(@NotNull String name, @NotNull String version, @Nullable String location, @NotNull List<PyRequirement> requirements) {
+  public PyPackage(@Nonnull String name, @Nonnull String version, @Nullable String location, @Nonnull List<PyRequirement> requirements) {
     super(name, version);
     myLocation = location;
     myRequirements = requirements;
   }
 
-  @NotNull
+  @Nonnull
   public List<PyRequirement> getRequirements() {
     return myRequirements;
   }

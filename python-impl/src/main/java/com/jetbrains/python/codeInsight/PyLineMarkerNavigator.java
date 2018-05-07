@@ -19,8 +19,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
@@ -78,7 +78,7 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
 	 */
 	@TestOnly
 	@Nullable
-	static NavigatablePsiElement[] getNavigationTargets(@NotNull final UserDataHolder holder)
+	static NavigatablePsiElement[] getNavigationTargets(@Nonnull final UserDataHolder holder)
 	{
 		return holder.getUserData(MARKERS);
 	}
@@ -86,5 +86,5 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
 	protected abstract String getTitle(T elt);
 
 	@Nullable
-	protected abstract Query<T> search(T elt, @NotNull TypeEvalContext context);
+	protected abstract Query<T> search(T elt, @Nonnull TypeEvalContext context);
 }

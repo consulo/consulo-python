@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -38,27 +39,27 @@ public class PyCondaManagementService extends PyPackageManagementService
 {
 	private static final Logger LOG = Logger.getInstance(PyCondaManagementService.class);
 
-	public PyCondaManagementService(@NotNull final Project project, @NotNull final Sdk sdk)
+	public PyCondaManagementService(@Nonnull final Project project, @Nonnull final Sdk sdk)
 	{
 		super(project, sdk);
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public List<RepoPackage> getAllPackagesCached()
 	{
 		return versionMapToPackageList(PyCondaPackageService.getInstance().getCondaPackages());
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public List<RepoPackage> getAllPackages()
 	{
 		return versionMapToPackageList(PyCondaPackageService.getInstance().loadAndGetPackages());
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public List<RepoPackage> reloadAllPackages()
 	{
 		return getAllPackages();

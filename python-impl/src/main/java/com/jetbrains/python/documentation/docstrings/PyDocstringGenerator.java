@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -79,9 +79,9 @@ public class PyDocstringGenerator
 
 	private PyDocstringGenerator(@Nullable PyDocStringOwner docStringOwner,
 			@Nullable String docStringText,
-			@NotNull DocStringFormat format,
-			@NotNull String indentation,
-			@NotNull PsiElement settingsAnchor)
+			@Nonnull DocStringFormat format,
+			@Nonnull String indentation,
+			@Nonnull PsiElement settingsAnchor)
 	{
 		myDocStringOwner = docStringOwner;
 		myDocStringIndent = indentation;
@@ -91,8 +91,8 @@ public class PyDocstringGenerator
 		mySettingsAnchor = settingsAnchor;
 	}
 
-	@NotNull
-	public static PyDocstringGenerator forDocStringOwner(@NotNull PyDocStringOwner owner)
+	@Nonnull
+	public static PyDocstringGenerator forDocStringOwner(@Nonnull PyDocStringOwner owner)
 	{
 		String indentation = "";
 		if(owner instanceof PyStatementListContainer)
@@ -108,14 +108,14 @@ public class PyDocstringGenerator
 	 *                       It's needed to detect configured docstring format and Python indentation size and, as result,
 	 *                       generate properly formatted docstring.
 	 */
-	@NotNull
-	public static PyDocstringGenerator create(@NotNull DocStringFormat format, @NotNull String indentation, @NotNull PsiElement settingsAnchor)
+	@Nonnull
+	public static PyDocstringGenerator create(@Nonnull DocStringFormat format, @Nonnull String indentation, @Nonnull PsiElement settingsAnchor)
 	{
 		return new PyDocstringGenerator(null, null, format, indentation, settingsAnchor);
 	}
 
-	@NotNull
-	public static PyDocstringGenerator update(@NotNull PyStringLiteralExpression docString)
+	@Nonnull
+	public static PyDocstringGenerator update(@Nonnull PyStringLiteralExpression docString)
 	{
 		return new PyDocstringGenerator(PsiTreeUtil.getParentOfType(docString, PyDocStringOwner.class), docString.getText(), DocStringUtil.getConfiguredDocStringFormat(docString),
 				PyIndentUtil.getElementIndent(docString), docString);
@@ -126,66 +126,66 @@ public class PyDocstringGenerator
 	 *                       It's needed to detect configured docstring format and Python indentation size and, as result,
 	 *                       generate properly formatted docstring.
 	 */
-	@NotNull
-	public static PyDocstringGenerator update(@NotNull DocStringFormat format, @NotNull String indentation, @NotNull String text, PsiElement settingsAnchor)
+	@Nonnull
+	public static PyDocstringGenerator update(@Nonnull DocStringFormat format, @Nonnull String indentation, @Nonnull String text, PsiElement settingsAnchor)
 	{
 		return new PyDocstringGenerator(null, text, format, indentation, settingsAnchor);
 	}
 
-	@NotNull
-	public PyDocstringGenerator withParam(@NotNull String name)
+	@Nonnull
+	public PyDocstringGenerator withParam(@Nonnull String name)
 	{
 		return withParamTypedByName(name, null);
 	}
 
-	@NotNull
-	public PyDocstringGenerator withParam(@NotNull PyNamedParameter param)
+	@Nonnull
+	public PyDocstringGenerator withParam(@Nonnull PyNamedParameter param)
 	{
 		return withParam(getPreferredParameterName(param));
 	}
 
-	@NotNull
-	public PyDocstringGenerator withParamTypedByName(@NotNull String name, @Nullable String type)
+	@Nonnull
+	public PyDocstringGenerator withParamTypedByName(@Nonnull String name, @Nullable String type)
 	{
 		myAddedParams.add(new DocstringParam(name, type, false));
 		return this;
 	}
 
-	@NotNull
-	public PyDocstringGenerator withParamTypedByName(@NotNull PyNamedParameter name, @Nullable String type)
+	@Nonnull
+	public PyDocstringGenerator withParamTypedByName(@Nonnull PyNamedParameter name, @Nullable String type)
 	{
 		return withParamTypedByName(getPreferredParameterName(name), type);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyDocstringGenerator withReturnValue(@Nullable String type)
 	{
 		myAddedParams.add(new DocstringParam("", type, true));
 		return this;
 	}
 
-	@NotNull
-	public PyDocstringGenerator withoutParam(@NotNull String name)
+	@Nonnull
+	public PyDocstringGenerator withoutParam(@Nonnull String name)
 	{
 		myRemovedParams.add(new DocstringParam(name, null, false));
 		return this;
 	}
 
-	@NotNull
-	public PyDocstringGenerator withQuotes(@NotNull String quotes)
+	@Nonnull
+	public PyDocstringGenerator withQuotes(@Nonnull String quotes)
 	{
 		myQuotes = quotes;
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	public PyDocstringGenerator useTypesFromDebuggerSignature(boolean use)
 	{
 		myUseTypesFromDebuggerSignature = use;
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	public PyDocstringGenerator addFirstEmptyLine()
 	{
 		myAddFirstEmptyLine = true;
@@ -193,7 +193,7 @@ public class PyDocstringGenerator
 	}
 
 
-	@NotNull
+	@Nonnull
 	public PyDocstringGenerator forceNewMode()
 	{
 		myNewMode = true;
@@ -206,7 +206,7 @@ public class PyDocstringGenerator
 	 *                  "captures" whole function body including return statements. Keep in mind that declaration for the return value
 	 *                  won't be added if containing function is <tt>__init__</tt> or <tt>__new__</tt> method.
 	 */
-	@NotNull
+	@Nonnull
 	public PyDocstringGenerator withInferredParameters(boolean addReturn)
 	{
 		if(myDocStringOwner instanceof PyFunction)
@@ -237,19 +237,19 @@ public class PyDocstringGenerator
 		return this;
 	}
 
-	private static boolean isConstructor(@NotNull PyFunction function)
+	private static boolean isConstructor(@Nonnull PyFunction function)
 	{
 		final String funcName = function.getName();
 		return PyNames.INIT.equals(funcName) && function.getContainingClass() != null;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getDocStringIndent()
 	{
 		return myDocStringIndent;
 	}
 
-	@NotNull
+	@Nonnull
 	public DocStringFormat getDocStringFormat()
 	{
 		return myDocStringFormat;
@@ -418,8 +418,8 @@ public class PyDocstringGenerator
 		}
 	}
 
-	@NotNull
-	public String getPreferredParameterName(@NotNull PyNamedParameter parameter)
+	@Nonnull
+	public String getPreferredParameterName(@Nonnull PyNamedParameter parameter)
 	{
 		if(getDocStringFormat() == DocStringFormat.GOOGLE && parameter.getAsNamed() != null)
 		{
@@ -429,8 +429,8 @@ public class PyDocstringGenerator
 	}
 
 
-	@NotNull
-	private static String getDefaultType(@NotNull DocstringParam param)
+	@Nonnull
+	private static String getDefaultType(@Nonnull DocstringParam param)
 	{
 		if(StringUtil.isEmpty(param.getType()))
 		{
@@ -442,7 +442,7 @@ public class PyDocstringGenerator
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public String buildDocString()
 	{
 		prepareParameters();
@@ -456,7 +456,7 @@ public class PyDocstringGenerator
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	private String createDocString()
 	{
 		DocStringBuilder builder = null;
@@ -539,7 +539,7 @@ public class PyDocstringGenerator
 		return createEmptyFallbackDocString();
 	}
 
-	@NotNull
+	@Nonnull
 	private String updateDocString()
 	{
 		DocStringUpdater updater = null;
@@ -589,7 +589,7 @@ public class PyDocstringGenerator
 		return createEmptyFallbackDocString();
 	}
 
-	@NotNull
+	@Nonnull
 	private String createEmptyFallbackDocString()
 	{
 		return myQuotes + '\n' + myDocStringIndent + myQuotes;
@@ -604,7 +604,7 @@ public class PyDocstringGenerator
 		return myAddedParams.get(0);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyDocStringOwner buildAndInsert()
 	{
 		Preconditions.checkNotNull(myDocStringOwner, "For this action docstring owner must be supplied");
@@ -685,14 +685,14 @@ public class PyDocstringGenerator
 		private final String myType;
 		private final boolean myReturnValue;
 
-		private DocstringParam(@NotNull String name, @Nullable String type, boolean isReturn)
+		private DocstringParam(@Nonnull String name, @Nullable String type, boolean isReturn)
 		{
 			myName = name;
 			myType = type;
 			myReturnValue = isReturn;
 		}
 
-		@NotNull
+		@Nonnull
 		public String getName()
 		{
 			return myName;
@@ -769,7 +769,7 @@ public class PyDocstringGenerator
 		private PyExpression myRaiseTarget = null;
 
 		@Override
-		public void visitPyRaiseStatement(@NotNull PyRaiseStatement node)
+		public void visitPyRaiseStatement(@Nonnull PyRaiseStatement node)
 		{
 			myHasRaise = true;
 			final PyExpression[] expressions = node.getExpressions();
@@ -785,7 +785,7 @@ public class PyDocstringGenerator
 			myHasReturn = true;
 		}
 
-		@NotNull
+		@Nonnull
 		public String getRaiseTargetText()
 		{
 			if(myRaiseTarget != null)

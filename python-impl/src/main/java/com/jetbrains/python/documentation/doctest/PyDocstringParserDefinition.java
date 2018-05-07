@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.documentation.doctest;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.FileViewProvider;
@@ -33,19 +33,19 @@ public class PyDocstringParserDefinition extends PythonParserDefinition {
   public static final IFileElementType PYTHON_DOCSTRING_FILE = new PyDocstringFileElementType(PyDocstringLanguageDialect
                                                                                                 .getInstance());
 
-  @NotNull
+  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new PyDocstringLexer();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public PsiParser createParser(LanguageVersion languageVersion) {
     return new PyDocstringParser();
   }
 
 
-  @NotNull
+  @Nonnull
   @Override
   public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return TokenSet.orSet(super.getWhitespaceTokens(languageVersion), TokenSet.create(PyDocstringTokenTypes.DOTS));

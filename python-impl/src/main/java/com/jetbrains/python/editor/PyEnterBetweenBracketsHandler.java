@@ -23,18 +23,18 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.PythonLanguage;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public class PyEnterBetweenBracketsHandler extends EnterBetweenBracesHandler {
   @Override
-  public Result preprocessEnter(@NotNull PsiFile file,
-                                @NotNull Editor editor,
-                                @NotNull Ref<Integer> caretOffsetRef,
-                                @NotNull Ref<Integer> caretAdvance,
-                                @NotNull DataContext dataContext,
+  public Result preprocessEnter(@Nonnull PsiFile file,
+                                @Nonnull Editor editor,
+                                @Nonnull Ref<Integer> caretOffsetRef,
+                                @Nonnull Ref<Integer> caretAdvance,
+                                @Nonnull DataContext dataContext,
                                 EditorActionHandler originalHandler) {
     if (!file.getLanguage().is(PythonLanguage.getInstance())) {
       return Result.Continue;

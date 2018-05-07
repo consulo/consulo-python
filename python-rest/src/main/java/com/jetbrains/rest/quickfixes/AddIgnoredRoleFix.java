@@ -16,7 +16,7 @@
 
 package com.jetbrains.rest.quickfixes;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -39,20 +39,20 @@ public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction {
     myInspection = visitor;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return RestBundle.message("QFIX.ignore.role", myRole);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getFamilyName() {
     return "Ignore undefined role";
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     if (!myInspection.ignoredRoles.contains(myRole)) {
       myInspection.ignoredRoles.add(myRole);
       final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();

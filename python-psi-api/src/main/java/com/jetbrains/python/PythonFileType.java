@@ -25,10 +25,10 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
@@ -54,28 +54,28 @@ public class PythonFileType extends LanguageFileType {
     super(language);
   }
 
-  @NotNull
+  @Nonnull
   public String getId() {
     return "Python";
   }
 
-  @NotNull
+  @Nonnull
   public String getDescription() {
     return "Python files";
   }
 
-  @NotNull
+  @Nonnull
   public String getDefaultExtension() {
     return "py";
   }
 
-  @NotNull
+  @Nonnull
   public Icon getIcon() {
     return PythonPsiApiIcons.PythonFile;
   }
 
   @Override
-  public String getCharset(@NotNull VirtualFile file, byte[] content) {
+  public String getCharset(@Nonnull VirtualFile file, byte[] content) {
     if (CharsetToolkit.hasUTF8Bom(content)) {
       return CharsetToolkit.UTF8;
     }
@@ -85,7 +85,7 @@ public class PythonFileType extends LanguageFileType {
   }
 
   @Override
-  public Charset extractCharsetFromFileContent(@Nullable Project project, @Nullable VirtualFile file, @NotNull CharSequence content) {
+  public Charset extractCharsetFromFileContent(@Nullable Project project, @Nullable VirtualFile file, @Nonnull CharSequence content) {
     final String charsetName = getCharsetFromEncodingDeclaration(content);
     if (charsetName == null) {
       return null;

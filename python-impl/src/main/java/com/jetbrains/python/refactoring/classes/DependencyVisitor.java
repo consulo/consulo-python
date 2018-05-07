@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -38,20 +39,20 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 class DependencyVisitor extends PyRecursiveElementVisitor
 {
 
-	@NotNull
+	@Nonnull
 	private final PyElement myElementToFind;
 	private boolean myDependencyFound;
 
 	/**
 	 * @param elementToFind what to find
 	 */
-	DependencyVisitor(@NotNull final PyElement elementToFind)
+	DependencyVisitor(@Nonnull final PyElement elementToFind)
 	{
 		myElementToFind = elementToFind;
 	}
 
 	@Override
-	public void visitPyCallExpression(@NotNull final PyCallExpression node)
+	public void visitPyCallExpression(@Nonnull final PyCallExpression node)
 	{
 		final PyExpression callee = node.getCallee();
 		if(callee != null)

@@ -21,8 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import consulo.ide.IconDescriptorUpdaters;
@@ -44,7 +44,7 @@ import com.jetbrains.python.psi.impl.LightNamedElement;
  * @author yole
  */
 public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpression> {
-  public PyDunderAllReference(@NotNull PyStringLiteralExpression element) {
+  public PyDunderAllReference(@Nonnull PyStringLiteralExpression element) {
     super(element);
     final List<TextRange> ranges = element.getStringValueTextRanges();
     if (ranges.size() > 0) {
@@ -60,7 +60,7 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
     return containingFile.getElementNamed(name);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Object[] getVariants() {
     final List<LookupElement> result = new ArrayList<LookupElement>();
@@ -72,7 +72,7 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
     }
     containingFile.processDeclarations(new PsiScopeProcessor() {
       @Override
-      public boolean execute(@NotNull PsiElement element, ResolveState state) {
+      public boolean execute(@Nonnull PsiElement element, ResolveState state) {
         if (element instanceof PsiNamedElement && !(element instanceof LightNamedElement)) {
           final String name = ((PsiNamedElement)element).getName();
           if (name != null && PyUtil.getInitialUnderscores(name) == 0 && !seenNames.contains(name)) {
@@ -91,7 +91,7 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
       }
 
       @Override
-      public <T> T getHint(@NotNull Key<T> hintKey) {
+      public <T> T getHint(@Nonnull Key<T> hintKey) {
         return null;
       }
 

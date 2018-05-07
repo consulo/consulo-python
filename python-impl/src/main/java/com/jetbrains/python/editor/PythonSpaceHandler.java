@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.editor;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.openapi.editor.Document;
@@ -36,7 +37,7 @@ import com.jetbrains.python.psi.PyDocStringOwner;
 public class PythonSpaceHandler extends TypedHandlerDelegate
 {
 	@Override
-	public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file)
+	public Result charTyped(char c, Project project, @Nonnull Editor editor, @Nonnull PsiFile file)
 	{
 		CodeInsightSettings codeInsightSettings = CodeInsightSettings.getInstance();
 		if(c == ' ' && codeInsightSettings.JAVADOC_STUB_ON_ENTER)

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.extractSuperclass;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.refactoring.classMembers.AbstractUsesDependencyMemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
@@ -26,7 +27,7 @@ import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
  */
 class PyExtractSuperclassInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement, PyClass, PyMemberInfo<PyElement>>
 {
-	PyExtractSuperclassInfoModel(@NotNull final PyClass clazz)
+	PyExtractSuperclassInfoModel(@Nonnull final PyClass clazz)
 	{
 		super(clazz, null, false);
 	}
@@ -38,13 +39,13 @@ class PyExtractSuperclassInfoModel extends AbstractUsesDependencyMemberInfoModel
 	}
 
 	@Override
-	public int checkForProblems(@NotNull final PyMemberInfo<PyElement> member)
+	public int checkForProblems(@Nonnull final PyMemberInfo<PyElement> member)
 	{
 		return member.isChecked() ? OK : super.checkForProblems(member);
 	}
 
 	@Override
-	protected int doCheck(@NotNull final PyMemberInfo<PyElement> memberInfo, final int problem)
+	protected int doCheck(@Nonnull final PyMemberInfo<PyElement> memberInfo, final int problem)
 	{
 		return problem;
 	}

@@ -26,7 +26,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 
@@ -54,7 +54,7 @@ public class PyCodeStylePanel extends CodeStyleAbstractPanel {
   protected void prepareForReformat(PsiFile psiFile) {
   }
 
-  @NotNull
+  @Nonnull
   @Override
   protected FileType getFileType() {
     return PythonFileType.INSTANCE;

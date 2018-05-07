@@ -18,8 +18,9 @@ package com.jetbrains.python.psi.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.psi.PsiElement;
@@ -38,11 +39,11 @@ public final class PyTypeUtil
 	/**
 	 * Returns members of certain type from {@link PyClassLikeType}.
 	 */
-	@NotNull
-	public static <T extends PsiElement> List<T> getMembersOfType(@NotNull final PyClassLikeType type,
-			@NotNull final Class<T> expectedMemberType,
+	@Nonnull
+	public static <T extends PsiElement> List<T> getMembersOfType(@Nonnull final PyClassLikeType type,
+			@Nonnull final Class<T> expectedMemberType,
 			boolean inherited,
-			@NotNull final TypeEvalContext context)
+			@Nonnull final TypeEvalContext context)
 	{
 
 		final List<T> result = new ArrayList<>();
@@ -68,7 +69,7 @@ public final class PyTypeUtil
 	 * @return data or null if not found
 	 */
 	@Nullable
-	public static <T> T findData(@NotNull final PyType type, @NotNull final Key<T> key)
+	public static <T> T findData(@Nonnull final PyType type, @Nonnull final Key<T> key)
 	{
 		if(type instanceof UserDataHolder)
 		{

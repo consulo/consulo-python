@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.run;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.jetbrains.python.remote.PyRemoteSdkAdditionalDataBase;
 
@@ -28,8 +29,8 @@ public class PyRemoteProcessStarterManagerUtil
 	{
 	}
 
-	@NotNull
-	public static PyRemoteProcessStarterManager getManager(@NotNull PyRemoteSdkAdditionalDataBase pyRemoteSdkAdditionalDataBase) throws ExecutionException
+	@Nonnull
+	public static PyRemoteProcessStarterManager getManager(@Nonnull PyRemoteSdkAdditionalDataBase pyRemoteSdkAdditionalDataBase) throws ExecutionException
 	{
 
 		for(PyRemoteProcessStarterManager processManager : PyRemoteProcessStarterManager.EP_NAME.getExtensions())

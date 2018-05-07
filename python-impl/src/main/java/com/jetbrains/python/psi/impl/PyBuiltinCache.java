@@ -22,9 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -77,7 +79,7 @@ public class PyBuiltinCache
 	/**
 	 * Stores the most often used types, returned by getNNNType().
 	 */
-	@NotNull
+	@Nonnull
 	private final Map<String, PyClassTypeImpl> myTypeCache = new HashMap<>();
 
 	@Nullable
@@ -102,7 +104,7 @@ public class PyBuiltinCache
 	 * @param reference something to define the module from.
 	 * @return an instance of cache. If reference was null, the instance is a fail-fast dud one.
 	 */
-	@NotNull
+	@Nonnull
 	public static PyBuiltinCache getInstance(@Nullable PsiElement reference)
 	{
 		if(reference != null)
@@ -163,13 +165,13 @@ public class PyBuiltinCache
 	}
 
 	@Nullable
-	public static PyFile getBuiltinsForSdk(@NotNull Project project, @NotNull Sdk sdk)
+	public static PyFile getBuiltinsForSdk(@Nonnull Project project, @Nonnull Sdk sdk)
 	{
 		return getSkeletonFile(project, sdk, PythonSdkType.getBuiltinsFileName(sdk));
 	}
 
 	@Nullable
-	public static PyFile getSkeletonFile(final @NotNull Project project, @NotNull Sdk sdk, @NotNull String name)
+	public static PyFile getSkeletonFile(final @Nonnull Project project, @Nonnull Sdk sdk, @Nonnull String name)
 	{
 		SdkTypeId sdkType = sdk.getSdkType();
 		if(sdkType instanceof PythonSdkType)
@@ -206,7 +208,7 @@ public class PyBuiltinCache
 	}
 
 	@Nullable
-	public PyType createLiteralCollectionType(final PySequenceExpression sequence, final String name, @NotNull TypeEvalContext context)
+	public PyType createLiteralCollectionType(final PySequenceExpression sequence, final String name, @Nonnull TypeEvalContext context)
 	{
 		final PyClass cls = getClass(name);
 		if(cls != null)
@@ -216,8 +218,8 @@ public class PyBuiltinCache
 		return null;
 	}
 
-	@NotNull
-	private static List<PyType> getSequenceElementTypes(@NotNull PySequenceExpression sequence, @NotNull TypeEvalContext context)
+	@Nonnull
+	private static List<PyType> getSequenceElementTypes(@Nonnull PySequenceExpression sequence, @Nonnull TypeEvalContext context)
 	{
 		final PyExpression[] elements = sequence.getElements();
 		if(elements.length == 0 || elements.length > 10 /* performance */)
@@ -430,7 +432,7 @@ public class PyBuiltinCache
 	}
 
 	@Nullable
-	public PyType getByteStringType(@NotNull LanguageLevel level)
+	public PyType getByteStringType(@Nonnull LanguageLevel level)
 	{
 		if(level.isPy3K())
 		{
@@ -501,7 +503,7 @@ public class PyBuiltinCache
 		return the_file == myBuiltinsFile || the_file == myExceptionsFile;
 	}
 
-	public static boolean isInBuiltins(@NotNull PyExpression expression)
+	public static boolean isInBuiltins(@Nonnull PyExpression expression)
 	{
 		if(expression instanceof PyQualifiedExpression && (((PyQualifiedExpression) expression).isQualified()))
 		{

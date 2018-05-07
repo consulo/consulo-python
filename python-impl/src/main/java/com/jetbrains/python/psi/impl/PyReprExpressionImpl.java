@@ -23,8 +23,8 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReprExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -44,7 +44,7 @@ public class PyReprExpressionImpl extends PyElementImpl implements PyReprExpress
     pyVisitor.visitPyReprExpression(this);
   }
 
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
+  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     return null;
   }
 }

@@ -26,8 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
@@ -56,7 +57,7 @@ public class PySkeletonGenerator
 	protected static final String GENERATOR3 = "generator3.py";
 
 	private final String mySkeletonsPath;
-	@NotNull
+	@Nonnull
 	private final Map<String, String> myEnv;
 
 	public void finishSkeletonsGeneration()
@@ -85,7 +86,7 @@ public class PySkeletonGenerator
 	 * @param pySdk         SDK
 	 * @param currentFolder current folder (some flavors may search for binary files there) or null if unknown
 	 */
-	public PySkeletonGenerator(String skeletonPath, @NotNull final Sdk pySdk, @Nullable final String currentFolder)
+	public PySkeletonGenerator(String skeletonPath, @Nonnull final Sdk pySdk, @Nullable final String currentFolder)
 	{
 		mySkeletonsPath = skeletonPath;
 		final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(pySdk);
@@ -186,7 +187,7 @@ public class PySkeletonGenerator
 		return PySdkUtil.getProcessOutput(homePath, commandLine, env, timeout);
 	}
 
-	public void generateBuiltinSkeletons(@NotNull Sdk sdk) throws InvalidSdkException
+	public void generateBuiltinSkeletons(@Nonnull Sdk sdk) throws InvalidSdkException
 	{
 		//noinspection ResultOfMethodCallIgnored
 		new File(mySkeletonsPath).mkdirs();
@@ -210,8 +211,8 @@ public class PySkeletonGenerator
 		LOG.info("Rebuilding builtin skeletons took " + (System.currentTimeMillis() - startTime) + " ms");
 	}
 
-	@NotNull
-	public ListBinariesResult listBinaries(@NotNull Sdk sdk, @NotNull String extraSysPath) throws InvalidSdkException
+	@Nonnull
+	public ListBinariesResult listBinaries(@Nonnull Sdk sdk, @Nonnull String extraSysPath) throws InvalidSdkException
 	{
 		final String homePath = sdk.getHomePath();
 		final long startTime = System.currentTimeMillis();
@@ -279,7 +280,7 @@ public class PySkeletonGenerator
 		return new ListBinariesResult(generatorVersion, binaries);
 	}
 
-	public boolean deleteOrLog(@NotNull File item)
+	public boolean deleteOrLog(@Nonnull File item)
 	{
 		boolean deleted = item.delete();
 		if(!deleted)

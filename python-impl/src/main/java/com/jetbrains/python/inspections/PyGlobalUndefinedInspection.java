@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -23,8 +25,8 @@ import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyGlobalStatement;
 import com.jetbrains.python.psi.PyTargetExpression;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * User: ktisha
@@ -33,23 +35,23 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PyGlobalUndefinedInspection extends PyInspection {
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.global.undefined");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
 
   private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
       super(holder, session);
     }
 

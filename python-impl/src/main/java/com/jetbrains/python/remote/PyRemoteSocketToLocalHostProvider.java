@@ -1,6 +1,6 @@
 package com.jetbrains.python.remote;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.Pair;
 import com.intellij.remote.RemoteSdkException;
 
@@ -17,6 +17,6 @@ public interface PyRemoteSocketToLocalHostProvider
 	 * @return {@code &lt;host, port&gt;} with which socket on the remote host should be created
 	 * @throws RemoteSdkException
 	 */
-	@NotNull
+	@Nonnull
 	Pair<String, Integer> getRemoteSocket(int localPort) throws RemoteSdkException;
 }

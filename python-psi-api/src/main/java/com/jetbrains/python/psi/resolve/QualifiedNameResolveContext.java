@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.resolve;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -25,8 +27,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.python.PyNames;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
@@ -34,7 +36,8 @@ import org.jetbrains.annotations.Nullable;
 public class QualifiedNameResolveContext {
   @Nullable private Module myModule;
   private PsiFile myFootholdFile;
-  @NotNull PsiManager myPsiManager;
+  @Nonnull
+  PsiManager myPsiManager;
   private Sdk mySdk;
 
   public void copyFrom(QualifiedNameResolveContext context) {
@@ -86,12 +89,12 @@ public class QualifiedNameResolveContext {
     return myFootholdFile;
   }
 
-  @NotNull
+  @Nonnull
   public PsiManager getPsiManager() {
     return myPsiManager;
   }
 
-  @NotNull
+  @Nonnull
   public Project getProject() {
     return myPsiManager.getProject();
   }

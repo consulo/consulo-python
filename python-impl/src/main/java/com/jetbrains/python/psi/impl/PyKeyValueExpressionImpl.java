@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.impl;
 
 import java.util.Arrays;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyExpression;
@@ -37,7 +37,7 @@ public class PyKeyValueExpressionImpl extends PyElementImpl implements PyKeyValu
 		super(astNode);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		final PyType keyType = context.getType(getKey());
 		final PyExpression value = getValue();
@@ -49,7 +49,7 @@ public class PyKeyValueExpressionImpl extends PyElementImpl implements PyKeyValu
 		return PyTupleType.create(this, Arrays.asList(keyType, valueType));
 	}
 
-	@NotNull
+	@Nonnull
 	public PyExpression getKey()
 	{
 		return (PyExpression) getNode().getFirstChildNode().getPsi();

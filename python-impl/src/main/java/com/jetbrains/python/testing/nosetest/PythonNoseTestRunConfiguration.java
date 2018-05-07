@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.testing.nosetest;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -32,7 +34,6 @@ import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import com.jetbrains.python.testing.VFSTestFrameworkListener;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -80,7 +81,7 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
     return myPluralTitle;
   }
 
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment env) throws ExecutionException {
     return new PythonNoseTestCommandLineState(this, env);
   }
 

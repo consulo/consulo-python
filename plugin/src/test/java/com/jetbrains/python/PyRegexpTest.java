@@ -2,7 +2,7 @@ package com.jetbrains.python;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.Pair;
@@ -138,7 +138,7 @@ public class PyRegexpTest extends PyTestCase {
                        "(foomissingbaz$)");
   }
 
-  private void doTestInjectedText(@NotNull String text, @NotNull String expected) {
+  private void doTestInjectedText(@Nonnull String text, @Nonnull String expected) {
     myFixture.configureByText(PythonFileType.INSTANCE, text);
     final InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(myFixture.getProject());
     final PsiLanguageInjectionHost host = languageManager.getInjectionHost(myFixture.getElementAtCaret());

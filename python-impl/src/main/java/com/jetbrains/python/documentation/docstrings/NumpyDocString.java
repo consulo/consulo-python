@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.Pair;
 import com.jetbrains.python.toolbox.Substring;
@@ -41,7 +42,7 @@ public class NumpyDocString extends SectionBasedDocString
 
 	private Substring mySignature;
 
-	public NumpyDocString(@NotNull Substring text)
+	public NumpyDocString(@Nonnull Substring text)
 	{
 		super(text);
 	}
@@ -59,7 +60,7 @@ public class NumpyDocString extends SectionBasedDocString
 		return nextNonEmptyLineNum;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected Pair<Substring, Integer> parseSectionHeader(int lineNum)
 	{
@@ -134,7 +135,7 @@ public class NumpyDocString extends SectionBasedDocString
 		return Pair.create(new SectionField(names, type, description != null ? description.trim() : null), parsedDescription.getSecond());
 	}
 
-	@NotNull
+	@Nonnull
 	public String getSignature()
 	{
 		return mySignature != null ? mySignature.toString() : "";

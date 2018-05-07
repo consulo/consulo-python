@@ -16,7 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -38,25 +39,25 @@ public class UnresolvedReferenceAddSelfQuickFix implements LocalQuickFix, HighPr
 	private PyReferenceExpression myElement;
 	private String myQualifier;
 
-	public UnresolvedReferenceAddSelfQuickFix(@NotNull final PyReferenceExpression element, @NotNull final String qualifier)
+	public UnresolvedReferenceAddSelfQuickFix(@Nonnull final PyReferenceExpression element, @Nonnull final String qualifier)
 	{
 		myElement = element;
 		myQualifier = qualifier;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		return PyBundle.message("QFIX.unresolved.reference", myElement.getText(), myQualifier);
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return "Add qualifier";
 	}
 
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		if(!FileModificationService.getInstance().preparePsiElementForWrite(myElement))
 		{

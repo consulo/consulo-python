@@ -17,7 +17,8 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import java.io.IOException;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IndexSink;
@@ -43,30 +44,30 @@ public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStu
 		super("DECORATOR_CALL");
 	}
 
-	@NotNull
-	public PsiElement createElement(@NotNull ASTNode node)
+	@Nonnull
+	public PsiElement createElement(@Nonnull ASTNode node)
 	{
 		return new PyDecoratorImpl(node);
 	}
 
-	public PyDecorator createPsi(@NotNull PyDecoratorStub stub)
+	public PyDecorator createPsi(@Nonnull PyDecoratorStub stub)
 	{
 		return new PyDecoratorImpl(stub);
 	}
 
-	@NotNull
-	public PyDecoratorStub createStub(@NotNull PyDecorator psi, StubElement parentStub)
+	@Nonnull
+	public PyDecoratorStub createStub(@Nonnull PyDecorator psi, StubElement parentStub)
 	{
 		return new PyDecoratorStubImpl(psi.getQualifiedName(), parentStub);
 	}
 
-	public void serialize(@NotNull PyDecoratorStub stub, @NotNull StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull PyDecoratorStub stub, @Nonnull StubOutputStream dataStream) throws IOException
 	{
 		QualifiedName.serialize(stub.getQualifiedName(), dataStream);
 	}
 
 	@Override
-	public void indexStub(@NotNull final PyDecoratorStub stub, @NotNull final IndexSink sink)
+	public void indexStub(@Nonnull final PyDecoratorStub stub, @Nonnull final IndexSink sink)
 	{
 		// Index decorators stub by name (todo: index by FQDN as well!)
 		final QualifiedName qualifiedName = stub.getQualifiedName();
@@ -76,8 +77,8 @@ public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStu
 		}
 	}
 
-	@NotNull
-	public PyDecoratorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException
+	@Nonnull
+	public PyDecoratorStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		QualifiedName q_name = QualifiedName.deserialize(dataStream);
 		return new PyDecoratorStubImpl(q_name, parentStub);

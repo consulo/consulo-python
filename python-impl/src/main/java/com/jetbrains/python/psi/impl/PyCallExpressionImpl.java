@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -67,7 +67,7 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 		return PsiTreeUtil.getChildOfType(this, PyArgumentList.class);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyExpression[] getArguments()
 	{
 		final PyArgumentList argList = getArgumentList();
@@ -94,7 +94,7 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 
 	@Nullable
 	@Override
-	public <T extends PsiElement> T getArgument(@NotNull final FunctionParameter parameter, @NotNull final Class<T> argClass)
+	public <T extends PsiElement> T getArgument(@Nonnull final FunctionParameter parameter, @Nonnull final Class<T> argClass)
 	{
 		return PyCallExpressionHelper.getArgument(parameter, argClass, this);
 	}
@@ -126,28 +126,28 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 		return PyCallExpressionHelper.resolveCallee(this, resolveContext, offset);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PyArgumentsMapping mapArguments(@NotNull PyResolveContext resolveContext)
+	public PyArgumentsMapping mapArguments(@Nonnull PyResolveContext resolveContext)
 	{
 		return PyCallExpressionHelper.mapArguments(this, resolveContext, 0);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PyArgumentsMapping mapArguments(@NotNull PyResolveContext resolveContext, int implicitOffset)
+	public PyArgumentsMapping mapArguments(@Nonnull PyResolveContext resolveContext, int implicitOffset)
 	{
 		return PyCallExpressionHelper.mapArguments(this, resolveContext, implicitOffset);
 	}
 
 	@Override
-	public boolean isCalleeText(@NotNull String... nameCandidates)
+	public boolean isCalleeText(@Nonnull String... nameCandidates)
 	{
 		return PyCallExpressionHelper.isCalleeText(this, nameCandidates);
 	}
 
 	@Override
-	public boolean isCallee(@NotNull final FQNamesProvider... name)
+	public boolean isCallee(@Nonnull final FQNamesProvider... name)
 	{
 		return PyCallExpressionHelper.isCallee(this, name);
 	}
@@ -158,7 +158,7 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 		return "PyCallExpression: " + PyUtil.getReadableRepr(getCallee(), true); //or: getCalledFunctionReference().getReferencedName();
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		return PyCallExpressionHelper.getCallType(this, context);
 	}

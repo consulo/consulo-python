@@ -30,8 +30,8 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyImportStatementBase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public class RenamePyFileProcessor extends RenamePsiFileProcessor {
   @Override
-  public boolean canProcessElement(@NotNull PsiElement element) {
+  public boolean canProcessElement(@Nonnull PsiElement element) {
     return element instanceof PyFile;
   }
 
@@ -56,7 +56,7 @@ public class RenamePyFileProcessor extends RenamePsiFileProcessor {
     return element;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Collection<PsiReference> findReferences(PsiElement element) {
     final List<PsiReference> results = new ArrayList<PsiReference>();
@@ -91,7 +91,7 @@ public class RenamePyFileProcessor extends RenamePsiFileProcessor {
     }
   }
 
-  private static boolean isNotAliasedInImportElement(@NotNull PsiReference reference) {
+  private static boolean isNotAliasedInImportElement(@Nonnull PsiReference reference) {
     boolean include = true;
     if (reference instanceof PsiPolyVariantReference) {
       final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);

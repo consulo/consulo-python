@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.refactoring.extractmethod;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.codeFragment.CannotCreateCodeFragmentException;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.CaretModel;
@@ -48,7 +48,7 @@ import com.jetbrains.python.refactoring.PyRefactoringUtil;
 public class PyExtractMethodHandler implements RefactoringActionHandler
 {
 	@Override
-	public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file, final DataContext dataContext)
+	public void invoke(@Nonnull final Project project, final Editor editor, final PsiFile file, final DataContext dataContext)
 	{
 		editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
 		// select editor text fragment
@@ -60,7 +60,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 	}
 
 	@Override
-	public void invoke(@NotNull final Project project, @NotNull final PsiElement[] elements, final DataContext dataContext)
+	public void invoke(@Nonnull final Project project, @Nonnull final PsiElement[] elements, final DataContext dataContext)
 	{
 	}
 
@@ -150,7 +150,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 				".extractMethod");
 	}
 
-	private static boolean rangeBelongsToSameClassBody(@NotNull PsiElement element1, @NotNull PsiElement element2)
+	private static boolean rangeBelongsToSameClassBody(@Nonnull PsiElement element1, @Nonnull PsiElement element2)
 	{
 		final PyClass firstScopeOwner = PsiTreeUtil.getParentOfType(element1, PyClass.class, false, ScopeOwner.class);
 		final PyClass secondScopeOwner = PsiTreeUtil.getParentOfType(element2, PyClass.class, false, ScopeOwner.class);

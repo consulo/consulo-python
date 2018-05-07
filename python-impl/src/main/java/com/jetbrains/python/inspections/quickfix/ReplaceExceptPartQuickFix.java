@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.ASTNode;
@@ -28,25 +30,24 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyTryExceptStatement;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey.Ivanov
  */
 public class ReplaceExceptPartQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return PyBundle.message("INTN.convert.except.to");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement exceptPart = descriptor.getPsiElement();
     if (exceptPart instanceof PyExceptPart) {
       PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

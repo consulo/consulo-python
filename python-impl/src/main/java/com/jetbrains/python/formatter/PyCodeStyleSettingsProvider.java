@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.formatter;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.application.options.CodeStyleAbstractConfigurable;
 import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.openapi.options.Configurable;
@@ -33,7 +33,7 @@ public class PyCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     return new PyCodeStyleSettings(settings);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, "Python") {

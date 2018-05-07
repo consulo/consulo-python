@@ -32,8 +32,8 @@ import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -50,8 +50,8 @@ public class PySmartStepIntoHandler extends XSmartStepIntoHandler<PySmartStepInt
     myProcess = process;
   }
 
-  @NotNull
-  public List<PySmartStepIntoVariant> computeSmartStepVariants(@NotNull XSourcePosition position) {
+  @Nonnull
+  public List<PySmartStepIntoVariant> computeSmartStepVariants(@Nonnull XSourcePosition position) {
     final Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
     final List<PySmartStepIntoVariant> variants = Lists.newArrayList();
     final Set<PyCallExpression> visitedCalls = Sets.newHashSet();
@@ -72,7 +72,7 @@ public class PySmartStepIntoHandler extends XSmartStepIntoHandler<PySmartStepInt
     myProcess.startSmartStepInto(smartStepIntoVariant.getFunctionName());
   }
 
-  public String getPopupTitle(@NotNull XSourcePosition position) {
+  public String getPopupTitle(@Nonnull XSourcePosition position) {
     return PyBundle.message("debug.popup.title.step.into.function");
   }
 

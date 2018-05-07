@@ -16,7 +16,7 @@
 
 package com.jetbrains.rest;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.Language;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
@@ -28,7 +28,7 @@ import com.intellij.psi.PsiManager;
  */
 public class RestFileProviderFactory implements FileViewProviderFactory {
 
-    public FileViewProvider createFileViewProvider(@NotNull VirtualFile virtualFile, Language language, @NotNull PsiManager psiManager, boolean physical) {
+    public FileViewProvider createFileViewProvider(@Nonnull VirtualFile virtualFile, Language language, @Nonnull PsiManager psiManager, boolean physical) {
         return new RestFileViewProvider(psiManager, virtualFile, physical);
     }
 }

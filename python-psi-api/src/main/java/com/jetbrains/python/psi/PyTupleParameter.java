@@ -18,7 +18,7 @@ package com.jetbrains.python.psi;
 
 import com.intellij.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyTupleParameterStub;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Tuple parameter. Defines nothing; this interface is only needed for stub creation.
@@ -28,6 +28,6 @@ public interface PyTupleParameter extends PyParameter, StubBasedPsiElement<PyTup
   /**
    * @return the nested parameters within this tuple parameter.
    */
-  @NotNull
+  @Nonnull
   PyParameter[] getContents();
 }

@@ -17,7 +17,8 @@ package com.jetbrains.python.console;
 
 import java.nio.charset.Charset;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -33,7 +34,7 @@ public class PyConsoleProcessHandler extends PythonProcessHandler
 	private final PythonConsoleView myConsoleView;
 	private final PydevConsoleCommunication myPydevConsoleCommunication;
 
-	public PyConsoleProcessHandler(final Process process, PythonConsoleView consoleView, PydevConsoleCommunication pydevConsoleCommunication, @NotNull String commandLine, final Charset charset)
+	public PyConsoleProcessHandler(final Process process, PythonConsoleView consoleView, PydevConsoleCommunication pydevConsoleCommunication, @Nonnull String commandLine, final Charset charset)
 	{
 		super(process, commandLine, charset);
 		myConsoleView = consoleView;

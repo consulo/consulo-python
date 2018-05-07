@@ -18,7 +18,7 @@ package com.jetbrains.python.codeInsight.controlflow;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.codeInsight.controlflow.ControlFlow;
 import com.intellij.codeInsight.controlflow.ControlFlowBuilder;
 import com.intellij.codeInsight.controlflow.Instruction;
@@ -41,7 +41,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 {
 	private final ControlFlowBuilder myBuilder = new ControlFlowBuilder();
 
-	public ControlFlow buildControlFlow(@NotNull final ScopeOwner owner)
+	public ControlFlow buildControlFlow(@Nonnull final ScopeOwner owner)
 	{
 		return myBuilder.build(this, owner);
 	}

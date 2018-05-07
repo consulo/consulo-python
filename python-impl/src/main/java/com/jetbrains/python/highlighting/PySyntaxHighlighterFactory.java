@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.highlighting;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
@@ -58,7 +58,7 @@ public class PySyntaxHighlighterFactory extends SyntaxHighlighterFactory
 		}
 	};
 
-	@NotNull
+	@Nonnull
 	public SyntaxHighlighter getSyntaxHighlighter(@Nullable final Project project, @Nullable final VirtualFile virtualFile)
 	{
 		final LanguageLevel level = project != null && virtualFile != null ? PyUtil.getLanguageLevelForVirtualFile(project, virtualFile) : LanguageLevel.getDefault();

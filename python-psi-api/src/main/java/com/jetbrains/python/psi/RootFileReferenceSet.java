@@ -17,8 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.io.FileUtil;
@@ -38,7 +38,7 @@ import com.intellij.util.containers.ContainerUtil;
 public class RootFileReferenceSet extends FileReferenceSet
 {
 	public RootFileReferenceSet(String str,
-			@NotNull PsiElement element,
+			@Nonnull PsiElement element,
 			int startInElement,
 			PsiReferenceProvider provider,
 			boolean caseSensitive,
@@ -48,7 +48,7 @@ public class RootFileReferenceSet extends FileReferenceSet
 		super(str, element, startInElement, provider, caseSensitive, endingSlashNotAllowed, suitableFileTypes);
 	}
 
-	public RootFileReferenceSet(String s, @NotNull PsiElement element, int offset, PsiReferenceProvider provider, boolean sensitive)
+	public RootFileReferenceSet(String s, @Nonnull PsiElement element, int offset, PsiReferenceProvider provider, boolean sensitive)
 	{
 		super(s, element, offset, provider, sensitive);
 	}
@@ -66,7 +66,7 @@ public class RootFileReferenceSet extends FileReferenceSet
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PsiFileSystemItem> computeDefaultContexts()
 	{

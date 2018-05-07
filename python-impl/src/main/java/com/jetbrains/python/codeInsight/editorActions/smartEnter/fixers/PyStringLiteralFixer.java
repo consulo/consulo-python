@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -36,7 +37,7 @@ public class PyStringLiteralFixer extends PyFixer<PyStringLiteralExpression>
 	}
 
 	@Override
-	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyStringLiteralExpression psiElement) throws IncorrectOperationException
+	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyStringLiteralExpression psiElement) throws IncorrectOperationException
 	{
 		final String text = psiElement.getText();
 		if(StringUtil.startsWith(text, "\"\"\""))

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager.vp;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
@@ -41,7 +42,7 @@ public abstract class MembersBasedPresenterNoPreviewImpl<T extends MembersBasedV
 	 * @param infoStorage           info storage
 	 * @param model                 Member model (to be used for dependencies checking)
 	 */
-	protected MembersBasedPresenterNoPreviewImpl(@NotNull final T view, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull final M model)
+	protected MembersBasedPresenterNoPreviewImpl(@Nonnull final T view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final M model)
 	{
 		super(view, classUnderRefactoring, infoStorage, model);
 	}
@@ -63,7 +64,7 @@ public abstract class MembersBasedPresenterNoPreviewImpl<T extends MembersBasedV
 	/**
 	 * @return Command name for this preview
 	 */
-	@NotNull
+	@Nonnull
 	protected abstract String getCommandName();
 
 	/**

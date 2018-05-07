@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.run;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.net.HostAndPort;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -41,7 +41,7 @@ public class PyRemoteProcessStarter
 	public static final Key<Boolean> OPEN_FOR_INCOMING_CONNECTION = Key.create("OPEN_FOR_INCOMING_CONNECTION");
 	public static final Key<HostAndPort> WEB_SERVER_HOST_AND_PORT = new Key<>("WEB_SERVER_HOST_AND_PORT");
 
-	public ProcessHandler startRemoteProcess(@NotNull Sdk sdk, @NotNull GeneralCommandLine commandLine, @Nullable Project project, @Nullable PyRemotePathMapper pathMapper) throws ExecutionException
+	public ProcessHandler startRemoteProcess(@Nonnull Sdk sdk, @Nonnull GeneralCommandLine commandLine, @Nullable Project project, @Nullable PyRemotePathMapper pathMapper) throws ExecutionException
 	{
 		PythonRemoteInterpreterManager manager = PythonRemoteInterpreterManager.getInstance();
 		if(manager != null)
@@ -70,9 +70,9 @@ public class PyRemoteProcessStarter
 		}
 	}
 
-	protected PyRemoteProcessHandlerBase doStartRemoteProcess(@NotNull Sdk sdk,
-			@NotNull final GeneralCommandLine commandLine,
-			@NotNull final PythonRemoteInterpreterManager manager,
+	protected PyRemoteProcessHandlerBase doStartRemoteProcess(@Nonnull Sdk sdk,
+			@Nonnull final GeneralCommandLine commandLine,
+			@Nonnull final PythonRemoteInterpreterManager manager,
 			@Nullable final Project project,
 			@Nullable PyRemotePathMapper pathMapper) throws ExecutionException
 	{

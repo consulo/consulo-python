@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.console.parsing;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.PsiBuilder;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;

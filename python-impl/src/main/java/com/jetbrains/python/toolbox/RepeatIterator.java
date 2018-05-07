@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.toolbox;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,7 +36,7 @@ public class RepeatIterator<T> implements Iterator<T> {
    * Create an iterator that repeats the contents of given list.
    * @param master the list to repeat
    */
-  public RepeatIterator(@NotNull List<T> master) {
+  public RepeatIterator(@Nonnull List<T> master) {
     this.master = master;
     this.source = master.iterator();
   }
@@ -45,7 +45,7 @@ public class RepeatIterator<T> implements Iterator<T> {
    * Create an iterator that repeats given value.
    * @param single the value to repeat
    */
-  public RepeatIterator(@NotNull T single) {
+  public RepeatIterator(@Nonnull T single) {
     master = new ArrayList<T>(1);
     master.add(single);
     source = master.iterator();

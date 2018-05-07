@@ -21,10 +21,10 @@ import java.awt.Insets;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComboBox;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -181,7 +181,7 @@ public class CreateCondaEnvDialog extends AbstractCreateVirtualEnvDialog
 		});
 	} */
 
-	@NotNull
+	@Nonnull
 	protected String createEnvironment(Sdk basicSdk) throws ExecutionException
 	{
 		return PyCondaPackageManagerImpl.createVirtualEnv(getDestination(), (String) mySdkCombo.getSelectedItem());

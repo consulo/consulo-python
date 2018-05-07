@@ -18,8 +18,8 @@ package com.jetbrains.python.traceBackParsers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Adapter that uses regexps
@@ -32,13 +32,13 @@ public abstract class TraceBackParserAdapter implements TraceBackParser
 	 * We do not search anything in line longer than this, because it makes no sense to search something in so long lines
 	 */
 	private static final int MAX_LINE_TO_PARSE = 5000;
-	@NotNull
+	@Nonnull
 	private final Pattern myPattern;
 
 	/**
 	 * @param pattern pattern to be used to match line.
 	 */
-	protected TraceBackParserAdapter(@NotNull final Pattern pattern)
+	protected TraceBackParserAdapter(@Nonnull final Pattern pattern)
 	{
 		myPattern = pattern;
 	}
@@ -46,7 +46,7 @@ public abstract class TraceBackParserAdapter implements TraceBackParser
 
 	@Nullable
 	@Override
-	public final LinkInTrace findLinkInTrace(@NotNull String line)
+	public final LinkInTrace findLinkInTrace(@Nonnull String line)
 	{
 		if(line.length() > MAX_LINE_TO_PARSE)
 		{
@@ -70,6 +70,6 @@ public abstract class TraceBackParserAdapter implements TraceBackParser
 	 * @param matchedMatcher regex matcher that found link
 	 * @return line info
 	 */
-	@NotNull
-	protected abstract LinkInTrace findLinkInTrace(@NotNull String line, @NotNull Matcher matchedMatcher);
+	@Nonnull
+	protected abstract LinkInTrace findLinkInTrace(@Nonnull String line, @Nonnull Matcher matchedMatcher);
 }

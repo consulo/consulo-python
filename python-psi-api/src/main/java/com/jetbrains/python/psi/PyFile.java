@@ -17,8 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
@@ -30,7 +30,7 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
 
 	List<PyClass> getTopLevelClasses();
 
-	@NotNull
+	@Nonnull
 	List<PyFunction> getTopLevelFunctions();
 
 	List<PyTargetExpression> getTopLevelAttributes();
@@ -51,7 +51,7 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
 	 *
 	 * @return the list of 'from ... import' statements.
 	 */
-	@NotNull
+	@Nonnull
 	List<PyFromImportStatement> getFromImports();
 
 	/**
@@ -63,14 +63,14 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
 	/**
 	 * Iterate over exported PSI elements defined in the file.
 	 */
-	@NotNull
+	@Nonnull
 	Iterable<PyElement> iterateNames();
 
 	/**
 	 * Return the resolved exported elements.
 	 */
-	@NotNull
-	List<RatedResolveResult> multiResolveName(@NotNull String name);
+	@Nonnull
+	List<RatedResolveResult> multiResolveName(@Nonnull String name);
 
 	/**
 	 * @deprecated Use {@link #multiResolveName(String)} instead.
@@ -84,7 +84,7 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
 	 *
 	 * @return the list of import targets.
 	 */
-	@NotNull
+	@Nonnull
 	List<PyImportElement> getImportTargets();
 
 	/**

@@ -30,8 +30,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
@@ -184,22 +184,22 @@ abstract public class IntroduceHandler implements RefactoringActionHandler
 	private final IntroduceValidator myValidator;
 	protected final String myDialogTitle;
 
-	protected IntroduceHandler(@NotNull final IntroduceValidator validator, @NotNull final String dialogTitle)
+	protected IntroduceHandler(@Nonnull final IntroduceValidator validator, @Nonnull final String dialogTitle)
 	{
 		myValidator = validator;
 		myDialogTitle = dialogTitle;
 	}
 
-	public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext)
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext)
 	{
 		performAction(new IntroduceOperation(project, editor, file, null));
 	}
 
-	public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext)
+	public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext)
 	{
 	}
 
-	public Collection<String> getSuggestedNames(@NotNull final PyExpression expression)
+	public Collection<String> getSuggestedNames(@Nonnull final PyExpression expression)
 	{
 		Collection<String> candidates = generateSuggestedNames(expression);
 
@@ -408,22 +408,22 @@ abstract public class IntroduceHandler implements RefactoringActionHandler
 		performActionOnElement(operation);
 	}
 
-	private static boolean breaksStringFormatting(@NotNull String s, @NotNull TextRange range)
+	private static boolean breaksStringFormatting(@Nonnull String s, @Nonnull TextRange range)
 	{
 		return breaksRanges(substitutionsToRanges(filterSubstitutions(parsePercentFormat(s))), range);
 	}
 
-	private static boolean breaksNewStyleStringFormatting(@NotNull String s, @NotNull TextRange range)
+	private static boolean breaksNewStyleStringFormatting(@Nonnull String s, @Nonnull TextRange range)
 	{
 		return breaksRanges(substitutionsToRanges(filterSubstitutions(parseNewStyleFormat(s))), range);
 	}
 
-	private static boolean breaksStringEscaping(@NotNull String s, @NotNull TextRange range)
+	private static boolean breaksStringEscaping(@Nonnull String s, @Nonnull TextRange range)
 	{
 		return breaksRanges(getEscapeRanges(s), range);
 	}
 
-	private static boolean breaksRanges(@NotNull List<TextRange> ranges, @NotNull TextRange range)
+	private static boolean breaksRanges(@Nonnull List<TextRange> ranges, @Nonnull TextRange range)
 	{
 		for(TextRange r : ranges)
 		{
@@ -640,7 +640,7 @@ abstract public class IntroduceHandler implements RefactoringActionHandler
 	{
 		private final StringBuilder myResult = new StringBuilder();
 
-		public InitializerTextBuilder(@NotNull PyExpression expression)
+		public InitializerTextBuilder(@Nonnull PyExpression expression)
 		{
 			if(PsiTreeUtil.findChildOfType(expression, PsiComment.class) != null)
 			{
@@ -715,7 +715,7 @@ abstract public class IntroduceHandler implements RefactoringActionHandler
 			}
 		}
 
-		private boolean needToWrapTopLevelExpressionInParenthesis(@NotNull PyExpression node)
+		private boolean needToWrapTopLevelExpressionInParenthesis(@Nonnull PyExpression node)
 		{
 			if(node instanceof PyGeneratorExpression)
 			{
@@ -747,18 +747,18 @@ abstract public class IntroduceHandler implements RefactoringActionHandler
 		return true;
 	}
 
-	protected List<PsiElement> getOccurrences(PsiElement element, @NotNull final PyExpression expression)
+	protected List<PsiElement> getOccurrences(PsiElement element, @Nonnull final PyExpression expression)
 	{
 		return PyRefactoringUtil.getOccurrences(expression, ScopeUtil.getScopeOwner(expression));
 	}
 
-	private PsiElement performReplace(@NotNull final PsiElement declaration, final IntroduceOperation operation)
+	private PsiElement performReplace(@Nonnull final PsiElement declaration, final IntroduceOperation operation)
 	{
 		final PyExpression expression = operation.getInitializer();
 		final Project project = operation.getProject();
 		return new WriteCommandAction<PsiElement>(project, expression.getContainingFile())
 		{
-			protected void run(@NotNull final Result<PsiElement> result) throws Throwable
+			protected void run(@Nonnull final Result<PsiElement> result) throws Throwable
 			{
 				try
 				{
@@ -824,7 +824,7 @@ abstract public class IntroduceHandler implements RefactoringActionHandler
 	}
 
 	@Nullable
-	protected abstract PsiElement addDeclaration(@NotNull final PsiElement expression, @NotNull final PsiElement declaration, @NotNull IntroduceOperation operation);
+	protected abstract PsiElement addDeclaration(@Nonnull final PsiElement expression, @Nonnull final PsiElement declaration, @Nonnull IntroduceOperation operation);
 
 	protected void postRefactoring(PsiElement element)
 	{

@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
@@ -57,7 +57,7 @@ public class PyPsiUtils
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	protected static <T extends PyElement> T[] nodesToPsi(ASTNode[] nodes, T[] array)
 	{
 		T[] psiElements = (T[]) Array.newInstance(array.getClass().getComponentType(), nodes.length);
@@ -73,7 +73,7 @@ public class PyPsiUtils
 	 * Finds the closest comma after the element skipping any whitespaces in-between.
 	 */
 	@Nullable
-	public static PsiElement getPrevComma(@NotNull PsiElement element)
+	public static PsiElement getPrevComma(@Nonnull PsiElement element)
 	{
 		final PsiElement prevNode = getPrevNonWhitespaceSibling(element);
 		return prevNode != null && prevNode.getNode().getElementType() == PyTokenTypes.COMMA ? prevNode : null;
@@ -92,7 +92,7 @@ public class PyPsiUtils
 	 * Finds first non-whitespace sibling before given AST node.
 	 */
 	@Nullable
-	public static ASTNode getPrevNonWhitespaceSibling(@NotNull ASTNode node)
+	public static ASTNode getPrevNonWhitespaceSibling(@Nonnull ASTNode node)
 	{
 		return skipSiblingsBackward(node, TokenSet.create(TokenType.WHITE_SPACE));
 	}
@@ -116,7 +116,7 @@ public class PyPsiUtils
 	 * Finds the closest comma after the element skipping any whitespaces in-between.
 	 */
 	@Nullable
-	public static PsiElement getNextComma(@NotNull PsiElement element)
+	public static PsiElement getNextComma(@Nonnull PsiElement element)
 	{
 		final PsiElement nextNode = getNextNonWhitespaceSibling(element);
 		return nextNode != null && nextNode.getNode().getElementType() == PyTokenTypes.COMMA ? nextNode : null;
@@ -135,7 +135,7 @@ public class PyPsiUtils
 	 * Finds first non-whitespace sibling after given PSI element but stops at first whitespace containing line feed.
 	 */
 	@Nullable
-	public static PsiElement getNextNonWhitespaceSiblingOnSameLine(@NotNull PsiElement element)
+	public static PsiElement getNextNonWhitespaceSiblingOnSameLine(@Nonnull PsiElement element)
 	{
 		PsiElement cur = element.getNextSibling();
 		while(cur != null)
@@ -157,7 +157,7 @@ public class PyPsiUtils
 	 * Finds first non-whitespace sibling after given AST node.
 	 */
 	@Nullable
-	public static ASTNode getNextNonWhitespaceSibling(@NotNull ASTNode after)
+	public static ASTNode getNextNonWhitespaceSibling(@Nonnull ASTNode after)
 	{
 		return skipSiblingsForward(after, TokenSet.create(TokenType.WHITE_SPACE));
 	}
@@ -211,7 +211,7 @@ public class PyPsiUtils
 	 * Finds the closest comma looking for the next comma first and then for the preceding one.
 	 */
 	@Nullable
-	public static PsiElement getAdjacentComma(@NotNull PsiElement element)
+	public static PsiElement getAdjacentComma(@Nonnull PsiElement element)
 	{
 		final PsiElement nextComma = getNextComma(element);
 		return nextComma != null ? nextComma : getPrevComma(element);
@@ -221,7 +221,7 @@ public class PyPsiUtils
 	 * Works similarly to {@link PsiTreeUtil#skipSiblingsForward(PsiElement, Class[])}, but for AST nodes.
 	 */
 	@Nullable
-	public static ASTNode skipSiblingsForward(@Nullable ASTNode node, @NotNull TokenSet types)
+	public static ASTNode skipSiblingsForward(@Nullable ASTNode node, @Nonnull TokenSet types)
 	{
 		if(node == null)
 		{
@@ -241,7 +241,7 @@ public class PyPsiUtils
 	 * Works similarly to {@link PsiTreeUtil#skipSiblingsBackward(PsiElement, Class[])}, but for AST nodes.
 	 */
 	@Nullable
-	public static ASTNode skipSiblingsBackward(@Nullable ASTNode node, @NotNull TokenSet types)
+	public static ASTNode skipSiblingsBackward(@Nullable ASTNode node, @Nonnull TokenSet types)
 	{
 		if(node == null)
 		{
@@ -266,7 +266,7 @@ public class PyPsiUtils
 	 * @return child element described
 	 */
 	@Nullable
-	public static PsiElement getFirstChildOfType(@NotNull final PsiElement element, @NotNull PyElementType type)
+	public static PsiElement getFirstChildOfType(@Nonnull final PsiElement element, @Nonnull PyElementType type)
 	{
 		final ASTNode child = element.getNode().findChildByType(type);
 		return child != null ? child.getPsi() : null;
@@ -281,7 +281,7 @@ public class PyPsiUtils
 	 * @return PsiElement - child psiElement
 	 */
 	@Nullable
-	public static PsiElement getChildByFilter(@NotNull PsiElement element, @NotNull TokenSet filter, int number)
+	public static PsiElement getChildByFilter(@Nonnull PsiElement element, @Nonnull TokenSet filter, int number)
 	{
 		final ASTNode node = element.getNode();
 		if(node != null)
@@ -292,7 +292,7 @@ public class PyPsiUtils
 		return null;
 	}
 
-	public static void addBeforeInParent(@NotNull final PsiElement anchor, @NotNull final PsiElement... newElements)
+	public static void addBeforeInParent(@Nonnull final PsiElement anchor, @Nonnull final PsiElement... newElements)
 	{
 		final ASTNode anchorNode = anchor.getNode();
 		LOG.assertTrue(anchorNode != null);
@@ -302,7 +302,7 @@ public class PyPsiUtils
 		}
 	}
 
-	public static void removeElements(@NotNull final PsiElement... elements)
+	public static void removeElements(@Nonnull final PsiElement... elements)
 	{
 		final ASTNode parentNode = elements[0].getParent().getNode();
 		LOG.assertTrue(parentNode != null);
@@ -314,7 +314,7 @@ public class PyPsiUtils
 	}
 
 	@Nullable
-	public static PsiElement getStatement(@NotNull final PsiElement element)
+	public static PsiElement getStatement(@Nonnull final PsiElement element)
 	{
 		final PyElement compStatement = getStatementList(element);
 		if(compStatement == null)
@@ -338,7 +338,7 @@ public class PyPsiUtils
 	 * @return described element or {@code null} if it doesn't exist
 	 */
 	@Nullable
-	public static PsiElement getParentRightBefore(@NotNull PsiElement element, @NotNull final PsiElement superParent)
+	public static PsiElement getParentRightBefore(@Nonnull PsiElement element, @Nonnull final PsiElement superParent)
 	{
 		return PsiTreeUtil.findFirstParent(element, false, element1 -> element1.getParent() == superParent);
 	}
@@ -417,8 +417,8 @@ public class PyPsiUtils
 	}
 
 
-	@NotNull
-	public static PsiElement getRealContext(@NotNull final PsiElement element)
+	@Nonnull
+	public static PsiElement getRealContext(@Nonnull final PsiElement element)
 	{
 		assertValid(element);
 		final PsiFile file = element.getContainingFile();
@@ -449,7 +449,7 @@ public class PyPsiUtils
 	 * @param child   child node comma should be adjacent to
 	 * @see #getAdjacentComma(PsiElement)
 	 */
-	public static void deleteAdjacentCommaWithWhitespaces(@NotNull PsiElement element, @NotNull PsiElement child)
+	public static void deleteAdjacentCommaWithWhitespaces(@Nonnull PsiElement element, @Nonnull PsiElement child)
 	{
 		final PsiElement commaNode = getAdjacentComma(child);
 		if(commaNode != null)
@@ -470,7 +470,7 @@ public class PyPsiUtils
 	 * @return described range or {@code null} if there are no such comments
 	 */
 	@Nullable
-	public static Couple<PsiComment> getPrecedingComments(@NotNull PsiElement element)
+	public static Couple<PsiComment> getPrecedingComments(@Nonnull PsiElement element)
 	{
 		PsiComment firstComment = null, lastComment = null;
 		overComments:
@@ -501,7 +501,7 @@ public class PyPsiUtils
 		return lastComment == null ? null : Couple.of(firstComment, lastComment);
 	}
 
-	@NotNull
+	@Nonnull
 	static <T, U extends PsiElement> List<T> collectStubChildren(U e, final StubElement<U> stub, final IElementType elementType, final Class<T> itemClass)
 	{
 		final List<T> result = new ArrayList<>();
@@ -581,7 +581,7 @@ public class PyPsiUtils
 	}
 
 	@Nullable
-	public static PyTargetExpression getAttribute(@NotNull final PyFile file, @NotNull final String name)
+	public static PyTargetExpression getAttribute(@Nonnull final PyFile file, @Nonnull final String name)
 	{
 		PyTargetExpression attr = file.findTopLevelAttribute(name);
 		if(attr == null)
@@ -603,7 +603,7 @@ public class PyPsiUtils
 		return attr;
 	}
 
-	public static List<PyExpression> getAttributeValuesFromFile(@NotNull PyFile file, @NotNull String name)
+	public static List<PyExpression> getAttributeValuesFromFile(@Nonnull PyFile file, @Nonnull String name)
 	{
 		List<PyExpression> result = ContainerUtil.newArrayList();
 		final PyTargetExpression attr = file.findTopLevelAttribute(name);
@@ -656,7 +656,7 @@ public class PyPsiUtils
 		return expression instanceof PyStringLiteralExpression ? ((PyStringLiteralExpression) expression).getStringValue() : null;
 	}
 
-	public static boolean isBefore(@NotNull final PsiElement element, @NotNull final PsiElement element2)
+	public static boolean isBefore(@Nonnull final PsiElement element, @Nonnull final PsiElement element2)
 	{
 		// TODO: From RubyPsiUtil, should be moved to PsiTreeUtil
 		return element.getTextOffset() <= element2.getTextOffset();
@@ -669,7 +669,7 @@ public class PyPsiUtils
 	}
 
 	@Nullable
-	public static PyExpression getFirstQualifier(@NotNull PyQualifiedExpression expr)
+	public static PyExpression getFirstQualifier(@Nonnull PyQualifiedExpression expr)
 	{
 		final List<PyExpression> expressions = unwindQualifiers(expr);
 		if(!expressions.isEmpty())
@@ -679,7 +679,7 @@ public class PyPsiUtils
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	public static String toPath(@Nullable PyQualifiedExpression expr)
 	{
 		if(expr != null)
@@ -699,13 +699,13 @@ public class PyPsiUtils
 	}
 
 	@Nullable
-	protected static QualifiedName asQualifiedName(@NotNull PyQualifiedExpression expr)
+	protected static QualifiedName asQualifiedName(@Nonnull PyQualifiedExpression expr)
 	{
 		return fromReferenceChain(unwindQualifiers(expr));
 	}
 
-	@NotNull
-	private static List<PyExpression> unwindQualifiers(@NotNull final PyQualifiedExpression expr)
+	@Nonnull
+	private static List<PyExpression> unwindQualifiers(@Nonnull final PyQualifiedExpression expr)
 	{
 		final List<PyExpression> path = new LinkedList<>();
 		PyQualifiedExpression e = expr;
@@ -719,7 +719,7 @@ public class PyPsiUtils
 	}
 
 	@Nullable
-	private static QualifiedName fromReferenceChain(@NotNull List<PyExpression> components)
+	private static QualifiedName fromReferenceChain(@Nonnull List<PyExpression> components)
 	{
 		final List<String> componentNames = new ArrayList<>(components.size());
 		for(PyExpression component : components)
@@ -746,13 +746,13 @@ public class PyPsiUtils
 		PsiUtilCore.ensureValid(element);
 	}
 
-	public static void assertValid(@NotNull final Module module)
+	public static void assertValid(@Nonnull final Module module)
 	{
 		Preconditions.checkArgument(!module.isDisposed(), String.format("Module %s is disposed", module));
 	}
 
-	@NotNull
-	public static PsiFileSystemItem getFileSystemItem(@NotNull PsiElement element)
+	@Nonnull
+	public static PsiFileSystemItem getFileSystemItem(@Nonnull PsiElement element)
 	{
 		if(element instanceof PsiFileSystemItem)
 		{

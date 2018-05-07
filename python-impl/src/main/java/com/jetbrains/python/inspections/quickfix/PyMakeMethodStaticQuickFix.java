@@ -18,7 +18,8 @@ package com.jetbrains.python.inspections.quickfix;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -39,13 +40,13 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("QFIX.NAME.make.static");
 	}
 
-	public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 	{
 		final PsiElement element = descriptor.getPsiElement();
 		final PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
@@ -94,7 +95,7 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void updateUsage(@NotNull final PyReferenceExpression element)
+	private static void updateUsage(@Nonnull final PyReferenceExpression element)
 	{
 		final PyExpression qualifier = element.getQualifier();
 		if(qualifier == null)
@@ -113,7 +114,7 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void updateArgumentList(@NotNull final PyReferenceExpression element)
+	private static void updateArgumentList(@Nonnull final PyReferenceExpression element)
 	{
 		final PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
 		if(callExpression == null)

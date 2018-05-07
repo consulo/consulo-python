@@ -16,10 +16,12 @@
 
 package com.jetbrains.python.psi;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Represents function parameter list.
@@ -35,7 +37,7 @@ public interface PyParameterList extends PyElement, StubBasedPsiElement<PyParame
   PyParameter[] getParameters();
 
   @Nullable
-  PyNamedParameter findParameterByName(@NotNull String name);
+  PyNamedParameter findParameterByName(@Nonnull String name);
 
 
   /**

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.console;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -30,7 +31,7 @@ public class PythonConsoleToolWindowFactory implements ToolWindowFactory, DumbAw
 	public static final String ID = "Python Console";
 
 	@Override
-	public void createToolWindowContent(final @NotNull Project project, final @NotNull ToolWindow toolWindow)
+	public void createToolWindowContent(final @Nonnull Project project, final @Nonnull ToolWindow toolWindow)
 	{
 		PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(project, null);
 		TransactionGuard.submitTransaction(project, runner::runSync);

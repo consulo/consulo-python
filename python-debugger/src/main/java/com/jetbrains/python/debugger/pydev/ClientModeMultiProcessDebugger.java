@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -32,18 +32,18 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	private static final Logger LOG = Logger.getInstance(ClientModeMultiProcessDebugger.class);
 
 	private final IPyDebugProcess myDebugProcess;
-	@NotNull
+	@Nonnull
 	private final String myHost;
 	private final int myPort;
 
-	@NotNull
+	@Nonnull
 	private final RemoteDebugger myMainDebugger;
 	private final Object myOtherDebuggersObject = new Object();
 	private final List<RemoteDebugger> myOtherDebuggers = Lists.newArrayList();
 
 	private ThreadRegistry myThreadRegistry = new ThreadRegistry();
 
-	public ClientModeMultiProcessDebugger(@NotNull final IPyDebugProcess debugProcess, @NotNull String host, int port)
+	public ClientModeMultiProcessDebugger(@Nonnull final IPyDebugProcess debugProcess, @Nonnull String host, int port)
 	{
 		myDebugProcess = debugProcess;
 		myHost = host;
@@ -54,7 +54,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 		myOtherDebuggers.add(myMainDebugger);
 	}
 
-	@NotNull
+	@Nonnull
 	private RemoteDebugger createDebugger()
 	{
 		return new RemoteDebugger(myDebugProcess, myHost, myPort)
@@ -187,8 +187,8 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 		debugger(threadId).loadReferrers(threadId, frameId, var, callback);
 	}
 
-	@NotNull
-	private ProcessDebugger debugger(@NotNull String threadId)
+	@Nonnull
+	private ProcessDebugger debugger(@Nonnull String threadId)
 	{
 		ProcessDebugger debugger = myThreadRegistry.getDebugger(threadId);
 		if(debugger != null)
@@ -242,7 +242,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 			return myThreadIdToDebugger.get(threadId);
 		}
 
-		public static String threadName(@NotNull String name, @NotNull String id)
+		public static String threadName(@Nonnull String name, @Nonnull String id)
 		{
 			int indx = id.indexOf("_", id.indexOf("_") + 1);
 			if(indx != -1)
@@ -353,7 +353,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void execute(@NotNull AbstractCommand command)
+	public void execute(@Nonnull AbstractCommand command)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -395,7 +395,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setTempBreakpoint(@NotNull String type, @NotNull String file, int line)
+	public void setTempBreakpoint(@Nonnull String type, @Nonnull String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -404,7 +404,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeTempBreakpoint(@NotNull String file, int line)
+	public void removeTempBreakpoint(@Nonnull String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -413,13 +413,13 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setBreakpoint(@NotNull String typeId,
-			@NotNull String file,
+	public void setBreakpoint(@Nonnull String typeId,
+			@Nonnull String file,
 			int line,
 			@Nullable String condition,
 			@Nullable String logExpression,
 			@Nullable String funcName,
-			@NotNull SuspendPolicy policy)
+			@Nonnull SuspendPolicy policy)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -428,7 +428,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeBreakpoint(@NotNull String typeId, @NotNull String file, int line)
+	public void removeBreakpoint(@Nonnull String typeId, @Nonnull String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{

@@ -18,7 +18,7 @@ package com.jetbrains.python.parsing;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.PsiBuilder;
 import com.jetbrains.python.psi.LanguageLevel;
 
@@ -42,18 +42,18 @@ public class ParsingContext
 		myScopes.push(emptyParsingScope());
 	}
 
-	@NotNull
+	@Nonnull
 	public ParsingScope popScope()
 	{
 		return myScopes.pop();
 	}
 
-	public void pushScope(@NotNull ParsingScope scope)
+	public void pushScope(@Nonnull ParsingScope scope)
 	{
 		myScopes.push(scope);
 	}
 
-	@NotNull
+	@Nonnull
 	public ParsingScope getScope()
 	{
 		return myScopes.peek();

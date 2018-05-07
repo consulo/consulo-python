@@ -27,7 +27,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.text.DateFormatUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -49,7 +49,7 @@ public class PyPIPackagesUpdater implements StartupActivity {
   }
 
   @Override
-  public void runActivity(@NotNull final Project project) {
+  public void runActivity(@Nonnull final Project project) {
     final Application application = ApplicationManager.getApplication();
     if (application.isUnitTestMode()) {
       return;

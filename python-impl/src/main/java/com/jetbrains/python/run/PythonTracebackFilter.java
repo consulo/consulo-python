@@ -17,8 +17,8 @@ package com.jetbrains.python.run;
 
 import java.io.File;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.project.Project;
@@ -50,7 +50,7 @@ public class PythonTracebackFilter implements Filter
 
 	@Override
 	@Nullable
-	public final Result applyFilter(@NotNull final String line, final int entireLength)
+	public final Result applyFilter(@Nonnull final String line, final int entireLength)
 	{
 
 		for(final TraceBackParser parser : TraceBackParser.PARSERS)
@@ -76,7 +76,7 @@ public class PythonTracebackFilter implements Filter
 	}
 
 	@Nullable
-	protected VirtualFile findFileByName(@NotNull final String fileName)
+	protected VirtualFile findFileByName(@Nonnull final String fileName)
 	{
 		VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(fileName);
 		if(vFile == null && !StringUtil.isEmptyOrSpaces(myWorkingDirectory))

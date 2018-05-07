@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.console;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.inspections.PyIncorrectDocstringInspection;
 import com.jetbrains.python.inspections.PyMandatoryEncodingInspection;
@@ -36,7 +37,7 @@ import com.jetbrains.python.validation.DocStringAnnotator;
 public class ConsoleVisitorFilter implements PythonVisitorFilter
 {
 	@Override
-	public boolean isSupported(@NotNull final Class visitorClass, @NotNull final PsiFile file)
+	public boolean isSupported(@Nonnull final Class visitorClass, @Nonnull final PsiFile file)
 	{
 		//if we're in console
 		if(PydevConsoleRunner.isInPydevConsole(file))

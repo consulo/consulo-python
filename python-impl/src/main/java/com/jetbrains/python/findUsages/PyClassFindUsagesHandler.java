@@ -18,7 +18,8 @@ package com.jetbrains.python.findUsages;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyNames;
@@ -32,13 +33,13 @@ public class PyClassFindUsagesHandler extends FindUsagesHandler
 {
 	private final PyClass myClass;
 
-	public PyClassFindUsagesHandler(@NotNull PyClass psiElement)
+	public PyClassFindUsagesHandler(@Nonnull PyClass psiElement)
 	{
 		super(psiElement);
 		myClass = psiElement;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiElement[] getSecondaryElements()
 	{
@@ -51,13 +52,13 @@ public class PyClassFindUsagesHandler extends FindUsagesHandler
 	}
 
 	@Override
-	protected boolean isSearchForTextOccurrencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile)
+	protected boolean isSearchForTextOccurrencesAvailable(@Nonnull PsiElement psiElement, boolean isSingleFile)
 	{
 		return true;
 	}
 
 	@Override
-	protected Collection<String> getStringsToSearch(@NotNull PsiElement element)
+	protected Collection<String> getStringsToSearch(@Nonnull PsiElement element)
 	{
 		if(element instanceof PyFunction && PyNames.INIT.equals(((PyFunction) element).getName()))
 		{

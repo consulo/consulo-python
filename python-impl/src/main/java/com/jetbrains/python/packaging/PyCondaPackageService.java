@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -96,12 +96,12 @@ public class PyCondaPackageService implements PersistentStateComponent<PyCondaPa
 		return CONDA_CHANNELS;
 	}
 
-	public void addChannel(@NotNull final String url)
+	public void addChannel(@Nonnull final String url)
 	{
 		CONDA_CHANNELS.add(url);
 	}
 
-	public void removeChannel(@NotNull final String url)
+	public void removeChannel(@Nonnull final String url)
 	{
 		if(CONDA_CHANNELS.contains(url))
 		{
@@ -156,7 +156,7 @@ public class PyCondaPackageService implements PersistentStateComponent<PyCondaPa
 	}
 
 	@Nullable
-	public static String getCondaExecutable(@NotNull final String condaName)
+	public static String getCondaExecutable(@Nonnull final String condaName)
 	{
 		final VirtualFile userHome = LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
 		if(userHome != null)
@@ -283,8 +283,8 @@ public class PyCondaPackageService implements PersistentStateComponent<PyCondaPa
 		LAST_TIME_CHECKED = System.currentTimeMillis();
 	}
 
-	@NotNull
-	public List<String> getPackageVersions(@NotNull final String packageName)
+	@Nonnull
+	public List<String> getPackageVersions(@Nonnull final String packageName)
 	{
 		if(PACKAGES_TO_RELEASES.containsKey(packageName))
 		{

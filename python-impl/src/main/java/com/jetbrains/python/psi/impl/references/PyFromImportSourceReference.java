@@ -26,7 +26,7 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.resolve.ResolveImportUtil;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class PyFromImportSourceReference extends PyImportReference {
     assert myStatement != null;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   protected List<RatedResolveResult> resolveInner() {
     List<PsiElement> targets = ResolveImportUtil.resolveFromImportStatementSource(myStatement, myElement.asQualifiedName());

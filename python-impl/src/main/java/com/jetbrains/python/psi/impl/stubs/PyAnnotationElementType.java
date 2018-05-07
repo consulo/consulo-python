@@ -29,7 +29,7 @@ import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.impl.PyAnnotationImpl;
 import com.jetbrains.python.psi.stubs.PyAnnotationStub;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -42,24 +42,24 @@ public class PyAnnotationElementType extends PyStubElementType<PyAnnotationStub,
     super(debugName);
   }
 
-  public PyAnnotation createPsi(@NotNull final PyAnnotationStub stub) {
+  public PyAnnotation createPsi(@Nonnull final PyAnnotationStub stub) {
     return new PyAnnotationImpl(stub);
   }
 
-  public PyAnnotationStub createStub(@NotNull final PyAnnotation psi, final StubElement parentStub) {
+  public PyAnnotationStub createStub(@Nonnull final PyAnnotation psi, final StubElement parentStub) {
     return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
   }
 
-  public PsiElement createElement(@NotNull final ASTNode node) {
+  public PsiElement createElement(@Nonnull final ASTNode node) {
     return new PyAnnotationImpl(node);
   }
 
-  public void serialize(@NotNull final PyAnnotationStub stub, @NotNull final StubOutputStream dataStream)
+  public void serialize(@Nonnull final PyAnnotationStub stub, @Nonnull final StubOutputStream dataStream)
       throws IOException {
   }
 
-  @NotNull
-  public PyAnnotationStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub)
+  @Nonnull
+  public PyAnnotationStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub)
       throws IOException {
     return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
   }

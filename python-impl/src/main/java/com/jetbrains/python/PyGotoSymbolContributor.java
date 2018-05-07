@@ -27,7 +27,7 @@ import com.jetbrains.python.psi.search.PyProjectScopeBuilder;
 import com.jetbrains.python.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.psi.stubs.PyVariableNameIndex;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,7 +38,7 @@ import java.util.Set;
  * @author yole
  */
 public class PyGotoSymbolContributor implements GotoClassContributor {
-  @NotNull
+  @Nonnull
   public String[] getNames(final Project project, final boolean includeNonProjectItems) {
     Set<String> symbols = new HashSet<String>();
     symbols.addAll(PyClassNameIndex.allKeys(project));
@@ -47,7 +47,7 @@ public class PyGotoSymbolContributor implements GotoClassContributor {
     return ArrayUtil.toStringArray(symbols);
   }
 
-  @NotNull
+  @Nonnull
   public NavigationItem[] getItemsByName(final String name, final String pattern, final Project project, final boolean includeNonProjectItems) {
     final GlobalSearchScope scope = includeNonProjectItems
                                     ? PyProjectScopeBuilder.excludeSdkTestsScope(project)

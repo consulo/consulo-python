@@ -17,11 +17,11 @@ package com.jetbrains.python.debugger.containerview;
 
 import java.awt.event.KeyListener;
 
+import javax.annotation.Nonnull;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
@@ -47,7 +47,7 @@ public class NumericContainerRendererForm
 	protected JPanel myMainPanel;
 	protected JLabel myFormatLabel;
 
-	public NumericContainerRendererForm(@NotNull Project project, KeyListener resliceCallback, KeyListener reformatCallback)
+	public NumericContainerRendererForm(@Nonnull Project project, KeyListener resliceCallback, KeyListener reformatCallback)
 	{
 		myResliceCallback = resliceCallback;
 		myProject = project;

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.structureView;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.structureView.StructureViewTreeElement;
@@ -33,13 +33,13 @@ import com.jetbrains.python.psi.PyTargetExpression;
  * @author yole
  */
 public class PyStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider, StructureViewModel.ExpandInfoProvider {
-  public PyStructureViewModel(@NotNull PsiFile psiFile) {
+  public PyStructureViewModel(@Nonnull PsiFile psiFile) {
     this(psiFile, new PyStructureViewElement((PyElement) psiFile));
     withSorters(Sorter.ALPHA_SORTER);
     withSuitableClasses(PyFunction.class, PyClass.class);
   }
 
-  public PyStructureViewModel(@NotNull PsiFile file, @NotNull StructureViewTreeElement element) {
+  public PyStructureViewModel(@Nonnull PsiFile file, @Nonnull StructureViewTreeElement element) {
     super(file, element);
   }
 
@@ -59,7 +59,7 @@ public class PyStructureViewModel extends StructureViewModelBase implements Stru
     return element instanceof PyClass;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Filter[] getFilters() {
     return new Filter[] {

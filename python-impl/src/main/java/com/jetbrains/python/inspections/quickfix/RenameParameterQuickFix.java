@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -23,7 +25,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyNamedParameter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Parameter renaming.
@@ -37,19 +38,19 @@ public class RenameParameterQuickFix implements LocalQuickFix {
     myNewName = newName;
   }
 
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     final PsiElement elt = descriptor.getPsiElement();
     if (elt != null && elt instanceof PyNamedParameter && elt.isWritable()) {
       new RenameProcessor(project, elt, myNewName, false, true).run();
     }
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return "Rename parameter";
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.rename.parameter.to.$0", myNewName);
   }

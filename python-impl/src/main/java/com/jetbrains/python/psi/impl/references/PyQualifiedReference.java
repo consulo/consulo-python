@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -86,7 +86,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 		super(element, context);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected List<RatedResolveResult> resolveInner()
 	{
@@ -275,7 +275,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 		return rate;
 	}
 
-	private static boolean canQualifyAnImplicitName(@NotNull PyExpression qualifier)
+	private static boolean canQualifyAnImplicitName(@Nonnull PyExpression qualifier)
 	{
 		if(qualifier instanceof PyCallExpression)
 		{
@@ -292,7 +292,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 		return true;
 	}
 
-	private static boolean addAssignedAttributes(ResolveResultList ret, String referencedName, @NotNull final PyQualifiedExpression qualifier)
+	private static boolean addAssignedAttributes(ResolveResultList ret, String referencedName, @Nonnull final PyQualifiedExpression qualifier)
 	{
 		final QualifiedName qName = qualifier.asQualifiedName();
 		if(qName == null)
@@ -334,7 +334,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 		ret.poke(docstring, RatedResolveResult.RATE_HIGH);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{
@@ -532,8 +532,8 @@ public class PyQualifiedReference extends PyReferenceImpl
 		return ArrayUtil.toObjectArray(results);
 	}
 
-	@NotNull
-	public static Collection<PyExpression> collectAssignedAttributes(@NotNull final QualifiedName qualifierQName, @NotNull final PsiElement anchor)
+	@Nonnull
+	public static Collection<PyExpression> collectAssignedAttributes(@Nonnull final QualifiedName qualifierQName, @Nonnull final PsiElement anchor)
 	{
 		final Set<String> names = new HashSet<>();
 		final List<PyExpression> results = new ArrayList<>();
@@ -607,7 +607,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	protected PyQualifiedReference copyWithResolveContext(PyResolveContext context)
 	{
 		return new PyQualifiedReference(myElement, context);

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XValueChildrenList;
@@ -26,17 +27,17 @@ public class PyReferringObjectsValue extends PyDebugValue
 	private static final Logger LOG = Logger.getInstance(PyReferringObjectsValue.class);
 
 	private final
-	@NotNull
+	@Nonnull
 	PyReferrersLoader myReferrersLoader;
 
-	public PyReferringObjectsValue(@NotNull String name,
+	public PyReferringObjectsValue(@Nonnull String name,
 			String type,
 			String typeQualifier,
 			String value,
 			boolean container,
 			boolean isReturnedVal,
 			boolean errorOnEval,
-			@NotNull PyFrameAccessor frameAccessor)
+			@Nonnull PyFrameAccessor frameAccessor)
 	{
 		super(name, type, typeQualifier, value, container, isReturnedVal, false, errorOnEval, frameAccessor);
 		myReferrersLoader = frameAccessor.getReferrersLoader();
@@ -55,7 +56,7 @@ public class PyReferringObjectsValue extends PyDebugValue
 	}
 
 	@Override
-	public void computeChildren(@NotNull final XCompositeNode node)
+	public void computeChildren(@Nonnull final XCompositeNode node)
 	{
 		if(node.isObsolete())
 		{

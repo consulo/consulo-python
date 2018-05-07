@@ -18,7 +18,6 @@ package com.jetbrains.python.codeInsight.stdlib;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.python.PythonHelpersLocator;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -28,11 +27,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 /**
  * @author vlan
  */
 public class PyStdlibUtil {
-  @Nullable private static Set<String> PACKAGES = loadStdlibPackagesList();
+  @Nullable
+  private static Set<String> PACKAGES = loadStdlibPackagesList();
 
   private PyStdlibUtil() {
   }

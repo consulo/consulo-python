@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -26,7 +27,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -64,9 +64,9 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable
 	private JComboBox myTestRunnerComboBox;
 	private JComboBox myDocstringFormatComboBox;
 	private PythonTestConfigurationsModel myModel;
-	@NotNull
+	@Nonnull
 	private final Module myModule;
-	@NotNull
+	@Nonnull
 	private final Project myProject;
 	private final PyDocumentationSettings myDocumentationSettings;
 	private TextFieldWithBrowseButton myWorkDir;
@@ -77,7 +77,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable
 	private JPanel myDocStringsPanel;
 	private JPanel myRestPanel;
 
-	public PyIntegratedToolsConfigurable(@NotNull Module module)
+	public PyIntegratedToolsConfigurable(@Nonnull Module module)
 	{
 		myModule = module;
 		myProject = myModule.getProject();
@@ -106,7 +106,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable
 		myRestPanel.setBorder(IdeBorderFactory.createTitledBorder("reStructuredText"));
 	}
 
-	@NotNull
+	@Nonnull
 	private String getRequirementsPath()
 	{
 		final String path = PyPackageRequirementsSettings.getInstance(myModule).getRequirementsPath();
@@ -331,7 +331,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getId()
 	{

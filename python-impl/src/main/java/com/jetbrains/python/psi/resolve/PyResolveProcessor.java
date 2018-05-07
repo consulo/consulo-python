@@ -20,8 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
@@ -41,29 +42,29 @@ import com.jetbrains.python.psi.impl.ResolveResultList;
  */
 public class PyResolveProcessor implements PsiScopeProcessor
 {
-	@NotNull
+	@Nonnull
 	private final String myName;
 	private final boolean myLocalResolve;
-	@NotNull
+	@Nonnull
 	private final Map<PsiElement, PyImportedNameDefiner> myResults = Maps.newLinkedHashMap();
-	@NotNull
+	@Nonnull
 	private final Map<PsiElement, PyImportedNameDefiner> myImplicitlyImportedResults = Maps.newLinkedHashMap();
 	@Nullable
 	private ScopeOwner myOwner;
 
-	public PyResolveProcessor(@NotNull String name)
+	public PyResolveProcessor(@Nonnull String name)
 	{
 		this(name, false);
 	}
 
-	public PyResolveProcessor(@NotNull String name, boolean localResolve)
+	public PyResolveProcessor(@Nonnull String name, boolean localResolve)
 	{
 		myName = name;
 		myLocalResolve = localResolve;
 	}
 
 	@Override
-	public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state)
+	public boolean execute(@Nonnull PsiElement element, @Nonnull ResolveState state)
 	{
 		final PsiNamedElement namedElement = PyUtil.as(element, PsiNamedElement.class);
 		if(namedElement != null && myName.equals(namedElement.getName()))
@@ -102,23 +103,23 @@ public class PyResolveProcessor implements PsiScopeProcessor
 
 	@Nullable
 	@Override
-	public <T> T getHint(@NotNull Key<T> hintKey)
+	public <T> T getHint(@Nonnull Key<T> hintKey)
 	{
 		return null;
 	}
 
 	@Override
-	public void handleEvent(@NotNull Event event, @Nullable Object associated)
+	public void handleEvent(@Nonnull Event event, @Nullable Object associated)
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	public Map<PsiElement, PyImportedNameDefiner> getResults()
 	{
 		return myResults.isEmpty() ? myImplicitlyImportedResults : myResults;
 	}
 
-	@NotNull
+	@Nonnull
 	public Collection<PsiElement> getElements()
 	{
 		return getResults().keySet();
@@ -130,8 +131,8 @@ public class PyResolveProcessor implements PsiScopeProcessor
 		return myOwner;
 	}
 
-	@NotNull
-	private List<RatedResolveResult> resolveInImportedNameDefiner(@NotNull PyImportedNameDefiner definer)
+	@Nonnull
+	private List<RatedResolveResult> resolveInImportedNameDefiner(@Nonnull PyImportedNameDefiner definer)
 	{
 		if(myLocalResolve)
 		{

@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyTokenTypes;
@@ -41,7 +41,7 @@ public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAug
 		pyVisitor.visitPyAugAssignmentStatement(this);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyExpression getTarget()
 	{
 		final PyExpression target = childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);

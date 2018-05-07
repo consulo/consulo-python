@@ -16,11 +16,11 @@
 
 package consulo.python.buildout.module.extension;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.Comparing;
 import com.jetbrains.python.buildout.BuildoutConfigPanel;
@@ -34,7 +34,7 @@ import consulo.roots.ModuleRootLayer;
  */
 public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>
 {
-	public BuildoutMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
+	public BuildoutMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
@@ -56,7 +56,7 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 	}
 
 	@Override
-	public boolean isModified(@NotNull BuildoutModuleExtension extension)
+	public boolean isModified(@Nonnull BuildoutModuleExtension extension)
 	{
 		return myIsEnabled != extension.isEnabled() || !Comparing.strEqual(myScriptName, extension.getScriptName());
 	}

@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.run;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.Location;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
@@ -33,5 +33,5 @@ public interface RunnableScriptFilter
 {
 	ExtensionPointName<RunnableScriptFilter> EP_NAME = ExtensionPointName.create("consulo.python.runnableScriptFilter");
 
-	boolean isRunnableScript(PsiFile script, @NotNull Module module, Location location, @Nullable TypeEvalContext context);
+	boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable TypeEvalContext context);
 }

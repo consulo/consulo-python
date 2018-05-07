@@ -16,9 +16,10 @@
 
 package com.jetbrains.python.documentation.doctest;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.Language;
 import com.jetbrains.python.psi.PyFileElementType;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : ktisha
@@ -28,7 +29,7 @@ public class PyDocstringFileElementType extends PyFileElementType {
     super(language);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getExternalId() {
     return "PyDocstring.FILE";

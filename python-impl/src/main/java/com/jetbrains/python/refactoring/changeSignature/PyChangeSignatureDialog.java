@@ -31,7 +31,7 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.editor.Document;

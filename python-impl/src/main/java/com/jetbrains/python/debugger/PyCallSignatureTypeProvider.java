@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.Ref;
 import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyFunction;
@@ -32,7 +33,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyCallSignatureTypeProvider extends PyTypeProviderBase
 {
 	@Override
-	public Ref<PyType> getParameterType(@NotNull final PyNamedParameter param, @NotNull final PyFunction func, @NotNull TypeEvalContext context)
+	public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param, @Nonnull final PyFunction func, @Nonnull TypeEvalContext context)
 	{
 		final String name = param.getName();
 		if(name != null)
@@ -51,7 +52,7 @@ public class PyCallSignatureTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public Ref<PyType> getReturnType(@NotNull final PyCallable callable, @NotNull TypeEvalContext context)
+	public Ref<PyType> getReturnType(@Nonnull final PyCallable callable, @Nonnull TypeEvalContext context)
 	{
 		if(callable instanceof PyFunction)
 		{

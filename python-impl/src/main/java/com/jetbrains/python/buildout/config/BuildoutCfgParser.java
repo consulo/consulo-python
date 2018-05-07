@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.buildout.config;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import consulo.lang.LanguageVersion;
 import com.intellij.lang.PsiBuilder;
@@ -26,7 +27,7 @@ import com.intellij.psi.tree.IElementType;
  * @author traff
  */
 public class BuildoutCfgParser implements PsiParser, BuildoutCfgElementTypes, BuildoutCfgTokenTypes {
-  @NotNull
+  @Nonnull
   public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion) {
     final PsiBuilder.Marker rootMarker = builder.mark();
     Parsing parsing = new Parsing(builder);

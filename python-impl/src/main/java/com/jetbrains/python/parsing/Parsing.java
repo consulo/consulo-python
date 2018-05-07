@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.parsing;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
@@ -71,7 +71,7 @@ public class Parsing
 		return false;
 	}
 
-	protected boolean parseIdentifierOrSkip(@NotNull IElementType... validSuccessiveTokens)
+	protected boolean parseIdentifierOrSkip(@Nonnull IElementType... validSuccessiveTokens)
 	{
 		if(myBuilder.getTokenType() == PyTokenTypes.IDENTIFIER)
 		{
@@ -100,7 +100,7 @@ public class Parsing
 		return myBuilder.getTokenType() == tokenType;
 	}
 
-	protected boolean atToken(@NotNull final IElementType tokenType, @NotNull String tokenText)
+	protected boolean atToken(@Nonnull final IElementType tokenType, @Nonnull String tokenText)
 	{
 		return myBuilder.getTokenType() == tokenType && tokenText.equals(myBuilder.getTokenText());
 	}

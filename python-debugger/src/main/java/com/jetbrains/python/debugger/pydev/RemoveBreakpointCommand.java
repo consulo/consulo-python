@@ -1,11 +1,11 @@
 package com.jetbrains.python.debugger.pydev;
 
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class RemoveBreakpointCommand extends LineBreakpointCommand {
 
-  public RemoveBreakpointCommand(final RemoteDebugger debugger, @NotNull final String type, final String file, final int line) {
+  public RemoveBreakpointCommand(final RemoteDebugger debugger, @Nonnull final String type, final String file, final int line) {
     super(debugger, type, REMOVE_BREAKPOINT, file, line);
   }
 }

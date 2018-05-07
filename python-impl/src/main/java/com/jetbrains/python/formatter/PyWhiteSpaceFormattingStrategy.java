@@ -20,7 +20,7 @@ import gnu.trove.TIntProcedure;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -40,7 +40,7 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
 	}
 
 	@Override
-	public CharSequence adjustWhiteSpaceIfNecessary(@NotNull CharSequence whiteSpaceText, @NotNull PsiElement startElement, int startOffset,
+	public CharSequence adjustWhiteSpaceIfNecessary(@Nonnull CharSequence whiteSpaceText, @Nonnull PsiElement startElement, int startOffset,
 			int endOffset, CodeStyleSettings codeStyleSettings)
 	{
 		CharSequence whiteSpace = super.adjustWhiteSpaceIfNecessary(whiteSpaceText, startElement, startOffset, endOffset, codeStyleSettings);
@@ -71,9 +71,9 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
 	 * @param nodeAfter
 	 * @return symbols to use for replacing <code>[startOffset; endOffset)</code> sub-sequence of the given text
 	 */
-	@NotNull
+	@Nonnull
 	@Override
-	public CharSequence adjustWhiteSpaceIfNecessary(@NotNull CharSequence whiteSpaceText, @NotNull CharSequence text, int startOffset,
+	public CharSequence adjustWhiteSpaceIfNecessary(@Nonnull CharSequence whiteSpaceText, @Nonnull CharSequence text, int startOffset,
 			int endOffset, CodeStyleSettings codeStyleSettings, ASTNode nodeAfter)
 	{
 		// The general idea is that '\' symbol before line feed should be preserved.

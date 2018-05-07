@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.pushDown;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.refactoring.RefactoringBundle;
@@ -36,7 +37,7 @@ public class PyPushDownHandler extends PyClassRefactoringHandler
 	public static final String REFACTORING_NAME = RefactoringBundle.message("push.members.down.title");
 
 	@Override
-	protected void doRefactorImpl(@NotNull final Project project, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull Editor editor)
+	protected void doRefactorImpl(@Nonnull final Project project, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull Editor editor)
 	{
 
 		//TODO: Move to presenter?
@@ -50,16 +51,16 @@ public class PyPushDownHandler extends PyClassRefactoringHandler
 
 		ViewPresenterUtils.linkViewWithPresenterAndLaunch(PyPushDownPresenter.class, PyPushDownView.class, new Creator<PyPushDownView, PyPushDownPresenter>()
 		{
-			@NotNull
+			@Nonnull
 			@Override
-			public PyPushDownPresenter createPresenter(@NotNull PyPushDownView view)
+			public PyPushDownPresenter createPresenter(@Nonnull PyPushDownView view)
 			{
 				return new PyPushDownPresenterImpl(project, view, classUnderRefactoring, infoStorage);
 			}
 
-			@NotNull
+			@Nonnull
 			@Override
-			public PyPushDownView createView(@NotNull PyPushDownPresenter presenter)
+			public PyPushDownView createView(@Nonnull PyPushDownPresenter presenter)
 			{
 				return new PyPushDownViewSwingImpl(classUnderRefactoring, project, presenter);
 			}

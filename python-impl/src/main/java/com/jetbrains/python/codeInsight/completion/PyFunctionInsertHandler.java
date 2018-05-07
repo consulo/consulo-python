@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.codeInsight.completion;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
@@ -37,7 +38,7 @@ public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElem
 	public static PyFunctionInsertHandler INSTANCE = new PyFunctionInsertHandler();
 
 	@Override
-	public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item)
+	public void handleInsert(@Nonnull InsertionContext context, @Nonnull LookupElement item)
 	{
 		super.handleInsert(context, item);
 		if(hasParams(context, item))
@@ -47,18 +48,18 @@ public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElem
 	}
 
 	@Override
-	protected boolean placeCaretInsideParentheses(@NotNull InsertionContext context, @NotNull LookupElement item)
+	protected boolean placeCaretInsideParentheses(@Nonnull InsertionContext context, @Nonnull LookupElement item)
 	{
 		return hasParams(context, item);
 	}
 
-	private static boolean hasParams(@NotNull InsertionContext context, @NotNull LookupElement item)
+	private static boolean hasParams(@Nonnull InsertionContext context, @Nonnull LookupElement item)
 	{
 		final PyFunction function = getFunction(item);
 		return function != null && hasParams(context, function);
 	}
 
-	public static boolean hasParams(@NotNull InsertionContext context, @NotNull PyFunction function)
+	public static boolean hasParams(@Nonnull InsertionContext context, @Nonnull PyFunction function)
 	{
 		final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
 		PyReferenceExpression refExpr = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
@@ -67,7 +68,7 @@ public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElem
 	}
 
 	@Nullable
-	private static PyFunction getFunction(@NotNull LookupElement item)
+	private static PyFunction getFunction(@Nonnull LookupElement item)
 	{
 		return PyUtil.as(item.getPsiElement(), PyFunction.class);
 	}

@@ -15,9 +15,10 @@
  */
 package com.jetbrains.python.inspections;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -47,7 +48,7 @@ import com.jetbrains.python.toolbox.Substring;
 public class PyDocstringTypesInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
@@ -60,16 +61,16 @@ public class PyDocstringTypesInspection extends PyInspection
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
 
 	public static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -84,7 +85,7 @@ public class PyDocstringTypesInspection extends PyInspection
 			}
 		}
 
-		private void checkDocString(@NotNull PyFunction function)
+		private void checkDocString(@Nonnull PyFunction function)
 		{
 			final PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
 			if(docStringExpression != null)
@@ -151,14 +152,14 @@ public class PyDocstringTypesInspection extends PyInspection
 			myStringLiteralExpression = expression;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getName()
 		{
 			return "Change " + myParamName + " type from " + myTypeSubstring.getValue() + " to " + myNewType;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -166,7 +167,7 @@ public class PyDocstringTypesInspection extends PyInspection
 		}
 
 		@Override
-		public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 		{
 			String newValue = myTypeSubstring.getTextRange().replace(myTypeSubstring.getSuperString(), myNewType);
 

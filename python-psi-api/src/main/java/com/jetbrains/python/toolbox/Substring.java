@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 
@@ -36,17 +37,17 @@ public class Substring implements CharSequence
 {
 	private static final Pattern RE_NL = Pattern.compile("(\\r?\\n)");
 
-	@NotNull
+	@Nonnull
 	private final String myString;
 	private final int myStartOffset;
 	private final int myEndOffset;
 
-	public Substring(@NotNull String s)
+	public Substring(@Nonnull String s)
 	{
 		this(s, 0, s.length());
 	}
 
-	public Substring(@NotNull String s, int start, int end)
+	public Substring(@Nonnull String s, int start, int end)
 	{
 		myString = s;
 		myStartOffset = start;
@@ -73,51 +74,51 @@ public class Substring implements CharSequence
 		return toString().hashCode();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String toString()
 	{
 		return getValue();
 	}
 
-	@NotNull
+	@Nonnull
 	public String getValue()
 	{
 		return getTextRange().substring(myString);
 	}
 
-	@NotNull
+	@Nonnull
 	public String getSuperString()
 	{
 		return myString;
 	}
 
-	@NotNull
+	@Nonnull
 	public TextRange getTextRange()
 	{
 		return TextRange.create(myStartOffset, myEndOffset);
 	}
 
-	@NotNull
-	public List<Substring> split(@NotNull String regex)
+	@Nonnull
+	public List<Substring> split(@Nonnull String regex)
 	{
 		return split(regex, Integer.MAX_VALUE);
 	}
 
-	@NotNull
-	public List<Substring> split(@NotNull String regex, int maxSplits)
+	@Nonnull
+	public List<Substring> split(@Nonnull String regex, int maxSplits)
 	{
 		return split(Pattern.compile(regex), maxSplits);
 	}
 
-	@NotNull
-	public List<Substring> split(@NotNull Pattern pattern)
+	@Nonnull
+	public List<Substring> split(@Nonnull Pattern pattern)
 	{
 		return split(pattern, Integer.MAX_VALUE);
 	}
 
-	@NotNull
-	public List<Substring> split(@NotNull Pattern pattern, int maxSplits)
+	@Nonnull
+	public List<Substring> split(@Nonnull Pattern pattern, int maxSplits)
 	{
 		final List<Substring> result = new ArrayList<>();
 		final Matcher m = pattern.matcher(myString);
@@ -146,19 +147,19 @@ public class Substring implements CharSequence
 		return result;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<Substring> splitLines()
 	{
 		return split(RE_NL);
 	}
 
-	@NotNull
+	@Nonnull
 	public Substring trim()
 	{
 		return trimLeft().trimRight();
 	}
 
-	@NotNull
+	@Nonnull
 	public Substring trimLeft()
 	{
 		int start;
@@ -167,7 +168,7 @@ public class Substring implements CharSequence
 		return createAnotherSubstring(start, myEndOffset);
 	}
 
-	@NotNull
+	@Nonnull
 	public Substring trimRight()
 	{
 		int end;
@@ -176,8 +177,8 @@ public class Substring implements CharSequence
 		return createAnotherSubstring(myStartOffset, end + 1);
 	}
 
-	@NotNull
-	public Substring getMatcherGroup(@NotNull Matcher m, int group)
+	@Nonnull
+	public Substring getMatcherGroup(@Nonnull Matcher m, int group)
 	{
 		return substring(m.start(group), m.end(group));
 	}
@@ -205,43 +206,43 @@ public class Substring implements CharSequence
 		return substring(start, end);
 	}
 
-	public boolean startsWith(@NotNull String prefix)
+	public boolean startsWith(@Nonnull String prefix)
 	{
 		return indexOf(prefix) == 0;
 	}
 
-	public boolean endsWith(@NotNull String prefix)
+	public boolean endsWith(@Nonnull String prefix)
 	{
 		return myString.lastIndexOf(prefix) == length() - prefix.length();
 	}
 
-	public int indexOf(@NotNull String s)
+	public int indexOf(@Nonnull String s)
 	{
 		int n = myString.indexOf(s, myStartOffset);
 		return n >= 0 && n < myEndOffset ? n - myStartOffset : -1;
 	}
 
-	public boolean contains(@NotNull String s)
+	public boolean contains(@Nonnull String s)
 	{
 		return indexOf(s) >= 0;
 	}
 
-	@NotNull
+	@Nonnull
 	@SuppressWarnings({"MethodNamesDifferingOnlyByCase"})
 	public Substring substring(int start)
 	{
 		return substring(start, length());
 	}
 
-	@NotNull
+	@Nonnull
 	@SuppressWarnings({"MethodNamesDifferingOnlyByCase"})
 	public Substring substring(int start, int end)
 	{
 		return createAnotherSubstring(myStartOffset + start, myStartOffset + end);
 	}
 
-	@NotNull
-	public String concatTrimmedLines(@NotNull String separator)
+	@Nonnull
+	public String concatTrimmedLines(@Nonnull String separator)
 	{
 		final StringBuilder b = new StringBuilder();
 		List<Substring> lines = splitLines();
@@ -257,7 +258,7 @@ public class Substring implements CharSequence
 		return b.toString();
 	}
 
-	@NotNull
+	@Nonnull
 	private Substring createAnotherSubstring(int start, int end)
 	{
 		return new Substring(myString, start, end);
@@ -266,8 +267,8 @@ public class Substring implements CharSequence
 	/**
 	 * If both substrings share the same origin, returns new substring that includes both of them.
 	 */
-	@NotNull
-	public Substring union(@NotNull Substring other)
+	@Nonnull
+	public Substring union(@Nonnull Substring other)
 	{
 		if(!myString.equals(other.myString))
 		{

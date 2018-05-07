@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.TemplateBuilder;
@@ -30,7 +32,6 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.ParamHelper;
 import com.jetbrains.python.psi.impl.PyFunctionBuilder;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: catherine
@@ -46,17 +47,17 @@ public class UnresolvedRefCreateFunctionQuickFix implements LocalQuickFix {
     myReference = reference;
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.unresolved.reference.create.function.$0", myReference.getText());
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     if (!myElement.isValid() || !FileModificationService.getInstance().preparePsiElementForWrite(myElement)) return;
 
     PyFunctionBuilder functionBuilder = new PyFunctionBuilder(myReference.getText());

@@ -17,8 +17,8 @@ package com.jetbrains.python.debugger;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author amarch
@@ -38,7 +38,7 @@ public class ArrayChunk
 	private final List<ColHeader> myColHeaders;
 
 
-	public ArrayChunk(@NotNull PyDebugValue value,
+	public ArrayChunk(@Nonnull PyDebugValue value,
 			String slicePresentation,
 			int rows,
 			int columns,

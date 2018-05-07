@@ -16,10 +16,11 @@
 
 package com.jetbrains.python.refactoring.introduce.variable;
 
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.refactoring.introduce.IntroduceValidator;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.

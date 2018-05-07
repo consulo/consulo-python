@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.BaseRefactoringProcessor;
@@ -40,11 +40,11 @@ import com.jetbrains.python.refactoring.classes.PyClassRefactoringUtil;
 public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringProcessor implements UsageViewDescriptor
 {
 
-	@NotNull
+	@Nonnull
 	protected final Collection<PyMemberInfo<PyElement>> myMembersToMove;
-	@NotNull
+	@Nonnull
 	protected final PyClass myFrom;
-	@NotNull
+	@Nonnull
 	private final PyClass[] myTo;
 
 	/**
@@ -52,10 +52,10 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	 * @param from          source
 	 * @param to            where to move
 	 */
-	protected PyMembersRefactoringBaseProcessor(@NotNull final Project project,
-			@NotNull final Collection<PyMemberInfo<PyElement>> membersToMove,
-			@NotNull final PyClass from,
-			@NotNull final PyClass... to)
+	protected PyMembersRefactoringBaseProcessor(@Nonnull final Project project,
+			@Nonnull final Collection<PyMemberInfo<PyElement>> membersToMove,
+			@Nonnull final PyClass from,
+			@Nonnull final PyClass... to)
 	{
 		super(project);
 		myFrom = from;
@@ -63,14 +63,14 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 		myTo = to.clone();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected UsageViewDescriptor createUsageViewDescriptor(@NotNull final UsageInfo[] usages)
+	protected UsageViewDescriptor createUsageViewDescriptor(@Nonnull final UsageInfo[] usages)
 	{
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiElement[] getElements()
 	{
@@ -80,7 +80,7 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	/**
 	 * @return destinations (so user would be able to choose if she wants to move member to certain place or not)
 	 */
-	@NotNull
+	@Nonnull
 	@Override
 	protected final PyUsageInfo[] findUsages()
 	{
@@ -93,7 +93,7 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	}
 
 	@Override
-	protected final void performRefactoring(@NotNull final UsageInfo[] usages)
+	protected final void performRefactoring(@Nonnull final UsageInfo[] usages)
 	{
 		final Collection<PyClass> destinations = new ArrayList<>(usages.length);
 		for(final UsageInfo usage : usages)
@@ -122,7 +122,7 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 
 	@Nullable
 	@Override
-	protected RefactoringEventData getAfterData(@NotNull UsageInfo[] usages)
+	protected RefactoringEventData getAfterData(@Nonnull UsageInfo[] usages)
 	{
 		final RefactoringEventData data = new RefactoringEventData();
 		data.addElements(myTo);

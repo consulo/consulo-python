@@ -1,13 +1,13 @@
 package com.jetbrains.python.debugger.pydev;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author Alexander Koshevoy
  */
 public class ProcessCreatedCommand extends AbstractCommand<ProcessCreatedCommand>
 {
-	public ProcessCreatedCommand(@NotNull RemoteDebugger debugger, int commandCode)
+	public ProcessCreatedCommand(@Nonnull RemoteDebugger debugger, int commandCode)
 	{
 		super(debugger, commandCode);
 	}

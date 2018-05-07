@@ -18,8 +18,9 @@ package com.jetbrains.python.psi.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.tree.TokenSet;
@@ -50,20 +51,20 @@ public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStat
 		pyVisitor.visitPyGlobalStatement(this);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyTargetExpression[] getGlobals()
 	{
 		return childrenToPsi(TARGET_EXPRESSION_SET, PyTargetExpression.EMPTY_ARRAY);
 	}
 
-	@NotNull
+	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
 		return Arrays.<PsiNamedElement>asList(getGlobals());
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@NotNull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}
@@ -76,7 +77,7 @@ public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStat
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode child)
+	public void deleteChildInternal(@Nonnull ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getGlobals()))
 		{

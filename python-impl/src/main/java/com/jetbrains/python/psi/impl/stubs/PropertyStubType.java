@@ -19,9 +19,10 @@ package com.jetbrains.python.psi.impl.stubs;
 import com.intellij.psi.stubs.StubInputStream;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.stubs.PropertyStubStorage;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole

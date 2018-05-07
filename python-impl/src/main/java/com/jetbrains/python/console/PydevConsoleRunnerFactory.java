@@ -19,9 +19,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -43,8 +45,8 @@ import com.jetbrains.python.sdk.PythonEnvUtil;
 public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory
 {
 	@Override
-	@NotNull
-	public PydevConsoleRunnerImpl createConsoleRunner(@NotNull Project project, @Nullable Module contextModule)
+	@Nonnull
+	public PydevConsoleRunnerImpl createConsoleRunner(@Nonnull Project project, @Nullable Module contextModule)
 	{
 		Pair<Sdk, Module> sdkAndModule = PydevConsoleRunner.findPythonSdkAndModule(project, contextModule);
 
@@ -136,13 +138,13 @@ public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory
 		return createConsoleRunner(project, sdk, workingDir, envs, PyConsoleType.PYTHON, settingsProvider, rerunAction, setupFragment);
 	}
 
-	public static void putIPythonEnvFlag(@NotNull Project project, Map<String, String> envs)
+	public static void putIPythonEnvFlag(@Nonnull Project project, Map<String, String> envs)
 	{
 		String ipythonEnabled = PyConsoleOptions.getInstance(project).isIpythonEnabled() ? "True" : "False";
 		envs.put(PythonEnvUtil.IPYTHONENABLE, ipythonEnabled);
 	}
 
-	@NotNull
+	@Nonnull
 	protected PydevConsoleRunnerImpl createConsoleRunner(Project project,
 			Sdk sdk,
 			String workingDir,

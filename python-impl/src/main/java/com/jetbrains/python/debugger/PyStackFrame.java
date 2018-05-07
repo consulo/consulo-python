@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.AccessToken;
@@ -70,7 +70,7 @@ public class PyStackFrame extends XStackFrame
 	private final PyStackFrameInfo myFrameInfo;
 	private final XSourcePosition myPosition;
 
-	public PyStackFrame(@NotNull Project project, @NotNull final PyFrameAccessor debugProcess, @NotNull final PyStackFrameInfo frameInfo, XSourcePosition position)
+	public PyStackFrame(@Nonnull Project project, @Nonnull final PyFrameAccessor debugProcess, @Nonnull final PyStackFrameInfo frameInfo, XSourcePosition position)
 	{
 		myProject = project;
 		myDebugProcess = debugProcess;
@@ -97,7 +97,7 @@ public class PyStackFrame extends XStackFrame
 	}
 
 	@Override
-	public void customizePresentation(@NotNull ColoredTextContainer component)
+	public void customizePresentation(@Nonnull ColoredTextContainer component)
 	{
 		component.setIcon(AllIcons.Debugger.StackFrame);
 
@@ -148,7 +148,7 @@ public class PyStackFrame extends XStackFrame
 	}
 
 	@Override
-	public void computeChildren(@NotNull final XCompositeNode node)
+	public void computeChildren(@Nonnull final XCompositeNode node)
 	{
 		if(node.isObsolete())
 		{
@@ -174,7 +174,7 @@ public class PyStackFrame extends XStackFrame
 		});
 	}
 
-	protected void addChildren(@NotNull final XCompositeNode node, @Nullable final XValueChildrenList children)
+	protected void addChildren(@Nonnull final XCompositeNode node, @Nullable final XValueChildrenList children)
 	{
 		if(children == null)
 		{
@@ -241,13 +241,13 @@ public class PyStackFrame extends XStackFrame
 		}
 	}
 
-	private static void addReturnedValuesGroup(@NotNull final XCompositeNode node, Map<String, XValue> returnedValues)
+	private static void addReturnedValuesGroup(@Nonnull final XCompositeNode node, Map<String, XValue> returnedValues)
 	{
 		final ArrayList<XValueGroup> group = Lists.newArrayList();
 		group.add(new XValueGroup(RETURN_VALUES_GROUP_NAME)
 		{
 			@Override
-			public void computeChildren(@NotNull XCompositeNode node)
+			public void computeChildren(@Nonnull XCompositeNode node)
 			{
 				XValueChildrenList list = new XValueChildrenList();
 				for(Map.Entry<String, XValue> entry : returnedValues.entrySet())
@@ -267,13 +267,13 @@ public class PyStackFrame extends XStackFrame
 		node.addChildren(XValueChildrenList.topGroups(group), true);
 	}
 
-	private static void addSpecialValuesGroup(@NotNull final XCompositeNode node, List<Map<String, XValue>> specialValuesGroups)
+	private static void addSpecialValuesGroup(@Nonnull final XCompositeNode node, List<Map<String, XValue>> specialValuesGroups)
 	{
 		final ArrayList<XValueGroup> group = Lists.newArrayList();
 		group.add(new XValueGroup(SPECIAL_VARIABLES_GROUP_NAME)
 		{
 			@Override
-			public void computeChildren(@NotNull XCompositeNode node)
+			public void computeChildren(@Nonnull XCompositeNode node)
 			{
 				XValueChildrenList list = new XValueChildrenList();
 				for(Map<String, XValue> group : specialValuesGroups)

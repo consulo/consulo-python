@@ -27,15 +27,15 @@ import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.search.PyProjectScopeBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 
 public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String,PyClass> KEY = StubIndexKey.createIndexKey("Py.class.shortName");
 
-  @NotNull
+  @Nonnull
   public StubIndexKey<String, PyClass> getKey() {
     return KEY;
   }
@@ -53,7 +53,7 @@ public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
 
 
   @Nullable
-  public static PyClass findClass(@NotNull String qName, Project project, GlobalSearchScope scope) {
+  public static PyClass findClass(@Nonnull String qName, Project project, GlobalSearchScope scope) {
     int pos = qName.lastIndexOf(".");
     String shortName = pos > 0 ? qName.substring(pos+1) : qName;
     for (PyClass pyClass : find(shortName, project, scope)) {

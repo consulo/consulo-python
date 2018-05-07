@@ -22,8 +22,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -112,7 +113,7 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
 		}
 
 		@Nullable
-		protected Query<PsiElement> search(final PsiElement elt, @NotNull final TypeEvalContext context)
+		protected Query<PsiElement> search(final PsiElement elt, @Nonnull final TypeEvalContext context)
 		{
 			if(!(elt.getParent() instanceof PyFunction))
 			{
@@ -130,7 +131,7 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
 		}
 
 		@Nullable
-		protected Query<PsiElement> search(final PsiElement elt, @NotNull final TypeEvalContext context)
+		protected Query<PsiElement> search(final PsiElement elt, @Nonnull final TypeEvalContext context)
 		{
 			List<PsiElement> result = new ArrayList<PsiElement>();
 			PyClass containingClass = PsiTreeUtil.getParentOfType(elt, PyClass.class);
@@ -156,7 +157,7 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
 			return "Choose Subclass of " + elt.getName();
 		}
 
-		protected Query<PyClass> search(final PyClass elt, @NotNull TypeEvalContext context)
+		protected Query<PyClass> search(final PyClass elt, @Nonnull TypeEvalContext context)
 		{
 			return PyClassInheritorsSearch.search(elt, true);
 		}
@@ -169,13 +170,13 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
 			return "Choose Overriding Method of " + elt.getName();
 		}
 
-		protected Query<PyFunction> search(final PyFunction elt, @NotNull TypeEvalContext context)
+		protected Query<PyFunction> search(final PyFunction elt, @Nonnull TypeEvalContext context)
 		{
 			return PyOverridingMethodsSearch.search(elt, true);
 		}
 	};
 
-	public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement element)
+	public LineMarkerInfo getLineMarkerInfo(@Nonnull final PsiElement element)
 	{
 		final ASTNode node = element.getNode();
 		if(node != null && node.getElementType() == PyTokenTypes.IDENTIFIER && element.getParent() instanceof PyFunction)
@@ -247,7 +248,7 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
 		return null;
 	}
 
-	public void collectSlowLineMarkers(@NotNull final List<PsiElement> elements, @NotNull final Collection<LineMarkerInfo> result)
+	public void collectSlowLineMarkers(@Nonnull final List<PsiElement> elements, @Nonnull final Collection<LineMarkerInfo> result)
 	{
 		Set<PyFunction> functions = new HashSet<PyFunction>();
 		for(PsiElement element : elements)

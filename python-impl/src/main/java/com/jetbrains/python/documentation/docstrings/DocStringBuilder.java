@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.text.StringUtil;
 
 /**
@@ -34,46 +35,46 @@ public abstract class DocStringBuilder<This extends DocStringBuilder>
 		myLines = new ArrayList<>();
 	}
 
-	@NotNull
-	public This addLine(@NotNull String line)
+	@Nonnull
+	public This addLine(@Nonnull String line)
 	{
 		return addLine(line, myLines.size());
 	}
 
-	@NotNull
-	public This addLine(@NotNull String line, int index)
+	@Nonnull
+	public This addLine(@Nonnull String line, int index)
 	{
 		myLines.add(index, line);
 		//noinspection unchecked
 		return (This) this;
 	}
 
-	@NotNull
+	@Nonnull
 	public This addEmptyLine()
 	{
 		return addLine("", myLines.size());
 	}
 
-	@NotNull
+	@Nonnull
 	public This addEmptyLine(int index)
 	{
 		return addLine("", index);
 	}
 
-	@NotNull
+	@Nonnull
 	public List<String> getLines()
 	{
 		return Collections.unmodifiableList(myLines);
 	}
 
-	@NotNull
+	@Nonnull
 	public String buildContent(int indent, boolean indentFirst)
 	{
 		return buildContent(StringUtil.repeatSymbol(' ', indent), indentFirst);
 	}
 
-	@NotNull
-	public String buildContent(@NotNull String indentation, boolean indentFirst)
+	@Nonnull
+	public String buildContent(@Nonnull String indentation, boolean indentFirst)
 	{
 		final StringBuilder result = new StringBuilder();
 		boolean first = true;

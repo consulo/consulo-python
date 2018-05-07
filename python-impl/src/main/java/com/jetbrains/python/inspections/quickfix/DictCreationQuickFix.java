@@ -27,7 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.PyDictCreationInspection;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Map;
@@ -40,24 +40,24 @@ import java.util.Map;
  */
 public class DictCreationQuickFix implements LocalQuickFix {
   private final PyAssignmentStatement myStatement;
-  public DictCreationQuickFix(@NotNull final PyAssignmentStatement statement) {
+  public DictCreationQuickFix(@Nonnull final PyAssignmentStatement statement) {
     myStatement = statement;
   }
 
   @Override
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.dict.creation");
   }
 
   @Override
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
   @Override
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
     final Map<String, String> statementsMap = Maps.newLinkedHashMap();
     final PyExpression assignedValue = myStatement.getAssignedValue();

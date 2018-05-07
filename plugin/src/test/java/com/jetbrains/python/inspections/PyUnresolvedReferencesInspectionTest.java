@@ -1,6 +1,7 @@
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -310,7 +311,7 @@ public class PyUnresolvedReferencesInspectionTest extends PyTestCase {
     myFixture.checkHighlighting(true, false, false);
   }
 
-  private void doMultiFileTest(@NotNull String filename) {
+  private void doMultiFileTest(@Nonnull String filename) {
     final String testName = getTestName(false);
     myFixture.copyDirectoryToProject(TEST_DIRECTORY + testName, "");
     myFixture.configureFromTempProjectFile(filename);

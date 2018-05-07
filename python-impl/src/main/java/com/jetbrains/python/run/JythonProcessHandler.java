@@ -18,13 +18,13 @@ package com.jetbrains.python.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
 public class JythonProcessHandler extends PythonProcessHandler {
-  private JythonProcessHandler(@NotNull Process process, @NotNull GeneralCommandLine commandLine) {
+  private JythonProcessHandler(@Nonnull Process process, @Nonnull GeneralCommandLine commandLine) {
     super(process, commandLine);
   }
 

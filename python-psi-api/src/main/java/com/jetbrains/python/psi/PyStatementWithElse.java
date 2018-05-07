@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * A part of a multi-part statement which can have an "else:" clause.

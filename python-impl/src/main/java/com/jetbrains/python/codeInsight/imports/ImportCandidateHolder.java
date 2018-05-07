@@ -17,8 +17,8 @@ package com.jetbrains.python.codeInsight.imports;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -71,7 +71,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder>
 	 *                      For modules and packages it should be <em>qualified name of their parental package</em>
 	 *                      (empty for modules and packages located at source roots).
 	 */
-	public ImportCandidateHolder(@NotNull PsiElement importable, @NotNull PsiFileSystemItem file, @Nullable PyImportElement importElement, @Nullable QualifiedName path, @Nullable String asName)
+	public ImportCandidateHolder(@Nonnull PsiElement importable, @Nonnull PsiFileSystemItem file, @Nullable PyImportElement importElement, @Nullable QualifiedName path, @Nullable String asName)
 	{
 		myFile = file;
 		myImportable = importable;
@@ -81,12 +81,12 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder>
 		assert importElement != null || path != null; // one of these must be present
 	}
 
-	public ImportCandidateHolder(@NotNull PsiElement importable, @NotNull PsiFileSystemItem file, @Nullable PyImportElement importElement, @Nullable QualifiedName path)
+	public ImportCandidateHolder(@Nonnull PsiElement importable, @Nonnull PsiFileSystemItem file, @Nullable PyImportElement importElement, @Nullable QualifiedName path)
 	{
 		this(importable, file, importElement, path, null);
 	}
 
-	@NotNull
+	@Nonnull
 	public PsiElement getImportable()
 	{
 		return myImportable;
@@ -98,7 +98,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder>
 		return myImportElement;
 	}
 
-	@NotNull
+	@Nonnull
 	public PsiFileSystemItem getFile()
 	{
 		return myFile;
@@ -119,8 +119,8 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder>
 	 * @param source     known ImportElement to import the name; its 'as' clause is used if present.
 	 * @return a properly qualified name.
 	 */
-	@NotNull
-	public static String getQualifiedName(@NotNull String name, @Nullable QualifiedName importPath, @Nullable PyImportElement source)
+	@Nonnull
+	public static String getQualifiedName(@Nonnull String name, @Nullable QualifiedName importPath, @Nullable PyImportElement source)
 	{
 		final StringBuilder sb = new StringBuilder();
 		if(source != null)
@@ -146,8 +146,8 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder>
 		return sb.toString();
 	}
 
-	@NotNull
-	public String getPresentableText(@NotNull String myName)
+	@Nonnull
+	public String getPresentableText(@Nonnull String myName)
 	{
 		final StringBuilder sb = new StringBuilder(getQualifiedName(myName, myPath, myImportElement));
 		PsiElement parent = null;
@@ -183,7 +183,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder>
 		return sb.toString();
 	}
 
-	public int compareTo(@NotNull ImportCandidateHolder other)
+	public int compareTo(@Nonnull ImportCandidateHolder other)
 	{
 		final int lRelevance = getRelevance();
 		final int rRelevance = other.getRelevance();

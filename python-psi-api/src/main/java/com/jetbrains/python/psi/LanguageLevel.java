@@ -17,7 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
@@ -48,7 +48,7 @@ public enum LanguageLevel
 
 	public static LanguageLevel FORCE_LANGUAGE_LEVEL = null;
 
-	@NotNull
+	@Nonnull
 	public static LanguageLevel getDefault()
 	{
 		return DEFAULT2;
@@ -98,17 +98,17 @@ public enum LanguageLevel
 		return myIsPy3K;
 	}
 
-	public boolean isOlderThan(@NotNull LanguageLevel other)
+	public boolean isOlderThan(@Nonnull LanguageLevel other)
 	{
 		return myVersion < other.myVersion;
 	}
 
-	public boolean isAtLeast(@NotNull LanguageLevel other)
+	public boolean isAtLeast(@Nonnull LanguageLevel other)
 	{
 		return myVersion >= other.myVersion;
 	}
 
-	public static LanguageLevel fromPythonVersion(@NotNull String pythonVersion)
+	public static LanguageLevel fromPythonVersion(@Nonnull String pythonVersion)
 	{
 		if(pythonVersion.startsWith("2"))
 		{
@@ -167,8 +167,8 @@ public enum LanguageLevel
 
 	public static final Key<LanguageLevel> KEY = new Key<>("python.language.level");
 
-	@NotNull
-	public static LanguageLevel forElement(@NotNull PsiElement element)
+	@Nonnull
+	public static LanguageLevel forElement(@Nonnull PsiElement element)
 	{
 		final PsiFile containingFile = element.getContainingFile();
 		if(containingFile instanceof PyFile)
@@ -178,7 +178,7 @@ public enum LanguageLevel
 		return getDefault();
 	}
 
-	@NotNull
+	@Nonnull
 	public static LanguageLevel getLatest()
 	{
 		//noinspection ConstantConditions

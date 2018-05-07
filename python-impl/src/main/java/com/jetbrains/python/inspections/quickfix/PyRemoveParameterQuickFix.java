@@ -18,7 +18,8 @@ package com.jetbrains.python.inspections.quickfix;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -40,13 +41,13 @@ import com.jetbrains.python.refactoring.PyRefactoringUtil;
 public class PyRemoveParameterQuickFix implements LocalQuickFix
 {
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("QFIX.NAME.remove.parameter");
 	}
 
-	public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 	{
 		final PsiElement element = descriptor.getPsiElement();
 		assert element instanceof PyParameter;

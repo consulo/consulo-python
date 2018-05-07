@@ -15,8 +15,8 @@
  */
 package com.jetbrains.pyqt;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.PyNames;
@@ -38,7 +38,7 @@ public class PyQtTypeProvider extends PyTypeProviderBase
 	private static final String ourQt4Signal = "pyqtSignal";
 
 	@Override
-	public Ref<PyType> getReturnType(@NotNull PyCallable callable, @NotNull TypeEvalContext context)
+	public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
 	{
 		if(PyNames.INIT.equals(callable.getName()) && callable instanceof PyFunction)
 		{
@@ -65,7 +65,7 @@ public class PyQtTypeProvider extends PyTypeProviderBase
 
 	@Nullable
 	@Override
-	public PyType getCallableType(@NotNull PyCallable callable, @NotNull TypeEvalContext context)
+	public PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
 	{
 		if(callable instanceof PyFunction)
 		{

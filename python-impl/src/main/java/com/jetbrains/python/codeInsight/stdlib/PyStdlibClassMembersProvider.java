@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
@@ -39,7 +39,7 @@ public class PyStdlibClassMembersProvider extends PyClassMembersProviderBase
 {
 	private Key<List<PyCustomMember>> mySocketMembersKey = Key.create("socket.members");
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PyCustomMember> getMembers(PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
 	{

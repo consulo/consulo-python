@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.refactoring.move.moduleMembers;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.classMembers.DependentMembersCollectorBase;
@@ -35,7 +35,7 @@ public class PyDependentModuleMembersCollector extends DependentMembersCollector
 {
 	private final PyFile myModule;
 
-	public PyDependentModuleMembersCollector(@NotNull PyFile module)
+	public PyDependentModuleMembersCollector(@Nonnull PyFile module)
 	{
 		super(module, null);
 		myModule = module;
@@ -67,7 +67,7 @@ public class PyDependentModuleMembersCollector extends DependentMembersCollector
 		}
 	}
 
-	private boolean isValidSameModuleDependency(@NotNull PsiElement element)
+	private boolean isValidSameModuleDependency(@Nonnull PsiElement element)
 	{
 		return PyMoveModuleMembersHelper.isMovableModuleMember(element) && element.getContainingFile() == myModule;
 	}

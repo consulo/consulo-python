@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -33,7 +34,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PyJavaSuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters>
 {
-	public boolean execute(@NotNull final PySuperMethodsSearch.SearchParameters queryParameters, @NotNull final Processor<PsiElement> consumer)
+	public boolean execute(@Nonnull final PySuperMethodsSearch.SearchParameters queryParameters, @Nonnull final Processor<PsiElement> consumer)
 	{
 		PyFunction func = queryParameters.getDerivedMethod();
 		PyClass containingClass = func.getContainingClass();

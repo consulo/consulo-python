@@ -17,7 +17,7 @@
 package com.jetbrains.python.codeInsight.dataflow.scope;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -25,10 +25,10 @@ import java.util.Collection;
  * @author oleg
  */
 public interface ScopeVariable {
-  @NotNull
+  @Nonnull
   String getName();
 
-  @NotNull
+  @Nonnull
   Collection<PsiElement> getDeclarations();
 
   boolean isParameter();

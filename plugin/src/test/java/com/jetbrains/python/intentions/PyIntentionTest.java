@@ -2,7 +2,7 @@ package com.jetbrains.python.intentions;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.python.PyBundle;

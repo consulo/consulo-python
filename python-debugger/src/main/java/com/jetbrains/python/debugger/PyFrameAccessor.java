@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 

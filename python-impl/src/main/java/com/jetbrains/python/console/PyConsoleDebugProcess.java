@@ -18,7 +18,8 @@ package com.jetbrains.python.console;
 import java.net.ServerSocket;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Maps;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
@@ -38,10 +39,10 @@ public class PyConsoleDebugProcess extends PyDebugProcess
 	private final int myLocalPort;
 	private final PyConsoleDebugProcessHandler myConsoleDebugProcessHandler;
 
-	public PyConsoleDebugProcess(@NotNull XDebugSession session,
-			@NotNull final ServerSocket serverSocket,
-			@NotNull final ExecutionConsole executionConsole,
-			@NotNull final PyConsoleDebugProcessHandler consoleDebugProcessHandler)
+	public PyConsoleDebugProcess(@Nonnull XDebugSession session,
+			@Nonnull final ServerSocket serverSocket,
+			@Nonnull final ExecutionConsole executionConsole,
+			@Nonnull final PyConsoleDebugProcessHandler consoleDebugProcessHandler)
 	{
 		super(session, serverSocket, executionConsole, consoleDebugProcessHandler, false);
 		myLocalPort = serverSocket.getLocalPort();

@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.ASTNode;
@@ -34,13 +35,13 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 public class PyAddExceptionSuperClassQuickFix implements LocalQuickFix
 {
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("QFIX.NAME.add.exception.base");
 	}
 
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		final PsiElement element = descriptor.getPsiElement();
 		if(element instanceof PyCallExpression)

@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.types;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
@@ -33,12 +33,12 @@ import com.jetbrains.python.psi.resolve.RatedResolveResult;
  */
 public class PyGenericType implements PyType
 {
-	@NotNull
+	@Nonnull
 	private final String myName;
 	@Nullable
 	private PyType myBound;
 
-	public PyGenericType(@NotNull String name, @Nullable PyType bound)
+	public PyGenericType(@Nonnull String name, @Nullable PyType bound)
 	{
 		myName = name;
 		myBound = bound;
@@ -46,7 +46,7 @@ public class PyGenericType implements PyType
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		return null;
 	}
@@ -57,7 +57,7 @@ public class PyGenericType implements PyType
 		return new Object[0];
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getName()
 	{
@@ -105,7 +105,7 @@ public class PyGenericType implements PyType
 		return myName.hashCode();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String toString()
 	{

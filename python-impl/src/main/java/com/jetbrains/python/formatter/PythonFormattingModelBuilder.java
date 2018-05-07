@@ -18,8 +18,8 @@ package com.jetbrains.python.formatter;
 import static com.jetbrains.python.PyElementTypes.*;
 import static com.jetbrains.python.PyTokenTypes.*;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.formatting.CustomFormattingModelBuilder;
 import com.intellij.formatting.FormatTextRanges;
 import com.intellij.formatting.FormattingMode;
@@ -49,9 +49,9 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilderEx, C
 	private static final boolean DUMP_FORMATTING_AST = false;
 	public static final TokenSet STATEMENT_OR_DECLARATION = PythonDialectsTokenSetProvider.INSTANCE.getStatementTokens();
 
-	@NotNull
+	@Nonnull
 	@Override
-	public FormattingModel createModel(@NotNull PsiElement element, @NotNull CodeStyleSettings settings, @NotNull FormattingMode mode)
+	public FormattingModel createModel(@Nonnull PsiElement element, @Nonnull CodeStyleSettings settings, @Nonnull FormattingMode mode)
 	{
 		if(DUMP_FORMATTING_AST)
 		{
@@ -70,12 +70,12 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilderEx, C
 
 	@Nullable
 	@Override
-	public CommonCodeStyleSettings.IndentOptions getIndentOptionsToUse(@NotNull PsiFile file, @NotNull FormatTextRanges ranges, @NotNull CodeStyleSettings settings)
+	public CommonCodeStyleSettings.IndentOptions getIndentOptionsToUse(@Nonnull PsiFile file, @Nonnull FormatTextRanges ranges, @Nonnull CodeStyleSettings settings)
 	{
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	public FormattingModel createModel(final PsiElement element, final CodeStyleSettings settings)
 	{
 		return createModel(element, settings, FormattingMode.REFORMAT);

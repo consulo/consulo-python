@@ -30,8 +30,8 @@ import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -40,8 +40,8 @@ import java.util.List;
  */
 public class PyFillParagraphHandler extends ParagraphFillHandler {
 
-  @NotNull
-  protected String getPrefix(@NotNull final PsiElement element) {
+  @Nonnull
+  protected String getPrefix(@Nonnull final PsiElement element) {
     final PyStringLiteralExpression stringLiteralExpression =
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {
@@ -83,9 +83,9 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
     return indent;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  protected String getPostfix(@NotNull PsiElement element) {
+  protected String getPostfix(@Nonnull PsiElement element) {
     final PyStringLiteralExpression stringLiteralExpression =
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {

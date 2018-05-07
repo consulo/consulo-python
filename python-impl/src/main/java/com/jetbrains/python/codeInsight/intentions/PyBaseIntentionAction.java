@@ -17,7 +17,8 @@
 package com.jetbrains.python.codeInsight.intentions;
 
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
@@ -28,10 +29,10 @@ import com.intellij.util.IncorrectOperationException;
 public abstract class PyBaseIntentionAction extends BaseIntentionAction {
 
 	@Override
-	public final void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+	public final void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
 		if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
 		doInvoke(project, editor, file);
 	}
 
-	public abstract void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException;
+	public abstract void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException;
 }

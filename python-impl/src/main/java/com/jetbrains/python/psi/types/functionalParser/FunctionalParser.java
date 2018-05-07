@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.types.functionalParser;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Function;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -26,35 +26,35 @@ import java.util.List;
 * @author vlan
 */
 public interface FunctionalParser<R, T> {
-  @NotNull
-  R parse(@NotNull List<Token<T>> tokens) throws ParserException;
+  @Nonnull
+  R parse(@Nonnull List<Token<T>> tokens) throws ParserException;
 
-  @NotNull
-  Pair<R, FunctionalParserBase.State> parse(@NotNull List<Token<T>> tokens,
-                                            @NotNull FunctionalParserBase.State state) throws ParserException;
+  @Nonnull
+  Pair<R, FunctionalParserBase.State> parse(@Nonnull List<Token<T>> tokens,
+                                            @Nonnull FunctionalParserBase.State state) throws ParserException;
 
-  @NotNull
-  <R2> FunctionalParser<Pair<R, R2>, T> then(@NotNull FunctionalParser<R2, T> parser);
+  @Nonnull
+  <R2> FunctionalParser<Pair<R, R2>, T> then(@Nonnull FunctionalParser<R2, T> parser);
 
-  @NotNull
-  <R2> FunctionalParser<R2, T> skipThen(@NotNull FunctionalParser<R2, T> parser);
+  @Nonnull
+  <R2> FunctionalParser<R2, T> skipThen(@Nonnull FunctionalParser<R2, T> parser);
 
-  @NotNull
-  <R2> FunctionalParser<R, T> thenSkip(@NotNull FunctionalParser<R2, T> parser);
+  @Nonnull
+  <R2> FunctionalParser<R, T> thenSkip(@Nonnull FunctionalParser<R2, T> parser);
 
-  @NotNull
-  FunctionalParser<R, T> or(@NotNull FunctionalParser<R, T> parser);
+  @Nonnull
+  FunctionalParser<R, T> or(@Nonnull FunctionalParser<R, T> parser);
 
-  @NotNull
-  <R2> FunctionalParser<R2, T> map(@NotNull Function<R, R2> f);
+  @Nonnull
+  <R2> FunctionalParser<R2, T> map(@Nonnull Function<R, R2> f);
 
-  @NotNull
+  @Nonnull
   FunctionalParser<R, T> endOfInput();
 
-  @NotNull
-  FunctionalParser<R, T> named(@NotNull String name);
+  @Nonnull
+  FunctionalParser<R, T> named(@Nonnull String name);
 
-  @NotNull
+  @Nonnull
   FunctionalParser<R, T> cached();
 
   class State {
@@ -68,7 +68,7 @@ public interface FunctionalParser<R, T> {
       myMax = 0;
     }
 
-    State(@NotNull State state, int pos, int max) {
+    State(@Nonnull State state, int pos, int max) {
       myKey = state.myKey;
       myPos = pos;
       myMax = max;

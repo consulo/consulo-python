@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.debugger.array;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebuggerException;
 
@@ -25,7 +25,7 @@ import com.jetbrains.python.debugger.PyDebuggerException;
 public interface TableChunkDatasource
 {
 
-	String correctStringValue(@NotNull Object value);
+	String correctStringValue(@Nonnull Object value);
 
 	void showError(String message);
 

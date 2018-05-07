@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.jetbrains.python.psi.PyTargetExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -37,7 +37,7 @@ public class PyVariableNameIndex extends StringStubIndexExtension<PyTargetExpres
     return super.getVersion() + 1;
   }
 
-  @NotNull
+  @Nonnull
   public StubIndexKey<String, PyTargetExpression> getKey() {
     return KEY;
   }

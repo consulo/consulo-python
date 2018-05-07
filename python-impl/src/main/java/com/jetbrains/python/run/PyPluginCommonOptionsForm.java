@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.application.options.ModuleListCellRenderer;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.util.PathMappingsComponent;

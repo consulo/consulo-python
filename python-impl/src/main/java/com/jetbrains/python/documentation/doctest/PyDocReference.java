@@ -18,8 +18,8 @@ package com.jetbrains.python.documentation.doctest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.ASTNode;
@@ -52,7 +52,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PyDocReference extends PyReferenceImpl
 {
-	public PyDocReference(PyQualifiedExpression element, @NotNull PyResolveContext context)
+	public PyDocReference(PyQualifiedExpression element, @Nonnull PyResolveContext context)
 	{
 		super(element, context);
 	}
@@ -63,7 +63,7 @@ public class PyDocReference extends PyReferenceImpl
 		return HighlightSeverity.WARNING;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ResolveResult[] multiResolve(boolean incompleteCode)
 	{
@@ -116,12 +116,12 @@ public class PyDocReference extends PyReferenceImpl
 	}
 
 	@Nullable
-	private PsiElement getScopeControlFlowAnchor(@NotNull PsiLanguageInjectionHost host)
+	private PsiElement getScopeControlFlowAnchor(@Nonnull PsiLanguageInjectionHost host)
 	{
 		return isInsideFormattedStringNode(host) ? PsiTreeUtil.getParentOfType(host, PyStatement.class) : null;
 	}
 
-	private boolean isInsideFormattedStringNode(@NotNull PsiLanguageInjectionHost host)
+	private boolean isInsideFormattedStringNode(@Nonnull PsiLanguageInjectionHost host)
 	{
 		if(host instanceof PyStringLiteralExpression)
 		{
@@ -132,7 +132,7 @@ public class PyDocReference extends PyReferenceImpl
 	}
 
 	@Nullable
-	private static ASTNode findContainingStringNode(@NotNull PsiElement injectedElement, @NotNull PyStringLiteralExpression host)
+	private static ASTNode findContainingStringNode(@Nonnull PsiElement injectedElement, @Nonnull PyStringLiteralExpression host)
 	{
 		final InjectedLanguageManager manager = InjectedLanguageManager.getInstance(host.getProject());
 		final List<Pair<PsiElement, TextRange>> files = manager.getInjectedPsiFiles(host);
@@ -156,7 +156,7 @@ public class PyDocReference extends PyReferenceImpl
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	public Object[] getVariants()
 	{
 		final ArrayList<Object> ret = Lists.newArrayList(super.getVariants());

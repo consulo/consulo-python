@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -42,7 +42,7 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix
 	private final SmartPsiElementPointer<PsiComment> myTypeCommentAnnotation;
 	private final String myReturnTypeName;
 
-	public PyMakeFunctionReturnTypeQuickFix(@NotNull PyFunction function, @Nullable String returnTypeName, @NotNull TypeEvalContext context)
+	public PyMakeFunctionReturnTypeQuickFix(@Nonnull PyFunction function, @Nullable String returnTypeName, @Nonnull TypeEvalContext context)
 	{
 		final SmartPointerManager manager = SmartPointerManager.getInstance(function.getProject());
 		myFunction = manager.createSmartPsiElementPointer(function);
@@ -53,7 +53,7 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix
 		myReturnTypeName = (returnTypeName == null) ? PythonDocumentationProvider.getTypeName(function.getReturnStatementType(context), context) : returnTypeName;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		PyFunction function = myFunction.getElement();
@@ -61,13 +61,13 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix
 		return PyBundle.message("QFIX.NAME.make.$0.return.$1", functionName, myReturnTypeName);
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("QFIX.NAME.make.$0.return.$1", "function", "inferred type");
 	}
 
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 		if(myAnnotation != null)

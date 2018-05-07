@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
@@ -39,7 +40,7 @@ public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		pyVisitor.visitPyListLiteralExpression(this);
 	}
 
-	public PsiElement add(@NotNull PsiElement psiElement) throws IncorrectOperationException
+	public PsiElement add(@Nonnull PsiElement psiElement) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		PyExpression element = (PyExpression) psiElement;
@@ -56,20 +57,20 @@ public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		}
 	}
 
-	public PsiElement addAfter(@NotNull PsiElement psiElement, PsiElement afterThis) throws IncorrectOperationException
+	public PsiElement addAfter(@Nonnull PsiElement psiElement, PsiElement afterThis) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		checkPyExpression(afterThis);
 		return PyElementGenerator.getInstance(getProject()).insertItemIntoList(this, (PyExpression) afterThis, (PyExpression) psiElement);
 	}
 
-	public PsiElement addBefore(@NotNull PsiElement psiElement, PsiElement beforeThis) throws IncorrectOperationException
+	public PsiElement addBefore(@Nonnull PsiElement psiElement, PsiElement beforeThis) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		return PyElementGenerator.getInstance(getProject()).insertItemIntoList(this, null, (PyExpression) psiElement);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		return PyBuiltinCache.getInstance(this).createLiteralCollectionType(this, "list", context);
 	}

@@ -16,7 +16,8 @@
 
 package com.jetbrains.python;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -51,7 +52,7 @@ public class PythonParserDefinition implements ParserDefinition {
     myStringLiteralTokens = TokenSet.orSet(PyTokenTypes.STRING_NODES, TokenSet.create(PyElementTypes.STRING_LITERAL_EXPRESSION));
   }
 
-  @NotNull
+  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new PythonIndentingLexer();
   }
@@ -60,28 +61,28 @@ public class PythonParserDefinition implements ParserDefinition {
     return PyFileElementType.INSTANCE;
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return myWhitespaceTokens;
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getCommentTokens(LanguageVersion languageVersion) {
     return myCommentTokens;
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return myStringLiteralTokens;
   }
 
-  @NotNull
+  @Nonnull
   public PsiParser createParser(LanguageVersion languageVersion) {
     return new PyParser();
   }
 
-  @NotNull
-  public PsiElement createElement(@NotNull ASTNode node) {
+  @Nonnull
+  public PsiElement createElement(@Nonnull ASTNode node) {
     final IElementType type = node.getElementType();
     if (type instanceof PyElementType) {
       PyElementType pyElType = (PyElementType)type;

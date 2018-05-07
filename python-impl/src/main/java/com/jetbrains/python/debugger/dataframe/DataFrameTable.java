@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.debugger.dataframe;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebugValue;
@@ -35,7 +36,7 @@ public class DataFrameTable extends NumericContainerViewTable implements TableCh
 
 	private Project myProject;
 
-	public DataFrameTable(@NotNull Project project, @NotNull ViewNumericContainerDialog dialog, @NotNull PyDebugValue value)
+	public DataFrameTable(@Nonnull Project project, @Nonnull ViewNumericContainerDialog dialog, @Nonnull PyDebugValue value)
 	{
 		super(project, dialog, value);
 	}

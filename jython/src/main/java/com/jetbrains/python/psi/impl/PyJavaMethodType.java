@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.impl;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -55,28 +55,28 @@ public class PyJavaMethodType implements PyCallableType
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@NotNull TypeEvalContext context)
+	public PyType getReturnType(@Nonnull TypeEvalContext context)
 	{
 		return PyJavaTypeProvider.asPyType(myMethod.getReturnType());
 	}
 
 	@Nullable
 	@Override
-	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
 	{
 		return getReturnType(context);
 	}
 
 	@Nullable
 	@Override
-	public List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context)
+	public List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
 	{
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location, @NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
 		return Collections.emptyList();
 	}

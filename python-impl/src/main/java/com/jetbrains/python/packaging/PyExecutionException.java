@@ -18,7 +18,8 @@ package com.jetbrains.python.packaging;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,35 +29,35 @@ import com.intellij.openapi.util.text.StringUtil;
  */
 public class PyExecutionException extends ExecutionException
 {
-	@NotNull
+	@Nonnull
 	private String myCommand;
-	@NotNull
+	@Nonnull
 	private List<String> myArgs;
-	@NotNull
+	@Nonnull
 	private final String myStdout;
-	@NotNull
+	@Nonnull
 	private final String myStderr;
 	private final int myExitCode;
-	@NotNull
+	@Nonnull
 	private final List<? extends PyExecutionFix> myFixes;
 
-	public PyExecutionException(@NotNull String message, @NotNull String command, @NotNull List<String> args)
+	public PyExecutionException(@Nonnull String message, @Nonnull String command, @Nonnull List<String> args)
 	{
 		this(message, command, args, "", "", 0, Collections.<PyExecutionFix>emptyList());
 	}
 
-	public PyExecutionException(@NotNull String message, @NotNull String command, @NotNull List<String> args, @NotNull ProcessOutput output)
+	public PyExecutionException(@Nonnull String message, @Nonnull String command, @Nonnull List<String> args, @Nonnull ProcessOutput output)
 	{
 		this(message, command, args, output.getStdout(), output.getStderr(), output.getExitCode(), Collections.<PyExecutionFix>emptyList());
 	}
 
-	public PyExecutionException(@NotNull String message,
-			@NotNull String command,
-			@NotNull List<String> args,
-			@NotNull String stdout,
-			@NotNull String stderr,
+	public PyExecutionException(@Nonnull String message,
+			@Nonnull String command,
+			@Nonnull List<String> args,
+			@Nonnull String stdout,
+			@Nonnull String stderr,
 			int exitCode,
-			@NotNull List<? extends PyExecutionFix> fixes)
+			@Nonnull List<? extends PyExecutionFix> fixes)
 	{
 		super(message);
 		myCommand = command;
@@ -85,19 +86,19 @@ public class PyExecutionException extends ExecutionException
 		return b.toString();
 	}
 
-	@NotNull
+	@Nonnull
 	public String getCommand()
 	{
 		return myCommand;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<String> getArgs()
 	{
 		return myArgs;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<? extends PyExecutionFix> getFixes()
 	{
 		return myFixes;
@@ -108,13 +109,13 @@ public class PyExecutionException extends ExecutionException
 		return myExitCode;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getStdout()
 	{
 		return myStdout;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getStderr()
 	{
 		return myStderr;

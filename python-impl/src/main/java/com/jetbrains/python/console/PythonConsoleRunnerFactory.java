@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.console;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -26,11 +27,11 @@ import com.intellij.openapi.project.Project;
  */
 public abstract class PythonConsoleRunnerFactory
 {
-	@NotNull
+	@Nonnull
 	public static PythonConsoleRunnerFactory getInstance()
 	{
 		return ServiceManager.getService(PythonConsoleRunnerFactory.class);
 	}
 
-	public abstract PydevConsoleRunner createConsoleRunner(@NotNull final Project project, @Nullable Module contextModule);
+	public abstract PydevConsoleRunner createConsoleRunner(@Nonnull final Project project, @Nullable Module contextModule);
 }

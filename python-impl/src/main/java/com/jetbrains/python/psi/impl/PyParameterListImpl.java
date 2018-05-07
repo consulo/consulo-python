@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -126,7 +127,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 
 	@Override
 	@Nullable
-	public PyNamedParameter findParameterByName(@NotNull final String name)
+	public PyNamedParameter findParameterByName(@Nonnull final String name)
 	{
 		final Ref<PyNamedParameter> result = new Ref<>();
 		ParamHelper.walkDownParamArray(getParameters(), new ParamHelper.ParamVisitor()
@@ -195,7 +196,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode node)
+	public void deleteChildInternal(@Nonnull ASTNode node)
 	{
 		if(ArrayUtil.contains(node.getPsi(), getParameters()))
 		{

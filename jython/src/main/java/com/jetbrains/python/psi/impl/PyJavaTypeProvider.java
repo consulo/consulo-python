@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiClass;
@@ -45,7 +45,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyJavaTypeProvider extends PyTypeProviderBase
 {
 	@Nullable
-	public PyType getReferenceType(@NotNull final PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
+	public PyType getReferenceType(@Nonnull final PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(referenceTarget instanceof PsiClass)
 		{
@@ -82,7 +82,7 @@ public class PyJavaTypeProvider extends PyTypeProviderBase
 		return null;
 	}
 
-	public Ref<PyType> getParameterType(@NotNull final PyNamedParameter param, @NotNull final PyFunction func, @NotNull TypeEvalContext context)
+	public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param, @Nonnull final PyFunction func, @Nonnull TypeEvalContext context)
 	{
 		if(!(param.getParent() instanceof PyParameterList))
 		{

@@ -17,7 +17,7 @@ package com.jetbrains.python.psi.resolve;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.jetbrains.python.psi.PyQualifiedExpression;
 
@@ -31,6 +31,6 @@ public interface PyReferenceResolveProvider
 	/**
 	 * Allows to provide a custom resolve result for qualified expression
 	 */
-	@NotNull
-	List<RatedResolveResult> resolveName(@NotNull final PyQualifiedExpression element);
+	@Nonnull
+	List<RatedResolveResult> resolveName(@Nonnull final PyQualifiedExpression element);
 }

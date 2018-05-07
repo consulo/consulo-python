@@ -18,7 +18,8 @@ package com.jetbrains.rest;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.InjectedLanguagePlaces;
@@ -32,7 +33,7 @@ import com.jetbrains.rest.psi.RestLine;
  */
 public class PyRestDocstringLanguageInjector implements LanguageInjector {
   @Override
-  public void getLanguagesToInject(@NotNull final PsiLanguageInjectionHost host, @NotNull final InjectedLanguagePlaces injectionPlacesRegistrar) {
+  public void getLanguagesToInject(@Nonnull final PsiLanguageInjectionHost host, @Nonnull final InjectedLanguagePlaces injectionPlacesRegistrar) {
     if (host instanceof RestLine) {
       int start = 0;
       int end = host.getTextLength() - 1;

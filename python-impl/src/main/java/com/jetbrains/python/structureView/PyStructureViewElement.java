@@ -23,10 +23,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
@@ -149,7 +149,7 @@ public class PyStructureViewElement implements StructureViewTreeElement
 		return name != null ? name.hashCode() : 0;
 	}
 
-	@NotNull
+	@Nonnull
 	public StructureViewTreeElement[] getChildren()
 	{
 		final Collection<StructureViewTreeElement> children = new ArrayList<>();
@@ -289,7 +289,7 @@ public class PyStructureViewElement implements StructureViewTreeElement
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemPresentation getPresentation()
 	{

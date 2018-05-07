@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.jetbrains.python.PyNames;
 
 /**
@@ -27,13 +27,13 @@ import com.jetbrains.python.PyNames;
  */
 public class PyDynamicallyEvaluatedType extends PyUnionType
 {
-	private PyDynamicallyEvaluatedType(@NotNull Collection<PyType> members)
+	private PyDynamicallyEvaluatedType(@Nonnull Collection<PyType> members)
 	{
 		super(members);
 	}
 
-	@NotNull
-	public static PyDynamicallyEvaluatedType create(@NotNull PyType type)
+	@Nonnull
+	public static PyDynamicallyEvaluatedType create(@Nonnull PyType type)
 	{
 		final List<PyType> members = new ArrayList<>();
 		if(type instanceof PyUnionType)

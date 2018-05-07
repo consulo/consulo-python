@@ -2,8 +2,8 @@ package com.jetbrains.python.fixtures;
 
 import java.io.File;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -108,7 +108,7 @@ public abstract class PyTestCase extends UsefulTestCase
 		PythonLanguageLevelPusher.setForcedLanguageLevel(myFixture.getProject(), languageLevel);
 	}
 
-	protected void runWithLanguageLevel(@NotNull LanguageLevel languageLevel, @NotNull Runnable action)
+	protected void runWithLanguageLevel(@Nonnull LanguageLevel languageLevel, @Nonnull Runnable action)
 	{
 		setLanguageLevel(languageLevel);
 		try
@@ -136,7 +136,7 @@ public abstract class PyTestCase extends UsefulTestCase
 		}
 
 		@Override
-		public void configureSdk(@NotNull Consumer<Sdk> consumer)
+		public void configureSdk(@Nonnull Consumer<Sdk> consumer)
 		{
 			consumer.consume(PythonMockSdk.findOrCreate(myPythonVersion));
 		}

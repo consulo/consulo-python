@@ -17,9 +17,11 @@ package com.jetbrains.python.inspections;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -47,16 +49,16 @@ import com.jetbrains.python.sdk.PySdkUtil;
 public class PyNoneFunctionAssignmentInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.none.function.assignment");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -66,7 +68,7 @@ public class PyNoneFunctionAssignmentInspection extends PyInspection
 	{
 		private final Map<PyFunction, Boolean> myHasInheritors = new HashMap<>();
 
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -105,7 +107,7 @@ public class PyNoneFunctionAssignmentInspection extends PyInspection
 			}
 		}
 
-		private boolean hasInheritors(@NotNull PyFunction function)
+		private boolean hasInheritors(@Nonnull PyFunction function)
 		{
 			final Boolean cached = myHasInheritors.get(function);
 			if(cached != null)

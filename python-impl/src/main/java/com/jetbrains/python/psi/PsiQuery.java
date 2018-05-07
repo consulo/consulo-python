@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -42,13 +42,13 @@ import com.jetbrains.python.nameResolver.FQNamesProvider;
 public class PsiQuery
 {
 	private static final PsiQuery EMPTY = new PsiQuery();
-	@NotNull
+	@Nonnull
 	private final PsiElement[] myPsiElements;
 
 	/**
 	 * @param psiElement one or more elements to start
 	 */
-	public PsiQuery(@NotNull final PsiElement... psiElement)
+	public PsiQuery(@Nonnull final PsiElement... psiElement)
 	{
 		myPsiElements = psiElement.clone();
 	}
@@ -57,7 +57,7 @@ public class PsiQuery
 	/**
 	 * @param psiElements one or more elements to start
 	 */
-	public PsiQuery(@NotNull final List<? extends PsiElement> psiElements)
+	public PsiQuery(@Nonnull final List<? extends PsiElement> psiElements)
 	{
 		this(psiElements.toArray(new PsiElement[psiElements.size()]));
 	}
@@ -65,8 +65,8 @@ public class PsiQuery
 	/**
 	 * Filter children by name
 	 */
-	@NotNull
-	public PsiQuery childrenNamed(@NotNull final String name)
+	@Nonnull
+	public PsiQuery childrenNamed(@Nonnull final String name)
 	{
 		return childrenNamed(PsiNamedElement.class, name);
 	}
@@ -74,8 +74,8 @@ public class PsiQuery
 	/**
 	 * Filter children by name and class
 	 */
-	@NotNull
-	public PsiQuery childrenNamed(@NotNull final Class<? extends PsiNamedElement> clazz, @NotNull final String name)
+	@Nonnull
+	public PsiQuery childrenNamed(@Nonnull final Class<? extends PsiNamedElement> clazz, @Nonnull final String name)
 	{
 		final List<PsiElement> result = new ArrayList<>();
 		for(final PsiElement element : myPsiElements)
@@ -99,8 +99,8 @@ public class PsiQuery
 	 * @param expectedText expected text
 	 * @return query {@link com.jetbrains.python.psi.PsiQuery}
 	 */
-	@NotNull
-	public final PsiQuery childrenStringLiterals(@NotNull final Class<? extends PyStringLiteralExpression> clazz, @NotNull final String expectedText)
+	@Nonnull
+	public final PsiQuery childrenStringLiterals(@Nonnull final Class<? extends PyStringLiteralExpression> clazz, @Nonnull final String expectedText)
 	{
 		final List<PsiElement> result = new ArrayList<>();
 		for(final PyStringLiteralExpression element : getChildrenElements(clazz))
@@ -120,8 +120,8 @@ public class PsiQuery
 	 *
 	 * @return {@link com.jetbrains.python.psi.PsiQuery} backed by {@link com.jetbrains.python.psi.PyCallExpression}
 	 */
-	@NotNull
-	public PsiQuery childrenCall(@NotNull final FQNamesProvider name)
+	@Nonnull
+	public PsiQuery childrenCall(@Nonnull final FQNamesProvider name)
 	{
 		final List<PsiElement> result = new ArrayList<>();
 		for(final PsiElement element : myPsiElements)
@@ -140,8 +140,8 @@ public class PsiQuery
 	/**
 	 * Filter children by class
 	 */
-	@NotNull
-	public PsiQuery children(@NotNull final Class<? extends PsiElement> clazz)
+	@Nonnull
+	public PsiQuery children(@Nonnull final Class<? extends PsiElement> clazz)
 	{
 		final List<PsiElement> result = new ArrayList<>();
 		for(final PsiElement element : myPsiElements)
@@ -156,8 +156,8 @@ public class PsiQuery
 	/**
 	 * Filter parents by name
 	 */
-	@NotNull
-	public PsiQuery parents(@NotNull final String name)
+	@Nonnull
+	public PsiQuery parents(@Nonnull final String name)
 	{
 		throw new RuntimeException("Not implemented");
 	}
@@ -166,8 +166,8 @@ public class PsiQuery
 	/**
 	 * Filter parents by name and class
 	 */
-	@NotNull
-	public PsiQuery parents(@NotNull final Class<? extends PsiElement> clazz)
+	@Nonnull
+	public PsiQuery parents(@Nonnull final Class<? extends PsiElement> clazz)
 	{
 		final List<PsiElement> result = new ArrayList<>();
 		for(final PsiElement element : myPsiElements)
@@ -184,7 +184,7 @@ public class PsiQuery
 	/**
 	 * Get qualifiers of all elements if elements do have any
 	 */
-	@NotNull
+	@Nonnull
 	public PsiQuery qualifiers()
 	{
 		return new PsiQuery(Arrays.stream(myPsiElements).filter(o -> o instanceof PyQualifiedExpression).map(o -> ((PyQualifiedExpression) o).getQualifier()).filter(o -> o != null).collect
@@ -195,8 +195,8 @@ public class PsiQuery
 	/**
 	 * Filter parents by condition
 	 */
-	@NotNull
-	public PsiQuery parents(@NotNull final Condition<Class<? extends PsiElement>> condition)
+	@Nonnull
+	public PsiQuery parents(@Nonnull final Condition<Class<? extends PsiElement>> condition)
 	{
 		throw new RuntimeException("Not impl");
 	}
@@ -205,8 +205,8 @@ public class PsiQuery
 	/**
 	 * Filter parents by class and name
 	 */
-	@NotNull
-	public PsiQuery parents(@NotNull final Class<? extends PsiElement> clazz, @NotNull final String name)
+	@Nonnull
+	public PsiQuery parents(@Nonnull final Class<? extends PsiElement> clazz, @Nonnull final String name)
 	{
 		throw new RuntimeException("Not impl");
 	}
@@ -215,8 +215,8 @@ public class PsiQuery
 	/**
 	 * Filter parents by function call
 	 */
-	@NotNull
-	public PsiQuery parents(@NotNull final FQNamesProvider name)
+	@Nonnull
+	public PsiQuery parents(@Nonnull final FQNamesProvider name)
 	{
 		throw new RuntimeException("Not impl");
 	}
@@ -225,8 +225,8 @@ public class PsiQuery
 	/**
 	 * Filter siblings by name
 	 */
-	@NotNull
-	public PsiQuery siblings(@NotNull final String name)
+	@Nonnull
+	public PsiQuery siblings(@Nonnull final String name)
 	{
 		return siblings(PsiNamedElement.class, name);
 	}
@@ -235,8 +235,8 @@ public class PsiQuery
 	/**
 	 * Filter siblings by class returning typed result
 	 */
-	@NotNull
-	public <T extends PsiElement> PsiTypedQuery<T> siblings(@NotNull final Class<T> clazz)
+	@Nonnull
+	public <T extends PsiElement> PsiTypedQuery<T> siblings(@Nonnull final Class<T> clazz)
 	{
 		// TODO: Rewrite function, get rid of inner class
 		final List<T> result = new ArrayList<>();
@@ -258,8 +258,8 @@ public class PsiQuery
 	/**
 	 * Filter siblings by name and class
 	 */
-	@NotNull
-	public PsiQuery siblings(@NotNull final Class<? extends PsiNamedElement> clazz, @NotNull final String name)
+	@Nonnull
+	public PsiQuery siblings(@Nonnull final Class<? extends PsiNamedElement> clazz, @Nonnull final String name)
 	{
 		final List<PsiElement> result = new ArrayList<>();
 		for(final PsiElement element : myPsiElements)
@@ -280,8 +280,8 @@ public class PsiQuery
 	/**
 	 * Filter siblings by function call name
 	 */
-	@NotNull
-	public PsiQuery siblings(@NotNull final FQNamesProvider name)
+	@Nonnull
+	public PsiQuery siblings(@Nonnull final FQNamesProvider name)
 	{
 		final List<PsiElement> result = new ArrayList<>();
 		for(final PsiElement element : myPsiElements)
@@ -302,7 +302,7 @@ public class PsiQuery
 	/**
 	 * Get first element from result only
 	 */
-	@NotNull
+	@Nonnull
 	public PsiQuery first()
 	{
 		return (myPsiElements.length > 0) ? new PsiQuery(myPsiElements[0]) : EMPTY;
@@ -312,7 +312,7 @@ public class PsiQuery
 	/**
 	 * Get last element from result only
 	 */
-	@NotNull
+	@Nonnull
 	public PsiQuery last()
 	{
 		return (myPsiElements.length > 0) ? new PsiQuery(myPsiElements[myPsiElements.length - 1]) : EMPTY;
@@ -323,7 +323,7 @@ public class PsiQuery
 	 * Get first element from result only if certain class
 	 */
 	@Nullable
-	public <T extends PsiElement> T getFirstElement(@NotNull final Class<T> expectedClass)
+	public <T extends PsiElement> T getFirstElement(@Nonnull final Class<T> expectedClass)
 	{
 		final List<T> elements = getChildrenElements(expectedClass);
 		if(!elements.isEmpty())
@@ -338,7 +338,7 @@ public class PsiQuery
 	 * Get last element from result only if certain class
 	 */
 	@Nullable
-	public <T extends PsiElement> T getLastElement(@NotNull final Class<T> expectedClass)
+	public <T extends PsiElement> T getLastElement(@Nonnull final Class<T> expectedClass)
 	{
 		final List<T> elements = getChildrenElements(expectedClass);
 		if(!elements.isEmpty())
@@ -352,8 +352,8 @@ public class PsiQuery
 	/**
 	 * Get children elements filtered by class
 	 */
-	@NotNull
-	public <T extends PsiElement> List<T> getChildrenElements(@NotNull final Class<T> expectedClass)
+	@Nonnull
+	public <T extends PsiElement> List<T> getChildrenElements(@Nonnull final Class<T> expectedClass)
 	{
 		final List<T> result = new ArrayList<>();
 		for(final PsiElement element : myPsiElements)
@@ -379,8 +379,8 @@ public class PsiQuery
 	/**
 	 * Filter by function call
 	 */
-	@NotNull
-	public PsiQuery filter(@NotNull final FQNamesProvider name)
+	@Nonnull
+	public PsiQuery filter(@Nonnull final FQNamesProvider name)
 	{
 		final Set<PsiElement> result = new HashSet<>(Arrays.asList(myPsiElements));
 		for(final PsiElement element : myPsiElements)
@@ -398,8 +398,8 @@ public class PsiQuery
 	/**
 	 * Filter by element name
 	 */
-	@NotNull
-	public PsiQuery filter(@NotNull final String name)
+	@Nonnull
+	public PsiQuery filter(@Nonnull final String name)
 	{
 		return filter(PsiNamedElement.class, name);
 	}
@@ -408,8 +408,8 @@ public class PsiQuery
 	/**
 	 * Filter elements by class
 	 */
-	@NotNull
-	public <T extends PsiElement> PsiTypedQuery<T> filter(@NotNull final Class<T> clazz)
+	@Nonnull
+	public <T extends PsiElement> PsiTypedQuery<T> filter(@Nonnull final Class<T> clazz)
 	{
 		final Set<PsiElement> result = new HashSet<>(Arrays.asList(myPsiElements));
 		for(final PsiElement element : myPsiElements)
@@ -429,8 +429,8 @@ public class PsiQuery
 	/**
 	 * Filter elements by class and name
 	 */
-	@NotNull
-	public PsiQuery filter(@NotNull final Class<? extends PsiNamedElement> clazz, @NotNull final String name)
+	@Nonnull
+	public PsiQuery filter(@Nonnull final Class<? extends PsiNamedElement> clazz, @Nonnull final String name)
 	{
 		final Set<PsiElement> result = new HashSet<>(Arrays.asList(myPsiElements));
 		for(final PsiElement element : myPsiElements)
@@ -459,16 +459,16 @@ public class PsiQuery
 	 */
 	public static class PsiTypedQuery<T extends PsiElement> extends PsiQuery
 	{
-		@NotNull
+		@Nonnull
 		private final Class<T> myClass;
-		@NotNull
+		@Nonnull
 		private final List<T> myElements;
 
 		/**
 		 * @param clazz    type
 		 * @param elements elements
 		 */
-		private PsiTypedQuery(@NotNull final Class<T> clazz, @NotNull final List<T> elements)
+		private PsiTypedQuery(@Nonnull final Class<T> clazz, @Nonnull final List<T> elements)
 		{
 			super(elements);
 			myClass = clazz;
@@ -496,7 +496,7 @@ public class PsiQuery
 		/**
 		 * @return All elements of certain type
 		 */
-		@NotNull
+		@Nonnull
 		public List<T> getElements()
 		{
 			return Collections.unmodifiableList(myElements);

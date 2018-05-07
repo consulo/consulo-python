@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -27,18 +27,18 @@ import com.jetbrains.python.psi.PyFunction;
 
 public class PythonPsiManager extends PsiTreeChangePreprocessorBase
 {
-	public PythonPsiManager(@NotNull PsiManager psiManager)
+	public PythonPsiManager(@Nonnull PsiManager psiManager)
 	{
 		super(psiManager);
 	}
 
 	@Override
-	protected boolean acceptsEvent(@NotNull PsiTreeChangeEventImpl event)
+	protected boolean acceptsEvent(@Nonnull PsiTreeChangeEventImpl event)
 	{
 		return event.getFile() instanceof PyFile;
 	}
 
-	protected boolean isOutOfCodeBlock(@NotNull PsiElement element)
+	protected boolean isOutOfCodeBlock(@Nonnull PsiElement element)
 	{
 		while(true)
 		{

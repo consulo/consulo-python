@@ -17,8 +17,9 @@ package com.jetbrains.python.testing;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfileState;
@@ -42,5 +43,5 @@ public interface TestRunConfigurationReRunResponsible
 	 * @throws ExecutionException failed to run
 	 */
 	@Nullable
-	RunProfileState rerunTests(@NotNull final Executor executor, @NotNull final ExecutionEnvironment environment, @NotNull Collection<PsiElement> failedTests) throws ExecutionException;
+	RunProfileState rerunTests(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment environment, @Nonnull Collection<PsiElement> failedTests) throws ExecutionException;
 }

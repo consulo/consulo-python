@@ -17,9 +17,9 @@ package com.jetbrains.python.debugger;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.icons.AllIcons;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XSuspendContext;
@@ -32,21 +32,21 @@ public class PySuspendContext extends XSuspendContext
 	private final PyExecutionStack myActiveStack;
 	private PyDebugProcess myDebugProcess;
 
-	public PySuspendContext(@NotNull final PyDebugProcess debugProcess, @NotNull final PyThreadInfo threadInfo)
+	public PySuspendContext(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo)
 	{
 		myDebugProcess = debugProcess;
 		myActiveStack = new PyExecutionStack(debugProcess, threadInfo, getThreadIcon(threadInfo));
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public PyExecutionStack getActiveExecutionStack()
 	{
 		return myActiveStack;
 	}
 
-	@NotNull
-	public static Icon getThreadIcon(@NotNull PyThreadInfo threadInfo)
+	@Nonnull
+	public static Icon getThreadIcon(@Nonnull PyThreadInfo threadInfo)
 	{
 		if((threadInfo.getState() == PyThreadInfo.State.SUSPENDED) && (threadInfo.getStopReason() == AbstractCommand.SET_BREAKPOINT))
 		{
@@ -58,7 +58,7 @@ public class PySuspendContext extends XSuspendContext
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public XExecutionStack[] getExecutionStacks()
 	{

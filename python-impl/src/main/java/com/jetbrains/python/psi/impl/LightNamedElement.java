@@ -25,7 +25,7 @@ import com.intellij.psi.impl.light.LightElement;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.psi.PyElement;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -42,7 +42,7 @@ public class LightNamedElement extends LightElement implements PyElement, PsiNam
     return myName;
   }
 
-  public void accept(@NotNull PsiElementVisitor visitor) {
+  public void accept(@Nonnull PsiElementVisitor visitor) {
     visitor.visitElement(this);
   }
 
@@ -54,7 +54,7 @@ public class LightNamedElement extends LightElement implements PyElement, PsiNam
     return myName;
   }
 
-  public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+  public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException {
     throw new UnsupportedOperationException("LightNamedElement#setName() is not supported");
   }
 

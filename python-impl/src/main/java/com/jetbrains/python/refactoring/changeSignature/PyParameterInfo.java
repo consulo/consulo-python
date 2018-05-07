@@ -17,8 +17,8 @@
 package com.jetbrains.python.refactoring.changeSignature;
 
 import com.intellij.refactoring.changeSignature.ParameterInfo;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * User : ktisha
@@ -44,13 +44,13 @@ public class PyParameterInfo implements ParameterInfo {
     myDefaultInSignature = defaultInSignature;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return myName;
   }
 
-  @NotNull
+  @Nonnull
   public String getOldName() {
     return myOldName;
   }

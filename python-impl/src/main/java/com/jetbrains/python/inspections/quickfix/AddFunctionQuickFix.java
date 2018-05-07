@@ -19,7 +19,8 @@ import static com.jetbrains.python.psi.PyUtil.sure;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.TemplateBuilder;
@@ -59,25 +60,25 @@ public class AddFunctionQuickFix implements LocalQuickFix
 	private final String myIdentifier;
 	private final String myModuleName;
 
-	public AddFunctionQuickFix(@NotNull String identifier, String moduleName)
+	public AddFunctionQuickFix(@Nonnull String identifier, String moduleName)
 	{
 		myIdentifier = identifier;
 		myModuleName = moduleName;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getName()
 	{
 		return PyBundle.message("QFIX.NAME.add.function.$0.to.module.$1", myIdentifier, myModuleName);
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return "Create function in module";
 	}
 
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		try
 		{
@@ -157,7 +158,7 @@ public class AddFunctionQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void showTemplateBuilder(PyFunction method, @NotNull final PsiFile file)
+	private static void showTemplateBuilder(PyFunction method, @Nonnull final PsiFile file)
 	{
 		method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
 

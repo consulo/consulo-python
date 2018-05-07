@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -33,8 +35,8 @@ import com.jetbrains.python.refactoring.introduce.parameter.PyIntroduceParameter
 import com.jetbrains.python.refactoring.introduce.constant.PyIntroduceConstantHandler;
 import com.jetbrains.python.refactoring.introduce.field.PyIntroduceFieldHandler;
 import com.jetbrains.python.refactoring.introduce.variable.PyIntroduceVariableHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov
@@ -76,7 +78,7 @@ public class PyRefactoringProvider extends RefactoringSupportProvider {
   }
 
   @Override
-  public boolean isInplaceRenameAvailable(@NotNull PsiElement element, PsiElement context) {
+  public boolean isInplaceRenameAvailable(@Nonnull PsiElement element, PsiElement context) {
     if (context != null && context.getContainingFile() != element.getContainingFile()) return false;
     PyFunction containingFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
     if (containingFunction != null) {

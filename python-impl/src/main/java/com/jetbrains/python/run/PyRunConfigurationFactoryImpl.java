@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.run;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ModuleBasedConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -47,7 +48,7 @@ public class PyRunConfigurationFactoryImpl extends PyRunConfigurationFactory {
     return settings;
   }
 
-  private static RunnerAndConfigurationSettings createConfigurationSettings(ConfigurationFactory factory, @NotNull final Module module) {
+  private static RunnerAndConfigurationSettings createConfigurationSettings(ConfigurationFactory factory, @Nonnull final Module module) {
     final RunnerAndConfigurationSettings settings =
       RunManager.getInstance(module.getProject()).createRunConfiguration(module.getName(), factory);
     ModuleBasedConfiguration configuration = (ModuleBasedConfiguration) settings.getConfiguration();

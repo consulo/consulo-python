@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.Extensions;
@@ -68,7 +68,7 @@ public class PyUserSkeletonsUtil
 	private static VirtualFile ourUserSkeletonsDirectory;
 	private static boolean ourNoSkeletonsErrorReported = false;
 
-	@NotNull
+	@Nonnull
 	private static List<String> getPossibleUserSkeletonsPaths()
 	{
 		final List<String> result = new ArrayList<>();
@@ -99,7 +99,7 @@ public class PyUserSkeletonsUtil
 		return ourUserSkeletonsDirectory;
 	}
 
-	public static boolean isUnderUserSkeletonsDirectory(@NotNull PsiFile file)
+	public static boolean isUnderUserSkeletonsDirectory(@Nonnull PsiFile file)
 	{
 		final VirtualFile virtualFile = file.getVirtualFile();
 		if(virtualFile == null)
@@ -109,20 +109,20 @@ public class PyUserSkeletonsUtil
 		return isUnderUserSkeletonsDirectory(virtualFile);
 	}
 
-	public static boolean isUnderUserSkeletonsDirectory(@NotNull final VirtualFile virtualFile)
+	public static boolean isUnderUserSkeletonsDirectory(@Nonnull final VirtualFile virtualFile)
 	{
 		final VirtualFile skeletonsDir = getUserSkeletonsDirectory();
 		return skeletonsDir != null && VfsUtilCore.isAncestor(skeletonsDir, virtualFile, false);
 	}
 
 	@Nullable
-	public static <T extends PyElement> T getUserSkeleton(@NotNull T element)
+	public static <T extends PyElement> T getUserSkeleton(@Nonnull T element)
 	{
 		return getUserSkeletonWithContext(element, null);
 	}
 
 	@Nullable
-	public static <T extends PyElement> T getUserSkeletonWithContext(@NotNull T element, @Nullable final TypeEvalContext context)
+	public static <T extends PyElement> T getUserSkeletonWithContext(@Nonnull T element, @Nullable final TypeEvalContext context)
 	{
 		final PsiFile file = element.getContainingFile();
 		if(file instanceof PyFile)
@@ -142,7 +142,7 @@ public class PyUserSkeletonsUtil
 	}
 
 	@Nullable
-	public static PyFile getUserSkeletonForModuleQName(@NotNull String qName, @NotNull PsiElement foothold)
+	public static PyFile getUserSkeletonForModuleQName(@Nonnull String qName, @Nonnull PsiElement foothold)
 	{
 		final Sdk sdk = PythonSdkType.getSdk(foothold);
 		if(sdk != null)
@@ -180,7 +180,7 @@ public class PyUserSkeletonsUtil
 	}
 
 	@Nullable
-	private static PsiElement getUserSkeleton(@NotNull PyElement element, @NotNull PyFile skeletonFile, @Nullable TypeEvalContext context)
+	private static PsiElement getUserSkeleton(@Nonnull PyElement element, @Nonnull PyFile skeletonFile, @Nullable TypeEvalContext context)
 	{
 		if(element instanceof PyFile)
 		{
@@ -221,7 +221,7 @@ public class PyUserSkeletonsUtil
 	}
 
 	@Nullable
-	private static PyFile getUserSkeletonForFile(@NotNull PyFile file)
+	private static PyFile getUserSkeletonForFile(@Nonnull PyFile file)
 	{
 		final Boolean hasSkeleton = file.getUserData(HAS_SKELETON);
 		if(hasSkeleton != null && !hasSkeleton)

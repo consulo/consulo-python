@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.console;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.console.DuplexConsoleView;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -52,13 +52,13 @@ public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleVie
 	}
 
 	@Override
-	public void executeCode(@NotNull String code, @Nullable Editor e)
+	public void executeCode(@Nonnull String code, @Nullable Editor e)
 	{
 		enableConsole(false);
 		getPydevConsoleView().executeCode(code, e);
 	}
 
-	@NotNull
+	@Nonnull
 	public PythonConsoleView getPydevConsoleView()
 	{
 		return getSecondaryConsoleView();

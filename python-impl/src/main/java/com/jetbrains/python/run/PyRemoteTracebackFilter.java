@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.run;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,7 +38,7 @@ public class PyRemoteTracebackFilter extends PythonTracebackFilter
 
 	@Override
 	@Nullable
-	protected VirtualFile findFileByName(@NotNull String fileName)
+	protected VirtualFile findFileByName(@Nonnull String fileName)
 	{
 		VirtualFile vFile = super.findFileByName(fileName);
 		if(vFile != null)

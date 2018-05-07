@@ -27,8 +27,8 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.Stack;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,17 +49,17 @@ import java.util.List;
  *
  */
 public class ConvertVariadicParamIntention extends BaseIntentionAction {
-  @NotNull
+  @Nonnull
   public String getText() {
     return PyBundle.message("INTN.convert.variadic.param");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.convert.variadic.param");
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
@@ -97,7 +97,7 @@ public class ConvertVariadicParamIntention extends BaseIntentionAction {
     return null;
   }
 
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     PyFunction function =
       PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyFunction.class);
     replaceSubscriptions(function, project);

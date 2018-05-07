@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.google.common.collect.Sets;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -59,9 +61,9 @@ public class PyTypeCheckerInspection extends PyInspection
 	private static final Logger LOG = Logger.getInstance(PyTypeCheckerInspection.class.getName());
 	private static Key<Long> TIME_KEY = Key.create("PyTypeCheckerInspection.StartTime");
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		if(LOG.isDebugEnabled())
 		{
@@ -72,7 +74,7 @@ public class PyTypeCheckerInspection extends PyInspection
 
 	public static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -130,7 +132,7 @@ public class PyTypeCheckerInspection extends PyInspection
 		}
 
 		@Nullable
-		private PyType getExpectedReturnType(@NotNull PyFunction function)
+		private PyType getExpectedReturnType(@Nonnull PyFunction function)
 		{
 			final PyType returnType = myTypeEvalContext.getReturnType(function);
 
@@ -232,8 +234,8 @@ public class PyTypeCheckerInspection extends PyInspection
 			}
 		}
 
-		@NotNull
-		private Map<PyExpression, Pair<String, ProblemHighlightType>> checkMapping(@Nullable PyExpression receiver, @NotNull Map<PyExpression, PyNamedParameter> mapping)
+		@Nonnull
+		private Map<PyExpression, Pair<String, ProblemHighlightType>> checkMapping(@Nullable PyExpression receiver, @Nonnull Map<PyExpression, PyNamedParameter> mapping)
 		{
 			final Map<PyExpression, Pair<String, ProblemHighlightType>> problems = new HashMap<>();
 			final Map<PyGenericType, PyType> substitutions = new LinkedHashMap<>();
@@ -269,8 +271,8 @@ public class PyTypeCheckerInspection extends PyInspection
 		@Nullable
 		private static Pair<String, ProblemHighlightType> checkTypes(@Nullable PyType expected,
 				@Nullable PyType actual,
-				@NotNull TypeEvalContext context,
-				@NotNull Map<PyGenericType, PyType> substitutions)
+				@Nonnull TypeEvalContext context,
+				@Nonnull Map<PyGenericType, PyType> substitutions)
 		{
 			if(actual != null && expected != null)
 			{
@@ -316,7 +318,7 @@ public class PyTypeCheckerInspection extends PyInspection
 	}
 
 	@Nullable
-	private static Set<String> getAttributes(@NotNull PyType type, @NotNull TypeEvalContext context)
+	private static Set<String> getAttributes(@Nonnull PyType type, @Nonnull TypeEvalContext context)
 	{
 		if(type instanceof PyStructuralType)
 		{
@@ -330,7 +332,7 @@ public class PyTypeCheckerInspection extends PyInspection
 	}
 
 	@Override
-	public void inspectionFinished(@NotNull LocalInspectionToolSession session, @NotNull ProblemsHolder problemsHolder)
+	public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder problemsHolder)
 	{
 		if(LOG.isDebugEnabled())
 		{
@@ -343,7 +345,7 @@ public class PyTypeCheckerInspection extends PyInspection
 	}
 
 	@Nls
-	@NotNull
+	@Nonnull
 	public String getDisplayName()
 	{
 		return "Type checker";

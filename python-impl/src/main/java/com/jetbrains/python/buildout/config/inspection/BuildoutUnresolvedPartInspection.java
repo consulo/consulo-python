@@ -30,7 +30,7 @@ import com.jetbrains.python.buildout.config.BuildoutCfgFileType;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgValueLine;
 import com.jetbrains.python.buildout.config.ref.BuildoutPartReference;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -39,20 +39,20 @@ import java.util.List;
  */
 public class BuildoutUnresolvedPartInspection extends LocalInspectionTool {
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getGroupDisplayName() {
     return PyBundle.message("buildout");
   }
 
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return PyBundle.message("buildout.unresolved.part.inspection");
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getShortName() {
     return "BuildoutUnresolvedPartInspection";
@@ -64,7 +64,7 @@ public class BuildoutUnresolvedPartInspection extends LocalInspectionTool {
   }
 
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
+  public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
     List<ProblemDescriptor> problems = Lists.newArrayList();
     if (file.getFileType().equals(BuildoutCfgFileType.INSTANCE)) {
       Visitor visitor = new Visitor();

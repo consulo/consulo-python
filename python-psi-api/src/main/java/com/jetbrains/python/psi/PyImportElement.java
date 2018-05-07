@@ -17,8 +17,9 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.util.QualifiedName;
@@ -63,6 +64,6 @@ public interface PyImportElement extends PyElement, PyImportedNameDefiner, StubB
 	/**
 	 * Resolves the import element to the elements being imported.
 	 */
-	@NotNull
+	@Nonnull
 	List<RatedResolveResult> multiResolve();
 }

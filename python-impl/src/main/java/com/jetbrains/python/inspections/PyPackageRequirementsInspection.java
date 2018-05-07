@@ -22,10 +22,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -84,7 +84,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 
 	public JDOMExternalizableStringList ignoredPackages = new JDOMExternalizableStringList();
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
@@ -98,15 +98,15 @@ public class PyPackageRequirementsInspection extends PyInspection
 		return form.getContentPanel();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session, ignoredPackages);
 	}
 
 	@Nullable
-	public static PyPackageRequirementsInspection getInstance(@NotNull PsiElement element)
+	public static PyPackageRequirementsInspection getInstance(@Nonnull PsiElement element)
 	{
 		final InspectionProfile inspectionProfile = InspectionProjectProfileManager.getInstance(element.getProject()).getInspectionProfile();
 		final String toolName = PyPackageRequirementsInspection.class.getSimpleName();
@@ -117,7 +117,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 	{
 		private final Set<String> myIgnoredPackages;
 
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session, Collection<String> ignoredPackages)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, Collection<String> ignoredPackages)
 		{
 			super(holder, session);
 			myIgnoredPackages = ImmutableSet.copyOf(ignoredPackages);
@@ -178,7 +178,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 			}
 		}
 
-		private void checkPackageNameInRequirements(@NotNull PyQualifiedExpression importedExpression)
+		private void checkPackageNameInRequirements(@Nonnull PyQualifiedExpression importedExpression)
 		{
 			for(PyInspectionExtension extension : Extensions.getExtensions(PyInspectionExtension.EP_NAME))
 			{
@@ -265,7 +265,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 	}
 
 	@Nullable
-	private static Set<PyRequirement> getTransitiveRequirements(@NotNull Sdk sdk, @NotNull Collection<PyRequirement> requirements, @NotNull Set<PyPackage> visited)
+	private static Set<PyRequirement> getTransitiveRequirements(@Nonnull Sdk sdk, @Nonnull Collection<PyRequirement> requirements, @Nonnull Set<PyPackage> visited)
 	{
 		if(requirements.isEmpty())
 		{
@@ -295,7 +295,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 	}
 
 	@Nullable
-	private static List<PyRequirement> findUnsatisfiedRequirements(@NotNull Module module, @NotNull Sdk sdk, @NotNull Set<String> ignoredPackages)
+	private static List<PyRequirement> findUnsatisfiedRequirements(@Nonnull Module module, @Nonnull Sdk sdk, @Nonnull Set<String> ignoredPackages)
 	{
 		final PyPackageManager manager = PyPackageManager.getInstance(sdk);
 		List<PyRequirement> requirements = manager.getRequirements(module);
@@ -319,12 +319,12 @@ public class PyPackageRequirementsInspection extends PyInspection
 		return null;
 	}
 
-	private static void setRunningPackagingTasks(@NotNull Module module, boolean value)
+	private static void setRunningPackagingTasks(@Nonnull Module module, boolean value)
 	{
 		module.putUserData(PyPackageManager.RUNNING_PACKAGING_TASKS, value);
 	}
 
-	private static boolean isRunningPackagingTasks(@NotNull Module module)
+	private static boolean isRunningPackagingTasks(@Nonnull Module module)
 	{
 		final Boolean value = module.getUserData(PyPackageManager.RUNNING_PACKAGING_TASKS);
 		return value != null && value;
@@ -332,16 +332,16 @@ public class PyPackageRequirementsInspection extends PyInspection
 
 	public static class PyInstallRequirementsFix implements LocalQuickFix
 	{
-		@NotNull
+		@Nonnull
 		private String myName;
-		@NotNull
+		@Nonnull
 		private final Module myModule;
-		@NotNull
+		@Nonnull
 		private Sdk mySdk;
-		@NotNull
+		@Nonnull
 		private final List<PyRequirement> myUnsatisfied;
 
-		public PyInstallRequirementsFix(@Nullable String name, @NotNull Module module, @NotNull Sdk sdk, @NotNull List<PyRequirement> unsatisfied)
+		public PyInstallRequirementsFix(@Nullable String name, @Nonnull Module module, @Nonnull Sdk sdk, @Nonnull List<PyRequirement> unsatisfied)
 		{
 			final boolean plural = unsatisfied.size() > 1;
 			myName = name != null ? name : String.format("Install requirement%s", plural ? "s" : "");
@@ -350,7 +350,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 			myUnsatisfied = unsatisfied;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -358,7 +358,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 		}
 
 		@Override
-		public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor)
 		{
 			boolean installManagement = false;
 			final PyPackageManager manager = PyPackageManager.getInstance(mySdk);
@@ -438,10 +438,10 @@ public class PyPackageRequirementsInspection extends PyInspection
 		private String myPackageName;
 		@Nullable
 		private final String myAsName;
-		@NotNull
+		@Nonnull
 		private final SmartPsiElementPointer<PyElement> myNode;
 
-		public InstallAndImportQuickFix(@NotNull final String packageName, @Nullable final String asName, @NotNull final PyElement node)
+		public InstallAndImportQuickFix(@Nonnull final String packageName, @Nullable final String asName, @Nonnull final PyElement node)
 		{
 			myPackageName = packageName;
 			myAsName = asName;
@@ -450,13 +450,13 @@ public class PyPackageRequirementsInspection extends PyInspection
 			mySdk = PythonSdkType.findPythonSdk(myModule);
 		}
 
-		@NotNull
+		@Nonnull
 		public String getFamilyName()
 		{
 			return "Install and import package " + myPackageName;
 		}
 
-		public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 		{
 			final PyPackageManagerUI ui = new PyPackageManagerUI(project, mySdk, new UIListener(myModule)
 			{
@@ -508,15 +508,15 @@ public class PyPackageRequirementsInspection extends PyInspection
 
 	private static class IgnoreRequirementFix implements LocalQuickFix
 	{
-		@NotNull
+		@Nonnull
 		private final Set<String> myPackageNames;
 
-		public IgnoreRequirementFix(@NotNull Set<String> packageNames)
+		public IgnoreRequirementFix(@Nonnull Set<String> packageNames)
 		{
 			myPackageNames = packageNames;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -525,7 +525,7 @@ public class PyPackageRequirementsInspection extends PyInspection
 		}
 
 		@Override
-		public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 		{
 			final PsiElement element = descriptor.getPsiElement();
 			if(element != null)
@@ -555,21 +555,21 @@ public class PyPackageRequirementsInspection extends PyInspection
 
 	private static class AddToRequirementsFix implements LocalQuickFix
 	{
-		@NotNull
+		@Nonnull
 		private final Module myModule;
-		@NotNull
+		@Nonnull
 		private final String myPackageName;
-		@NotNull
+		@Nonnull
 		private final LanguageLevel myLanguageLevel;
 
-		private AddToRequirementsFix(@NotNull Module module, @NotNull String packageName, @NotNull LanguageLevel languageLevel)
+		private AddToRequirementsFix(@Nonnull Module module, @Nonnull String packageName, @Nonnull LanguageLevel languageLevel)
 		{
 			myModule = module;
 			myPackageName = packageName;
 			myLanguageLevel = languageLevel;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -577,14 +577,14 @@ public class PyPackageRequirementsInspection extends PyInspection
 		}
 
 		@Override
-		public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor)
 		{
 			CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(() -> {
 				PyPackageUtil.addRequirementToTxtOrSetupPy(myModule, myPackageName, myLanguageLevel);
 			}), getName(), null);
 		}
 
-		@NotNull
+		@Nonnull
 		private String calculateTarget()
 		{
 			final VirtualFile requirementsTxt = PyPackageUtil.findRequirementsTxt(myModule);

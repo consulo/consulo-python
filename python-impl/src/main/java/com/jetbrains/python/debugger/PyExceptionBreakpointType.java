@@ -32,7 +32,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -52,13 +52,13 @@ public class PyExceptionBreakpointType
     super("python-exception", "Python Exception Breakpoint");
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Icon getEnabledIcon() {
     return AllIcons.Debugger.Db_exception_breakpoint;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Icon getDisabledIcon() {
     return AllIcons.Debugger.Db_disabled_exception_breakpoint;
@@ -103,7 +103,7 @@ public class PyExceptionBreakpointType
     private final HashMap<Integer, Pair<WeakReference<PyClass>, Boolean>> processedElements = Maps.newHashMap();
 
     @Override
-    public boolean isAccepted(@NotNull final PyClass pyClass) {
+    public boolean isAccepted(@Nonnull final PyClass pyClass) {
       final VirtualFile virtualFile = pyClass.getContainingFile().getVirtualFile();
       if (virtualFile == null) {
         return false;
@@ -147,7 +147,7 @@ public class PyExceptionBreakpointType
   }
 
   @Override
-  public XBreakpoint<PyExceptionBreakpointProperties> createDefaultBreakpoint(@NotNull XBreakpointCreator<PyExceptionBreakpointProperties> creator) {
+  public XBreakpoint<PyExceptionBreakpointProperties> createDefaultBreakpoint(@Nonnull XBreakpointCreator<PyExceptionBreakpointProperties> creator) {
     final XBreakpoint<PyExceptionBreakpointProperties> breakpoint = creator.createBreakpoint(createDefaultBreakpointProperties());
     breakpoint.setEnabled(true);
     return breakpoint;
@@ -174,7 +174,7 @@ public class PyExceptionBreakpointType
     private JRadioButton myAlwaysRadio;
     private JRadioButton myOnlyOnFirstRadio;
 
-    @NotNull
+    @Nonnull
     @Override
     public JComponent getComponent() {
       myNotifyOnTerminateCheckBox = new JCheckBox("On termination");
@@ -243,7 +243,7 @@ public class PyExceptionBreakpointType
     }
 
     @Override
-    public void saveTo(@NotNull XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
+    public void saveTo(@Nonnull XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
       breakpoint.getProperties().setNotifyOnTerminate(myNotifyOnTerminateCheckBox.isSelected());
 
       breakpoint.getProperties().setNotifyAlways(myNotifyOnRaiseCheckBox.isSelected() && myAlwaysRadio.isSelected());
@@ -251,7 +251,7 @@ public class PyExceptionBreakpointType
     }
 
     @Override
-    public void loadFrom(@NotNull XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
+    public void loadFrom(@Nonnull XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
       myNotifyOnTerminateCheckBox.setSelected(breakpoint.getProperties().isNotifyOnTerminate());
 
       boolean always = breakpoint.getProperties().isNotifyAlways();

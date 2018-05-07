@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
@@ -42,7 +43,7 @@ public class PyMissingBracesFixer extends PyFixer<PyElement>
 	}
 
 	@Override
-	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyElement psiElement) throws IncorrectOperationException
+	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyElement psiElement) throws IncorrectOperationException
 	{
 		if(psiElement instanceof PySetLiteralExpression || psiElement instanceof PyDictLiteralExpression)
 		{

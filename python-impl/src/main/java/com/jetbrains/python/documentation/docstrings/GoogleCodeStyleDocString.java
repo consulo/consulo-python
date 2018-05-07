@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
@@ -38,7 +38,7 @@ public class GoogleCodeStyleDocString extends SectionBasedDocString
 	public static final List<String> PREFERRED_SECTION_HEADERS = ImmutableList.of("Args", "Keyword Args", "Returns", "Yields", "Raises", "Attributes", "See Also", "Methods", "References",
 			"Examples", "Notes", "Warnings");
 
-	public GoogleCodeStyleDocString(@NotNull Substring text)
+	public GoogleCodeStyleDocString(@Nonnull Substring text)
 	{
 		super(text);
 	}
@@ -130,7 +130,7 @@ public class GoogleCodeStyleDocString extends SectionBasedDocString
 	}
 
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected Pair<Substring, Integer> parseSectionHeader(int lineNum)
 	{

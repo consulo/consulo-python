@@ -1,8 +1,8 @@
 package com.jetbrains.python.debugger.pydev;
 
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.xdebugger.breakpoints.SuspendPolicy;
 
 public class SetBreakpointCommand extends LineBreakpointCommand
@@ -17,23 +17,23 @@ public class SetBreakpointCommand extends LineBreakpointCommand
 	@Nullable
 	final String myFuncName;
 	private
-	@NotNull
+	@Nonnull
 	final SuspendPolicy mySuspendPolicy;
 
-	public SetBreakpointCommand(@NotNull final RemoteDebugger debugger, @NotNull final String type, @NotNull final String file, final int line)
+	public SetBreakpointCommand(@Nonnull final RemoteDebugger debugger, @Nonnull final String type, @Nonnull final String file, final int line)
 	{
 		this(debugger, type, file, line, null, null, null, SuspendPolicy.NONE);
 	}
 
 
-	public SetBreakpointCommand(@NotNull final RemoteDebugger debugger,
-			@NotNull final String type,
-			@NotNull final String file,
+	public SetBreakpointCommand(@Nonnull final RemoteDebugger debugger,
+			@Nonnull final String type,
+			@Nonnull final String file,
 			final int line,
 			@Nullable final String condition,
 			@Nullable final String logExpression,
 			@Nullable final String funcName,
-			@NotNull final SuspendPolicy policy)
+			@Nonnull final SuspendPolicy policy)
 	{
 		super(debugger, type, SET_BREAKPOINT, file, line);
 		myCondition = condition;
@@ -49,7 +49,7 @@ public class SetBreakpointCommand extends LineBreakpointCommand
 		payload.add(buildCondition(myFuncName)).add(mySuspendPolicy.name()).add(buildCondition(myCondition)).add(buildCondition(myLogExpression));
 	}
 
-	@NotNull
+	@Nonnull
 	private static String buildCondition(String expression)
 	{
 		String condition;

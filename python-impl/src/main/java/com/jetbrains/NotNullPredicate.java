@@ -15,8 +15,8 @@
  */
 package com.jetbrains;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 
 /**
@@ -41,7 +41,7 @@ public class NotNullPredicate<T> implements Predicate<T>
 		return applyNotNull(input);
 	}
 
-	protected boolean applyNotNull(@NotNull final T input)
+	protected boolean applyNotNull(@Nonnull final T input)
 	{
 		return true;
 	}

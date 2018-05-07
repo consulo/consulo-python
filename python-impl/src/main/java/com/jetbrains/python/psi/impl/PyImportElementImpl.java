@@ -18,10 +18,10 @@ package com.jetbrains.python.psi.impl;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.Comparing;
@@ -160,7 +160,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return new ItemPresentation()
 		{
 
-			@NotNull
+			@Nonnull
 			private String getRefName(String default_name)
 			{
 				PyReferenceExpression ref = getImportReferenceExpression();
@@ -226,7 +226,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		};
 	}
 
-	@NotNull
+	@Nonnull
 	public Iterable<PyElement> iterateNames()
 	{
 		PyElement ret = getAsNameElement();
@@ -245,8 +245,8 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return Collections.singleton(ret);
 	}
 
-	@NotNull
-	public List<RatedResolveResult> multiResolveName(@NotNull final String name)
+	@Nonnull
+	public List<RatedResolveResult> multiResolveName(@Nonnull final String name)
 	{
 		return getElementsNamed(name, true);
 	}
@@ -259,8 +259,8 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
 	}
 
-	@NotNull
-	private List<RatedResolveResult> getElementsNamed(@NotNull String name, boolean resolveImportElement)
+	@Nonnull
+	private List<RatedResolveResult> getElementsNamed(@Nonnull String name, boolean resolveImportElement)
 	{
 		String asName = getAsName();
 		if(asName != null)
@@ -302,7 +302,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<RatedResolveResult> multiResolve()
 	{

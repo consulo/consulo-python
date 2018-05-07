@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -45,15 +46,15 @@ import com.jetbrains.python.toolbox.Substring;
  */
 public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public Visitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public Visitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session)
 		{
 
 			@Override
-			protected void checkDocString(@NotNull PyDocStringOwner node)
+			protected void checkDocString(@Nonnull PyDocStringOwner node)
 			{
 				final PyStringLiteralExpression docstringExpr = node.getDocStringExpression();
 				if(docstringExpr != null)
@@ -62,7 +63,7 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection
 				}
 			}
 
-			private void checkParameters(@NotNull PyDocStringOwner pyDocStringOwner, @NotNull PyStringLiteralExpression node)
+			private void checkParameters(@Nonnull PyDocStringOwner pyDocStringOwner, @Nonnull PyStringLiteralExpression node)
 			{
 				final StructuredDocString docString = DocStringUtil.parseDocString(node);
 				if(docString instanceof PlainDocString)
@@ -100,8 +101,8 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection
 		};
 	}
 
-	@NotNull
-	private static List<PyNamedParameter> getMissingParams(@NotNull StructuredDocString docString, @NotNull PyParameter[] realParams)
+	@Nonnull
+	private static List<PyNamedParameter> getMissingParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams)
 	{
 		final List<PyNamedParameter> missing = new ArrayList<>();
 		final List<String> docStringParameters = docString.getParameters();
@@ -125,8 +126,8 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection
 		return missing;
 	}
 
-	@NotNull
-	private static List<Substring> getUnexpectedParams(@NotNull StructuredDocString docString, @NotNull PyParameter[] realParams)
+	@Nonnull
+	private static List<Substring> getUnexpectedParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams)
 	{
 		final Map<String, Substring> unexpected = Maps.newHashMap();
 

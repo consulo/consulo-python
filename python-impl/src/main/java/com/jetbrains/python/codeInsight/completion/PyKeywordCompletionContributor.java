@@ -39,8 +39,8 @@ import com.jetbrains.python.documentation.doctest.PyDocstringFile;
 import com.jetbrains.python.psi.*;
 import consulo.codeInsight.completion.CompletionProvider;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -262,7 +262,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
   public static final ElementPattern<PsiElement> IN_WITH_AFTER_REF =
     psiElement().afterLeaf(psiElement().inside(psiElement(PyWithItem.class).with(new PatternCondition<PyWithItem>("withoutAsKeyword") {
       @Override
-      public boolean accepts(@NotNull PyWithItem item, ProcessingContext context) {
+      public boolean accepts(@Nonnull PyWithItem item, ProcessingContext context) {
         return item.getNode().findChildByType(PyTokenTypes.AS_KEYWORD) == null;
       }
     })));
@@ -351,14 +351,14 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
 
   // ======
 
-  private static void putKeywords(final CompletionResultSet result, TailType tail, @NonNls @NotNull String... words) {
+  private static void putKeywords(final CompletionResultSet result, TailType tail, @NonNls @Nonnull String... words) {
     for (String s : words) {
       result.addElement(TailTypeDecorator.withTail(new PythonLookupElement(s, true, null), tail));
     }
   }
 
   private static void putKeyword(
-    @NotNull @NonNls String keyword,
+    @Nonnull @NonNls String keyword,
     InsertHandler<PythonLookupElement> handler,
     TailType tail,
     CompletionResultSet result) {
@@ -382,7 +382,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
       ,
       new CompletionProvider() {
 		  public void addCompletions(
-          @NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result
+          @Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result
         ) {
           putKeywords(result, TailType.NONE, "def", "class", "for", "if", "while", "with");
           putKeywords(result, TailType.CASE_COLON, "try");
@@ -406,7 +406,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
       inStatement,
       new CompletionProvider() {
 		  public void addCompletions(
-          @NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result
+          @Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result
         ) {
           putKeywords(result, TailType.SPACE, "assert", "del", "exec", "from", "import", "raise");
           putKeywords(result, TailType.NONE, PyNames.PASS);
@@ -492,7 +492,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
       ,
       new CompletionProvider() {
 		  public void addCompletions(
-          @NotNull final CompletionParameters parameters, final ProcessingContext context, @NotNull final CompletionResultSet result
+          @Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result
         ) {
           putKeyword("except", UnindentingInsertHandler.INSTANCE, TailType.NONE, result);
           putKeyword("finally", UnindentingInsertHandler.INSTANCE, TailType.CASE_COLON, result);
@@ -673,8 +673,8 @@ public class PyKeywordCompletionContributor extends CompletionContributor {
       myInsertHandler = insertHandler;
     }
 
-    public void addCompletions(@NotNull final CompletionParameters parameters, final ProcessingContext context,
-                                  @NotNull final CompletionResultSet result) {
+    public void addCompletions(@Nonnull final CompletionParameters parameters, final ProcessingContext context,
+                                  @Nonnull final CompletionResultSet result) {
       for (String s : myKeywords) {
         final PythonLookupElement element = new PythonLookupElement(s, true, null);
         if (myInsertHandler != null) {

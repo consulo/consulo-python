@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
@@ -35,10 +36,10 @@ public class PyDebuggerOptionsProvider implements PersistentStateComponent<PyDeb
 {
 	private State myState = new State();
 
-	@NotNull
+	@Nonnull
 	private final Project myProject;
 
-	public PyDebuggerOptionsProvider(@NotNull Project project)
+	public PyDebuggerOptionsProvider(@Nonnull Project project)
 	{
 		myProject = project;
 	}

@@ -27,7 +27,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -38,7 +38,7 @@ import java.util.Collection;
  */
 public class FileReferenceWithOneContext extends FileReference {
 
-  public FileReferenceWithOneContext(@NotNull FileReferenceSet fileReferenceSet,
+  public FileReferenceWithOneContext(@Nonnull FileReferenceSet fileReferenceSet,
                                      TextRange range, int index, String text) {
     super(fileReferenceSet, range, index, text);
   }

@@ -26,8 +26,8 @@ import java.util.Vector;
 import org.apache.xmlrpc.WebServer;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -160,7 +160,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 			new Task.Backgroundable(myProject, "Close Console Communication", true)
 			{
 				@Override
-				public void run(@NotNull ProgressIndicator indicator)
+				public void run(@Nonnull ProgressIndicator indicator)
 				{
 					try
 					{
@@ -355,7 +355,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 	/**
 	 * @return completions from the client
 	 */
-	@NotNull
+	@Nonnull
 	public List<PydevCompletionVariant> getCompletions(String text, String actTok) throws Exception
 	{
 		if(myDebugCommunication != null && myDebugCommunication.isSuspended())
@@ -417,7 +417,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 			{
 
 				@Override
-				public void run(@NotNull ProgressIndicator indicator)
+				public void run(@Nonnull ProgressIndicator indicator)
 				{
 					boolean needInput = false;
 					try
@@ -726,7 +726,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 	 * @param extraEnvs
 	 * @throws Exception if connection fails
 	 */
-	public void connectToDebugger(int localPort, @NotNull Map<String, Boolean> dbgOpts, @NotNull Map<String, String> extraEnvs) throws Exception
+	public void connectToDebugger(int localPort, @Nonnull Map<String, Boolean> dbgOpts, @Nonnull Map<String, String> extraEnvs) throws Exception
 	{
 		if(waitingForInput)
 		{

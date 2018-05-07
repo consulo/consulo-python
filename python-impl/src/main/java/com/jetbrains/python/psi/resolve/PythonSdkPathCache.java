@@ -19,7 +19,8 @@ package com.jetbrains.python.psi.resolve;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -40,7 +41,7 @@ import consulo.bundle.SdkTableListener;
 public class PythonSdkPathCache extends PythonPathCache implements Disposable {
   private static final Key<Map<Project, PythonSdkPathCache>> KEY = Key.create("PythonPathCache");
 
-  public static PythonSdkPathCache getInstance(@NotNull Project project, @NotNull Sdk sdk) {
+  public static PythonSdkPathCache getInstance(@Nonnull Project project, @Nonnull Sdk sdk) {
     synchronized (KEY) {
       Map<Project, PythonSdkPathCache> cacheMap = sdk.getUserData(KEY);
       if (cacheMap == null) {
@@ -60,7 +61,7 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
   private final Sdk mySdk;
   private final AtomicReference<PyBuiltinCache> myBuiltins = new AtomicReference<PyBuiltinCache>();
 
-  public PythonSdkPathCache(@NotNull final Project project, @NotNull final Sdk sdk) {
+  public PythonSdkPathCache(@Nonnull final Project project, @Nonnull final Sdk sdk) {
     myProject = project;
     mySdk = sdk;
     sdk.getRootProvider().addRootSetChangedListener(new RootProvider.RootSetChangedListener() {
@@ -102,7 +103,7 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
     }
   }
 
-  @NotNull
+  @Nonnull
   public PyBuiltinCache getBuiltins() {
     while (true) {
       PyBuiltinCache pyBuiltinCache = myBuiltins.get();

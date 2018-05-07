@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,7 +35,7 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
   private PyPySdkFlavor() {
   }
 
-  public boolean isValidSdkPath(@NotNull File file) {
+  public boolean isValidSdkPath(@Nonnull File file) {
     return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("pypy");
   }
 
@@ -47,7 +47,7 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
     return "--version";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return "PyPy";
@@ -64,7 +64,7 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
     return LanguageLevel.getDefault();
   }
 
-  private static String getPythonVersion(@NotNull String pypyVersion) {
+  private static String getPythonVersion(@Nonnull String pypyVersion) {
     final String DEFAULT = "2.4";
     final String LATEST = "2.7";
     final List<String> vs = StringUtil.split(pypyVersion, ".");

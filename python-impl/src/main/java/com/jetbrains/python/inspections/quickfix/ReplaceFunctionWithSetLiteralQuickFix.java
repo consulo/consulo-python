@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -23,7 +25,6 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.PySetFunctionToLiteralInspection;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : catherine
@@ -32,19 +33,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ReplaceFunctionWithSetLiteralQuickFix implements LocalQuickFix {
   @Override
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.replace.function.set.with.literal");
   }
 
   @Override
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PyElement[] elements = PySetFunctionToLiteralInspection.getSetCallArguments((PyCallExpression)descriptor.getPsiElement());
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
     PsiElement functionCall = descriptor.getPsiElement();

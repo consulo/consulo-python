@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -34,14 +34,14 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 	private Project myProject;
 	private final PyFrameAccessor myDebugProcess;
 
-	public PyDebuggerEvaluator(@NotNull Project project, @NotNull final PyFrameAccessor debugProcess)
+	public PyDebuggerEvaluator(@Nonnull Project project, @Nonnull final PyFrameAccessor debugProcess)
 	{
 		myProject = project;
 		myDebugProcess = debugProcess;
 	}
 
 	@Override
-	public void evaluate(@NotNull String expression, @NotNull XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition)
+	public void evaluate(@Nonnull String expression, @Nonnull XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition)
 	{
 		doEvaluate(expression, callback, true);
 	}
@@ -84,9 +84,9 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 		return PyDebugSupportUtils.getExpressionRangeAtOffset(project, document, offset);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public String formatTextForEvaluation(@NotNull String text)
+	public String formatTextForEvaluation(@Nonnull String text)
 	{
 		return PyConsoleIndentUtil.normalize(text);
 	}

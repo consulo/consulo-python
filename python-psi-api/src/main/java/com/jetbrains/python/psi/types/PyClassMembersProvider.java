@@ -17,8 +17,9 @@ package com.jetbrains.python.psi.types;
 
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
@@ -30,7 +31,7 @@ public interface PyClassMembersProvider
 {
 	ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create("consulo.python.pyClassMembersProvider");
 
-	@NotNull
+	@Nonnull
 	Collection<PyCustomMember> getMembers(final PyClassType clazz, PsiElement location, @Nullable TypeEvalContext typeEvalContext);
 
 	@Nullable

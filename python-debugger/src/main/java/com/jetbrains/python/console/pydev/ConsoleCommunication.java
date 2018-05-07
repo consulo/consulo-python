@@ -2,7 +2,7 @@ package com.jetbrains.python.console.pydev;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.util.Function;
 
 /**
@@ -10,7 +10,7 @@ import com.intellij.util.Function;
  */
 public interface ConsoleCommunication
 {
-	@NotNull
+	@Nonnull
 	List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception;
 
 	String getDescription(String text) throws Exception;

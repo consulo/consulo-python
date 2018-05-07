@@ -27,9 +27,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.ParamsGroup;
@@ -64,7 +66,7 @@ public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleE
 {
 	private static final Logger LOGGER = Logger.getInstance(BuildoutModuleExtension.class);
 
-	@NotNull
+	@Nonnull
 	public static List<VirtualFile> getExtraPathForAllOpenModules()
 	{
 		final List<VirtualFile> results = new ArrayList<>();
@@ -101,7 +103,7 @@ public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleE
 	protected String myScriptName;
 	protected List<String> myPaths;
 
-	public BuildoutModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
+	public BuildoutModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
@@ -148,7 +150,7 @@ public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleE
 	}
 
 	@Nullable
-	public static List<String> extractBuildoutPaths(@NotNull VirtualFile script)
+	public static List<String> extractBuildoutPaths(@Nonnull VirtualFile script)
 	{
 		try
 		{
@@ -183,7 +185,7 @@ public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleE
 	 * @return extracted paths, or null if extraction fails.
 	 */
 	@Nullable
-	public static List<String> extractFromScript(@NotNull VirtualFile script) throws IOException
+	public static List<String> extractFromScript(@Nonnull VirtualFile script) throws IOException
 	{
 		String text = VfsUtil.loadText(script);
 		Pattern pat = Pattern.compile("(?:^\\s*(['\"])(.*)(\\1),\\s*$)|(\\])", Pattern.MULTILINE);
@@ -382,7 +384,7 @@ public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleE
 	}
 
 	@Override
-	public void commit(@NotNull BuildoutModuleExtension mutableModuleExtension)
+	public void commit(@Nonnull BuildoutModuleExtension mutableModuleExtension)
 	{
 		super.commit(mutableModuleExtension);
 		myScriptName = mutableModuleExtension.getScriptName();

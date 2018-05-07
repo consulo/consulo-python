@@ -2,11 +2,11 @@ package com.jetbrains.python.debugger;
 
 import com.jetbrains.python.console.pydev.AbstractPyCodeCompletion;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import org.jetbrains.annotations.Nullable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.annotation.Nullable;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;

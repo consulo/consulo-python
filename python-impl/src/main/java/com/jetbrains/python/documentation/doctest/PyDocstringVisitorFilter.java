@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.documentation.doctest;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.python.inspections.*;
@@ -34,7 +35,7 @@ import com.jetbrains.python.validation.ReturnAnnotator;
 public class PyDocstringVisitorFilter implements PythonVisitorFilter
 {
 	@Override
-	public boolean isSupported(@NotNull final Class visitorClass, @NotNull final PsiFile file)
+	public boolean isSupported(@Nonnull final Class visitorClass, @Nonnull final PsiFile file)
 	{
 		//inspections
 		if(visitorClass == PyArgumentListInspection.class)

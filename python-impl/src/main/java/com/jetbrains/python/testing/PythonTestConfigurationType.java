@@ -16,16 +16,15 @@
 
 package com.jetbrains.python.testing;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.run.PythonConfigurationType;
 import com.jetbrains.python.testing.attest.PythonAtTestRunConfiguration;
 import com.jetbrains.python.testing.doctest.PythonDocTestRunConfiguration;
 import com.jetbrains.python.testing.nosetest.PythonNoseTestRunConfiguration;
@@ -67,7 +66,7 @@ public class PythonTestConfigurationType implements ConfigurationType
 		}
 
 		@Override
-		public boolean isApplicable(@NotNull Project project)
+		public boolean isApplicable(@Nonnull Project project)
 		{
 			return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
 		}
@@ -93,7 +92,7 @@ public class PythonTestConfigurationType implements ConfigurationType
 		}
 
 		@Override
-		public boolean isApplicable(@NotNull Project project)
+		public boolean isApplicable(@Nonnull Project project)
 		{
 			return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
 		}
@@ -119,7 +118,7 @@ public class PythonTestConfigurationType implements ConfigurationType
 		}
 
 		@Override
-		public boolean isApplicable(@NotNull Project project)
+		public boolean isApplicable(@Nonnull Project project)
 		{
 			return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
 		}
@@ -145,7 +144,7 @@ public class PythonTestConfigurationType implements ConfigurationType
 		}
 
 		@Override
-		public boolean isApplicable(@NotNull Project project)
+		public boolean isApplicable(@Nonnull Project project)
 		{
 			return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
 		}
@@ -171,7 +170,7 @@ public class PythonTestConfigurationType implements ConfigurationType
 		}
 
 		@Override
-		public boolean isApplicable(@NotNull Project project)
+		public boolean isApplicable(@Nonnull Project project)
 		{
 			return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
 		}
@@ -201,7 +200,7 @@ public class PythonTestConfigurationType implements ConfigurationType
 		return PythonIcons.Python.PythonTests;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getId()
 	{

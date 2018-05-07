@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.surround.surrounders.expressions;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.openapi.editor.Editor;
@@ -23,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,12 +38,12 @@ public class PyWithParenthesesSurrounder extends PyExpressionSurrounder {
   }
 
   @Override
-  public boolean isApplicable(@NotNull PyExpression elements) {
+  public boolean isApplicable(@Nonnull PyExpression elements) {
     return true;
   }
 
   @Override
-  public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull PyExpression element)
+  public TextRange surroundExpression(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PyExpression element)
     throws IncorrectOperationException {
     PyParenthesizedExpression parenthesesExpression = (PyParenthesizedExpression)PyElementGenerator.getInstance(project)
       .createFromText(LanguageLevel.getDefault(), PyExpressionStatement.class, "(a)").getExpression();

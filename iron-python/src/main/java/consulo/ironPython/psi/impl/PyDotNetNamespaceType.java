@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -58,10 +58,10 @@ public class PyDotNetNamespaceType implements PyType
 	}
 
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name,
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
 			@Nullable PyExpression location,
-			@NotNull AccessDirection direction,
-			@NotNull PyResolveContext resolveContext)
+			@Nonnull AccessDirection direction,
+			@Nonnull PyResolveContext resolveContext)
 	{
 		Project project = myNamespaceAsElement.getProject();
 		DotNetPsiSearcher facade = DotNetPsiSearcher.getInstance(project);

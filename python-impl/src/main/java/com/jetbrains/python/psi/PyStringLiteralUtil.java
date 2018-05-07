@@ -17,8 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -52,13 +52,13 @@ public class PyStringLiteralUtil
 	 *
 	 * @return string without heading and trailing pair of ' or "
 	 */
-	@NotNull
-	public static String getStringValue(@NotNull String s)
+	@Nonnull
+	public static String getStringValue(@Nonnull String s)
 	{
 		return getStringValueTextRange(s).substring(s);
 	}
 
-	public static TextRange getStringValueTextRange(@NotNull String s)
+	public static TextRange getStringValueTextRange(@Nonnull String s)
 	{
 		final Pair<String, String> quotes = getQuotes(s);
 		if(quotes != null)
@@ -92,7 +92,7 @@ public class PyStringLiteralUtil
 	 * UR"unicode raw string" -> (UR", ")
 	 */
 	@Nullable
-	public static Pair<String, String> getQuotes(@NotNull final String text)
+	public static Pair<String, String> getQuotes(@Nonnull final String text)
 	{
 		final String prefix = getPrefix(text);
 		final String mainText = text.substring(prefix.length());
@@ -114,7 +114,7 @@ public class PyStringLiteralUtil
 	 *
 	 * @return end offset of found string prefix
 	 */
-	public static int getPrefixEndOffset(@NotNull CharSequence text, int startOffset)
+	public static int getPrefixEndOffset(@Nonnull CharSequence text, int startOffset)
 	{
 		int offset;
 		for(offset = startOffset; offset < Math.min(startOffset + MAX_PREFIX_LENGTH, text.length()); offset++)
@@ -127,8 +127,8 @@ public class PyStringLiteralUtil
 		return offset;
 	}
 
-	@NotNull
-	public static String getPrefix(@NotNull CharSequence text)
+	@Nonnull
+	public static String getPrefix(@Nonnull CharSequence text)
 	{
 		return getPrefix(text, 0);
 	}
@@ -139,8 +139,8 @@ public class PyStringLiteralUtil
 	 * @return extracted string prefix
 	 * @see #getPrefixEndOffset(CharSequence, int)
 	 */
-	@NotNull
-	public static String getPrefix(@NotNull CharSequence text, int startOffset)
+	@Nonnull
+	public static String getPrefix(@Nonnull CharSequence text, int startOffset)
 	{
 		return text.subSequence(startOffset, getPrefixEndOffset(text, startOffset)).toString();
 	}
@@ -148,7 +148,7 @@ public class PyStringLiteralUtil
 	/**
 	 * @return whether the given prefix contains either 'u' or 'U' character
 	 */
-	public static boolean isUnicodePrefix(@NotNull String prefix)
+	public static boolean isUnicodePrefix(@Nonnull String prefix)
 	{
 		return StringUtil.indexOfIgnoreCase(prefix, 'u', 0) >= 0;
 	}
@@ -156,7 +156,7 @@ public class PyStringLiteralUtil
 	/**
 	 * @return whether the given prefix contains either 'b' or 'B' character
 	 */
-	public static boolean isBytesPrefix(@NotNull String prefix)
+	public static boolean isBytesPrefix(@Nonnull String prefix)
 	{
 		return StringUtil.indexOfIgnoreCase(prefix, 'b', 0) >= 0;
 	}
@@ -164,7 +164,7 @@ public class PyStringLiteralUtil
 	/**
 	 * @return whether the given prefix contains either 'r' or 'R' character
 	 */
-	public static boolean isRawPrefix(@NotNull String prefix)
+	public static boolean isRawPrefix(@Nonnull String prefix)
 	{
 		return StringUtil.indexOfIgnoreCase(prefix, 'r', 0) >= 0;
 	}
@@ -172,13 +172,13 @@ public class PyStringLiteralUtil
 	/**
 	 * @return whether the given prefix contains either 'f' or 'F' character
 	 */
-	public static boolean isFormattedPrefix(@NotNull String prefix)
+	public static boolean isFormattedPrefix(@Nonnull String prefix)
 	{
 		return StringUtil.indexOfIgnoreCase(prefix, 'f', 0) >= 0;
 	}
 
 	@Nullable
-	private static Pair<String, String> getQuotes(@NotNull String text, @NotNull String prefix, @NotNull String quote)
+	private static Pair<String, String> getQuotes(@Nonnull String text, @Nonnull String prefix, @Nonnull String quote)
 	{
 		final int length = text.length();
 		final int n = quote.length();

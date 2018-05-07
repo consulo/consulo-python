@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.testing;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiFile;
@@ -30,5 +30,5 @@ import com.intellij.psi.PsiFile;
 public interface RunnableUnitTestFilter {
   ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create("consulo.python.runnableUnitTestFilter");
 
-  boolean isRunnableUnitTest(PsiFile script, @NotNull Module module);
+  boolean isRunnableUnitTest(PsiFile script, @Nonnull Module module);
 }

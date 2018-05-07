@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.structureView;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.FileStructureFilter;
@@ -24,7 +26,6 @@ import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapManager;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vlan
@@ -46,7 +47,7 @@ public class PyInheritedMembersFilter implements FileStructureFilter {
     return true;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return ID;
@@ -57,7 +58,7 @@ public class PyInheritedMembersFilter implements FileStructureFilter {
     return getName();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public ActionPresentation getPresentation() {
     return new ActionPresentationData(IdeBundle.message("action.structureview.show.inherited"),

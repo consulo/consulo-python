@@ -17,8 +17,9 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiNamedElement;
@@ -108,13 +109,13 @@ public interface PyFunction extends PsiNamedElement, StubBasedPsiElement<PyFunct
 	 *
 	 * @return assignment statements for function attributes
 	 */
-	@NotNull
+	@Nonnull
 	List<PyAssignmentStatement> findAttributes();
 
 	/**
 	 * @return function protection level (underscore based)
 	 */
-	@NotNull
+	@Nonnull
 	ProtectionLevel getProtectionLevel();
 
 	enum ProtectionLevel

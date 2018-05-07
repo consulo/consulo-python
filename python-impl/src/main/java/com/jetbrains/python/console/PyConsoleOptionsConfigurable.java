@@ -21,7 +21,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.options.Configurable;
@@ -49,7 +49,7 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
 		myProject = project;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getId()
 	{
@@ -83,7 +83,7 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
 		return new SearchableConfigurable()
 		{
 
-			@NotNull
+			@Nonnull
 			@Override
 			public String getId()
 			{

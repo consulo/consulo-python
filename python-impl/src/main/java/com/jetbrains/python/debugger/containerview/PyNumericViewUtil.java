@@ -19,7 +19,7 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.util.Pair;
 
 /**
@@ -72,7 +72,7 @@ public class PyNumericViewUtil
 		return range;
 	}
 
-	private static Pair<Double, Double> parsePyComplex(@NotNull String pyComplexValue)
+	private static Pair<Double, Double> parsePyComplex(@Nonnull String pyComplexValue)
 	{
 		if(pyComplexValue.startsWith("(") && pyComplexValue.endsWith(")"))
 		{

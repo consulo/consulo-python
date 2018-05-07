@@ -27,8 +27,8 @@ import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.DictCreationQuickFix;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,22 +38,22 @@ import java.util.List;
  */
 public class PyDictCreationInspection extends PyInspection {
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.dict.creation");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
   private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
       super(holder, session);
     }
 
@@ -87,9 +87,9 @@ public class PyDictCreationInspection extends PyInspection {
   }
 
   @Nullable
-  public static List<Pair<PyExpression, PyExpression>> getDictTargets(@NotNull final PyExpression target,
-                                                                      @NotNull final String name,
-                                                                      @NotNull final PyAssignmentStatement assignmentStatement) {
+  public static List<Pair<PyExpression, PyExpression>> getDictTargets(@Nonnull final PyExpression target,
+                                                                      @Nonnull final String name,
+                                                                      @Nonnull final PyAssignmentStatement assignmentStatement) {
     final List<Pair<PyExpression, PyExpression>> targets = new ArrayList<Pair<PyExpression, PyExpression>>();
     for (Pair<PyExpression, PyExpression> targetToValue : assignmentStatement.getTargetsToValuesMapping()) {
       if (targetToValue.first instanceof PySubscriptionExpression) {
@@ -106,7 +106,7 @@ public class PyDictCreationInspection extends PyInspection {
     return targets;
   }
 
-  private static boolean referencesTarget(@NotNull final PyExpression expression, @NotNull final PsiElement target) {
+  private static boolean referencesTarget(@Nonnull final PyExpression expression, @Nonnull final PsiElement target) {
     final List<PsiElement> refs = new ArrayList<PsiElement>();
     expression.accept(new PyRecursiveElementVisitor() {
       @Override

@@ -18,7 +18,8 @@ package com.jetbrains.python.console;
 
 import java.awt.datatransfer.StringSelection;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+
 import com.intellij.execution.impl.ConsoleViewUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;

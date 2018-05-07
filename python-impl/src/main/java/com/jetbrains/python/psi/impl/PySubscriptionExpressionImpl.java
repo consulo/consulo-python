@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -58,13 +58,13 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 		super(astNode);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyExpression getOperand()
 	{
 		return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PyExpression getRootOperand()
 	{
@@ -90,7 +90,7 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 
 	@Nullable
 	@Override
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		final PsiPolyVariantReference reference = getReference(PyResolveContext.noImplicits().withTypeEvalContext(context));
 		final List<PyType> members = new ArrayList<>();
@@ -135,7 +135,7 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 		return getReference(PyResolveContext.noImplicits());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PsiPolyVariantReference getReference(PyResolveContext context)
 	{

@@ -18,7 +18,7 @@ package com.jetbrains.python.codeInsight.dataflow.scope.impl;
 
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeVariable;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,12 +41,12 @@ public class ScopeVariableImpl implements ScopeVariable {
     this(name, parameter, Collections.singletonList(declaration));
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return myName;
   }
 
-  @NotNull
+  @Nonnull
   public Collection<PsiElement> getDeclarations() {
     return myDeclarations;
   }

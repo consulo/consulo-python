@@ -19,8 +19,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -40,16 +41,16 @@ import com.jetbrains.python.psi.search.PySuperMethodsSearch;
 public class PyMethodMayBeStaticInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.method.may.be.static");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -57,7 +58,7 @@ public class PyMethodMayBeStaticInspection extends PyInspection
 
 	private static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -185,7 +186,7 @@ public class PyMethodMayBeStaticInspection extends PyInspection
 		}
 	}
 
-	private static boolean isTestElement(@NotNull PyFunction node)
+	private static boolean isTestElement(@Nonnull PyFunction node)
 	{
 		final String methodName = node.getName();
 		final PyClass pyClass = node.getContainingClass();

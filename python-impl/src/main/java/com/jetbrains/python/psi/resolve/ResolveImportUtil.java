@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
@@ -135,14 +135,14 @@ public class ResolveImportUtil
 	 */
 	@Deprecated
 	@Nullable
-	public static PsiElement resolveImportElement(PyImportElement importElement, @NotNull final QualifiedName qName)
+	public static PsiElement resolveImportElement(PyImportElement importElement, @Nonnull final QualifiedName qName)
 	{
 		final List<RatedResolveResult> resultList = RatedResolveResult.sorted(multiResolveImportElement(importElement, qName));
 		return resultList.size() > 0 ? resultList.get(0).getElement() : null;
 	}
 
-	@NotNull
-	public static List<RatedResolveResult> multiResolveImportElement(PyImportElement importElement, @NotNull final QualifiedName qName)
+	@Nonnull
+	public static List<RatedResolveResult> multiResolveImportElement(PyImportElement importElement, @Nonnull final QualifiedName qName)
 	{
 		PyUtil.verboseOnly(() -> PyPsiUtils.assertValid(importElement));
 		final PyStatement importStatement = importElement.getContainingImportStatement();
@@ -156,8 +156,8 @@ public class ResolveImportUtil
 		}
 	}
 
-	@NotNull
-	public static List<RatedResolveResult> resolveNameInImportStatement(PyImportElement importElement, @NotNull QualifiedName qName)
+	@Nonnull
+	public static List<RatedResolveResult> resolveNameInImportStatement(PyImportElement importElement, @Nonnull QualifiedName qName)
 	{
 		final PsiFile file = importElement.getContainingFile().getOriginalFile();
 		boolean absoluteImportEnabled = isAbsoluteImportEnabledFor(importElement);
@@ -165,8 +165,8 @@ public class ResolveImportUtil
 		return rateResults(modules);
 	}
 
-	@NotNull
-	public static List<RatedResolveResult> resolveNameInFromImport(PyFromImportStatement importStatement, @NotNull QualifiedName qName)
+	@Nonnull
+	public static List<RatedResolveResult> resolveNameInFromImport(PyFromImportStatement importStatement, @Nonnull QualifiedName qName)
 	{
 		PsiFile file = importStatement.getContainingFile().getOriginalFile();
 		String name = qName.getComponents().get(0);
@@ -207,8 +207,8 @@ public class ResolveImportUtil
 		return Collections.emptyList();
 	}
 
-	@NotNull
-	public static List<PsiElement> resolveFromImportStatementSource(@NotNull PyFromImportStatement fromImportStatement, @Nullable QualifiedName qName)
+	@Nonnull
+	public static List<PsiElement> resolveFromImportStatementSource(@Nonnull PyFromImportStatement fromImportStatement, @Nullable QualifiedName qName)
 	{
 		final boolean absoluteImportEnabled = isAbsoluteImportEnabledFor(fromImportStatement);
 		final PsiFile file = fromImportStatement.getContainingFile();
@@ -224,7 +224,7 @@ public class ResolveImportUtil
 	 * @param relativeLevel    if > 0, step back from sourceFile and resolve from there (even if importIsAbsolute is false!).
 	 * @return list of possible candidates
 	 */
-	@NotNull
+	@Nonnull
 	public static List<PsiElement> resolveModule(@Nullable QualifiedName qualifiedName, @Nullable PsiFile sourceFile, boolean importIsAbsolute, int relativeLevel)
 	{
 		if(qualifiedName == null || sourceFile == null)
@@ -235,8 +235,8 @@ public class ResolveImportUtil
 		return PyUtil.getParameterizedCachedValue(sourceFile, params, ResolveImportUtil::calculateResolveModule);
 	}
 
-	@NotNull
-	private static List<PsiElement> calculateResolveModule(@NotNull ResolveModuleParams params)
+	@Nonnull
+	private static List<PsiElement> calculateResolveModule(@Nonnull ResolveModuleParams params)
 	{
 		final QualifiedName qualifiedName = params.getName();
 		final int relativeLevel = params.getLevel();
@@ -275,7 +275,7 @@ public class ResolveImportUtil
 	}
 
 	@Nullable
-	public static PsiElement resolveModuleInRoots(@NotNull QualifiedName moduleQualifiedName, @Nullable PsiElement foothold)
+	public static PsiElement resolveModuleInRoots(@Nonnull QualifiedName moduleQualifiedName, @Nullable PsiElement foothold)
 	{
 		if(foothold == null)
 		{
@@ -310,7 +310,7 @@ public class ResolveImportUtil
 	 */
 	@Deprecated
 	@Nullable
-	public static PsiElement resolveChild(@Nullable final PsiElement parent, @NotNull final String referencedName, @Nullable final PsiFile containingFile, boolean fileOnly, boolean checkForPackage)
+	public static PsiElement resolveChild(@Nullable final PsiElement parent, @Nonnull final String referencedName, @Nullable final PsiFile containingFile, boolean fileOnly, boolean checkForPackage)
 	{
 		final List<RatedResolveResult> results = resolveChildren(parent, referencedName, containingFile, fileOnly, checkForPackage);
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
@@ -326,8 +326,8 @@ public class ResolveImportUtil
 	 * @param checkForPackage if true, directories are returned only if they contain __init__.py
 	 * @return the element the referencedName resolves to, or null.
 	 */
-	@NotNull
-	public static List<RatedResolveResult> resolveChildren(@Nullable PsiElement parent, @NotNull String referencedName, @Nullable PsiFile containingFile, boolean fileOnly, boolean checkForPackage)
+	@Nonnull
+	public static List<RatedResolveResult> resolveChildren(@Nullable PsiElement parent, @Nonnull String referencedName, @Nullable PsiFile containingFile, boolean fileOnly, boolean checkForPackage)
 	{
 		if(parent == null)
 		{
@@ -348,8 +348,8 @@ public class ResolveImportUtil
 
 	}
 
-	@NotNull
-	private static List<RatedResolveResult> resolveInPackageModule(@NotNull PyFile parent, @NotNull String referencedName, @Nullable PsiFile containingFile, boolean fileOnly, boolean checkForPackage)
+	@Nonnull
+	private static List<RatedResolveResult> resolveInPackageModule(@Nonnull PyFile parent, @Nonnull String referencedName, @Nullable PsiFile containingFile, boolean fileOnly, boolean checkForPackage)
 	{
 		final List<RatedResolveResult> moduleMembers = resolveModuleMember(parent, referencedName);
 		final List<RatedResolveResult> resolvedInModule = Lists.newArrayList();
@@ -380,15 +380,15 @@ public class ResolveImportUtil
 		return results;
 	}
 
-	private static boolean preferResolveInDirectoryOverModule(@NotNull PsiElement resolved)
+	private static boolean preferResolveInDirectoryOverModule(@Nonnull PsiElement resolved)
 	{
 		return PsiTreeUtil.getStubOrPsiParentOfType(resolved, PyExceptPart.class) != null ||
 				PyUtil.instanceOf(resolved, PsiFile.class, PsiDirectory.class) ||  // XXX: Workaround for PY-9439
 				isDunderAll(resolved);
 	}
 
-	@NotNull
-	private static List<RatedResolveResult> resolveModuleMember(@NotNull PyFile file, @NotNull String referencedName)
+	@Nonnull
+	private static List<RatedResolveResult> resolveModuleMember(@Nonnull PyFile file, @Nonnull String referencedName)
 	{
 		final PyModuleType moduleType = new PyModuleType(file);
 		final PyResolveContext resolveContext = PyResolveContext.defaultContext();
@@ -400,9 +400,9 @@ public class ResolveImportUtil
 		return Lists.newArrayList(results);
 	}
 
-	@NotNull
+	@Nonnull
 	private static List<RatedResolveResult> resolveInPackageDirectory(@Nullable PsiElement parent,
-			@NotNull String referencedName,
+			@Nonnull String referencedName,
 			@Nullable PsiFile containingFile,
 			boolean fileOnly,
 			boolean checkForPackage)
@@ -438,13 +438,13 @@ public class ResolveImportUtil
 	}
 
 	@Nullable
-	private static PsiElement resolveForeignImports(@NotNull PsiFile foothold, @NotNull String referencedName)
+	private static PsiElement resolveForeignImports(@Nonnull PsiFile foothold, @Nonnull String referencedName)
 	{
 		return new QualifiedNameResolverImpl(referencedName).fromElement(foothold).withoutRoots().firstResult();
 	}
 
-	@NotNull
-	private static List<RatedResolveResult> resolveMemberFromReferenceTypeProviders(@NotNull PsiElement parent, @NotNull String referencedName)
+	@Nonnull
+	private static List<RatedResolveResult> resolveMemberFromReferenceTypeProviders(@Nonnull PsiElement parent, @Nonnull String referencedName)
 	{
 		final PyResolveContext resolveContext = PyResolveContext.defaultContext();
 		final PyType refType = PyReferenceExpressionImpl.getReferenceTypeFromProviders(parent, resolveContext.getTypeEvalContext(), null);
@@ -459,13 +459,13 @@ public class ResolveImportUtil
 		return Collections.emptyList();
 	}
 
-	private static boolean isDunderAll(@NotNull PsiElement element)
+	private static boolean isDunderAll(@Nonnull PsiElement element)
 	{
 		return (element instanceof PyElement) && PyNames.ALL.equals(((PyElement) element).getName());
 	}
 
-	@NotNull
-	private static List<RatedResolveResult> resolveInDirectory(@NotNull final String referencedName,
+	@Nonnull
+	private static List<RatedResolveResult> resolveInDirectory(@Nonnull final String referencedName,
 			@Nullable final PsiFile containingFile,
 			final PsiDirectory dir,
 			boolean isFileOnly,
@@ -559,8 +559,8 @@ public class ResolveImportUtil
 	 * @return the how the element relates to an enclosing import statement, if any
 	 * @see PointInImport
 	 */
-	@NotNull
-	public static PointInImport getPointInImport(@NotNull PsiElement element)
+	@Nonnull
+	public static PointInImport getPointInImport(@Nonnull PsiElement element)
 	{
 		final PsiElement parent = PsiTreeUtil.getNonStrictParentOfType(element, PyImportElement.class, PyFromImportStatement.class);
 		if(parent instanceof PyFromImportStatement)
@@ -584,14 +584,14 @@ public class ResolveImportUtil
 
 	private static final class ResolveModuleParams
 	{
-		@NotNull
+		@Nonnull
 		private final QualifiedName myName;
-		@NotNull
+		@Nonnull
 		private final PsiFile myFile;
 		private final boolean myAbsolute;
 		private final int myLevel;
 
-		public ResolveModuleParams(@NotNull QualifiedName qualifiedName, @NotNull PsiFile file, boolean importIsAbsolute, int relativeLevel)
+		public ResolveModuleParams(@Nonnull QualifiedName qualifiedName, @Nonnull PsiFile file, boolean importIsAbsolute, int relativeLevel)
 		{
 			myName = qualifiedName;
 			myFile = file;
@@ -599,7 +599,7 @@ public class ResolveImportUtil
 			myLevel = relativeLevel;
 		}
 
-		@NotNull
+		@Nonnull
 		public QualifiedName getName()
 		{
 			return myName;
@@ -615,7 +615,7 @@ public class ResolveImportUtil
 			return myLevel;
 		}
 
-		@NotNull
+		@Nonnull
 		public PsiFile getFile()
 		{
 			return myFile;

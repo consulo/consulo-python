@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.template.TemplateBuilderImpl;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -31,7 +32,7 @@ import com.jetbrains.python.PyBundle;
 
 public class PyRenameArgumentQuickFix implements LocalQuickFix
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public String getFamilyName()
 	{
@@ -39,7 +40,7 @@ public class PyRenameArgumentQuickFix implements LocalQuickFix
 	}
 
 	@Override
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		final PsiElement element = descriptor.getPsiElement();
 		if(!(element instanceof PsiNamedElement))

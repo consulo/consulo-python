@@ -19,7 +19,7 @@ import static com.jetbrains.python.psi.PyUtil.StringNodeInfo;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -45,7 +45,7 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 	private static class StringLiteralTokenizer extends Tokenizer<PyStringLiteralExpression>
 	{
 		@Override
-		public void tokenize(@NotNull PyStringLiteralExpression element, TokenConsumer consumer)
+		public void tokenize(@Nonnull PyStringLiteralExpression element, TokenConsumer consumer)
 		{
 			final Splitter splitter = PlainTextSplitter.getInstance();
 			final List<ASTNode> strNodes = element.getStringNodes();
@@ -79,7 +79,7 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 	private static class FormatStringTokenizer extends Tokenizer<PyStringLiteralExpression>
 	{
 		@Override
-		public void tokenize(@NotNull PyStringLiteralExpression element, TokenConsumer consumer)
+		public void tokenize(@Nonnull PyStringLiteralExpression element, TokenConsumer consumer)
 		{
 			String stringValue = element.getStringValue();
 			List<PyStringFormatParser.FormatStringChunk> chunks = PyStringFormatParser.parsePercentFormat(stringValue);
@@ -100,7 +100,7 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 	private StringLiteralTokenizer myStringLiteralTokenizer = new StringLiteralTokenizer();
 	private FormatStringTokenizer myFormatStringTokenizer = new FormatStringTokenizer();
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Tokenizer getTokenizer(PsiElement element)
 	{

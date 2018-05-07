@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -42,9 +42,9 @@ import com.jetbrains.python.toolbox.Substring;
  */
 public class DocStringReferenceProvider extends PsiReferenceProvider
 {
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull ProcessingContext context)
+	public PsiReference[] getReferencesByElement(@Nonnull final PsiElement element, @Nonnull ProcessingContext context)
 	{
 		if(element == DocStringUtil.getParentDefinitionDocString(element))
 		{
@@ -99,11 +99,11 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 		return result;
 	}
 
-	private static List<PsiReference> referencesFromNames(@NotNull PyStringLiteralExpression element,
+	private static List<PsiReference> referencesFromNames(@Nonnull PyStringLiteralExpression element,
 			int offset,
-			@NotNull StructuredDocString docString,
-			@NotNull List<Substring> paramNames,
-			@NotNull ReferenceType refType)
+			@Nonnull StructuredDocString docString,
+			@Nonnull List<Substring> paramNames,
+			@Nonnull ReferenceType refType)
 	{
 		List<PsiReference> result = new ArrayList<>();
 		for(Substring name : paramNames)
@@ -126,10 +126,10 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 		return result;
 	}
 
-	@NotNull
-	private static List<PsiReference> referencesFromFields(@NotNull PyStringLiteralExpression element,
+	@Nonnull
+	private static List<PsiReference> referencesFromFields(@Nonnull PyStringLiteralExpression element,
 			int offset,
-			@NotNull List<SectionBasedDocString.SectionField> fields,
+			@Nonnull List<SectionBasedDocString.SectionField> fields,
 			@Nullable ReferenceType nameRefType)
 	{
 		final List<PsiReference> result = new ArrayList<>();
@@ -152,8 +152,8 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 		return result;
 	}
 
-	@NotNull
-	private static List<PsiReference> parseTypeReferences(@NotNull PsiElement anchor, @NotNull Substring s, int offset)
+	@Nonnull
+	private static List<PsiReference> parseTypeReferences(@Nonnull PsiElement anchor, @Nonnull Substring s, int offset)
 	{
 		final List<PsiReference> result = new ArrayList<>();
 		final PyTypeParser.ParseResult parseResult = PyTypeParser.parse(anchor, s.toString());

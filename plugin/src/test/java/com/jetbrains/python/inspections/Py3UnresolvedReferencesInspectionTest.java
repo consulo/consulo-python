@@ -1,6 +1,7 @@
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.testFramework.TestModuleDescriptor;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
@@ -28,7 +29,7 @@ public class Py3UnresolvedReferencesInspectionTest extends PyTestCase {
     });
   }
 
-  private void doMultiFileTest(@NotNull final String filename) {
+  private void doMultiFileTest(@Nonnull final String filename) {
     runWithLanguageLevel(LanguageLevel.PYTHON33, new Runnable() {
       @Override
       public void run() {

@@ -16,10 +16,12 @@
 
 package com.jetbrains.python.psi;
 
+import javax.annotation.Nonnull;
+
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Optionally typed Python element.
@@ -28,5 +30,5 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface PyTypedElement extends PyElement {
   @Nullable
-  PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key);
+  PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key);
 }

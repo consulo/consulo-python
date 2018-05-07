@@ -17,8 +17,8 @@ package com.jetbrains.python.console;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -116,7 +116,7 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
 		public String myWorkingDirectory = "";
 		public boolean myAddContentRoots = true;
 		public boolean myAddSourceRoots;
-		@NotNull
+		@Nonnull
 		private PathMappingSettings myMappings = new PathMappingSettings();
 
 		public PyConsoleSettings()

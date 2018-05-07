@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.jetbrains.python.PyElementTypes;
@@ -79,7 +79,7 @@ public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub
 		pyVisitor.visitPyTupleParameter(this);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyParameter[] getContents()
 	{
 		return getStubOrPsiChildren(PythonDialectsTokenSetProvider.INSTANCE.getParameterTokens(), new PyParameter[0]);

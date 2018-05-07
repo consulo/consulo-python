@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.introduce;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.project.Project;
@@ -30,8 +32,8 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.refactoring.PyReplaceExpressionUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,7 +50,7 @@ public abstract class IntroduceValidator {
            !(myNamesValidator.isKeyword(name, project));
   }
 
-  public boolean checkPossibleName(@NotNull final String name, @NotNull final PyExpression expression) {
+  public boolean checkPossibleName(@Nonnull final String name, @Nonnull final PyExpression expression) {
     return check(name, expression) == null;
   }
 

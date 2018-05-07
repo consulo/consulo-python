@@ -17,7 +17,8 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import java.io.IOException;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
@@ -38,29 +39,29 @@ public class PyStarImportElementElementType extends PyStubElementType<PyStarImpo
 		super("STAR_IMPORT_ELEMENT");
 	}
 
-	@NotNull
-	public PsiElement createElement(@NotNull final ASTNode node)
+	@Nonnull
+	public PsiElement createElement(@Nonnull final ASTNode node)
 	{
 		return new PyStarImportElementImpl(node);
 	}
 
-	public PyStarImportElement createPsi(@NotNull final PyStarImportElementStub stub)
+	public PyStarImportElement createPsi(@Nonnull final PyStarImportElementStub stub)
 	{
 		return new PyStarImportElementImpl(stub);
 	}
 
-	@NotNull
-	public PyStarImportElementStub createStub(@NotNull final PyStarImportElement psi, final StubElement parentStub)
+	@Nonnull
+	public PyStarImportElementStub createStub(@Nonnull final PyStarImportElement psi, final StubElement parentStub)
 	{
 		return new PyStarImportElementStubImpl(parentStub);
 	}
 
-	public void serialize(@NotNull final PyStarImportElementStub stub, @NotNull final StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull final PyStarImportElementStub stub, @Nonnull final StubOutputStream dataStream) throws IOException
 	{
 	}
 
-	@NotNull
-	public PyStarImportElementStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException
+	@Nonnull
+	public PyStarImportElementStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub) throws IOException
 	{
 		return new PyStarImportElementStubImpl(parentStub);
 	}

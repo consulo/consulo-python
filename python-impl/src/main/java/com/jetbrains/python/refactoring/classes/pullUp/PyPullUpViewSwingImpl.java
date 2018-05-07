@@ -22,10 +22,10 @@ import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.annotation.Nonnull;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.refactoring.RefactoringBundle;
@@ -40,11 +40,11 @@ import com.jetbrains.python.refactoring.classes.ui.PyClassCellRenderer;
  */
 class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter, PyPullUpViewInitializationInfo> implements PyPullUpView, ItemListener
 {
-	@NotNull
+	@Nonnull
 	private final ComboBox myParentsCombo;
-	@NotNull
+	@Nonnull
 	private final DefaultComboBoxModel myParentsComboBoxModel;
-	@NotNull
+	@Nonnull
 	private final PyPullUpNothingToRefactorMessage myNothingToRefactorMessage;
 
 	/**
@@ -53,10 +53,10 @@ class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter,
 	 * @param clazz                    class to refactor
 	 * @param nothingToRefactorMessage class that displays message "nothing to refactor" when presenter calls {@link #showNothingToRefactor()}
 	 */
-	PyPullUpViewSwingImpl(@NotNull final Project project,
-			@NotNull final PyPullUpPresenter presenter,
-			@NotNull final PyClass clazz,
-			@NotNull final PyPullUpNothingToRefactorMessage nothingToRefactorMessage)
+	PyPullUpViewSwingImpl(@Nonnull final Project project,
+			@Nonnull final PyPullUpPresenter presenter,
+			@Nonnull final PyClass clazz,
+			@Nonnull final PyPullUpNothingToRefactorMessage nothingToRefactorMessage)
 	{
 		super(project, presenter, RefactoringBundle.message("members.to.be.pulled.up"), true);
 		setTitle(PyPullUpHandler.REFACTORING_NAME);
@@ -92,14 +92,14 @@ class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter,
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	protected String getHelpId()
 	{
 		return "python.reference.pullMembersUp";
 	}
 
 
-	@NotNull
+	@Nonnull
 	@Override
 	public PyClass getSelectedParent()
 	{
@@ -113,7 +113,7 @@ class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter,
 	}
 
 	@Override
-	public void configure(@NotNull final PyPullUpViewInitializationInfo configInfo)
+	public void configure(@Nonnull final PyPullUpViewInitializationInfo configInfo)
 	{
 		super.configure(configInfo);
 		for(final PyClass parent : configInfo.getParents())

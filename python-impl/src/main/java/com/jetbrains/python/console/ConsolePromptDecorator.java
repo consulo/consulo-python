@@ -20,8 +20,8 @@ import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
@@ -117,7 +117,7 @@ public class ConsolePromptDecorator extends EditorLinePainter implements TextAnn
 
 	@Nullable
 	@Override
-	public Collection<LineExtensionInfo> getLineExtensions(@NotNull Project project, @NotNull VirtualFile virtualFile, int i)
+	public Collection<LineExtensionInfo> getLineExtensions(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int i)
 	{
 		return null;
 	}

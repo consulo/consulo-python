@@ -1,6 +1,7 @@
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.xdebugger.frame.XFullValueEvaluator;
 
 /**
@@ -32,7 +33,7 @@ public class PyFullValueEvaluator extends XFullValueEvaluator
 
 
 	@Override
-	public void startEvaluation(@NotNull XFullValueEvaluationCallback callback)
+	public void startEvaluation(@Nonnull XFullValueEvaluationCallback callback)
 	{
 		String expression = myExpression.trim();
 		if("".equals(expression))

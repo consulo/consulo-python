@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Ref;
@@ -163,7 +163,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
 	}
 
 
-	private List<String> collectParameters(final PyParameterInfo[] newParameters, @NotNull final PyArgumentList argumentList)
+	private List<String> collectParameters(final PyParameterInfo[] newParameters, @Nonnull final PyArgumentList argumentList)
 	{
 		useKeywords = false;
 		isMethod = false;
@@ -358,7 +358,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
 		return false;
 	}
 
-	private static void processFunctionDeclaration(@NotNull PyChangeInfo changeInfo, @NotNull PyFunction function)
+	private static void processFunctionDeclaration(@Nonnull PyChangeInfo changeInfo, @Nonnull PyFunction function)
 	{
 		if(changeInfo.isParameterNamesChanged())
 		{
@@ -387,7 +387,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
 		}
 	}
 
-	private static void fixDoc(PyChangeInfo changeInfo, @NotNull PyFunction function)
+	private static void fixDoc(PyChangeInfo changeInfo, @Nonnull PyFunction function)
 	{
 		PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
 		if(docStringExpression == null)
@@ -484,7 +484,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
 	}
 
 	@Override
-	public void registerConflictResolvers(List<ResolveSnapshotProvider.ResolveSnapshot> snapshots, @NotNull ResolveSnapshotProvider resolveSnapshotProvider, UsageInfo[] usages, ChangeInfo changeInfo)
+	public void registerConflictResolvers(List<ResolveSnapshotProvider.ResolveSnapshot> snapshots, @Nonnull ResolveSnapshotProvider resolveSnapshotProvider, UsageInfo[] usages, ChangeInfo changeInfo)
 	{
 	}
 }

@@ -28,8 +28,8 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyExceptPartNavigator;
 import com.jetbrains.python.psi.impl.PyForStatementNavigator;
 import com.jetbrains.python.psi.impl.PyListCompExpressionNavigator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,8 +137,8 @@ public class ScopeUtil {
     return null;
   }
 
-  @NotNull
-  public static Collection<PsiElement> getReadWriteElements(@NotNull String name, @NotNull ScopeOwner scopeOwner, boolean isReadAccess,
+  @Nonnull
+  public static Collection<PsiElement> getReadWriteElements(@Nonnull String name, @Nonnull ScopeOwner scopeOwner, boolean isReadAccess,
                                                             boolean isWriteAccess) {
     ControlFlow flow = ControlFlowCache.getControlFlow(scopeOwner);
     Collection<PsiElement> result = new ArrayList<PsiElement>();

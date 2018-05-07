@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.codeInsight;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 
@@ -38,8 +38,8 @@ public final class PyCustomMemberUtils
 	 * @param typeText type text (if any)
 	 * @return lookup element
 	 */
-	@NotNull
-	public static LookupElementBuilder toLookUpElement(@NotNull final PyCustomMember member, @Nullable final String typeText)
+	@Nonnull
+	public static LookupElementBuilder toLookUpElement(@Nonnull final PyCustomMember member, @Nullable final String typeText)
 	{
 
 		LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(member.getName()).withIcon(member.getIcon()).withTypeText(typeText);

@@ -32,8 +32,8 @@ import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.*;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -49,15 +49,15 @@ public class PyStringFormatInspection extends PyInspection {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.inspections.PyStringFormatInspection");
 
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.str.format");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {
+  public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, final boolean isOnTheFly, @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
@@ -326,12 +326,12 @@ public class PyStringFormatInspection extends PyInspection {
         return (expressions.length + additionalExpressions.size());
       }
 
-      private void registerProblem(@NotNull PsiElement problemTarget, @NotNull final String message) {
+      private void registerProblem(@Nonnull PsiElement problemTarget, @Nonnull final String message) {
         myProblemRegister = true;
         myVisitor.registerProblem(problemTarget, message);
       }
 
-      private void checkExpressionType(@NotNull final PyExpression expression, @NotNull final String expectedTypeName, PsiElement problemTarget) {
+      private void checkExpressionType(@Nonnull final PyExpression expression, @Nonnull final String expectedTypeName, PsiElement problemTarget) {
         final PyType actual = myTypeEvalContext.getType(expression);
         final PyType expected = PyTypeParser.getTypeByName(problemTarget, expectedTypeName);
         if (actual != null) {
@@ -339,7 +339,7 @@ public class PyStringFormatInspection extends PyInspection {
         }
       }
 
-      private void checkTypeCompatible(@NotNull final PsiElement problemTarget,
+      private void checkTypeCompatible(@Nonnull final PsiElement problemTarget,
                                        @Nullable final PyType actual,
                                        @Nullable final PyType expected) {
         if (expected != null && "str".equals(expected.getName())) {
@@ -350,7 +350,7 @@ public class PyStringFormatInspection extends PyInspection {
         }
       }
 
-      private void inspectFormat(@NotNull final PyStringLiteralExpression formatExpression) {
+      private void inspectFormat(@Nonnull final PyStringLiteralExpression formatExpression) {
         final String value = formatExpression.getStringValue();
         final List<PyStringFormatParser.SubstitutionChunk> chunks = filterSubstitutions(parsePercentFormat(value));
 
@@ -390,7 +390,7 @@ public class PyStringFormatInspection extends PyInspection {
         }
       }
 
-      private void inspectWidth(@NotNull final PyStringLiteralExpression formatExpression, String width) {
+      private void inspectWidth(@Nonnull final PyStringLiteralExpression formatExpression, String width) {
         if ("*".equals(width)){
           ++myExpectedArguments;
           if (myUsedMappingKeys.size() > 0) {
@@ -422,7 +422,7 @@ public class PyStringFormatInspection extends PyInspection {
         }
       }
 
-      private void inspectArgumentsNumber(@NotNull final PyExpression rightExpression) {
+      private void inspectArgumentsNumber(@Nonnull final PyExpression rightExpression) {
         final int arguments = inspectArguments(rightExpression, rightExpression);
         if (myUsedMappingKeys.isEmpty() && arguments >= 0) {
           if (myExpectedArguments < arguments) {

@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -25,27 +27,27 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * @author vlan
  */
 public class PyYieldFromIntention extends BaseIntentionAction {
-  @NotNull
+  @Nonnull
   @Override
   public String getFamilyName() {
     return PyBundle.message("INTN.yield.from");
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getText() {
     return PyBundle.message("INTN.yield.from");
   }
 
   @Override
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (LanguageLevel.forElement(file).isAtLeast(LanguageLevel.PYTHON33)) {
       final PyForStatement forLoop = findForStatementAtCaret(editor, file);
       if (forLoop != null) {
@@ -63,7 +65,7 @@ public class PyYieldFromIntention extends BaseIntentionAction {
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     final PyForStatement forLoop = findForStatementAtCaret(editor, file);
     if (forLoop != null) {
       final PyExpression source = forLoop.getForPart().getSource();
@@ -84,13 +86,13 @@ public class PyYieldFromIntention extends BaseIntentionAction {
   }
 
   @Nullable
-  private static PyForStatement findForStatementAtCaret(@NotNull Editor editor, @NotNull PsiFile file) {
+  private static PyForStatement findForStatementAtCaret(@Nonnull Editor editor, @Nonnull PsiFile file) {
     final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
     return PsiTreeUtil.getParentOfType(elementAtCaret, PyForStatement.class);
   }
 
   @Nullable
-  private static PyTargetExpression findSingleForLoopTarget(@NotNull PyForStatement forLoop) {
+  private static PyTargetExpression findSingleForLoopTarget(@Nonnull PyForStatement forLoop) {
     final PyForPart forPart = forLoop.getForPart();
     final PyExpression forTarget = forPart.getTarget();
     if (forTarget instanceof PyTargetExpression) {
@@ -100,7 +102,7 @@ public class PyYieldFromIntention extends BaseIntentionAction {
   }
 
   @Nullable
-  private static PyReferenceExpression findSingleYieldValue(@NotNull PyForStatement forLoop) {
+  private static PyReferenceExpression findSingleYieldValue(@Nonnull PyForStatement forLoop) {
     final PyForPart forPart = forLoop.getForPart();
     final PyStatementList stmtList = forPart.getStatementList();
     if (stmtList != null && forLoop.getElsePart() == null) {

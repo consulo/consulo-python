@@ -16,8 +16,9 @@
 
 package com.jetbrains.python.buildout.config;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
@@ -38,7 +39,7 @@ import consulo.lang.LanguageVersion;
 public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCfgElementTypes, BuildoutCfgTokenTypes {
   private final BuildoutCfgASTFactory astFactory = new BuildoutCfgASTFactory();
 
-  @NotNull
+  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new BuildoutCfgFlexLexer();
   }
@@ -52,22 +53,22 @@ public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCf
     return FILE;
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return TokenSet.create(WHITESPACE);
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getCommentTokens(LanguageVersion languageVersion) {
     return TokenSet.create(COMMENT);
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return TokenSet.create(TEXT);
   }
 
-  @NotNull
+  @Nonnull
   public PsiElement createElement(final ASTNode node) {
     return astFactory.create(node);
   }

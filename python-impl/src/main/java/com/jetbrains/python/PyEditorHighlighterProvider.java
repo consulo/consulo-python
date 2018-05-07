@@ -16,6 +16,8 @@
 
 package com.jetbrains.python;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.EditorHighlighterProvider;
@@ -23,8 +25,8 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.python.lexer.PythonEditorHighlighter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
 * @author yole
@@ -32,8 +34,8 @@ import org.jetbrains.annotations.Nullable;
 public class PyEditorHighlighterProvider implements EditorHighlighterProvider {
   @Override
   public EditorHighlighter getEditorHighlighter(@Nullable Project project,
-                                                @NotNull FileType fileType, @Nullable VirtualFile virtualFile,
-                                                @NotNull EditorColorsScheme colors) {
+                                                @Nonnull FileType fileType, @Nullable VirtualFile virtualFile,
+                                                @Nonnull EditorColorsScheme colors) {
     return new PythonEditorHighlighter(colors, project, virtualFile);
   }
 }

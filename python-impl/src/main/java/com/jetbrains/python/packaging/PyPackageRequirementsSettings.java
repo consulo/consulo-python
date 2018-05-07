@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.packaging;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vlan
@@ -32,31 +33,31 @@ import org.jetbrains.annotations.NotNull;
 public class PyPackageRequirementsSettings implements PersistentStateComponent<PyPackageRequirementsSettings> {
   public static final String DEFAULT_REQUIREMENTS_PATH = "requirements.txt";
 
-  @NotNull
+  @Nonnull
   private String myRequirementsPath = DEFAULT_REQUIREMENTS_PATH;
 
-  @NotNull
+  @Nonnull
   @Override
   public PyPackageRequirementsSettings getState() {
     return this;
   }
 
   @Override
-  public void loadState(@NotNull PyPackageRequirementsSettings state) {
+  public void loadState(@Nonnull PyPackageRequirementsSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
-  @NotNull
+  @Nonnull
   public String getRequirementsPath() {
     return myRequirementsPath;
   }
 
-  public void setRequirementsPath(@NotNull String path) {
+  public void setRequirementsPath(@Nonnull String path) {
     myRequirementsPath = path;
   }
 
-  @NotNull
-  public static PyPackageRequirementsSettings getInstance(@NotNull Module module) {
+  @Nonnull
+  public static PyPackageRequirementsSettings getInstance(@Nonnull Module module) {
     return ModuleServiceManager.getService(module, PyPackageRequirementsSettings.class);
   }
 }

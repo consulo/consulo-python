@@ -16,7 +16,7 @@
 package com.jetbrains.python.vp;
 
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Creates view and presenter allowing them to have links to each other.
@@ -35,8 +35,8 @@ public interface Creator<V, P extends Presenter>
 	 * @param view for that presenter
 	 * @return presenter
 	 */
-	@NotNull
-	P createPresenter(@NotNull V view);
+	@Nonnull
+	P createPresenter(@Nonnull V view);
 
 	/**
 	 * Creates view
@@ -44,7 +44,7 @@ public interface Creator<V, P extends Presenter>
 	 * @param presenter for this view
 	 * @return view
 	 */
-	@NotNull
-	V createView(@NotNull P presenter);
+	@Nonnull
+	V createView(@Nonnull P presenter);
 
 }

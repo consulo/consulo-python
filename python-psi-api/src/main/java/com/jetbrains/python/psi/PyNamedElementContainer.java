@@ -17,7 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 
@@ -31,6 +31,6 @@ public interface PyNamedElementContainer extends PsiElement
 	/**
 	 * Return named children visible in the current scope.
 	 */
-	@NotNull
+	@Nonnull
 	List<PsiNamedElement> getNamedElements();
 }

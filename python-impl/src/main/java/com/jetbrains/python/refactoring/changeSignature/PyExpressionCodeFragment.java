@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiCodeFragment;
 import com.intellij.psi.PsiElementVisitor;
@@ -27,7 +29,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.impl.PyFileImpl;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : ktisha
@@ -37,9 +38,9 @@ public class PyExpressionCodeFragment extends PyFileImpl implements PsiCodeFragm
 
   private GlobalSearchScope myResolveScope;
 
-  public PyExpressionCodeFragment(@NotNull final Project project,
+  public PyExpressionCodeFragment(@Nonnull final Project project,
                                   @NonNls final String name,
-                                  @NotNull final CharSequence text) {
+                                  @Nonnull final CharSequence text) {
     super(((PsiManagerEx)PsiManager.getInstance(project)).getFileManager().createFileViewProvider(
       new LightVirtualFile(name, PythonFileType.INSTANCE, text), true));
     ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
@@ -61,10 +62,10 @@ public class PyExpressionCodeFragment extends PyFileImpl implements PsiCodeFragm
   }
 
   @Override
-  public void accept(@NotNull PsiElementVisitor visitor) {
+  public void accept(@Nonnull PsiElementVisitor visitor) {
   }
 
-  public boolean isAcceptedFor(@NotNull Class visitorClass) {
+  public boolean isAcceptedFor(@Nonnull Class visitorClass) {
     return false;
   }
 }

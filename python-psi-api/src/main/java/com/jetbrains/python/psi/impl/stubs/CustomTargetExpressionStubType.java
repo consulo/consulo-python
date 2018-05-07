@@ -18,7 +18,8 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import java.io.IOException;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubInputStream;

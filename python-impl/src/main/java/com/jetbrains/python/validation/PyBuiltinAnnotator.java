@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.validation;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.psi.PsiElement;
@@ -80,7 +80,7 @@ public class PyBuiltinAnnotator extends PyAnnotator
 	 * @param node what to work with
 	 * @return true iff the node was highlighted.
 	 */
-	private boolean highlightAsAttribute(@NotNull PyQualifiedExpression node, @NotNull String name)
+	private boolean highlightAsAttribute(@Nonnull PyQualifiedExpression node, @Nonnull String name)
 	{
 		final LanguageLevel languageLevel = LanguageLevel.forElement(node);
 		if(PyNames.UnderscoredAttributes.contains(name) || PyNames.getBuiltinMethods(languageLevel).containsKey(name))

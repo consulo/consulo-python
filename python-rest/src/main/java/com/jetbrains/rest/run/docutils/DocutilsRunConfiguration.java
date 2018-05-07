@@ -16,6 +16,8 @@
 
 package com.jetbrains.rest.run.docutils;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -26,7 +28,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.rest.run.RestConfigurationEditor;
 import com.jetbrains.rest.run.RestRunConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : catherine
@@ -48,7 +49,7 @@ public class DocutilsRunConfiguration extends RestRunConfiguration {
   }
 
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException {
     return new DocutilsCommandLineState(this, env);
   }
 

@@ -22,7 +22,7 @@ import org.intellij.lang.regexp.RegExpCapability;
 import org.intellij.lang.regexp.RegExpFile;
 import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpParser;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.FileViewProvider;
@@ -42,7 +42,7 @@ public class PythonVerboseRegexpParserDefinition extends PythonRegexpParserDefin
     VERBOSE_CAPABILITIES.add(RegExpCapability.COMMENT_MODE);
   }
 
-  @NotNull
+  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new RegExpLexer(VERBOSE_CAPABILITIES);
   }

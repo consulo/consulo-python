@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
@@ -40,7 +40,7 @@ public class PyFunctionFixer extends PyFixer<PyFunction>
 	}
 
 	@Override
-	public void doApply(@NotNull Editor editor, @NotNull PySmartEnterProcessor processor, @NotNull PyFunction function) throws IncorrectOperationException
+	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyFunction function) throws IncorrectOperationException
 	{
 		final PsiElement colon = PyPsiUtils.getFirstChildOfType(function, PyTokenTypes.COLON);
 		if(!isFakeFunction(function) && colon == null)
@@ -71,7 +71,7 @@ public class PyFunctionFixer extends PyFixer<PyFunction>
 	 *
 	 * @return whether it's more or less proper function definition, i.e. it contains at least {@code def} keyword
 	 */
-	static boolean isFakeFunction(@NotNull PyFunction function)
+	static boolean isFakeFunction(@Nonnull PyFunction function)
 	{
 		return function.getNode().findChildByType(PyTokenTypes.DEF_KEYWORD) == null;
 	}

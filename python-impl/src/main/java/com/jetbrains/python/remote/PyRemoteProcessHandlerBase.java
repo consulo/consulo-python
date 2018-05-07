@@ -17,8 +17,9 @@ package com.jetbrains.python.remote;
 
 import java.nio.charset.Charset;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.remote.ColoredRemoteProcessHandler;
 import com.intellij.remote.RemoteProcess;
 
@@ -27,7 +28,7 @@ import com.intellij.remote.RemoteProcess;
  */
 public abstract class PyRemoteProcessHandlerBase extends ColoredRemoteProcessHandler<RemoteProcess> implements PyRemoteProcessControl
 {
-	public PyRemoteProcessHandlerBase(@NotNull RemoteProcess process, @NotNull String commandLine, @Nullable Charset charset)
+	public PyRemoteProcessHandlerBase(@Nonnull RemoteProcess process, @Nonnull String commandLine, @Nullable Charset charset)
 	{
 		super(process, commandLine, charset);
 	}

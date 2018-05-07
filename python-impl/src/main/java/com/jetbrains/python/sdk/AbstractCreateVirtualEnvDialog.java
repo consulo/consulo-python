@@ -26,8 +26,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -274,7 +274,7 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 		{
 			String myPath;
 
-			public void run(@NotNull final ProgressIndicator indicator)
+			public void run(@Nonnull final ProgressIndicator indicator)
 			{
 
 				try

@@ -3,7 +3,7 @@ package com.jetbrains.numpy.codeInsight;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public class NumpyUfuncs
 {

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.console;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -58,7 +58,7 @@ public class RunPythonConsoleAction extends AnAction implements DumbAware
 	}
 
 	@RequiredDispatchThread
-	public void actionPerformed(@NotNull final AnActionEvent e)
+	public void actionPerformed(@Nonnull final AnActionEvent e)
 	{
 		Project project = e.getRequiredData(CommonDataKeys.PROJECT);
 

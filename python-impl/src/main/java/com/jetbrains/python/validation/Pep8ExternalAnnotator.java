@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -97,7 +97,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 		private final String myCode;
 		private final String myDescription;
 
-		public Problem(int line, int column, @NotNull String code, @NotNull String description)
+		public Problem(int line, int column, @Nonnull String code, @Nonnull String description)
 		{
 			myLine = line;
 			myColumn = column;
@@ -115,13 +115,13 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 			return myColumn;
 		}
 
-		@NotNull
+		@Nonnull
 		public String getCode()
 		{
 			return myCode;
 		}
 
-		@NotNull
+		@Nonnull
 		public String getDescription()
 		{
 			return myDescription;
@@ -161,7 +161,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 
 	@Nullable
 	@Override
-	public State collectInformation(@NotNull PsiFile file)
+	public State collectInformation(@Nonnull PsiFile file)
 	{
 		VirtualFile vFile = file.getVirtualFile();
 		if(vFile == null || vFile.getFileType() != PythonFileType.INSTANCE)
@@ -275,7 +275,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 	}
 
 	@Override
-	public void apply(@NotNull PsiFile file, Results annotationResult, @NotNull AnnotationHolder holder)
+	public void apply(@Nonnull PsiFile file, Results annotationResult, @Nonnull AnnotationHolder holder)
 	{
 		if(annotationResult == null || !file.isValid())
 		{
@@ -387,7 +387,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 		}
 	}
 
-	private static boolean ignoredDueToProblemSuppressors(@NotNull Project project, @NotNull Problem problem, @NotNull PsiFile file, @Nullable PsiElement element)
+	private static boolean ignoredDueToProblemSuppressors(@Nonnull Project project, @Nonnull Problem problem, @Nonnull PsiFile file, @Nullable PsiElement element)
 	{
 		final Pep8ProblemSuppressor[] suppressors = Pep8ProblemSuppressor.EP_NAME.getExtensions();
 		return Arrays.stream(suppressors).anyMatch(p -> p.isProblemSuppressed(problem, file, element));
@@ -498,14 +498,14 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 			myCode = code;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getText()
 		{
 			return "Ignore errors like this";
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getFamilyName()
 		{
@@ -513,13 +513,13 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 		}
 
 		@Override
-		public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+		public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 		{
 			return true;
 		}
 
 		@Override
-		public void invoke(@NotNull Project project, Editor editor, final PsiFile file) throws IncorrectOperationException
+		public void invoke(@Nonnull Project project, Editor editor, final PsiFile file) throws IncorrectOperationException
 		{
 			InspectionProjectProfileManager.getInstance(project).getInspectionProfile().modifyProfile(model -> {
 				PyPep8Inspection tool = (PyPep8Inspection) model.getUnwrappedTool(PyPep8Inspection.INSPECTION_SHORT_NAME, file);

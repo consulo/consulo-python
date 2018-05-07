@@ -18,7 +18,8 @@ package com.jetbrains.python.inspections.quickfix;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -45,13 +46,13 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix
 	{
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("QFIX.NAME.make.function");
 	}
 
-	public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 	{
 		final PsiElement element = descriptor.getPsiElement();
 		final PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
@@ -93,7 +94,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void updateUsage(@NotNull final PsiElement finalElement, @NotNull final PyReferenceExpression element, @NotNull final PsiFile usageFile, boolean addImport)
+	private static void updateUsage(@Nonnull final PsiElement finalElement, @Nonnull final PyReferenceExpression element, @Nonnull final PsiFile usageFile, boolean addImport)
 	{
 		final PyExpression qualifier = element.getQualifier();
 		if(qualifier == null)
@@ -136,7 +137,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void removeFormerImport(@NotNull final PsiFile usageFile, boolean addImport)
+	private static void removeFormerImport(@Nonnull final PsiFile usageFile, boolean addImport)
 	{
 		if(usageFile instanceof PyFile && addImport)
 		{
@@ -156,7 +157,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void updateAssignment(PyReferenceExpression element, @NotNull final PsiElement resolved)
+	private static void updateAssignment(PyReferenceExpression element, @Nonnull final PsiElement resolved)
 	{
 		final PsiElement parent = resolved.getParent();
 		if(parent instanceof PyAssignmentStatement)
@@ -181,7 +182,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix
 		}
 	}
 
-	private static void updateArgumentList(@NotNull final PyReferenceExpression element)
+	private static void updateArgumentList(@Nonnull final PyReferenceExpression element)
 	{
 		final PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
 		if(callExpression == null)

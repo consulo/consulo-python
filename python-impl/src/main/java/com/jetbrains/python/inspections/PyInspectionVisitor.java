@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.HintAction;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -40,13 +40,13 @@ public abstract class PyInspectionVisitor extends PyElementVisitor
 {
 	@Nullable
 	private final ProblemsHolder myHolder;
-	@NotNull
+	@Nonnull
 	private final LocalInspectionToolSession mySession;
 	protected final TypeEvalContext myTypeEvalContext;
 
 	public static final Key<TypeEvalContext> INSPECTION_TYPE_EVAL_CONTEXT = Key.create("PyInspectionTypeEvalContext");
 
-	public PyInspectionVisitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+	public PyInspectionVisitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 	{
 		myHolder = holder;
 		mySession = session;
@@ -75,7 +75,7 @@ public abstract class PyInspectionVisitor extends PyElementVisitor
 		return myHolder;
 	}
 
-	@NotNull
+	@Nonnull
 	public LocalInspectionToolSession getSession()
 	{
 		return mySession;
@@ -93,7 +93,7 @@ public abstract class PyInspectionVisitor extends PyElementVisitor
 		}
 	}
 
-	protected final void registerProblem(@Nullable final PsiElement element, @NotNull final String message, @NotNull final LocalQuickFix... quickFixes)
+	protected final void registerProblem(@Nullable final PsiElement element, @Nonnull final String message, @Nonnull final LocalQuickFix... quickFixes)
 	{
 		if(element == null || element.getTextLength() == 0)
 		{
@@ -122,8 +122,8 @@ public abstract class PyInspectionVisitor extends PyElementVisitor
 	 *
 	 * @see com.intellij.codeInspection.ProblemDescriptor
 	 */
-	protected final void registerProblem(@NotNull final PsiElement psiElement,
-			@NotNull final String descriptionTemplate,
+	protected final void registerProblem(@Nonnull final PsiElement psiElement,
+			@Nonnull final String descriptionTemplate,
 			final ProblemHighlightType highlightType,
 			@Nullable final HintAction hintAction,
 			final LocalQuickFix... fixes)
@@ -136,8 +136,8 @@ public abstract class PyInspectionVisitor extends PyElementVisitor
 	 *
 	 * @see ProblemDescriptor
 	 */
-	protected final void registerProblem(@NotNull final PsiElement psiElement,
-			@NotNull final String descriptionTemplate,
+	protected final void registerProblem(@Nonnull final PsiElement psiElement,
+			@Nonnull final String descriptionTemplate,
 			final ProblemHighlightType highlightType,
 			@Nullable final HintAction hintAction,
 			@Nullable final TextRange rangeInElement,

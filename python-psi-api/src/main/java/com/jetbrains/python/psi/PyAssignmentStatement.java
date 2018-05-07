@@ -17,8 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.Pair;
 
 /**
@@ -38,7 +38,7 @@ public interface PyAssignmentStatement extends PyStatement, PyNamedElementContai
 	 *
 	 * @return the list of assignment target expressions
 	 */
-	@NotNull
+	@Nonnull
 	PyExpression[] getRawTargets();
 
 
@@ -73,12 +73,12 @@ public interface PyAssignmentStatement extends PyStatement, PyNamedElementContai
 	 *
 	 * @return a list of [target, value] pairs; either part of a pair may be null, but not both.
 	 */
-	@NotNull
+	@Nonnull
 	List<Pair<PyExpression, PyExpression>> getTargetsToValuesMapping();
 
 	@Nullable
 	PyExpression getLeftHandSideExpression();
 
-	boolean isAssignmentTo(@NotNull String name);
+	boolean isAssignmentTo(@Nonnull String name);
 
 }

@@ -18,8 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Iterators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -79,18 +80,18 @@ public class PyKnownDecoratorUtil
 
 		private final QualifiedName myQualifiedName;
 
-		KnownDecorator(@NotNull String qualifiedName)
+		KnownDecorator(@Nonnull String qualifiedName)
 		{
 			myQualifiedName = QualifiedName.fromDottedString(qualifiedName);
 		}
 
-		@NotNull
+		@Nonnull
 		public QualifiedName getQualifiedName()
 		{
 			return myQualifiedName;
 		}
 
-		@NotNull
+		@Nonnull
 		public String getShortName()
 		{
 			//noinspection ConstantConditions
@@ -118,8 +119,8 @@ public class PyKnownDecoratorUtil
 	 *                of theirs qualified names.
 	 * @return list of known decorators in declaration order with duplicates (with any)
 	 */
-	@NotNull
-	public static List<KnownDecorator> getKnownDecorators(@NotNull PyDecoratable element, @NotNull TypeEvalContext context)
+	@Nonnull
+	public static List<KnownDecorator> getKnownDecorators(@Nonnull PyDecoratable element, @Nonnull TypeEvalContext context)
 	{
 		final PyDecoratorList decoratorList = element.getDecoratorList();
 		if(decoratorList == null)
@@ -165,7 +166,7 @@ public class PyKnownDecoratorUtil
 	}
 
 	@Nullable
-	private static PsiElement resolveDecorator(@NotNull PyDecorator decorator)
+	private static PsiElement resolveDecorator(@Nonnull PyDecorator decorator)
 	{
 		final PyExpression callee = decorator.getCallee();
 		if(callee == null)
@@ -188,7 +189,7 @@ public class PyKnownDecoratorUtil
 	 *                of theirs qualified names.
 	 * @see PyKnownDecoratorUtil.KnownDecorator
 	 */
-	public static boolean hasUnknownDecorator(@NotNull PyDecoratable element, @NotNull TypeEvalContext context)
+	public static boolean hasUnknownDecorator(@Nonnull PyDecoratable element, @Nonnull TypeEvalContext context)
 	{
 		return !allDecoratorsAreKnown(element, getKnownDecorators(element, context));
 	}
@@ -201,7 +202,7 @@ public class PyKnownDecoratorUtil
 	 *                of theirs qualified names.
 	 * @see PyKnownDecoratorUtil.KnownDecorator
 	 */
-	public static boolean hasNonBuiltinDecorator(@NotNull PyDecoratable element, @NotNull TypeEvalContext context)
+	public static boolean hasNonBuiltinDecorator(@Nonnull PyDecoratable element, @Nonnull TypeEvalContext context)
 	{
 		final List<KnownDecorator> knownDecorators = getKnownDecorators(element, context);
 		if(!allDecoratorsAreKnown(element, knownDecorators))
@@ -220,7 +221,7 @@ public class PyKnownDecoratorUtil
 	 *                of theirs qualified names.
 	 * @see PyKnownDecoratorUtil.KnownDecorator
 	 */
-	public static boolean hasAbstractDecorator(@NotNull PyDecoratable element, @NotNull TypeEvalContext context)
+	public static boolean hasAbstractDecorator(@Nonnull PyDecoratable element, @Nonnull TypeEvalContext context)
 	{
 		final List<KnownDecorator> knownDecorators = getKnownDecorators(element, context);
 		if(knownDecorators.isEmpty())
@@ -231,7 +232,7 @@ public class PyKnownDecoratorUtil
 		return !knownDecorators.isEmpty();
 	}
 
-	private static boolean allDecoratorsAreKnown(@NotNull PyDecoratable element, @NotNull List<KnownDecorator> decorators)
+	private static boolean allDecoratorsAreKnown(@Nonnull PyDecoratable element, @Nonnull List<KnownDecorator> decorators)
 	{
 		final PyDecoratorList decoratorList = element.getDecoratorList();
 		return decoratorList == null ? decorators.isEmpty() : decoratorList.getDecorators().length == decorators.size();

@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -36,7 +37,7 @@ import com.jetbrains.python.psi.PyFunction;
 public class RenamePyClassProcessor extends RenamePyElementProcessor
 {
 	@Override
-	public boolean canProcessElement(@NotNull PsiElement element)
+	public boolean canProcessElement(@Nonnull PsiElement element)
 	{
 		return element instanceof PyClass;
 	}
@@ -65,7 +66,7 @@ public class RenamePyClassProcessor extends RenamePyElementProcessor
 		PyCodeInsightSettings.getInstance().RENAME_SEARCH_NON_CODE_FOR_CLASS = enabled;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Collection<PsiReference> findReferences(final PsiElement element)
 	{

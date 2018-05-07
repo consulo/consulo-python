@@ -35,8 +35,8 @@ import com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers.*;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
   private static class TooManyAttemptsException extends Exception {
   }
 
-  private static void collectAllElements(final PsiElement element, @NotNull final List<PsiElement> result, boolean recurse) {
+  private static void collectAllElements(final PsiElement element, @Nonnull final List<PsiElement> result, boolean recurse) {
     result.add(0, element);
     if (doNotStep(element)) {
       if (!recurse) {
@@ -94,7 +94,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     return (element instanceof PyStatementList) || (element instanceof PyStatement);
   }
 
-  private static boolean isModified(@NotNull final Editor editor) {
+  private static boolean isModified(@Nonnull final Editor editor) {
     final Long timestamp = editor.getUserData(SMART_ENTER_TIMESTAMP);
     return editor.getDocument().getModificationStamp() != timestamp.longValue();
   }
@@ -104,7 +104,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
   private static final Key<Long> SMART_ENTER_TIMESTAMP = Key.create("smartEnterOriginalTimestamp");
 
   @Override
-  public boolean process(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
+  public boolean process(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PsiFile psiFile) {
     final Document document = editor.getDocument();
     final String textForRollBack = document.getText();
     final int offset = editor.getCaretModel().getOffset();
@@ -124,7 +124,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     return true;
   }
 
-  private void process(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile, final int attempt)
+  private void process(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PsiFile psiFile, final int attempt)
     throws TooManyAttemptsException {
     if (attempt > MAX_ATTEMPTS) {
       throw new TooManyAttemptsException();

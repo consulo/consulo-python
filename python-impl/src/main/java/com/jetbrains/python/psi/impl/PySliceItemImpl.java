@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PySliceItem;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * @author yole

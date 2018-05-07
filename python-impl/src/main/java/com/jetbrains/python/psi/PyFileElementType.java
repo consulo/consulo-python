@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
@@ -119,7 +119,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 	}
 
 	@Nullable
-	private ASTNode parseConsoleCode(@NotNull ASTNode node, PythonConsoleData consoleData)
+	private ASTNode parseConsoleCode(@Nonnull ASTNode node, PythonConsoleData consoleData)
 	{
 		final Lexer lexer = createConsoleLexer(node, consoleData);
 		final PsiElement psi = node.getPsi();
@@ -175,7 +175,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 		return ((PyFile) file).getLanguageLevel();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getExternalId()
 	{
@@ -183,16 +183,16 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 	}
 
 	@Override
-	public void serialize(@NotNull PyFileStub stub, @NotNull StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull PyFileStub stub, @Nonnull StubOutputStream dataStream) throws IOException
 	{
 		writeNullableList(dataStream, stub.getDunderAll());
 		writeBitSet(dataStream, stub.getFutureFeatures());
 		dataStream.writeName(stub.getDeprecationMessage());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PyFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException
+	public PyFileStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		List<String> all = readNullableList(dataStream);
 		BitSet future_features = readBitSet(dataStream);

@@ -1,10 +1,10 @@
 package consulo.jython.module.extension;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import consulo.annotations.RequiredDispatchThread;
@@ -19,7 +19,7 @@ import consulo.roots.ModuleRootLayer;
  */
 public class JythonMutableModuleExtension extends JythonModuleExtension implements MutableModuleExtensionWithSdk<JythonModuleExtension>
 {
-	public JythonMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
+	public JythonMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
@@ -41,12 +41,12 @@ public class JythonMutableModuleExtension extends JythonModuleExtension implemen
 	}
 
 	@Override
-	public boolean isModified(@NotNull JythonModuleExtension extension)
+	public boolean isModified(@Nonnull JythonModuleExtension extension)
 	{
 		return isModifiedImpl(extension);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{

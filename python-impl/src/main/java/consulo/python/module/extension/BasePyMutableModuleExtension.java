@@ -16,11 +16,11 @@
 
 package consulo.python.module.extension;
 
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import consulo.annotations.RequiredDispatchThread;
@@ -35,7 +35,7 @@ import consulo.roots.ModuleRootLayer;
  */
 public class BasePyMutableModuleExtension extends BasePyModuleExtension implements MutableModuleExtensionWithSdk<BasePyModuleExtension>
 {
-	public BasePyMutableModuleExtension(@NotNull String id, @NotNull ModuleRootLayer module)
+	public BasePyMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
 		super(id, module);
 	}
@@ -50,7 +50,7 @@ public class BasePyMutableModuleExtension extends BasePyModuleExtension implemen
 		return panel;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -64,7 +64,7 @@ public class BasePyMutableModuleExtension extends BasePyModuleExtension implemen
 	}
 
 	@Override
-	public boolean isModified(@NotNull BasePyModuleExtension extension)
+	public boolean isModified(@Nonnull BasePyModuleExtension extension)
 	{
 		return isModifiedImpl(extension);
 	}

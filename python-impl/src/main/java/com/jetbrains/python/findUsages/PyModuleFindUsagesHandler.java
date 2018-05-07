@@ -31,7 +31,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.impl.PyImportedModule;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,19 +43,19 @@ import java.util.List;
 public class PyModuleFindUsagesHandler extends FindUsagesHandler {
   private final PsiFileSystemItem myElement;
 
-  protected PyModuleFindUsagesHandler(@NotNull PsiFileSystemItem file) {
+  protected PyModuleFindUsagesHandler(@Nonnull PsiFileSystemItem file) {
     super(file);
     final PsiElement e = PyUtil.turnInitIntoDir(file);
     myElement = e instanceof PsiFileSystemItem ? (PsiFileSystemItem)e : file;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public PsiElement[] getPrimaryElements() {
     return new PsiElement[] {myElement};
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public AbstractFindUsagesDialog getFindUsagesDialog(boolean isSingleFile, boolean toShowInNewTab, boolean mustOpenInNewTab) {
     return new CommonFindUsagesDialog(myElement,
@@ -66,7 +66,7 @@ public class PyModuleFindUsagesHandler extends FindUsagesHandler {
                                       isSingleFile,
                                       this) {
       @Override
-      public void configureLabelComponent(@NotNull final SimpleColoredComponent coloredComponent) {
+      public void configureLabelComponent(@Nonnull final SimpleColoredComponent coloredComponent) {
         coloredComponent.append(myElement instanceof PsiDirectory ? "Package " : "Module ");
         coloredComponent.append(myElement.getName(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
       }
@@ -74,7 +74,7 @@ public class PyModuleFindUsagesHandler extends FindUsagesHandler {
   }
 
   @Override
-  public Collection<PsiReference> findReferencesToHighlight(@NotNull PsiElement target, @NotNull SearchScope searchScope) {
+  public Collection<PsiReference> findReferencesToHighlight(@Nonnull PsiElement target, @Nonnull SearchScope searchScope) {
     if (target instanceof PyImportedModule) {
       target = ((PyImportedModule) target).resolve();
     }

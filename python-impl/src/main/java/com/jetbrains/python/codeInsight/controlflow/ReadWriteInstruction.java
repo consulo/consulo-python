@@ -16,7 +16,7 @@
 package com.jetbrains.python.codeInsight.controlflow;
 
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.controlflow.ControlFlowBuilder;
 import com.intellij.codeInsight.controlflow.impl.InstructionImpl;
 import com.intellij.psi.PsiElement;

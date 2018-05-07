@@ -20,7 +20,7 @@ import com.intellij.ide.hierarchy.HierarchyBrowserManager;
 import com.intellij.ide.util.treeView.AlphaComparator;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Comparator;
 
@@ -40,7 +40,7 @@ public class PyHierarchyUtils {
   private PyHierarchyUtils() {
   }
 
-  @NotNull
+  @Nonnull
   public static Comparator<NodeDescriptor> getComparator(final Project project) {
     if (HierarchyBrowserManager.getInstance(project).getState().SORT_ALPHABETICALLY) {
       return AlphaComparator.INSTANCE;

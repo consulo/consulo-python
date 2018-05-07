@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.impl;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -47,7 +47,7 @@ public class PyTupleExpressionImpl extends PySequenceExpressionImpl implements P
 		pyVisitor.visitPyTupleExpression(this);
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		return PyTupleType.create(this, ContainerUtil.map(getElements(), context::getType));
 	}
@@ -58,7 +58,7 @@ public class PyTupleExpressionImpl extends PySequenceExpressionImpl implements P
 	}
 
 	@Override
-	public void deleteChildInternal(@NotNull ASTNode child)
+	public void deleteChildInternal(@Nonnull ASTNode child)
 	{
 		super.deleteChildInternal(child);
 		final PyExpression[] children = getElements();

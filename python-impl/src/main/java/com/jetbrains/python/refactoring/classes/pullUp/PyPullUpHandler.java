@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.refactoring.classes.pullUp;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.PyBundle;
@@ -33,7 +34,7 @@ public class PyPullUpHandler extends PyClassRefactoringHandler
 	public static final String REFACTORING_NAME = PyBundle.message("refactoring.pull.up.dialog.title");
 
 	@Override
-	protected void doRefactorImpl(@NotNull final Project project, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull final Editor editor)
+	protected void doRefactorImpl(@Nonnull final Project project, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final Editor editor)
 	{
 		//TODO: Move to vp (presenter) as well
 		final PyPullUpNothingToRefactorMessage nothingToRefactor = new PyPullUpNothingToRefactorMessage(project, editor, classUnderRefactoring);
@@ -47,16 +48,16 @@ public class PyPullUpHandler extends PyClassRefactoringHandler
 
 		ViewPresenterUtils.linkViewWithPresenterAndLaunch(PyPullUpPresenter.class, PyPullUpView.class, new Creator<PyPullUpView, PyPullUpPresenter>()
 		{
-			@NotNull
+			@Nonnull
 			@Override
-			public PyPullUpPresenter createPresenter(@NotNull final PyPullUpView view)
+			public PyPullUpPresenter createPresenter(@Nonnull final PyPullUpView view)
 			{
 				return new PyPullUpPresenterImpl(view, infoStorage, classUnderRefactoring);
 			}
 
-			@NotNull
+			@Nonnull
 			@Override
-			public PyPullUpView createView(@NotNull final PyPullUpPresenter presenter)
+			public PyPullUpView createView(@Nonnull final PyPullUpPresenter presenter)
 			{
 				return new PyPullUpViewSwingImpl(project, presenter, classUnderRefactoring, nothingToRefactor);
 			}

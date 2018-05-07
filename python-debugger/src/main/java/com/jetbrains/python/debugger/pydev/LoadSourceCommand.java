@@ -1,8 +1,8 @@
 package com.jetbrains.python.debugger.pydev;
 
 import com.jetbrains.python.debugger.PyDebuggerException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author traff
@@ -12,7 +12,7 @@ public class LoadSourceCommand extends AbstractCommand {
 
   private String myContent = null;
 
-  protected LoadSourceCommand(@NotNull final RemoteDebugger debugger, String path) {
+  protected LoadSourceCommand(@Nonnull final RemoteDebugger debugger, String path) {
     super(debugger, LOAD_SOURCE);
     myPath = path;
   }

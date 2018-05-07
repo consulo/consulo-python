@@ -28,7 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -48,7 +48,7 @@ public class PyManagePackagesDialog extends DialogWrapper
 {
 	private JPanel myMainPanel;
 
-	public PyManagePackagesDialog(@NotNull final Project project, @NotNull Sdk sdk)
+	public PyManagePackagesDialog(@Nonnull final Project project, @Nonnull Sdk sdk)
 	{
 		super(project, true);
 		setTitle("Manage Python Packages");
@@ -99,7 +99,7 @@ public class PyManagePackagesDialog extends DialogWrapper
 		return "PyManagePackagesDialog";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected Action[] createActions()
 	{

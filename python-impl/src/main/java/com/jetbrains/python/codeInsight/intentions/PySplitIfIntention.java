@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.intentions;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -42,13 +43,13 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
  */
 public class PySplitIfIntention extends PyBaseIntentionAction
 {
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.split.if");
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -97,7 +98,7 @@ public class PySplitIfIntention extends PyBaseIntentionAction
 		return true;
 	}
 
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		PsiElement elementAtOffset = file.findElementAt(editor.getCaretModel().getOffset());
 		// PY-745

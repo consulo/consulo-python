@@ -16,9 +16,9 @@
 
 package com.jetbrains.python;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,7 +38,7 @@ import icons.PythonIcons;
 public class PyIconDescriptorUpdater implements IconDescriptorUpdater
 {
 	@Override
-	public void updateIcon(@NotNull IconDescriptor iconDescriptor, @NotNull PsiElement element, int i)
+	public void updateIcon(@Nonnull IconDescriptor iconDescriptor, @Nonnull PsiElement element, int i)
 	{
 		if(element instanceof PsiDirectory)
 		{

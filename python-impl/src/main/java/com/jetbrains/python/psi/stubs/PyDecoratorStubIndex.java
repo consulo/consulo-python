@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.psi.stubs;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.jetbrains.python.psi.PyDecorator;
@@ -33,7 +34,7 @@ public class PyDecoratorStubIndex extends StringStubIndexExtension<PyDecorator>
 	 */
 	public static final StubIndexKey<String, PyDecorator> KEY = StubIndexKey.createIndexKey("Python.Decorator");
 
-	@NotNull
+	@Nonnull
 	@Override
 	public StubIndexKey<String, PyDecorator> getKey()
 	{

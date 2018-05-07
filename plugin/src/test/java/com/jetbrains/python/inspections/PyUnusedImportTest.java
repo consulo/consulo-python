@@ -1,6 +1,6 @@
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 
@@ -38,7 +38,7 @@ public class PyUnusedImportTest extends PyTestCase {
     doTest("test1.py");
   }
 
-  private void doTest(@NotNull String filename) {
+  private void doTest(@Nonnull String filename) {
     myFixture.copyDirectoryToProject("inspections/unusedImport/" + getTestName(true), "");
     myFixture.enableInspections(PyUnresolvedReferencesInspection.class);
     myFixture.testHighlighting(true, false, false, filename);

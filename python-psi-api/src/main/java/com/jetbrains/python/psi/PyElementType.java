@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.PythonFileType;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.lang.reflect.Constructor;
 
@@ -33,22 +33,22 @@ public class PyElementType extends IElementType {
 
   private String mySpecialMethodName;
 
-  public PyElementType(@NotNull @NonNls String debugName) {
+  public PyElementType(@Nonnull @NonNls String debugName) {
     super(debugName, PythonFileType.INSTANCE.getLanguage());
   }
 
-  public PyElementType(@NotNull @NonNls String debugName, @NotNull Class<? extends PsiElement> psiElementClass) {
+  public PyElementType(@Nonnull @NonNls String debugName, @Nonnull Class<? extends PsiElement> psiElementClass) {
     this(debugName);
     myPsiElementClass = psiElementClass;
   }
 
-  public PyElementType(@NotNull @NonNls String debugName, @NotNull @NonNls String specialMethodName) {
+  public PyElementType(@Nonnull @NonNls String debugName, @Nonnull @NonNls String specialMethodName) {
     this(debugName);
     mySpecialMethodName = specialMethodName;
   }
 
-  @NotNull
-  public PsiElement createElement(@NotNull ASTNode node) {
+  @Nonnull
+  public PsiElement createElement(@Nonnull ASTNode node) {
     if (myPsiElementClass == null) {
       throw new IllegalStateException("Cannot create an element for " + node.getElementType() + " without element class");
     }

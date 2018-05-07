@@ -16,10 +16,11 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -34,12 +35,12 @@ public class PyIfStatementImpl extends PyPartitionedElementImpl implements PyIfS
     pyVisitor.visitPyIfStatement(this);
   }
 
-  @NotNull
+  @Nonnull
   public PyIfPart getIfPart() {
     return (PyIfPart)getPartNotNull(PyElementTypes.IF_PART_IF);
   }
 
-  @NotNull
+  @Nonnull
   public PyIfPart[] getElifParts() {
     return childrenToPsi(PyElementTypes.ELIFS, PyIfPart.EMPTY_ARRAY);
   }

@@ -16,9 +16,10 @@
 
 package com.jetbrains.rest.inspections;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.CustomSuppressableInspectionTool;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.SuppressIntentionAction;
@@ -30,13 +31,13 @@ import com.jetbrains.rest.RestBundle;
  */
 public abstract class RestInspection extends LocalInspectionTool implements CustomSuppressableInspectionTool {
   @Nls
-  @NotNull
+  @Nonnull
   @Override
   public String getGroupDisplayName() {
     return RestBundle.message("INSP.GROUP.rest");
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getShortName() {
     return getClass().getSimpleName();
@@ -53,7 +54,7 @@ public abstract class RestInspection extends LocalInspectionTool implements Cust
   }
 
   @Override
-  public boolean isSuppressedFor(@NotNull PsiElement element) {
+  public boolean isSuppressedFor(@Nonnull PsiElement element) {
     return false;
   }
 }

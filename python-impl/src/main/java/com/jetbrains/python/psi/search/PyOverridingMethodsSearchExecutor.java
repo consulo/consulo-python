@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.search;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
@@ -33,7 +33,7 @@ import com.jetbrains.python.psi.PyUtil;
  */
 public class PyOverridingMethodsSearchExecutor implements QueryExecutor<PyFunction, PyOverridingMethodsSearch.SearchParameters>
 {
-	public boolean execute(@NotNull final PyOverridingMethodsSearch.SearchParameters queryParameters, @NotNull final Processor<PyFunction> consumer)
+	public boolean execute(@Nonnull final PyOverridingMethodsSearch.SearchParameters queryParameters, @Nonnull final Processor<PyFunction> consumer)
 	{
 		final PyFunction baseMethod = queryParameters.getFunction();
 

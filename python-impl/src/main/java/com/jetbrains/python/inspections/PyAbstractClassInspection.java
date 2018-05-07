@@ -21,9 +21,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.ASTNode;
@@ -46,23 +47,23 @@ import com.jetbrains.python.psi.types.PyType;
 public class PyAbstractClassInspection extends PyInspection
 {
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.abstract.class");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
 
 	private static class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -90,7 +91,7 @@ public class PyAbstractClassInspection extends PyInspection
 			}
 		}
 
-		private boolean isAbstract(@NotNull PyClass pyClass)
+		private boolean isAbstract(@Nonnull PyClass pyClass)
 		{
 			final PyType metaClass = pyClass.getMetaClassType(myTypeEvalContext);
 			if(metaClass instanceof PyClassLikeType && PyNames.ABC_META_CLASS.equals(metaClass.getName()))
@@ -115,7 +116,7 @@ public class PyAbstractClassInspection extends PyInspection
 			return false;
 		}
 
-		private static boolean isAbstractMethodForClass(@NotNull PyFunction method, @NotNull PyClass cls)
+		private static boolean isAbstractMethodForClass(@Nonnull PyFunction method, @Nonnull PyClass cls)
 		{
 			final String methodName = method.getName();
 			if(methodName == null ||

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.nameResolver;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Some enum value that represents one or more fully qualified names for some function
@@ -27,7 +27,7 @@ public interface FQNamesProvider
 	/**
 	 * @return one or more fully qualified names
 	 */
-	@NotNull
+	@Nonnull
 	String[] getNames();
 
 	/**

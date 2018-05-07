@@ -23,7 +23,7 @@ import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PySequenceExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyTargetExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -34,19 +34,19 @@ public class PyStdReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
     registerClassAttributeReference(registrar, PyNames.ALL, new PsiReferenceProvider() {
-      @NotNull
+      @Nonnull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                   @NotNull ProcessingContext context) {
+      public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
+                                                   @Nonnull ProcessingContext context) {
         return new PsiReference[]{new PyDunderAllReference((PyStringLiteralExpression)element)};
       }
     });
 
     registerClassAttributeReference(registrar, PyNames.SLOTS, new PsiReferenceProvider() {
-      @NotNull
+      @Nonnull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                   @NotNull ProcessingContext context) {
+      public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
+                                                   @Nonnull ProcessingContext context) {
         return new PsiReference[]{new PyDunderSlotsReference((PyStringLiteralExpression)element)};
       }
     });

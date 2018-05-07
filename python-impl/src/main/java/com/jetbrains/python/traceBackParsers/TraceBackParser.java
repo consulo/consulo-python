@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.traceBackParsers;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.jetbrains.python.run.PyTracebackParser;
 import com.jetbrains.python.testing.pytest.PyTestTracebackParser;
 
@@ -34,9 +34,9 @@ public interface TraceBackParser
 	 * @return line info (if found)
 	 */
 	@Nullable
-	LinkInTrace findLinkInTrace(@NotNull String line);
+	LinkInTrace findLinkInTrace(@Nonnull String line);
 
-	@NotNull // TODO: use EP instead?
+	@Nonnull // TODO: use EP instead?
 	@SuppressWarnings("PublicStaticArrayField")
 	// Noone will change it, anyway.
 			TraceBackParser[] PARSERS = {

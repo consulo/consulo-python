@@ -30,7 +30,7 @@ import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.impl.PyImportElementImpl;
 import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -47,28 +47,28 @@ public class PyImportElementElementType extends PyStubElementType<PyImportElemen
   }
 
   @Override
-  public PsiElement createElement(@NotNull ASTNode node) {
+  public PsiElement createElement(@Nonnull ASTNode node) {
     return new PyImportElementImpl(node);
   }
 
   @Override
-  public PyImportElement createPsi(@NotNull PyImportElementStub stub) {
+  public PyImportElement createPsi(@Nonnull PyImportElementStub stub) {
     return new PyImportElementImpl(stub);
   }
 
   @Override
-  public PyImportElementStub createStub(@NotNull PyImportElement psi, StubElement parentStub) {
+  public PyImportElementStub createStub(@Nonnull PyImportElement psi, StubElement parentStub) {
     final PyTargetExpression asName = psi.getAsNameElement();
     return new PyImportElementStubImpl(psi.getImportedQName(), asName != null ? asName.getName() : "", parentStub, getStubElementType());
   }
 
-  public void serialize(@NotNull PyImportElementStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+  public void serialize(@Nonnull PyImportElementStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
     QualifiedName.serialize(stub.getImportedQName(), dataStream);
     dataStream.writeName(stub.getAsName());
   }
 
-  @NotNull
-  public PyImportElementStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @Nonnull
+  public PyImportElementStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
     QualifiedName qName = QualifiedName.deserialize(dataStream);
     StringRef asName = dataStream.readName();
     return new PyImportElementStubImpl(qName, asName.getString(), parentStub, getStubElementType());

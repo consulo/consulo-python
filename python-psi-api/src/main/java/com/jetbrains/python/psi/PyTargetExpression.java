@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiNamedElement;
@@ -51,7 +51,7 @@ public interface PyTargetExpression extends PyQualifiedExpression, PsiNamedEleme
 	 * This method does not access AST if underlying PSI is stub based and the context doesn't allow switching to AST.
 	 */
 	@Nullable
-	PsiElement resolveAssignedValue(@NotNull PyResolveContext resolveContext);
+	PsiElement resolveAssignedValue(@Nonnull PyResolveContext resolveContext);
 
 	/**
 	 * Returns the qualified name (if there is any) assigned to the expression.
@@ -70,6 +70,6 @@ public interface PyTargetExpression extends PyQualifiedExpression, PsiNamedEleme
 	@Nullable
 	QualifiedName getCalleeName();
 
-	@NotNull
+	@Nonnull
 	PsiReference getReference();
 }

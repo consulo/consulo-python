@@ -16,14 +16,15 @@
 
 package com.jetbrains.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 
 public class PyLineBreakpointType extends XLineBreakpointTypeBase
 {
 	public static final String ID = "python-line";
 
-	@NotNull
+	@Nonnull
 	public static PyLineBreakpointType getInstance()
 	{
 		return EXTENSION_POINT_NAME.findExtension(PyLineBreakpointType.class);

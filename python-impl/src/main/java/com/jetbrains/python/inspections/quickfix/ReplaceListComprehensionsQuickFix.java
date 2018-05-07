@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpressionStatement;
 import com.jetbrains.python.psi.PyTupleExpression;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,19 +34,19 @@ import org.jetbrains.annotations.NotNull;
  * Time:   16:50:53
  */
 public class ReplaceListComprehensionsQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return PyBundle.message("INTN.replace.list.comprehensions");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement expression = descriptor.getPsiElement();
     if (expression instanceof PyTupleExpression) {
       PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

@@ -1,19 +1,19 @@
 package com.jetbrains.python.debugger.pydev;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
 public class ExceptionBreakpointCommand extends AbstractCommand {
 
-  @NotNull
+  @Nonnull
   protected final String myException;
 
 
-  public ExceptionBreakpointCommand(@NotNull final RemoteDebugger debugger,
+  public ExceptionBreakpointCommand(@Nonnull final RemoteDebugger debugger,
                                      final int commandCode,
-                                     @NotNull String exception) {
+                                     @Nonnull String exception) {
     super(debugger, commandCode);
     myException = exception;
   }
@@ -23,11 +23,11 @@ public class ExceptionBreakpointCommand extends AbstractCommand {
     payload.add(myException);
   }
 
-  public static ExceptionBreakpointCommand addExceptionBreakpointCommand(@NotNull final RemoteDebugger debugger, String exception, AddExceptionBreakpointCommand.ExceptionBreakpointNotifyPolicy notifyPolicy) {
+  public static ExceptionBreakpointCommand addExceptionBreakpointCommand(@Nonnull final RemoteDebugger debugger, String exception, AddExceptionBreakpointCommand.ExceptionBreakpointNotifyPolicy notifyPolicy) {
     return new AddExceptionBreakpointCommand(debugger, exception, notifyPolicy);
   }
 
-  public static ExceptionBreakpointCommand removeExceptionBreakpointCommand(@NotNull final RemoteDebugger debugger, String exception) {
+  public static ExceptionBreakpointCommand removeExceptionBreakpointCommand(@Nonnull final RemoteDebugger debugger, String exception) {
     return new ExceptionBreakpointCommand(debugger, REMOVE_EXCEPTION_BREAKPOINT, exception);
   }
 }

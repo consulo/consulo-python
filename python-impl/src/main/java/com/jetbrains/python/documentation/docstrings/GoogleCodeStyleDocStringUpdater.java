@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.toolbox.Substring;
 
@@ -26,24 +27,24 @@ public class GoogleCodeStyleDocStringUpdater extends SectionBasedDocStringUpdate
 {
 	private final String myFallbackSectionIndent;
 
-	public static GoogleCodeStyleDocStringUpdater forProject(@NotNull GoogleCodeStyleDocString docString, @NotNull String minContentIndent, @NotNull Project project)
+	public static GoogleCodeStyleDocStringUpdater forProject(@Nonnull GoogleCodeStyleDocString docString, @Nonnull String minContentIndent, @Nonnull Project project)
 	{
 		return new GoogleCodeStyleDocStringUpdater(docString, minContentIndent, GoogleCodeStyleDocStringBuilder.getDefaultSectionIndent(project));
 	}
 
-	public GoogleCodeStyleDocStringUpdater(@NotNull GoogleCodeStyleDocString docString, @NotNull String minContentIndent, @NotNull String fallbackSectionIndent)
+	public GoogleCodeStyleDocStringUpdater(@Nonnull GoogleCodeStyleDocString docString, @Nonnull String minContentIndent, @Nonnull String fallbackSectionIndent)
 	{
 		super(docString, minContentIndent);
 		myFallbackSectionIndent = fallbackSectionIndent;
 	}
 
 	@Override
-	protected void updateParamDeclarationWithType(@NotNull Substring nameSubstring, @NotNull String type)
+	protected void updateParamDeclarationWithType(@Nonnull Substring nameSubstring, @Nonnull String type)
 	{
 		insert(nameSubstring.getEndOffset(), " (" + type + ")");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected SectionBasedDocStringBuilder createBuilder()
 	{

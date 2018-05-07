@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.testing.unittest;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -28,7 +30,6 @@ import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Leonid Shalupov
@@ -54,7 +55,7 @@ public class PythonUnitTestRunConfiguration extends
   }
 
   @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment env) throws ExecutionException {
     return new PythonUnitTestCommandLineState(this, env);
   }
 

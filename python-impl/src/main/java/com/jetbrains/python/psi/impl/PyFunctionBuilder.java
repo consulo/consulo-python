@@ -21,7 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -49,7 +50,7 @@ public class PyFunctionBuilder
 	private final List<String> myStatements = new ArrayList<>();
 	private final List<String> myDecorators = new ArrayList<>();
 	private String myAnnotation = null;
-	@NotNull
+	@Nonnull
 	private final Map<String, String> myDecoratorValues = new HashMap<>();
 	private boolean myAsync = false;
 	private PyDocstringGenerator myDocStringGenerator;
@@ -61,8 +62,8 @@ public class PyFunctionBuilder
 	 * @param decoratorsToCopyIfExist list of decorator names to be copied to new function.
 	 * @return builder configured by this function
 	 */
-	@NotNull
-	public static PyFunctionBuilder copySignature(@NotNull final PyFunction source, @NotNull final String... decoratorsToCopyIfExist)
+	@Nonnull
+	public static PyFunctionBuilder copySignature(@Nonnull final PyFunction source, @Nonnull final String... decoratorsToCopyIfExist)
 	{
 		final String name = source.getName();
 		final PyFunctionBuilder functionBuilder = new PyFunctionBuilder((name != null) ? name : "", source);
@@ -94,7 +95,7 @@ public class PyFunctionBuilder
 	}
 
 	@Deprecated
-	public PyFunctionBuilder(@NotNull String name)
+	public PyFunctionBuilder(@Nonnull String name)
 	{
 		myName = name;
 		myDocStringGenerator = null;
@@ -105,7 +106,7 @@ public class PyFunctionBuilder
 	 *                       It's needed to detect configured docstring format and Python indentation size and, as result,
 	 *                       generate properly formatted docstring.
 	 */
-	public PyFunctionBuilder(@NotNull String name, @NotNull PsiElement settingsAnchor)
+	public PyFunctionBuilder(@Nonnull String name, @Nonnull PsiElement settingsAnchor)
 	{
 		myName = name;
 		myDocStringGenerator = PyDocstringGenerator.create(DocStringUtil.getConfiguredDocStringFormat(settingsAnchor), PyIndentUtil.getIndentFromSettings(settingsAnchor.getProject()),
@@ -119,17 +120,17 @@ public class PyFunctionBuilder
 	 * @param name   param name
 	 * @param type   param type
 	 */
-	@NotNull
-	public PyFunctionBuilder parameterWithType(@NotNull String name, @NotNull String type)
+	@Nonnull
+	public PyFunctionBuilder parameterWithType(@Nonnull String name, @Nonnull String type)
 	{
 		parameter(name);
 		myDocStringGenerator.withParamTypedByName(name, type);
 		return this;
 	}
 
-	@NotNull
+	@Nonnull
 	@Deprecated
-	public PyFunctionBuilder parameterWithType(@NotNull final String name, @NotNull final String type, @NotNull final DocStringFormat format)
+	public PyFunctionBuilder parameterWithType(@Nonnull final String name, @Nonnull final String type, @Nonnull final DocStringFormat format)
 	{
 		parameter(name);
 		myDocStringGenerator.withParamTypedByName(name, type);
@@ -233,7 +234,7 @@ public class PyFunctionBuilder
 	 * @param decoratorName decorator name
 	 * @param value         its argument
 	 */
-	public void decorate(@NotNull final String decoratorName, @NotNull final String value)
+	public void decorate(@Nonnull final String decoratorName, @Nonnull final String value)
 	{
 		decorate(decoratorName);
 		myDecoratorValues.put(decoratorName, value);

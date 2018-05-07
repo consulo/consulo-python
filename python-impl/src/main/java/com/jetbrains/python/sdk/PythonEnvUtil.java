@@ -20,8 +20,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.EnvironmentUtil;
@@ -48,13 +49,13 @@ public class PythonEnvUtil
 	{
 	}
 
-	public static Map<String, String> setPythonUnbuffered(@NotNull Map<String, String> env)
+	public static Map<String, String> setPythonUnbuffered(@Nonnull Map<String, String> env)
 	{
 		env.put(PYTHONUNBUFFERED, "1");
 		return env;
 	}
 
-	public static Map<String, String> setPythonIOEncoding(@NotNull Map<String, String> env, @NotNull String encoding)
+	public static Map<String, String> setPythonIOEncoding(@Nonnull Map<String, String> env, @Nonnull String encoding)
 	{
 		env.put(PYTHONIOENCODING, encoding);
 		return env;
@@ -63,7 +64,7 @@ public class PythonEnvUtil
 	/**
 	 * Resets the environment variables that affect the way the Python interpreter searches for its settings and libraries.
 	 */
-	public static Map<String, String> resetHomePathChanges(@NotNull String homePath, @NotNull Map<String, String> env)
+	public static Map<String, String> resetHomePathChanges(@Nonnull String homePath, @Nonnull Map<String, String> env)
 	{
 		if(System.getenv(PYVENV_LAUNCHER) != null || EnvironmentUtil.getEnvironmentMap().containsKey(PYVENV_LAUNCHER))
 		{
@@ -79,8 +80,8 @@ public class PythonEnvUtil
 	 * @param value  what to append
 	 * @return modified path-like string
 	 */
-	@NotNull
-	public static String appendToPathEnvVar(@Nullable String source, @NotNull String value)
+	@Nonnull
+	public static String appendToPathEnvVar(@Nullable String source, @Nonnull String value)
 	{
 		if(StringUtil.isEmpty(source))
 		{
@@ -90,7 +91,7 @@ public class PythonEnvUtil
 		return !paths.contains(value) ? source + File.pathSeparator + value : source;
 	}
 
-	public static void addPathsToEnv(@NotNull Map<String, String> env, String key, @NotNull Collection<String> values)
+	public static void addPathsToEnv(@Nonnull Map<String, String> env, String key, @Nonnull Collection<String> values)
 	{
 		for(String val : values)
 		{
@@ -98,7 +99,7 @@ public class PythonEnvUtil
 		}
 	}
 
-	public static void addPathToEnv(@NotNull Map<String, String> env, String key, String value)
+	public static void addPathToEnv(@Nonnull Map<String, String> env, String key, String value)
 	{
 		if(!StringUtil.isEmpty(value))
 		{
@@ -113,17 +114,17 @@ public class PythonEnvUtil
 		}
 	}
 
-	public static void addToPythonPath(@NotNull Map<String, String> env, @NotNull Collection<String> values)
+	public static void addToPythonPath(@Nonnull Map<String, String> env, @Nonnull Collection<String> values)
 	{
 		addPathsToEnv(env, PYTHONPATH, values);
 	}
 
-	public static void addToPythonPath(@NotNull Map<String, String> env, String value)
+	public static void addToPythonPath(@Nonnull Map<String, String> env, String value)
 	{
 		addPathToEnv(env, PYTHONPATH, value);
 	}
 
-	public static void mergePythonPath(@NotNull Map<String, String> from, @NotNull Map<String, String> to)
+	public static void mergePythonPath(@Nonnull Map<String, String> from, @Nonnull Map<String, String> to)
 	{
 		String value = from.get(PYTHONPATH);
 		if(value != null)
@@ -133,8 +134,8 @@ public class PythonEnvUtil
 		}
 	}
 
-	@NotNull
-	public static Map<String, String> setPythonDontWriteBytecode(@NotNull Map<String, String> env)
+	@Nonnull
+	public static Map<String, String> setPythonDontWriteBytecode(@Nonnull Map<String, String> env)
 	{
 		env.put(PYTHONDONTWRITEBYTECODE, "1");
 		return env;

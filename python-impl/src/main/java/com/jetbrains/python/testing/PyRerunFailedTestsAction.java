@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
@@ -49,14 +49,14 @@ import com.jetbrains.python.run.CommandLinePatcher;
 
 public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 {
-	protected PyRerunFailedTestsAction(@NotNull ComponentContainer componentContainer)
+	protected PyRerunFailedTestsAction(@Nonnull ComponentContainer componentContainer)
 	{
 		super(componentContainer);
 	}
 
 	@Override
 	@Nullable
-	protected MyRunProfile getRunProfile(@NotNull ExecutionEnvironment environment)
+	protected MyRunProfile getRunProfile(@Nonnull ExecutionEnvironment environment)
 	{
 		final TestFrameworkRunningModel model = getModel();
 		if(model == null)
@@ -74,7 +74,7 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 			super(configuration);
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public Module[] getModules()
 		{
@@ -83,7 +83,7 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 
 		@Nullable
 		@Override
-		public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException
+		public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
 		{
 			final AbstractPythonRunConfiguration configuration = ((AbstractPythonRunConfiguration) getPeer());
 
@@ -136,7 +136,7 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 			return super.execute(executor, patchers);
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		protected List<String> getTestSpecs()
 		{

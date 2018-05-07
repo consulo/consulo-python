@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -25,25 +27,24 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyRaiseStatement;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey.Ivanov
  */
 public class ReplaceRaiseStatementQuickFix implements LocalQuickFix {
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return PyBundle.message("INTN.replace.raise.statement");
   }
 
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
   @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement raiseStatement = descriptor.getPsiElement();
     if (raiseStatement instanceof PyRaiseStatement) {
       PyExpression[] expressions = ((PyRaiseStatement)raiseStatement).getExpressions();

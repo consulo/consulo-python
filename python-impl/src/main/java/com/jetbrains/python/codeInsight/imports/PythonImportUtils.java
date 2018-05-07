@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -307,7 +307,7 @@ public final class PythonImportUtils
 		return result;
 	}
 
-	public static boolean isImportableModule(PsiFile targetFile, @NotNull PsiFileSystemItem file)
+	public static boolean isImportableModule(PsiFile targetFile, @Nonnull PsiFileSystemItem file)
 	{
 		PsiDirectory parent = (PsiDirectory) file.getParent();
 		return parent != null && file != targetFile &&

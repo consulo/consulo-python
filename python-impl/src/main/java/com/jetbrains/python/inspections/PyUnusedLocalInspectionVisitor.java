@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.controlflow.ControlFlowUtil;
 import com.intellij.codeInsight.controlflow.Instruction;
@@ -75,8 +75,8 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 	private final HashSet<PsiElement> myUnusedElements;
 	private final HashSet<PsiElement> myUsedElements;
 
-	public PyUnusedLocalInspectionVisitor(@NotNull ProblemsHolder holder,
-			@NotNull LocalInspectionToolSession session,
+	public PyUnusedLocalInspectionVisitor(@Nonnull ProblemsHolder holder,
+			@Nonnull LocalInspectionToolSession session,
 			boolean ignoreTupleUnpacking,
 			boolean ignoreLambdaParameters,
 			boolean ignoreRangeIterationVariables)
@@ -224,7 +224,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 		}
 	}
 
-	private static boolean parameterInMethodWithFixedSignature(@NotNull ScopeOwner owner, @NotNull PsiElement element)
+	private static boolean parameterInMethodWithFixedSignature(@Nonnull ScopeOwner owner, @Nonnull PsiElement element)
 	{
 		if(owner instanceof PyFunction && element instanceof PyParameter)
 		{
@@ -279,7 +279,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 		}
 	}
 
-	private void analyzeReadsInScope(@NotNull String name, @NotNull ScopeOwner owner, @NotNull Instruction[] instructions, int startInstruction, @Nullable PsiElement scopeAnchor)
+	private void analyzeReadsInScope(@Nonnull String name, @Nonnull ScopeOwner owner, @Nonnull Instruction[] instructions, int startInstruction, @Nullable PsiElement scopeAnchor)
 	{
 		// Check if the element is declared out of scope, mark all out of scope write accesses as used
 		if(scopeAnchor != null)
@@ -549,20 +549,20 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 		return false;
 	}
 
-	private void registerWarning(@NotNull final PsiElement element, final String msg, LocalQuickFix... quickfixes)
+	private void registerWarning(@Nonnull final PsiElement element, final String msg, LocalQuickFix... quickfixes)
 	{
 		registerProblem(element, msg, ProblemHighlightType.LIKE_UNUSED_SYMBOL, null, quickfixes);
 	}
 
 	private static class ReplaceWithWildCard implements LocalQuickFix
 	{
-		@NotNull
+		@Nonnull
 		public String getFamilyName()
 		{
 			return PyBundle.message("INSP.unused.locals.replace.with.wildcard");
 		}
 
-		public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor)
+		public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 		{
 			if(!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.getPsiElement()))
 			{

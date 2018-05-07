@@ -22,8 +22,8 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -69,16 +69,16 @@ public class PyProtectedMemberInspection extends PyInspection
 	public boolean ignoreAnnotations = false;
 
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.protected.member.access");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -86,7 +86,7 @@ public class PyProtectedMemberInspection extends PyInspection
 
 	private class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
@@ -133,7 +133,7 @@ public class PyProtectedMemberInspection extends PyInspection
 			checkReference(node, qualifier);
 		}
 
-		private void checkReference(@NotNull final PyReferenceExpression node, @NotNull final PyExpression qualifier)
+		private void checkReference(@Nonnull final PyReferenceExpression node, @Nonnull final PyExpression qualifier)
 		{
 			if(myTypeEvalContext.getType(qualifier) instanceof PyNamedTupleType)
 			{

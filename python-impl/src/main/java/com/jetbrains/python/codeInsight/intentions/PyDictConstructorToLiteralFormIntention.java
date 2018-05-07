@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.intentions;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -44,19 +45,19 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionAction
 {
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.convert.dict.constructor.to.dict.literal");
 	}
 
-	@NotNull
+	@Nonnull
 	public String getText()
 	{
 		return PyBundle.message("INTN.convert.dict.constructor.to.dict.literal");
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -85,7 +86,7 @@ public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionActi
 		return false;
 	}
 
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		PyCallExpression expression = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
 		PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

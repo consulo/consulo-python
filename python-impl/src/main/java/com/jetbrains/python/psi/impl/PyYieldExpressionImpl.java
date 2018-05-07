@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyTokenTypes;
@@ -24,7 +26,6 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyYieldExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
@@ -50,7 +51,7 @@ public class PyYieldExpressionImpl extends PyElementImpl implements PyYieldExpre
   }
 
   @Override
-  public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key) {
+  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     final PyExpression e = getExpression();
     return e != null ? context.getType(e) : null;
   }

@@ -18,7 +18,8 @@ package com.jetbrains.python.testing;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
@@ -64,7 +65,7 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	protected ConsoleView createAndAttachConsole(Project project, ProcessHandler processHandler, Executor executor) throws ExecutionException
 	{
 
@@ -103,7 +104,7 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 		return cmd;
 	}
 
-	protected void setWorkingDirectory(@NotNull final GeneralCommandLine cmd)
+	protected void setWorkingDirectory(@Nonnull final GeneralCommandLine cmd)
 	{
 		final String workingDirectory = myConfiguration.getWorkingDirectory();
 		if(!StringUtil.isEmptyOrSpaces(workingDirectory))
@@ -165,6 +166,6 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 
 	protected abstract HelperPackage getRunner();
 
-	@NotNull
+	@Nonnull
 	protected abstract List<String> getTestSpecs();
 }

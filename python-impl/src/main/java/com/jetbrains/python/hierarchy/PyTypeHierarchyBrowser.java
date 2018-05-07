@@ -18,11 +18,11 @@ package com.jetbrains.python.hierarchy;
 import java.util.Comparator;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
@@ -44,13 +44,13 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 {
 	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.hierarchy.TypeHierarchyBrowser");
 
-	protected PyTypeHierarchyBrowser(@NotNull PyClass pyClass)
+	protected PyTypeHierarchyBrowser(@Nonnull PyClass pyClass)
 	{
 		super(pyClass.getProject(), pyClass);
 	}
 
 	@Nullable
-	protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor)
+	protected PsiElement getElementFromDescriptor(@Nonnull HierarchyNodeDescriptor descriptor)
 	{
 		if(!(descriptor instanceof PyHierarchyNodeDescriptor))
 		{
@@ -59,7 +59,7 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 		return descriptor.getPsiElement();
 	}
 
-	protected void createTrees(@NotNull Map<String, JTree> trees)
+	protected void createTrees(@Nonnull Map<String, JTree> trees)
 	{
 		createTreeAndSetupCommonActions(trees, "PyTypeHierarchyPopupMenu");
 	}
@@ -70,13 +70,13 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 		return null;
 	}
 
-	protected boolean isApplicableElement(@NotNull PsiElement element)
+	protected boolean isApplicableElement(@Nonnull PsiElement element)
 	{
 		return (element instanceof PyClass);
 	}
 
 	@Nullable
-	protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement)
+	protected HierarchyTreeStructure createHierarchyTreeStructure(@Nonnull String typeName, @Nonnull PsiElement psiElement)
 	{
 		if(SUPERTYPES_HIERARCHY_TYPE.equals(typeName))
 		{
@@ -113,7 +113,7 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 		return (psiElement instanceof PyClass);
 	}
 
-	@NotNull
+	@Nonnull
 	protected String getQualifiedName(PsiElement psiElement)
 	{
 		if(psiElement instanceof PyClass)

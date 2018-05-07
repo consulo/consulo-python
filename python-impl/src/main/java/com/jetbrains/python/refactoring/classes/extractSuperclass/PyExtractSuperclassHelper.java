@@ -21,8 +21,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.base.Predicate;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
@@ -73,7 +74,7 @@ public final class PyExtractSuperclassHelper
 	{
 	}
 
-	static void extractSuperclass(final PyClass clazz, @NotNull Collection<PyMemberInfo<PyElement>> selectedMemberInfos, final String superBaseName, final String targetFile)
+	static void extractSuperclass(final PyClass clazz, @Nonnull Collection<PyMemberInfo<PyElement>> selectedMemberInfos, final String superBaseName, final String targetFile)
 	{
 		final Project project = clazz.getProject();
 
@@ -129,12 +130,12 @@ public final class PyExtractSuperclassHelper
 	/**
 	 * If class explicitly extends object we shall move it even in Py3K
 	 */
-	private static boolean isObjectParentDeclaredExplicitly(@NotNull final PyClass clazz)
+	private static boolean isObjectParentDeclaredExplicitly(@Nonnull final PyClass clazz)
 	{
 		return Arrays.stream(clazz.getSuperClassExpressions()).filter(o -> PyNames.OBJECT.equals(o.getName())).findFirst().isPresent();
 	}
 
-	private static PyClass placeNewClass(final Project project, PyClass newClass, @NotNull final PyClass clazz, final String targetFile)
+	private static PyClass placeNewClass(final Project project, PyClass newClass, @Nonnull final PyClass clazz, final String targetFile)
 	{
 		VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(ApplicationManagerEx.getApplicationEx().isUnitTestMode() ? targetFile : VfsUtilCore.pathToUrl(targetFile));
 		// file is the same as the source

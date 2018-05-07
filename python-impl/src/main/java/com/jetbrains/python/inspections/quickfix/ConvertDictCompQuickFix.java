@@ -17,7 +17,8 @@ package com.jetbrains.python.inspections.quickfix;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -41,21 +42,21 @@ import com.jetbrains.python.psi.PyKeyValueExpression;
  */
 public class ConvertDictCompQuickFix implements LocalQuickFix
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public String getName()
 	{
 		return PyBundle.message("INTN.convert.dict.comp.to");
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.Family.convert.dict.comp.expression");
 	}
 
 	@Override
-	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 	{
 		PsiElement element = descriptor.getPsiElement();
 		if(!LanguageLevel.forElement(element).isPy3K() && element instanceof PyDictCompExpression)

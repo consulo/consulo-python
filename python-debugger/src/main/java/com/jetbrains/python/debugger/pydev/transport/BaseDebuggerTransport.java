@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Date;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
 import com.jetbrains.python.debugger.pydev.RemoteDebugger;
@@ -18,16 +19,16 @@ public abstract class BaseDebuggerTransport implements DebuggerTransport
 
 	protected final Object mySocketObject = new Object();
 
-	@NotNull
+	@Nonnull
 	protected final RemoteDebugger myDebugger;
 
-	protected BaseDebuggerTransport(@NotNull RemoteDebugger debugger)
+	protected BaseDebuggerTransport(@Nonnull RemoteDebugger debugger)
 	{
 		myDebugger = debugger;
 	}
 
 	@Override
-	public boolean sendFrame(@NotNull final ProtocolFrame frame)
+	public boolean sendFrame(@Nonnull final ProtocolFrame frame)
 	{
 		logFrame(frame, true);
 

@@ -18,8 +18,9 @@ package com.jetbrains.python.psi.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.tree.TokenSet;
@@ -49,7 +50,7 @@ public class PyWithStatementImpl extends PyElementImpl implements PyWithStatemen
 		pyVisitor.visitPyWithStatement(this);
 	}
 
-	@NotNull
+	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
 		PyWithItem[] items = PsiTreeUtil.getChildrenOfType(this, PyWithItem.class);
@@ -73,7 +74,7 @@ public class PyWithStatementImpl extends PyElementImpl implements PyWithStatemen
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@NotNull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}
@@ -84,7 +85,7 @@ public class PyWithStatementImpl extends PyElementImpl implements PyWithStatemen
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public PyStatementList getStatementList()
 	{
 		final PyStatementList statementList = childToPsi(PyElementTypes.STATEMENT_LIST);

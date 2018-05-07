@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger.pydev;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
@@ -9,7 +9,7 @@ public class AddExceptionBreakpointCommand extends ExceptionBreakpointCommand
 {
 	final ExceptionBreakpointNotifyPolicy myNotifyPolicy;
 
-	public AddExceptionBreakpointCommand(@NotNull final RemoteDebugger debugger, @NotNull String exception, @NotNull ExceptionBreakpointNotifyPolicy notifyPolicy)
+	public AddExceptionBreakpointCommand(@Nonnull final RemoteDebugger debugger, @Nonnull String exception, @Nonnull ExceptionBreakpointNotifyPolicy notifyPolicy)
 	{
 		super(debugger, ADD_EXCEPTION_BREAKPOINT, exception);
 		myNotifyPolicy = notifyPolicy;

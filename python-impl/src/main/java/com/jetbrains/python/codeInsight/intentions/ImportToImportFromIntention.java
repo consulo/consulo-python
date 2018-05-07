@@ -21,8 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -62,7 +63,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction
 		// is anything that resolves to our imported module is just an exact reference to that module
 		private int myRelativeLevel; // true if "from ... import"
 
-		public IntentionState(@NotNull Editor editor, @NotNull PsiFile file)
+		public IntentionState(@Nonnull Editor editor, @Nonnull PsiFile file)
 		{
 			boolean available = false;
 			myImportElement = findImportElement(editor, file);
@@ -115,7 +116,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction
 					final Collection<PsiReference> references = new ArrayList<>();
 					PsiTreeUtil.processElements(file, new PsiElementProcessor()
 					{
-						public boolean execute(@NotNull PsiElement element)
+						public boolean execute(@Nonnull PsiElement element)
 						{
 							if(element instanceof PyReferenceExpression && PsiTreeUtil.getParentOfType(element, PyImportElement.class) == null)
 							{
@@ -233,7 +234,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction
 		}
 
 
-		@NotNull
+		@Nonnull
 		public String getText()
 		{
 			String moduleName = "?";
@@ -248,7 +249,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction
 			return PyBundle.message("INTN.convert.to.from.$0.import.$1", getDots() + moduleName, "...");
 		}
 
-		@NotNull
+		@Nonnull
 		private String getDots()
 		{
 			String dots = "";
@@ -260,14 +261,14 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFamilyName()
 	{
 		return PyBundle.message("INTN.Family.convert.import.unqualify");
 	}
 
 	@Nullable
-	private static PyImportElement findImportElement(@NotNull Editor editor, @NotNull PsiFile file)
+	private static PyImportElement findImportElement(@Nonnull Editor editor, @Nonnull PsiFile file)
 	{
 		final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
 		final PyImportElement importElement = PsiTreeUtil.getParentOfType(elementAtCaret, PyImportElement.class);
@@ -282,7 +283,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction
 		}
 	}
 
-	public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file)
+	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -299,7 +300,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction
 	}
 
 	@Override
-	public void doInvoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
 	{
 		final IntentionState state = new IntentionState(editor, file);
 		state.invoke();

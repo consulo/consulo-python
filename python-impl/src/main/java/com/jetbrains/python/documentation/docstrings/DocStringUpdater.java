@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.psi.PyIndentUtil;
@@ -36,29 +36,29 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 	private final List<Modification> myUpdates = new ArrayList<>();
 	protected final String myMinContentIndent;
 
-	public DocStringUpdater(@NotNull T docString, @NotNull String minContentIndent)
+	public DocStringUpdater(@Nonnull T docString, @Nonnull String minContentIndent)
 	{
 		myBuilder = new StringBuilder(docString.getDocStringContent().getSuperString());
 		myOriginalDocString = docString;
 		myMinContentIndent = minContentIndent;
 	}
 
-	protected final void replace(@NotNull TextRange range, @NotNull String text)
+	protected final void replace(@Nonnull TextRange range, @Nonnull String text)
 	{
 		myUpdates.add(new Modification(range, text));
 	}
 
-	protected final void replace(int startOffset, int endOffset, @NotNull String text)
+	protected final void replace(int startOffset, int endOffset, @Nonnull String text)
 	{
 		replace(new TextRange(startOffset, endOffset), text);
 	}
 
-	protected final void insert(int offset, @NotNull String text)
+	protected final void insert(int offset, @Nonnull String text)
 	{
 		replace(offset, offset, text);
 	}
 
-	protected final void insertAfterLine(int lineNumber, @NotNull String text)
+	protected final void insertAfterLine(int lineNumber, @Nonnull String text)
 	{
 		final Substring line = myOriginalDocString.getLines().get(lineNumber);
 		insert(line.getEndOffset(), '\n' + text);
@@ -96,13 +96,13 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 		removeLines(line, line + 1);
 	}
 
-	protected final void insertBeforeLine(int lineNumber, @NotNull String text)
+	protected final void insertBeforeLine(int lineNumber, @Nonnull String text)
 	{
 		final Substring line = myOriginalDocString.getLines().get(lineNumber);
 		insert(line.getStartOffset(), text + '\n');
 	}
 
-	@NotNull
+	@Nonnull
 	public final String getDocStringText()
 	{
 		beforeApplyingModifications();
@@ -135,13 +135,13 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 
 	}
 
-	@NotNull
+	@Nonnull
 	public T getOriginalDocString()
 	{
 		return myOriginalDocString;
 	}
 
-	@NotNull
+	@Nonnull
 	protected String getLineIndent(int lineNum)
 	{
 		final String lastLineIndent = myOriginalDocString.getLineIndent(lineNum);
@@ -169,20 +169,20 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 		return 0;
 	}
 
-	public abstract void addParameter(@NotNull String name, @Nullable String type);
+	public abstract void addParameter(@Nonnull String name, @Nullable String type);
 
 	public abstract void addReturnValue(@Nullable String type);
 
-	public abstract void removeParameter(@NotNull String name);
+	public abstract void removeParameter(@Nonnull String name);
 
 	private static class Modification implements Comparable<Modification>
 	{
-		@NotNull
+		@Nonnull
 		final TextRange range;
-		@NotNull
+		@Nonnull
 		final String text;
 
-		public Modification(@NotNull TextRange range, @NotNull String newText)
+		public Modification(@Nonnull TextRange range, @Nonnull String newText)
 		{
 			this.range = range;
 			this.text = newText;

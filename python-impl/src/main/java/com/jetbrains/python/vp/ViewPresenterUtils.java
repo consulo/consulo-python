@@ -19,7 +19,8 @@ package com.jetbrains.python.vp;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.base.Preconditions;
 
 /**
@@ -43,7 +44,7 @@ public final class ViewPresenterUtils
 	 * @param <V>                view interface
 	 * @param <P>                presenter interface
 	 */
-	public static <V, P extends Presenter> void linkViewWithPresenterAndLaunch(@NotNull Class<P> presenterInterface, @NotNull Class<V> viewInterface, @NotNull Creator<V, P> creator)
+	public static <V, P extends Presenter> void linkViewWithPresenterAndLaunch(@Nonnull Class<P> presenterInterface, @Nonnull Class<V> viewInterface, @Nonnull Creator<V, P> creator)
 	{
 		Preconditions.checkArgument(presenterInterface.isInterface(), "Presenter is not interface");
 		Preconditions.checkArgument(viewInterface.isInterface(), "View is not interface");

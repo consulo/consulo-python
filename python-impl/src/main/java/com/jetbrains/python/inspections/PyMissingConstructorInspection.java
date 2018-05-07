@@ -23,9 +23,10 @@ import static com.jetbrains.python.PyNames.__CLASS__;
 
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.Comparing;
@@ -53,16 +54,16 @@ public class PyMissingConstructorInspection extends PyInspection
 {
 
 	@Nls
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDisplayName()
 	{
 		return PyBundle.message("INSP.NAME.missing.super.constructor");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
 	{
 		return new Visitor(holder, session);
 	}
@@ -70,13 +71,13 @@ public class PyMissingConstructorInspection extends PyInspection
 	private static class Visitor extends PyInspectionVisitor
 	{
 
-		public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
 		{
 			super(holder, session);
 		}
 
 		@Override
-		public void visitPyClass(@NotNull PyClass node)
+		public void visitPyClass(@Nonnull PyClass node)
 		{
 			final PsiElement[] superClasses = node.getSuperClassExpressions();
 
@@ -104,7 +105,7 @@ public class PyMissingConstructorInspection extends PyInspection
 			}
 		}
 
-		private static boolean superHasConstructor(@NotNull PyClass cls, @NotNull TypeEvalContext context)
+		private static boolean superHasConstructor(@Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 		{
 			final String className = cls.getName();
 
@@ -121,7 +122,7 @@ public class PyMissingConstructorInspection extends PyInspection
 			return false;
 		}
 
-		private static boolean isExceptionClass(@NotNull PyClass cls, @NotNull TypeEvalContext context)
+		private static boolean isExceptionClass(@Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 		{
 			if(PyBroadExceptionInspection.equalsException(cls, context))
 			{
@@ -131,7 +132,7 @@ public class PyMissingConstructorInspection extends PyInspection
 			return cls.getAncestorClasses(context).stream().filter(baseClass -> PyBroadExceptionInspection.equalsException(baseClass, context)).findAny().isPresent();
 		}
 
-		private static boolean hasConstructorCall(@NotNull PyClass cls, @NotNull PyFunction initMethod, @NotNull TypeEvalContext context)
+		private static boolean hasConstructorCall(@Nonnull PyClass cls, @Nonnull PyFunction initMethod, @Nonnull TypeEvalContext context)
 		{
 			final CallVisitor visitor = new CallVisitor(cls, context);
 			initMethod.getStatementList().accept(visitor);
@@ -141,22 +142,22 @@ public class PyMissingConstructorInspection extends PyInspection
 		private static class CallVisitor extends PyRecursiveElementVisitor
 		{
 
-			@NotNull
+			@Nonnull
 			private final PyClass myClass;
 
-			@NotNull
+			@Nonnull
 			private final TypeEvalContext myContext;
 
 			private boolean myHasConstructorCall = false;
 
-			public CallVisitor(@NotNull PyClass cls, @NotNull TypeEvalContext context)
+			public CallVisitor(@Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 			{
 				myClass = cls;
 				myContext = context;
 			}
 
 			@Override
-			public void visitPyCallExpression(@NotNull PyCallExpression node)
+			public void visitPyCallExpression(@Nonnull PyCallExpression node)
 			{
 				if(isConstructorCall(node, myClass, myContext))
 				{
@@ -164,7 +165,7 @@ public class PyMissingConstructorInspection extends PyInspection
 				}
 			}
 
-			private static boolean isConstructorCall(@NotNull PyCallExpression call, @NotNull PyClass cls, @NotNull TypeEvalContext context)
+			private static boolean isConstructorCall(@Nonnull PyCallExpression call, @Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 			{
 				final PyExpression callee = call.getCallee();
 
@@ -179,7 +180,7 @@ public class PyMissingConstructorInspection extends PyInspection
 				return calleeQualifier != null && (isSuperCall(calleeQualifier, cls, context) || isSuperClassCall(calleeQualifier, cls, context));
 			}
 
-			private static boolean isSuperCall(@NotNull PyExpression calleeQualifier, @NotNull PyClass cls, @NotNull TypeEvalContext context)
+			private static boolean isSuperCall(@Nonnull PyExpression calleeQualifier, @Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 			{
 				final String prevCalleeName = Optional.of(calleeQualifier).filter(PyCallExpression.class::isInstance).map(PyCallExpression.class::cast).map(PyCallExpression::getCallee).map
 						(PyExpression::getName).orElse(null);
@@ -210,7 +211,7 @@ public class PyMissingConstructorInspection extends PyInspection
 				return cls.getAncestorClasses(context).stream().map(PyClass::getName).filter(firstArg::equals).findAny().isPresent();
 			}
 
-			private static boolean isSuperClassCall(@NotNull PyExpression calleeQualifier, @NotNull PyClass cls, @NotNull TypeEvalContext context)
+			private static boolean isSuperClassCall(@Nonnull PyExpression calleeQualifier, @Nonnull PyClass cls, @Nonnull TypeEvalContext context)
 			{
 				final PsiElement callingClass = resolveCallingClass(calleeQualifier);
 
@@ -218,7 +219,7 @@ public class PyMissingConstructorInspection extends PyInspection
 			}
 
 			@Nullable
-			private static PsiElement resolveCallingClass(@NotNull PyExpression calleeQualifier)
+			private static PsiElement resolveCallingClass(@Nonnull PyExpression calleeQualifier)
 			{
 				if(calleeQualifier instanceof PyCallExpression)
 				{

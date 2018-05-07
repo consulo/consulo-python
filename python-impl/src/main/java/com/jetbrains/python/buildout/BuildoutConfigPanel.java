@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import consulo.python.buildout.module.extension.BuildoutMutableModuleExtension;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -65,7 +65,7 @@ public class BuildoutConfigPanel extends JPanel
 		//initErrorValidation();
 	}
 
-	@NotNull
+	@Nonnull
 	public static VirtualFile getScriptFile(String script_name) throws ConfigurationException
 	{
 		VirtualFile script_file = LocalFileSystem.getInstance().findFileByPath(script_name);

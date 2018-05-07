@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -49,7 +49,7 @@ public class PyRemotePackageManagerImpl extends PyPackageManagerImpl
 {
 	private static final Logger LOG = Logger.getInstance(PyRemotePackageManagerImpl.class);
 
-	PyRemotePackageManagerImpl(@NotNull final Sdk sdk)
+	PyRemotePackageManagerImpl(@Nonnull final Sdk sdk)
 	{
 		super(sdk);
 	}
@@ -97,10 +97,10 @@ public class PyRemotePackageManagerImpl extends PyPackageManagerImpl
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected ProcessOutput getPythonProcessOutput(@NotNull String helperPath,
-			@NotNull List<String> args,
+	protected ProcessOutput getPythonProcessOutput(@Nonnull String helperPath,
+			@Nonnull List<String> args,
 			boolean askForSudo,
 			boolean showProgress,
 			@Nullable final String workingDir) throws ExecutionException
@@ -210,7 +210,7 @@ public class PyRemotePackageManagerImpl extends PyPackageManagerImpl
 	}
 
 	@Override
-	protected void installManagement(@NotNull String name) throws ExecutionException
+	protected void installManagement(@Nonnull String name) throws ExecutionException
 	{
 		super.installManagement(name);
 		// TODO: remove temp directory for remote interpreter
@@ -223,18 +223,18 @@ public class PyRemotePackageManagerImpl extends PyPackageManagerImpl
 
 	private class LaunchVagrantFix implements PyExecutionFix
 	{
-		@NotNull
+		@Nonnull
 		private final String myVagrantFolder;
 		@Nullable
 		private final String myMachineName;
 
-		public LaunchVagrantFix(@NotNull String vagrantFolder, @Nullable String machineName)
+		public LaunchVagrantFix(@Nonnull String vagrantFolder, @Nullable String machineName)
 		{
 			myVagrantFolder = vagrantFolder;
 			myMachineName = machineName;
 		}
 
-		@NotNull
+		@Nonnull
 		@Override
 		public String getName()
 		{
@@ -242,7 +242,7 @@ public class PyRemotePackageManagerImpl extends PyPackageManagerImpl
 		}
 
 		@Override
-		public void run(@NotNull Sdk sdk)
+		public void run(@Nonnull Sdk sdk)
 		{
 			final PythonRemoteInterpreterManager manager = PythonRemoteInterpreterManager.getInstance();
 			if(manager != null)

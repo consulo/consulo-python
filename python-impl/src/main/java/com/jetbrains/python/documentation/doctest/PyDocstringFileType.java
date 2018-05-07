@@ -18,7 +18,7 @@
 package com.jetbrains.python.documentation.doctest;
 
 import com.jetbrains.python.PythonFileType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -30,19 +30,19 @@ public class PyDocstringFileType extends PythonFileType {
     super(new PyDocstringLanguageDialect());
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return "PyDocstring";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getDescription() {
     return "python docstring";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getDefaultExtension() {
     return "docstring";

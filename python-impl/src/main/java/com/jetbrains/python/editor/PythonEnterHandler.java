@@ -17,8 +17,8 @@ package com.jetbrains.python.editor;
 
 import java.util.regex.Matcher;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.AutoHardWrapHandler;
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
@@ -90,11 +90,11 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter
 	};
 
 	@Override
-	public Result preprocessEnter(@NotNull PsiFile file,
-			@NotNull Editor editor,
-			@NotNull Ref<Integer> caretOffset,
-			@NotNull Ref<Integer> caretAdvance,
-			@NotNull DataContext dataContext,
+	public Result preprocessEnter(@Nonnull PsiFile file,
+			@Nonnull Editor editor,
+			@Nonnull Ref<Integer> caretOffset,
+			@Nonnull Ref<Integer> caretAdvance,
+			@Nonnull DataContext dataContext,
 			EditorActionHandler originalHandler)
 	{
 		int offset = caretOffset.get();
@@ -393,7 +393,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter
 	}
 
 	@Nullable
-	private static <T extends PsiElement> T getNonStrictParentOfType(@NotNull PsiElement element, @NotNull Class<? extends T>... classes)
+	private static <T extends PsiElement> T getNonStrictParentOfType(@Nonnull PsiElement element, @Nonnull Class<? extends T>... classes)
 	{
 		PsiElement run = element;
 		while(run != null)
@@ -431,7 +431,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter
 	}
 
 	@Override
-	public Result postProcessEnter(@NotNull PsiFile file, @NotNull Editor editor, @NotNull DataContext dataContext)
+	public Result postProcessEnter(@Nonnull PsiFile file, @Nonnull Editor editor, @Nonnull DataContext dataContext)
 	{
 		if(!(file instanceof PyFile))
 		{
@@ -447,7 +447,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter
 		return super.postProcessEnter(file, editor, dataContext);
 	}
 
-	private static void addGoogleDocStringSectionIndent(@NotNull PsiFile file, @NotNull Editor editor, int offset)
+	private static void addGoogleDocStringSectionIndent(@Nonnull PsiFile file, @Nonnull Editor editor, int offset)
 	{
 		final Document document = editor.getDocument();
 		PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
@@ -482,8 +482,8 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter
 		EMPTY
 	}
 
-	@NotNull
-	public static DocstringState canGenerateDocstring(@NotNull PsiElement element, int firstQuoteOffset, @NotNull Document document)
+	@Nonnull
+	public static DocstringState canGenerateDocstring(@Nonnull PsiElement element, int firstQuoteOffset, @Nonnull Document document)
 	{
 		if(firstQuoteOffset < 0 || firstQuoteOffset > document.getTextLength() - 3)
 		{

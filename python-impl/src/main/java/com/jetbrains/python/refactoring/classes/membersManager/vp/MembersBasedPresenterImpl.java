@@ -18,7 +18,8 @@ package com.jetbrains.python.refactoring.classes.membersManager.vp;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.intellij.util.containers.MultiMap;
@@ -39,16 +40,16 @@ import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
  */
 abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extends MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements MembersBasedPresenter
 {
-	@NotNull
+	@Nonnull
 	protected final T myView;
-	@NotNull
+	@Nonnull
 	protected final PyClass myClassUnderRefactoring;
-	@NotNull
+	@Nonnull
 	protected final PyMemberInfoStorage myStorage;
 	/**
 	 * Member model
 	 */
-	@NotNull
+	@Nonnull
 	protected final M myModel;
 
 	/**
@@ -57,7 +58,7 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	 * @param infoStorage           info storage
 	 * @param model                 Member model (to be used for dependencies checking)
 	 */
-	MembersBasedPresenterImpl(@NotNull final T view, @NotNull final PyClass classUnderRefactoring, @NotNull final PyMemberInfoStorage infoStorage, @NotNull final M model)
+	MembersBasedPresenterImpl(@Nonnull final T view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final M model)
 	{
 		myView = view;
 		myClassUnderRefactoring = classUnderRefactoring;
@@ -122,7 +123,7 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	 * @return map of conflicts (if any)
 	 * @see #getDestClassesToCheckConflicts()
 	 */
-	@NotNull
+	@Nonnull
 	protected final MultiMap<PyClass, PyMemberInfo<?>> getConflicts()
 	{
 		final MultiMap<PyClass, PyMemberInfo<?>> result = new MultiMap<>();
@@ -144,6 +145,6 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	 * @return classes where this refactoring will move members. To be used to check for conflicts (if one of target classes already has members)
 	 * @see #getConflicts()
 	 */
-	@NotNull
+	@Nonnull
 	protected abstract Iterable<? extends PyClass> getDestClassesToCheckConflicts();
 }

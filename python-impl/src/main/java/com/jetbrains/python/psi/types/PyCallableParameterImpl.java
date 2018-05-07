@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi.types;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameter;
 
@@ -63,7 +63,7 @@ public class PyCallableParameterImpl implements PyCallableParameter
 
 	@Nullable
 	@Override
-	public PyType getType(@NotNull TypeEvalContext context)
+	public PyType getType(@Nonnull TypeEvalContext context)
 	{
 		if(myType != null)
 		{

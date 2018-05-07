@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.run;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
 import consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -57,7 +57,7 @@ public class PythonConfigurationType implements ConfigurationType
 		}
 
 		@Override
-		public boolean isApplicable(@NotNull Project project)
+		public boolean isApplicable(@Nonnull Project project)
 		{
 			return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
 		}
@@ -99,7 +99,7 @@ public class PythonConfigurationType implements ConfigurationType
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	@NonNls
 	public String getId()
 	{

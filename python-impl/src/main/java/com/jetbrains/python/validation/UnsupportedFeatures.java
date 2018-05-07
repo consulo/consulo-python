@@ -18,8 +18,8 @@ package com.jetbrains.python.validation;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.CommonProblemDescriptorImpl;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -50,7 +50,7 @@ public class UnsupportedFeatures extends CompatibilityVisitor
 	}
 
 	@Override
-	protected void registerProblem(@NotNull PsiElement node, @NotNull TextRange range, @NotNull String message, @Nullable LocalQuickFix localQuickFix, boolean asError)
+	protected void registerProblem(@Nonnull PsiElement node, @Nonnull TextRange range, @Nonnull String message, @Nullable LocalQuickFix localQuickFix, boolean asError)
 	{
 		if(range.isEmpty())
 		{
@@ -81,14 +81,14 @@ public class UnsupportedFeatures extends CompatibilityVisitor
 		}
 	}
 
-	@NotNull
-	private static IntentionAction createIntention(@NotNull PsiElement node, @NotNull String message, @NotNull LocalQuickFix localQuickFix)
+	@Nonnull
+	private static IntentionAction createIntention(@Nonnull PsiElement node, @Nonnull String message, @Nonnull LocalQuickFix localQuickFix)
 	{
 		return createIntention(node, node.getTextRange(), message, localQuickFix);
 	}
 
-	@NotNull
-	private static IntentionAction createIntention(@NotNull PsiElement node, @Nullable TextRange range, @NotNull String message, @NotNull LocalQuickFix localQuickFix)
+	@Nonnull
+	private static IntentionAction createIntention(@Nonnull PsiElement node, @Nullable TextRange range, @Nonnull String message, @Nonnull LocalQuickFix localQuickFix)
 	{
 		final LocalQuickFix[] quickFixes = {localQuickFix};
 		final CommonProblemDescriptorImpl descr = new ProblemDescriptorImpl(node, node, message, quickFixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, range, true);

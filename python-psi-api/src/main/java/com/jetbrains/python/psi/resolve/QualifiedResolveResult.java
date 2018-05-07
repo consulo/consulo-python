@@ -18,9 +18,10 @@ package com.jetbrains.python.psi.resolve;
 
 import com.intellij.psi.ResolveResult;
 import com.jetbrains.python.psi.PyExpression;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 /**
  * Knows about the last qualifier that occurred in assignment resolution chain.

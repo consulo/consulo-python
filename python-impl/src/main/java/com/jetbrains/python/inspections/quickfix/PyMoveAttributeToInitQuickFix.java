@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -26,7 +28,6 @@ import com.intellij.util.FunctionUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User: ktisha
@@ -36,18 +37,18 @@ public class PyMoveAttributeToInitQuickFix implements LocalQuickFix {
   public PyMoveAttributeToInitQuickFix() {
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return PyBundle.message("QFIX.move.attribute");
   }
 
   @NonNls
-  @NotNull
+  @Nonnull
   public String getFamilyName() {
     return getName();
   }
 
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
     final PsiElement element = descriptor.getPsiElement();
     if (!(element instanceof PyTargetExpression)) return;
     final PyTargetExpression targetExpression = (PyTargetExpression)element;

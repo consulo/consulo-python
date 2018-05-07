@@ -16,8 +16,8 @@
 
 package consulo.python.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import consulo.annotations.RequiredReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -46,7 +46,7 @@ public class PyLineBreakpointTypeResolver implements XLineBreakpointTypeResolver
 	@Nullable
 	@Override
 	@RequiredReadAction
-	public XLineBreakpointType<?> resolveBreakpointType(@NotNull Project project, @NotNull VirtualFile virtualFile, int line)
+	public XLineBreakpointType<?> resolveBreakpointType(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int line)
 	{
 		final Ref<PyLineBreakpointType> result = Ref.create();
 		final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);

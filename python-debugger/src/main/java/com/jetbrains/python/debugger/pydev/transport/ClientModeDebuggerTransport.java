@@ -12,8 +12,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.jetbrains.python.debugger.IPyDebugProcess;
@@ -56,7 +56,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 		private AtomicInteger num = new AtomicInteger(1);
 
 		@Override
-		public Thread newThread(@NotNull Runnable r)
+		public Thread newThread(@Nonnull Runnable r)
 		{
 			return new Thread(r, "Python Debug Script Connection " + num.getAndIncrement());
 		}
@@ -66,14 +66,14 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 	private static final long CHECK_CONNECTION_APPROVED_DELAY = 1000L;
 	private static final long SLEEP_TIME_BETWEEN_CONNECTION_TRIES = 150L;
 
-	@NotNull
+	@Nonnull
 	private final IPyDebugProcess myDebugProcess;
 
-	@NotNull
+	@Nonnull
 	private final String myHost;
 	private final int myPort;
 
-	@NotNull
+	@Nonnull
 	private volatile State myState = State.INIT;
 
 	@Nullable
@@ -81,7 +81,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 	@Nullable
 	private volatile DebuggerReader myDebuggerReader;
 
-	public ClientModeDebuggerTransport(@NotNull IPyDebugProcess debugProcess, @NotNull RemoteDebugger debugger, @NotNull String host, int port)
+	public ClientModeDebuggerTransport(@Nonnull IPyDebugProcess debugProcess, @Nonnull RemoteDebugger debugger, @Nonnull String host, int port)
 	{
 		super(debugger);
 		myDebugProcess = debugProcess;
@@ -269,7 +269,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 	}
 
 	@Override
-	public void messageReceived(@NotNull ProtocolFrame frame)
+	public void messageReceived(@Nonnull ProtocolFrame frame)
 	{
 		if(myState == State.CONNECTED)
 		{
@@ -301,7 +301,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 
 	public class DebuggerReader extends BaseDebuggerReader
 	{
-		public DebuggerReader(@NotNull RemoteDebugger debugger, @NotNull InputStream stream) throws IOException
+		public DebuggerReader(@Nonnull RemoteDebugger debugger, @Nonnull InputStream stream) throws IOException
 		{
 			super(stream, CharsetToolkit.UTF8_CHARSET, debugger); //TODO: correct encoding?
 			start(getClass().getName());

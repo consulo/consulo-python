@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -63,16 +63,16 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Override
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@NotNull final String name, PyExpression location, @NotNull AccessDirection direction,
-			@NotNull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull final String name, PyExpression location, @Nonnull AccessDirection direction,
+			@Nonnull PyResolveContext resolveContext)
 	{
 		return resolveMember(name, location, direction, resolveContext, true);
 	}
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@NotNull String name, @Nullable PyExpression location,
-			@NotNull AccessDirection direction, @NotNull PyResolveContext resolveContext, boolean inherited)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location,
+			@Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext, boolean inherited)
 	{
 		ResolveResultList resultList = new ResolveResultList();
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
@@ -88,7 +88,7 @@ public class PyDotNetClassType implements PyClassLikeType
 	}
 
 	@Override
-	public void visitMembers(@NotNull Processor<PsiElement> processor, boolean inherited, @NotNull TypeEvalContext context)
+	public void visitMembers(@Nonnull Processor<PsiElement> processor, boolean inherited, @Nonnull TypeEvalContext context)
 	{
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
 		{
@@ -96,9 +96,9 @@ public class PyDotNetClassType implements PyClassLikeType
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Set<String> getMemberNames(boolean inherited, @NotNull TypeEvalContext context)
+	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
 	{
 		Set<String> names = new THashSet<>();
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
@@ -154,14 +154,14 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@NotNull TypeEvalContext context)
+	public PyType getReturnType(@Nonnull TypeEvalContext context)
 	{
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public PyType getCallType(@NotNull TypeEvalContext context, @NotNull PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
 	{
 		if(myDefinition)
 		{
@@ -172,7 +172,7 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public List<PyCallableParameter> getParameters(@NotNull TypeEvalContext context)
+	public List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
 	{
 		return null;
 	}
@@ -196,10 +196,10 @@ public class PyDotNetClassType implements PyClassLikeType
 		return myClass.getPresentableQName();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@RequiredReadAction
-	public List<PyClassLikeType> getSuperClassTypes(@NotNull TypeEvalContext context)
+	public List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context)
 	{
 		final List<PyClassLikeType> result = new ArrayList<PyClassLikeType>();
 		for(DotNetTypeRef typeRef : myClass.getExtendTypeRefs())
@@ -221,7 +221,7 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyClassLikeType getMetaClassType(@NotNull TypeEvalContext context, boolean inherited)
+	public PyClassLikeType getMetaClassType(@Nonnull TypeEvalContext context, boolean inherited)
 	{
 		return null;
 	}
@@ -231,9 +231,9 @@ public class PyDotNetClassType implements PyClassLikeType
 		return myClass;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<PyClassLikeType> getAncestorTypes(@NotNull TypeEvalContext context)
+	public List<PyClassLikeType> getAncestorTypes(@Nonnull TypeEvalContext context)
 	{
 		return Collections.emptyList();
 	}

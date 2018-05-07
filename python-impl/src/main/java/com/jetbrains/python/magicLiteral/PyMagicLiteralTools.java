@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.magicLiteral;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -49,7 +49,7 @@ public final class PyMagicLiteralTools
 	 * @param element element to check
 	 * @return true if magic
 	 */
-	public static boolean isMagicLiteral(@NotNull final PsiElement element)
+	public static boolean isMagicLiteral(@Nonnull final PsiElement element)
 	{
 		return (element instanceof StringLiteralExpression) && (getPoint((StringLiteralExpression) element) != null);
 	}
@@ -61,7 +61,7 @@ public final class PyMagicLiteralTools
 	 * @return extension point (if any) or null if literal is unknown to all installed magic literal extesnion points
 	 */
 	@Nullable
-	public static PyMagicLiteralExtensionPoint getPoint(@NotNull final StringLiteralExpression element)
+	public static PyMagicLiteralExtensionPoint getPoint(@Nonnull final StringLiteralExpression element)
 	{
 		return MAGIC_LITERAL_POINT.getValue(element).get();
 	}

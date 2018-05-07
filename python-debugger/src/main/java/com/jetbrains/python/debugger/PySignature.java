@@ -2,8 +2,8 @@ package com.jetbrains.python.debugger;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 
@@ -20,14 +20,14 @@ public class PySignature
 
 	private final List<NamedParameter> myArgs = Lists.newArrayList();
 
-	public PySignature(@NotNull String file, @NotNull String name)
+	public PySignature(@Nonnull String file, @Nonnull String name)
 	{
 		myFile = file;
 		myFunctionName = name;
 	}
 
 	@Nullable
-	public String getArgTypeQualifiedName(@NotNull String name)
+	public String getArgTypeQualifiedName(@Nonnull String name)
 	{
 		for(NamedParameter param : myArgs)
 		{
@@ -39,19 +39,19 @@ public class PySignature
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFile()
 	{
 		return myFile;
 	}
 
-	@NotNull
+	@Nonnull
 	public String getFunctionName()
 	{
 		return myFunctionName;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<NamedParameter> getArgs()
 	{
 		return myArgs;
@@ -78,8 +78,8 @@ public class PySignature
 		return this;
 	}
 
-	@NotNull
-	public PySignature addAllArgs(@NotNull PySignature signature)
+	@Nonnull
+	public PySignature addAllArgs(@Nonnull PySignature signature)
 	{
 		for(NamedParameter param : signature.getArgs())
 		{
@@ -122,15 +122,15 @@ public class PySignature
 		private final String myName;
 		private final List<String> myTypes;
 
-		private NamedParameter(@NotNull String name, @NotNull String type)
+		private NamedParameter(@Nonnull String name, @Nonnull String type)
 		{
 			myName = name;
 
 			myTypes = parseTypes(type);
 		}
 
-		@NotNull
-		private static List<String> parseTypes(@NotNull String type)
+		@Nonnull
+		private static List<String> parseTypes(@Nonnull String type)
 		{
 			if(type.startsWith(UNION_PREFIX) && type.endsWith("]"))
 			{

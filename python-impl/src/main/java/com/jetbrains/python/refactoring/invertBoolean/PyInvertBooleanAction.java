@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.refactoring.invertBoolean;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -29,7 +31,6 @@ import com.intellij.refactoring.actions.BaseRefactoringAction;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * User : ktisha
@@ -41,14 +42,14 @@ public class PyInvertBooleanAction extends BaseRefactoringAction {
   }
 
   @Override
-  protected boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
+  protected boolean isEnabledOnElements(@Nonnull PsiElement[] elements) {
     if (elements.length == 1) {
       return isApplicable(elements[0], elements[0].getContainingFile());
     }
     return false;
   }
 
-  private static boolean isApplicable(@NotNull final PsiElement element, @NotNull final PsiFile file) {
+  private static boolean isApplicable(@Nonnull final PsiElement element, @Nonnull final PsiFile file) {
     final VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile != null && ProjectRootManager.getInstance(element.getProject()).getFileIndex().isInLibraryClasses(virtualFile)) return false;
     if (element instanceof PyTargetExpression) {
@@ -68,12 +69,12 @@ public class PyInvertBooleanAction extends BaseRefactoringAction {
   }
 
   @Override
-  protected boolean isAvailableOnElementInEditorAndFile(@NotNull final PsiElement element, @NotNull final Editor editor, @NotNull PsiFile file, @NotNull DataContext context) {
+  protected boolean isAvailableOnElementInEditorAndFile(@Nonnull final PsiElement element, @Nonnull final Editor editor, @Nonnull PsiFile file, @Nonnull DataContext context) {
     return isApplicable(element, element.getContainingFile());
   }
 
   @Override
-  protected RefactoringActionHandler getHandler(@NotNull DataContext dataContext) {
+  protected RefactoringActionHandler getHandler(@Nonnull DataContext dataContext) {
     return new PyInvertBooleanHandler();
   }
 

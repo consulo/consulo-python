@@ -26,7 +26,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * User: catherine
@@ -46,7 +46,7 @@ public class PythonDocTestRunConfiguration extends AbstractPythonTestRunConfigur
   }
 
   @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment env) throws ExecutionException {
     return new PythonDocTestCommandLineState(this, env);
   }
 

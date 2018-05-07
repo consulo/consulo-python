@@ -11,8 +11,8 @@ import com.intellij.testFramework.TestDataFile;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,7 +115,7 @@ public abstract class PyResolveTestCase extends PyTestCase {
     return offset;
   }
 
-  @NotNull
+  @Nonnull
   public static PsiPolyVariantReference findReferenceByMarker(PsiFile psiFile) {
     int offset = findMarkerOffset(psiFile);
     final PsiPolyVariantReference ref = (PsiPolyVariantReference)psiFile.findReferenceAt(offset);

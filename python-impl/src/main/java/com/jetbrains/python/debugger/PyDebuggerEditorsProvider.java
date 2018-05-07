@@ -16,6 +16,9 @@
 
 package com.jetbrains.python.debugger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -27,24 +30,22 @@ import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.impl.PyExpressionCodeFragmentImpl;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 
 public class PyDebuggerEditorsProvider extends XDebuggerEditorsProvider {
 
-  @NotNull
+  @Nonnull
   @Override
   public FileType getFileType() {
     return PythonFileType.INSTANCE;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public Document createDocument(@NotNull final Project project,
-                                 @NotNull String text,
+  public Document createDocument(@Nonnull final Project project,
+                                 @Nonnull String text,
                                  @Nullable final XSourcePosition sourcePosition,
-                                 @NotNull EvaluationMode mode) {
+                                 @Nonnull EvaluationMode mode) {
     text = text.trim();
     final PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(project, "fragment.py", text, true);
 

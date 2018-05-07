@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.xml.util.XmlTagUtilBase;
 import com.jetbrains.python.toolbox.Substring;
@@ -105,12 +105,12 @@ public class EpydocString extends TagBasedDocString
 			"see"
 	};
 
-	public EpydocString(@NotNull Substring docstringText)
+	public EpydocString(@Nonnull Substring docstringText)
 	{
 		super(docstringText, "@");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription()
 	{
@@ -119,14 +119,14 @@ public class EpydocString extends TagBasedDocString
 		return html;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getParameters()
 	{
 		return toUniqueStrings(getParameterSubstrings());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getKeywordArguments()
 	{
@@ -184,7 +184,7 @@ public class EpydocString extends TagBasedDocString
 		return inlineMarkupToHTML(getTagValue(KEYWORD_ARGUMENT_TAGS, paramName));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<String> getRaisedExceptions()
 	{
@@ -434,7 +434,7 @@ public class EpydocString extends TagBasedDocString
 		return list;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<Substring> getKeywordArgumentSubstrings()
 	{

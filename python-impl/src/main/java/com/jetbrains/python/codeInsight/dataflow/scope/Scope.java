@@ -18,8 +18,9 @@ package com.jetbrains.python.codeInsight.dataflow.scope;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInsight.dataflow.DFALimitExceededException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -35,7 +36,7 @@ public interface Scope
 	 * @return defined scope local/instance/class variables and parameters, using reaching defs
 	 */
 	@Nullable
-	ScopeVariable getDeclaredVariable(@NotNull PsiElement anchorElement, @NotNull String name) throws DFALimitExceededException;
+	ScopeVariable getDeclaredVariable(@Nonnull PsiElement anchorElement, @Nonnull String name) throws DFALimitExceededException;
 
 	boolean isGlobal(String name);
 
@@ -43,15 +44,15 @@ public interface Scope
 
 	boolean containsDeclaration(String name);
 
-	@NotNull
+	@Nonnull
 	List<PyImportedNameDefiner> getImportedNameDefiners();
 
-	@NotNull
+	@Nonnull
 	Collection<PsiNamedElement> getNamedElements(String name, boolean includeNestedGlobals);
 
-	@NotNull
+	@Nonnull
 	Collection<PsiNamedElement> getNamedElements();
 
-	@NotNull
+	@Nonnull
 	Collection<PyTargetExpression> getTargetExpressions();
 }

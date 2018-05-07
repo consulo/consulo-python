@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.psi.impl.stubs;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
@@ -37,7 +38,7 @@ public class PyFunctionStubImpl extends StubBase<PyFunction> implements PyFuncti
 			boolean isAsync,
 			@Nullable String typeComment,
 			final StubElement parent,
-			@NotNull IStubElementType stubElementType)
+			@Nonnull IStubElementType stubElementType)
 	{
 		super(parent, stubElementType);
 		myName = name;

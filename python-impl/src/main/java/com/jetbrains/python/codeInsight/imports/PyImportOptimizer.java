@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Ordering;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.lang.ImportOptimizer;
@@ -64,8 +65,8 @@ public class PyImportOptimizer implements ImportOptimizer
 	}
 
 	@Override
-	@NotNull
-	public Runnable processFile(@NotNull final PsiFile file)
+	@Nonnull
+	public Runnable processFile(@Nonnull final PsiFile file)
 	{
 		final LocalInspectionToolSession session = new LocalInspectionToolSession(file, 0, file.getTextLength());
 		final PyUnresolvedReferencesInspection.Visitor visitor = new PyUnresolvedReferencesInspection.Visitor(null, session, Collections.emptyList());
@@ -104,7 +105,7 @@ public class PyImportOptimizer implements ImportOptimizer
 		private final Map<ImportPriority, List<PyImportStatementBase>> myGroups;
 		private final PyCodeStyleSettings myPySettings;
 
-		private ImportSorter(@NotNull PyFile file)
+		private ImportSorter(@Nonnull PyFile file)
 		{
 			myFile = file;
 			myPySettings = CodeStyleSettingsManager.getSettings(myFile.getProject()).getCustomSettings(PyCodeStyleSettings.class);
@@ -144,8 +145,8 @@ public class PyImportOptimizer implements ImportOptimizer
 			}
 		}
 
-		@NotNull
-		private List<PyImportStatementBase> transformImportStatements(@NotNull List<PyImportStatementBase> imports)
+		@Nonnull
+		private List<PyImportStatementBase> transformImportStatements(@Nonnull List<PyImportStatementBase> imports)
 		{
 			final List<PyImportStatementBase> result = new ArrayList<>();
 
@@ -242,8 +243,8 @@ public class PyImportOptimizer implements ImportOptimizer
 			return result;
 		}
 
-		@NotNull
-		public static String getNormalizedFromImportSource(@NotNull PyFromImportStatement statement)
+		@Nonnull
+		public static String getNormalizedFromImportSource(@Nonnull PyFromImportStatement statement)
 		{
 			return StringUtil.repeatSymbol('.', statement.getRelativeLevel()) + Objects.toString(statement.getImportSourceQName(), "");
 		}
@@ -308,7 +309,7 @@ public class PyImportOptimizer implements ImportOptimizer
 			}
 		}
 
-		private void addImports(@NotNull PyImportStatementBase anchor)
+		private void addImports(@Nonnull PyImportStatementBase anchor)
 		{
 			// EnumMap returns values in key order, i.e. according to import groups priority
 			for(List<PyImportStatementBase> imports : myGroups.values())

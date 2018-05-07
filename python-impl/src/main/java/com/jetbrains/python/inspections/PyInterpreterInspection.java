@@ -16,9 +16,11 @@
 
 package com.jetbrains.python.inspections;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -37,23 +39,23 @@ import com.jetbrains.python.psi.PyFile;
 public class PyInterpreterInspection extends PyInspection {
 
   @Nls
-  @NotNull
+  @Nonnull
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.invalid.interpreter");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         final boolean isOnTheFly,
-                                        @NotNull final LocalInspectionToolSession session) {
+                                        @Nonnull final LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
   public static class Visitor extends PyInspectionVisitor {
 
     public Visitor(@Nullable ProblemsHolder holder,
-                   @NotNull LocalInspectionToolSession session) {
+                   @Nonnull LocalInspectionToolSession session) {
       super(holder, session);
     }
 
@@ -76,20 +78,20 @@ public class PyInterpreterInspection extends PyInspection {
   }
 
   private static class ConfigureInterpreterFix implements LocalQuickFix {
-    @NotNull
+    @Nonnull
     @Override
     public String getName() {
       return "Configure Python Interpreter";
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getFamilyName() {
       return "Configure Python Interpreter";
     }
 
     @Override
-    public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
+    public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
         public void run() {

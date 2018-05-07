@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -38,23 +38,23 @@ public interface PyTypeProvider
 	ExtensionPointName<PyTypeProvider> EP_NAME = ExtensionPointName.create("consulo.python.typeProvider");
 
 	@Nullable
-	PyType getReferenceExpressionType(@NotNull PyReferenceExpression referenceExpression, @NotNull TypeEvalContext context);
+	PyType getReferenceExpressionType(@Nonnull PyReferenceExpression referenceExpression, @Nonnull TypeEvalContext context);
 
 	@Nullable
-	PyType getReferenceType(@NotNull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor);
+	PyType getReferenceType(@Nonnull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor);
 
 	@Nullable
-	Ref<PyType> getParameterType(@NotNull PyNamedParameter param, @NotNull PyFunction func, @NotNull TypeEvalContext context);
+	Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context);
 
 	@Nullable
-	Ref<PyType> getReturnType(@NotNull PyCallable callable, @NotNull TypeEvalContext context);
+	Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context);
 
 	@Nullable
-	Ref<PyType> getCallType(@NotNull PyFunction function, @Nullable PyCallSiteExpression callSite, @NotNull TypeEvalContext context);
+	Ref<PyType> getCallType(@Nonnull PyFunction function, @Nullable PyCallSiteExpression callSite, @Nonnull TypeEvalContext context);
 
 	@Nullable
 	PyType getContextManagerVariableType(PyClass contextManager, PyExpression withExpression, TypeEvalContext context);
 
 	@Nullable
-	PyType getCallableType(@NotNull PyCallable callable, @NotNull TypeEvalContext context);
+	PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context);
 }

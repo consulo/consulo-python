@@ -21,8 +21,8 @@ import java.util.List;
 
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -45,13 +45,13 @@ public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider
 
 	@Nullable
 	@Override
-	public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element)
+	public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element)
 	{
 		return null;
 	}
 
 	@Override
-	public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result)
+	public void collectSlowLineMarkers(@Nonnull List<PsiElement> elements, @Nonnull Collection<LineMarkerInfo> result)
 	{
 		for(PsiElement element : elements)
 		{
@@ -75,7 +75,7 @@ public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider
 	}
 
 	@Nullable
-	private static PyElement getUserSkeleton(@NotNull PsiElement element)
+	private static PyElement getUserSkeleton(@Nonnull PsiElement element)
 	{
 		if(element instanceof PyFunction || element instanceof PyTargetExpression)
 		{

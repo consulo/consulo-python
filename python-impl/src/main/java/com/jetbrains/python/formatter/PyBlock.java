@@ -27,8 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.formatting.ASTBlock;
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
@@ -91,7 +91,7 @@ public class PyBlock implements ASTBlock
 	private final Wrap myDictWrapping;
 	private final boolean myEmptySequence;
 
-	public PyBlock(@Nullable PyBlock parent, @NotNull ASTNode node, @Nullable Alignment alignment, @NotNull Indent indent, @Nullable Wrap wrap, @NotNull PyBlockContext context)
+	public PyBlock(@Nullable PyBlock parent, @Nonnull ASTNode node, @Nullable Alignment alignment, @Nonnull Indent indent, @Nullable Wrap wrap, @Nonnull PyBlockContext context)
 	{
 		myParent = parent;
 		myAlignment = alignment;
@@ -114,14 +114,14 @@ public class PyBlock implements ASTBlock
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public ASTNode getNode()
 	{
 		return myNode;
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public TextRange getTextRange()
 	{
 		return myNode.getTextRange();
@@ -137,7 +137,7 @@ public class PyBlock implements ASTBlock
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public List<Block> getSubBlocks()
 	{
 		if(mySubBlocks == null)
@@ -149,7 +149,7 @@ public class PyBlock implements ASTBlock
 	}
 
 	@Nullable
-	private PyBlock getSubBlockByNode(@NotNull ASTNode node)
+	private PyBlock getSubBlockByNode(@Nonnull ASTNode node)
 	{
 		return mySubBlockByNode.get(node);
 	}
@@ -160,7 +160,7 @@ public class PyBlock implements ASTBlock
 		return mySubBlocks.get(index);
 	}
 
-	@NotNull
+	@Nonnull
 	private Map<ASTNode, PyBlock> buildSubBlocks()
 	{
 		final Map<ASTNode, PyBlock> blocks = new LinkedHashMap<>();
@@ -184,8 +184,8 @@ public class PyBlock implements ASTBlock
 		return Collections.unmodifiableMap(blocks);
 	}
 
-	@NotNull
-	private PyBlock buildSubBlock(@NotNull ASTNode child)
+	@Nonnull
+	private PyBlock buildSubBlock(@Nonnull ASTNode child)
 	{
 		final IElementType parentType = myNode.getElementType();
 
@@ -474,34 +474,34 @@ public class PyBlock implements ASTBlock
 		return new PyBlock(this, child, childAlignment, childIndent, wrap, myContext);
 	}
 
-	private static boolean isValueOfKeyValuePairOfDictLiteral(@NotNull ASTNode node)
+	private static boolean isValueOfKeyValuePairOfDictLiteral(@Nonnull ASTNode node)
 	{
 		return isValueOfKeyValuePair(node) && isChildOfDictLiteral(node.getTreeParent());
 	}
 
-	private static boolean isChildOfKeyValuePairOfDictLiteral(@NotNull ASTNode node)
+	private static boolean isChildOfKeyValuePairOfDictLiteral(@Nonnull ASTNode node)
 	{
 		return isChildOfKeyValuePair(node) && isChildOfDictLiteral(node.getTreeParent());
 	}
 
-	private static boolean isChildOfDictLiteral(@NotNull ASTNode node)
+	private static boolean isChildOfDictLiteral(@Nonnull ASTNode node)
 	{
 		final ASTNode nodeParent = node.getTreeParent();
 		return nodeParent != null && nodeParent.getElementType() == PyElementTypes.DICT_LITERAL_EXPRESSION;
 	}
 
-	private static boolean isChildOfKeyValuePair(@NotNull ASTNode node)
+	private static boolean isChildOfKeyValuePair(@Nonnull ASTNode node)
 	{
 		final ASTNode nodeParent = node.getTreeParent();
 		return nodeParent != null && nodeParent.getElementType() == PyElementTypes.KEY_VALUE_EXPRESSION;
 	}
 
-	private static boolean isValueOfKeyValuePair(@NotNull ASTNode node)
+	private static boolean isValueOfKeyValuePair(@Nonnull ASTNode node)
 	{
 		return isChildOfKeyValuePair(node) && node.getTreeParent().getPsi(PyKeyValueExpression.class).getValue() == node.getPsi();
 	}
 
-	private static boolean isEmptySequence(@NotNull ASTNode node)
+	private static boolean isEmptySequence(@Nonnull ASTNode node)
 	{
 		return node.getPsi() instanceof PySequenceExpression && ((PySequenceExpression) node.getPsi()).isEmpty();
 	}
@@ -523,7 +523,7 @@ public class PyBlock implements ASTBlock
 	}
 
 	// Check https://www.python.org/dev/peps/pep-0008/#indentation
-	private static boolean hasHangingIndent(@NotNull PsiElement elem)
+	private static boolean hasHangingIndent(@Nonnull PsiElement elem)
 	{
 		if(elem instanceof PyCallExpression)
 		{
@@ -588,8 +588,8 @@ public class PyBlock implements ASTBlock
 		}
 	}
 
-	@NotNull
-	private static PsiElement[] getItems(@NotNull PsiElement elem)
+	@Nonnull
+	private static PsiElement[] getItems(@Nonnull PsiElement elem)
 	{
 		if(elem instanceof PySequenceExpression)
 		{
@@ -627,7 +627,7 @@ public class PyBlock implements ASTBlock
 		return type != PyElementTypes.BINARY_EXPRESSION;
 	}
 
-	private static Alignment getAlignmentOfChild(@NotNull PyBlock b, int childNum)
+	private static Alignment getAlignmentOfChild(@Nonnull PyBlock b, int childNum)
 	{
 		if(b.getSubBlocks().size() > childNum)
 		{
@@ -637,7 +637,7 @@ public class PyBlock implements ASTBlock
 		return null;
 	}
 
-	private static boolean isIndentNext(@NotNull ASTNode child)
+	private static boolean isIndentNext(@Nonnull ASTNode child)
 	{
 		final PsiElement psi = PsiTreeUtil.getParentOfType(child.getPsi(), PyStatement.class);
 
@@ -652,7 +652,7 @@ public class PyBlock implements ASTBlock
 				psi instanceof PyWhileStatement;
 	}
 
-	private static boolean isSubscriptionOperand(@NotNull ASTNode child)
+	private static boolean isSubscriptionOperand(@Nonnull ASTNode child)
 	{
 		return child.getTreeParent().getElementType() == PyElementTypes.SUBSCRIPTION_EXPRESSION && child.getPsi() == ((PySubscriptionExpression) child.getTreeParent().getPsi()).getOperand();
 	}
@@ -663,7 +663,7 @@ public class PyBlock implements ASTBlock
 	}
 
 	@Nullable
-	private static PsiElement getControlStatementHeader(@NotNull ASTNode node)
+	private static PsiElement getControlStatementHeader(@Nonnull ASTNode node)
 	{
 		final PyStatementPart statementPart = PsiTreeUtil.getParentOfType(node.getPsi(), PyStatementPart.class, false, PyStatementList.class);
 		if(statementPart != null)
@@ -678,7 +678,7 @@ public class PyBlock implements ASTBlock
 		return null;
 	}
 
-	private boolean isSliceOperand(@NotNull ASTNode child)
+	private boolean isSliceOperand(@Nonnull ASTNode child)
 	{
 		if(myNode.getPsi() instanceof PySliceExpression)
 		{
@@ -689,7 +689,7 @@ public class PyBlock implements ASTBlock
 		return false;
 	}
 
-	private static boolean isAfterStatementList(@NotNull ASTNode child)
+	private static boolean isAfterStatementList(@Nonnull ASTNode child)
 	{
 		final PsiElement prev = child.getPsi().getPrevSibling();
 		if(!(prev instanceof PyStatement))
@@ -700,7 +700,7 @@ public class PyBlock implements ASTBlock
 		return lastChild.getParent() instanceof PyStatementList;
 	}
 
-	private boolean needListAlignment(@NotNull ASTNode child)
+	private boolean needListAlignment(@Nonnull ASTNode child)
 	{
 		final IElementType childType = child.getElementType();
 		if(PyTokenTypes.OPEN_BRACES.contains(childType))
@@ -746,7 +746,7 @@ public class PyBlock implements ASTBlock
 	}
 
 	@Nullable
-	private static ASTNode findPrevNonSpaceNode(@NotNull ASTNode node)
+	private static ASTNode findPrevNonSpaceNode(@Nonnull ASTNode node)
 	{
 		do
 		{
@@ -761,7 +761,7 @@ public class PyBlock implements ASTBlock
 		return node != null && (node.getElementType() == TokenType.WHITE_SPACE || PyTokenTypes.WHITESPACE.contains(node.getElementType()));
 	}
 
-	private static boolean hasLineBreaksBeforeInSameParent(@NotNull ASTNode node, int minCount)
+	private static boolean hasLineBreaksBeforeInSameParent(@Nonnull ASTNode node, int minCount)
 	{
 		final ASTNode treePrev = node.getTreePrev();
 		return (treePrev != null && isWhitespaceWithLineBreaks(TreeUtil.findLastLeaf(treePrev), minCount)) ||
@@ -769,7 +769,7 @@ public class PyBlock implements ASTBlock
 				isWhitespaceWithLineBreaks(node.getFirstChildNode(), minCount);
 	}
 
-	private static boolean hasLineBreakAfterIgnoringComments(@NotNull ASTNode node)
+	private static boolean hasLineBreakAfterIgnoringComments(@Nonnull ASTNode node)
 	{
 		for(ASTNode next = TreeUtil.nextLeaf(node); next != null; next = TreeUtil.nextLeaf(next))
 		{
@@ -841,7 +841,7 @@ public class PyBlock implements ASTBlock
 
 	@Override
 	@Nullable
-	public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2)
+	public Spacing getSpacing(@Nullable Block child1, @Nonnull Block child2)
 	{
 		if(child1 instanceof ASTBlock && child2 instanceof ASTBlock)
 		{
@@ -936,7 +936,7 @@ public class PyBlock implements ASTBlock
 		return myContext.getSpacingBuilder().getSpacing(this, child1, child2);
 	}
 
-	@NotNull
+	@Nonnull
 	private Spacing getBlankLinesForOption(int option)
 	{
 		final int blankLines = option + 1;
@@ -955,7 +955,7 @@ public class PyBlock implements ASTBlock
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public ChildAttributes getChildAttributes(int newChildIndex)
 	{
 		int statementListsBelow = 0;
@@ -1041,7 +1041,7 @@ public class PyBlock implements ASTBlock
 		return new ChildAttributes(childIndent, childAlignment);
 	}
 
-	private static boolean dedentAfterLastStatement(@NotNull PyStatementList statementList)
+	private static boolean dedentAfterLastStatement(@Nonnull PyStatementList statementList)
 	{
 		final PyStatement[] statements = statementList.getStatements();
 		if(statements.length == 0)
@@ -1078,7 +1078,7 @@ public class PyBlock implements ASTBlock
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	private Indent getChildIndent(int newChildIndex)
 	{
 		final ASTNode afterNode = getAfterNode(newChildIndex);
@@ -1201,7 +1201,7 @@ public class PyBlock implements ASTBlock
 		return getSubBlockByIndex(prevIndex).getNode();
 	}
 
-	private static ASTNode getLastNonSpaceChild(@NotNull ASTNode node, boolean acceptError)
+	private static ASTNode getLastNonSpaceChild(@Nonnull ASTNode node, boolean acceptError)
 	{
 		ASTNode lastChild = node.getLastChildNode();
 		while(lastChild != null && (lastChild.getElementType() == TokenType.WHITE_SPACE || (!acceptError && lastChild.getPsi() instanceof PsiErrorElement)))
@@ -1267,7 +1267,7 @@ public class PyBlock implements ASTBlock
 		return false;
 	}
 
-	private static boolean isIncompleteCall(@NotNull ASTNode node)
+	private static boolean isIncompleteCall(@Nonnull ASTNode node)
 	{
 		if(node.getElementType() == PyElementTypes.CALL_EXPRESSION)
 		{

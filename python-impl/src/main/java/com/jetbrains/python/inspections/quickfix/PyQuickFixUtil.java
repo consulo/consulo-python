@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -29,7 +29,7 @@ import com.intellij.psi.PsiElement;
 public class PyQuickFixUtil
 {
 	@Nullable
-	public static Editor getEditor(@NotNull PsiElement element)
+	public static Editor getEditor(@Nonnull PsiElement element)
 	{
 		Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
 		if(document != null)

@@ -22,8 +22,8 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.swing.*;
 
@@ -42,12 +42,12 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
   protected final String myTailText;
   protected InsertHandler<PythonLookupElement> myHandler;
 
-  public PythonLookupElement(@NotNull final String lookupString,
+  public PythonLookupElement(@Nonnull final String lookupString,
                            @Nullable final String tailText,
                            @Nullable final String typeText, final boolean bold,
                            @Nullable final Icon icon,
                            @Nullable final Icon typeIcon,
-                           @NotNull final InsertHandler<PythonLookupElement> handler) {
+                           @Nonnull final InsertHandler<PythonLookupElement> handler) {
     myLookupString = lookupString;
     myTailText = tailText;
     myTypeText = typeText;
@@ -57,7 +57,7 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
     myHandler = handler;
   }
 
-  public PythonLookupElement(@NotNull final String lookupString,
+  public PythonLookupElement(@Nonnull final String lookupString,
                            @Nullable final String tailText,
                            @Nullable final String typeText, final boolean bold,
                            @Nullable final Icon icon,
@@ -66,14 +66,14 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
   }
 
   public PythonLookupElement(
-    @NotNull final String lookupString,
+    @Nonnull final String lookupString,
     final boolean bold,
     @Nullable final Icon icon
   ) {
     this(lookupString, null, null, bold, icon, null, new BasicInsertHandler<PythonLookupElement>());
   }
 
-  @NotNull
+  @Nonnull
   public String getLookupString() {
     return myLookupString;
   }

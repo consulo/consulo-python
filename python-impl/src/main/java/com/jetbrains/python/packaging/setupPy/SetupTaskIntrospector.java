@@ -22,8 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -50,7 +51,7 @@ public class SetupTaskIntrospector
 	private static final Map<String, List<SetupTask>> ourDistutilsTaskCache = new HashMap<>();
 	private static final Map<String, List<SetupTask>> ourSetuptoolsTaskCache = new HashMap<>();
 
-	public static boolean usesSetuptools(@NotNull PyFile file)
+	public static boolean usesSetuptools(@Nonnull PyFile file)
 	{
 		final List<PyFromImportStatement> imports = file.getFromImports();
 		for(PyFromImportStatement anImport : imports)

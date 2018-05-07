@@ -16,20 +16,21 @@
 
 package com.jetbrains.python.psi.types.functionalParser;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
 * @author vlan
 */
 public class ParserException extends Exception {
-  @NotNull private final FunctionalParserBase.State myState;
+  @Nonnull
+  private final FunctionalParserBase.State myState;
 
-  public ParserException(@NotNull String message, @NotNull FunctionalParserBase.State state) {
+  public ParserException(@Nonnull String message, @Nonnull FunctionalParserBase.State state) {
     super(message);
     myState = state;
   }
 
-  @NotNull
+  @Nonnull
   FunctionalParserBase.State getState() {
     return myState;
   }

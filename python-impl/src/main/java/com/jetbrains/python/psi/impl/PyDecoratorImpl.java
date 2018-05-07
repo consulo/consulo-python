@@ -15,9 +15,11 @@
  */
 package com.jetbrains.python.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -131,7 +133,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		return PsiTreeUtil.getChildOfType(this, PyArgumentList.class);
 	}
 
-	@NotNull
+	@Nonnull
 	public PyExpression[] getArguments()
 	{
 		final PyArgumentList argList = getArgumentList();
@@ -158,7 +160,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 
 	@Nullable
 	@Override
-	public <T extends PsiElement> T getArgument(@NotNull final FunctionParameter parameter, @NotNull final Class<T> argClass)
+	public <T extends PsiElement> T getArgument(@Nonnull final FunctionParameter parameter, @Nonnull final Class<T> argClass)
 	{
 		return PyCallExpressionHelper.getArgument(parameter, argClass, this);
 	}
@@ -194,16 +196,16 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		return callee;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PyArgumentsMapping mapArguments(@NotNull PyResolveContext resolveContext)
+	public PyArgumentsMapping mapArguments(@Nonnull PyResolveContext resolveContext)
 	{
 		return PyCallExpressionHelper.mapArguments(this, resolveContext, 0);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public PyArgumentsMapping mapArguments(@NotNull PyResolveContext resolveContext, int implicitOffset)
+	public PyArgumentsMapping mapArguments(@Nonnull PyResolveContext resolveContext, int implicitOffset)
 	{
 		return PyCallExpressionHelper.mapArguments(this, resolveContext, implicitOffset);
 	}
@@ -214,13 +216,13 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		return PyCallExpressionHelper.resolveCalleeFunction(this, resolveContext);
 	}
 
-	public boolean isCalleeText(@NotNull String... nameCandidates)
+	public boolean isCalleeText(@Nonnull String... nameCandidates)
 	{
 		return PyCallExpressionHelper.isCalleeText(this, nameCandidates);
 	}
 
 	@Override
-	public boolean isCallee(@NotNull final FQNamesProvider... name)
+	public boolean isCallee(@Nonnull final FQNamesProvider... name)
 	{
 		return PyCallExpressionHelper.isCallee(this, name);
 	}
@@ -232,7 +234,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		return "PyDecorator: @" + PyUtil.getReadableRepr(getCallee(), true); //getCalledFunctionReference().getReferencedName();
 	}
 
-	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException
+	public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
 	{
 		final ASTNode node = getNode();
 		final ASTNode nameNode = node.findChildByType(PyTokenTypes.IDENTIFIER);
@@ -248,7 +250,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 		}
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		return PyCallExpressionHelper.getCallType(this, context);
 	}

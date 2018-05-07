@@ -26,8 +26,8 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReturnStatement;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,21 +39,21 @@ import java.util.Collection;
  */
 public class PyReturnFromInitInspection extends PyInspection {
   @Nls
-  @NotNull
+  @Nonnull
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.init.return");
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     return new Visitor(holder, session);
   }
 
   public static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
       super(holder, session);
     }
 
@@ -67,7 +67,7 @@ public class PyReturnFromInitInspection extends PyInspection {
       }
     }
 
-    private static void findReturnValueInside(@NotNull PsiElement node, Collection<PsiElement> offenders) {
+    private static void findReturnValueInside(@Nonnull PsiElement node, Collection<PsiElement> offenders) {
       for (PsiElement child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
         if (child instanceof PyFunction || child instanceof PyClass) continue; // ignore possible inner functions and classes
         if (child instanceof PyReturnStatement) {

@@ -18,7 +18,8 @@ package com.jetbrains.python.psi.search;
 import java.util.Collection;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -42,7 +43,7 @@ public class PyClassInheritorsSearchExecutor implements QueryExecutor<PyClass, P
 	 */
 	protected static final ImmutableSet<String> IGNORED_BASES = ImmutableSet.of("object", "BaseException", "Exception");
 
-	public boolean execute(@NotNull final PyClassInheritorsSearch.SearchParameters queryParameters, @NotNull final Processor<PyClass> consumer)
+	public boolean execute(@Nonnull final PyClassInheritorsSearch.SearchParameters queryParameters, @Nonnull final Processor<PyClass> consumer)
 	{
 		Set<PyClass> processed = new HashSet<>();
 		return processDirectInheritors(queryParameters.getSuperClass(), consumer, queryParameters.isCheckDeepInheritance(), processed);

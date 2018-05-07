@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
 public interface PySliceExpression extends PyExpression {
-  @NotNull
+  @Nonnull
   PyExpression getOperand();
 
   @Nullable

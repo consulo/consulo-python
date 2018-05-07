@@ -23,7 +23,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.swing.*;
 
@@ -37,16 +37,16 @@ public class PyUnusedLocalInspection extends PyInspection {
   public boolean ignoreLambdaParameters = true;
   public boolean ignoreLoopIterationVariables = true;
 
-  @NotNull
+  @Nonnull
   @Nls
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.unused");
   }
 
-  @NotNull
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+  @Nonnull
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         final boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session) {
     final PyUnusedLocalInspectionVisitor visitor = new PyUnusedLocalInspectionVisitor(holder,
                                                                                       session,
                                                                                       ignoreTupleUnpacking,
@@ -61,7 +61,7 @@ public class PyUnusedLocalInspection extends PyInspection {
   }
 
   @Override
-  public void inspectionFinished(@NotNull LocalInspectionToolSession session, @NotNull ProblemsHolder holder) {
+  public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder) {
     final PyUnusedLocalInspectionVisitor visitor = session.getUserData(KEY);
     if (visitor != null) {
       visitor.registerProblems();

@@ -29,9 +29,9 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolverImpl;
 import com.jetbrains.python.sdk.PythonSdkType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
@@ -52,19 +52,19 @@ public abstract class QtFileType implements FileType, INativeFileType {
     myIcon = icon;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getName() {
     return myName;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getDescription() {
     return myDescription;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getDefaultExtension() {
     return myDefaultExtension;
@@ -86,12 +86,12 @@ public abstract class QtFileType implements FileType, INativeFileType {
   }
 
   @Override
-  public String getCharset(@NotNull VirtualFile file, byte[] content) {
+  public String getCharset(@Nonnull VirtualFile file, byte[] content) {
     return null;
   }
 
   @Override
-  public boolean openFileInAssociatedApplication(Project project, @NotNull VirtualFile file) {
+  public boolean openFileInAssociatedApplication(Project project, @Nonnull VirtualFile file) {
     String qtTool = findQtTool(ModuleUtil.findModuleForFile(file, project), getToolName());
     if (qtTool == null) {
       return false;

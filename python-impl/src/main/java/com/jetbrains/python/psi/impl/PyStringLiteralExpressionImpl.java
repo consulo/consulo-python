@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
 import org.intellij.lang.regexp.DefaultRegExpPropertiesProvider;
@@ -31,8 +32,8 @@ import org.intellij.lang.regexp.RegExpLanguageHost;
 import org.intellij.lang.regexp.psi.RegExpChar;
 import org.intellij.lang.regexp.psi.RegExpGroup;
 import org.intellij.lang.regexp.psi.RegExpNamedGroupRef;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
@@ -122,7 +123,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 		myDecodedFragments = null;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<TextRange> getStringValueTextRanges()
 	{
 		if(valueTextRanges == null)
@@ -180,7 +181,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public List<Pair<TextRange, String>> getDecodedFragments()
 	{
 		if(myDecodedFragments == null)
@@ -210,8 +211,8 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 		return stringNodes.size() == 1 && stringNodes.get(0).getElementType() == PyTokenTypes.DOCSTRING;
 	}
 
-	@NotNull
-	private static List<Pair<TextRange, String>> getDecodedFragments(@NotNull String encoded, int offset, boolean raw, boolean unicode)
+	@Nonnull
+	private static List<Pair<TextRange, String>> getDecodedFragments(@Nonnull String encoded, int offset, boolean raw, boolean unicode)
 	{
 		final List<Pair<TextRange, String>> result = new ArrayList<>();
 		final Matcher escMatcher = PATTERN_ESCAPE.matcher(encoded);
@@ -287,12 +288,12 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 	}
 
 	@Nullable
-	private static String escapeRegexGroup(@NotNull Matcher matcher, EscapeRegexGroup group)
+	private static String escapeRegexGroup(@Nonnull Matcher matcher, EscapeRegexGroup group)
 	{
 		return matcher.group(group.ordinal());
 	}
 
-	@NotNull
+	@Nonnull
 	public List<ASTNode> getStringNodes()
 	{
 		return Arrays.asList(getNode().getChildren(PyTokenTypes.STRING_NODES));
@@ -341,7 +342,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 		return true;
 	}
 
-	public PyType getType(@NotNull TypeEvalContext context, @NotNull TypeEvalContext.Key key)
+	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
 		final List<ASTNode> nodes = getStringNodes();
 		if(nodes.size() > 0)
@@ -362,7 +363,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 		return PyBuiltinCache.getInstance(this).getBytesType(LanguageLevel.forElement(this));
 	}
 
-	@NotNull
+	@Nonnull
 	public PsiReference[] getReferences()
 	{
 		return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
@@ -396,12 +397,12 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 		};
 	}
 
-	public PsiLanguageInjectionHost updateText(@NotNull String text)
+	public PsiLanguageInjectionHost updateText(@Nonnull String text)
 	{
 		return ElementManipulators.handleContentChange(this, text);
 	}
 
-	@NotNull
+	@Nonnull
 	public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper()
 	{
 		return new StringLiteralTextEscaper(this);
@@ -411,14 +412,14 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 	{
 		private final PyStringLiteralExpressionImpl myHost;
 
-		protected StringLiteralTextEscaper(@NotNull PyStringLiteralExpressionImpl host)
+		protected StringLiteralTextEscaper(@Nonnull PyStringLiteralExpressionImpl host)
 		{
 			super(host);
 			myHost = host;
 		}
 
 		@Override
-		public boolean decode(@NotNull final TextRange rangeInsideHost, @NotNull final StringBuilder outChars)
+		public boolean decode(@Nonnull final TextRange rangeInsideHost, @Nonnull final StringBuilder outChars)
 		{
 			for(Pair<TextRange, String> fragment : myHost.getDecodedFragments())
 			{
@@ -445,7 +446,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 		}
 
 		@Override
-		public int getOffsetInHost(final int offsetInDecoded, @NotNull final TextRange rangeInsideHost)
+		public int getOffsetInHost(final int offsetInDecoded, @Nonnull final TextRange rangeInsideHost)
 		{
 			int offset = 0;
 			int endOffset = -1;
@@ -563,12 +564,12 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 	}
 
 	@Override
-	public boolean isValidCategory(@NotNull String category)
+	public boolean isValidCategory(@Nonnull String category)
 	{
 		return myPropertiesProvider.isValidCategory(category);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String[][] getAllKnownProperties()
 	{
@@ -582,7 +583,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 		return myPropertiesProvider.getPropertyDescription(name);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String[][] getKnownCharacterClasses()
 	{

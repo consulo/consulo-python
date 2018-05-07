@@ -16,29 +16,32 @@
 
 package com.jetbrains.rest.inspections;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.rest.validation.RestElementVisitor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * User : catherine
  */
 public abstract class RestInspectionVisitor extends RestElementVisitor {
-  @Nullable private final ProblemsHolder myHolder;
+  @Nullable
+  private final ProblemsHolder myHolder;
   public RestInspectionVisitor(@Nullable final ProblemsHolder holder) {
     myHolder = holder;
   }
 
   public RestInspectionVisitor(@Nullable ProblemsHolder problemsHolder,
-                               @NotNull LocalInspectionToolSession session) {
+                               @Nonnull LocalInspectionToolSession session) {
     myHolder = problemsHolder;
   }
 
-  @Nullable protected ProblemsHolder getHolder() {
+  @Nullable
+  protected ProblemsHolder getHolder() {
     return myHolder;
   }
 
@@ -53,8 +56,8 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
   }
 
   protected final void registerProblem(@Nullable final PsiElement element,
-                                       @NotNull final String message,
-                                       @NotNull final LocalQuickFix quickFix){
+                                       @Nonnull final String message,
+                                       @Nonnull final LocalQuickFix quickFix){
       if (element == null || element.getTextLength() == 0){
           return;
       }
@@ -69,8 +72,8 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
    * @see com.intellij.codeInspection.ProblemDescriptor
    */
   protected final void registerProblem(
-    @NotNull final PsiElement psiElement,
-    @NotNull final String descriptionTemplate,
+    @Nonnull final PsiElement psiElement,
+    @Nonnull final String descriptionTemplate,
     final ProblemHighlightType highlightType,
     @Nullable final HintAction hintAction,
     final LocalQuickFix... fixes) {
@@ -82,8 +85,8 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
    * @see com.intellij.codeInspection.ProblemDescriptor
    */
   protected final void registerProblem(
-    @NotNull final PsiElement psiElement,
-    @NotNull final String descriptionTemplate,
+    @Nonnull final PsiElement psiElement,
+    @Nonnull final String descriptionTemplate,
     final ProblemHighlightType highlightType,
     @Nullable final HintAction hintAction,
     @Nullable final TextRange rangeInElement,
