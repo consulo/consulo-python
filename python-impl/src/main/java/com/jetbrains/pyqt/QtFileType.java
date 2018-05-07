@@ -16,6 +16,12 @@
 
 package com.jetbrains.pyqt;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.INativeFileType;
 import com.intellij.openapi.module.Module;
@@ -29,12 +35,7 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolverImpl;
 import com.jetbrains.python.sdk.PythonSdkType;
-import javax.annotation.Nonnull;
-
-import javax.annotation.Nullable;
-import javax.swing.*;
-import java.io.IOException;
-import java.util.List;
+import consulo.ui.image.Image;
 
 /**
  * @author yole
@@ -43,9 +44,9 @@ public abstract class QtFileType implements FileType, INativeFileType {
   private final String myName;
   private final String myDescription;
   private final String myDefaultExtension;
-  private final Icon myIcon;
+  private final Image myIcon;
 
-  protected QtFileType(String name, String description, String defaultExtension, Icon icon) {
+  protected QtFileType(String name, String description, String defaultExtension, Image icon) {
     myName = name;
     myDescription = description;
     myDefaultExtension = defaultExtension;
@@ -54,7 +55,7 @@ public abstract class QtFileType implements FileType, INativeFileType {
 
   @Nonnull
   @Override
-  public String getName() {
+  public String getId() {
     return myName;
   }
 
@@ -71,7 +72,7 @@ public abstract class QtFileType implements FileType, INativeFileType {
   }
 
   @Override
-  public Icon getIcon() {
+  public Image getIcon() {
     return myIcon;
   }
 

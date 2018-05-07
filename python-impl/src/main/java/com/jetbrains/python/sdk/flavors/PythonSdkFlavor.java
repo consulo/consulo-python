@@ -49,6 +49,7 @@ import com.jetbrains.python.run.PythonProcessHandler;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkAdditionalData;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -294,7 +295,8 @@ public abstract class PythonSdkFlavor
 		return LanguageLevel.getDefault();
 	}
 
-	public Icon getIcon()
+	@Nonnull
+	public Image getIcon()
 	{
 		return PythonIcons.Python.Python;
 	}

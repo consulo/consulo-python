@@ -26,9 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
@@ -36,6 +35,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.text.CharSequenceReader;
+import consulo.ui.image.Image;
 import icons.PythonPsiApiIcons;
 
 /**
@@ -70,7 +70,7 @@ public class PythonFileType extends LanguageFileType {
   }
 
   @Nonnull
-  public Icon getIcon() {
+  public Image getIcon() {
     return PythonPsiApiIcons.PythonFile;
   }
 

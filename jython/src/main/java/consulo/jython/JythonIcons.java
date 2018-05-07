@@ -1,8 +1,7 @@
 package consulo.jython;
 
-import javax.swing.Icon;
-
 import com.intellij.openapi.util.IconLoader;
+import consulo.ui.image.Image;
 
 /**
  * @author VISTALL
@@ -10,5 +9,5 @@ import com.intellij.openapi.util.IconLoader;
  */
 public interface JythonIcons
 {
-	Icon Jython = IconLoader.findIcon("/icons/jython.png"); // 16x16
+	Image Jython = IconLoader.findIcon("/icons/jython.png"); // 16x16
 }

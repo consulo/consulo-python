@@ -19,7 +19,6 @@ package com.jetbrains.python.highlighting;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
 import org.jetbrains.annotations.NonNls;
 import com.google.common.collect.ImmutableMap;
@@ -80,10 +79,6 @@ public class PythonColorsPage implements ColorSettingsPage, InspectionColorSetti
   @Nonnull
   public String getDisplayName() {
     return "Python";
-  }
-
-  public Icon getIcon() {
-    return PythonFileType.INSTANCE.getIcon();
   }
 
   @Nonnull

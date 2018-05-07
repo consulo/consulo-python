@@ -16,18 +16,17 @@
 
 package icons;
 
-import javax.swing.Icon;
-
 import com.intellij.openapi.util.IconLoader;
+import consulo.ui.image.Image;
 
 /**
  * NOTE THIS FILE IS AUTO-GENERATED
  * DO NOT EDIT IT BY HAND, run build/scripts/icons.gant instead
  */
 public class PythonPsiApiIcons {
-  private static Icon load(String path) {
+  private static Image load(String path) {
     return IconLoader.getIcon(path, PythonPsiApiIcons.class);
   }
 
-  public static final Icon PythonFile = load("/icons/com/jetbrains/python/pythonFile.png"); // 16x16
+  public static final Image PythonFile = load("/icons/com/jetbrains/python/pythonFile.png"); // 16x16
 }

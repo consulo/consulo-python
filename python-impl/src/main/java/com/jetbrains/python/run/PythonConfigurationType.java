@@ -17,9 +17,7 @@
 package com.jetbrains.python.run;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
-import consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NonNls;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
@@ -27,6 +25,8 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import consulo.module.extension.ModuleExtensionHelper;
+import consulo.python.module.extension.PyModuleExtension;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -82,7 +82,7 @@ public class PythonConfigurationType implements ConfigurationType
 	}
 
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return PythonIcons.Python.Python;
 	}

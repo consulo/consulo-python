@@ -24,12 +24,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.WinPythonSdkFlavor;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -125,7 +125,7 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 	}
 
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return PythonIcons.Python.Dotnet;
 	}

@@ -19,10 +19,10 @@ package com.jetbrains.python.sdk.flavors;
 import java.io.File;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -57,7 +57,7 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
   }
 
   @Override
-  public Icon getIcon() {
+  public Image getIcon() {
     return PythonIcons.Python.Python; //TODO: maya icon
   }
 

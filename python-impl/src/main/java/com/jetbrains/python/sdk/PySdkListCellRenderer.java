@@ -20,21 +20,21 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.Icon;
-import javax.swing.JList;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.JList;
+
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.awt.TargetAWT;
+import consulo.ui.image.Image;
+import consulo.ui.image.ImageEffects;
 
 public class PySdkListCellRenderer extends ListCellRendererWrapper<Object>
 {
@@ -65,7 +65,7 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object>
 		{
 			Sdk sdk = (Sdk) item;
 			final PythonSdkFlavor flavor = PythonSdkFlavor.getPlatformIndependentFlavor(sdk.getHomePath());
-			final Icon icon = flavor != null ? flavor.getIcon() : ((SdkType) sdk.getSdkType()).getIcon();
+			final Image baseIcon = flavor != null ? flavor.getIcon() : ((SdkType) sdk.getSdkType()).getIcon();
 
 			String name;
 			if(mySdkModifiers != null && mySdkModifiers.containsKey(sdk))
@@ -95,31 +95,34 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object>
 				name = shortenName(name);
 			}
 
+			Image icon = null;
 			if(PythonSdkType.isInvalid(sdk))
 			{
 				setText("[invalid] " + name);
-				setIcon(wrapIconWithWarningDecorator(icon));
+				icon = wrapIconWithWarningDecorator(baseIcon);
 			}
 			else if(PythonSdkType.isIncompleteRemote(sdk))
 			{
 				setText("[incomplete] " + name);
-				setIcon(wrapIconWithWarningDecorator(icon));
+				icon = wrapIconWithWarningDecorator(baseIcon);
 			}
 			else if(PythonSdkType.hasInvalidRemoteCredentials(sdk))
 			{
 				setText("[invalid] " + name);
-				setIcon(wrapIconWithWarningDecorator(icon));
+				icon = wrapIconWithWarningDecorator(baseIcon);
 			}
 			else if(sdk instanceof PyDetectedSdk)
 			{
 				setText(name);
-				setIcon(IconLoader.getTransparentIcon(icon));
+				icon = ImageEffects.transparent(baseIcon);
 			}
 			else
 			{
 				setText(name);
-				setIcon(icon);
+				icon = baseIcon;
 			}
+
+			setIcon(TargetAWT.to(icon));
 		}
 		else if(SEPARATOR.equals(item))
 		{
@@ -159,12 +162,8 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object>
 		return name;
 	}
 
-	private static LayeredIcon wrapIconWithWarningDecorator(Icon icon)
+	private static Image wrapIconWithWarningDecorator(Image icon)
 	{
-		final LayeredIcon layered = new LayeredIcon(2);
-		layered.setIcon(icon, 0);
-		final Icon overlay = AllIcons.Actions.Cancel;
-		layered.setIcon(overlay, 1);
-		return layered;
+		return ImageEffects.folded(icon, AllIcons.Actions.Cancel);
 	}
 }

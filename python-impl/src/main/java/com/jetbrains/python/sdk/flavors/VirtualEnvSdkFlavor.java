@@ -21,9 +21,8 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
@@ -34,6 +33,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SystemProperties;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -258,7 +258,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor
 	}
 
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return PythonIcons.Python.Virtualenv;
 	}

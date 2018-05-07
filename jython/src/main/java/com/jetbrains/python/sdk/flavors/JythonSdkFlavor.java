@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -35,6 +34,7 @@ import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.run.JythonProcessHandler;
 import com.jetbrains.python.run.PythonCommandLineState;
 import consulo.jython.JythonIcons;
+import consulo.ui.image.Image;
 
 /**
  * @author yole
@@ -119,7 +119,7 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 	}
 
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return JythonIcons.Jython;
 	}

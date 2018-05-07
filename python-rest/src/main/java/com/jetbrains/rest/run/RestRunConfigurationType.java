@@ -17,7 +17,6 @@
 package com.jetbrains.rest.run;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
@@ -28,6 +27,7 @@ import com.jetbrains.rest.RestBundle;
 import com.jetbrains.rest.RestFileType;
 import com.jetbrains.rest.run.docutils.DocutilsRunConfiguration;
 import com.jetbrains.rest.run.sphinx.SphinxRunConfiguration;
+import consulo.ui.image.Image;
 
 /**
  * User : catherine
@@ -50,7 +50,7 @@ public class RestRunConfigurationType implements ConfigurationType {
     return RestBundle.message("runcfg.docutils.description");
   }
 
-  public Icon getIcon() {
+  public Image getIcon() {
     return RestFileType.INSTANCE.getIcon();
   }
 

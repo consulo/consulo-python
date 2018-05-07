@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.buildout.config;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import icons.PythonIcons;
-import org.jetbrains.annotations.NonNls;
 import javax.annotation.Nonnull;
-
 import javax.annotation.Nullable;
-import javax.swing.*;
+
+import org.jetbrains.annotations.NonNls;
+import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.ui.image.Image;
+import icons.PythonIcons;
 
 /**
  * @author traff
@@ -53,7 +53,7 @@ public class BuildoutCfgFileType extends LanguageFileType {
   }
 
   @Nullable
-  public Icon getIcon() {
+  public Image getIcon() {
     return PythonIcons.Python.Buildout.Buildout;
   }
 }

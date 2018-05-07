@@ -30,12 +30,11 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.apache.xmlrpc.XmlRpcException;
-
-import javax.annotation.Nullable;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.lookup.LookupManager;
@@ -132,6 +131,7 @@ import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.run.PythonRunParams;
 import com.jetbrains.python.run.PythonTracebackFilter;
 import com.jetbrains.python.sdk.PySdkUtil;
+import consulo.awt.TargetAWT;
 import icons.PythonIcons;
 
 /**
@@ -1164,7 +1164,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		final ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
 
 		final XDebugSession session = XDebuggerManager.getInstance(myProject).
-				startSessionAndShowTab("Python Console Debugger", PythonIcons.Python.Python, null, true, new XDebugProcessStarter()
+				startSessionAndShowTab("Python Console Debugger", TargetAWT.to(PythonIcons.Python.Python), null, true, new XDebugProcessStarter()
 				{
 					@Nonnull
 					public XDebugProcess start(@Nonnull final XDebugSession session)

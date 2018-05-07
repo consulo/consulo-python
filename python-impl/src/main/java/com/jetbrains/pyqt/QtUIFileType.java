@@ -32,9 +32,4 @@ public class QtUIFileType extends QtFileType implements FileType {
   protected String getToolName() {
     return "designer";
   }
-
-  @Override
-  public boolean useNativeIcon() {
-    return false;
-  }
 }

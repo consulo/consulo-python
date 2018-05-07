@@ -17,12 +17,12 @@ package com.jetbrains.python.sdk.flavors;
 
 import java.util.Collection;
 
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.remote.RemoteFile;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -86,7 +86,7 @@ public class PyRemoteSdkFlavor extends CPythonSdkFlavor
 	}
 
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return PythonIcons.Python.RemoteInterpreter;
 	}

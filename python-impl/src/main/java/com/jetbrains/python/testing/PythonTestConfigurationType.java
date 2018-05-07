@@ -32,6 +32,7 @@ import com.jetbrains.python.testing.pytest.PyTestRunConfiguration;
 import com.jetbrains.python.testing.unittest.PythonUnitTestRunConfiguration;
 import consulo.module.extension.ModuleExtensionHelper;
 import consulo.python.module.extension.PyModuleExtension;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -195,7 +196,7 @@ public class PythonTestConfigurationType implements ConfigurationType
 	}
 
 	@Override
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return PythonIcons.Python.PythonTests;
 	}

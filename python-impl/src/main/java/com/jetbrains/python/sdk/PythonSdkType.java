@@ -102,6 +102,7 @@ import com.jetbrains.python.remote.PyRemoteSdkAdditionalDataBase;
 import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.sdk.flavors.CPythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.ui.image.Image;
 import consulo.vfs.util.ArchiveVfsUtil;
 import icons.PythonIcons;
 
@@ -154,7 +155,7 @@ public final class PythonSdkType extends SdkType
 		super("Python SDK");
 	}
 
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		return PythonIcons.Python.Python;
 	}
