@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
-import javax.swing.Icon;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -32,7 +31,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.PlatformIcons;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.completion.PyClassInsertHandler;
 import com.jetbrains.python.codeInsight.completion.PyFunctionInsertHandler;
@@ -49,6 +47,7 @@ import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.Image;
 
 /**
  * @author yole
@@ -196,12 +195,7 @@ public class CompletionVariantsProcessor extends VariantsProcessor
 	@Override
 	protected void addImportedElement(String referencedName, PyElement expr)
 	{
-		Icon icon = IconDescriptorUpdaters.getIcon(expr, 0);
-		// things like PyTargetExpression cannot have a general icon, but here we only have variables
-		if(icon == null)
-		{
-			icon = PlatformIcons.VARIABLE_ICON;
-		}
+		Image icon = IconDescriptorUpdaters.getIcon(expr, 0);
 		LookupElementBuilder lookupItem = setupItem(LookupElementBuilder.createWithSmartPointer(referencedName, expr).withIcon(icon));
 		myVariants.put(referencedName, lookupItem);
 	}

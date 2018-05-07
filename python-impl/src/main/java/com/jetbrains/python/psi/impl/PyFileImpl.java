@@ -75,6 +75,7 @@ import com.jetbrains.python.psi.stubs.PyFileStub;
 import com.jetbrains.python.psi.types.PyModuleType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 
 public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression
@@ -950,7 +951,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression
 				{
 					return AllIcons.Modules.SourceRoot;
 				}
-				return IconDescriptorUpdaters.getIcon(PyFileImpl.this, 0);
+				return TargetAWT.to(IconDescriptorUpdaters.getIcon(PyFileImpl.this, 0));
 			}
 
 			@Nonnull

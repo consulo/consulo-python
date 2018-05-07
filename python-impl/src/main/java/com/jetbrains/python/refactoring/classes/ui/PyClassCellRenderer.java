@@ -25,6 +25,7 @@ import javax.swing.JList;
 
 import com.intellij.openapi.util.Iconable;
 import com.jetbrains.python.psi.PyClass;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 
 /**
@@ -63,7 +64,7 @@ public class PyClassCellRenderer extends DefaultListCellRenderer
 		{
 			flags |= Iconable.ICON_FLAG_READ_STATUS;
 		}
-		Icon icon = IconDescriptorUpdaters.getIcon(aClass, flags);
+		Icon icon = TargetAWT.to(IconDescriptorUpdaters.getIcon(aClass, flags));
 		if(icon != null)
 		{
 			setIcon(icon);

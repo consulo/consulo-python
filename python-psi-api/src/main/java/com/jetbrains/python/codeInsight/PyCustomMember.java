@@ -39,6 +39,7 @@ import com.jetbrains.python.psi.PyTypedElement;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 
 /**
@@ -194,7 +195,7 @@ public class PyCustomMember extends UserDataHolderBase
 	{
 		if(myTarget != null)
 		{
-			return IconDescriptorUpdaters.getIcon(myTarget, 0);
+			return TargetAWT.to(IconDescriptorUpdaters.getIcon(myTarget, 0));
 		}
 		return myIcon;
 	}

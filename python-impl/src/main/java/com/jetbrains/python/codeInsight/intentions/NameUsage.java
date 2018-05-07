@@ -22,6 +22,8 @@ import javax.swing.Icon;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.openapi.editor.Document;
@@ -76,7 +78,7 @@ class NameUsage implements PsiElementUsage {
     return new UsagePresentation() {
       @Nullable
       public Icon getIcon() {
-        return myElement.isValid() ? IconDescriptorUpdaters.getIcon(myElement, 0) : null;
+        return myElement.isValid() ? TargetAWT.to(IconDescriptorUpdaters.getIcon(myElement, 0)) : null;
       }
 
       @Nonnull

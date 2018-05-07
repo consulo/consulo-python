@@ -164,6 +164,6 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object>
 
 	private static Image wrapIconWithWarningDecorator(Image icon)
 	{
-		return ImageEffects.folded(icon, AllIcons.Actions.Cancel);
+		return ImageEffects.layered(icon, AllIcons.Actions.Cancel);
 	}
 }

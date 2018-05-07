@@ -28,6 +28,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.psi.PyParameterList;
 import consulo.codeInsight.completion.CompletionProvider;
+import consulo.ui.image.Image;
 
 /**
  * @author yole
@@ -54,7 +55,7 @@ public class PyParameterCompletionContributor extends CompletionContributor {
 	public void addCompletions(@Nonnull CompletionParameters parameters,
                                   ProcessingContext context,
                                   @Nonnull CompletionResultSet result) {
-      result.addElement(LookupElementBuilder.create(myName).withIcon(AllIcons.Nodes.Parameter));
+      result.addElement(LookupElementBuilder.create(myName).withIcon((Image) AllIcons.Nodes.Parameter));
     }
   }
 }

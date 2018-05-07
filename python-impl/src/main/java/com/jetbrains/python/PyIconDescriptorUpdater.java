@@ -17,19 +17,19 @@
 package com.jetbrains.python;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.PlatformIcons;
 import com.jetbrains.python.psi.Property;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdater;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -49,17 +49,17 @@ public class PyIconDescriptorUpdater implements IconDescriptorUpdater
 				final VirtualFile root = ProjectRootManager.getInstance(directory.getProject()).getFileIndex().getSourceRootForFile(vFile);
 				if(!Comparing.equal(root, vFile))
 				{
-					iconDescriptor.setMainIcon(PlatformIcons.PACKAGE_ICON);
+					iconDescriptor.setMainIcon(AllIcons.Nodes.Package);
 				}
 			}
 		}
 		else if(element instanceof PyClass)
 		{
-			iconDescriptor.setMainIcon(PlatformIcons.CLASS_ICON);
+			iconDescriptor.setMainIcon(AllIcons.Nodes.Class);
 		}
 		else if(element instanceof PyFunction)
 		{
-			Icon icon = null;
+			Image icon = null;
 			final Property property = ((PyFunction) element).getProperty();
 			if(property != null)
 			{
@@ -77,7 +77,7 @@ public class PyIconDescriptorUpdater implements IconDescriptorUpdater
 				}
 				else
 				{
-					icon = PlatformIcons.PROPERTY_ICON;
+					icon = AllIcons.Nodes.Property;
 				}
 			}
 			if(icon != null)
@@ -86,7 +86,7 @@ public class PyIconDescriptorUpdater implements IconDescriptorUpdater
 			}
 			else
 			{
-				iconDescriptor.setMainIcon(PlatformIcons.METHOD_ICON);
+				iconDescriptor.setMainIcon(AllIcons.Nodes.Method);
 			}
 		}
 	}

@@ -44,6 +44,7 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 import icons.PythonIcons;
 
@@ -329,7 +330,7 @@ public class PyStructureViewElement implements StructureViewTreeElement
 			@Override
 			public Icon getIcon(boolean open)
 			{
-				Icon normal_icon = IconDescriptorUpdaters.getIcon(myElement, 0);
+				Icon normal_icon = TargetAWT.to(IconDescriptorUpdaters.getIcon(myElement, 0));
 				if(myIcon != null)
 				{
 					normal_icon = myIcon; // override normal

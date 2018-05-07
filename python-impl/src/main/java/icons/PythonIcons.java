@@ -65,9 +65,9 @@ public class PythonIcons
 
 		}
 
-		public static final Icon PropertyDeleter = load("/icons/com/jetbrains/python/propertyDeleter.png"); // 16x16
-		public static final Icon PropertyGetter = load("/icons/com/jetbrains/python/propertyGetter.png"); // 16x16
-		public static final Icon PropertySetter = load("/icons/com/jetbrains/python/propertySetter.png"); // 16x16
+		public static final Image PropertyDeleter = load("/icons/com/jetbrains/python/propertyDeleter.png"); // 16x16
+		public static final Image PropertyGetter = load("/icons/com/jetbrains/python/propertyGetter.png"); // 16x16
+		public static final Image PropertySetter = load("/icons/com/jetbrains/python/propertySetter.png"); // 16x16
 		public static final Image Pypy = load("/icons/com/jetbrains/python/pypy.png"); // 16x16
 		public static final Image Python = load("/icons/com/jetbrains/python/python.png"); // 16x16
 		public static final Icon Python_24 = load("/icons/com/jetbrains/python/python_24.png"); // 24x24

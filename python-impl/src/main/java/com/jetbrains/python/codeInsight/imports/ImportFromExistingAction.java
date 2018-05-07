@@ -53,6 +53,7 @@ import com.jetbrains.python.psi.PyFromImportStatement;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 
 /**
@@ -305,7 +306,7 @@ public class ImportFromExistingAction implements QuestionAction
 			clear();
 
 			ImportCandidateHolder item = (ImportCandidateHolder) value;
-			setIcon(IconDescriptorUpdaters.getIcon(item.getImportable(), 0));
+			setIcon(TargetAWT.to(IconDescriptorUpdaters.getIcon(item.getImportable(), 0)));
 			String item_name = item.getPresentableText(myName);
 			append(item_name, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 

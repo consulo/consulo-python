@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 
 /**
@@ -67,7 +68,7 @@ public class PyElementPresentation implements ColoredItemPresentation
 	@Override
 	public Icon getIcon(boolean unused)
 	{
-		return IconDescriptorUpdaters.getIcon(myElement, 0);
+		return TargetAWT.to(IconDescriptorUpdaters.getIcon(myElement, 0));
 	}
 
 	public static String getPackageForFile(@Nonnull PsiFile containingFile)

@@ -24,9 +24,8 @@ import static com.jetbrains.python.psi.impl.PyCallExpressionHelper.interpretAsMo
 import java.util.*;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
@@ -50,7 +49,6 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.JBIterable;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyNames;
@@ -67,6 +65,7 @@ import com.jetbrains.python.psi.stubs.PyFunctionStub;
 import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
 import com.jetbrains.python.psi.types.*;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -136,7 +135,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
 		return this;
 	}
 
-	public Icon getIcon(int flags)
+	public Image getIcon(int flags)
 	{
 		PyPsiUtils.assertValid(this);
 		final Property property = getProperty();
@@ -154,11 +153,11 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
 			{
 				return PythonIcons.Python.PropertyDeleter;
 			}
-			return PlatformIcons.PROPERTY_ICON;
+			return AllIcons.Nodes.Property;
 		}
 		if(getContainingClass() != null)
 		{
-			return PlatformIcons.METHOD_ICON;
+			return AllIcons.Nodes.Method;
 		}
 		return AllIcons.Nodes.Function;
 	}
