@@ -16,6 +16,21 @@
 
 package com.jetbrains.python.debugger;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+
+import javax.annotation.Nonnull;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.EmptyBorder;
+
 import com.google.common.collect.Maps;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.AbstractTreeClassChooserDialog;
@@ -32,15 +47,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyUtil;
-import javax.annotation.Nonnull;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
+import consulo.ui.image.Image;
 
 
 public class PyExceptionBreakpointType
@@ -54,13 +61,13 @@ public class PyExceptionBreakpointType
 
   @Nonnull
   @Override
-  public Icon getEnabledIcon() {
+  public Image getEnabledIcon() {
     return AllIcons.Debugger.Db_exception_breakpoint;
   }
 
   @Nonnull
   @Override
-  public Icon getDisabledIcon() {
+  public Image getDisabledIcon() {
     return AllIcons.Debugger.Db_disabled_exception_breakpoint;
   }
 
