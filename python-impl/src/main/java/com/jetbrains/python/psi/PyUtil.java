@@ -54,7 +54,6 @@ import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.ASTFactory;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.impl.ApplicationImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -1090,8 +1089,6 @@ public class PyUtil
 	 * This method is allowed to be called from any thread, but in general you should not set {@code modal=true} if you're calling it
 	 * from the write action, because in this case {@code function} will be executed right in the current thread (presumably EDT)
 	 * without any progress whatsoever to avoid possible deadlock.
-	 *
-	 * @see ApplicationImpl#runProcessWithProgressSynchronously(Runnable, String, boolean, Project, JComponent, String)
 	 */
 	public static void runWithProgress(@Nullable Project project,
 			@Nls(capitalization = Nls.Capitalization.Title) @Nonnull String title,
