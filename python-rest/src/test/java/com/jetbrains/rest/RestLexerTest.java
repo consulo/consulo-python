@@ -127,7 +127,7 @@ public class RestLexerTest extends TestCase {
   private static void doTest(String text, String... expected) throws IOException {
     _RestFlexLexer lexer = createLexer(text);
     for (String expectedTokenText : expected) {
-      IElementType type = lexer.advance();
+      IElementType type = lexer.advanceImpl();
       if (type == null) {
         fail("Not enough tokens");
       }
@@ -137,7 +137,7 @@ public class RestLexerTest extends TestCase {
   }
 
   public static _RestFlexLexer createLexer(String text) {
-    _RestFlexLexer lexer = new _RestFlexLexer((Reader)null);
+    _RestFlexLexer lexer = new _RestFlexLexer();
     lexer.reset(text, 0, text.length(), _RestFlexLexer.YYINITIAL);
     return lexer;
   }
