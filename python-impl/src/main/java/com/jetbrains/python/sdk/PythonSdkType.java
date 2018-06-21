@@ -772,39 +772,39 @@ public final class PythonSdkType extends SdkType
 		return null;
 	}
 
-	@Nullable
-	@Override
-	public String getVersionString(@Nonnull Sdk sdk)
-	{
-		if(isRemote(sdk))
-		{
-			final PyRemoteSdkAdditionalDataBase data = (PyRemoteSdkAdditionalDataBase) sdk.getSdkAdditionalData();
-			assert data != null;
-			String versionString = data.getVersionString();
-			if(StringUtil.isEmpty(versionString))
-			{
-				final PythonRemoteInterpreterManager remoteInterpreterManager = PythonRemoteInterpreterManager.getInstance();
-				if(remoteInterpreterManager != null)
-				{
-					try
-					{
-						versionString = remoteInterpreterManager.getInterpreterVersion(null, data);
-					}
-					catch(Exception e)
-					{
-						LOG.warn("Couldn't get interpreter version:" + e.getMessage(), e);
-						versionString = "undefined";
-					}
-				}
-				data.setVersionString(versionString);
-			}
-			return versionString;
-		}
-		else
-		{
-			return getVersionString(sdk.getHomePath());
-		}
-	}
+//	@Nullable
+//	@Override
+//	public String getVersionString(@Nonnull Sdk sdk)
+//	{
+//		if(isRemote(sdk))
+//		{
+//			final PyRemoteSdkAdditionalDataBase data = (PyRemoteSdkAdditionalDataBase) sdk.getSdkAdditionalData();
+//			assert data != null;
+//			String versionString = data.getVersionString();
+//			if(StringUtil.isEmpty(versionString))
+//			{
+//				final PythonRemoteInterpreterManager remoteInterpreterManager = PythonRemoteInterpreterManager.getInstance();
+//				if(remoteInterpreterManager != null)
+//				{
+//					try
+//					{
+//						versionString = remoteInterpreterManager.getInterpreterVersion(null, data);
+//					}
+//					catch(Exception e)
+//					{
+//						LOG.warn("Couldn't get interpreter version:" + e.getMessage(), e);
+//						versionString = "undefined";
+//					}
+//				}
+//				data.setVersionString(versionString);
+//			}
+//			return versionString;
+//		}
+//		else
+//		{
+//			return getVersionString(sdk.getHomePath());
+//		}
+//	}
 
 	@Nullable
 	public String getVersionString(final String sdkHome)
