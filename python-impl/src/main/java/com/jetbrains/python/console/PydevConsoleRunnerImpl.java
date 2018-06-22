@@ -131,7 +131,6 @@ import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.run.PythonRunParams;
 import com.jetbrains.python.run.PythonTracebackFilter;
 import com.jetbrains.python.sdk.PySdkUtil;
-import consulo.awt.TargetAWT;
 import icons.PythonIcons;
 
 /**
@@ -140,8 +139,7 @@ import icons.PythonIcons;
 public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 {
 	public static final String WORKING_DIR_ENV = "WORKING_DIR_AND_PYTHON_PATHS";
-	public static final String CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))\n" +
-			"sys.path.extend([" + WORKING_DIR_ENV + "])\n";
+	public static final String CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))\n" + "sys.path.extend([" + WORKING_DIR_ENV + "])\n";
 	private static final Logger LOG = Logger.getInstance(PydevConsoleRunnerImpl.class.getName());
 	@SuppressWarnings("SpellCheckingInspection")
 	public static final String PYDEV_PYDEVCONSOLE_PY = "pydev/pydevconsole.py";
@@ -245,7 +243,8 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 		PythonConsoleToolWindow toolWindow = PythonConsoleToolWindow.getInstance(myProject);
 		if(toolWindow != null)
 		{
-			toolWindow.getToolWindow().activate(() -> {
+			toolWindow.getToolWindow().activate(() ->
+			{
 			}, true);
 		}
 		else
@@ -610,7 +609,8 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	{
 		// Create Server process
 		final Process process = createProcess();
-		UIUtil.invokeLaterIfNeeded(() -> {
+		UIUtil.invokeLaterIfNeeded(() ->
+		{
 			// Init console view
 			myConsoleView = createConsoleView();
 			if(myConsoleView != null)
@@ -695,7 +695,8 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	{
 		if(handshake())
 		{
-			ApplicationManager.getApplication().invokeLater(() -> {
+			ApplicationManager.getApplication().invokeLater(() ->
+			{
 				// Propagate console communication to language console
 				final PythonConsoleView consoleView = myConsoleView;
 
@@ -1163,53 +1164,52 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	{
 		final ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
 
-		final XDebugSession session = XDebuggerManager.getInstance(myProject).
-				startSessionAndShowTab("Python Console Debugger", TargetAWT.to(PythonIcons.Python.Python), null, true, new XDebugProcessStarter()
+		final XDebugSession session = XDebuggerManager.getInstance(myProject).startSessionAndShowTab("Python Console Debugger", PythonIcons.Python.Python, null, true, new XDebugProcessStarter()
+		{
+			@Nonnull
+			public XDebugProcess start(@Nonnull final XDebugSession session)
+			{
+				PythonDebugLanguageConsoleView debugConsoleView = new PythonDebugLanguageConsoleView(myProject, mySdk);
+
+				PyConsoleDebugProcessHandler consoleDebugProcessHandler = new PyConsoleDebugProcessHandler(myProcessHandler);
+
+				PyConsoleDebugProcess consoleDebugProcess = new PyConsoleDebugProcess(session, serverSocket, debugConsoleView, consoleDebugProcessHandler);
+
+				PythonDebugConsoleCommunication communication = PyDebugRunner.initDebugConsoleView(myProject, consoleDebugProcess, debugConsoleView, consoleDebugProcessHandler, session);
+
+				communication.addCommunicationListener(new ConsoleCommunicationListener()
 				{
-					@Nonnull
-					public XDebugProcess start(@Nonnull final XDebugSession session)
+					@Override
+					public void commandExecuted(boolean more)
 					{
-						PythonDebugLanguageConsoleView debugConsoleView = new PythonDebugLanguageConsoleView(myProject, mySdk);
+						session.rebuildViews();
+					}
 
-						PyConsoleDebugProcessHandler consoleDebugProcessHandler = new PyConsoleDebugProcessHandler(myProcessHandler);
-
-						PyConsoleDebugProcess consoleDebugProcess = new PyConsoleDebugProcess(session, serverSocket, debugConsoleView, consoleDebugProcessHandler);
-
-						PythonDebugConsoleCommunication communication = PyDebugRunner.initDebugConsoleView(myProject, consoleDebugProcess, debugConsoleView, consoleDebugProcessHandler, session);
-
-						communication.addCommunicationListener(new ConsoleCommunicationListener()
-						{
-							@Override
-							public void commandExecuted(boolean more)
-							{
-								session.rebuildViews();
-							}
-
-							@Override
-							public void inputRequested()
-							{
-							}
-						});
-
-						myPydevConsoleCommunication.setDebugCommunication(communication);
-						debugConsoleView.attachToProcess(consoleDebugProcessHandler);
-
-						consoleDebugProcess.waitForNextConnection();
-
-						try
-						{
-							consoleDebugProcess.connect(myPydevConsoleCommunication);
-						}
-						catch(Exception e)
-						{
-							LOG.error(e); //TODO
-						}
-
-						myProcessHandler.notifyTextAvailable("\nDebugger connected.\n", ProcessOutputTypes.STDERR);
-
-						return consoleDebugProcess;
+					@Override
+					public void inputRequested()
+					{
 					}
 				});
+
+				myPydevConsoleCommunication.setDebugCommunication(communication);
+				debugConsoleView.attachToProcess(consoleDebugProcessHandler);
+
+				consoleDebugProcess.waitForNextConnection();
+
+				try
+				{
+					consoleDebugProcess.connect(myPydevConsoleCommunication);
+				}
+				catch(Exception e)
+				{
+					LOG.error(e); //TODO
+				}
+
+				myProcessHandler.notifyTextAvailable("\nDebugger connected.\n", ProcessOutputTypes.STDERR);
+
+				return consoleDebugProcess;
+			}
+		});
 
 		return session;
 	}
