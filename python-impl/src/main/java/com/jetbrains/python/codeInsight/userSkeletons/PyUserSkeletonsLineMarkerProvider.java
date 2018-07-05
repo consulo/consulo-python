@@ -19,10 +19,9 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.Icon;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -40,9 +39,6 @@ import com.jetbrains.python.psi.PyTargetExpression;
  */
 public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider
 {
-	// TODO: Create an icon for a related user skeleton
-	public static final Icon ICON = AllIcons.Gutter.Unique;
-
 	@Nullable
 	@Override
 	public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element)
@@ -58,7 +54,7 @@ public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider
 			final PyElement skeleton = getUserSkeleton(element);
 			if(skeleton != null)
 			{
-				result.add(new LineMarkerInfo<PsiElement>(element, element.getTextRange(), ICON, Pass.LINE_MARKERS, e -> "Has user skeleton", new GutterIconNavigationHandler<PsiElement>()
+				result.add(new LineMarkerInfo<PsiElement>(element, element.getTextRange(), AllIcons.Gutter.Unique, Pass.LINE_MARKERS, e -> "Has user skeleton", new GutterIconNavigationHandler<PsiElement>()
 				{
 					@Override
 					public void navigate(MouseEvent e, PsiElement elt)
