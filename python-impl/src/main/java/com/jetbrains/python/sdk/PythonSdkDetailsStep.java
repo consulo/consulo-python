@@ -36,6 +36,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
+import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.projectRoots.impl.SdkImpl;
@@ -321,7 +322,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 		final String sdkName = customSdkSuggestedName == null ? SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkPath, sdks) : SdkConfigurationUtil.createUniqueSdkName(customSdkSuggestedName,
 				sdks);
 
-		SdkImpl sdk = new SdkImpl(sdkName, sdkType);
+		SdkImpl sdk = new SdkImpl(SdkTable.getInstance(), sdkName, sdkType);
 
 		if(additionalData != null)
 		{
