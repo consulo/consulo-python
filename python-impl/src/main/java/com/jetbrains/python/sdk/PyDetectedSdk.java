@@ -15,13 +15,14 @@
  */
 package com.jetbrains.python.sdk;
 
+import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.projectRoots.impl.SdkImpl;
 
 public class PyDetectedSdk extends SdkImpl
 {
 	public PyDetectedSdk(String name)
 	{
-		super(name, PythonSdkType.getInstance());
+		super(SdkTable.getInstance(), name, PythonSdkType.getInstance());
 		setHomePath(name);
 	}
 
