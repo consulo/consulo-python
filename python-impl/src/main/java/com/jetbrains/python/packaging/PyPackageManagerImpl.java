@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunCanceledByUserException;
@@ -47,7 +48,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.SdkImpl;
+import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
@@ -407,8 +409,11 @@ public class PyPackageManagerImpl extends PyPackageManager
 			final VirtualFile binaryFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
 			if(binaryFile != null)
 			{
-				final SdkImpl tmpSdk = new SdkImpl("", PythonSdkType.getInstance());
-				tmpSdk.setHomePath(path);
+				final Sdk tmpSdk = SdkTable.getInstance().createSdk("", PythonSdkType.getInstance());
+				SdkModificator modificator = tmpSdk.getSdkModificator();
+				modificator.setHomePath(path);
+				modificator.commitChanges();
+
 				final PyPackageManager manager = PyPackageManager.getInstance(tmpSdk);
 				manager.installManagement();
 			}

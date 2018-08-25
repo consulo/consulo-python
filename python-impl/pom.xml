@@ -81,6 +81,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>com.intellij.regexp</artifactId>
 			<version>${project.version}</version>
