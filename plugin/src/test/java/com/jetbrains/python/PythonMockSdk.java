@@ -41,7 +41,7 @@ public class PythonMockSdk {
     SdkType sdkType = PythonSdkType.getInstance();
 
 
-    final Sdk sdk = new SdkImpl(MOCK_SDK_NAME + " " + version, sdkType) {
+    final Sdk sdk = new SdkImpl(SdkTable.getInstance(), MOCK_SDK_NAME + " " + version, sdkType) {
       @Override
       public String getVersionString() {
         return "Python " + version + " Mock SDK";
