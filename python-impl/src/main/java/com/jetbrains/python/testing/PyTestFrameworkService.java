@@ -28,7 +28,6 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 @State(name = "PyTestFrameworkService", storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/other.xml"))
 public class PyTestFrameworkService implements PersistentStateComponent<PyTestFrameworkService>
 {
-
 	public static PyTestFrameworkService getInstance()
 	{
 		return ServiceManager.getService(PyTestFrameworkService.class);

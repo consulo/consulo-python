@@ -506,6 +506,7 @@
 
 		<applicationService serviceInterface="com.jetbrains.python.codeInsight.PyCodeInsightSettings"
 							serviceImplementation="com.jetbrains.python.codeInsight.PyCodeInsightSettings"/>
+		<applicationService serviceImplementation="com.jetbrains.python.testing.PyTestFrameworkService" />
 		<applicationConfigurable id="editor.preferences.import.python"
 								 parentId="editor.preferences.import"
 								 displayName="Python"
