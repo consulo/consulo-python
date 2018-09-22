@@ -16,14 +16,6 @@
 
 package com.jetbrains.python.formatter;
 
-import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.BLANK_LINES;
-import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.SPACES_AROUND_OPERATORS;
-import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES;
-import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.SPACES_OTHER;
-import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.SPACES_WITHIN;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
@@ -32,6 +24,10 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import com.jetbrains.python.PythonLanguage;
+
+import javax.annotation.Nonnull;
+
+import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable.*;
 
 /**
  * @author yole
@@ -122,12 +118,6 @@ public class PyLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
 		indentOptions.INDENT_SIZE = 4;
 		defaultSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = true;
 		return defaultSettings;
-	}
-
-	@Override
-	public boolean isIndentBasedLanguageSemantics()
-	{
-		return true;
 	}
 
 	@SuppressWarnings("FieldCanBeLocal")
