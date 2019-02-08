@@ -24,12 +24,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -41,7 +41,6 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.ui.ListEditForm;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.util.Pair;
@@ -53,7 +52,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.CheckBox;
 import com.jetbrains.python.PyNames;
@@ -82,9 +80,7 @@ public class PyPep8NamingInspection extends PyInspection
 	private static final Pattern MIXEDCASE_REGEX = Pattern.compile("_?_?[\\p{javaUpperCase}][\\p{javaLowerCase}\\p{javaUpperCase}0-9]*");
 	private static final String INSPECTION_SHORT_NAME = "PyPep8NamingInspection";
 	// See error codes of the tool "pep8-naming"
-	private static final Map<String, String> ERROR_CODES_DESCRIPTION = ImmutableMap.<String, String>builder().put("N801", "Class names should use CamelCase convention").put("N802", "Function name " +
-			"should be lowercase").put("N803", "Argument name should be lowercase").put("N806", "Variable in function should be lowercase").put("N811", "Constant variable imported as non constant")
-			.put("N812", "Lowercase variable imported as non lowercase").put("N813", "CamelCase variable imported as lowercase").put("N814", "CamelCase variable imported as constant").build();
+	private static final Map<String, String> ERROR_CODES_DESCRIPTION = ImmutableMap.<String, String>builder().put("N801", "Class names should use CamelCase convention").put("N802", "Function name " + "should be lowercase").put("N803", "Argument name should be lowercase").put("N806", "Variable in function should be lowercase").put("N811", "Constant variable imported as non constant").put("N812", "Lowercase variable imported as non lowercase").put("N813", "CamelCase variable imported as lowercase").put("N814", "CamelCase variable imported as constant").build();
 
 	public final List<String> ignoredErrors = new ArrayList<>();
 
@@ -371,15 +367,7 @@ public class PyPep8NamingInspection extends PyInspection
 					addIfNotNull(inspection.ignoredBaseClasses, (String) list.getSelectedValue());
 				});
 			};
-			DataManager.getInstance().getDataContextFromFocus().doWhenDone(new Consumer<DataContext>()
-			{
-				@Override
-				public void consume(DataContext dataContext)
-				{
-					new PopupChooserBuilder(list).setTitle("Ignore base class").setItemChoosenCallback(updateBlackList).setFilteringEnabled(o -> (String) o).createPopup().showInBestPositionFor
-							(dataContext);
-				}
-			});
+			DataManager.getInstance().getDataContextFromFocus().doWhenDone(dataContext -> new PopupChooserBuilder(list).setTitle("Ignore base class").setItemChoosenCallback(updateBlackList).setFilteringEnabled(o -> (String) o).createPopup().showInBestPositionFor(dataContext));
 		}
 
 		public List<String> getBaseClassNames()

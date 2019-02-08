@@ -26,7 +26,6 @@ import javax.swing.ListCellRenderer;
 import com.intellij.codeInsight.hint.QuestionAction;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -45,7 +44,6 @@ import com.intellij.psi.util.QualifiedName;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.Consumer;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
@@ -149,15 +147,7 @@ public class ImportFromExistingAction implements QuestionAction
 			}
 		};
 
-		DataManager.getInstance().getDataContextFromFocus().doWhenDone(new Consumer<DataContext>()
-		{
-			@Override
-			public void consume(DataContext dataContext)
-			{
-				new PopupChooserBuilder(list).setTitle(myUseQualifiedImport ? PyBundle.message("ACT.qualify.with.module") : PyBundle.message("ACT.from.some.module.import")).setItemChoosenCallback
-						(runnable).setFilteringEnabled(o -> ((ImportCandidateHolder) o).getPresentableText(myName)).createPopup().showInBestPositionFor(dataContext);
-			}
-		});
+		DataManager.getInstance().getDataContextFromFocus().doWhenDone(dataContext -> new PopupChooserBuilder(list).setTitle(myUseQualifiedImport ? PyBundle.message("ACT.qualify.with.module") : PyBundle.message("ACT.from.some.module.import")).setItemChoosenCallback(runnable).setFilteringEnabled(o -> ((ImportCandidateHolder) o).getPresentableText(myName)).createPopup().showInBestPositionFor(dataContext));
 	}
 
 	private void doIt(final ImportCandidateHolder item)
@@ -279,9 +269,7 @@ public class ImportFromExistingAction implements QuestionAction
 			return true;
 		}
 		ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(directory.getProject());
-		return Comparing.equal(fileIndex.getClassRootForFile(vFile), vFile) ||
-				Comparing.equal(fileIndex.getContentRootForFile(vFile), vFile) ||
-				Comparing.equal(fileIndex.getSourceRootForFile(vFile), vFile);
+		return Comparing.equal(fileIndex.getClassRootForFile(vFile), vFile) || Comparing.equal(fileIndex.getContentRootForFile(vFile), vFile) || Comparing.equal(fileIndex.getSourceRootForFile(vFile), vFile);
 	}
 
 	// Stolen from FQNameCellRenderer
