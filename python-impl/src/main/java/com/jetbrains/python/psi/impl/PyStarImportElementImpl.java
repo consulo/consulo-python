@@ -19,9 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -44,6 +43,7 @@ import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PyStarImportElementStub;
 import com.jetbrains.python.psi.types.PyModuleType;
 import com.jetbrains.python.toolbox.ChainIterable;
+import consulo.ui.image.Image;
 
 /**
  * @author dcheryasov
@@ -171,7 +171,7 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 				return "| " + "from " + getName() + " import *";
 			}
 
-			public Icon getIcon(final boolean open)
+			public Image getIcon()
 			{
 				return null;
 			}

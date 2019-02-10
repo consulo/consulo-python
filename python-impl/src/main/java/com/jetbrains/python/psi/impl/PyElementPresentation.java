@@ -16,9 +16,8 @@
 package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,8 +25,8 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
-import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.Image;
 
 /**
  * @author vlan
@@ -66,9 +65,9 @@ public class PyElementPresentation implements ColoredItemPresentation
 
 	@Nullable
 	@Override
-	public Icon getIcon(boolean unused)
+	public Image getIcon()
 	{
-		return TargetAWT.to(IconDescriptorUpdaters.getIcon(myElement, 0));
+		return IconDescriptorUpdaters.getIcon(myElement, 0);
 	}
 
 	public static String getPackageForFile(@Nonnull PsiFile containingFile)

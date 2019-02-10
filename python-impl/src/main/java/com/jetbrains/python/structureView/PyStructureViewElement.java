@@ -24,9 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
@@ -34,7 +33,6 @@ import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.LayeredIcon;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
@@ -44,8 +42,9 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import consulo.awt.TargetAWT;
+import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 /**
@@ -67,7 +66,7 @@ public class PyStructureViewElement implements StructureViewTreeElement
 
 	private PyElement myElement;
 	private Visibility myVisibility;
-	private Icon myIcon;
+	private Image myIcon;
 	private boolean myInherited;
 	private boolean myField;
 
@@ -123,7 +122,7 @@ public class PyStructureViewElement implements StructureViewTreeElement
 		return myElement.canNavigateToSource();
 	}
 
-	public void setIcon(Icon icon)
+	public void setIcon(Image icon)
 	{
 		myIcon = icon;
 	}
@@ -328,9 +327,9 @@ public class PyStructureViewElement implements StructureViewTreeElement
 
 			@Nullable
 			@Override
-			public Icon getIcon(boolean open)
+			public Image getIcon()
 			{
-				Icon normal_icon = TargetAWT.to(IconDescriptorUpdaters.getIcon(myElement, 0));
+				Image normal_icon = IconDescriptorUpdaters.getIcon(myElement, 0);
 				if(myIcon != null)
 				{
 					normal_icon = myIcon; // override normal
@@ -341,9 +340,9 @@ public class PyStructureViewElement implements StructureViewTreeElement
 				}
 				else
 				{
-					LayeredIcon icon = new LayeredIcon(2);
-					icon.setIcon(normal_icon, 0);
-					Icon overlay = null;
+					IconDescriptor iconDescriptor = new IconDescriptor(normal_icon);
+
+					Image overlay = null;
 					if(myVisibility == Visibility.PRIVATE || myVisibility == Visibility.PROTECTED)
 					{
 						overlay = PythonIcons.Python.Nodes.Lock;
@@ -358,9 +357,9 @@ public class PyStructureViewElement implements StructureViewTreeElement
 					}
 					if(overlay != null)
 					{
-						icon.setIcon(overlay, 1);
+						iconDescriptor.addLayerIcon(overlay);
 					}
-					return icon;
+					return iconDescriptor.toIcon();
 				}
 			}
 		};

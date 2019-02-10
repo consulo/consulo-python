@@ -19,9 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.Comparing;
@@ -46,6 +45,7 @@ import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.resolve.ResolveImportUtil;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
+import consulo.ui.image.Image;
 
 /**
  * The "import foo" or "import foo as bar" parts.
@@ -219,7 +219,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 				return buf.toString();
 			}
 
-			public Icon getIcon(final boolean open)
+			public Image getIcon()
 			{
 				return null;
 			}

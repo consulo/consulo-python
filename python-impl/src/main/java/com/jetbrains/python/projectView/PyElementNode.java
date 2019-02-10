@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import consulo.awt.TargetAWT;
-import consulo.ide.IconDescriptorUpdaters;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.BasePsiNode;
@@ -31,6 +29,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.ide.IconDescriptorUpdaters;
 
 /**
  * @author yole
@@ -67,7 +66,7 @@ public class PyElementNode extends BasePsiNode<PyElement> {
       presentableText.append(((PyFunction) value).getParameterList().getPresentableText(false));
     }
     data.setPresentableText(presentableText.toString());
-    data.setIcon(TargetAWT.to(IconDescriptorUpdaters.getIcon(value, 0)));
+    data.setIcon(IconDescriptorUpdaters.getIcon(value, 0));
   }
 
   @Override

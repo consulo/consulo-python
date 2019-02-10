@@ -16,11 +16,8 @@
 
 package icons;
 
-import javax.swing.Icon;
-
 import com.intellij.openapi.util.IconLoader;
 import consulo.ui.image.Image;
-import consulo.ui.migration.SwingImageRef;
 
 /**
  * NOTE THIS FILE IS AUTO-GENERATED
@@ -28,7 +25,7 @@ import consulo.ui.migration.SwingImageRef;
  */
 public class PythonIcons
 {
-	private static SwingImageRef load(String path)
+	private static Image load(String path)
 	{
 		return IconLoader.getIcon(path, PythonIcons.class);
 	}
@@ -50,18 +47,18 @@ public class PythonIcons
 
 		public static class Debug
 		{
-			public static final Icon CommandLine = load("/icons/com/jetbrains/python/debug/commandLine.png"); // 16x16
-			public static final Icon SpecialVar = load("/icons/com/jetbrains/python/debug/specialVar.png"); // 16x16
-			public static final Icon StepIntoMyCode = load("/icons/com/jetbrains/python/debug/StepIntoMyCode.png"); // 16x16
+			public static final Image CommandLine = load("/icons/com/jetbrains/python/debug/commandLine.png"); // 16x16
+			public static final Image SpecialVar = load("/icons/com/jetbrains/python/debug/specialVar.png"); // 16x16
+			public static final Image StepIntoMyCode = load("/icons/com/jetbrains/python/debug/StepIntoMyCode.png"); // 16x16
 		}
 
 		public static final Image Dotnet = load("/icons/com/jetbrains/python/dotnet.png"); // 16x16
 
 		public static class Nodes
 		{
-			public static final Icon Cyan_dot = load("/icons/com/jetbrains/python/nodes/cyan-dot.png"); // 16x16
-			public static final Icon Lock = load("/icons/com/jetbrains/python/nodes/lock.png"); // 16x16
-			public static final Icon Red_inv_triangle = load("/icons/com/jetbrains/python/nodes/red-inv-triangle.png"); // 16x16
+			public static final Image Cyan_dot = load("/icons/com/jetbrains/python/nodes/cyan-dot.png"); // 16x16
+			public static final Image Lock = load("/icons/com/jetbrains/python/nodes/lock.png"); // 16x16
+			public static final Image Red_inv_triangle = load("/icons/com/jetbrains/python/nodes/red-inv-triangle.png"); // 16x16
 
 		}
 
@@ -70,9 +67,9 @@ public class PythonIcons
 		public static final Image PropertySetter = load("/icons/com/jetbrains/python/propertySetter.png"); // 16x16
 		public static final Image Pypy = load("/icons/com/jetbrains/python/pypy.png"); // 16x16
 		public static final Image Python = load("/icons/com/jetbrains/python/python.png"); // 16x16
-		public static final Icon Python_24 = load("/icons/com/jetbrains/python/python_24.png"); // 24x24
-		public static final Icon PythonConsole = load("/icons/com/jetbrains/python/pythonConsole.png"); // 16x16
-		public static final Icon PythonClosed = load("/icons/com/jetbrains/python/pythonClosed.png"); // 16x16
+		public static final Image Python_24 = load("/icons/com/jetbrains/python/python_24.png"); // 24x24
+		public static final Image PythonConsole = load("/icons/com/jetbrains/python/pythonConsole.png"); // 16x16
+		public static final Image PythonClosed = load("/icons/com/jetbrains/python/pythonClosed.png"); // 16x16
 		public static final Image PythonTests = load("/icons/com/jetbrains/python/pythonTests.png"); // 16x16
 		public static final Image RemoteInterpreter = load("/icons/com/jetbrains/python/RemoteInterpreter.png"); // 16x16
 		public static final Image Virtualenv = load("/icons/com/jetbrains/python/virtualenv.png"); // 16x16

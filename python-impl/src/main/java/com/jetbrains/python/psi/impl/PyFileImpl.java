@@ -25,9 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.extapi.psi.PsiFileBase;
@@ -75,8 +74,8 @@ import com.jetbrains.python.psi.stubs.PyFileStub;
 import com.jetbrains.python.psi.types.PyModuleType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.Image;
 
 public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression
 {
@@ -945,13 +944,13 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression
 			}
 
 			@Override
-			public Icon getIcon(final boolean open)
+			public Image getIcon()
 			{
 				if(PyUtil.isPackage(PyFileImpl.this))
 				{
 					return AllIcons.Modules.SourceRoot;
 				}
-				return TargetAWT.to(IconDescriptorUpdaters.getIcon(PyFileImpl.this, 0));
+				return IconDescriptorUpdaters.getIcon(PyFileImpl.this, 0);
 			}
 
 			@Nonnull

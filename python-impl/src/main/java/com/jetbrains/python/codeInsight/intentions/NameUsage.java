@@ -18,13 +18,9 @@ package com.jetbrains.python.codeInsight.intentions;
 
 import java.awt.Font;
 
-import javax.swing.Icon;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import consulo.awt.TargetAWT;
-import consulo.ide.IconDescriptorUpdaters;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -35,6 +31,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.usages.TextChunk;
 import com.intellij.usages.UsagePresentation;
 import com.intellij.usages.rules.PsiElementUsage;
+import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.Image;
 
 /**
  * Simplistic usage object for demonstration of name clashes, etc.
@@ -77,8 +75,8 @@ class NameUsage implements PsiElementUsage {
   public UsagePresentation getPresentation() {
     return new UsagePresentation() {
       @Nullable
-      public Icon getIcon() {
-        return myElement.isValid() ? TargetAWT.to(IconDescriptorUpdaters.getIcon(myElement, 0)) : null;
+      public Image getIcon() {
+        return myElement.isValid() ? IconDescriptorUpdaters.getIcon(myElement, 0) : null;
       }
 
       @Nonnull

@@ -47,6 +47,7 @@ import com.intellij.xdebugger.frame.XValue;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.frame.XValueGroup;
 import com.jetbrains.python.debugger.settings.PyDebuggerSettings;
+import consulo.awt.TargetAWT;
 import icons.PythonIcons;
 
 
@@ -290,7 +291,7 @@ public class PyStackFrame extends XStackFrame
 			@Override
 			public Icon getIcon()
 			{
-				return PythonIcons.Python.Debug.SpecialVar;
+				return TargetAWT.to(PythonIcons.Python.Debug.SpecialVar);
 			}
 		});
 		node.addChildren(XValueChildrenList.topGroups(group), true);
