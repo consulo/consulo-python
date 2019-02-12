@@ -31,7 +31,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.event.HyperlinkEvent;
 

@@ -23,9 +23,8 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.AccessToken;
@@ -47,7 +46,7 @@ import com.intellij.xdebugger.frame.XValue;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.frame.XValueGroup;
 import com.jetbrains.python.debugger.settings.PyDebuggerSettings;
-import consulo.awt.TargetAWT;
+import consulo.ui.image.Image;
 import icons.PythonIcons;
 
 
@@ -260,7 +259,7 @@ public class PyStackFrame extends XStackFrame
 
 			@Nullable
 			@Override
-			public Icon getIcon()
+			public Image getIcon()
 			{
 				return AllIcons.Debugger.WatchLastReturnValue;
 			}
@@ -289,9 +288,9 @@ public class PyStackFrame extends XStackFrame
 
 			@Nullable
 			@Override
-			public Icon getIcon()
+			public Image getIcon()
 			{
-				return TargetAWT.to(PythonIcons.Python.Debug.SpecialVar);
+				return PythonIcons.Python.Debug.SpecialVar;
 			}
 		});
 		node.addChildren(XValueChildrenList.topGroups(group), true);

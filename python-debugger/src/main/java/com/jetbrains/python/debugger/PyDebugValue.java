@@ -4,9 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.google.common.base.Strings;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,6 +20,7 @@ import com.intellij.xdebugger.frame.XValueModifier;
 import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
 import com.jetbrains.python.debugger.pydev.PyVariableLocator;
+import consulo.ui.image.Image;
 
 // todo: load long lists by parts
 // todo: null modifier for modify modules, class objects etc.
@@ -328,7 +328,7 @@ public class PyDebugValue extends XNamedValue
 		return new PyValueModifier(myFrameAccessor, this);
 	}
 
-	private Icon getValueIcon()
+	private Image getValueIcon()
 	{
 		if(!myContainer)
 		{

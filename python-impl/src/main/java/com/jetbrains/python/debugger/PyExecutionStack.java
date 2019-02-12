@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import com.intellij.xdebugger.frame.XExecutionStack;
+import consulo.ui.image.Image;
 
 
 public class PyExecutionStack extends XExecutionStack
@@ -40,7 +40,7 @@ public class PyExecutionStack extends XExecutionStack
 		myThreadInfo = threadInfo;
 	}
 
-	public PyExecutionStack(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo, final @Nullable Icon icon)
+	public PyExecutionStack(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo, final @Nullable Image icon)
 	{
 		super(threadInfo.getName(), icon);
 		myDebugProcess = debugProcess;

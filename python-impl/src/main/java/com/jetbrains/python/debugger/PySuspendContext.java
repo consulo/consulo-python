@@ -18,12 +18,12 @@ package com.jetbrains.python.debugger;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.jetbrains.python.debugger.pydev.AbstractCommand;
+import consulo.ui.image.Image;
 
 
 public class PySuspendContext extends XSuspendContext
@@ -46,7 +46,7 @@ public class PySuspendContext extends XSuspendContext
 	}
 
 	@Nonnull
-	public static Icon getThreadIcon(@Nonnull PyThreadInfo threadInfo)
+	public static Image getThreadIcon(@Nonnull PyThreadInfo threadInfo)
 	{
 		if((threadInfo.getState() == PyThreadInfo.State.SUSPENDED) && (threadInfo.getStopReason() == AbstractCommand.SET_BREAKPOINT))
 		{
