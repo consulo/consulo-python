@@ -626,7 +626,7 @@
 
 		<lang.parserDefinition language="BuildoutCfg" implementationClass="com.jetbrains.python.buildout.config.BuildoutCfgParserDefinition"/>
 		<fileTypeFactory implementation="com.jetbrains.python.buildout.config.BuildoutCfgFileTypeFactory"/>
-		<lang.syntaxHighlighterFactory key="BuildoutCfg"
+		<lang.syntaxHighlighterFactory language="BuildoutCfg"
 									   implementationClass="com.jetbrains.python.buildout.config.BuildoutCfgHighlighterFactory"/>
 
 		<localInspection language="BuildoutCfg" shortName="BuildoutUnresolvedPartInspection" bundle="com.jetbrains.python.PyBundle"

@@ -18,19 +18,18 @@ package com.jetbrains.python.buildout.config;
 
 import javax.annotation.Nonnull;
 
+import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 
 /**
  * @author traff
  */
-public class BuildoutCfgHighlighterFactory extends SyntaxHighlighterFactory {
-
-    @Nonnull
-    @Override
-    public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
-        return new BuildoutCfgSyntaxHighlighter();
-    }
+public class BuildoutCfgHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory
+{
+	@Nonnull
+	@Override
+	protected SyntaxHighlighter createHighlighter()
+	{
+		return new BuildoutCfgSyntaxHighlighter();
+	}
 }
