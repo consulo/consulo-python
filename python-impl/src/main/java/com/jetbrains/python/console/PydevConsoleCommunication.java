@@ -15,19 +15,6 @@
  */
 package com.jetbrains.python.console;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import org.apache.xmlrpc.WebServer;
-import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.XmlRpcHandler;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -41,23 +28,24 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
-import com.intellij.util.WaitFor;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.jetbrains.python.console.parsing.PythonConsoleData;
-import com.jetbrains.python.console.pydev.AbstractConsoleCommunication;
-import com.jetbrains.python.console.pydev.IPydevXmlRpcClient;
-import com.jetbrains.python.console.pydev.InterpreterResponse;
-import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.console.pydev.PydevXmlRpcClient;
-import com.jetbrains.python.debugger.ArrayChunk;
-import com.jetbrains.python.debugger.PyDebugValue;
-import com.jetbrains.python.debugger.PyDebuggerException;
-import com.jetbrains.python.debugger.PyFrameAccessor;
-import com.jetbrains.python.debugger.PyReferrersLoader;
-import com.jetbrains.python.debugger.PydevXmlUtils;
+import com.jetbrains.python.console.pydev.*;
+import com.jetbrains.python.debugger.*;
 import com.jetbrains.python.debugger.pydev.GetVariableCommand;
 import com.jetbrains.python.debugger.pydev.ProtocolParser;
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.XmlRpcHandler;
+import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
+import org.apache.xmlrpc.webserver.WebServer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.net.MalformedURLException;
+import java.util.*;
 
 /**
  * Communication with Xml-rpc with the client.
@@ -89,7 +77,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 	/**
 	 * This is the server responsible for giving input to a raw_input() requested.
 	 */
-	private MyWebServer myWebServer;
+	private WebServer myWebServer;
 
 	private static final Logger LOG = Logger.getInstance(PydevConsoleCommunication.class.getName());
 
@@ -128,9 +116,13 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 		super(project);
 
 		//start the server that'll handle input requests
-		myWebServer = new MyWebServer(clientPort);
+		myWebServer = new WebServer(clientPort);
 
-		myWebServer.addHandler("$default", this);
+		XmlRpcServerConfigImpl config = new XmlRpcServerConfigImpl();
+		XmlRpcServer server = myWebServer.getXmlRpcServer();
+		server.setConfig(config);
+		server.setHandlerMapping(handlerName -> this);
+
 		this.myWebServer.start();
 
 		this.myClient = new PydevXmlRpcClient(process, port);
@@ -196,8 +188,17 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 	/**
 	 * Called when the server is requesting some input from this class.
 	 */
-	public Object execute(String method, Vector params) throws Exception
+	@Override
+	public Object execute(XmlRpcRequest rpcRequest) throws XmlRpcException
 	{
+		String method = rpcRequest.getMethodName();
+
+		List<Object> params = new ArrayList<>(rpcRequest.getParameterCount());
+		for(int i = 0; i < rpcRequest.getParameterCount(); i++)
+		{
+			params.add(rpcRequest.getParameter(i));
+		}
+
 		if("NotifyFinished".equals(method))
 		{
 			return execNotifyFinished((Boolean) params.get(0));
@@ -220,7 +221,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 		}
 	}
 
-	private Object execNotifyAboutMagic(Vector params)
+	private Object execNotifyAboutMagic(List<Object> params)
 	{
 		List<String> commands = (List<String>) params.get(0);
 		boolean isAutoMagic = (Boolean) params.get(1);
@@ -235,7 +236,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 		return "";
 	}
 
-	private Object execIPythonEditor(Vector params)
+	private Object execIPythonEditor(List<Object> params)
 	{
 
 		String path = (String) params.get(0);
@@ -732,7 +733,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 		{
 			throw new Exception("Can't connect debugger now, waiting for input");
 		}
-	/* argument needs to be hashtable type for compatability with the RPC library */
+		/* argument needs to be hashtable type for compatability with the RPC library */
 		Hashtable<String, Object> opts = new Hashtable<>(dbgOpts);
 		opts.put(PYDEVD_EXTRA_ENVS, new Hashtable<>(extraEnvs));
 		Object result = myClient.execute(CONNECT_TO_DEBUGGER, new Object[]{
@@ -781,54 +782,11 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 	}
 
 
-	public boolean waitForTerminate()
+	public void waitForTerminate()
 	{
 		if(myWebServer != null)
 		{
-			return myWebServer.waitForTerminate();
-		}
-
-		return true;
-	}
-
-	private static final class MyWebServer extends WebServer
-	{
-		public MyWebServer(int port)
-		{
-			super(port);
-		}
-
-		@Override
-		public synchronized void shutdown()
-		{
-			try
-			{
-				if(serverSocket != null)
-				{
-					serverSocket.close();
-				}
-			}
-			catch(IOException e)
-			{
-				//pass
-			}
-			super.shutdown();
-		}
-
-		public boolean waitForTerminate()
-		{
-			if(listener != null)
-			{
-				return new WaitFor(10000)
-				{
-					@Override
-					protected boolean condition()
-					{
-						return !listener.isAlive();
-					}
-				}.isConditionRealized();
-			}
-			return true;
+			myWebServer.shutdown();
 		}
 	}
 }

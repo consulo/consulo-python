@@ -64,8 +64,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.ws.xmlrpc</groupId>
-			<artifactId>xmlrpc</artifactId>
+			<groupId>org.apache.xmlrpc</groupId>
+			<artifactId>xmlrpc-client</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

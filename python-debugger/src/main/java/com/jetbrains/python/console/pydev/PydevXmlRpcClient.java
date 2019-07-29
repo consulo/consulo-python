@@ -1,17 +1,17 @@
 package com.jetbrains.python.console.pydev;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.net.NetUtils;
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.XmlRpcRequest;
+import org.apache.xmlrpc.client.AsyncCallback;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Vector;
-
-import org.apache.xmlrpc.AsyncCallback;
-import org.apache.xmlrpc.XmlRpc;
-import org.apache.xmlrpc.XmlRpcClient;
-import org.apache.xmlrpc.XmlRpcClientLite;
-import org.apache.xmlrpc.XmlRpcException;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.net.NetUtils;
 
 /**
  * Subclass of XmlRpcClient that will monitor the process so that if the process is destroyed, we stop waiting
@@ -50,9 +50,12 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 
 		URL url = new URL("http://" + hostname + ':' + port + "/RPC2");
 
-		XmlRpc.setDefaultInputEncoding("UTF8"); //eventhough it uses UTF anyway
-		this.impl = new XmlRpcClientLite(url);
-		//this.impl = new XmlRpcClient(url, new CommonsXmlRpcTransportFactory(url));
+		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+		config.setEncoding("UTF8"); //eventhough it uses UTF anyway
+		config.setServerURL(url);
+
+		this.impl = new XmlRpcClient();
+		this.impl.setConfig(config);
 		this.process = process;
 	}
 
@@ -78,14 +81,16 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 		this.impl.executeAsync(command, new Vector(Arrays.asList(args)), new AsyncCallback()
 		{
 
-			public void handleError(Exception error, URL url, String method)
-			{
-				result[0] = new Object[]{error.getMessage()};
-			}
-
-			public void handleResult(Object recievedResult, URL url, String method)
+			@Override
+			public void handleResult(XmlRpcRequest pRequest, Object recievedResult)
 			{
 				result[0] = recievedResult;
+			}
+
+			@Override
+			public void handleError(XmlRpcRequest pRequest, Throwable error)
+			{
+				result[0] = new Object[]{error.getMessage()};
 			}
 		});
 
