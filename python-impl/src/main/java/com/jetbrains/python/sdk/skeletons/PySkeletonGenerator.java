@@ -15,23 +15,8 @@
  */
 package com.jetbrains.python.sdk.skeletons;
 
-import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Maps;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -45,14 +30,21 @@ import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import consulo.application.ApplicationProperties;
+import consulo.logging.Logger;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.*;
+
+import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
 
 /**
  * @author traff
  */
 public class PySkeletonGenerator
 {
-
-	protected static final Logger LOG = Logger.getInstance("#" + PySkeletonGenerator.class.getName());
+	protected static final Logger LOG = Logger.getInstance(PySkeletonGenerator.class);
 	protected static final int MINUTE = 60 * 1000;
 	protected static final String GENERATOR3 = "generator3.py";
 
