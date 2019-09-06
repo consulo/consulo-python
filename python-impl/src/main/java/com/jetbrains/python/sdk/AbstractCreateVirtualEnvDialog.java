@@ -15,19 +15,6 @@
  */
 package com.jetbrains.python.sdk;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -45,7 +32,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.LocationNameFieldsBinding;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.PathUtil;
 import com.intellij.webcore.packaging.PackageManagementService;
@@ -55,6 +41,14 @@ import com.jetbrains.python.packaging.PyPackageService;
 import com.jetbrains.python.packaging.ui.PyPackageManagementService;
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor;
 import com.jetbrains.python.ui.IdeaDialog;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 {
