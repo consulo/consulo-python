@@ -16,8 +16,6 @@
 
 package com.jetbrains.python.psi.search;
 
-import javax.annotation.Nonnull;
-
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -26,12 +24,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.jetbrains.python.psi.*;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author yole
  */
 public class PyKeywordArgumentSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   @Override
-  public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<PsiReference> consumer) {
+  public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer) {
     final PsiElement element = queryParameters.getElementToSearch();
     if (!(element instanceof PyNamedParameter)) {
       return;

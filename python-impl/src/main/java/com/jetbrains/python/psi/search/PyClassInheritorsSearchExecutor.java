@@ -15,11 +15,6 @@
  */
 package com.jetbrains.python.psi.search;
 
-import java.util.Collection;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,6 +27,10 @@ import com.intellij.util.containers.HashSet;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.stubs.PySuperClassIndex;
 
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Set;
+
 /**
  * @author yole
  */
@@ -43,13 +42,13 @@ public class PyClassInheritorsSearchExecutor implements QueryExecutor<PyClass, P
 	 */
 	protected static final ImmutableSet<String> IGNORED_BASES = ImmutableSet.of("object", "BaseException", "Exception");
 
-	public boolean execute(@Nonnull final PyClassInheritorsSearch.SearchParameters queryParameters, @Nonnull final Processor<PyClass> consumer)
+	public boolean execute(@Nonnull final PyClassInheritorsSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PyClass> consumer)
 	{
 		Set<PyClass> processed = new HashSet<>();
 		return processDirectInheritors(queryParameters.getSuperClass(), consumer, queryParameters.isCheckDeepInheritance(), processed);
 	}
 
-	private static boolean processDirectInheritors(final PyClass superClass, final Processor<PyClass> consumer, final boolean checkDeep, final Set<PyClass> processed)
+	private static boolean processDirectInheritors(final PyClass superClass, final Processor<? super PyClass> consumer, final boolean checkDeep, final Set<PyClass> processed)
 	{
 		AccessToken accessToken = ApplicationManager.getApplication().acquireReadActionLock();
 		try

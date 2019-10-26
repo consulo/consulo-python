@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
  */
 public class PyStringReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   public void processQuery(@Nonnull final ReferencesSearch.SearchParameters params,
-                           @Nonnull final Processor<PsiReference> consumer) {
+                           @Nonnull final Processor<? super PsiReference> consumer) {
     final PsiElement element = params.getElementToSearch();
     if (!(element instanceof PyElement) && !(element instanceof PsiDirectory)) {
       return;

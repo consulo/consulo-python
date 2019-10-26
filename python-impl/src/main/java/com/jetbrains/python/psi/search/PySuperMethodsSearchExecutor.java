@@ -15,23 +15,17 @@
  */
 package com.jetbrains.python.psi.search;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
-import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.Property;
-import com.jetbrains.python.psi.PyCallable;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.PyTypeUtil;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+
+import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yole
@@ -39,7 +33,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PySuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters>
 {
 	@Override
-	public boolean execute(@Nonnull final PySuperMethodsSearch.SearchParameters queryParameters, @Nonnull final Processor<PsiElement> consumer)
+	public boolean execute(@Nonnull final PySuperMethodsSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiElement> consumer)
 	{
 		final PyFunction func = queryParameters.getDerivedMethod();
 		final String name = func.getName();

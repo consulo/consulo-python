@@ -15,16 +15,7 @@
  */
 package com.jetbrains.python.codeInsight.completion;
 
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.navigation.NavigationItem;
@@ -35,14 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -58,6 +42,9 @@ import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.psi.stubs.PyVariableNameIndex;
 import com.jetbrains.python.psi.types.PyModuleType;
 import consulo.ide.IconDescriptorUpdaters;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
  * @author yole
@@ -151,7 +138,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		GlobalSearchScope scope = PyProjectScopeBuilder.excludeSdkTestsScope(targetFile);
 
 		Collection<String> keys = StubIndex.getInstance().getAllKeys(key, project);
-		for(final String elementName : CompletionUtil.sortMatching(resultSet.getPrefixMatcher(), keys))
+		for(final String elementName : resultSet.getPrefixMatcher().sortMatching(keys))
 		{
 			for(T element : StubIndex.getElements(key, elementName, project, scope, elementClass))
 			{
