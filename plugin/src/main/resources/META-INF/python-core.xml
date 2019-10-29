@@ -662,8 +662,6 @@
 		<xdebugger.settings implementation="com.jetbrains.python.debugger.settings.PyDebuggerSettings"/>
 
 		<editorActionHandler action="EditorCopy" implementationClass="com.jetbrains.python.console.PyConsoleCopyHandler"/>
-
-		<psi.treeChangePreprocessor implementation="com.jetbrains.python.PythonPsiManager"/>
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.python">
