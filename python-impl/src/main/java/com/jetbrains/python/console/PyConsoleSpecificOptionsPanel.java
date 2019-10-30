@@ -112,12 +112,8 @@ public class PyConsoleSpecificOptionsPanel {
           editor.setVerticalScrollbarVisible(true);
           return editor;
         }
-
-        @Override
-        protected boolean isOneLineMode() {
-          return false;
-        }
       };
+    myEditorTextField.setOneLineMode(false);
     myStartingScriptPanel.setLayout(new BorderLayout());
     myStartingScriptPanel.add(myEditorTextField, BorderLayout.CENTER);
     myConsoleSettings = optionsProvider;
