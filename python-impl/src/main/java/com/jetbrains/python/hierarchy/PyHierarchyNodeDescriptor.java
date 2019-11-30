@@ -15,8 +15,6 @@
  */
 package com.jetbrains.python.hierarchy;
 
-import javax.annotation.Nonnull;
-import consulo.annotations.RequiredDispatchThread;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.util.treeView.NodeDescriptor;
@@ -27,6 +25,9 @@ import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.ui.annotation.RequiredUIAccess;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,7 +42,7 @@ public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor
 		super(element.getProject(), parentDescriptor, element, isBase);
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	@Override
 	public boolean update()
 	{

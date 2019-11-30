@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.console;
 
-import javax.annotation.Nonnull;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -25,8 +24,10 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
-import consulo.annotations.RequiredDispatchThread;
+import consulo.ui.annotation.RequiredUIAccess;
 import icons.PythonIcons;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author oleg
@@ -40,7 +41,7 @@ public class RunPythonConsoleAction extends AnAction implements DumbAware
 		getTemplatePresentation().setIcon(PythonIcons.Python.PythonConsole);
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	@Override
 	public void update(final AnActionEvent e)
 	{
@@ -57,7 +58,7 @@ public class RunPythonConsoleAction extends AnAction implements DumbAware
 		}
 	}
 
-	@RequiredDispatchThread
+	@RequiredUIAccess
 	public void actionPerformed(@Nonnull final AnActionEvent e)
 	{
 		Project project = e.getRequiredData(CommonDataKeys.PROJECT);

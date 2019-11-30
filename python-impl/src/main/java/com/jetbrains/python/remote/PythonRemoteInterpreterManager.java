@@ -15,16 +15,6 @@
  */
 package com.jetbrains.python.remote;
 
-import java.awt.Component;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.jdom.Element;
-
-import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -39,14 +29,7 @@ import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.remote.RemoteConnectionCredentialsWrapper;
-import com.intellij.remote.RemoteCredentials;
-import com.intellij.remote.RemoteProcess;
-import com.intellij.remote.RemoteSdkCredentials;
-import com.intellij.remote.RemoteSdkCredentialsProducer;
-import com.intellij.remote.RemoteSdkException;
-import com.intellij.remote.RemoteSdkProperties;
-import com.intellij.remote.RemoteSshProcess;
+import com.intellij.remote.*;
 import com.intellij.util.NullableConsumer;
 import com.intellij.util.PathMapper;
 import com.intellij.util.PathMappingSettings;
@@ -56,7 +39,15 @@ import com.jetbrains.python.console.PydevConsoleCommunication;
 import com.jetbrains.python.console.PythonConsoleView;
 import com.jetbrains.python.remote.PyRemotePathMapper.PyPathMappingType;
 import com.jetbrains.python.sdk.skeletons.PySkeletonGenerator;
-import consulo.annotations.DeprecationInfo;
+import consulo.annotation.DeprecationInfo;
+import org.jdom.Element;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author traff
