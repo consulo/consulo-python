@@ -16,11 +16,6 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -31,9 +26,13 @@ import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.containers.WeakHashMap;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import consulo.bundle.SdkTableListener;
+import consulo.util.collection.Maps;
+
+import javax.annotation.Nonnull;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author yole
@@ -45,7 +44,7 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
     synchronized (KEY) {
       Map<Project, PythonSdkPathCache> cacheMap = sdk.getUserData(KEY);
       if (cacheMap == null) {
-        cacheMap = new WeakHashMap<Project, PythonSdkPathCache>();
+        cacheMap = Maps.newWeakHashMap();
         sdk.putUserData(KEY, cacheMap);
       }
       PythonSdkPathCache cache = cacheMap.get(project);

@@ -15,20 +15,6 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import consulo.python.module.extension.PyModuleExtension;
-
-import javax.annotation.Nullable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -53,7 +39,6 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.util.FileContentUtil;
-import com.intellij.util.containers.WeakHashMap;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.messages.MessageBus;
 import com.jetbrains.python.PythonFileType;
@@ -61,6 +46,15 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.PythonSdkPathCache;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.python.module.extension.PyModuleExtension;
+import consulo.util.collection.Maps;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author yole
@@ -69,7 +63,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 {
 	public static final Key<LanguageLevel> PYTHON_LANGUAGE_LEVEL = Key.create("PYTHON_LANGUAGE_LEVEL");
 
-	private final Map<Module, Sdk> myModuleSdks = new WeakHashMap<>();
+	private final Map<Module, Sdk> myModuleSdks = Maps.newWeakHashMap();
 
 	public static void pushLanguageLevel(final Project project)
 	{
