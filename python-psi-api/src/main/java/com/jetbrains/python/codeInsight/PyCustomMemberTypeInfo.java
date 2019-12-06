@@ -15,15 +15,14 @@
  */
 package com.jetbrains.python.codeInsight;
 
+import com.intellij.openapi.util.Pair;
+import consulo.util.dataholder.Key;
+import consulo.util.dataholder.UserDataHolder;
+
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.UserDataHolder;
 
 /**
  * Info to add to type of custom member.

@@ -17,7 +17,7 @@
 package com.jetbrains.python.inspections;
 
 import com.intellij.codeInspection.ui.ListEditForm;
-import com.intellij.openapi.util.Key;
+import consulo.util.dataholder.Key;
 
 import javax.swing.*;
 import java.util.ArrayList;

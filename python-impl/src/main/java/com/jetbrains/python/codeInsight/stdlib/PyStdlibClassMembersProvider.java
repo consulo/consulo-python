@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.util.Key;
+import consulo.util.dataholder.Key;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyClass;

@@ -24,7 +24,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
+import consulo.util.dataholder.Key;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import consulo.bundle.SdkTableListener;

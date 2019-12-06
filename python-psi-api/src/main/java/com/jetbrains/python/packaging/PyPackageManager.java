@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Key;
+import consulo.util.dataholder.Key;
 
 /**
  * @author yole

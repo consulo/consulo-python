@@ -16,15 +16,16 @@
 
 package com.jetbrains.python.psi.types;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.util.UserDataHolder;
 import com.jetbrains.python.psi.PyClass;
+import consulo.util.dataholder.UserDataHolder;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public interface PyClassType extends PyClassLikeType, UserDataHolder {
+public interface PyClassType extends PyClassLikeType, UserDataHolder
+{
   @Nonnull
   PyClass getPyClass();
 }

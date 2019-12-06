@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Couple;
-import com.intellij.openapi.util.Key;
+import consulo.util.dataholder.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDirectory;

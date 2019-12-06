@@ -15,26 +15,6 @@
  */
 package com.jetbrains.python.console;
 
-import static com.intellij.execution.runners.AbstractConsoleRunnerWithHistory.registerActionShortcuts;
-
-import java.awt.BorderLayout;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import org.apache.xmlrpc.XmlRpcException;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.lookup.LookupManager;
@@ -87,7 +67,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Couple;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -103,11 +82,7 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SideBorder;
 import com.intellij.ui.content.Content;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.IJSwingUtilities;
-import com.intellij.util.PathMappingSettings;
-import com.intellij.util.TimeoutUtil;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.NetUtils;
 import com.intellij.util.ui.MessageCategory;
@@ -125,13 +100,28 @@ import com.jetbrains.python.remote.PyRemotePathMapper;
 import com.jetbrains.python.remote.PyRemoteProcessHandlerBase;
 import com.jetbrains.python.remote.PyRemoteSdkAdditionalDataBase;
 import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
-import com.jetbrains.python.run.PyRemoteProcessStarter;
-import com.jetbrains.python.run.PyRemoteProcessStarterManagerUtil;
-import com.jetbrains.python.run.PythonCommandLineState;
-import com.jetbrains.python.run.PythonRunParams;
-import com.jetbrains.python.run.PythonTracebackFilter;
+import com.jetbrains.python.run.*;
 import com.jetbrains.python.sdk.PySdkUtil;
+import consulo.util.dataholder.Key;
 import icons.PythonIcons;
+import org.apache.xmlrpc.XmlRpcException;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+import static com.intellij.execution.runners.AbstractConsoleRunnerWithHistory.registerActionShortcuts;
 
 /**
  * @author traff, oleg
@@ -809,7 +799,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 				Document document = editor.getDocument();
 				int lineStart = document.getLineStartOffset(document.getLineNumber(offset));
 				String textToCursor = document.getText(new TextRange(lineStart, offset));
-				e.getPresentation().setEnabled(!CharMatcher.WHITESPACE.matchesAllOf(textToCursor));
+				e.getPresentation().setEnabled(!CharMatcher.whitespace().matchesAllOf(textToCursor));
 			}
 		};
 
@@ -822,7 +812,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	private boolean isIndentSubstring(String text)
 	{
 		int indentSize = myConsoleExecuteActionHandler.getPythonIndent();
-		return text.length() >= indentSize && CharMatcher.WHITESPACE.matchesAllOf(text.substring(text.length() - indentSize));
+		return text.length() >= indentSize && CharMatcher.whitespace().matchesAllOf(text.substring(text.length() - indentSize));
 	}
 
 	private void enableConsoleExecuteAction()

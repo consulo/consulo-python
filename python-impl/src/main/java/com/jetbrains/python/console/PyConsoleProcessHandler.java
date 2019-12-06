@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
+import consulo.util.dataholder.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.python.run.PythonProcessHandler;

@@ -15,15 +15,14 @@
  */
 package com.jetbrains.python.psi.types;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.psi.PsiElement;
+import consulo.util.dataholder.Key;
+import consulo.util.dataholder.UserDataHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataHolder;
-import com.intellij.psi.PsiElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tools and wrappers around {@link PyType} inheritors
