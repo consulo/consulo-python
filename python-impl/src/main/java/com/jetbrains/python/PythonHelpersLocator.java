@@ -16,12 +16,13 @@
 
 package com.jetbrains.python;
 
-import java.io.File;
-
-import org.jetbrains.annotations.NonNls;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.PathUtil;
+import consulo.container.boot.ContainerPathManager;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.TestOnly;
+
+import java.io.File;
 
 public class PythonHelpersLocator {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.PythonHelpersLocator");
@@ -63,11 +64,12 @@ public class PythonHelpersLocator {
     return new File(getHelpersRoot(), resourceName);
   }
 
+  @TestOnly
   public static String getPythonCommunityPath() {
-    File pathFromUltimate = new File(PathManager.getHomePath(), "community/python");
+    File pathFromUltimate = new File(ContainerPathManager.get().getHomePath(), "community/python");
     if (pathFromUltimate.exists()) {
       return pathFromUltimate.getPath();
     }
-    return new File(PathManager.getHomePath(), "python").getPath();
+    return new File(ContainerPathManager.get().getHomePath(), "python").getPath();
   }
 }

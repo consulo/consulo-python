@@ -15,18 +15,6 @@
  */
 package com.jetbrains.python.sdk;
 
-import java.awt.Component;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -34,7 +22,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -61,6 +48,15 @@ import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.remote.PyCredentialsContribution;
 import com.jetbrains.python.remote.PyRemoteSdkAdditionalDataBase;
 import com.jetbrains.python.sdk.skeletons.PySkeletonRefresher;
+import consulo.container.boot.ContainerPathManager;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.io.File;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Refreshes all project's Python SDKs.
@@ -440,7 +436,7 @@ public class PythonSdkUpdater implements StartupActivity
 	@Nullable
 	private static String getBinarySkeletonsPath(@Nullable String path)
 	{
-		return path != null ? PythonSdkType.getSkeletonsPath(PathManager.getSystemPath(), path) : null;
+		return path != null ? PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), path) : null;
 	}
 
 	/**

@@ -1,7 +1,5 @@
 package com.jetbrains.python.fixtures;
 
-import com.intellij.openapi.application.PathManager;
-
 /**
  * @author yole
  */
@@ -12,6 +10,6 @@ public abstract class PyProfessionalTestCase extends PyTestCase {
   }
 
   public static String getProfessionalTestDataPath() {
-    return PathManager.getHomePath() + "/python/testData";
+    return "";
   }
 }

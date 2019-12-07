@@ -15,38 +15,11 @@
  */
 package com.jetbrains.python.sdk.skeletons;
 
-import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
-
-import java.awt.Component;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-
-import consulo.python.buildout.module.extension.BuildoutModuleExtension;
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -72,7 +45,21 @@ import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.sdk.InvalidSdkException;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.container.boot.ContainerPathManager;
+import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import consulo.vfs.util.ArchiveVfsUtil;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
 
 /**
  * Handles a refresh of SDK's skeletons.
@@ -315,7 +302,7 @@ public class PySkeletonRefresher
 	{
 		if(mySkeletonsPath == null)
 		{
-			mySkeletonsPath = PythonSdkType.getSkeletonsPath(PathManager.getSystemPath(), mySdk.getHomePath());
+			mySkeletonsPath = PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), mySdk.getHomePath());
 			final File skeletonsDir = new File(mySkeletonsPath);
 			if(!skeletonsDir.exists() && !skeletonsDir.mkdirs())
 			{
@@ -440,7 +427,7 @@ public class PySkeletonRefresher
 		if(base != null)
 		{
 			indicate("Copying base SDK skeletons for virtualenv...");
-			final String baseSkeletonsPath = PythonSdkType.getSkeletonsPath(PathManager.getSystemPath(), base.getHomePath());
+			final String baseSkeletonsPath = PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), base.getHomePath());
 			final PySkeletonGenerator.ListBinariesResult baseBinaries = mySkeletonsGenerator.listBinaries(base, calculateExtraSysPath(base, baseSkeletonsPath));
 			for(Map.Entry<String, PyBinaryItem> entry : binaries.modules.entrySet())
 			{
@@ -1033,7 +1020,7 @@ public class PySkeletonRefresher
 	@Nullable
 	private static File findPregeneratedSkeletonsRoot()
 	{
-		final String path = PathManager.getHomePath();
+		final String path = ContainerPathManager.get().getHomePath();
 		LOG.info("Home path is " + path);
 		File f = new File(path, "python/skeletons");  // from sources
 		if(f.exists())

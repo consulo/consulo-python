@@ -1,10 +1,5 @@
 package com.jetbrains.python.fixtures;
 
-import java.io.File;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
@@ -31,6 +26,11 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.impl.PyFileImpl;
 import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import consulo.container.boot.ContainerPathManager;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
 
 /**
  * @author yole
@@ -149,7 +149,7 @@ public abstract class PyTestCase extends UsefulTestCase
 		protected void createLibrary(ModifiableRootModel model, final String name, final String path)
 		{
 			final Library.ModifiableModel modifiableModel = model.getModuleLibraryTable().createLibrary(name).getModifiableModel();
-			final VirtualFile home = LocalFileSystem.getInstance().refreshAndFindFileByPath(PathManager.getHomePath() + path);
+			final VirtualFile home = LocalFileSystem.getInstance().refreshAndFindFileByPath(ContainerPathManager.get().getHomePath() + path);
 
 			modifiableModel.addRoot(home, OrderRootType.CLASSES);
 			modifiableModel.commit();

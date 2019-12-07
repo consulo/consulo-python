@@ -15,19 +15,10 @@
  */
 package com.jetbrains.python.codeInsight.userSkeletons;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import consulo.util.dataholder.Key;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -39,21 +30,21 @@ import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyUtil;
-import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.resolve.PythonSdkPathCache;
-import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolverImpl;
-import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.resolve.*;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.container.boot.ContainerPathManager;
+import consulo.util.dataholder.Key;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author vlan
@@ -72,7 +63,7 @@ public class PyUserSkeletonsUtil
 	private static List<String> getPossibleUserSkeletonsPaths()
 	{
 		final List<String> result = new ArrayList<>();
-		result.add(PathManager.getConfigPath() + File.separator + USER_SKELETONS_DIR);
+		result.add(ContainerPathManager.get().getConfigPath() + File.separator + USER_SKELETONS_DIR);
 		result.add(PythonHelpersLocator.getHelperPath(USER_SKELETONS_DIR));
 		return result;
 	}

@@ -2,13 +2,13 @@ package com.jetbrains.python.testRunner;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.python.PythonTestUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.testing.JythonUnitTestUtil;
+import consulo.container.boot.ContainerPathManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class PyTestRunnerTest extends LightPlatformTestCase {
   }
 
   public void testEmptySuite() throws ExecutionException {
-    String[] result = runUTRunner(PathManager.getHomePath(), "true");
+    String[] result = runUTRunner(ContainerPathManager.get().getHomePath(), "true");
     assertEquals("##teamcity[testCount count='0']", result [1]);
   }
 

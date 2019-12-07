@@ -15,21 +15,10 @@
  */
 package com.jetbrains.python.sdk;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderRootType;
@@ -43,6 +32,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.remote.RemoteSdkAdditionalData;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.HashMap;
+import consulo.container.boot.ContainerPathManager;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * A more flexible cousin of SdkVersionUtil.
@@ -249,7 +247,7 @@ public class PySdkUtil
 	{
 		String sep = File.separator;
 
-		String basePath = PathManager.getSystemPath();
+		String basePath = ContainerPathManager.get().getSystemPath();
 		return basePath +
 				File.separator +
 				PythonSdkType.REMOTE_SOURCES_DIR_NAME +
