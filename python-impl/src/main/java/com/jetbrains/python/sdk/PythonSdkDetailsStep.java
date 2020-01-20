@@ -295,7 +295,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 		{
 			sdk = createSdk(allSdks, homeDir, sdkType, additionalData, customSdkSuggestedName);
 
-			sdkType.setupSdkPaths(sdk);
+			sdkType.setupSdkPaths((Sdk) sdk);
 		}
 		catch(Exception e)
 		{
