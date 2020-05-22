@@ -15,19 +15,19 @@
  */
 package com.jetbrains.python.psi.types;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.FactoryMap;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyTypeProvider;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author yole
@@ -41,14 +41,7 @@ public class PyTypeProviderBase implements PyTypeProvider
 			.createClassType(pyClass, false)).orElse(null);
 
 	@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
-	private final Map<String, ReturnTypeDescriptor> myMethodToReturnTypeMap = new FactoryMap<String, ReturnTypeDescriptor>()
-	{
-		@Override
-		protected ReturnTypeDescriptor create(String key)
-		{
-			return new ReturnTypeDescriptor();
-		}
-	};
+	private final Map<String, ReturnTypeDescriptor> myMethodToReturnTypeMap = FactoryMap.create(s -> new ReturnTypeDescriptor());
 
 	@Nullable
 	@Override

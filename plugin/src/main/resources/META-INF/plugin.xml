@@ -1,4 +1,4 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+<consulo-plugin>
 	<id>consulo.python</id>
 	<name>Python</name>
 	<description>Smart editing for Python scripts</description>
@@ -13,8 +13,8 @@
 
 	<vendor>JetBrains, Keith Lea</vendor>
 
-	<xi:include href="/META-INF/python-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
-	<xi:include href="/META-INF/actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
+	<import path="/META-INF/python-core.xml" />
+	<import path="/META-INF/actions.xml" />
 
 	<extensionPoints>
 		<extensionPoint name="importResolver" interface="com.jetbrains.python.psi.impl.PyImportResolver"/>
@@ -71,4 +71,4 @@
 								 immutableClass="consulo.python.buildout.module.extension.BuildoutModuleExtension"
 								 mutableClass="consulo.python.buildout.module.extension.BuildoutMutableModuleExtension"/>
 	</extensions>
-</idea-plugin>
+</consulo-plugin>

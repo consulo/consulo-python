@@ -15,36 +15,45 @@
  */
 package com.jetbrains.python.console;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.JComponent;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
-import consulo.util.dataholder.Key;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import consulo.util.dataholder.Key;
 import consulo.wm.impl.ToolWindowContentUI;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.swing.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.List;
 
 /**
  * @author traff
  */
+@Singleton
 public class PythonConsoleToolWindow
 {
+	@Nonnull
+	public static PythonConsoleToolWindow getInstance(@Nonnull Project project)
+	{
+		return ServiceManager.getService(project, PythonConsoleToolWindow.class);
+	}
+
 	public static final Key<RunContentDescriptor> CONTENT_DESCRIPTOR = Key.create("CONTENT_DESCRIPTOR");
 
 	public static final Function<Content, RunContentDescriptor> CONTENT_TO_DESCRIPTOR_FUNCTION = new Function<Content, RunContentDescriptor>()
@@ -60,14 +69,10 @@ public class PythonConsoleToolWindow
 
 	private boolean myInitialized = false;
 
+	@Inject
 	public PythonConsoleToolWindow(Project project)
 	{
 		myProject = project;
-	}
-
-	public static PythonConsoleToolWindow getInstance(@Nonnull Project project)
-	{
-		return project.getComponent(PythonConsoleToolWindow.class);
 	}
 
 	public List<RunContentDescriptor> getConsoleContentDescriptors()

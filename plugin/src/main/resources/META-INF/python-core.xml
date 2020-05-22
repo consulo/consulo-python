@@ -1,4 +1,4 @@
-<idea-plugin>
+<consulo-plugin>
 	<!-- Components and extensions declared in this file work both in PyCharm and Python plugin. -->
 
 
@@ -577,6 +577,7 @@
 								 displayName="Python External Documentation"/>
 		<applicationService serviceInterface="com.jetbrains.python.console.PythonConsoleRunnerFactory"
 							serviceImplementation="com.jetbrains.python.console.PydevConsoleRunnerFactory"/>
+		<projectService serviceImplementation="com.jetbrains.python.console.PythonConsoleToolWindow" />
 		<projectConfigurable instance="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable"
 							 id="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" displayName="Python Integrated Tools"
 							 nonDefaultProject="true"/>
@@ -800,4 +801,4 @@
 		</component>
 	</application-components>
 
-</idea-plugin>
+</consulo-plugin>

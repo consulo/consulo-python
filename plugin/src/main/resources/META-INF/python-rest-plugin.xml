@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<consulo-plugin>
   <extensions defaultExtensionNs="com.intellij">
 
     <lang.fileViewProviderFactory language="ReST"
@@ -26,4 +26,4 @@
     </action>
 
   </actions>
-</idea-plugin>
+</consulo-plugin>

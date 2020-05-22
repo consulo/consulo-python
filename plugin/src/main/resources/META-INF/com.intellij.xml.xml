@@ -1,5 +1,5 @@
-<idea-plugin>
+<consulo-plugin>
 	<extensions defaultExtensionNs="com.intellij">
 		<fileTypeFactory implementation="com.jetbrains.python.PythonXmlFileTypeFactory" />
 	</extensions>
-</idea-plugin>
+</consulo-plugin>
