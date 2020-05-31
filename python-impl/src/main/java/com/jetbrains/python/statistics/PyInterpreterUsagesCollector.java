@@ -34,8 +34,6 @@ import java.util.Set;
  * @author yole
  */
 public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesCollector {
-  private static final String GROUP_ID = "py-interpreter";
-
   @Nonnull
   @Override
   public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException {
@@ -54,7 +52,7 @@ public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesColle
 
   @Nonnull
   @Override
-  public GroupDescriptor getGroupId() {
-    return GroupDescriptor.create(GROUP_ID);
+  public String getGroupId() {
+    return "py-interpreter";
   }
 }

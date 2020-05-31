@@ -40,8 +40,6 @@ import com.jetbrains.python.sdk.PythonSdkType;
  */
 public class PyPackageUsagesCollector extends AbstractApplicationUsagesCollector
 {
-	private static final String GROUP_ID = "py-packages";
-
 	@Nonnull
 	@Override
 	public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException
@@ -74,8 +72,8 @@ public class PyPackageUsagesCollector extends AbstractApplicationUsagesCollector
 
 	@Nonnull
 	@Override
-	public GroupDescriptor getGroupId()
+	public String getGroupId()
 	{
-		return GroupDescriptor.create(GROUP_ID);
+		return "py-packages";
 	}
 }
