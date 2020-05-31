@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import com.intellij.internal.statistic.AbstractApplicationUsagesCollector;
 import com.intellij.internal.statistic.CollectUsagesException;
-import com.intellij.internal.statistic.beans.GroupDescriptor;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
