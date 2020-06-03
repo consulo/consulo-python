@@ -19,9 +19,14 @@ package consulo.python.buildout.module.extension;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.Comparing;
 import com.jetbrains.python.buildout.BuildoutConfigPanel;
+import consulo.disposer.Disposable;
 import consulo.module.extension.MutableModuleExtension;
+import consulo.module.extension.swing.SwingMutableModuleExtension;
 import consulo.roots.ModuleRootLayer;
+import consulo.ui.Component;
+import consulo.ui.Label;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.layout.VerticalLayout;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +36,7 @@ import javax.swing.*;
  * @author VISTALL
  * @since 20.10.13.
  */
-public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>
+public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>, SwingMutableModuleExtension
 {
 	public BuildoutMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{
@@ -41,7 +46,15 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 	@RequiredUIAccess
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@Nullable Runnable runnable)
+	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
+	{
+		return VerticalLayout.create().add(Label.create("Unsupported platform"));
+	}
+
+	@RequiredUIAccess
+	@Nullable
+	@Override
+	public JComponent createConfigurablePanel(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
 	{
 		JPanel panel = new JPanel(new VerticalFlowLayout(true, false));
 		panel.add(new BuildoutConfigPanel(this));

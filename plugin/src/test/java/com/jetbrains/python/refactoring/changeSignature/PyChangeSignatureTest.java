@@ -1,7 +1,7 @@
 package com.jetbrains.python.refactoring.changeSignature;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
+import consulo.disposer.Disposer;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.testFramework.TestDataPath;
 import com.jetbrains.python.PyBundle;

@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.util.Disposer;
+import consulo.disposer.Disposer;
 
 /**
  * @author Alexander Koshevoy

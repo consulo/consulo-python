@@ -1,16 +1,17 @@
 package consulo.ironPython.module.extension;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.VerticalFlowLayout;
-import consulo.extension.ui.ModuleExtensionSdkBoxBuilder;
+import consulo.disposer.Disposable;
+import consulo.extension.ui.ModuleExtensionBundleBoxBuilder;
 import consulo.module.extension.MutableModuleExtensionWithSdk;
 import consulo.module.extension.MutableModuleInheritableNamedPointer;
 import consulo.roots.ModuleRootLayer;
+import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.*;
+import consulo.ui.layout.VerticalLayout;
 
 /**
  * @author VISTALL
@@ -33,11 +34,11 @@ public class IronPythonMutableModuleExtension extends IronPythonModuleExtension 
 	@RequiredUIAccess
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@Nonnull Runnable runnable)
+	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
 	{
-		JPanel panel = new JPanel(new VerticalFlowLayout(true, false));
-		panel.add(ModuleExtensionSdkBoxBuilder.createAndDefine(this, runnable).build());
-		return panel;
+		VerticalLayout layout = VerticalLayout.create();
+		layout.add(ModuleExtensionBundleBoxBuilder.createAndDefine(this, disposable, runnable).build());
+		return layout;
 	}
 
 	@Override

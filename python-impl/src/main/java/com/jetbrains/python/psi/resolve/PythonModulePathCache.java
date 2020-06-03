@@ -17,7 +17,6 @@
 package com.jetbrains.python.psi.resolve;
 
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -25,11 +24,13 @@ import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.disposer.Disposable;
 
 /**
  * @author yole
  */
-public class PythonModulePathCache extends PythonPathCache implements Disposable {
+public class PythonModulePathCache extends PythonPathCache implements Disposable
+{
   public static PythonPathCache getInstance(Module module) {
     return ModuleServiceManager.getService(module, PythonPathCache.class);
   }

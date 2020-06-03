@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.roots.RootProvider;
-import com.intellij.openapi.util.Disposer;
+import consulo.disposer.Disposable;
+import consulo.disposer.Disposer;
 import consulo.util.dataholder.Key;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
@@ -37,7 +37,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author yole
  */
-public class PythonSdkPathCache extends PythonPathCache implements Disposable {
+public class PythonSdkPathCache extends PythonPathCache implements Disposable
+{
   private static final Key<Map<Project, PythonSdkPathCache>> KEY = Key.create("PythonPathCache");
 
   public static PythonSdkPathCache getInstance(@Nonnull Project project, @Nonnull Sdk sdk) {
