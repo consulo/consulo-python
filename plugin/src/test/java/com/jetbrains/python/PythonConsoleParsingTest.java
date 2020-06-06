@@ -11,7 +11,7 @@ import consulo.testFramework.ParsingTestCase;
  * @author traff
  */
 @TestDataPath("$CONTENT_ROOT/../testData/ipython/")
-public class PythonConsoleParsingTest extends ParsingTestCase
+public abstract class PythonConsoleParsingTest extends ParsingTestCase
 {
   private LanguageLevel myLanguageLevel = LanguageLevel.getDefault();
 

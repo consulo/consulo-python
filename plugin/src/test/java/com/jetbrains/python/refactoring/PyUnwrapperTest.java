@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * User : ktisha
  */
-public class PyUnwrapperTest extends PyTestCase {
+public abstract class PyUnwrapperTest extends PyTestCase {
 
   public void testIfUnwrap()                          throws Throwable {doTest();}
   public void testIfUnwrapEmpty()                     throws Throwable {doNegativeTest();}

@@ -11,7 +11,7 @@ import java.util.List;
  * User: dcheryasov
  * Date: Nov 20, 2009 3:42:51 AM
  */
-public class IteratorsTest extends TestCase {
+public abstract class IteratorsTest extends TestCase {
 
   public IteratorsTest() {
     super();

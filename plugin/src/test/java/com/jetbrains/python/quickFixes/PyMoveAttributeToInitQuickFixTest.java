@@ -9,7 +9,7 @@ import com.jetbrains.python.inspections.PyAttributeOutsideInitInspection;
  * User: ktisha
  */
 @TestDataPath("$CONTENT_ROOT/../testData/quickFixes/PyMoveAttributeToInitQuickFixTest")
-public class PyMoveAttributeToInitQuickFixTest extends PyQuickFixTestCase {
+public abstract class PyMoveAttributeToInitQuickFixTest extends PyQuickFixTestCase {
 
   public void testMoveToInit() {
     doQuickFixTest(PyAttributeOutsideInitInspection.class, PyBundle.message("QFIX.move.attribute"));

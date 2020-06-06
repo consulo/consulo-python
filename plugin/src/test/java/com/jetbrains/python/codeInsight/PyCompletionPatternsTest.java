@@ -10,7 +10,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author yole
  */
-public class PyCompletionPatternsTest extends PyTestCase {
+public abstract class PyCompletionPatternsTest extends PyTestCase {
   public void testInFromImportAfterRef() {
     assertTrue(doTest("from . im", PyKeywordCompletionContributor.IN_FROM_IMPORT_AFTER_REF));
   }

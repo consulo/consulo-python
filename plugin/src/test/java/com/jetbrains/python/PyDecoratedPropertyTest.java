@@ -5,7 +5,7 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
 import com.jetbrains.python.toolbox.Maybe;
 
-public class PyDecoratedPropertyTest extends PyTestCase {
+public abstract class PyDecoratedPropertyTest extends PyTestCase {
   protected PyClass myClass;
 
   @Override

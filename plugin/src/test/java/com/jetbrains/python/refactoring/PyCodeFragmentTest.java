@@ -19,7 +19,7 @@ import java.util.TreeSet;
 /**
  * @author oleg
  */
-public class PyCodeFragmentTest extends LightMarkedTestCase {
+public abstract class PyCodeFragmentTest extends LightMarkedTestCase {
   @Override
   public String getTestDataPath() {
     return PythonTestUtil.getTestDataPath() + "/codeInsight/codefragment/";

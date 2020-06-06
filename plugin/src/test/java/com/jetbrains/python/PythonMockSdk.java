@@ -18,7 +18,7 @@ import com.jetbrains.python.sdk.PythonSdkType;
 /**
  * @author yole
  */
-public class PythonMockSdk {
+public abstract class PythonMockSdk {
   @NonNls private static final String MOCK_SDK_NAME = "Mock Python SDK";
 
   private PythonMockSdk() {

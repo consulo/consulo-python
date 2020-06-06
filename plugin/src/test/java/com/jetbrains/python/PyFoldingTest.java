@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyFoldingTest extends PyTestCase {
+public abstract class PyFoldingTest extends PyTestCase {
   private void doTest() {
    //TODO [VISTALL] myFixture.testFolding(getTestDataPath() + "/folding/" + getTestName(true) + ".py");
   }

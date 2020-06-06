@@ -8,7 +8,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyCommenterTest extends PyTestCase {
+public abstract class PyCommenterTest extends PyTestCase {
   public void testIndentedComment() {
     doTest();
   }

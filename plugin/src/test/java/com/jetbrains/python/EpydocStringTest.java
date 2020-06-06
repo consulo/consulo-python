@@ -9,7 +9,7 @@ import com.jetbrains.python.toolbox.Substring;
 /**
  * @author yole
  */
-public class EpydocStringTest extends UsefulTestCase
+public abstract class EpydocStringTest extends UsefulTestCase
 {
 	public void testTagValue()
 	{

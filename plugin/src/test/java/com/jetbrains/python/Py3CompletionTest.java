@@ -9,7 +9,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class Py3CompletionTest extends PyTestCase {
+public abstract class Py3CompletionTest extends PyTestCase {
   @Override
   protected TestModuleDescriptor getProjectDescriptor() {
     return ourPy3Descriptor;

@@ -8,7 +8,7 @@ import com.jetbrains.python.psi.PyFunction;
 /**
  * @author yole
  */
-public class PyDeprecationTest extends PyTestCase {
+public abstract class PyDeprecationTest extends PyTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();

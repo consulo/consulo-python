@@ -10,7 +10,7 @@ import com.jetbrains.python.psi.PyStatementList;
 /**
  * @author yole
  */
-public class PyStatementListTest extends PyTestCase {
+public abstract class PyStatementListTest extends PyTestCase {
   public void testOneLineList() {
     PyElementGenerator generator = PyElementGenerator.getInstance(myFixture.getProject());
     PyFunction function = generator.createPhysicalFromText(LanguageLevel.PYTHON27, PyFunction.class, "def foo(): print 1");

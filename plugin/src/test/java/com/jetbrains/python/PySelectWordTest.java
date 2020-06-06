@@ -6,7 +6,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PySelectWordTest extends PyTestCase {
+public abstract class PySelectWordTest extends PyTestCase {
   public void testWord() {
     doTest();
   }

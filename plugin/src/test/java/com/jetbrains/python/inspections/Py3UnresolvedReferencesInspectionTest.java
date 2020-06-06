@@ -10,7 +10,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author vlan
  */
-public class Py3UnresolvedReferencesInspectionTest extends PyTestCase {
+public abstract class Py3UnresolvedReferencesInspectionTest extends PyTestCase {
   private static final String TEST_DIRECTORY = "inspections/PyUnresolvedReferencesInspection3K/";
 
   @Override

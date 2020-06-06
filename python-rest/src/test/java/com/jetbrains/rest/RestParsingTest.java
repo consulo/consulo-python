@@ -6,7 +6,7 @@ import consulo.testFramework.ParsingTestCase;
 /**
  * User : catherine
  */
-public class RestParsingTest extends ParsingTestCase
+public abstract class RestParsingTest extends ParsingTestCase
 {
 
   public RestParsingTest() {

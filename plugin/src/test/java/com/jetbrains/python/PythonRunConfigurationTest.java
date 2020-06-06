@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author yole
  */
-public class PythonRunConfigurationTest extends PyCommandLineTestCase {
+public abstract class PythonRunConfigurationTest extends PyCommandLineTestCase {
   private static final String PY_SCRIPT = "foo.py";
 
   public void testUnitTestCommandLine() {

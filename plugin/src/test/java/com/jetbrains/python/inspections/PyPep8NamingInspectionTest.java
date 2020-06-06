@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User: ktisha
  */
-public class PyPep8NamingInspectionTest extends PyTestCase {
+public abstract class PyPep8NamingInspectionTest extends PyTestCase {
 
   public void testFunctionVariable() {
     doTest();

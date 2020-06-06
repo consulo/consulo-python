@@ -7,7 +7,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyOptimizeImportsTest extends PyTestCase {
+public abstract class PyOptimizeImportsTest extends PyTestCase {
   public void testSimple() {
     doTest();
   }

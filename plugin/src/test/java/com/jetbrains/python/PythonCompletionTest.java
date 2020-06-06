@@ -11,7 +11,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
 
-public class PythonCompletionTest extends PyTestCase {
+public abstract class PythonCompletionTest extends PyTestCase {
 
   private void doTest() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());

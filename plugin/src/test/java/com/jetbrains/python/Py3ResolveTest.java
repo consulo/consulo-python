@@ -12,7 +12,7 @@ import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
 /**
  * @author yole
  */
-public class Py3ResolveTest extends PyResolveTestCase {
+public abstract class Py3ResolveTest extends PyResolveTestCase {
   @Override
   protected TestModuleDescriptor getProjectDescriptor() {
     return PyTestCase.ourPy3Descriptor;

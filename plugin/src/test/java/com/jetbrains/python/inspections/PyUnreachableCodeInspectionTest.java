@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author vlan
  */
-public class PyUnreachableCodeInspectionTest extends PyTestCase {
+public abstract class PyUnreachableCodeInspectionTest extends PyTestCase {
   private static final String TEST_DIRECTORY = "inspections/PyUnreachableCodeInspection/";
 
   // All previous unreachable tests, feel free to split them

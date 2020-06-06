@@ -3,7 +3,7 @@ package com.jetbrains.python.refactoring.classes;
 /**
  * @author Dennis.Ushakov
  */
-public class PyPushDownTest extends PyClassRefactoringTest {
+public abstract class PyPushDownTest extends PyClassRefactoringTest {
   public void testSimple() throws Exception {
     doProcessorTest("Foo", null, ".foo");
   }

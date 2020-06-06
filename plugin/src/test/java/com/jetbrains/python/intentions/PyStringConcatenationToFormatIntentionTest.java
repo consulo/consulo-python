@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * User : ktisha
  */
-public class PyStringConcatenationToFormatIntentionTest extends PyIntentionTestCase {
+public abstract class PyStringConcatenationToFormatIntentionTest extends PyIntentionTestCase {
 
   public void testSimple() {
     doTest(PyBundle.message("INTN.replace.plus.with.format.operator"), LanguageLevel.PYTHON25);

@@ -8,7 +8,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyClassNameCompletionTest extends PyTestCase {
+public abstract class PyClassNameCompletionTest extends PyTestCase {
 
   public void testSimple() {
     doTest();

@@ -3,7 +3,7 @@ package com.jetbrains.python;
 /**
  * @author yole
  */
-public class PythonTestUtil {
+public abstract class PythonTestUtil {
   private PythonTestUtil() {
   }
 

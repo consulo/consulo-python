@@ -6,7 +6,7 @@ import com.jetbrains.python.inspections.PyAugmentAssignmentInspection;
 /**
  * User: ktisha
  */
-public class PyAugmentAssignmentQuickFixTest extends PyQuickFixTestCase {
+public abstract class PyAugmentAssignmentQuickFixTest extends PyQuickFixTestCase {
 
   public void testSimple() {  // PY-1415
     doInspectionTest(PyAugmentAssignmentInspection.class);

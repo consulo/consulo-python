@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User: ktisha
  */
-public class PyProtectedMemberInspectionTest extends PyTestCase {
+public abstract class PyProtectedMemberInspectionTest extends PyTestCase {
 
   public void testTruePositive() {
     doTest();

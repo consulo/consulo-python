@@ -16,7 +16,7 @@ import com.jetbrains.python.PythonHelpersLocator;
 /**
  * @author traff
  */
-public class JythonUnitTestUtil
+public abstract class JythonUnitTestUtil
 {
 	private JythonUnitTestUtil()
 	{

@@ -17,7 +17,7 @@ import java.util.List;
  * User : ktisha
  */
 @TestDataPath("$CONTENT_ROOT/../testData/refactoring/changeSignature/")
-public class PyChangeSignatureTest extends PyTestCase {
+public abstract class PyChangeSignatureTest extends PyTestCase {
 
   public void testChooseSuperMethod() {
     doChangeSignatureTest("baz", null);

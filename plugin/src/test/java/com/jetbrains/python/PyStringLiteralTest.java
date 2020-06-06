@@ -17,7 +17,7 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 /**
  * @author yole
  */
-public class PyStringLiteralTest extends PyTestCase
+public abstract class PyStringLiteralTest extends PyTestCase
 {
 	public void testEscaperDecode()
 	{

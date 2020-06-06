@@ -6,7 +6,7 @@ import com.jetbrains.python.inspections.PyMethodOverridingInspection;
 /**
  * @author vlan
  */
-public class PyMethodOverridingInspectionTest extends PyTestCase {
+public abstract class PyMethodOverridingInspectionTest extends PyTestCase {
   private static final String TEST_DIRECTORY = "inspections/PyMethodOverridingInspection/";
 
   public void testArgsKwargsOverrideArg() {

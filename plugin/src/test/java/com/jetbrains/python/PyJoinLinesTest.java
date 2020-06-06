@@ -13,7 +13,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
  * User: dcheryasov
  * Date: 1/29/11 2:33 AM
  */
-public class PyJoinLinesTest extends PyTestCase {
+public abstract class PyJoinLinesTest extends PyTestCase {
   private void doTest() {
     final String path = "joinLines/";
     myFixture.configureByFile(path + getTestName(false) + ".py");

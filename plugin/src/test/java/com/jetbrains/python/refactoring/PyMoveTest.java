@@ -24,7 +24,7 @@ import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
 /**
  * @author vlan
  */
-public class PyMoveTest extends PyTestCase {
+public abstract class PyMoveTest extends PyTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();

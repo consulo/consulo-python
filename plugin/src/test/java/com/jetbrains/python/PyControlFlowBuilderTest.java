@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * @author oleg
  */
-public class PyControlFlowBuilderTest extends LightMarkedTestCase {
+public abstract class PyControlFlowBuilderTest extends LightMarkedTestCase {
 
   @Override
   public String getTestDataPath() {

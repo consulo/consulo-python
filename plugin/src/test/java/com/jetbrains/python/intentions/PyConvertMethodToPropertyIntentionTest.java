@@ -5,7 +5,7 @@ import com.jetbrains.python.PyBundle;
 /**
  * User : ktisha
  */
-public class PyConvertMethodToPropertyIntentionTest extends PyIntentionTestCase {
+public abstract class PyConvertMethodToPropertyIntentionTest extends PyIntentionTestCase {
 
   public void testParamList() throws Exception {
     doNegativeTest(PyBundle.message("INTN.convert.method.to.property"));

@@ -15,7 +15,7 @@ import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
 import com.jetbrains.python.psi.resolve.ImportedResolveResult;
 import junit.framework.Assert;
 
-public class PyResolveTest extends PyResolveTestCase {
+public abstract class PyResolveTest extends PyResolveTestCase {
   @Override
   protected PsiElement doResolve() {
     final PsiReference ref = findReferenceByMarker();

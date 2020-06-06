@@ -11,7 +11,7 @@ import com.jetbrains.python.refactoring.introduce.field.PyIntroduceFieldHandler;
  * @author yole
  */
 @TestDataPath("$CONTENT_ROOT/../testData/refactoring/introduceField/")
-public class PyIntroduceFieldTest extends PyIntroduceTestCase {
+public abstract class PyIntroduceFieldTest extends PyIntroduceTestCase {
   public void testMetaClass() {  // PY-1580
     doTest(new IntroduceOperationCustomizer(IntroduceHandler.InitPlace.SAME_METHOD, false));
   }

@@ -34,7 +34,7 @@ import com.jetbrains.python.toolbox.Maybe;
  * @author yole
  */
 @TestDataPath("$CONTENT_ROOT/../testData/stubs/")
-public class PyStubsTest extends PyTestCase {
+public abstract class PyStubsTest extends PyTestCase {
 
   @Override
   protected String getTestDataPath() {

@@ -13,7 +13,7 @@ import com.jetbrains.python.psi.PyFunction;
  * User: dcheryasov
  * Date: Dec 28, 2008 3:50:23 AM
  */
-public class PyDecoratorTest extends PyTestCase {
+public abstract class PyDecoratorTest extends PyTestCase {
   private PsiElement find() throws Exception {
     PsiReference ref = myFixture.getReferenceAtCaretPosition("/resolve/decorators/" + getTestName(false) + ".py");
     return ref.getElement();

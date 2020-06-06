@@ -9,7 +9,7 @@ import consulo.codeInsight.TargetElementUtil;
 /**
  * @author Dennis.Ushakov
  */
-public class PyInlineLocalTest extends PyTestCase
+public abstract class PyInlineLocalTest extends PyTestCase
 {
 	private void doTest()
 	{

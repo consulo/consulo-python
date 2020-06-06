@@ -7,7 +7,7 @@ import com.jetbrains.rest.fixtures.RestFixtureTestCase;
 /**
  * User : catherine
  */
-public class RestDirectiveCompletionTest extends RestFixtureTestCase {
+public abstract class RestDirectiveCompletionTest extends RestFixtureTestCase {
 
   public void testNote() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());

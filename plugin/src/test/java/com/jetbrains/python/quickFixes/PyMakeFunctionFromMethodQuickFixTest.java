@@ -7,7 +7,7 @@ import com.jetbrains.python.inspections.PyMethodMayBeStaticInspection;
 /**
  * User: ktisha
  */
-public class PyMakeFunctionFromMethodQuickFixTest extends PyQuickFixTestCase {
+public abstract class PyMakeFunctionFromMethodQuickFixTest extends PyQuickFixTestCase {
 
   public void testOneParam() {
     doQuickFixTest(PyMethodMayBeStaticInspection.class, PyBundle.message("QFIX.NAME.make.function"));

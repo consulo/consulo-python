@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  * User: ktisha
  */
-public class PyMethodMayBeStaticInspectionTest extends PyTestCase {
+public abstract class PyMethodMayBeStaticInspectionTest extends PyTestCase {
 
   public void testTruePositive() {
     doTest();

@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 /**
  * @author yole
  */
-public class PyEncodingTest extends TestCase {
+public abstract class PyEncodingTest extends TestCase {
   public void testEncodingEmacs() {
     doTest("#!/usr/bin/python\n# -*- coding: iso-8859-15 -*-\nimport os, sys", "iso-8859-15");
   }

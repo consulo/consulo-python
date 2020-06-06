@@ -9,7 +9,7 @@ import consulo.testFramework.ParsingTestCase;
  * @author yole
  */
 @TestDataPath("$CONTENT_ROOT/../testData/psi/")
-public class PythonParsingTest extends ParsingTestCase
+public abstract class PythonParsingTest extends ParsingTestCase
 {
   private LanguageLevel myLanguageLevel = LanguageLevel.getDefault();
 

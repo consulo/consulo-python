@@ -12,7 +12,7 @@ import java.util.List;
  * User: dcheryasov
  * Date: Nov 20, 2009 6:46:25 AM
  */
-public class FPTest extends TestCase {
+public abstract class FPTest extends TestCase {
 
   public void testMap() {
     List<String> sequence = Arrays.asList("a", "b", "c");

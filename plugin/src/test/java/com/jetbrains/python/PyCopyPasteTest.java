@@ -9,7 +9,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyCopyPasteTest extends PyTestCase {
+public abstract class PyCopyPasteTest extends PyTestCase {
   private boolean myOldEnabled;
 
   @Override

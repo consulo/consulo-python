@@ -9,7 +9,7 @@ import com.jetbrains.python.psi.LanguageLevel;
  * @author Denis Zhdanov
  * @since 4/13/11 5:18 PM
  */
-public class PyEmacsTabTest extends PyTestCase {
+public abstract class PyEmacsTabTest extends PyTestCase {
   
   public void testIndentToRightAfterCompositeStatementStart() {
     doTest(

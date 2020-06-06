@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author yole
  */
-public class PyMissingConstructorTest extends PyTestCase {
+public abstract class PyMissingConstructorTest extends PyTestCase {
   private static final String TEST_DIRECTORY = "inspections/PyMissingConstructorInspection/";
   
   public void testBasic() {

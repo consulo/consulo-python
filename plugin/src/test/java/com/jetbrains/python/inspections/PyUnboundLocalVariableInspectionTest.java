@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author vlan
  */
-public class PyUnboundLocalVariableInspectionTest extends PyTestCase {
+public abstract class PyUnboundLocalVariableInspectionTest extends PyTestCase {
   private static final String TEST_DIRECTORY = "inspections/PyUnboundLocalVariableInspection/";
 
   public void testSimple() {

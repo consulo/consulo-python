@@ -8,7 +8,7 @@ import com.jetbrains.python.psi.*;
 /**
  * @author yole
  */
-public class PyMultiFileResolveTest extends PyMultiFileResolveTestCase {
+public abstract class PyMultiFileResolveTest extends PyMultiFileResolveTestCase {
 
   private static void checkInitPyDir(PsiElement elt, String dirname) {
     assertTrue(elt instanceof PyFile);

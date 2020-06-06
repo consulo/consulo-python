@@ -10,7 +10,7 @@ import static com.jetbrains.python.inspections.PyStringFormatParser.*;
 /**
  * @author yole
  */
-public class PyStringFormatParserTest extends TestCase {
+public abstract class PyStringFormatParserTest extends TestCase {
   public void testSimple() {
     List<FormatStringChunk> chunks = parsePercentFormat("abc");
     assertEquals(1, chunks.size());

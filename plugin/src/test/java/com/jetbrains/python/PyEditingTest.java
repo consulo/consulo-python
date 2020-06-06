@@ -16,7 +16,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyEditingTest extends PyTestCase {
+public abstract class PyEditingTest extends PyTestCase {
   public void testNoPairedParenthesesBeforeIdentifier() {       // PY-290
     assertEquals("(abc", doTestTyping("abc", 0, '('));
   }

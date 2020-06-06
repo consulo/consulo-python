@@ -7,7 +7,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyWrapTest extends PyTestCase {
+public abstract class PyWrapTest extends PyTestCase {
   private boolean myOldWrap;
   private int myOldMargin;
 

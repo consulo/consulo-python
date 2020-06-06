@@ -9,7 +9,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author yole
  */
-public class PyUnresolvedReferencesInspectionTest extends PyTestCase {
+public abstract class PyUnresolvedReferencesInspectionTest extends PyTestCase {
   private static final String TEST_DIRECTORY = "inspections/PyUnresolvedReferencesInspection/";
 
   public void testSelfReference() {

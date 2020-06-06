@@ -17,7 +17,7 @@ import java.util.Map;
  * User: dcheryasov
  * Date: Dec 11, 2009 2:13:51 AM
  */
-public class PyAssignmentMappingTest extends LightMarkedTestCase {
+public abstract class PyAssignmentMappingTest extends LightMarkedTestCase {
 
   @Override
   public String getTestDataPath() {

@@ -13,7 +13,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 /**
  * @author vlan
  */
-public class PyClassMROTest extends PyTestCase {
+public abstract class PyClassMROTest extends PyTestCase {
   public void testSimpleDiamond() {
     assertMRO(getClass("C"), "B1", "B2", "object");
   }

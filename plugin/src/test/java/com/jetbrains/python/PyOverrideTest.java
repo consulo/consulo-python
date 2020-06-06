@@ -15,7 +15,7 @@ import com.jetbrains.python.psi.stubs.PyClassNameIndex;
 /**
  * @author yole
  */
-public class PyOverrideTest extends PyTestCase {
+public abstract class PyOverrideTest extends PyTestCase {
   private void doTest() {
     myFixture.configureByFile("override/" + getTestName(true) + ".py");
     PyFunction toOverride = getTopLevelClass(0).getMethods() [0];

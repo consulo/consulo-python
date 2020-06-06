@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * User: catherine
  */
-public class PyDocTestRunnerTest extends LightPlatformTestCase {
+public abstract class PyDocTestRunnerTest extends LightPlatformTestCase {
   @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors"})
   public PyDocTestRunnerTest() {
     PyTestCase.initPlatformPrefix();

@@ -7,7 +7,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author vlan
  */
-public class Py3TypeCheckerInspectionTest extends PyTestCase {
+public abstract class Py3TypeCheckerInspectionTest extends PyTestCase {
   public static final String TEST_DIRECTORY = "inspections/PyTypeCheckerInspection/";
 
   @Override

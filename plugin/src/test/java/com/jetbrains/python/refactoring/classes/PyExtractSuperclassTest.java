@@ -3,7 +3,7 @@ package com.jetbrains.python.refactoring.classes;
 /**
  * @author Dennis.Ushakov
  */
-public class PyExtractSuperclassTest extends PyClassRefactoringTest {
+public abstract class PyExtractSuperclassTest extends PyClassRefactoringTest {
   public void testSimple() throws Exception {
     doSimpleTest("Foo", "Suppa", null, true, ".foo");
   }

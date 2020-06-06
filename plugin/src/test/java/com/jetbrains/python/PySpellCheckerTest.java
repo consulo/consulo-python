@@ -6,7 +6,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PySpellCheckerTest extends PyTestCase {
+public abstract class PySpellCheckerTest extends PyTestCase {
   public void testPlainTextSplitter() {
     doTest();
   }

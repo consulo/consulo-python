@@ -10,7 +10,7 @@ import java.io.Reader;
 /**
  * @author traff
  */
-public class BuildoutCfgLexerTest extends TestCase {
+public abstract class BuildoutCfgLexerTest extends TestCase {
 
   public void testSimple() throws IOException {
     doTest("[buildout]\n" +

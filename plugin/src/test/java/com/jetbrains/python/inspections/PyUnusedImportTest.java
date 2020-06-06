@@ -7,7 +7,7 @@ import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenc
 /**
  * @author yole
  */
-public class PyUnusedImportTest extends PyTestCase {
+public abstract class PyUnusedImportTest extends PyTestCase {
   // PY-3626
   public void testModuleAndSubmodule() {
     doTest("py3626.py");

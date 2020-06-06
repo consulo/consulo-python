@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User: ktisha
  */
-public class PyAugmentAssignmentInspectionTest extends PyTestCase {
+public abstract class PyAugmentAssignmentInspectionTest extends PyTestCase {
 
   public void testMult() {
     doTest();

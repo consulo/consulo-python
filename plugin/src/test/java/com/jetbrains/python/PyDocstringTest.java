@@ -17,7 +17,7 @@ import consulo.lang.util.LanguageVersionUtil;
 /**
  * User: ktisha
  */
-public class PyDocstringTest extends PyTestCase {
+public abstract class PyDocstringTest extends PyTestCase {
 
   @Override
   protected String getTestDataPath() {

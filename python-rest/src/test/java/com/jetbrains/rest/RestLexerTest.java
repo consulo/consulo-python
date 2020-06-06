@@ -10,7 +10,7 @@ import java.io.Reader;
 /**
  * User : catherine
  */
-public class RestLexerTest extends TestCase {
+public abstract class RestLexerTest extends TestCase {
 
   public void testTitle() throws IOException {
     doTest("\n" +

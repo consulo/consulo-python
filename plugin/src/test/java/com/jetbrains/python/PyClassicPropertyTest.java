@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.toolbox.Maybe;
 
-public class PyClassicPropertyTest extends PyTestCase {
+public abstract class PyClassicPropertyTest extends PyTestCase {
   protected PyClass myClass;
 
   @Override

@@ -10,7 +10,7 @@ import com.jetbrains.python.psi.types.*;
 /**
  * @author yole
  */
-public class PyTypeParserTest extends PyTestCase {
+public abstract class PyTypeParserTest extends PyTestCase {
   public void testClassType() {
     myFixture.configureByFile("typeParser/typeParser.py");
     final PyType type = PyTypeParser.getTypeByName(myFixture.getFile(), "MyObject");

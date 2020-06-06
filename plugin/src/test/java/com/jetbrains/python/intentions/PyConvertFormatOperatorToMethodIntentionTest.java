@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * User : ktisha
  */
-public class PyConvertFormatOperatorToMethodIntentionTest extends PyIntentionTestCase {
+public abstract class PyConvertFormatOperatorToMethodIntentionTest extends PyIntentionTestCase {
 
   public void testSimple() {
     doTest(PyBundle.message("INTN.replace.with.method"), LanguageLevel.PYTHON26);

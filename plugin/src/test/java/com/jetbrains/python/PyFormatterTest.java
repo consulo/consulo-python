@@ -15,7 +15,7 @@ import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
 /**
  * @author yole
  */
-public class PyFormatterTest extends PyTestCase {
+public abstract class PyFormatterTest extends PyTestCase {
   public void testBlankLineBetweenMethods() {
     doTest();
   }

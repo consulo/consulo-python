@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User: ktisha
  */
-public class PyGlobalUndefinedInspectionTest extends PyTestCase {
+public abstract class PyGlobalUndefinedInspectionTest extends PyTestCase {
 
   public void testTruePositive() {
     doTest();

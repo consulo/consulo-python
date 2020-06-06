@@ -17,7 +17,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 /**
  * @author yole
  */
-public class PyTypeTest extends PyTestCase {
+public abstract class PyTypeTest extends PyTestCase {
   public void testTupleType() {
     doTest("str",
            "t = ('a', 2)\n" +

@@ -8,7 +8,7 @@ import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenc
 /**
  * User: ktisha
  */
-public class AddMethodQuickFixTest extends PyQuickFixTestCase {
+public abstract class AddMethodQuickFixTest extends PyQuickFixTestCase {
 
   public void testAddInit() {
     doQuickFixTest(PyClassHasNoInitInspection.class, PyBundle.message("QFIX.NAME.add.method.$0.to.class.$1", "__init__", "A"));

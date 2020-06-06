@@ -6,7 +6,7 @@ import com.jetbrains.rest.fixtures.RestFixtureTestCase;
 /**
  * User : catherine
  */
-public class RestOptionCompletionTest extends RestFixtureTestCase {
+public abstract class RestOptionCompletionTest extends RestFixtureTestCase {
 
   public void testFootnote() {
     final String filePath = "/completion/option/footnote.rst";

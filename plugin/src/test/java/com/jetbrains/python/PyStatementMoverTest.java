@@ -8,7 +8,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * User : ktisha
  */
-public class PyStatementMoverTest extends PyTestCase {
+public abstract class PyStatementMoverTest extends PyTestCase {
   private void doTest() {
     final String testName = getTestName(true);
     myFixture.configureByFile("mover/" + testName + ".py");

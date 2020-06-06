@@ -17,7 +17,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author Alexey.Ivanov
  */
-public class PySmartEnterTest extends PyTestCase {
+public abstract class PySmartEnterTest extends PyTestCase {
   protected static List<SmartEnterProcessor> getSmartProcessors(Language language) {
     return SmartEnterProcessors.INSTANCE.forKey(language);
   }

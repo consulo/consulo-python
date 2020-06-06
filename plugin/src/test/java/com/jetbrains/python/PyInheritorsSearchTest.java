@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * @author yole
  */
-public class PyInheritorsSearchTest extends PyTestCase {
+public abstract class PyInheritorsSearchTest extends PyTestCase {
   public void testSimple() throws Exception {
     setupProject();
     final PyClass pyClass = findClass("A");

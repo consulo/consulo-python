@@ -20,7 +20,7 @@ import consulo.lang.util.LanguageVersionUtil;
 /**
  * @author yole
  */
-public class PyRegexpTest extends PyTestCase {
+public abstract class PyRegexpTest extends PyTestCase {
   public void testNestedCharacterClasses() {  // PY-2908
     doTestHighlighting();
   }

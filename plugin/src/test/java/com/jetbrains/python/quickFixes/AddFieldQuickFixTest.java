@@ -7,7 +7,7 @@ import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenc
 /**
  * User: ktisha
  */
-public class AddFieldQuickFixTest extends PyQuickFixTestCase {
+public abstract class AddFieldQuickFixTest extends PyQuickFixTestCase {
 
   public void testAddClassField() {
     doQuickFixTest(PyUnresolvedReferencesInspection.class, PyBundle.message("QFIX.NAME.add.field.$0.to.class.$1", "FIELD", "A"));

@@ -11,7 +11,7 @@ import com.jetbrains.python.refactoring.surround.surrounders.statements.PyWithWh
 /**
  * @author yole
  */
-public class PySurroundWithTest extends PyTestCase {
+public abstract class PySurroundWithTest extends PyTestCase {
   public void testSurroundWithIf() throws Exception {
     doTest(new PyWithIfSurrounder());
   }

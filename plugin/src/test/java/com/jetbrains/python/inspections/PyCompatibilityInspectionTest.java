@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 /**
  * User : catherine
  */
-public class PyCompatibilityInspectionTest extends PyTestCase {
+public abstract class PyCompatibilityInspectionTest extends PyTestCase {
 
   public void testDictCompExpression() {
     setLanguageLevel(LanguageLevel.PYTHON27);

@@ -8,7 +8,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyIndentTest extends PyTestCase {
+public abstract class PyIndentTest extends PyTestCase {
   private void doTest(final String before, String after) {
     final String name = getTestName(false);
 

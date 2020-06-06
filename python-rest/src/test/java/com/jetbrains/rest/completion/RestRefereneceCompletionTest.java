@@ -6,7 +6,7 @@ import com.jetbrains.rest.fixtures.RestFixtureTestCase;
 /**
  * User : catherine
  */
-public class RestRefereneceCompletionTest extends RestFixtureTestCase {
+public abstract class RestRefereneceCompletionTest extends RestFixtureTestCase {
 
   public void testFootnote() {
     doTest();

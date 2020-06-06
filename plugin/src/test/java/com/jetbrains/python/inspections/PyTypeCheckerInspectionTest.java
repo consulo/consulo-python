@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author vlan
  */
-public class PyTypeCheckerInspectionTest extends PyTestCase {
+public abstract class PyTypeCheckerInspectionTest extends PyTestCase {
   public static final String TEST_DIRECTORY = "inspections/PyTypeCheckerInspection/";
 
   private void doTest() {

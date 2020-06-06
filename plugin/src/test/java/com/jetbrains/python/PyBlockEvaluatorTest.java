@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author yole
  */
-public class PyBlockEvaluatorTest extends PyTestCase {
+public abstract class PyBlockEvaluatorTest extends PyTestCase {
   public void testSimple() {
     PyBlockEvaluator eval = doEvaluate("a='b'");
     assertEquals("b", eval.getValue("a"));

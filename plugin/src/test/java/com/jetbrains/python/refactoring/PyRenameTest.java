@@ -17,7 +17,7 @@ import consulo.codeInsight.TargetElementUtilEx;
 /**
  * @author yole
  */
-public class PyRenameTest extends PyTestCase
+public abstract class PyRenameTest extends PyTestCase
 {
 	public static final String RENAME_DATA_PATH = "refactoring/rename/";
 

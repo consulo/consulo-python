@@ -19,7 +19,7 @@ import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
  *
  * @author yole
  */
-public class PythonHighlightingTest extends PyTestCase {
+public abstract class PythonHighlightingTest extends PyTestCase {
   private static final String TEST_PATH = "/highlighting/";
 
   public void testBuiltins() {

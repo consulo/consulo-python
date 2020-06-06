@@ -6,7 +6,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User : ktisha
  */
-public class PythonDoctestCompletionTest extends PyTestCase {
+public abstract class PythonDoctestCompletionTest extends PyTestCase {
 
   private void doDoctestTest(String expected) {
     final String testName = "completion/doctest/" + getTestName(true);

@@ -8,7 +8,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.jetbrains.python.PythonTestUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
 
-public class PythonDemorganLawIntentionTest extends PyTestCase {
+public abstract class PythonDemorganLawIntentionTest extends PyTestCase {
   public void test1() throws Exception {
     doTest();
   }

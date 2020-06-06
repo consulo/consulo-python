@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author yole
  */
-public class PyRedundantParenthesesInspectionTest extends PyTestCase {
+public abstract class PyRedundantParenthesesInspectionTest extends PyTestCase {
   public void doTest() {
     myFixture.configureByFile("inspections/PyRedundantParenthesesInspection/" + getTestName(false) + ".py");
     myFixture.enableInspections(PyRedundantParenthesesInspection.class);

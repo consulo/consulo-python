@@ -15,7 +15,7 @@ import java.util.List;
  * @author yole
  */
 @RecordExecution(includePackages = {"com.jetbrains.python.**"})
-public class PyPathEvaluatorTest extends PyTestCase {
+public abstract class PyPathEvaluatorTest extends PyTestCase {
   public void testDirName() {
     assertEquals("/foo/bar", doEvaluate("os.path.dirname(__file__)", "/foo/bar/baz.py"));
   }

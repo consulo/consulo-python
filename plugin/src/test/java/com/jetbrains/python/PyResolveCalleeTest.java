@@ -12,7 +12,7 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
  * User: dcheryasov
  * Date: Aug 21, 2008
  */
-public class PyResolveCalleeTest extends PyTestCase {
+public abstract class PyResolveCalleeTest extends PyTestCase {
 
   private PyCallExpression.PyMarkedCallee resolveCallee() {
     PsiReference ref = myFixture.getReferenceAtCaretPosition("/resolve/callee/" + getTestName(false) + ".py");

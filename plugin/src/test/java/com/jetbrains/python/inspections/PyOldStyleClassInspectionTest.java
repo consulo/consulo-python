@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * User : catherine
  */
-public class PyOldStyleClassInspectionTest extends PyTestCase {
+public abstract class PyOldStyleClassInspectionTest extends PyTestCase {
 
   public void testSlot() {
     doTest(getTestName(false));

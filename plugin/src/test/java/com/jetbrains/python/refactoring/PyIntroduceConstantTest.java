@@ -10,7 +10,7 @@ import com.jetbrains.python.refactoring.introduce.constant.PyIntroduceConstantHa
  * @author yole
  */
 @TestDataPath("$CONTENT_ROOT/../testData/refactoring/introduceConstant/")
-public class PyIntroduceConstantTest extends PyIntroduceTestCase {
+public abstract class PyIntroduceConstantTest extends PyIntroduceTestCase {
   public void testPy1840() {
     doTest();
   }

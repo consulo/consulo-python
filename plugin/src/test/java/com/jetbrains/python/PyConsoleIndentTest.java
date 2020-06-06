@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * @author traff
  */
-public class PyConsoleIndentTest extends UsefulTestCase {
+public abstract class PyConsoleIndentTest extends UsefulTestCase {
   public void testIndent1() {
     doTest();
   }

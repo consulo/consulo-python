@@ -8,7 +8,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author yole
  */
-public class PyAddImportTest extends PyTestCase {
+public abstract class PyAddImportTest extends PyTestCase {
   public void testAddBuiltin() {
     myFixture.configureByFile("addImport/addBuiltin.py");
     new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {

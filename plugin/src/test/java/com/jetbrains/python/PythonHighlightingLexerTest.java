@@ -7,7 +7,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * user : catherine
  */
-public class PythonHighlightingLexerTest extends PyLexerTestCase {
+public abstract class PythonHighlightingLexerTest extends PyLexerTestCase {
 
   public void testFromFutureUnicode() {
     doTest(LanguageLevel.PYTHON26, "from __future__ import unicode_literals\n\n" +

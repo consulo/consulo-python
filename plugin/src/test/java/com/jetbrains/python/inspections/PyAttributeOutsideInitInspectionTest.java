@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User: ktisha
  */
-public class PyAttributeOutsideInitInspectionTest extends PyTestCase {
+public abstract class PyAttributeOutsideInitInspectionTest extends PyTestCase {
 
   public void testTruePositive() {
     doTest();

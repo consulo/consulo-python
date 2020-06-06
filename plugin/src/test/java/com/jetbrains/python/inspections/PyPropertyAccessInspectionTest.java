@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 /**
  * @author yole
  */
-public class PyPropertyAccessInspectionTest extends PyTestCase {
+public abstract class PyPropertyAccessInspectionTest extends PyTestCase {
   public void testTest() {
     doTest();
   }

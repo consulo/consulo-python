@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * @author dcheryasov
  */
-public class PyQuickDocTest extends LightMarkedTestCase {
+public abstract class PyQuickDocTest extends LightMarkedTestCase {
   private PythonDocumentationProvider myProvider;
 
   @Override

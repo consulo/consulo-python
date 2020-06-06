@@ -12,7 +12,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User : ktisha
  */
-public class PyFillParagraphTest extends PyTestCase {
+public abstract class PyFillParagraphTest extends PyTestCase {
 
   public void testDocstring() {
     doTest();

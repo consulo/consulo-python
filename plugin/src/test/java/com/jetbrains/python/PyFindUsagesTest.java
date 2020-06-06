@@ -18,7 +18,7 @@ import consulo.codeInsight.TargetElementUtilEx;
 /**
  * @author yole
  */
-public class PyFindUsagesTest extends PyTestCase
+public abstract class PyFindUsagesTest extends PyTestCase
 {
 	public void testInitUsages()
 	{   // PY-292

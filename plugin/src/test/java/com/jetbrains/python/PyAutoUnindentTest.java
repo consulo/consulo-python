@@ -12,7 +12,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
  * User: dcheryasov
  * Date: Mar 5, 2010 2:49:38 PM
  */
-public class PyAutoUnindentTest extends PyTestCase {
+public abstract class PyAutoUnindentTest extends PyTestCase {
 
   public void testSingleElse() throws Exception{
     doTypingTest();

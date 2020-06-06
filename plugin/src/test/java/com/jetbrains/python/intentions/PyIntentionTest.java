@@ -15,7 +15,7 @@ import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
 /**
  * @author Alexey.Ivanov
  */
-public class PyIntentionTest extends PyTestCase {
+public abstract class PyIntentionTest extends PyTestCase {
   @Nullable private PyDocumentationSettings myDocumentationSettings = null;
 
   @Override

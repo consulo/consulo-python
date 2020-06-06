@@ -11,7 +11,7 @@ import com.jetbrains.python.refactoring.introduce.parameter.PyIntroduceParameter
  * User: ktisha
  */
 @TestDataPath("$CONTENT_ROOT/../testData/refactoring/introduceParameter/")
-public class PyIntroduceParameterTest extends PyIntroduceTestCase {
+public abstract class PyIntroduceParameterTest extends PyIntroduceTestCase {
   public void testSimple() {
     doTest();
   }

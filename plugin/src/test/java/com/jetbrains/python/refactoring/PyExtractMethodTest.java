@@ -13,7 +13,7 @@ import com.jetbrains.python.refactoring.extractmethod.PyExtractMethodUtil;
 /**
  * @author oleg
  */
-public class PyExtractMethodTest extends LightMarkedTestCase {
+public abstract class PyExtractMethodTest extends LightMarkedTestCase {
   private void doTest(String newName, LanguageLevel level) {
     setLanguageLevel(level);
     try {

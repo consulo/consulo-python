@@ -6,7 +6,7 @@ import com.jetbrains.python.psi.PyElement;
 /**
  * @author Dennis.Ushakov
  */
-public class PyPullUpTest extends PyClassRefactoringTest {
+public abstract class PyPullUpTest extends PyClassRefactoringTest {
   public void testSimple() {
     doHelperTest("Boo", ".boo", "Foo");
   }

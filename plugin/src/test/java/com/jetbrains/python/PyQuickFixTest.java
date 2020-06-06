@@ -18,7 +18,7 @@ import com.jetbrains.python.psi.LanguageLevel;
  * Date: Nov 29, 2008 12:47:08 AM
  */
 @TestDataPath("$CONTENT_ROOT/../testData/inspections/")
-public class PyQuickFixTest extends PyTestCase {
+public abstract class PyQuickFixTest extends PyTestCase {
 
   public void testAddImport() {
     doInspectionTest(new String[] { "AddImport.py", "ImportTarget.py" }, PyUnresolvedReferencesInspection.class, PyBundle.message("ACT.NAME.use.import"), true, true);

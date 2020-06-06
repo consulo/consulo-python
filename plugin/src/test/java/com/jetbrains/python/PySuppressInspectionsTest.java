@@ -11,7 +11,7 @@ import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenc
 /**
  * @author yole
  */
-public class PySuppressInspectionsTest extends PyTestCase {
+public abstract class PySuppressInspectionsTest extends PyTestCase {
   public void testSuppressedForStatement() {
     doTestHighlighting(PyUnresolvedReferencesInspection.class);
   }

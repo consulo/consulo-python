@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * @author peter
  */
-public class PythonAutoPopupTest extends PyTestCase {
+public abstract class PythonAutoPopupTest extends PyTestCase {
   private static final String FOO_CLASS = "class Foo(object):\n" +
                                           "    def bar(self):\n" +
                                           "        pass\n\n";

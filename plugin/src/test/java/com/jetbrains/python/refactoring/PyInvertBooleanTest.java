@@ -14,7 +14,7 @@ import java.util.List;
  * User : ktisha
  */
 @TestDataPath("$CONTENT_ROOT/../testData/refactoring/invertBoolean/")
-public class PyInvertBooleanTest extends PyTestCase {
+public abstract class PyInvertBooleanTest extends PyTestCase {
 
   public void testSimple() { doTest(); }
 

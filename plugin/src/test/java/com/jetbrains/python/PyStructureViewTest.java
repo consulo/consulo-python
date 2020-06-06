@@ -9,7 +9,7 @@ import static com.intellij.testFramework.PlatformTestUtil.assertTreeEqual;
 /**
  * @author vlan
  */
-public class PyStructureViewTest extends PyTestCase {
+public abstract class PyStructureViewTest extends PyTestCase {
   private static String TEST_DIRECTORY = "structureView/";
 
   public void testBaseClassNames() {

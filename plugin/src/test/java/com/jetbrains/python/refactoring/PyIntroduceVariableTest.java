@@ -14,7 +14,7 @@ import java.util.Collection;
  * @author yole
  */
 @TestDataPath("$CONTENT_ROOT/../testData/refactoring/introduceVariable/")
-public class PyIntroduceVariableTest extends PyIntroduceTestCase {
+public abstract class PyIntroduceVariableTest extends PyIntroduceTestCase {
   public void testSimple() {
     doTest();
   }

@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 /**
  * User: ktisha
  */
-public class PyClassHasNoInitInspectionTest extends PyTestCase {
+public abstract class PyClassHasNoInitInspectionTest extends PyTestCase {
 
   public void testClass() {
     doTest();

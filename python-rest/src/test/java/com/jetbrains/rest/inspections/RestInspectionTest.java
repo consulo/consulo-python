@@ -5,7 +5,7 @@ import com.jetbrains.rest.fixtures.RestFixtureTestCase;
 /**
  * User : catherine
  */
-public class RestInspectionTest extends RestFixtureTestCase {
+public abstract class RestInspectionTest extends RestFixtureTestCase {
   public void testUndefinedRole() {
     doTest(RestRoleInspection.class);
   }

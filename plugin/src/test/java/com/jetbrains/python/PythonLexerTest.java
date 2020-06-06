@@ -6,7 +6,7 @@ import com.jetbrains.python.lexer.PythonIndentingLexer;
 /**
  * @author yole
  */
-public class PythonLexerTest extends PyLexerTestCase {
+public abstract class PythonLexerTest extends PyLexerTestCase {
   public void testSimpleExpression() {
     doTest("a=1", "Py:IDENTIFIER", "Py:EQ", "Py:INTEGER_LITERAL", "Py:STATEMENT_BREAK");
   }
