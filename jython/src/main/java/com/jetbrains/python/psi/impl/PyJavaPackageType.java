@@ -77,7 +77,7 @@ public class PyJavaPackageType implements PyType
 
 	private GlobalSearchScope getScope(Project project)
 	{
-		return myModule != null ? myModule.getModuleWithDependenciesAndLibrariesScope(false) : ProjectScope.getAllScope(project);
+		return myModule != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule, false) : ProjectScope.getAllScope(project);
 	}
 
 	@Override

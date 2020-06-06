@@ -45,7 +45,7 @@ public class PyDotNetImportResolver implements PyImportResolver
 		Module module = context.getModule();
 		if(module != null && ModuleUtilCore.getExtension(module, BaseIronPythonModuleExtension.class) != null)
 		{
-			GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
+			GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
 			final DotNetNamespaceAsElement aPackage = psiFacade.findNamespace(fqn, scope);
 			if(aPackage != null)
 			{

@@ -18,6 +18,7 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nullable;
 
+import com.intellij.psi.search.GlobalSearchScope;
 import consulo.jython.module.extension.JythonModuleExtension;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -52,7 +53,7 @@ public class PyJavaImportResolver implements PyImportResolver
 		Module module = context.getModule();
 		if(module != null && ModuleUtilCore.getExtension(module, JythonModuleExtension.class) != null)
 		{
-			final PsiClass aClass = psiFacade.findClass(fqn, module.getModuleWithDependenciesAndLibrariesScope(false));
+			final PsiClass aClass = psiFacade.findClass(fqn, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false));
 			if(aClass != null)
 			{
 				return aClass;

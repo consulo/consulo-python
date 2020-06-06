@@ -48,7 +48,7 @@ public class PyJavaImportCandidateProvider implements PyImportCandidateProvider
 			return;
 		}
 
-		GlobalSearchScope scope = module == null ? ProjectScope.getAllScope(project) : module.getModuleWithDependenciesAndLibrariesScope(false);
+		GlobalSearchScope scope = module == null ? ProjectScope.getAllScope(project) : GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
 		PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
 		final PsiClass[] classesByName = cache.getClassesByName(name, scope);
 		for(PsiClass psiClass : classesByName)
