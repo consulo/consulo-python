@@ -15,7 +15,7 @@ import junit.framework.Assert;
  * @author yole
  */
 @TestDataPath("$CONTENT_ROOT/../testData/resolve/pyToJava/")
-public class PyToJavaResolveTest extends UsefulTestCase
+public abstract class PyToJavaResolveTest extends UsefulTestCase
 {
   private PsiElement resolve() throws Exception {
     PsiReference ref = null;//configureByFile(getTestName(false) + ".py");

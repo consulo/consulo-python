@@ -7,7 +7,7 @@ import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenc
 /**
  * @author yole
  */
-public class PyJythonHighlightingTest extends LightCodeInsightFixtureTestCase {
+public abstract class PyJythonHighlightingTest extends LightCodeInsightFixtureTestCase {
   public void testCallableJavaClass() {
     doCallableTest();
   }
