@@ -16,11 +16,6 @@
 
 package com.jetbrains.python.statistics;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.internal.statistic.AbstractApplicationUsagesCollector;
 import com.intellij.internal.statistic.CollectUsagesException;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
@@ -29,6 +24,10 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.jetbrains.python.sdk.PythonSdkType;
+
+import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yole
@@ -53,6 +52,6 @@ public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesColle
   @Nonnull
   @Override
   public String getGroupId() {
-    return "py-interpreter";
+    return "consulo.python:interpreter";
   }
 }

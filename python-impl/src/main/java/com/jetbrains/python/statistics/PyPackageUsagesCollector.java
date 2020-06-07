@@ -15,12 +15,6 @@
  */
 package com.jetbrains.python.statistics;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
 import com.intellij.internal.statistic.AbstractApplicationUsagesCollector;
 import com.intellij.internal.statistic.CollectUsagesException;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
@@ -33,6 +27,12 @@ import com.jetbrains.python.packaging.PyPIPackageUtil;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.packaging.PyRequirement;
 import com.jetbrains.python.sdk.PythonSdkType;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author yole
@@ -73,6 +73,6 @@ public class PyPackageUsagesCollector extends AbstractApplicationUsagesCollector
 	@Override
 	public String getGroupId()
 	{
-		return "py-packages";
+		return "consulo.python.packages";
 	}
 }
