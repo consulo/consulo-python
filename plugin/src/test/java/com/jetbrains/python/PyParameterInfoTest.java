@@ -1,12 +1,5 @@
 package com.jetbrains.python;
 
-import java.awt.Color;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
 import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.lang.parameterInfo.ParameterInfoUIContextEx;
@@ -22,7 +15,15 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
 import com.jetbrains.python.psi.PyArgumentList;
+import consulo.util.dataholder.UserDataHolderEx;
 import junit.framework.Assert;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Tests parameter info available via ^P at call sites.
@@ -493,7 +494,6 @@ public abstract class PyParameterInfoTest extends LightMarkedTestCase
 	 */
 	private static class Collector implements ParameterInfoUIContextEx, CreateParameterInfoContext, UpdateParameterInfoContext
 	{
-
 		private final PsiFile myFile;
 		private final int myOffset;
 		private int myIndex;
@@ -522,7 +522,7 @@ public abstract class PyParameterInfoTest extends LightMarkedTestCase
 		}
 
 		@Override
-		public void setEscapeFunction(@Nullable Function<String, String> function)
+		public void setEscapeFunction(@Nullable Function<? super String, String> function)
 		{
 
 		}
@@ -538,6 +538,12 @@ public abstract class PyParameterInfoTest extends LightMarkedTestCase
 		{
 			// nothing, we don't use it
 			return text;
+		}
+
+		@Override
+		public void setupRawUIComponentPresentation(String s)
+		{
+
 		}
 
 		@Override
@@ -587,9 +593,33 @@ public abstract class PyParameterInfoTest extends LightMarkedTestCase
 		}
 
 		@Override
+		public boolean isSingleOverload()
+		{
+			return false;
+		}
+
+		@Override
+		public boolean isSingleParameterInfo()
+		{
+			return false;
+		}
+
+		@Override
+		public UserDataHolderEx getCustomContext()
+		{
+			return null;
+		}
+
+		@Override
 		public void setHighlightedParameter(Object parameter)
 		{
 			// nothing, we don't use it
+		}
+
+		@Override
+		public Object getHighlightedParameter()
+		{
+			return null;
 		}
 
 		@Override
@@ -631,6 +661,24 @@ public abstract class PyParameterInfoTest extends LightMarkedTestCase
 		public Object[] getObjectsToView()
 		{
 			return null; // we don't use it
+		}
+
+		@Override
+		public boolean isPreservedOnHintHidden()
+		{
+			return false;
+		}
+
+		@Override
+		public void setPreservedOnHintHidden(boolean b)
+		{
+
+		}
+
+		@Override
+		public boolean isInnermostContext()
+		{
+			return false;
 		}
 
 		@Override
