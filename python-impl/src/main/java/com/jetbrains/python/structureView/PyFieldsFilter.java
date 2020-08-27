@@ -16,12 +16,13 @@
 
 package com.jetbrains.python.structureView;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.util.PlatformIcons;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -58,6 +59,6 @@ public class PyFieldsFilter implements Filter {
   @Nonnull
   @Override
   public ActionPresentation getPresentation() {
-    return new ActionPresentationData(IdeBundle.message("action.structureview.show.fields"), null, PlatformIcons.FIELD_ICON);
+    return new ActionPresentationData(IdeBundle.message("action.structureview.show.fields"), null, AllIcons.Nodes.Field);
   }
 }
