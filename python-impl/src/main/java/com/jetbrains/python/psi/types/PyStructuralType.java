@@ -15,22 +15,22 @@
  */
 package com.jetbrains.python.psi.types;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author vlan
@@ -62,7 +62,7 @@ public class PyStructuralType implements PyType
 		{
 			if(!attribute.equals(completionPrefix))
 			{
-				variants.add(LookupElementBuilder.create(attribute).withIcon(PlatformIcons.FIELD_ICON));
+				variants.add(LookupElementBuilder.create(attribute).withIcon(AllIcons.Nodes.Field));
 			}
 		}
 		return variants.toArray();

@@ -22,6 +22,8 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.text.StringUtil;
+import consulo.ui.image.Image;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,16 +39,16 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
   protected final String myLookupString;
   protected final String myTypeText;
   protected final boolean isBold;
-  protected final Icon myIcon;
-  private final Icon myTypeIcon;
+  protected final Image myIcon;
+  private final Image myTypeIcon;
   protected final String myTailText;
   protected InsertHandler<PythonLookupElement> myHandler;
 
   public PythonLookupElement(@Nonnull final String lookupString,
                            @Nullable final String tailText,
                            @Nullable final String typeText, final boolean bold,
-                           @Nullable final Icon icon,
-                           @Nullable final Icon typeIcon,
+                           @Nullable final Image icon,
+                           @Nullable final Image typeIcon,
                            @Nonnull final InsertHandler<PythonLookupElement> handler) {
     myLookupString = lookupString;
     myTailText = tailText;
@@ -60,15 +62,15 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
   public PythonLookupElement(@Nonnull final String lookupString,
                            @Nullable final String tailText,
                            @Nullable final String typeText, final boolean bold,
-                           @Nullable final Icon icon,
-                           @Nullable final Icon typeIcon) {
+                           @Nullable final Image icon,
+                           @Nullable final Image typeIcon) {
     this(lookupString, tailText, typeText, bold, icon, typeIcon, new BasicInsertHandler<PythonLookupElement>());
   }
 
   public PythonLookupElement(
     @Nonnull final String lookupString,
     final boolean bold,
-    @Nullable final Icon icon
+    @Nullable final Image icon
   ) {
     this(lookupString, null, null, bold, icon, null, new BasicInsertHandler<PythonLookupElement>());
   }
@@ -88,12 +90,12 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
     return !StringUtil.isEmpty(myTypeText) ? myTypeText : null;
   }
 
-  public Icon getIcon() {
+  public Image getIcon() {
     return myIcon;
   }
 
 
-  public Icon getTypeIcon() {
+  public Image getTypeIcon() {
     return myTypeIcon;
   }
 

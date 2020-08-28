@@ -1,9 +1,9 @@
 package com.jetbrains.python.console.pydev;
 
-import javax.annotation.Nullable;
-import javax.swing.Icon;
-
 import com.intellij.icons.AllIcons;
+import consulo.ui.image.Image;
+
+import javax.annotation.Nullable;
 
 public class PyCodeCompletionImages {
 
@@ -13,7 +13,7 @@ public class PyCodeCompletionImages {
      * @return
      */
     @Nullable
-    public static Icon getImageForType(int type){
+    public static Image getImageForType(int type){
       switch (type) {
         case IToken.TYPE_CLASS:
           return AllIcons.Nodes.Class;

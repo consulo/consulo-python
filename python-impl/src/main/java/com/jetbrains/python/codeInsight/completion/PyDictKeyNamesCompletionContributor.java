@@ -15,18 +15,10 @@
  */
 package com.jetbrains.python.codeInsight.completion;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
@@ -35,13 +27,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.codeInsight.completion.CompletionProvider;
+
+import javax.annotation.Nonnull;
+
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 /**
  * User: catherine
@@ -235,7 +230,7 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor
 	private static LookupElementBuilder createElement(final String key, final boolean addHandler)
 	{
 		LookupElementBuilder item;
-		item = LookupElementBuilder.create(key).withTypeText("dict key").withIcon(PlatformIcons.PARAMETER_ICON);
+		item = LookupElementBuilder.create(key).withTypeText("dict key").withIcon(AllIcons.Nodes.Parameter);
 
 		if(addHandler)
 		{

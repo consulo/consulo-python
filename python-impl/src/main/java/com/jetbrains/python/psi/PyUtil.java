@@ -15,38 +15,13 @@
  */
 package com.jetbrains.python.psi;
 
-import static com.jetbrains.python.psi.PyFunction.Modifier.CLASSMETHOD;
-import static com.jetbrains.python.psi.PyFunction.Modifier.STATICMETHOD;
-
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.scratch.ScratchFileService;
@@ -83,20 +58,9 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.psi.util.QualifiedName;
+import com.intellij.psi.util.*;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.NotNullFunction;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.PlatformIcons;
-import com.intellij.util.SmartList;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.jetbrains.NotNullPredicate;
@@ -117,19 +81,26 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PySetuptoolsNamespaceIndex;
-import com.jetbrains.python.psi.types.PyCallableParameter;
-import com.jetbrains.python.psi.types.PyCallableType;
-import com.jetbrains.python.psi.types.PyClassLikeType;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyClassTypeImpl;
-import com.jetbrains.python.psi.types.PyTupleType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.PyUnionType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.psi.types.*;
 import com.jetbrains.python.refactoring.classes.PyDependenciesComparator;
 import com.jetbrains.python.refactoring.classes.extractSuperclass.PyExtractSuperclassHelper;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.sdk.PythonSdkType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.*;
+
+import static com.jetbrains.python.psi.PyFunction.Modifier.CLASSMETHOD;
+import static com.jetbrains.python.psi.PyFunction.Modifier.STATICMETHOD;
 
 public class PyUtil
 {
@@ -1337,7 +1308,7 @@ public class PyUtil
 		{
 			suffix = "=";
 		}
-		LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name + suffix).withIcon(PlatformIcons.PARAMETER_ICON);
+		LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(name + suffix).withIcon(AllIcons.Nodes.Parameter);
 		lookupElementBuilder = lookupElementBuilder.withInsertHandler(OverwriteEqualsInsertHandler.INSTANCE);
 		return PrioritizedLookupElement.withGrouping(lookupElementBuilder, 1);
 	}

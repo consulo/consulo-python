@@ -29,14 +29,13 @@ import com.jetbrains.python.psi.PyTypedElement;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.Image;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolderBase;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
 
 /**
  * Note: if you use {@link #myTypeName} to override real field, be sure to use
@@ -62,7 +61,7 @@ public class PyCustomMember extends UserDataHolderBase
 	 * Force resolving to {@link MyInstanceElement} even if element is function
 	 */
 	private boolean myAlwaysResolveToCustomElement;
-	private Icon myIcon = AllIcons.Nodes.Method;
+	private Image myIcon = AllIcons.Nodes.Method;
 	private PyCustomMemberTypeInfo<?> myCustomTypeInfo;
 
 	public PyCustomMember(@Nonnull final String name, @Nullable final String type, final boolean resolveToInstance)
@@ -187,11 +186,11 @@ public class PyCustomMember extends UserDataHolderBase
 		return myName;
 	}
 
-	public Icon getIcon()
+	public Image getIcon()
 	{
 		if(myTarget != null)
 		{
-			return TargetAWT.to(IconDescriptorUpdaters.getIcon(myTarget, 0));
+			return IconDescriptorUpdaters.getIcon(myTarget, 0);
 		}
 		return myIcon;
 	}
@@ -284,7 +283,7 @@ public class PyCustomMember extends UserDataHolderBase
 	/**
 	 * @param icon icon to use (will be used method icon otherwise)
 	 */
-	public PyCustomMember withIcon(@Nonnull final Icon icon)
+	public PyCustomMember withIcon(@Nonnull final Image icon)
 	{
 		myIcon = icon;
 		return this;
