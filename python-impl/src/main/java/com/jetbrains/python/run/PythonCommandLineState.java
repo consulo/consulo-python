@@ -15,18 +15,6 @@
  */
 package com.jetbrains.python.run;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -34,12 +22,8 @@ import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.CommandLineState;
-import com.intellij.execution.configurations.EncodingEnvironmentUtil;
-import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.configurations.GeneralCommandLine.ParentEnvironmentType;
-import com.intellij.execution.configurations.ParametersList;
-import com.intellij.execution.configurations.PtyCommandLine;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.filters.UrlFilter;
@@ -83,6 +67,13 @@ import consulo.roots.impl.ProductionContentFolderTypeProvider;
 import consulo.roots.impl.TestContentFolderTypeProvider;
 import consulo.vfs.ArchiveFileSystem;
 import consulo.vfs.util.ArchiveVfsUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * @author traff, Leonid Shalupov
@@ -559,7 +550,7 @@ public abstract class PythonCommandLineState extends CommandLineState
 			pythonPathList.add(pathForTests.getPath());
 		}
 
-		ModuleExtension[] extensions = ModuleRootManager.getInstance(module).getExtensions();
+		List<ModuleExtension> extensions = ModuleRootManager.getInstance(module).getExtensions();
 		for(ModuleExtension moduleExtension : extensions)
 		{
 			if(moduleExtension instanceof PythonPathContributingFacet)

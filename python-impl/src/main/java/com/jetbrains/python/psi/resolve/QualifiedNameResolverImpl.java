@@ -16,13 +16,6 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
@@ -43,6 +36,13 @@ import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.impl.PyImportResolver;
 import com.jetbrains.python.sdk.PythonSdkType;
 import consulo.module.extension.ModuleExtension;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Resolves the specified qualified name in the specified context (module, all modules or a file) to a file or directory.
@@ -117,7 +117,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 		Module module = myContext.getModule();
 		if(module != null)
 		{
-			ModuleExtension[] extensions = ModuleRootManager.getInstance(module).getExtensions();
+			List<ModuleExtension> extensions = ModuleRootManager.getInstance(module).getExtensions();
 			for(ModuleExtension facet : extensions)
 			{
 				if(facet instanceof PythonPathContributingFacet && ((PythonPathContributingFacet) facet).acceptRootAsTopLevelPackage())
