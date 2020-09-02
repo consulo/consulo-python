@@ -22,22 +22,21 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.python.PythonFileType;
-import consulo.awt.TargetAWT;
 
 /**
  * @author yole
  */
 public class CreatePythonFileAction extends CreateFileFromTemplateAction implements DumbAware {
   public CreatePythonFileAction() {
-    super("Python File", "Creates a Python file from the specified template", TargetAWT.to(PythonFileType.INSTANCE.getIcon()));
+    super("Python File", "Creates a Python file from the specified template", PythonFileType.INSTANCE.getIcon());
   }
 
   @Override
   protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
     builder
       .setTitle("New Python file")
-      .addKind("Python file", TargetAWT.to(PythonFileType.INSTANCE.getIcon()), "Python Script")
-      .addKind("Python unit test", TargetAWT.to(PythonFileType.INSTANCE.getIcon()), "Python Unit Test");
+      .addKind("Python file", PythonFileType.INSTANCE.getIcon(), "Python Script")
+      .addKind("Python unit test", PythonFileType.INSTANCE.getIcon(), "Python Unit Test");
   }
 
   @Override
