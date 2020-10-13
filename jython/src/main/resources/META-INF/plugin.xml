@@ -1,4 +1,4 @@
-<idea-plugin>
+<consulo-plugin>
 	<id>consulo.jython</id>
 	<name>Jython</name>
 	<category>Language Extensions</category>
@@ -11,7 +11,7 @@
 		<moduleExtensionProvider key="jython"
 								 parentKey="java"
 								 name="Jython"
-								 icon="/icons/jython.png"
+								 icon="consulo.jython.JythonIconGroup@jython"
 								 immutableClass="consulo.jython.module.extension.JythonModuleExtension"
 								 mutableClass="consulo.jython.module.extension.JythonMutableModuleExtension" />
 		<addTo.listOfElements name="pythonExtensions">jython</addTo.listOfElements>
@@ -24,4 +24,4 @@
 		<importCandidateProvider implementation="com.jetbrains.python.psi.impl.PyJavaImportCandidateProvider"/>
 		<sdkFlavor implementation="com.jetbrains.python.sdk.flavors.JythonSdkFlavor" />
 	</extensions>
-</idea-plugin>
+</consulo-plugin>

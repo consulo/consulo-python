@@ -16,25 +16,18 @@
 
 package icons;
 
-import com.intellij.openapi.util.IconLoader;
+import consulo.annotation.DeprecationInfo;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
 
-/**
- * NOTE THIS FILE IS AUTO-GENERATED
- * DO NOT EDIT IT BY HAND, run build/scripts/icons.gant instead
- */
+@Deprecated
+@DeprecationInfo("Use PythonIcons")
 public class PythonIcons
 {
-	private static Image load(String path)
-	{
-		return IconLoader.getIcon(path, PythonIcons.class);
-	}
-
-
 	public static class Pyqt
 	{
-		public static final Image TsFile = load("/icons/com/jetbrains/pyqt/tsFile.png"); // 16x16
-		public static final Image UiForm = load("/icons/com/jetbrains/pyqt/uiForm.png"); // 16x16
+		public static final Image TsFile = PythonImplIconGroup.pyqtTsFile();
+		public static final Image UiForm = PythonImplIconGroup.pyqtUiForm();
 	}
 
 	public static class Python
@@ -42,36 +35,36 @@ public class PythonIcons
 
 		public static class Buildout
 		{
-			public static final Image Buildout = load("/icons/com/jetbrains/python/buildout/buildout.png"); // 16x16
+			public static final Image Buildout = PythonImplIconGroup.pythonBuildoutBuildout();
 		}
 
 		public static class Debug
 		{
-			public static final Image CommandLine = load("/icons/com/jetbrains/python/debug/commandLine.png"); // 16x16
-			public static final Image SpecialVar = load("/icons/com/jetbrains/python/debug/specialVar.png"); // 16x16
-			public static final Image StepIntoMyCode = load("/icons/com/jetbrains/python/debug/StepIntoMyCode.png"); // 16x16
+			public static final Image CommandLine = PythonImplIconGroup.pythonDebugCommandLine();
+			public static final Image SpecialVar = PythonImplIconGroup.pythonDebugSpecialVar();
+			public static final Image StepIntoMyCode = PythonImplIconGroup.pythonDebugStepIntoMyCode();
 		}
 
-		public static final Image Dotnet = load("/icons/com/jetbrains/python/dotnet.png"); // 16x16
+		public static final Image Dotnet = PythonImplIconGroup.pythonDotnet();
 
 		public static class Nodes
 		{
-			public static final Image Cyan_dot = load("/icons/com/jetbrains/python/nodes/cyan-dot.png"); // 16x16
-			public static final Image Lock = load("/icons/com/jetbrains/python/nodes/lock.png"); // 16x16
-			public static final Image Red_inv_triangle = load("/icons/com/jetbrains/python/nodes/red-inv-triangle.png"); // 16x16
+			public static final Image Cyan_dot = PythonImplIconGroup.pythonNodesCyan_dot();
+			public static final Image Lock = PythonImplIconGroup.pythonNodesLock();
+			public static final Image Red_inv_triangle = PythonImplIconGroup.pythonNodesRed_inv_triangle();
 
 		}
 
-		public static final Image PropertyDeleter = load("/icons/com/jetbrains/python/propertyDeleter.png"); // 16x16
-		public static final Image PropertyGetter = load("/icons/com/jetbrains/python/propertyGetter.png"); // 16x16
-		public static final Image PropertySetter = load("/icons/com/jetbrains/python/propertySetter.png"); // 16x16
-		public static final Image Pypy = load("/icons/com/jetbrains/python/pypy.png"); // 16x16
-		public static final Image Python = load("/icons/com/jetbrains/python/python.png"); // 16x16
-		public static final Image Python_24 = load("/icons/com/jetbrains/python/python_24.png"); // 24x24
-		public static final Image PythonConsole = load("/icons/com/jetbrains/python/pythonConsole.png"); // 16x16
-		public static final Image PythonClosed = load("/icons/com/jetbrains/python/pythonClosed.png"); // 16x16
-		public static final Image PythonTests = load("/icons/com/jetbrains/python/pythonTests.png"); // 16x16
-		public static final Image RemoteInterpreter = load("/icons/com/jetbrains/python/RemoteInterpreter.png"); // 16x16
-		public static final Image Virtualenv = load("/icons/com/jetbrains/python/virtualenv.png"); // 16x16
+		public static final Image PropertyDeleter = PythonImplIconGroup.pythonPropertyDeleter();
+		public static final Image PropertyGetter = PythonImplIconGroup.pythonPropertyGetter();
+		public static final Image PropertySetter = PythonImplIconGroup.pythonPropertySetter();
+		public static final Image Pypy = PythonImplIconGroup.pythonPypy();
+		public static final Image Python = PythonImplIconGroup.pythonPython();
+		public static final Image Python_24 = PythonImplIconGroup.pythonPython_24();
+		public static final Image PythonConsole = PythonImplIconGroup.pythonPythonConsole();
+		public static final Image PythonClosed = PythonImplIconGroup.pythonPythonClosed();
+		public static final Image PythonTests = PythonImplIconGroup.pythonPythonTests();
+		public static final Image RemoteInterpreter = PythonImplIconGroup.pythonRemoteInterpreter();
+		public static final Image Virtualenv = PythonImplIconGroup.pythonVirtualenv();
 	}
 }

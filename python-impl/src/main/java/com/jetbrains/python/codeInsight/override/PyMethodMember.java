@@ -59,7 +59,7 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 
 	public PyMethodMember(final PyElement element)
 	{
-		super(element, trimUnderscores(buildNameFor(element)), TargetAWT.to(IconDescriptorUpdaters.getIcon(element, 0)));
+		super(element, trimUnderscores(buildNameFor(element)), IconDescriptorUpdaters.getIcon(element, 0));
 		myFullName = buildNameFor(element);
 	}
 
@@ -80,6 +80,6 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 	public void renderTreeNode(SimpleColoredComponent component, JTree tree)
 	{
 		component.append(myFullName, getTextAttributes(tree));
-		component.setIcon(TargetAWT.to(IconDescriptorUpdaters.getIcon(getPsiElement(), 0)));
+		component.setIcon(IconDescriptorUpdaters.getIcon(getPsiElement(), 0));
 	}
 }

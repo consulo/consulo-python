@@ -15,21 +15,19 @@
  */
 package com.jetbrains.python.refactoring.classes.ui;
 
-import java.util.List;
-
-import javax.swing.Icon;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.MemberInfoModel;
 import com.intellij.refactoring.ui.AbstractMemberSelectionTable;
-import com.intellij.ui.RowIcon;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
+import consulo.ui.image.Image;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
@@ -61,15 +59,10 @@ public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyEleme
 	}
 
 	@Override
-	protected void setVisibilityIcon(PyMemberInfo<PyElement> memberInfo, RowIcon icon)
-	{
-	}
-
-	@Override
-	protected Icon getOverrideIcon(PyMemberInfo<PyElement> memberInfo)
+	protected Image getOverrideIcon(PyMemberInfo<PyElement> memberInfo)
 	{
 		final PsiElement member = memberInfo.getMember();
-		Icon overrideIcon = EMPTY_OVERRIDE_ICON;
+		Image overrideIcon = EMPTY_OVERRIDE_ICON;
 		if(member instanceof PyFunction && memberInfo.getOverrides() != null && memberInfo.getOverrides())
 		{
 			overrideIcon = AllIcons.General.OverridingMethod;

@@ -16,14 +16,6 @@
 
 package com.jetbrains.python.sdk.flavors;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
@@ -33,8 +25,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.run.JythonProcessHandler;
 import com.jetbrains.python.run.PythonCommandLineState;
-import consulo.jython.JythonIcons;
+import consulo.jython.icon.JythonIconGroup;
 import consulo.ui.image.Image;
+
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author yole
@@ -121,6 +120,6 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 	@Override
 	public Image getIcon()
 	{
-		return JythonIcons.Jython;
+		return JythonIconGroup.jython();
 	}
 }

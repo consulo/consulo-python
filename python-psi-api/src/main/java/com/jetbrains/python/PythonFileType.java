@@ -16,6 +16,18 @@
 
 package com.jetbrains.python;
 
+import com.intellij.lang.Language;
+import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.text.CharSequenceReader;
+import consulo.python.psi.icon.PythonPsiIconGroup;
+import consulo.ui.image.Image;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -24,19 +36,6 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.text.CharSequenceReader;
-import consulo.ui.image.Image;
-import icons.PythonPsiApiIcons;
 
 /**
  * @author yole
@@ -71,7 +70,7 @@ public class PythonFileType extends LanguageFileType {
 
   @Nonnull
   public Image getIcon() {
-    return PythonPsiApiIcons.PythonFile;
+    return PythonPsiIconGroup.pythonFile();
   }
 
   @Override

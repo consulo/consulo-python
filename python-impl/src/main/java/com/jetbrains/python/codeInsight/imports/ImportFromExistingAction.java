@@ -15,14 +15,6 @@
  */
 package com.jetbrains.python.codeInsight.imports;
 
-import java.awt.Component;
-import java.awt.Font;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-
 import com.intellij.codeInsight.hint.QuestionAction;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -45,14 +37,14 @@ import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
 import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyQualifiedExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
+
+import javax.annotation.Nonnull;
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
 /**
  * Turns an unqualified unresolved identifier into qualified and resolvable.
@@ -294,7 +286,7 @@ public class ImportFromExistingAction implements QuestionAction
 			clear();
 
 			ImportCandidateHolder item = (ImportCandidateHolder) value;
-			setIcon(TargetAWT.to(IconDescriptorUpdaters.getIcon(item.getImportable(), 0)));
+			setIcon(IconDescriptorUpdaters.getIcon(item.getImportable(), 0));
 			String item_name = item.getPresentableText(myName);
 			append(item_name, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 

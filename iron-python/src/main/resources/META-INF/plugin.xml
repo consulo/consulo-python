@@ -1,4 +1,4 @@
-<idea-plugin>
+<consulo-plugin>
 	<id>consulo.iron-python</id>
 	<name>IronPython</name>
 	<category>Language Extensions</category>
@@ -18,4 +18,4 @@
 		<pySuperMethodsSearch implementation="consulo.ironPython.psi.impl.PyDotNetSuperMethodsSearchExecutor"/>
 		<importCandidateProvider implementation="consulo.ironPython.psi.impl.PyDotNetImportCandidateProvider"/>
 	</extensions>
-</idea-plugin>
+</consulo-plugin>
