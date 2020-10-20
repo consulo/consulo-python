@@ -32,11 +32,12 @@ import com.intellij.ui.content.ContentFactory;
 import consulo.disposer.Disposer;
 import consulo.util.dataholder.Key;
 import consulo.wm.impl.ToolWindowContentUI;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+
+import jakarta.inject.Singleton;
 import javax.swing.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
