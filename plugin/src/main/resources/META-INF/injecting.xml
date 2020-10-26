@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<consulo-plugin>
+	<extensions defaultExtensionNs="com.intellij">
+		<injectionLanguageSupport implementation="com.jetbrains.python.intelliLang.PyLanguageInjectionSupport"/>
+		<injectionConfig config="pyInjections.xml"/>
+
+		<patterns.patternClass className="com.jetbrains.python.patterns.PythonPatterns" alias="py"/>
+	</extensions>
+</consulo-plugin>

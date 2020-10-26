@@ -54,7 +54,6 @@
 						<dependency>com.intellij.spellchecker</dependency>
 						<dependency>com.intellij.xml</dependency>
 						<dependency>org.jetbrains.plugins.rest</dependency>
-						<dependency>org.intellij.intelliLang</dependency>
 						<dependency>consulo.java</dependency>
 						<dependency>consulo.dotnet</dependency>
 						<dependency>consulo.dotnet.microsoft</dependency>
