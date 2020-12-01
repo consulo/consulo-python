@@ -15,13 +15,6 @@
  */
 package com.jetbrains.python.console;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-
-import javax.annotation.Nullable;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
@@ -52,8 +45,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.ActionCallback;
-import consulo.disposer.Disposer;
-import consulo.util.dataholder.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -76,6 +67,14 @@ import com.jetbrains.python.debugger.PyStackFrameInfo;
 import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.awt.TargetAWT;
+import consulo.disposer.Disposer;
+import consulo.util.dataholder.Key;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author traff
@@ -469,7 +468,7 @@ public class PythonConsoleView extends LanguageConsoleImpl implements Observable
 		getHistoryViewer().getSettings().setAdditionalLinesCount(0);
 		getHistoryViewer().getSettings().setUseSoftWraps(false);
 		getConsoleEditor().getGutter().registerTextAnnotation(this.myPromptView);
-		getConsoleEditor().getGutterComponentEx().setBackground(getConsoleEditor().getBackgroundColor());
+		getConsoleEditor().getGutterComponentEx().setBackground(TargetAWT.to(getConsoleEditor().getBackgroundColor()));
 		getConsoleEditor().getGutterComponentEx().revalidate();
 		getConsoleEditor().getColorsScheme().setColor(EditorColors.GUTTER_BACKGROUND, getConsoleEditor().getBackgroundColor());
 

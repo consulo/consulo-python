@@ -16,19 +16,13 @@
 
 package com.jetbrains.python.console;
 
-import java.awt.Color;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorLinePainter;
 import com.intellij.openapi.editor.LineExtensionInfo;
 import com.intellij.openapi.editor.TextAnnotationGutterProvider;
-import com.intellij.openapi.editor.colors.ColorKey;
+import com.intellij.openapi.editor.colors.EditorColorKey;
 import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
@@ -36,6 +30,12 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.python.console.parsing.PythonConsoleData;
+import consulo.ui.color.ColorValue;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author VISTALL
@@ -43,7 +43,7 @@ import com.jetbrains.python.console.parsing.PythonConsoleData;
  */
 public class ConsolePromptDecorator extends EditorLinePainter implements TextAnnotationGutterProvider
 {
-	private static ColorKey promptColor = ColorKey.createColorKey("CONSOLE_PROMPT_COLOR");
+	private static EditorColorKey promptColor = EditorColorKey.createColorKey("CONSOLE_PROMPT_COLOR");
 
 	private static String extend(String s, int len)
 	{
@@ -155,16 +155,16 @@ public class ConsolePromptDecorator extends EditorLinePainter implements TextAnn
 
 	@Nullable
 	@Override
-	public ColorKey getColor(int i, Editor editor)
+	public EditorColorKey getColor(int i, Editor editor)
 	{
 		return promptColor;
 	}
 
 	@Nullable
 	@Override
-	public Color getBgColor(int i, Editor editor)
+	public ColorValue getBgColor(int i, Editor editor)
 	{
-		Color backgroundColor = this.promptAttributes.getAttributes().getBackgroundColor();
+		ColorValue backgroundColor = this.promptAttributes.getAttributes().getBackgroundColor();
 		if(backgroundColor == null)
 		{
 			backgroundColor = myEditorEx.getBackgroundColor();

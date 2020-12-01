@@ -1,8 +1,5 @@
 package com.jetbrains.python;
 
-import java.awt.Color;
-import java.awt.Font;
-
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -13,6 +10,9 @@ import com.jetbrains.python.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import consulo.ui.style.StandardColors;
+
+import java.awt.*;
 
 /**
  * Test highlighting added by annotators.
@@ -32,11 +32,11 @@ public abstract class PythonHighlightingTest extends PyTestCase {
     TextAttributes xAttributes;
     
     xKey = TextAttributesKey.find("PY.BUILTIN_NAME");
-    xAttributes = new TextAttributes(Color.green, Color.black, Color.white, EffectType.BOXED, Font.BOLD);
+    xAttributes = new TextAttributes(StandardColors.GREEN, StandardColors.BLACK, StandardColors.WHITE, EffectType.BOXED, Font.BOLD);
     scheme.setAttributes(xKey, xAttributes);
 
     xKey = TextAttributesKey.find("PY.PREDEFINED_USAGE");
-    xAttributes = new TextAttributes(Color.yellow, Color.black, Color.white, EffectType.BOXED, Font.BOLD);
+    xAttributes = new TextAttributes(StandardColors.YELLOW, StandardColors.BLACK, StandardColors.WHITE, EffectType.BOXED, Font.BOLD);
     scheme.setAttributes(xKey, xAttributes);
 
     doTest();
@@ -49,15 +49,15 @@ public abstract class PythonHighlightingTest extends PyTestCase {
     EditorColorsManager.getInstance().setGlobalScheme(scheme);
 
     TextAttributesKey xKey = TextAttributesKey.find("PY.CLASS_DEFINITION");
-    TextAttributes xAttributes = new TextAttributes(Color.blue, Color.black, Color.white, EffectType.BOXED, Font.BOLD);
+    TextAttributes xAttributes = new TextAttributes(StandardColors.BLUE, StandardColors.BLACK, StandardColors.WHITE, EffectType.BOXED, Font.BOLD);
     scheme.setAttributes(xKey, xAttributes);
 
     xKey = TextAttributesKey.find("PY.FUNC_DEFINITION");
-    xAttributes = new TextAttributes(Color.red, Color.black, Color.white, EffectType.BOXED, Font.BOLD);
+    xAttributes = new TextAttributes(StandardColors.RED, StandardColors.BLACK, StandardColors.WHITE, EffectType.BOXED, Font.BOLD);
     scheme.setAttributes(xKey, xAttributes);
 
     xKey = TextAttributesKey.find("PY.PREDEFINED_DEFINITION");
-    xAttributes = new TextAttributes(Color.green, Color.black, Color.white, EffectType.BOXED, Font.BOLD);
+    xAttributes = new TextAttributes(StandardColors.GREEN, StandardColors.BLACK, StandardColors.WHITE, EffectType.BOXED, Font.BOLD);
     scheme.setAttributes(xKey, xAttributes);
 
     doTest();
@@ -192,7 +192,7 @@ public abstract class PythonHighlightingTest extends PyTestCase {
     EditorColorsManager.getInstance().setGlobalScheme(scheme);
 
     TextAttributesKey xKey = TextAttributesKey.find("PY.FUNC_DEFINITION");
-    TextAttributes xAttributes = new TextAttributes(Color.red, Color.black, Color.white, EffectType.BOXED, Font.BOLD);
+    TextAttributes xAttributes = new TextAttributes(StandardColors.RED, StandardColors.BLACK, StandardColors.WHITE, EffectType.BOXED, Font.BOLD);
     scheme.setAttributes(xKey, xAttributes);
 
     doTest();
