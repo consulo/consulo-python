@@ -18,17 +18,17 @@ package com.jetbrains.python.packaging;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.text.DateFormatUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
-import javax.annotation.Nonnull;
+import consulo.logging.Logger;
+import consulo.project.startup.StartupActivity;
+import consulo.ui.UIAccess;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -36,20 +36,10 @@ import java.io.IOException;
  * User : catherine
  */
 public class PyPIPackagesUpdater implements StartupActivity {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.packaging.PyPIPackagesUpdater");
-
-  public static PyPIPackagesUpdater getInstance() {
-    final StartupActivity[] extensions = Extensions.getExtensions(StartupActivity.POST_STARTUP_ACTIVITY);
-    for (StartupActivity extension : extensions) {
-      if (extension instanceof PyPIPackagesUpdater) {
-        return (PyPIPackagesUpdater) extension;
-      }
-    }
-    throw new UnsupportedOperationException("could not find self");
-  }
+  private static final Logger LOG = Logger.getInstance(PyPIPackagesUpdater.class);
 
   @Override
-  public void runActivity(@Nonnull final Project project) {
+  public void runActivity(@Nonnull final Project project, UIAccess uiAccess) {
     final Application application = ApplicationManager.getApplication();
     if (application.isUnitTestMode()) {
       return;
