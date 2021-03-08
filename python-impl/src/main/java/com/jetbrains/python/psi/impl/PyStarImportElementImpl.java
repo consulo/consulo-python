@@ -28,7 +28,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyElement;

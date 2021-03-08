@@ -19,7 +19,7 @@ package com.jetbrains.python.codeInsight.dataflow;
 import com.intellij.codeInsight.dataflow.map.DFAMap;
 import com.intellij.codeInsight.dataflow.map.MapSemilattice;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeVariable;
 import com.jetbrains.python.codeInsight.dataflow.scope.impl.ScopeVariableImpl;
 import javax.annotation.Nullable;

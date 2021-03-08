@@ -15,22 +15,18 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.util.Set;
-
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.containers.HashSet;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.PyMoveExceptQuickFix;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyExceptPart;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyTryExceptStatement;
+import com.jetbrains.python.psi.*;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Alexey.Ivanov

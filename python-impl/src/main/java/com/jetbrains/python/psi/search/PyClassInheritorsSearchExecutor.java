@@ -23,7 +23,7 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
-import com.intellij.util.containers.HashSet;
+import java.util.HashSet;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.stubs.PySuperClassIndex;
 

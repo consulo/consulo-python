@@ -22,7 +22,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.util.containers.HashMap;
+import java.util.HashMap;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 
 @State(name = "PyTestFrameworkService", storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/other.xml"))
