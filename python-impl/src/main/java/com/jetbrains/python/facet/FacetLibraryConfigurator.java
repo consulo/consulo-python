@@ -16,28 +16,24 @@
 
 package com.jetbrains.python.facet;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModifiableModelsProvider;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.OrderEntryUtil;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import consulo.fileTypes.ArchiveFileType;
 import consulo.vfs.util.ArchiveVfsUtil;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author yole
@@ -47,11 +43,10 @@ public class FacetLibraryConfigurator {
   }
 
   public static void attachLibrary(final Module module, @Nullable final ModifiableRootModel existingModel, final String libraryName, final List<String> paths) {
-    final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         // add all paths to library
-        final ModifiableRootModel model = existingModel != null ? existingModel : modelsProvider.getModuleModifiableModel(module);
+        final ModifiableRootModel model = existingModel != null ? existingModel : ModuleRootManager.getInstance(module).getModifiableModel();
         final LibraryOrderEntry orderEntry = OrderEntryUtil.findLibraryOrderEntry(model, libraryName);
         if (orderEntry != null) {
           // update existing
@@ -59,19 +54,19 @@ public class FacetLibraryConfigurator {
           if (lib != null) {
             fillLibrary(module.getProject(), lib, paths);
             if (existingModel == null) {
-              modelsProvider.commitModuleModifiableModel(model);
+               model.commit();
             }
             return;
           }
         }
         // create new
-        final LibraryTable.ModifiableModel projectLibrariesModel = modelsProvider.getLibraryTableModifiableModel(model.getProject());
+        final LibraryTable.ModifiableModel projectLibrariesModel = ProjectLibraryTable.getInstance(model.getProject()).getModifiableModel();
         Library lib = projectLibrariesModel.createLibrary(libraryName);
         fillLibrary(module.getProject(), lib, paths);
         projectLibrariesModel.commit();
         model.addLibraryEntry(lib);
         if (existingModel == null) {
-          modelsProvider.commitModuleModifiableModel(model);
+           model.commit();
         }
       }
     });
@@ -108,18 +103,17 @@ public class FacetLibraryConfigurator {
   }
 
   public static void detachLibrary(final Module module, final String libraryName) {
-    final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         // remove the library
-        final ModifiableRootModel model = modelsProvider.getModuleModifiableModel(module);
+        final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
         OrderEntry entry = OrderEntryUtil.findLibraryOrderEntry(model, libraryName);
         if (entry == null) {
-          modelsProvider.disposeModuleModifiableModel(model);
+          model.dispose();
         }
         else {
           model.removeOrderEntry(entry);
-          modelsProvider.commitModuleModifiableModel(model);
+          model.commit();
         }
       }
     });
