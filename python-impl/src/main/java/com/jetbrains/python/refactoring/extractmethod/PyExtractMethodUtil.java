@@ -15,16 +15,6 @@
  */
 package com.jetbrains.python.refactoring.extractmethod;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.codeFragment.CodeFragment;
 import com.intellij.lang.LanguageNamesValidation;
@@ -39,22 +29,11 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiRecursiveElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.extractMethod.AbstractExtractMethodDialog;
-import com.intellij.refactoring.extractMethod.AbstractVariableData;
-import com.intellij.refactoring.extractMethod.ExtractMethodDecorator;
-import com.intellij.refactoring.extractMethod.ExtractMethodHelper;
-import com.intellij.refactoring.extractMethod.ExtractMethodValidator;
-import com.intellij.refactoring.extractMethod.SimpleDuplicatesFinder;
-import com.intellij.refactoring.extractMethod.SimpleMatch;
+import com.intellij.refactoring.extractMethod.*;
 import com.intellij.refactoring.listeners.RefactoringElementListenerComposite;
 import com.intellij.refactoring.listeners.RefactoringEventData;
 import com.intellij.refactoring.listeners.RefactoringEventListener;
@@ -64,7 +43,6 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
@@ -78,6 +56,10 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.refactoring.PyReplaceExpressionUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * @author oleg

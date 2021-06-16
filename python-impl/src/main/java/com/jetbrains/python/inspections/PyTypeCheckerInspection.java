@@ -15,43 +15,27 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.Nls;
-
-import javax.annotation.Nullable;
 import com.google.common.collect.Sets;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.diagnostic.Logger;
-import consulo.util.dataholder.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.containers.hash.LinkedHashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.inspections.quickfix.PyMakeFunctionReturnTypeQuickFix;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.types.PyABCUtil;
-import com.jetbrains.python.psi.types.PyClassLikeType;
-import com.jetbrains.python.psi.types.PyCollectionType;
-import com.jetbrains.python.psi.types.PyGenericType;
-import com.jetbrains.python.psi.types.PyNoneType;
-import com.jetbrains.python.psi.types.PyStructuralType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.PyTypeChecker;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.psi.types.*;
+import consulo.util.dataholder.Key;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * @author vlan

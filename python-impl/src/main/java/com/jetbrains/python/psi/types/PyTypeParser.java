@@ -15,23 +15,6 @@
  */
 package com.jetbrains.python.psi.types;
 
-import static com.jetbrains.python.psi.PyUtil.as;
-import static com.jetbrains.python.psi.types.PyTypeTokenTypes.IDENTIFIER;
-import static com.jetbrains.python.psi.types.PyTypeTokenTypes.PARAMETER;
-import static com.jetbrains.python.psi.types.functionalParser.FunctionalParserBase.many;
-import static com.jetbrains.python.psi.types.functionalParser.FunctionalParserBase.maybe;
-import static com.jetbrains.python.psi.types.functionalParser.FunctionalParserBase.token;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
@@ -45,7 +28,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.PyTypingTypeProvider;
 import com.jetbrains.python.psi.*;
@@ -58,6 +40,17 @@ import com.jetbrains.python.psi.types.functionalParser.ForwardDeclaration;
 import com.jetbrains.python.psi.types.functionalParser.FunctionalParser;
 import com.jetbrains.python.psi.types.functionalParser.ParserException;
 import com.jetbrains.python.psi.types.functionalParser.Token;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
+
+import static com.jetbrains.python.psi.PyUtil.as;
+import static com.jetbrains.python.psi.types.PyTypeTokenTypes.IDENTIFIER;
+import static com.jetbrains.python.psi.types.PyTypeTokenTypes.PARAMETER;
+import static com.jetbrains.python.psi.types.functionalParser.FunctionalParserBase.*;
 
 /**
  * @author vlan

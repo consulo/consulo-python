@@ -15,29 +15,22 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.Nls;
-
-import javax.annotation.Nullable;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.PyRemoveAssignmentQuickFix;
-import com.jetbrains.python.psi.PyAssignmentStatement;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyCallable;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.search.PyOverridingMethodsSearch;
 import com.jetbrains.python.psi.types.PyNoneType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.sdk.PySdkUtil;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: ktisha

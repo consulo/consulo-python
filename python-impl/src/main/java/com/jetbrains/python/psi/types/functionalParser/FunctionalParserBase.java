@@ -19,11 +19,11 @@ package com.jetbrains.python.psi.types.functionalParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.reference.SoftReference;
 import com.intellij.util.Function;
-import com.intellij.util.containers.hash.HashMap;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

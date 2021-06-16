@@ -23,7 +23,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import gnu.trove.TIntStack;
+import consulo.util.collection.primitive.ints.IntStack;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PythonIndentingProcessor extends MergingLexerAdapter {
-  protected final TIntStack myIndentStack = new TIntStack();
+  protected final IntStack myIndentStack = new IntStack();
   protected int myBraceLevel;
   protected boolean myLineHasSignificantTokens;
   protected int myLastNewLineIndent = -1;

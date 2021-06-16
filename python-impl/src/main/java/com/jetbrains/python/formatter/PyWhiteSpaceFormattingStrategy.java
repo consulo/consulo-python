@@ -15,18 +15,18 @@
  */
 package com.jetbrains.python.formatter;
 
-import gnu.trove.TIntIntHashMap;
-import gnu.trove.TIntProcedure;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.Nonnull;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.StaticSymbolWhiteSpaceDefinitionStrategy;
 import com.jetbrains.python.editor.PythonEnterHandler;
+import consulo.util.collection.primitive.ints.IntSet;
+import consulo.util.collection.primitive.ints.IntSets;
+
+import javax.annotation.Nonnull;
+import java.util.PrimitiveIterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author yole
@@ -77,7 +77,7 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
 			int endOffset, CodeStyleSettings codeStyleSettings, ASTNode nodeAfter)
 	{
 		// The general idea is that '\' symbol before line feed should be preserved.
-		TIntIntHashMap initialBackSlashes = countBackSlashes(text, startOffset, endOffset);
+		IntSet initialBackSlashes = countBackSlashes(text, startOffset, endOffset);
 		if(initialBackSlashes.isEmpty())
 		{
 			if(nodeAfter != null && whiteSpaceText.length() > 0 && whiteSpaceText.charAt(0) == '\n' &&
@@ -88,24 +88,15 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
 			return whiteSpaceText;
 		}
 
-		final TIntIntHashMap newBackSlashes = countBackSlashes(whiteSpaceText, 0, whiteSpaceText.length());
-		final AtomicBoolean continueProcessing = new AtomicBoolean();
-		initialBackSlashes.forEachKey(new TIntProcedure()
+		final IntSet newBackSlashes = countBackSlashes(whiteSpaceText, 0, whiteSpaceText.length());
+		PrimitiveIterator.OfInt iterator = initialBackSlashes.iterator();
+		while(iterator.hasNext())
 		{
-			@Override
-			public boolean execute(int key)
+			int key = iterator.nextInt();
+			if(!newBackSlashes.contains(key))
 			{
-				if(!newBackSlashes.containsKey(key))
-				{
-					continueProcessing.set(true);
-					return false;
-				}
-				return true;
+				return whiteSpaceText;
 			}
-		});
-		if(!continueProcessing.get())
-		{
-			return whiteSpaceText;
 		}
 
 		PyCodeStyleSettings settings = codeStyleSettings.getCustomSettings(PyCodeStyleSettings.class);
@@ -140,9 +131,9 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
 	 * @param end   end offset to use with the given text (exclusive)
 	 * @return map that holds '{@code line number -> number of back slashes}' mapping for the target text
 	 */
-	static TIntIntHashMap countBackSlashes(CharSequence text, int start, int end)
+	static IntSet countBackSlashes(CharSequence text, int start, int end)
 	{
-		TIntIntHashMap result = new TIntIntHashMap();
+		IntSet result = IntSets.newHashSet();
 		int line = 0;
 		if(end > text.length())
 		{
@@ -157,7 +148,7 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
 					line++;
 					break;
 				case '\\':
-					result.put(line, 1);
+					result.add(line);
 					break;
 			}
 		}

@@ -37,14 +37,10 @@ import consulo.dotnet.psi.DotNetNamedElement;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
 import consulo.dotnet.resolve.DotNetTypeRef;
 import consulo.ide.IconDescriptorUpdaters;
-import gnu.trove.THashSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author yole
@@ -99,7 +95,7 @@ public class PyDotNetClassType implements PyClassLikeType
 	@Override
 	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
 	{
-		Set<String> names = new THashSet<>();
+		Set<String> names = new HashSet<>();
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
 		{
 			names.add(dotNetNamedElement.getName());
