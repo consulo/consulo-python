@@ -16,27 +16,21 @@
 
 package com.jetbrains.python.run;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.EnvironmentUtil;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.EnvironmentUtil;
-import com.intellij.util.LineSeparator;
-
-/**
- * @author VISTALL
- * @since 08-Nov-16
- */
 public class PyVirtualEnvReader extends EnvironmentUtil.ShellEnvReader
 {
-	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.run.PyVirtualEnvReader");
+	private static final Logger LOG = Logger.getInstance(PyVirtualEnvReader.class);
 
 	private String activate;
 
@@ -77,7 +71,7 @@ public class PyVirtualEnvReader extends EnvironmentUtil.ShellEnvReader
 
 	@Nullable
 	@Override
-	protected String getShell() throws Exception
+	protected String getShell()
 	{
 		if(new File("/bin/bash").exists())
 		{
@@ -94,24 +88,24 @@ public class PyVirtualEnvReader extends EnvironmentUtil.ShellEnvReader
 	}
 
 	@Override
-	protected List<String> getShellProcessCommand() throws Exception
+	protected List<String> getShellProcessCommand()
 	{
 		String shellPath = getShell();
 
 		if(shellPath == null || !new File(shellPath).canExecute())
 		{
-			throw new Exception("shell:" + shellPath);
+			throw new IllegalArgumentException("shell:" + shellPath);
 		}
 
 		return activate != null ? Arrays.asList(shellPath, "-c", ". '$activate'") : super.getShellProcessCommand();
 	}
 
-	@Override
-	public Map<String, String> readShellEnv() throws Exception
+	public Map<String, String> readPythonEnv() throws Exception
 	{
 		if(SystemInfo.isUnix)
 		{
-			return super.readShellEnv();
+			// pass shell environment for correct virtualenv environment setup (virtualenv expects to be executed from the terminal)
+			return super.readShellEnv(null, EnvironmentUtil.getEnvironmentMap());
 		}
 		else
 		{
@@ -137,7 +131,7 @@ public class PyVirtualEnvReader extends EnvironmentUtil.ShellEnvReader
 			FileUtil.appendToFile(activateFile, "\n\nset");
 			List<String> command = Arrays.asList(activateFile.getPath(), ">", envFile.getAbsolutePath());
 
-			return runProcessAndReadEnvs(command, envFile, LineSeparator.CRLF.getSeparatorString());
+			return runProcessAndReadOutputAndEnvs(command,null, envFile.toPath()).getValue();
 		}
 		finally
 		{

@@ -347,7 +347,7 @@ public abstract class PythonCommandLineState extends CommandLineState
 			{
 				try
 				{
-					env.putAll(reader.readShellEnv());
+					env.putAll(reader.readPythonEnv());
 				}
 				catch(Exception e)
 				{
