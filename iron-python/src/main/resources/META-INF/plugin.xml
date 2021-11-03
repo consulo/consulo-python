@@ -1,6 +1,7 @@
 <consulo-plugin>
 	<id>consulo.iron-python</id>
 	<name>IronPython</name>
+	<version>SNAPSHOT</version>
 	<category>Language Extensions</category>
 	<tags>
 		<tag>language.extension</tag>
