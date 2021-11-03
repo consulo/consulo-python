@@ -4,6 +4,9 @@
 	<category>Language Extensions</category>
 	<depends>consulo.python</depends>
 	<depends>consulo.java</depends>
+	<tags>
+		<tag>language.extension</tag>
+	</tags>
 
 	<extensions defaultExtensionNs="com.intellij">
 		<completion.contributor language="Python" implementationClass="com.jetbrains.python.psi.impl.PyConstructorArgumentCompletionContributor"/>

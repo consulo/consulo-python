@@ -9,6 +9,9 @@
 	<depends>com.intellij.regexp</depends>
 	<resource-bundle>com.jetbrains.python.PyBundle</resource-bundle>
 	<category>Custom Languages</category>
+	<tags>
+		<tag>custom.language</tag>
+	</tags>
 
 	<vendor>JetBrains, Keith Lea</vendor>
 

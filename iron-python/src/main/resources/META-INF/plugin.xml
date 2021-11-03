@@ -2,6 +2,9 @@
 	<id>consulo.iron-python</id>
 	<name>IronPython</name>
 	<category>Language Extensions</category>
+	<tags>
+		<tag>language.extension</tag>
+	</tags>
 	<depends>consulo.python</depends>
 	<depends config-file="consulo.microsoft.dotnet.xml" optional="true">consulo.dotnet.microsoft</depends>
 
