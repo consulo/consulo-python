@@ -573,12 +573,14 @@
 		<applicationService serviceInterface="com.jetbrains.python.documentation.PythonDocumentationMap"
 							serviceImplementation="com.jetbrains.python.documentation.PythonDocumentationMap"/>
 		<applicationConfigurable instance="com.jetbrains.python.documentation.PythonDocumentationConfigurable"
-								 id="com.jetbrains.python.documentation.PythonDocumentationConfigurable"
+								 parentId="execution"
+								 id="py.external.doc"
 								 displayName="Python External Documentation"/>
 		<applicationService serviceInterface="com.jetbrains.python.console.PythonConsoleRunnerFactory"
 							serviceImplementation="com.jetbrains.python.console.PydevConsoleRunnerFactory"/>
 		<projectService serviceImplementation="com.jetbrains.python.console.PythonConsoleToolWindow" />
 		<projectConfigurable instance="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable"
+							 parentId="execution"
 							 id="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" displayName="Python Integrated Tools"
 							 nonDefaultProject="true"/>
 		<moduleService serviceInterface="com.jetbrains.python.documentation.PyDocumentationSettings"
@@ -591,7 +593,8 @@
 		<projectConfigurable instance="com.jetbrains.python.console.PyConsoleOptionsConfigurable"/>
 		<projectService serviceImplementation="com.jetbrains.python.console.PyConsoleOptions"/>
 
-		<projectConfigurable instance="com.jetbrains.python.debugger.PyDebuggerConfigurable"/>
+		<projectConfigurable id="py.debugger" parentId="execution" displayName="Python Debugger" instance="com.jetbrains.python.debugger.PyDebuggerConfigurable"/>
+
 		<projectService serviceImplementation="com.jetbrains.python.debugger.PyDebuggerOptionsProvider"/>
 
 		<codeBlockProvider language="Python" implementationClass="com.jetbrains.python.codeInsight.PyCodeBlockProvider"/>
