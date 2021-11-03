@@ -2,6 +2,7 @@
 	<id>consulo.jython</id>
 	<name>Jython</name>
 	<category>Language Extensions</category>
+	<version>SNAPSHOT</version>
 	<depends>consulo.python</depends>
 	<depends>consulo.java</depends>
 	<tags>
