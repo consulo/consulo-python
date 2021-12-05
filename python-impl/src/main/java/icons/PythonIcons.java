@@ -26,7 +26,6 @@ public class PythonIcons
 {
 	public static class Pyqt
 	{
-		public static final Image TsFile = PythonImplIconGroup.pyqtTsFile();
 		public static final Image UiForm = PythonImplIconGroup.pyqtUiForm();
 	}
 
