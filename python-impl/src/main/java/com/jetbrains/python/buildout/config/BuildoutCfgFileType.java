@@ -16,35 +16,33 @@
 
 package com.jetbrains.python.buildout.config;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NonNls;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import icons.PythonIcons;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author traff
  */
 public class BuildoutCfgFileType extends LanguageFileType {
   public static final BuildoutCfgFileType INSTANCE = new BuildoutCfgFileType();
-  @NonNls public static final String DEFAULT_EXTENSION = "cfg";
-  @NonNls private static final String NAME = "BuildoutCfg";
-  @NonNls private static final String DESCRIPTION = "Buildout config files";
+  public static final String DEFAULT_EXTENSION = "cfg";
 
   private BuildoutCfgFileType() {
     super(BuildoutCfgLanguage.INSTANCE);
   }
 
   @Nonnull
-  public String getName() {
-    return NAME;
+  public String getId() {
+    return "BuildoutCfg";
   }
 
   @Nonnull
-  public String getDescription() {
-    return DESCRIPTION;
+  public LocalizeValue getDescription() {
+    return LocalizeValue.localizeTODO("Buildout config files");
   }
 
   @Nonnull

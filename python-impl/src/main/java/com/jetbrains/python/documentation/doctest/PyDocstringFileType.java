@@ -18,6 +18,8 @@
 package com.jetbrains.python.documentation.doctest;
 
 import com.jetbrains.python.PythonFileType;
+import consulo.localize.LocalizeValue;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -32,14 +34,14 @@ public class PyDocstringFileType extends PythonFileType {
 
   @Nonnull
   @Override
-  public String getName() {
+  public String getId() {
     return "PyDocstring";
   }
 
   @Nonnull
   @Override
-  public String getDescription() {
-    return "python docstring";
+  public LocalizeValue getDescription() {
+    return LocalizeValue.localizeTODO("python docstring");
   }
 
   @Nonnull

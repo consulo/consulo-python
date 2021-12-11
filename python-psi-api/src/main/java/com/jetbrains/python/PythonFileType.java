@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.text.CharSequenceReader;
+import consulo.localize.LocalizeValue;
 import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 
@@ -59,8 +60,8 @@ public class PythonFileType extends LanguageFileType {
   }
 
   @Nonnull
-  public String getDescription() {
-    return "Python files";
+  public LocalizeValue getDescription() {
+    return LocalizeValue.localizeTODO("Python files");
   }
 
   @Nonnull
