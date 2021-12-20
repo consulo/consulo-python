@@ -35,6 +35,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiFileSystemItem;
 import com.jetbrains.python.PyNames;
+import consulo.ide.actions.CreateDirectoryOrPackageType;
 
 /**
  * @author yole
@@ -52,7 +53,7 @@ public class CreatePackageAction extends DumbAwareAction {
     final PsiDirectory directory = DirectoryChooserUtil.getOrChooseDirectory(view);
 
     if (directory == null) return;
-    CreateDirectoryOrPackageHandler validator = new CreateDirectoryOrPackageHandler(project, directory, false, ".") {
+    CreateDirectoryOrPackageHandler validator = new CreateDirectoryOrPackageHandler(project, directory, CreateDirectoryOrPackageType.Package, ".") {
       @Override
       protected void createDirectories(String subDirName) {
         super.createDirectories(subDirName);
@@ -86,7 +87,7 @@ public class CreatePackageAction extends DumbAwareAction {
     }
     if (template != null) {
       try {
-        FileTemplateUtil.createFromTemplate(template, PyNames.INIT_DOT_PY, fileTemplateManager.getDefaultProperties(directory.getProject()), directory);
+        FileTemplateUtil.createFromTemplate(template, PyNames.INIT_DOT_PY, fileTemplateManager.getDefaultVariables(), directory);
       }
       catch (Exception e) {
         LOG.error(e);
