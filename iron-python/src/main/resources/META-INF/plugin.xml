@@ -1,4 +1,4 @@
-<consulo-plugin>
+<consulo-plugin url="https://github.com/consulo/consulo-python">
 	<id>consulo.iron-python</id>
 	<name>IronPython</name>
 	<version>SNAPSHOT</version>

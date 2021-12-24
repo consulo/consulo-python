@@ -1,4 +1,4 @@
-<consulo-plugin>
+<consulo-plugin url="https://github.com/consulo/consulo-python">
 	<id>consulo.python</id>
 	<name>Python</name>
 	<description>Smart editing for Python scripts</description>
