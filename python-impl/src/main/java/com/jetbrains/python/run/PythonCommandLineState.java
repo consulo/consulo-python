@@ -80,7 +80,7 @@ import java.util.*;
  */
 public abstract class PythonCommandLineState extends CommandLineState
 {
-	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.run.PythonCommandLineState");
+	private static final Logger LOG = Logger.getInstance(PythonCommandLineState.class);
 
 	// command line has a number of fixed groups of parameters; patchers should only operate on them and not the raw list.
 
@@ -92,7 +92,6 @@ public abstract class PythonCommandLineState extends CommandLineState
 	private final AbstractPythonRunConfiguration myConfig;
 
 	private Boolean myMultiprocessDebug = null;
-	private boolean myRunWithPty = PtyCommandLine.isEnabled();
 
 	public boolean isDebug()
 	{
@@ -268,7 +267,7 @@ public abstract class PythonCommandLineState extends CommandLineState
 
 	public GeneralCommandLine generateCommandLine()
 	{
-		GeneralCommandLine commandLine = createPythonCommandLine(myConfig.getProject(), myConfig, isDebug(), myRunWithPty);
+		GeneralCommandLine commandLine = createPythonCommandLine(myConfig.getProject(), myConfig, isDebug());
 
 		buildCommandLineParameters(commandLine);
 
@@ -278,9 +277,9 @@ public abstract class PythonCommandLineState extends CommandLineState
 	}
 
 	@Nonnull
-	public static GeneralCommandLine createPythonCommandLine(Project project, PythonRunParams config, boolean isDebug, boolean runWithPty)
+	public static GeneralCommandLine createPythonCommandLine(Project project, PythonRunParams config, boolean isDebug)
 	{
-		GeneralCommandLine commandLine = generalCommandLine(runWithPty);
+		GeneralCommandLine commandLine = new GeneralCommandLine();
 
 		commandLine.withCharset(EncodingProjectManager.getInstance(project).getDefaultCharset());
 
@@ -291,11 +290,6 @@ public abstract class PythonCommandLineState extends CommandLineState
 		setRunnerPath(project, commandLine, config);
 
 		return commandLine;
-	}
-
-	private static GeneralCommandLine generalCommandLine(boolean runWithPty)
-	{
-		return runWithPty ? new PtyCommandLine() : new GeneralCommandLine();
 	}
 
 	/**
@@ -629,11 +623,6 @@ public abstract class PythonCommandLineState extends CommandLineState
 	public void setMultiprocessDebug(boolean multiprocessDebug)
 	{
 		myMultiprocessDebug = multiprocessDebug;
-	}
-
-	public void setRunWithPty(boolean runWithPty)
-	{
-		myRunWithPty = runWithPty;
 	}
 
 	@Nonnull

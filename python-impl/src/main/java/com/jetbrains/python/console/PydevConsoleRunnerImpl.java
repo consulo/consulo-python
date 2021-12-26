@@ -25,7 +25,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.EncodingEnvironmentUtil;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.execution.configurations.PtyCommandLine;
 import com.intellij.execution.console.ConsoleExecuteAction;
 import com.intellij.execution.console.ConsoleHistoryController;
 import com.intellij.execution.console.LanguageConsoleView;
@@ -67,7 +66,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Couple;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -130,7 +128,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 {
 	public static final String WORKING_DIR_ENV = "WORKING_DIR_AND_PYTHON_PATHS";
 	public static final String CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))\n" + "sys.path.extend([" + WORKING_DIR_ENV + "])\n";
-	private static final Logger LOG = Logger.getInstance(PydevConsoleRunnerImpl.class.getName());
+	private static final Logger LOG = Logger.getInstance(PydevConsoleRunnerImpl.class);
 	@SuppressWarnings("SpellCheckingInspection")
 	public static final String PYDEV_PYDEVCONSOLE_PY = "pydev/pydevconsole.py";
 	public static final int PORTS_WAITING_TIMEOUT = 20000;
@@ -388,8 +386,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner
 	@Nonnull
 	protected GeneralCommandLine doCreateConsoleCmdLine(Sdk sdk, Map<String, String> environmentVariables, String workingDir, int[] ports, PythonHelper helper)
 	{
-		GeneralCommandLine cmd = PythonCommandLineState.createPythonCommandLine(myProject, new PythonConsoleRunParams(myConsoleSettings, workingDir, sdk, environmentVariables), false, PtyCommandLine
-				.isEnabled() && !SystemInfo.isWindows);
+		GeneralCommandLine cmd = PythonCommandLineState.createPythonCommandLine(myProject, new PythonConsoleRunParams(myConsoleSettings, workingDir, sdk, environmentVariables), false);
 		cmd.withWorkDirectory(myWorkingDir);
 
 		ParamsGroup group = cmd.getParametersList().getParamsGroup(PythonCommandLineState.GROUP_SCRIPT);

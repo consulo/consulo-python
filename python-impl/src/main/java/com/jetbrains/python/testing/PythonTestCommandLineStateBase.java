@@ -15,11 +15,6 @@
  */
 package com.jetbrains.python.testing;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
 import com.google.common.collect.Lists;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
@@ -45,6 +40,10 @@ import com.jetbrains.python.run.CommandLinePatcher;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.sdk.PythonSdkType;
 
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author yole
  */
@@ -61,7 +60,6 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 	{
 		super(configuration, env);
 		myConfiguration = configuration;
-		setRunWithPty(false);
 	}
 
 	@Override
