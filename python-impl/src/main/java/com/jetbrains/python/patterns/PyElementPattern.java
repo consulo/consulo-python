@@ -18,8 +18,8 @@ package com.jetbrains.python.patterns;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.patterns.InitialPatternCondition;
-import com.intellij.patterns.PsiElementPattern;
+import consulo.language.pattern.InitialPatternCondition;
+import consulo.language.pattern.PsiElementPattern;
 import com.jetbrains.python.psi.PyElement;
 
 /**

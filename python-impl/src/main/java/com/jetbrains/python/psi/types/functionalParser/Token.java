@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.types.functionalParser;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.util.TextRange;
+import consulo.document.util.TextRange;
 
 /**
 * @author vlan

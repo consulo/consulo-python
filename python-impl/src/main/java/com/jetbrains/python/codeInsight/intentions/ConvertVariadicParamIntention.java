@@ -16,15 +16,15 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.Stack;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.ast.ASTNode;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.util.collection.Stack;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
 import javax.annotation.Nonnull;

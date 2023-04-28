@@ -16,22 +16,31 @@
 
 package com.jetbrains.python.documentation.doctest;
 
-import javax.annotation.Nonnull;
-import com.intellij.lang.PsiParser;
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PythonParserDefinition;
-import consulo.lang.LanguageVersion;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.ast.IFileElementType;
+import consulo.language.ast.TokenSet;
+import consulo.language.file.FileViewProvider;
+import consulo.language.lexer.Lexer;
+import consulo.language.parser.PsiParser;
+import consulo.language.psi.PsiFile;
+import consulo.language.version.LanguageVersion;
+
+import javax.annotation.Nonnull;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PyDocstringParserDefinition extends PythonParserDefinition {
-  public static final IFileElementType PYTHON_DOCSTRING_FILE = new PyDocstringFileElementType(PyDocstringLanguageDialect
-                                                                                                .getInstance());
+  public static final IFileElementType PYTHON_DOCSTRING_FILE = new PyDocstringFileElementType(PyDocstringLanguageDialect.INSTANCE);
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PyDocstringLanguageDialect.getInstance();
+  }
 
   @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {

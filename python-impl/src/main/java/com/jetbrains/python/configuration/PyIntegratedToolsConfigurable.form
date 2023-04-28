@@ -35,7 +35,7 @@
         <border type="none"/>
         <children/>
       </grid>
-      <component id="1a2fb" class="com.intellij.ui.components.JBLabel">
+      <component id="1a2fb" class="consulo.ui.ex.awt.JBLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -43,7 +43,7 @@
           <text value="Package requirements file:"/>
         </properties>
       </component>
-      <component id="4940f" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myRequirementsPathField">
+      <component id="4940f" class="consulo.ui.ex.awt.TextFieldWithBrowseButton" binding="myRequirementsPathField">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -57,7 +57,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="88016" class="com.intellij.ui.components.JBLabel">
+          <component id="88016" class="consulo.ui.ex.awt.JBLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -92,7 +92,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="653de" class="com.intellij.ui.components.JBLabel">
+          <component id="653de" class="consulo.ui.ex.awt.JBLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -101,7 +101,7 @@
               <text value="Sphinx working directory:"/>
             </properties>
           </component>
-          <component id="bef7c" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myWorkDir">
+          <component id="bef7c" class="consulo.ui.ex.awt.TextFieldWithBrowseButton" binding="myWorkDir">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

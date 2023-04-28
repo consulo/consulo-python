@@ -15,14 +15,12 @@
  */
 package com.jetbrains.python.debugger.containerview;
 
-import java.util.function.Function;
+import consulo.project.Project;
+import consulo.ui.ex.awt.DialogWrapper;
 
 import javax.annotation.Nonnull;
-import javax.swing.Action;
-import javax.swing.JComponent;
-
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
+import javax.swing.*;
+import java.util.function.Function;
 
 /**
  * Created by Yuli Fiterman on 5/10/2016.

@@ -18,9 +18,9 @@ package com.jetbrains.python.debugger;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.xdebugger.breakpoints.XBreakpoint;
-import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
-import com.intellij.xdebugger.breakpoints.XBreakpointType;
+import consulo.execution.debug.breakpoint.XBreakpoint;
+import consulo.execution.debug.breakpoint.XBreakpointHandler;
+import consulo.execution.debug.breakpoint.XBreakpointType;
 
 
 /**

@@ -16,16 +16,17 @@
 
 package com.jetbrains.python.packaging;
 
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.util.text.DateFormatUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Application;
+import consulo.application.ApplicationManager;
+import consulo.application.util.DateFormatUtil;
+import consulo.content.bundle.Sdk;
 import consulo.logging.Logger;
-import consulo.project.startup.StartupActivity;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.project.Project;
+import consulo.project.startup.PostStartupActivity;
 import consulo.ui.UIAccess;
 
 import javax.annotation.Nonnull;
@@ -35,15 +36,13 @@ import java.io.IOException;
  * PyPI cache updater
  * User : catherine
  */
-public class PyPIPackagesUpdater implements StartupActivity {
+@ExtensionImpl
+public class PyPIPackagesUpdater implements PostStartupActivity {
   private static final Logger LOG = Logger.getInstance(PyPIPackagesUpdater.class);
 
   @Override
   public void runActivity(@Nonnull final Project project, UIAccess uiAccess) {
     final Application application = ApplicationManager.getApplication();
-    if (application.isUnitTestMode()) {
-      return;
-    }
     final PyPackageService service = PyPackageService.getInstance();
     if (checkNeeded(project, service)) {
       application.executeOnPooledThread(new Runnable() {

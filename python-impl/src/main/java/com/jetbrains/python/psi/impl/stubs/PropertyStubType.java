@@ -16,17 +16,18 @@
 
 package com.jetbrains.python.psi.impl.stubs;
 
-import com.intellij.psi.stubs.StubInputStream;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.stubs.PropertyStubStorage;
-
-import java.io.IOException;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.stub.StubInputStream;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PropertyStubType extends CustomTargetExpressionStubType<PropertyStubStorage> {
   @Nullable
   @Override

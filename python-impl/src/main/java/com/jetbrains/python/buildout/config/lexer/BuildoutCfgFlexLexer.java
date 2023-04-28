@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.buildout.config.lexer;
 
-import com.intellij.lexer.FlexAdapter;
+import consulo.language.lexer.FlexAdapter;
 
 import java.io.Reader;
 

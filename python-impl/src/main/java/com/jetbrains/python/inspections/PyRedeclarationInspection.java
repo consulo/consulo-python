@@ -16,18 +16,6 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInsight.controlflow.ControlFlowUtil;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
@@ -35,12 +23,25 @@ import com.jetbrains.python.codeInsight.controlflow.ReadWriteInstruction;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiNameIdentifierOwner;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.ref.Ref;
 import org.jetbrains.annotations.Nls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Annotates declarations that unconditionally override others without these being used.
@@ -48,6 +49,7 @@ import java.util.List;
  * @author dcheryasov
  * @author vlan
  */
+@ExtensionImpl
 public class PyRedeclarationInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -59,7 +61,8 @@ public class PyRedeclarationInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -121,35 +124,37 @@ public class PyRedeclarationInspection extends PyInspection {
             elementInControlFlow = importStatement;
           }
         }
-        final int startInstruction = ControlFlowUtil.findInstructionNumberByElement(instructions, elementInControlFlow);
+        final int startInstruction =
+          consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, elementInControlFlow);
         if (startInstruction < 0) {
           return;
         }
         final Ref<PsiElement> readElementRef = Ref.create(null);
         final Ref<PsiElement> writeElementRef = Ref.create(null);
-        ControlFlowUtil.iteratePrev(startInstruction, instructions, new Function<Instruction, ControlFlowUtil.Operation>() {
-          @Override
-          public ControlFlowUtil.Operation fun(Instruction instruction) {
-            if (instruction instanceof ReadWriteInstruction && instruction.num() != startInstruction) {
-              final ReadWriteInstruction rwInstruction = (ReadWriteInstruction)instruction;
-              if (name.equals(rwInstruction.getName())) {
-                final PsiElement originalElement = rwInstruction.getElement();
-                if (originalElement != null) {
-                  if (rwInstruction.getAccess().isReadAccess()) {
-                    readElementRef.set(originalElement);
-                  }
-                  if (rwInstruction.getAccess().isWriteAccess()) {
-                    if (originalElement != element) {
-                      writeElementRef.set(originalElement);
+        ControlFlowUtil.iteratePrev(startInstruction,
+                                    instructions, new Function<Instruction, ControlFlowUtil.Operation>() {
+            @Override
+            public consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation apply(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction) {
+              if (instruction instanceof ReadWriteInstruction && instruction.num() != startInstruction) {
+                final ReadWriteInstruction rwInstruction = (ReadWriteInstruction)instruction;
+                if (name.equals(rwInstruction.getName())) {
+                  final PsiElement originalElement = rwInstruction.getElement();
+                  if (originalElement != null) {
+                    if (rwInstruction.getAccess().isReadAccess()) {
+                      readElementRef.set(originalElement);
+                    }
+                    if (rwInstruction.getAccess().isWriteAccess()) {
+                      if (originalElement != element) {
+                        writeElementRef.set(originalElement);
+                      }
                     }
                   }
+                  return ControlFlowUtil.Operation.CONTINUE;
                 }
-                return ControlFlowUtil.Operation.CONTINUE;
               }
+              return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.NEXT;
             }
-            return ControlFlowUtil.Operation.NEXT;
-          }
-        });
+          });
         final PsiElement writeElement = writeElementRef.get();
         if (writeElement != null && readElementRef.get() == null) {
           final List<LocalQuickFix> quickFixes = new ArrayList<LocalQuickFix>();
@@ -173,7 +178,7 @@ public class PyRedeclarationInspection extends PyInspection {
       }
       // Renaming an __init__ method results in renaming its class
       else if (element instanceof PyFunction && PyNames.INIT.equals(element.getName()) &&
-               ((PyFunction)element).getContainingClass() != null) {
+        ((PyFunction)element).getContainingClass() != null) {
         return false;
       }
       return true;

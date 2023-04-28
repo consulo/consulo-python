@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nullable;
 
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;

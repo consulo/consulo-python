@@ -16,21 +16,23 @@
 
 package com.jetbrains.python.documentation.doctest;
 
-import com.intellij.codeInsight.intention.impl.QuickEditAction;
-import com.intellij.lang.InjectableLanguage;
-import com.intellij.lang.Language;
 import com.jetbrains.python.PythonLanguage;
+import consulo.language.InjectableLanguage;
+import consulo.language.Language;
 
 /**
  * User : ktisha
  */
 public class PyDocstringLanguageDialect extends Language implements InjectableLanguage {
+  public static final PyDocstringLanguageDialect INSTANCE = new PyDocstringLanguageDialect();
+
+  @Deprecated
   public static PyDocstringLanguageDialect getInstance() {
-    return (PyDocstringLanguageDialect)PyDocstringFileType.INSTANCE.getLanguage();
+    return INSTANCE;
   }
 
   protected PyDocstringLanguageDialect() {
-    super(PythonLanguage.getInstance(), "PyDocstring");
-    putUserData(QuickEditAction.EDIT_ACTION_AVAILABLE, false);
+    super(PythonLanguage.INSTANCE, "PyDocstring");
+    putUserData(consulo.language.editor.impl.intention.QuickEditAction.EDIT_ACTION_AVAILABLE, false);
   }
 }

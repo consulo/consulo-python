@@ -15,25 +15,6 @@
  */
 package com.jetbrains.python.psi.impl.references;
 
-import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.psi.stubs.StubUpdatingIndex;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
@@ -53,6 +34,25 @@ import com.jetbrains.python.psi.stubs.PyClassNameIndexInsensitive;
 import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.psi.stubs.PyInstanceAttributeIndex;
 import com.jetbrains.python.psi.types.*;
+import consulo.application.AllIcons;
+import consulo.ide.impl.psi.stubs.StubUpdatingIndex;
+import consulo.language.editor.completion.AutoCompletionPolicy;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.editor.impl.internal.completion.CompletionUtil;
+import consulo.language.psi.*;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.stub.FileBasedIndex;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.ProcessingContext;
+import consulo.logging.Logger;
+import consulo.project.Project;
+import consulo.project.content.scope.ProjectScopes;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -175,7 +175,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 		{
 			if(!(function instanceof PyFunction))
 			{
-				FileBasedIndex.getInstance().scheduleRebuild(StubUpdatingIndex.INDEX_ID, new Throwable("found non-function object " + function + " in function list"));
+				FileBasedIndex.getInstance().scheduleRebuild(consulo.ide.impl.psi.stubs.StubUpdatingIndex.INDEX_ID, new Throwable("found non-function object " + function + " in function list"));
 				break;
 			}
 			PyFunction pyFunction = (PyFunction) function;
@@ -231,7 +231,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 			final VirtualFile vFile = target.getContainingFile().getVirtualFile();
 			if(vFile != null)
 			{
-				if(ProjectScope.getProjectScope(myElement.getProject()).contains(vFile))
+				if(ProjectScopes.getProjectScope(myElement.getProject()).contains(vFile))
 				{
 					rate += 80;
 				}

@@ -20,9 +20,9 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.usageView.UsageViewBundle;
+import consulo.project.Project;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.usage.UsageViewBundle;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.search.PyClassInheritorsSearch;

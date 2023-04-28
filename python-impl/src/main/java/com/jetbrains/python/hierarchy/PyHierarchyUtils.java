@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.hierarchy;
 
-import com.intellij.ide.hierarchy.HierarchyBrowserManager;
-import com.intellij.ide.util.treeView.AlphaComparator;
-import com.intellij.ide.util.treeView.NodeDescriptor;
-import com.intellij.openapi.project.Project;
+import consulo.ide.impl.idea.ide.hierarchy.HierarchyBrowserManager;
+import consulo.ui.ex.tree.AlphaComparator;
+import consulo.ui.ex.tree.NodeDescriptor;
+import consulo.project.Project;
 import javax.annotation.Nonnull;
 
 import java.util.Comparator;

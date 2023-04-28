@@ -16,7 +16,8 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
-import com.intellij.refactoring.changeSignature.ParameterInfo;
+import consulo.language.editor.refactoring.changeSignature.ParameterInfo;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -24,7 +25,8 @@ import javax.annotation.Nullable;
  * User : ktisha
  */
 
-public class PyParameterInfo implements ParameterInfo {
+public class PyParameterInfo implements ParameterInfo
+{
 
   private final int myOldIndex;
   private String myName = "";

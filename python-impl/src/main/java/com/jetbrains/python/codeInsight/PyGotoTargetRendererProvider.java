@@ -16,18 +16,19 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import com.intellij.codeInsight.navigation.GotoTargetRendererProvider;
-import com.intellij.ide.util.PsiElementListCellRenderer;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.python.psi.PyElement;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.ide.navigation.GotoTargetRendererProvider;
+import consulo.language.editor.ui.PsiElementListCellRenderer;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyGotoTargetRendererProvider implements GotoTargetRendererProvider {
-  public PsiElementListCellRenderer getRenderer(final PsiElement element, GotoTargetHandler.GotoData gotoData) {
+  public PsiElementListCellRenderer getRenderer(final PsiElement element) {
     if (element instanceof PyElement && element instanceof PsiNamedElement) return new PyElementListCellRenderer();
     return null;
   }

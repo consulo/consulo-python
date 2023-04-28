@@ -19,8 +19,8 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.util.containers.MultiMap;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.util.collection.MultiMap;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
@@ -71,7 +71,7 @@ public interface MembersBasedView<C extends MembersViewInitializationInfo>
 	Collection<PyMemberInfo<PyElement>> getSelectedMemberInfos();
 
 	/**
-	 * Runs refactoring based on {@link com.intellij.refactoring.BaseRefactoringProcessor}.
+	 * Runs refactoring based on {@link BaseRefactoringProcessor}.
 	 * It may display "preview" first.
 	 *
 	 * @param processor refactoring processor

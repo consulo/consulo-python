@@ -15,17 +15,17 @@
  */
 package com.jetbrains.python.console;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Pair;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.language.editor.CommonDataKeys;
+import consulo.language.editor.LangDataKeys;
+import consulo.module.Module;
+import consulo.application.dumb.DumbAware;
+import consulo.project.Project;
+import consulo.content.bundle.Sdk;
+import consulo.util.lang.Pair;
 import consulo.ui.annotation.RequiredUIAccess;
-import icons.PythonIcons;
+import com.jetbrains.python.PythonIcons;
 
 import javax.annotation.Nonnull;
 

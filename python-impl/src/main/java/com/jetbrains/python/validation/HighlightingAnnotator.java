@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.validation;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.annotation.Annotation;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.psi.*;
 

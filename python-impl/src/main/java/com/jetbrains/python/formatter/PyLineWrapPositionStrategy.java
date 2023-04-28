@@ -16,25 +16,29 @@
 
 package com.jetbrains.python.formatter;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.GenericLineWrapPositionStrategy;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.text.CharArrayUtil;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.StringLiteralExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.GenericLineWrapPositionStrategy;
+import consulo.document.Document;
+import consulo.language.Language;
+import consulo.language.editor.LanguageLineWrapPositionStrategy;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.util.lang.CharArrayUtil;
+import consulo.util.lang.StringUtil;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
-public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy {
+@ExtensionImpl
+public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy implements LanguageLineWrapPositionStrategy {
   public PyLineWrapPositionStrategy() {
     // Commas.
     addRule(new Rule(',', WrapCondition.AFTER, Rule.DEFAULT_WEIGHT * 1.1));
@@ -101,5 +105,11 @@ public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy 
       }
     }
     return wrapPosition;
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 }

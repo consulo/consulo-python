@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
+import consulo.document.util.TextRange;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
 import java.util.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;

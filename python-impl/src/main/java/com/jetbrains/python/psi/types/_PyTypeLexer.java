@@ -9,7 +9,7 @@ import static com.jetbrains.python.psi.types.PyTypeTokenTypes.OP;
 import static com.jetbrains.python.psi.types.PyTypeTokenTypes.PARAMETER;
 import static com.jetbrains.python.psi.types.PyTypeTokenTypes.SPACE;
 
-import com.intellij.lexer.FlexLexer;
+import consulo.language.lexer.FlexLexer;
 import com.jetbrains.python.psi.PyElementType;
 
 

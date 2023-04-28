@@ -25,10 +25,10 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.cmd.ParamsGroup;
+import consulo.content.bundle.Sdk;
+import consulo.util.io.FileUtil;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;

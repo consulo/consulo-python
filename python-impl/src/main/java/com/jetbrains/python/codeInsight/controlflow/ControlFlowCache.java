@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.codeInsight.controlflow;
 
-import com.intellij.codeInsight.controlflow.ControlFlow;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
 import consulo.util.dataholder.Key;
-import com.intellij.reference.SoftReference;
+import consulo.util.lang.ref.SoftReference;
 import com.jetbrains.python.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.codeInsight.dataflow.scope.impl.ScopeImpl;
 import javax.annotation.Nonnull;
@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  * @author yole
  */
 public class ControlFlowCache {
-  private static Key<SoftReference<ControlFlow>> CONTROL_FLOW_KEY = Key.create("com.jetbrains.python.codeInsight.controlflow.ControlFlow");
+  private static Key<SoftReference<consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow>> CONTROL_FLOW_KEY = Key.create("com.jetbrains.python.codeInsight.controlflow.ControlFlow");
   private static Key<SoftReference<Scope>> SCOPE_KEY = Key.create("com.jetbrains.python.codeInsight.controlflow.Scope");
 
   private ControlFlowCache() {
@@ -38,12 +38,12 @@ public class ControlFlowCache {
     scopeOwner.putUserData(SCOPE_KEY, null);
   }
 
-  public static ControlFlow getControlFlow(@Nonnull ScopeOwner element) {
-    SoftReference<ControlFlow> ref = element.getUserData(CONTROL_FLOW_KEY);
-    ControlFlow flow = ref != null ? ref.get() : null;
+  public static consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow getControlFlow(@Nonnull ScopeOwner element) {
+    SoftReference<consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow> ref = element.getUserData(CONTROL_FLOW_KEY);
+    consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ref != null ? ref.get() : null;
     if (flow == null) {
       flow = new PyControlFlowBuilder().buildControlFlow(element);
-      element.putUserData(CONTROL_FLOW_KEY, new SoftReference<ControlFlow>(flow));
+      element.putUserData(CONTROL_FLOW_KEY, new SoftReference<consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow>(flow));
     }
     return flow;
   }

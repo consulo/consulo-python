@@ -16,17 +16,18 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -43,7 +44,8 @@ import java.util.List;
  * if a and b:
  *   #stuff here
  */
-public class PyJoinIfIntention extends BaseIntentionAction {
+public class PyJoinIfIntention extends BaseIntentionAction
+{
   @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.join.if");

@@ -15,18 +15,20 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
 
-public interface PyResolveResultRater
-{
-	ExtensionPointName<PyResolveResultRater> EP_NAME = ExtensionPointName.create("consulo.python.resolveResultRater");
+import javax.annotation.Nonnull;
 
-	int getImportElementRate(@Nonnull final PsiElement target);
+@ExtensionAPI(ComponentScope.APPLICATION)
+public interface PyResolveResultRater {
+  ExtensionPointName<PyResolveResultRater> EP_NAME = ExtensionPointName.create(PyResolveResultRater.class);
 
-	int getMemberRate(PsiElement member, PyType type, TypeEvalContext context);
+  int getImportElementRate(@Nonnull final PsiElement target);
+
+  int getMemberRate(PsiElement member, PyType type, TypeEvalContext context);
 }

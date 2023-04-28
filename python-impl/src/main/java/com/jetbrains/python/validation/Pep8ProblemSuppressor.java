@@ -15,11 +15,14 @@
  */
 package com.jetbrains.python.validation;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 
 /**
  * Custom filter that allows to selectively suppress warnings and errors produced by pycodestyle.py (former pep8.py).
@@ -30,15 +33,15 @@ import com.intellij.psi.PsiFile;
  * @see Pep8ExternalAnnotator
  * @see com.jetbrains.python.inspections.PythonVisitorFilter
  */
-public interface Pep8ProblemSuppressor
-{
-	ExtensionPointName<Pep8ProblemSuppressor> EP_NAME = ExtensionPointName.create("consulo.python.pep8ProblemSuppressor");
+@ExtensionAPI(ComponentScope.APPLICATION)
+public interface Pep8ProblemSuppressor {
+  ExtensionPointName<Pep8ProblemSuppressor> EP_NAME = ExtensionPointName.create(Pep8ProblemSuppressor.class);
 
-	/**
-	 * @param problem       a single problem returned by the script and extracted from its output
-	 * @param file          PSI file where the inspection operates
-	 * @param targetElement PSI element found in the place of a problem on which annotation is going be attached in the editor
-	 * @return whether notification about this problem should be hidden in the editor
-	 */
-	boolean isProblemSuppressed(@Nonnull Pep8ExternalAnnotator.Problem problem, @Nonnull PsiFile file, @Nullable PsiElement targetElement);
+  /**
+   * @param problem       a single problem returned by the script and extracted from its output
+   * @param file          PSI file where the inspection operates
+   * @param targetElement PSI element found in the place of a problem on which annotation is going be attached in the editor
+   * @return whether notification about this problem should be hidden in the editor
+   */
+  boolean isProblemSuppressed(@Nonnull Pep8ExternalAnnotator.Problem problem, @Nonnull PsiFile file, @Nullable PsiElement targetElement);
 }

@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyNonlocalStatement;

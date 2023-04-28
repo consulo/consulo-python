@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.psi.impl.stubs;
 
-import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.psi.stubs.PsiFileStubImpl;
-import com.intellij.psi.tree.IStubFileElementType;
-import com.intellij.util.io.StringRef;
+import consulo.language.parser.ParserDefinition;
+import consulo.language.psi.stub.IStubFileElementType;
+import consulo.language.psi.stub.PsiFileStubImpl;
+import consulo.index.io.StringRef;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.FutureFeature;
 import com.jetbrains.python.psi.PyFile;
@@ -75,6 +75,6 @@ public class PyFileStubImpl extends PsiFileStubImpl<PyFile> implements PyFileStu
 
   @Override
   public IStubFileElementType getType() {
-    return (IStubFileElementType) LanguageParserDefinitions.INSTANCE.forLanguage(PythonLanguage.getInstance()).getFileNodeType();
+    return (IStubFileElementType) ParserDefinition.forLanguage(PythonLanguage.INSTANCE).getFileNodeType();
   }
 }

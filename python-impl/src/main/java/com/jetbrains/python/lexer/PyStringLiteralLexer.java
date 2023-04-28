@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.lexer;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lexer.LexerBase;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.StringEscapesTokenTypes;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.PyTokenTypes;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.StringEscapesTokenTypes;
+import consulo.language.lexer.LexerBase;
+import consulo.logging.Logger;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * Specialized lexer for string literals. To be used as a layer in a LayeredLexer.

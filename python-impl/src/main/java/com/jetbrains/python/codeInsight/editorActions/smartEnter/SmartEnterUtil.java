@@ -18,11 +18,11 @@ package com.jetbrains.python.codeInsight.editorActions.smartEnter;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
-import com.intellij.openapi.editor.ex.EditorEx;
+import consulo.ui.ex.action.IdeActions;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.action.EditorActionHandler;
+import consulo.codeEditor.action.EditorActionManager;
+import consulo.codeEditor.EditorEx;
 
 /**
  * Created by IntelliJ IDEA.

@@ -16,19 +16,34 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.application.Application;
+import consulo.component.extension.ExtensionPointCacheKey;
+import consulo.language.Language;
+import consulo.language.extension.ByLanguageValue;
+import consulo.language.extension.LanguageExtension;
+import consulo.language.extension.LanguageOneToMany;
+import consulo.language.psi.PsiFile;
 
-import com.intellij.lang.LanguageExtension;
-import com.intellij.psi.PsiFile;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * User : catherine
- *
+ * <p>
  * filter for pythonvisitor.
  * check if we should visit element
  */
-public interface PythonVisitorFilter {
-  LanguageExtension<PythonVisitorFilter> INSTANCE = new LanguageExtension<PythonVisitorFilter>("consulo.python.visitorFilter");
+@ExtensionAPI(ComponentScope.APPLICATION)
+public interface PythonVisitorFilter extends LanguageExtension {
+  ExtensionPointCacheKey<PythonVisitorFilter, ByLanguageValue<List<PythonVisitorFilter>>> KEY =
+    ExtensionPointCacheKey.create("PythonVisitorFilter", LanguageOneToMany.build(false));
+
+  @Nonnull
+  static List<PythonVisitorFilter> forLanguage(@Nonnull Language language) {
+    return Application.get().getExtensionPoint(PythonVisitorFilter.class).getOrBuildCache(KEY).requiredGet(language);
+  }
 
   boolean isSupported(@Nonnull Class visitorClass, @Nonnull PsiFile file);
 }

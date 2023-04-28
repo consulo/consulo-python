@@ -16,9 +16,9 @@
 
 package com.jetbrains.python;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.PathUtil;
 import consulo.container.boot.ContainerPathManager;
+import consulo.logging.Logger;
+import consulo.util.io.ClassPathUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.TestOnly;
 
@@ -34,7 +34,7 @@ public class PythonHelpersLocator {
    * @return the base directory under which various scripts, etc are stored.
    */
   public static File getHelpersRoot() {
-    @NonNls String jarPath = PathUtil.getJarPathForClass(PythonHelpersLocator.class);
+    @NonNls String jarPath = ClassPathUtil.getJarPathForClass(PythonHelpersLocator.class);
     if (jarPath.endsWith(".jar")) {
       final File jarFile = new File(jarPath);
 

@@ -18,13 +18,13 @@ package com.jetbrains.python.refactoring.surround.surrounders.statements;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.surroundWith.Surrounder;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.surroundWith.Surrounder;
+import consulo.logging.Logger;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.IncorrectOperationException;
 
 import javax.annotation.Nullable;
 

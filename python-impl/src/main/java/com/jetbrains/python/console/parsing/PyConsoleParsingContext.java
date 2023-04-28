@@ -17,7 +17,7 @@ package com.jetbrains.python.console.parsing;
 
 import javax.annotation.Nullable;
 
-import com.intellij.lang.PsiBuilder;
+import consulo.language.parser.PsiBuilder;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.parsing.ExpressionParsing;

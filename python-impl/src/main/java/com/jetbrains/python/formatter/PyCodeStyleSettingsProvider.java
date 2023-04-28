@@ -16,17 +16,20 @@
 
 package com.jetbrains.python.formatter;
 
+import consulo.annotation.component.ExtensionImpl;
+import consulo.configurable.Configurable;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CustomCodeStyleSettings;
+import consulo.language.codeStyle.setting.CodeStyleSettingsProvider;
+import consulo.language.codeStyle.ui.setting.CodeStyleAbstractConfigurable;
+import consulo.language.codeStyle.ui.setting.CodeStyleAbstractPanel;
+
 import javax.annotation.Nonnull;
-import com.intellij.application.options.CodeStyleAbstractConfigurable;
-import com.intellij.application.options.CodeStyleAbstractPanel;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
-import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   @Override
   public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {

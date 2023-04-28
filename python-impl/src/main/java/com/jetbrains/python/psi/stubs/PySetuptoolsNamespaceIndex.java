@@ -24,17 +24,17 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.indexing.DataIndexer;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileContent;
-import com.intellij.util.indexing.ID;
-import com.intellij.util.indexing.ScalarIndexExtension;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.KeyDescriptor;
+import consulo.language.psi.stub.ScalarIndexExtension;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.index.io.DataIndexer;
+import consulo.language.psi.stub.FileBasedIndex;
+import consulo.language.psi.stub.FileContent;
+import consulo.index.io.ID;
+import consulo.index.io.EnumeratorStringDescriptor;
+import consulo.index.io.KeyDescriptor;
 import com.jetbrains.python.psi.search.PyProjectScopeBuilder;
 
 /**

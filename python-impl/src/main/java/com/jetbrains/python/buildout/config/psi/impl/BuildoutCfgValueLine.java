@@ -17,14 +17,14 @@
 package com.jetbrains.python.buildout.config.psi.impl;
 
 import com.google.common.collect.Lists;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiReference;
 import com.jetbrains.python.buildout.config.psi.BuildoutPsiUtil;
 import com.jetbrains.python.buildout.config.ref.BuildoutPartReference;
-import javax.annotation.Nonnull;
+import consulo.ide.impl.idea.openapi.util.text.StringUtil;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiReference;
+import consulo.util.lang.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -49,7 +49,7 @@ public class BuildoutCfgValueLine extends BuildoutCfgPsiElement {
       for (Pair<String, Integer> name : names) {
         refs.add(new BuildoutPartReference(this, name.getFirst(), name.getSecond()));
       }
-      return  refs.toArray(new BuildoutPartReference[refs.size()]);
+      return refs.toArray(new BuildoutPartReference[refs.size()]);
     }
 
     return PsiReference.EMPTY_ARRAY;

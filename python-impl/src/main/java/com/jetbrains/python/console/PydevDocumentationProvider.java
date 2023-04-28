@@ -16,16 +16,16 @@
 
 package com.jetbrains.python.console;
 
-import javax.annotation.Nullable;
-
-import com.intellij.lang.documentation.AbstractDocumentationProvider;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.console.completion.PydevConsoleElement;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.language.editor.documentation.AbstractDocumentationProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nullable;
 
 /**
  * @author oleg

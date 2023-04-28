@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
+import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
 import com.jetbrains.python.hierarchy.PyHierarchyNodeDescriptor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyUtil;

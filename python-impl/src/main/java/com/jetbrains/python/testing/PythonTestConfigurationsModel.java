@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.testing;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.ui.CollectionComboBoxModel;
+import consulo.module.Module;
+import consulo.ui.ex.awt.CollectionComboBoxModel;
 import com.jetbrains.python.PyBundle;
 
 import java.util.List;

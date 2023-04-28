@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.console;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.ui.EditorTextField;
-import com.intellij.util.ui.UIUtil;
+import consulo.document.Document;
+import consulo.codeEditor.EditorEx;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.editor.ui.awt.EditorTextField;
+import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.impl.PyExpressionCodeFragmentImpl;
 import com.jetbrains.python.run.AbstractPyCommonOptionsForm;

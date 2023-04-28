@@ -16,13 +16,13 @@
 
 package com.jetbrains.python;
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.text.CharSequenceReader;
+import consulo.language.Language;
+import consulo.language.file.LanguageFileType;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+import consulo.util.io.CharsetToolkit;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.util.io.CharSequenceReader;
 import consulo.localize.LocalizeValue;
 import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
@@ -47,7 +47,7 @@ public class PythonFileType extends LanguageFileType {
   public static PythonFileType INSTANCE = new PythonFileType();
 
   public PythonFileType() {
-    this(new PythonLanguage());
+    this(PythonLanguage.INSTANCE);
   }
 
   public PythonFileType(Language language) {
@@ -71,7 +71,7 @@ public class PythonFileType extends LanguageFileType {
 
   @Nonnull
   public Image getIcon() {
-    return PythonPsiIconGroup.pythonFile();
+    return PythonPsiIconGroup.pythonfile();
   }
 
   @Override

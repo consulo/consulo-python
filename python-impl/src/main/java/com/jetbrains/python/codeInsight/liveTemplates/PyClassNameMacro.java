@@ -16,18 +16,24 @@
 
 package com.jetbrains.python.codeInsight.liveTemplates;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.template.*;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyClass;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.template.Expression;
+import consulo.language.editor.template.ExpressionContext;
+import consulo.language.editor.template.Result;
+import consulo.language.editor.template.TextResult;
+import consulo.language.editor.template.context.TemplateContextType;
+import consulo.language.editor.template.macro.Macro;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyClassNameMacro extends Macro {
   @Override
   public String getName() {

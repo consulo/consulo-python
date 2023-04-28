@@ -18,12 +18,12 @@ package com.jetbrains.python.run;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ModuleBasedConfiguration;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
+import consulo.execution.RunManager;
+import consulo.execution.RunnerAndConfigurationSettings;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.ModuleBasedConfiguration;
+import consulo.module.Module;
+import consulo.project.Project;
 
 /**
  * @author yole

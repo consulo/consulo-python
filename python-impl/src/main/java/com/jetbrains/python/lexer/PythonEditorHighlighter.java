@@ -16,29 +16,29 @@
 
 package com.jetbrains.python.lexer;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lexer.LayeredLexer;
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter;
-import com.intellij.openapi.editor.highlighter.HighlighterClient;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
-import com.intellij.openapi.project.Project;
-import consulo.util.dataholder.Key;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
+import consulo.codeEditor.HighlighterClient;
+import consulo.colorScheme.EditorColorsScheme;
+import consulo.document.Document;
+import consulo.document.event.DocumentEvent;
+import consulo.document.util.TextRange;
+import consulo.language.editor.highlight.LexerEditorHighlighter;
+import consulo.language.editor.highlight.SyntaxHighlighterFactory;
+import consulo.language.lexer.LayeredLexer;
+import consulo.language.lexer.Lexer;
+import consulo.project.Project;
+import consulo.util.dataholder.Key;
+import consulo.virtualFileSystem.VirtualFile;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * User : catherine
  */
-public class PythonEditorHighlighter extends LexerEditorHighlighter {
+public class PythonEditorHighlighter extends LexerEditorHighlighter
+{
 
   public PythonEditorHighlighter(@Nonnull EditorColorsScheme scheme, @Nullable Project project, @Nullable VirtualFile file) {
     super(SyntaxHighlighterFactory.getSyntaxHighlighter(file != null ? file.getFileType() : PythonFileType.INSTANCE,

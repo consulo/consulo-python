@@ -9,7 +9,7 @@
  *******************************************************************************/
 package com.jetbrains.python.console.pydev;
 
-import com.intellij.util.Function;
+import java.util.function.Function;
 
 /**
  * Interface for the console communication.

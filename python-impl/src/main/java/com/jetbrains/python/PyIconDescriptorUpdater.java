@@ -16,78 +16,65 @@
 
 package com.jetbrains.python;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.Property;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import consulo.ide.IconDescriptor;
-import consulo.ide.IconDescriptorUpdater;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
+import consulo.language.icon.IconDescriptor;
+import consulo.language.icon.IconDescriptorUpdater;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.module.content.ProjectRootManager;
 import consulo.ui.image.Image;
-import icons.PythonIcons;
+import consulo.util.lang.Comparing;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public class PyIconDescriptorUpdater implements IconDescriptorUpdater
-{
-	@Override
-	public void updateIcon(@Nonnull IconDescriptor iconDescriptor, @Nonnull PsiElement element, int i)
-	{
-		if(element instanceof PsiDirectory)
-		{
-			final PsiDirectory directory = (PsiDirectory) element;
-			if(directory.findFile(PyNames.INIT_DOT_PY) != null)
-			{
-				final VirtualFile vFile = directory.getVirtualFile();
-				final VirtualFile root = ProjectRootManager.getInstance(directory.getProject()).getFileIndex().getSourceRootForFile(vFile);
-				if(!Comparing.equal(root, vFile))
-				{
-					iconDescriptor.setMainIcon(AllIcons.Nodes.Package);
-				}
-			}
-		}
-		else if(element instanceof PyClass)
-		{
-			iconDescriptor.setMainIcon(AllIcons.Nodes.Class);
-		}
-		else if(element instanceof PyFunction)
-		{
-			Image icon = null;
-			final Property property = ((PyFunction) element).getProperty();
-			if(property != null)
-			{
-				if(property.getGetter().valueOrNull() == this)
-				{
-					icon = PythonIcons.Python.PropertyGetter;
-				}
-				else if(property.getSetter().valueOrNull() == this)
-				{
-					icon = PythonIcons.Python.PropertySetter;
-				}
-				else if(property.getDeleter().valueOrNull() == this)
-				{
-					icon = PythonIcons.Python.PropertyDeleter;
-				}
-				else
-				{
-					icon = AllIcons.Nodes.Property;
-				}
-			}
-			if(icon != null)
-			{
-				iconDescriptor.setMainIcon(icon);
-			}
-			else
-			{
-				iconDescriptor.setMainIcon(AllIcons.Nodes.Method);
-			}
-		}
-	}
+@ExtensionImpl
+public class PyIconDescriptorUpdater implements IconDescriptorUpdater {
+  @Override
+  public void updateIcon(@Nonnull IconDescriptor iconDescriptor, @Nonnull PsiElement element, int i) {
+    if (element instanceof PsiDirectory) {
+      final PsiDirectory directory = (PsiDirectory)element;
+      if (directory.findFile(PyNames.INIT_DOT_PY) != null) {
+        final VirtualFile vFile = directory.getVirtualFile();
+        final VirtualFile root = ProjectRootManager.getInstance(directory.getProject()).getFileIndex().getSourceRootForFile(vFile);
+        if (!Comparing.equal(root, vFile)) {
+          iconDescriptor.setMainIcon(AllIcons.Nodes.Package);
+        }
+      }
+    }
+    else if (element instanceof PyClass) {
+      iconDescriptor.setMainIcon(AllIcons.Nodes.Class);
+    }
+    else if (element instanceof PyFunction) {
+      Image icon = null;
+      final Property property = ((PyFunction)element).getProperty();
+      if (property != null) {
+        if (property.getGetter().valueOrNull() == this) {
+          icon = PythonIcons.Python.PropertyGetter;
+        }
+        else if (property.getSetter().valueOrNull() == this) {
+          icon = PythonIcons.Python.PropertySetter;
+        }
+        else if (property.getDeleter().valueOrNull() == this) {
+          icon = PythonIcons.Python.PropertyDeleter;
+        }
+        else {
+          icon = AllIcons.Nodes.Property;
+        }
+      }
+      if (icon != null) {
+        iconDescriptor.setMainIcon(icon);
+      }
+      else {
+        iconDescriptor.setMainIcon(AllIcons.Nodes.Method);
+      }
+    }
+  }
 }

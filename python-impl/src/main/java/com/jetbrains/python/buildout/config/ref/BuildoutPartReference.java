@@ -17,10 +17,10 @@
 package com.jetbrains.python.buildout.config.ref;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReferenceBase;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonStringUtil;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgFile;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgSection;

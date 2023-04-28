@@ -15,31 +15,34 @@
  */
 package com.jetbrains.rest.completion;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ProcessingContext;
+import com.jetbrains.rest.RestLanguage;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.editor.completion.CompletionType;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.util.ModuleUtilCore;
+import consulo.content.bundle.Sdk;
+import consulo.language.pattern.PsiElementPattern;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ProcessingContext;
 import com.jetbrains.rest.RestTokenTypes;
 import com.jetbrains.rest.RestUtil;
 import com.jetbrains.rest.psi.RestReferenceTarget;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.codeInsight.completion.CompletionProvider;
+import consulo.language.editor.completion.CompletionProvider;
+import consulo.language.editor.completion.CompletionContributor;
 import consulo.python.module.extension.PyModuleExtension;
 
 import javax.annotation.Nonnull;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
-import static com.intellij.patterns.StandardPatterns.or;
+import static consulo.language.pattern.PlatformPatterns.psiElement;
+import static consulo.language.pattern.StandardPatterns.or;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class SphinxDirectiveCompletionContributor extends CompletionContributor
 {
 	public static final PsiElementPattern.Capture<PsiElement> DIRECTIVE_PATTERN = psiElement().afterSibling(or(psiElement().
@@ -63,5 +66,12 @@ public class SphinxDirectiveCompletionContributor extends CompletionContributor
 				}
 			}
 		});
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return RestLanguage.INSTANCE;
 	}
 }

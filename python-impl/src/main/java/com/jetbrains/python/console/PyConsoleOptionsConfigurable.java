@@ -15,201 +15,177 @@
  */
 package com.jetbrains.python.console;
 
-import java.util.List;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.components.JBCheckBox;
+import consulo.configurable.Configurable;
+import consulo.configurable.ConfigurationException;
+import consulo.configurable.SearchableConfigurable;
+import consulo.project.Project;
+import consulo.ui.ex.awt.JBCheckBox;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.swing.*;
+import java.util.List;
 
 /**
  * @author traff
  */
-public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.Abstract implements Configurable.NoScroll
-{
-	public static final String CONSOLE_SETTINGS_HELP_REFERENCE = "reference.project.settings.console";
-	public static final String CONSOLE_SETTINGS_HELP_REFERENCE_PYTHON = "reference.project.settings.console.python";
+public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.Abstract implements Configurable.NoScroll {
+  public static final String CONSOLE_SETTINGS_HELP_REFERENCE = "reference.project.settings.console";
+  public static final String CONSOLE_SETTINGS_HELP_REFERENCE_PYTHON = "reference.project.settings.console.python";
 
-	private PyConsoleOptionsPanel myPanel;
+  private PyConsoleOptionsPanel myPanel;
 
-	private final PyConsoleOptions myOptionsProvider;
-	private final Project myProject;
+  private final PyConsoleOptions myOptionsProvider;
+  private final Project myProject;
 
-	public PyConsoleOptionsConfigurable(PyConsoleOptions optionsProvider, Project project)
-	{
-		myOptionsProvider = optionsProvider;
-		myProject = project;
-	}
+  public PyConsoleOptionsConfigurable(PyConsoleOptions optionsProvider, Project project) {
+    myOptionsProvider = optionsProvider;
+    myProject = project;
+  }
 
-	@Nonnull
-	@Override
-	public String getId()
-	{
-		return "pyconsole";
-	}
+  @Nonnull
+  @Override
+  public String getId() {
+    return "pyconsole";
+  }
 
-	@Override
-	protected Configurable[] buildConfigurables()
-	{
-		List<Configurable> result = Lists.newArrayList();
+  @Override
+  protected Configurable[] buildConfigurables() {
+    List<Configurable> result = Lists.newArrayList();
 
-		PyConsoleSpecificOptionsPanel pythonConsoleOptionsPanel = new PyConsoleSpecificOptionsPanel(myProject);
-		result.add(createConsoleChildConfigurable("Python Console", pythonConsoleOptionsPanel, myOptionsProvider.getPythonConsoleSettings(), CONSOLE_SETTINGS_HELP_REFERENCE_PYTHON));
+    PyConsoleSpecificOptionsPanel pythonConsoleOptionsPanel = new PyConsoleSpecificOptionsPanel(myProject);
+    result.add(createConsoleChildConfigurable("Python Console",
+                                              pythonConsoleOptionsPanel,
+                                              myOptionsProvider.getPythonConsoleSettings(),
+                                              CONSOLE_SETTINGS_HELP_REFERENCE_PYTHON));
 
-		for(PyConsoleOptionsProvider provider : Extensions.getExtensions(PyConsoleOptionsProvider.EP_NAME))
-		{
-			if(provider.isApplicableTo(myProject))
-			{
-				result.add(createConsoleChildConfigurable(provider.getName(), new PyConsoleSpecificOptionsPanel(myProject), provider.getSettings(myProject), provider.getHelpTopic()));
-			}
-		}
+    for (PyConsoleOptionsProvider provider : PyConsoleOptionsProvider.EP_NAME.getExtensionList()) {
+      if (provider.isApplicableTo(myProject)) {
+        result.add(createConsoleChildConfigurable(provider.getName(),
+                                                  new PyConsoleSpecificOptionsPanel(myProject),
+                                                  provider.getSettings(myProject),
+                                                  provider.getHelpTopic()));
+      }
+    }
 
-		return result.toArray(new Configurable[result.size()]);
-	}
+    return result.toArray(new Configurable[result.size()]);
+  }
 
-	private static Configurable createConsoleChildConfigurable(final String name,
-			final PyConsoleSpecificOptionsPanel panel,
-			final PyConsoleOptions.PyConsoleSettings settings,
-			final String helpReference)
-	{
-		return new SearchableConfigurable()
-		{
+  private static Configurable createConsoleChildConfigurable(final String name,
+                                                             final PyConsoleSpecificOptionsPanel panel,
+                                                             final PyConsoleOptions.PyConsoleSettings settings,
+                                                             final String helpReference) {
+    return new SearchableConfigurable() {
 
-			@Nonnull
-			@Override
-			public String getId()
-			{
-				return "PyConsoleConfigurable." + name;
-			}
+      @Nonnull
+      @Override
+      public String getId() {
+        return "PyConsoleConfigurable." + name;
+      }
 
-			@Nls
-			@Override
-			public String getDisplayName()
-			{
-				return name;
-			}
+      @Nls
+      @Override
+      public String getDisplayName() {
+        return name;
+      }
 
-			@Override
-			public String getHelpTopic()
-			{
-				return helpReference;
-			}
+      @Override
+      public String getHelpTopic() {
+        return helpReference;
+      }
 
-			@Override
-			public JComponent createComponent()
-			{
-				return panel.createPanel(settings);
-			}
+      @Override
+      public JComponent createComponent() {
+        return panel.createPanel(settings);
+      }
 
-			@Override
-			public boolean isModified()
-			{
-				return panel.isModified();
-			}
+      @Override
+      public boolean isModified() {
+        return panel.isModified();
+      }
 
-			@Override
-			public void apply() throws ConfigurationException
-			{
-				panel.apply();
-			}
+      @Override
+      public void apply() throws ConfigurationException {
+        panel.apply();
+      }
 
-			@Override
-			public void reset()
-			{
-				panel.reset();
-			}
+      @Override
+      public void reset() {
+        panel.reset();
+      }
 
-			@Override
-			public void disposeUIResources()
-			{
-			}
-		};
-	}
+      @Override
+      public void disposeUIResources() {
+      }
+    };
+  }
 
-	@Nls
-	@Override
-	public String getDisplayName()
-	{
-		return "Console";
-	}
+  @Nls
+  @Override
+  public String getDisplayName() {
+    return "Console";
+  }
 
-	@Override
-	public String getHelpTopic()
-	{
-		return CONSOLE_SETTINGS_HELP_REFERENCE;
-	}
+  @Override
+  public String getHelpTopic() {
+    return CONSOLE_SETTINGS_HELP_REFERENCE;
+  }
 
-	@Override
-	public JComponent createComponent()
-	{
-		myPanel = new PyConsoleOptionsPanel();
+  @Override
+  public JComponent createComponent() {
+    myPanel = new PyConsoleOptionsPanel();
 
-		return myPanel.createPanel(myOptionsProvider);
-	}
+    return myPanel.createPanel(myOptionsProvider);
+  }
 
-	@Override
-	public boolean isModified()
-	{
-		return myPanel.isModified();
-	}
+  @Override
+  public boolean isModified() {
+    return myPanel.isModified();
+  }
 
-	@Override
-	public void apply() throws ConfigurationException
-	{
-		myPanel.apply();
-	}
+  @Override
+  public void apply() throws ConfigurationException {
+    myPanel.apply();
+  }
 
 
-	@Override
-	public void reset()
-	{
-		myPanel.reset();
-	}
+  @Override
+  public void reset() {
+    myPanel.reset();
+  }
 
-	@Override
-	public void disposeUIResources()
-	{
-		myPanel = null;
-	}
+  @Override
+  public void disposeUIResources() {
+    myPanel = null;
+  }
 
-	private static class PyConsoleOptionsPanel
-	{
-		private JPanel myWholePanel;
-		private JBCheckBox myShowDebugConsoleByDefault;
-		private JBCheckBox myIpythonEnabledCheckbox;
-		private PyConsoleOptions myOptionsProvider;
+  private static class PyConsoleOptionsPanel {
+    private JPanel myWholePanel;
+    private JBCheckBox myShowDebugConsoleByDefault;
+    private JBCheckBox myIpythonEnabledCheckbox;
+    private PyConsoleOptions myOptionsProvider;
 
-		public JPanel createPanel(PyConsoleOptions optionsProvider)
-		{
-			myOptionsProvider = optionsProvider;
+    public JPanel createPanel(PyConsoleOptions optionsProvider) {
+      myOptionsProvider = optionsProvider;
 
-			return myWholePanel;
-		}
+      return myWholePanel;
+    }
 
-		public void apply()
-		{
-			myOptionsProvider.setShowDebugConsoleByDefault(myShowDebugConsoleByDefault.isSelected());
-			myOptionsProvider.setIpythonEnabled(myIpythonEnabledCheckbox.isSelected());
-		}
+    public void apply() {
+      myOptionsProvider.setShowDebugConsoleByDefault(myShowDebugConsoleByDefault.isSelected());
+      myOptionsProvider.setIpythonEnabled(myIpythonEnabledCheckbox.isSelected());
+    }
 
-		public void reset()
-		{
-			myShowDebugConsoleByDefault.setSelected(myOptionsProvider.isShowDebugConsoleByDefault());
-			myIpythonEnabledCheckbox.setSelected(myOptionsProvider.isIpythonEnabled());
-		}
+    public void reset() {
+      myShowDebugConsoleByDefault.setSelected(myOptionsProvider.isShowDebugConsoleByDefault());
+      myIpythonEnabledCheckbox.setSelected(myOptionsProvider.isIpythonEnabled());
+    }
 
-		public boolean isModified()
-		{
-			return myShowDebugConsoleByDefault.isSelected() != myOptionsProvider.isShowDebugConsoleByDefault() || myIpythonEnabledCheckbox.isSelected() != myOptionsProvider.isIpythonEnabled();
+    public boolean isModified() {
+      return myShowDebugConsoleByDefault.isSelected() != myOptionsProvider.isShowDebugConsoleByDefault() || myIpythonEnabledCheckbox.isSelected() != myOptionsProvider
+        .isIpythonEnabled();
 
-		}
-	}
+    }
+  }
 }

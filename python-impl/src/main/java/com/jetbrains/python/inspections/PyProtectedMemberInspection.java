@@ -15,26 +15,6 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.swing.JComponent;
-
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
@@ -42,19 +22,26 @@ import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.codeInsight.stdlib.PyNamedTupleType;
 import com.jetbrains.python.inspections.quickfix.PyAddPropertyForFieldQuickFix;
 import com.jetbrains.python.inspections.quickfix.PyMakePublicQuickFix;
-import com.jetbrains.python.psi.PyAnnotation;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyModuleType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.testing.pytest.PyTestUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.*;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.StringUtil;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: ktisha
@@ -63,10 +50,15 @@ import com.jetbrains.python.testing.pytest.PyTestUtil;
  * protected member (i.e. class member with a name beginning with an underscore)
  * is access outside the class or a descendant of the class where it's defined.
  */
+@ExtensionImpl
 public class PyProtectedMemberInspection extends PyInspection
 {
-	public boolean ignoreTestFunctions = true;
-	public boolean ignoreAnnotations = false;
+	@Nonnull
+	@Override
+	public InspectionToolState<?> createStateProvider()
+	{
+		return new PyProtectedMemberInspectionState();
+	}
 
 	@Nls
 	@Nonnull
@@ -78,17 +70,24 @@ public class PyProtectedMemberInspection extends PyInspection
 
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
 	{
-		return new Visitor(holder, session);
+		PyProtectedMemberInspectionState inspectionState = (PyProtectedMemberInspectionState) state;
+		return new Visitor(holder, session, inspectionState);
 	}
 
 
 	private class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
+		private final PyProtectedMemberInspectionState myState;
+
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyProtectedMemberInspectionState inspectionState)
 		{
 			super(holder, session);
+			myState = inspectionState;
 		}
 
 		@Override
@@ -122,7 +121,7 @@ public class PyProtectedMemberInspection extends PyInspection
 		public void visitPyReferenceExpression(PyReferenceExpression node)
 		{
 			final PyExpression qualifier = node.getQualifier();
-			if(ignoreAnnotations && PsiTreeUtil.getParentOfType(node, PyAnnotation.class) != null)
+			if(myState.ignoreAnnotations && PsiTreeUtil.getParentOfType(node, PyAnnotation.class) != null)
 			{
 				return;
 			}
@@ -160,7 +159,9 @@ public class PyProtectedMemberInspection extends PyInspection
 					final String newName = StringUtil.trimLeading(name, '_');
 					if(resolvedClass != null)
 					{
-						final String qFixName = resolvedClass.getProperties().containsKey(newName) ? PyBundle.message("QFIX.use.property") : PyBundle.message("QFIX.add.property");
+						final String qFixName =
+								resolvedClass.getProperties().containsKey(newName) ? PyBundle.message("QFIX.use.property") : PyBundle.message(
+										"QFIX.add.property");
 						quickFixes.add(new PyAddPropertyForFieldQuickFix(qFixName));
 
 						final Collection<String> usedNames = PyRefactoringUtil.collectUsedNames(resolvedClass);
@@ -174,7 +175,7 @@ public class PyProtectedMemberInspection extends PyInspection
 				final PyClass parentClass = getClassOwner(node);
 				if(parentClass != null)
 				{
-					if(PyTestUtil.isPyTestClass(parentClass, null) && ignoreTestFunctions)
+					if(PyTestUtil.isPyTestClass(parentClass, null) && myState.ignoreTestFunctions)
 					{
 						return;
 					}
@@ -196,8 +197,13 @@ public class PyProtectedMemberInspection extends PyInspection
 					}
 				}
 				final PyType type = myTypeEvalContext.getType(qualifier);
-				final String bundleKey = type instanceof PyModuleType ? "INSP.protected.member.$0.access.module" : "INSP.protected.member.$0.access";
-				registerProblem(node, PyBundle.message(bundleKey, name), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, null, quickFixes.toArray(new LocalQuickFix[quickFixes.size() - 1]));
+				final String bundleKey =
+						type instanceof PyModuleType ? "INSP.protected.member.$0.access.module" : "INSP.protected.member.$0.access";
+				registerProblem(node,
+						PyBundle.message(bundleKey, name),
+						ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+						null,
+						quickFixes.toArray(new LocalQuickFix[quickFixes.size() - 1]));
 			}
 		}
 
@@ -213,15 +219,5 @@ public class PyProtectedMemberInspection extends PyInspection
 			}
 			return null;
 		}
-	}
-
-	@Nullable
-	@Override
-	public JComponent createOptionsPanel()
-	{
-		MultipleCheckboxOptionsPanel panel = new MultipleCheckboxOptionsPanel(this);
-		panel.addCheckbox("Ignore test functions", "ignoreTestFunctions");
-		panel.addCheckbox("Ignore annotations", "ignoreAnnotations");
-		return panel;
 	}
 }

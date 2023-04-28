@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.codeInsight.dataflow.scope.impl;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeVariable;
 import javax.annotation.Nonnull;
 

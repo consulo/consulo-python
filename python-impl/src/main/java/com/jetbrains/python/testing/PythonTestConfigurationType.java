@@ -17,13 +17,12 @@
 package com.jetbrains.python.testing;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.openapi.project.Project;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.ConfigurationType;
+import consulo.execution.configuration.ConfigurationTypeUtil;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.project.Project;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.testing.attest.PythonAtTestRunConfiguration;
 import com.jetbrains.python.testing.doctest.PythonDocTestRunConfiguration;
@@ -33,7 +32,7 @@ import com.jetbrains.python.testing.unittest.PythonUnitTestRunConfiguration;
 import consulo.module.extension.ModuleExtensionHelper;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.image.Image;
-import icons.PythonIcons;
+import com.jetbrains.python.PythonIcons;
 
 /**
  * User : catherine

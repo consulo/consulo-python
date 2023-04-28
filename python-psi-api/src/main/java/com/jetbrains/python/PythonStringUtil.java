@@ -16,35 +16,33 @@
 
 package com.jetbrains.python;
 
-import static com.intellij.openapi.util.text.StringUtil.endsWith;
-import static com.intellij.openapi.util.text.StringUtil.startsWith;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import consulo.application.util.SystemInfo;
+import consulo.document.util.TextRange;
+import consulo.ide.impl.idea.openapi.util.io.FileUtilRt;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.io.PathUtil;
+import consulo.util.lang.ObjectUtil;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.PathUtil;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
+import static consulo.util.lang.StringUtil.endsWith;
+import static consulo.util.lang.StringUtil.startsWith;
 
 /**
  * @author Alexei Orischenko
  * @author vlan
  */
 public class PythonStringUtil {
-  private static final ImmutableList<String> QUOTES = ImmutableList.of("'''", "\"\"\"", "'", "\"");
+  private static final List<String> QUOTES = List.of("'''", "\"\"\"", "'", "\"");
 
   private PythonStringUtil() {
   }
@@ -95,8 +93,8 @@ public class PythonStringUtil {
 
   public static boolean isPath(@Nullable String s) {
     if (!StringUtil.isEmpty(s)) {
-      s = ObjectUtils.assertNotNull(s);
-      s = FileUtil.toSystemIndependentName(s);
+      s = ObjectUtil.assertNotNull(s);
+      s = FileUtilRt.toSystemIndependentName(s);
       final List<String> components = StringUtil.split(s, "/");
       for (String name : components) {
         if (name == components.get(0) && SystemInfo.isWindows && name.endsWith(":")) {

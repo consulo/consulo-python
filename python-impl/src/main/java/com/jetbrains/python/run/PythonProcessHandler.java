@@ -16,54 +16,36 @@
 
 package com.jetbrains.python.run;
 
-import java.nio.charset.Charset;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.RunnerMediator;
-import com.intellij.openapi.util.SystemInfo;
+import consulo.platform.Platform;
+import consulo.process.ExecutionException;
+import consulo.process.ProcessConsoleType;
+import consulo.process.ProcessHandler;
+import consulo.process.ProcessHandlerBuilder;
+import consulo.process.cmd.GeneralCommandLine;
 
 /**
  * @author traff
  */
-public class PythonProcessHandler extends KillableColoredProcessHandler
-{
-	protected PythonProcessHandler(@Nonnull Process process, @Nonnull GeneralCommandLine commandLine)
-	{
-		super(process, commandLine.getCommandLineString());
-	}
+public class PythonProcessHandler {
+  public static ProcessHandler createProcessHandler(GeneralCommandLine commandLine) throws ExecutionException {
+    return ProcessHandlerBuilder.create(commandLine)
+                                .killable()
+                                .colored()
+                                .shouldDestroyProcessRecursively(true)
+                                .build();
+  }
 
-	public PythonProcessHandler(Process process, String commandLine, @Nonnull Charset charset)
-	{
-		super(process, commandLine, charset);
-	}
-
-	public static PythonProcessHandler createProcessHandler(GeneralCommandLine commandLine) throws ExecutionException
-	{
-		Process p = commandLine.createProcess();
-
-		return new PythonProcessHandler(p, commandLine);
-	}
-
-	public static ProcessHandler createDefaultProcessHandler(GeneralCommandLine commandLine, boolean withMediator) throws ExecutionException
-	{
-		if(withMediator && SystemInfo.isWindows)
-		{
-			return RunnerMediator.getInstance().createProcess(commandLine);
-		}
-		else
-		{
-			return PythonProcessHandler.createProcessHandler(commandLine);
-		}
-	}
-
-	@Override
-	protected boolean shouldDestroyProcessRecursively()
-	{
-		return true;
-	}
+  public static ProcessHandler createDefaultProcessHandler(GeneralCommandLine commandLine, boolean withMediator) throws ExecutionException {
+    if (withMediator && Platform.current().os().isWindows()) {
+      return ProcessHandlerBuilder.create(commandLine)
+                                  .killable()
+                                  .colored()
+                                  .consoleType(ProcessConsoleType.EXTERNAL_EMULATION)
+                                  .shouldDestroyProcessRecursively(true)
+                                  .build();
+    }
+    else {
+      return createProcessHandler(commandLine);
+    }
+  }
 }

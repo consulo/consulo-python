@@ -17,26 +17,29 @@
 package com.jetbrains.python.buildout.config.inspection;
 
 import com.google.common.collect.Lists;
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementVisitor;
-import com.intellij.psi.PsiReference;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.buildout.config.BuildoutCfgFileType;
 import com.jetbrains.python.buildout.config.psi.impl.BuildoutCfgValueLine;
 import com.jetbrains.python.buildout.config.ref.BuildoutPartReference;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionTool;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.scheme.InspectionManager;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiRecursiveElementVisitor;
+import consulo.language.psi.PsiReference;
 import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * @author traff
  */
+@ExtensionImpl
 public class BuildoutUnresolvedPartInspection extends LocalInspectionTool {
   @Nls
   @Nonnull
@@ -56,6 +59,12 @@ public class BuildoutUnresolvedPartInspection extends LocalInspectionTool {
   @Override
   public String getShortName() {
     return "BuildoutUnresolvedPartInspection";
+  }
+
+  @Nonnull
+  @Override
+  public HighlightDisplayLevel getDefaultLevel() {
+    return HighlightDisplayLevel.WARNING;
   }
 
   @Override

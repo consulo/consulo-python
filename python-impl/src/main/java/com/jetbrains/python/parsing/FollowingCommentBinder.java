@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.parsing;
 
-import com.intellij.lang.WhitespacesAndCommentsBinder;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.parser.WhitespacesAndCommentsBinder;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
 
 import java.util.List;

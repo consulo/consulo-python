@@ -22,8 +22,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Collections2;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.NotNullPredicate;
+import consulo.language.psi.util.PsiTreeUtil;
+import com.jetbrains.python.NotNullPredicate;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyAssignmentStatement;

@@ -15,38 +15,9 @@
  */
 package com.jetbrains.rest.inspections;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.swing.JComponent;
-
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableSet;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ui.ListEditForm;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.JDOMExternalizableStringList;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import java.util.HashSet;
 import com.jetbrains.python.ReSTService;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyExpressionStatement;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.psi.PyStatementList;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.rest.RestBundle;
 import com.jetbrains.rest.RestFile;
 import com.jetbrains.rest.RestTokenTypes;
@@ -54,15 +25,49 @@ import com.jetbrains.rest.RestUtil;
 import com.jetbrains.rest.psi.RestDirectiveBlock;
 import com.jetbrains.rest.psi.RestRole;
 import com.jetbrains.rest.quickfixes.AddIgnoredRoleFix;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.InspectionToolState;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * User: catherine
  * <p>
  * Looks for using not defined roles
  */
+@ExtensionImpl
 public class RestRoleInspection extends RestInspection
 {
-	public JDOMExternalizableStringList ignoredRoles = new JDOMExternalizableStringList();
+	@Nonnull
+	@Override
+	public HighlightDisplayLevel getDefaultLevel()
+	{
+		return HighlightDisplayLevel.WARNING;
+	}
+
+	@Nonnull
+	@Override
+	public InspectionToolState<?> createStateProvider()
+	{
+		return new RestRoleInspectionState();
+	}
 
 	@Nls
 	@Nonnull
@@ -80,9 +85,10 @@ public class RestRoleInspection extends RestInspection
 
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, LocalInspectionToolSession session, Object state)
 	{
-		return new Visitor(holder, ignoredRoles);
+		RestRoleInspectionState inspectionState = (RestRoleInspectionState) state;
+		return new Visitor(holder, inspectionState.ignoredRoles);
 	}
 
 	private class Visitor extends RestInspectionVisitor
@@ -201,14 +207,7 @@ public class RestRoleInspection extends RestInspection
 			{
 				return;
 			}
-			registerProblem(node, "Not defined role '" + node.getRoleName() + "'", new AddIgnoredRoleFix(node.getRoleName(), RestRoleInspection.this));
+			registerProblem(node, "Not defined role '" + node.getRoleName() + "'", new AddIgnoredRoleFix(node.getRoleName()));
 		}
-	}
-
-	@Override
-	public JComponent createOptionsPanel()
-	{
-		ListEditForm form = new ListEditForm("Ignore roles", ignoredRoles);
-		return form.getContentPanel();
 	}
 }

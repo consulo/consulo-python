@@ -16,19 +16,17 @@
 
 package com.jetbrains.python.console;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorLinePainter;
-import com.intellij.openapi.editor.LineExtensionInfo;
-import com.intellij.openapi.editor.TextAnnotationGutterProvider;
-import com.intellij.openapi.editor.colors.EditorColorKey;
-import com.intellij.openapi.editor.colors.EditorFontType;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ui.UIUtil;
+import consulo.codeEditor.*;
+import consulo.execution.ui.console.ConsoleViewContentType;
+import consulo.ui.ex.action.AnAction;
+import consulo.codeEditor.EditorLinePainter;
+import consulo.colorScheme.EditorColorKey;
+import consulo.colorScheme.EditorFontType;
+import consulo.codeEditor.EditorEx;
+import consulo.project.Project;
+import consulo.util.lang.Comparing;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.console.parsing.PythonConsoleData;
 import consulo.ui.color.ColorValue;
 

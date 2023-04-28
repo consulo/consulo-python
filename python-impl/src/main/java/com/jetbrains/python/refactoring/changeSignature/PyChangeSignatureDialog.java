@@ -16,52 +16,6 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-
-import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nullable;
-import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.refactoring.NamesValidator;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.event.DocumentAdapter;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiCodeFragment;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.changeSignature.CallerChooserBase;
-import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase;
-import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
-import com.intellij.refactoring.ui.ComboBoxVisibilityPanel;
-import com.intellij.refactoring.ui.VisibilityPanelBase;
-import com.intellij.ui.EditorTextField;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.Consumer;
-import com.intellij.util.IJSwingUtilities;
-import java.util.HashSet;
-import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.table.JBListTable;
-import com.intellij.util.ui.table.JBTableRow;
-import com.intellij.util.ui.table.JBTableRowEditor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
@@ -70,6 +24,40 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.refactoring.introduce.IntroduceValidator;
+import consulo.document.Document;
+import consulo.document.event.DocumentAdapter;
+import consulo.document.event.DocumentEvent;
+import consulo.ide.impl.idea.refactoring.changeSignature.CallerChooserBase;
+import consulo.ide.impl.idea.refactoring.changeSignature.ChangeSignatureDialogBase;
+import consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase;
+import consulo.ide.impl.idea.util.ui.table.JBListTable;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.language.editor.refactoring.NamesValidator;
+import consulo.language.editor.ui.awt.EditorTextField;
+import consulo.language.file.LanguageFileType;
+import consulo.language.psi.PsiCodeFragment;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.ui.ex.awt.JBLabel;
+import consulo.ui.ex.awt.UIUtil;
+import consulo.ui.ex.awt.ValidationInfo;
+import consulo.ui.ex.awt.VerticalFlowLayout;
+import consulo.ui.ex.awt.tree.Tree;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * User : ktisha
@@ -113,10 +101,10 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   public boolean isNameValid(final String name, final Project project) {
-    final NamesValidator validator = LanguageNamesValidation.INSTANCE.forLanguage(PythonLanguage.getInstance());
+    final NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.getInstance());
     return (name != null) &&
-           (validator.isIdentifier(name, project)) &&
-           !(validator.isKeyword(name, project));
+      (validator.isIdentifier(name, project)) &&
+      !(validator.isKeyword(name, project));
   }
 
   @Nullable
@@ -154,7 +142,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
 
       if (name.equals("*")) {
         hadSingleStar = true;
-        if (index == parametersLength-1) {
+        if (index == parametersLength - 1) {
           return PyBundle.message("ANN.named.arguments.after.star");
         }
       }
@@ -239,7 +227,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
       if (!defaultValue.isEmpty() && parameterInfo.isDefaultInSignature()) {
         builder.append(" = " + defaultValue);
       }
-      if (i != parameters.size()-1)
+      if (i != parameters.size() - 1)
         builder.append(", ");
     }
     builder.append(")");
@@ -247,8 +235,8 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   @Override
-  protected VisibilityPanelBase<String> createVisibilityControl() {
-    return new ComboBoxVisibilityPanel<String>(new String[0]);
+  protected consulo.ide.impl.idea.refactoring.ui.VisibilityPanelBase<String> createVisibilityControl() {
+    return new consulo.ide.impl.idea.refactoring.ui.ComboBoxVisibilityPanel<String>(new String[0]);
   }
 
   @Override
@@ -256,7 +244,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
     String text = item.parameter.getName();
     final String defaultCallValue = item.defaultValueCodeFragment.getText();
     PyParameterTableModelItem pyItem = (PyParameterTableModelItem)item;
-    final String defaultValue = pyItem.isDefaultInSignature()? pyItem.defaultValueCodeFragment.getText() : "";
+    final String defaultValue = pyItem.isDefaultInSignature() ? pyItem.defaultValueCodeFragment.getText() : "";
 
     if (StringUtil.isNotEmpty(defaultValue)) {
       text += " = " + defaultValue;
@@ -278,8 +266,9 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   @Override
-  protected JBTableRowEditor getTableEditor(final JTable t, final ParameterTableModelItemBase<PyParameterInfo> item) {
-    return new JBTableRowEditor() {
+  protected consulo.ide.impl.idea.util.ui.table.JBTableRowEditor getTableEditor(final JTable t,
+                                                                                final consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase<PyParameterInfo> item) {
+    return new consulo.ide.impl.idea.util.ui.table.JBTableRowEditor() {
       private EditorTextField myNameEditor;
       private EditorTextField myDefaultValueEditor;
       private JCheckBox myDefaultInSignature;
@@ -296,9 +285,9 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
 
         final String nameText = myNameEditor.getText();
         myDefaultValueEditor.setEnabled(!nameText.startsWith("*")
-                                        && !PyNames.CANONICAL_SELF.equals(nameText));
+                                          && !PyNames.CANONICAL_SELF.equals(nameText));
         myDefaultInSignature.setEnabled(!nameText.startsWith("*")
-                                        && !PyNames.CANONICAL_SELF.equals(nameText));
+                                          && !PyNames.CANONICAL_SELF.equals(nameText));
       }
 
       private JPanel createDefaultValueCheckBox() {
@@ -306,8 +295,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
 
         final JBLabel inSignatureLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.default.value.checkbox"),
                                                      UIUtil.ComponentStyle.SMALL);
-        IJSwingUtilities.adjustComponentsOnMac(inSignatureLabel,
-                                               myDefaultInSignature);
+
         defaultValuePanel.add(inSignatureLabel, BorderLayout.WEST);
         myDefaultInSignature = new JCheckBox();
         myDefaultInSignature.setSelected(
@@ -331,7 +319,6 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
         myDefaultValueEditor = new EditorTextField(doc, getProject(), getFileType());
         final JBLabel defaultValueLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.default.value.label"),
                                                       UIUtil.ComponentStyle.SMALL);
-        IJSwingUtilities.adjustComponentsOnMac(defaultValueLabel, myDefaultValueEditor);
         defaultValuePanel.add(defaultValueLabel);
         defaultValuePanel.add(myDefaultValueEditor);
         myDefaultValueEditor.setPreferredWidth(t.getWidth() / 2);
@@ -344,7 +331,6 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
         myNameEditor = new EditorTextField(item.parameter.getName(), getProject(), getFileType());
         final JBLabel nameLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.name.label"),
                                               UIUtil.ComponentStyle.SMALL);
-        IJSwingUtilities.adjustComponentsOnMac(nameLabel, myNameEditor);
         namePanel.add(nameLabel);
         namePanel.add(myNameEditor);
         myNameEditor.setPreferredWidth(t.getWidth() / 2);
@@ -362,14 +348,16 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
       }
 
       @Override
-      public JBTableRow getValue() {
-        return new JBTableRow() {
+      public consulo.ide.impl.idea.util.ui.table.JBTableRow getValue() {
+        return new consulo.ide.impl.idea.util.ui.table.JBTableRow() {
           @Override
           public Object getValueAt(int column) {
             switch (column) {
-              case 0: return myNameEditor.getText().trim();
-              case 1: return new Pair<PsiCodeFragment, Boolean>(item.defaultValueCodeFragment,
-                                                                ((PyParameterTableModelItem)item).isDefaultInSignature());
+              case 0:
+                return myNameEditor.getText().trim();
+              case 1:
+                return new Pair<PsiCodeFragment, Boolean>(item.defaultValueCodeFragment,
+                                                          ((PyParameterTableModelItem)item).isDefaultInSignature());
             }
             return null;
           }

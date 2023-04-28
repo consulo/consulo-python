@@ -16,22 +16,24 @@
 
 package com.jetbrains.python.psi.impl;
 
-import javax.annotation.Nullable;
-
-import com.intellij.psi.search.GlobalSearchScope;
-import consulo.jython.module.extension.JythonModuleExtension;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiJavaPackage;
-import com.intellij.psi.util.QualifiedName;
+import com.intellij.java.language.psi.JavaPsiFacade;
+import com.intellij.java.language.psi.PsiClass;
+import com.intellij.java.language.psi.PsiJavaPackage;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.jython.module.extension.JythonModuleExtension;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyJavaImportResolver implements PyImportResolver
 {
 	@Override

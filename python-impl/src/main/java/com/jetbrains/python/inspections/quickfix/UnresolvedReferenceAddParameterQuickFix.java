@@ -18,15 +18,15 @@ package com.jetbrains.python.inspections.quickfix;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.template.TemplateBuilder;
-import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.template.TemplateBuilder;
+import consulo.language.editor.template.TemplateBuilderFactory;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFunction;

@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * User : ktisha
@@ -34,7 +34,8 @@ public class PyTryUnwrapper extends PyUnwrapper {
   }
 
   @Override
-  protected void doUnwrap(final PsiElement element, final Context context) throws IncorrectOperationException {
+  protected void doUnwrap(final PsiElement element, final Context context) throws IncorrectOperationException
+  {
     final PyTryExceptStatement statement = (PyTryExceptStatement)element;
     context.extractPart(statement);
     context.extractPart(statement.getElsePart());

@@ -16,8 +16,8 @@
 
 package com.jetbrains.python;
 
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.psi.tree.TokenSet;
+import consulo.component.extension.Extensions;
+import consulo.language.ast.TokenSet;
 
 /**
  * Provides element types of various kinds for known Python dialects.

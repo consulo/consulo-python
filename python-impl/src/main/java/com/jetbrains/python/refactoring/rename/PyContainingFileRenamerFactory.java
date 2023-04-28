@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.refactoring.rename;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.naming.AutomaticRenamer;
-import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory;
-import com.intellij.usageView.UsageInfo;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.refactoring.rename.AutomaticRenamer;
+import consulo.util.io.FileUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.editor.refactoring.rename.AutomaticRenamerFactory;
+import consulo.usage.UsageInfo;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyClass;
@@ -35,6 +35,7 @@ import java.util.Collection;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
   @Override
   public boolean isApplicable(PsiElement element) {
@@ -70,7 +71,8 @@ public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
     return new PyContainingFileRenamer((PyClass) element, newName);
   }
 
-  public static class PyContainingFileRenamer extends AutomaticRenamer {
+  public static class PyContainingFileRenamer extends AutomaticRenamer
+  {
     private final PyClass myClass;
 
     public PyContainingFileRenamer(PyClass element, String newName) {
@@ -101,7 +103,7 @@ public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
 
     @Override
     protected String canonicalNameToName(@NonNls String canonicalName, PsiNamedElement element) {
-      return canonicalName + "." + FileUtilRt.getExtension(myClass.getContainingFile().getName());
+      return canonicalName + "." + FileUtil.getExtension(myClass.getContainingFile().getName());
     }
 
     @Override

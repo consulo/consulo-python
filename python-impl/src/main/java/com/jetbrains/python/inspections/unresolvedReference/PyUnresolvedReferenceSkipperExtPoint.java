@@ -15,10 +15,12 @@
  */
 package com.jetbrains.python.inspections.unresolvedReference;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.jetbrains.python.psi.PyImportedNameDefiner;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+
+import javax.annotation.Nonnull;
 
 /**
  * Inject this point to ask "unused reference" inspection to skip some unused references.
@@ -27,16 +29,16 @@ import com.jetbrains.python.psi.PyImportedNameDefiner;
  *
  * @author Ilya.Kazakevich
  */
-public interface PyUnresolvedReferenceSkipperExtPoint
-{
-	@Nonnull
-	ExtensionPointName<PyUnresolvedReferenceSkipperExtPoint> EP_NAME = ExtensionPointName.create("consulo.python.unresolvedReferenceSkipper");
+@ExtensionAPI(ComponentScope.APPLICATION)
+public interface PyUnresolvedReferenceSkipperExtPoint {
+  @Nonnull
+  ExtensionPointName<PyUnresolvedReferenceSkipperExtPoint> EP_NAME = ExtensionPointName.create(PyUnresolvedReferenceSkipperExtPoint.class);
 
-	/**
-	 * Checks if some unused import should be skipped
-	 *
-	 * @param importNameDefiner unused import
-	 * @return true if should be skipped
-	 */
-	boolean unusedImportShouldBeSkipped(@Nonnull PyImportedNameDefiner importNameDefiner);
+  /**
+   * Checks if some unused import should be skipped
+   *
+   * @param importNameDefiner unused import
+   * @return true if should be skipped
+   */
+  boolean unusedImportShouldBeSkipped(@Nonnull PyImportedNameDefiner importNameDefiner);
 }

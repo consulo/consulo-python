@@ -16,29 +16,22 @@
 
 package com.jetbrains.python.run;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import javax.annotation.Nonnull;
+import consulo.process.ExecutionException;
+import consulo.process.ProcessHandler;
+import consulo.process.ProcessHandlerBuilder;
+import consulo.process.cmd.GeneralCommandLine;
 
 /**
  * @author traff
  */
-public class JythonProcessHandler extends PythonProcessHandler {
-  private JythonProcessHandler(@Nonnull Process process, @Nonnull GeneralCommandLine commandLine) {
-    super(process, commandLine);
-  }
-
-  @Override
-  protected void doDestroyProcess() {
-    // force "kill -9" because jython makes threaddump on "SIGINT" signal
-    killProcessTree(getProcess());
-  }
-
-  public static JythonProcessHandler createProcessHandler(GeneralCommandLine commandLine)
-    throws ExecutionException {
-
-    Process p = commandLine.createProcess();
-
-    return new JythonProcessHandler(p, commandLine);
-  }
+public class JythonProcessHandler
+{
+	public static ProcessHandler createProcessHandler(GeneralCommandLine commandLine) throws ExecutionException
+	{
+		return ProcessHandlerBuilder.create(commandLine)
+				.killable()
+				.colored()
+				.shouldDestroyProcessRecursively(true)
+				.build();
+	}
 }

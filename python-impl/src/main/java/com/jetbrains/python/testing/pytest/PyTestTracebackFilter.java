@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.testing.pytest;
 
-import com.intellij.execution.filters.Filter;
-import com.intellij.execution.filters.OpenFileHyperlinkInfo;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import javax.annotation.Nullable;
+import consulo.execution.ui.console.Filter;
+import consulo.execution.ui.console.OpenFileHyperlinkInfo;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

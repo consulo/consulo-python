@@ -16,21 +16,23 @@
 
 package com.jetbrains.python.psi.impl.stubs;
 
-import java.io.IOException;
-
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubInputStream;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.stub.IndexSink;
+import consulo.language.psi.stub.StubInputStream;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public abstract class CustomTargetExpressionStubType<T extends CustomTargetExpressionStub> {
-  public static ExtensionPointName<CustomTargetExpressionStubType> EP_NAME = ExtensionPointName.create("consulo.python.customTargetExpressionStubType");
+  public static ExtensionPointName<CustomTargetExpressionStubType> EP_NAME = ExtensionPointName.create(CustomTargetExpressionStubType.class);
 
   @Nullable
   public abstract T createStub(PyTargetExpression psi);

@@ -16,9 +16,9 @@
 
 package com.jetbrains.python;
 
-import javax.annotation.Nonnull;
+import consulo.language.ast.TokenSet;
 
-import com.intellij.psi.tree.TokenSet;
+import javax.annotation.Nonnull;
 
 /**
  * @author vlan

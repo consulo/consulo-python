@@ -15,24 +15,26 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.util.Processor;
-import com.intellij.util.QueryExecutor;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.java.language.psi.PsiClass;
+import com.intellij.java.language.psi.PsiMethod;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.search.PySuperMethodsSearch;
+import com.jetbrains.python.psi.search.PySuperMethodsSearchExecutor;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.util.function.Processor;
+import consulo.language.psi.PsiElement;
+import consulo.util.collection.ContainerUtil;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public class PyJavaSuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters>
+@ExtensionImpl
+public class PyJavaSuperMethodsSearchExecutor implements PySuperMethodsSearchExecutor
 {
 	public boolean execute(@Nonnull final PySuperMethodsSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiElement> consumer)
 	{

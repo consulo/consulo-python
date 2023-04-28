@@ -16,12 +16,12 @@
 
 package com.jetbrains.python.editor;
 
-import com.intellij.openapi.util.text.LineTokenizer;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.*;
+import consulo.application.util.LineTokenizer;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiErrorElement;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
 
 /**
  * User : catherine
@@ -42,7 +42,7 @@ public class PythonDocCommentUtil {
           PyStringLiteralExpression str = docStringOwner.getDocStringExpression();
           String text = element.getText();
           if (str != null && text.equals(str.getText()) &&
-                      (text.startsWith("\"\"\"") || text.startsWith("'''"))) {
+            (text.startsWith("\"\"\"") || text.startsWith("'''"))) {
             if (offset == str.getTextRange().getStartOffset()) {
               PsiErrorElement error = PsiTreeUtil.getNextSiblingOfType(string, PsiErrorElement.class);
               if (error != null)
@@ -71,7 +71,7 @@ public class PythonDocCommentUtil {
           ws += spaces[1];
       }
     }
-    return ws+suffix;
+    return ws + suffix;
   }
 
   static public String removeParamFromDocstring(String text, String prefix, String paramName) {

@@ -17,10 +17,10 @@
 package com.jetbrains.python.codeInsight.controlflow;
 
 import com.google.common.collect.Lists;
-import com.intellij.codeInsight.controlflow.ControlFlowBuilder;
-import com.intellij.codeInsight.controlflow.Instruction;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowBuilder;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
 import com.jetbrains.python.psi.PyReferenceExpression;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.util.QualifiedName;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class InstructionBuilder {
   private InstructionBuilder() {
   }
 
-  public static List<Instruction> buildInstructions(ControlFlowBuilder builder, List<PyTypeAssertionEvaluator.Assertion> assertions) {
+  public static List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> buildInstructions(consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowBuilder builder, List<PyTypeAssertionEvaluator.Assertion> assertions) {
     List<Instruction> result = Lists.newArrayList();
     for (PyTypeAssertionEvaluator.Assertion def: assertions) {
       final PyReferenceExpression e = def.getElement();
@@ -42,8 +42,8 @@ public class InstructionBuilder {
     return result;
   }
 
-  public static void addAssertInstructions(ControlFlowBuilder builder, PyTypeAssertionEvaluator assertionEvaluator) {
-    for (Instruction instr : buildInstructions(builder, assertionEvaluator.getDefinitions())) {
+  public static void addAssertInstructions(consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowBuilder builder, PyTypeAssertionEvaluator assertionEvaluator) {
+    for (consulo.ide.impl.idea.codeInsight.controlflow.Instruction instr : buildInstructions(builder, assertionEvaluator.getDefinitions())) {
       builder.addNode(instr);
     }
   }

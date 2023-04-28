@@ -15,14 +15,14 @@
  */
 package com.jetbrains.python.hierarchy;
 
-import com.intellij.ide.IdeBundle;
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
-import com.intellij.ide.util.treeView.NodeDescriptor;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.roots.ui.util.CompositeAppearance;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.PsiElement;
+import consulo.ide.IdeBundle;
+import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
+import consulo.ui.ex.tree.NodeDescriptor;
+import consulo.navigation.ItemPresentation;
+import consulo.ide.impl.idea.openapi.roots.ui.util.CompositeAppearance;
+import consulo.util.lang.Comparing;
+import consulo.language.psi.NavigatablePsiElement;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.ui.annotation.RequiredUIAccess;
@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
  * Date: Jul 31, 2009
  * Time: 6:26:37 PM
  */
-public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor
+public class PyHierarchyNodeDescriptor extends consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor
 {
 	public PyHierarchyNodeDescriptor(final NodeDescriptor parentDescriptor, @Nonnull final PsiElement element, final boolean isBase)
 	{
@@ -57,7 +57,7 @@ public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor
 			final String invalidPrefix = IdeBundle.message("node.hierarchy.invalid");
 			if(!myHighlightedText.getText().startsWith(invalidPrefix))
 			{
-				myHighlightedText.getBeginning().addText(invalidPrefix, HierarchyNodeDescriptor.getInvalidPrefixAttributes());
+				myHighlightedText.getBeginning().addText(invalidPrefix, consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor.getInvalidPrefixAttributes());
 			}
 			return true;
 		}
@@ -74,7 +74,7 @@ public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor
 				}
 			}
 			myHighlightedText.getEnding().addText(presentation.getPresentableText());
-			myHighlightedText.getEnding().addText(" " + presentation.getLocationString(), HierarchyNodeDescriptor.getPackageNameAttributes());
+			myHighlightedText.getEnding().addText(" " + presentation.getLocationString(), consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor.getPackageNameAttributes());
 		}
 		myName = myHighlightedText.getText();
 

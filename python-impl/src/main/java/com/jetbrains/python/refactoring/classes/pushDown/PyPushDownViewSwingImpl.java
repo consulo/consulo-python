@@ -20,8 +20,8 @@ import java.awt.BorderLayout;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.project.Project;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersBasedViewSwingImpl;
 import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersViewInitializationInfo;

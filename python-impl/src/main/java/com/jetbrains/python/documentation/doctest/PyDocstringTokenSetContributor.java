@@ -16,13 +16,15 @@
 
 package com.jetbrains.python.documentation.doctest;
 
-import com.intellij.psi.tree.TokenSet;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PythonDialectsTokenSetContributorBase;
 import javax.annotation.Nonnull;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PyDocstringTokenSetContributor extends PythonDialectsTokenSetContributorBase {
   public static final TokenSet DOCSTRING_REFERENCE_EXPRESSIONS = TokenSet.create(PyDocstringTokenTypes.DOC_REFERENCE);
 

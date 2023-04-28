@@ -16,30 +16,29 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.PsiSearchHelper;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.PsiElementRenameHandler;
-import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.application.ApplicationManager;
+import consulo.codeEditor.Editor;
+import consulo.content.scope.SearchScope;
+import consulo.fileEditor.FileEditorManager;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.refactoring.rename.PsiElementRenameHandler;
+import consulo.language.editor.refactoring.rename.RenameProcessor;
+import consulo.language.editor.refactoring.rename.RenamePsiElementProcessor;
+import consulo.language.editor.refactoring.rename.inplace.VariableInplaceRenamer;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNameIdentifierOwner;
+import consulo.language.psi.scope.LocalSearchScope;
+import consulo.language.psi.search.PsiSearchHelper;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.navigation.OpenFileDescriptorFactory;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -62,12 +61,14 @@ public class PyRenameElementQuickFix implements LocalQuickFix {
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     final PsiElement element = descriptor.getPsiElement();
     final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
-                                             (PsiNameIdentifierOwner)element :
-                                             PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
+      (PsiNameIdentifierOwner)element :
+      PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
     if (nameOwner != null) {
       final VirtualFile virtualFile = nameOwner.getContainingFile().getVirtualFile();
       if (virtualFile != null) {
-        final Editor editor = FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, virtualFile), true);
+        final Editor editor = FileEditorManager.getInstance(project)
+                                               .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
+                                                               true);
         if (ApplicationManager.getApplication().isUnitTestMode()) {
           renameInUnitTestMode(project, nameOwner, editor);
         }

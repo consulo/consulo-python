@@ -24,21 +24,21 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionException;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.StubBasedPsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.ast.ASTNode;
+import consulo.logging.Logger;
+import consulo.component.extension.ExtensionException;
+import consulo.component.extension.Extensions;
+import consulo.util.lang.ref.Ref;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiInvalidElementAccessException;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.ResolveResult;
+import consulo.language.psi.StubBasedPsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
@@ -545,7 +545,7 @@ public class PyReferenceExpressionImpl extends PyElementImpl implements PyRefere
 		final PyElement element = augAssignment != null ? augAssignment : anchor;
 		try
 		{
-			final List<Instruction> defs = PyDefUseUtil.getLatestDefs(scopeOwner, name, element, true, false);
+			final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> defs = PyDefUseUtil.getLatestDefs(scopeOwner, name, element, true, false);
 			if(!defs.isEmpty())
 			{
 				final ReadWriteInstruction firstInstruction = PyUtil.as(defs.get(0), ReadWriteInstruction.class);

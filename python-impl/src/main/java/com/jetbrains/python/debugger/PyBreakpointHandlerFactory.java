@@ -16,14 +16,17 @@
 
 package com.jetbrains.python.debugger;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.execution.debug.breakpoint.XBreakpointHandler;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public abstract class PyBreakpointHandlerFactory {
-  public static ExtensionPointName<PyBreakpointHandlerFactory> EP_NAME = ExtensionPointName.create("consulo.python.breakpointHandler");
+  public static ExtensionPointName<PyBreakpointHandlerFactory> EP_NAME = ExtensionPointName.create(PyBreakpointHandlerFactory.class);
 
   public abstract XBreakpointHandler createBreakpointHandler(PyDebugProcess process);
 }

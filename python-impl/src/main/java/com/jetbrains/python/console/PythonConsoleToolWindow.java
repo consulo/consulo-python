@@ -19,25 +19,23 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
-import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
 import consulo.disposer.Disposer;
+import consulo.execution.ui.RunContentDescriptor;
+import consulo.ide.ServiceManager;
+import consulo.ide.impl.wm.impl.ToolWindowContentUI;
+import consulo.project.Project;
+import consulo.project.ui.wm.ToolWindowManager;
+import consulo.project.ui.wm.ToolWindowManagerListener;
+import consulo.ui.ex.awt.SimpleToolWindowPanel;
+import consulo.ui.ex.content.Content;
+import consulo.ui.ex.content.ContentFactory;
+import consulo.ui.ex.toolWindow.ToolWindow;
 import consulo.util.dataholder.Key;
-import consulo.wm.impl.ToolWindowContentUI;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import jakarta.inject.Singleton;
 import javax.swing.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -57,14 +55,15 @@ public class PythonConsoleToolWindow
 
 	public static final Key<RunContentDescriptor> CONTENT_DESCRIPTOR = Key.create("CONTENT_DESCRIPTOR");
 
-	public static final Function<Content, RunContentDescriptor> CONTENT_TO_DESCRIPTOR_FUNCTION = new Function<Content, RunContentDescriptor>()
-	{
-		@Override
-		public RunContentDescriptor apply(@Nullable Content input)
-		{
-			return input != null ? input.getUserData(CONTENT_DESCRIPTOR) : null;
-		}
-	};
+	public static final Function<Content, RunContentDescriptor> CONTENT_TO_DESCRIPTOR_FUNCTION =
+			new Function<Content, RunContentDescriptor>()
+			{
+				@Override
+				public RunContentDescriptor apply(@Nullable Content input)
+				{
+					return input != null ? input.getUserData(CONTENT_DESCRIPTOR) : null;
+				}
+			};
 
 	private final Project myProject;
 
@@ -78,7 +77,10 @@ public class PythonConsoleToolWindow
 
 	public List<RunContentDescriptor> getConsoleContentDescriptors()
 	{
-		return FluentIterable.from(Lists.newArrayList(getToolWindow(myProject).getContentManager().getContents())).transform(CONTENT_TO_DESCRIPTOR_FUNCTION).filter(Predicates.notNull()).toList();
+		return FluentIterable.from(Lists.newArrayList(getToolWindow(myProject).getContentManager().getContents()))
+				.transform(CONTENT_TO_DESCRIPTOR_FUNCTION)
+				.filter(Predicates.notNull())
+				.toList();
 	}
 
 
@@ -98,7 +100,7 @@ public class PythonConsoleToolWindow
 
 		toolWindow.setToHideOnEmptyContent(true);
 
-		((ToolWindowManagerEx) ToolWindowManager.getInstance(myProject)).addToolWindowManagerListener(new ToolWindowManagerListener()
+		((consulo.ide.impl.idea.openapi.wm.ex.ToolWindowManagerEx) ToolWindowManager.getInstance(myProject)).addToolWindowManagerListener(new ToolWindowManagerListener()
 		{
 			@Override
 			public void toolWindowRegistered(@Nonnull String id)
@@ -170,7 +172,8 @@ public class PythonConsoleToolWindow
 
 	private static void resetContent(RunContentDescriptor contentDescriptor, SimpleToolWindowPanel panel, Content content)
 	{
-		RunContentDescriptor oldDescriptor = content.getDisposer() instanceof RunContentDescriptor ? (RunContentDescriptor) content.getDisposer() : null;
+		RunContentDescriptor oldDescriptor =
+				content.getDisposer() instanceof RunContentDescriptor ? (RunContentDescriptor) content.getDisposer() : null;
 		if(oldDescriptor != null)
 		{
 			Disposer.dispose(oldDescriptor);

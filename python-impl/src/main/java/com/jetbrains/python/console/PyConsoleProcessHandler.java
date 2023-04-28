@@ -15,59 +15,81 @@
  */
 package com.jetbrains.python.console;
 
-import java.nio.charset.Charset;
-
-import javax.annotation.Nonnull;
-
-import consulo.disposer.Disposable;
 import consulo.disposer.Disposer;
+import consulo.process.ProcessHandler;
+import consulo.process.event.ProcessEvent;
+import consulo.process.event.ProcessListener;
+import consulo.ui.ex.awt.UIUtil;
 import consulo.util.dataholder.Key;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ui.UIUtil;
-import com.jetbrains.python.run.PythonProcessHandler;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nullable;
+import java.io.OutputStream;
 
 /**
  * @author traff
  */
-public class PyConsoleProcessHandler extends PythonProcessHandler
+public class PyConsoleProcessHandler extends ProcessHandler
 {
+	private final ProcessHandler myProcessHandler;
 	private final PythonConsoleView myConsoleView;
 	private final PydevConsoleCommunication myPydevConsoleCommunication;
 
-	public PyConsoleProcessHandler(final Process process, PythonConsoleView consoleView, PydevConsoleCommunication pydevConsoleCommunication, @Nonnull String commandLine, final Charset charset)
+	public PyConsoleProcessHandler(ProcessHandler processHandler,
+								   PythonConsoleView consoleView,
+								   PydevConsoleCommunication pydevConsoleCommunication)
 	{
-		super(process, commandLine, charset);
+		myProcessHandler = processHandler;
 		myConsoleView = consoleView;
 		myPydevConsoleCommunication = pydevConsoleCommunication;
 
-		Disposer.register(consoleView, new Disposable()
+		processHandler.addProcessListener(new ProcessListener()
 		{
 			@Override
-			public void dispose()
+			public void onTextAvailable(ProcessEvent event, Key outputType)
 			{
-				if(!isProcessTerminated())
-				{
-					destroyProcess();
-				}
+				String string = PyConsoleUtil.processPrompts(myConsoleView, StringUtil.convertLineSeparators(event.getText()));
+
+				myConsoleView.print(string, outputType);
+
+				PyConsoleProcessHandler.this.notifyTextAvailable(string, outputType);
+			}
+		});
+
+		Disposer.register(consoleView, () ->
+		{
+			if(!isProcessTerminated())
+			{
+				destroyProcess();
 			}
 		});
 	}
 
 	@Override
-	public void coloredTextAvailable(final String text, final Key attributes)
+	protected void destroyProcessImpl()
 	{
-		String string = PyConsoleUtil.processPrompts(myConsoleView, StringUtil.convertLineSeparators(text));
+		myProcessHandler.destroyProcess();
 
-		myConsoleView.print(string, attributes);
-
-		notifyColoredListeners(text, attributes);
+		doCloseCommunication();
 	}
 
 	@Override
-	protected void closeStreams()
+	protected void detachProcessImpl()
 	{
-		doCloseCommunication();
-		super.closeStreams();
+
+	}
+
+	@Override
+	public boolean detachIsDefault()
+	{
+		return false;
+	}
+
+	@Nullable
+	@Override
+	public OutputStream getProcessInput()
+	{
+		return null;
 	}
 
 	@Override
@@ -76,31 +98,21 @@ public class PyConsoleProcessHandler extends PythonProcessHandler
 		return !myPydevConsoleCommunication.isExecuting();
 	}
 
-	@Override
-	public boolean shouldKillProcessSoftly()
-	{
-		return false;
-	}
-
 	private void doCloseCommunication()
 	{
 		if(myPydevConsoleCommunication != null)
 		{
 
-			UIUtil.invokeAndWaitIfNeeded(new Runnable()
+			UIUtil.invokeAndWaitIfNeeded((Runnable) () ->
 			{
-				@Override
-				public void run()
+				try
 				{
-					try
-					{
-						myPydevConsoleCommunication.close();
-						Thread.sleep(300);
-					}
-					catch(Exception e1)
-					{
-						// Ignore
-					}
+					myPydevConsoleCommunication.close();
+					Thread.sleep(300);
+				}
+				catch(Exception e1)
+				{
+					// Ignore
 				}
 			});
 

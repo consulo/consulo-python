@@ -15,32 +15,33 @@
  */
 package com.jetbrains.python.sdk;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.DumbModePermission;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.components.JBCheckBox;
-import com.intellij.util.PathUtil;
-import com.intellij.webcore.packaging.PackageManagementService;
-import com.intellij.webcore.packaging.PackagesNotificationPanel;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.packaging.PyPackageService;
 import com.jetbrains.python.packaging.ui.PyPackageManagementService;
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor;
 import com.jetbrains.python.ui.IdeaDialog;
+import consulo.application.Application;
+import consulo.application.ApplicationManager;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.progress.ProgressManager;
+import consulo.application.progress.Task;
+import consulo.application.util.function.Computable;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkUtil;
+import consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel;
+import consulo.process.ExecutionException;
+import consulo.project.DumbModePermission;
+import consulo.project.DumbService;
+import consulo.project.Project;
+import consulo.repository.ui.PackageManagementService;
+import consulo.ui.UIAccess;
+import consulo.ui.ex.awt.JBCheckBox;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.util.io.FileUtil;
+import consulo.util.io.PathUtil;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -77,7 +78,8 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 		});
 		if(sdkHome != null)
 		{
-			final Sdk sdk = SdkConfigurationUtil.createAndAddSDK(FileUtil.toSystemDependentName(sdkHome.getPath()), PythonSdkType.getInstance(), false);
+			final Sdk sdk =
+					SdkUtil.createAndAddSDK(FileUtil.toSystemDependentName(sdkHome.getPath()), PythonSdkType.getInstance(), UIAccess.current());
 			callback.virtualEnvCreated(sdk, associateWithProject);
 		}
 	}
@@ -109,7 +111,7 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 		layoutPanel(allSdks);
 		init();
 		setOKActionEnabled(false);
-		/*registerValidators(new FacetValidatorsManager()
+	/*registerValidators(new FacetValidatorsManager()
 		{
 			public void registerValidator(FacetEditorValidator validator, JComponent... componentsToWatch)
 			{
@@ -124,7 +126,11 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 		checkValid();
 		setInitialDestination();
 		addUpdater(myName);
-		new LocationNameFieldsBinding(project, myDestination, myName, myInitialPath, PyBundle.message("sdk.create.venv.dialog.select.venv.location"));
+		new LocationNameFieldsBinding(project,
+				myDestination,
+				myName,
+				myInitialPath,
+				PyBundle.message("sdk.create.venv.dialog.select.venv.location"));
 	}
 
 	protected void setInitialDestination()
@@ -279,12 +285,13 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 				catch(final ExecutionException e)
 				{
 					ApplicationManager.getApplication().invokeLater(() -> {
-						final PackageManagementService.ErrorDescription description = PyPackageManagementService.toErrorDescription(Collections.singletonList(e), basicSdk);
+						final PackageManagementService.ErrorDescription description =
+								PyPackageManagementService.toErrorDescription(Collections.singletonList(e), basicSdk);
 						if(description != null)
 						{
 							PackagesNotificationPanel.showError(PyBundle.message("sdk.create.venv.dialog.error.failed.to.create.venv"), description);
 						}
-					}, ModalityState.any());
+					}, Application.get().getAnyModalityState());
 				}
 			}
 
@@ -294,8 +301,11 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 			{
 				if(myPath != null)
 				{
-					ApplicationManager.getApplication().invokeLater(() -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, () -> setupVirtualEnvSdk(myPath,
-							associateWithProject(), callback)));
+					ApplicationManager.getApplication()
+							.invokeLater(() -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
+									() -> setupVirtualEnvSdk(myPath,
+											associateWithProject(),
+											callback)));
 				}
 			}
 		};
@@ -318,7 +328,8 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
 		if(!myDestination.getText().startsWith(myInitialPath) && (baseDir == null || !myDestination.getText().startsWith(baseDir.getPath())))
 		{
 			String path = myDestination.getText();
-			PyPackageService.getInstance().setVirtualEnvBasePath(!path.contains(File.separator) ? path : path.substring(0, path.lastIndexOf(File.separator)));
+			PyPackageService.getInstance()
+					.setVirtualEnvBasePath(!path.contains(File.separator) ? path : path.substring(0, path.lastIndexOf(File.separator)));
 		}
 	}
 }

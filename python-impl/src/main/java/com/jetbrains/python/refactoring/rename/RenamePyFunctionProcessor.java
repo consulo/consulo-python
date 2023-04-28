@@ -16,11 +16,12 @@
 
 package com.jetbrains.python.refactoring.rename;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Processor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationManager;
+import consulo.codeEditor.Editor;
+import consulo.ui.ex.awt.Messages;
+import consulo.language.psi.PsiElement;
+import consulo.application.util.function.Processor;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.*;
@@ -34,6 +35,7 @@ import java.util.Map;
 /**
  * @author yole
  */
+@ExtensionImpl(id = "pyFunc", order = "before pyVar")
 public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
   @Override
   public boolean canProcessElement(@Nonnull PsiElement element) {

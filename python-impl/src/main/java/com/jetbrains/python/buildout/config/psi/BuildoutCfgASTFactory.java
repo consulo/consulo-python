@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.buildout.config.psi;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.buildout.config.BuildoutCfgElementTypes;
 import com.jetbrains.python.buildout.config.BuildoutCfgTokenTypes;
 import com.jetbrains.python.buildout.config.psi.impl.*;

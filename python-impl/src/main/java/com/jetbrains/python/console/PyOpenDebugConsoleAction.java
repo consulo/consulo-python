@@ -15,81 +15,73 @@
  */
 package com.jetbrains.python.console;
 
-import java.util.Collection;
+import com.jetbrains.python.PythonIcons;
+import consulo.application.dumb.DumbAware;
+import consulo.application.ui.wm.ApplicationIdeFocusManager;
+import consulo.dataContext.DataContext;
+import consulo.execution.ExecutionHelper;
+import consulo.execution.ui.RunContentDescriptor;
+import consulo.language.editor.CommonDataKeys;
+import consulo.process.ProcessHandler;
+import consulo.project.Project;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
 
 import javax.annotation.Nonnull;
-
-import com.intellij.execution.ExecutionHelper;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.util.Consumer;
-import icons.PythonIcons;
+import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * @author traff
  */
-public class PyOpenDebugConsoleAction extends AnAction implements DumbAware
-{
+public class PyOpenDebugConsoleAction extends AnAction implements DumbAware {
 
-	public PyOpenDebugConsoleAction()
-	{
-		super();
-		getTemplatePresentation().setIcon(PythonIcons.Python.Debug.CommandLine);
-	}
+  public PyOpenDebugConsoleAction() {
+    super();
+    getTemplatePresentation().setIcon(PythonIcons.Python.Debug.CommandLine);
+  }
 
-	@Override
-	public void update(final AnActionEvent e)
-	{
-		e.getPresentation().setVisible(false);
-		e.getPresentation().setEnabled(true);
-		final Project project = e.getData(CommonDataKeys.PROJECT);
-		if(project != null)
-		{
-			e.getPresentation().setVisible(getConsoles(project).size() > 0);
-		}
-	}
+  @Override
+  public void update(final AnActionEvent e) {
+    e.getPresentation().setVisible(false);
+    e.getPresentation().setEnabled(true);
+    final Project project = e.getData(CommonDataKeys.PROJECT);
+    if (project != null) {
+      e.getPresentation().setVisible(getConsoles(project).size() > 0);
+    }
+  }
 
-	@Override
-	public void actionPerformed(final AnActionEvent e)
-	{
-		final Project project = e.getData(CommonDataKeys.PROJECT);
-		if(project != null)
-		{
-			selectRunningProcess(e.getDataContext(), project, view -> {
-				view.enableConsole(false);
-				IdeFocusManager.getInstance(project).requestFocus(view.getPydevConsoleView().getComponent(), true);
-			});
-		}
-	}
+  @Override
+  public void actionPerformed(final AnActionEvent e) {
+    final Project project = e.getData(CommonDataKeys.PROJECT);
+    if (project != null) {
+      selectRunningProcess(e.getDataContext(), project, view -> {
+        view.enableConsole(false);
+        ApplicationIdeFocusManager.getInstance().getInstanceForProject(project).requestFocus(view.getPydevConsoleView().getComponent(), true);
+      });
+    }
+  }
 
 
-	private static void selectRunningProcess(@Nonnull DataContext dataContext, @Nonnull Project project, final Consumer<PythonDebugLanguageConsoleView> consumer)
-	{
-		Collection<RunContentDescriptor> consoles = getConsoles(project);
+  private static void selectRunningProcess(@Nonnull DataContext dataContext,
+                                           @Nonnull Project project,
+                                           final Consumer<PythonDebugLanguageConsoleView> consumer) {
+    Collection<RunContentDescriptor> consoles = getConsoles(project);
 
-		ExecutionHelper.selectContentDescriptor(dataContext, project, consoles, "Select running python process", descriptor -> {
-			if(descriptor != null && descriptor.getExecutionConsole() instanceof PythonDebugLanguageConsoleView)
-			{
-				consumer.consume((PythonDebugLanguageConsoleView) descriptor.getExecutionConsole());
-			}
-		});
-	}
+    ExecutionHelper.selectContentDescriptor(dataContext, project, consoles, "Select running python process", descriptor -> {
+      if (descriptor != null && descriptor.getExecutionConsole() instanceof PythonDebugLanguageConsoleView) {
+        consumer.accept((PythonDebugLanguageConsoleView)descriptor.getExecutionConsole());
+      }
+    });
+  }
 
-	private static Collection<RunContentDescriptor> getConsoles(Project project)
-	{
-		return ExecutionHelper.findRunningConsole(project, dom -> dom.getExecutionConsole() instanceof PythonDebugLanguageConsoleView && isAlive(dom));
-	}
+  private static Collection<RunContentDescriptor> getConsoles(Project project) {
+    return ExecutionHelper.findRunningConsole(project,
+                                              dom -> dom.getExecutionConsole() instanceof PythonDebugLanguageConsoleView && isAlive(dom));
+  }
 
-	private static boolean isAlive(RunContentDescriptor dom)
-	{
-		ProcessHandler processHandler = dom.getProcessHandler();
-		return processHandler != null && !processHandler.isProcessTerminated();
-	}
+  private static boolean isAlive(RunContentDescriptor dom) {
+    ProcessHandler processHandler = dom.getProcessHandler();
+    return processHandler != null && !processHandler.isProcessTerminated();
+  }
 }

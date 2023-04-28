@@ -16,33 +16,39 @@
 
 package com.jetbrains.python.editor;
 
-import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.codeInsight.editorActions.CopyPastePreProcessor;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.*;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.CharFilter;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationManager;
+import consulo.codeEditor.CaretModel;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.RawText;
+import consulo.codeEditor.SelectionModel;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.language.ast.IElementType;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CodeStyleSettingsManager;
+import consulo.language.editor.CodeInsightSettings;
+import consulo.language.editor.action.CopyPastePreProcessor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.util.lang.CharFilter;
+import consulo.util.lang.StringUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 /**
  * User : catherine
  */
+@ExtensionImpl
 public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
 
   @Nullable

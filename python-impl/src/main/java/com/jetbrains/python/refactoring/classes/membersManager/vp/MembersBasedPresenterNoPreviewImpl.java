@@ -17,9 +17,9 @@ package com.jetbrains.python.refactoring.classes.membersManager.vp;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.refactoring.classMembers.MemberInfoModel;
+import consulo.application.ApplicationManager;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.undoRedo.CommandProcessor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.PyMemberInfoStorage;

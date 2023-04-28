@@ -18,7 +18,7 @@ package com.jetbrains.python.debugger;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.util.xmlb.annotations.Attribute;
+import consulo.util.xml.serializer.annotation.Attribute;
 import com.jetbrains.python.debugger.pydev.AddExceptionBreakpointCommand;
 import com.jetbrains.python.debugger.pydev.ExceptionBreakpointCommand;
 import com.jetbrains.python.debugger.pydev.RemoteDebugger;

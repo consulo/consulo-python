@@ -18,8 +18,8 @@ package com.jetbrains.python.documentation.docstrings;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.psi.PyIndentUtil;
 
 /**

@@ -16,26 +16,24 @@
 
 package com.jetbrains.python.buildout;
 
-import java.awt.BorderLayout;
-import java.io.File;
-import java.util.List;
-
-import javax.swing.JPanel;
-
+import consulo.configurable.ConfigurationException;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.module.Module;
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import consulo.python.buildout.module.extension.BuildoutMutableModuleExtension;
+import consulo.ui.ex.awt.CollectionComboBoxModel;
+import consulo.ui.ex.awt.ComboboxWithBrowseButton;
+import consulo.ui.ex.awt.TextComponentAccessor;
+import consulo.util.collection.ContainerUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.List;
 
 /**
  * Panel to choose target buildout script
@@ -84,14 +82,7 @@ public class BuildoutConfigPanel extends JPanel
 	public void reset()
 	{
 		final List<File> scriptFiles = BuildoutModuleExtension.getScripts(myBuildoutMutableModuleExtension, myModule.getProject().getBaseDir());
-		final List<String> scripts = ContainerUtil.map(scriptFiles, new Function<File, String>()
-		{
-			@Override
-			public String fun(File file)
-			{
-				return file.getPath();
-			}
-		});
+		final List<String> scripts = ContainerUtil.map(scriptFiles, file -> file.getPath());
 		myScript.getComboBox().setModel(new CollectionComboBoxModel(scripts, myBuildoutMutableModuleExtension.getScriptName()));
 		myScript.getComboBox().getEditor().setItem(myBuildoutMutableModuleExtension.getScriptName());
 	}

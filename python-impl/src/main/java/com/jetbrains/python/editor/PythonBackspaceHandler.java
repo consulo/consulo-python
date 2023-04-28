@@ -16,23 +16,25 @@
 
 package com.jetbrains.python.editor;
 
-import com.intellij.codeInsight.editorActions.BackspaceHandler;
-import com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorModificationUtil;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.python.PythonFileType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.LogicalPosition;
+import consulo.ide.impl.idea.openapi.editor.EditorModificationUtil;
+import consulo.language.editor.action.BackspaceHandlerDelegate;
+import consulo.language.editor.action.EditorBackspaceUtil;
+import consulo.language.psi.PsiFile;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonBackspaceHandler extends BackspaceHandlerDelegate {
   private LogicalPosition myTargetPosition;
 
   public void beforeCharDeleted(final char c, final PsiFile file, final Editor editor) {
     if (PythonFileType.INSTANCE != file.getFileType()) return;
-    myTargetPosition = BackspaceHandler.getBackspaceUnindentPosition(file, editor);
+    myTargetPosition = EditorBackspaceUtil.getBackspaceUnindentPosition(file, editor);
   }
 
   public boolean charDeleted(final char c, final PsiFile file, final Editor editor) {

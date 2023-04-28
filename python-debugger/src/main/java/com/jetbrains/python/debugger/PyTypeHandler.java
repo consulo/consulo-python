@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger;
 
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.util.lang.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;

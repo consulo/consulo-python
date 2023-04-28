@@ -15,102 +15,93 @@
  */
 package com.jetbrains.python.packaging.requirement;
 
-import static com.intellij.webcore.packaging.PackageVersionComparator.VERSION_COMPARATOR;
+import consulo.util.lang.Pair;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.util.Pair;
 
-public class PyRequirementVersionSpec
-{
+import static consulo.repository.ui.PackageVersionComparator.VERSION_COMPARATOR;
 
-	@Nonnull
-	private final PyRequirementRelation myRelation;
+public class PyRequirementVersionSpec {
 
-	@Nonnull
-	private final String myVersion;
+  @Nonnull
+  private final PyRequirementRelation myRelation;
 
-	public PyRequirementVersionSpec(@Nonnull PyRequirementRelation relation, @Nonnull String version)
-	{
-		myRelation = relation;
-		myVersion = version;
-	}
+  @Nonnull
+  private final String myVersion;
 
-	@Override
-	public String toString()
-	{
-		return myRelation + myVersion;
-	}
+  public PyRequirementVersionSpec(@Nonnull PyRequirementRelation relation, @Nonnull String version) {
+    myRelation = relation;
+    myVersion = version;
+  }
 
-	@Override
-	public boolean equals(Object o)
-	{
-		if(o == this)
-		{
-			return true;
-		}
-		if(o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
+  @Override
+  public String toString() {
+    return myRelation + myVersion;
+  }
 
-		final PyRequirementVersionSpec spec = (PyRequirementVersionSpec) o;
-		return myRelation == spec.myRelation && myVersion.equals(spec.myVersion);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-	@Override
-	public int hashCode()
-	{
-		return 31 * myRelation.hashCode() + myVersion.hashCode();
-	}
+    final PyRequirementVersionSpec spec = (PyRequirementVersionSpec)o;
+    return myRelation == spec.myRelation && myVersion.equals(spec.myVersion);
+  }
 
-	@Nonnull
-	public PyRequirementRelation getRelation()
-	{
-		return myRelation;
-	}
+  @Override
+  public int hashCode() {
+    return 31 * myRelation.hashCode() + myVersion.hashCode();
+  }
 
-	@Nonnull
-	public String getVersion()
-	{
-		return myVersion;
-	}
+  @Nonnull
+  public PyRequirementRelation getRelation() {
+    return myRelation;
+  }
 
-	public boolean matches(@Nonnull String version)
-	{
-		switch(myRelation)
-		{
-			case LT:
-				return VERSION_COMPARATOR.compare(version, myVersion) < 0;
-			case LTE:
-				return VERSION_COMPARATOR.compare(version, myVersion) <= 0;
-			case GT:
-				return VERSION_COMPARATOR.compare(version, myVersion) > 0;
-			case GTE:
-				return VERSION_COMPARATOR.compare(version, myVersion) >= 0;
-			case EQ:
-				final Pair<String, String> publicAndLocalVersions = splitIntoPublicAndLocalVersions(myVersion);
-				final Pair<String, String> otherPublicAndLocalVersions = splitIntoPublicAndLocalVersions(version);
-				final boolean publicVersionsAreSame = VERSION_COMPARATOR.compare(otherPublicAndLocalVersions.first, publicAndLocalVersions.first) == 0;
+  @Nonnull
+  public String getVersion() {
+    return myVersion;
+  }
 
-				return publicVersionsAreSame && (publicAndLocalVersions.second.isEmpty() || otherPublicAndLocalVersions.second.equals(publicAndLocalVersions.second));
-			case NE:
-				return VERSION_COMPARATOR.compare(version, myVersion) != 0;
-			case COMPATIBLE:
-				return false; // TODO: implement matching version against compatible relation
-			case STR_EQ:
-				return version.equals(myVersion);
-			default:
-				return false;
-		}
-	}
+  public boolean matches(@Nonnull String version) {
+    switch (myRelation) {
+      case LT:
+        return VERSION_COMPARATOR.compare(version, myVersion) < 0;
+      case LTE:
+        return VERSION_COMPARATOR.compare(version, myVersion) <= 0;
+      case GT:
+        return VERSION_COMPARATOR.compare(version, myVersion) > 0;
+      case GTE:
+        return VERSION_COMPARATOR.compare(version, myVersion) >= 0;
+      case EQ:
+        final Pair<String, String> publicAndLocalVersions = splitIntoPublicAndLocalVersions(myVersion);
+        final Pair<String, String> otherPublicAndLocalVersions = splitIntoPublicAndLocalVersions(version);
+        final boolean publicVersionsAreSame =
+          VERSION_COMPARATOR.compare(otherPublicAndLocalVersions.first, publicAndLocalVersions.first) == 0;
 
-	private static Pair<String, String> splitIntoPublicAndLocalVersions(@Nonnull String version)
-	{
-		final String[] publicAndLocalVersions = version.split("\\+", 2);
+        return publicVersionsAreSame && (publicAndLocalVersions.second.isEmpty() || otherPublicAndLocalVersions.second.equals(
+          publicAndLocalVersions.second));
+      case NE:
+        return VERSION_COMPARATOR.compare(version, myVersion) != 0;
+      case COMPATIBLE:
+        return false; // TODO: implement matching version against compatible relation
+      case STR_EQ:
+        return version.equals(myVersion);
+      default:
+        return false;
+    }
+  }
 
-		final String publicVersion = publicAndLocalVersions[0];
-		final String localVersion = publicAndLocalVersions.length == 1 ? "" : publicAndLocalVersions[1];
+  private static Pair<String, String> splitIntoPublicAndLocalVersions(@Nonnull String version) {
+    final String[] publicAndLocalVersions = version.split("\\+", 2);
 
-		return Pair.createNonNull(publicVersion, localVersion);
-	}
+    final String publicVersion = publicAndLocalVersions[0];
+    final String localVersion = publicAndLocalVersions.length == 1 ? "" : publicAndLocalVersions[1];
+
+    return Pair.createNonNull(publicVersion, localVersion);
+  }
 }

@@ -16,18 +16,21 @@
 
 package com.jetbrains.python.psi.impl;
 
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyImportResolver {
-  ExtensionPointName<PyImportResolver> EP_NAME = ExtensionPointName.create("consulo.python.importResolver");
+  ExtensionPointName<PyImportResolver> EP_NAME = ExtensionPointName.create(PyImportResolver.class);
 
   @Nullable
   PsiElement resolveImportReference(QualifiedName name, QualifiedNameResolveContext context);

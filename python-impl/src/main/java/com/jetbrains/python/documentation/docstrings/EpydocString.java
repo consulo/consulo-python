@@ -21,8 +21,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.xml.util.XmlTagUtilBase;
+import consulo.util.lang.StringUtil;
+import consulo.ide.impl.idea.xml.util.XmlTagUtilBase;
 import com.jetbrains.python.toolbox.Substring;
 
 /**

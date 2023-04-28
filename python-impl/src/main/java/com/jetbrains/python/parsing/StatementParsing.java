@@ -20,12 +20,12 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NonNls;
 import javax.annotation.Nullable;
-import com.intellij.lang.ITokenTypeRemapper;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.text.CharArrayUtil;
+import consulo.language.parser.ITokenTypeRemapper;
+import consulo.language.parser.PsiBuilder;
+import consulo.logging.Logger;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenSet;
+import consulo.util.lang.CharArrayUtil;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.LanguageLevel;

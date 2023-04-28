@@ -21,8 +21,8 @@ import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import com.intellij.ui.JBColor;
-import com.intellij.util.ui.UIUtil;
+import consulo.ui.ex.JBColor;
+import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.debugger.containerview.ColoredCellRenderer;
 import com.jetbrains.python.debugger.containerview.PyNumericViewUtil;
 

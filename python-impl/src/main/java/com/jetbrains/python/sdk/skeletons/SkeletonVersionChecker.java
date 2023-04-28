@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.sdk.skeletons;
 
-import com.intellij.openapi.diagnostic.Logger;
+import consulo.logging.Logger;
 import com.jetbrains.python.PythonHelpersLocator;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.util.QualifiedName;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.*;

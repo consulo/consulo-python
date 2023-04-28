@@ -16,8 +16,9 @@
 
 package com.jetbrains.python.codeInsight.stdlib;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +29,7 @@ import java.util.List;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyStdlibCanonicalPathProvider implements PyCanonicalPathProvider {
   @Nullable
   @Override

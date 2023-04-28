@@ -56,11 +56,11 @@
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
+          <BorderFactoryClass class="java.lang.String" value="consulo.ui.ex.awt.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
         <border type="none" title="Available Macros"/>
         <children>
-          <scrollpane id="f705b" class="com.intellij.ui.components.JBScrollPane">
+          <scrollpane id="f705b" class="consulo.ui.ex.awt.JBScrollPane">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="-1" height="150"/>
@@ -69,7 +69,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="6e732" class="com.intellij.ui.components.JBList" binding="myMacroList">
+              <component id="6e732" class="consulo.ui.ex.awt.JBList" binding="myMacroList">
                 <constraints/>
                 <properties>
                   <model>

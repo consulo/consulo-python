@@ -16,7 +16,7 @@
 package com.jetbrains.python.refactoring.classes.membersManager;
 
 import javax.annotation.Nonnull;
-import com.intellij.util.containers.MultiMap;
+import consulo.util.collection.MultiMap;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyRecursiveElementVisitor;

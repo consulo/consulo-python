@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.buildout.config.psi.impl;
 
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

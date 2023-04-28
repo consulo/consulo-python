@@ -17,12 +17,12 @@ package com.jetbrains.python.psi;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.ast.ASTNode;
+import consulo.ide.ServiceManager;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.IncorrectOperationException;
 
 public abstract class PyElementGenerator
 {

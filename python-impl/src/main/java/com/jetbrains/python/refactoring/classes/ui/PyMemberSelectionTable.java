@@ -15,11 +15,11 @@
  */
 package com.jetbrains.python.refactoring.classes.ui;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.classMembers.MemberInfoModel;
-import com.intellij.refactoring.ui.AbstractMemberSelectionTable;
+import consulo.application.AllIcons;
+import consulo.language.psi.PsiElement;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.ide.impl.idea.refactoring.ui.AbstractMemberSelectionTable;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;

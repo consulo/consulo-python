@@ -16,8 +16,8 @@
 package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
+import consulo.language.ast.ASTNode;
+import consulo.navigation.ItemPresentation;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;

@@ -16,15 +16,15 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import com.intellij.ProjectTopics;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootAdapter;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.content.bundle.Sdk;
 import consulo.disposer.Disposable;
+import consulo.ide.impl.idea.openapi.module.ModuleServiceManager;
+import consulo.module.Module;
+import consulo.module.content.layer.event.ModuleRootAdapter;
+import consulo.module.content.layer.event.ModuleRootEvent;
+import consulo.module.content.layer.event.ModuleRootListener;
+import consulo.virtualFileSystem.VirtualFileManager;
 
 /**
  * @author yole
@@ -32,12 +32,12 @@ import consulo.disposer.Disposable;
 public class PythonModulePathCache extends PythonPathCache implements Disposable
 {
   public static PythonPathCache getInstance(Module module) {
-    return ModuleServiceManager.getService(module, PythonPathCache.class);
+    return module.getInstance(PythonPathCache.class);
   }
 
   @SuppressWarnings({"UnusedDeclaration"})
   public PythonModulePathCache(final Module module) {
-    module.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+    module.getMessageBus().connect().subscribe(ModuleRootListener.class, new ModuleRootAdapter() {
       public void rootsChanged(ModuleRootEvent event) {
         updateCacheForSdk(module);
         clearCache();

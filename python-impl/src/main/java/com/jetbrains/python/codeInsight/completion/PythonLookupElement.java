@@ -16,25 +16,22 @@
 
 package com.jetbrains.python.codeInsight.completion;
 
-import com.intellij.codeInsight.completion.BasicInsertHandler;
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.language.editor.completion.lookup.InsertHandler;
+import consulo.language.editor.completion.lookup.InsertionContext;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementPresentation;
 import consulo.ui.image.Image;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import javax.swing.*;
 
 /**
  * TODO: Add description
  * User: dcheryasov
  * Date: Mar 2, 2010 5:05:24 PM
  */
-public class PythonLookupElement extends LookupElement implements Comparable<LookupElement>{
+public class PythonLookupElement extends LookupElement implements Comparable<LookupElement> {
 
   protected final String myLookupString;
   protected final String myTypeText;
@@ -45,11 +42,11 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
   protected InsertHandler<PythonLookupElement> myHandler;
 
   public PythonLookupElement(@Nonnull final String lookupString,
-                           @Nullable final String tailText,
-                           @Nullable final String typeText, final boolean bold,
-                           @Nullable final Image icon,
-                           @Nullable final Image typeIcon,
-                           @Nonnull final InsertHandler<PythonLookupElement> handler) {
+                             @Nullable final String tailText,
+                             @Nullable final String typeText, final boolean bold,
+                             @Nullable final Image icon,
+                             @Nullable final Image typeIcon,
+                             @Nonnull final InsertHandler<PythonLookupElement> handler) {
     myLookupString = lookupString;
     myTailText = tailText;
     myTypeText = typeText;
@@ -60,11 +57,11 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
   }
 
   public PythonLookupElement(@Nonnull final String lookupString,
-                           @Nullable final String tailText,
-                           @Nullable final String typeText, final boolean bold,
-                           @Nullable final Image icon,
-                           @Nullable final Image typeIcon) {
-    this(lookupString, tailText, typeText, bold, icon, typeIcon, new BasicInsertHandler<PythonLookupElement>());
+                             @Nullable final String tailText,
+                             @Nullable final String typeText, final boolean bold,
+                             @Nullable final Image icon,
+                             @Nullable final Image typeIcon) {
+    this(lookupString, tailText, typeText, bold, icon, typeIcon, (context, item) -> {});
   }
 
   public PythonLookupElement(
@@ -72,7 +69,7 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
     final boolean bold,
     @Nullable final Image icon
   ) {
-    this(lookupString, null, null, bold, icon, null, new BasicInsertHandler<PythonLookupElement>());
+    this(lookupString, null, null, bold, icon, null, (context, item) -> {});
   }
 
   @Nonnull

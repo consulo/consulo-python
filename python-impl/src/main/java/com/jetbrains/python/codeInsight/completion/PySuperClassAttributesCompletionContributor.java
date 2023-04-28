@@ -15,30 +15,25 @@
  */
 package com.jetbrains.python.codeInsight.completion;
 
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.pattern.PlatformPatterns;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ProcessingContext;
 
 import javax.annotation.Nonnull;
-
-import com.google.common.collect.Lists;
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyExpressionStatement;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStatementList;
-import com.jetbrains.python.psi.PyTargetExpression;
-import consulo.codeInsight.completion.CompletionProvider;
+import java.util.List;
 
 /**
  * @author traff
  */
+@ExtensionImpl
 public class PySuperClassAttributesCompletionContributor extends CompletionContributor
 {
 	public PySuperClassAttributesCompletionContributor()
@@ -84,5 +79,12 @@ public class PySuperClassAttributesCompletionContributor extends CompletionContr
 			}
 		}
 		return attrs;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

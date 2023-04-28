@@ -14,8 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.CharsetToolkit;
+import consulo.logging.Logger;
+import consulo.util.io.CharsetToolkit;
 import com.jetbrains.python.debugger.IPyDebugProcess;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import com.jetbrains.python.debugger.pydev.AbstractCommand;

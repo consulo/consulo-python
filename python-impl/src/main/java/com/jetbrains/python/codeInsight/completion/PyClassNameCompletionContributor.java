@@ -15,24 +15,8 @@
  */
 package com.jetbrains.python.codeInsight.completion;
 
-import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Conditions;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.codeInsight.imports.AddImportHelper;
 import com.jetbrains.python.codeInsight.imports.PythonImportUtils;
 import com.jetbrains.python.psi.*;
@@ -41,7 +25,32 @@ import com.jetbrains.python.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.psi.stubs.PyVariableNameIndex;
 import com.jetbrains.python.psi.types.PyModuleType;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Result;
+import consulo.document.Document;
+import consulo.language.Language;
+import consulo.language.editor.WriteCommandAction;
+import consulo.language.editor.completion.CompletionContributor;
+import consulo.language.editor.completion.CompletionParameters;
+import consulo.language.editor.completion.CompletionResultSet;
+import consulo.language.editor.completion.lookup.InsertHandler;
+import consulo.language.editor.completion.lookup.InsertionContext;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.file.FileViewProvider;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.impl.file.MultiplePsiFilesPerDocumentFileViewProvider;
+import consulo.language.psi.*;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.search.FileTypeIndex;
+import consulo.language.psi.stub.StubIndex;
+import consulo.language.psi.stub.StubIndexKey;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.navigation.NavigationItem;
+import consulo.project.Project;
+import consulo.util.lang.function.Condition;
+import consulo.util.lang.function.Conditions;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -49,9 +58,9 @@ import java.util.Collection;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyClassNameCompletionContributor extends CompletionContributor
 {
-
 	@Override
 	public void fillCompletionVariants(@Nonnull CompletionParameters parameters, @Nonnull CompletionResultSet result)
 	{
@@ -128,11 +137,11 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 	private static Condition<PsiElement> IS_TOPLEVEL = element -> PyUtil.isTopLevel(element);
 
 	private static <T extends PsiNamedElement> void addVariantsFromIndex(final CompletionResultSet resultSet,
-			final PsiFile targetFile,
-			final StubIndexKey<String, T> key,
-			final InsertHandler<LookupElement> insertHandler,
-			final Condition<? super T> condition,
-			Class<T> elementClass)
+																		 final PsiFile targetFile,
+																		 final StubIndexKey<String, T> key,
+																		 final InsertHandler<LookupElement> insertHandler,
+																		 final Condition<? super T> condition,
+																		 Class<T> elementClass)
 	{
 		final Project project = targetFile.getProject();
 		GlobalSearchScope scope = PyProjectScopeBuilder.excludeSdkTestsScope(targetFile);
@@ -216,5 +225,12 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 				AddImportHelper.addImport(PyUtil.as(item.getPsiElement(), PsiNamedElement.class), context.getFile(), (PyElement) ref.getElement());
 			}
 		}.execute();
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

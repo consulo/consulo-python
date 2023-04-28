@@ -16,22 +16,24 @@
 
 package com.jetbrains.rest.run;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.openapi.project.Project;
 import com.jetbrains.rest.RestBundle;
 import com.jetbrains.rest.RestFileType;
 import com.jetbrains.rest.run.docutils.DocutilsRunConfiguration;
 import com.jetbrains.rest.run.sphinx.SphinxRunConfiguration;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.ConfigurationType;
+import consulo.execution.configuration.ConfigurationTypeUtil;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.project.Project;
 import consulo.ui.image.Image;
+
+import javax.annotation.Nonnull;
 
 /**
  * User : catherine
  */
+@ExtensionImpl
 public class RestRunConfigurationType implements ConfigurationType {
   public final ConfigurationFactory DOCUTILS_FACTORY = new DocutilsRunConfigurationFactory(this);
   public final ConfigurationFactory SPHINX_FACTORY = new SphinxRunConfigurationFactory(this);

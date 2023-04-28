@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.module.Module;
+import consulo.content.bundle.Sdk;
+import consulo.virtualFileSystem.VirtualFile;
 import javax.annotation.Nullable;
 
 /**

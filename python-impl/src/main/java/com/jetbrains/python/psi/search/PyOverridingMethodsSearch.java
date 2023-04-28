@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.psi.search;
 
-import com.intellij.psi.search.searches.ExtensibleQueryFactory;
-import com.intellij.util.Query;
-import com.intellij.util.EmptyQuery;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.application.util.query.EmptyQuery;
+import consulo.application.util.query.ExtensibleQueryFactory;
+import consulo.application.util.query.Query;
 
 /**
  * @author yole
@@ -46,7 +46,7 @@ public class PyOverridingMethodsSearch extends ExtensibleQueryFactory<PyFunction
   }
 
   private PyOverridingMethodsSearch() {
-    super("consulo.python");
+    super(PyOverridingMethodsSearchExecutor.class);
   }
 
   public static Query<PyFunction> search(PyFunction function, boolean checkDeep) {

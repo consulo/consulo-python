@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.codeInsight.dataflow.scope;
 
-import com.intellij.codeInsight.controlflow.ControlFlow;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.StubBasedPsiElement;
-import com.intellij.psi.stubs.StubElement;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.StubBasedPsiElement;
+import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ReadWriteInstruction;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
@@ -34,8 +34,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
-import static com.intellij.psi.util.PsiTreeUtil.isAncestor;
+import static consulo.language.psi.util.PsiTreeUtil.getParentOfType;
+import static consulo.language.psi.util.PsiTreeUtil.isAncestor;
 
 /**
  * @author oleg

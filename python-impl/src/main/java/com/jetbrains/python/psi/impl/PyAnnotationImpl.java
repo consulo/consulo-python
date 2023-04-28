@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiPolyVariantReference;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyClass;

@@ -18,18 +18,18 @@ package com.jetbrains.python.refactoring.surround.surrounders.statements;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.document.Document;
+import consulo.codeEditor.Editor;
+import consulo.document.RangeMarker;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.codeStyle.CodeStyleManager;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
+import consulo.language.util.IncorrectOperationException;
 
 import javax.annotation.Nullable;
 
@@ -43,7 +43,8 @@ public class PyWithTryExceptSurrounder extends PyStatementSurrounder {
   @Override
   @Nullable
   protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
-    throws IncorrectOperationException {
+    throws IncorrectOperationException
+  {
     PyTryExceptStatement tryStatement = PyElementGenerator.getInstance(project).
       createFromText(LanguageLevel.getDefault(), PyTryExceptStatement.class, getTemplate());
     final PsiElement parent = elements[0].getParent();

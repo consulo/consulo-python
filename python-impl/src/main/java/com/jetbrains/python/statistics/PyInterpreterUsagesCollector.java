@@ -16,14 +16,15 @@
 
 package com.jetbrains.python.statistics;
 
-import com.intellij.internal.statistic.AbstractApplicationUsagesCollector;
-import com.intellij.internal.statistic.CollectUsagesException;
-import com.intellij.internal.statistic.beans.UsageDescriptor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.content.bundle.Sdk;
+import consulo.externalService.statistic.AbstractApplicationUsagesCollector;
+import consulo.externalService.statistic.CollectUsagesException;
+import consulo.externalService.statistic.UsageDescriptor;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.project.Project;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -32,12 +33,13 @@ import java.util.Set;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesCollector {
   @Nonnull
   @Override
   public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException {
     Set<UsageDescriptor> result = new HashSet<UsageDescriptor>();
-    for(Module m: ModuleManager.getInstance(project).getModules()) {
+    for (Module m : ModuleManager.getInstance(project).getModules()) {
       Sdk pythonSdk = PythonSdkType.findPythonSdk(m);
       if (pythonSdk != null) {
         String versionString = pythonSdk.getVersionString();

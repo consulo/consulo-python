@@ -17,15 +17,14 @@
 package com.jetbrains.rest;
 
 import com.google.common.collect.Sets;
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
+import consulo.language.Language;
+import consulo.language.parser.ParserDefinition;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.impl.file.MultiplePsiFilesPerDocumentFileViewProvider;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
+import consulo.language.impl.psi.PsiFileImpl;
+import consulo.language.template.TemplateLanguageFileViewProvider;
 import com.jetbrains.python.PythonLanguage;
 import javax.annotation.Nonnull;
 
@@ -77,7 +76,7 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
 
   @Override
   protected PsiFile createFile(@Nonnull final Language lang) {
-    ParserDefinition def = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
+    ParserDefinition def = ParserDefinition.forLanguage(lang);
     if (def == null) return null;
     if (lang == getTemplateDataLanguage()) {
       PsiFileImpl file = (PsiFileImpl)def.createFile(this);

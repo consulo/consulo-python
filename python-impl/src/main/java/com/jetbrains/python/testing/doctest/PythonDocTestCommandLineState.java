@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.runners.ExecutionEnvironment;
+import consulo.execution.runner.ExecutionEnvironment;
 import com.jetbrains.python.PythonHelper;
 import com.jetbrains.python.testing.PythonTestCommandLineStateBase;
 

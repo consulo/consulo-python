@@ -1,11 +1,11 @@
 package com.jetbrains.python.console.pydev;
 
-import java.util.List;
+import consulo.project.Project;
+import consulo.util.collection.Lists;
+import consulo.util.lang.Pair;
+import consulo.virtualFileSystem.VirtualFile;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
+import java.util.List;
 
 /**
  * @author traff
@@ -23,8 +23,7 @@ public abstract class AbstractConsoleCommunication implements ConsoleCommunicati
 	 */
 	public volatile boolean waitingForInput;
 
-	private final List<ConsoleCommunicationListener> communicationListeners = ContainerUtil.createLockFreeCopyOnWriteList();
-
+	private final List<ConsoleCommunicationListener> communicationListeners = Lists.newLockFreeCopyOnWriteList();
 
 	public AbstractConsoleCommunication(Project project)
 	{

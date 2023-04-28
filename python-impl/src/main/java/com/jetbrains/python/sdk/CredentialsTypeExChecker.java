@@ -15,92 +15,74 @@
  */
 package com.jetbrains.python.sdk;
 
-import javax.annotation.Nullable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Ref;
-import com.intellij.remote.RemoteCredentialsHolder;
-import com.intellij.remote.RemoteSdkAdditionalData;
-import com.intellij.remote.VagrantBasedCredentialsHolder;
-import com.intellij.remote.WebDeploymentCredentialsHolder;
-import com.intellij.remote.ext.CredentialsCase;
-import com.intellij.remote.ext.LanguageCaseCollector;
-import com.intellij.util.ObjectUtils;
 import com.jetbrains.python.remote.PyCredentialsContribution;
+import consulo.content.bundle.Sdk;
+import consulo.ide.impl.idea.remote.RemoteSdkAdditionalData;
+import consulo.ide.impl.idea.remote.VagrantBasedCredentialsHolder;
+import consulo.ide.impl.idea.remote.ext.LanguageCaseCollector;
+import consulo.util.lang.ObjectUtil;
+import consulo.util.lang.ref.Ref;
 
-public abstract class CredentialsTypeExChecker
-{
-	private boolean mySshContribution;
-	private boolean myVagrantContribution;
-	private boolean myWebDeploymentContribution;
+import javax.annotation.Nullable;
 
-	public CredentialsTypeExChecker withSshContribution(boolean sshContribution)
-	{
-		mySshContribution = sshContribution;
-		return this;
-	}
+public abstract class CredentialsTypeExChecker {
+  private boolean mySshContribution;
+  private boolean myVagrantContribution;
+  private boolean myWebDeploymentContribution;
 
-	public CredentialsTypeExChecker withVagrantContribution(boolean vagrantContribution)
-	{
-		myVagrantContribution = vagrantContribution;
-		return this;
-	}
+  public CredentialsTypeExChecker withSshContribution(boolean sshContribution) {
+    mySshContribution = sshContribution;
+    return this;
+  }
 
-	public CredentialsTypeExChecker withWebDeploymentContribution(boolean webDeploymentContribution)
-	{
-		myWebDeploymentContribution = webDeploymentContribution;
-		return this;
-	}
+  public CredentialsTypeExChecker withVagrantContribution(boolean vagrantContribution) {
+    myVagrantContribution = vagrantContribution;
+    return this;
+  }
 
-	public boolean check(@Nullable final Sdk sdk)
-	{
-		if(sdk == null)
-		{
-			return false;
-		}
-		RemoteSdkAdditionalData data = ObjectUtils.tryCast(sdk.getSdkAdditionalData(), RemoteSdkAdditionalData.class);
-		if(data == null)
-		{
-			return false;
-		}
-		return check(data);
-	}
+  public CredentialsTypeExChecker withWebDeploymentContribution(boolean webDeploymentContribution) {
+    myWebDeploymentContribution = webDeploymentContribution;
+    return this;
+  }
 
-	public boolean check(RemoteSdkAdditionalData data)
-	{
-		final Ref<Boolean> result = Ref.create(mySshContribution);
-		data.switchOnConnectionType(new LanguageCaseCollector<PyCredentialsContribution>()
-		{
+  public boolean check(@Nullable final Sdk sdk) {
+    if (sdk == null) {
+      return false;
+    }
+    RemoteSdkAdditionalData data = ObjectUtil.tryCast(sdk.getSdkAdditionalData(), RemoteSdkAdditionalData.class);
+    if (data == null) {
+      return false;
+    }
+    return check(data);
+  }
 
-			@Override
-			protected void processLanguageContribution(PyCredentialsContribution languageContribution, Object credentials)
-			{
-				result.set(checkLanguageContribution(languageContribution));
-			}
-		}.collectCases(PyCredentialsContribution.class, new CredentialsCase.Ssh()
-				{
-					@Override
-					public void process(RemoteCredentialsHolder credentials)
-					{
-						result.set(mySshContribution);
-					}
-				}, new CredentialsCase.Vagrant()
-				{
-					@Override
-					public void process(VagrantBasedCredentialsHolder credentials)
-					{
-						result.set(myVagrantContribution);
-					}
-				}, new CredentialsCase.WebDeployment()
-				{
-					@Override
-					public void process(WebDeploymentCredentialsHolder credentials)
-					{
-						result.set(myWebDeploymentContribution);
-					}
-				}
-		));
-		return result.get();
-	}
+  public boolean check(consulo.ide.impl.idea.remote.RemoteSdkAdditionalData data) {
+    final Ref<Boolean> result = Ref.create(mySshContribution);
+    data.switchOnConnectionType(new LanguageCaseCollector<PyCredentialsContribution>() {
 
-	protected abstract boolean checkLanguageContribution(PyCredentialsContribution languageContribution);
+      @Override
+      protected void processLanguageContribution(PyCredentialsContribution languageContribution, Object credentials) {
+        result.set(checkLanguageContribution(languageContribution));
+      }
+    }.collectCases(PyCredentialsContribution.class, new consulo.ide.impl.idea.remote.ext.CredentialsCase.Ssh() {
+                     @Override
+                     public void process(consulo.ide.impl.idea.remote.RemoteCredentialsHolder credentials) {
+                       result.set(mySshContribution);
+                     }
+                   }, new consulo.ide.impl.idea.remote.ext.CredentialsCase.Vagrant() {
+                     @Override
+                     public void process(VagrantBasedCredentialsHolder credentials) {
+                       result.set(myVagrantContribution);
+                     }
+                   }, new consulo.ide.impl.idea.remote.ext.CredentialsCase.WebDeployment() {
+                     @Override
+                     public void process(consulo.ide.impl.idea.remote.WebDeploymentCredentialsHolder credentials) {
+                       result.set(myWebDeploymentContribution);
+                     }
+                   }
+    ));
+    return result.get();
+  }
+
+  protected abstract boolean checkLanguageContribution(PyCredentialsContribution languageContribution);
 }

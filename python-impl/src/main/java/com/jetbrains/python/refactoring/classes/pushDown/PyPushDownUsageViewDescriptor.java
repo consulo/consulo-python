@@ -19,10 +19,10 @@ package com.jetbrains.python.refactoring.classes.pushDown;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.usageView.UsageViewBundle;
-import com.intellij.usageView.UsageViewDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.usage.UsageViewBundle;
+import consulo.usage.UsageViewDescriptor;
 import com.jetbrains.python.psi.PyClass;
 
 /**

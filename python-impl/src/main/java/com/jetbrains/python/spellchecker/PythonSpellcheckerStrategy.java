@@ -15,31 +15,35 @@
  */
 package com.jetbrains.python.spellchecker;
 
-import static com.jetbrains.python.psi.PyUtil.StringNodeInfo;
-
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.spellchecker.inspections.PlainTextSplitter;
-import com.intellij.spellchecker.inspections.Splitter;
-import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
-import com.intellij.spellchecker.tokenizer.TokenConsumer;
-import com.intellij.spellchecker.tokenizer.Tokenizer;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.inspections.PyStringFormatParser;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyStringLiteralUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.language.Language;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.spellcheker.SpellcheckingStrategy;
+import consulo.language.spellcheker.tokenizer.TokenConsumer;
+import consulo.language.spellcheker.tokenizer.Tokenizer;
+import consulo.language.spellcheker.tokenizer.splitter.PlainTextTokenSplitter;
+import consulo.language.spellcheker.tokenizer.splitter.TokenSplitter;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+
+import static com.jetbrains.python.psi.PyUtil.StringNodeInfo;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 {
 	private static class StringLiteralTokenizer extends Tokenizer<PyStringLiteralExpression>
@@ -47,7 +51,7 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 		@Override
 		public void tokenize(@Nonnull PyStringLiteralExpression element, TokenConsumer consumer)
 		{
-			final Splitter splitter = PlainTextSplitter.getInstance();
+			final TokenSplitter splitter = PlainTextTokenSplitter.getInstance();
 			final List<ASTNode> strNodes = element.getStringNodes();
 			final List<String> prefixes = ContainerUtil.mapNotNull(strNodes, n -> StringUtil.nullize(new StringNodeInfo(n).getPrefix()));
 
@@ -83,7 +87,7 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 		{
 			String stringValue = element.getStringValue();
 			List<PyStringFormatParser.FormatStringChunk> chunks = PyStringFormatParser.parsePercentFormat(stringValue);
-			Splitter splitter = PlainTextSplitter.getInstance();
+			TokenSplitter splitter = PlainTextTokenSplitter.getInstance();
 			for(PyStringFormatParser.FormatStringChunk chunk : chunks)
 			{
 				if(chunk instanceof PyStringFormatParser.ConstantChunk)
@@ -118,5 +122,12 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 			return myStringLiteralTokenizer;
 		}
 		return super.getTokenizer(element);
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

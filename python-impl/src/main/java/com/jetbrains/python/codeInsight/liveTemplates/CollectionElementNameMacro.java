@@ -16,19 +16,26 @@
 
 package com.jetbrains.python.codeInsight.liveTemplates;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.template.*;
-import com.intellij.openapi.util.text.StringUtil;
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.editor.template.Expression;
+import consulo.language.editor.template.ExpressionContext;
+import consulo.language.editor.template.Result;
+import consulo.language.editor.template.TextResult;
+import consulo.language.editor.template.macro.Macro;
+import consulo.util.lang.StringUtil;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author yole
  */
-public class CollectionElementNameMacro extends Macro {
+@ExtensionImpl
+public class CollectionElementNameMacro extends Macro
+{
   public String getName() {
     return "collectionElementName";
   }

@@ -16,26 +16,28 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.RemoveDecoratorQuickFix;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyDecorator;
 import com.jetbrains.python.psi.PyDecoratorList;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * User: catherine
- *
+ * <p>
  * Inspection to detect occurrences of @classmethod and @staticmethod
  * on methods outside of a class
  */
+@ExtensionImpl
 public class PyDecoratorInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -48,7 +50,8 @@ public class PyDecoratorInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -58,7 +61,7 @@ public class PyDecoratorInspection extends PyInspection {
     }
 
     @Override
-    public void visitPyFunction(final PyFunction node){
+    public void visitPyFunction(final PyFunction node) {
       PyClass containingClass = node.getContainingClass();
       if (containingClass != null)
         return;

@@ -16,20 +16,23 @@
 
 package com.jetbrains.python.psi.resolve;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
 
 /**
  * Allows to provide a custom qualified name when a specific symbol is going to be imported into a specific file.
  *
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyCanonicalPathProvider {
-  ExtensionPointName<PyCanonicalPathProvider> EP_NAME = ExtensionPointName.create("consulo.python.canonicalPathProvider");
+  ExtensionPointName<PyCanonicalPathProvider> EP_NAME = ExtensionPointName.create(PyCanonicalPathProvider.class);
 
   /**
    * Allows to provide a custom qualified name when a specific symbol is going to be imported into a specific file.

@@ -16,22 +16,22 @@
 
 package com.jetbrains.python.debugger;
 
-import java.io.File;
+import consulo.application.AccessToken;
+import consulo.application.ApplicationManager;
+import consulo.application.util.SystemInfo;
+import consulo.application.util.function.Computable;
+import consulo.document.Document;
+import consulo.document.FileDocumentManager;
+import consulo.execution.debug.XDebuggerUtil;
+import consulo.execution.debug.XSourcePosition;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.VirtualFileSystem;
+import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileSystem;
-import com.intellij.xdebugger.XDebuggerUtil;
-import com.intellij.xdebugger.XSourcePosition;
-import consulo.vfs.util.ArchiveVfsUtil;
+import java.io.File;
 
 
 public class PyLocalPositionConverter implements PyPositionConverter

@@ -16,92 +16,82 @@
 
 package com.jetbrains.python.console;
 
-import java.awt.datatransfer.StringSelection;
+import consulo.codeEditor.Caret;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.EditorEx;
+import consulo.codeEditor.action.EditorActionHandler;
+import consulo.dataContext.DataContext;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.execution.ui.console.ConsoleViewUtil;
+import consulo.ide.impl.idea.openapi.editor.richcopy.settings.RichCopySettings;
+import consulo.ui.ex.awt.CopyPasteManager;
+import consulo.util.dataholder.Key;
+import consulo.util.lang.ref.Ref;
 
 import javax.annotation.Nullable;
-
-import com.intellij.execution.impl.ConsoleViewUtil;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.richcopy.settings.RichCopySettings;
-import com.intellij.openapi.ide.CopyPasteManager;
-import consulo.util.dataholder.Key;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
+import java.awt.datatransfer.StringSelection;
 
 /**
  * @author VISTALL
  * @since 08-Nov-16
  */
-public class PyConsoleCopyHandler extends EditorActionHandler
-{
-	public static final Key<Integer> PROMPT_LENGTH_MARKER = Key.create("PROMPT_LENGTH_MARKER");
+public class PyConsoleCopyHandler extends EditorActionHandler {
+  public static final Key<Integer> PROMPT_LENGTH_MARKER = Key.create("PROMPT_LENGTH_MARKER");
 
-	private EditorActionHandler myOriginalHandler;
+  private EditorActionHandler myOriginalHandler;
 
-	public PyConsoleCopyHandler(EditorActionHandler originalHandler)
-	{
-		myOriginalHandler = originalHandler;
-	}
+  public PyConsoleCopyHandler(EditorActionHandler originalHandler) {
+    myOriginalHandler = originalHandler;
+  }
 
-	@Override
-	protected void doExecute(Editor editor, @Nullable Caret caret, DataContext dataContext)
-	{
-		if(!RichCopySettings.getInstance().isEnabled())
-		{
-			myOriginalHandler.execute(editor, null, dataContext);
-			return;
-		}
-		if(editor.getUserData(ConsoleViewUtil.EDITOR_IS_CONSOLE_HISTORY_VIEW) != Boolean.TRUE || editor.getCaretModel().getAllCarets().size() != 1)
-		{
-			myOriginalHandler.execute(editor, null, dataContext);
-			return;
-		}
-		doCopyWithoutPrompt((EditorEx) editor);
-	}
+  @Override
+  protected void doExecute(Editor editor, @Nullable Caret caret, DataContext dataContext) {
+    if (!RichCopySettings.getInstance().isEnabled()) {
+      myOriginalHandler.execute(editor, null, dataContext);
+      return;
+    }
+    if (editor.getUserData(ConsoleViewUtil.EDITOR_IS_CONSOLE_HISTORY_VIEW) != Boolean.TRUE || editor.getCaretModel()
+                                                                                                    .getAllCarets()
+                                                                                                    .size() != 1) {
+      myOriginalHandler.execute(editor, null, dataContext);
+      return;
+    }
+    doCopyWithoutPrompt((EditorEx)editor);
+  }
 
-	private void doCopyWithoutPrompt(EditorEx editor)
-	{
-		int start = editor.getSelectionModel().getSelectionStart();
-		int end = editor.getSelectionModel().getSelectionEnd();
-		Document document = editor.getDocument();
-		int beginLine = document.getLineNumber(start);
-		int endLine = document.getLineNumber(end);
-		StringBuilder sb = new StringBuilder();
-		for(int i = beginLine; i <= endLine; i++)
-		{
-			int lineStart = document.getLineStartOffset(i);
-			Ref<Integer> r = Ref.create();
-			editor.getMarkupModel().processRangeHighlightersOverlappingWith(lineStart, lineStart, rangeHighlighterEx -> {
-				Integer data = rangeHighlighterEx.getUserData(PROMPT_LENGTH_MARKER);
-				if(data == null)
-				{
-					return true;
-				}
-				r.set(data);
-				return false;
-			});
+  private void doCopyWithoutPrompt(EditorEx editor) {
+    int start = editor.getSelectionModel().getSelectionStart();
+    int end = editor.getSelectionModel().getSelectionEnd();
+    Document document = editor.getDocument();
+    int beginLine = document.getLineNumber(start);
+    int endLine = document.getLineNumber(end);
+    StringBuilder sb = new StringBuilder();
+    for (int i = beginLine; i <= endLine; i++) {
+      int lineStart = document.getLineStartOffset(i);
+      Ref<Integer> r = Ref.create();
+      editor.getMarkupModel().processRangeHighlightersOverlappingWith(lineStart, lineStart, rangeHighlighterEx -> {
+        Integer data = rangeHighlighterEx.getUserData(PROMPT_LENGTH_MARKER);
+        if (data == null) {
+          return true;
+        }
+        r.set(data);
+        return false;
+      });
 
-			if(!r.isNull())
-			{
-				lineStart += r.get();
-			}
-			int rangeStart = Math.max(lineStart, start);
-			int rangeEnd = Math.min(document.getLineEndOffset(i), end);
-			if(rangeStart < rangeEnd)
-			{
-				sb.append(document.getText(new TextRange(rangeStart, rangeEnd)));
-				sb.append("\n");
-			}
-		}
+      if (!r.isNull()) {
+        lineStart += r.get();
+      }
+      int rangeStart = Math.max(lineStart, start);
+      int rangeEnd = Math.min(document.getLineEndOffset(i), end);
+      if (rangeStart < rangeEnd) {
+        sb.append(document.getText(new TextRange(rangeStart, rangeEnd)));
+        sb.append("\n");
+      }
+    }
 
-		if(sb.length() != 0)
-		{
-			CopyPasteManager.getInstance().setContents(new StringSelection(sb.toString()));
-		}
-	}
+    if (sb.length() != 0) {
+      CopyPasteManager.getInstance().setContents(new StringSelection(sb.toString()));
+    }
+  }
 }

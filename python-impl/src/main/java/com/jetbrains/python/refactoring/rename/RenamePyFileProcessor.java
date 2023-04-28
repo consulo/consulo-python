@@ -16,23 +16,23 @@
 
 package com.jetbrains.python.refactoring.rename;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.RenamePsiFileProcessor;
-import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo;
-import com.intellij.usageView.UsageInfo;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyImportStatementBase;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.refactoring.rename.UnresolvableCollisionUsageInfo;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.ResolveResult;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.usage.UsageInfo;
+import consulo.util.io.FileUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +41,8 @@ import java.util.Map;
 /**
  * @author yole
  */
-public class RenamePyFileProcessor extends RenamePsiFileProcessor {
+@ExtensionImpl(id = "pyFile")
+public class RenamePyFileProcessor extends consulo.ide.impl.idea.refactoring.rename.RenamePsiFileProcessor {
   @Override
   public boolean canProcessElement(@Nonnull PsiElement element) {
     return element instanceof PyFile;

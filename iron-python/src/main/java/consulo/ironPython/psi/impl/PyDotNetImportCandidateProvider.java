@@ -16,59 +16,51 @@
 
 package consulo.ironPython.psi.impl;
 
-import consulo.ironPython.module.extension.BaseIronPythonModuleExtension;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.Processor;
-import com.intellij.util.indexing.IdFilter;
 import com.jetbrains.python.codeInsight.imports.AutoImportQuickFix;
 import com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider;
-import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.resolve.DotNetShortNameSearcher;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.dotnet.psi.resolve.DotNetShortNameSearcher;
+import consulo.ironPython.module.extension.BaseIronPythonModuleExtension;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.stub.IdFilter;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
 
 /**
  * @author yole
  * @author VISTALL
  */
-public class PyDotNetImportCandidateProvider implements PyImportCandidateProvider
-{
+@ExtensionImpl
+public class PyDotNetImportCandidateProvider implements PyImportCandidateProvider {
+  @RequiredReadAction
 	@Override
-	public void addImportCandidates(PsiReference reference, String name, final AutoImportQuickFix quickFix)
-	{
-		final PsiElement element = reference.getElement();
-		final Project project = element.getProject();
-		Module module = ModuleUtil.findModuleForPsiElement(element);
+  public void addImportCandidates(PsiReference reference, String name, final AutoImportQuickFix quickFix) {
+    final PsiElement element = reference.getElement();
+    final Project project = element.getProject();
+    Module module = ModuleUtilCore.findModuleForPsiElement(element);
 
-		if(module == null)
-		{
-			return;
-		}
-		if(ModuleUtilCore.getExtension(module, BaseIronPythonModuleExtension.class) == null)
-		{
-			return;
-		}
+    if (module == null) {
+      return;
+    }
+    if (ModuleUtilCore.getExtension(module, BaseIronPythonModuleExtension.class) == null) {
+      return;
+    }
 
-		DotNetShortNameSearcher.getInstance(project).collectTypes(name, element.getResolveScope(), IdFilter.getProjectIdFilter(project, false),
-				new Processor<DotNetTypeDeclaration>()
-		{
-			@Override
-			public boolean process(DotNetTypeDeclaration typeDeclaration)
-			{
-				String presentableParentQName = typeDeclaration.getPresentableParentQName();
-				if(StringUtil.isEmpty(presentableParentQName))
-				{
-					return true;
-				}
-				final QualifiedName packageQName = QualifiedName.fromDottedString(typeDeclaration.getPresentableQName()).removeLastComponent();
-				quickFix.addImport(typeDeclaration, typeDeclaration.getContainingFile(), packageQName);
-				return true;
-			}
-		});
-	}
+    DotNetShortNameSearcher.getInstance(project)
+                           .collectTypes(name, element.getResolveScope(), IdFilter.getProjectIdFilter(project, false), typeDeclaration -> {
+                             String presentableParentQName = typeDeclaration.getPresentableParentQName();
+                             if (StringUtil.isEmpty(presentableParentQName)) {
+                               return true;
+                             }
+                             final QualifiedName packageQName =
+                               QualifiedName.fromDottedString(typeDeclaration.getPresentableQName()).removeLastComponent();
+                             quickFix.addImport(typeDeclaration, typeDeclaration.getContainingFile(), packageQName);
+                             return true;
+                           });
+  }
 }

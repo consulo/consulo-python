@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.document.Document;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.EditorFactory;
+import consulo.project.Project;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiFile;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.override.PyOverrideImplementUtil;
 import com.jetbrains.python.psi.PyClass;

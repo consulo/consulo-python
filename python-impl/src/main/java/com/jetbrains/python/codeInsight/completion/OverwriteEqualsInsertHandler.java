@@ -15,11 +15,10 @@
  */
 package com.jetbrains.python.codeInsight.completion;
 
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.editor.Document;
+import consulo.language.editor.completion.lookup.*;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.document.Document;
+import consulo.language.editor.completion.lookup.InsertionContext;
 
 /**
  * @author yole

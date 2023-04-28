@@ -15,32 +15,33 @@
  */
 package com.jetbrains.python.magicLiteral;
 
-import javax.annotation.Nonnull;
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.jetbrains.python.psi.StringLiteralExpression;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+
+import javax.annotation.Nonnull;
 
 /**
- * Any magic literal extension point should imlement this interface and be installed as extesnion point
- * using {@link #EP_NAME}
+ * Any magic literal extension point should imlement this interface
  *
  * @author Ilya.Kazakevich
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyMagicLiteralExtensionPoint {
 
-	ExtensionPointName<PyMagicLiteralExtensionPoint> EP_NAME = ExtensionPointName.create("consulo.python.magicLiteral");
+  /**
+   * Checks if literal is magic and supported by this extension point.
+   *
+   * @param element element to check
+   * @return true if magic.
+   */
+  boolean isMagicLiteral(@Nonnull StringLiteralExpression element);
 
 
-	/**
-	 * Checks if literal is magic and supported by this extension point.
-	 * @param element element to check
-	 * @return true if magic.
-	 */
-	boolean isMagicLiteral(@Nonnull StringLiteralExpression element);
-
-
-	/**
-	 * @return human-readable type of this literal. Actually, that is extension point name
-	 */
-	@Nonnull
-	String getLiteralType();
+  /**
+   * @return human-readable type of this literal. Actually, that is extension point name
+   */
+  @Nonnull
+  String getLiteralType();
 }

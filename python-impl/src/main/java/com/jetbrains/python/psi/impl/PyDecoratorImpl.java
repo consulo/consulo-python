@@ -17,15 +17,16 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
 
+import consulo.language.impl.psi.stub.StubBasedPsiElementBase;
+import consulo.language.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nullable;
-import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.IncorrectOperationException;
+
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.FunctionParameter;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;

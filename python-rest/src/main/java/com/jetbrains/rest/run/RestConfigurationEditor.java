@@ -16,14 +16,14 @@
 
 package com.jetbrains.rest.run;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.PanelWithAnchor;
-import com.intellij.ui.components.JBLabel;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.configurable.ConfigurationException;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.project.Project;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.ui.ex.awt.CollectionComboBoxModel;
+import consulo.ui.ex.awt.PanelWithAnchor;
+import consulo.ui.ex.awt.JBLabel;
 import com.jetbrains.python.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.run.PyCommonOptionsFormFactory;

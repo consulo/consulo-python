@@ -18,14 +18,14 @@ package com.jetbrains.python.codeInsight.imports;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.codeInspection.HintAction;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.intention.HighPriorityAction;
+import consulo.language.editor.intention.HintAction;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * @author yole
@@ -54,7 +54,8 @@ public class AutoImportHintAction implements LocalQuickFix, HintAction, HighPrio
   }
 
   @Override
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+  {
     myDelegate.invoke(file);
   }
 

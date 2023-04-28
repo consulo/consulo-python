@@ -16,23 +16,26 @@
 
 package consulo.ironPython.psi.impl;
 
-import javax.annotation.Nullable;
-import consulo.ironPython.module.extension.BaseIronPythonModuleExtension;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.impl.PyImportResolver;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.resolve.DotNetNamespaceAsElement;
-import consulo.dotnet.resolve.DotNetPsiSearcher;
+import consulo.dotnet.psi.resolve.DotNetNamespaceAsElement;
+import consulo.dotnet.psi.resolve.DotNetPsiSearcher;
+import consulo.ironPython.module.extension.BaseIronPythonModuleExtension;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  * @author VISTALL
  */
+@ExtensionImpl
 public class PyDotNetImportResolver implements PyImportResolver
 {
 	@Override

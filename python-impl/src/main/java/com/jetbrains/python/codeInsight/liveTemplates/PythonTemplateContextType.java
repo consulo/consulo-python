@@ -16,12 +16,14 @@
 
 package com.jetbrains.python.codeInsight.liveTemplates;
 
-import com.intellij.codeInsight.template.FileTypeBasedContextType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.template.context.FileTypeBasedContextType;
 import com.jetbrains.python.PythonFileType;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonTemplateContextType extends FileTypeBasedContextType {
   public PythonTemplateContextType() {
     super("Python", "Python", PythonFileType.INSTANCE);

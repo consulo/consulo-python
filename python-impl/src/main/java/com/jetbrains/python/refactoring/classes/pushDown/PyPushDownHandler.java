@@ -17,11 +17,11 @@ package com.jetbrains.python.refactoring.classes.pushDown;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.util.Query;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.project.Project;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
+import consulo.application.util.query.Query;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.search.PyClassInheritorsSearch;
 import com.jetbrains.python.refactoring.classes.PyClassRefactoringHandler;

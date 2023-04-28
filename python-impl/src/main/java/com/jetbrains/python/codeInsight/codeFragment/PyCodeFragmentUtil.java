@@ -27,20 +27,20 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.codeInsight.codeFragment.CannotCreateCodeFragmentException;
-import com.intellij.codeInsight.codeFragment.CodeFragmentUtil;
-import com.intellij.codeInsight.codeFragment.Position;
-import com.intellij.codeInsight.controlflow.ControlFlow;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException;
+import consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragmentUtil;
+import consulo.ide.impl.idea.codeInsight.codeFragment.Position;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.util.lang.Pair;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.ResolveResult;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ReadWriteInstruction;
@@ -64,7 +64,7 @@ public class PyCodeFragmentUtil
 	@Nonnull
 	public static PyCodeFragment createCodeFragment(@Nonnull final ScopeOwner owner,
 			@Nonnull final PsiElement startInScope,
-			@Nonnull final PsiElement endInScope) throws CannotCreateCodeFragmentException
+			@Nonnull final PsiElement endInScope) throws consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException
 	{
 		final int start = startInScope.getTextOffset();
 		final int end = endInScope.getTextOffset() + endInScope.getTextLength();
@@ -73,18 +73,18 @@ public class PyCodeFragmentUtil
 		{
 			throw new CannotCreateCodeFragmentException(PyBundle.message("refactoring.extract.method.error.undetermined.execution.flow"));
 		}
-		final List<Instruction> graph = Arrays.asList(flow.getInstructions());
-		final List<Instruction> subGraph = getFragmentSubGraph(graph, start, end);
+		final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> graph = Arrays.asList(flow.getInstructions());
+		final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> subGraph = getFragmentSubGraph(graph, start, end);
 		final AnalysisResult subGraphAnalysis = analyseSubGraph(subGraph, start, end);
 		if((subGraphAnalysis.regularExits > 0 && subGraphAnalysis.returns > 0) ||
 				subGraphAnalysis.targetInstructions > 1 ||
 				subGraphAnalysis.outerLoopBreaks > 0)
 		{
-			throw new CannotCreateCodeFragmentException(PyBundle.message("refactoring.extract.method.error.interrupted.execution.flow"));
+			throw new consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException(PyBundle.message("refactoring.extract.method.error.interrupted.execution.flow"));
 		}
 		if(subGraphAnalysis.starImports > 0)
 		{
-			throw new CannotCreateCodeFragmentException(PyBundle.message("refactoring.extract.method.error.star.import"));
+			throw new consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException(PyBundle.message("refactoring.extract.method.error.star.import"));
 		}
 
 		final Set<String> globalWrites = getGlobalWrites(subGraph, owner);
@@ -188,22 +188,22 @@ public class PyCodeFragmentUtil
 	}
 
 	@Nonnull
-	private static List<Instruction> getFragmentSubGraph(@Nonnull List<Instruction> graph, int start, int end)
+	private static List<Instruction> getFragmentSubGraph(@Nonnull List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> graph, int start, int end)
 	{
 		List<Instruction> instructions = new ArrayList<>();
-		for(Instruction instruction : graph)
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : graph)
 		{
 			final PsiElement element = instruction.getElement();
 			if(element != null)
 			{
-				if(CodeFragmentUtil.getPosition(element, start, end) == Position.INSIDE)
+				if(consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragmentUtil.getPosition(element, start, end) == Position.INSIDE)
 				{
 					instructions.add(instruction);
 				}
 			}
 		}
 		// Hack for including inner assert type instructions that can point to elements outside of the selected scope
-		for(Instruction instruction : graph)
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : graph)
 		{
 			if(instruction instanceof ReadWriteInstruction)
 			{
@@ -211,7 +211,7 @@ public class PyCodeFragmentUtil
 				if(readWriteInstruction.getAccess().isAssertTypeAccess())
 				{
 					boolean innerAssertType = true;
-					for(Instruction next : readWriteInstruction.allSucc())
+					for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction next : readWriteInstruction.allSucc())
 					{
 						if(!instructions.contains(next))
 						{
@@ -254,7 +254,7 @@ public class PyCodeFragmentUtil
 	{
 		int returnSources = 0;
 		int regularSources = 0;
-		final Set<Instruction> targetInstructions = new HashSet<>();
+		final Set<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> targetInstructions = new HashSet<>();
 		int starImports = 0;
 		int outerLoopBreaks = 0;
 		int yieldExpressions = 0;
@@ -262,7 +262,7 @@ public class PyCodeFragmentUtil
 		for(Pair<Instruction, Instruction> edge : getOutgoingEdges(subGraph))
 		{
 			final Instruction sourceInstruction = edge.getFirst();
-			final Instruction targetInstruction = edge.getSecond();
+			final consulo.ide.impl.idea.codeInsight.controlflow.Instruction targetInstruction = edge.getSecond();
 			final PsiElement source = sourceInstruction.getElement();
 			final PsiElement target = targetInstruction.getElement();
 
@@ -316,7 +316,7 @@ public class PyCodeFragmentUtil
 	@Nonnull
 	private static Set<Pair<Instruction, Instruction>> getOutgoingEdges(@Nonnull Collection<Instruction> subGraph)
 	{
-		final Set<Pair<Instruction, Instruction>> outgoing = new HashSet<>();
+		final Set<Pair<Instruction, consulo.ide.impl.idea.codeInsight.controlflow.Instruction>> outgoing = new HashSet<>();
 		for(Instruction instruction : subGraph)
 		{
 			for(Instruction next : instruction.allSucc())
@@ -355,7 +355,7 @@ public class PyCodeFragmentUtil
 			}
 		}
 		final List<PsiElement> outputElements = getOutputElements(subGraph, graph);
-		for(Instruction instruction : getWriteInstructions(subGraph))
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : getWriteInstructions(subGraph))
 		{
 			final PsiElement element = instruction.getElement();
 			if(element != null)
@@ -377,11 +377,11 @@ public class PyCodeFragmentUtil
 	}
 
 	@Nonnull
-	private static List<PsiElement> getOutputElements(@Nonnull List<Instruction> subGraph, @Nonnull List<Instruction> graph)
+	private static List<PsiElement> getOutputElements(@Nonnull List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> subGraph, @Nonnull List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> graph)
 	{
 		final List<PsiElement> result = new ArrayList<>();
-		final List<Instruction> outerGraph = new ArrayList<>();
-		for(Instruction instruction : graph)
+		final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> outerGraph = new ArrayList<>();
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : graph)
 		{
 			if(!subGraph.contains(instruction))
 			{
@@ -433,7 +433,7 @@ public class PyCodeFragmentUtil
 	private static Set<PsiElement> getSubGraphElements(@Nonnull List<Instruction> subGraph)
 	{
 		final Set<PsiElement> result = new HashSet<>();
-		for(Instruction instruction : subGraph)
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : subGraph)
 		{
 			final PsiElement element = instruction.getElement();
 			if(element != null)
@@ -445,7 +445,7 @@ public class PyCodeFragmentUtil
 	}
 
 	@Nonnull
-	private static Set<String> getGlobalWrites(@Nonnull List<Instruction> instructions, @Nonnull ScopeOwner owner)
+	private static Set<String> getGlobalWrites(@Nonnull List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> instructions, @Nonnull ScopeOwner owner)
 	{
 		final Scope scope = ControlFlowCache.getScope(owner);
 		final Set<String> globalWrites = new LinkedHashSet<>();
@@ -464,18 +464,18 @@ public class PyCodeFragmentUtil
 		return globalWrites;
 	}
 
-	private static boolean isUsedOutside(@Nonnull PsiNamedElement element, @Nonnull List<Instruction> subGraph)
+	private static boolean isUsedOutside(@Nonnull PsiNamedElement element, @Nonnull List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> subGraph)
 	{
 		final Set<PsiElement> subGraphElements = getSubGraphElements(subGraph);
 		return ContainerUtil.exists(PyRefactoringUtil.findUsages(element, false), usageInfo -> !subGraphElements.contains(usageInfo.getElement()));
 	}
 
 	@Nonnull
-	private static Set<String> getNonlocalWrites(@Nonnull List<Instruction> instructions, @Nonnull ScopeOwner owner)
+	private static Set<String> getNonlocalWrites(@Nonnull List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> instructions, @Nonnull ScopeOwner owner)
 	{
 		final Scope scope = ControlFlowCache.getScope(owner);
 		final Set<String> nonlocalWrites = new LinkedHashSet<>();
-		for(Instruction instruction : getWriteInstructions(instructions))
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : getWriteInstructions(instructions))
 		{
 			if(instruction instanceof ReadWriteInstruction)
 			{
@@ -524,8 +524,8 @@ public class PyCodeFragmentUtil
 	@Nonnull
 	private static List<Instruction> getReadInstructions(@Nonnull List<Instruction> subGraph)
 	{
-		final List<Instruction> result = new ArrayList<>();
-		for(Instruction instruction : subGraph)
+		final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> result = new ArrayList<>();
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : subGraph)
 		{
 			if(instruction instanceof ReadWriteInstruction)
 			{
@@ -540,10 +540,10 @@ public class PyCodeFragmentUtil
 	}
 
 	@Nonnull
-	private static List<Instruction> getWriteInstructions(@Nonnull List<Instruction> subGraph)
+	private static List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> getWriteInstructions(@Nonnull List<Instruction> subGraph)
 	{
-		final List<Instruction> result = new ArrayList<>();
-		for(Instruction instruction : subGraph)
+		final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> result = new ArrayList<>();
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : subGraph)
 		{
 			if(instruction instanceof ReadWriteInstruction)
 			{

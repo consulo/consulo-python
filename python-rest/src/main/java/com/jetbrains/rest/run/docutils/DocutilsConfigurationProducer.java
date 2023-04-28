@@ -16,29 +16,31 @@
 
 package com.jetbrains.rest.run.docutils;
 
-import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.rest.RestFileType;
 import com.jetbrains.rest.run.RestRunConfiguration;
 import com.jetbrains.rest.run.RestRunConfigurationType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.RunnerAndConfigurationSettings;
+import consulo.execution.action.ConfigurationContext;
+import consulo.execution.action.Location;
+import consulo.execution.action.RuntimeConfigurationProducer;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 /**
  * User : catherine
  */
+@ExtensionImpl
 public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
   private PsiFile mySourceFile = null;
 
@@ -55,7 +57,7 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
     if (script == null || script.getFileType() != RestFileType.INSTANCE) {
       return null;
     }
-    Module module = ModuleUtil.findModuleForPsiElement(script);
+    Module module = ModuleUtilCore.findModuleForPsiElement(script);
     mySourceFile = script;
 
     final Project project = mySourceFile.getProject();

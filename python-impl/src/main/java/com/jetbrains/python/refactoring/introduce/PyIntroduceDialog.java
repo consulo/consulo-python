@@ -16,15 +16,15 @@
 
 package com.jetbrains.python.refactoring.introduce;
 
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.ui.EditorComboBoxEditor;
-import com.intellij.ui.EditorComboBoxRenderer;
-import com.intellij.ui.EditorTextField;
-import com.intellij.ui.StringComboboxEditor;
+import consulo.document.event.DocumentEvent;
+import consulo.document.event.DocumentListener;
+import consulo.language.editor.ui.awt.*;
+import consulo.project.Project;
+import consulo.ui.ex.awt.ComboBox;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.language.editor.ui.awt.EditorComboBoxEditor;
+import consulo.language.editor.ui.awt.EditorTextField;
+import consulo.language.editor.ui.awt.StringComboboxEditor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyExpression;

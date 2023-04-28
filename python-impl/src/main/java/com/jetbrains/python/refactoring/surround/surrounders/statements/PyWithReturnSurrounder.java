@@ -18,15 +18,15 @@ package com.jetbrains.python.refactoring.surround.surrounders.statements;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
+import consulo.language.util.IncorrectOperationException;
 
 import javax.annotation.Nullable;
 
@@ -46,7 +46,8 @@ public class PyWithReturnSurrounder extends PyStatementSurrounder {
   @Override
   @Nullable
   protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
-    throws IncorrectOperationException {
+    throws IncorrectOperationException
+  {
     PyReturnStatement returnStatement =
       PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyReturnStatement.class, "return a");
     PyExpression expression = returnStatement.getExpression();

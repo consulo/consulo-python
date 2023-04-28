@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
-import com.intellij.codeInsight.unwrap.AbstractUnwrapper;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.refactoring.unwrap.AbstractUnwrapper;
+import consulo.language.ast.ASTNode;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.impl.psi.CodeEditUtil;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyIfPartIfImpl;

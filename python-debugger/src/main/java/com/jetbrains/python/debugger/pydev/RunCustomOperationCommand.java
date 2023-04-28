@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import com.intellij.openapi.diagnostic.Logger;
+import consulo.logging.Logger;
 
 
 /**

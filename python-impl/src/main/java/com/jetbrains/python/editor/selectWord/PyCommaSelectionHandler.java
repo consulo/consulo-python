@@ -16,27 +16,29 @@
 
 package com.jetbrains.python.editor.selectWord;
 
-import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementType;
+import consulo.language.editor.action.ExtendWordSelectionHandlerBase;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiWhiteSpace;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
  * User: catherine
- *
- * Handler to select commas around a selection before widening the selection to few words  
+ * <p>
+ * Handler to select commas around a selection before widening the selection to few words
  */
+@ExtensionImpl
 public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
   public boolean canSelect(final PsiElement e) {
-    return e instanceof PyReferenceExpression || e instanceof PyKeyValueExpression || e instanceof PyKeywordArgument 
+    return e instanceof PyReferenceExpression || e instanceof PyKeyValueExpression || e instanceof PyKeywordArgument
       || e instanceof PyNumericLiteralExpression || e instanceof PyStringLiteralExpression || e instanceof PyNamedParameter
       || e instanceof PyStarArgument;
   }
@@ -53,7 +55,8 @@ public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
 
   /**
    * adds previous comma and whitespace to result text range
-   * @param e is current element
+   *
+   * @param e            is current element
    * @param cursorOffset is current cursor offset
    * @return result selection textRange
    */
@@ -97,7 +100,8 @@ public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
 
   /**
    * add next comma and whitespace to selection
-   * @param e is crrent element
+   *
+   * @param e            is crrent element
    * @param cursorOffset is current cursor offset
    * @return result selection TextRange
    */

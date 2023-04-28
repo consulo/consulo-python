@@ -16,24 +16,24 @@
 
 package com.jetbrains.python.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.evaluation.EvaluationMode;
-import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.impl.PyExpressionCodeFragmentImpl;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.document.Document;
+import consulo.document.FileDocumentManager;
+import consulo.execution.debug.XSourcePosition;
+import consulo.execution.debug.evaluation.EvaluationMode;
+import consulo.execution.debug.evaluation.XDebuggerEditorsProvider;
+import consulo.language.psi.*;
+import consulo.project.Project;
+import consulo.virtualFileSystem.fileType.FileType;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
-public class PyDebuggerEditorsProvider extends XDebuggerEditorsProvider {
-
+public class PyDebuggerEditorsProvider extends XDebuggerEditorsProvider
+{
   @Nonnull
   @Override
   public FileType getFileType() {

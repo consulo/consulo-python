@@ -15,28 +15,6 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import static com.jetbrains.python.psi.PyUtil.sure;
-
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.FileModificationService;
-import com.intellij.codeInsight.template.TemplateBuilder;
-import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.PyInspectionExtension;
 import com.jetbrains.python.psi.*;
@@ -45,6 +23,27 @@ import com.jetbrains.python.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.psi.types.PyModuleType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.codeEditor.Editor;
+import consulo.component.extension.Extensions;
+import consulo.fileEditor.FileEditorManager;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.FileModificationService;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.template.TemplateBuilder;
+import consulo.language.editor.template.TemplateBuilderFactory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.IncorrectOperationException;
+import consulo.navigation.OpenFileDescriptorFactory;
+import consulo.project.Project;
+import consulo.ui.NotificationType;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+
+import static com.jetbrains.python.psi.PyUtil.sure;
 
 /**
  * Adds a missing top-level function to a module.
@@ -54,135 +53,112 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  *
  * @see AddMethodQuickFix AddMethodQuickFix
  */
-public class AddFunctionQuickFix implements LocalQuickFix
-{
+public class AddFunctionQuickFix implements LocalQuickFix {
 
-	private final String myIdentifier;
-	private final String myModuleName;
+  private final String myIdentifier;
+  private final String myModuleName;
 
-	public AddFunctionQuickFix(@Nonnull String identifier, String moduleName)
-	{
-		myIdentifier = identifier;
-		myModuleName = moduleName;
-	}
+  public AddFunctionQuickFix(@Nonnull String identifier, String moduleName) {
+    myIdentifier = identifier;
+    myModuleName = moduleName;
+  }
 
-	@Nonnull
-	public String getName()
-	{
-		return PyBundle.message("QFIX.NAME.add.function.$0.to.module.$1", myIdentifier, myModuleName);
-	}
+  @Nonnull
+  public String getName() {
+    return PyBundle.message("QFIX.NAME.add.function.$0.to.module.$1", myIdentifier, myModuleName);
+  }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return "Create function in module";
-	}
+  @Nonnull
+  public String getFamilyName() {
+    return "Create function in module";
+  }
 
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		try
-		{
-			final PsiElement problemElement = descriptor.getPsiElement();
-			if(!(problemElement instanceof PyQualifiedExpression))
-			{
-				return;
-			}
-			final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
-			if(qualifier == null)
-			{
-				return;
-			}
-			final PyType type = TypeEvalContext.userInitiated(problemElement.getProject(), problemElement.getContainingFile()).getType(qualifier);
-			if(!(type instanceof PyModuleType))
-			{
-				return;
-			}
-			final PyFile file = ((PyModuleType) type).getModule();
-			sure(file);
-			sure(FileModificationService.getInstance().preparePsiElementForWrite(file));
-			// try to at least match parameter count
-			// TODO: get parameter style from code style
-			PyFunctionBuilder builder = new PyFunctionBuilder(myIdentifier, problemElement);
-			PsiElement problemParent = problemElement.getParent();
-			if(problemParent instanceof PyCallExpression)
-			{
-				PyArgumentList arglist = ((PyCallExpression) problemParent).getArgumentList();
-				if(arglist == null)
-				{
-					return;
-				}
-				final PyExpression[] args = arglist.getArguments();
-				for(PyExpression arg : args)
-				{
-					if(arg instanceof PyKeywordArgument)
-					{ // foo(bar) -> def foo(bar_1)
-						builder.parameter(((PyKeywordArgument) arg).getKeyword());
-					}
-					else if(arg instanceof PyReferenceExpression)
-					{
-						PyReferenceExpression refex = (PyReferenceExpression) arg;
-						builder.parameter(refex.getReferencedName());
-					}
-					else
-					{ // use a boring name
-						builder.parameter("param");
-					}
-				}
-			}
-			else if(problemParent != null)
-			{
-				for(PyInspectionExtension extension : Extensions.getExtensions(PyInspectionExtension.EP_NAME))
-				{
-					List<String> params = extension.getFunctionParametersFromUsage(problemElement);
-					if(params != null)
-					{
-						for(String param : params)
-						{
-							builder.parameter(param);
-						}
-						break;
-					}
-				}
-			}
-			// else: no arglist, use empty args
-			PyFunction function = builder.buildFunction(project, LanguageLevel.forElement(file));
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    try {
+      final PsiElement problemElement = descriptor.getPsiElement();
+      if (!(problemElement instanceof PyQualifiedExpression)) {
+        return;
+      }
+      final PyExpression qualifier = ((PyQualifiedExpression)problemElement).getQualifier();
+      if (qualifier == null) {
+        return;
+      }
+      final PyType type = TypeEvalContext.userInitiated(problemElement.getProject(), problemElement.getContainingFile()).getType(qualifier);
+      if (!(type instanceof PyModuleType)) {
+        return;
+      }
+      final PyFile file = ((PyModuleType)type).getModule();
+      sure(file);
+      sure(FileModificationService.getInstance().preparePsiElementForWrite(file));
+      // try to at least match parameter count
+      // TODO: get parameter style from code style
+      PyFunctionBuilder builder = new PyFunctionBuilder(myIdentifier, problemElement);
+      PsiElement problemParent = problemElement.getParent();
+      if (problemParent instanceof PyCallExpression) {
+        PyArgumentList arglist = ((PyCallExpression)problemParent).getArgumentList();
+        if (arglist == null) {
+          return;
+        }
+        final PyExpression[] args = arglist.getArguments();
+        for (PyExpression arg : args) {
+          if (arg instanceof PyKeywordArgument) { // foo(bar) -> def foo(bar_1)
+            builder.parameter(((PyKeywordArgument)arg).getKeyword());
+          }
+          else if (arg instanceof PyReferenceExpression) {
+            PyReferenceExpression refex = (PyReferenceExpression)arg;
+            builder.parameter(refex.getReferencedName());
+          }
+          else { // use a boring name
+            builder.parameter("param");
+          }
+        }
+      }
+      else if (problemParent != null) {
+        for (PyInspectionExtension extension : Extensions.getExtensions(PyInspectionExtension.EP_NAME)) {
+          List<String> params = extension.getFunctionParametersFromUsage(problemElement);
+          if (params != null) {
+            for (String param : params) {
+              builder.parameter(param);
+            }
+            break;
+          }
+        }
+      }
+      // else: no arglist, use empty args
+      PyFunction function = builder.buildFunction(project, LanguageLevel.forElement(file));
 
-			// add to the bottom
-			function = (PyFunction) file.add(function);
-			showTemplateBuilder(function, file);
-		}
-		catch(IncorrectOperationException ignored)
-		{
-			// we failed. tell about this
-			PyUtil.showBalloon(project, PyBundle.message("QFIX.failed.to.add.function"), MessageType.ERROR);
-		}
-	}
+      // add to the bottom
+      function = (PyFunction)file.add(function);
+      showTemplateBuilder(function, file);
+    }
+    catch (IncorrectOperationException ignored) {
+      // we failed. tell about this
+      PyUtil.showBalloon(project, PyBundle.message("QFIX.failed.to.add.function"), NotificationType.ERROR);
+    }
+  }
 
-	private static void showTemplateBuilder(PyFunction method, @Nonnull final PsiFile file)
-	{
-		method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
+  private static void showTemplateBuilder(PyFunction method, @Nonnull final PsiFile file) {
+    method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
 
-		final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(method);
-		ParamHelper.walkDownParamArray(method.getParameterList().getParameters(), new ParamHelper.ParamVisitor()
-		{
-			public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last)
-			{
-				builder.replaceElement(param, param.getName());
-			}
-		});
+    final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(method);
+    ParamHelper.walkDownParamArray(method.getParameterList().getParameters(), new ParamHelper.ParamVisitor() {
+      public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) {
+        builder.replaceElement(param, param.getName());
+      }
+    });
 
-		// TODO: detect expected return type from call site context: PY-1863
-		builder.replaceElement(method.getStatementList(), "return None");
-		final VirtualFile virtualFile = file.getVirtualFile();
-		if(virtualFile == null)
-		{
-			return;
-		}
-		final Editor editor = FileEditorManager.getInstance(file.getProject()).openTextEditor(new OpenFileDescriptor(file.getProject(), virtualFile), true);
-		if(editor == null)
-		{
-			return;
-		}
-		builder.run(editor, false);
-	}
+    // TODO: detect expected return type from call site context: PY-1863
+    builder.replaceElement(method.getStatementList(), "return None");
+    final VirtualFile virtualFile = file.getVirtualFile();
+    if (virtualFile == null) {
+      return;
+    }
+    final Editor editor =
+      FileEditorManager.getInstance(file.getProject())
+                       .openTextEditor(OpenFileDescriptorFactory.getInstance(file.getProject()).builder(virtualFile).build(), true);
+    if (editor == null) {
+      return;
+    }
+    builder.run(editor, false);
+  }
 }

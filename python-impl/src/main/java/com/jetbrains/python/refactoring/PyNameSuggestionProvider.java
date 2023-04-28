@@ -19,20 +19,22 @@
  */
 package com.jetbrains.python.refactoring;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.codeStyle.SuggestedNameInfo;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.NameSuggestionProvider;
 import com.jetbrains.python.psi.*;
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.refactoring.rename.NameSuggestionProvider;
+import consulo.language.editor.refactoring.rename.SuggestedNameInfo;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.StringUtil;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PyNameSuggestionProvider implements NameSuggestionProvider {
   public SuggestedNameInfo getSuggestedNames(PsiElement element, PsiElement nameSuggestionContext, Set<String> result) {
     if (!(element instanceof PyElement)) return null;

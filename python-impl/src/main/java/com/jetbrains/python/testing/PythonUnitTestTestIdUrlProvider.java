@@ -20,11 +20,11 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.Location;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.search.GlobalSearchScope;
+import consulo.execution.action.Location;
+import consulo.application.dumb.DumbAware;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.scope.GlobalSearchScope;
 
 public class PythonUnitTestTestIdUrlProvider implements PythonTestLocator, DumbAware
 {

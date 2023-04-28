@@ -15,20 +15,19 @@
  */
 package com.jetbrains.python.psi.types;
 
-import java.util.Collection;
-import java.util.Collections;
+import com.jetbrains.python.codeInsight.PyCustomMember;
+import com.jetbrains.python.psi.PyClass;
+import consulo.language.psi.PsiElement;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.psi.PsiElement;
-import com.jetbrains.python.codeInsight.PyCustomMember;
-import com.jetbrains.python.psi.PyClass;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author yole
  */
-public class PyClassMembersProviderBase implements PyClassMembersProvider
+public abstract class PyClassMembersProviderBase implements PyClassMembersProvider
 {
 	@Nonnull
 	@Override

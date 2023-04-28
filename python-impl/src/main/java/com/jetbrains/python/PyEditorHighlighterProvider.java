@@ -16,26 +16,36 @@
 
 package com.jetbrains.python;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.highlighter.EditorHighlighter;
-import com.intellij.openapi.fileTypes.EditorHighlighterProvider;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.python.lexer.PythonEditorHighlighter;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.EditorHighlighter;
+import consulo.colorScheme.EditorColorsScheme;
+import consulo.language.editor.highlight.EditorHighlighterProvider;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
-* @author yole
-*/
-public class PyEditorHighlighterProvider implements EditorHighlighterProvider {
-  @Override
-  public EditorHighlighter getEditorHighlighter(@Nullable Project project,
-                                                @Nonnull FileType fileType, @Nullable VirtualFile virtualFile,
-                                                @Nonnull EditorColorsScheme colors) {
-    return new PythonEditorHighlighter(colors, project, virtualFile);
-  }
+ * @author yole
+ */
+@ExtensionImpl
+public class PyEditorHighlighterProvider implements EditorHighlighterProvider
+{
+	@Override
+	public EditorHighlighter getEditorHighlighter(@Nullable Project project,
+												  @Nonnull FileType fileType, @Nullable VirtualFile virtualFile,
+												  @Nonnull EditorColorsScheme colors)
+	{
+		return new PythonEditorHighlighter(colors, project, virtualFile);
+	}
+
+	@Nonnull
+	@Override
+	public FileType getFileType()
+	{
+		return PythonFileType.INSTANCE;
+	}
 }

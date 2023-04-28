@@ -15,15 +15,15 @@
  */
 package com.jetbrains.python.codeInsight.completion;
 
-import com.intellij.codeInsight.AutoPopupController;
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
+import consulo.language.editor.AutoPopupController;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.document.Document;
+import consulo.codeEditor.Editor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyUtil;
+import consulo.language.editor.completion.lookup.InsertHandler;
+import consulo.language.editor.completion.lookup.InsertionContext;
 
 /**
  * @author yole

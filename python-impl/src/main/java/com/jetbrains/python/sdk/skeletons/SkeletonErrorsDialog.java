@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.sdk.skeletons;
 
-import com.intellij.ui.components.JBScrollPane;
+import consulo.ui.ex.awt.JBScrollPane;
 import com.jetbrains.python.PyBundle;
 
 import javax.swing.*;

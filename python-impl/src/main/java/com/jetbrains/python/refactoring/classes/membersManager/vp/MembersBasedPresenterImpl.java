@@ -20,9 +20,9 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.classMembers.MemberInfoModel;
-import com.intellij.util.containers.MultiMap;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.util.collection.MultiMap;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.PyMemberInfoStorage;

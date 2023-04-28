@@ -19,7 +19,7 @@ package com.jetbrains.python.psi.impl;
 import com.jetbrains.python.psi.PyStatementPart;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.PyElementTypes;
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 
 /**
  * Abstract statement part implementation; extracts the statements list.

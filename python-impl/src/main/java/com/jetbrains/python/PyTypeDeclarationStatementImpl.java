@@ -17,7 +17,7 @@ package com.jetbrains.python;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;

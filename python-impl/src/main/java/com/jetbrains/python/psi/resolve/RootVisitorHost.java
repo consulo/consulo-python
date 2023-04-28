@@ -16,23 +16,32 @@
 
 package com.jetbrains.python.psi.resolve;
 
+import com.google.common.collect.Sets;
+import consulo.application.util.function.Processor;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.base.SourcesOrderRootType;
+import consulo.content.bundle.Sdk;
+import consulo.ide.impl.idea.openapi.module.ModuleUtil;
+import consulo.language.content.LanguageContentFolderScopes;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.module.Module;
+import consulo.module.content.ProjectFileIndex;
+import consulo.module.content.ProjectRootManager;
+import consulo.module.content.layer.ContentEntry;
+import consulo.module.content.layer.ModuleRootModel;
+import consulo.module.content.layer.OrderEnumerator;
+import consulo.module.content.layer.orderEntry.ModuleExtensionWithSdkOrderEntry;
+import consulo.module.content.layer.orderEntry.ModuleOrderEntry;
+import consulo.module.content.layer.orderEntry.ModuleSourceOrderEntry;
+import consulo.module.content.layer.orderEntry.OrderEntry;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.Sets;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.Processor;
-import consulo.roots.ContentFolderScopes;
 
 /**
  * @author yole
@@ -95,7 +104,7 @@ public class RootVisitorHost {
   }
 
   public static boolean visitSdkRoots(@Nonnull Sdk sdk, @Nonnull RootVisitor visitor) {
-    final VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
+    final VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
     for (VirtualFile root : roots) {
       if (!visitor.visitRoot(root, null, sdk, false)) {
         return true;
@@ -112,7 +121,7 @@ public class RootVisitorHost {
 
       if (rootFile != null && !visitor.visitRoot(rootFile, null, null, true)) return false;
       contentRoots.add(rootFile);
-      for (VirtualFile folder : entry.getFolderFiles(ContentFolderScopes.production())) {
+      for (VirtualFile folder : entry.getFolderFiles(LanguageContentFolderScopes.production())) {
         if (!visitor.visitRoot(folder, rootModel.getModule(), null, true)) return false;
       }
     }
@@ -121,8 +130,8 @@ public class RootVisitorHost {
 
   private static boolean visitOrderEntryRoots(RootVisitor visitor, OrderEntry entry) {
     Set<VirtualFile> allRoots = new LinkedHashSet<VirtualFile>();
-    Collections.addAll(allRoots, entry.getFiles(OrderRootType.SOURCES));
-    Collections.addAll(allRoots, entry.getFiles(OrderRootType.CLASSES));
+    Collections.addAll(allRoots, entry.getFiles(SourcesOrderRootType.getInstance()));
+    Collections.addAll(allRoots, entry.getFiles(BinariesOrderRootType.getInstance()));
     Module module = entry instanceof ModuleOrderEntry ? ((ModuleOrderEntry) entry).getModule() : null;
     Sdk sdk = entry instanceof ModuleExtensionWithSdkOrderEntry ? ((ModuleExtensionWithSdkOrderEntry) entry).getSdk() : null;
     for (VirtualFile root : allRoots) {

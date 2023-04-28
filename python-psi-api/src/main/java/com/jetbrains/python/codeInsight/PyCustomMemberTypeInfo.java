@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.openapi.util.Pair;
+import consulo.util.lang.Pair;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolder;
 

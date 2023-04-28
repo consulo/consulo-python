@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyEmptyExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;

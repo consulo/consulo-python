@@ -15,11 +15,11 @@
  */
 package com.jetbrains.python.psi.types;
 
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ProcessingContext;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.application.AllIcons;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ProcessingContext;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;

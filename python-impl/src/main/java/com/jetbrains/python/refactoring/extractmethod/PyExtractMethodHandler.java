@@ -17,22 +17,22 @@ package com.jetbrains.python.refactoring.extractmethod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.codeInsight.codeFragment.CannotCreateCodeFragmentException;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Couple;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.RefactoringActionHandler;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
+import consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException;
+import consulo.dataContext.DataContext;
+import consulo.codeEditor.CaretModel;
+import consulo.document.Document;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.ScrollType;
+import consulo.codeEditor.SelectionModel;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
+import consulo.project.Project;
+import consulo.util.lang.Couple;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.editor.refactoring.action.RefactoringActionHandler;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.codeFragment.PyCodeFragment;
 import com.jetbrains.python.codeInsight.codeFragment.PyCodeFragmentUtil;
@@ -115,7 +115,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 			{
 				fragment = PyCodeFragmentUtil.createCodeFragment(owner, element1, element2);
 			}
-			catch(CannotCreateCodeFragmentException e)
+			catch(consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException e)
 			{
 				CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), RefactoringBundle.message("extract.method.title"), "refactoring.extractMethod");
 				return;
@@ -137,7 +137,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 			{
 				fragment = PyCodeFragmentUtil.createCodeFragment(owner, element1, element2);
 			}
-			catch(CannotCreateCodeFragmentException e)
+			catch(consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException e)
 			{
 				CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), RefactoringBundle.message("extract.method.title"), "refactoring.extractMethod");
 				return;

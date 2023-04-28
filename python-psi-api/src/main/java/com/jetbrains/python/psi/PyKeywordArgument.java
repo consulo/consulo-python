@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi;
 
-import com.intellij.psi.PsiNamedElement;
+import consulo.language.psi.PsiNamedElement;
 import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 
 /**
  * @author yole

@@ -15,31 +15,24 @@
  */
 package com.jetbrains.python.psi.impl.stubs;
 
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.resolve.PyResolveUtil;
+import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
+import consulo.index.io.StringRef;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.StubInputStream;
+import consulo.language.psi.stub.StubOutputStream;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.io.StringRef;
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.PyUtil;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.resolve.PyResolveUtil;
-import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
 
 public class PyNamedTupleStubImpl implements PyNamedTupleStub
 {

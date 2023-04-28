@@ -16,30 +16,23 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * @author vlan
  */
 public class PyYieldFromIntention extends BaseIntentionAction {
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return PyBundle.message("INTN.yield.from");
-  }
-
   @Nonnull
   @Override
   public String getText() {

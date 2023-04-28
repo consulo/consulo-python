@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.Language;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.impl.light.LightElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.Language;
+import consulo.language.impl.psi.LightElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.PsiNamedElement;
 import com.jetbrains.python.psi.PyElement;
+import consulo.language.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import javax.annotation.Nonnull;
 
@@ -54,7 +54,8 @@ public class LightNamedElement extends LightElement implements PyElement, PsiNam
     return myName;
   }
 
-  public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException {
+  public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
+  {
     throw new UnsupportedOperationException("LightNamedElement#setName() is not supported");
   }
 

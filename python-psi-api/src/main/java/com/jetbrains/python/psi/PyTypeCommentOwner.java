@@ -16,7 +16,7 @@
 package com.jetbrains.python.psi;
 
 import javax.annotation.Nullable;
-import com.intellij.psi.PsiComment;
+import consulo.language.psi.PsiComment;
 
 /**
  * @author Mikhail Golubev

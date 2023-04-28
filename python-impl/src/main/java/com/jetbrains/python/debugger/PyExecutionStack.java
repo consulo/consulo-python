@@ -15,15 +15,14 @@
  */
 package com.jetbrains.python.debugger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import consulo.execution.debug.frame.XExecutionStack;
+import consulo.ui.image.Image;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.xdebugger.frame.XExecutionStack;
-import consulo.ui.image.Image;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class PyExecutionStack extends XExecutionStack

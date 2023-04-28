@@ -16,23 +16,29 @@
 
 package com.jetbrains.python.testing.pytest;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.components.PathMacroManager;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizerUtil;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import com.jetbrains.python.testing.VFSTestFrameworkListener;
+import consulo.content.bundle.Sdk;
+import consulo.execution.RuntimeConfigurationException;
+import consulo.execution.RuntimeConfigurationWarning;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.configuration.RuntimeConfigurationError;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.executor.Executor;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.project.macro.ProjectPathMacroManager;
+import consulo.util.lang.StringUtil;
+import consulo.util.xml.serializer.InvalidDataException;
+import consulo.util.xml.serializer.JDOMExternalizerUtil;
+import consulo.util.xml.serializer.WriteExternalException;
 import org.jdom.Element;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -112,7 +118,7 @@ public class PyTestRunConfiguration extends AbstractPythonTestRunConfiguration i
 
   @Override
   public void readExternal(Element element) throws InvalidDataException {
-    PathMacroManager.getInstance(getProject()).expandPaths(element);
+    ProjectPathMacroManager.getInstance(getProject()).expandPaths(element);
     super.readExternal(element);
     myTestToRun = JDOMExternalizerUtil.readField(element, TEST_TO_RUN_FIELD);
     myKeywords = JDOMExternalizerUtil.readField(element, KEYWORDS_FIELD);
@@ -129,7 +135,7 @@ public class PyTestRunConfiguration extends AbstractPythonTestRunConfiguration i
     JDOMExternalizerUtil.writeField(element, PARAMS_FIELD, myParams);
     JDOMExternalizerUtil.writeField(element, "USE_PARAM", String.valueOf(useParam));
     JDOMExternalizerUtil.writeField(element, "USE_KEYWORD", String.valueOf(useKeyword));
-    PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
+    ProjectPathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
   }
 
   @Override

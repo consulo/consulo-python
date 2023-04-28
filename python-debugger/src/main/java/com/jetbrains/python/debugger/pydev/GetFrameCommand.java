@@ -2,7 +2,7 @@ package com.jetbrains.python.debugger.pydev;
 
 import java.util.List;
 
-import com.intellij.xdebugger.frame.XValueChildrenList;
+import consulo.execution.debug.frame.XValueChildrenList;
 import com.jetbrains.python.debugger.IPyDebugProcess;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.PyDebuggerException;

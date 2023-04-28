@@ -15,74 +15,67 @@
  */
 package com.jetbrains.python.run;
 
-import java.io.File;
+import com.jetbrains.python.traceBackParsers.LinkInTrace;
+import com.jetbrains.python.traceBackParsers.TraceBackParser;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.ui.console.Filter;
+import consulo.execution.ui.console.OpenFileHyperlinkInfo;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.execution.filters.Filter;
-import com.intellij.execution.filters.OpenFileHyperlinkInfo;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.python.traceBackParsers.LinkInTrace;
-import com.jetbrains.python.traceBackParsers.TraceBackParser;
+import java.io.File;
 
 /**
  * @author yole
  */
-public class PythonTracebackFilter implements Filter
-{
-	private final Project myProject;
-	private final String myWorkingDirectory;
+public class PythonTracebackFilter implements Filter {
+  private final Project myProject;
+  private final String myWorkingDirectory;
 
-	public PythonTracebackFilter(final Project project)
-	{
-		myProject = project;
-		myWorkingDirectory = null;
-	}
+  public PythonTracebackFilter(final Project project) {
+    myProject = project;
+    myWorkingDirectory = null;
+  }
 
-	public PythonTracebackFilter(final Project project, @Nullable final String workingDirectory)
-	{
-		myProject = project;
-		myWorkingDirectory = workingDirectory;
-	}
+  public PythonTracebackFilter(final Project project, @Nullable final String workingDirectory) {
+    myProject = project;
+    myWorkingDirectory = workingDirectory;
+  }
 
-	@Override
-	@Nullable
-	public final Result applyFilter(@Nonnull final String line, final int entireLength)
-	{
+  @Override
+  @Nullable
+  public final Result applyFilter(@Nonnull final String line, final int entireLength) {
 
-		for(final TraceBackParser parser : TraceBackParser.PARSERS)
-		{
-			final LinkInTrace linkInTrace = parser.findLinkInTrace(line);
-			if(linkInTrace == null)
-			{
-				continue;
-			}
-			final int lineNumber = linkInTrace.getLineNumber();
-			final VirtualFile vFile = findFileByName(linkInTrace.getFileName());
+    for (final TraceBackParser parser : TraceBackParser.PARSERS) {
+      final LinkInTrace linkInTrace = parser.findLinkInTrace(line);
+      if (linkInTrace == null) {
+        continue;
+      }
+      final int lineNumber = linkInTrace.getLineNumber();
+      final VirtualFile vFile = findFileByName(linkInTrace.getFileName());
 
-			if(vFile != null)
-			{
-				final OpenFileHyperlinkInfo hyperlink = new OpenFileHyperlinkInfo(myProject, vFile, lineNumber - 1);
-				final int textStartOffset = entireLength - line.length();
-				final int startPos = linkInTrace.getStartPos();
-				final int endPos = linkInTrace.getEndPos();
-				return new Result(startPos + textStartOffset, endPos + textStartOffset, hyperlink);
-			}
-		}
-		return null;
-	}
+      if (vFile != null) {
+        final OpenFileHyperlinkInfo hyperlink = new OpenFileHyperlinkInfo(myProject, vFile, lineNumber - 1);
+        final int textStartOffset = entireLength - line.length();
+        final int startPos = linkInTrace.getStartPos();
+        final int endPos = linkInTrace.getEndPos();
+        return new Result(startPos + textStartOffset, endPos + textStartOffset, hyperlink);
+      }
+    }
+    return null;
+  }
 
-	@Nullable
-	protected VirtualFile findFileByName(@Nonnull final String fileName)
-	{
-		VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(fileName);
-		if(vFile == null && !StringUtil.isEmptyOrSpaces(myWorkingDirectory))
-		{
-			vFile = LocalFileSystem.getInstance().findFileByIoFile(new File(myWorkingDirectory, fileName));
-		}
-		return vFile;
-	}
+  @Nullable
+  protected VirtualFile findFileByName(@Nonnull final String fileName) {
+    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(fileName);
+    if (vFile == null && !StringUtil.isEmptyOrSpaces(myWorkingDirectory)) {
+      vFile = LocalFileSystem.getInstance().findFileByIoFile(new File(myWorkingDirectory, fileName));
+    }
+    return vFile;
+  }
 }

@@ -15,26 +15,26 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.ProcessingContext;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyExpressionStatement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import consulo.codeInsight.completion.CompletionProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.pattern.PsiElementPattern;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.ProcessingContext;
+
+import javax.annotation.Nonnull;
+
+import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class DocStringTagCompletionContributor extends CompletionContributor
 {
 	public static final PsiElementPattern.Capture<PyStringLiteralExpression> DOCSTRING_PATTERN = psiElement(PyStringLiteralExpression.class).withParent(psiElement(PyExpressionStatement.class).inside
@@ -93,5 +93,12 @@ public class DocStringTagCompletionContributor extends CompletionContributor
 				}
 			}
 		});
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

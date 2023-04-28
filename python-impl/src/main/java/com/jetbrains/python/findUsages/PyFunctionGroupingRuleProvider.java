@@ -16,28 +16,32 @@
 
 package com.jetbrains.python.findUsages;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.usages.PsiNamedElementUsageGroupBase;
-import com.intellij.usages.Usage;
-import com.intellij.usages.UsageGroup;
-import com.intellij.usages.impl.FileStructureGroupRuleProvider;
-import com.intellij.usages.rules.PsiElementUsage;
-import com.intellij.usages.rules.UsageGroupingRule;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.usage.PsiNamedElementUsageGroupBase;
+import consulo.usage.Usage;
+import consulo.usage.UsageGroup;
+import consulo.usage.rule.FileStructureGroupRuleProvider;
+import consulo.usage.rule.PsiElementUsage;
+import consulo.usage.rule.UsageGroupingRule;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+
 import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl(id = "py-function")
 public class PyFunctionGroupingRuleProvider implements FileStructureGroupRuleProvider {
   public UsageGroupingRule getUsageGroupingRule(Project project) {
     return new PyFunctionGroupingRule();
   }
 
-  private static class PyFunctionGroupingRule implements UsageGroupingRule {
+  private static class PyFunctionGroupingRule implements UsageGroupingRule
+  {
     public UsageGroup groupUsage(@Nonnull Usage usage) {
       if (!(usage instanceof PsiElementUsage)) return null;
       final PsiElement psiElement = ((PsiElementUsage)usage).getElement();

@@ -15,35 +15,26 @@
  */
 package com.jetbrains.python.packaging.ui;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import com.jetbrains.python.packaging.*;
+import com.jetbrains.python.sdk.PySdkUtil;
+import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.application.Application;
+import consulo.application.ApplicationManager;
+import consulo.content.bundle.Sdk;
+import consulo.ide.impl.idea.webcore.packaging.InstalledPackagesPanel;
+import consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.repository.ui.InstalledPackage;
+import consulo.repository.ui.PackageManagementService;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.webcore.packaging.InstalledPackage;
-import com.intellij.webcore.packaging.InstalledPackagesPanel;
-import com.intellij.webcore.packaging.PackageManagementService;
-import com.intellij.webcore.packaging.PackagesNotificationPanel;
-import com.jetbrains.python.packaging.PyCondaPackageManagerImpl;
-import com.jetbrains.python.packaging.PyExecutionException;
-import com.jetbrains.python.packaging.PyExecutionFix;
-import com.jetbrains.python.packaging.PyPackage;
-import com.jetbrains.python.packaging.PyPackageManager;
-import com.jetbrains.python.packaging.PyPackageManagerUI;
-import com.jetbrains.python.packaging.PyPackageManagers;
-import com.jetbrains.python.packaging.PyPackageUtil;
-import com.jetbrains.python.sdk.PySdkUtil;
-import com.jetbrains.python.sdk.PythonSdkType;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author yole
@@ -91,7 +82,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 					final PackageManagementService.ErrorDescription description = PyPackageManagementService.toErrorDescription(exceptions, sdk);
 					if(description != null)
 					{
-						PackagesNotificationPanel.showError("Failed to install Python packaging tools", description);
+						consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel.showError("Failed to install Python packaging tools", description);
 					}
 					packageManager.refresh();
 					updatePackages(PyPackageManagers.getInstance().getManagementService(myProject, sdk));
@@ -162,7 +153,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 						myInstallButton.setEnabled(!invalid && installEnabled());
 					}
 				}
-			}, ModalityState.any());
+			}, application.getAnyModalityState());
 		});
 	}
 

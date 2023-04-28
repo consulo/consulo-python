@@ -15,9 +15,9 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import com.intellij.codeInsight.daemon.impl.actions.AbstractBatchSuppressByNoInspectionCommentFix;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.editor.inspection.AbstractBatchSuppressByNoInspectionCommentFix;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyElement;
 
 /**

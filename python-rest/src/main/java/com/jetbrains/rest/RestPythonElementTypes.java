@@ -16,7 +16,7 @@
 
 package com.jetbrains.rest;
 
-import com.intellij.psi.templateLanguages.TemplateDataElementType;
+import consulo.language.impl.psi.template.TemplateDataElementType;
 
 /**
  * User : catherine

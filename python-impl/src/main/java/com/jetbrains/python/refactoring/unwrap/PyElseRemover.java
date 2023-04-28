@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyElement;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * User : ktisha
@@ -30,7 +30,8 @@ public class PyElseRemover extends PyElseUnwrapperBase {
   }
 
   @Override
-  protected void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException {
+  protected void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException
+  {
     context.delete(branch);
   }
 }

@@ -25,12 +25,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
-import com.intellij.codeInsight.controlflow.ControlFlow;
-import com.intellij.codeInsight.controlflow.ControlFlowUtil;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.util.lang.Comparing;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ReadWriteInstruction;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
@@ -54,10 +54,10 @@ public class PyDefUseUtil
 	}
 
 	@Nonnull
-	public static List<Instruction> getLatestDefs(ScopeOwner block, String varName, PsiElement anchor, boolean acceptTypeAssertions, boolean acceptImplicitImports)
+	public static List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> getLatestDefs(ScopeOwner block, String varName, PsiElement anchor, boolean acceptTypeAssertions, boolean acceptImplicitImports)
 	{
 		final ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
-		final Instruction[] instructions = controlFlow.getInstructions();
+		final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = controlFlow.getInstructions();
 		final PyAugAssignmentStatement augAssignment = PyAugAssignmentStatementNavigator.getStatementByTarget(anchor);
 		if(augAssignment != null)
 		{
@@ -70,23 +70,23 @@ public class PyDefUseUtil
 		}
 		if(anchor instanceof PyTargetExpression)
 		{
-			Collection<Instruction> pred = instructions[instr].allPred();
+			Collection<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> pred = instructions[instr].allPred();
 			if(!pred.isEmpty())
 			{
 				instr = pred.iterator().next().num();
 			}
 		}
-		final Collection<Instruction> result = getLatestDefs(varName, instructions, instr, acceptTypeAssertions, acceptImplicitImports);
+		final Collection<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> result = getLatestDefs(varName, instructions, instr, acceptTypeAssertions, acceptImplicitImports);
 		return new ArrayList<>(result);
 	}
 
-	private static Collection<Instruction> getLatestDefs(final String varName,
-			final Instruction[] instructions,
-			final int instr,
-			final boolean acceptTypeAssertions,
-			final boolean acceptImplicitImports)
+	private static Collection<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> getLatestDefs(final String varName,
+																									   final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions,
+																									   final int instr,
+																									   final boolean acceptTypeAssertions,
+																									   final boolean acceptImplicitImports)
 	{
-		final Collection<Instruction> result = new LinkedHashSet<>();
+		final Collection<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> result = new LinkedHashSet<>();
 		ControlFlowUtil.iteratePrev(instr, instructions, instruction -> {
 			final PsiElement element = instruction.getElement();
 			final PyImplicitImportNameDefiner implicit = PyUtil.as(element, PyImplicitImportNameDefiner.class);
@@ -100,7 +100,7 @@ public class PyDefUseUtil
 					if(Comparing.strEqual(name, varName))
 					{
 						result.add(rwInstruction);
-						return ControlFlowUtil.Operation.CONTINUE;
+						return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.CONTINUE;
 					}
 				}
 			}
@@ -112,7 +112,7 @@ public class PyDefUseUtil
 					return ControlFlowUtil.Operation.CONTINUE;
 				}
 			}
-			return ControlFlowUtil.Operation.NEXT;
+			return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.NEXT;
 		});
 		return result;
 	}
@@ -139,22 +139,22 @@ public class PyDefUseUtil
 	public static PsiElement[] getPostRefs(ScopeOwner block, PyTargetExpression var, PyExpression anchor)
 	{
 		final ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
-		final Instruction[] instructions = controlFlow.getInstructions();
-		final int instr = ControlFlowUtil.findInstructionNumberByElement(instructions, anchor);
+		final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = controlFlow.getInstructions();
+		final int instr = consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, anchor);
 		if(instr < 0)
 		{
 			return PyElement.EMPTY_ARRAY;
 		}
 		final boolean[] visited = new boolean[instructions.length];
 		final Collection<PyElement> result = Sets.newHashSet();
-		for(Instruction instruction : instructions[instr].allSucc())
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : instructions[instr].allSucc())
 		{
 			getPostRefs(var, instructions, instruction.num(), visited, result);
 		}
 		return result.toArray(new PyElement[result.size()]);
 	}
 
-	private static void getPostRefs(PyTargetExpression var, Instruction[] instructions, int instr, boolean[] visited, Collection<PyElement> result)
+	private static void getPostRefs(PyTargetExpression var, consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions, int instr, boolean[] visited, Collection<PyElement> result)
 	{
 		// TODO: Use ControlFlowUtil.process() for forwards CFG traversal
 		if(visited[instr])
@@ -177,7 +177,7 @@ public class PyDefUseUtil
 				result.add((PyElement) instruction.getElement());
 			}
 		}
-		for(Instruction instruction : instructions[instr].allSucc())
+		for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : instructions[instr].allSucc())
 		{
 			getPostRefs(var, instructions, instruction.num(), visited, result);
 		}

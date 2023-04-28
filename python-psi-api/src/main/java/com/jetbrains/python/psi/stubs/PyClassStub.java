@@ -25,8 +25,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.psi.stubs.NamedStub;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.stub.NamedStub;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.PyClass;
 
 public interface PyClassStub extends NamedStub<PyClass>

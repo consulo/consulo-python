@@ -2,9 +2,9 @@ package com.jetbrains.python.debugger;
 
 import java.io.IOException;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.frame.XValueChildrenList;
+import consulo.execution.debug.XDebugSession;
+import consulo.execution.debug.frame.XValueChildrenList;
+import consulo.execution.ui.console.ConsoleViewContentType;
 import com.jetbrains.python.debugger.pydev.PyDebugCallback;
 
 /**

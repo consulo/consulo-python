@@ -15,18 +15,19 @@
  */
 package com.jetbrains.python.statistics;
 
-import com.intellij.internal.statistic.AbstractApplicationUsagesCollector;
-import com.intellij.internal.statistic.CollectUsagesException;
-import com.intellij.internal.statistic.beans.UsageDescriptor;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.jetbrains.python.packaging.PyPIPackageUtil;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.packaging.PyRequirement;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationManager;
+import consulo.content.bundle.Sdk;
+import consulo.externalService.statistic.AbstractApplicationUsagesCollector;
+import consulo.externalService.statistic.CollectUsagesException;
+import consulo.externalService.statistic.UsageDescriptor;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.project.Project;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -37,42 +38,35 @@ import java.util.Set;
 /**
  * @author yole
  */
-public class PyPackageUsagesCollector extends AbstractApplicationUsagesCollector
-{
-	@Nonnull
-	@Override
-	public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException
-	{
-		final Set<UsageDescriptor> result = new HashSet<>();
-		for(final Module m : ModuleManager.getInstance(project).getModules())
-		{
-			final Sdk pythonSdk = PythonSdkType.findPythonSdk(m);
-			if(pythonSdk != null)
-			{
-				ApplicationManager.getApplication().runReadAction(() -> {
-					List<PyRequirement> requirements = PyPackageManager.getInstance(pythonSdk).getRequirements(m);
-					if(requirements != null)
-					{
-						Collection<String> packages = new HashSet<>(PyPIPackageUtil.INSTANCE.getPackageNames());
-						for(PyRequirement requirement : requirements)
-						{
-							String name = requirement.getName();
-							if(packages.contains(name))
-							{
-								result.add(new UsageDescriptor(name, 1));
-							}
-						}
-					}
-				});
-			}
-		}
-		return result;
-	}
+@ExtensionImpl
+public class PyPackageUsagesCollector extends AbstractApplicationUsagesCollector {
+  @Nonnull
+  @Override
+  public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException {
+    final Set<UsageDescriptor> result = new HashSet<>();
+    for (final Module m : ModuleManager.getInstance(project).getModules()) {
+      final Sdk pythonSdk = PythonSdkType.findPythonSdk(m);
+      if (pythonSdk != null) {
+        ApplicationManager.getApplication().runReadAction(() -> {
+          List<PyRequirement> requirements = PyPackageManager.getInstance(pythonSdk).getRequirements(m);
+          if (requirements != null) {
+            Collection<String> packages = new HashSet<>(PyPIPackageUtil.INSTANCE.getPackageNames());
+            for (PyRequirement requirement : requirements) {
+              String name = requirement.getName();
+              if (packages.contains(name)) {
+                result.add(new UsageDescriptor(name, 1));
+              }
+            }
+          }
+        });
+      }
+    }
+    return result;
+  }
 
-	@Nonnull
-	@Override
-	public String getGroupId()
-	{
-		return "consulo.python.packages";
-	}
+  @Nonnull
+  @Override
+  public String getGroupId() {
+    return "consulo.python.packages";
+  }
 }

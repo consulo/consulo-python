@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.search;
 
-import com.intellij.psi.search.searches.ExtensibleQueryFactory;
-import com.intellij.util.Query;
 import com.jetbrains.python.psi.PyClass;
+import consulo.application.util.query.ExtensibleQueryFactory;
+import consulo.application.util.query.Query;
 
 /**
  * @author yole
@@ -45,7 +45,7 @@ public class PyClassInheritorsSearch extends ExtensibleQueryFactory<PyClass, PyC
   }
 
   private PyClassInheritorsSearch() {
-    super("consulo.python");
+    super(PyClassInheritorsSearchExecutor.class);
   }
 
   public static Query<PyClass> search(final PyClass superClass, final boolean checkDeepInheritance) {

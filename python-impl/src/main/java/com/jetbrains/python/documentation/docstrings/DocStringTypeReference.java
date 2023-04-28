@@ -21,18 +21,18 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
-import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.ElementManipulator;
-import com.intellij.psi.ElementManipulators;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPolyVariantReferenceBase;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.impl.internal.completion.CompletionUtil;
+import consulo.document.util.TextRange;
+import consulo.language.util.IncorrectOperationException;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.ElementManipulator;
+import consulo.language.psi.ElementManipulators;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiPolyVariantReferenceBase;
+import consulo.language.psi.ResolveResult;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
@@ -178,7 +178,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 					{
 						continue;
 					}
-					final PyType type = TypeEvalContext.userInitiated(file.getProject(), CompletionUtil.getOriginalOrSelf(file)).getType(referenceExpression);
+					final PyType type = TypeEvalContext.userInitiated(file.getProject(), consulo.language.editor.impl.internal.completion.CompletionUtil.getOriginalOrSelf(file)).getType(referenceExpression);
 					if(type instanceof PyClassType)
 					{
 						variants.add(((PyClassType) type).getPyClass());

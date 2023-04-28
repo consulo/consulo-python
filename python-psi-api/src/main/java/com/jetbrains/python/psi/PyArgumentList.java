@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import com.jetbrains.python.FunctionParameter;
 
 /**

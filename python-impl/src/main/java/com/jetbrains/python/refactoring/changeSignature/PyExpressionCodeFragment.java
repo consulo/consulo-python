@@ -18,14 +18,14 @@ package com.jetbrains.python.refactoring.changeSignature;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiCodeFragment;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.SingleRootFileViewProvider;
-import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testFramework.LightVirtualFile;
+import consulo.language.impl.file.SingleRootFileViewProvider;
+import consulo.language.impl.internal.psi.PsiManagerEx;
+import consulo.project.Project;
+import consulo.language.psi.PsiCodeFragment;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.file.light.LightVirtualFile;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.impl.PyFileImpl;
 import org.jetbrains.annotations.NonNls;

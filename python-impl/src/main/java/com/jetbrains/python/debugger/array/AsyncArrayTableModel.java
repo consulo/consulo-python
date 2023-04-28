@@ -31,9 +31,9 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.ConcurrencyUtil;
-import com.intellij.util.ui.UIUtil;
+import consulo.util.lang.Pair;
+import consulo.util.concurrent.ConcurrencyUtil;
+import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.ArrayChunkBuilder;
 

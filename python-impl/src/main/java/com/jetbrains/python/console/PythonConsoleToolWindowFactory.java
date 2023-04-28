@@ -15,25 +15,22 @@
  */
 package com.jetbrains.python.console;
 
-import javax.annotation.Nonnull;
+import consulo.application.TransactionGuard;
+import consulo.application.dumb.DumbAware;
+import consulo.project.Project;
+import consulo.ui.ex.toolWindow.ToolWindow;
 
-import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
-public class PythonConsoleToolWindowFactory implements ToolWindowFactory, DumbAware
-{
-	public static final String ID = "Python Console";
+public class PythonConsoleToolWindowFactory implements DumbAware {
+  public static final String ID = "Python Console";
 
-	@Override
-	public void createToolWindowContent(final @Nonnull Project project, final @Nonnull ToolWindow toolWindow)
-	{
-		PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(project, null);
-		TransactionGuard.submitTransaction(project, runner::runSync);
-	}
+  //@Override
+  public void createToolWindowContent(final @Nonnull Project project, final @Nonnull ToolWindow toolWindow) {
+    PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(project, null);
+    TransactionGuard.submitTransaction(project, runner::runSync);
+  }
 }

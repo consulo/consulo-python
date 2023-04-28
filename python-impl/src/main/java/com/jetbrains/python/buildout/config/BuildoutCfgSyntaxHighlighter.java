@@ -17,11 +17,11 @@
 package com.jetbrains.python.buildout.config;
 
 import com.google.common.collect.Maps;
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.lexer.Lexer;
+import consulo.codeEditor.DefaultLanguageHighlighterColors;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.language.editor.highlight.SyntaxHighlighterBase;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.buildout.config.lexer.BuildoutCfgFlexLexer;
 import org.jetbrains.annotations.NonNls;
 import javax.annotation.Nonnull;

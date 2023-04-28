@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.ui;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
+import consulo.project.Project;
+import consulo.ui.ex.awt.DialogWrapper;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

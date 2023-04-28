@@ -19,8 +19,8 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.ArrayUtil;
+import consulo.language.psi.PsiFile;
+import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyArgumentList;
 import com.jetbrains.python.psi.PyCallExpression;

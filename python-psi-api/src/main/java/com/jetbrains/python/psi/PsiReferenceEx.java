@@ -18,8 +18,8 @@ package com.jetbrains.python.psi;
 
 import javax.annotation.Nullable;
 
-import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.psi.PsiReference;
+import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.language.psi.PsiReference;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
 public interface PsiReferenceEx extends PsiReference {

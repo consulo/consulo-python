@@ -19,10 +19,10 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiLanguageInjectionHost;
+import consulo.language.ast.ASTNode;
+import consulo.util.lang.Pair;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiLanguageInjectionHost;
 
 public interface PyStringLiteralExpression extends PyLiteralExpression, StringLiteralExpression, PsiLanguageInjectionHost
 {

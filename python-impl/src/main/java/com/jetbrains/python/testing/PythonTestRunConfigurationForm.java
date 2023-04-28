@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.testing;
 
-import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
+import static consulo.util.io.FileUtil.toSystemIndependentName;
 import static com.jetbrains.python.testing.unittest.PythonUnitTestRunConfiguration.TestType;
 
 import java.awt.BorderLayout;
@@ -28,12 +28,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.ui.PanelWithAnchor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.project.Project;
+import consulo.ui.ex.awt.LabeledComponent;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.util.io.FileUtil;
+import consulo.ui.ex.awt.PanelWithAnchor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;

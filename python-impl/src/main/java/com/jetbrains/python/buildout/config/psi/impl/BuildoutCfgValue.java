@@ -18,7 +18,7 @@ package com.jetbrains.python.buildout.config.psi.impl;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 
 /**
  * @author traff

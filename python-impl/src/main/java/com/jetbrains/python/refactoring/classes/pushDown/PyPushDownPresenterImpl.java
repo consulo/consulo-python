@@ -17,10 +17,10 @@ package com.jetbrains.python.refactoring.classes.pushDown;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.classMembers.MemberInfoModel;
-import com.intellij.refactoring.classMembers.UsedByDependencyMemberInfoModel;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.project.Project;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.language.editor.refactoring.classMember.UsedByDependencyMemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyUtil;

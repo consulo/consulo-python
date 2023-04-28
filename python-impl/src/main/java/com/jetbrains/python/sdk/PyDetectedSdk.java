@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.sdk;
 
-import com.intellij.openapi.projectRoots.SdkTable;
-import com.intellij.openapi.projectRoots.impl.SdkImpl;
+import consulo.content.bundle.SdkTable;
+import consulo.content.impl.internal.bundle.SdkImpl;
 
 public class PyDetectedSdk extends SdkImpl
 {

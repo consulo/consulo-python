@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.psi;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
 
 /**
  * A generic string literal interface (used both in Python code and template files).

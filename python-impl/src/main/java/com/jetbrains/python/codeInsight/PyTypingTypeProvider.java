@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.codeInsight;
 
-import static com.intellij.util.containers.ContainerUtil.list;
+import static consulo.util.collection.ContainerUtil.list;
 import static com.jetbrains.python.psi.PyUtil.as;
 
 import java.util.ArrayList;
@@ -33,12 +33,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.project.Project;
+import consulo.util.lang.ref.Ref;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.ContainerUtil;
 import java.util.HashSet;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;

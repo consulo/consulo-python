@@ -15,75 +15,62 @@
  */
 package com.jetbrains.python.packaging;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.python.packaging.ui.PyCondaManagementService;
 import com.jetbrains.python.packaging.ui.PyPackageManagementService;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.bundle.Sdk;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author yole
  */
-public class PyPackageManagersImpl extends PyPackageManagers
-{
-	private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<>();
+public class PyPackageManagersImpl extends PyPackageManagers {
+  private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<>();
 
-	@Nonnull
-	public synchronized PyPackageManager forSdk(@Nonnull final Sdk sdk)
-	{
-		final String key = PythonSdkType.getSdkKey(sdk);
-		PyPackageManagerImpl manager = myInstances.get(key);
-		if(manager == null)
-		{
-			if(PythonSdkType.isRemote(sdk))
-			{
-				manager = new PyRemotePackageManagerImpl(sdk);
-			}
-			else if(PyCondaPackageManagerImpl.isCondaVEnv(sdk) && PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory()) != null)
-			{
-				manager = new PyCondaPackageManagerImpl(sdk);
-			}
-			else
-			{
-				manager = new PyPackageManagerImpl(sdk);
-			}
-			if(sdkIsSetUp(sdk))
-			{
-				myInstances.put(key, manager);
-			}
-		}
-		return manager;
-	}
+  @Nonnull
+  public synchronized PyPackageManager forSdk(@Nonnull final Sdk sdk) {
+    final String key = PythonSdkType.getSdkKey(sdk);
+    PyPackageManagerImpl manager = myInstances.get(key);
+    if (manager == null) {
+      if (PythonSdkType.isRemote(sdk)) {
+        manager = new PyRemotePackageManagerImpl(sdk);
+      }
+      else if (PyCondaPackageManagerImpl.isCondaVEnv(sdk) && PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory()) != null) {
+        manager = new PyCondaPackageManagerImpl(sdk);
+      }
+      else {
+        manager = new PyPackageManagerImpl(sdk);
+      }
+      if (sdkIsSetUp(sdk)) {
+        myInstances.put(key, manager);
+      }
+    }
+    return manager;
+  }
 
-	private static boolean sdkIsSetUp(@Nonnull final Sdk sdk)
-	{
-		final VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
-		return roots.length != 0;
-	}
+  private static boolean sdkIsSetUp(@Nonnull final Sdk sdk) {
+    final VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+    return roots.length != 0;
+  }
 
-	public PyPackageManagementService getManagementService(Project project, Sdk sdk)
-	{
-		if(PyCondaPackageManagerImpl.isCondaVEnv(sdk))
-		{
-			return new PyCondaManagementService(project, sdk);
-		}
-		return new PyPackageManagementService(project, sdk);
-	}
+  public PyPackageManagementService getManagementService(Project project, Sdk sdk) {
+    if (PyCondaPackageManagerImpl.isCondaVEnv(sdk)) {
+      return new PyCondaManagementService(project, sdk);
+    }
+    return new PyPackageManagementService(project, sdk);
+  }
 
-	@Override
-	public void clearCache(@Nonnull Sdk sdk)
-	{
-		final String key = PythonSdkType.getSdkKey(sdk);
-		if(myInstances.containsKey(key))
-		{
-			myInstances.remove(key);
-		}
-	}
+  @Override
+  public void clearCache(@Nonnull Sdk sdk) {
+    final String key = PythonSdkType.getSdkKey(sdk);
+    if (myInstances.containsKey(key)) {
+      myInstances.remove(key);
+    }
+  }
 }

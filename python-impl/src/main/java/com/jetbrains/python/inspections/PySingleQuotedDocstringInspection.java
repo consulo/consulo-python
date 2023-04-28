@@ -16,26 +16,28 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.ConvertDocstringQuickFix;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * User: catherine
- *
+ * <p>
  * Inspection to detect docstrings not using triple double-quoted string
  */
+@ExtensionImpl
 public class PySingleQuotedDocstringInspection extends PyInspection {
 
   @Nls
@@ -49,7 +51,8 @@ public class PySingleQuotedDocstringInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -65,7 +68,7 @@ public class PySingleQuotedDocstringInspection extends PyInspection {
       stringText = stringText.substring(length);
       final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
       if (docStringOwner != null) {
-        if (docStringOwner.getDocStringExpression() == string)  {
+        if (docStringOwner.getDocStringExpression() == string) {
           if (!stringText.startsWith("\"\"\"") && !stringText.endsWith("\"\"\"")) {
             ProblemsHolder holder = getHolder();
             if (holder != null) {
@@ -73,9 +76,9 @@ public class PySingleQuotedDocstringInspection extends PyInspection {
               if (stringText.startsWith("'''") && stringText.endsWith("'''")) {
                 quoteCount = 3;
               }
-              TextRange trStart = new TextRange(length, length+quoteCount);
-              TextRange trEnd = new TextRange(stringText.length()+length-quoteCount,
-                                              stringText.length()+length);
+              TextRange trStart = new TextRange(length, length + quoteCount);
+              TextRange trEnd = new TextRange(stringText.length() + length - quoteCount,
+                                              stringText.length() + length);
               if (string.getStringValue().isEmpty())
                 holder.registerProblem(string, PyBundle.message("INSP.message.single.quoted.docstring"),
                                        new ConvertDocstringQuickFix());

@@ -16,10 +16,6 @@
 
 package consulo.ironPython.psi.impl;
 
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Processor;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
@@ -30,8 +26,11 @@ import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.dotnet.psi.*;
-import consulo.dotnet.resolve.DotNetNamespaceAsElement;
-import consulo.dotnet.resolve.DotNetTypeRef;
+import consulo.dotnet.psi.resolve.DotNetNamespaceAsElement;
+import consulo.dotnet.psi.resolve.DotNetTypeRef;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ModuleUtilCore;
+import consulo.util.lang.ref.Ref;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,7 +53,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 		}
 		if(referenceTarget instanceof DotNetNamespaceAsElement)
 		{
-			return new PyDotNetNamespaceType((DotNetNamespaceAsElement) referenceTarget, anchor == null ? null : ModuleUtil.findModuleForPsiElement(anchor));
+			return new PyDotNetNamespaceType((DotNetNamespaceAsElement) referenceTarget, anchor == null ? null : ModuleUtilCore.findModuleForPsiElement(anchor));
 		}
 		if(referenceTarget instanceof DotNetLikeMethodDeclaration)
 		{
@@ -94,29 +93,24 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 			return null;
 		}
 		final List<PyType> superMethodParameterTypes = new ArrayList<PyType>();
-		PySuperMethodsSearch.search(func, context).forEach(new Processor<PsiElement>()
+		PySuperMethodsSearch.search(func, context).forEach(psiElement ->
 		{
-			@Override
-			@RequiredReadAction
-			public boolean process(final PsiElement psiElement)
+			if(psiElement instanceof DotNetLikeMethodDeclaration)
 			{
-				if(psiElement instanceof DotNetLikeMethodDeclaration)
+				final DotNetLikeMethodDeclaration method = (DotNetLikeMethodDeclaration) psiElement;
+				final DotNetParameter[] psiParameters = method.getParameterList().getParameters();
+				int javaIndex = method.hasModifier(DotNetModifier.STATIC) ? index : index - 1; // adjust for 'self' parameter
+				if(javaIndex < psiParameters.length)
 				{
-					final DotNetLikeMethodDeclaration method = (DotNetLikeMethodDeclaration) psiElement;
-					final DotNetParameter[] psiParameters = method.getParameterList().getParameters();
-					int javaIndex = method.hasModifier(DotNetModifier.STATIC) ? index : index - 1; // adjust for 'self' parameter
-					if(javaIndex < psiParameters.length)
+					DotNetTypeRef paramType = psiParameters[javaIndex].toTypeRef(true);
+					PsiElement resolve = paramType.resolve().getElement();
+					if(resolve instanceof DotNetTypeDeclaration)
 					{
-						DotNetTypeRef paramType = psiParameters[javaIndex].toTypeRef(true);
-						PsiElement resolve = paramType.resolve().getElement();
-						if(resolve instanceof DotNetTypeDeclaration)
-						{
-							superMethodParameterTypes.add(new PyDotNetClassType((DotNetTypeDeclaration) resolve, false));
-						}
+						superMethodParameterTypes.add(new PyDotNetClassType((DotNetTypeDeclaration) resolve, false));
 					}
 				}
-				return true;
 			}
+			return true;
 		});
 		if(superMethodParameterTypes.size() > 0)
 		{

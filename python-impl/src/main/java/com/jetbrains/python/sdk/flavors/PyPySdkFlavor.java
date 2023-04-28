@@ -16,33 +16,34 @@
 
 package com.jetbrains.python.sdk.flavors;
 
-import java.io.File;
-import java.util.List;
+import com.jetbrains.python.PythonIcons;
+import com.jetbrains.python.psi.LanguageLevel;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.content.bundle.Sdk;
+import consulo.ui.image.Image;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
-
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.python.psi.LanguageLevel;
-import consulo.ui.image.Image;
-import icons.PythonIcons;
+import java.io.File;
+import java.util.List;
 
 /**
  * @author traff
  */
+@ExtensionImpl
 public class PyPySdkFlavor extends PythonSdkFlavor {
-  private PyPySdkFlavor() {
-  }
-
+  @Override
   public boolean isValidSdkPath(@Nonnull File file) {
     return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("pypy");
   }
 
+  @Override
   public String getVersionRegexp() {
     return "\\[(PyPy \\S+).*\\]";
   }
 
+  @Override
   public String getVersionOption() {
     return "--version";
   }

@@ -15,9 +15,9 @@
  */
 package com.jetbrains.python.formatter;
 
-import com.intellij.formatting.WrapType;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
+import consulo.language.codeStyle.WrapType;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CustomCodeStyleSettings;
 import com.jetbrains.python.PyBundle;
 
 /**

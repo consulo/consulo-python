@@ -1,8 +1,9 @@
 package com.jetbrains.python.debugger;
 
+import consulo.execution.debug.XSourcePosition;
+import consulo.execution.debug.frame.XValueChildrenList;
+
 import javax.annotation.Nullable;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.frame.XValueChildrenList;
 
 /**
  * Facade to access python variables frame

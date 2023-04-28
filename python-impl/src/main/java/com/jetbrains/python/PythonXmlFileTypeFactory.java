@@ -16,21 +16,21 @@
 
 package com.jetbrains.python;
 
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.virtualFileSystem.fileType.FileTypeConsumer;
+import consulo.virtualFileSystem.fileType.FileTypeFactory;
+import consulo.xml.ide.highlighter.XmlFileType;
 
-import com.intellij.ide.highlighter.XmlFileType;
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 20.10.13.
  */
-public class PythonXmlFileTypeFactory extends FileTypeFactory
-{
-	@Override
-	public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer)
-	{
-		fileTypeConsumer.consume(XmlFileType.INSTANCE, "qrc");
-	}
+@ExtensionImpl
+public class PythonXmlFileTypeFactory extends FileTypeFactory {
+  @Override
+  public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer) {
+    fileTypeConsumer.consume(XmlFileType.INSTANCE, "qrc");
+  }
 }

@@ -16,12 +16,16 @@
 
 package com.jetbrains.python.editor.selectWord;
 
-import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyCallExpression;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.language.editor.action.ExtendWordSelectionHandlerBase;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiWhiteSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +33,17 @@ import java.util.List;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyStatementSelectionHandler extends ExtendWordSelectionHandlerBase {
   public boolean canSelect(final PsiElement e) {
     return e instanceof PyStringLiteralExpression || e instanceof PyCallExpression || e instanceof PyStatement ||
-           e instanceof PyStatementList;
+      e instanceof PyStatementList;
   }
 
   public List<TextRange> select(final PsiElement e, final CharSequence editorText, final int cursorOffset, final Editor editor) {
     List<TextRange> result = new ArrayList<TextRange>();
     PsiElement endElement = e;
-    while(endElement.getLastChild() != null) {
+    while (endElement.getLastChild() != null) {
       endElement = endElement.getLastChild();
     }
     if (endElement instanceof PsiWhiteSpace) {

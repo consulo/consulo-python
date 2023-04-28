@@ -15,55 +15,7 @@
  */
 package com.jetbrains.python.inspections.unresolvedReference;
 
-import static com.jetbrains.python.inspections.quickfix.AddIgnoredIdentifierQuickFix.END_WILDCARD;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ui.ListEditForm;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Comparing;
-import consulo.util.dataholder.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyCustomType;
 import com.jetbrains.python.PyNames;
@@ -78,12 +30,7 @@ import com.jetbrains.python.codeInsight.imports.PythonImportUtils;
 import com.jetbrains.python.console.PydevConsoleRunner;
 import com.jetbrains.python.documentation.docstrings.DocStringParameterReference;
 import com.jetbrains.python.documentation.docstrings.DocStringTypeReference;
-import com.jetbrains.python.inspections.PyInspection;
-import com.jetbrains.python.inspections.PyInspectionExtension;
-import com.jetbrains.python.inspections.PyInspectionVisitor;
-import com.jetbrains.python.inspections.PyPackageRequirementsInspection;
-import com.jetbrains.python.inspections.PyUnreachableCodeInspection;
-import com.jetbrains.python.inspections.PyUnresolvedReferenceQuickFixProvider;
+import com.jetbrains.python.inspections.*;
 import com.jetbrains.python.inspections.quickfix.*;
 import com.jetbrains.python.packaging.PyPIPackageUtil;
 import com.jetbrains.python.packaging.PyPackageUtil;
@@ -101,18 +48,49 @@ import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
 import com.jetbrains.python.psi.types.*;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.skeletons.PySkeletonRefresher;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.component.extension.Extensions;
+import consulo.content.bundle.Sdk;
+import consulo.document.util.TextRange;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.inject.InjectedLanguageManager;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.collection.SmartList;
+import consulo.util.dataholder.Key;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.Pair;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+
+import static com.jetbrains.python.inspections.quickfix.AddIgnoredIdentifierQuickFix.END_WILDCARD;
 
 /**
  * Marks references that fail to resolve. Also tracks unused imports and provides "optimize imports" support.
  * User: dcheryasov
  * Date: Nov 15, 2008
  */
+@ExtensionImpl
 public class PyUnresolvedReferencesInspection extends PyInspection
 {
 	private static final Key<Visitor> KEY = Key.create("PyUnresolvedReferencesInspection.Visitor");
-	public static final Key<PyUnresolvedReferencesInspection> SHORT_NAME_KEY = Key.create(PyUnresolvedReferencesInspection.class.getSimpleName());
-
-	public List<String> ignoredIdentifiers = new ArrayList<>();
+	public static final Key<PyUnresolvedReferencesInspection> SHORT_NAME_KEY =
+			Key.create(PyUnresolvedReferencesInspection.class.getSimpleName());
 
 	public static PyUnresolvedReferencesInspection getInstance(PsiElement element)
 	{
@@ -129,9 +107,14 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, final boolean isOnTheFly, @Nonnull final LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  final boolean isOnTheFly,
+										  @Nonnull final LocalInspectionToolSession session,
+										  Object state)
 	{
-		final Visitor visitor = new Visitor(holder, session, ignoredIdentifiers);
+		PyUnresolvedReferencesInspectionState inspectionState = (PyUnresolvedReferencesInspectionState) state;
+
+		final Visitor visitor = new Visitor(holder, session, inspectionState.ignoredIdentifiers);
 		// buildVisitor() will be called on injected files in the same session - don't overwrite if we already have one
 		final Visitor existingVisitor = session.getUserData(KEY);
 		if(existingVisitor == null)
@@ -142,7 +125,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 	}
 
 	@Override
-	public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder)
+	public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder, Object state)
 	{
 		final Visitor visitor = session.getUserData(KEY);
 		assert visitor != null;
@@ -151,13 +134,6 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			visitor.highlightUnusedImports();
 		}
 		session.putUserData(KEY, null);
-	}
-
-	@Override
-	public JComponent createOptionsPanel()
-	{
-		final ListEditForm form = new ListEditForm("Ignore references", ignoredIdentifiers);
-		return form.getContentPanel();
 	}
 
 	public static class Visitor extends PyInspectionVisitor
@@ -550,13 +526,17 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 					{
 						final PyTargetExpression asElement = importElement.getAsNameElement();
 						final PyElement toHighlight = asElement != null ? asElement : node;
-						registerProblem(toHighlight, PyBundle.message("INSP.try.except.import.error", visibleName), ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+						registerProblem(toHighlight,
+								PyBundle.message("INSP.try.except.import.error", visibleName),
+								ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
 					}
 				}
 			}
 		}
 
-		private void registerUnresolvedReferenceProblem(@Nonnull PyElement node, @Nonnull final PsiReference reference, @Nonnull HighlightSeverity severity)
+		private void registerUnresolvedReferenceProblem(@Nonnull PyElement node,
+														@Nonnull final PsiReference reference,
+														@Nonnull HighlightSeverity severity)
 		{
 			if(reference instanceof DocStringTypeReference)
 			{
@@ -632,7 +612,8 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 					}
 					addAddSelfFix(node, expr, actions);
 					PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
-					if(callExpression != null && (!(callExpression.getCallee() instanceof PyQualifiedExpression) || ((PyQualifiedExpression) callExpression.getCallee()).getQualifier() == null))
+					if(callExpression != null && (!(callExpression.getCallee() instanceof PyQualifiedExpression) || ((PyQualifiedExpression) callExpression
+							.getCallee()).getQualifier() == null))
 					{
 						actions.add(new UnresolvedRefCreateFunctionQuickFix(callExpression, expr));
 					}
@@ -653,7 +634,9 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 					return;
 				}
 				// may be a "try: import ..."; not an error not to resolve
-				if((PsiTreeUtil.getParentOfType(PsiTreeUtil.getParentOfType(node, PyImportElement.class), PyTryExceptStatement.class, PyIfStatement.class) != null))
+				if((PsiTreeUtil.getParentOfType(PsiTreeUtil.getParentOfType(node, PyImportElement.class),
+						PyTryExceptStatement.class,
+						PyIfStatement.class) != null))
 				{
 					severity = HighlightSeverity.WEAK_WARNING;
 					description = PyBundle.message("INSP.module.$0.not.found", refText);
@@ -705,7 +688,10 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 											className = metaClassType.getName();
 										}
 									}
-									description = PyBundle.message("INSP.unresolved.operator.ref", className, refName, ((PyOperatorReference) reference).getReadableOperatorName());
+									description = PyBundle.message("INSP.unresolved.operator.ref",
+											className,
+											refName,
+											((PyOperatorReference) reference).getReadableOperatorName());
 								}
 								else
 								{
@@ -822,7 +808,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 		{
 			// TODO: check
 			return false;
-	  /*return (type instanceof PyCustomType) && ((PyCustomType)type).hasMember(refName);*/
+			/*return (type instanceof PyCustomType) && ((PyCustomType)type).hasMember(refName);*/
 		}
 
 		/**
@@ -1021,7 +1007,10 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			return false;
 		}
 
-		private static boolean hasUnresolvedDynamicMember(@Nonnull final PyClassType type, PsiReference reference, @Nonnull final String name, TypeEvalContext typeEvalContext)
+		private static boolean hasUnresolvedDynamicMember(@Nonnull final PyClassType type,
+														  PsiReference reference,
+														  @Nonnull final String name,
+														  TypeEvalContext typeEvalContext)
 		{
 			for(PyClassMembersProvider provider : Extensions.getExtensions(PyClassMembersProvider.EP_NAME))
 			{
@@ -1222,7 +1211,9 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 			// if we're in a class context and the class defines a variable with the same name, offer auto-import only as quickfix,
 			// not as popup
 			PyClass containingClass = PsiTreeUtil.getParentOfType(node, PyClass.class);
-			if(containingClass != null && (containingClass.findMethodByName(importFix.getNameToImport(), true, null) != null || containingClass.findInstanceAttribute(importFix.getNameToImport(),
+			if(containingClass != null && (containingClass.findMethodByName(importFix.getNameToImport(),
+					true,
+					null) != null || containingClass.findInstanceAttribute(importFix.getNameToImport(),
 					true) != null))
 			{
 				return true;
@@ -1267,9 +1258,9 @@ public class PyUnresolvedReferencesInspection extends PyInspection
 
 		private static void addPluginQuickFixes(PsiReference reference, final List<LocalQuickFix> actions)
 		{
-			for(PyUnresolvedReferenceQuickFixProvider provider : Extensions.getExtensions(PyUnresolvedReferenceQuickFixProvider.EP_NAME))
+			for(PyUnresolvedReferenceQuickFixProvider provider : PyUnresolvedReferenceQuickFixProvider.EP_NAME.getExtensionList())
 			{
-				provider.registerQuickFixes(reference, localQuickFix -> actions.add(localQuickFix));
+				provider.registerQuickFixes(reference, actions::add);
 			}
 		}
 

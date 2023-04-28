@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.xdebugger.breakpoints.SuspendPolicy;
-import com.intellij.xdebugger.frame.XValueChildrenList;
+import consulo.execution.debug.breakpoint.SuspendPolicy;
+import consulo.execution.debug.frame.XValueChildrenList;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebugValue;

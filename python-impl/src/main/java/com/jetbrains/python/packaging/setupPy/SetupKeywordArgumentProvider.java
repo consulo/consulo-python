@@ -16,7 +16,8 @@
 
 package com.jetbrains.python.packaging.setupPy;
 
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyKeywordArgumentProvider;
@@ -28,6 +29,7 @@ import java.util.List;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class SetupKeywordArgumentProvider implements PyKeywordArgumentProvider {
   @Override
   public List<String> getKeywordArguments(PyFunction function, PyCallExpression callExpr) {

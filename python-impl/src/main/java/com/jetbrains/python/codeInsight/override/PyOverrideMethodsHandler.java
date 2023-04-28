@@ -15,19 +15,23 @@
  */
 package com.jetbrains.python.codeInsight.override;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.LanguageCodeInsightActionHandler;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.language.Language;
+import consulo.language.editor.generation.OverrideMethodHandler;
+import consulo.language.psi.PsiFile;
+import consulo.project.Project;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
  */
-public class PyOverrideMethodsHandler implements LanguageCodeInsightActionHandler
+@ExtensionImpl
+public class PyOverrideMethodsHandler implements OverrideMethodHandler
 {
 	public boolean isValidFor(Editor editor, PsiFile file)
 	{
@@ -46,5 +50,12 @@ public class PyOverrideMethodsHandler implements LanguageCodeInsightActionHandle
 	public boolean startInWriteAction()
 	{
 		return false;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

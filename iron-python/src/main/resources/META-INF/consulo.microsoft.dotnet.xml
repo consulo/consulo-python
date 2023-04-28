@@ -7,7 +7,5 @@
 								 immutableClass="consulo.ironPython.module.extension.IronPythonModuleExtension"
 								 mutableClass="consulo.ironPython.module.extension.IronPythonMutableModuleExtension"/>
 	</extensions>
-	<extensions defaultExtensionNs="consulo.python">
-		<sdkFlavor implementation="consulo.ironPython.sdk.flavors.IronPythonSdkFlavor"/>
-	</extensions>
+
 </consulo-plugin>

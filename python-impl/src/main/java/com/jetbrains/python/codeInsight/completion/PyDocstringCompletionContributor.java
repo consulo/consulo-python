@@ -16,33 +16,32 @@
 
 package com.jetbrains.python.codeInsight.completion;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
-
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.documentation.PyDocumentationSettings;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
-import consulo.codeInsight.completion.CompletionProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ModuleUtilCore;
+import consulo.language.util.ProcessingContext;
+import consulo.module.Module;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
+
+import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PyDocstringCompletionContributor extends CompletionContributor {
   public PyDocstringCompletionContributor() {
     extend(CompletionType.BASIC,
@@ -50,16 +49,21 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
            new IdentifierCompletionProvider());
   }
 
-  private static class IdentifierCompletionProvider implements CompletionProvider
-  {
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
+
+  private static class IdentifierCompletionProvider implements CompletionProvider {
 
     private IdentifierCompletionProvider() {
     }
 
     @Override
-	public void addCompletions(@Nonnull CompletionParameters parameters,
-                                  ProcessingContext context,
-                                  @Nonnull CompletionResultSet result) {
+    public void addCompletions(@Nonnull CompletionParameters parameters,
+                               ProcessingContext context,
+                               @Nonnull CompletionResultSet result) {
       if (parameters.isAutoPopup()) return;
       final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyDocStringOwner.class);
       if (docStringOwner != null) {
@@ -88,7 +92,7 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
     }
     final String text = file.getText();
     StringBuilder prefixBuilder = new StringBuilder();
-    while(offset > 0 && Character.isLetterOrDigit(text.charAt(offset))) {
+    while (offset > 0 && Character.isLetterOrDigit(text.charAt(offset))) {
       prefixBuilder.insert(0, text.charAt(offset));
       offset--;
     }

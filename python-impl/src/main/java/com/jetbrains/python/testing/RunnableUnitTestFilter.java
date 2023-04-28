@@ -16,10 +16,13 @@
 
 package com.jetbrains.python.testing;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiFile;
+import consulo.module.Module;
+
 import javax.annotation.Nonnull;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiFile;
 
 /**
  * Filters out Python unit tests for which it doesn't make sense to run the standard unit test configuration,
@@ -27,8 +30,9 @@ import com.intellij.psi.PsiFile;
  *
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface RunnableUnitTestFilter {
-  ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create("consulo.python.runnableUnitTestFilter");
+  ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create(RunnableUnitTestFilter.class);
 
   boolean isRunnableUnitTest(PsiFile script, @Nonnull Module module);
 }

@@ -16,15 +16,18 @@
 
 package com.jetbrains.python.refactoring.surround;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.surroundWith.SurroundDescriptor;
-import com.intellij.lang.surroundWith.Surrounder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.refactoring.surround.surrounders.expressions.PyWithParenthesesSurrounder;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.surroundWith.SurroundDescriptor;
+import consulo.language.editor.surroundWith.Surrounder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,6 +35,7 @@ import com.jetbrains.python.refactoring.surround.surrounders.expressions.PyWithP
  * Date: Aug 27, 2009
  * Time: 5:59:04 PM
  */
+@ExtensionImpl
 public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
   private static final Surrounder[] SURROUNDERS = {new PyWithParenthesesSurrounder()};
 
@@ -52,5 +56,11 @@ public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
   @Override
   public boolean isExclusive() {
     return false;
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 }

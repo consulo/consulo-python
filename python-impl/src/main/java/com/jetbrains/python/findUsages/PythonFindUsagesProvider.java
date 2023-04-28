@@ -16,18 +16,22 @@
 
 package com.jetbrains.python.findUsages;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.cacheBuilder.WordsScanner;
-import com.intellij.lang.findUsages.FindUsagesProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.cacheBuilder.WordsScanner;
+import consulo.language.findUsage.FindUsagesProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.util.PsiTreeUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonFindUsagesProvider implements FindUsagesProvider {
   public boolean canFindUsagesFor(@Nonnull PsiElement psiElement) {
     return psiElement instanceof PsiNamedElement || psiElement instanceof PyReferenceExpression;
@@ -115,5 +119,11 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
 
   public WordsScanner getWordsScanner() {
     return new PyWordsScanner();
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 }

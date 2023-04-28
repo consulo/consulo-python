@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.codeInsight.regexp;
 
-import com.intellij.lang.Language;
+import consulo.language.Language;
 import org.intellij.lang.regexp.RegExpLanguage;
 
 /**

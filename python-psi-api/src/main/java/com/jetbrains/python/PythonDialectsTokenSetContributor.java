@@ -18,16 +18,19 @@ package com.jetbrains.python;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.tree.TokenSet;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.ast.TokenSet;
 
 /**
  * Contributes element types of various kinds specific for a particular Python dialect.
  *
  * @author vlan
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PythonDialectsTokenSetContributor {
-  ExtensionPointName<PythonDialectsTokenSetContributor> EP_NAME = ExtensionPointName.create("consulo.python.dialectsTokenSetContributor");
+  ExtensionPointName<PythonDialectsTokenSetContributor> EP_NAME = ExtensionPointName.create(PythonDialectsTokenSetContributor.class);
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyStatement}.

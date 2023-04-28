@@ -16,29 +16,31 @@
 
 package com.jetbrains.rest.run.sphinx;
 
-import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.rest.RestFile;
 import com.jetbrains.rest.run.RestRunConfiguration;
 import com.jetbrains.rest.run.RestRunConfigurationType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.RunnerAndConfigurationSettings;
+import consulo.execution.action.ConfigurationContext;
+import consulo.execution.action.Location;
+import consulo.execution.action.RuntimeConfigurationProducer;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 /**
  * User : catherine
  */
+@ExtensionImpl
 public class SphinxConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
   private PsiDirectory mySourceFile = null;
 
@@ -79,7 +81,7 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
       configuration.setWorkingDirectory(parent.getPath());
     }
     configuration.setName(configuration.suggestedName());
-    Module module = ModuleUtil.findModuleForPsiElement(element);
+    Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module != null) {
       configuration.setUseModuleSdk(true);
       configuration.setModule(module);

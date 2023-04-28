@@ -15,14 +15,6 @@
  */
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.inspections.quickfix.PyChangeSignatureQuickFix;
@@ -30,61 +22,64 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.search.PySuperMethodsSearch;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov
  */
-public class PyMethodOverridingInspection extends PyInspection
-{
-	@Nls
-	@Nonnull
-	public String getDisplayName()
-	{
-		return PyBundle.message("INSP.NAME.method.over");
-	}
+@ExtensionImpl
+public class PyMethodOverridingInspection extends PyInspection {
+  @Nls
+  @Nonnull
+  public String getDisplayName() {
+    return PyBundle.message("INSP.NAME.method.over");
+  }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
-	{
-		return new Visitor(holder, session);
-	}
+  @Nonnull
+  @Override
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+                                        boolean isOnTheFly,
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
+    return new Visitor(holder, session);
+  }
 
-	public static class Visitor extends PyInspectionVisitor
-	{
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
-		{
-			super(holder, session);
-		}
+  public static class Visitor extends PyInspectionVisitor {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+      super(holder, session);
+    }
 
-		@Override
-		public void visitPyFunction(final PyFunction function)
-		{
-			// sanity checks
-			PyClass cls = function.getContainingClass();
-			if(cls == null)
-			{
-				return; // not a method, ignore
-			}
-			String name = function.getName();
-			if(PyNames.INIT.equals(name) || PyNames.NEW.equals(name))
-			{
-				return;  // these are expected to change signature
-			}
-			// real work
-			for(PsiElement psiElement : PySuperMethodsSearch.search(function, myTypeEvalContext))
-			{
-				if(psiElement instanceof PyFunction)
-				{
-					final PyFunction baseMethod = (PyFunction) psiElement;
-					final PyClass baseClass = baseMethod.getContainingClass();
-					if(!PyUtil.isSignatureCompatibleTo(function, baseMethod, myTypeEvalContext))
-					{
-						final String msg = PyBundle.message("INSP.signature.mismatch", cls.getName() + "." + name + "()", baseClass != null ? baseClass.getName() : "");
-						registerProblem(function.getParameterList(), msg, new PyChangeSignatureQuickFix(true));
-					}
-				}
-			}
-		}
-	}
+    @Override
+    public void visitPyFunction(final PyFunction function) {
+      // sanity checks
+      PyClass cls = function.getContainingClass();
+      if (cls == null) {
+        return; // not a method, ignore
+      }
+      String name = function.getName();
+      if (PyNames.INIT.equals(name) || PyNames.NEW.equals(name)) {
+        return;  // these are expected to change signature
+      }
+      // real work
+      for (PsiElement psiElement : PySuperMethodsSearch.search(function, myTypeEvalContext)) {
+        if (psiElement instanceof PyFunction) {
+          final PyFunction baseMethod = (PyFunction)psiElement;
+          final PyClass baseClass = baseMethod.getContainingClass();
+          if (!PyUtil.isSignatureCompatibleTo(function, baseMethod, myTypeEvalContext)) {
+            final String msg =
+              PyBundle.message("INSP.signature.mismatch", cls.getName() + "." + name + "()", baseClass != null ? baseClass.getName() : "");
+            registerProblem(function.getParameterList(), msg, new PyChangeSignatureQuickFix(true));
+          }
+        }
+      }
+    }
+  }
 }

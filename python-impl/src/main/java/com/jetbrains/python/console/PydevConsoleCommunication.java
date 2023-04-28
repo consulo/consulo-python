@@ -15,26 +15,26 @@
  */
 package com.jetbrains.python.console;
 
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Function;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.jetbrains.python.console.parsing.PythonConsoleData;
 import com.jetbrains.python.console.pydev.*;
 import com.jetbrains.python.debugger.*;
 import com.jetbrains.python.debugger.pydev.GetVariableCommand;
 import com.jetbrains.python.debugger.pydev.ProtocolParser;
+import consulo.application.AccessToken;
+import consulo.application.ApplicationManager;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.progress.ProgressManager;
+import consulo.application.progress.Task;
+import consulo.execution.debug.XSourcePosition;
+import consulo.execution.debug.frame.XValueChildrenList;
+import consulo.fileEditor.FileEditorManager;
+import consulo.logging.Logger;
+import consulo.process.ProcessHandler;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcHandler;
 import org.apache.xmlrpc.XmlRpcRequest;
@@ -46,6 +46,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Communication with Xml-rpc with the client.
@@ -54,7 +55,6 @@ import java.util.*;
  */
 public class PydevConsoleCommunication extends AbstractConsoleCommunication implements XmlRpcHandler, PyFrameAccessor
 {
-
 	private static final String EXEC_LINE = "execLine";
 	private static final String EXEC_MULTILINE = "execMultipleLines";
 	private static final String GET_COMPLETIONS = "getCompletions";
@@ -79,7 +79,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 	 */
 	private WebServer myWebServer;
 
-	private static final Logger LOG = Logger.getInstance(PydevConsoleCommunication.class.getName());
+	private static final Logger LOG = Logger.getInstance(PydevConsoleCommunication.class);
 
 	/**
 	 * Input that should be sent to the server (waiting for raw_input)
@@ -111,7 +111,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 	 * @param process this is the process that was spawned (server for the XML-RPC)
 	 * @throws MalformedURLException
 	 */
-	public PydevConsoleCommunication(Project project, int port, Process process, int clientPort) throws Exception
+	public PydevConsoleCommunication(Project project, int port, ProcessHandler process, int clientPort) throws Exception
 	{
 		super(project);
 
@@ -528,7 +528,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 					myNeedsMore = true;
 					notifyCommandExecuted(true);
 				}
-				onResponseReceived.fun(nextResponse);
+				onResponseReceived.apply(nextResponse);
 			}, "Waiting for REPL response", true, myProject);
 		}
 	}

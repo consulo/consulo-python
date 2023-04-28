@@ -16,18 +16,15 @@
 
 package com.jetbrains.python.structureView;
 
+import com.jetbrains.python.psi.*;
+import consulo.fileEditor.structureView.StructureViewModel;
+import consulo.fileEditor.structureView.StructureViewTreeElement;
+import consulo.fileEditor.structureView.tree.Filter;
+import consulo.fileEditor.structureView.tree.Sorter;
+import consulo.language.editor.structureView.StructureViewModelBase;
+import consulo.language.psi.PsiFile;
+
 import javax.annotation.Nonnull;
-import com.intellij.ide.structureView.StructureViewModel;
-import com.intellij.ide.structureView.StructureViewModelBase;
-import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.util.treeView.smartTree.Filter;
-import com.intellij.ide.util.treeView.smartTree.Sorter;
-import com.intellij.psi.PsiFile;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyTargetExpression;
 
 /**
  * @author yole

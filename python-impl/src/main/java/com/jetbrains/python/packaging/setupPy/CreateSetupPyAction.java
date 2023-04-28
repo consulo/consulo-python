@@ -16,34 +16,34 @@
 
 package com.jetbrains.python.packaging.setupPy;
 
-import java.util.Collection;
-import java.util.Properties;
-
-import com.intellij.ide.IdeView;
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.actions.AttributesDefaults;
-import com.intellij.ide.fileTemplates.actions.CreateFromTemplateAction;
-import com.intellij.ide.fileTemplates.ui.CreateFromTemplateDialog;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.util.SystemProperties;
 import com.jetbrains.python.packaging.PyPackageUtil;
 import com.jetbrains.python.psi.PyUtil;
+import consulo.dataContext.DataContext;
+import consulo.fileTemplate.AttributesDefaults;
+import consulo.fileTemplate.FileTemplate;
+import consulo.fileTemplate.FileTemplateManager;
+import consulo.ide.IdeView;
+import consulo.ide.action.ui.CreateFromTemplateDialog;
+import consulo.ide.impl.idea.ide.fileTemplates.actions.CreateFromTemplateAction;
+import consulo.ide.impl.idea.ide.util.PropertiesComponent;
+import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
+import consulo.language.editor.CommonDataKeys;
+import consulo.language.editor.LangDataKeys;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiManager;
+import consulo.module.Module;
+import consulo.module.content.ModuleRootManager;
+import consulo.module.content.ProjectFileIndex;
+import consulo.project.Project;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.StringUtil;
+import consulo.util.lang.SystemProperties;
+import consulo.virtualFileSystem.VirtualFile;
+
+import java.util.Collection;
+import java.util.Properties;
 
 /**
  * @author yole

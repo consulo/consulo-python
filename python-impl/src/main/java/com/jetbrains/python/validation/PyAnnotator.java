@@ -17,12 +17,15 @@
 package com.jetbrains.python.validation;
 
 import com.jetbrains.python.psi.PyElementVisitor;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.psi.PsiElement;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.language.editor.annotation.AnnotationHolder;
+import consulo.language.psi.PsiElement;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public abstract class PyAnnotator extends PyElementVisitor {
   private AnnotationHolder _holder;
 

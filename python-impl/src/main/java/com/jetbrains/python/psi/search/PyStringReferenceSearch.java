@@ -16,27 +16,31 @@
 
 package com.jetbrains.python.psi.search;
 
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.QueryExecutorBase;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.search.UsageSearchContext;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.util.Processor;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AccessToken;
+import consulo.application.ApplicationManager;
+import consulo.application.util.function.Processor;
+import consulo.content.scope.SearchScope;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.search.ReferencesSearch;
+import consulo.language.psi.search.ReferencesSearchQueryExecutor;
+import consulo.language.psi.search.UsageSearchContext;
+import consulo.project.util.query.QueryExecutorBase;
+import consulo.util.lang.StringUtil;
+
 import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
-public class PyStringReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+@ExtensionImpl
+public class PyStringReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
   public void processQuery(@Nonnull final ReferencesSearch.SearchParameters params,
                            @Nonnull final Processor<? super PsiReference> consumer) {
     final PsiElement element = params.getElementToSearch();

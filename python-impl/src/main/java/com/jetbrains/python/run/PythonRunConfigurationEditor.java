@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.run;
 
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
+import consulo.configurable.ConfigurationException;
+import consulo.execution.configuration.ui.SettingsEditor;
 import javax.annotation.Nonnull;
 
 import javax.swing.*;

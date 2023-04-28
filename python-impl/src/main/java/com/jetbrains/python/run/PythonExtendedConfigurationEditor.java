@@ -22,8 +22,8 @@ import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
+import consulo.configurable.ConfigurationException;
+import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.disposer.Disposer;
 
 /**

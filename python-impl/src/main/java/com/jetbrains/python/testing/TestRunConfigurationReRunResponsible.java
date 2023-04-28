@@ -20,11 +20,11 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.psi.PsiElement;
+import consulo.process.ExecutionException;
+import consulo.execution.executor.Executor;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.language.psi.PsiElement;
 
 /**
  * Configuration that handles rerun failed tests itself.

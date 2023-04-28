@@ -16,21 +16,16 @@
 
 package com.jetbrains.python.codeInsight.regexp;
 
-import java.util.EnumSet;
+import consulo.language.ast.IFileElementType;
+import consulo.language.file.FileViewProvider;
+import consulo.language.lexer.Lexer;
+import consulo.language.parser.PsiParser;
+import consulo.language.psi.PsiFile;
+import consulo.language.version.LanguageVersion;
+import org.intellij.lang.regexp.*;
 
 import javax.annotation.Nonnull;
-
-import org.intellij.lang.regexp.RegExpCapability;
-import org.intellij.lang.regexp.RegExpFile;
-import org.intellij.lang.regexp.RegExpLexer;
-import org.intellij.lang.regexp.RegExpParser;
-import org.intellij.lang.regexp.RegExpParserDefinition;
-import com.intellij.lang.PsiParser;
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IFileElementType;
-import consulo.lang.LanguageVersion;
+import java.util.EnumSet;
 
 /**
  * @author yole

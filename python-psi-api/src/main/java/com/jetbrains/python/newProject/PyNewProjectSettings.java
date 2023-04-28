@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.newProject;
 
-import com.intellij.openapi.projectRoots.Sdk;
+import consulo.content.bundle.Sdk;
 
 /**
  * Project generation settings selected on the first page of the new project dialog.

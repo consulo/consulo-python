@@ -35,8 +35,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
 import com.google.common.base.Strings;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.table.JBTable;
+import consulo.ui.ex.awt.JBScrollPane;
+import consulo.ui.ex.awt.table.JBTable;
 
 /**
  * @author amarch

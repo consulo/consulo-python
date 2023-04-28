@@ -18,14 +18,14 @@ package com.jetbrains.python.psi.resolve;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import consulo.module.Module;
+import consulo.language.util.ModuleUtilCore;
+import consulo.project.Project;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
 import com.jetbrains.python.PyNames;
 
 import javax.annotation.Nullable;

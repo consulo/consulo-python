@@ -15,18 +15,18 @@
  */
 package com.jetbrains.python.codeInsight.userSkeletons;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.QualifiedName;
+import consulo.logging.Logger;
+import consulo.component.extension.Extensions;
+import consulo.project.Project;
+import consulo.content.bundle.Sdk;
+import consulo.virtualFileSystem.StandardFileSystems;
+import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;

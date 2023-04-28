@@ -15,74 +15,44 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ui.ListEditForm;
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.JDOMExternalizableStringList;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.profile.codeInspection.InspectionProfileManager;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
 import com.jetbrains.python.codeInsight.imports.AddImportHelper;
 import com.jetbrains.python.codeInsight.stdlib.PyStdlibUtil;
-import com.jetbrains.python.packaging.PyPIPackageUtil;
-import com.jetbrains.python.packaging.PyPackage;
-import com.jetbrains.python.packaging.PyPackageManager;
-import com.jetbrains.python.packaging.PyPackageManagerUI;
-import com.jetbrains.python.packaging.PyPackageUtil;
-import com.jetbrains.python.packaging.PyRequirement;
+import com.jetbrains.python.packaging.*;
 import com.jetbrains.python.packaging.ui.PyChooseRequirementsDialog;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyImportStatement;
-import com.jetbrains.python.psi.PyQualifiedExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationManager;
+import consulo.component.extension.Extensions;
+import consulo.content.bundle.Sdk;
+import consulo.language.editor.inspection.*;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProfileManager;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.psi.*;
+import consulo.language.util.ModuleUtilCore;
+import consulo.logging.Logger;
+import consulo.module.Module;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.ui.ex.awt.Messages;
+import consulo.undoRedo.CommandProcessor;
+import consulo.util.xml.serializer.JDOMExternalizableStringList;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * @author vlan
  */
+@ExtensionImpl
 public class PyPackageRequirementsInspection extends PyInspection
 {
 	private static final Logger LOG = Logger.getInstance(PyPackageRequirementsInspection.class);
-
-	public JDOMExternalizableStringList ignoredPackages = new JDOMExternalizableStringList();
 
 	@Nonnull
 	@Override
@@ -91,26 +61,22 @@ public class PyPackageRequirementsInspection extends PyInspection
 		return "Package requirements";
 	}
 
+	@Nonnull
 	@Override
-	public JComponent createOptionsPanel()
+	public InspectionToolState<?> createStateProvider()
 	{
-		final ListEditForm form = new ListEditForm("Ignore packages", ignoredPackages);
-		return form.getContentPanel();
+		return new PyPackageRequirementsInspectionState();
 	}
 
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
 	{
-		return new Visitor(holder, session, ignoredPackages);
-	}
-
-	@Nullable
-	public static PyPackageRequirementsInspection getInstance(@Nonnull PsiElement element)
-	{
-		final InspectionProfile inspectionProfile = InspectionProjectProfileManager.getInstance(element.getProject()).getInspectionProfile();
-		final String toolName = PyPackageRequirementsInspection.class.getSimpleName();
-		return (PyPackageRequirementsInspection) inspectionProfile.getUnwrappedTool(toolName, element);
+		PyPackageRequirementsInspectionState inspectionState = (PyPackageRequirementsInspectionState) state;
+		return new Visitor(holder, session, inspectionState.ignoredPackages);
 	}
 
 	private static class Visitor extends PyInspectionVisitor
@@ -140,7 +106,10 @@ public class PyPackageRequirementsInspection extends PyInspection
 					if(unsatisfied != null && !unsatisfied.isEmpty())
 					{
 						final boolean plural = unsatisfied.size() > 1;
-						String msg = String.format("Package requirement%s %s %s not satisfied", plural ? "s" : "", PyPackageUtil.requirementsToString(unsatisfied), plural ? "are" : "is");
+						String msg = String.format("Package requirement%s %s %s not satisfied",
+								plural ? "s" : "",
+								PyPackageUtil.requirementsToString(unsatisfied),
+								plural ? "are" : "is");
 						final Set<String> unsatisfiedNames = new HashSet<>();
 						for(PyRequirement req : unsatisfied)
 						{
@@ -149,7 +118,11 @@ public class PyPackageRequirementsInspection extends PyInspection
 						final List<LocalQuickFix> quickFixes = new ArrayList<>();
 						quickFixes.add(new PyInstallRequirementsFix(null, module, sdk, unsatisfied));
 						quickFixes.add(new IgnoreRequirementFix(unsatisfiedNames));
-						registerProblem(node, msg, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, null, quickFixes.toArray(new LocalQuickFix[quickFixes.size()]));
+						registerProblem(node,
+								msg,
+								ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+								null,
+								quickFixes.toArray(new LocalQuickFix[quickFixes.size()]));
 					}
 				}
 			}
@@ -255,7 +228,10 @@ public class PyPackageRequirementsInspection extends PyInspection
 							final List<LocalQuickFix> quickFixes = new ArrayList<>();
 							quickFixes.add(new AddToRequirementsFix(module, packageName, LanguageLevel.forElement(importedExpression)));
 							quickFixes.add(new IgnoreRequirementFix(Collections.singleton(packageName)));
-							registerProblem(packageReferenceExpression, String.format("Package '%s' is not listed in project requirements", packageName), ProblemHighlightType.WEAK_WARNING, null,
+							registerProblem(packageReferenceExpression,
+									String.format("Package '%s' is not listed in project requirements", packageName),
+									ProblemHighlightType.WEAK_WARNING,
+									null,
 									quickFixes.toArray(new LocalQuickFix[quickFixes.size()]));
 						}
 					}
@@ -265,7 +241,9 @@ public class PyPackageRequirementsInspection extends PyInspection
 	}
 
 	@Nullable
-	private static Set<PyRequirement> getTransitiveRequirements(@Nonnull Sdk sdk, @Nonnull Collection<PyRequirement> requirements, @Nonnull Set<PyPackage> visited)
+	private static Set<PyRequirement> getTransitiveRequirements(@Nonnull Sdk sdk,
+																@Nonnull Collection<PyRequirement> requirements,
+																@Nonnull Set<PyPackage> visited)
 	{
 		if(requirements.isEmpty())
 		{
@@ -295,7 +273,9 @@ public class PyPackageRequirementsInspection extends PyInspection
 	}
 
 	@Nullable
-	private static List<PyRequirement> findUnsatisfiedRequirements(@Nonnull Module module, @Nonnull Sdk sdk, @Nonnull Set<String> ignoredPackages)
+	private static List<PyRequirement> findUnsatisfiedRequirements(@Nonnull Module module,
+																   @Nonnull Sdk sdk,
+																   @Nonnull Set<String> ignoredPackages)
 	{
 		final PyPackageManager manager = PyPackageManager.getInstance(sdk);
 		List<PyRequirement> requirements = manager.getRequirements(module);
@@ -341,7 +321,10 @@ public class PyPackageRequirementsInspection extends PyInspection
 		@Nonnull
 		private final List<PyRequirement> myUnsatisfied;
 
-		public PyInstallRequirementsFix(@Nullable String name, @Nonnull Module module, @Nonnull Sdk sdk, @Nonnull List<PyRequirement> unsatisfied)
+		public PyInstallRequirementsFix(@Nullable String name,
+										@Nonnull Module module,
+										@Nonnull Sdk sdk,
+										@Nonnull List<PyRequirement> unsatisfied)
 		{
 			final boolean plural = unsatisfied.size() > 1;
 			myName = name != null ? name : String.format("Install requirement%s", plural ? "s" : "");
@@ -369,8 +352,11 @@ public class PyPackageRequirementsInspection extends PyInspection
 			}
 			if(!PyPackageUtil.hasManagement(packages))
 			{
-				final int result = Messages.showYesNoDialog(project, "Python packaging tools are required for installing packages. Do you want to " + "install 'pip' and 'setuptools' for your " +
-						"interpreter?", "Install Python Packaging Tools", Messages.getQuestionIcon());
+				final int result = Messages.showYesNoDialog(project,
+						"Python packaging tools are required for installing packages. Do you want to " + "install 'pip' and 'setuptools' for your " +
+								"interpreter?",
+						"Install Python Packaging Tools",
+						Messages.getQuestionIcon());
 				if(result == Messages.YES)
 				{
 					installManagement = true;
@@ -474,7 +460,11 @@ public class PyPackageRequirementsInspection extends PyInspection
 						}
 
 						CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(() -> {
-							AddImportHelper.addImportStatement(element.getContainingFile(), myPackageName, myAsName, AddImportHelper.ImportPriority.THIRD_PARTY, element);
+							AddImportHelper.addImportStatement(element.getContainingFile(),
+									myPackageName,
+									myAsName,
+									AddImportHelper.ImportPriority.THIRD_PARTY,
+									element);
 						}), "Add import", "Add import");
 					}
 				}
@@ -530,25 +520,18 @@ public class PyPackageRequirementsInspection extends PyInspection
 			final PsiElement element = descriptor.getPsiElement();
 			if(element != null)
 			{
-				final PyPackageRequirementsInspection inspection = getInstance(element);
-				if(inspection != null)
+				final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+
+				profile.<PyPackageRequirementsInspection, PyPackageRequirementsInspectionState>modifyToolSettings(PyPackageRequirementsInspection.class.getSimpleName(), element, (inspectionTool, state) ->
 				{
-					final JDOMExternalizableStringList ignoredPackages = inspection.ignoredPackages;
-					boolean changed = false;
 					for(String name : myPackageNames)
 					{
-						if(!ignoredPackages.contains(name))
+						if(!state.ignoredPackages.contains(name))
 						{
-							ignoredPackages.add(name);
-							changed = true;
+							state.ignoredPackages.add(name);
 						}
 					}
-					if(changed)
-					{
-						final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-						InspectionProfileManager.getInstance().fireProfileChanged(profile);
-					}
-				}
+				});
 			}
 		}
 	}

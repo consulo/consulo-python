@@ -16,18 +16,23 @@
 
 package com.jetbrains.python.facet;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.OrderEntryUtil;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import consulo.fileTypes.ArchiveFileType;
-import consulo.vfs.util.ArchiveVfsUtil;
+import consulo.application.ApplicationManager;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.library.Library;
+import consulo.content.library.LibraryTable;
+import consulo.module.Module;
+import consulo.module.content.ModuleRootManager;
+import consulo.module.content.ProjectRootManager;
+import consulo.module.content.layer.ModifiableRootModel;
+import consulo.module.content.layer.orderEntry.LibraryOrderEntry;
+import consulo.module.content.layer.orderEntry.OrderEntry;
+import consulo.module.content.util.OrderEntryUtil;
+import consulo.project.Project;
+import consulo.project.content.library.ProjectLibraryTable;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.archive.ArchiveFileType;
+import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -42,11 +47,15 @@ public class FacetLibraryConfigurator {
   private FacetLibraryConfigurator() {
   }
 
-  public static void attachLibrary(final Module module, @Nullable final ModifiableRootModel existingModel, final String libraryName, final List<String> paths) {
+  public static void attachLibrary(final Module module,
+                                   @Nullable final ModifiableRootModel existingModel,
+                                   final String libraryName,
+                                   final List<String> paths) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         // add all paths to library
-        final ModifiableRootModel model = existingModel != null ? existingModel : ModuleRootManager.getInstance(module).getModifiableModel();
+        final ModifiableRootModel model =
+          existingModel != null ? existingModel : ModuleRootManager.getInstance(module).getModifiableModel();
         final LibraryOrderEntry orderEntry = OrderEntryUtil.findLibraryOrderEntry(model, libraryName);
         if (orderEntry != null) {
           // update existing
@@ -54,7 +63,7 @@ public class FacetLibraryConfigurator {
           if (lib != null) {
             fillLibrary(module.getProject(), lib, paths);
             if (existingModel == null) {
-               model.commit();
+              model.commit();
             }
             return;
           }
@@ -66,7 +75,7 @@ public class FacetLibraryConfigurator {
         projectLibrariesModel.commit();
         model.addLibraryEntry(lib);
         if (existingModel == null) {
-           model.commit();
+          model.commit();
         }
       }
     });
@@ -74,8 +83,8 @@ public class FacetLibraryConfigurator {
 
   private static void fillLibrary(Project project, Library lib, List<String> paths) {
     Library.ModifiableModel modifiableModel = lib.getModifiableModel();
-    for (String root : lib.getUrls(OrderRootType.CLASSES)) {
-      modifiableModel.removeRoot(root, OrderRootType.CLASSES);
+    for (String root : lib.getUrls(BinariesOrderRootType.getInstance())) {
+      modifiableModel.removeRoot(root, BinariesOrderRootType.getInstance());
     }
     Set<VirtualFile> roots = new HashSet<VirtualFile>();
     ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
@@ -92,10 +101,10 @@ public class FacetLibraryConfigurator {
           continue;
         }
         if (pathEntry != null) {
-          modifiableModel.addRoot(pathEntry, OrderRootType.CLASSES);
+          modifiableModel.addRoot(pathEntry, BinariesOrderRootType.getInstance());
         }
         else {
-          modifiableModel.addRoot("file://"+dir, OrderRootType.CLASSES);
+          modifiableModel.addRoot("file://" + dir, BinariesOrderRootType.getInstance());
         }
       }
     }

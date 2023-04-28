@@ -22,7 +22,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.google.common.collect.Maps;
-import com.intellij.util.ui.UIUtil;
+import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.array.AsyncArrayTableModel;
 import com.jetbrains.python.debugger.array.TableChunkDatasource;

@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
 import javax.annotation.Nonnull;

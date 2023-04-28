@@ -16,20 +16,27 @@
 
 package com.jetbrains.python.buildout.config;
 
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.highlight.SingleLazyInstanceSyntaxHighlighterFactory;
+import consulo.language.editor.highlight.SyntaxHighlighter;
 
-import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
-public class BuildoutCfgHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory
-{
-	@Nonnull
-	@Override
-	protected SyntaxHighlighter createHighlighter()
-	{
-		return new BuildoutCfgSyntaxHighlighter();
-	}
+@ExtensionImpl
+public class BuildoutCfgHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
+  @Nonnull
+  @Override
+  protected SyntaxHighlighter createHighlighter() {
+    return new BuildoutCfgSyntaxHighlighter();
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return BuildoutCfgLanguage.INSTANCE;
+  }
 }

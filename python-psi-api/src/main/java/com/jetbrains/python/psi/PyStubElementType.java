@@ -18,11 +18,11 @@ package com.jetbrains.python.psi;
 import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.NonNls;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.IStubElementType;
+import consulo.language.psi.stub.IndexSink;
+import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.PythonFileType;
 
 /**

@@ -16,13 +16,6 @@
 
 package com.jetbrains.python.codeInsight.stdlib;
 
-import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.documentation.PythonDocumentationLinkProvider;
 import com.jetbrains.python.documentation.PythonDocumentationProvider;
@@ -30,18 +23,26 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 
 import java.util.List;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyStdlibDocumentationLinkProvider implements PythonDocumentationLinkProvider {
   // use tools/stdlib-modindex.py to regenerate the map when new Python versions are released
-  private static List<String> py2LibraryModules = ImmutableList.of(
+  private static List<String> py2LibraryModules = List.of(
     "abc",
     "aepack",
     "aetools",
@@ -318,7 +319,7 @@ public class PyStdlibDocumentationLinkProvider implements PythonDocumentationLin
     "__future__"
   );
 
-  private static List<String> py3LibraryModules = ImmutableList.of(
+  private static List<String> py3LibraryModules = List.of(
     "abc",
     "aifc",
     "argparse",

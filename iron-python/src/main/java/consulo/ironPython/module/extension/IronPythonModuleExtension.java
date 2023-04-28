@@ -1,17 +1,17 @@
 package consulo.ironPython.module.extension;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.projectRoots.SdkType;
 import com.jetbrains.python.sdk.PythonSdkType;
-import consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
-import consulo.roots.ModuleRootLayer;
+import consulo.content.bundle.SdkType;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.extension.ModuleExtensionWithSdkBase;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 11.02.14
  */
-public class IronPythonModuleExtension extends ModuleExtensionWithSdkImpl<IronPythonModuleExtension> implements BaseIronPythonModuleExtension<IronPythonModuleExtension>
+public class IronPythonModuleExtension extends ModuleExtensionWithSdkBase<IronPythonModuleExtension> implements BaseIronPythonModuleExtension<IronPythonModuleExtension>
 {
 	public IronPythonModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer modifiableRootModel)
 	{

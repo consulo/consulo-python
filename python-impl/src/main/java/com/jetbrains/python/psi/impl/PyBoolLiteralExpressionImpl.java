@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyBoolLiteralExpression;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.types.PyType;

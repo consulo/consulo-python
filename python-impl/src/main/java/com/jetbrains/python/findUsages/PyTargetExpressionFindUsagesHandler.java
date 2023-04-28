@@ -2,7 +2,7 @@ package com.jetbrains.python.findUsages;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.find.findUsages.FindUsagesHandler;
+import consulo.find.FindUsagesHandler;
 import com.jetbrains.python.psi.PyTargetExpression;
 
 /**

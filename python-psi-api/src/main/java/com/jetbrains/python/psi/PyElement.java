@@ -16,8 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import com.intellij.openapi.util.Iconable;
-import com.intellij.psi.NavigatablePsiElement;
+import consulo.language.psi.NavigatablePsiElement;
 
 public interface PyElement extends NavigatablePsiElement{
 

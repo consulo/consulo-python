@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.packaging;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.language.editor.LangDataKeys;
+import consulo.module.Module;
+import consulo.content.bundle.Sdk;
 import com.jetbrains.python.sdk.PythonSdkType;
 
 /**

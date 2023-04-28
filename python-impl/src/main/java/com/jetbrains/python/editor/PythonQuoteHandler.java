@@ -17,12 +17,38 @@
 package com.jetbrains.python.editor;
 
 import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonFileType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.action.FileQuoteHandler;
+import consulo.virtualFileSystem.fileType.FileType;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
-public class PythonQuoteHandler extends BaseQuoteHandler {
-  public PythonQuoteHandler() {
-    super(PyTokenTypes.STRING_NODES, new char[]{'}', ']', ')', ',', ':', ';', ' ', '\t', '\n'});
-  }
+@ExtensionImpl
+public class PythonQuoteHandler extends BaseQuoteHandler implements FileQuoteHandler
+{
+	public PythonQuoteHandler()
+	{
+		super(PyTokenTypes.STRING_NODES, new char[]{
+				'}',
+				']',
+				')',
+				',',
+				':',
+				';',
+				' ',
+				'\t',
+				'\n'
+		});
+	}
+
+	@Nonnull
+	@Override
+	public FileType getFileType()
+	{
+		return PythonFileType.INSTANCE;
+	}
 }

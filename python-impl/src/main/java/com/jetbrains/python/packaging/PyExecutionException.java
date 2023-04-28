@@ -20,9 +20,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.process.ExecutionException;
+import consulo.process.local.ProcessOutput;
+import consulo.util.lang.StringUtil;
 
 /**
  * @author vlan

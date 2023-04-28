@@ -15,23 +15,24 @@
  */
 package com.jetbrains.python.run;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.net.HostAndPort;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import consulo.util.dataholder.Key;
 import com.jetbrains.python.remote.PyRemotePathMapper;
 import com.jetbrains.python.remote.PyRemoteProcessHandlerBase;
 import com.jetbrains.python.remote.PyRemoteSdkAdditionalDataBase;
 import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
+import consulo.application.Application;
+import consulo.application.ApplicationManager;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkAdditionalData;
+import consulo.execution.process.ProcessTerminatedListener;
+import consulo.process.ExecutionException;
+import consulo.process.ProcessHandler;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.project.Project;
+import consulo.util.dataholder.Key;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author traff

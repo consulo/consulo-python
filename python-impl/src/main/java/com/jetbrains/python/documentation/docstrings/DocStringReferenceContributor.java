@@ -15,18 +15,30 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
+import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.psi.PsiReferenceContributor;
+import consulo.language.psi.PsiReferenceRegistrar;
+
 import javax.annotation.Nonnull;
-import com.intellij.psi.PsiReferenceContributor;
-import com.intellij.psi.PsiReferenceRegistrar;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class DocStringReferenceContributor extends PsiReferenceContributor
 {
 	@Override
 	public void registerReferenceProviders(@Nonnull PsiReferenceRegistrar registrar)
 	{
 		registrar.registerReferenceProvider(DocStringTagCompletionContributor.DOCSTRING_PATTERN, new DocStringReferenceProvider());
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

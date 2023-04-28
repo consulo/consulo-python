@@ -16,8 +16,8 @@
 package com.jetbrains.python.codeInsight;
 
 import javax.annotation.Nullable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 

@@ -16,17 +16,17 @@
 
 package com.jetbrains.python.psi;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.impl.source.resolve.reference.impl.CachingReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.psi.path.FileReference;
+import consulo.language.psi.path.FileReferenceHelper;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.CachingReference;
+import consulo.language.psi.path.FileReferenceSet;
+import consulo.language.util.IncorrectOperationException;
 import javax.annotation.Nonnull;
 
 import java.util.Collection;
@@ -36,7 +36,8 @@ import java.util.Collection;
  *
  * @author traff
  */
-public class FileReferenceWithOneContext extends FileReference {
+public class FileReferenceWithOneContext extends FileReference
+{
 
   public FileReferenceWithOneContext(@Nonnull FileReferenceSet fileReferenceSet,
                                      TextRange range, int index, String text) {

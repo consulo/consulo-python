@@ -17,16 +17,16 @@ package com.jetbrains.python.editor;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.editor.CodeInsightSettings;
+import consulo.language.editor.action.TypedHandlerDelegate;
+import consulo.document.Document;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.documentation.docstrings.PyDocstringGenerator;
 import com.jetbrains.python.editor.PythonEnterHandler.DocstringState;
 import com.jetbrains.python.psi.PyDocStringOwner;

@@ -15,20 +15,15 @@
  */
 package com.jetbrains.python.psi.resolve;
 
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.event.*;
+
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileAdapter;
-import com.intellij.openapi.vfs.VirtualFileCopyEvent;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileMoveEvent;
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
 
 /**
  * @author yole

@@ -16,16 +16,18 @@
 
 package com.jetbrains.python.buildout.config;
 
-import javax.annotation.Nonnull;
-
+import consulo.annotation.component.ExtensionImpl;
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
-import com.intellij.openapi.fileTypes.ExactFileNameMatcher;
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
+import consulo.virtualFileSystem.fileType.FileTypeConsumer;
+import consulo.virtualFileSystem.fileType.FileTypeFactory;
+import consulo.virtualFileSystem.internal.matcher.ExactFileNameMatcher;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
+@ExtensionImpl
 public class BuildoutCfgFileTypeFactory extends FileTypeFactory {
   public void createFileTypes(final @Nonnull FileTypeConsumer consumer) {
     consumer.consume(BuildoutCfgFileType.INSTANCE, new ExactFileNameMatcher(BuildoutModuleExtension.BUILDOUT_CFG, true));

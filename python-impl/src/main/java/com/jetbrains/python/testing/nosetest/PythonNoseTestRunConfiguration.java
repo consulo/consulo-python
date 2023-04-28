@@ -16,24 +16,28 @@
 
 package com.jetbrains.python.testing.nosetest;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.components.PathMacroManager;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizerUtil;
-import com.intellij.openapi.util.WriteExternalException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import com.jetbrains.python.testing.VFSTestFrameworkListener;
+import consulo.content.bundle.Sdk;
+import consulo.execution.RuntimeConfigurationException;
+import consulo.execution.RuntimeConfigurationWarning;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.executor.Executor;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.project.macro.ProjectPathMacroManager;
+import consulo.util.xml.serializer.InvalidDataException;
+import consulo.util.xml.serializer.JDOMExternalizerUtil;
+import consulo.util.xml.serializer.WriteExternalException;
 import org.jdom.Element;
+
+import javax.annotation.Nonnull;
 
 /**
  * User: catherine
@@ -57,7 +61,7 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
 
   @Override
   public void readExternal(Element element) throws InvalidDataException {
-    PathMacroManager.getInstance(getProject()).expandPaths(element);
+    ProjectPathMacroManager.getInstance(getProject()).expandPaths(element);
     super.readExternal(element);
     myParams = JDOMExternalizerUtil.readField(element, "PARAMS");
     useParam = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "USE_PARAM"));
@@ -68,7 +72,7 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
     super.writeExternal(element);
     JDOMExternalizerUtil.writeField(element, "PARAMS", myParams);
     JDOMExternalizerUtil.writeField(element, "USE_PARAM", String.valueOf(useParam));
-    PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
+    ProjectPathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
   }
 
   @Override
@@ -100,7 +104,8 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
   }
 
   @Override
-  public void checkConfiguration() throws RuntimeConfigurationException {
+  public void checkConfiguration() throws RuntimeConfigurationException
+  {
     super.checkConfiguration();
     Sdk sdkPath = PythonSdkType.findSdkByPath(getInterpreterPath());
     if (sdkPath != null && !VFSTestFrameworkListener.getInstance().isNoseTestInstalled(sdkPath))

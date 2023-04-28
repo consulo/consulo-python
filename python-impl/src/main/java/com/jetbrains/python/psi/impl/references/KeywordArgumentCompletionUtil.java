@@ -15,18 +15,6 @@
  */
 package com.jetbrains.python.psi.impl.references;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.stdlib.PyNamedTupleType;
 import com.jetbrains.python.psi.*;
@@ -34,13 +22,19 @@ import com.jetbrains.python.psi.impl.PyKeywordArgumentProvider;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
 import com.jetbrains.python.psi.search.PySuperMethodsSearch;
-import com.jetbrains.python.psi.types.PyCallableParameter;
-import com.jetbrains.python.psi.types.PyCallableType;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyFunctionType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.PyUnionType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.psi.types.*;
+import consulo.component.extension.Extensions;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.Comparing;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 public class KeywordArgumentCompletionUtil
 {

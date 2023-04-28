@@ -16,97 +16,109 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInsight.controlflow.ControlFlow;
-import com.intellij.codeInsight.controlflow.ControlFlowUtil;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.Function;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.util.lang.ref.Ref;
 import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Detects unreachable code using control flow graph
  */
-public class PyUnreachableCodeInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.unreachable.code");
-  }
+@ExtensionImpl
+public class PyUnreachableCodeInspection extends PyInspection
+{
+	@Nls
+	@Nonnull
+	public String getDisplayName()
+	{
+		return PyBundle.message("INSP.NAME.unreachable.code");
+	}
 
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
-    return new Visitor(holder, session);
-  }
+	@Nonnull
+	@Override
+	public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
+	{
+		return new Visitor(holder, session);
+	}
 
-  public static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nonnull ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
+	public static class Visitor extends PyInspectionVisitor
+	{
+		public Visitor(@Nonnull ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
+		{
+			super(holder, session);
+		}
 
-    @Override
-    public void visitElement(final PsiElement element) {
-      if (element instanceof ScopeOwner) {
-        final ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner)element);
-        final Instruction[] instructions = flow.getInstructions();
-        final List<PsiElement> unreachable = new ArrayList<PsiElement>();
-        if (instructions.length > 0) {
-          ControlFlowUtil.iteratePrev(instructions.length - 1, instructions, new Function<Instruction, ControlFlowUtil.Operation>() {
-            @Override
-            public ControlFlowUtil.Operation fun(Instruction instruction) {
-              if (instruction.allPred().isEmpty() && !isFirstInstruction(instruction)) {
-                unreachable.add(instruction.getElement());
-              }
-              return ControlFlowUtil.Operation.NEXT;
-            }
-          });
-        }
-        for (PsiElement e : unreachable) {
-          registerProblem(e, PyBundle.message("INSP.unreachable.code"));
-        }
-      }
-    }
-  }
+		@Override
+		public void visitElement(final PsiElement element)
+		{
+			if(element instanceof ScopeOwner)
+			{
+				final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner) element);
+				final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = flow.getInstructions();
+				final List<PsiElement> unreachable = new ArrayList<PsiElement>();
+				if(instructions.length > 0)
+				{
+					consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.iteratePrev(instructions.length - 1, instructions, instruction ->
+					{
+						if(instruction.allPred().isEmpty() && !isFirstInstruction(instruction))
+						{
+							unreachable.add(instruction.getElement());
+						}
+						return ControlFlowUtil.Operation.NEXT;
+					});
+				}
+				for(PsiElement e : unreachable)
+				{
+					registerProblem(e, PyBundle.message("INSP.unreachable.code"));
+				}
+			}
+		}
+	}
 
-  public static boolean hasAnyInterruptedControlFlowPaths(@Nonnull PsiElement element) {
-    final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
-    if (owner != null) {
-      final ControlFlow flow = ControlFlowCache.getControlFlow(owner);
-      final Instruction[] instructions = flow.getInstructions();
-      final int start = ControlFlowUtil.findInstructionNumberByElement(instructions, element);
-      if (start >= 0) {
-        final Ref<Boolean> resultRef = Ref.create(false);
-        ControlFlowUtil.iteratePrev(start, instructions, new Function<Instruction, ControlFlowUtil.Operation>() {
-          @Override
-          public ControlFlowUtil.Operation fun(Instruction instruction) {
-            if (instruction.allPred().isEmpty() && !isFirstInstruction(instruction)) {
-              resultRef.set(true);
-              return ControlFlowUtil.Operation.BREAK;
-            }
-            return ControlFlowUtil.Operation.NEXT;
-          }
-        });
-        return resultRef.get();
-      }
-    }
-    return false;
-  }
+	public static boolean hasAnyInterruptedControlFlowPaths(@Nonnull PsiElement element)
+	{
+		final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+		if(owner != null)
+		{
+			final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow(owner);
+			final Instruction[] instructions = flow.getInstructions();
+			final int start = consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, element);
+			if(start >= 0)
+			{
+				final Ref<Boolean> resultRef = Ref.create(false);
+				ControlFlowUtil.iteratePrev(start, instructions, instruction ->
+				{
+					if(instruction.allPred().isEmpty() && !isFirstInstruction(instruction))
+					{
+						resultRef.set(true);
+						return ControlFlowUtil.Operation.BREAK;
+					}
+					return ControlFlowUtil.Operation.NEXT;
+				});
+				return resultRef.get();
+			}
+		}
+		return false;
+	}
 
-  private static boolean isFirstInstruction(Instruction instruction) {
-    return instruction.num() == 0;
-  }
+	private static boolean isFirstInstruction(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction)
+	{
+		return instruction.num() == 0;
+	}
 }

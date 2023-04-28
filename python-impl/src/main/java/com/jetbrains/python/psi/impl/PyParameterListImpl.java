@@ -18,11 +18,11 @@ package com.jetbrains.python.psi.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.util.ArrayUtil;
+import consulo.language.ast.ASTNode;
+import consulo.util.lang.ref.Ref;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.IStubElementType;
+import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;

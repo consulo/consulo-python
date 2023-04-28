@@ -16,15 +16,15 @@
 
 package com.jetbrains.python.spellchecker;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.bundle.Sdk;
+import consulo.language.editor.LangDataKeys;
+import consulo.module.Module;
+import consulo.module.content.ModuleRootManager;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.virtualFileSystem.VirtualFile;
 
 /**
  * @author yole
@@ -48,7 +48,7 @@ public class PythonSpellcheckerGenerateDictionariesAction extends AnAction {
     final PythonSpellcheckerDictionaryGenerator generator = new PythonSpellcheckerDictionaryGenerator(module.getProject(),
                                                                                                       contentRoots[0].getPath() + "/dicts");
 
-    VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
+    VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
     for (VirtualFile root : roots) {
       if (root.getName().equals("Lib")) {
         generator.addFolder("python", root);

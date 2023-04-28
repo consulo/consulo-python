@@ -18,8 +18,8 @@ package com.jetbrains.python.psi;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
 
 /**
  * PSI element that contains named children that are visible in the current scope.

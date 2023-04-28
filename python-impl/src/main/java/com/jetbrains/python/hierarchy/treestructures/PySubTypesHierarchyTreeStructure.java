@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
-import com.intellij.ide.hierarchy.HierarchyTreeStructure;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Query;
+import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
+import consulo.ide.impl.idea.ide.hierarchy.HierarchyTreeStructure;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.util.collection.ArrayUtil;
+import consulo.application.util.query.Query;
 import com.jetbrains.python.hierarchy.PyHierarchyNodeDescriptor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.search.PyClassInheritorsSearch;

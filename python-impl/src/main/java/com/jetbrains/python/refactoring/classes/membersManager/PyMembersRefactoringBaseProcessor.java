@@ -21,19 +21,20 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.listeners.RefactoringEventData;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.usageView.UsageViewDescriptor;
+
+import consulo.language.editor.refactoring.event.RefactoringEventData;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.usage.UsageInfo;
+import consulo.usage.UsageViewDescriptor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.PyClassRefactoringUtil;
 
 /**
  * Processor for member-based refactorings. It moves members from one place to another using {@link com.jetbrains.python.refactoring.classes.membersManager.MembersManager}.
- * Inheritors only need to implement {@link com.intellij.usageView.UsageViewDescriptor} methods (while this interface is also implemented by this class)
+ * Inheritors only need to implement {@link UsageViewDescriptor} methods (while this interface is also implemented by this class)
  *
  * @author Ilya.Kazakevich
  */

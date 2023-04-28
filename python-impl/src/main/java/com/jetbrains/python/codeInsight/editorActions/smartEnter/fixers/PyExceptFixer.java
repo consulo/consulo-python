@@ -18,14 +18,14 @@ package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 import static com.jetbrains.python.psi.PyUtil.sure;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
 import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * Created by IntelliJ IDEA.

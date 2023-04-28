@@ -15,10 +15,10 @@
  */
 package com.jetbrains.python.refactoring.rename;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import com.intellij.util.containers.MultiMap;
+import consulo.language.editor.refactoring.rename.RenamePsiElementProcessor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.MultiMap;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;

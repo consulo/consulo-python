@@ -16,14 +16,15 @@
 
 package com.jetbrains.python.projectView;
 
-import com.intellij.ide.projectView.SelectableTreeStructureProvider;
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.project.ui.view.tree.PsiFileNode;
+import consulo.project.ui.view.tree.SelectableTreeStructureProvider;
+import consulo.project.ui.view.tree.ViewSettings;
+import consulo.project.ui.view.tree.AbstractTreeNode;
+import consulo.application.dumb.DumbAware;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
@@ -35,6 +36,7 @@ import java.util.List;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyTreeStructureProvider implements SelectableTreeStructureProvider, DumbAware {
   @Override
   public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings) {

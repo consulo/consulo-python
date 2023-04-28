@@ -16,18 +16,22 @@
 
 package com.jetbrains.rest.run.docutils;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.rest.run.RestConfigurationEditor;
 import com.jetbrains.rest.run.RestRunConfiguration;
+import consulo.execution.RuntimeConfigurationException;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.configuration.RuntimeConfigurationError;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.executor.Executor;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -54,7 +58,8 @@ public class DocutilsRunConfiguration extends RestRunConfiguration {
   }
 
   @Override
-  public void checkConfiguration() throws RuntimeConfigurationException {
+  public void checkConfiguration() throws RuntimeConfigurationException
+  {
     super.checkConfiguration();
     if (StringUtil.isEmptyOrSpaces(getInputFile()))
       throw new RuntimeConfigurationError("Please specify input file name.");

@@ -16,14 +16,17 @@
 
 package com.jetbrains.python;
 
-import com.intellij.lang.Language;
+import consulo.language.Language;
 
 /**
  * @author yole
  */
 public class PythonLanguage extends Language {
+  public static final PythonLanguage INSTANCE = new PythonLanguage();
+
+  @Deprecated
   public static PythonLanguage getInstance() {
-    return (PythonLanguage)PythonFileType.INSTANCE.getLanguage();
+    return INSTANCE;
   }
 
   @Override

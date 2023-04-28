@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.toolbox;
 
+import consulo.annotation.DeprecationInfo;
+
 import javax.annotation.Nullable;
 
 import java.util.NoSuchElementException;
@@ -28,6 +30,8 @@ import java.util.NoSuchElementException;
  * User: dcheryasov
  * Date: Jun 5, 2010 3:52:59 PM
  */
+@Deprecated
+@DeprecationInfo("Use Optional")
 public class Maybe<T> {
   private boolean myIsDefined;
   private T myValue;

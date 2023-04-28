@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.documentation;
 
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.ui.components.JBList;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awt.JBList;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;

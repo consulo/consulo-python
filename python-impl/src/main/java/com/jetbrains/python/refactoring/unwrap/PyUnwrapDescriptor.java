@@ -16,23 +16,28 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
-import javax.annotation.Nullable;
-
-import com.intellij.codeInsight.unwrap.UnwrapDescriptorBase;
-import com.intellij.codeInsight.unwrap.Unwrapper;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.SelectionModel;
+import consulo.language.Language;
+import consulo.language.editor.refactoring.unwrap.UnwrapDescriptorBase;
+import consulo.language.editor.refactoring.unwrap.Unwrapper;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * user : ktisha
  */
-public class PyUnwrapDescriptor extends UnwrapDescriptorBase{
+@ExtensionImpl
+public class PyUnwrapDescriptor extends UnwrapDescriptorBase {
   @Override
   protected Unwrapper[] createUnwrappers() {
-    return new Unwrapper[] {
+    return new Unwrapper[]{
       new PyIfUnwrapper(),
       new PyWhileUnwrapper(),
       new PyElseRemover(),
@@ -58,5 +63,11 @@ public class PyUnwrapDescriptor extends UnwrapDescriptorBase{
       }
     }
     return endElement;
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 }

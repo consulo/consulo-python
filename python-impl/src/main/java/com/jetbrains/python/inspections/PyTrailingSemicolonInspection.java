@@ -16,24 +16,26 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.PsiWhiteSpace;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.inspections.quickfix.RemoveTrailingSemicolonQuickFix;
 import com.jetbrains.python.psi.PyStatement;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.TokenSet;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiWhiteSpace;
 import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
 public class PyTrailingSemicolonInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -45,7 +47,8 @@ public class PyTrailingSemicolonInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 

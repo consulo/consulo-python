@@ -15,24 +15,6 @@
  */
 package com.jetbrains.python.testing.pytest;
 
-import java.io.File;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.execution.Location;
-import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.webcore.packaging.PackageVersionComparator;
 import com.jetbrains.python.packaging.PyPackage;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.packaging.PyPackageUtil;
@@ -42,181 +24,170 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.sdk.PythonSdkType;
-import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
-import com.jetbrains.python.testing.PythonTestConfigurationProducer;
-import com.jetbrains.python.testing.PythonTestConfigurationType;
-import com.jetbrains.python.testing.PythonTestConfigurationsModel;
-import com.jetbrains.python.testing.TestRunnerService;
+import com.jetbrains.python.testing.*;
+import consulo.content.bundle.Sdk;
+import consulo.execution.action.ConfigurationContext;
+import consulo.execution.action.Location;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.repository.ui.PackageVersionComparator;
+import consulo.util.lang.StringUtil;
+import consulo.util.lang.ref.Ref;
+import consulo.virtualFileSystem.VirtualFile;
 
-public class PyTestConfigurationProducer extends PythonTestConfigurationProducer
-{
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.List;
 
-	public PyTestConfigurationProducer()
-	{
-		super(PythonTestConfigurationType.getInstance().PY_PYTEST_FACTORY);
-	}
+public class PyTestConfigurationProducer extends PythonTestConfigurationProducer {
 
-	@Override
-	protected boolean setupConfigurationFromContext(AbstractPythonTestRunConfiguration configuration, ConfigurationContext context, Ref<PsiElement> sourceElement)
-	{
-		final PsiElement element = sourceElement.get();
-		final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-		if(!(configuration instanceof PyTestRunConfiguration))
-		{
-			return false;
-		}
-		if(module == null)
-		{
-			return false;
-		}
-		if(!(TestRunnerService.getInstance(module).getProjectConfiguration().equals(PythonTestConfigurationsModel.PY_TEST_NAME)))
-		{
-			return false;
-		}
+  public PyTestConfigurationProducer() {
+    super(PythonTestConfigurationType.getInstance().PY_PYTEST_FACTORY);
+  }
 
-		final PsiFileSystemItem file = element instanceof PsiDirectory ? (PsiDirectory) element : element.getContainingFile();
-		if(file == null)
-		{
-			return false;
-		}
-		final VirtualFile virtualFile = file.getVirtualFile();
-		if(virtualFile == null)
-		{
-			return false;
-		}
+  @Override
+  protected boolean setupConfigurationFromContext(AbstractPythonTestRunConfiguration configuration,
+                                                  ConfigurationContext context,
+                                                  Ref<PsiElement> sourceElement) {
+    final PsiElement element = sourceElement.get();
+    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
+    if (!(configuration instanceof PyTestRunConfiguration)) {
+      return false;
+    }
+    if (module == null) {
+      return false;
+    }
+    if (!(TestRunnerService.getInstance(module).getProjectConfiguration().equals(PythonTestConfigurationsModel.PY_TEST_NAME))) {
+      return false;
+    }
 
-		if(file instanceof PyFile || file instanceof PsiDirectory)
-		{
-			final List<PyStatement> testCases = PyTestUtil.getPyTestCasesFromFile(file, TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile()));
-			if(testCases.isEmpty())
-			{
-				return false;
-			}
-		}
-		else
-		{
-			return false;
-		}
+    final PsiFileSystemItem file = element instanceof PsiDirectory ? (PsiDirectory)element : element.getContainingFile();
+    if (file == null) {
+      return false;
+    }
+    final VirtualFile virtualFile = file.getVirtualFile();
+    if (virtualFile == null) {
+      return false;
+    }
 
-		final Sdk sdk = PythonSdkType.findPythonSdk(context.getModule());
-		if(sdk == null)
-		{
-			return false;
-		}
+    if (file instanceof PyFile || file instanceof PsiDirectory) {
+      final List<PyStatement> testCases =
+        PyTestUtil.getPyTestCasesFromFile(file, TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile()));
+      if (testCases.isEmpty()) {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
 
-		configuration.setUseModuleSdk(true);
-		configuration.setModule(ModuleUtilCore.findModuleForPsiElement(element));
-		((PyTestRunConfiguration) configuration).setTestToRun(virtualFile.getPath());
+    final Sdk sdk = PythonSdkType.findPythonSdk(context.getModule());
+    if (sdk == null) {
+      return false;
+    }
 
-		final String keywords = getKeywords(element, sdk);
-		if(keywords != null)
-		{
-			((PyTestRunConfiguration) configuration).useKeyword(true);
-			((PyTestRunConfiguration) configuration).setKeywords(keywords);
-			configuration.setName("py.test in " + keywords);
-		}
-		else
-		{
-			configuration.setName("py.test in " + file.getName());
-		}
-		return true;
-	}
+    configuration.setUseModuleSdk(true);
+    configuration.setModule(ModuleUtilCore.findModuleForPsiElement(element));
+    ((PyTestRunConfiguration)configuration).setTestToRun(virtualFile.getPath());
 
-	@Nullable
-	private static String getKeywords(@Nonnull final PsiElement element, @Nonnull final Sdk sdk)
-	{
-		final PyFunction pyFunction = findTestFunction(element);
-		final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
-		String keywords = null;
-		if(pyFunction != null)
-		{
-			keywords = pyFunction.getName();
-			if(pyClass != null)
-			{
-				final List<PyPackage> packages = PyPackageManager.getInstance(sdk).getPackages();
-				final PyPackage pytestPackage = packages != null ? PyPackageUtil.findPackage(packages, "pytest") : null;
-				if(pytestPackage != null && PackageVersionComparator.VERSION_COMPARATOR.compare(pytestPackage.getVersion(), "2.3.3") >= 0)
-				{
-					keywords = pyClass.getName() + " and " + keywords;
-				}
-				else
-				{
-					keywords = pyClass.getName() + "." + keywords;
-				}
-			}
-		}
-		else if(pyClass != null)
-		{
-			keywords = pyClass.getName();
-		}
-		return keywords;
-	}
+    final String keywords = getKeywords(element, sdk);
+    if (keywords != null) {
+      ((PyTestRunConfiguration)configuration).useKeyword(true);
+      ((PyTestRunConfiguration)configuration).setKeywords(keywords);
+      configuration.setName("py.test in " + keywords);
+    }
+    else {
+      configuration.setName("py.test in " + file.getName());
+    }
+    return true;
+  }
 
-	@Nullable
-	private static PyFunction findTestFunction(PsiElement element)
-	{
-		final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
-		if(function != null)
-		{
-			final String name = function.getName();
-			if(name != null && name.startsWith("test"))
-			{
-				return function;
-			}
-		}
-		return null;
-	}
+  @Nullable
+  private static String getKeywords(@Nonnull final PsiElement element, @Nonnull final Sdk sdk) {
+    final PyFunction pyFunction = findTestFunction(element);
+    final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
+    String keywords = null;
+    if (pyFunction != null) {
+      keywords = pyFunction.getName();
+      if (pyClass != null) {
+        final List<PyPackage> packages = PyPackageManager.getInstance(sdk).getPackages();
+        final PyPackage pytestPackage = packages != null ? PyPackageUtil.findPackage(packages, "pytest") : null;
+        if (pytestPackage != null && PackageVersionComparator.VERSION_COMPARATOR.compare(
+          pytestPackage.getVersion(),
+          "2.3.3") >= 0) {
+          keywords = pyClass.getName() + " and " + keywords;
+        }
+        else {
+          keywords = pyClass.getName() + "." + keywords;
+        }
+      }
+    }
+    else if (pyClass != null) {
+      keywords = pyClass.getName();
+    }
+    return keywords;
+  }
 
-	@Override
-	public boolean isConfigurationFromContext(AbstractPythonTestRunConfiguration configuration, ConfigurationContext context)
-	{
-		final Location location = context.getLocation();
-		if(location == null)
-		{
-			return false;
-		}
-		if(!(configuration instanceof PyTestRunConfiguration))
-		{
-			return false;
-		}
-		final PsiElement element = location.getPsiElement();
+  @Nullable
+  private static PyFunction findTestFunction(PsiElement element) {
+    final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+    if (function != null) {
+      final String name = function.getName();
+      if (name != null && name.startsWith("test")) {
+        return function;
+      }
+    }
+    return null;
+  }
 
-		final PsiFileSystemItem file = element instanceof PsiDirectory ? (PsiDirectory) element : element.getContainingFile();
-		if(file == null)
-		{
-			return false;
-		}
-		final VirtualFile virtualFile = file.getVirtualFile();
-		if(virtualFile == null)
-		{
-			return false;
-		}
+  @Override
+  public boolean isConfigurationFromContext(AbstractPythonTestRunConfiguration configuration, ConfigurationContext context) {
+    final Location location = context.getLocation();
+    if (location == null) {
+      return false;
+    }
+    if (!(configuration instanceof PyTestRunConfiguration)) {
+      return false;
+    }
+    final PsiElement element = location.getPsiElement();
 
-		if(file instanceof PyFile || file instanceof PsiDirectory)
-		{
-			final List<PyStatement> testCases = PyTestUtil.getPyTestCasesFromFile(file, TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile()));
-			if(testCases.isEmpty())
-			{
-				return false;
-			}
-		}
-		else
-		{
-			return false;
-		}
+    final PsiFileSystemItem file = element instanceof PsiDirectory ? (PsiDirectory)element : element.getContainingFile();
+    if (file == null) {
+      return false;
+    }
+    final VirtualFile virtualFile = file.getVirtualFile();
+    if (virtualFile == null) {
+      return false;
+    }
 
-		final Sdk sdk = PythonSdkType.findPythonSdk(context.getModule());
-		if(sdk == null)
-		{
-			return false;
-		}
-		final String keywords = getKeywords(element, sdk);
-		final String scriptName = ((PyTestRunConfiguration) configuration).getTestToRun();
-		final String workingDirectory = configuration.getWorkingDirectory();
-		final String path = virtualFile.getPath();
-		final boolean isTestFileEquals = scriptName.equals(path) || path.equals(new File(workingDirectory, scriptName).getAbsolutePath());
+    if (file instanceof PyFile || file instanceof PsiDirectory) {
+      final List<PyStatement> testCases =
+        PyTestUtil.getPyTestCasesFromFile(file, TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile()));
+      if (testCases.isEmpty()) {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
 
-		final String configurationKeywords = ((PyTestRunConfiguration) configuration).getKeywords();
-		return isTestFileEquals && (configurationKeywords.equals(keywords) || StringUtil.isEmptyOrSpaces(((PyTestRunConfiguration) configuration).getKeywords()) && keywords == null);
-	}
+    final Sdk sdk = PythonSdkType.findPythonSdk(context.getModule());
+    if (sdk == null) {
+      return false;
+    }
+    final String keywords = getKeywords(element, sdk);
+    final String scriptName = ((PyTestRunConfiguration)configuration).getTestToRun();
+    final String workingDirectory = configuration.getWorkingDirectory();
+    final String path = virtualFile.getPath();
+    final boolean isTestFileEquals = scriptName.equals(path) || path.equals(new File(workingDirectory, scriptName).getAbsolutePath());
+
+    final String configurationKeywords = ((PyTestRunConfiguration)configuration).getKeywords();
+    return isTestFileEquals && (configurationKeywords.equals(keywords) || StringUtil.isEmptyOrSpaces(((PyTestRunConfiguration)configuration)
+                                                                                                       .getKeywords()) && keywords == null);
+  }
 }

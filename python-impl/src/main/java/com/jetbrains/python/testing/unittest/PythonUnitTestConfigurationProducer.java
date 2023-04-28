@@ -24,10 +24,10 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.execution.Location;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.psi.PsiElement;
+import consulo.execution.action.Location;
+import consulo.module.Module;
+import consulo.language.util.ModuleUtilCore;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;

@@ -15,63 +15,42 @@
  */
 package com.jetbrains.python.psi.types;
 
-import static com.jetbrains.python.psi.PyUtil.inSameFile;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.roots.FileIndexFacade;
-import consulo.util.dataholder.Key;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.Function;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyImportStatement;
-import com.jetbrains.python.psi.PyImportStatementBase;
-import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyImportedModule;
 import com.jetbrains.python.psi.impl.ResolveResultList;
-import com.jetbrains.python.psi.resolve.CompletionVariantsProcessor;
-import com.jetbrains.python.psi.resolve.ImportedResolveResult;
-import com.jetbrains.python.psi.resolve.PointInImport;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.resolve.PyResolveUtil;
-import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import com.jetbrains.python.psi.resolve.ResolveImportUtil;
+import com.jetbrains.python.psi.resolve.*;
 import com.jetbrains.python.sdk.PythonSdkType;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.application.util.SystemInfo;
+import consulo.component.extension.Extensions;
+import consulo.language.content.FileIndexFacade;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.psi.*;
+import consulo.language.psi.resolve.PsiScopeProcessor;
+import consulo.language.psi.resolve.ResolveState;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.ProcessingContext;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.dataholder.Key;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+
+import static com.jetbrains.python.psi.PyUtil.inSameFile;
 
 /**
  * @author yole
@@ -367,7 +346,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 
 	private static boolean isBinaryModule(String filename)
 	{
-		final String ext = FileUtilRt.getExtension(filename);
+		final String ext = FileUtil.getExtension(filename);
 		if(SystemInfo.isWindows)
 		{
 			return "pyd".equalsIgnoreCase(ext);

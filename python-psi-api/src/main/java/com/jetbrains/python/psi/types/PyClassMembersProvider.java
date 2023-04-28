@@ -15,21 +15,23 @@
  */
 package com.jetbrains.python.psi.types;
 
-import java.util.Collection;
+import com.jetbrains.python.codeInsight.PyCustomMember;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
-import com.jetbrains.python.codeInsight.PyCustomMember;
+import java.util.Collection;
 
 /**
  * @author Dennis.Ushakov
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyClassMembersProvider
 {
-	ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create("consulo.python.pyClassMembersProvider");
+	ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create(PyClassMembersProvider.class);
 
 	@Nonnull
 	Collection<PyCustomMember> getMembers(final PyClassType clazz, PsiElement location, @Nullable TypeEvalContext typeEvalContext);

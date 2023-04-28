@@ -16,24 +16,26 @@
 
 package consulo.python.debugger;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.Processor;
-import com.intellij.xdebugger.XDebuggerUtil;
-import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.debugger.PyDebugSupportUtils;
 import com.jetbrains.python.debugger.PyLineBreakpointType;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.xdebugger.breakpoints.XLineBreakpointTypeResolver;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.util.function.Processor;
+import consulo.document.Document;
+import consulo.document.FileDocumentManager;
+import consulo.execution.debug.XDebuggerUtil;
+import consulo.execution.debug.breakpoint.XLineBreakpointType;
+import consulo.execution.debug.breakpoint.XLineBreakpointTypeResolver;
+import consulo.language.ast.IElementType;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.project.Project;
+import consulo.util.lang.ref.Ref;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,55 +44,52 @@ import javax.annotation.Nullable;
  * @author VISTALL
  * @since 5/8/2016
  */
-public class PyLineBreakpointTypeResolver implements XLineBreakpointTypeResolver
-{
-	@Nullable
-	@Override
-	@RequiredReadAction
-	public XLineBreakpointType<?> resolveBreakpointType(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int line)
-	{
-		final Ref<PyLineBreakpointType> result = Ref.create();
-		final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-		if(document != null)
-		{
-			if(virtualFile.getFileType() == PythonFileType.INSTANCE)
-			{
-				XDebuggerUtil.getInstance().iterateLine(project, document, line, new Processor<PsiElement>()
-				{
-					@Override
-					@RequiredReadAction
-					public boolean process(PsiElement psiElement)
-					{
-						if(psiElement instanceof PsiWhiteSpace || psiElement instanceof PsiComment)
-						{
-							return true;
-						}
-						if(psiElement.getNode() != null && notStoppableElementType(psiElement.getNode().getElementType()))
-						{
-							return true;
-						}
+@ExtensionImpl
+public class PyLineBreakpointTypeResolver implements XLineBreakpointTypeResolver {
+  @Nullable
+  @Override
+  @RequiredReadAction
+  public XLineBreakpointType<?> resolveBreakpointType(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int line) {
+    final Ref<PyLineBreakpointType> result = Ref.create();
+    final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    if (document != null) {
+      if (virtualFile.getFileType() == PythonFileType.INSTANCE) {
+        XDebuggerUtil.getInstance().iterateLine(project, document, line, new Processor<PsiElement>() {
+          @Override
+          @RequiredReadAction
+          public boolean process(PsiElement psiElement) {
+            if (psiElement instanceof PsiWhiteSpace || psiElement instanceof PsiComment) {
+              return true;
+            }
+            if (psiElement.getNode() != null && notStoppableElementType(psiElement.getNode().getElementType())) {
+              return true;
+            }
 
-						// Python debugger seems to be able to stop on pretty much everything
-						result.set(PyLineBreakpointType.getInstance());
-						return false;
-					}
-				});
+            // Python debugger seems to be able to stop on pretty much everything
+            result.set(PyLineBreakpointType.getInstance());
+            return false;
+          }
+        });
 
-				if(PyDebugSupportUtils.isContinuationLine(document, line - 1))
-				{
-					result.set(null);
-				}
-			}
-		}
+        if (PyDebugSupportUtils.isContinuationLine(document, line - 1)) {
+          result.set(null);
+        }
+      }
+    }
 
-		return result.get();
-	}
+    return result.get();
+  }
 
-	private static boolean notStoppableElementType(IElementType elementType)
-	{
-		return elementType == PyTokenTypes.TRIPLE_QUOTED_STRING ||
-				elementType == PyTokenTypes.SINGLE_QUOTED_STRING ||
-				elementType == PyTokenTypes.SINGLE_QUOTED_UNICODE ||
-				elementType == PyTokenTypes.DOCSTRING;
-	}
+  @Nonnull
+  @Override
+  public FileType getFileType() {
+    return PythonFileType.INSTANCE;
+  }
+
+  private static boolean notStoppableElementType(IElementType elementType) {
+    return elementType == PyTokenTypes.TRIPLE_QUOTED_STRING ||
+      elementType == PyTokenTypes.SINGLE_QUOTED_STRING ||
+      elementType == PyTokenTypes.SINGLE_QUOTED_UNICODE ||
+      elementType == PyTokenTypes.DOCSTRING;
+  }
 }

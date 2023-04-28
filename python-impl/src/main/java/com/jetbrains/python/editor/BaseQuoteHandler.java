@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.editor;
 
-import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.highlighter.HighlighterIterator;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
+import consulo.codeEditor.HighlighterIterator;
+import consulo.document.Document;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenSet;
+import consulo.language.editor.action.SimpleTokenSetQuoteHandler;
 
 import java.util.Arrays;
 
@@ -50,17 +50,17 @@ public class BaseQuoteHandler extends SimpleTokenSetQuoteHandler {
       // if we're next to two same quotes, don't auto-close, the user may want a triple quote
       if (
         offset >= 2 &&
-        text.charAt(offset - 1) == the_quote &&
-        text.charAt(offset - 2) == the_quote &&
-        (offset < 3 || text.charAt(offset - 3) != the_quote)
-        ) {
+          text.charAt(offset - 1) == the_quote &&
+          text.charAt(offset - 2) == the_quote &&
+          (offset < 3 || text.charAt(offset - 3) != the_quote)
+      ) {
         return false;
       }
       // handle string literal context
       if (super.isOpeningQuote(iterator, offset)) {
         return true;
       }
-      if (myLiteralTokenSet.contains(iterator.getTokenType())) {
+      if (myLiteralTokenSet.contains((IElementType)iterator.getTokenType())) {
         int start = iterator.getStart();
         if (offset - start <= 2) {
           if (getLiteralStartOffset(text, start) == offset) return true;
@@ -91,7 +91,7 @@ public class BaseQuoteHandler extends SimpleTokenSetQuoteHandler {
 
   @Override
   public boolean isClosingQuote(HighlighterIterator iterator, int offset) {
-    final IElementType tokenType = iterator.getTokenType();
+    final IElementType tokenType = (IElementType)iterator.getTokenType();
     if (myLiteralTokenSet.contains(tokenType)) {
       int start = iterator.getStart();
       int end = iterator.getEnd();

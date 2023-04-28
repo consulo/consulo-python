@@ -17,12 +17,12 @@ package com.jetbrains.python.debugger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
+import consulo.application.ApplicationManager;
+import consulo.document.Document;
+import consulo.execution.debug.evaluation.XDebuggerEvaluator;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.execution.debug.XSourcePosition;
 import com.jetbrains.python.console.PyConsoleIndentUtil;
 
 

@@ -16,12 +16,16 @@
 
 package com.jetbrains.python.run;
 
-import com.intellij.execution.configuration.RunConfigurationExtensionBase;
-import com.intellij.openapi.extensions.ExtensionPointName;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.execution.configuration.RunConfigurationExtensionBase;
 
 /**
  * @author traff
  */
-public abstract class PythonRunConfigurationExtension extends RunConfigurationExtensionBase<AbstractPythonRunConfiguration> {
-  protected static final ExtensionPointName<PythonRunConfigurationExtension> EP_NAME = new ExtensionPointName<PythonRunConfigurationExtension>("consulo.python.runConfigurationExtension");
+@ExtensionAPI(ComponentScope.APPLICATION)
+public abstract class PythonRunConfigurationExtension extends RunConfigurationExtensionBase<AbstractPythonRunConfiguration>
+{
+	protected static final ExtensionPointName<PythonRunConfigurationExtension> EP_NAME = ExtensionPointName.create(PythonRunConfigurationExtension.class);
 }

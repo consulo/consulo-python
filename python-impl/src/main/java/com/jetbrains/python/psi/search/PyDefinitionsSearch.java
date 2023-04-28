@@ -16,56 +16,45 @@
 
 package com.jetbrains.python.psi.search;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.searches.DefinitionsScopedSearch;
-import com.intellij.util.Processor;
-import com.intellij.util.Query;
-import com.intellij.util.QueryExecutor;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.util.function.Processor;
+import consulo.application.util.query.Query;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.search.DefinitionsScopedSearch;
+import consulo.language.psi.search.DefinitionsScopedSearchExecutor;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public class PyDefinitionsSearch implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters>
-{
-	public boolean execute(@Nonnull final DefinitionsScopedSearch.SearchParameters parameters, @Nonnull final Processor<? super PsiElement> consumer)
-	{
-		PsiElement element = parameters.getElement();
-		if(element instanceof PyClass)
-		{
-			final Query<PyClass> query = PyClassInheritorsSearch.search((PyClass) element, true);
-			return query.forEach(new Processor<PyClass>()
-			{
-				public boolean process(final PyClass pyClass)
-				{
-					return consumer.process(pyClass);
-				}
-			});
-		}
-		else if(element instanceof PyFunction)
-		{
-			final Query<PyFunction> query = PyOverridingMethodsSearch.search((PyFunction) element, true);
-			return query.forEach(new Processor<PyFunction>()
-			{
-				public boolean process(final PyFunction pyFunction)
-				{
-					return consumer.process(pyFunction);
-				}
-			});
-		}
-		else if(element instanceof PyTargetExpression)
-		{  // PY-237
-			final PsiElement parent = element.getParent();
-			if(parent instanceof PyAssignmentStatement)
-			{
-				return consumer.process(parent);
-			}
-		}
-		return true;
-	}
+@ExtensionImpl
+public class PyDefinitionsSearch implements DefinitionsScopedSearchExecutor {
+  public boolean execute(@Nonnull final DefinitionsScopedSearch.SearchParameters parameters,
+                         @Nonnull final Processor<? super PsiElement> consumer) {
+    PsiElement element = parameters.getElement();
+    if (element instanceof PyClass) {
+      final Query<PyClass> query = PyClassInheritorsSearch.search((PyClass)element, true);
+      return query.forEach(consumer::process);
+    }
+    else if (element instanceof PyFunction) {
+      final Query<PyFunction> query = PyOverridingMethodsSearch.search((PyFunction)element, true);
+      return query.forEach(new Processor<PyFunction>() {
+        public boolean process(final PyFunction pyFunction) {
+          return consumer.process(pyFunction);
+        }
+      });
+    }
+    else if (element instanceof PyTargetExpression) {  // PY-237
+      final PsiElement parent = element.getParent();
+      if (parent instanceof PyAssignmentStatement) {
+        return consumer.process(parent);
+      }
+    }
+    return true;
+  }
 }

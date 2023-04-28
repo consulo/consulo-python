@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.buildout.config;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.language.file.LanguageFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
-import icons.PythonIcons;
+import com.jetbrains.python.PythonIcons;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

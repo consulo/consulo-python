@@ -1,8 +1,9 @@
 package com.jetbrains.python.remote;
 
+import consulo.process.remote.RemoteSdkException;
+import consulo.util.lang.Pair;
+
 import javax.annotation.Nonnull;
-import com.intellij.openapi.util.Pair;
-import com.intellij.remote.RemoteSdkException;
 
 /**
  * @author Alexander Koshevoy

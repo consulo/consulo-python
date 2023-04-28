@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.codeInsight.dataflow;
 
-import com.intellij.codeInsight.dataflow.map.DFAMap;
-import com.intellij.codeInsight.dataflow.map.MapSemilattice;
-import com.intellij.psi.PsiElement;
+import consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap;
+import consulo.ide.impl.idea.codeInsight.dataflow.map.MapSemilattice;
+import consulo.language.psi.PsiElement;
 import java.util.HashSet;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeVariable;
 import com.jetbrains.python.codeInsight.dataflow.scope.impl.ScopeVariableImpl;
@@ -39,9 +39,9 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
     return e1.equals(e2);
   }
 
-  public DFAMap<ScopeVariable> join(ArrayList<DFAMap<ScopeVariable>> ins) {
+  public consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> join(ArrayList<DFAMap<ScopeVariable>> ins) {
     if (ins.isEmpty()) {
-      return DFAMap.empty();
+      return consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap.empty();
     }
     if (ins.size() == 1) {
       return ins.get(0);
@@ -52,7 +52,7 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
       return new DFAMap<ScopeVariable>();
     }
 
-    final DFAMap<ScopeVariable> result = new DFAMap<ScopeVariable>();
+    final consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> result = new DFAMap<ScopeVariable>();
     for (String name : resultNames) {
 
       boolean isParameter = true;
@@ -74,7 +74,7 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
   }
 
   @Nullable
-  private static Set<String> getResultNames(final ArrayList<DFAMap<ScopeVariable>> ins) {
+  private static Set<String> getResultNames(final ArrayList<consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable>> ins) {
     // Compute intersection of all the names
     Set<String> names2Include = null;
     for (DFAMap<ScopeVariable> map : ins) {

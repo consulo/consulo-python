@@ -15,20 +15,19 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.StubBasedPsiElement;
-import com.intellij.util.ArrayFactory;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.stubs.PyFunctionStub;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiNameIdentifierOwner;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.StubBasedPsiElement;
+import consulo.util.collection.ArrayFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Function declaration in source (the <code>def</code> and everything within).

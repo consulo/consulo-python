@@ -22,7 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.FluentIterable;
-import com.jetbrains.NotNullPredicate;
+import com.jetbrains.python.NotNullPredicate;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyCallExpression;

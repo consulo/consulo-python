@@ -16,8 +16,8 @@
 package com.jetbrains.python.psi;
 
 import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.util.QualifiedName;
 
 /**
  * Represents a qualified expression, that is, of "a.b.c..." sort.

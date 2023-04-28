@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.run;
 
-import com.intellij.execution.configurations.RunConfiguration;
+import consulo.execution.configuration.RunConfiguration;
 
 /**
  * Configuration that knows if it supports run under debug or not

@@ -16,14 +16,15 @@
 
 package com.jetbrains.python.formatter;
 
-import com.intellij.application.options.TabbedLanguageCodeStylePanel;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.ui.setting.TabbedLanguageCodeStylePanel;
 import com.jetbrains.python.PythonLanguage;
 
 /**
  * @author Rustam Vishnyakov
  */
-public class PyCodeStyleMainPanel extends TabbedLanguageCodeStylePanel {
+public class PyCodeStyleMainPanel extends TabbedLanguageCodeStylePanel
+{
   protected PyCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
     super(PythonLanguage.getInstance(), currentSettings, settings);
   }

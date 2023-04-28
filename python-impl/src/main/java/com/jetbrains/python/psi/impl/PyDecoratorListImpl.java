@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyDecorator;
 import com.jetbrains.python.psi.PyDecoratorList;

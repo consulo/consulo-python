@@ -17,11 +17,11 @@ package com.jetbrains.python.inspections.quickfix;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
+import consulo.document.Document;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.EditorFactory;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiElement;
 
 /**
  * @author traff

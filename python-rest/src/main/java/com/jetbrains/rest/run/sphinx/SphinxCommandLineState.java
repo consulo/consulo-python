@@ -17,9 +17,9 @@ package com.jetbrains.rest.run.sphinx;
 
 import java.util.Collections;
 
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
 import com.jetbrains.python.HelperPackage;
 import com.jetbrains.python.PythonHelper;
 import com.jetbrains.rest.run.RestCommandLineState;

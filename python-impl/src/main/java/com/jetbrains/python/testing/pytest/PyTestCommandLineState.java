@@ -20,15 +20,15 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.process.ExecutionException;
+import consulo.execution.executor.Executor;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.cmd.ParamsGroup;
+import consulo.process.ProcessHandler;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.execution.ui.console.ConsoleView;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.HelperPackage;
 import com.jetbrains.python.PythonHelper;
 import com.jetbrains.python.testing.PythonTestCommandLineStateBase;

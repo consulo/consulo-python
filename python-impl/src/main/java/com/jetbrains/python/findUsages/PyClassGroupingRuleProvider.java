@@ -18,21 +18,22 @@ package com.jetbrains.python.findUsages;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.usages.PsiNamedElementUsageGroupBase;
-import com.intellij.usages.Usage;
-import com.intellij.usages.UsageGroup;
-import com.intellij.usages.impl.FileStructureGroupRuleProvider;
-import com.intellij.usages.rules.PsiElementUsage;
-import com.intellij.usages.rules.UsageGroupingRule;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.usage.PsiNamedElementUsageGroupBase;
+import consulo.usage.Usage;
+import consulo.usage.UsageGroup;
+import consulo.usage.rule.FileStructureGroupRuleProvider;
+import consulo.usage.rule.PsiElementUsage;
+import consulo.usage.rule.UsageGroupingRule;
 import com.jetbrains.python.psi.PyClass;
 
 /**
  * @author yole
  */
-public class PyClassGroupingRuleProvider implements FileStructureGroupRuleProvider {
+public class PyClassGroupingRuleProvider implements FileStructureGroupRuleProvider
+{
   public UsageGroupingRule getUsageGroupingRule(Project project) {
     return new PyClassGroupingRule();
   }

@@ -17,13 +17,6 @@
 package com.jetbrains.python.inspections;
 
 import com.google.common.collect.ImmutableMap;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import java.util.HashMap;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
@@ -31,11 +24,19 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiFile;
+import consulo.logging.Logger;
 import org.jetbrains.annotations.Nls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,9 @@ import static com.jetbrains.python.inspections.PyStringFormatParser.parsePercent
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
 public class PyStringFormatInspection extends PyInspection {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.inspections.PyStringFormatInspection");
+  private static final Logger LOG = Logger.getInstance(PyStringFormatInspection.class);
 
   @Nls
   @Nonnull
@@ -57,7 +59,10 @@ public class PyStringFormatInspection extends PyInspection {
 
   @Nonnull
   @Override
-  public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder, final boolean isOnTheFly, @Nonnull LocalInspectionToolSession session) {
+  public PsiElementVisitor buildVisitor(@Nonnull final ProblemsHolder holder,
+                                        final boolean isOnTheFly,
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -107,11 +112,12 @@ public class PyStringFormatInspection extends PyInspection {
         if (rightExpression instanceof PyBinaryExpression) {
           PyBinaryExpression binaryExpression = (PyBinaryExpression)rightExpression;
           if (binaryExpression.getOperator() == PyTokenTypes.MULT && binaryExpression.getLeftExpression() instanceof PyParenthesizedExpression
-                                                                && binaryExpression.getRightExpression() instanceof PyNumericLiteralExpression) {
+            && binaryExpression.getRightExpression() instanceof PyNumericLiteralExpression) {
             PyParenthesizedExpression parenthesizedExpression = (PyParenthesizedExpression)binaryExpression.getLeftExpression();
             if (parenthesizedExpression.getContainedExpression() instanceof PyTupleExpression) {
               PyExpression[] tupleElements = ((PyTupleExpression)parenthesizedExpression.getContainedExpression()).getElements();
-              return ((PyNumericLiteralExpression)((PyBinaryExpression)rightExpression).getRightExpression()).getBigIntegerValue().intValue() * tupleElements.length;
+              return ((PyNumericLiteralExpression)((PyBinaryExpression)rightExpression).getRightExpression()).getBigIntegerValue()
+                                                                                                             .intValue() * tupleElements.length;
             }
           }
         }
@@ -122,7 +128,7 @@ public class PyStringFormatInspection extends PyInspection {
             PyType right_type = myTypeEvalContext.getType(rightExpression);
             if (right_type instanceof PySubscriptableType) {
               PySubscriptableType tuple_type = (PySubscriptableType)right_type;
-              for (int i=0; i <= tuple_type.getElementCount(); i += 1) {
+              for (int i = 0; i <= tuple_type.getElementCount(); i += 1) {
                 PyType elementType = tuple_type.getElementType(i);
                 if (elementType != null) {
                   final String typeName = myFormatSpec.get(String.valueOf(i + 1));
@@ -151,7 +157,7 @@ public class PyStringFormatInspection extends PyInspection {
         else if (rightExpression instanceof PyCallExpression) {
           final PyCallable callable = ((PyCallExpression)rightExpression).resolveCalleeFunction(resolveContext);
           // TODO: Switch to Callable.getReturnType()
-          if (callable instanceof PyFunction && myTypeEvalContext.maySwitchToAST((PyFunction) callable)) {
+          if (callable instanceof PyFunction && myTypeEvalContext.maySwitchToAST((PyFunction)callable)) {
             PyStatementList statementList = ((PyFunction)callable).getStatementList();
             if (statementList == null) {
               return -1;
@@ -206,7 +212,7 @@ public class PyStringFormatInspection extends PyInspection {
           final PyType listType = PyBuiltinCache.getInstance(rightExpression).getListType();
 
           if (type == null || PyTypeChecker.match(listType, type, myTypeEvalContext)
-              || PyTypeChecker.match(stringType, type, myTypeEvalContext)) {
+            || PyTypeChecker.match(stringType, type, myTypeEvalContext)) {
             checkTypeCompatible(problemTarget, builtinCache.getStrType(),
                                 PyTypeParser.getTypeByName(problemTarget, s));
             return 1;
@@ -218,7 +224,7 @@ public class PyStringFormatInspection extends PyInspection {
             PyExpression stride = sliceItem.getStride();
             if (upper instanceof PyNumericLiteralExpression) {
               BigInteger lowerVal;
-              if (lower instanceof PyNumericLiteralExpression ) {
+              if (lower instanceof PyNumericLiteralExpression) {
                 lowerVal = ((PyNumericLiteralExpression)lower).getBigIntegerValue();
               }
               else {
@@ -230,8 +236,8 @@ public class PyStringFormatInspection extends PyInspection {
                 strideVal = ((PyNumericLiteralExpression)stride).getBigIntegerValue().intValue();
               else
                 strideVal = 1;
-              int res = count/strideVal;
-              int residue = count%strideVal == 0 ? 0 : 1;
+              int res = count / strideVal;
+              int residue = count % strideVal == 0 ? 0 : 1;
               return res + residue;
             }
           }
@@ -242,7 +248,7 @@ public class PyStringFormatInspection extends PyInspection {
 
 
       private static Map<PyExpression, PyExpression> addSubscriptions(PsiFile file, String operand) {
-        Map<PyExpression, PyExpression> additionalExpressions = new HashMap<PyExpression,PyExpression>();
+        Map<PyExpression, PyExpression> additionalExpressions = new HashMap<PyExpression, PyExpression>();
         PySubscriptionExpression[] subscriptionExpressions = PyUtil.getAllChildrenOfType(file, PySubscriptionExpression.class);
         for (PySubscriptionExpression expr : subscriptionExpressions) {
           if (expr.getOperand().getText().equals(operand)) {
@@ -266,11 +272,13 @@ public class PyStringFormatInspection extends PyInspection {
         Map<PyExpression, PyExpression> additionalExpressions;
         if (addSubscriptions) {
           additionalExpressions = addSubscriptions(rightExpression.getContainingFile(),
-                                                                                 rightExpression.getText());
-          pyElement = ((PyReferenceExpression)rightExpression).followAssignmentsChain(PyResolveContext.noImplicits().withTypeEvalContext(myTypeEvalContext)).getElement();
+                                                   rightExpression.getText());
+          pyElement = ((PyReferenceExpression)rightExpression).followAssignmentsChain(PyResolveContext.noImplicits()
+                                                                                                      .withTypeEvalContext(myTypeEvalContext))
+                                                              .getElement();
         }
         else {
-          additionalExpressions = new HashMap<PyExpression,PyExpression>();
+          additionalExpressions = new HashMap<PyExpression, PyExpression>();
           pyElement = rightExpression;
         }
 
@@ -331,7 +339,9 @@ public class PyStringFormatInspection extends PyInspection {
         myVisitor.registerProblem(problemTarget, message);
       }
 
-      private void checkExpressionType(@Nonnull final PyExpression expression, @Nonnull final String expectedTypeName, PsiElement problemTarget) {
+      private void checkExpressionType(@Nonnull final PyExpression expression,
+                                       @Nonnull final String expectedTypeName,
+                                       PsiElement problemTarget) {
         final PyType actual = myTypeEvalContext.getType(expression);
         final PyType expected = PyTypeParser.getTypeByName(problemTarget, expectedTypeName);
         if (actual != null) {
@@ -365,7 +375,7 @@ public class PyStringFormatInspection extends PyInspection {
           PyStringFormatParser.SubstitutionChunk chunk = chunks.get(i);
 
           // 2. Mapping key
-          String mappingKey = Integer.toString(i+1);
+          String mappingKey = Integer.toString(i + 1);
           if (mapping) {
             if (chunk.getMappingKey() == null || chunk.isUnclosedMapping()) {
               registerProblem(formatExpression, PyBundle.message("INSP.too.few.keys"));
@@ -391,7 +401,7 @@ public class PyStringFormatInspection extends PyInspection {
       }
 
       private void inspectWidth(@Nonnull final PyStringLiteralExpression formatExpression, String width) {
-        if ("*".equals(width)){
+        if ("*".equals(width)) {
           ++myExpectedArguments;
           if (myUsedMappingKeys.size() > 0) {
             registerProblem(formatExpression, "Can't use \'*\' in formats when using a mapping");

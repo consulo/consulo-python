@@ -17,26 +17,6 @@ package com.jetbrains.python.sdk.skeletons;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.ZipUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.userSkeletons.PyUserSkeletonsUtil;
@@ -45,9 +25,29 @@ import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.sdk.InvalidSdkException;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.application.ApplicationManager;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.progress.ProgressManager;
+import consulo.application.util.SystemInfo;
+import consulo.application.util.UserHomeFileUtil;
 import consulo.container.boot.ContainerPathManager;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.bundle.Sdk;
+import consulo.ide.util.ZipUtil;
+import consulo.language.editor.DaemonCodeAnalyzer;
+import consulo.logging.Logger;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
-import consulo.vfs.util.ArchiveVfsUtil;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.collection.SmartList;
+import consulo.util.io.FilePermissionCopier;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nonnull;
@@ -56,6 +56,8 @@ import java.awt.*;
 import java.io.*;
 import java.util.List;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -272,7 +274,7 @@ public class PySkeletonRefresher
 
 		final List<VirtualFile> paths = new ArrayList<>();
 
-		paths.addAll(Arrays.asList(sdk.getRootProvider().getFiles(OrderRootType.CLASSES)));
+		paths.addAll(Arrays.asList(sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance())));
 		paths.addAll(BuildoutModuleExtension.getExtraPathForAllOpenModules());
 
 		return Joiner.on(File.pathSeparator).join(ContainerUtil.mapNotNull(paths, (Function<VirtualFile, Object>) file -> {
@@ -323,7 +325,7 @@ public class PySkeletonRefresher
 			//noinspection ResultOfMethodCallIgnored
 			skeletonsDir.mkdirs();
 		}
-		final String readablePath = FileUtil.getLocationRelativeToUserHome(homePath);
+		final String readablePath = UserHomeFileUtil.getLocationRelativeToUserHome(homePath);
 
 		mySkeletonsGenerator.prepare();
 		myBlacklist = loadBlacklist();
@@ -442,7 +444,7 @@ public class PySkeletonRefresher
 					final File toFile = fromFile.isDirectory() ? getPackageSkeleton(module, skeletonsPath) : getModuleSkeleton(module, skeletonsPath);
 					try
 					{
-						FileUtil.copy(fromFile, toFile);
+						FileUtil.copy(fromFile, toFile, FilePermissionCopier.BY_NIO2);
 					}
 					catch(IOException e)
 					{

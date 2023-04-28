@@ -2,7 +2,6 @@
 
 <consulo-plugin>
 	<extensions defaultExtensionNs="com.intellij">
-		<injectionLanguageSupport implementation="com.jetbrains.python.intelliLang.PyLanguageInjectionSupport"/>
 		<injectionConfig config="pyInjections.xml"/>
 
 		<patterns.patternClass className="com.jetbrains.python.patterns.PythonPatterns" alias="py"/>

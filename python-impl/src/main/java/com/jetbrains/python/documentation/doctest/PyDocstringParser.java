@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.documentation.doctest;
 
-import com.intellij.lang.PsiBuilder;
+import consulo.language.parser.PsiBuilder;
 import com.jetbrains.python.parsing.ParsingContext;
 import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.parsing.StatementParsing;

@@ -17,9 +17,9 @@ package com.jetbrains.python.codeInsight.controlflow;
 
 import org.jetbrains.annotations.NonNls;
 import javax.annotation.Nullable;
-import com.intellij.codeInsight.controlflow.ControlFlowBuilder;
-import com.intellij.codeInsight.controlflow.impl.InstructionImpl;
-import com.intellij.psi.PsiElement;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowBuilder;
+import consulo.ide.impl.idea.codeInsight.controlflow.impl.InstructionImpl;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.types.PyType;

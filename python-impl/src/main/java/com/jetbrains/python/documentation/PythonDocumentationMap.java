@@ -18,15 +18,19 @@ package com.jetbrains.python.documentation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.components.*;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import com.intellij.psi.util.QualifiedName;
+import consulo.component.persist.PersistentStateComponent;
+import consulo.component.persist.State;
+import consulo.component.persist.Storage;
+import consulo.component.persist.StoragePathMacros;
+import consulo.ide.ServiceManager;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,9 +42,9 @@ import java.util.Map;
 @State(
   name = "PythonDocumentationMap",
   storages = {
-  @Storage(
-    file = StoragePathMacros.APP_CONFIG + "/other.xml")
-    }
+    @Storage(
+      file = StoragePathMacros.APP_CONFIG + "/other.xml")
+  }
 )
 public class PythonDocumentationMap implements PersistentStateComponent<PythonDocumentationMap.State> {
   public static PythonDocumentationMap getInstance() {
@@ -102,7 +106,8 @@ public class PythonDocumentationMap implements PersistentStateComponent<PythonDo
     public State() {
       addEntry("PyQt4", "http://www.riverbankcomputing.co.uk/static/Docs/PyQt4/html/{class.name.lower}.html#{function.name}");
       addEntry("PySide", "http://srinikom.github.com/pyside-docs/{module.name.slashes}/{class.name}.html#{module.name}.{element.qname}");
-      addEntry("gtk", "http://library.gnome.org/devel/pygtk/stable/class-gtk{class.name.lower}.html#method-gtk{class.name.lower}--{function.name.dashes}");
+      addEntry("gtk",
+               "http://library.gnome.org/devel/pygtk/stable/class-gtk{class.name.lower}.html#method-gtk{class.name.lower}--{function.name.dashes}");
       addEntry("wx", "http://www.wxpython.org/docs/api/{module.name}.{class.name}-class.html#{function.name}");
       addEntry("numpy", "http://docs.scipy.org/doc/numpy/reference/{}generated/{module.name}.{element.name}.html");
       addEntry("scipy", "http://docs.scipy.org/doc/scipy/reference/{}generated/{module.name}.{element.name}.html");

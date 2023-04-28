@@ -15,32 +15,9 @@
  */
 package com.jetbrains.python.console;
 
-import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonIOEncoding;
-import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonUnbuffered;
-
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.console.LanguageConsoleView;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import consulo.util.dataholder.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.encoding.EncodingProjectManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.PathMappingSettings;
 import com.jetbrains.python.console.completion.PydevConsoleElement;
 import com.jetbrains.python.console.parsing.PythonConsoleData;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
@@ -51,222 +28,211 @@ import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.content.bundle.Sdk;
+import consulo.execution.ui.console.language.LanguageConsoleView;
+import consulo.ide.impl.idea.util.PathMappingSettings;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.process.ProcessHandler;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.project.Project;
+import consulo.util.dataholder.Key;
+import consulo.util.lang.Pair;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.encoding.EncodingProjectManager;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Map;
+
+import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonIOEncoding;
+import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonUnbuffered;
 
 /**
  * Created by Yuli Fiterman on 9/13/2016.
  */
-public interface PydevConsoleRunner
-{
+public interface PydevConsoleRunner {
 
-	Key<ConsoleCommunication> CONSOLE_KEY = new Key<>("PYDEV_CONSOLE_KEY");
-	Key<Sdk> CONSOLE_SDK = new Key<>("PYDEV_CONSOLE_SDK_KEY");
+  Key<ConsoleCommunication> CONSOLE_KEY = new Key<>("PYDEV_CONSOLE_KEY");
+  Key<Sdk> CONSOLE_SDK = new Key<>("PYDEV_CONSOLE_SDK_KEY");
 
-	interface ConsoleListener
-	{
-		void handleConsoleInitialized(LanguageConsoleView consoleView);
-	}
+  interface ConsoleListener {
+    void handleConsoleInitialized(LanguageConsoleView consoleView);
+  }
 
 
-	@Nullable
-	static PyRemotePathMapper getPathMapper(@Nonnull Project project, Sdk sdk, PyConsoleOptions.PyConsoleSettings consoleSettings)
-	{
-		if(PySdkUtil.isRemote(sdk))
-		{
-			PythonRemoteInterpreterManager instance = PythonRemoteInterpreterManager.getInstance();
-			if(instance != null)
-			{
-				//noinspection ConstantConditions
-				PyRemotePathMapper remotePathMapper = instance.setupMappings(project, (PyRemoteSdkAdditionalDataBase) sdk.getSdkAdditionalData(), null);
+  @Nullable
+  static PyRemotePathMapper getPathMapper(@Nonnull Project project, Sdk sdk, PyConsoleOptions.PyConsoleSettings consoleSettings) {
+    if (PySdkUtil.isRemote(sdk)) {
+      PythonRemoteInterpreterManager instance = PythonRemoteInterpreterManager.getInstance();
+      if (instance != null) {
+        //noinspection ConstantConditions
+        PyRemotePathMapper remotePathMapper =
+          instance.setupMappings(project, (PyRemoteSdkAdditionalDataBase)sdk.getSdkAdditionalData(), null);
 
-				PathMappingSettings mappingSettings = consoleSettings.getMappingSettings();
+        PathMappingSettings mappingSettings = consoleSettings.getMappingSettings();
 
-				remotePathMapper.addAll(mappingSettings.getPathMappings(), PyRemotePathMapper.PyPathMappingType.USER_DEFINED);
+        remotePathMapper.addAll(mappingSettings.getPathMappings(), PyRemotePathMapper.PyPathMappingType.USER_DEFINED);
 
-				return remotePathMapper;
-			}
-		}
-		return null;
-	}
+        return remotePathMapper;
+      }
+    }
+    return null;
+  }
 
-	@Nonnull
-	static Pair<Sdk, Module> findPythonSdkAndModule(@Nonnull Project project, @Nullable Module contextModule)
-	{
-		Sdk sdk = null;
-		Module module = null;
-		PyConsoleOptions.PyConsoleSettings settings = PyConsoleOptions.getInstance(project).getPythonConsoleSettings();
-		String sdkHome = settings.getSdkHome();
-		if(sdkHome != null)
-		{
-			sdk = PythonSdkType.findSdkByPath(sdkHome);
-			if(settings.getModuleName() != null)
-			{
-				module = ModuleManager.getInstance(project).findModuleByName(settings.getModuleName());
-			}
-			else
-			{
-				module = contextModule;
-				if(module == null && ModuleManager.getInstance(project).getModules().length > 0)
-				{
-					module = ModuleManager.getInstance(project).getModules()[0];
-				}
-			}
-		}
-		if(sdk == null && settings.isUseModuleSdk())
-		{
-			if(contextModule != null)
-			{
-				module = contextModule;
-			}
-			else if(settings.getModuleName() != null)
-			{
-				module = ModuleManager.getInstance(project).findModuleByName(settings.getModuleName());
-			}
-			if(module != null)
-			{
-				if(PythonSdkType.findPythonSdk(module) != null)
-				{
-					sdk = PythonSdkType.findPythonSdk(module);
-				}
-			}
-		}
-		else if(contextModule != null)
-		{
-			if(module == null)
-			{
-				module = contextModule;
-			}
-			if(sdk == null)
-			{
-				sdk = PythonSdkType.findPythonSdk(module);
-			}
-		}
+  @Nonnull
+  static Pair<Sdk, Module> findPythonSdkAndModule(@Nonnull Project project, @Nullable Module contextModule) {
+    Sdk sdk = null;
+    Module module = null;
+    PyConsoleOptions.PyConsoleSettings settings = PyConsoleOptions.getInstance(project).getPythonConsoleSettings();
+    String sdkHome = settings.getSdkHome();
+    if (sdkHome != null) {
+      sdk = PythonSdkType.findSdkByPath(sdkHome);
+      if (settings.getModuleName() != null) {
+        module = ModuleManager.getInstance(project).findModuleByName(settings.getModuleName());
+      }
+      else {
+        module = contextModule;
+        if (module == null && ModuleManager.getInstance(project).getModules().length > 0) {
+          module = ModuleManager.getInstance(project).getModules()[0];
+        }
+      }
+    }
+    if (sdk == null && settings.isUseModuleSdk()) {
+      if (contextModule != null) {
+        module = contextModule;
+      }
+      else if (settings.getModuleName() != null) {
+        module = ModuleManager.getInstance(project).findModuleByName(settings.getModuleName());
+      }
+      if (module != null) {
+        if (PythonSdkType.findPythonSdk(module) != null) {
+          sdk = PythonSdkType.findPythonSdk(module);
+        }
+      }
+    }
+    else if (contextModule != null) {
+      if (module == null) {
+        module = contextModule;
+      }
+      if (sdk == null) {
+        sdk = PythonSdkType.findPythonSdk(module);
+      }
+    }
 
-		if(sdk == null)
-		{
-			for(Module m : ModuleManager.getInstance(project).getModules())
-			{
-				if(PythonSdkType.findPythonSdk(m) != null)
-				{
-					sdk = PythonSdkType.findPythonSdk(m);
-					module = m;
-					break;
-				}
-			}
-		}
-		if(sdk == null)
-		{
-			if(PythonSdkType.getAllSdks().size() > 0)
-			{
-				//noinspection UnusedAssignment
-				sdk = PythonSdkType.getAllSdks().get(0); //take any python sdk
-			}
-		}
-		return Pair.create(sdk, module);
-	}
+    if (sdk == null) {
+      for (Module m : ModuleManager.getInstance(project).getModules()) {
+        if (PythonSdkType.findPythonSdk(m) != null) {
+          sdk = PythonSdkType.findPythonSdk(m);
+          module = m;
+          break;
+        }
+      }
+    }
+    if (sdk == null) {
+      if (PythonSdkType.getAllSdks().size() > 0) {
+        //noinspection UnusedAssignment
+        sdk = PythonSdkType.getAllSdks().get(0); //take any python sdk
+      }
+    }
+    return Pair.create(sdk, module);
+  }
 
-	static String constructPythonPathCommand(Collection<String> pythonPath, String command)
-	{
-		final String path = Joiner.on(", ").join(Collections2.transform(pythonPath, new Function<String, String>()
-		{
-			@Override
-			public String apply(String input)
-			{
-				return "'" + input.replace("\\", "\\\\").replace("'", "\\'") + "'";
-			}
-		}));
+  static String constructPythonPathCommand(Collection<String> pythonPath, String command) {
+    final String path = Joiner.on(", ").join(Collections2.transform(pythonPath, new Function<String, String>() {
+      @Override
+      public String apply(String input) {
+        return "'" + input.replace("\\", "\\\\").replace("'", "\\'") + "'";
+      }
+    }));
 
-		return command.replace(PydevConsoleRunnerImpl.WORKING_DIR_ENV, path);
-	}
+    return command.replace(PydevConsoleRunnerImpl.WORKING_DIR_ENV, path);
+  }
 
-	static Map<String, String> addDefaultEnvironments(Sdk sdk, Map<String, String> envs, @Nonnull Project project)
-	{
-		setCorrectStdOutEncoding(envs, project);
+  static Map<String, String> addDefaultEnvironments(Sdk sdk, Map<String, String> envs, @Nonnull Project project) {
+    setCorrectStdOutEncoding(envs, project);
 
-		PythonSdkFlavor.initPythonPath(envs, true, PythonCommandLineState.getAddedPaths(sdk));
-		return envs;
-	}
+    PythonSdkFlavor.initPythonPath(envs, true, PythonCommandLineState.getAddedPaths(sdk));
+    return envs;
+  }
 
-	/**
-	 * Add required ENV var to Python task to set its stdout charset to current project charset to allow it print correctly.
-	 *
-	 * @param envs    map of envs to add variable
-	 * @param project current project
-	 */
-	static void setCorrectStdOutEncoding(@Nonnull Map<String, String> envs, @Nonnull Project project)
-	{
-		final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
-		final String encoding = defaultCharset.name();
-		setPythonIOEncoding(setPythonUnbuffered(envs), encoding);
-	}
+  /**
+   * Add required ENV var to Python task to set its stdout charset to current project charset to allow it print correctly.
+   *
+   * @param envs    map of envs to add variable
+   * @param project current project
+   */
+  static void setCorrectStdOutEncoding(@Nonnull Map<String, String> envs, @Nonnull Project project) {
+    final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
+    final String encoding = defaultCharset.name();
+    setPythonIOEncoding(setPythonUnbuffered(envs), encoding);
+  }
 
-	/**
-	 * Set command line charset as current project charset.
-	 * Add required ENV var to Python task to set its stdout charset to current project charset to allow it print correctly.
-	 *
-	 * @param commandLine command line
-	 * @param project     current project
-	 */
-	static void setCorrectStdOutEncoding(@Nonnull GeneralCommandLine commandLine, @Nonnull Project project)
-	{
-		final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
-		commandLine.setCharset(defaultCharset);
-		setPythonIOEncoding(commandLine.getEnvironment(), defaultCharset.name());
-	}
+  /**
+   * Set command line charset as current project charset.
+   * Add required ENV var to Python task to set its stdout charset to current project charset to allow it print correctly.
+   *
+   * @param commandLine command line
+   * @param project     current project
+   */
+  static void setCorrectStdOutEncoding(@Nonnull GeneralCommandLine commandLine, @Nonnull Project project) {
+    final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
+    commandLine.setCharset(defaultCharset);
+    setPythonIOEncoding(commandLine.getEnvironment(), defaultCharset.name());
+  }
 
-	static boolean isInPydevConsole(PsiElement element)
-	{
-		return element instanceof PydevConsoleElement || getConsoleCommunication(element) != null;
-	}
+  static boolean isInPydevConsole(PsiElement element) {
+    return element instanceof PydevConsoleElement || getConsoleCommunication(element) != null;
+  }
 
-	static boolean isPythonConsole(@Nullable ASTNode element)
-	{
-		return getPythonConsoleData(element) != null;
-	}
+  static boolean isPythonConsole(@Nullable ASTNode element) {
+    return getPythonConsoleData(element) != null;
+  }
 
-	@Nullable
-	static PythonConsoleData getPythonConsoleData(@Nullable ASTNode element)
-	{
-		if(element == null || element.getPsi() == null || element.getPsi().getContainingFile() == null)
-		{
-			return null;
-		}
+  @Nullable
+  static PythonConsoleData getPythonConsoleData(@Nullable ASTNode element) {
+    if (element == null || element.getPsi() == null || element.getPsi().getContainingFile() == null) {
+      return null;
+    }
 
-		VirtualFile file = PydevConsoleRunnerImpl.getConsoleFile(element.getPsi().getContainingFile());
+    VirtualFile file = PydevConsoleRunnerImpl.getConsoleFile(element.getPsi().getContainingFile());
 
-		if(file == null)
-		{
-			return null;
-		}
-		return file.getUserData(PyConsoleUtil.PYTHON_CONSOLE_DATA);
-	}
+    if (file == null) {
+      return null;
+    }
+    return file.getUserData(PyConsoleUtil.PYTHON_CONSOLE_DATA);
+  }
 
-	@Nullable
-	static ConsoleCommunication getConsoleCommunication(PsiElement element)
-	{
-		final PsiFile containingFile = element.getContainingFile();
-		return containingFile != null ? containingFile.getCopyableUserData(CONSOLE_KEY) : null;
-	}
+  @Nullable
+  static ConsoleCommunication getConsoleCommunication(PsiElement element) {
+    final PsiFile containingFile = element.getContainingFile();
+    return containingFile != null ? containingFile.getCopyableUserData(CONSOLE_KEY) : null;
+  }
 
-	@Nullable
-	static Sdk getConsoleSdk(PsiElement element)
-	{
-		final PsiFile containingFile = element.getContainingFile();
-		return containingFile != null ? containingFile.getCopyableUserData(CONSOLE_SDK) : null;
-	}
+  @Nullable
+  static Sdk getConsoleSdk(PsiElement element) {
+    final PsiFile containingFile = element.getContainingFile();
+    return containingFile != null ? containingFile.getCopyableUserData(CONSOLE_SDK) : null;
+  }
 
-	void open();
+  void open();
 
-	void runSync();
+  void runSync();
 
-	void run();
+  void run();
 
-	PydevConsoleCommunication getPydevConsoleCommunication();
+  PydevConsoleCommunication getPydevConsoleCommunication();
 
-	void addConsoleListener(PydevConsoleRunnerImpl.ConsoleListener consoleListener);
+  void addConsoleListener(PydevConsoleRunnerImpl.ConsoleListener consoleListener);
 
-	PydevConsoleExecuteActionHandler getConsoleExecuteActionHandler();
+  PydevConsoleExecuteActionHandler getConsoleExecuteActionHandler();
 
-	PyConsoleProcessHandler getProcessHandler();
+  ProcessHandler getProcessHandler();
 
-	PythonConsoleView getConsoleView();
+  PythonConsoleView getConsoleView();
 }

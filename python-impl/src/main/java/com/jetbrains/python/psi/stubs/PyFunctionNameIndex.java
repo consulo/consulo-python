@@ -19,15 +19,15 @@
  */
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.stubs.StubIndexKey;
 import com.jetbrains.python.psi.PyFunction;
-import javax.annotation.Nonnull;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.stub.StringStubIndexExtension;
+import consulo.language.psi.stub.StubIndex;
+import consulo.language.psi.stub.StubIndexKey;
+import consulo.project.Project;
+import consulo.project.content.scope.ProjectScopes;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 public class PyFunctionNameIndex extends StringStubIndexExtension<PyFunction> {
@@ -43,7 +43,7 @@ public class PyFunctionNameIndex extends StringStubIndexExtension<PyFunction> {
   }
 
   public static Collection<PyFunction> find(String name, Project project) {
-    return StubIndex.getInstance().get(KEY, name, project, ProjectScope.getAllScope(project));
+    return StubIndex.getInstance().get(KEY, name, project, ProjectScopes.getAllScope(project));
   }
 
   public static Collection<String> allKeys(Project project) {

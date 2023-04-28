@@ -16,20 +16,21 @@
 
 package com.jetbrains.python.editor;
 
-import javax.annotation.Nullable;
-
-import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenSet;
+import consulo.language.editor.action.JoinRawLinesHandlerDelegate;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nullable;
 
 /**
  * Joins lines sanely.
@@ -43,6 +44,7 @@ import com.jetbrains.python.psi.*;
  * User: dcheryasov
  * Date: Sep 6, 2010 2:25:48 AM
  */
+@ExtensionImpl
 public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
 
   @Override
@@ -57,9 +59,9 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
     // step back the probable "\" and space before it.
     int i = start;
     CharSequence text = document.getCharsSequence();
-    if (i>= 0 && text.charAt(i) == '\n') i -=1;
-    if (i>= 0 && text.charAt(i) == '\\') i -=1;
-    while (i>=0 && text.charAt(i) == ' ' || text.charAt(i) == '\t') i -=1;
+    if (i >= 0 && text.charAt(i) == '\n') i -= 1;
+    if (i >= 0 && text.charAt(i) == '\\') i -= 1;
+    while (i >= 0 && text.charAt(i) == ' ' || text.charAt(i) == '\t') i -= 1;
     if (i < 0) return CANNOT_JOIN; // TODO: join with empty BOF, too
 
     // detect elements around the join
@@ -135,11 +137,11 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
         }
 
         if (i != substrings.length - 1 && !(element instanceof PyReferenceExpression) &&
-            !(element instanceof PyStringLiteralExpression)) {
+          !(element instanceof PyStringLiteralExpression)) {
           replacement.append(" ");
         }
       }
-      document.replaceString(element.getTextOffset(), element.getTextOffset()+element.getTextLength(), replacement);
+      document.replaceString(element.getTextOffset(), element.getTextOffset() + element.getTextLength(), replacement);
       return true;
     }
     return false;
@@ -154,7 +156,8 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
 
     /**
      * Result of a join operation.
-     * @param insert: what string to insert at start position
+     *
+     * @param insert:       what string to insert at start position
      * @param cursorOffset: how to move cursor relative to start (0 = stand at start)
      */
     Result(String insert, int cursorOffset) {
@@ -166,9 +169,10 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
 
     /**
      * Result of a join operation.
-     * @param insert what to insert into the cut place
+     *
+     * @param insert       what to insert into the cut place
      * @param cursorOffset where to put cursor, relative to the start cursorOffset of cutting
-     * @param cutFromLeft how many chars to cut from the end on left string, >0 moves start cursorOffset of cutting to the left.
+     * @param cutFromLeft  how many chars to cut from the end on left string, >0 moves start cursorOffset of cutting to the left.
      * @param cutIntoRight how many chars to cut from the beginning on right string, >0 moves start cursorOffset of cutting to the right.
      */
     private Result(String insert, int cursorOffset, int cutFromLeft, int cutIntoRight) {
@@ -245,6 +249,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
 
   private static class OpenBracketJoiner extends Joiner {
     private static TokenSet OPENS = TokenSet.create(PyTokenTypes.LBRACKET, PyTokenTypes.LBRACE, PyTokenTypes.LPAR);
+
     @Override
     public Result join(Request req) {
       if (OPENS.contains(req.leftElem().getNode().getElementType())) {
@@ -257,6 +262,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
 
   private static class CloseBracketJoiner extends Joiner {
     private static TokenSet CLOSES = TokenSet.create(PyTokenTypes.RBRACKET, PyTokenTypes.RBRACE, PyTokenTypes.RPAR);
+
     @Override
     public Result join(Request req) {
       if (CLOSES.contains(req.rightElem().getNode().getElementType())) {
@@ -315,7 +321,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
       if (req.leftElem() != req.rightElem()) {
         final PsiElement parent = req.rightElem().getParent();
         if ((req.leftElem().getParent() == parent && parent instanceof PyStringLiteralExpression) ||
-            (req.leftExpr() instanceof PyStringLiteralExpression && req.rightExpr() instanceof PyStringLiteralExpression)
+          (req.leftExpr() instanceof PyStringLiteralExpression && req.rightExpr() instanceof PyStringLiteralExpression)
         ) {
           // two quoted strings close by
           CharSequence text = req.document().getCharsSequence();
@@ -328,14 +334,14 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
             }
             else if (left_mod.compatibleTo(right_mod) && lquo.length() == 1 && right_mod.quote().length() == 1) {
               // maybe fit one literal's quotes to match other's
-              if (! containsChar(text, right_mod.getInnerRange(), left_mod.quote().charAt(0))) {
+              if (!containsChar(text, right_mod.getInnerRange(), left_mod.quote().charAt(0))) {
                 int quote_pos = right_mod.getInnerRange().getEndOffset();
-                req.document().replaceString(quote_pos, quote_pos+1, left_mod.quote());
+                req.document().replaceString(quote_pos, quote_pos + 1, left_mod.quote());
                 return new Result("", 0, left_mod.quote().length(), right_mod.getStartPadding());
               }
-              else if (! containsChar(text, left_mod.getInnerRange(), right_mod.quote().charAt(0))) {
-                int quote_pos = left_mod.getInnerRange().getStartOffset()-1;
-                req.document().replaceString(quote_pos, quote_pos+1, right_mod.quote());
+              else if (!containsChar(text, left_mod.getInnerRange(), right_mod.quote().charAt(0))) {
+                int quote_pos = left_mod.getInnerRange().getStartOffset() - 1;
+                req.document().replaceString(quote_pos, quote_pos + 1, right_mod.quote());
                 return new Result("", 0, left_mod.quote().length(), right_mod.getStartPadding());
               }
             }
@@ -346,7 +352,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
     }
 
     protected static boolean containsChar(CharSequence text, TextRange range, char c) {
-      for (int i=range.getStartOffset(); i <= range.getEndOffset(); i+=1) {
+      for (int i = range.getStartOffset(); i <= range.getEndOffset(); i += 1) {
         if (text.charAt(i) == c) return true;
       }
       return false;
@@ -364,13 +370,13 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
         char c = text.charAt(pos);
         if ("Uu".indexOf(c) > -1 || "Bb".indexOf(c) > -1) {
           myPrefix = String.valueOf(c).toLowerCase();
-          pos +=1;
+          pos += 1;
           c = text.charAt(pos);
         }
         else myPrefix = "";
         if ("Rr".indexOf(c) > -1) {
           myRaw = true;
-          pos +=1;
+          pos += 1;
           c = text.charAt(pos);
         }
         else myRaw = false;
@@ -382,23 +388,23 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
           return; // failed to find a quote
         }
         // TODO: we could run a simple but complete parser here, only checking escapes
-        if (range.getLength() >= 6 && text.charAt(pos+1) == quote && text.charAt(pos+2) == quote) {
-          myQuote = text.subSequence(pos, pos+3).toString();
-          if (!myQuote.equals(text.subSequence(range.getEndOffset()-3, range.getEndOffset()).toString())) {
+        if (range.getLength() >= 6 && text.charAt(pos + 1) == quote && text.charAt(pos + 2) == quote) {
+          myQuote = text.subSequence(pos, pos + 3).toString();
+          if (!myQuote.equals(text.subSequence(range.getEndOffset() - 3, range.getEndOffset()).toString())) {
             myInnerRange = null;
             myOk = false;
             return;
           }
         }
         else {
-          myQuote = text.subSequence(pos, pos+1).toString();
-          if (!myQuote.equals(text.subSequence(range.getEndOffset()-1, range.getEndOffset()).toString())) {
+          myQuote = text.subSequence(pos, pos + 1).toString();
+          if (!myQuote.equals(text.subSequence(range.getEndOffset() - 1, range.getEndOffset()).toString())) {
             myInnerRange = null;
             myOk = false;
             return;
           }
         }
-        myInnerRange = TextRange.from(range.getStartOffset()+getStartPadding(), range.getLength()-getStartPadding()-quote().length());
+        myInnerRange = TextRange.from(range.getStartOffset() + getStartPadding(), range.getLength() - getStartPadding() - quote().length());
         myOk = true;
       }
 
@@ -424,9 +430,9 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
           final StrMod other = (StrMod)o;
           return (
             myOk && other.isOk() &&
-            myRaw == other.isRaw() &&
-            myPrefix.equals(other.prefix()) &&
-            myQuote.equals(other.quote())
+              myRaw == other.isRaw() &&
+              myPrefix.equals(other.prefix()) &&
+              myQuote.equals(other.quote())
           );
         }
         return false;
@@ -436,7 +442,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
        * @return combined length of initial modifier letters and opening quotes
        */
       public int getStartPadding() {
-        return myQuote.length() + myPrefix.length() + (myRaw? 1 : 0);
+        return myQuote.length() + myPrefix.length() + (myRaw ? 1 : 0);
       }
 
       /**

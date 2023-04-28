@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyAugAssignmentStatement;

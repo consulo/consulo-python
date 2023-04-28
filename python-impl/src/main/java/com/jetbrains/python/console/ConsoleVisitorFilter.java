@@ -15,48 +15,45 @@
  */
 package com.jetbrains.python.console;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.psi.PsiFile;
-import com.jetbrains.python.inspections.PyIncorrectDocstringInspection;
-import com.jetbrains.python.inspections.PyMandatoryEncodingInspection;
-import com.jetbrains.python.inspections.PyMissingOrEmptyDocstringInspection;
-import com.jetbrains.python.inspections.PyPep8Inspection;
-import com.jetbrains.python.inspections.PySingleQuotedDocstringInspection;
-import com.jetbrains.python.inspections.PyStatementEffectInspection;
-import com.jetbrains.python.inspections.PyUnboundLocalVariableInspection;
-import com.jetbrains.python.inspections.PyUnusedLocalInspection;
-import com.jetbrains.python.inspections.PythonVisitorFilter;
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.inspections.*;
 import com.jetbrains.python.validation.DocStringAnnotator;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.psi.PsiFile;
+
+import javax.annotation.Nonnull;
 
 /**
  * User : catherine
  * <p>
  * filter out some python inspections and annotations if we're in console
  */
-public class ConsoleVisitorFilter implements PythonVisitorFilter
-{
-	@Override
-	public boolean isSupported(@Nonnull final Class visitorClass, @Nonnull final PsiFile file)
-	{
-		//if we're in console
-		if(PydevConsoleRunner.isInPydevConsole(file))
-		{
-			//inspections
-			if(visitorClass == PyUnusedLocalInspection.class || visitorClass == PyUnboundLocalVariableInspection.class ||
-					visitorClass == PyStatementEffectInspection.class || visitorClass == PySingleQuotedDocstringInspection.class ||
-					visitorClass == PyIncorrectDocstringInspection.class || visitorClass == PyMissingOrEmptyDocstringInspection.class ||
-					visitorClass == PyMandatoryEncodingInspection.class || visitorClass == PyPep8Inspection.class)
-			{
-				return false;
-			}
+@ExtensionImpl
+public class ConsoleVisitorFilter implements PythonVisitorFilter {
+  @Override
+  public boolean isSupported(@Nonnull final Class visitorClass, @Nonnull final PsiFile file) {
+    //if we're in console
+    if (PydevConsoleRunner.isInPydevConsole(file)) {
+      //inspections
+      if (visitorClass == PyUnusedLocalInspection.class || visitorClass == PyUnboundLocalVariableInspection.class ||
+        visitorClass == PyStatementEffectInspection.class || visitorClass == PySingleQuotedDocstringInspection.class ||
+        visitorClass == PyIncorrectDocstringInspection.class || visitorClass == PyMissingOrEmptyDocstringInspection.class ||
+        visitorClass == PyMandatoryEncodingInspection.class || visitorClass == PyPep8Inspection.class) {
+        return false;
+      }
 
-			//annotators
-			if(visitorClass == DocStringAnnotator.class)
-			{
-				return false;
-			}
-		}
-		return true;
-	}
+      //annotators
+      if (visitorClass == DocStringAnnotator.class) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
 }

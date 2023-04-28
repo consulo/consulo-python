@@ -18,14 +18,14 @@ package com.jetbrains.python.codeInsight.intentions;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * User: catherine
@@ -65,7 +65,8 @@ public class PyTransformConditionalExpressionIntention extends BaseIntentionActi
     return false;
   }
 
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+  {
     final PyAssignmentStatement assignmentStatement =
           PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyAssignmentStatement.class);
     assert assignmentStatement != null;

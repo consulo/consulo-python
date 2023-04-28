@@ -16,42 +16,50 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel;
-import consulo.util.dataholder.Key;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.InspectionToolState;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.util.dataholder.Key;
 import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
 
-import javax.swing.*;
+import javax.annotation.Nonnull;
 
 /**
  * @author oleg
  */
+@ExtensionImpl
 public class PyUnusedLocalInspection extends PyInspection {
   private static Key<PyUnusedLocalInspectionVisitor> KEY = Key.create("PyUnusedLocal.Visitor");
 
-  public boolean ignoreTupleUnpacking = true;
-  public boolean ignoreLambdaParameters = true;
-  public boolean ignoreLoopIterationVariables = true;
+  @Nonnull
+  @Override
+  public InspectionToolState<?> createStateProvider() {
+    return new PyUnusedLocalInspectionState();
+  }
 
+  @Override
   @Nonnull
   @Nls
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.unused");
   }
 
+  @Override
   @Nonnull
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         final boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
+    PyUnusedLocalInspectionState inspectionState = (PyUnusedLocalInspectionState)state;
+
     final PyUnusedLocalInspectionVisitor visitor = new PyUnusedLocalInspectionVisitor(holder,
                                                                                       session,
-                                                                                      ignoreTupleUnpacking,
-                                                                                      ignoreLambdaParameters,
-                                                                                      ignoreLoopIterationVariables);
+                                                                                      inspectionState.ignoreTupleUnpacking,
+                                                                                      inspectionState.ignoreLambdaParameters,
+                                                                                      inspectionState.ignoreLoopIterationVariables);
     // buildVisitor() will be called on injected files in the same session - don't overwrite if we already have one
     final PyUnusedLocalInspectionVisitor existingVisitor = session.getUserData(KEY);
     if (existingVisitor == null) {
@@ -61,20 +69,11 @@ public class PyUnusedLocalInspection extends PyInspection {
   }
 
   @Override
-  public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder) {
+  public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder, Object state) {
     final PyUnusedLocalInspectionVisitor visitor = session.getUserData(KEY);
     if (visitor != null) {
       visitor.registerProblems();
       session.putUserData(KEY, null);
     }
-  }
-
-  @Override
-  public JComponent createOptionsPanel() {
-    MultipleCheckboxOptionsPanel panel = new MultipleCheckboxOptionsPanel(this);
-    panel.addCheckbox("Ignore variables used in tuple unpacking", "ignoreTupleUnpacking");
-    panel.addCheckbox("Ignore lambda parameters", "ignoreLambdaParameters");
-    panel.addCheckbox("Ignore range iteration variables", "ignoreLoopIterationVariables");
-    return panel;
   }
 }

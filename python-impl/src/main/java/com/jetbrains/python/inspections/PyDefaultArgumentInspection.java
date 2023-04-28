@@ -16,21 +16,22 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.PyDefaultArgumentQuickFix;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
 public class PyDefaultArgumentInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -43,7 +44,8 @@ public class PyDefaultArgumentInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 

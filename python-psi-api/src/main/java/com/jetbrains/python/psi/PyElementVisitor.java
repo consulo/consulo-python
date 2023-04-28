@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import com.intellij.psi.PsiElementVisitor;
+import consulo.language.psi.PsiElementVisitor;
 
 /**
  * Visitor for python-specific nodes.

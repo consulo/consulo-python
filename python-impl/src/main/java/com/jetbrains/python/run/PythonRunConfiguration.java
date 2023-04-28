@@ -15,31 +15,31 @@
  */
 package com.jetbrains.python.run;
 
-import java.io.File;
-
-import org.jdom.Element;
-import javax.annotation.Nonnull;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.RefactoringListenerProvider;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.JDOMExternalizerUtil;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.listeners.RefactoringElementAdapter;
-import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.jetbrains.python.PyBundle;
+import consulo.execution.RuntimeConfigurationException;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.executor.Executor;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.language.editor.refactoring.event.RefactoringElementAdapter;
+import consulo.language.editor.refactoring.event.RefactoringElementListener;
+import consulo.language.editor.refactoring.event.RefactoringListenerProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.StringUtil;
+import consulo.util.xml.serializer.JDOMExternalizerUtil;
+import consulo.util.xml.serializer.WriteExternalException;
+import consulo.virtualFileSystem.VirtualFile;
+import org.jdom.Element;
+
+import javax.annotation.Nonnull;
+import java.io.File;
 
 /**
  * @author yole

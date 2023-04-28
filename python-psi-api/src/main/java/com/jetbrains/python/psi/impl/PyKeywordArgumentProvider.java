@@ -16,19 +16,22 @@
 
 package com.jetbrains.python.psi.impl;
 
-import java.util.List;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+
+import java.util.List;
 
 /**
  * Allows to provide a custom list of keyword arguments for a function that uses **kwargs.
  *
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyKeywordArgumentProvider {
-  ExtensionPointName<PyKeywordArgumentProvider> EP_NAME = ExtensionPointName.create("consulo.python.keywordArgumentProvider");
+  ExtensionPointName<PyKeywordArgumentProvider> EP_NAME = ExtensionPointName.create(PyKeywordArgumentProvider.class);
 
   List<String> getKeywordArguments(PyFunction function, PyCallExpression callExpr);
 }

@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.codeInsight.dataflow;
 
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.codeInsight.dataflow.map.DFAMap;
-import com.intellij.codeInsight.dataflow.map.DfaMapInstance;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap;
+import consulo.ide.impl.idea.codeInsight.dataflow.map.DfaMapInstance;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.codeInsight.controlflow.ReadWriteInstruction;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeVariable;
@@ -36,9 +36,10 @@ import java.util.Map;
 /**
  * @author oleg
  */
-public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable> {
+public class PyReachingDefsDfaInstance implements consulo.ide.impl.idea.codeInsight.dataflow.map.DfaMapInstance<ScopeVariable>
+{
   // Use this its own map, because check in PyReachingDefsDfaSemilattice is important
-  public static final DFAMap<ScopeVariable> INITIAL_MAP = new DFAMap<ScopeVariable>();
+  public static final consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> INITIAL_MAP = new consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable>();
 
   public DFAMap<ScopeVariable> fun(final DFAMap<ScopeVariable> map, final Instruction instruction) {
     final PsiElement element = instruction.getElement();
@@ -46,7 +47,7 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable> 
       return processReducedMap(map, instruction, element);
     }
     // Scope reduction
-    final DFAMap<ScopeVariable> reducedMap = new DFAMap<ScopeVariable>();
+    final consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> reducedMap = new consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable>();
     for (Map.Entry<String, ScopeVariable> entry : map.entrySet()) {
       final ScopeVariable value = entry.getValue();
       // Support PEP-3110. (PY-1408)
@@ -65,9 +66,9 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable> 
     return processReducedMap(reducedMap, instruction, element);
   }
 
-  private DFAMap<ScopeVariable> processReducedMap(DFAMap<ScopeVariable> map,
-                                                  final Instruction instruction,
-                                                  final PsiElement element) {
+  private consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> processReducedMap(consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> map,
+																								 final consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction,
+																								 final PsiElement element) {
     String name = null;
     // Process readwrite instruction
     if (instruction instanceof ReadWriteInstruction && ((ReadWriteInstruction)instruction).getAccess().isWriteAccess()) {
@@ -105,7 +106,7 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable> 
   }
 
   @Nonnull
-  public DFAMap<ScopeVariable> initial() {
+  public consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> initial() {
     return INITIAL_MAP;
   }
 

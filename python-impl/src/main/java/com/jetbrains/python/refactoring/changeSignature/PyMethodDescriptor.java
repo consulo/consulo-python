@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.refactoring.changeSignature.MethodDescriptor;
+import consulo.util.lang.StringUtil;
+import consulo.ide.impl.idea.refactoring.changeSignature.MethodDescriptor;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyNamedParameterImpl;
 
@@ -28,7 +28,8 @@ import java.util.List;
  * User : ktisha
  */
 
-public class PyMethodDescriptor implements MethodDescriptor<PyParameterInfo, String> {
+public class PyMethodDescriptor implements consulo.ide.impl.idea.refactoring.changeSignature.MethodDescriptor<PyParameterInfo, String>
+{
   private final PyFunction myFunction;
 
   public PyMethodDescriptor(PyFunction function) {

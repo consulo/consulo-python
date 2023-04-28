@@ -18,24 +18,23 @@ package com.jetbrains.python.psi.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.codeInsight.userSkeletons.PyUserSkeletonsUtil;
 import com.jetbrains.python.console.PydevConsoleRunner;
 import com.jetbrains.python.facet.PythonPathContributingFacet;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.impl.PyImportResolver;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.QualifiedName;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.ModuleRootManager;
 import consulo.module.extension.ModuleExtension;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -288,7 +287,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 
 		if(!myWithoutForeign)
 		{
-			for(PyImportResolver resolver : Extensions.getExtensions(PyImportResolver.EP_NAME))
+			for(PyImportResolver resolver : PyImportResolver.EP_NAME.getExtensionList())
 			{
 				PsiElement foreign = resolver.resolveImportReference(myQualifiedName, myContext);
 				if(foreign != null)

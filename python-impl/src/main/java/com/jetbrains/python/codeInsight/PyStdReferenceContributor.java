@@ -16,48 +16,67 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.psi.*;
-import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PySequenceExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.psi.*;
+import consulo.language.util.ProcessingContext;
+
 import javax.annotation.Nonnull;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
  * @author yole
  */
-public class PyStdReferenceContributor extends PsiReferenceContributor {
-  @Override
-  public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
-    registerClassAttributeReference(registrar, PyNames.ALL, new PsiReferenceProvider() {
-      @Nonnull
-      @Override
-      public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
-                                                   @Nonnull ProcessingContext context) {
-        return new PsiReference[]{new PyDunderAllReference((PyStringLiteralExpression)element)};
-      }
-    });
+@ExtensionImpl
+public class PyStdReferenceContributor extends PsiReferenceContributor
+{
+	@Override
+	public void registerReferenceProviders(PsiReferenceRegistrar registrar)
+	{
+		registerClassAttributeReference(registrar, PyNames.ALL, new PsiReferenceProvider()
+		{
+			@Nonnull
+			@Override
+			public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
+														 @Nonnull ProcessingContext context)
+			{
+				return new PsiReference[]{new PyDunderAllReference((PyStringLiteralExpression) element)};
+			}
+		});
 
-    registerClassAttributeReference(registrar, PyNames.SLOTS, new PsiReferenceProvider() {
-      @Nonnull
-      @Override
-      public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
-                                                   @Nonnull ProcessingContext context) {
-        return new PsiReference[]{new PyDunderSlotsReference((PyStringLiteralExpression)element)};
-      }
-    });
-  }
+		registerClassAttributeReference(registrar, PyNames.SLOTS, new PsiReferenceProvider()
+		{
+			@Nonnull
+			@Override
+			public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
+														 @Nonnull ProcessingContext context)
+			{
+				return new PsiReference[]{new PyDunderSlotsReference((PyStringLiteralExpression) element)};
+			}
+		});
+	}
 
-  private static void registerClassAttributeReference(PsiReferenceRegistrar registrar,
-                                                      final String name,
-                                                      final PsiReferenceProvider provider) {
-    registrar.registerReferenceProvider(psiElement(PyStringLiteralExpression.class).withParent(
-                                          psiElement(PySequenceExpression.class).withParent(
-                                            psiElement(PyAssignmentStatement.class).withFirstChild(
-                                              psiElement(PyTargetExpression.class).withName(name)))), provider);
-   }
+	private static void registerClassAttributeReference(PsiReferenceRegistrar registrar,
+														final String name,
+														final PsiReferenceProvider provider)
+	{
+		registrar.registerReferenceProvider(psiElement(PyStringLiteralExpression.class).withParent(
+				psiElement(PySequenceExpression.class).withParent(
+						psiElement(PyAssignmentStatement.class).withFirstChild(
+								psiElement(PyTargetExpression.class).withName(name)))), provider);
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
+	}
 }

@@ -15,20 +15,23 @@
  */
 package com.jetbrains.python.documentation;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
 
 /**
  * Allows you to inject quick info into python documentation provider
  *
  * @author Ilya.Kazakevich
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PythonDocumentationQuickInfoProvider
 {
-	ExtensionPointName<PythonDocumentationQuickInfoProvider> EP_NAME = ExtensionPointName.create("consulo.python.documentationQuickInfoProvider");
+	ExtensionPointName<PythonDocumentationQuickInfoProvider> EP_NAME = ExtensionPointName.create(PythonDocumentationQuickInfoProvider.class);
 
 	/**
 	 * Return quick info for <strong>original</strong> element.

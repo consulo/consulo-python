@@ -15,20 +15,20 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.Collection;
+import consulo.application.ApplicationManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiReferenceProvider;
+import consulo.language.psi.path.FileReferenceSet;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.ManagingFS;
+import consulo.virtualFileSystem.fileType.FileType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.newvfs.ManagingFS;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.util.containers.ContainerUtil;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Resolves absolute paths from FS root, not content roots
@@ -73,7 +73,7 @@ public class RootFileReferenceSet extends FileReferenceSet
 		PsiFile file = getContainingFile();
 		if(file == null)
 		{
-			return ContainerUtil.emptyList();
+			return List.of();
 		}
 
 		if(isAbsolutePathReference() && !ApplicationManager.getApplication().isUnitTestMode())

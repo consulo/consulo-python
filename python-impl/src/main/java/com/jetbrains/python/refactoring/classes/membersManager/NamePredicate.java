@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
-import com.intellij.navigation.NavigationItem;
-import com.jetbrains.NotNullPredicate;
+import consulo.navigation.NavigationItem;
+import com.jetbrains.python.NotNullPredicate;
 import com.jetbrains.python.psi.PyElement;
 
 

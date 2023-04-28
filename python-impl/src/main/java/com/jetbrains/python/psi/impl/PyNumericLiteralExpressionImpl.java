@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.ASTNode;
+import consulo.util.lang.StringUtil;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import javax.annotation.Nonnull;

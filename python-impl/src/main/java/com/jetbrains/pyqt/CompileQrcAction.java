@@ -16,25 +16,24 @@
 
 package com.jetbrains.pyqt;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.RunContentExecutor;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.execution.RunContentExecutor;
+import consulo.execution.process.ProcessTerminatedListener;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.language.editor.CommonDataKeys;
+import consulo.language.editor.LangDataKeys;
+import consulo.module.Module;
+import consulo.process.ExecutionException;
+import consulo.process.ProcessHandler;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.internal.OSProcessHandler;
+import consulo.project.Project;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awt.Messages;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.swing.*;
 
@@ -93,7 +92,7 @@ public class CompileQrcAction extends AnAction {
       return false;
     }
     for (VirtualFile vFile : vFiles) {
-      if (!FileUtilRt.extensionEquals(vFile.getName(), "qrc")) {
+      if (!FileUtil.extensionEquals(vFile.getName(), "qrc")) {
         return false;
       }
     }
@@ -107,12 +106,15 @@ public class CompileQrcAction extends AnAction {
     protected CompileQrcDialog(Project project, VirtualFile[] vFiles) {
       super(project);
       if (vFiles.length == 1) {
-        setTitle("Compile " + vFiles [0].getName());
+        setTitle("Compile " + vFiles[0].getName());
       }
       else {
         setTitle("Compile " + vFiles.length + " .qrc files");
       }
-      myOutputFileField.addBrowseFolderListener("Select output path:", null, project, FileChooserDescriptorFactory.createSingleLocalFileDescriptor());
+      myOutputFileField.addBrowseFolderListener("Select output path:",
+                                                null,
+                                                project,
+                                                FileChooserDescriptorFactory.createSingleLocalFileDescriptor());
       init();
     }
 

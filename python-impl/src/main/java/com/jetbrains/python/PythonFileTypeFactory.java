@@ -16,15 +16,18 @@
 
 package com.jetbrains.python;
 
-import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.jetbrains.pyqt.QtUIFileType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.virtualFileSystem.fileType.FileTypeConsumer;
+import consulo.virtualFileSystem.fileType.FileTypeFactory;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonFileTypeFactory extends FileTypeFactory
 {
 	@Override

@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.console;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.HighlighterColors;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.util.Pair;
+import consulo.execution.ui.console.ConsoleViewContentType;
+import consulo.language.lexer.Lexer;
+import consulo.codeEditor.HighlighterColors;
+import consulo.colorScheme.EditorColorsScheme;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.colorScheme.TextAttributes;
+import consulo.util.lang.Pair;
 import com.jetbrains.python.highlighting.PyHighlighter;
 
 /**

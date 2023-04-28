@@ -17,12 +17,12 @@ package com.jetbrains.python.codeInsight;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
+import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.util.lang.Comparing;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReferenceBase;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.psi.PsiReferenceEx;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;

@@ -17,13 +17,14 @@
 package com.jetbrains.python.buildout.config.psi.impl;
 
 import com.google.common.collect.Lists;
-import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.impl.psi.PsiFileBase;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.util.lang.StringUtil;
+import consulo.language.file.FileViewProvider;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.buildout.config.BuildoutCfgFileType;
 import com.jetbrains.python.buildout.config.BuildoutCfgLanguage;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,7 +35,8 @@ import java.util.List;
 /**
  * @author traff
  */
-public class BuildoutCfgFile extends PsiFileBase {
+public class BuildoutCfgFile extends PsiFileBase
+{
   public BuildoutCfgFile(FileViewProvider viewProvider) {
     super(viewProvider, BuildoutCfgLanguage.INSTANCE);
   }

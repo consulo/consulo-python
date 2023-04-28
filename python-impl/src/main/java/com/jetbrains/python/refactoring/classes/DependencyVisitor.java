@@ -17,11 +17,11 @@ package com.jetbrains.python.refactoring.classes;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.util.lang.function.Condition;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyArgumentList;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyCallExpression;

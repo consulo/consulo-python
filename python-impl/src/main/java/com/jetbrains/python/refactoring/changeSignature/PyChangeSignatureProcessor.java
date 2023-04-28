@@ -16,11 +16,12 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.refactoring.changeSignature.ChangeSignatureProcessorBase;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.usageView.UsageViewDescriptor;
+import consulo.project.Project;
+import consulo.language.editor.refactoring.changeSignature.ChangeSignatureProcessorBase;
+import consulo.usage.UsageInfo;
+import consulo.usage.UsageViewDescriptor;
 import com.jetbrains.python.psi.PyFunction;
+
 import javax.annotation.Nonnull;
 
 /**

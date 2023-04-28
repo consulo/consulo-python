@@ -16,9 +16,9 @@
 package com.jetbrains.python.validation;
 
 import javax.annotation.Nonnull;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.psi.PsiElement;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.annotation.Annotation;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;

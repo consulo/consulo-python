@@ -15,102 +15,82 @@
  */
 package com.jetbrains.python.packaging;
 
+import consulo.component.persist.*;
+import consulo.ide.ServiceManager;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.collection.Lists;
+import consulo.util.xml.serializer.XmlSerializerUtil;
+
 import java.util.List;
 import java.util.Map;
-
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.RoamingType;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 
 /**
  * User: catherine
  */
 @State(name = "PyPackageService", storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/py_packages.xml", roamingType = RoamingType.DISABLED))
-public class PyPackageService implements PersistentStateComponent<PyPackageService>
-{
-	public Map<String, Boolean> sdkToUsersite = ContainerUtil.newConcurrentMap();
-	public List<String> additionalRepositories = ContainerUtil.createConcurrentList();
-	public Map<String, String> PY_PACKAGES = ContainerUtil.newConcurrentMap();
-	public String virtualEnvBasePath;
-	public Boolean PYPI_REMOVED = false;
+public class PyPackageService implements PersistentStateComponent<PyPackageService> {
+  public Map<String, Boolean> sdkToUsersite = ContainerUtil.newConcurrentMap();
+  public List<String> additionalRepositories = Lists.newLockFreeCopyOnWriteList();
+  public Map<String, String> PY_PACKAGES = ContainerUtil.newConcurrentMap();
+  public String virtualEnvBasePath;
+  public Boolean PYPI_REMOVED = false;
 
-	public long LAST_TIME_CHECKED = 0;
+  public long LAST_TIME_CHECKED = 0;
 
-	@Override
-	public PyPackageService getState()
-	{
-		return this;
-	}
+  @Override
+  public PyPackageService getState() {
+    return this;
+  }
 
-	@Override
-	public void loadState(PyPackageService state)
-	{
-		XmlSerializerUtil.copyBean(state, this);
-	}
+  @Override
+  public void loadState(PyPackageService state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
 
-	public void addSdkToUserSite(String sdk, boolean useUsersite)
-	{
-		sdkToUsersite.put(sdk, useUsersite);
-	}
+  public void addSdkToUserSite(String sdk, boolean useUsersite) {
+    sdkToUsersite.put(sdk, useUsersite);
+  }
 
-	public void addRepository(String repository)
-	{
-		if(repository == null)
-		{
-			return;
-		}
-		if(PyPIPackageUtil.isPyPIRepository(repository))
-		{
-			PYPI_REMOVED = false;
-		}
-		else
-		{
-			if(!repository.endsWith("/"))
-			{
-				repository += "/";
-			}
-			additionalRepositories.add(repository);
-		}
-	}
+  public void addRepository(String repository) {
+    if (repository == null) {
+      return;
+    }
+    if (PyPIPackageUtil.isPyPIRepository(repository)) {
+      PYPI_REMOVED = false;
+    }
+    else {
+      if (!repository.endsWith("/")) {
+        repository += "/";
+      }
+      additionalRepositories.add(repository);
+    }
+  }
 
-	public void removeRepository(final String repository)
-	{
-		if(additionalRepositories.contains(repository))
-		{
-			additionalRepositories.remove(repository);
-		}
-		else if(PyPIPackageUtil.isPyPIRepository(repository))
-		{
-			PYPI_REMOVED = true;
-		}
-	}
+  public void removeRepository(final String repository) {
+    if (additionalRepositories.contains(repository)) {
+      additionalRepositories.remove(repository);
+    }
+    else if (PyPIPackageUtil.isPyPIRepository(repository)) {
+      PYPI_REMOVED = true;
+    }
+  }
 
-	public boolean useUserSite(String sdk)
-	{
-		if(sdkToUsersite.containsKey(sdk))
-		{
-			return sdkToUsersite.get(sdk);
-		}
-		return false;
-	}
+  public boolean useUserSite(String sdk) {
+    if (sdkToUsersite.containsKey(sdk)) {
+      return sdkToUsersite.get(sdk);
+    }
+    return false;
+  }
 
-	public static PyPackageService getInstance()
-	{
-		return ServiceManager.getService(PyPackageService.class);
-	}
+  public static PyPackageService getInstance() {
+    return ServiceManager.getService(PyPackageService.class);
+  }
 
-	public String getVirtualEnvBasePath()
-	{
-		return virtualEnvBasePath;
-	}
+  public String getVirtualEnvBasePath() {
+    return virtualEnvBasePath;
+  }
 
-	public void setVirtualEnvBasePath(String virtualEnvBasePath)
-	{
-		this.virtualEnvBasePath = virtualEnvBasePath;
-	}
+  public void setVirtualEnvBasePath(String virtualEnvBasePath) {
+    this.virtualEnvBasePath = virtualEnvBasePath;
+  }
 }

@@ -17,9 +17,8 @@ package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
 import com.jetbrains.python.psi.PyDictLiteralExpression;
 import com.jetbrains.python.psi.PyElement;
@@ -28,6 +27,7 @@ import com.jetbrains.python.psi.PySetLiteralExpression;
 import com.jetbrains.python.psi.PySliceExpression;
 import com.jetbrains.python.psi.PySubscriptionExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * Created by IntelliJ IDEA.

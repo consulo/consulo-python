@@ -16,21 +16,22 @@
 
 package com.jetbrains.pyqt;
 
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.INativeFileType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolverImpl;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.application.util.SystemInfo;
+import consulo.component.ComponentManager;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.util.ModuleUtilCore;
 import consulo.localize.LocalizeValue;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.ui.ex.awt.Messages;
 import consulo.ui.image.Image;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.virtualFileSystem.fileType.INativeFileType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,16 +93,16 @@ public abstract class QtFileType implements FileType, INativeFileType {
   }
 
   @Override
-  public boolean openFileInAssociatedApplication(Project project, @Nonnull VirtualFile file) {
-    String qtTool = findQtTool(ModuleUtil.findModuleForFile(file, project), getToolName());
+  public boolean openFileInAssociatedApplication(ComponentManager project, @Nonnull VirtualFile file) {
+    String qtTool = findQtTool(ModuleUtilCore.findModuleForFile(file, (Project)project), getToolName());
     if (qtTool == null) {
       return false;
     }
     try {
-      Runtime.getRuntime().exec(new String[] { qtTool, file.getPath() } );
+      Runtime.getRuntime().exec(new String[]{qtTool, file.getPath()});
     }
     catch (IOException e) {
-      Messages.showErrorDialog(project, "Failed to run Qt Designer: " + e.getMessage(), "Error");
+      Messages.showErrorDialog((Project)project, "Failed to run Qt Designer: " + e.getMessage(), "Error");
     }
     return true;
   }
@@ -120,7 +121,7 @@ public abstract class QtFileType implements FileType, INativeFileType {
         return tool;
       }
       return findToolInPackage(toolName, module, sdk, "PySide");
-   }
+    }
     // TODO
     return null;
   }

@@ -23,8 +23,8 @@ import javax.swing.JRadioButton;
 
 import org.jetbrains.annotations.Nls;
 import javax.annotation.Nullable;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
+import consulo.configurable.Configurable;
+import consulo.configurable.ConfigurationException;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 
 /**

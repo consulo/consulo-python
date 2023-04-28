@@ -16,24 +16,25 @@
 
 package com.jetbrains.rest;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.InjectedLanguagePlaces;
-import com.intellij.psi.LanguageInjector;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.jetbrains.python.documentation.doctest.PyDocstringLanguageDialect;
 import com.jetbrains.rest.psi.RestLine;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.language.inject.InjectedLanguagePlaces;
+import consulo.language.inject.LanguageInjector;
+import consulo.language.psi.PsiLanguageInjectionHost;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * User: ktisha
  */
+@ExtensionImpl
 public class PyRestDocstringLanguageInjector implements LanguageInjector {
   @Override
-  public void getLanguagesToInject(@Nonnull final PsiLanguageInjectionHost host, @Nonnull final InjectedLanguagePlaces injectionPlacesRegistrar) {
+  public void injectLanguages(@Nonnull final PsiLanguageInjectionHost host, @Nonnull final InjectedLanguagePlaces injectionPlacesRegistrar) {
     if (host instanceof RestLine) {
       int start = 0;
       int end = host.getTextLength() - 1;

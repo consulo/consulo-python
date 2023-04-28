@@ -17,21 +17,6 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.template.*;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
@@ -39,14 +24,30 @@ import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.impl.references.PyReferenceImpl;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
+import consulo.codeEditor.Editor;
+import consulo.fileEditor.FileEditorManager;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.editor.impl.internal.template.TemplateBuilderImpl;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.template.*;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.ResolveResult;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.navigation.OpenFileDescriptorFactory;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.*;
 
 /**
  * User : ktisha
- *
+ * <p>
  * Quick fix to rename unresolved references
  */
 public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
@@ -79,7 +80,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
 
     ReferenceNameExpression refExpr = new ReferenceNameExpression(items, name);
     TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().
-                                          createTemplateBuilder(parentScope);
+      createTemplateBuilder(parentScope);
     for (PyReferenceExpression expr : refs) {
       if (!expr.equals(referenceExpression)) {
         builder.replaceElement(expr, name, name, false);
@@ -99,7 +100,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
   public static boolean isValidReference(final PsiReference reference) {
     if (!(reference instanceof PyReferenceImpl)) return false;
     ResolveResult[] results = ((PyReferenceImpl)reference).multiResolve(true);
-    if(results.length == 0) return false;
+    if (results.length == 0) return false;
     for (ResolveResult result : results) {
       if (!result.isValidResult()) return false;
     }
@@ -129,9 +130,9 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
   private static Editor getEditor(@Nonnull final Project project, @Nonnull final PsiFile file, int offset) {
     final VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile != null) {
-    return FileEditorManager.getInstance(project).openTextEditor(
-      new OpenFileDescriptor(project, virtualFile, offset), true
-    );
+      return FileEditorManager.getInstance(project).openTextEditor(
+        OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).offset(offset).build(), true
+      );
     }
     return null;
   }

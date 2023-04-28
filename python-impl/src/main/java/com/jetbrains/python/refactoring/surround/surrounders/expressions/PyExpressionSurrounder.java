@@ -18,13 +18,13 @@ package com.jetbrains.python.refactoring.surround.surrounders.expressions;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.surroundWith.Surrounder;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.surroundWith.Surrounder;
+import consulo.logging.Logger;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.psi.PyExpression;
 
 /**
@@ -33,7 +33,8 @@ import com.jetbrains.python.psi.PyExpression;
  * Date: Aug 27, 2009
  * Time: 6:06:34 PM
  */
-public abstract class PyExpressionSurrounder implements Surrounder {
+public abstract class PyExpressionSurrounder implements Surrounder
+{
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.refactoring.surround.surrounders.expressions.PyExpressionSurrounder");
 
   public boolean isApplicable(@Nonnull PsiElement[] elements) {
@@ -47,7 +48,8 @@ public abstract class PyExpressionSurrounder implements Surrounder {
     throws IncorrectOperationException;
 
   public TextRange surroundElements(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
-    throws IncorrectOperationException {
+    throws IncorrectOperationException
+  {
     return surroundExpression(project, editor, (PyExpression)elements[0]);
   }
 }

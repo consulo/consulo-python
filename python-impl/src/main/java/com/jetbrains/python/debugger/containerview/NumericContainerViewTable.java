@@ -25,11 +25,11 @@ import java.awt.event.KeyListener;
 import javax.annotation.Nonnull;
 import javax.swing.JTable;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
+import consulo.application.ApplicationManager;
+import consulo.logging.Logger;
+import consulo.document.RangeMarker;
+import consulo.project.Project;
+import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.PyDebuggerException;

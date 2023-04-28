@@ -1,9 +1,9 @@
 package com.jetbrains.python.debugger.pydev;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.application.ApplicationManager;
 import com.jetbrains.python.debugger.PyDebuggerException;
+import consulo.application.ApplicationManager;
+
+import javax.annotation.Nonnull;
 
 
 public abstract class AbstractCommand<T>

@@ -27,24 +27,24 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.codeInsight.FileModificationService;
-import com.intellij.codeInsight.controlflow.ControlFlowUtil;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.editor.FileModificationService;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
+import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.inject.InjectedLanguageManager;
+import consulo.application.ApplicationManager;
+import consulo.undoRedo.CommandProcessor;
+import consulo.component.extension.Extensions;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
@@ -132,7 +132,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 				return;
 			}
 			final Instruction[] instructions = ControlFlowCache.getControlFlow(owner).getInstructions();
-			final int startInstruction = ControlFlowUtil.findInstructionNumberByElement(instructions, instrAnchor);
+			final int startInstruction = consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, instrAnchor);
 			if(startInstruction < 0)
 			{
 				return;
@@ -295,7 +295,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 				}
 			}
 		}
-		ControlFlowUtil.iteratePrev(startInstruction, instructions, inst -> {
+		consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.iteratePrev(startInstruction, instructions, inst -> {
 			final PsiElement instElement = inst.getElement();
 			// Mark function as used
 			if(instElement instanceof PyFunction)
@@ -304,7 +304,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 				{
 					myUsedElements.add(instElement);
 					myUnusedElements.remove(instElement);
-					return ControlFlowUtil.Operation.CONTINUE;
+					return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.CONTINUE;
 				}
 			}
 			// Mark write access as used
@@ -319,10 +319,10 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 						myUsedElements.add(instElement);
 						myUnusedElements.remove(instElement);
 					}
-					return ControlFlowUtil.Operation.CONTINUE;
+					return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.CONTINUE;
 				}
 			}
-			return ControlFlowUtil.Operation.NEXT;
+			return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.NEXT;
 		});
 	}
 

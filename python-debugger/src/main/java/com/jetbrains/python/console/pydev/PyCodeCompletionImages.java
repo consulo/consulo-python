@@ -1,6 +1,6 @@
 package com.jetbrains.python.console.pydev;
 
-import com.intellij.icons.AllIcons;
+import consulo.application.AllIcons;
 import consulo.ui.image.Image;
 
 import javax.annotation.Nullable;

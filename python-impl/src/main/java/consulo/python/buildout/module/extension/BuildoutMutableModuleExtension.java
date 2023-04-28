@@ -16,17 +16,17 @@
 
 package consulo.python.buildout.module.extension;
 
-import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.Comparing;
 import com.jetbrains.python.buildout.BuildoutConfigPanel;
 import consulo.disposer.Disposable;
+import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.module.extension.swing.SwingMutableModuleExtension;
-import consulo.roots.ModuleRootLayer;
 import consulo.ui.Component;
 import consulo.ui.Label;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.awt.VerticalFlowLayout;
 import consulo.ui.layout.VerticalLayout;
+import consulo.util.lang.Comparing;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

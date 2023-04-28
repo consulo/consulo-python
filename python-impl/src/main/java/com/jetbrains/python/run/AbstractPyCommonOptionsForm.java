@@ -15,12 +15,11 @@
  */
 package com.jetbrains.python.run;
 
-import java.awt.event.ActionListener;
-
-import javax.swing.JComponent;
-
+import consulo.ui.ex.awt.PanelWithAnchor;
 import org.jetbrains.annotations.NonNls;
-import com.intellij.ui.PanelWithAnchor;
+
+import javax.swing.*;
+import java.awt.event.ActionListener;
 
 /**
  * @author yole

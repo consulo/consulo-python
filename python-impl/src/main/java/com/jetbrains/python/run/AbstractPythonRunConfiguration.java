@@ -22,39 +22,40 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import consulo.content.bundle.SdkType;
+import consulo.execution.configuration.log.ui.LogConfigurationPanel;
 import consulo.python.module.extension.PyModuleExtension;
 import org.jdom.Element;
 
 import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
-import com.intellij.diagnostic.logging.LogConfigurationPanel;
-import com.intellij.execution.ExecutionBundle;
-import com.intellij.execution.Location;
-import com.intellij.execution.configuration.AbstractRunConfiguration;
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.LocatableConfiguration;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.testframework.AbstractTestProxy;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.options.SettingsEditorGroup;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizerUtil;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.PathMappingSettings;
+import consulo.execution.ExecutionBundle;
+import consulo.execution.action.Location;
+import consulo.execution.configuration.AbstractRunConfiguration;
+import consulo.execution.ui.awt.EnvironmentVariablesComponent;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.execution.configuration.LocatableConfiguration;
+import consulo.process.cmd.ParamsGroup;
+import consulo.execution.configuration.RuntimeConfigurationError;
+import consulo.execution.RuntimeConfigurationException;
+import consulo.execution.test.AbstractTestProxy;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.language.util.ModuleUtilCore;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.configuration.ui.SettingsEditorGroup;
+import consulo.project.Project;
+import consulo.content.bundle.Sdk;
+import consulo.module.content.ModuleRootManager;
+import consulo.util.xml.serializer.InvalidDataException;
+import consulo.util.xml.serializer.JDOMExternalizerUtil;
+import consulo.util.xml.serializer.WriteExternalException;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.ide.impl.idea.util.PathMappingSettings;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
@@ -444,7 +445,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	}
 
 	/**
-	 * Gets called after {@link #patchCommandLineForVirtualenv(com.intellij.openapi.projectRoots.SdkType, com.intellij.openapi.projectRoots.SdkType)}
+	 * Gets called after {@link #patchCommandLineForVirtualenv(SdkType, SdkType)}
 	 * Does nothing here, real implementations should use alter running script name or use engulfer.
 	 *
 	 * @param commandLine

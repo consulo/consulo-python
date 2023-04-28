@@ -15,23 +15,23 @@
  */
 package com.jetbrains.python.console;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.encoding.EncodingProjectManager;
-import com.intellij.util.Function;
 import com.jetbrains.python.console.pydev.AbstractConsoleCommunication;
 import com.jetbrains.python.console.pydev.InterpreterResponse;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
 import com.jetbrains.python.debugger.PyDebugProcess;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import com.jetbrains.python.debugger.pydev.PyDebugCallback;
+import consulo.logging.Logger;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
+import consulo.virtualFileSystem.encoding.EncodingProjectManager;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author traff
@@ -132,7 +132,7 @@ public class PythonDebugConsoleCommunication extends AbstractConsoleCommunicatio
 					boolean more = executed.second;
 					myNeedsMore = more;
 					notifyCommandExecuted(more);
-					callback.fun(new InterpreterResponse(more, isWaitingForInput()));
+					callback.apply(new InterpreterResponse(more, isWaitingForInput()));
 
 				}
 
@@ -141,7 +141,7 @@ public class PythonDebugConsoleCommunication extends AbstractConsoleCommunicatio
 				{
 					myNeedsMore = false;
 					notifyCommandExecuted(false);
-					callback.fun(new InterpreterResponse(false, isWaitingForInput()));
+					callback.apply(new InterpreterResponse(false, isWaitingForInput()));
 				}
 			});
 		}

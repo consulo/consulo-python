@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.debugger;
 
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.project.Project;
+import consulo.configurable.Configurable;
+import consulo.configurable.ConfigurationException;
+import consulo.configurable.SearchableConfigurable;
+import consulo.project.Project;
 import javax.annotation.Nonnull;
 
 import javax.swing.*;

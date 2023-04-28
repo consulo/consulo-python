@@ -15,29 +15,25 @@
  */
 package com.jetbrains.python.findUsages;
 
-import javax.annotation.Nonnull;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.usages.UsageTarget;
-import com.intellij.usages.impl.rules.UsageType;
-import com.intellij.usages.impl.rules.UsageTypeProviderEx;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyImportStatementBase;
-import com.jetbrains.python.psi.PyQualifiedExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PySequenceExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.types.PyStructuralType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.usage.UsageTarget;
+import consulo.usage.UsageType;
+import consulo.usage.UsageTypeProviderEx;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyUsageTypeProvider implements UsageTypeProviderEx
 {
 	private static final UsageType IN_IMPORT = new UsageType("Usage in import statement");

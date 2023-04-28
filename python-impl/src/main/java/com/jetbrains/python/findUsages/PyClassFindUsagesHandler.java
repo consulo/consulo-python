@@ -20,8 +20,8 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.psi.PsiElement;
+import consulo.find.FindUsagesHandler;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;

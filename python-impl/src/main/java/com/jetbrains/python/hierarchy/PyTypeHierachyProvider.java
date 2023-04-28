@@ -16,18 +16,22 @@
 
 package com.jetbrains.python.hierarchy;
 
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.psi.PyClass;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.dataContext.DataContext;
+import consulo.ide.impl.idea.ide.hierarchy.TypeHierarchyBrowserBase;
+import consulo.language.Language;
+import consulo.language.editor.CommonDataKeys;
+import consulo.language.editor.hierarchy.HierarchyBrowser;
+import consulo.language.editor.hierarchy.TypeHierarchyProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.ide.hierarchy.HierarchyBrowser;
-import com.intellij.ide.hierarchy.HierarchyProvider;
-import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.python.psi.PyClass;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,36 +39,36 @@ import com.jetbrains.python.psi.PyClass;
  * Date: Jul 31, 2009
  * Time: 6:00:21 PM
  */
-public class PyTypeHierachyProvider implements HierarchyProvider
-{
-	@Nullable
-	public PsiElement getTarget(@Nonnull DataContext dataContext)
-	{
-		PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
-		if(element == null)
-		{
-			final Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
-			final PsiFile file = dataContext.getData(CommonDataKeys.PSI_FILE);
-			if(editor != null && file != null)
-			{
-				element = file.findElementAt(editor.getCaretModel().getOffset());
-			}
-		}
-		if(!(element instanceof PyClass))
-		{
-			element = PsiTreeUtil.getParentOfType(element, PyClass.class);
-		}
-		return element;
-	}
+@ExtensionImpl
+public class PyTypeHierachyProvider implements TypeHierarchyProvider {
+  @Nullable
+  public PsiElement getTarget(@Nonnull DataContext dataContext) {
+    PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
+    if (element == null) {
+      final Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+      final PsiFile file = dataContext.getData(CommonDataKeys.PSI_FILE);
+      if (editor != null && file != null) {
+        element = file.findElementAt(editor.getCaretModel().getOffset());
+      }
+    }
+    if (!(element instanceof PyClass)) {
+      element = PsiTreeUtil.getParentOfType(element, PyClass.class);
+    }
+    return element;
+  }
 
-	@Nonnull
-	public HierarchyBrowser createHierarchyBrowser(PsiElement target)
-	{
-		return new PyTypeHierarchyBrowser((PyClass) target);
-	}
+  @Nonnull
+  public HierarchyBrowser createHierarchyBrowser(PsiElement target) {
+    return new PyTypeHierarchyBrowser((PyClass)target);
+  }
 
-	public void browserActivated(@Nonnull HierarchyBrowser hierarchyBrowser)
-	{
-		((PyTypeHierarchyBrowser) hierarchyBrowser).changeView(TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE);
-	}
+  public void browserActivated(@Nonnull HierarchyBrowser hierarchyBrowser) {
+    ((PyTypeHierarchyBrowser)hierarchyBrowser).changeView(TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE);
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
 }

@@ -16,7 +16,8 @@
 
 package com.jetbrains.python;
 
-import com.intellij.psi.tree.TokenSet;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.ast.TokenSet;
 import javax.annotation.Nonnull;
 
 import static com.jetbrains.python.PyElementTypes.*;
@@ -25,6 +26,7 @@ import static com.jetbrains.python.PyTokenTypes.*;
 /**
  * @author vlan
  */
+@ExtensionImpl
 public class PythonTokenSetContributor extends PythonDialectsTokenSetContributorBase {
   @Nonnull
   @Override

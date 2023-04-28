@@ -16,23 +16,22 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import java.awt.Font;
+import consulo.colorScheme.TextAttributes;
+import consulo.document.Document;
+import consulo.fileEditor.FileEditorLocation;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.EditSourceUtil;
+import consulo.navigation.Navigatable;
+import consulo.ui.image.Image;
+import consulo.usage.TextChunk;
+import consulo.usage.UsagePresentation;
+import consulo.usage.rule.PsiElementUsage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.ide.util.EditSourceUtil;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.fileEditor.FileEditorLocation;
-import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.usages.TextChunk;
-import com.intellij.usages.UsagePresentation;
-import com.intellij.usages.rules.PsiElementUsage;
-import consulo.ide.IconDescriptorUpdaters;
-import consulo.ui.image.Image;
+import java.awt.*;
 
 /**
  * Simplistic usage object for demonstration of name clashes, etc.

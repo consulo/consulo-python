@@ -16,32 +16,29 @@
 
 package com.jetbrains.python.refactoring.invertBoolean;
 
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.*;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.refactoring.rename.RenameUtil;
-import com.intellij.refactoring.util.MoveRenameUsageInfo;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.usageView.UsageViewDescriptor;
-import com.intellij.util.IncorrectOperationException;
-import java.util.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
-import javax.annotation.Nonnull;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.language.editor.refactoring.rename.RenameProcessor;
+import consulo.language.editor.refactoring.rename.RenameUtil;
+import consulo.language.psi.*;
+import consulo.language.psi.search.ReferencesSearch;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.usage.MoveRenameUsageInfo;
+import consulo.usage.UsageInfo;
+import consulo.usage.UsageViewDescriptor;
+import consulo.util.lang.ref.Ref;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 /**
  * User : ktisha
  */
-public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
+public class PyInvertBooleanProcessor extends BaseRefactoringProcessor
+{
   private PsiElement myElement;
   private String myNewName;
   private final RenameProcessor myRenameProcessor;

@@ -21,9 +21,9 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.util.AbstractPathMapper;
-import com.intellij.util.PathMappingSettings;
-import com.intellij.util.containers.MultiMap;
+import consulo.ide.impl.idea.util.AbstractPathMapper;
+import consulo.ide.impl.idea.util.PathMappingSettings;
+import consulo.util.collection.MultiMap;
 
 /**
  * @author Alexander Koshevoy

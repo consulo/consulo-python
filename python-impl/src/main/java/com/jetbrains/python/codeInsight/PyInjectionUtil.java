@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
+import consulo.language.inject.MultiHostRegistrar;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import javax.annotation.Nonnull;

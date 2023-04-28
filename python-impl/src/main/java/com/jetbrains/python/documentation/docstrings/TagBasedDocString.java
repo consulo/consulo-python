@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.document.util.TextRange;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.psi.StructuredDocString;
 import com.jetbrains.python.toolbox.Substring;
 

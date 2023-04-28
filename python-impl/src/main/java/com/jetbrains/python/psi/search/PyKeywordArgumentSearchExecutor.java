@@ -16,12 +16,14 @@
 
 package com.jetbrains.python.psi.search;
 
-import com.intellij.openapi.application.QueryExecutorBase;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Processor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.search.ReferencesSearchQueryExecutor;
+import consulo.project.util.query.QueryExecutorBase;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.search.ReferencesSearch;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.application.util.function.Processor;
 import com.jetbrains.python.psi.*;
 
 import javax.annotation.Nonnull;
@@ -29,7 +31,8 @@ import javax.annotation.Nonnull;
 /**
  * @author yole
  */
-public class PyKeywordArgumentSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+@ExtensionImpl
+public class PyKeywordArgumentSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
   @Override
   public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer) {
     final PsiElement element = queryParameters.getElementToSearch();

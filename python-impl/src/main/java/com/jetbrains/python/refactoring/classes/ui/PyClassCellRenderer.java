@@ -23,10 +23,10 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import com.intellij.openapi.util.Iconable;
+import consulo.component.util.Iconable;
 import com.jetbrains.python.psi.PyClass;
-import consulo.awt.TargetAWT;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
+import consulo.language.icon.IconDescriptorUpdaters;
 
 /**
  * @author Dennis.Ushakov

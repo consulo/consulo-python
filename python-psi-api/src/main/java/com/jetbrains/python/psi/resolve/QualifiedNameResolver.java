@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.psi.PsiElement;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiElement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

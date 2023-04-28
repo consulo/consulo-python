@@ -16,14 +16,19 @@
 
 package com.jetbrains.python.codeInsight.imports;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiReference;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiReference;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyImportCandidateProvider {
-  ExtensionPointName<PyImportCandidateProvider> EP_NAME = ExtensionPointName.create("consulo.python.importCandidateProvider");
+  ExtensionPointName<PyImportCandidateProvider> EP_NAME = ExtensionPointName.create(PyImportCandidateProvider.class);
 
+  @RequiredReadAction
   void addImportCandidates(PsiReference reference, String name, AutoImportQuickFix quickFix);
 }

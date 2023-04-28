@@ -15,13 +15,13 @@
  */
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
-import com.intellij.ide.util.DefaultPsiElementCellRenderer;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Query;
+import consulo.language.editor.gutter.GutterIconNavigationHandler;
+import consulo.language.editor.ui.PsiElementListNavigator;
+import consulo.language.editor.ui.DefaultPsiElementCellRenderer;
+import consulo.application.ApplicationManager;
+import consulo.language.psi.NavigatablePsiElement;
+import consulo.language.psi.PsiElement;
+import consulo.application.util.query.Query;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolder;

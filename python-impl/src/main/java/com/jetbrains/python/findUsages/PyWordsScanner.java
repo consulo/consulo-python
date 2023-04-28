@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.findUsages;
 
-import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
-import com.intellij.psi.tree.TokenSet;
+import consulo.language.cacheBuilder.DefaultWordsScanner;
+import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.lexer.PythonLexer;
 

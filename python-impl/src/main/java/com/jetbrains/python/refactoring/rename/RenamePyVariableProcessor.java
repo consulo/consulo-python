@@ -16,20 +16,21 @@
 
 package com.jetbrains.python.refactoring.rename;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiElement;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
+@ExtensionImpl(id = "pyVar", order = "after pyFile")
 public class RenamePyVariableProcessor extends RenamePyElementProcessor {
   @Override
   public boolean canProcessElement(@Nonnull PsiElement element) {

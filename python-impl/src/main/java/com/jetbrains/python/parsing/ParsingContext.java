@@ -19,7 +19,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import javax.annotation.Nonnull;
-import com.intellij.lang.PsiBuilder;
+import consulo.language.parser.PsiBuilder;
 import com.jetbrains.python.psi.LanguageLevel;
 
 public class ParsingContext

@@ -12,7 +12,7 @@
       <size top="0" left="6" bottom="0" right="12"/>
     </border>
     <children>
-      <component id="7f91c" class="com.intellij.ui.components.JBLabel">
+      <component id="7f91c" class="consulo.ui.ex.awt.JBLabel">
         <constraints border-constraint="West"/>
         <properties>
           <labelFor value="fa68d"/>

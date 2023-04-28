@@ -15,34 +15,34 @@
  */
 package com.jetbrains.python.codeInsight;
 
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.EditorPopupHelper;
+import consulo.language.Language;
+import consulo.language.editor.CodeInsightBundle;
+import consulo.language.editor.action.GotoSuperActionHander;
+import consulo.language.editor.ui.PopupNavigationUtil;
+import consulo.language.psi.NavigatablePsiElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.ui.ex.popup.JBPopup;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.CodeInsightActionHandler;
-import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.codeInsight.navigation.NavigationUtil;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.python.psi.PyAssignmentStatement;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.PyUtil;
-
 /**
  * @author Alexey.Ivanov
  */
-public class PyGotoSuperHandler implements CodeInsightActionHandler
+@ExtensionImpl
+public class PyGotoSuperHandler implements GotoSuperActionHander
 {
-
 	public void invoke(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PsiFile file)
 	{
 		PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
@@ -92,7 +92,8 @@ public class PyGotoSuperHandler implements CodeInsightActionHandler
 			}
 			else
 			{
-				NavigationUtil.getPsiElementPopup(superElementArray, title).showInBestPositionFor(editor);
+				JBPopup popup = PopupNavigationUtil.getPsiElementPopup(superElementArray, title);
+				EditorPopupHelper.getInstance().showPopupInBestPositionFor(editor, popup);
 			}
 		}
 	}
@@ -138,5 +139,18 @@ public class PyGotoSuperHandler implements CodeInsightActionHandler
 	public boolean startInWriteAction()
 	{
 		return false;
+	}
+
+	@Override
+	public boolean isValidFor(Editor editor, PsiFile file)
+	{
+		return true;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

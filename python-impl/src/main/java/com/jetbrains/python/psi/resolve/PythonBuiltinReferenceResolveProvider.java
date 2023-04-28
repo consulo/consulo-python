@@ -15,11 +15,6 @@
  */
 package com.jetbrains.python.psi.resolve;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.PyUtil;
@@ -27,10 +22,17 @@ import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.impl.references.PyReferenceImpl;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PythonBuiltinReferenceResolveProvider implements PyReferenceResolveProvider
 {
 	@Nonnull

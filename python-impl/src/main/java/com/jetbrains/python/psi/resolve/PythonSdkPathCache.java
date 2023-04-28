@@ -16,19 +16,18 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTable;
-import com.intellij.openapi.roots.RootProvider;
+import com.jetbrains.python.psi.impl.PyBuiltinCache;
+import consulo.content.RootProvider;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.event.SdkTableListener;
 import consulo.disposer.Disposable;
 import consulo.disposer.Disposer;
-import consulo.util.dataholder.Key;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.python.psi.impl.PyBuiltinCache;
-import consulo.bundle.SdkTableListener;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.project.Project;
 import consulo.util.collection.Maps;
+import consulo.util.dataholder.Key;
+import consulo.virtualFileSystem.VirtualFileManager;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -79,7 +78,7 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable
     }, this);
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVirtualFileAdapter(), this);
     if (!project.isDisposed()) {
-      project.getMessageBus().connect(this).subscribe(SdkTable.SDK_TABLE_TOPIC, new SdkTableListener.Adapter() {
+      project.getMessageBus().connect(this).subscribe(SdkTableListener.class, new SdkTableListener() {
         @Override
         public void sdkRemoved(Sdk jdk) {
           if (jdk == sdk) {

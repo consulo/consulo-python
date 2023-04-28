@@ -15,42 +15,30 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import org.jetbrains.annotations.Nls;
+import consulo.codeEditor.Editor;
+import consulo.ide.impl.idea.codeInsight.editorActions.fillParagraph.FillParagraphAction;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.intention.HighPriorityAction;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
+
 import javax.annotation.Nonnull;
-import com.intellij.codeInsight.editorActions.fillParagraph.FillParagraphAction;
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
 
-public class PyFillParagraphFix extends BaseIntentionAction implements HighPriorityAction
-{
+public class PyFillParagraphFix extends BaseIntentionAction implements HighPriorityAction {
 
-	public PyFillParagraphFix()
-	{
-		setText("Fill paragraph");
-	}
+  public PyFillParagraphFix() {
+    setText("Fill paragraph");
+  }
 
-	@Nls
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return getText();
-	}
+  @Override
+  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    return true;
+  }
 
-	@Override
-	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
-	{
-		return true;
-	}
-
-	@Override
-	public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-	{
-		final FillParagraphAction action = new FillParagraphAction();
-		action.actionPerformedImpl(project, editor);
-	}
+  @Override
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    final FillParagraphAction action = new consulo.ide.impl.idea.codeInsight.editorActions.fillParagraph.FillParagraphAction();
+    action.actionPerformedImpl(project, editor);
+  }
 }

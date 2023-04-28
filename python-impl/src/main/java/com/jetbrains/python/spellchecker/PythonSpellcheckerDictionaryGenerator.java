@@ -16,18 +16,17 @@
 
 package com.jetbrains.python.spellchecker;
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.spellchecker.generator.SpellCheckerDictionaryGenerator;
-import com.intellij.spellchecker.inspections.IdentifierSplitter;
-import com.intellij.util.Consumer;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.*;
+import consulo.document.util.TextRange;
+import consulo.language.Language;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.spellcheker.tokenizer.splitter.IdentifierTokenSplitter;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
 
 import java.util.HashSet;
 
@@ -43,12 +42,9 @@ public class PythonSpellcheckerDictionaryGenerator extends SpellCheckerDictionar
   protected void processFolder(final HashSet<String> seenNames, PsiManager manager, VirtualFile folder) {
     if (!myExcludedFolders.contains(folder)) {
       final String name = folder.getName();
-      IdentifierSplitter.getInstance().split(name, TextRange.allOf(name), new Consumer<TextRange>() {
-        @Override
-        public void consume(TextRange textRange) {
-          final String word = textRange.substring(name);
-          addSeenWord(seenNames, word, Language.ANY);
-        }
+      IdentifierTokenSplitter.getInstance().split(name, TextRange.allOf(name), textRange -> {
+        final String word = textRange.substring(name);
+        addSeenWord(seenNames, word, Language.ANY);
       });
     }
     super.processFolder(seenNames, manager, folder);

@@ -16,16 +16,17 @@
 
 package com.jetbrains.python.formatter;
 
-import com.intellij.application.options.CodeStyleAbstractPanel;
-import com.intellij.ide.highlighter.HighlighterFactory;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.highlighter.EditorHighlighter;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.ui.setting.CodeStyleAbstractPanel;
+import consulo.language.editor.highlight.HighlighterFactory;
+import consulo.colorScheme.EditorColorsScheme;
+import consulo.codeEditor.EditorHighlighter;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.language.psi.PsiFile;
 import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
+
 import javax.annotation.Nonnull;
 
 import javax.swing.*;
@@ -33,7 +34,8 @@ import javax.swing.*;
 /**
  * @author yole
  */
-public class PyCodeStylePanel extends CodeStyleAbstractPanel {
+public class PyCodeStylePanel extends CodeStyleAbstractPanel
+{
   private JPanel myPanel;
 
   protected PyCodeStylePanel(CodeStyleSettings settings) {

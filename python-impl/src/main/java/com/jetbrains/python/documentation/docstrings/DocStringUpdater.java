@@ -21,8 +21,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.document.util.TextRange;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.psi.PyIndentUtil;
 import com.jetbrains.python.toolbox.Substring;
 

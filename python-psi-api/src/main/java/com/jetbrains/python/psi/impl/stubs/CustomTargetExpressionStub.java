@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.psi.impl.stubs;
 
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.stub.StubOutputStream;
+import consulo.language.psi.util.QualifiedName;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

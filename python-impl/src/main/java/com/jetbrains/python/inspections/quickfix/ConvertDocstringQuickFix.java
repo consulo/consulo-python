@@ -18,12 +18,12 @@ package com.jetbrains.python.inspections.quickfix;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
@@ -65,7 +65,7 @@ public class ConvertDocstringQuickFix implements LocalQuickFix {
         content = content.length() == 1 ? "" : content.substring(1, content.length()-1);
       }
       if (content.endsWith("\""))
-        content = StringUtil.replaceSubstring(content, TextRange.create(content.length()-1, content.length()), "\\\"");
+        content = StringUtil.replaceSubstring(content, content.length()-1, content.length(), "\\\"");
 
       PyExpression newString = elementGenerator.createDocstring(prefix+"\"\"\"" + content + "\"\"\"").getExpression();
       expression.replace(newString);

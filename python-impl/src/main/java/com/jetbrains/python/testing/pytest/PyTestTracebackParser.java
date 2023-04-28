@@ -18,7 +18,7 @@ package com.jetbrains.python.testing.pytest;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.openapi.util.Pair;
+import consulo.util.lang.Pair;
 import com.jetbrains.python.traceBackParsers.LinkInTrace;
 import com.jetbrains.python.traceBackParsers.TraceBackParser;
 

@@ -1,9 +1,8 @@
 package com.jetbrains.python.console.pydev;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
-import com.intellij.util.Function;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author traff

@@ -17,9 +17,9 @@ package com.jetbrains.python.parsing;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.WhitespacesBinders;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.parser.WhitespacesBinders;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;

@@ -16,16 +16,16 @@
 
 package com.jetbrains.python.structureView;
 
-import javax.annotation.Nonnull;
+import consulo.application.AllIcons;
+import consulo.fileEditor.structureView.tree.ActionPresentation;
+import consulo.fileEditor.structureView.tree.ActionPresentationData;
+import consulo.fileEditor.structureView.tree.FileStructureFilter;
+import consulo.fileEditor.structureView.tree.TreeElement;
+import consulo.ide.IdeBundle;
+import consulo.ui.ex.action.Shortcut;
+import consulo.ui.ex.keymap.KeymapManager;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.IdeBundle;
-import com.intellij.ide.util.FileStructureFilter;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
-import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.keymap.KeymapManager;
+import javax.annotation.Nonnull;
 
 /**
  * @author vlan

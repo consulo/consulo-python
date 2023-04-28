@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.validation;
 
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFromImportStatement;

@@ -15,38 +15,35 @@
  */
 package com.jetbrains.python.run;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.execution.configuration.ui.SettingsEditor;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.options.SettingsEditor;
 
 /**
  * @author Alexander Koshevoy
  */
-public interface PyRunConfigurationEditorExtension
-{
-	ExtensionPointName<PyRunConfigurationEditorExtension> EP_NAME = ExtensionPointName.create("consulo.python.runConfigurationEditorExtension");
+@ExtensionAPI(ComponentScope.APPLICATION)
+public interface PyRunConfigurationEditorExtension {
+  ExtensionPointName<PyRunConfigurationEditorExtension> EP_NAME = ExtensionPointName.create(PyRunConfigurationEditorExtension.class);
 
-	boolean accepts(@Nonnull AbstractPythonRunConfiguration configuration);
+  boolean accepts(@Nonnull AbstractPythonRunConfiguration configuration);
 
-	@Nonnull
-	SettingsEditor<AbstractPythonRunConfiguration> createEditor(@Nonnull AbstractPythonRunConfiguration configuration);
+  @Nonnull
+  SettingsEditor<AbstractPythonRunConfiguration> createEditor(@Nonnull AbstractPythonRunConfiguration configuration);
 
-	class Factory
-	{
-		@Nullable
-		public static PyRunConfigurationEditorExtension getExtension(@Nonnull AbstractPythonRunConfiguration<?> configuration)
-		{
-			PyRunConfigurationEditorExtension[] extensions = EP_NAME.getExtensions();
-			for(PyRunConfigurationEditorExtension extension : extensions)
-			{
-				if(extension.accepts(configuration))
-				{
-					return extension;
-				}
-			}
-			return null;
-		}
-	}
+  class Factory {
+    @Nullable
+    public static PyRunConfigurationEditorExtension getExtension(@Nonnull AbstractPythonRunConfiguration<?> configuration) {
+      for (PyRunConfigurationEditorExtension extension : EP_NAME.getExtensionList()) {
+        if (extension.accepts(configuration)) {
+          return extension;
+        }
+      }
+      return null;
+    }
+  }
 }

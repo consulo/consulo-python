@@ -16,16 +16,17 @@
 
 package com.jetbrains.python.editor.selectWord;
 
-import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase;
-import com.intellij.codeInsight.editorActions.SelectWordUtil;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.lexer.PyStringLiteralLexer;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.action.ExtendWordSelectionHandlerBase;
+import consulo.language.editor.action.SelectWordUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import java.util.List;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyLiteralSelectionHandler extends ExtendWordSelectionHandlerBase {
   @Override
   public boolean canSelect(PsiElement e) {

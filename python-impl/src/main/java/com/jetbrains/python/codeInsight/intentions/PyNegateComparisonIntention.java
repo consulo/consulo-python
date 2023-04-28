@@ -16,16 +16,17 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+
 import javax.annotation.Nonnull;
 
 import java.util.HashMap;
@@ -37,7 +38,8 @@ import java.util.Map;
  * Date:   12.03.2010
  * Time:   17:58:56
  */
-public class PyNegateComparisonIntention extends BaseIntentionAction {
+public class PyNegateComparisonIntention extends BaseIntentionAction
+{
   private static final Map<PyElementType, String> comparisonStrings = new HashMap<PyElementType, String>(7);
   private static final Map<PyElementType, PyElementType> invertedComparasions = new HashMap<PyElementType, PyElementType>(7);
 

@@ -15,139 +15,115 @@
  */
 package com.jetbrains.python.codeInsight.intentions;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.ObjectUtils;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.debugger.PySignature;
 import com.jetbrains.python.debugger.PySignatureCacheManager;
 import com.jetbrains.python.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.documentation.docstrings.PyDocstringGenerator;
-import com.jetbrains.python.psi.PyCallable;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyNamedParameter;
-import com.jetbrains.python.psi.PyParameter;
-import com.jetbrains.python.psi.PyUtil;
-import com.jetbrains.python.psi.StructuredDocString;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.toolbox.Substring;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
+import consulo.util.lang.ObjectUtil;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * User: ktisha
  * <p>
  * Helps to specify type
  */
-public class SpecifyTypeInDocstringIntention extends TypeIntention
-{
-	private String myText = PyBundle.message("INTN.specify.type");
+public class SpecifyTypeInDocstringIntention extends TypeIntention {
+  private String myText = PyBundle.message("INTN.specify.type");
 
-	@Nonnull
-	public String getText()
-	{
-		return myText;
-	}
+  @Nonnull
+  public String getText() {
+    return myText;
+  }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("INTN.specify.type");
-	}
+  @Nonnull
+  public String getFamilyName() {
+    return PyBundle.message("INTN.specify.type");
+  }
 
-	@Override
-	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-	{
-		final PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
-		final PyExpression problemElement = getProblemElement(elementAt);
-		final PsiReference reference = problemElement == null ? null : problemElement.getReference();
+  @Override
+  public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    final PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+    final PyExpression problemElement = getProblemElement(elementAt);
+    final PsiReference reference = problemElement == null ? null : problemElement.getReference();
 
-		final PsiElement resolved = reference != null ? reference.resolve() : null;
-		final PyNamedParameter parameter = getParameter(problemElement, resolved);
+    final PsiElement resolved = reference != null ? reference.resolve() : null;
+    final PyNamedParameter parameter = getParameter(problemElement, resolved);
 
-		final PyCallable callable;
-		if(parameter != null)
-		{
-			callable = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
-		}
-		else
-		{
-			callable = getCallable(elementAt);
-		}
-		if(callable instanceof PyFunction)
-		{
-			generateDocstring(parameter, (PyFunction) callable);
-		}
-	}
+    final PyCallable callable;
+    if (parameter != null) {
+      callable = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
+    }
+    else {
+      callable = getCallable(elementAt);
+    }
+    if (callable instanceof PyFunction) {
+      generateDocstring(parameter, (PyFunction)callable);
+    }
+  }
 
-	private static void generateDocstring(@Nullable PyNamedParameter param, @Nonnull PyFunction pyFunction)
-	{
-		if(!DocStringUtil.ensureNotPlainDocstringFormat(pyFunction))
-		{
-			return;
-		}
+  private static void generateDocstring(@Nullable PyNamedParameter param, @Nonnull PyFunction pyFunction) {
+    if (!DocStringUtil.ensureNotPlainDocstringFormat(pyFunction)) {
+      return;
+    }
 
-		final PyDocstringGenerator docstringGenerator = PyDocstringGenerator.forDocStringOwner(pyFunction);
-		String type = PyNames.OBJECT;
-		if(param != null)
-		{
-			final String paramName = StringUtil.notNullize(param.getName());
-			final PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
-			if(signature != null)
-			{
-				type = ObjectUtils.chooseNotNull(signature.getArgTypeQualifiedName(paramName), type);
-			}
-			docstringGenerator.withParamTypedByName(param, type);
-		}
-		else
-		{
-			final PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
-			if(signature != null)
-			{
-				type = ObjectUtils.chooseNotNull(signature.getReturnTypeQualifiedName(), type);
-			}
-			docstringGenerator.withReturnValue(type);
-		}
+    final PyDocstringGenerator docstringGenerator = PyDocstringGenerator.forDocStringOwner(pyFunction);
+    String type = PyNames.OBJECT;
+    if (param != null) {
+      final String paramName = StringUtil.notNullize(param.getName());
+      final PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
+      if (signature != null) {
+        type = ObjectUtil.chooseNotNull(signature.getArgTypeQualifiedName(paramName), type);
+      }
+      docstringGenerator.withParamTypedByName(param, type);
+    }
+    else {
+      final PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
+      if (signature != null) {
+        type = ObjectUtil.chooseNotNull(signature.getReturnTypeQualifiedName(), type);
+      }
+      docstringGenerator.withReturnValue(type);
+    }
 
-		docstringGenerator.addFirstEmptyLine().buildAndInsert();
-		docstringGenerator.startTemplate();
-	}
+    docstringGenerator.addFirstEmptyLine().buildAndInsert();
+    docstringGenerator.startTemplate();
+  }
 
-	@Override
-	protected void updateText(boolean isReturn)
-	{
-		myText = PyBundle.message(isReturn ? "INTN.specify.return.type" : "INTN.specify.type");
-	}
+  @Override
+  protected void updateText(boolean isReturn) {
+    myText = PyBundle.message(isReturn ? "INTN.specify.return.type" : "INTN.specify.type");
+  }
 
-	@Override
-	protected boolean isParamTypeDefined(@Nonnull PyParameter parameter)
-	{
-		final PyFunction pyFunction = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
-		if(pyFunction != null)
-		{
-			final StructuredDocString structuredDocString = pyFunction.getStructuredDocString();
-			if(structuredDocString == null)
-			{
-				return false;
-			}
-			final Substring typeSub = structuredDocString.getParamTypeSubstring(StringUtil.notNullize(parameter.getName()));
-			return typeSub != null && !typeSub.isEmpty();
-		}
-		return false;
-	}
+  @Override
+  protected boolean isParamTypeDefined(@Nonnull PyParameter parameter) {
+    final PyFunction pyFunction = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
+    if (pyFunction != null) {
+      final StructuredDocString structuredDocString = pyFunction.getStructuredDocString();
+      if (structuredDocString == null) {
+        return false;
+      }
+      final Substring typeSub = structuredDocString.getParamTypeSubstring(StringUtil.notNullize(parameter.getName()));
+      return typeSub != null && !typeSub.isEmpty();
+    }
+    return false;
+  }
 
-	@Override
-	protected boolean isReturnTypeDefined(@Nonnull PyFunction function)
-	{
-		final StructuredDocString structuredDocString = function.getStructuredDocString();
-		return structuredDocString != null && structuredDocString.getReturnType() != null;
-	}
+  @Override
+  protected boolean isReturnTypeDefined(@Nonnull PyFunction function) {
+    final StructuredDocString structuredDocString = function.getStructuredDocString();
+    return structuredDocString != null && structuredDocString.getReturnType() != null;
+  }
 }

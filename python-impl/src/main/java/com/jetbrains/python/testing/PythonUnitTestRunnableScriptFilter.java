@@ -15,48 +15,48 @@
  */
 package com.jetbrains.python.testing;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.execution.Location;
-import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyIfStatement;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.run.RunnableScriptFilter;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.action.Location;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.module.Module;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
-public class PythonUnitTestRunnableScriptFilter implements RunnableScriptFilter
-{
-	public boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable final TypeEvalContext context)
-	{
-		return script instanceof PyFile && PythonUnitTestUtil.getTestCaseClassesFromFile(script, context).size() > 0 && !isIfNameMain(location) && TestRunnerService.getInstance(module)
-				.getProjectConfiguration().
-				equals(PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME);
-	}
+@ExtensionImpl
+public class PythonUnitTestRunnableScriptFilter implements RunnableScriptFilter {
+  public boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable final TypeEvalContext context) {
+    return script instanceof PyFile && PythonUnitTestUtil.getTestCaseClassesFromFile(script, context)
+                                                         .size() > 0 && !isIfNameMain(location) && TestRunnerService.getInstance(module)
+                                                                                                                    .getProjectConfiguration()
+                                                                                                                    .
+                                                                                                                      equals(
+                                                                                                                        PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME);
+  }
 
-	public static boolean isIfNameMain(Location location)
-	{
-		PsiElement element = location.getPsiElement();
-		while(true)
-		{
-			final PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
-			if(ifStatement == null)
-			{
-				break;
-			}
-			element = ifStatement;
-		}
-		if(element instanceof PyIfStatement)
-		{
-			PyIfStatement ifStatement = (PyIfStatement) element;
-			return PyUtil.isIfNameEqualsMain(ifStatement);
-		}
-		return false;
-	}
+  public static boolean isIfNameMain(Location location) {
+    PsiElement element = location.getPsiElement();
+    while (true) {
+      final PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
+      if (ifStatement == null) {
+        break;
+      }
+      element = ifStatement;
+    }
+    if (element instanceof PyIfStatement) {
+      PyIfStatement ifStatement = (PyIfStatement)element;
+      return PyUtil.isIfNameEqualsMain(ifStatement);
+    }
+    return false;
+  }
 }

@@ -15,97 +15,83 @@
  */
 package com.jetbrains.python.psi.search;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.searches.ExtensibleQueryFactory;
-import com.intellij.util.Query;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.application.util.query.ExtensibleQueryFactory;
+import consulo.application.util.query.Query;
+import consulo.language.psi.PsiElement;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yole
  */
-public class PySuperMethodsSearch extends ExtensibleQueryFactory<PsiElement, PySuperMethodsSearch.SearchParameters>
-{
-	public static final PySuperMethodsSearch INSTANCE = new PySuperMethodsSearch();
+public class PySuperMethodsSearch extends ExtensibleQueryFactory<PsiElement, PySuperMethodsSearch.SearchParameters> {
+  public static final PySuperMethodsSearch INSTANCE = new PySuperMethodsSearch();
 
-	private static PyFunction getBaseMethod(List<PsiElement> superMethods, PyClass containingClass)
-	{
+  private static PyFunction getBaseMethod(List<PsiElement> superMethods, PyClass containingClass) {
 
-		for(PyClass ancestor : containingClass.getAncestorClasses(null))
-		{
-			for(PsiElement method : superMethods)
-			{
-				if(ancestor.equals(((PyFunction) method).getContainingClass()))
-				{
-					return (PyFunction) method;
-				}
-			}
-		}
-		return (PyFunction) superMethods.get(superMethods.size() - 1);
-	}
+    for (PyClass ancestor : containingClass.getAncestorClasses(null)) {
+      for (PsiElement method : superMethods) {
+        if (ancestor.equals(((PyFunction)method).getContainingClass())) {
+          return (PyFunction)method;
+        }
+      }
+    }
+    return (PyFunction)superMethods.get(superMethods.size() - 1);
+  }
 
-	public static PyFunction findDeepestSuperMethod(PyFunction function)
-	{
-		TypeEvalContext context = TypeEvalContext.userInitiated(function.getProject(), null);
-		List<PsiElement> superMethods = new ArrayList<>(search(function, true, context).findAll());
-		while(superMethods.size() > 0)
-		{
-			function = getBaseMethod(superMethods, function.getContainingClass());
-			superMethods = new ArrayList<>(search(function, true, context).findAll());
-		}
-		return function;
-	}
+  public static PyFunction findDeepestSuperMethod(PyFunction function) {
+    TypeEvalContext context = TypeEvalContext.userInitiated(function.getProject(), null);
+    List<PsiElement> superMethods = new ArrayList<>(search(function, true, context).findAll());
+    while (superMethods.size() > 0) {
+      function = getBaseMethod(superMethods, function.getContainingClass());
+      superMethods = new ArrayList<>(search(function, true, context).findAll());
+    }
+    return function;
+  }
 
-	public static class SearchParameters
-	{
-		private final PyFunction myDerivedMethod;
-		private final boolean myDeepSearch;
-		private final TypeEvalContext myContext;
+  public static class SearchParameters {
+    private final PyFunction myDerivedMethod;
+    private final boolean myDeepSearch;
+    private final TypeEvalContext myContext;
 
-		public SearchParameters(final PyFunction derivedMethod, boolean deepSearch, @Nullable final TypeEvalContext context)
-		{
-			myDerivedMethod = derivedMethod;
-			myDeepSearch = deepSearch;
-			myContext = context;
-		}
+    public SearchParameters(final PyFunction derivedMethod, boolean deepSearch, @Nullable final TypeEvalContext context) {
+      myDerivedMethod = derivedMethod;
+      myDeepSearch = deepSearch;
+      myContext = context;
+    }
 
-		@Nullable
-		public TypeEvalContext getContext()
-		{
-			return myContext;
-		}
+    @Nullable
+    public TypeEvalContext getContext() {
+      return myContext;
+    }
 
-		public PyFunction getDerivedMethod()
-		{
-			return myDerivedMethod;
-		}
+    public PyFunction getDerivedMethod() {
+      return myDerivedMethod;
+    }
 
-		public boolean isDeepSearch()
-		{
-			return myDeepSearch;
-		}
-	}
+    public boolean isDeepSearch() {
+      return myDeepSearch;
+    }
+  }
 
-	private PySuperMethodsSearch()
-	{
-		super("consulo.python");
-	}
+  private PySuperMethodsSearch() {
+    super(PySuperMethodsSearchExecutor.class);
+  }
 
-	public static Query<PsiElement> search(final PyFunction derivedMethod, @Nullable final TypeEvalContext context)
-	{
-		final SearchParameters parameters = new SearchParameters(derivedMethod, false, context);
-		return INSTANCE.createUniqueResultsQuery(parameters);
-	}
+  public static Query<PsiElement> search(final PyFunction derivedMethod, @Nullable final TypeEvalContext context) {
+    final SearchParameters parameters = new SearchParameters(derivedMethod, false, context);
+    return INSTANCE.createUniqueResultsQuery(parameters);
+  }
 
-	public static Query<PsiElement> search(final PyFunction derivedMethod, final boolean deepSearch, @Nullable final TypeEvalContext context)
-	{
-		final SearchParameters parameters = new SearchParameters(derivedMethod, deepSearch, context);
-		return INSTANCE.createUniqueResultsQuery(parameters);
-	}
+  public static Query<PsiElement> search(final PyFunction derivedMethod,
+                                         final boolean deepSearch,
+                                         @Nullable final TypeEvalContext context) {
+    final SearchParameters parameters = new SearchParameters(derivedMethod, deepSearch, context);
+    return INSTANCE.createUniqueResultsQuery(parameters);
+  }
 }

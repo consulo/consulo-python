@@ -16,31 +16,34 @@
 
 package com.jetbrains.python;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.PsiParser;
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.lexer.PythonIndentingLexer;
 import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyFileElementType;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.impl.PyFileImpl;
-import consulo.lang.LanguageVersion;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.IFileElementType;
+import consulo.language.ast.TokenSet;
+import consulo.language.file.FileViewProvider;
+import consulo.language.impl.psi.ASTWrapperPsiElement;
+import consulo.language.lexer.Lexer;
+import consulo.language.parser.ParserDefinition;
+import consulo.language.parser.PsiParser;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.version.LanguageVersion;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  * @author Keith Lea
  */
+@ExtensionImpl
 public class PythonParserDefinition implements ParserDefinition {
   private final TokenSet myWhitespaceTokens;
   private final TokenSet myCommentTokens;
@@ -50,6 +53,12 @@ public class PythonParserDefinition implements ParserDefinition {
     myWhitespaceTokens = TokenSet.create(PyTokenTypes.LINE_BREAK, PyTokenTypes.SPACE, PyTokenTypes.TAB, PyTokenTypes.FORMFEED);
     myCommentTokens = TokenSet.create(PyTokenTypes.END_OF_LINE_COMMENT);
     myStringLiteralTokens = TokenSet.orSet(PyTokenTypes.STRING_NODES, TokenSet.create(PyElementTypes.STRING_LITERAL_EXPRESSION));
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 
   @Nonnull

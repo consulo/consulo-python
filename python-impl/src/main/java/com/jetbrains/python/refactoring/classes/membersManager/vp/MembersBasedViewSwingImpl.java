@@ -15,25 +15,23 @@
  */
 package com.jetbrains.python.refactoring.classes.membersManager.vp;
 
-import java.awt.BorderLayout;
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import com.google.common.base.Preconditions;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.ui.RefactoringDialog;
-import com.intellij.util.containers.MultiMap;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.MembersConflictDialog;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.refactoring.classes.ui.PyMemberSelectionPanel;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.language.editor.refactoring.ui.RefactoringDialog;
+import consulo.project.Project;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awt.Messages;
+import consulo.util.collection.MultiMap;
+
+import javax.annotation.Nonnull;
+import javax.swing.*;
+import java.awt.*;
+import java.util.Collection;
 
 /**
  * {@link com.jetbrains.python.refactoring.classes.membersManager.vp.MembersBasedView} implementation on swing.

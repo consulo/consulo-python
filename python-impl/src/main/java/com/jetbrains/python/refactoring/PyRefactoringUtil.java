@@ -16,23 +16,21 @@
 
 package com.jetbrains.python.refactoring;
 
-import com.intellij.codeInsight.PsiEquivalenceUtil;
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.Processor;
-import java.util.HashSet;
 import com.jetbrains.python.findUsages.PyFindUsagesHandlerFactory;
 import com.jetbrains.python.psi.*;
+import consulo.application.util.function.Processor;
+import consulo.document.util.TextRange;
+import consulo.find.FindUsagesHandler;
+import consulo.language.editor.PsiEquivalenceUtil;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.usage.UsageInfo;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.Pair;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.*;
 
 /**

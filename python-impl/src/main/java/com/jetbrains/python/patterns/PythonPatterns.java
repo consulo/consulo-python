@@ -15,21 +15,20 @@
  */
 package com.jetbrains.python.patterns;
 
-import java.util.regex.Pattern;
-
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.patterns.InitialPatternCondition;
-import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.pattern.InitialPatternCondition;
+import consulo.language.pattern.PlatformPatterns;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ProcessingContext;
+import consulo.util.io.FileUtil;
+
+import javax.annotation.Nullable;
+import java.util.regex.Pattern;
 
 /**
  * @author yole

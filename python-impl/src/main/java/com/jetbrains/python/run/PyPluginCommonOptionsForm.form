@@ -13,7 +13,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="c3528" class="com.intellij.ui.components.JBLabel" binding="myWorkingDirectoryJBLabel">
+          <component id="c3528" class="consulo.ui.ex.awt.JBLabel" binding="myWorkingDirectoryJBLabel">
             <constraints>
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -22,7 +22,7 @@
               <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.labels.working_directory"/>
             </properties>
           </component>
-          <component id="78c75" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myWorkingDirectoryTextField">
+          <component id="78c75" class="consulo.ui.ex.awt.TextFieldWithBrowseButton" binding="myWorkingDirectoryTextField">
             <constraints>
               <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -30,7 +30,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="32654" class="com.intellij.execution.configuration.EnvironmentVariablesComponent" binding="myEnvsComponent">
+          <component id="32654" class="consulo.execution.ui.awt.EnvironmentVariablesComponent" binding="myEnvsComponent">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -38,7 +38,7 @@
               <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.labels.environment_variables"/>
             </properties>
           </component>
-          <component id="cdd29" class="com.intellij.ui.components.JBLabel" binding="myInterpreterOptionsJBLabel">
+          <component id="cdd29" class="consulo.ui.ex.awt.JBLabel" binding="myInterpreterOptionsJBLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -46,7 +46,7 @@
               <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.labels.interpreter_options"/>
             </properties>
           </component>
-          <component id="1a856" class="com.intellij.ui.RawCommandLineEditor" binding="myInterpreterOptionsTextField">
+          <component id="1a856" class="consulo.execution.ui.awt.RawCommandLineEditor" binding="myInterpreterOptionsTextField">
             <constraints>
               <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -57,7 +57,7 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="a4f87" class="com.intellij.ui.components.JBLabel" binding="myPythonInterpreterJBLabel">
+          <component id="a4f87" class="consulo.ui.ex.awt.JBLabel" binding="myPythonInterpreterJBLabel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -88,7 +88,7 @@
               <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.labels.interpreter"/>
             </properties>
           </component>
-          <component id="8ee48" class="consulo.roots.ui.configuration.SdkComboBox" binding="myInterpreterComboBox" custom-create="true" default-binding="true">
+          <component id="8ee48" class="consulo.module.ui.awt.SdkComboBox" binding="myInterpreterComboBox" custom-create="true" default-binding="true">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -103,7 +103,7 @@
               </grid>
             </constraints>
           </vspacer>
-          <component id="86ab7" class="com.intellij.execution.util.PathMappingsComponent" binding="myPathMappingsComponent">
+          <component id="86ab7" class="consulo.ide.impl.idea.execution.util.PathMappingsComponent" binding="myPathMappingsComponent">
             <constraints>
               <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -111,7 +111,7 @@
               <text value="Path mappings"/>
             </properties>
           </component>
-          <component id="d919b" class="com.intellij.ui.components.JBCheckBox" binding="myAddContentRootsCheckbox">
+          <component id="d919b" class="consulo.ui.ex.awt.JBCheckBox" binding="myAddContentRootsCheckbox">
             <constraints>
               <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -120,7 +120,7 @@
               <text value="Add content roots to PYTHONPATH"/>
             </properties>
           </component>
-          <component id="1c6cd" class="com.intellij.ui.components.JBCheckBox" binding="myAddSourceRootsCheckbox">
+          <component id="1c6cd" class="consulo.ui.ex.awt.JBCheckBox" binding="myAddSourceRootsCheckbox">
             <constraints>
               <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

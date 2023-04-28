@@ -16,19 +16,19 @@
 
 package com.jetbrains.python.templateLanguages;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.language.psi.path.FileReference;
+import consulo.language.psi.path.FileReferenceSet;
+import consulo.module.Module;
+import consulo.language.util.ModuleUtilCore;
+import consulo.util.lang.Pair;
+import consulo.application.util.SystemInfo;
+import consulo.document.util.TextRange;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.PsiReferenceProvider;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PythonStringUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +39,8 @@ import java.util.List;
 /**
  * @author traff
  */
-public class TemplateFileReferenceSet extends FileReferenceSet {
+public class TemplateFileReferenceSet extends FileReferenceSet
+{
   private final String mySeparatorString;
 
   public TemplateFileReferenceSet(PsiElement element, @Nullable PsiReferenceProvider provider) {

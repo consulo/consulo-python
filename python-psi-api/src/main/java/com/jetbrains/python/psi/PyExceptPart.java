@@ -16,7 +16,7 @@
 package com.jetbrains.python.psi;
 
 import javax.annotation.Nullable;
-import com.intellij.psi.StubBasedPsiElement;
+import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyExceptPartStub;
 
 /**

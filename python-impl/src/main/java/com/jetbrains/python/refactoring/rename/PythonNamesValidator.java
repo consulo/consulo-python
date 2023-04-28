@@ -16,44 +16,58 @@
 
 package com.jetbrains.python.refactoring.rename;
 
-import com.intellij.lang.refactoring.NamesValidator;
-import com.intellij.openapi.project.Project;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.lexer.PythonLexer;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.refactoring.NamesValidator;
+import consulo.project.Project;
+
 import javax.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
 public class PythonNamesValidator implements NamesValidator {
-  private static final PythonLexer ourLexer = new PythonLexer();
 
-  public synchronized boolean isKeyword(@Nonnull final String name, final Project project) {
+  @Override
+  public boolean isKeyword(@Nonnull final String name, final Project project) {
     try {
-      ourLexer.start(name);
-      if (!PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens().contains(ourLexer.getTokenType())) {
+      PythonLexer lexer = new PythonLexer();
+      lexer.start(name);
+      if (!PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens().contains(lexer.getTokenType())) {
         return false;
       }
-      ourLexer.advance();
-      return ourLexer.getTokenType() == null;
+      lexer.advance();
+      return lexer.getTokenType() == null;
     }
     catch (StringIndexOutOfBoundsException e) {
       return false;
     }
   }
 
-  public synchronized boolean isIdentifier(@Nonnull final String name, final Project project) {
+  @Override
+  public boolean isIdentifier(@Nonnull final String name, final Project project) {
     try {
-      ourLexer.start(name);
-      if (ourLexer.getTokenType() != PyTokenTypes.IDENTIFIER) {
+      PythonLexer lexer = new PythonLexer();
+      lexer.start(name);
+      if (lexer.getTokenType() != PyTokenTypes.IDENTIFIER) {
         return false;
       }
-      ourLexer.advance();
-      return ourLexer.getTokenType() == null;
+      lexer.advance();
+      return lexer.getTokenType() == null;
     }
     catch (StringIndexOutOfBoundsException e) {
       return false;
     }
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 }

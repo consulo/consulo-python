@@ -16,33 +16,26 @@
 
 package com.jetbrains.python.psi.impl;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+import com.intellij.java.language.psi.*;
+import com.intellij.java.language.psi.util.PropertyUtil;
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ProcessingContext;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.util.PropertyUtil;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
-import com.jetbrains.python.psi.PyArgumentList;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyUtil;
-import consulo.codeInsight.completion.CompletionProvider;
+
+import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyConstructorArgumentCompletionContributor extends CompletionContributor
 {
 	public PyConstructorArgumentCompletionContributor()
@@ -107,5 +100,12 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 				}
 			}
 		}
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

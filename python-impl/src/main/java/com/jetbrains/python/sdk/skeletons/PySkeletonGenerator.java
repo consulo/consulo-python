@@ -16,13 +16,6 @@
 package com.jetbrains.python.sdk.skeletons;
 
 import com.google.common.collect.Maps;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.sdk.InvalidSdkException;
 import com.jetbrains.python.sdk.PySdkUtil;
@@ -30,12 +23,19 @@ import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import consulo.application.ApplicationProperties;
+import consulo.content.bundle.Sdk;
 import consulo.logging.Logger;
+import consulo.process.local.ProcessOutput;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.jetbrains.python.sdk.skeletons.SkeletonVersionChecker.fromVersionString;
 
@@ -135,7 +135,7 @@ public class PySkeletonGenerator
 			}
 		}
 
-		resultConsumer.consume(genResult.getExitCode() == 0);
+		resultConsumer.accept(genResult.getExitCode() == 0);
 	}
 
 	public ProcessOutput runSkeletonGeneration(String modname, String modfilename, List<String> assemblyRefs, String binaryPath, String extraSyspath) throws InvalidSdkException

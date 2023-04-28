@@ -19,12 +19,12 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.ui.ConflictsDialog;
-import com.intellij.refactoring.util.RefactoringUIUtil;
-import com.intellij.util.containers.MultiMap;
+import consulo.language.editor.refactoring.ui.ConflictsDialog;
+import consulo.language.editor.refactoring.ui.RefactoringUIUtil;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.util.collection.MultiMap;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyClass;
 

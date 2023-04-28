@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.psi.types.functionalParser;
 
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.Function;
-import javax.annotation.Nonnull;
+import consulo.util.lang.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Function;
 
 /**
 * @author vlan
@@ -30,7 +30,7 @@ public interface FunctionalParser<R, T> {
   R parse(@Nonnull List<Token<T>> tokens) throws ParserException;
 
   @Nonnull
-  Pair<R, FunctionalParserBase.State> parse(@Nonnull List<Token<T>> tokens,
+  Pair<R, State> parse(@Nonnull List<Token<T>> tokens,
                                             @Nonnull FunctionalParserBase.State state) throws ParserException;
 
   @Nonnull

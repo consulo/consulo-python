@@ -10,7 +10,6 @@
 	</tags>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<completion.contributor language="Python" implementationClass="com.jetbrains.python.psi.impl.PyConstructorArgumentCompletionContributor"/>
 
 		<moduleExtensionProvider key="jython"
 								 parentKey="java"
@@ -21,11 +20,4 @@
 		<addTo.listOfElements name="pythonExtensions">jython</addTo.listOfElements>
 	</extensions>
 
-	<extensions defaultExtensionNs="consulo.python">
-		<importResolver implementation="com.jetbrains.python.psi.impl.PyJavaImportResolver"/>
-		<typeProvider implementation="com.jetbrains.python.psi.impl.PyJavaTypeProvider"/>
-		<pySuperMethodsSearch implementation="com.jetbrains.python.psi.impl.PyJavaSuperMethodsSearchExecutor"/>
-		<importCandidateProvider implementation="com.jetbrains.python.psi.impl.PyJavaImportCandidateProvider"/>
-		<sdkFlavor implementation="com.jetbrains.python.sdk.flavors.JythonSdkFlavor" />
-	</extensions>
 </consulo-plugin>

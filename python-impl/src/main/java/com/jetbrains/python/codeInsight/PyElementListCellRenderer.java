@@ -16,16 +16,17 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.ide.util.PsiElementListCellRenderer;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.NavigationItem;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
+import consulo.language.editor.ui.PsiElementListCellRenderer;
+import consulo.navigation.ItemPresentation;
+import consulo.navigation.NavigationItem;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
 
 /**
  * @author yole
  */
-public class PyElementListCellRenderer extends PsiElementListCellRenderer {
+public class PyElementListCellRenderer extends PsiElementListCellRenderer
+{
   public String getElementText(final PsiElement element) {
     if (element instanceof PsiNamedElement) {
       final String name = ((PsiNamedElement)element).getName();

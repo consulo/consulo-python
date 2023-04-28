@@ -22,6 +22,5 @@ import consulo.module.extension.ModuleExtensionWithSdk;
  * @author VISTALL
  * @since 27.09.13.
  */
-public interface PyModuleExtension<T extends PyModuleExtension<T>> extends ModuleExtensionWithSdk<T>
-{
+public interface PyModuleExtension<T extends PyModuleExtension<T>> extends ModuleExtensionWithSdk<T> {
 }

@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
+import consulo.language.ast.ASTNode;
+import consulo.navigation.ItemPresentation;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyNamedParameter;

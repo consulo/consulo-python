@@ -16,26 +16,28 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.DictCreationQuickFix;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.Pair;
 import org.jetbrains.annotations.Nls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
 public class PyDictCreationInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -48,7 +50,8 @@ public class PyDictCreationInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -95,8 +98,8 @@ public class PyDictCreationInspection extends PyInspection {
       if (targetToValue.first instanceof PySubscriptionExpression) {
         final PySubscriptionExpression subscriptionExpression = (PySubscriptionExpression)targetToValue.first;
         if (name.equals(subscriptionExpression.getOperand().getName()) &&
-            subscriptionExpression.getIndexExpression() != null &&
-            !referencesTarget(targetToValue.second, target)) {
+          subscriptionExpression.getIndexExpression() != null &&
+          !referencesTarget(targetToValue.second, target)) {
           targets.add(targetToValue);
         }
       }

@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.buildout.config.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.ast.ASTNode;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.util.PsiTreeUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

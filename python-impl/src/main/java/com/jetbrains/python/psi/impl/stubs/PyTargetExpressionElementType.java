@@ -15,41 +15,28 @@
  */
 package com.jetbrains.python.psi.impl.stubs;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.TreeUtil;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.io.StringRef;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.documentation.docstrings.DocStringUtil;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyComprehensionElement;
-import com.jetbrains.python.psi.PyDocStringOwner;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStubElementType;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyTargetExpressionImpl;
-import com.jetbrains.python.psi.stubs.PyFileStub;
-import com.jetbrains.python.psi.stubs.PyFunctionStub;
-import com.jetbrains.python.psi.stubs.PyInstanceAttributeIndex;
-import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
-import com.jetbrains.python.psi.stubs.PyVariableNameIndex;
+import com.jetbrains.python.psi.stubs.*;
+import consulo.component.extension.Extensions;
+import consulo.index.io.StringRef;
+import consulo.language.ast.ASTNode;
+import consulo.language.impl.ast.TreeUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.IndexSink;
+import consulo.language.psi.stub.StubElement;
+import consulo.language.psi.stub.StubInputStream;
+import consulo.language.psi.stub.StubOutputStream;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
 
 /**
  * @author yole

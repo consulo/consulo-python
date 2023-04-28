@@ -20,7 +20,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.FunctionParameter;
 import com.jetbrains.python.nameResolver.FQNamesProvider;
 import com.jetbrains.python.psi.resolve.PyResolveContext;

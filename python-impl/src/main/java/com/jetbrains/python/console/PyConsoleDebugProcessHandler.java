@@ -15,62 +15,43 @@
  */
 package com.jetbrains.python.console;
 
-import java.io.OutputStream;
-
-import javax.annotation.Nullable;
-import com.intellij.execution.process.AnsiEscapeDecoder;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessListener;
-import com.intellij.execution.process.ProcessOutputTypes;
-import consulo.util.dataholder.Key;
 import com.jetbrains.python.debugger.PositionConverterProvider;
 import com.jetbrains.python.debugger.PyDebugProcess;
 import com.jetbrains.python.debugger.PyLocalPositionConverter;
 import com.jetbrains.python.debugger.PyPositionConverter;
+import consulo.process.ProcessHandler;
+import consulo.process.ProcessOutputTypes;
+import consulo.process.event.ProcessEvent;
+import consulo.process.event.ProcessListener;
+import consulo.util.dataholder.Key;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.OutputStream;
 
 /**
  * @author traff
  */
 public class PyConsoleDebugProcessHandler extends ProcessHandler implements PositionConverterProvider
 {
-	private final PyConsoleProcessHandler myConsoleProcessHandler;
+	private final ProcessHandler myConsoleProcessHandler;
 
-	public PyConsoleDebugProcessHandler(final PyConsoleProcessHandler processHandler)
+	public PyConsoleDebugProcessHandler(final ProcessHandler processHandler)
 	{
 		myConsoleProcessHandler = processHandler;
+
 		processHandler.addProcessListener(new ProcessListener()
 		{
 			@Override
-			public void startNotified(ProcessEvent event)
-			{
-
-			}
-
-			@Override
-			public void processTerminated(ProcessEvent event)
+			public void processTerminated(@Nonnull ProcessEvent event)
 			{
 				PyConsoleDebugProcessHandler.this.notifyProcessTerminated(event.getExitCode());
 			}
 
 			@Override
-			public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed)
+			public void onTextAvailable(@Nonnull ProcessEvent event, @Nonnull Key outputType)
 			{
-
-			}
-
-			@Override
-			public void onTextAvailable(ProcessEvent event, Key outputType)
-			{
-			}
-		});
-
-		processHandler.addColoredTextListener(new AnsiEscapeDecoder.ColoredTextAcceptor()
-		{
-			@Override
-			public void coloredTextAvailable(String text, Key attributes)
-			{
-				PyConsoleDebugProcessHandler.this.notifyTextAvailable(text, attributes);
+				PyConsoleDebugProcessHandler.this.notifyTextAvailable(event.getText(), outputType);
 			}
 		});
 	}
@@ -100,7 +81,7 @@ public class PyConsoleDebugProcessHandler extends ProcessHandler implements Posi
 		return null;
 	}
 
-	public PyConsoleProcessHandler getConsoleProcessHandler()
+	public ProcessHandler getConsoleProcessHandler()
 	{
 		return myConsoleProcessHandler;
 	}

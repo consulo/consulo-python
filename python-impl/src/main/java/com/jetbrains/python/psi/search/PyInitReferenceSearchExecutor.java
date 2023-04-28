@@ -16,16 +16,18 @@
 
 package com.jetbrains.python.psi.search;
 
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.QueryExecutorBase;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.search.UsageSearchContext;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.util.Processor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AccessToken;
+import consulo.application.ApplicationManager;
+import consulo.language.psi.search.ReferencesSearchQueryExecutor;
+import consulo.project.util.query.QueryExecutorBase;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.content.scope.SearchScope;
+import consulo.language.psi.search.UsageSearchContext;
+import consulo.language.psi.search.ReferencesSearch;
+import consulo.application.util.function.Processor;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyClass;
@@ -36,7 +38,8 @@ import javax.annotation.Nonnull;
 /**
  * @author yole
  */
-public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+@ExtensionImpl
+public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
   public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer) {
     PsiElement element = queryParameters.getElementToSearch();
     if (!(element instanceof PyFunction)) {

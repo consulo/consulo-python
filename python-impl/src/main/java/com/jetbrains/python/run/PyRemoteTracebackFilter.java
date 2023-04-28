@@ -15,42 +15,38 @@
  */
 package com.jetbrains.python.run;
 
+import consulo.ide.impl.idea.remote.RemoteProcessControl;
+import consulo.project.Project;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.remote.RemoteProcessControl;
 
 /**
  * @author traff
  */
-public class PyRemoteTracebackFilter extends PythonTracebackFilter
-{
-	private final RemoteProcessControl myHandler;
+public class PyRemoteTracebackFilter extends PythonTracebackFilter {
+  private final RemoteProcessControl myHandler;
 
-	public PyRemoteTracebackFilter(Project project, String workingDirectory, RemoteProcessControl remoteProcessHandler)
-	{
-		super(project, workingDirectory);
+  public PyRemoteTracebackFilter(Project project, String workingDirectory, RemoteProcessControl remoteProcessHandler) {
+    super(project, workingDirectory);
 
-		myHandler = remoteProcessHandler;
-	}
+    myHandler = remoteProcessHandler;
+  }
 
-	@Override
-	@Nullable
-	protected VirtualFile findFileByName(@Nonnull String fileName)
-	{
-		VirtualFile vFile = super.findFileByName(fileName);
-		if(vFile != null)
-		{
-			return vFile;
-		}
-		String localFile = myHandler.getMappingSettings().convertToLocal(fileName);
-		VirtualFile file = LocalFileSystem.getInstance().findFileByPath(localFile);
-		if(file != null && file.exists())
-		{
-			return file;
-		}
-		return null;
-	}
+  @Override
+  @Nullable
+  protected VirtualFile findFileByName(@Nonnull String fileName) {
+    VirtualFile vFile = super.findFileByName(fileName);
+    if (vFile != null) {
+      return vFile;
+    }
+    String localFile = myHandler.getMappingSettings().convertToLocal(fileName);
+    VirtualFile file = LocalFileSystem.getInstance().findFileByPath(localFile);
+    if (file != null && file.exists()) {
+      return file;
+    }
+    return null;
+  }
 }

@@ -17,13 +17,12 @@ package com.jetbrains.python.inspections.quickfix;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
+import consulo.language.psi.SmartPointerManager;
+import consulo.language.psi.SmartPsiElementPointer;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.intentions.PyGenerateDocstringIntention;
 import com.jetbrains.python.documentation.docstrings.PyDocstringGenerator;
@@ -32,6 +31,7 @@ import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * User : catherine

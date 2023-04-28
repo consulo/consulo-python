@@ -19,17 +19,17 @@
  */
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.stubs.StubIndexKey;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.search.PyProjectScopeBuilder;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.stub.StringStubIndexExtension;
+import consulo.language.psi.stub.StubIndex;
+import consulo.language.psi.stub.StubIndexKey;
+import consulo.project.Project;
+import consulo.project.content.scope.ProjectScopes;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collection;
 
 public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
@@ -69,7 +69,7 @@ public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
     if (qName == null) {
       return null;
     }
-    return findClass(qName, project, ProjectScope.getAllScope(project));
+    return findClass(qName, project, (GlobalSearchScope) ProjectScopes.getAllScope(project));
   }
 
   public static Collection<String> allKeys(Project project) {

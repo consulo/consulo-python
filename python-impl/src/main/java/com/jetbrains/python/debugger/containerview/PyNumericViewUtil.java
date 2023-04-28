@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.util.Pair;
+import consulo.util.lang.Pair;
 
 /**
  * Created by Yuli Fiterman on 5/10/2016.

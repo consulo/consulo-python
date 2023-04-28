@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.formatter;
 
-import com.intellij.formatting.FormattingMode;
-import com.intellij.formatting.SpacingBuilder;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import consulo.language.codeStyle.FormattingMode;
+import consulo.language.codeStyle.SpacingBuilder;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CommonCodeStyleSettings;
 import com.jetbrains.python.PythonLanguage;
 
 /**

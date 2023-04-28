@@ -16,9 +16,9 @@
 package com.jetbrains.python.refactoring.move.moduleMembers;
 
 import javax.annotation.Nonnull;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.refactoring.classMembers.DependentMembersCollectorBase;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.editor.refactoring.classMember.DependentMembersCollectorBase;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.psi.PyUtil;

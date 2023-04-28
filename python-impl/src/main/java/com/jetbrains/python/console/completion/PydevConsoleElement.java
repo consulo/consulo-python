@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.console.completion;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiManager;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiManager;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.impl.LightNamedElement;
 

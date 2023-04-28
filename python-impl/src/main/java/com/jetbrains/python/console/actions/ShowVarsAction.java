@@ -16,48 +16,42 @@
 
 package com.jetbrains.python.console.actions;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ToggleAction;
-import com.intellij.openapi.project.DumbAware;
 import com.jetbrains.python.console.PydevConsoleCommunication;
 import com.jetbrains.python.console.PythonConsoleView;
+import consulo.application.AllIcons;
+import consulo.application.dumb.DumbAware;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.ToggleAction;
 
 /**
  * @author VISTALL
  * @since 08-Nov-16
  */
-public class ShowVarsAction extends ToggleAction implements DumbAware
-{
-	private boolean mySelected;
-	private PythonConsoleView myConsoleView;
-	private PydevConsoleCommunication myConsoleCommunication;
+public class ShowVarsAction extends ToggleAction implements DumbAware {
+  private boolean mySelected;
+  private PythonConsoleView myConsoleView;
+  private PydevConsoleCommunication myConsoleCommunication;
 
-	public ShowVarsAction(PythonConsoleView consoleView, PydevConsoleCommunication consoleCommunication)
-	{
-		super("Show Variables", "Shows active console variables", AllIcons.Debugger.Watches);
-		myConsoleView = consoleView;
-		myConsoleCommunication = consoleCommunication;
-	}
+  public ShowVarsAction(PythonConsoleView consoleView, PydevConsoleCommunication consoleCommunication) {
+    super("Show Variables", "Shows active console variables", AllIcons.Debugger.Watches);
+    myConsoleView = consoleView;
+    myConsoleCommunication = consoleCommunication;
+  }
 
-	@Override
-	public boolean isSelected(AnActionEvent anActionEvent)
-	{
-		return mySelected;
-	}
+  @Override
+  public boolean isSelected(AnActionEvent anActionEvent) {
+    return mySelected;
+  }
 
-	@Override
-	public void setSelected(AnActionEvent anActionEvent, boolean b)
-	{
-		mySelected = b;
+  @Override
+  public void setSelected(AnActionEvent anActionEvent, boolean b) {
+    mySelected = b;
 
-		if(mySelected)
-		{
-			myConsoleView.showVariables(myConsoleCommunication);
-		}
-		else
-		{
-			myConsoleView.restoreWindow();
-		}
-	}
+    if (mySelected) {
+      myConsoleView.showVariables(myConsoleCommunication);
+    }
+    else {
+      myConsoleView.restoreWindow();
+    }
+  }
 }

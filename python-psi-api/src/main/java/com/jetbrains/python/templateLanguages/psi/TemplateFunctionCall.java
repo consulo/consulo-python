@@ -17,7 +17,7 @@ package com.jetbrains.python.templateLanguages.psi;
 
 import javax.annotation.Nullable;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 
 /**
  * A function call in a template file.

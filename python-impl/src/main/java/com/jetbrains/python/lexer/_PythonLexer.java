@@ -19,10 +19,11 @@
 /* It's an automatically generated code. Do not modify it. */
 package com.jetbrains.python.lexer;
 
-import com.intellij.lexer.FlexLexer;
-import com.intellij.psi.tree.IElementType;
 import com.jetbrains.python.PyTokenTypes;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.language.ast.IElementType;
+import consulo.language.lexer.FlexLexer;
+import consulo.util.lang.CharArrayUtil;
+import consulo.util.lang.StringUtil;
 
 
 /**
@@ -747,7 +748,7 @@ return yylength()-s.length();
 
   public void reset(CharSequence buffer, int start, int end,int initialState){
     zzBuffer = buffer;
-    zzBufferArray = com.intellij.util.text.CharArrayUtil.fromSequenceWithoutCopying(buffer);
+    zzBufferArray = CharArrayUtil.fromSequenceWithoutCopying(buffer);
     zzCurrentPos = zzMarkedPos = zzStartRead = start;
     zzPushbackPos = 0;
     zzAtEOF  = false;

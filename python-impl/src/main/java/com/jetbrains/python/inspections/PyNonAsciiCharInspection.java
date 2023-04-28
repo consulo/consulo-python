@@ -16,114 +16,113 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.inspections.quickfix.AddEncodingQuickFix;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.InspectionToolState;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiFile;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
 /**
  * User : catherine
  */
-public class PyNonAsciiCharInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.non.ascii");
-  }
+@ExtensionImpl
+public class PyNonAsciiCharInspection extends PyInspection
+{
+	@Nonnull
+	@Override
+	public InspectionToolState<?> createStateProvider()
+	{
+		return new PyNonAsciiCharInspectionState();
+	}
 
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
-    return new Visitor(holder, session);
-  }
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return PyBundle.message("INSP.NAME.non.ascii");
+	}
 
-  private class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
+	@Nonnull
+	@Override
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
+	{
+		return new Visitor(holder, session, (PyNonAsciiCharInspectionState) state);
+	}
 
-    @Override
-    public void visitComment(PsiComment node) {
-      checkString(node, node.getText());
-    }
-    
-    private void checkString(PsiElement node, String value) {
-      if (LanguageLevel.forElement(node).isPy3K()) return;
-      PsiFile file = node.getContainingFile(); // can't cache this in the instance, alas
-      if (file == null) return;
-      final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file.getText());
+	private class Visitor extends PyInspectionVisitor
+	{
+		private final PyNonAsciiCharInspectionState myState;
 
-      boolean hasNonAscii = false;
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyNonAsciiCharInspectionState state)
+		{
+			super(holder, session);
+			myState = state;
+		}
 
-      CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
-      int length = value.length();
-      char c = 0;
-      for (int i = 0; i < length; ++i) {
-        c = value.charAt(i);
-        if (!asciiEncoder.canEncode(c)) {
-          hasNonAscii = true;
-          break;
-        }
-      }
+		@Override
+		public void visitComment(PsiComment node)
+		{
+			checkString(node, node.getText());
+		}
 
-      if (hasNonAscii) {
-        if (charsetString == null)
-          registerProblem(node, "Non-ASCII character " + c + " in file, but no encoding declared",
-                          new AddEncodingQuickFix(myDefaultEncoding, myEncodingFormatIndex));
-      }
-    }
+		private void checkString(PsiElement node, String value)
+		{
+			if(LanguageLevel.forElement(node).isPy3K())
+			{
+				return;
+			}
+			PsiFile file = node.getContainingFile(); // can't cache this in the instance, alas
+			if(file == null)
+			{
+				return;
+			}
+			final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file.getText());
 
-    @Override
-    public void visitPyStringLiteralExpression(PyStringLiteralExpression node) {
-      checkString(node, node.getText());
-    }
-  }
+			boolean hasNonAscii = false;
 
-  public String myDefaultEncoding = "utf-8";
-  public int myEncodingFormatIndex = 0;
-  @Override
-  public JComponent createOptionsPanel() {
-    final JComboBox defaultEncoding = new JComboBox(PyEncodingUtil.POSSIBLE_ENCODINGS);
-    defaultEncoding.setSelectedItem(myDefaultEncoding);
+			CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
+			int length = value.length();
+			char c = 0;
+			for(int i = 0; i < length; ++i)
+			{
+				c = value.charAt(i);
+				if(!asciiEncoder.canEncode(c))
+				{
+					hasNonAscii = true;
+					break;
+				}
+			}
 
-    defaultEncoding.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        JComboBox cb = (JComboBox)e.getSource();
-        myDefaultEncoding = (String)cb.getSelectedItem();
-      }
-    });
+			if(hasNonAscii)
+			{
+				if(charsetString == null)
+				{
+					registerProblem(node, "Non-ASCII character " + c + " in file, but no encoding declared",
+							new AddEncodingQuickFix(myState.myDefaultEncoding, myState.myEncodingFormatIndex));
+				}
+			}
+		}
 
-    final JComboBox encodingFormat = new JComboBox(PyEncodingUtil.ENCODING_FORMAT);
-
-    encodingFormat.setSelectedIndex(myEncodingFormatIndex);
-    encodingFormat.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        JComboBox cb = (JComboBox)e.getSource();
-        myEncodingFormatIndex = cb.getSelectedIndex();
-      }
-    });
-
-    return PyEncodingUtil.createEncodingOptionsPanel(defaultEncoding, encodingFormat);
-  }
+		@Override
+		public void visitPyStringLiteralExpression(PyStringLiteralExpression node)
+		{
+			checkString(node, node.getText());
+		}
+	}
 }

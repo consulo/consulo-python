@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.validation;
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.impl.PyFileImpl;
-import javax.annotation.Nonnull;
+import consulo.language.editor.annotation.AnnotationHolder;
+import consulo.language.editor.annotation.Annotator;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.logging.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +31,11 @@ import java.util.List;
  * @author yole
  */
 public class PyAnnotatingVisitor implements Annotator {
-  private static final Logger LOGGER = Logger.getInstance(PyAnnotatingVisitor.class.getName());
+  private static final Logger LOGGER = Logger.getInstance(PyAnnotatingVisitor.class);
 
   private final List<PyAnnotator> myAnnotators = new ArrayList<PyAnnotator>();
 
-  private final Class[] ANNOTATOR_CLASSES = new Class[] {
+  private final Class[] ANNOTATOR_CLASSES = new Class[]{
     AssignTargetAnnotator.class,
     ParameterListAnnotator.class,
     HighlightingAnnotator.class,
@@ -46,7 +46,7 @@ public class PyAnnotatingVisitor implements Annotator {
     ImportAnnotator.class,
     StringLiteralQuotesAnnotator.class,
     PyBuiltinAnnotator.class,
-   UnsupportedFeatures.class
+    UnsupportedFeatures.class
   };
 
   public PyAnnotatingVisitor() {
@@ -69,7 +69,7 @@ public class PyAnnotatingVisitor implements Annotator {
 
   public void annotate(@Nonnull PsiElement psiElement, @Nonnull AnnotationHolder holder) {
     final PsiFile file = psiElement.getContainingFile();
-    for(PyAnnotator annotator: myAnnotators) {
+    for (PyAnnotator annotator : myAnnotators) {
       if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(annotator.getClass())) continue;
       annotator.annotateElement(psiElement, holder);
     }

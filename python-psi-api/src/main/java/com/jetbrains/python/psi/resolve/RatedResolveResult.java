@@ -16,9 +16,10 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveResult;
-import com.intellij.util.containers.SortedList;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.ResolveResult;
+import consulo.util.collection.impl.list.SortedList;
 
 import java.util.Comparator;
 import java.util.List;
@@ -49,7 +50,7 @@ public class RatedResolveResult implements ResolveResult {
 
   /**
    * Results with higher rate are shown higher in the list of multiResolve().
-   * @see com.intellij.psi.PsiPolyVariantReference#multiResolve(boolean)
+   * @see PsiPolyVariantReference#multiResolve(boolean)
    * @return desired rate. If in doubt, use 0.
    */
   public int getRate() {

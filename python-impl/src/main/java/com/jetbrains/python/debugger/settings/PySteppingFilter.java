@@ -16,8 +16,8 @@
 package com.jetbrains.python.debugger.settings;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
+import consulo.project.Project;
+import consulo.util.io.FileUtil;
 
 public class PySteppingFilter
 {

@@ -3,7 +3,7 @@ package com.jetbrains.python.debugger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.xdebugger.XSourcePosition;
+import consulo.execution.debug.XSourcePosition;
 
 
 public interface PyPositionConverter {

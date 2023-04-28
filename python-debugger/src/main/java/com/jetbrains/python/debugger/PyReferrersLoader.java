@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger;
 
-import com.intellij.xdebugger.frame.XValueChildrenList;
+import consulo.execution.debug.frame.XValueChildrenList;
 import com.jetbrains.python.debugger.pydev.PyDebugCallback;
 
 /**

@@ -17,11 +17,11 @@ package com.jetbrains.python.run;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizerUtil;
-import com.intellij.openapi.util.WriteExternalException;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.project.Project;
+import consulo.util.xml.serializer.InvalidDataException;
+import consulo.util.xml.serializer.JDOMExternalizerUtil;
+import consulo.util.xml.serializer.WriteExternalException;
 
 /**
  * @author traff

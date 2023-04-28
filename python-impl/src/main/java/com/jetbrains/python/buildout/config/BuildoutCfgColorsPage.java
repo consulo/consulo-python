@@ -16,22 +16,23 @@
 
 package com.jetbrains.python.buildout.config;
 
-import java.util.Map;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.colorScheme.setting.AttributesDescriptor;
+import consulo.colorScheme.setting.ColorDescriptor;
+import consulo.language.editor.colorScheme.setting.ColorSettingsPage;
+import consulo.language.editor.highlight.SyntaxHighlighter;
+import consulo.language.editor.highlight.SyntaxHighlighterFactory;
+import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
-import com.intellij.openapi.options.colors.AttributesDescriptor;
-import com.intellij.openapi.options.colors.ColorDescriptor;
-import com.intellij.openapi.options.colors.ColorSettingsPage;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author traff
  */
+@ExtensionImpl
 public class BuildoutCfgColorsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
     new AttributesDescriptor("Section name", BuildoutCfgSyntaxHighlighter.BUILDOUT_SECTION_NAME),
@@ -41,7 +42,8 @@ public class BuildoutCfgColorsPage implements ColorSettingsPage {
     new AttributesDescriptor("Comment", BuildoutCfgSyntaxHighlighter.BUILDOUT_COMMENT)
   };
 
-  @NonNls private static final HashMap<String, TextAttributesKey> ourTagToDescriptorMap = new HashMap<String, TextAttributesKey>();
+  @NonNls
+  private static final HashMap<String, TextAttributesKey> ourTagToDescriptorMap = new HashMap<String, TextAttributesKey>();
 
   static {
     //ourTagToDescriptorMap.put("comment", DjangoTemplateHighlighterColors.DJANGO_COMMENT);
@@ -72,16 +74,16 @@ public class BuildoutCfgColorsPage implements ColorSettingsPage {
   @Nonnull
   public String getDemoText() {
     return
-      "; Buildout config\n"+
-      "[buildout]\n" +
-      "parts = python\n" +
-      "develop = .\n" +
-      "eggs = django-shorturls\n" +
-      "\n" +
-      "[python]\n" +
-      "recipe = zc.recipe.egg\n" +
-      "interpreter = python\n" +
-      "eggs = ${buildout:eggs}";
+      "; Buildout config\n" +
+        "[buildout]\n" +
+        "parts = python\n" +
+        "develop = .\n" +
+        "eggs = django-shorturls\n" +
+        "\n" +
+        "[python]\n" +
+        "recipe = zc.recipe.egg\n" +
+        "interpreter = python\n" +
+        "eggs = ${buildout:eggs}";
   }
 
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {

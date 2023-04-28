@@ -16,32 +16,29 @@
 
 package com.jetbrains.python.validation;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.impl.PyFileImpl;
+import consulo.application.dumb.DumbAware;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.editor.annotation.AnnotationHolder;
+import consulo.language.editor.annotation.Annotator;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public class PyDumbAwareAnnotator implements Annotator, DumbAware {
-  public static ExtensionPointName<PyAnnotator> EP_NAME = ExtensionPointName.create("consulo.python.dumbAnnotator");
-  private final PyAnnotator[] myAnnotators;
+  public static ExtensionPointName<PyAnnotator> EP_NAME = ExtensionPointName.create(PyAnnotator.class);
 
   public PyDumbAwareAnnotator() {
-    myAnnotators = Extensions.getExtensions(EP_NAME);
   }
 
   public void annotate(@Nonnull PsiElement element, @Nonnull AnnotationHolder holder) {
     final PsiFile file = element.getContainingFile();
 
-    for(PyAnnotator annotator: myAnnotators) {
+    for(PyAnnotator annotator: EP_NAME.getExtensionList()) {
       if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(annotator.getClass())) continue;
       annotator.annotateElement(element, holder);
     }

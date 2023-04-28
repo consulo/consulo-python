@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import javax.annotation.Nonnull;

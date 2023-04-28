@@ -18,8 +18,8 @@ package com.jetbrains.python.console;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import consulo.util.lang.StringUtil;
+import consulo.util.collection.ArrayUtil;
 import javax.annotation.Nonnull;
 
 import java.util.List;

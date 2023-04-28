@@ -15,11 +15,11 @@
  */
 package com.jetbrains.python.remote;
 
-import com.intellij.remote.RemoteSdkCredentials;
+import consulo.ide.impl.idea.remote.RemoteSdkCredentials;
 
 /**
  * @author yole
  */
-public interface PyRemoteSdkCredentials extends RemoteSdkCredentials, PySkeletonsPathAware {
+public interface PyRemoteSdkCredentials extends consulo.ide.impl.idea.remote.RemoteSdkCredentials, PySkeletonsPathAware {
 
 }

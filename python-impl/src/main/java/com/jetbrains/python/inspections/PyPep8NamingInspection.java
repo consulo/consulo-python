@@ -15,64 +15,48 @@
  */
 package com.jetbrains.python.inspections;
 
-import static com.intellij.util.containers.ContainerUtilRt.addIfNotNull;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
+import com.jetbrains.python.codeInsight.dataflow.scope.Scope;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.search.PySuperMethodsSearch;
+import com.jetbrains.python.psi.types.PyClassLikeType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.dataContext.DataManager;
+import consulo.ide.impl.ui.impl.PopupChooserBuilder;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.inspection.*;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.project.Project;
+import consulo.ui.ex.awt.JBList;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.Pair;
+import org.jetbrains.annotations.Nls;
 
-import java.awt.BorderLayout;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import org.jetbrains.annotations.Nls;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ui.ListEditForm;
-import com.intellij.ide.DataManager;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.PopupChooserBuilder;
-import com.intellij.openapi.util.Pair;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.ui.OnePixelSplitter;
-import com.intellij.ui.components.JBList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.CheckBox;
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
-import com.jetbrains.python.codeInsight.dataflow.scope.Scope;
-import com.jetbrains.python.psi.PyAssignmentStatement;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyParameter;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.PyUtil;
-import com.jetbrains.python.psi.search.PySuperMethodsSearch;
-import com.jetbrains.python.psi.types.PyClassLikeType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import static consulo.ide.impl.idea.util.containers.ContainerUtilRt.addIfNotNull;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PyPep8NamingInspection extends PyInspection
 {
 	private static final Pattern LOWERCASE_REGEX = Pattern.compile("[_\\p{javaLowerCase}][_\\p{javaLowerCase}0-9]*");
@@ -80,40 +64,49 @@ public class PyPep8NamingInspection extends PyInspection
 	private static final Pattern MIXEDCASE_REGEX = Pattern.compile("_?_?[\\p{javaUpperCase}][\\p{javaLowerCase}\\p{javaUpperCase}0-9]*");
 	private static final String INSPECTION_SHORT_NAME = "PyPep8NamingInspection";
 	// See error codes of the tool "pep8-naming"
-	private static final Map<String, String> ERROR_CODES_DESCRIPTION = ImmutableMap.<String, String>builder().put("N801", "Class names should use CamelCase convention").put("N802", "Function name " + "should be lowercase").put("N803", "Argument name should be lowercase").put("N806", "Variable in function should be lowercase").put("N811", "Constant variable imported as non constant").put("N812", "Lowercase variable imported as non lowercase").put("N813", "CamelCase variable imported as lowercase").put("N814", "CamelCase variable imported as constant").build();
-
-	public final List<String> ignoredErrors = new ArrayList<>();
-
-	public boolean ignoreOverriddenFunctions = true;
-	public final List<String> ignoredBaseClasses = Lists.newArrayList("unittest.TestCase", "unittest.case.TestCase");
+	private static final Map<String, String> ERROR_CODES_DESCRIPTION =
+			ImmutableMap.<String, String>builder().put("N801", "Class names should use CamelCase convention")
+					.put("N802", "Function name " + "should be lowercase")
+					.put("N803", "Argument name should be lowercase")
+					.put("N806", "Variable in function should be lowercase")
+					.put("N811", "Constant variable imported as non constant")
+					.put("N812", "Lowercase variable imported as non lowercase")
+					.put("N813", "CamelCase variable imported as lowercase")
+					.put("N814", "CamelCase variable imported as constant")
+					.build();
 
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
 	{
-		return new Visitor(holder, session);
+		return new Visitor(holder, session, (PyPep8NamingInspectionState) state);
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
-	public JComponent createOptionsPanel()
+	public String getDisplayName()
 	{
-		final JPanel rootPanel = new JPanel(new BorderLayout());
-		rootPanel.add(new CheckBox("Ignore overridden functions", this, "ignoreOverriddenFunctions"), BorderLayout.NORTH);
+		return "PEP 8 naming convention violation";
+	}
 
-		final OnePixelSplitter splitter = new OnePixelSplitter(false);
-		splitter.setFirstComponent(new ListEditForm("Excluded base classes", ignoredBaseClasses).getContentPanel());
-		splitter.setSecondComponent(new ListEditForm("Ignored errors", ignoredErrors).getContentPanel());
-		rootPanel.add(splitter, BorderLayout.CENTER);
-
-		return rootPanel;
+	@Nonnull
+	@Override
+	public InspectionToolState<?> createStateProvider()
+	{
+		return new PyPep8NamingInspectionState();
 	}
 
 	public class Visitor extends PyInspectionVisitor
 	{
-		public Visitor(ProblemsHolder holder, LocalInspectionToolSession session)
+		private final PyPep8NamingInspectionState myState;
+
+		public Visitor(ProblemsHolder holder, LocalInspectionToolSession session, PyPep8NamingInspectionState state)
 		{
 			super(holder, session);
+			myState = state;
 		}
 
 		@Override
@@ -147,7 +140,7 @@ public class PyPep8NamingInspection extends PyInspection
 					return;
 				}
 				final String errorCode = "N806";
-				if(!LOWERCASE_REGEX.matcher(name).matches() && !name.startsWith("_") && !ignoredErrors.contains(errorCode))
+				if(!LOWERCASE_REGEX.matcher(name).matches() && !name.startsWith("_") && !myState.ignoredErrors.contains(errorCode))
 				{
 					registerAndAddRenameAndIgnoreErrorQuickFixes(pair.getFirst(), errorCode);
 				}
@@ -164,7 +157,7 @@ public class PyPep8NamingInspection extends PyInspection
 			}
 
 			final String errorCode = "N803";
-			if(!LOWERCASE_REGEX.matcher(name).matches() && !ignoredErrors.contains(errorCode))
+			if(!LOWERCASE_REGEX.matcher(name).matches() && !myState.ignoredErrors.contains(errorCode))
 			{
 				registerAndAddRenameAndIgnoreErrorQuickFixes(node, errorCode);
 			}
@@ -186,7 +179,7 @@ public class PyPep8NamingInspection extends PyInspection
 		public void visitPyFunction(PyFunction function)
 		{
 			final PyClass containingClass = function.getContainingClass();
-			if(ignoreOverriddenFunctions && isOverriddenMethod(function))
+			if(myState.ignoreOverriddenFunctions && isOverriddenMethod(function))
 			{
 				return;
 			}
@@ -215,10 +208,12 @@ public class PyPep8NamingInspection extends PyInspection
 						quickFixes.add(new IgnoreBaseClassQuickFix(containingClass, myTypeEvalContext));
 					}
 					final String errorCode = "N802";
-					if(!ignoredErrors.contains(errorCode))
+					if(!myState.ignoredErrors.contains(errorCode))
 					{
 						quickFixes.add(new IgnoreErrorFix(errorCode));
-						registerProblem(nameNode.getPsi(), ERROR_CODES_DESCRIPTION.get(errorCode), quickFixes.toArray(new LocalQuickFix[quickFixes.size()]));
+						registerProblem(nameNode.getPsi(),
+								ERROR_CODES_DESCRIPTION.get(errorCode),
+								quickFixes.toArray(new LocalQuickFix[quickFixes.size()]));
 					}
 				}
 			}
@@ -231,7 +226,7 @@ public class PyPep8NamingInspection extends PyInspection
 
 		private boolean isIgnoredOrHasIgnoredAncestor(@Nonnull PyClass pyClass)
 		{
-			final Set<String> blackList = Sets.newHashSet(ignoredBaseClasses);
+			final Set<String> blackList = Sets.newHashSet(myState.ignoredBaseClasses);
 			if(blackList.contains(pyClass.getQualifiedName()))
 			{
 				return true;
@@ -255,7 +250,7 @@ public class PyPep8NamingInspection extends PyInspection
 				return;
 			}
 			final String errorCode = "N801";
-			if(!ignoredErrors.contains(errorCode))
+			if(!myState.ignoredErrors.contains(errorCode))
 			{
 				final boolean isLowercaseContextManagerClass = isContextManager(node) && LOWERCASE_REGEX.matcher(name).matches();
 				if(!isLowercaseContextManagerClass && !MIXEDCASE_REGEX.matcher(name).matches())
@@ -303,7 +298,7 @@ public class PyPep8NamingInspection extends PyInspection
 			if(UPPERCASE_REGEX.matcher(name).matches())
 			{
 				final String errorCode = "N811";
-				if(!UPPERCASE_REGEX.matcher(asName).matches() && !ignoredErrors.contains(errorCode))
+				if(!UPPERCASE_REGEX.matcher(asName).matches() && !myState.ignoredErrors.contains(errorCode))
 				{
 					registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
 				}
@@ -311,7 +306,7 @@ public class PyPep8NamingInspection extends PyInspection
 			else if(LOWERCASE_REGEX.matcher(name).matches())
 			{
 				final String errorCode = "N812";
-				if(!LOWERCASE_REGEX.matcher(asName).matches() && !ignoredErrors.contains(errorCode))
+				if(!LOWERCASE_REGEX.matcher(asName).matches() && !myState.ignoredErrors.contains(errorCode))
 				{
 					registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
 				}
@@ -319,7 +314,7 @@ public class PyPep8NamingInspection extends PyInspection
 			else if(LOWERCASE_REGEX.matcher(asName).matches())
 			{
 				final String errorCode = "N813";
-				if(!ignoredErrors.contains(errorCode))
+				if(!myState.ignoredErrors.contains(errorCode))
 				{
 					registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
 				}
@@ -327,7 +322,7 @@ public class PyPep8NamingInspection extends PyInspection
 			else if(UPPERCASE_REGEX.matcher(asName).matches())
 			{
 				final String errorCode = "N814";
-				if(!ignoredErrors.contains(errorCode))
+				if(!myState.ignoredErrors.contains(errorCode))
 				{
 					registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
 				}
@@ -360,14 +355,22 @@ public class PyPep8NamingInspection extends PyInspection
 		public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
 		{
 			final JBList list = new JBList(getBaseClassNames());
-			final Runnable updateBlackList = () -> {
+			final Runnable updateBlackList = () ->
+			{
 				final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-				profile.modifyProfile(model -> {
-					final PyPep8NamingInspection inspection = (PyPep8NamingInspection) model.getUnwrappedTool(PyPep8NamingInspection.class.getSimpleName(), descriptor.getPsiElement());
-					addIfNotNull(inspection.ignoredBaseClasses, (String) list.getSelectedValue());
+				profile.<PyPep8NamingInspection, PyPep8NamingInspectionState>modifyToolSettings(PyPep8NamingInspection.class.getSimpleName(), descriptor.getPsiElement(), (i, s) ->
+				{
+					addIfNotNull(s.ignoredBaseClasses, (String) list.getSelectedValue());
 				});
 			};
-			DataManager.getInstance().getDataContextFromFocus().doWhenDone(dataContext -> new PopupChooserBuilder(list).setTitle("Ignore base class").setItemChoosenCallback(updateBlackList).setFilteringEnabled(o -> (String) o).createPopup().showInBestPositionFor(dataContext));
+
+			DataManager.getInstance()
+					.getDataContextFromFocus()
+					.doWhenDone(dataContext -> new PopupChooserBuilder(list).setTitle("Ignore base class")
+							.setItemChoosenCallback(updateBlackList)
+							.setFilteringEnabled(o -> (String) o)
+							.createPopup()
+							.showInBestPositionFor(dataContext));
 		}
 
 		public List<String> getBaseClassNames()
@@ -398,11 +401,12 @@ public class PyPep8NamingInspection extends PyInspection
 		public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
 		{
 			final PsiFile file = descriptor.getStartElement().getContainingFile();
-			InspectionProjectProfileManager.getInstance(project).getInspectionProfile().modifyProfile(model -> {
-				PyPep8NamingInspection tool = (PyPep8NamingInspection) model.getUnwrappedTool(INSPECTION_SHORT_NAME, file);
-				if(!tool.ignoredErrors.contains(myCode))
+			InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+			profile.<PyPep8NamingInspection, PyPep8NamingInspectionState>modifyToolSettings(INSPECTION_SHORT_NAME, file, (i, s) ->
+			{
+				if(!s.ignoredErrors.contains(myCode))
 				{
-					tool.ignoredErrors.add(myCode);
+					s.ignoredErrors.add(myCode);
 				}
 			});
 		}

@@ -17,11 +17,11 @@ package com.jetbrains.python.buildout.config;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
-import consulo.lang.LanguageVersion;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.ASTNode;
+import consulo.language.version.LanguageVersion;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.parser.PsiParser;
+import consulo.language.ast.IElementType;
 
 /**
  * @author traff

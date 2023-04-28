@@ -15,24 +15,27 @@
  */
 package com.jetbrains.python.psi.types;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.annotation.Nullable;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyPsiFacade;
 import com.jetbrains.python.psi.resolve.PointInImport;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public abstract class PyModuleMembersProvider
 {
-	public static final ExtensionPointName<PyModuleMembersProvider> EP_NAME = ExtensionPointName.create("consulo.python.pyModuleMembersProvider");
+	public static final ExtensionPointName<PyModuleMembersProvider> EP_NAME = ExtensionPointName.create(PyModuleMembersProvider.class);
 
 	public Collection<PyCustomMember> getMembers(PyFile module, PointInImport point)
 	{

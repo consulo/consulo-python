@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.testing.unittest;
 
-import com.intellij.openapi.project.Project;
+import consulo.project.Project;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfigurationParams;

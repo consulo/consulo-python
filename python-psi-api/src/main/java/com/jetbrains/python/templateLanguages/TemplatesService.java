@@ -16,11 +16,9 @@
 
 package com.jetbrains.python.templateLanguages;
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.language.Language;
+import consulo.module.Module;
+import consulo.virtualFileSystem.VirtualFile;
 
 import java.util.List;
 
@@ -35,17 +33,17 @@ public abstract class TemplatesService {
   public static final String WEB2PY = "Web2Py";
   public static final String CHAMELEON = "Chameleon";
 
-  private static List<String> ALL_TEMPLATE_LANGUAGES = ContainerUtil.immutableList(NONE,
-                                                                                   DJANGO,
-                                                                                   MAKO,
-                                                                                  JINJA2,
-                                                                                  WEB2PY,
-                                                                                  CHAMELEON);
+  private static List<String> ALL_TEMPLATE_LANGUAGES = List.of(NONE,
+                                                               DJANGO,
+                                                               MAKO,
+                                                               JINJA2,
+                                                               WEB2PY,
+                                                               CHAMELEON);
 
   public abstract Language getSelectedTemplateLanguage();
 
   public static TemplatesService getInstance(Module module) {
-    return ModuleServiceManager.getService(module, TemplatesService.class);
+    return module.getInstance(TemplatesService.class);
   }
 
   public static List<String> getAllTemplateLanguages() {
@@ -63,6 +61,7 @@ public abstract class TemplatesService {
   public abstract String getTemplateLanguage();
 
   public abstract List<String> getTemplateFileTypes();
+
   public abstract void setTemplateFileTypes(List<String> fileTypes);
 }
 

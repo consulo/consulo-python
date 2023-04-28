@@ -16,24 +16,25 @@
 
 package com.jetbrains.python.actions;
 
+import com.jetbrains.python.PyNames;
+import consulo.application.Application;
+import consulo.application.progress.ProgressManager;
+import consulo.application.util.AsyncFileService;
+import consulo.application.util.function.Processor;
+import consulo.language.editor.LangDataKeys;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.project.Project;
+import consulo.project.ui.wm.StatusBar;
+import consulo.project.ui.wm.WindowManager;
+import consulo.ui.ex.action.AnAction;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.util.io.FileUtil;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Processor;
-import com.jetbrains.python.PyNames;
 
 /**
  * @author yole
@@ -48,8 +49,8 @@ public class CleanPycAction extends AnAction
 			public boolean process(File file)
 			{
 				if(file.getParentFile().getName().equals(PyNames.PYCACHE) ||
-						FileUtilRt.extensionEquals(file.getName(), "pyc") ||
-						FileUtilRt.extensionEquals(file.getName(), "pyo"))
+						FileUtil.extensionEquals(file.getName(), "pyc") ||
+						FileUtil.extensionEquals(file.getName(), "pyo"))
 				{
 					pycFiles.add(file);
 				}
@@ -93,10 +94,10 @@ public class CleanPycAction extends AnAction
 					PsiDirectory dir = (PsiDirectory) element;
 					collectPycFiles(new File(dir.getVirtualFile().getPath()), pycFiles);
 				}
-				FileUtil.asyncDelete(pycFiles);
+				Application.get().getInstance(AsyncFileService.class).asyncDelete(pycFiles);
 			}
-		}, "Cleaning up .py files...", false, e.getProject());
-		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(e.getProject()).getStatusBar();
+		}, "Cleaning up .py files...", false, e.getData(Project.KEY));
+		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(e.getData(Project.KEY)).getStatusBar();
 		statusBar.setInfo("Deleted " + pycFiles.size() + " bytecode file" + (pycFiles.size() > 1 ? "s" : ""));
 	}
 

@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.projectView;
 
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
+import consulo.project.ui.view.tree.ViewSettings;
+import consulo.project.ui.view.tree.PsiFileNode;
+import consulo.project.ui.view.tree.AbstractTreeNode;
+import consulo.project.Project;
+import consulo.language.psi.PsiFile;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;

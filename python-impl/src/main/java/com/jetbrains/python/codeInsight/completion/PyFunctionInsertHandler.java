@@ -18,12 +18,12 @@ package com.jetbrains.python.codeInsight.completion;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.codeInsight.AutoPopupController;
-import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.editor.AutoPopupController;
+import consulo.language.editor.completion.lookup.InsertionContext;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.ParenthesesInsertHandler;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.PyUtil;

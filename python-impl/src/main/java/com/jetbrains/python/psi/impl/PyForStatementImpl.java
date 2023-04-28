@@ -19,8 +19,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiNamedElement;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiNamedElement;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.PyElementVisitor;

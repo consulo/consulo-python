@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.validation;
 
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.openapi.util.TextRange;
+import consulo.language.editor.annotation.Annotation;
+import consulo.document.util.TextRange;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.documentation.docstrings.DocStringReferenceProvider;

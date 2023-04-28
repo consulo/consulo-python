@@ -17,8 +17,8 @@ package com.jetbrains.python.psi.stubs;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.stubs.StubIndexKey;
+import consulo.language.psi.stub.StringStubIndexExtension;
+import consulo.language.psi.stub.StubIndexKey;
 import com.jetbrains.python.psi.PyDecorator;
 
 /**

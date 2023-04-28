@@ -15,68 +15,73 @@
  */
 package com.jetbrains.python.codeInsight.userSkeletons;
 
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
+import consulo.codeEditor.markup.GutterIconRenderer;
+import consulo.language.Language;
+import consulo.language.editor.Pass;
+import consulo.language.editor.gutter.GutterIconNavigationHandler;
+import consulo.language.editor.gutter.LineMarkerInfo;
+import consulo.language.editor.gutter.LineMarkerProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiNavigateUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
-import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.PsiNavigateUtil;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyTargetExpression;
-
 /**
  * @author vlan
  */
-public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider
-{
-	@Nullable
-	@Override
-	public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element)
-	{
-		return null;
-	}
+@ExtensionImpl
+public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider {
+  @Nullable
+  @Override
+  public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element) {
+    return null;
+  }
 
-	@Override
-	public void collectSlowLineMarkers(@Nonnull List<PsiElement> elements, @Nonnull Collection<LineMarkerInfo> result)
-	{
-		for(PsiElement element : elements)
-		{
-			final PyElement skeleton = getUserSkeleton(element);
-			if(skeleton != null)
-			{
-				result.add(new LineMarkerInfo<PsiElement>(element, element.getTextRange(), AllIcons.Gutter.Unique, Pass.LINE_MARKERS, e -> "Has user skeleton", new GutterIconNavigationHandler<PsiElement>()
-				{
-					@Override
-					public void navigate(MouseEvent e, PsiElement elt)
-					{
-						final PyElement s = getUserSkeleton(elt);
-						if(s != null)
-						{
-							PsiNavigateUtil.navigate(s);
-						}
-					}
-				}, GutterIconRenderer.Alignment.RIGHT));
-			}
-		}
-	}
+  @Override
+  public void collectSlowLineMarkers(@Nonnull List<PsiElement> elements, @Nonnull Collection<LineMarkerInfo> result) {
+    for (PsiElement element : elements) {
+      final PyElement skeleton = getUserSkeleton(element);
+      if (skeleton != null) {
+        result.add(new LineMarkerInfo<PsiElement>(element,
+                                                  element.getTextRange(),
+                                                  AllIcons.Gutter.Unique,
+                                                  Pass.LINE_MARKERS,
+                                                  e -> "Has user skeleton",
+                                                  new GutterIconNavigationHandler<PsiElement>() {
+                                                    @Override
+                                                    public void navigate(MouseEvent e, PsiElement elt) {
+                                                      final PyElement s = getUserSkeleton(elt);
+                                                      if (s != null) {
+                                                        PsiNavigateUtil.navigate(s);
+                                                      }
+                                                    }
+                                                  },
+                                                  GutterIconRenderer.Alignment.RIGHT));
+      }
+    }
+  }
 
-	@Nullable
-	private static PyElement getUserSkeleton(@Nonnull PsiElement element)
-	{
-		if(element instanceof PyFunction || element instanceof PyTargetExpression)
-		{
-			return PyUserSkeletonsUtil.getUserSkeleton((PyElement) element);
-		}
-		return null;
-	}
+  @Nullable
+  private static PyElement getUserSkeleton(@Nonnull PsiElement element) {
+    if (element instanceof PyFunction || element instanceof PyTargetExpression) {
+      return PyUserSkeletonsUtil.getUserSkeleton((PyElement)element);
+    }
+    return null;
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
 }

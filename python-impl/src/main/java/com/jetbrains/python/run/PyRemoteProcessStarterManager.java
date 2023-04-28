@@ -15,44 +15,50 @@
  */
 package com.jetbrains.python.run;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.project.Project;
 import com.jetbrains.python.remote.PyRemotePathMapper;
 import com.jetbrains.python.remote.PyRemoteProcessHandlerBase;
 import com.jetbrains.python.remote.PyRemoteSdkAdditionalDataBase;
 import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
+import consulo.annotation.DeprecationInfo;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.process.ExecutionException;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.local.ProcessOutput;
+import consulo.project.Project;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Alexander Koshevoy
  */
-public interface PyRemoteProcessStarterManager
-{
-	ExtensionPointName<PyRemoteProcessStarterManager> EP_NAME = ExtensionPointName.create("consulo.python.remoteProcessStarterManager");
+@ExtensionAPI(ComponentScope.APPLICATION)
+@Deprecated
+@DeprecationInfo("We don't have remote plugin")
+public interface PyRemoteProcessStarterManager {
+  ExtensionPointName<PyRemoteProcessStarterManager> EP_NAME = ExtensionPointName.create(PyRemoteProcessStarterManager.class);
 
-	boolean supports(@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData);
+  boolean supports(@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData);
 
-	@Nonnull
-	PyRemoteProcessHandlerBase startRemoteProcess(@Nullable Project project,
-			@Nonnull GeneralCommandLine commandLine,
-			@Nonnull PythonRemoteInterpreterManager manager,
-			@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
-			@Nonnull PyRemotePathMapper pathMapper) throws ExecutionException, InterruptedException;
+  @Nonnull
+  PyRemoteProcessHandlerBase startRemoteProcess(@Nullable Project project,
+                                                @Nonnull GeneralCommandLine commandLine,
+                                                @Nonnull PythonRemoteInterpreterManager manager,
+                                                @Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
+                                                @Nonnull PyRemotePathMapper pathMapper) throws ExecutionException, InterruptedException;
 
-	@Nonnull
-	ProcessOutput executeRemoteProcess(@Nullable Project project,
-			@Nonnull String[] command,
-			@Nullable String workingDir,
-			@Nonnull PythonRemoteInterpreterManager manager,
-			@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
-			@Nonnull PyRemotePathMapper pathMapper,
-			boolean askForSudo,
-			boolean checkHelpers) throws ExecutionException, InterruptedException;
+  @Nonnull
+  ProcessOutput executeRemoteProcess(@Nullable Project project,
+                                     @Nonnull String[] command,
+                                     @Nullable String workingDir,
+                                     @Nonnull PythonRemoteInterpreterManager manager,
+                                     @Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData,
+                                     @Nonnull PyRemotePathMapper pathMapper,
+                                     boolean askForSudo,
+                                     boolean checkHelpers) throws ExecutionException, InterruptedException;
 
 
-	String getFullInterpreterPath(@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData) throws ExecutionException, InterruptedException;
+  String getFullInterpreterPath(@Nonnull PyRemoteSdkAdditionalDataBase sdkAdditionalData) throws ExecutionException, InterruptedException;
 }

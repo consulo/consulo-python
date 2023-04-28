@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.remote;
 
-import com.intellij.remote.RemoteProcessControl;
+import consulo.ide.impl.idea.remote.RemoteProcessControl;
 
 /**
  * @author traff

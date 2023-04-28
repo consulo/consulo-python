@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.util.io.FileUtil;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.util.io.FileUtil;
 import com.jetbrains.python.PythonHelper;
 import com.jetbrains.python.testing.PythonTestCommandLineStateBase;
 

@@ -15,207 +15,177 @@
  */
 package com.jetbrains.python.sdk;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.packaging.PyPackageManager;
+import consulo.content.bundle.Sdk;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.fileChooser.IdeaFileChooser;
+import consulo.ide.impl.idea.remote.RemoteSdkCredentialsHolder;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.ui.ex.awt.*;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-import javax.annotation.Nullable;
-import javax.swing.JComboBox;
+public class CreateVirtualEnvDialog extends AbstractCreateVirtualEnvDialog {
+  private JComboBox mySdkCombo;
+  private JBCheckBox mySitePackagesCheckBox;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.FixedSizeButton;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.remote.RemoteSdkCredentialsHolder;
-import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.util.NullableConsumer;
-import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.packaging.PyPackageManager;
+  public CreateVirtualEnvDialog(Project project, final List<Sdk> allSdks) {
+    super(project, allSdks);
+  }
 
-public class CreateVirtualEnvDialog extends AbstractCreateVirtualEnvDialog
-{
-	private JComboBox mySdkCombo;
-	private JBCheckBox mySitePackagesCheckBox;
+  public CreateVirtualEnvDialog(Component owner, final List<Sdk> allSdks) {
+    super(owner, allSdks);
+  }
 
-	public CreateVirtualEnvDialog(Project project, final List<Sdk> allSdks)
-	{
-		super(project, allSdks);
-	}
+  void setupDialog(Project project, final List<Sdk> allSdks) {
+    super.setupDialog(project, allSdks);
 
-	public CreateVirtualEnvDialog(Component owner, final List<Sdk> allSdks)
-	{
-		super(owner, allSdks);
-	}
+    setTitle(PyBundle.message("sdk.create.venv.dialog.title"));
 
-	void setupDialog(Project project, final List<Sdk> allSdks)
-	{
-		super.setupDialog(project, allSdks);
+    allSdks.removeIf(new Predicate<Sdk>() {
+      @Override
+      public boolean test(Sdk s) {
+        return PythonSdkType.isInvalid(s) || PythonSdkType.isVirtualEnv(s) || RemoteSdkCredentialsHolder.isRemoteSdk(
+          s.getHomePath()) ||
+          PythonSdkType.isCondaVirtualEnv(s);
+      }
+    });
+    List<Sdk> sortedSdks = new ArrayList<>(allSdks);
+    Collections.sort(sortedSdks, new PreferredSdkComparator());
+    updateSdkList(allSdks, sortedSdks.isEmpty() ? null : sortedSdks.get(0));
+  }
 
-		setTitle(PyBundle.message("sdk.create.venv.dialog.title"));
+  protected void layoutPanel(final List<Sdk> allSdks) {
 
-		Iterables.removeIf(allSdks, new Predicate<Sdk>()
-		{
-			@Override
-			public boolean apply(Sdk s)
-			{
-				return PythonSdkType.isInvalid(s) || PythonSdkType.isVirtualEnv(s) || RemoteSdkCredentialsHolder.isRemoteSdk(s.getHomePath()) ||
-						PythonSdkType.isCondaVirtualEnv(s);
-			}
-		});
-		List<Sdk> sortedSdks = new ArrayList<>(allSdks);
-		Collections.sort(sortedSdks, new PreferredSdkComparator());
-		updateSdkList(allSdks, sortedSdks.isEmpty() ? null : sortedSdks.get(0));
-	}
+    final GridBagConstraints c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.insets = new Insets(2, 2, 2, 2);
 
-	protected void layoutPanel(final List<Sdk> allSdks)
-	{
+    c.gridx = 0;
+    c.gridy = 0;
+    c.weightx = 0.0;
+    myMainPanel.add(new JBLabel(PyBundle.message("sdk.create.venv.dialog.label.name")), c);
 
-		final GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(2, 2, 2, 2);
+    c.gridx = 1;
+    c.gridy = 0;
+    c.gridwidth = 2;
+    c.weightx = 1.0;
 
-		c.gridx = 0;
-		c.gridy = 0;
-		c.weightx = 0.0;
-		myMainPanel.add(new JBLabel(PyBundle.message("sdk.create.venv.dialog.label.name")), c);
+    myMainPanel.add(myName, c);
 
-		c.gridx = 1;
-		c.gridy = 0;
-		c.gridwidth = 2;
-		c.weightx = 1.0;
+    c.gridx = 0;
+    c.gridy = 1;
+    c.gridwidth = 1;
+    c.weightx = 0.0;
+    myMainPanel.add(new JBLabel(PyBundle.message("sdk.create.venv.dialog.label.location")), c);
 
-		myMainPanel.add(myName, c);
+    c.gridx = 1;
+    c.gridy = 1;
+    c.gridwidth = 2;
+    c.weightx = 1.0;
+    myMainPanel.add(myDestination, c);
 
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		c.weightx = 0.0;
-		myMainPanel.add(new JBLabel(PyBundle.message("sdk.create.venv.dialog.label.location")), c);
+    c.gridx = 0;
+    c.gridy = 2;
+    c.gridwidth = 1;
+    c.weightx = 0.0;
+    myMainPanel.add(new JBLabel(PyBundle.message("sdk.create.venv.dialog.label.base.interpreter")), c);
 
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 2;
-		c.weightx = 1.0;
-		myMainPanel.add(myDestination, c);
+    c.gridx = 1;
+    c.gridy = 2;
+    mySdkCombo = new ComboBox();
+    c.insets = new Insets(2, 2, 2, 2);
+    c.weightx = 1.0;
+    myMainPanel.add(mySdkCombo, c);
 
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 1;
-		c.weightx = 0.0;
-		myMainPanel.add(new JBLabel(PyBundle.message("sdk.create.venv.dialog.label.base.interpreter")), c);
+    c.gridx = 2;
+    c.gridy = 2;
+    c.insets = new Insets(0, 0, 2, 2);
+    c.weightx = 0.0;
+    FixedSizeButton button = new FixedSizeButton();
+    button.setPreferredSize(myDestination.getButton().getPreferredSize());
+    myMainPanel.add(button, c);
 
-		c.gridx = 1;
-		c.gridy = 2;
-		mySdkCombo = new ComboBox();
-		c.insets = new Insets(2, 2, 2, 2);
-		c.weightx = 1.0;
-		myMainPanel.add(mySdkCombo, c);
+    c.gridx = 0;
+    c.gridy = 3;
+    c.gridwidth = 3;
+    c.insets = new Insets(2, 2, 2, 2);
+    mySitePackagesCheckBox = new JBCheckBox(PyBundle.message("sdk.create.venv.dialog.label.inherit.global.site.packages"));
+    myMainPanel.add(mySitePackagesCheckBox, c);
 
-		c.gridx = 2;
-		c.gridy = 2;
-		c.insets = new Insets(0, 0, 2, 2);
-		c.weightx = 0.0;
-		FixedSizeButton button = new FixedSizeButton();
-		button.setPreferredSize(myDestination.getButton().getPreferredSize());
-		myMainPanel.add(button, c);
+    c.gridx = 0;
+    c.gridy = 4;
 
-		c.gridx = 0;
-		c.gridy = 3;
-		c.gridwidth = 3;
-		c.insets = new Insets(2, 2, 2, 2);
-		mySitePackagesCheckBox = new JBCheckBox(PyBundle.message("sdk.create.venv.dialog.label.inherit.global.site.packages"));
-		myMainPanel.add(mySitePackagesCheckBox, c);
+    myMainPanel.add(myMakeAvailableToAllProjectsCheckbox, c);
+    button.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        final PythonSdkType sdkType = PythonSdkType.getInstance();
+        final FileChooserDescriptor descriptor = sdkType.getHomeChooserDescriptor();
 
-		c.gridx = 0;
-		c.gridy = 4;
+        String suggestedPath = ContainerUtil.getFirstItem(sdkType.suggestHomePaths());
+        VirtualFile suggestedDir =
+          suggestedPath == null ? null : LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(suggestedPath));
+        final Consumer<Sdk> consumer = sdk -> {
+          if (sdk == null) {
+            return;
+          }
+          if (!allSdks.contains(sdk)) {
+            allSdks.add(sdk);
+          }
+          updateSdkList(allSdks, sdk);
+        };
+        IdeaFileChooser.chooseFiles(descriptor, myProject, suggestedDir, new Consumer<List<VirtualFile>>() {
+          @Override
+          public void accept(List<VirtualFile> selectedFiles) {
+            String path = selectedFiles.get(0).getPath();
+            if (sdkType.isValidSdkHome(path)) {
+              path = FileUtil.toSystemDependentName(path);
+              Sdk newSdk = null;
+              for (Sdk sdk : allSdks) {
+                if (path.equals(sdk.getHomePath())) {
+                  newSdk = sdk;
+                }
+              }
+              if (newSdk == null) {
+                newSdk = new PyDetectedSdk(path);
+              }
+              consumer.accept(newSdk);
+            }
+          }
+        });
 
-		myMainPanel.add(myMakeAvailableToAllProjectsCheckbox, c);
-		button.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				final PythonSdkType sdkType = PythonSdkType.getInstance();
-				final FileChooserDescriptor descriptor = sdkType.getHomeChooserDescriptor();
+      }
+    });
+  }
 
-				String suggestedPath = ContainerUtil.getFirstItem(sdkType.suggestHomePaths());
-				VirtualFile suggestedDir = suggestedPath == null ? null : LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(suggestedPath));
-				final NullableConsumer<Sdk> consumer = sdk -> {
-					if(sdk == null)
-					{
-						return;
-					}
-					if(!allSdks.contains(sdk))
-					{
-						allSdks.add(sdk);
-					}
-					updateSdkList(allSdks, sdk);
-				};
-				FileChooser.chooseFiles(descriptor, myProject, suggestedDir, new FileChooser.FileChooserConsumer()
-				{
-					@Override
-					public void consume(List<VirtualFile> selectedFiles)
-					{
-						String path = selectedFiles.get(0).getPath();
-						if(sdkType.isValidSdkHome(path))
-						{
-							path = FileUtil.toSystemDependentName(path);
-							Sdk newSdk = null;
-							for(Sdk sdk : allSdks)
-							{
-								if(path.equals(sdk.getHomePath()))
-								{
-									newSdk = sdk;
-								}
-							}
-							if(newSdk == null)
-							{
-								newSdk = new PyDetectedSdk(path);
-							}
-							consumer.consume(newSdk);
-						}
-					}
+  protected void checkValid() {
+    setOKActionEnabled(true);
+    setErrorText(null);
 
-					@Override
-					public void cancelled()
-					{
-					}
-				});
-
-			}
-		});
-	}
-
-	protected void checkValid()
-	{
-		setOKActionEnabled(true);
-		setErrorText(null);
-
-		super.checkValid();
-		if(mySdkCombo.getSelectedItem() == null)
-		{
-			setOKActionEnabled(false);
-			setErrorText(PyBundle.message("sdk.create.venv.dialog.error.no.base.interpreter"));
-		}
-	}
+    super.checkValid();
+    if (mySdkCombo.getSelectedItem() == null) {
+      setOKActionEnabled(false);
+      setErrorText(PyBundle.message("sdk.create.venv.dialog.error.no.base.interpreter"));
+    }
+  }
 
 	/*protected void registerValidators(final FacetValidatorsManager validatorsManager)
-	{
+  {
 		super.registerValidators(validatorsManager);
 
 		mySdkCombo.addActionListener(new ActionListener()
@@ -228,37 +198,31 @@ public class CreateVirtualEnvDialog extends AbstractCreateVirtualEnvDialog
 		});
 	} */
 
-	private void updateSdkList(final List<Sdk> allSdks, @Nullable Sdk initialSelection)
-	{
-		mySdkCombo.setRenderer(new PySdkListCellRenderer(false));
-		mySdkCombo.setModel(new CollectionComboBoxModel<>(allSdks, initialSelection));
-		checkValid();
-	}
+  private void updateSdkList(final List<Sdk> allSdks, @Nullable Sdk initialSelection) {
+    mySdkCombo.setRenderer(new PySdkListCellRenderer(false));
+    mySdkCombo.setModel(new CollectionComboBoxModel<>(allSdks, initialSelection));
+    checkValid();
+  }
 
-	public String getDestination()
-	{
-		return myDestination.getText();
-	}
+  public String getDestination() {
+    return myDestination.getText();
+  }
 
-	public String getName()
-	{
-		return myName.getText();
-	}
+  public String getName() {
+    return myName.getText();
+  }
 
-	public Sdk getSdk()
-	{
-		return (Sdk) mySdkCombo.getSelectedItem();
-	}
+  public Sdk getSdk() {
+    return (Sdk)mySdkCombo.getSelectedItem();
+  }
 
-	@Override
-	public boolean useGlobalSitePackages()
-	{
-		return mySitePackagesCheckBox.isSelected();
-	}
+  @Override
+  public boolean useGlobalSitePackages() {
+    return mySitePackagesCheckBox.isSelected();
+  }
 
-	protected String createEnvironment(Sdk basicSdk) throws ExecutionException
-	{
-		final PyPackageManager packageManager = PyPackageManager.getInstance(basicSdk);
-		return packageManager.createVirtualEnv(getDestination(), useGlobalSitePackages());
-	}
+  protected String createEnvironment(Sdk basicSdk) throws ExecutionException {
+    final PyPackageManager packageManager = PyPackageManager.getInstance(basicSdk);
+    return packageManager.createVirtualEnv(getDestination(), useGlobalSitePackages());
+  }
 }

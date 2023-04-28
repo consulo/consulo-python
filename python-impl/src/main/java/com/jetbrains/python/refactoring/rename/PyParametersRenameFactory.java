@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.refactoring.rename;
 
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.naming.AutomaticRenamer;
-import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.Processor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.refactoring.rename.AutomaticRenamer;
+import consulo.util.lang.Comparing;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.editor.refactoring.rename.AutomaticRenamerFactory;
+import consulo.usage.UsageInfo;
+import consulo.application.util.function.Processor;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
@@ -34,6 +35,7 @@ import java.util.Collection;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyParametersRenameFactory implements AutomaticRenamerFactory {
   @Override
   public boolean isApplicable(PsiElement element) {
@@ -64,7 +66,8 @@ public class PyParametersRenameFactory implements AutomaticRenamerFactory {
     return new PyParametersRenamer((PyParameter)element, newName);
   }
 
-  public static class PyParametersRenamer extends AutomaticRenamer {
+  public static class PyParametersRenamer extends AutomaticRenamer
+  {
 
     public PyParametersRenamer(final PyParameter element, String newName) {
       PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import com.intellij.psi.ResolveResult;
+import consulo.language.psi.ResolveResult;
 import com.jetbrains.python.psi.PyExpression;
 
 import java.util.List;

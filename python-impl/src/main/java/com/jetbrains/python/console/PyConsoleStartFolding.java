@@ -16,13 +16,14 @@
 package com.jetbrains.python.console;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.FoldRegion;
-import com.intellij.openapi.editor.FoldingModel;
-import com.intellij.openapi.editor.event.DocumentAdapter;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.ex.FoldingListener;
-import com.intellij.util.DocumentUtil;
+
+import consulo.codeEditor.event.FoldingListener;
+import consulo.document.Document;
+import consulo.codeEditor.FoldRegion;
+import consulo.codeEditor.FoldingModel;
+import consulo.document.event.DocumentAdapter;
+import consulo.document.event.DocumentEvent;
+import consulo.document.util.DocumentUtil;
 import com.jetbrains.python.console.pydev.ConsoleCommunicationListener;
 
 public class PyConsoleStartFolding extends DocumentAdapter implements ConsoleCommunicationListener, FoldingListener

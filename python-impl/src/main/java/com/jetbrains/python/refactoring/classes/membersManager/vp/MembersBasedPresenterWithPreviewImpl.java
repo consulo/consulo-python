@@ -17,15 +17,15 @@ package com.jetbrains.python.refactoring.classes.membersManager.vp;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.classMembers.MemberInfoModel;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.PyMemberInfoStorage;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 
 /**
- * Does refactoring with preview (based on {@link com.intellij.refactoring.BaseRefactoringProcessor}).
+ * Does refactoring with preview (based on {@link BaseRefactoringProcessor}).
  * Child must implement {@link #createProcessor()} and return appropriate processor.
  * "Preview" button would be displayed.
  *

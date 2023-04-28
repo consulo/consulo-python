@@ -15,68 +15,65 @@
  */
 package com.jetbrains.python.inspections;
 
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.TransformClassicClassQuickFix;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov
  */
-public class PyClassicStyleClassInspection extends PyInspection
-{
-	@Nls
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return PyBundle.message("INSP.NAME.classic.class.usage");
-	}
+@ExtensionImpl
+public class PyClassicStyleClassInspection extends PyInspection {
+  @Nls
+  @Nonnull
+  @Override
+  public String getDisplayName() {
+    return PyBundle.message("INSP.NAME.classic.class.usage");
+  }
 
-	@Override
-	public boolean isEnabledByDefault()
-	{
-		return false;
-	}
+  @Override
+  public boolean isEnabledByDefault() {
+    return false;
+  }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
-	{
-		return new Visitor(holder, session);
-	}
+  @Nonnull
+  @Override
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+                                        boolean isOnTheFly,
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
+    return new Visitor(holder, session);
+  }
 
-	private static class Visitor extends PyInspectionVisitor
-	{
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
-		{
-			super(holder, session);
-		}
+  private static class Visitor extends PyInspectionVisitor {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+      super(holder, session);
+    }
 
-		@Override
-		public void visitPyClass(PyClass node)
-		{
-			final ASTNode nameNode = node.getNameNode();
-			if(!node.isNewStyleClass(myTypeEvalContext) && nameNode != null)
-			{
-				PyExpression[] superClassExpressions = node.getSuperClassExpressions();
-				if(superClassExpressions.length == 0)
-				{
-					registerProblem(nameNode.getPsi(), PyBundle.message("INSP.classic.class.usage.old.style.class"), new TransformClassicClassQuickFix());
-				}
-				else
-				{
-					registerProblem(nameNode.getPsi(), PyBundle.message("INSP.classic.class.usage.old.style.class.ancestors"));
-				}
-			}
-		}
-	}
+    @Override
+    public void visitPyClass(PyClass node) {
+      final ASTNode nameNode = node.getNameNode();
+      if (!node.isNewStyleClass(myTypeEvalContext) && nameNode != null) {
+        PyExpression[] superClassExpressions = node.getSuperClassExpressions();
+        if (superClassExpressions.length == 0) {
+          registerProblem(nameNode.getPsi(),
+                          PyBundle.message("INSP.classic.class.usage.old.style.class"),
+                          new TransformClassicClassQuickFix());
+        }
+        else {
+          registerProblem(nameNode.getPsi(), PyBundle.message("INSP.classic.class.usage.old.style.class.ancestors"));
+        }
+      }
+    }
+  }
 }

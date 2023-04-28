@@ -19,11 +19,11 @@ package com.jetbrains.python.testing.nosetest;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.execution.Location;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.psi.PsiElement;
+import consulo.execution.action.Location;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.testing.*;

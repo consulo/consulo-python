@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.validation;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.language.ast.ASTNode;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.impl.PyStringLiteralExpressionImpl;
 

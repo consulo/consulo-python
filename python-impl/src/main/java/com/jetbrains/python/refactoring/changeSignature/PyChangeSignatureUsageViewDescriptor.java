@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.refactoring.ui.UsageViewDescriptorAdapter;
-import com.intellij.usageView.UsageInfo;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiUtilCore;
+import consulo.language.editor.refactoring.ui.UsageViewDescriptorAdapter;
+import consulo.usage.UsageInfo;
 import com.jetbrains.python.PyBundle;
 import javax.annotation.Nonnull;
 

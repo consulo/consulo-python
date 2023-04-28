@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.debugger;
 
-import com.intellij.util.xmlb.annotations.Attribute;
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
+import consulo.util.xml.serializer.annotation.Attribute;
+import consulo.execution.debug.breakpoint.XBreakpointProperties;
 import com.jetbrains.python.debugger.pydev.ExceptionBreakpointCommandFactory;
 
 /**

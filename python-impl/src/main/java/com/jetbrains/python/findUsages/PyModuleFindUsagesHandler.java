@@ -16,21 +16,22 @@
 
 package com.jetbrains.python.findUsages;
 
-import com.intellij.find.findUsages.AbstractFindUsagesDialog;
-import com.intellij.find.findUsages.CommonFindUsagesDialog;
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.ui.SimpleColoredComponent;
-import com.intellij.ui.SimpleTextAttributes;
+import consulo.find.FindUsagesHandler;
+import consulo.find.ui.AbstractFindUsagesDialog;
+import consulo.find.ui.CommonFindUsagesDialog;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiReference;
+import consulo.content.scope.SearchScope;
+import consulo.language.psi.search.ReferencesSearch;
+import consulo.ui.ex.awt.SimpleColoredComponent;
+import consulo.ui.ex.SimpleTextAttributes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.impl.PyImportedModule;
+
 import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
@@ -40,7 +41,8 @@ import java.util.List;
 /**
  * @author yole
  */
-public class PyModuleFindUsagesHandler extends FindUsagesHandler {
+public class PyModuleFindUsagesHandler extends FindUsagesHandler
+{
   private final PsiFileSystemItem myElement;
 
   protected PyModuleFindUsagesHandler(@Nonnull PsiFileSystemItem file) {

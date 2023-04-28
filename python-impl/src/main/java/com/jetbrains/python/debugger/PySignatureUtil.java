@@ -20,8 +20,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.types.functionalParser;
 
-import com.intellij.openapi.util.Pair;
+import consulo.util.lang.Pair;
 import javax.annotation.Nonnull;
 
 import java.util.List;

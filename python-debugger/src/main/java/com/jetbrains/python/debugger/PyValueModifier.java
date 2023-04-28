@@ -2,8 +2,8 @@ package com.jetbrains.python.debugger;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.xdebugger.frame.XValueModifier;
+import consulo.application.ApplicationManager;
+import consulo.execution.debug.frame.XValueModifier;
 
 
 public class PyValueModifier extends XValueModifier {

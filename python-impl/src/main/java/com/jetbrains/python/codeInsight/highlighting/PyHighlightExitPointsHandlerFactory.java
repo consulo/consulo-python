@@ -16,20 +16,23 @@
 
 package com.jetbrains.python.codeInsight.highlighting;
 
-import consulo.codeInsight.TargetElementUtil;
-import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerBase;
-import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerFactory;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReturnStatement;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.TargetElementUtil;
+import consulo.language.editor.highlight.usage.HighlightUsagesHandlerBase;
+import consulo.language.editor.highlight.usage.HighlightUsagesHandlerFactory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
 
 /**
  * @author oleg
  */
+@ExtensionImpl
 public class PyHighlightExitPointsHandlerFactory implements HighlightUsagesHandlerFactory {
+  @Override
   public HighlightUsagesHandlerBase createHighlightUsagesHandler(final Editor editor, final PsiFile file) {
     int offset = TargetElementUtil.adjustOffset(file, editor.getDocument(), editor.getCaretModel().getOffset());
     PsiElement target = file.findElementAt(offset);

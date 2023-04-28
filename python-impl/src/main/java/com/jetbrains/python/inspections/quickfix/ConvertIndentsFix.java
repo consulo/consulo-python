@@ -18,15 +18,15 @@ package com.jetbrains.python.inspections.quickfix;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeStyle.CodeStyleFacade;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.actions.ConvertIndentsActionBase;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.ide.impl.idea.codeStyle.CodeStyleFacade;
+import consulo.document.Document;
+import consulo.ide.impl.idea.openapi.editor.actions.ConvertIndentsActionBase;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiFile;
 
 /**
  * @author yole

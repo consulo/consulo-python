@@ -2,7 +2,7 @@ package com.jetbrains.python.debugger;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.xdebugger.frame.XFullValueEvaluator;
+import consulo.execution.debug.frame.XFullValueEvaluator;
 
 /**
  * @author traff

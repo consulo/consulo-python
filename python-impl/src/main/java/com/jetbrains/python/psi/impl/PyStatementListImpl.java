@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.lang.ASTFactory;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.TokenType;
+import consulo.language.impl.ast.ASTFactory;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.TokenType;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyStatement;

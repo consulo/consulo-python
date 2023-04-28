@@ -17,26 +17,25 @@ package com.jetbrains.python.codeInsight.intentions;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.TemplateBuilder;
-import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.codeInsight.template.TemplateBuilderImpl;
-import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.template.*;
+import consulo.language.editor.impl.internal.template.TemplateBuilderImpl;
+import consulo.language.editor.template.TemplateManager;
+import consulo.document.Document;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.editor.template.TemplateBuilder;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * User: ktisha
@@ -163,7 +162,7 @@ public class TypeAssertionIntention extends PyBaseIntentionAction
 			element = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element);
 			final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
 			builder.replaceRange(TextRange.create(text.length() - 1, text.length() - 1), PyNames.OBJECT);
-			Template template = ((TemplateBuilderImpl) builder).buildInlineTemplate();
+			Template template = ((consulo.language.editor.impl.internal.template.TemplateBuilderImpl) builder).buildInlineTemplate();
 			TemplateManager.getInstance(project).startTemplate(editor, template);
 		}
 	}

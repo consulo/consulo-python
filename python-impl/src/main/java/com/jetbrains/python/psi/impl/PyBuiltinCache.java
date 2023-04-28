@@ -24,29 +24,29 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import consulo.content.base.BinariesOrderRootType;
 import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nullable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTypeId;
-import com.intellij.openapi.roots.ModuleExtensionWithSdkOrderEntry;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.ModuleLibraryOrderEntryImpl;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
+import consulo.application.ApplicationManager;
+import consulo.module.Module;
+import consulo.language.util.ModuleUtilCore;
+import consulo.project.Project;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkTypeId;
+import consulo.module.content.layer.orderEntry.ModuleExtensionWithSdkOrderEntry;
+import consulo.module.content.layer.orderEntry.OrderEntry;
+import consulo.module.content.ProjectRootManager;
+import consulo.util.lang.ref.Ref;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiInvalidElementAccessException;
+import consulo.language.psi.PsiManager;
+import consulo.language.psi.PsiReference;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
@@ -155,7 +155,7 @@ public class PyBuiltinCache
 				{
 					sdk = ((ModuleExtensionWithSdkOrderEntry) orderEntry).getSdk();
 				}
-				else if(orderEntry instanceof ModuleLibraryOrderEntryImpl)
+				else if(orderEntry instanceof consulo.module.impl.internal.layer.orderEntry.ModuleLibraryOrderEntryImpl)
 				{
 					sdk = PythonSdkType.findPythonSdk(orderEntry.getOwnerModule());
 				}
@@ -177,7 +177,7 @@ public class PyBuiltinCache
 		if(sdkType instanceof PythonSdkType)
 		{
 			// dig out the builtins file, create an instance based on it
-			final String[] urls = sdk.getRootProvider().getUrls(PythonSdkType.BUILTIN_ROOT_TYPE);
+			final String[] urls = sdk.getRootProvider().getUrls(BinariesOrderRootType.getInstance());
 			for(String url : urls)
 			{
 				if(url.contains(PythonSdkType.SKELETON_DIR_NAME))

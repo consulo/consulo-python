@@ -19,17 +19,19 @@ package com.jetbrains.python.codeInsight.intentions;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.FileModificationService;
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.FileModificationService;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.IncorrectOperationException;
 
-public abstract class PyBaseIntentionAction extends BaseIntentionAction {
+public abstract class PyBaseIntentionAction extends BaseIntentionAction
+{
 
 	@Override
-	public final void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+	public final void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+	{
 		if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
 		doInvoke(project, editor, file);
 	}

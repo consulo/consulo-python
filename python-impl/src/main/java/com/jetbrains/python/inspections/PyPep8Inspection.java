@@ -16,12 +16,11 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.ui.ListEditForm;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.InspectionToolState;
 import consulo.util.dataholder.Key;
 
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Nonnull;
 
 /**
  * Dummy inspection for configuring the PEP8 checker. The checking itself is performed by
@@ -29,14 +28,23 @@ import java.util.List;
  *
  * @author yole
  */
-public class PyPep8Inspection extends PyInspection {
-  public List<String> ignoredErrors = new ArrayList<String>();
-  public static final String INSPECTION_SHORT_NAME = "PyPep8Inspection";
-  public static final Key<PyPep8Inspection> KEY = Key.create(INSPECTION_SHORT_NAME);
+@ExtensionImpl
+public class PyPep8Inspection extends PyInspection
+{
+	public static final String INSPECTION_SHORT_NAME = "PyPep8Inspection";
+	public static final Key<PyPep8Inspection> KEY = Key.create(INSPECTION_SHORT_NAME);
 
-  @Override
-  public JComponent createOptionsPanel() {
-    ListEditForm form = new ListEditForm("Ignore errors", ignoredErrors);
-    return form.getContentPanel();
-  }
+	@Nonnull
+	@Override
+	public InspectionToolState<?> createStateProvider()
+	{
+		return new PyPep8InspectionState();
+	}
+
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return "PEP 8 coding style violation";
+	}
 }

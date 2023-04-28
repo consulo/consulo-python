@@ -16,15 +16,16 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -38,19 +39,14 @@ public class PyDemorganIntention extends BaseIntentionAction {
     return "DeMorgan Law";
   }
 
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return "DeMorgan Law";
-  }
-
   @Override
   public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
     if (!(file instanceof PyFile)) {
       return false;
     }
 
-    PyBinaryExpression expression = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyBinaryExpression.class);
+    PyBinaryExpression expression =
+      PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyBinaryExpression.class);
     if (expression != null) {
       PyElementType op = expression.getOperator();
       if (op == PyTokenTypes.AND_KEYWORD || op == PyTokenTypes.OR_KEYWORD) {
@@ -130,7 +126,7 @@ public class PyDemorganIntention extends BaseIntentionAction {
 
   private static boolean isConjunctionExpression(PyExpression expression, PyElementType tokenType) {
     if (expression instanceof PyBinaryExpression) {
-      PyElementType operator = ((PyBinaryExpression) expression).getOperator();
+      PyElementType operator = ((PyBinaryExpression)expression).getOperator();
       return operator == tokenType;
     }
     return false;

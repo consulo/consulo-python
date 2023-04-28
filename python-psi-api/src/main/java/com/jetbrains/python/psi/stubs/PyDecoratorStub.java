@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.psi.stubs.StubElement;
+import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyDecorator;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.util.QualifiedName;
 
 /**
  * Created by IntelliJ IDEA.

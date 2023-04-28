@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.documentation.doctest;
 
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiLanguageInjectionHost;
+import consulo.language.inject.InjectedLanguageManager;
+import consulo.language.file.FileViewProvider;
+import consulo.language.psi.PsiLanguageInjectionHost;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.impl.PyFileImpl;
 

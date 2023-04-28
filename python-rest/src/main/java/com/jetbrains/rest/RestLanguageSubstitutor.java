@@ -16,26 +16,44 @@
 
 package com.jetbrains.rest;
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.LanguageSubstitutor;
 import com.jetbrains.python.ReSTService;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.plain.PlainTextLanguage;
+import consulo.language.psi.LanguageSubstitutor;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
 
 /**
  * User : catherine
  */
-public class RestLanguageSubstitutor extends LanguageSubstitutor {
-  @Override
-  public Language getLanguage(@Nonnull final VirtualFile vFile, @Nonnull final Project project) {
-    final Module module = ModuleUtilCore.findModuleForFile(vFile, project);
-    if (module == null) return null;
-    boolean txtIsRst = ReSTService.getInstance(module).txtIsRst();
-     if (txtIsRst)
-       return RestLanguage.INSTANCE;
-     return null;
-  }
+@ExtensionImpl
+public class RestLanguageSubstitutor extends LanguageSubstitutor
+{
+	@Override
+	public Language getLanguage(@Nonnull final VirtualFile vFile, @Nonnull final Project project)
+	{
+		final Module module = ModuleUtilCore.findModuleForFile(vFile, project);
+		if(module == null)
+		{
+			return null;
+		}
+		boolean txtIsRst = ReSTService.getInstance(module).txtIsRst();
+		if(txtIsRst)
+		{
+			return RestLanguage.INSTANCE;
+		}
+		return null;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PlainTextLanguage.INSTANCE;
+	}
 }

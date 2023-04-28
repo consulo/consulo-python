@@ -16,15 +16,15 @@
 
 package com.jetbrains.python.refactoring.invertBoolean;
 
-import com.intellij.lang.findUsages.DescriptiveNameUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.rename.RenameUtil;
-import com.intellij.refactoring.ui.RefactoringDialog;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.usageView.UsageViewUtil;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.rename.RenameUtil;
+import consulo.language.editor.refactoring.ui.RefactoringDialog;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
+import consulo.language.findUsage.DescriptiveNameUtil;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.usage.UsageViewUtil;
 import javax.annotation.Nullable;
 
 import javax.swing.*;
@@ -32,7 +32,8 @@ import javax.swing.*;
 /**
  * User : ktisha
  */
-public class PyInvertBooleanDialog extends RefactoringDialog {
+public class PyInvertBooleanDialog extends RefactoringDialog
+{
   private JTextField myNameField;
   private JPanel myPanel;
   private JLabel myLabel;

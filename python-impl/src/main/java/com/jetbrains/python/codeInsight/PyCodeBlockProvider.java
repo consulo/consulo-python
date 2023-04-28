@@ -16,20 +16,26 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.codeInsight.editorActions.CodeBlockProvider;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.action.CodeBlockProvider;
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyCodeBlockProvider implements CodeBlockProvider {
   @Nullable
   @Override
@@ -77,5 +83,11 @@ public class PyCodeBlockProvider implements CodeBlockProvider {
       }
     }
     return null;
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 }

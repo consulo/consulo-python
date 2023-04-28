@@ -16,18 +16,19 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.usage.UsageInfo;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
+
 import javax.annotation.Nonnull;
 
 import java.util.List;
@@ -35,7 +36,8 @@ import java.util.List;
 /**
  * User: ktisha
  */
-public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionAction {
+public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionAction
+{
   @Nonnull
   public String getFamilyName() {
     return PyBundle.message("INTN.convert.static.method.to.function");

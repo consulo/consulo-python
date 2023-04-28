@@ -15,143 +15,122 @@
  */
 package com.jetbrains.python.run;
 
-import java.awt.BorderLayout;
+import com.jetbrains.python.debugger.PyDebuggerOptionsProvider;
+import consulo.execution.ui.awt.RawCommandLineEditor;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.project.Project;
+import consulo.ui.ex.awt.*;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.Comparing;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComponentWithBrowseButton;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.PanelWithAnchor;
-import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.components.JBLabel;
-import com.jetbrains.python.debugger.PyDebuggerOptionsProvider;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author yole
  */
-public class PythonRunConfigurationForm implements PythonRunConfigurationParams, PanelWithAnchor
-{
-	private JPanel myRootPanel;
-	private TextFieldWithBrowseButton myScriptTextField;
-	private RawCommandLineEditor myScriptParametersTextField;
-	private JPanel myCommonOptionsPlaceholder;
-	private JBLabel myScriptParametersLabel;
-	private final AbstractPyCommonOptionsForm myCommonOptionsForm;
-	private JComponent anchor;
-	private final Project myProject;
-	private JBCheckBox myShowCommandLineCheckbox;
+public class PythonRunConfigurationForm implements PythonRunConfigurationParams, PanelWithAnchor {
+  private JPanel myRootPanel;
+  private TextFieldWithBrowseButton myScriptTextField;
+  private RawCommandLineEditor myScriptParametersTextField;
+  private JPanel myCommonOptionsPlaceholder;
+  private JBLabel myScriptParametersLabel;
+  private final AbstractPyCommonOptionsForm myCommonOptionsForm;
+  private JComponent anchor;
+  private final Project myProject;
+  private JBCheckBox myShowCommandLineCheckbox;
 
-	public PythonRunConfigurationForm(PythonRunConfiguration configuration)
-	{
-		myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());
-		myCommonOptionsPlaceholder.add(myCommonOptionsForm.getMainPanel(), BorderLayout.CENTER);
+  public PythonRunConfigurationForm(PythonRunConfiguration configuration) {
+    myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());
+    myCommonOptionsPlaceholder.add(myCommonOptionsForm.getMainPanel(), BorderLayout.CENTER);
 
-		myProject = configuration.getProject();
+    myProject = configuration.getProject();
 
-		FileChooserDescriptor chooserDescriptor = new FileChooserDescriptor(true, false, false, false, false, false)
-		{
-			@Override
-			public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles)
-			{
-				return file.isDirectory() || file.getExtension() == null || Comparing.equal(file.getExtension(), "py");
-			}
-		};
-		//chooserDescriptor.setRoot(s.getProject().getBaseDir());
+    FileChooserDescriptor chooserDescriptor = new FileChooserDescriptor(true, false, false, false, false, false) {
+      @Override
+      public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+        return file.isDirectory() || file.getExtension() == null || Comparing.equal(file.getExtension(), "py");
+      }
+    };
+    //chooserDescriptor.setRoot(s.getProject().getBaseDir());
 
-		ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> listener = new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>("Select Script", "", myScriptTextField,
-				myProject, chooserDescriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT)
-		{
+    ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> listener =
+      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>("Select Script",
+                                                                           "",
+                                                                           myScriptTextField,
+                                                                           myProject,
+                                                                           chooserDescriptor,
+                                                                           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
 
-			@Override
-			protected void onFileChosen(@Nonnull VirtualFile chosenFile)
-			{
-				super.onFileChosen(chosenFile);
-				myCommonOptionsForm.setWorkingDirectory(chosenFile.getParent().getPath());
-			}
-		};
+        @Override
+        protected void onFileChosen(@Nonnull VirtualFile chosenFile) {
+          super.onFileChosen(chosenFile);
+          myCommonOptionsForm.setWorkingDirectory(chosenFile.getParent().getPath());
+        }
+      };
 
-		myScriptTextField.addActionListener(listener);
+    myScriptTextField.addActionListener(listener);
 
-		setAnchor(myCommonOptionsForm.getAnchor());
-	}
+    setAnchor(myCommonOptionsForm.getAnchor());
+  }
 
-	public JComponent getPanel()
-	{
-		return myRootPanel;
-	}
+  public JComponent getPanel() {
+    return myRootPanel;
+  }
 
-	@Override
-	public AbstractPythonRunConfigurationParams getBaseParams()
-	{
-		return myCommonOptionsForm;
-	}
+  @Override
+  public AbstractPythonRunConfigurationParams getBaseParams() {
+    return myCommonOptionsForm;
+  }
 
-	@Override
-	public String getScriptName()
-	{
-		return FileUtil.toSystemIndependentName(myScriptTextField.getText().trim());
-	}
+  @Override
+  public String getScriptName() {
+    return FileUtil.toSystemIndependentName(myScriptTextField.getText().trim());
+  }
 
-	@Override
-	public void setScriptName(String scriptName)
-	{
-		myScriptTextField.setText(scriptName == null ? "" : FileUtil.toSystemDependentName(scriptName));
-	}
+  @Override
+  public void setScriptName(String scriptName) {
+    myScriptTextField.setText(scriptName == null ? "" : FileUtil.toSystemDependentName(scriptName));
+  }
 
-	@Override
-	public String getScriptParameters()
-	{
-		return myScriptParametersTextField.getText().trim();
-	}
+  @Override
+  public String getScriptParameters() {
+    return myScriptParametersTextField.getText().trim();
+  }
 
-	@Override
-	public void setScriptParameters(String scriptParameters)
-	{
-		myScriptParametersTextField.setText(scriptParameters);
-	}
+  @Override
+  public void setScriptParameters(String scriptParameters) {
+    myScriptParametersTextField.setText(scriptParameters);
+  }
 
-	@Override
-	public boolean showCommandLineAfterwards()
-	{
-		return myShowCommandLineCheckbox.isSelected();
-	}
+  @Override
+  public boolean showCommandLineAfterwards() {
+    return myShowCommandLineCheckbox.isSelected();
+  }
 
-	@Override
-	public void setShowCommandLineAfterwards(boolean showCommandLineAfterwards)
-	{
-		myShowCommandLineCheckbox.setSelected(showCommandLineAfterwards);
-	}
+  @Override
+  public void setShowCommandLineAfterwards(boolean showCommandLineAfterwards) {
+    myShowCommandLineCheckbox.setSelected(showCommandLineAfterwards);
+  }
 
-	@Override
-	public JComponent getAnchor()
-	{
-		return anchor;
-	}
+  @Override
+  public JComponent getAnchor() {
+    return anchor;
+  }
 
-	public boolean isMultiprocessMode()
-	{
-		return PyDebuggerOptionsProvider.getInstance(myProject).isAttachToSubprocess();
-	}
+  public boolean isMultiprocessMode() {
+    return PyDebuggerOptionsProvider.getInstance(myProject).isAttachToSubprocess();
+  }
 
-	public void setMultiprocessMode(boolean multiprocess)
-	{
-	}
+  public void setMultiprocessMode(boolean multiprocess) {
+  }
 
-	@Override
-	public void setAnchor(JComponent anchor)
-	{
-		this.anchor = anchor;
-		myScriptParametersLabel.setAnchor(anchor);
-		myCommonOptionsForm.setAnchor(anchor);
-	}
+  @Override
+  public void setAnchor(JComponent anchor) {
+    this.anchor = anchor;
+    myScriptParametersLabel.setAnchor(anchor);
+    myCommonOptionsForm.setAnchor(anchor);
+  }
 }

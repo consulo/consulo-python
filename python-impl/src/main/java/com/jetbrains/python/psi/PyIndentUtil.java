@@ -15,30 +15,28 @@
  */
 package com.jetbrains.python.psi;
 
-import static com.jetbrains.python.psi.PyUtil.as;
+import com.google.common.collect.Iterables;
+import com.jetbrains.python.PythonFileType;
+import consulo.application.util.LineTokenizer;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CodeStyleSettingsManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.StringUtil;
+import org.jetbrains.annotations.NonNls;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
-import com.google.common.collect.Iterables;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.LineTokenizer;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.python.PythonFileType;
+import static com.jetbrains.python.psi.PyUtil.as;
 
 /**
  * Contains various methods for manipulation on indentation found in arbitrary text and individual lines:

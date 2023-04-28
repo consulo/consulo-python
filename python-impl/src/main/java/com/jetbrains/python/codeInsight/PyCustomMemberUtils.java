@@ -17,8 +17,10 @@ package com.jetbrains.python.codeInsight;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
+
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.editor.completion.lookup.ParenthesesInsertHandler;
 
 /**
  * TODO: Move methods to {@link com.jetbrains.python.codeInsight.PyCustomMember}. Only dependency hell prevents me from doing it
@@ -30,7 +32,7 @@ public final class PyCustomMemberUtils
 	}
 
 	/**
-	 * Creates {@link com.intellij.codeInsight.lookup.LookupElement} to be used in cases like {@link com.jetbrains.python.psi.types.PyType#getCompletionVariants(String, com.intellij.psi.PsiElement,
+	 * Creates {@link LookupElement} to be used in cases like {@link com.jetbrains.python.psi.types.PyType#getCompletionVariants(String, com.intellij.psi.PsiElement,
 	 * com.intellij.util.ProcessingContext)}
 	 * This method should be in {@link com.jetbrains.python.codeInsight.PyCustomMember} but it does not. We need to move it.
 	 *

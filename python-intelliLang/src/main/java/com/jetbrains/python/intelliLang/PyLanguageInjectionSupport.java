@@ -15,15 +15,16 @@
  */
 package com.jetbrains.python.intelliLang;
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.jetbrains.python.patterns.PythonPatterns;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import consulo.psi.injection.AbstractLanguageInjectionSupport;
-import org.intellij.plugins.intelliLang.inject.config.BaseInjection;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.ide.impl.intelliLang.inject.config.BaseInjection;
+import consulo.ide.impl.psi.injection.AbstractLanguageInjectionSupport;
+import consulo.language.Language;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiLanguageInjectionHost;
 import org.jdom.Element;
 
 import javax.annotation.Nonnull;
@@ -32,6 +33,7 @@ import java.util.List;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyLanguageInjectionSupport extends AbstractLanguageInjectionSupport {
   private static final String SUPPORT_ID = "python";
 

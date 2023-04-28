@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.codeInsight.testIntegration;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.help.HelpManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.BooleanTableCellRenderer;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.application.HelpManager;
+import consulo.project.Project;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.util.lang.StringUtil;
+import consulo.ui.ex.awt.BooleanTableCellRenderer;
 import javax.annotation.Nonnull;
 
 import javax.swing.*;

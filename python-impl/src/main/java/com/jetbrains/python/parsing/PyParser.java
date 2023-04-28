@@ -17,13 +17,13 @@ package com.jetbrains.python.parsing;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiParser;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.ASTNode;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.parser.PsiParser;
+import consulo.logging.Logger;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.psi.LanguageLevel;
-import consulo.lang.LanguageVersion;
+import consulo.language.version.LanguageVersion;
 
 /**
  * @author yole

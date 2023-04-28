@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.enterProcessors;
 
-import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.codeEditor.CaretModel;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.SmartEnterUtil;
 
 /**

@@ -16,27 +16,25 @@
 
 package consulo.python.module.extension;
 
-import javax.annotation.Nonnull;
-import com.intellij.openapi.projectRoots.SdkType;
 import com.jetbrains.python.sdk.PythonSdkType;
-import consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
-import consulo.roots.ModuleRootLayer;
+import consulo.content.bundle.SdkType;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.extension.ModuleExtensionWithSdkBase;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 31.01.14
  */
-public class BasePyModuleExtension extends ModuleExtensionWithSdkImpl<BasePyModuleExtension> implements PyModuleExtension<BasePyModuleExtension>
-{
-	public BasePyModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
-	{
-		super(id, module);
-	}
+public class BasePyModuleExtension extends ModuleExtensionWithSdkBase<BasePyModuleExtension> implements PyModuleExtension<BasePyModuleExtension> {
+  public BasePyModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module) {
+    super(id, module);
+  }
 
-	@Nonnull
-	@Override
-	public Class<? extends SdkType> getSdkTypeClass()
-	{
-		return PythonSdkType.class;
-	}
+  @Nonnull
+  @Override
+  public Class<? extends SdkType> getSdkTypeClass() {
+    return PythonSdkType.class;
+  }
 }

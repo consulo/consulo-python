@@ -22,11 +22,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.EditorTextField;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.table.JBTable;
+import consulo.codeEditor.EditorEx;
+import consulo.language.editor.ui.awt.EditorTextField;
+import consulo.project.Project;
+import consulo.ui.ex.awt.JBScrollPane;
+import consulo.ui.ex.awt.table.JBTable;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.debugger.array.JBTableWithRowHeaders;
 

@@ -15,48 +15,35 @@
  */
 package com.jetbrains.python.sdk;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-
-import javax.annotation.Nullable;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
-import com.intellij.openapi.projectRoots.SdkTable;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.projectRoots.impl.SdkImpl;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.ui.popup.ListSeparator;
-import com.intellij.openapi.ui.popup.PopupStep;
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import consulo.disposer.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.NullableConsumer;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.packaging.PyCondaPackageService;
 import com.jetbrains.python.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.content.bundle.*;
+import consulo.disposer.Disposer;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.fileChooser.IdeaFileChooser;
+import consulo.ide.setting.ShowSettingsUtil;
+import consulo.project.Project;
+import consulo.project.ProjectBundle;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awt.Messages;
+import consulo.ui.ex.popup.*;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 {
@@ -65,7 +52,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 	private final Project myProject;
 	private final Component myOwnerComponent;
 	private final Sdk[] myExistingSdks;
-	private final NullableConsumer<Sdk> mySdkAddedCallback;
+	private final Consumer<Sdk> mySdkAddedCallback;
 
 	private static final String LOCAL = PyBundle.message("sdk.details.step.add.local");
 	private static final String REMOTE = PyBundle.message("sdk.details.step.add.remote");
@@ -75,23 +62,23 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 	private boolean myNewProject;
 
 	public static void show(final Project project,
-			final Sdk[] existingSdks,
-			@Nullable final DialogWrapper moreDialog,
-			JComponent ownerComponent,
-			final Point popupPoint,
-			final NullableConsumer<Sdk> sdkAddedCallback)
+							final Sdk[] existingSdks,
+							@Nullable final DialogWrapper moreDialog,
+							JComponent ownerComponent,
+							final Point popupPoint,
+							final Consumer<Sdk> sdkAddedCallback)
 	{
 		show(project, existingSdks, moreDialog, ownerComponent, popupPoint, sdkAddedCallback, false);
 
 	}
 
 	public static void show(final Project project,
-			final Sdk[] existingSdks,
-			@Nullable final DialogWrapper moreDialog,
-			JComponent ownerComponent,
-			final Point popupPoint,
-			final NullableConsumer<Sdk> sdkAddedCallback,
-			boolean isNewProject)
+							final Sdk[] existingSdks,
+							@Nullable final DialogWrapper moreDialog,
+							JComponent ownerComponent,
+							final Point popupPoint,
+							final Consumer<Sdk> sdkAddedCallback,
+							boolean isNewProject)
 	{
 		final PythonSdkDetailsStep sdkHomesStep = new PythonSdkDetailsStep(project, moreDialog, ownerComponent, existingSdks, sdkAddedCallback);
 		sdkHomesStep.setNewProject(isNewProject);
@@ -105,10 +92,10 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 	}
 
 	public PythonSdkDetailsStep(@Nullable final Project project,
-			@Nullable final DialogWrapper moreDialog,
-			@Nonnull final Component ownerComponent,
-			@Nonnull final Sdk[] existingSdks,
-			@Nonnull final NullableConsumer<Sdk> sdkAddedCallback)
+								@Nullable final DialogWrapper moreDialog,
+								@Nonnull final Component ownerComponent,
+								@Nonnull final Sdk[] existingSdks,
+								@Nonnull final Consumer<Sdk> sdkAddedCallback)
 	{
 		super(null, getAvailableOptions(moreDialog != null));
 		myProject = project;
@@ -184,12 +171,13 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 		PythonRemoteInterpreterManager remoteInterpreterManager = PythonRemoteInterpreterManager.getInstance();
 		if(remoteInterpreterManager != null)
 		{
-			remoteInterpreterManager.addRemoteSdk(myProject, myOwnerComponent, Lists.newArrayList(myExistingSdks), mySdkAddedCallback);
+			remoteInterpreterManager.addRemoteSdk(myProject, myOwnerComponent, List.of(myExistingSdks), mySdkAddedCallback);
 		}
 		else
 		{
 			final String pathToPluginsPage = ShowSettingsUtil.getSettingsMenuName() + " | Plugins";
-			Messages.showErrorDialog(PyBundle.message("remote.interpreter.error.plugin.missing", pathToPluginsPage), PyBundle.message("remote.interpreter.add.title"));
+			Messages.showErrorDialog(PyBundle.message("remote.interpreter.error.plugin.missing", pathToPluginsPage),
+					PyBundle.message("remote.interpreter.add.title"));
 		}
 	}
 
@@ -198,11 +186,11 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 		AbstractCreateVirtualEnvDialog.VirtualEnvCallback callback = getVEnvCallback();
 
 		final CreateVirtualEnvDialog dialog;
-		final List<Sdk> allSdks = Lists.newArrayList(myExistingSdks);
-		Iterables.removeIf(allSdks, new Predicate<Sdk>()
+		final List<Sdk> allSdks = new ArrayList<>(List.of(myExistingSdks));
+		allSdks.removeIf(new Predicate<Sdk>()
 		{
 			@Override
-			public boolean apply(Sdk sdk)
+			public boolean test(Sdk sdk)
 			{
 				return !(sdk.getSdkType() instanceof PythonSdkType);
 			}
@@ -231,20 +219,24 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 	}
 
 
-	public static void createSdk(@Nullable final Project project, final Sdk[] existingSdks, final NullableConsumer<Sdk> onSdkCreatedCallBack, final boolean createIfExists, final SdkType... sdkTypes)
+	public static void createSdk(@Nullable final Project project,
+								 final Sdk[] existingSdks,
+								 final Consumer<Sdk> onSdkCreatedCallBack,
+								 final boolean createIfExists,
+								 final SdkType... sdkTypes)
 	{
 		if(sdkTypes.length == 0)
 		{
-			onSdkCreatedCallBack.consume(null);
+			onSdkCreatedCallBack.accept(null);
 			return;
 		}
 
 		FileChooserDescriptor descriptor = createCompositeDescriptor(sdkTypes);
 		VirtualFile suggestedDir = getSuggestedSdkRoot(sdkTypes[0]);
-		FileChooser.chooseFiles(descriptor, project, suggestedDir, new FileChooser.FileChooserConsumer()
+		IdeaFileChooser.chooseFiles(descriptor, project, suggestedDir, new IdeaFileChooser.FileChooserConsumer()
 		{
 			@Override
-			public void consume(List<VirtualFile> selectedFiles)
+			public void accept(List<VirtualFile> selectedFiles)
 			{
 				for(SdkType sdkType : sdkTypes)
 				{
@@ -267,30 +259,30 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 						{
 							newSdk = setupSdk(existingSdks, selectedFiles.get(0), sdkType, false, null, null);
 						}
-						onSdkCreatedCallBack.consume(newSdk);
+						onSdkCreatedCallBack.accept(newSdk);
 						return;
 					}
 				}
-				onSdkCreatedCallBack.consume(null);
+				onSdkCreatedCallBack.accept(null);
 			}
 
 			@Override
 			public void cancelled()
 			{
-				onSdkCreatedCallBack.consume(null);
+				onSdkCreatedCallBack.accept(null);
 			}
 		});
 	}
 
 	@Nullable
 	public static Sdk setupSdk(@Nonnull Sdk[] allSdks,
-			@Nonnull VirtualFile homeDir,
-			final SdkType sdkType,
-			final boolean silent,
-			@Nullable final SdkAdditionalData additionalData,
-			@Nullable final String customSdkSuggestedName)
+							   @Nonnull VirtualFile homeDir,
+							   final SdkType sdkType,
+							   final boolean silent,
+							   @Nullable final SdkAdditionalData additionalData,
+							   @Nullable final String customSdkSuggestedName)
 	{
-		final SdkImpl sdk;
+		final Sdk sdk;
 		try
 		{
 			sdk = createSdk(allSdks, homeDir, sdkType, additionalData, customSdkSuggestedName);
@@ -312,27 +304,38 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 		return sdk;
 	}
 
-	public static SdkImpl createSdk(@Nonnull Sdk[] allSdks, @Nonnull VirtualFile homeDir, SdkType sdkType, @Nullable SdkAdditionalData additionalData, @Nullable String customSdkSuggestedName)
+	public static Sdk createSdk(@Nonnull Sdk[] allSdks,
+								@Nonnull VirtualFile homeDir,
+								SdkType sdkType,
+								@Nullable SdkAdditionalData additionalData,
+								@Nullable String customSdkSuggestedName)
 	{
 		final List<Sdk> sdksList = Arrays.asList(allSdks);
 
 		String sdkPath = sdkType.sdkPath(homeDir);
 
 		Sdk[] sdks = sdksList.toArray(new Sdk[sdksList.size()]);
-		final String sdkName = customSdkSuggestedName == null ? SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkPath, sdks) : SdkConfigurationUtil.createUniqueSdkName(customSdkSuggestedName,
+		final String sdkName = customSdkSuggestedName == null ? SdkUtil.createUniqueSdkName(sdkType,
+				sdkPath,
+				sdks) : SdkUtil.createUniqueSdkName(
+				customSdkSuggestedName,
 				sdks);
 
-		SdkImpl sdk = new SdkImpl(SdkTable.getInstance(), sdkName, sdkType);
+		Sdk sdk = SdkTable.getInstance().createSdk(sdkName, sdkType);
+
+		SdkModificator sdkModificator = sdk.getSdkModificator();
 
 		if(additionalData != null)
 		{
 			// additional initialization.
 			// E.g. some ruby sdks must be initialized before
 			// setupSdkPaths() method invocation
-			sdk.setSdkAdditionalData(additionalData);
+			sdkModificator.setSdkAdditionalData(additionalData);
 		}
 
-		sdk.setHomePath(sdkPath);
+		sdkModificator.setHomePath(sdkPath);
+		sdkModificator.commitChanges();
+
 		return sdk;
 	}
 
@@ -353,7 +356,8 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 						}
 					}
 				}
-				String key = files.length > 0 && files[0].isDirectory() ? "sdk.configure.home.invalid.error" : "sdk.configure.home.file.invalid.error";
+				String key =
+						files.length > 0 && files[0].isDirectory() ? "sdk.configure.home.invalid.error" : "sdk.configure.home.file.invalid.error";
 				throw new Exception(ProjectBundle.message(key, sdkTypes[0].getPresentableName()));
 			}
 		};
@@ -409,7 +413,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 					if(additionalData == null)
 					{
 						additionalData = new PythonSdkAdditionalData(PythonSdkFlavor.getFlavor(sdk.getHomePath()));
-						((SdkImpl) sdk).setSdkAdditionalData(additionalData);
+						((consulo.content.impl.internal.bundle.SdkImpl) sdk).setSdkAdditionalData(additionalData);
 					}
 					if(myNewProject)
 					{
@@ -420,7 +424,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String>
 						((PythonSdkAdditionalData) additionalData).associateWithProject(myProject);
 					}
 				}
-				mySdkAddedCallback.consume(sdk);
+				mySdkAddedCallback.accept(sdk);
 			}
 		};
 	}

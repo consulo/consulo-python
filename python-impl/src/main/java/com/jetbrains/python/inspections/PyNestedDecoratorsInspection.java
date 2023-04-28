@@ -16,20 +16,21 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyDecorator;
 import com.jetbrains.python.psi.PyDecoratorList;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Checks nested decorators, especially whatever comes after @classmethod.
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.Nls;
  * User: dcheryasov
  * Date: Sep 4, 2010 3:56:57 AM
  */
+@ExtensionImpl
 public class PyNestedDecoratorsInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -53,7 +55,8 @@ public class PyNestedDecoratorsInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -73,7 +76,7 @@ public class PyNestedDecoratorsInspection extends PyInspection {
             String deconame = deco.getName();
             if ((PyNames.CLASSMETHOD.equals(deconame) || PyNames.STATICMETHOD.equals(deconame)) && deco.isBuiltin()) {
               registerProblem(
-                decos[i-1],
+                decos[i - 1],
                 PyBundle.message("INSP.decorator.receives.unexpected.builtin"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
               );

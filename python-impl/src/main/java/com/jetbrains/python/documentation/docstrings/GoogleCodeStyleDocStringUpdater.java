@@ -17,7 +17,7 @@ package com.jetbrains.python.documentation.docstrings;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.project.Project;
+import consulo.project.Project;
 import com.jetbrains.python.toolbox.Substring;
 
 /**

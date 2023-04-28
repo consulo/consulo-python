@@ -15,30 +15,6 @@
  */
 package com.jetbrains.python.psi;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderFactory;
-import com.intellij.lang.PsiParser;
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.StubBuilder;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.psi.tree.IStubFileElementType;
-import com.intellij.util.io.StringRef;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.console.PydevConsoleRunner;
 import com.jetbrains.python.console.parsing.PyConsoleParser;
@@ -49,8 +25,27 @@ import com.jetbrains.python.parsing.StatementParsing;
 import com.jetbrains.python.psi.impl.stubs.PyFileStubBuilder;
 import com.jetbrains.python.psi.impl.stubs.PyFileStubImpl;
 import com.jetbrains.python.psi.stubs.PyFileStub;
-import consulo.lang.LanguageVersion;
-import consulo.lang.util.LanguageVersionUtil;
+import consulo.index.io.StringRef;
+import consulo.language.Language;
+import consulo.language.ast.ASTNode;
+import consulo.language.lexer.Lexer;
+import consulo.language.parser.ParserDefinition;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.parser.PsiBuilderFactory;
+import consulo.language.parser.PsiParser;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.stub.*;
+import consulo.language.version.LanguageVersion;
+import consulo.language.version.LanguageVersionUtil;
+import consulo.project.Project;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
 /**
  * @author yole
@@ -94,7 +89,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 				final Project project = psi.getProject();
 				final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
 				final Language language = getLanguage();
-				final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(language);
+				final ParserDefinition parserDefinition = ParserDefinition.forLanguage(language);
 				if(parserDefinition == null)
 				{
 					return null;
@@ -145,7 +140,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub>
 		}
 		else
 		{
-			final ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage());
+			final ParserDefinition parserDefinition = ParserDefinition.forLanguage(getLanguage());
 			if(parserDefinition == null)
 			{
 				return null;

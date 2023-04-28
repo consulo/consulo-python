@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.VirtualFile;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyExpression;

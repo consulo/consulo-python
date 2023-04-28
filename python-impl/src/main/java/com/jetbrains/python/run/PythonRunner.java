@@ -18,16 +18,16 @@ package com.jetbrains.python.run;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.execution.runners.DefaultProgramRunner;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.RunContentBuilder;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import consulo.process.ExecutionException;
+import consulo.execution.ExecutionResult;
+import consulo.execution.configuration.RunProfile;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.executor.DefaultRunExecutor;
+import consulo.execution.runner.DefaultProgramRunner;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.execution.runner.RunContentBuilder;
+import consulo.execution.ui.RunContentDescriptor;
+import consulo.document.FileDocumentManager;
 
 /**
  * @author yole

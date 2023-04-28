@@ -18,9 +18,9 @@ package com.jetbrains.python.buildout.config.psi.impl;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.NavigatablePsiElement;
+import consulo.language.impl.psi.ASTWrapperPsiElement;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.NavigatablePsiElement;
 
 /**
  * @author traff

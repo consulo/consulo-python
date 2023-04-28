@@ -16,12 +16,6 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.inspections.quickfix.AugmentedAssignmentQuickFix;
@@ -29,15 +23,22 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeChecker;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.ast.TokenSet;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * User: catherine
- *
+ * <p>
  * Inspection to detect assignments that can be replaced with augmented assignments.
  */
+@ExtensionImpl
 public class PyAugmentAssignmentInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -50,7 +51,8 @@ public class PyAugmentAssignmentInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -91,7 +93,8 @@ public class PyAugmentAssignmentInspection extends PyInspection {
                                                     PyTokenTypes.EXP);
         final TokenSet commutativeOperations = TokenSet.create(PyTokenTypes.PLUS, PyTokenTypes.MULT, PyTokenTypes.OR, PyTokenTypes.AND);
         if ((operations.contains(op) && !changedParts) || (changedParts && commutativeOperations.contains(op))) {
-          if (leftExpression.getText().equals(targetText) && (leftExpression instanceof PyReferenceExpression || leftExpression instanceof PySubscriptionExpression)) {
+          if (leftExpression.getText()
+                            .equals(targetText) && (leftExpression instanceof PyReferenceExpression || leftExpression instanceof PySubscriptionExpression)) {
             final PyType type = myTypeEvalContext.getType(rightExpression);
             if (type != null && !PyTypeChecker.isUnknown(type)) {
               final PyBuiltinCache cache = PyBuiltinCache.getInstance(rightExpression);

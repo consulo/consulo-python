@@ -15,49 +15,46 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
+import com.jetbrains.python.PyBundle;
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.fileEditor.FileEditorManager;
+import consulo.language.editor.impl.internal.template.TemplateBuilderImpl;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.navigation.OpenFileDescriptorFactory;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.template.TemplateBuilderImpl;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.jetbrains.python.PyBundle;
+public class PyRenameArgumentQuickFix implements LocalQuickFix {
+  @Nonnull
+  @Override
+  public String getFamilyName() {
+    return PyBundle.message("QFIX.NAME.rename.argument");
+  }
 
-public class PyRenameArgumentQuickFix implements LocalQuickFix
-{
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.rename.argument");
-	}
-
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		final PsiElement element = descriptor.getPsiElement();
-		if(!(element instanceof PsiNamedElement))
-		{
-			return;
-		}
-		final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-		if(virtualFile != null)
-		{
-			final Editor editor = FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, virtualFile), true);
-			final TemplateBuilderImpl builder = new TemplateBuilderImpl(element);
-			final String name = ((PsiNamedElement) element).getName();
-			assert name != null;
-			assert editor != null;
-			builder.replaceElement(element, TextRange.create(0, name.length()), name);
-			builder.run(editor, false);
-		}
-	}
+  @Override
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    final PsiElement element = descriptor.getPsiElement();
+    if (!(element instanceof PsiNamedElement)) {
+      return;
+    }
+    final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+    if (virtualFile != null) {
+      final Editor editor = FileEditorManager.getInstance(project)
+                                             .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
+                                                             true);
+      final TemplateBuilderImpl builder = new TemplateBuilderImpl(element);
+      final String name = ((PsiNamedElement)element).getName();
+      assert name != null;
+      assert editor != null;
+      builder.replaceElement(element, TextRange.create(0, name.length()), name);
+      builder.run(editor, false);
+    }
+  }
 
 }

@@ -16,7 +16,7 @@
 package com.jetbrains.python.packaging;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.projectRoots.Sdk;
+import consulo.content.bundle.Sdk;
 
 /**
  * @author vlan

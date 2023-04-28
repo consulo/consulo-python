@@ -15,13 +15,16 @@
  */
 package com.jetbrains.python.run;
 
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.execution.action.Location;
+import consulo.language.psi.PsiFile;
+import consulo.module.Module;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.execution.Location;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiFile;
-import com.jetbrains.python.psi.types.TypeEvalContext;
 
 /**
  * Filters out Python scripts for which it doesn't make sense to run the standard Python configuration,
@@ -29,9 +32,9 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  *
  * @author yole
  */
-public interface RunnableScriptFilter
-{
-	ExtensionPointName<RunnableScriptFilter> EP_NAME = ExtensionPointName.create("consulo.python.runnableScriptFilter");
+@ExtensionAPI(ComponentScope.APPLICATION)
+public interface RunnableScriptFilter {
+  ExtensionPointName<RunnableScriptFilter> EP_NAME = ExtensionPointName.create(RunnableScriptFilter.class);
 
-	boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable TypeEvalContext context);
+  boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable TypeEvalContext context);
 }

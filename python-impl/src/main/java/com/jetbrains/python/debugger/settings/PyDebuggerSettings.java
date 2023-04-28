@@ -15,140 +15,122 @@
  */
 package com.jetbrains.python.debugger.settings;
 
-import static java.util.Collections.singletonList;
+import consulo.configurable.Configurable;
+import consulo.configurable.IdeaSimpleConfigurable;
+import consulo.execution.debug.setting.DebuggerSettingsCategory;
+import consulo.execution.debug.setting.XDebuggerSettings;
+import consulo.ide.impl.idea.openapi.util.Getter;
+import consulo.project.Project;
+import consulo.util.collection.SmartList;
+import consulo.util.xml.serializer.XmlSerializerUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.SimpleConfigurable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Getter;
-import com.intellij.util.SmartList;
-import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.intellij.xdebugger.settings.DebuggerSettingsCategory;
-import com.intellij.xdebugger.settings.XDebuggerSettings;
+import static java.util.Collections.singletonList;
 
 
-public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> implements Getter<PyDebuggerSettings>
-{
-	private boolean myLibrariesFilterEnabled;
-	private boolean mySteppingFiltersEnabled;
-	private
-	@Nonnull
-	List<PySteppingFilter> mySteppingFilters;
-	public static final String FILTERS_DIVIDER = ";";
-	private boolean myWatchReturnValues = false;
-	private boolean mySimplifiedView = true;
+public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> implements Getter<PyDebuggerSettings> {
+  private boolean myLibrariesFilterEnabled;
+  private boolean mySteppingFiltersEnabled;
+  private
+  @Nonnull
+  List<PySteppingFilter> mySteppingFilters;
+  public static final String FILTERS_DIVIDER = ";";
+  private boolean myWatchReturnValues = false;
+  private boolean mySimplifiedView = true;
 
-	public PyDebuggerSettings()
-	{
-		super("python");
-		mySteppingFilters = new SmartList<>();
-	}
+  public PyDebuggerSettings() {
+    super("python");
+    mySteppingFilters = new SmartList<>();
+  }
 
-	public boolean isWatchReturnValues()
-	{
-		return myWatchReturnValues;
-	}
+  public boolean isWatchReturnValues() {
+    return myWatchReturnValues;
+  }
 
-	public void setWatchReturnValues(boolean watchReturnValues)
-	{
-		myWatchReturnValues = watchReturnValues;
-	}
+  public void setWatchReturnValues(boolean watchReturnValues) {
+    myWatchReturnValues = watchReturnValues;
+  }
 
-	public boolean isSimplifiedView()
-	{
-		return mySimplifiedView;
-	}
+  public boolean isSimplifiedView() {
+    return mySimplifiedView;
+  }
 
-	public void setSimplifiedView(boolean simplifiedView)
-	{
-		mySimplifiedView = simplifiedView;
-	}
+  public void setSimplifiedView(boolean simplifiedView) {
+    mySimplifiedView = simplifiedView;
+  }
 
-	public static PyDebuggerSettings getInstance()
-	{
-		return getInstance(PyDebuggerSettings.class);
-	}
+  public static PyDebuggerSettings getInstance() {
+    return getInstance(PyDebuggerSettings.class);
+  }
 
-	public boolean isLibrariesFilterEnabled()
-	{
-		return myLibrariesFilterEnabled;
-	}
+  public boolean isLibrariesFilterEnabled() {
+    return myLibrariesFilterEnabled;
+  }
 
-	public void setLibrariesFilterEnabled(boolean librariesFilterEnabled)
-	{
-		myLibrariesFilterEnabled = librariesFilterEnabled;
-	}
+  public void setLibrariesFilterEnabled(boolean librariesFilterEnabled) {
+    myLibrariesFilterEnabled = librariesFilterEnabled;
+  }
 
-	public boolean isSteppingFiltersEnabled()
-	{
-		return mySteppingFiltersEnabled;
-	}
+  public boolean isSteppingFiltersEnabled() {
+    return mySteppingFiltersEnabled;
+  }
 
-	public void setSteppingFiltersEnabled(boolean steppingFiltersEnabled)
-	{
-		mySteppingFiltersEnabled = steppingFiltersEnabled;
-	}
+  public void setSteppingFiltersEnabled(boolean steppingFiltersEnabled) {
+    mySteppingFiltersEnabled = steppingFiltersEnabled;
+  }
 
-	@Nonnull
-	public List<PySteppingFilter> getSteppingFilters()
-	{
-		return mySteppingFilters;
-	}
+  @Nonnull
+  public List<PySteppingFilter> getSteppingFilters() {
+    return mySteppingFilters;
+  }
 
-	@Nonnull
-	public String getSteppingFiltersForProject(@Nonnull Project project)
-	{
-		StringBuilder sb = new StringBuilder();
-		for(PySteppingFilter filter : mySteppingFilters)
-		{
-			if(filter.isEnabled())
-			{
-				sb.append(filter.getAbsolutePlatformIndependentFilter(project)).append(FILTERS_DIVIDER);
-			}
-		}
-		return sb.toString();
-	}
+  @Nonnull
+  public String getSteppingFiltersForProject(@Nonnull Project project) {
+    StringBuilder sb = new StringBuilder();
+    for (PySteppingFilter filter : mySteppingFilters) {
+      if (filter.isEnabled()) {
+        sb.append(filter.getAbsolutePlatformIndependentFilter(project)).append(FILTERS_DIVIDER);
+      }
+    }
+    return sb.toString();
+  }
 
-	public void setSteppingFilters(@Nonnull List<PySteppingFilter> steppingFilters)
-	{
-		mySteppingFilters = steppingFilters;
-	}
+  public void setSteppingFilters(@Nonnull List<PySteppingFilter> steppingFilters) {
+    mySteppingFilters = steppingFilters;
+  }
 
-	@Nullable
-	@Override
-	public PyDebuggerSettings getState()
-	{
-		return this;
-	}
+  @Nullable
+  @Override
+  public PyDebuggerSettings getState() {
+    return this;
+  }
 
-	@Override
-	public void loadState(PyDebuggerSettings state)
-	{
-		XmlSerializerUtil.copyBean(state, this);
-	}
+  @Override
+  public void loadState(PyDebuggerSettings state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
 
-	@Nonnull
-	@Override
-	public Collection<? extends Configurable> createConfigurables(@Nonnull DebuggerSettingsCategory category)
-	{
-		switch(category)
-		{
-			case STEPPING:
-				return singletonList(SimpleConfigurable.create("python.debug.configurable", "Python", PyDebuggerSteppingConfigurableUi.class, this));
-			default:
-				return Collections.emptyList();
-		}
-	}
+  @Nonnull
+  @Override
+  public Collection<? extends Configurable> createConfigurables(@Nonnull DebuggerSettingsCategory category) {
+    switch (category) {
+      case STEPPING:
+        return singletonList(IdeaSimpleConfigurable.create("python.debug.configurable",
+                                                           "Python",
+                                                           PyDebuggerSteppingConfigurableUi.class,
+                                                           this));
+      default:
+        return Collections.emptyList();
+    }
+  }
 
-	@Override
-	public PyDebuggerSettings get()
-	{
-		return this;
-	}
+  @Override
+  public PyDebuggerSettings get() {
+    return this;
+  }
 }

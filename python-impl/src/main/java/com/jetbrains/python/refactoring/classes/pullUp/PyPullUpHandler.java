@@ -17,8 +17,8 @@ package com.jetbrains.python.refactoring.classes.pullUp;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.refactoring.classes.PyClassRefactoringHandler;

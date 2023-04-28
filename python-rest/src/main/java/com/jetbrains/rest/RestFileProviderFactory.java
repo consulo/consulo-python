@@ -16,19 +16,31 @@
 
 package com.jetbrains.rest;
 
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.file.FileViewProvider;
+import consulo.language.file.LanguageFileViewProviderFactory;
+import consulo.language.psi.PsiManager;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
-import com.intellij.lang.Language;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.FileViewProviderFactory;
-import com.intellij.psi.PsiManager;
 
 /**
  * User : catherine
  */
-public class RestFileProviderFactory implements FileViewProviderFactory {
+@ExtensionImpl
+public class RestFileProviderFactory implements LanguageFileViewProviderFactory
+{
+	@Override
+	public FileViewProvider createFileViewProvider(@Nonnull VirtualFile virtualFile, Language language, @Nonnull PsiManager psiManager, boolean physical)
+	{
+		return new RestFileViewProvider(psiManager, virtualFile, physical);
+	}
 
-    public FileViewProvider createFileViewProvider(@Nonnull VirtualFile virtualFile, Language language, @Nonnull PsiManager psiManager, boolean physical) {
-        return new RestFileViewProvider(psiManager, virtualFile, physical);
-    }
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return RestLanguage.INSTANCE;
+	}
 }

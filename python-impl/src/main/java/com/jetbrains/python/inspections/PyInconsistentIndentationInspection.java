@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.scheme.InspectionManager;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.inspections.quickfix.ConvertIndentsFix;
@@ -36,6 +37,7 @@ import java.util.List;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyInconsistentIndentationInspection extends PyInspection {
   @Nls
   @Nonnull

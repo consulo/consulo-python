@@ -20,11 +20,11 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.cmd.ParamsGroup;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonHelper;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;

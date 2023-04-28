@@ -15,11 +15,11 @@
  */
 package com.jetbrains.python.debugger;
 
-import com.intellij.execution.console.LanguageConsoleView;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.xdebugger.XDebugSessionListener;
 import com.jetbrains.python.console.PydevConsoleExecuteActionHandler;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
+import consulo.execution.debug.event.XDebugSessionListener;
+import consulo.execution.ui.console.language.LanguageConsoleView;
+import consulo.process.ProcessHandler;
 
 /**
  * @author traff

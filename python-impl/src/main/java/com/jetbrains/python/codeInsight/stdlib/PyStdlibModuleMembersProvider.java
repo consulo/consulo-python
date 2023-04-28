@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
+import consulo.application.util.SystemInfo;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.resolve.ResolveImportUtil;

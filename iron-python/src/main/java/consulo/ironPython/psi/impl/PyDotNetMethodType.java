@@ -16,14 +16,6 @@
 
 package consulo.ironPython.psi.impl;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyCallSiteExpression;
 import com.jetbrains.python.psi.PyExpression;
@@ -34,6 +26,14 @@ import com.jetbrains.python.psi.types.PyCallableType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.dotnet.psi.DotNetLikeMethodDeclaration;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ProcessingContext;
+import consulo.util.collection.ArrayUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author yole

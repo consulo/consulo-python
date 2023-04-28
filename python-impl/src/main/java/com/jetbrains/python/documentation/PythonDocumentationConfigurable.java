@@ -28,13 +28,13 @@ import org.jetbrains.annotations.Nls;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.ui.AddEditRemovePanel;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
+import consulo.configurable.Configurable;
+import consulo.configurable.ConfigurationException;
+import consulo.configurable.SearchableConfigurable;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awt.AddEditRemovePanel;
+import consulo.ui.ex.awt.ColoredTableCellRenderer;
+import consulo.ui.ex.SimpleTextAttributes;
 
 /**
  * @author yole

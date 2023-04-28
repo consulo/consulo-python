@@ -15,25 +15,24 @@
  */
 package com.jetbrains.python.templateLanguages;
 
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.ElementManipulators;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelperRegistrar;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiFileSystemItemUtil;
-import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.psi.WeakFileReference;
+import consulo.document.util.TextRange;
+import consulo.language.inject.InjectedLanguageManager;
+import consulo.language.psi.ElementManipulators;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.path.FileReferenceHelper;
+import consulo.language.psi.path.FileReferenceHelperRegistrar;
+import consulo.language.psi.path.FileReferenceSet;
+import consulo.language.psi.path.PsiFileSystemItemUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collection;
 
 /**
@@ -90,8 +89,8 @@ public class TemplateFileReference extends WeakFileReference {
         for (PsiFileSystemItem context : contexts) {
           final VirtualFile contextFile = context.getVirtualFile();
           assert contextFile != null;
-          if (VfsUtil.isAncestor(contextFile, dstVFile, true)) {
-            final String path = VfsUtilCore.getRelativePath(dstVFile, contextFile, '/');
+          if (VirtualFileUtil.isAncestor(contextFile, dstVFile, true)) {
+            final String path = VirtualFileUtil.getRelativePath(dstVFile, contextFile, '/');
             if (path != null) {
               return rename(path.replace("/", getFileReferenceSet().getSeparatorString()));
             }

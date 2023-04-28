@@ -18,17 +18,17 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
 
+import consulo.language.impl.file.SingleRootFileViewProvider;
+import consulo.language.impl.internal.psi.PsiManagerEx;
 import org.jetbrains.annotations.NonNls;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.SingleRootFileViewProvider;
-import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.psi.impl.file.impl.FileManager;
-import com.intellij.psi.impl.source.tree.FileElement;
-import com.intellij.testFramework.LightVirtualFile;
+import consulo.language.file.FileTypeManager;
+import consulo.project.Project;
+import consulo.language.file.FileViewProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiManager;
+import consulo.language.impl.internal.file.FileManager;
+import consulo.language.impl.ast.FileElement;
+import consulo.language.file.light.LightVirtualFile;
 import com.jetbrains.python.psi.PyExpressionCodeFragment;
 
 /**

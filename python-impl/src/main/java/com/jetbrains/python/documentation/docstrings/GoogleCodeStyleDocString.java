@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.util.lang.Pair;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.toolbox.Substring;
 
 /**

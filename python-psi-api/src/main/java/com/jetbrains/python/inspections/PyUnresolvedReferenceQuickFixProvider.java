@@ -16,16 +16,20 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiReference;
-import com.intellij.util.Consumer;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.psi.PsiReference;
+
+import java.util.function.Consumer;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyUnresolvedReferenceQuickFixProvider {
-  ExtensionPointName<PyUnresolvedReferenceQuickFixProvider> EP_NAME = ExtensionPointName.create("consulo.python.unresolvedReferenceQuickFixProvider");
+  ExtensionPointName<PyUnresolvedReferenceQuickFixProvider> EP_NAME = ExtensionPointName.create(PyUnresolvedReferenceQuickFixProvider.class);
 
   void registerQuickFixes(PsiReference reference, Consumer<LocalQuickFix> fixConsumer);
 }

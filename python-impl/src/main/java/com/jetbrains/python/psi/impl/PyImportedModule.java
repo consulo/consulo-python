@@ -17,11 +17,11 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.impl.light.LightElement;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.impl.psi.LightElement;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportElement;

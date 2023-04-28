@@ -15,62 +15,52 @@
  */
 package com.jetbrains.python.debugger;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.util.Ref;
 import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
-import com.jetbrains.python.psi.types.PyDynamicallyEvaluatedType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.PyTypeParser;
-import com.jetbrains.python.psi.types.PyTypeProviderBase;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.psi.types.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.util.lang.ref.Ref;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
-public class PyCallSignatureTypeProvider extends PyTypeProviderBase
-{
-	@Override
-	public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param, @Nonnull final PyFunction func, @Nonnull TypeEvalContext context)
-	{
-		final String name = param.getName();
-		if(name != null)
-		{
-			final String typeName = PySignatureCacheManager.getInstance(param.getProject()).findParameterType(func, name);
-			if(typeName != null)
-			{
-				final PyType type = PyTypeParser.getTypeByName(param, typeName);
-				if(type != null)
-				{
-					return Ref.create(PyDynamicallyEvaluatedType.create(type));
-				}
-			}
-		}
-		return null;
-	}
+@ExtensionImpl
+public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
+  @Override
+  public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param,
+                                      @Nonnull final PyFunction func,
+                                      @Nonnull TypeEvalContext context) {
+    final String name = param.getName();
+    if (name != null) {
+      final String typeName = PySignatureCacheManager.getInstance(param.getProject()).findParameterType(func, name);
+      if (typeName != null) {
+        final PyType type = PyTypeParser.getTypeByName(param, typeName);
+        if (type != null) {
+          return Ref.create(PyDynamicallyEvaluatedType.create(type));
+        }
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Ref<PyType> getReturnType(@Nonnull final PyCallable callable, @Nonnull TypeEvalContext context)
-	{
-		if(callable instanceof PyFunction)
-		{
-			PyFunction function = (PyFunction) callable;
-			PySignature signature = PySignatureCacheManager.getInstance(function.getProject()).findSignature(function);
-			if(signature != null && signature.getReturnType() != null)
-			{
-				final String typeName = signature.getReturnType().getTypeQualifiedName();
-				if(typeName != null)
-				{
-					final PyType type = PyTypeParser.getTypeByName(function, typeName);
-					if(type != null)
-					{
-						return Ref.create(PyDynamicallyEvaluatedType.create(type));
-					}
-				}
-			}
-		}
-		return null;
-	}
+  @Override
+  public Ref<PyType> getReturnType(@Nonnull final PyCallable callable, @Nonnull TypeEvalContext context) {
+    if (callable instanceof PyFunction) {
+      PyFunction function = (PyFunction)callable;
+      PySignature signature = PySignatureCacheManager.getInstance(function.getProject()).findSignature(function);
+      if (signature != null && signature.getReturnType() != null) {
+        final String typeName = signature.getReturnType().getTypeQualifiedName();
+        if (typeName != null) {
+          final PyType type = PyTypeParser.getTypeByName(function, typeName);
+          if (type != null) {
+            return Ref.create(PyDynamicallyEvaluatedType.create(type));
+          }
+        }
+      }
+    }
+    return null;
+  }
 }

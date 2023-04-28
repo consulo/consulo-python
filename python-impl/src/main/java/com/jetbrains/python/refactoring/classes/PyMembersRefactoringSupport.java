@@ -15,23 +15,28 @@
  */
 package com.jetbrains.python.refactoring.classes;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.classMembers.ClassMembersRefactoringSupport;
-import com.intellij.refactoring.classMembers.DependentMembersCollectorBase;
-import com.intellij.refactoring.classMembers.MemberInfoBase;
+import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.editor.refactoring.classMember.ClassMembersRefactoringSupport;
+import consulo.language.editor.refactoring.classMember.DependentMembersCollectorBase;
+import consulo.language.editor.refactoring.classMember.MemberInfoBase;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.refactoring.move.moduleMembers.PyDependentModuleMembersCollector;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Dennis.Ushakov
  */
+@ExtensionImpl
 public class PyMembersRefactoringSupport implements ClassMembersRefactoringSupport
 {
-
 	public static PyMemberInfoStorage getSelectedMemberInfos(PyClass clazz, PsiElement element1, PsiElement element2)
 	{
 		final PyMemberInfoStorage infoStorage = new PyMemberInfoStorage(clazz);
@@ -59,5 +64,12 @@ public class PyMembersRefactoringSupport implements ClassMembersRefactoringSuppo
 	public boolean isProperMember(MemberInfoBase member)
 	{
 		return true;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

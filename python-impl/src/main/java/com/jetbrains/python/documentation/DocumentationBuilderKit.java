@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jetbrains.annotations.NonNls;
-import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
-import com.intellij.xml.util.XmlStringUtil;
+import consulo.language.editor.documentation.DocumentationManagerProtocol;
+import consulo.util.lang.xml.XmlStringUtil;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.toolbox.ChainIterable;

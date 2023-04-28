@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.EnvironmentUtil;
+import consulo.util.lang.StringUtil;
+import consulo.process.local.EnvironmentUtil;
 
 /**
  * @author traff

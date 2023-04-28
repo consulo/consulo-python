@@ -20,9 +20,9 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import com.google.common.base.Preconditions;
-import com.intellij.openapi.project.Project;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
+import consulo.project.Project;
+import consulo.language.editor.refactoring.BaseRefactoringProcessor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyUtil;

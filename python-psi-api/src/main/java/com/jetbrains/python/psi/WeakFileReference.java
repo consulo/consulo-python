@@ -15,9 +15,9 @@
  */
 package com.jetbrains.python.psi;
 
-import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
+import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.document.util.TextRange;
+import consulo.language.psi.path.FileReferenceSet;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import javax.annotation.Nullable;
 

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 
 /** How we refer to a name */
 public enum AccessDirection {

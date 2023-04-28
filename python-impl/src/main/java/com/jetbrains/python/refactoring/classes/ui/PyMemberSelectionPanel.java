@@ -27,9 +27,9 @@ import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 
 import com.google.common.base.Preconditions;
-import com.intellij.refactoring.classMembers.MemberInfoModel;
-import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.ScrollPaneFactory;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.ui.ex.awt.IdeBorderFactory;
+import consulo.ui.ex.awt.ScrollPaneFactory;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 
@@ -46,7 +46,7 @@ public class PyMemberSelectionPanel extends JPanel
 
 
 	/**
-	 * Creates empty panel to be filled later by {@link #init(com.intellij.refactoring.classMembers.MemberInfoModel, java.util.Collection)}
+	 * Creates empty panel to be filled later by {@link #init(MemberInfoModel, java.util.Collection)}
 	 *
 	 * @param title
 	 */
@@ -56,7 +56,7 @@ public class PyMemberSelectionPanel extends JPanel
 	}
 
 	/**
-	 * Creates panel and fills its table (see {@link #init(com.intellij.refactoring.classMembers.MemberInfoModel, java.util.Collection)} ) with members info
+	 * Creates panel and fills its table (see {@link #init(MemberInfoModel, java.util.Collection)} ) with members info
 	 *
 	 * @param title      Title for panel
 	 * @param memberInfo list of members

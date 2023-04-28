@@ -18,8 +18,8 @@ package com.jetbrains.python.refactoring.changeSignature;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.Language;
-import com.intellij.refactoring.changeSignature.ChangeInfo;
+import consulo.language.Language;
+import consulo.language.editor.refactoring.changeSignature.ChangeInfo;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFunction;

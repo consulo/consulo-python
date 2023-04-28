@@ -16,9 +16,10 @@
 
 package com.jetbrains.python.documentation.doctest;
 
-import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.HighlightErrorFilter;
+import consulo.language.psi.PsiErrorElement;
+import consulo.language.psi.PsiFile;
 import javax.annotation.Nonnull;
 
 /**
@@ -26,6 +27,7 @@ import javax.annotation.Nonnull;
  *
  * Do not highlight syntax errors in doctests
  */
+@ExtensionImpl
 public class PyDocstringErrorFilter extends HighlightErrorFilter {
 
   public boolean shouldHighlightErrorElement(@Nonnull final PsiErrorElement element) {

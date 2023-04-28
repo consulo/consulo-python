@@ -15,20 +15,6 @@
  */
 package com.jetbrains.python.codeInsight.testIntegration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testIntegration.TestFinder;
-import com.intellij.testIntegration.TestFinderHelper;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyFunction;
@@ -37,10 +23,25 @@ import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.testing.PythonUnitTestUtil;
 import com.jetbrains.python.testing.doctest.PythonDocTestUtil;
 import com.jetbrains.python.testing.pytest.PyTestUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.testIntegration.TestFinder;
+import consulo.language.editor.testIntegration.TestFinderHelper;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.Pair;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User : catherine
  */
+@ExtensionImpl
 public class PyTestFinder implements TestFinder
 {
 	public PyDocStringOwner findSourceElement(@Nonnull PsiElement element)

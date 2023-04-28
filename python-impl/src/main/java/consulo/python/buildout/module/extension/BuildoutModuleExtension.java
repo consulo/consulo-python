@@ -16,53 +16,46 @@
 
 package consulo.python.buildout.module.extension;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.ParametersList;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.text.LineTokenizer;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.facet.FacetLibraryConfigurator;
 import com.jetbrains.python.facet.LibraryContributingFacet;
 import com.jetbrains.python.facet.PythonPathContributingFacet;
 import com.jetbrains.python.run.PythonCommandLineState;
 import com.jetbrains.python.sdk.PythonEnvUtil;
-import consulo.module.extension.impl.ModuleExtensionImpl;
-import consulo.roots.ModuleRootLayer;
+import consulo.application.util.LineTokenizer;
+import consulo.application.util.SystemInfo;
+import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
+import consulo.language.util.ModuleUtilCore;
+import consulo.logging.Logger;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.extension.ModuleExtensionBase;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.cmd.ParametersList;
+import consulo.process.cmd.ParamsGroup;
+import consulo.project.Project;
+import consulo.project.ProjectManager;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author VISTALL
  * @since 20.10.13.
  */
-public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleExtension> implements PythonPathContributingFacet, LibraryContributingFacet
+public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleExtension> implements PythonPathContributingFacet, LibraryContributingFacet
 {
 	private static final Logger LOGGER = Logger.getInstance(BuildoutModuleExtension.class);
 
@@ -137,7 +130,7 @@ public class BuildoutModuleExtension extends ModuleExtensionImpl<BuildoutModuleE
 					{
 						return name.endsWith("-script.py");
 					}
-					String ext = FileUtilRt.getExtension(name);
+					String ext = FileUtil.getExtension(name);
 					return ext.length() == 0 || FileUtil.namesEqual(ext, "py");
 				}
 			});

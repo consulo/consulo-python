@@ -21,20 +21,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.intellij.ide.projectView.PresentationData;
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.BasePsiNode;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.Project;
+import consulo.project.ui.view.tree.BasePsiNode;
+import consulo.project.ui.view.tree.ViewSettings;
+import consulo.ui.ex.tree.PresentationData;
+import consulo.project.ui.view.tree.AbstractTreeNode;
+import consulo.project.Project;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.language.icon.IconDescriptorUpdaters;
 
 /**
  * @author yole
  */
-public class PyElementNode extends BasePsiNode<PyElement> {
+public class PyElementNode extends BasePsiNode<PyElement>
+{
   public PyElementNode(Project project, PyElement value, ViewSettings viewSettings) {
     super(project, value, viewSettings);
   }

@@ -23,11 +23,11 @@
 		<extensionPoint name="importResolver" interface="com.jetbrains.python.psi.impl.PyImportResolver"/>
 		<extensionPoint name="sdkFlavor" interface="com.jetbrains.python.sdk.flavors.PythonSdkFlavor"/>
 		<extensionPoint name="typeProvider" interface="com.jetbrains.python.psi.impl.PyTypeProvider"/>
-		<extensionPoint name="pySuperMethodsSearch" interface="com.intellij.util.QueryExecutor"/>
-		<extensionPoint name="pyClassInheritorsSearch" interface="com.intellij.util.QueryExecutor"/>
+		<extensionPoint name="pySuperMethodsSearch" interface="consulo.application.util.query.QueryExecutor"/>
+		<extensionPoint name="pyClassInheritorsSearch" interface="consulo.application.util.query.QueryExecutor"/>
 		<extensionPoint name="pyClassMembersProvider" interface="com.jetbrains.python.psi.types.PyClassMembersProvider"/>
 		<extensionPoint name="pyModuleMembersProvider" interface="com.jetbrains.python.psi.types.PyModuleMembersProvider"/>
-		<extensionPoint name="pyOverridingMethodsSearch" interface="com.intellij.util.QueryExecutor"/>
+		<extensionPoint name="pyOverridingMethodsSearch" interface="consulo.application.util.query.QueryExecutor"/>
 		<extensionPoint name="runnableScriptFilter" interface="com.jetbrains.python.run.RunnableScriptFilter"/>
 		<extensionPoint name="runnableUnitTestFilter" interface="com.jetbrains.python.testing.RunnableUnitTestFilter"/>
 		<extensionPoint name="unresolvedReferenceQuickFixProvider"
@@ -47,7 +47,6 @@
 		<extensionPoint name="canonicalPathProvider" interface="com.jetbrains.python.psi.resolve.PyCanonicalPathProvider"/>
 		<extensionPoint name="templateContextProvider" interface="com.jetbrains.python.templateLanguages.TemplateContextProvider"/>
 		<extensionPoint name="pyReferenceResolveProvider" interface="com.jetbrains.python.psi.resolve.PyReferenceResolveProvider"/>
-		<extensionPoint name="breakpointHandler" interface="com.jetbrains.python.debugger.PyBreakpointHandlerFactory"/>
 		<extensionPoint name="consoleOptionsProvider" interface="com.jetbrains.python.console.PyConsoleOptionsProvider"/>
 		<extensionPoint name="documentationQuickInfoProvider" interface="com.jetbrains.python.documentation.PythonDocumentationQuickInfoProvider"/>
 		<extensionPoint name="debugSessionFactory" interface="com.jetbrains.python.debugger.PyDebugSessionFactory"/>

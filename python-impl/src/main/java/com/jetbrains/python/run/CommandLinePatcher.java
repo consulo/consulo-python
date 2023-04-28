@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.run;
 
-import com.intellij.execution.configurations.GeneralCommandLine;
+import consulo.process.cmd.GeneralCommandLine;
 
 /**
  * @author yole

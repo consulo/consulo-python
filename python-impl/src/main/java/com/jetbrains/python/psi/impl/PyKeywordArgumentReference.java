@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.*;
+import consulo.document.util.TextRange;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

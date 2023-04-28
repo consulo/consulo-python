@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.impl.references;
 
-import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFromImportStatement;
 import com.jetbrains.python.psi.impl.PyReferenceExpressionImpl;

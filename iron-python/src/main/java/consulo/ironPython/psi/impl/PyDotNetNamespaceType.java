@@ -16,21 +16,6 @@
 
 package consulo.ironPython.psi.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.ProcessingContext;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.impl.ResolveResultList;
@@ -38,9 +23,24 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyType;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
-import consulo.dotnet.resolve.DotNetNamespaceAsElement;
-import consulo.dotnet.resolve.DotNetPsiSearcher;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.dotnet.psi.resolve.DotNetNamespaceAsElement;
+import consulo.dotnet.psi.resolve.DotNetPsiSearcher;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.util.ProcessingContext;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.project.content.scope.ProjectScopes;
+import consulo.util.collection.ArrayUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author yole
@@ -83,7 +83,7 @@ public class PyDotNetNamespaceType implements PyType
 
 	private GlobalSearchScope getScope(Project project)
 	{
-		return myModule != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule, false) : ProjectScope.getAllScope(project);
+		return myModule != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule, false) : (GlobalSearchScope) ProjectScopes.getAllScope(project);
 	}
 
 	@Override

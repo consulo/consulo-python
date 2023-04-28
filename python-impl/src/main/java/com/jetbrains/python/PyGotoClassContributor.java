@@ -16,29 +16,37 @@
 
 package com.jetbrains.python;
 
-import com.intellij.navigation.ChooseByNameContributor;
-import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ArrayUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.stubs.PyClassNameIndex;
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.util.function.Processor;
+import consulo.content.scope.SearchScope;
+import consulo.ide.navigation.GotoClassOrTypeContributor;
+import consulo.language.psi.search.FindSymbolParameters;
+import consulo.language.psi.stub.IdFilter;
+import consulo.language.psi.stub.StubIndex;
+import consulo.navigation.NavigationItem;
+import consulo.project.content.scope.ProjectAwareSearchScope;
 
-import java.util.Collection;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
-public class PyGotoClassContributor implements ChooseByNameContributor {
-  @Nonnull
-  public String[] getNames(final Project project, final boolean includeNonProjectItems) {
-    final Collection<String> classNames = PyClassNameIndex.allKeys(project);
-    return ArrayUtil.toStringArray(classNames);
-  }
+@ExtensionImpl
+public class PyGotoClassContributor implements GotoClassOrTypeContributor
+{
+	@Override
+	public void processNames(@Nonnull Processor<String> processor, @Nonnull SearchScope searchScope, @Nullable IdFilter idFilter)
+	{
+		StubIndex.getInstance().processAllKeys(PyClassNameIndex.KEY, processor, (ProjectAwareSearchScope) searchScope, idFilter);
+	}
 
-  @Nonnull
-  public NavigationItem[] getItemsByName(final String name, final String pattern, final Project project, final boolean includeNonProjectItems) {
-    final Collection<PyClass> classes = PyClassNameIndex.find(name, project, includeNonProjectItems);
-    return classes.toArray(new NavigationItem[classes.size()]);
-  }
+	@Override
+	public void processElementsWithName(@Nonnull String s, @Nonnull Processor<NavigationItem> processor, @Nonnull FindSymbolParameters findSymbolParameters)
+	{
+		StubIndex.getInstance().processElements(PyClassNameIndex.KEY, s, findSymbolParameters.getProject(), findSymbolParameters.getSearchScope(), findSymbolParameters.getIdFilter(), PyClass.class,
+				processor);
+	}
 }

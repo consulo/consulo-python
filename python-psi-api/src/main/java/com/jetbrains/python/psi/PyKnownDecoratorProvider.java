@@ -16,14 +16,18 @@
 
 package com.jetbrains.python.psi;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+
 import javax.annotation.Nullable;
-import com.intellij.openapi.extensions.ExtensionPointName;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyKnownDecoratorProvider {
-  ExtensionPointName<PyKnownDecoratorProvider> EP_NAME = ExtensionPointName.create("consulo.python.knownDecoratorProvider");
+  ExtensionPointName<PyKnownDecoratorProvider> EP_NAME = ExtensionPointName.create(PyKnownDecoratorProvider.class);
 
   @Nullable
   String toKnownDecorator(String decoratorName);

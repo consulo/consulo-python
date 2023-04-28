@@ -16,15 +16,6 @@
 
 package com.jetbrains.python.refactoring.introduce;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.refactoring.NamesValidator;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;
@@ -32,7 +23,14 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.refactoring.PyReplaceExpressionUtil;
+import consulo.document.util.TextRange;
+import consulo.language.editor.refactoring.NamesValidator;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -42,7 +40,7 @@ import javax.annotation.Nullable;
  * Time: 4:20:13 PM
  */
 public abstract class IntroduceValidator {
-  private final NamesValidator myNamesValidator = LanguageNamesValidation.INSTANCE.forLanguage(PythonLanguage.getInstance());
+  private final NamesValidator myNamesValidator = NamesValidator.forLanguage(PythonLanguage.getInstance());
 
   public boolean isNameValid(final String name, final Project project) {
     return (name != null) &&

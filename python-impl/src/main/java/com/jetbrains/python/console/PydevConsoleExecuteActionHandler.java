@@ -15,23 +15,6 @@
  */
 package com.jetbrains.python.console;
 
-import java.awt.Font;
-
-import javax.annotation.Nonnull;
-import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.execution.console.LanguageConsoleView;
-import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.console.pydev.ConsoleCommunicationListener;
@@ -39,6 +22,23 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStatementList;
+import consulo.application.ApplicationManager;
+import consulo.colorScheme.TextAttributes;
+import consulo.document.Document;
+import consulo.document.RangeMarker;
+import consulo.execution.ui.console.ConsoleViewContentType;
+import consulo.execution.ui.console.language.LanguageConsoleView;
+import consulo.execution.ui.console.language.ProcessBackedConsoleExecuteActionHandler;
+import consulo.language.codeStyle.CodeStyleSettingsManager;
+import consulo.language.editor.hint.HintManager;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.process.ProcessHandler;
+import consulo.project.Project;
+import consulo.undoRedo.CommandProcessor;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
 
 /**
  * @author traff

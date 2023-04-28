@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.sdk;
 
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Comparing;
+import consulo.content.bundle.Sdk;
+import consulo.util.lang.Comparing;
 import com.jetbrains.python.sdk.flavors.CPythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 

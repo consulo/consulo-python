@@ -18,7 +18,7 @@ package com.jetbrains.python.validation;
 
 import javax.annotation.Nullable;
 
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyBreakStatement;
 import com.jetbrains.python.psi.PyClass;

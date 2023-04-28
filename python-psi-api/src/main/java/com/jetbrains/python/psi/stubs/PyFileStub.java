@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.psi.stubs.PsiFileStub;
+import consulo.language.psi.stub.PsiFileStub;
 import com.jetbrains.python.psi.PyFile;
 
 import java.util.BitSet;

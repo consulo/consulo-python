@@ -16,28 +16,21 @@
 
 package com.jetbrains.python;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
-import com.intellij.openapi.util.io.ByteSequence;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.localize.LocalizeValue;
+import consulo.virtualFileSystem.fileType.HashBangFileTypeDetector;
 
 /**
  * @author yole
  */
-public class PyFileTypeDetector implements FileTypeRegistry.FileTypeDetector
-{
-	@Override
-	public FileType detect(@Nonnull VirtualFile file, @Nonnull ByteSequence firstBytes, @Nullable CharSequence firstCharsIfText)
-	{
-		return FileUtil.isHashBangLine(firstCharsIfText, "python") ? PythonFileType.INSTANCE : null;
-	}
+@ExtensionImpl
+public class PyFileTypeDetector extends HashBangFileTypeDetector {
+  public PyFileTypeDetector() {
+    super(PythonFileType.INSTANCE, "python", LocalizeValue.localizeTODO("Python"));
+  }
 
-	@Override
-	public int getVersion()
-	{
-		return 1;
-	}
+  @Override
+  public int getVersion() {
+    return 1;
+  }
 }

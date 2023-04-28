@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.remote;
 
-import com.intellij.remote.RemoteSdkAdditionalData;
+import consulo.ide.impl.idea.remote.RemoteSdkAdditionalData;
 
 /**
  * @author traff

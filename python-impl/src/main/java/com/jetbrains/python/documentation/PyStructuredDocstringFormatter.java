@@ -16,14 +16,14 @@
 package com.jetbrains.python.documentation.docstrings;
 
 import com.google.common.collect.Lists;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiElement;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.local.ProcessOutput;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.language.util.ModuleUtilCore;
+import consulo.content.bundle.Sdk;
+import consulo.util.io.CharsetToolkit;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PythonHelper;
 import com.jetbrains.python.psi.PyIndentUtil;

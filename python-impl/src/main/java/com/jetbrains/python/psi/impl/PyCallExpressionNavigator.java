@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nullable;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.PyCallExpression;
 
 /**

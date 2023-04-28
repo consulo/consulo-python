@@ -16,19 +16,19 @@
 
 package com.jetbrains.python.psi.impl.stubs;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.IStubElementType;
+import consulo.language.psi.stub.StubElement;
+import consulo.language.psi.stub.StubInputStream;
+import consulo.language.psi.stub.StubOutputStream;
+import consulo.index.io.StringRef;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.impl.PyImportElementImpl;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
 import javax.annotation.Nonnull;
 

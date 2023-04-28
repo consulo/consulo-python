@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.buildout.config;
 
-import com.intellij.lang.Language;
+import consulo.language.Language;
 
 /**
  * @author traff

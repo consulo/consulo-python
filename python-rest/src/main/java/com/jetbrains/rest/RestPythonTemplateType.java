@@ -15,10 +15,10 @@
  */
 package com.jetbrains.rest;
 
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.templateLanguages.TemplateDataElementType;
-import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
+import consulo.language.impl.psi.template.TemplateDataElementType;
+import consulo.language.lexer.Lexer;
+import consulo.language.psi.PsiFile;
+import consulo.language.template.TemplateLanguageFileViewProvider;
 import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
 

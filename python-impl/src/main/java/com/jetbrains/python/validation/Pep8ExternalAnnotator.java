@@ -15,6 +15,59 @@
  */
 package com.jetbrains.python.validation;
 
+import com.google.common.collect.ImmutableMap;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.PythonHelper;
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.codeInsight.imports.OptimizeImportsQuickFix;
+import com.jetbrains.python.formatter.PyCodeStyleSettings;
+import com.jetbrains.python.inspections.PyPep8Inspection;
+import com.jetbrains.python.inspections.PyPep8InspectionState;
+import com.jetbrains.python.inspections.quickfix.PyFillParagraphFix;
+import com.jetbrains.python.inspections.quickfix.ReformatFix;
+import com.jetbrains.python.inspections.quickfix.RemoveTrailingBlankLinesFix;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyFileImpl;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.sdk.PreferredSdkComparator;
+import com.jetbrains.python.sdk.PySdkUtil;
+import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationProperties;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.impl.EditorSettingsExternalizable;
+import consulo.content.bundle.Sdk;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.language.Language;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CodeStyleSettingsManager;
+import consulo.language.codeStyle.CommonCodeStyleSettings;
+import consulo.language.editor.annotation.Annotation;
+import consulo.language.editor.annotation.AnnotationHolder;
+import consulo.language.editor.annotation.ExternalAnnotator;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.editor.intention.SyntheticIntentionAction;
+import consulo.language.editor.rawHighlight.HighlightDisplayKey;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.util.IncorrectOperationException;
+import consulo.language.util.ModuleUtilCore;
+import consulo.logging.Logger;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.local.ProcessOutput;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,72 +76,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInsight.daemon.HighlightDisplayKey;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.ex.CustomEditInspectionToolsSettingsAction;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.ExternalAnnotator;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.util.IncorrectOperationException;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.PythonHelper;
-import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.codeInsight.imports.OptimizeImportsQuickFix;
-import com.jetbrains.python.formatter.PyCodeStyleSettings;
-import com.jetbrains.python.inspections.PyPep8Inspection;
-import com.jetbrains.python.inspections.quickfix.PyFillParagraphFix;
-import com.jetbrains.python.inspections.quickfix.ReformatFix;
-import com.jetbrains.python.inspections.quickfix.RemoveTrailingBlankLinesFix;
-import com.jetbrains.python.psi.PyAnnotation;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyKeywordArgument;
-import com.jetbrains.python.psi.PyParameter;
-import com.jetbrains.python.psi.PyUtil;
-import com.jetbrains.python.psi.impl.PyFileImpl;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.sdk.PreferredSdkComparator;
-import com.jetbrains.python.sdk.PySdkUtil;
-import com.jetbrains.python.sdk.PythonSdkType;
-import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import consulo.application.ApplicationProperties;
-
 /**
  * @author yole
  */
+@ExtensionImpl
 public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotator.State, Pep8ExternalAnnotator.Results>
 {
 	// Taken directly from the sources of pycodestyle.py
 	private static final String DEFAULT_IGNORED_ERRORS = "E121,E123,E126,E226,E24,E704,W503";
 	private static final Logger LOG = Logger.getInstance(Pep8ExternalAnnotator.class);
 	private static final Pattern E303_LINE_COUNT_PATTERN = Pattern.compile(".*\\((\\d+)\\)$");
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
+	}
 
 	public static class Problem
 	{
@@ -198,10 +202,11 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 		{
 			return null;
 		}
-		final PyPep8Inspection inspection = (PyPep8Inspection) profile.getUnwrappedTool(PyPep8Inspection.KEY.toString(), file);
+
+		final PyPep8InspectionState toolState = profile.getToolState(PyPep8Inspection.KEY.toString(), file);
 		final CodeStyleSettings currentSettings = CodeStyleSettingsManager.getInstance(file.getProject()).getCurrentSettings();
 
-		final List<String> ignoredErrors = Lists.newArrayList(inspection.ignoredErrors);
+		final List<String> ignoredErrors = new ArrayList<>(toolState.ignoredErrors);
 		if(!currentSettings.getCustomSettings(PyCodeStyleSettings.class).SPACE_AFTER_NUMBER_SIGN)
 		{
 			ignoredErrors.add("E262"); // Block comment should start with a space
@@ -237,7 +242,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 		{
 			return null;
 		}
-		ArrayList<String> options = Lists.newArrayList();
+		ArrayList<String> options = new ArrayList<>();
 
 		if(!collectedInfo.ignoredErrors.isEmpty())
 		{
@@ -248,7 +253,11 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 
 		GeneralCommandLine cmd = PythonHelper.PYCODESTYLE.newCommandLine(collectedInfo.interpreterPath, options);
 
-		ProcessOutput output = PySdkUtil.getProcessOutput(cmd, new File(collectedInfo.interpreterPath).getParent(), ImmutableMap.of("PYTHONBUFFERED", "1"), 10000, collectedInfo.fileText.getBytes(),
+		ProcessOutput output = PySdkUtil.getProcessOutput(cmd,
+				new File(collectedInfo.interpreterPath).getParent(),
+				ImmutableMap.of("PYTHONBUFFERED", "1"),
+				10000,
+				collectedInfo.fileText.getBytes(),
 				false);
 
 		Results results = new Results(collectedInfo.level);
@@ -382,12 +391,16 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 					annotation.registerUniversalFix(new ReformatFix(), null, null);
 				}
 				annotation.registerFix(new IgnoreErrorFix(problem.myCode));
-				annotation.registerFix(new CustomEditInspectionToolsSettingsAction(HighlightDisplayKey.find(PyPep8Inspection.INSPECTION_SHORT_NAME), () -> "Edit inspection profile setting"));
+				annotation.registerFix(new consulo.ide.impl.idea.codeInspection.ex.CustomEditInspectionToolsSettingsAction(HighlightDisplayKey.find(
+						PyPep8Inspection.INSPECTION_SHORT_NAME), () -> "Edit inspection profile setting"));
 			}
 		}
 	}
 
-	private static boolean ignoredDueToProblemSuppressors(@Nonnull Project project, @Nonnull Problem problem, @Nonnull PsiFile file, @Nullable PsiElement element)
+	private static boolean ignoredDueToProblemSuppressors(@Nonnull Project project,
+														  @Nonnull Problem problem,
+														  @Nonnull PsiFile file,
+														  @Nullable PsiElement element)
 	{
 		final Pep8ProblemSuppressor[] suppressors = Pep8ProblemSuppressor.EP_NAME.getExtensions();
 		return Arrays.stream(suppressors).anyMatch(p -> p.isProblemSuppressed(problem, file, element));
@@ -406,7 +419,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 
 	private static boolean ignoreDueToSettings(Project project, Problem problem, @Nullable PsiElement element)
 	{
-		final EditorSettingsExternalizable editorSettings = EditorSettingsExternalizable.getInstance();
+		final consulo.codeEditor.impl.EditorSettingsExternalizable editorSettings = EditorSettingsExternalizable.getInstance();
 		if(!editorSettings.getStripTrailingSpaces().equals(EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE))
 		{
 			// ignore trailing spaces errors if they're going to disappear after save
@@ -461,7 +474,8 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 
 			// E251 unexpected spaces around keyword / parameter equals
 			// Note that E222 (multiple spaces after operator) is not suppressed, though.
-			if(problem.myCode.equals("E251") && (element.getParent() instanceof PyParameter && pySettings.SPACE_AROUND_EQ_IN_NAMED_PARAMETER || element.getParent() instanceof PyKeywordArgument &&
+			if(problem.myCode.equals("E251") && (element.getParent() instanceof PyParameter && pySettings.SPACE_AROUND_EQ_IN_NAMED_PARAMETER || element
+					.getParent() instanceof PyKeywordArgument &&
 					pySettings.SPACE_AROUND_EQ_IN_KEYWORD_ARGUMENT))
 			{
 				return true;
@@ -489,7 +503,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 		return null;
 	}
 
-	private static class IgnoreErrorFix implements IntentionAction
+	private static class IgnoreErrorFix implements SyntheticIntentionAction
 	{
 		private final String myCode;
 
@@ -505,13 +519,6 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 			return "Ignore errors like this";
 		}
 
-		@Nonnull
-		@Override
-		public String getFamilyName()
-		{
-			return getText();
-		}
-
 		@Override
 		public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
 		{
@@ -521,11 +528,12 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 		@Override
 		public void invoke(@Nonnull Project project, Editor editor, final PsiFile file) throws IncorrectOperationException
 		{
-			InspectionProjectProfileManager.getInstance(project).getInspectionProfile().modifyProfile(model -> {
-				PyPep8Inspection tool = (PyPep8Inspection) model.getUnwrappedTool(PyPep8Inspection.INSPECTION_SHORT_NAME, file);
-				if(!tool.ignoredErrors.contains(myCode))
+			InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+			profile.<PyPep8Inspection, PyPep8InspectionState>modifyToolSettings(PyPep8Inspection.INSPECTION_SHORT_NAME, file, (i, s) ->
+			{
+				if(!s.ignoredErrors.contains(myCode))
 				{
-					tool.ignoredErrors.add(myCode);
+					s.ignoredErrors.add(myCode);
 				}
 			});
 		}

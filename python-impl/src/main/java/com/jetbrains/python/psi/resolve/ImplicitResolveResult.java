@@ -17,7 +17,7 @@
 package com.jetbrains.python.psi.resolve;
 
 import javax.annotation.Nullable;
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 
 /**
  * @author yole

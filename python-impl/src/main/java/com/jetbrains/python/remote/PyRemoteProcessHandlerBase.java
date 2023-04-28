@@ -15,13 +15,12 @@
  */
 package com.jetbrains.python.remote;
 
-import java.nio.charset.Charset;
+import consulo.ide.impl.idea.remote.ColoredRemoteProcessHandler;
+import consulo.process.remote.RemoteProcess;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.remote.ColoredRemoteProcessHandler;
-import com.intellij.remote.RemoteProcess;
+import java.nio.charset.Charset;
 
 /**
  * @author traff

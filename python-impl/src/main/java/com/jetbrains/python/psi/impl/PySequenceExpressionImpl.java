@@ -2,8 +2,8 @@ package com.jetbrains.python.psi.impl;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.util.ArrayUtil;
+import consulo.language.ast.ASTNode;
+import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PySequenceExpression;

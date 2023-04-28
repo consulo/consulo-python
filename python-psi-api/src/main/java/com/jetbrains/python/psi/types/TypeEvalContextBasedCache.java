@@ -15,16 +15,16 @@
  */
 package com.jetbrains.python.psi.types;
 
-import java.util.HashMap;
-import java.util.Map;
+import consulo.application.util.CachedValue;
+import consulo.application.util.CachedValueProvider;
+import consulo.application.util.CachedValuesManager;
+import consulo.language.psi.PsiModificationTracker;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.Function;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Engine to cache something in map, where {@link TypeEvalContext} is used as key.
@@ -76,7 +76,7 @@ public final class TypeEvalContextBasedCache<T>
 			}
 			// This is the same value, semantically: value for context-key
 			//noinspection ReuseOfLocalVariable
-			value = myProvider.fun(context);
+			value = myProvider.apply(context);
 			map.put(context.getConstraints(), value);
 			return value;
 		}

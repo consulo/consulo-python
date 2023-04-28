@@ -18,7 +18,7 @@ package com.jetbrains.python.psi;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.psi.StubBasedPsiElement;
+import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
 
 import javax.annotation.Nullable;

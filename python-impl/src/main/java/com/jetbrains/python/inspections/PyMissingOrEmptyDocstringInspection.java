@@ -15,92 +15,82 @@
  */
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.DocstringQuickFix;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyDocStringOwner;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.component.extension.Extensions;
+import consulo.document.util.TextRange;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Mikhail Golubev
  */
-public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspection
-{
-	@Nonnull
-	@Override
-	public Visitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
-	{
-		return new Visitor(holder, session)
-		{
-			@Override
-			protected void checkDocString(@Nonnull PyDocStringOwner node)
-			{
-				final PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
-				if(docStringExpression == null)
-				{
-					for(PyInspectionExtension extension : Extensions.getExtensions(PyInspectionExtension.EP_NAME))
-					{
-						if(extension.ignoreMissingDocstring(node))
-						{
-							return;
-						}
-					}
-					PsiElement marker = null;
-					if(node instanceof PyClass)
-					{
-						final ASTNode n = ((PyClass) node).getNameNode();
-						if(n != null)
-						{
-							marker = n.getPsi();
-						}
-					}
-					else if(node instanceof PyFunction)
-					{
-						final ASTNode n = ((PyFunction) node).getNameNode();
-						if(n != null)
-						{
-							marker = n.getPsi();
-						}
-					}
-					else if(node instanceof PyFile)
-					{
-						final TextRange tr = new TextRange(0, 0);
-						final ProblemsHolder holder = getHolder();
-						if(holder != null)
-						{
-							holder.registerProblem(node, tr, PyBundle.message("INSP.no.docstring"));
-						}
-						return;
-					}
-					if(marker == null)
-					{
-						marker = node;
-					}
-					if(node instanceof PyFunction || (node instanceof PyClass && ((PyClass) node).findInitOrNew(false, null) != null))
-					{
-						registerProblem(marker, PyBundle.message("INSP.no.docstring"), new DocstringQuickFix(null, null));
-					}
-					else
-					{
-						registerProblem(marker, PyBundle.message("INSP.no.docstring"));
-					}
-				}
-				else if(StringUtil.isEmptyOrSpaces(docStringExpression.getStringValue()))
-				{
-					registerProblem(docStringExpression, PyBundle.message("INSP.empty.docstring"));
-				}
-			}
-		};
-	}
+@ExtensionImpl
+public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspection {
+  @Nonnull
+  @Override
+  public String getDisplayName() {
+    return PyBundle.message("INSP.NAME.missing.or.empty.docstring");
+  }
+
+  @Nonnull
+  @Override
+  public Visitor buildVisitor(@Nonnull ProblemsHolder holder,
+                              boolean isOnTheFly,
+                              @Nonnull LocalInspectionToolSession session,
+                              Object state) {
+    return new Visitor(holder, session) {
+      @Override
+      protected void checkDocString(@Nonnull PyDocStringOwner node) {
+        final PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
+        if (docStringExpression == null) {
+          for (PyInspectionExtension extension : Extensions.getExtensions(PyInspectionExtension.EP_NAME)) {
+            if (extension.ignoreMissingDocstring(node)) {
+              return;
+            }
+          }
+          PsiElement marker = null;
+          if (node instanceof PyClass) {
+            final ASTNode n = ((PyClass)node).getNameNode();
+            if (n != null) {
+              marker = n.getPsi();
+            }
+          }
+          else if (node instanceof PyFunction) {
+            final ASTNode n = ((PyFunction)node).getNameNode();
+            if (n != null) {
+              marker = n.getPsi();
+            }
+          }
+          else if (node instanceof PyFile) {
+            final TextRange tr = new TextRange(0, 0);
+            final ProblemsHolder holder = getHolder();
+            if (holder != null) {
+              holder.registerProblem(node, tr, PyBundle.message("INSP.no.docstring"));
+            }
+            return;
+          }
+          if (marker == null) {
+            marker = node;
+          }
+          if (node instanceof PyFunction || (node instanceof PyClass && ((PyClass)node).findInitOrNew(false, null) != null)) {
+            registerProblem(marker, PyBundle.message("INSP.no.docstring"), new DocstringQuickFix(null, null));
+          }
+          else {
+            registerProblem(marker, PyBundle.message("INSP.no.docstring"));
+          }
+        }
+        else if (StringUtil.isEmptyOrSpaces(docStringExpression.getStringValue())) {
+          registerProblem(docStringExpression, PyBundle.message("INSP.empty.docstring"));
+        }
+      }
+    };
+  }
 }

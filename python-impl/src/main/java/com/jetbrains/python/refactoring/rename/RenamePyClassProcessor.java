@@ -15,25 +15,26 @@
  */
 package com.jetbrains.python.refactoring.rename;
 
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.search.ReferencesSearch;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-
 /**
  * @author yole
  */
+@ExtensionImpl(id = "pyClass", order = "before pyVar, after pyClass")
 public class RenamePyClassProcessor extends RenamePyElementProcessor
 {
 	@Override

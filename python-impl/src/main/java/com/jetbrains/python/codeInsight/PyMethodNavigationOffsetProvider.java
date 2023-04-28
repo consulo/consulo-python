@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.codeInsight.navigation.MethodNavigationOffsetProvider;
-import com.intellij.codeInsight.navigation.MethodUpDownUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.moveUpDown.MethodNavigationOffsetProvider;
+import consulo.language.editor.moveUpDown.MethodUpDownUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.Collections;
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PyMethodNavigationOffsetProvider implements MethodNavigationOffsetProvider {
 
   @Override
@@ -51,7 +53,7 @@ public class PyMethodNavigationOffsetProvider implements MethodNavigationOffsetP
         addNavigationElements(array, pyFunction);
       }
     }
-    else if (psiElement instanceof PyFunction){
+    else if (psiElement instanceof PyFunction) {
       array.add(psiElement);
     }
     else if (psiElement instanceof PyClass) {

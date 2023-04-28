@@ -15,34 +15,6 @@
  */
 package com.jetbrains.python.refactoring.extractmethod;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.codeFragment.CodeFragment;
-import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.refactoring.NamesValidator;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Couple;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.extractMethod.*;
-import com.intellij.refactoring.listeners.RefactoringElementListenerComposite;
-import com.intellij.refactoring.listeners.RefactoringEventData;
-import com.intellij.refactoring.listeners.RefactoringEventListener;
-import com.intellij.refactoring.rename.RenameUtil;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.Function;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
@@ -56,10 +28,37 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.refactoring.PyReplaceExpressionUtil;
+import consulo.application.ApplicationManager;
+import consulo.application.WriteAction;
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragment;
+import consulo.ide.impl.idea.refactoring.extractMethod.*;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.refactoring.NamesValidator;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.event.RefactoringElementListenerComposite;
+import consulo.language.editor.refactoring.event.RefactoringEventData;
+import consulo.language.editor.refactoring.event.RefactoringEventListener;
+import consulo.language.editor.refactoring.rename.RenameUtil;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
+import consulo.language.impl.psi.CodeEditUtil;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
+import consulo.ui.ex.awt.Messages;
+import consulo.undoRedo.CommandProcessor;
+import consulo.usage.UsageInfo;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.Couple;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author oleg
@@ -116,7 +115,7 @@ public class PyExtractMethodUtil
 					statement1,
 					statement2
 			});
-			project.getMessageBus().syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC).refactoringStarted(getRefactoringId(), beforeData);
+			project.getMessageBus().syncPublisher(RefactoringEventListener.class).refactoringStarted(getRefactoringId(), beforeData);
 
 			final StringBuilder builder = new StringBuilder();
 			final boolean isAsync = fragment.isAsync();
@@ -200,7 +199,7 @@ public class PyExtractMethodUtil
 
 			final RefactoringEventData afterData = new RefactoringEventData();
 			afterData.addElement(insertedMethod);
-			project.getMessageBus().syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC).refactoringDone(getRefactoringId(), afterData);
+			project.getMessageBus().syncPublisher(RefactoringEventListener.class).refactoringDone(getRefactoringId(), afterData);
 		}, PyBundle.message("refactoring.extract.method"), null);
 	}
 
@@ -808,7 +807,7 @@ public class PyExtractMethodUtil
 		@Nullable
 		public String check(final String name)
 		{
-			if(myFunction != null && !myFunction.fun(name))
+			if(myFunction != null && !myFunction.apply(name))
 			{
 				return PyBundle.message("refactoring.extract.method.error.name.clash");
 			}
@@ -817,7 +816,7 @@ public class PyExtractMethodUtil
 
 		public boolean isValidName(@Nonnull final String name)
 		{
-			final NamesValidator validator = LanguageNamesValidation.INSTANCE.forLanguage(PythonLanguage.getInstance());
+			final NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.getInstance());
 			assert validator != null;
 			return validator.isIdentifier(name, myProject);
 		}

@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.annotation.Nonnull;
-import com.intellij.lang.ASTNode;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.language.ast.ASTNode;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyElementVisitor;

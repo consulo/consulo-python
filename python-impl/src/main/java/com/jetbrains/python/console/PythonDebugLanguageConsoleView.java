@@ -15,77 +15,68 @@
  */
 package com.jetbrains.python.console;
 
+import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.PythonIcons;
+import consulo.application.ui.wm.IdeFocusManager;
+import consulo.codeEditor.Editor;
+import consulo.content.bundle.Sdk;
+import consulo.execution.ui.console.ConsoleView;
+import consulo.execution.ui.console.TextConsoleBuilderFactory;
+import consulo.ide.impl.idea.execution.impl.ConsoleViewImpl;
+import consulo.project.Project;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.execution.console.DuplexConsoleView;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
-import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.wm.IdeFocusManager;
-import com.jetbrains.python.PyBundle;
-import icons.PythonIcons;
 
 /**
  * @author traff
  */
-public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleView, PythonConsoleView> implements PyCodeExecutor
-{
+public class PythonDebugLanguageConsoleView extends consulo.ide.impl.idea.execution.console.DuplexConsoleView<ConsoleView, PythonConsoleView> implements PyCodeExecutor {
 
-	public static final String DEBUG_CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))";
+  public static final String DEBUG_CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))";
 
-	public PythonDebugLanguageConsoleView(final Project project, Sdk sdk, ConsoleView consoleView)
-	{
-		super(consoleView, new PythonConsoleView(project, "Python Console", sdk));
+  public PythonDebugLanguageConsoleView(final Project project, Sdk sdk, ConsoleView consoleView) {
+    super(consoleView, new PythonConsoleView(project, "Python Console", sdk));
 
-		enableConsole(!PyConsoleOptions.getInstance(project).isShowDebugConsoleByDefault());
+    enableConsole(!PyConsoleOptions.getInstance(project).isShowDebugConsoleByDefault());
 
-		getSwitchConsoleActionPresentation().setIcon(PythonIcons.Python.Debug.CommandLine);
-		getSwitchConsoleActionPresentation().setText(PyBundle.message("run.configuration.show.command.line.action.name"));
-	}
+    getSwitchConsoleActionPresentation().setIcon(PythonIcons.Python.Debug.CommandLine);
+    getSwitchConsoleActionPresentation().setText(PyBundle.message("run.configuration.show.command.line.action.name"));
+  }
 
-	public PythonDebugLanguageConsoleView(final Project project, Sdk sdk)
-	{
-		this(project, sdk, TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole());
-	}
+  public PythonDebugLanguageConsoleView(final Project project, Sdk sdk) {
+    this(project, sdk, TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole());
+  }
 
-	@Override
-	public void executeCode(@Nonnull String code, @Nullable Editor e)
-	{
-		enableConsole(false);
-		getPydevConsoleView().executeCode(code, e);
-	}
+  @Override
+  public void executeCode(@Nonnull String code, @Nullable Editor e) {
+    enableConsole(false);
+    getPydevConsoleView().executeCode(code, e);
+  }
 
-	@Nonnull
-	public PythonConsoleView getPydevConsoleView()
-	{
-		return getSecondaryConsoleView();
-	}
+  @Nonnull
+  public PythonConsoleView getPydevConsoleView() {
+    return getSecondaryConsoleView();
+  }
 
-	public ConsoleViewImpl getTextConsole()
-	{
-		ConsoleView consoleView = getPrimaryConsoleView();
-		if(consoleView instanceof ConsoleViewImpl)
-		{
-			return (ConsoleViewImpl) consoleView;
-		}
-		return null;
-	}
+  public consulo.ide.impl.idea.execution.impl.ConsoleViewImpl getTextConsole() {
+    ConsoleView consoleView = getPrimaryConsoleView();
+    if (consoleView instanceof ConsoleViewImpl) {
+      return (consulo.ide.impl.idea.execution.impl.ConsoleViewImpl)consoleView;
+    }
+    return null;
+  }
 
-	@Override
-	public void enableConsole(boolean primary)
-	{
-		super.enableConsole(primary);
+  @Override
+  public void enableConsole(boolean primary) {
+    super.enableConsole(primary);
 
-		if(!primary && !isPrimaryConsoleEnabled())
-		{
-			PythonConsoleView console = getPydevConsoleView();
-			console.addConsoleFolding(true);
-			console.showStartMessageForFirstExecution(DEBUG_CONSOLE_START_COMMAND);
+    if (!primary && !isPrimaryConsoleEnabled()) {
+      PythonConsoleView console = getPydevConsoleView();
+      console.addConsoleFolding(true);
+      console.showStartMessageForFirstExecution(DEBUG_CONSOLE_START_COMMAND);
 
-			IdeFocusManager.findInstance().requestFocus(console.getConsoleEditor().getContentComponent(), true);
-		}
-	}
+      IdeFocusManager.findInstance().requestFocus(console.getConsoleEditor().getContentComponent(), true);
+    }
+  }
 }

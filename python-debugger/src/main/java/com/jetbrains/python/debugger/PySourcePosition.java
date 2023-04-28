@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger;
 
-import com.intellij.openapi.util.io.FileUtil;
+import consulo.util.io.FileUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

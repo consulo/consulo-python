@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.psi.stubs.StubElement;
+import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyTupleParameter;
 
 /**

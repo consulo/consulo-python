@@ -7,18 +7,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Strings;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XNamedValue;
-import com.intellij.xdebugger.frame.XNavigatable;
-import com.intellij.xdebugger.frame.XReferrersProvider;
-import com.intellij.xdebugger.frame.XValue;
-import com.intellij.xdebugger.frame.XValueChildrenList;
-import com.intellij.xdebugger.frame.XValueModifier;
-import com.intellij.xdebugger.frame.XValueNode;
-import com.intellij.xdebugger.frame.XValuePlace;
+import consulo.application.AllIcons;
+import consulo.application.ApplicationManager;
+import consulo.execution.debug.frame.*;
+import consulo.logging.Logger;
+import consulo.execution.debug.frame.XReferrersProvider;
+import consulo.execution.debug.frame.XValueNode;
+import consulo.execution.debug.frame.XValuePlace;
 import com.jetbrains.python.debugger.pydev.PyVariableLocator;
 import consulo.ui.image.Image;
 

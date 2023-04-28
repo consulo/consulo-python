@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+
 import java.util.HashMap;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
@@ -30,6 +30,8 @@ import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyFile;
+import consulo.language.util.IncorrectOperationException;
+
 import javax.annotation.Nonnull;
 
 import java.util.Map;
@@ -40,7 +42,8 @@ import java.util.Map;
  * Date:   26.03.2010
  * Time:   22:01:27
  */
-public class PyFlipComparisonIntention extends BaseIntentionAction {
+public class PyFlipComparisonIntention extends BaseIntentionAction
+{
   private static final Map<PyElementType, String> FLIPPED_OPERATORS = new HashMap<PyElementType, String>(7);
 
   static {
@@ -83,7 +86,8 @@ public class PyFlipComparisonIntention extends BaseIntentionAction {
     return false;
   }
 
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+  {
     PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
     PyBinaryExpression binaryExpression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);
     while (binaryExpression != null) {

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python;
 
-import com.intellij.psi.tree.TokenSet;
+import consulo.language.ast.TokenSet;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.*;
 import com.jetbrains.python.psi.impl.stubs.*;

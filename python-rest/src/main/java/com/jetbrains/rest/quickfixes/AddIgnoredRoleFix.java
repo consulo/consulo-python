@@ -16,47 +16,54 @@
 
 package com.jetbrains.rest.quickfixes;
 
-import javax.annotation.Nonnull;
-import com.intellij.codeInsight.intention.LowPriorityAction;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.profile.codeInspection.InspectionProfileManager;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.jetbrains.rest.RestBundle;
 import com.jetbrains.rest.inspections.RestRoleInspection;
+import com.jetbrains.rest.inspections.RestRoleInspectionState;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.editor.intention.LowPriorityAction;
+import consulo.project.Project;
+
+import javax.annotation.Nonnull;
 
 /**
  * User : catherine
  */
-public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction {
-  private final String myRole;
-  private RestRoleInspection myInspection;
+public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction
+{
+	private final String myRole;
 
-  public AddIgnoredRoleFix(String role, RestRoleInspection visitor) {
-    myRole = role;
-    myInspection = visitor;
-  }
+	public AddIgnoredRoleFix(String role)
+	{
+		myRole = role;
+	}
 
-  @Nonnull
-  @Override
-  public String getName() {
-    return RestBundle.message("QFIX.ignore.role", myRole);
-  }
+	@Nonnull
+	@Override
+	public String getName()
+	{
+		return RestBundle.message("QFIX.ignore.role", myRole);
+	}
 
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return "Ignore undefined role";
-  }
+	@Nonnull
+	@Override
+	public String getFamilyName()
+	{
+		return "Ignore undefined role";
+	}
 
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    if (!myInspection.ignoredRoles.contains(myRole)) {
-      myInspection.ignoredRoles.add(myRole);
-      final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-      InspectionProfileManager.getInstance().fireProfileChanged(profile);
-    }
-  }
+	@Override
+	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
+	{
+		final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+		profile.<RestRoleInspection, RestRoleInspectionState>modifyToolSettings(RestRoleInspection.class.getSimpleName(), descriptor.getPsiElement(), (t, s) ->
+		{
+			if(!s.ignoredRoles.contains(myRole))
+			{
+				s.ignoredRoles.add(myRole);
+			}
+		});
+	}
 }

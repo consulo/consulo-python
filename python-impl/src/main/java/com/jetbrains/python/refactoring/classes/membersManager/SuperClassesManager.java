@@ -25,9 +25,9 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.util.containers.MultiMap;
-import com.jetbrains.NotNullPredicate;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.util.collection.MultiMap;
+import com.jetbrains.python.NotNullPredicate;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;

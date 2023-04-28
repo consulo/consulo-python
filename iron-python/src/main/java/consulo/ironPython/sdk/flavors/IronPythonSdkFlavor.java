@@ -16,25 +16,22 @@
 
 package consulo.ironPython.sdk.flavors;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.openapi.util.text.StringUtil;
+import com.jetbrains.python.PythonIcons;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import com.jetbrains.python.sdk.flavors.WinPythonSdkFlavor;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.process.cmd.GeneralCommandLine;
 import consulo.ui.image.Image;
-import icons.PythonIcons;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.util.*;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class IronPythonSdkFlavor extends PythonSdkFlavor
 {
 	@Override

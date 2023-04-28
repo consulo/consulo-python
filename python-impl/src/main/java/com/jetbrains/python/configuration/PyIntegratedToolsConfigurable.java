@@ -15,36 +15,7 @@
  */
 package com.jetbrains.python.configuration;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-
-import org.jetbrains.annotations.Nls;
 import com.google.common.collect.Lists;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.fileTypes.PlainTextFileType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.ListCellRendererWrapper;
-import com.intellij.util.FileContentUtil;
-import com.intellij.util.FileContentUtilCore;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.ReSTService;
 import com.jetbrains.python.documentation.PyDocumentationSettings;
@@ -54,75 +25,95 @@ import com.jetbrains.python.packaging.PyPackageUtil;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.testing.PythonTestConfigurationsModel;
 import com.jetbrains.python.testing.TestRunnerService;
+import consulo.configurable.ConfigurationException;
+import consulo.configurable.SearchableConfigurable;
+import consulo.content.ContentIterator;
+import consulo.document.util.FileContentUtilCore;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.ide.impl.idea.util.FileContentUtil;
+import consulo.language.editor.DaemonCodeAnalyzer;
+import consulo.language.plain.PlainTextFileType;
+import consulo.module.Module;
+import consulo.module.content.ProjectRootManager;
+import consulo.project.Project;
+import consulo.ui.ex.awt.CollectionComboBoxModel;
+import consulo.ui.ex.awt.IdeBorderFactory;
+import consulo.ui.ex.awt.ListCellRendererWrapper;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.virtualFileSystem.VirtualFile;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.swing.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User: catherine
  */
-public class PyIntegratedToolsConfigurable implements SearchableConfigurable
-{
-	private JPanel myMainPanel;
-	private JComboBox myTestRunnerComboBox;
-	private JComboBox myDocstringFormatComboBox;
-	private PythonTestConfigurationsModel myModel;
-	@Nonnull
-	private final Module myModule;
-	@Nonnull
-	private final Project myProject;
-	private final PyDocumentationSettings myDocumentationSettings;
-	private TextFieldWithBrowseButton myWorkDir;
-	private JCheckBox txtIsRst;
-	private JPanel myErrorPanel;
-	private TextFieldWithBrowseButton myRequirementsPathField;
-	private JCheckBox analyzeDoctest;
-	private JPanel myDocStringsPanel;
-	private JPanel myRestPanel;
+public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
+  private JPanel myMainPanel;
+  private JComboBox myTestRunnerComboBox;
+  private JComboBox myDocstringFormatComboBox;
+  private PythonTestConfigurationsModel myModel;
+  @Nonnull
+  private final Module myModule;
+  @Nonnull
+  private final Project myProject;
+  private final PyDocumentationSettings myDocumentationSettings;
+  private TextFieldWithBrowseButton myWorkDir;
+  private JCheckBox txtIsRst;
+  private JPanel myErrorPanel;
+  private TextFieldWithBrowseButton myRequirementsPathField;
+  private JCheckBox analyzeDoctest;
+  private JPanel myDocStringsPanel;
+  private JPanel myRestPanel;
 
-	public PyIntegratedToolsConfigurable(@Nonnull Module module)
-	{
-		myModule = module;
-		myProject = myModule.getProject();
-		myDocumentationSettings = PyDocumentationSettings.getInstance(myModule);
-		//noinspection unchecked
-		myDocstringFormatComboBox.setModel(new CollectionComboBoxModel<>(Arrays.asList(DocStringFormat.values()), myDocumentationSettings.getFormat()));
-		myDocstringFormatComboBox.setRenderer(new ListCellRendererWrapper<DocStringFormat>()
-		{
-			@Override
-			public void customize(JList list, DocStringFormat value, int index, boolean selected, boolean hasFocus)
-			{
-				setText(value.getName());
-			}
-		});
+  public PyIntegratedToolsConfigurable(@Nonnull Module module) {
+    myModule = module;
+    myProject = myModule.getProject();
+    myDocumentationSettings = PyDocumentationSettings.getInstance(myModule);
+    //noinspection unchecked
+    myDocstringFormatComboBox.setModel(new CollectionComboBoxModel<>(Arrays.asList(DocStringFormat.values()),
+                                                                     myDocumentationSettings.getFormat()));
+    myDocstringFormatComboBox.setRenderer(new ListCellRendererWrapper<DocStringFormat>() {
+      @Override
+      public void customize(JList list, DocStringFormat value, int index, boolean selected, boolean hasFocus) {
+        setText(value.getName());
+      }
+    });
 
-		final FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-		myWorkDir.addBrowseFolderListener("Please choose working directory:", null, myProject, fileChooserDescriptor);
-		ReSTService service = ReSTService.getInstance(myModule);
-		myWorkDir.setText(service.getWorkdir());
-		txtIsRst.setSelected(service.txtIsRst());
-		analyzeDoctest.setSelected(myDocumentationSettings.isAnalyzeDoctest());
-		myRequirementsPathField.addBrowseFolderListener("Choose path to the package requirements file:", null, myProject, FileChooserDescriptorFactory.createSingleLocalFileDescriptor());
-		myRequirementsPathField.setText(getRequirementsPath());
+    final FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+    myWorkDir.addBrowseFolderListener("Please choose working directory:", null, myProject, fileChooserDescriptor);
+    ReSTService service = ReSTService.getInstance(myModule);
+    myWorkDir.setText(service.getWorkdir());
+    txtIsRst.setSelected(service.txtIsRst());
+    analyzeDoctest.setSelected(myDocumentationSettings.isAnalyzeDoctest());
+    myRequirementsPathField.addBrowseFolderListener("Choose path to the package requirements file:",
+                                                    null,
+                                                    myProject,
+                                                    FileChooserDescriptorFactory.createSingleLocalFileDescriptor());
+    myRequirementsPathField.setText(getRequirementsPath());
 
-		myDocStringsPanel.setBorder(IdeBorderFactory.createTitledBorder("Docstrings"));
-		myRestPanel.setBorder(IdeBorderFactory.createTitledBorder("reStructuredText"));
-	}
+    myDocStringsPanel.setBorder(IdeBorderFactory.createTitledBorder("Docstrings"));
+    myRestPanel.setBorder(IdeBorderFactory.createTitledBorder("reStructuredText"));
+  }
 
-	@Nonnull
-	private String getRequirementsPath()
-	{
-		final String path = PyPackageRequirementsSettings.getInstance(myModule).getRequirementsPath();
-		if(path.equals(PyPackageRequirementsSettings.DEFAULT_REQUIREMENTS_PATH) && !PyPackageUtil.hasRequirementsTxt(myModule))
-		{
-			return "";
-		}
-		else
-		{
-			return path;
-		}
-	}
+  @Nonnull
+  private String getRequirementsPath() {
+    final String path = PyPackageRequirementsSettings.getInstance(myModule).getRequirementsPath();
+    if (path.equals(PyPackageRequirementsSettings.DEFAULT_REQUIREMENTS_PATH) && !PyPackageUtil.hasRequirementsTxt(myModule)) {
+      return "";
+    }
+    else {
+      return path;
+    }
+  }
 
-	private void initErrorValidation()
-	{
-	/*	final FacetErrorPanel facetErrorPanel = new FacetErrorPanel();
+  private void initErrorValidation() {
+  /*	final FacetErrorPanel facetErrorPanel = new FacetErrorPanel();
 		myErrorPanel.add(facetErrorPanel.getComponent(), BorderLayout.CENTER);
 
 		facetErrorPanel.getValidatorsManager().registerValidator(new FacetEditorValidator()
@@ -162,7 +153,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable
 		}, myTestRunnerComboBox);
 
 		facetErrorPanel.getValidatorsManager().validate(); */
-	}
+  }
 
 	/*private FacetConfigurationQuickFix createQuickFix(final Sdk sdk, final FacetErrorPanel facetErrorPanel, final String name)
 	{
@@ -193,149 +184,125 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable
 		};
 	} */
 
-	@Nls
-	@Override
-	public String getDisplayName()
-	{
-		return "Python Integrated Tools";
-	}
+  @Nls
+  @Override
+  public String getDisplayName() {
+    return "Python Integrated Tools";
+  }
 
-	@Override
-	public String getHelpTopic()
-	{
-		return "test_runner_configuration";
-	}
+  @Override
+  public String getHelpTopic() {
+    return "test_runner_configuration";
+  }
 
-	@Override
-	public JComponent createComponent()
-	{
-		List<String> configurations = TestRunnerService.getInstance(myModule).getConfigurations();
-		myModel = new PythonTestConfigurationsModel(configurations, TestRunnerService.getInstance(myModule).getProjectConfiguration(), myModule);
+  @Override
+  public JComponent createComponent() {
+    List<String> configurations = TestRunnerService.getInstance(myModule).getConfigurations();
+    myModel =
+      new PythonTestConfigurationsModel(configurations, TestRunnerService.getInstance(myModule).getProjectConfiguration(), myModule);
 
-		updateConfigurations();
-		initErrorValidation();
-		return myMainPanel;
-	}
+    updateConfigurations();
+    initErrorValidation();
+    return myMainPanel;
+  }
 
-	private void updateConfigurations()
-	{
-		//noinspection unchecked
-		myTestRunnerComboBox.setModel(myModel);
-	}
+  private void updateConfigurations() {
+    //noinspection unchecked
+    myTestRunnerComboBox.setModel(myModel);
+  }
 
-	@Override
-	public boolean isModified()
-	{
-		if(myTestRunnerComboBox.getSelectedItem() != myModel.getTestRunner())
-		{
-			return true;
-		}
-		if(myDocstringFormatComboBox.getSelectedItem() != myDocumentationSettings.getFormat())
-		{
-			return true;
-		}
-		if(analyzeDoctest.isSelected() != myDocumentationSettings.isAnalyzeDoctest())
-		{
-			return true;
-		}
-		if(!ReSTService.getInstance(myModule).getWorkdir().equals(myWorkDir.getText()))
-		{
-			return true;
-		}
-		if(!ReSTService.getInstance(myModule).txtIsRst() == txtIsRst.isSelected())
-		{
-			return true;
-		}
-		if(!getRequirementsPath().equals(myRequirementsPathField.getText()))
-		{
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean isModified() {
+    if (myTestRunnerComboBox.getSelectedItem() != myModel.getTestRunner()) {
+      return true;
+    }
+    if (myDocstringFormatComboBox.getSelectedItem() != myDocumentationSettings.getFormat()) {
+      return true;
+    }
+    if (analyzeDoctest.isSelected() != myDocumentationSettings.isAnalyzeDoctest()) {
+      return true;
+    }
+    if (!ReSTService.getInstance(myModule).getWorkdir().equals(myWorkDir.getText())) {
+      return true;
+    }
+    if (!ReSTService.getInstance(myModule).txtIsRst() == txtIsRst.isSelected()) {
+      return true;
+    }
+    if (!getRequirementsPath().equals(myRequirementsPathField.getText())) {
+      return true;
+    }
+    return false;
+  }
 
-	@Override
-	public void apply() throws ConfigurationException
-	{
-		if(myDocstringFormatComboBox.getSelectedItem() != myDocumentationSettings.getFormat())
-		{
-			DaemonCodeAnalyzer.getInstance(myProject).restart();
-		}
-		if(analyzeDoctest.isSelected() != myDocumentationSettings.isAnalyzeDoctest())
-		{
-			final List<VirtualFile> files = Lists.newArrayList();
-			ProjectRootManager.getInstance(myProject).getFileIndex().iterateContent(new ContentIterator()
-			{
-				@Override
-				public boolean processFile(VirtualFile fileOrDir)
-				{
-					if(!fileOrDir.isDirectory() && PythonFileType.INSTANCE.getDefaultExtension().equals(fileOrDir.getExtension()))
-					{
-						files.add(fileOrDir);
-					}
-					return true;
-				}
-			});
-			FileContentUtil.reparseFiles(myProject, Lists.newArrayList(files), false);
-		}
-		myModel.apply();
-		myDocumentationSettings.setFormat((DocStringFormat) myDocstringFormatComboBox.getSelectedItem());
-		final ReSTService reSTService = ReSTService.getInstance(myModule);
-		reSTService.setWorkdir(myWorkDir.getText());
-		if(txtIsRst.isSelected() != reSTService.txtIsRst())
-		{
-			reSTService.setTxtIsRst(txtIsRst.isSelected());
-			reparseFiles(Collections.singletonList(PlainTextFileType.INSTANCE.getDefaultExtension()));
-		}
-		myDocumentationSettings.setAnalyzeDoctest(analyzeDoctest.isSelected());
-		PyPackageRequirementsSettings.getInstance(myModule).setRequirementsPath(myRequirementsPathField.getText());
-		DaemonCodeAnalyzer.getInstance(myProject).restart();
-	}
+  @Override
+  public void apply() throws ConfigurationException {
+    if (myDocstringFormatComboBox.getSelectedItem() != myDocumentationSettings.getFormat()) {
+      DaemonCodeAnalyzer.getInstance(myProject).restart();
+    }
+    if (analyzeDoctest.isSelected() != myDocumentationSettings.isAnalyzeDoctest()) {
+      final List<VirtualFile> files = Lists.newArrayList();
+      ProjectRootManager.getInstance(myProject).getFileIndex().iterateContent(new ContentIterator() {
+        @Override
+        public boolean processFile(VirtualFile fileOrDir) {
+          if (!fileOrDir.isDirectory() && PythonFileType.INSTANCE.getDefaultExtension().equals(fileOrDir.getExtension())) {
+            files.add(fileOrDir);
+          }
+          return true;
+        }
+      });
+      FileContentUtil.reparseFiles(myProject, Lists.newArrayList(files), false);
+    }
+    myModel.apply();
+    myDocumentationSettings.setFormat((DocStringFormat)myDocstringFormatComboBox.getSelectedItem());
+    final ReSTService reSTService = ReSTService.getInstance(myModule);
+    reSTService.setWorkdir(myWorkDir.getText());
+    if (txtIsRst.isSelected() != reSTService.txtIsRst()) {
+      reSTService.setTxtIsRst(txtIsRst.isSelected());
+      reparseFiles(Collections.singletonList(PlainTextFileType.INSTANCE.getDefaultExtension()));
+    }
+    myDocumentationSettings.setAnalyzeDoctest(analyzeDoctest.isSelected());
+    PyPackageRequirementsSettings.getInstance(myModule).setRequirementsPath(myRequirementsPathField.getText());
+    DaemonCodeAnalyzer.getInstance(myProject).restart();
+  }
 
-	public void reparseFiles(final List<String> extensions)
-	{
-		final List<VirtualFile> filesToReparse = Lists.newArrayList();
-		ProjectRootManager.getInstance(myProject).getFileIndex().iterateContent(new ContentIterator()
-		{
-			@Override
-			public boolean processFile(VirtualFile fileOrDir)
-			{
-				if(!fileOrDir.isDirectory() && extensions.contains(fileOrDir.getExtension()))
-				{
-					filesToReparse.add(fileOrDir);
-				}
-				return true;
-			}
-		});
-		FileContentUtilCore.reparseFiles(filesToReparse);
+  public void reparseFiles(final List<String> extensions) {
+    final List<VirtualFile> filesToReparse = Lists.newArrayList();
+    ProjectRootManager.getInstance(myProject).getFileIndex().iterateContent(new ContentIterator() {
+      @Override
+      public boolean processFile(VirtualFile fileOrDir) {
+        if (!fileOrDir.isDirectory() && extensions.contains(fileOrDir.getExtension())) {
+          filesToReparse.add(fileOrDir);
+        }
+        return true;
+      }
+    });
+    FileContentUtilCore.reparseFiles(filesToReparse);
 
-		PyUtil.rehighlightOpenEditors(myProject);
+    PyUtil.rehighlightOpenEditors(myProject);
 
-		DaemonCodeAnalyzer.getInstance(myProject).restart();
-	}
+    DaemonCodeAnalyzer.getInstance(myProject).restart();
+  }
 
-	@Override
-	public void reset()
-	{
-		myTestRunnerComboBox.setSelectedItem(myModel.getTestRunner());
-		myTestRunnerComboBox.repaint();
-		myModel.reset();
-		myDocstringFormatComboBox.setSelectedItem(myDocumentationSettings.getFormat());
-		myWorkDir.setText(ReSTService.getInstance(myModule).getWorkdir());
-		txtIsRst.setSelected(ReSTService.getInstance(myModule).txtIsRst());
-		analyzeDoctest.setSelected(myDocumentationSettings.isAnalyzeDoctest());
-		myRequirementsPathField.setText(getRequirementsPath());
-	}
+  @Override
+  public void reset() {
+    myTestRunnerComboBox.setSelectedItem(myModel.getTestRunner());
+    myTestRunnerComboBox.repaint();
+    myModel.reset();
+    myDocstringFormatComboBox.setSelectedItem(myDocumentationSettings.getFormat());
+    myWorkDir.setText(ReSTService.getInstance(myModule).getWorkdir());
+    txtIsRst.setSelected(ReSTService.getInstance(myModule).txtIsRst());
+    analyzeDoctest.setSelected(myDocumentationSettings.isAnalyzeDoctest());
+    myRequirementsPathField.setText(getRequirementsPath());
+  }
 
-	@Override
-	public void disposeUIResources()
-	{
-	}
+  @Override
+  public void disposeUIResources() {
+  }
 
-	@Nonnull
-	@Override
-	public String getId()
-	{
-		return "PyIntegratedToolsConfigurable";
-	}
+  @Nonnull
+  @Override
+  public String getId() {
+    return "PyIntegratedToolsConfigurable";
+  }
 }
 

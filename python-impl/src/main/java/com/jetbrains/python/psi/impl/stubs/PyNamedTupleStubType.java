@@ -15,13 +15,13 @@
  */
 package com.jetbrains.python.psi.impl.stubs;
 
-import java.io.IOException;
+import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
+import consulo.language.psi.stub.StubInputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.psi.stubs.StubInputStream;
-import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
+import java.io.IOException;
 
 public class PyNamedTupleStubType extends CustomTargetExpressionStubType<PyNamedTupleStub>
 {

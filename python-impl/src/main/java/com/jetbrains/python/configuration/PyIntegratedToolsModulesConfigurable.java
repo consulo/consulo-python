@@ -16,11 +16,12 @@
 
 package com.jetbrains.python.configuration;
 
+import consulo.configurable.Configurable;
+import consulo.configurable.NonDefaultProjectConfigurable;
+import consulo.module.Module;
+import consulo.project.Project;
+
 import javax.annotation.Nonnull;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.NonDefaultProjectConfigurable;
-import com.intellij.openapi.project.Project;
 
 /**
  * @author vlan

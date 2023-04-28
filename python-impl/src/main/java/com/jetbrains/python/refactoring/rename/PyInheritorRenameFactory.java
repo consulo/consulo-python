@@ -16,10 +16,11 @@
 
 package com.jetbrains.python.refactoring.rename;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.rename.naming.AutomaticRenamer;
-import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory;
-import com.intellij.usageView.UsageInfo;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.refactoring.rename.AutomaticRenamerFactory;
+import consulo.language.psi.PsiElement;
+import consulo.language.editor.refactoring.rename.AutomaticRenamer;
+import consulo.usage.UsageInfo;
 import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.search.PyClassInheritorsSearch;
@@ -29,7 +30,9 @@ import java.util.Collection;
 /**
  * @author yole
  */
-public class PyInheritorRenameFactory implements AutomaticRenamerFactory {
+@ExtensionImpl
+public class PyInheritorRenameFactory implements AutomaticRenamerFactory
+{
   @Override
   public boolean isApplicable(PsiElement element) {
     return element instanceof PyClass;

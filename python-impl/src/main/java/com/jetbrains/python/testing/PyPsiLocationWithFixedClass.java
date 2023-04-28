@@ -17,8 +17,8 @@ package com.jetbrains.python.testing;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.execution.PsiLocation;
-import com.intellij.openapi.project.Project;
+import consulo.execution.action.PsiLocation;
+import consulo.project.Project;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 

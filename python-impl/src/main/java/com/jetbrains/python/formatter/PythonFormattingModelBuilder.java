@@ -15,70 +15,51 @@
  */
 package com.jetbrains.python.formatter;
 
-import static com.jetbrains.python.PyElementTypes.*;
-import static com.jetbrains.python.PyTokenTypes.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.formatting.CustomFormattingModelBuilder;
-import com.intellij.formatting.FormatTextRanges;
-import com.intellij.formatting.FormattingMode;
-import com.intellij.formatting.FormattingModel;
-import com.intellij.formatting.FormattingModelBuilderEx;
-import com.intellij.formatting.FormattingModelDumper;
-import com.intellij.formatting.FormattingModelProvider;
-import com.intellij.formatting.Indent;
-import com.intellij.formatting.SpacingBuilder;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.ide.impl.idea.formatting.FormattingModelDumper;
+import consulo.language.Language;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenSet;
+import consulo.language.codeStyle.*;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+
+import javax.annotation.Nonnull;
+
+import static com.jetbrains.python.PyElementTypes.*;
+import static com.jetbrains.python.PyTokenTypes.*;
 
 /**
  * @author yole
  */
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class PythonFormattingModelBuilder implements FormattingModelBuilderEx, CustomFormattingModelBuilder
+@ExtensionImpl
+public class PythonFormattingModelBuilder implements FormattingModelBuilder, CustomFormattingModelBuilder
 {
 	private static final boolean DUMP_FORMATTING_AST = false;
 	public static final TokenSet STATEMENT_OR_DECLARATION = PythonDialectsTokenSetProvider.INSTANCE.getStatementTokens();
 
 	@Nonnull
 	@Override
-	public FormattingModel createModel(@Nonnull PsiElement element, @Nonnull CodeStyleSettings settings, @Nonnull FormattingMode mode)
+	public FormattingModel createModel(@Nonnull FormattingContext formattingContext)
 	{
+		PsiElement element = formattingContext.getPsiElement();
+		CodeStyleSettings settings = formattingContext.getCodeStyleSettings();
 		if(DUMP_FORMATTING_AST)
 		{
 			ASTNode fileNode = element.getContainingFile().getNode();
 			System.out.println("AST tree for " + element.getContainingFile().getName() + ":");
 			printAST(fileNode, 0);
 		}
-		final PyBlockContext context = new PyBlockContext(settings, createSpacingBuilder(settings), mode);
+		final PyBlockContext context = new PyBlockContext(settings, createSpacingBuilder(settings), formattingContext.getFormattingMode());
 		final PyBlock block = new PyBlock(null, element.getNode(), null, Indent.getNoneIndent(), null, context);
 		if(DUMP_FORMATTING_AST)
 		{
 			FormattingModelDumper.dumpFormattingModel(block, 2, System.out);
 		}
 		return FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), block, settings);
-	}
-
-	@Nullable
-	@Override
-	public CommonCodeStyleSettings.IndentOptions getIndentOptionsToUse(@Nonnull PsiFile file, @Nonnull FormatTextRanges ranges, @Nonnull CodeStyleSettings settings)
-	{
-		return null;
-	}
-
-	@Nonnull
-	public FormattingModel createModel(final PsiElement element, final CodeStyleSettings settings)
-	{
-		return createModel(element, settings, FormattingMode.REFORMAT);
 	}
 
 	protected SpacingBuilder createSpacingBuilder(CodeStyleSettings settings)
@@ -143,11 +124,6 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilderEx, C
 		return TokenSet.create(IElementType.enumerate(type -> type != LAMBDA_KEYWORD && type.getLanguage().isKindOf(pythonLanguage)));
 	}
 
-	public TextRange getRangeAffectingIndent(PsiFile file, int offset, ASTNode elementAtOffset)
-	{
-		return null;
-	}
-
 	private static void printAST(ASTNode node, int indent)
 	{
 		while(node != null)
@@ -166,5 +142,12 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilderEx, C
 	{
 		PsiFile file = context.getContainingFile();
 		return file != null && file.getLanguage() == PythonLanguage.getInstance();
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

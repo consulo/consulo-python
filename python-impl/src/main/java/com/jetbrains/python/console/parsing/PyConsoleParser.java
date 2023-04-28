@@ -16,15 +16,15 @@
 package com.jetbrains.python.console.parsing;
 
 import javax.annotation.Nonnull;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.ASTNode;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.parsing.ParsingContext;
 import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.parsing.StatementParsing;
 import com.jetbrains.python.psi.LanguageLevel;
-import consulo.lang.LanguageVersion;
+import consulo.language.version.LanguageVersion;
 
 /**
  * @author traff

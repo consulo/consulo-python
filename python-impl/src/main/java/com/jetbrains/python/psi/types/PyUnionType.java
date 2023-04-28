@@ -26,11 +26,11 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.NullableFunction;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.SmartList;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.ide.impl.idea.util.NullableFunction;
+import consulo.language.util.ProcessingContext;
+import consulo.util.collection.SmartList;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;

@@ -15,10 +15,6 @@
  */
 package com.jetbrains.python.codeInsight.userSkeletons;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
@@ -26,10 +22,17 @@ import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+import consulo.util.lang.ref.Ref;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author vlan
  */
+@ExtensionImpl
 public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 {
 	@Override

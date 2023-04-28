@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.packaging.setupPy;
 
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.ide.impl.idea.ide.util.PropertiesComponent;
+import consulo.project.Project;
+import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awt.LabeledComponent;
+import consulo.util.lang.StringUtil;
 
 import javax.swing.*;
 import java.awt.*;

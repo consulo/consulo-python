@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.stubs.StubIndexKey;
+import consulo.language.psi.stub.StringStubIndexExtension;
+import consulo.language.psi.stub.StubIndexKey;
 import com.jetbrains.python.psi.PyClass;
 import javax.annotation.Nonnull;
 

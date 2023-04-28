@@ -16,14 +16,15 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.codeHighlighting.Pass;
-import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.colors.CodeInsightColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.markup.SeparatorPlacement;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
+import consulo.language.editor.Pass;
+import consulo.language.editor.gutter.LineMarkerInfo;
+import consulo.application.ApplicationManager;
+import consulo.codeEditor.CodeInsightColors;
+import consulo.colorScheme.EditorColorsManager;
+import consulo.codeEditor.markup.SeparatorPlacement;
+import consulo.util.lang.ref.Ref;
+import consulo.language.psi.PsiElement;
+
 import javax.annotation.Nullable;
 
 /**

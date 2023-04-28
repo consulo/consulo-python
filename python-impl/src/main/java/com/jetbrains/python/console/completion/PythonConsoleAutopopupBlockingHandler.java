@@ -16,17 +16,18 @@
 
 package com.jetbrains.python.console.completion;
 
-import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
+import consulo.language.editor.action.TypedHandlerDelegate;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
 import consulo.util.dataholder.Key;
-import com.intellij.psi.PsiFile;
+import consulo.language.psi.PsiFile;
 
 /**
  * @author oleg
  * @date 10/26/10
  */
-public class PythonConsoleAutopopupBlockingHandler extends TypedHandlerDelegate {
+public class PythonConsoleAutopopupBlockingHandler extends TypedHandlerDelegate
+{
 
   public static final Key<Object> REPL_KEY = new Key<Object>("python.repl.console.editor");
 

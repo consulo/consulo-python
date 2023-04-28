@@ -1,6 +1,6 @@
 package com.jetbrains.python.psi;
 
-import static com.intellij.util.containers.ContainerUtil.newMapFromValues;
+import static consulo.util.collection.ContainerUtil.newMapFromValues;
 import static com.jetbrains.python.psi.PyKnownDecoratorUtil.KnownDecorator.ABC_ABSTRACTCLASSMETHOD;
 import static com.jetbrains.python.psi.PyKnownDecoratorUtil.KnownDecorator.ABC_ABSTRACTMETHOD;
 import static com.jetbrains.python.psi.PyKnownDecoratorUtil.KnownDecorator.ABC_ABSTRACTPROPERTY;
@@ -22,10 +22,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterators;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.containers.Convertor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.util.QualifiedName;
+import consulo.ide.impl.idea.util.containers.Convertor;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 

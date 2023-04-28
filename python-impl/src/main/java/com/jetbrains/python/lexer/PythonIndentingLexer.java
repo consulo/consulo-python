@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.lexer;
 
-import com.intellij.psi.tree.TokenSet;
+import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PyTokenTypes;
 
 import java.io.Reader;

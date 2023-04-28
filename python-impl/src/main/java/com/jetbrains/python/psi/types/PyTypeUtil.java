@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.types;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolder;
 

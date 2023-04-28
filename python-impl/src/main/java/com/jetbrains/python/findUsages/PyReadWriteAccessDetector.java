@@ -16,9 +16,10 @@
 
 package com.jetbrains.python.findUsages;
 
-import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.highlight.ReadWriteAccessDetector;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
 import com.jetbrains.python.psi.PyAugAssignmentStatement;
 import com.jetbrains.python.psi.PyDelStatement;
 import com.jetbrains.python.psi.PyReferenceExpression;
@@ -28,6 +29,7 @@ import com.jetbrains.python.psi.impl.PyAugAssignmentStatementNavigator;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyReadWriteAccessDetector extends ReadWriteAccessDetector {
   @Override
   public boolean isReadWriteAccessible(PsiElement element) {

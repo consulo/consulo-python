@@ -1,35 +1,25 @@
 package com.jetbrains.python.debugger.pydev;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.xdebugger.breakpoints.SuspendPolicy;
-import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.debugger.ArrayChunk;
-import com.jetbrains.python.debugger.IPyDebugProcess;
-import com.jetbrains.python.debugger.PyDebugValue;
-import com.jetbrains.python.debugger.PyDebuggerException;
-import com.jetbrains.python.debugger.PyReferringObjectsValue;
-import com.jetbrains.python.debugger.PyThreadInfo;
+import com.jetbrains.python.debugger.*;
+import consulo.application.ApplicationManager;
+import consulo.execution.debug.breakpoint.SuspendPolicy;
+import consulo.execution.debug.frame.XValueChildrenList;
+import consulo.logging.Logger;
+import consulo.process.ExecutionException;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.*;
 
 /**
  * @author traff

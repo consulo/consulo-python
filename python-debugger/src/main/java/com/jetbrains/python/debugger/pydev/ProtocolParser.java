@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Contract;
 import org.xmlpull.mxp1.MXParser;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.debugger.*;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.XppReader;

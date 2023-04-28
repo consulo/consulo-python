@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.refactoring.introduce;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
 import com.jetbrains.python.psi.PyExpression;
 
 import java.util.Collection;

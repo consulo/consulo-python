@@ -16,12 +16,12 @@
 
 package com.jetbrains.python.structureView;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.IdeBundle;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
-import com.intellij.ide.util.treeView.smartTree.Filter;
-import com.intellij.ide.util.treeView.smartTree.TreeElement;
+import consulo.application.AllIcons;
+import consulo.fileEditor.structureView.tree.ActionPresentation;
+import consulo.fileEditor.structureView.tree.ActionPresentationData;
+import consulo.fileEditor.structureView.tree.Filter;
+import consulo.fileEditor.structureView.tree.TreeElement;
+import consulo.ide.IdeBundle;
 
 import javax.annotation.Nonnull;
 

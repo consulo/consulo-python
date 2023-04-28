@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyElsePart;
 import com.jetbrains.python.psi.PyIfStatement;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * User : ktisha
@@ -35,7 +35,8 @@ public abstract class PyElseUnwrapperBase extends PyUnwrapper {
       return (e instanceof PyElsePart);
   }
   @Override
-    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException
+  {
       PyElement elseBranch;
 
       if (element instanceof PyIfStatement && ((PyIfStatement)element).getElsePart() != null) {

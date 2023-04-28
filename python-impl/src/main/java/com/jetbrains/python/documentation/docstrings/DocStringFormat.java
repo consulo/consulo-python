@@ -15,83 +15,72 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import java.util.Collections;
-import java.util.List;
+import consulo.language.psi.PsiElement;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.lang.ObjectUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author yole
  */
-public enum DocStringFormat
-{
-	/**
-	 * @see DocStringUtil#ensureNotPlainDocstringFormat(PsiElement)
-	 */
-	PLAIN("Plain", ""),
-	EPYTEXT("Epytext", "epytext"),
-	REST("reStructuredText", "rest"),
-	NUMPY("NumPy", "numpy"),
-	GOOGLE("Google", "google");
+public enum DocStringFormat {
+  /**
+   * @see DocStringUtil#ensureNotPlainDocstringFormat(PsiElement)
+   */
+  PLAIN("Plain", ""),
+  EPYTEXT("Epytext", "epytext"),
+  REST("reStructuredText", "rest"),
+  NUMPY("NumPy", "numpy"),
+  GOOGLE("Google", "google");
 
-	public static final List<String> ALL_NAMES = getAllNames();
+  public static final List<String> ALL_NAMES = getAllNames();
 
-	@Nonnull
-	private static List<String> getAllNames()
-	{
-		return Collections.unmodifiableList(ContainerUtil.map(values(), format -> format.getName()));
-	}
+  @Nonnull
+  private static List<String> getAllNames() {
+    return Collections.unmodifiableList(ContainerUtil.map(values(), format -> format.getName()));
+  }
 
-	public static final List<String> ALL_NAMES_BUT_PLAIN = getAllNamesButPlain();
+  public static final List<String> ALL_NAMES_BUT_PLAIN = getAllNamesButPlain();
 
-	@Nonnull
-	private static List<String> getAllNamesButPlain()
-	{
-		return Collections.unmodifiableList(ContainerUtil.mapNotNull(values(), format -> format == PLAIN ? null : format.getName()));
-	}
+  @Nonnull
+  private static List<String> getAllNamesButPlain() {
+    return Collections.unmodifiableList(ContainerUtil.mapNotNull(values(), format -> format == PLAIN ? null : format.getName()));
+  }
 
-	@Nullable
-	public static DocStringFormat fromName(@Nonnull String name)
-	{
-		for(DocStringFormat format : values())
-		{
-			if(format.getName().equalsIgnoreCase(name))
-			{
-				return format;
-			}
-		}
-		return null;
-	}
+  @Nullable
+  public static DocStringFormat fromName(@Nonnull String name) {
+    for (DocStringFormat format : values()) {
+      if (format.getName().equalsIgnoreCase(name)) {
+        return format;
+      }
+    }
+    return null;
+  }
 
-	@Nonnull
-	public static DocStringFormat fromNameOrPlain(@Nonnull String name)
-	{
-		return ObjectUtils.notNull(fromName(name), PLAIN);
-	}
+  @Nonnull
+  public static DocStringFormat fromNameOrPlain(@Nonnull String name) {
+    return ObjectUtil.notNull(fromName(name), PLAIN);
+  }
 
-	private final String myName;
-	private final String myFormatterCommand;
+  private final String myName;
+  private final String myFormatterCommand;
 
-	DocStringFormat(@Nonnull String name, @Nonnull String formatterCommand)
-	{
-		myName = name;
-		myFormatterCommand = formatterCommand;
-	}
+  DocStringFormat(@Nonnull String name, @Nonnull String formatterCommand) {
+    myName = name;
+    myFormatterCommand = formatterCommand;
+  }
 
-	@Nonnull
-	public String getName()
-	{
-		return myName;
-	}
+  @Nonnull
+  public String getName() {
+    return myName;
+  }
 
-	@Nonnull
-	public String getFormatterCommand()
-	{
-		return myFormatterCommand;
-	}
+  @Nonnull
+  public String getFormatterCommand() {
+    return myFormatterCommand;
+  }
 }

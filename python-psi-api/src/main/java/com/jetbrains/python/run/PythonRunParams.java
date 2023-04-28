@@ -15,56 +15,55 @@
  */
 package com.jetbrains.python.run;
 
-import java.util.Map;
+import consulo.ide.impl.idea.util.PathMappingSettings;
+import consulo.module.Module;
 
 import javax.annotation.Nullable;
-import com.intellij.openapi.module.Module;
-import com.intellij.util.PathMappingSettings;
+import java.util.Map;
 
 /**
  * @author traff
  */
-public interface PythonRunParams
-{
-	String getInterpreterOptions();
+public interface PythonRunParams {
+  String getInterpreterOptions();
 
-	void setInterpreterOptions(String interpreterOptions);
+  void setInterpreterOptions(String interpreterOptions);
 
-	String getWorkingDirectory();
+  String getWorkingDirectory();
 
-	void setWorkingDirectory(String workingDirectory);
+  void setWorkingDirectory(String workingDirectory);
 
-	@Nullable
-	String getSdkHome();
+  @Nullable
+  String getSdkHome();
 
-	void setSdkHome(String sdkHome);
+  void setSdkHome(String sdkHome);
 
-	void setModule(Module module);
+  void setModule(Module module);
 
-	String getModuleName();
+  String getModuleName();
 
-	boolean isUseModuleSdk();
+  boolean isUseModuleSdk();
 
-	void setUseModuleSdk(boolean useModuleSdk);
+  void setUseModuleSdk(boolean useModuleSdk);
 
-	boolean isPassParentEnvs();
+  boolean isPassParentEnvs();
 
-	void setPassParentEnvs(boolean passParentEnvs);
+  void setPassParentEnvs(boolean passParentEnvs);
 
-	Map<String, String> getEnvs();
+  Map<String, String> getEnvs();
 
-	void setEnvs(Map<String, String> envs);
+  void setEnvs(Map<String, String> envs);
 
-	@Nullable
-	PathMappingSettings getMappingSettings();
+  @Nullable
+  PathMappingSettings getMappingSettings();
 
-	void setMappingSettings(@Nullable PathMappingSettings mappingSettings);
+  void setMappingSettings(@Nullable PathMappingSettings mappingSettings);
 
-	boolean shouldAddContentRoots();
+  boolean shouldAddContentRoots();
 
-	boolean shouldAddSourceRoots();
+  boolean shouldAddSourceRoots();
 
-	void setAddContentRoots(boolean flag);
+  void setAddContentRoots(boolean flag);
 
-	void setAddSourceRoots(boolean flag);
+  void setAddSourceRoots(boolean flag);
 }

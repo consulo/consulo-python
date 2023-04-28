@@ -16,16 +16,20 @@
 
 package com.jetbrains.python.documentation;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.content.bundle.Sdk;
+import consulo.language.psi.PsiElement;
+
 import javax.annotation.Nullable;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.psi.PsiElement;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PythonDocumentationLinkProvider {
-  ExtensionPointName<PythonDocumentationLinkProvider> EP_NAME = ExtensionPointName.create("consulo.python.documentationLinkProvider");
+  ExtensionPointName<PythonDocumentationLinkProvider> EP_NAME = ExtensionPointName.create(PythonDocumentationLinkProvider.class);
 
   @Nullable
   String getExternalDocumentationUrl(PsiElement element, PsiElement originalElement);

@@ -21,9 +21,9 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.codeInsight.dataflow.DFALimitExceededException;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
+import consulo.ide.impl.idea.codeInsight.dataflow.DFALimitExceededException;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
 import com.jetbrains.python.psi.PyImportedNameDefiner;
 import com.jetbrains.python.psi.PyTargetExpression;
 

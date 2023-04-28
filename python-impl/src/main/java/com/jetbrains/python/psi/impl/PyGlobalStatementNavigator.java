@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ArrayUtil;
+import consulo.language.psi.PsiElement;
+import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.psi.PyGlobalStatement;
 import javax.annotation.Nullable;
 

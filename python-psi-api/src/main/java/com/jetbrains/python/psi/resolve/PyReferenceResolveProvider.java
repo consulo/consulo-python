@@ -15,18 +15,21 @@
  */
 package com.jetbrains.python.psi.resolve;
 
-import java.util.List;
+import com.jetbrains.python.psi.PyQualifiedExpression;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.jetbrains.python.psi.PyQualifiedExpression;
+import java.util.List;
 
 /**
  * User : ktisha
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyReferenceResolveProvider
 {
-	ExtensionPointName<PyReferenceResolveProvider> EP_NAME = ExtensionPointName.create("consulo.python.pyReferenceResolveProvider");
+	ExtensionPointName<PyReferenceResolveProvider> EP_NAME = ExtensionPointName.create(PyReferenceResolveProvider.class);
 
 	/**
 	 * Allows to provide a custom resolve result for qualified expression

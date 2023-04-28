@@ -17,9 +17,9 @@ package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.codeEditor.Editor;
+import consulo.util.lang.StringUtil;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 

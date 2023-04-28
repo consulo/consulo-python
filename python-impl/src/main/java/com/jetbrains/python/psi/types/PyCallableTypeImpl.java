@@ -19,9 +19,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ProcessingContext;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ProcessingContext;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyCallSiteExpression;

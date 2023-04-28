@@ -3,7 +3,7 @@ package com.jetbrains.python.debugger.pydev;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.xdebugger.breakpoints.SuspendPolicy;
+import consulo.execution.debug.breakpoint.SuspendPolicy;
 
 public class SetBreakpointCommand extends LineBreakpointCommand
 {

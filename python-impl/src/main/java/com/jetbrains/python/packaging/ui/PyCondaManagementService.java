@@ -15,127 +15,112 @@
  */
 package com.jetbrains.python.packaging.ui;
 
+import com.google.common.collect.Lists;
+import com.jetbrains.python.packaging.PyCondaPackageService;
+import consulo.content.bundle.Sdk;
+import consulo.logging.Logger;
+import consulo.process.ExecutionException;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.internal.CapturingProcessHandler;
+import consulo.process.local.ProcessOutput;
+import consulo.project.Project;
+import consulo.repository.ui.PackageVersionComparator;
+import consulo.repository.ui.RepoPackage;
+import consulo.util.concurrent.AsyncResult;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+public class PyCondaManagementService extends PyPackageManagementService {
+  private static final Logger LOG = Logger.getInstance(PyCondaManagementService.class);
 
-import com.google.common.collect.Lists;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.CatchingConsumer;
-import com.intellij.webcore.packaging.PackageVersionComparator;
-import com.intellij.webcore.packaging.RepoPackage;
-import com.jetbrains.python.packaging.PyCondaPackageService;
+  public PyCondaManagementService(@Nonnull final Project project, @Nonnull final Sdk sdk) {
+    super(project, sdk);
+  }
 
-public class PyCondaManagementService extends PyPackageManagementService
-{
-	private static final Logger LOG = Logger.getInstance(PyCondaManagementService.class);
+  @Override
+  @Nonnull
+  public List<RepoPackage> getAllPackagesCached() {
+    return versionMapToPackageList(PyCondaPackageService.getInstance().getCondaPackages());
+  }
 
-	public PyCondaManagementService(@Nonnull final Project project, @Nonnull final Sdk sdk)
-	{
-		super(project, sdk);
-	}
+  @Override
+  @Nonnull
+  public List<RepoPackage> getAllPackages() {
+    return versionMapToPackageList(PyCondaPackageService.getInstance().loadAndGetPackages());
+  }
 
-	@Override
-	@Nonnull
-	public List<RepoPackage> getAllPackagesCached()
-	{
-		return versionMapToPackageList(PyCondaPackageService.getInstance().getCondaPackages());
-	}
+  @Override
+  @Nonnull
+  public List<RepoPackage> reloadAllPackages() {
+    return getAllPackages();
+  }
 
-	@Override
-	@Nonnull
-	public List<RepoPackage> getAllPackages()
-	{
-		return versionMapToPackageList(PyCondaPackageService.getInstance().loadAndGetPackages());
-	}
+  @Override
+  public List<String> getAllRepositories() {
+    List<String> result = new ArrayList<>();
+    result.addAll(PyCondaPackageService.getInstance().loadAndGetChannels());
+    return result;
+  }
 
-	@Override
-	@Nonnull
-	public List<RepoPackage> reloadAllPackages()
-	{
-		return getAllPackages();
-	}
+  @Override
+  public void addRepository(String repositoryUrl) {
+    final String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
+    final ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--add", "channels", repositoryUrl, "--force");
+    final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
 
-	@Override
-	public List<String> getAllRepositories()
-	{
-		List<String> result = new ArrayList<>();
-		result.addAll(PyCondaPackageService.getInstance().loadAndGetChannels());
-		return result;
-	}
+    try {
+      final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
+      final ProcessOutput result = handler.runProcess();
+      final int exitCode = result.getExitCode();
+      if (exitCode != 0) {
+        final String message =
+          StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
+        LOG.warn("Failed to add repository " + message);
+      }
+      PyCondaPackageService.getInstance().addChannel(repositoryUrl);
+    }
+    catch (ExecutionException e) {
+      LOG.warn("Failed to add repository");
+    }
 
-	@Override
-	public void addRepository(String repositoryUrl)
-	{
-		final String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
-		final ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--add", "channels", repositoryUrl, "--force");
-		final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
+  }
 
-		try
-		{
-			final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
-			final ProcessOutput result = handler.runProcess();
-			final int exitCode = result.getExitCode();
-			if(exitCode != 0)
-			{
-				final String message = StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
-				LOG.warn("Failed to add repository " + message);
-			}
-			PyCondaPackageService.getInstance().addChannel(repositoryUrl);
-		}
-		catch(ExecutionException e)
-		{
-			LOG.warn("Failed to add repository");
-		}
+  @Override
+  public void removeRepository(String repositoryUrl) {
+    final String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
+    final ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--remove", "channels", repositoryUrl, "--force");
+    final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
 
-	}
+    try {
+      final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
+      final ProcessOutput result = handler.runProcess();
+      final int exitCode = result.getExitCode();
+      if (exitCode != 0) {
+        final String message =
+          StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
+        LOG.warn("Failed to remove repository " + message);
+      }
+      PyCondaPackageService.getInstance().removeChannel(repositoryUrl);
+    }
+    catch (ExecutionException e) {
+      LOG.warn("Failed to remove repository");
+    }
+  }
 
-	@Override
-	public void removeRepository(String repositoryUrl)
-	{
-		final String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
-		final ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--remove", "channels", repositoryUrl, "--force");
-		final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
+  @Override
+  public boolean canInstallToUser() {
+    return false;
+  }
 
-		try
-		{
-			final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
-			final ProcessOutput result = handler.runProcess();
-			final int exitCode = result.getExitCode();
-			if(exitCode != 0)
-			{
-				final String message = StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
-				LOG.warn("Failed to remove repository " + message);
-			}
-			PyCondaPackageService.getInstance().removeChannel(repositoryUrl);
-		}
-		catch(ExecutionException e)
-		{
-			LOG.warn("Failed to remove repository");
-		}
-	}
-
-	@Override
-	public boolean canInstallToUser()
-	{
-		return false;
-	}
-
-	@Override
-	public void fetchPackageVersions(String packageName, CatchingConsumer<List<String>, Exception> consumer)
-	{
-		final List<String> versions = PyCondaPackageService.getInstance().getPackageVersions(packageName);
-		Collections.sort(versions, Collections.reverseOrder(new PackageVersionComparator()));
-		consumer.consume(versions);
-	}
-
+  @Nonnull
+  @Override
+  public AsyncResult<List<String>> fetchPackageVersions(String packageName) {
+    final List<String> versions = PyCondaPackageService.getInstance().getPackageVersions(packageName);
+    Collections.sort(versions, Collections.reverseOrder(new PackageVersionComparator()));
+    return AsyncResult.resolved(versions);
+  }
 }

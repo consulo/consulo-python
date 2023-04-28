@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.highlighting;
 
-import com.intellij.lexer.LayeredLexer;
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.HighlighterColors;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
-import com.intellij.psi.StringEscapesTokenTypes;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.StringEscapesTokenTypes;
+import consulo.language.lexer.LayeredLexer;
+import consulo.language.lexer.Lexer;
+import consulo.codeEditor.HighlighterColors;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.language.editor.highlight.SyntaxHighlighterBase;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.lexer.PyStringLiteralLexer;
@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.intellij.openapi.editor.DefaultLanguageHighlighterColors.*;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.*;
 
 /**
  * Colors and lexer(s) needed for highlighting.

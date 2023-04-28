@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.refactoring.classes;
 
-import com.intellij.refactoring.classMembers.DependentMembersCollectorBase;
+import consulo.language.editor.refactoring.classMember.DependentMembersCollectorBase;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.MembersManager;

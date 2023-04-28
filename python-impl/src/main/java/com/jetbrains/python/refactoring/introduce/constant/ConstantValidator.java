@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.refactoring.introduce.constant;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.refactoring.introduce.IntroduceValidator;
 

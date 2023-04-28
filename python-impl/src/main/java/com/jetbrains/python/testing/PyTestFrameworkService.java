@@ -17,13 +17,13 @@ package com.jetbrains.python.testing;
 
 import java.util.Map;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
+import consulo.component.persist.PersistentStateComponent;
+import consulo.ide.ServiceManager;
+import consulo.component.persist.State;
+import consulo.component.persist.Storage;
+import consulo.component.persist.StoragePathMacros;
 import java.util.HashMap;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import consulo.util.xml.serializer.XmlSerializerUtil;
 
 @State(name = "PyTestFrameworkService", storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/other.xml"))
 public class PyTestFrameworkService implements PersistentStateComponent<PyTestFrameworkService>

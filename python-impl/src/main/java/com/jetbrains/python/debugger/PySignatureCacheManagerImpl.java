@@ -20,26 +20,26 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.FileAttribute;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.util.ArrayUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.application.progress.ProgressManager;
+import consulo.content.ContentIterator;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.logging.Logger;
+import consulo.module.content.ProjectFileIndex;
+import consulo.project.Project;
+import consulo.project.content.scope.ProjectScopes;
+import consulo.ui.ex.awt.Messages;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.lang.StringUtil;
+import consulo.util.lang.ref.Ref;
+import consulo.virtualFileSystem.FileAttribute;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  * @author traff
  */
 public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
-  protected static final Logger LOG = Logger.getInstance(PySignatureCacheManagerImpl.class.getName());
+  protected static final Logger LOG = Logger.getInstance(PySignatureCacheManagerImpl.class);
 
   private final static boolean SHOULD_OVERWRITE_TYPES = false;
 
@@ -74,7 +74,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
 
   @Override
   public void recordSignature(@Nonnull PySignature signature) {
-    GlobalSearchScope scope = ProjectScope.getProjectScope(myProject);
+    GlobalSearchScope scope = (GlobalSearchScope) ProjectScopes.getProjectScope(myProject);
 
     VirtualFile file = getFile(signature);
     if (file != null && scope.contains(file)) {

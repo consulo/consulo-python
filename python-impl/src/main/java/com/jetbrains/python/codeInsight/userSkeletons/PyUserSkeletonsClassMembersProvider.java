@@ -15,15 +15,6 @@
  */
 package com.jetbrains.python.codeInsight.userSkeletons;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
@@ -33,10 +24,20 @@ import com.jetbrains.python.psi.types.PyClassMembersProviderBase;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyOverridingAncestorsClassMembersProvider;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author vlan
  */
+@ExtensionImpl
 public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderBase implements PyOverridingAncestorsClassMembersProvider
 {
 	@Nonnull

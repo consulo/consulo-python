@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyIfStatement;

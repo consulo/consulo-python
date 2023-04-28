@@ -16,12 +16,12 @@
 
 package consulo.ironPython.psi.impl;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.util.Processor;
-import com.intellij.util.QueryExecutor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.search.PySuperMethodsSearch;
+import consulo.application.util.function.Processor;
+import consulo.application.util.query.QueryExecutor;
+import consulo.language.psi.PsiElement;
 
 import javax.annotation.Nonnull;
 

@@ -16,8 +16,8 @@
 package com.jetbrains.python.refactoring.classes.membersManager;
 
 import javax.annotation.Nonnull;
-import com.intellij.psi.PsiNamedElement;
-import com.jetbrains.NotNullPredicate;
+import consulo.language.psi.PsiNamedElement;
+import com.jetbrains.python.NotNullPredicate;
 import com.jetbrains.python.psi.PyElement;
 
 /**

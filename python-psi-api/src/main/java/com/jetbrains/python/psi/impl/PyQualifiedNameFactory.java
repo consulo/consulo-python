@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;

@@ -8,8 +8,8 @@ import java.net.Socket;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.CharsetToolkit;
+import consulo.logging.Logger;
+import consulo.util.io.CharsetToolkit;
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
 import com.jetbrains.python.debugger.pydev.RemoteDebugger;
 

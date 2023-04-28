@@ -15,15 +15,15 @@
  */
 package com.jetbrains.python.templateLanguages;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.language.psi.path.FileReference;
+import consulo.module.Module;
+import consulo.language.util.ModuleUtilCore;
+import consulo.document.util.TextRange;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.language.psi.PsiManager;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyStringLiteralFileReferenceSet;
 import javax.annotation.Nonnull;

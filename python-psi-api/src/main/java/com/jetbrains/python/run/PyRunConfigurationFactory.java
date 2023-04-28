@@ -15,10 +15,10 @@
  */
 package com.jetbrains.python.run;
 
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.module.Module;
+import consulo.execution.RunnerAndConfigurationSettings;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.ide.ServiceManager;
+import consulo.module.Module;
 
 /**
  * @author yole

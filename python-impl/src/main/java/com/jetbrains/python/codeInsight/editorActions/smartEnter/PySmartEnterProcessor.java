@@ -16,18 +16,7 @@
 
 package com.jetbrains.python.codeInsight.editorActions.smartEnter;
 
-import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessor;
-import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import consulo.util.dataholder.Key;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.enterProcessors.EnterProcessor;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.enterProcessors.PyCommentBreakerEnterProcessor;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.enterProcessors.PyPlainEnterProcessor;
@@ -35,9 +24,23 @@ import com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers.*;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.document.Document;
+import consulo.language.Language;
+import consulo.language.editor.action.SmartEnterProcessor;
+import consulo.language.editor.completion.lookup.LookupManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.logging.Logger;
+import consulo.project.Project;
+import consulo.util.dataholder.Key;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +50,9 @@ import java.util.List;
  * Date:   15.04.2010
  * Time:   15:55:57
  */
+@ExtensionImpl
 public class PySmartEnterProcessor extends SmartEnterProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.codeInsight.editorActions.smartEnter.PySmartEnterProcessor");
+  private static final Logger LOG = Logger.getInstance(PySmartEnterProcessor.class);
   private static final List<PyFixer> ourFixers = new ArrayList<PyFixer>();
   private static final List<EnterProcessor> ourProcessors = new ArrayList<EnterProcessor>();
 
@@ -67,6 +71,12 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
 
     ourProcessors.add(new PyCommentBreakerEnterProcessor());
     ourProcessors.add(new PyPlainEnterProcessor());
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 
   private static class TooManyAttemptsException extends Exception {

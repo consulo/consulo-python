@@ -16,15 +16,15 @@
 
 package com.jetbrains.rest.inspections;
 
+import com.jetbrains.rest.RestBundle;
+import consulo.language.editor.inspection.CustomSuppressableInspectionTool;
+import consulo.language.editor.inspection.LocalInspectionTool;
+import consulo.language.editor.intention.SuppressIntentionAction;
+import consulo.language.psi.PsiElement;
+import org.jetbrains.annotations.Nls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.Nls;
-import com.intellij.codeInspection.CustomSuppressableInspectionTool;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.SuppressIntentionAction;
-import com.intellij.psi.PsiElement;
-import com.jetbrains.rest.RestBundle;
 
 /**
  * User : catherine

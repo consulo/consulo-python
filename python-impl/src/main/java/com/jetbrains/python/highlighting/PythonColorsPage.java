@@ -16,26 +16,26 @@
 
 package com.jetbrains.python.highlighting;
 
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+import com.jetbrains.python.PythonFileType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.colorScheme.setting.AttributesDescriptor;
+import consulo.colorScheme.setting.ColorDescriptor;
+import consulo.language.editor.colorScheme.setting.ColorSettingsPage;
+import consulo.language.editor.highlight.SyntaxHighlighter;
+import consulo.language.editor.highlight.SyntaxHighlighterFactory;
+import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NonNls;
-import com.google.common.collect.ImmutableMap;
-import com.intellij.application.options.colors.InspectionColorSettingsPage;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
-import com.intellij.openapi.options.colors.AttributesDescriptor;
-import com.intellij.openapi.options.colors.ColorDescriptor;
-import com.intellij.openapi.options.colors.ColorSettingsPage;
-import com.jetbrains.python.PythonFileType;
+import java.util.Map;
 
 /**
  * @author yole
  */
-public class PythonColorsPage implements ColorSettingsPage, InspectionColorSettingsPage {
-  private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[] {
+@ExtensionImpl
+public class PythonColorsPage implements ColorSettingsPage {
+  private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
     new AttributesDescriptor("Keyword", PyHighlighter.PY_KEYWORD),
     new AttributesDescriptor("String (bytes)", PyHighlighter.PY_BYTE_STRING),
     new AttributesDescriptor("String (Unicode)", PyHighlighter.PY_UNICODE_STRING),
@@ -62,7 +62,8 @@ public class PythonColorsPage implements ColorSettingsPage, InspectionColorSetti
     new AttributesDescriptor("Invalid escape sequence", PyHighlighter.PY_INVALID_STRING_ESCAPE),
   };
 
-  @NonNls private static final Map<String,TextAttributesKey> ourTagToDescriptorMap = ImmutableMap.<String, TextAttributesKey>builder()
+  @NonNls
+  private static final Map<String, TextAttributesKey> ourTagToDescriptorMap = ImmutableMap.<String, TextAttributesKey>builder()
     .put("docComment", PyHighlighter.PY_DOC_COMMENT)
     .put("docCommentTag", PyHighlighter.PY_DOC_COMMENT_TAG)
     .put("decorator", PyHighlighter.PY_DECORATOR)
@@ -102,24 +103,24 @@ public class PythonColorsPage implements ColorSettingsPage, InspectionColorSetti
   public String getDemoText() {
     return
       "@<decorator>decorator</decorator>(param=1)\n" +
-      "def f(<param>x</param>):\n" +
-      "    <docComment>\"\"\" Syntax Highlighting Demo\n" +
-      "        <docCommentTag>@param</docCommentTag> x Parameter\"\"\"</docComment>\n" +
-      "    s = (\"Test\", 2+3, {'a': 'b'}, <param>x</param>)   # Comment\n" +
-      "    print s[0].lower()\n"+
-      "\n"+
-      "class <classDef>Foo</classDef>:\n"+
-      "    def <predefined>__init__</predefined>(<self>self</self>):\n" +
-      "        byte_string = 'newline:\\n also newline:\\x0a'\n" +
-      "        text_string = u\"Cyrillic \u042f is \\u042f. Oops: \\u042g\"\n"+
-      "        <self>self</self>.makeSense(<kwarg>whatever</kwarg>=1)\n" +
-      "    \n" +
-      "    def <funcDef>makeSense</funcDef>(<self>self</self>, <param>whatever</param>):\n"+
-      "        <self>self</self>.sense = <param>whatever</param>\n"+
-      "\n"+
-      "x = <builtin>len</builtin>('abc')\n"+
-      "print(f.<predefinedUsage>__doc__</predefinedUsage>)"
-    ;
+        "def f(<param>x</param>):\n" +
+        "    <docComment>\"\"\" Syntax Highlighting Demo\n" +
+        "        <docCommentTag>@param</docCommentTag> x Parameter\"\"\"</docComment>\n" +
+        "    s = (\"Test\", 2+3, {'a': 'b'}, <param>x</param>)   # Comment\n" +
+        "    print s[0].lower()\n" +
+        "\n" +
+        "class <classDef>Foo</classDef>:\n" +
+        "    def <predefined>__init__</predefined>(<self>self</self>):\n" +
+        "        byte_string = 'newline:\\n also newline:\\x0a'\n" +
+        "        text_string = u\"Cyrillic \u042f is \\u042f. Oops: \\u042g\"\n" +
+        "        <self>self</self>.makeSense(<kwarg>whatever</kwarg>=1)\n" +
+        "    \n" +
+        "    def <funcDef>makeSense</funcDef>(<self>self</self>, <param>whatever</param>):\n" +
+        "        <self>self</self>.sense = <param>whatever</param>\n" +
+        "\n" +
+        "x = <builtin>len</builtin>('abc')\n" +
+        "print(f.<predefinedUsage>__doc__</predefinedUsage>)"
+      ;
   }
 
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {

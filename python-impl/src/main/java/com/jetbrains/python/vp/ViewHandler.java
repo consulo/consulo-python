@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
-import com.intellij.openapi.application.ApplicationManager;
+import consulo.application.ApplicationManager;
 
 /**
  * Wrapper for view.

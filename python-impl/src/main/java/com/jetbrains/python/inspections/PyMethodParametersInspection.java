@@ -15,78 +15,42 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.inspections.quickfix.AddSelfQuickFix;
 import com.jetbrains.python.inspections.quickfix.RenameParameterQuickFix;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyNamedParameter;
-import com.jetbrains.python.psi.PyParameter;
-import com.jetbrains.python.psi.PyParameterList;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.ResolveImportUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.inspection.InspectionToolState;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.util.QualifiedName;
+import consulo.util.lang.ref.Ref;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Looks for the 'self' or its equivalents.
  *
  * @author dcheryasov
  */
+@ExtensionImpl
 public class PyMethodParametersInspection extends PyInspection
 {
-	public String MCS = "mcs";
-
-	@Nullable
+	@Nonnull
 	@Override
-	public JComponent createOptionsPanel()
+	public InspectionToolState<?> createStateProvider()
 	{
-		ComboBox comboBox = new ComboBox(new String[]{
-				"mcs",
-				"metacls"
-		});
-		comboBox.setSelectedItem(MCS);
-		comboBox.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				ComboBox cb = (ComboBox) e.getSource();
-				MCS = (String) cb.getSelectedItem();
-			}
-		});
-
-		JPanel option = new JPanel(new BorderLayout());
-		option.add(new JLabel("Metaclass method first argument name"), BorderLayout.WEST);
-		option.add(comboBox, BorderLayout.EAST);
-
-		final JPanel root = new JPanel(new BorderLayout());
-		root.add(option, BorderLayout.PAGE_START);
-		return root;
+		return new PyMethodParametersInspectionState();
 	}
 
 	@Nls
@@ -104,18 +68,23 @@ public class PyMethodParametersInspection extends PyInspection
 
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
 	{
-		return new Visitor(holder, session);
+		return new Visitor(holder, session, (PyMethodParametersInspectionState) state);
 	}
 
 	public class Visitor extends PyInspectionVisitor
 	{
 		private Ref<PsiElement> myPossibleZopeRef = null;
+		private final PyMethodParametersInspectionState myState;
 
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyMethodParametersInspectionState state)
 		{
 			super(holder, session);
+			myState = state;
 		}
 
 		@Nullable
@@ -141,7 +110,7 @@ public class PyMethodParametersInspection extends PyInspection
 		@Override
 		public void visitPyFunction(final PyFunction node)
 		{
-			for(PyInspectionExtension extension : Extensions.getExtensions(PyInspectionExtension.EP_NAME))
+			for(PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList())
 			{
 				if(extension.ignoreMethodParameters(node))
 				{
@@ -187,7 +156,7 @@ public class PyMethodParametersInspection extends PyInspection
 							{
 								if(flags.isClassMethod())
 								{
-									paramName = MCS;
+									paramName = myState.MCS;
 								}
 								else
 								{
@@ -202,7 +171,11 @@ public class PyMethodParametersInspection extends PyInspection
 							{
 								paramName = PyNames.CANONICAL_SELF;
 							}
-							registerProblem(plist, PyBundle.message("INSP.must.have.first.parameter", paramName), ProblemHighlightType.GENERIC_ERROR, null, new AddSelfQuickFix(paramName));
+							registerProblem(plist,
+									PyBundle.message("INSP.must.have.first.parameter", paramName),
+									ProblemHighlightType.GENERIC_ERROR,
+									null,
+									new AddSelfQuickFix(paramName));
 						}
 					}
 				}
@@ -233,7 +206,9 @@ public class PyMethodParametersInspection extends PyInspection
 						};
 						if(PyUtil.among(pname, mangled))
 						{
-							registerProblem(PyUtil.sure(params[0].getNode()).getPsi(), PyBundle.message("INSP.probably.mistyped.self"), new RenameParameterQuickFix(PyNames.CANONICAL_SELF));
+							registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
+									PyBundle.message("INSP.probably.mistyped.self"),
+									new RenameParameterQuickFix(PyNames.CANONICAL_SELF));
 							return;
 						}
 						if(flags.isMetaclassMethod())
@@ -246,7 +221,7 @@ public class PyMethodParametersInspection extends PyInspection
 							String alternativeName = null;
 							if(PyNames.NEW.equals(methodName) || flags.isClassMethod())
 							{
-								expectedName = MCS;
+								expectedName = myState.MCS;
 							}
 							else if(flags.isSpecialMetaclassMethod())
 							{
@@ -259,7 +234,9 @@ public class PyMethodParametersInspection extends PyInspection
 							}
 							if(!expectedName.equals(pname) && (alternativeName == null || !alternativeName.equals(pname)))
 							{
-								registerProblem(PyUtil.sure(params[0].getNode()).getPsi(), PyBundle.message("INSP.usually.named.$0", expectedName), new RenameParameterQuickFix(expectedName));
+								registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
+										PyBundle.message("INSP.usually.named.$0", expectedName),
+										new RenameParameterQuickFix(expectedName));
 							}
 						}
 						else if(flags.isClassMethod() ||
@@ -268,7 +245,9 @@ public class PyMethodParametersInspection extends PyInspection
 						{
 							if(!CLS.equals(pname))
 							{
-								registerProblem(PyUtil.sure(params[0].getNode()).getPsi(), PyBundle.message("INSP.usually.named.$0", CLS), new RenameParameterQuickFix(CLS));
+								registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
+										PyBundle.message("INSP.usually.named.$0", CLS),
+										new RenameParameterQuickFix(CLS));
 							}
 						}
 						else if(!flags.isStaticMethod() && !first_param.isPositionalContainer() && !PyNames.CANONICAL_SELF.equals(pname))
@@ -277,7 +256,9 @@ public class PyMethodParametersInspection extends PyInspection
 							{
 								return;   // accept either 'self' or 'cls' for all methods in metaclass
 							}
-							registerProblem(PyUtil.sure(params[0].getNode()).getPsi(), PyBundle.message("INSP.usually.named.self"), new RenameParameterQuickFix(PyNames.CANONICAL_SELF));
+							registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
+									PyBundle.message("INSP.usually.named.self"),
+									new RenameParameterQuickFix(PyNames.CANONICAL_SELF));
 						}
 					}
 					else

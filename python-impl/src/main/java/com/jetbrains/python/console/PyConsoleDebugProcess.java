@@ -21,12 +21,12 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Maps;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.openapi.project.Project;
-import com.intellij.remote.RemoteProcessControl;
-import com.intellij.util.ui.UIUtil;
-import com.intellij.xdebugger.XDebugSession;
+import consulo.execution.ui.console.ConsoleViewContentType;
+import consulo.execution.ui.ExecutionConsole;
+import consulo.project.Project;
+import consulo.ide.impl.idea.remote.RemoteProcessControl;
+import consulo.ui.ex.awt.UIUtil;
+import consulo.execution.debug.XDebugSession;
 import com.jetbrains.python.debugger.PyDebugProcess;
 import com.jetbrains.python.debugger.PyDebugRunner;
 import com.jetbrains.python.debugger.PyDebuggerOptionsProvider;
@@ -94,7 +94,7 @@ public class PyConsoleDebugProcess extends PyDebugProcess
 	public void connect(PydevConsoleCommunication consoleCommunication) throws Exception
 	{
 		int portToConnect;
-		if(myConsoleDebugProcessHandler.getConsoleProcessHandler() instanceof RemoteProcessControl)
+		if(myConsoleDebugProcessHandler.getConsoleProcessHandler() instanceof consulo.ide.impl.idea.remote.RemoteProcessControl)
 		{
 			portToConnect = getRemoteTunneledPort(myLocalPort, ((RemoteProcessControl) myConsoleDebugProcessHandler.getConsoleProcessHandler()));
 		}

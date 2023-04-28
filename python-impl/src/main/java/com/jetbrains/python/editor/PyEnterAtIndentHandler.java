@@ -16,23 +16,24 @@
 
 package com.jetbrains.python.editor;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.editorActions.BackspaceHandler;
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
-import com.intellij.injected.editor.EditorWindow;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.jetbrains.python.psi.PyFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.action.EditorActionHandler;
+import consulo.dataContext.DataContext;
+import consulo.language.editor.action.EditorBackspaceUtil;
+import consulo.language.editor.action.EnterHandlerDelegateAdapter;
+import consulo.language.editor.inject.EditorWindow;
+import consulo.language.inject.InjectedLanguageManager;
+import consulo.language.psi.PsiFile;
+import consulo.util.lang.ref.Ref;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
   @Override
   public Result preprocessEnter(@Nonnull PsiFile file,
@@ -44,7 +45,7 @@ public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
     int offset = caretOffset.get();
     if (editor instanceof EditorWindow) {
       file = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(file);
-      editor = InjectedLanguageUtil.getTopLevelEditor(editor);
+      editor = EditorWindow.getTopLevelEditor(editor);
       offset = editor.getCaretModel().getOffset();
     }
     if (!(file instanceof PyFile)) {
@@ -52,7 +53,7 @@ public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
     }
 
     // honor dedent (PY-3009)
-    if (BackspaceHandler.isWhitespaceBeforeCaret(editor)) {
+    if (EditorBackspaceUtil.isWhitespaceBeforeCaret(editor)) {
       return Result.DefaultSkipIndent;
     }
     return Result.Continue;

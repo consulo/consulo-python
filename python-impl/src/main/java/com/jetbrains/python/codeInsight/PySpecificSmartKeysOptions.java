@@ -18,8 +18,8 @@ package com.jetbrains.python.codeInsight;
 
 import org.jetbrains.annotations.Nls;
 import javax.annotation.Nullable;
-import com.intellij.openapi.options.BeanConfigurable;
-import com.intellij.openapi.options.Configurable;
+import consulo.configurable.BeanConfigurable;
+import consulo.configurable.Configurable;
 
 /**
  * @author yole

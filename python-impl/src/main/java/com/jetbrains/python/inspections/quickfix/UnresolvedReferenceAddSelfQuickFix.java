@@ -18,11 +18,11 @@ package com.jetbrains.python.inspections.quickfix;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.FileModificationService;
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
+import consulo.language.editor.FileModificationService;
+import consulo.language.editor.intention.HighPriorityAction;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;

@@ -17,7 +17,7 @@ package com.jetbrains.python.debugger.dataframe;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.project.Project;
+import consulo.project.Project;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.array.AsyncArrayTableModel;

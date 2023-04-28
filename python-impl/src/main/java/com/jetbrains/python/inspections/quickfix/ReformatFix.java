@@ -18,16 +18,16 @@ package com.jetbrains.python.inspections.quickfix;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.FileModificationService;
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.editor.FileModificationService;
+import consulo.language.editor.intention.HighPriorityAction;
+import consulo.language.editor.intention.IntentionAction;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.codeEditor.Editor;
+import consulo.project.Project;
+import consulo.language.psi.PsiFile;
+import consulo.language.codeStyle.CodeStyleManager;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * @author yole
@@ -62,7 +62,8 @@ public class ReformatFix implements IntentionAction, LocalQuickFix, HighPriority
   }
 
   @Override
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+  {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
       return;
     }

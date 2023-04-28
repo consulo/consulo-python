@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
-import com.intellij.psi.PsiCodeFragment;
-import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
+import consulo.language.psi.PsiCodeFragment;
+import consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase;
 
 /**
 * User : ktisha
 */
-class PyParameterTableModelItem extends ParameterTableModelItemBase<PyParameterInfo> {
+class PyParameterTableModelItem extends consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase<PyParameterInfo>
+{
 
   public PyParameterTableModelItem(PyParameterInfo parameter,
                                    PsiCodeFragment typeCodeFragment,

@@ -17,8 +17,8 @@ package com.jetbrains.python.refactoring.classes;
 
 import java.util.ArrayList;
 
-import com.intellij.refactoring.classMembers.AbstractMemberInfoStorage;
-import com.intellij.refactoring.classMembers.MemberInfoBase;
+import consulo.language.editor.refactoring.classMember.AbstractMemberInfoStorage;
+import consulo.language.editor.refactoring.classMember.MemberInfoBase;
 import java.util.HashSet;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;

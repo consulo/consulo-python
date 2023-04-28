@@ -16,20 +16,20 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.Stack;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.RemoveUnnecessaryBackslashQuickFix;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.Stack;
 import org.jetbrains.annotations.Nls;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
  * <p/>
  * Inspection to highlight backslashes in places where line continuation is implicit (inside (), [], {}).
  */
+@ExtensionImpl
 public class PyUnnecessaryBackslashInspection extends PyInspection {
 
   @Nls
@@ -50,7 +51,8 @@ public class PyUnnecessaryBackslashInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -111,8 +113,8 @@ public class PyUnnecessaryBackslashInspection extends PyInspection {
     public void visitPyStringLiteralExpression(final PyStringLiteralExpression stringLiteralExpression) {
       PsiElement parent = stringLiteralExpression.getParent();
       if (parent instanceof PyListLiteralExpression || parent instanceof PyParenthesizedExpression ||
-          parent instanceof PySetLiteralExpression || parent instanceof PyKeyValueExpression ||
-          parent instanceof PyNamedParameter || parent instanceof PyArgumentList) {
+        parent instanceof PySetLiteralExpression || parent instanceof PyKeyValueExpression ||
+        parent instanceof PyNamedParameter || parent instanceof PyArgumentList) {
         findProblem(stringLiteralExpression);
       }
     }

@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.codeInsight;
 
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.util.lang.function.Condition;
+import consulo.virtualFileSystem.VirtualFile;
 import com.jetbrains.python.PythonFileType;
 
 /**

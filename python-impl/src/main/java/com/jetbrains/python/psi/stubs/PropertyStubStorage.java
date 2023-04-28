@@ -16,12 +16,12 @@
 
 package com.jetbrains.python.psi.stubs;
 
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
+import consulo.language.psi.stub.StubInputStream;
+import consulo.language.psi.stub.StubOutputStream;
+import consulo.index.io.StringRef;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.impl.PropertyBunch;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType;
 import com.jetbrains.python.psi.impl.stubs.PropertyStubType;

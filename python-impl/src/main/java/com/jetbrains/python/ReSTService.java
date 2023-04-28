@@ -16,12 +16,12 @@
 
 package com.jetbrains.python;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import consulo.component.persist.PersistentStateComponent;
+import consulo.component.persist.State;
+import consulo.component.persist.Storage;
+import consulo.module.Module;
+import consulo.ide.impl.idea.openapi.module.ModuleServiceManager;
+import consulo.util.xml.serializer.XmlSerializerUtil;
 import javax.annotation.Nonnull;
 
 /**
@@ -52,7 +52,7 @@ public class ReSTService implements PersistentStateComponent<ReSTService> {
   }
 
   public static ReSTService getInstance(@Nonnull Module module) {
-    return ModuleServiceManager.getService(module, ReSTService.class);
+    return module.getInstance(ReSTService.class);
   }
 
   public String getWorkdir() {

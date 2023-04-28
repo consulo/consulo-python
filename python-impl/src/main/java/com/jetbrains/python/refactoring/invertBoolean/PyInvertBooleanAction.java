@@ -18,16 +18,16 @@ package com.jetbrains.python.refactoring.invertBoolean;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.RefactoringActionHandler;
-import com.intellij.refactoring.actions.BaseRefactoringAction;
+import consulo.language.Language;
+import consulo.dataContext.DataContext;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.refactoring.action.RefactoringActionHandler;
+import consulo.module.content.ProjectRootManager;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.editor.refactoring.action.BaseRefactoringAction;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.*;

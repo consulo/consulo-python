@@ -15,33 +15,26 @@
  */
 package com.jetbrains.python.refactoring.classes.extractSuperclass;
 
-import java.awt.BorderLayout;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersBasedViewSwingImpl;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.module.content.ProjectRootManager;
+import consulo.project.Project;
+import consulo.ui.ex.awt.TextComponentAccessor;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.Box;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.refactoring.RefactoringBundle;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersBasedViewSwingImpl;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Ilya.Kazakevich
  */
 class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtractSuperclassPresenter, PyExtractSuperclassInitializationInfo> implements PyExtractSuperclassView
 {
-
 	private static final String FILE_OR_DIRECTORY = RefactoringBundle.message("extract.superclass.elements.header");
 	@Nonnull
 	private final JTextArea myExtractedSuperNameField = new JTextArea();

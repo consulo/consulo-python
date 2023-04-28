@@ -16,23 +16,24 @@
 
 package com.jetbrains.python.codeInsight.completion;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.psi.PyParameterList;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.util.ProcessingContext;
+import consulo.ui.image.Image;
 
 import javax.annotation.Nonnull;
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.icons.AllIcons;
-import com.intellij.util.ProcessingContext;
-import com.jetbrains.python.psi.PyParameterList;
-import consulo.codeInsight.completion.CompletionProvider;
-import consulo.ui.image.Image;
+
+import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyParameterCompletionContributor extends CompletionContributor {
   public PyParameterCompletionContributor() {
     extend(CompletionType.BASIC,
@@ -43,8 +44,13 @@ public class PyParameterCompletionContributor extends CompletionContributor {
            new ParameterCompletionProvider("kwargs"));
   }
 
-  private static class ParameterCompletionProvider implements CompletionProvider
-  {
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
+
+  private static class ParameterCompletionProvider implements CompletionProvider {
     private String myName;
 
     private ParameterCompletionProvider(String name) {
@@ -52,10 +58,10 @@ public class PyParameterCompletionContributor extends CompletionContributor {
     }
 
     @Override
-	public void addCompletions(@Nonnull CompletionParameters parameters,
-                                  ProcessingContext context,
-                                  @Nonnull CompletionResultSet result) {
-      result.addElement(LookupElementBuilder.create(myName).withIcon((Image) AllIcons.Nodes.Parameter));
+    public void addCompletions(@Nonnull CompletionParameters parameters,
+                               ProcessingContext context,
+                               @Nonnull CompletionResultSet result) {
+      result.addElement(LookupElementBuilder.create(myName).withIcon((Image)AllIcons.Nodes.Parameter));
     }
   }
 }

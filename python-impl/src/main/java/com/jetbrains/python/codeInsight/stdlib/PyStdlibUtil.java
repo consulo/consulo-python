@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.codeInsight.stdlib;
 
-import com.intellij.openapi.diagnostic.Logger;
+import consulo.logging.Logger;
 import com.jetbrains.python.PythonHelpersLocator;
 
 import java.io.BufferedReader;

@@ -15,45 +15,7 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import org.jetbrains.annotations.Nls;
-
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.ide.util.ElementsChooser;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.JDOMExternalizableStringList;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
@@ -64,37 +26,38 @@ import com.jetbrains.python.psi.types.PyTypeChecker;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.validation.CompatibilityVisitor;
 import com.jetbrains.python.validation.UnsupportedFeaturesUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.language.editor.inspection.*;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.module.content.ProjectRootManager;
+import consulo.util.collection.ArrayUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * User: catherine
  * <p>
  * Inspection to detect code incompatibility with python versions
  */
+@ExtensionImpl
 public class PyCompatibilityInspection extends PyInspection
 {
-
 	@Nonnull
-	public static final List<String> BACKPORTED_PACKAGES = ImmutableList.<String>builder().add("enum").add("typing").build();
+	public static final List<String> BACKPORTED_PACKAGES = List.of("enum", "typing");
 
 	public static final int LATEST_INSPECTION_VERSION = 2;
 
 	@Nonnull
 	public static final List<LanguageLevel> DEFAULT_PYTHON_VERSIONS = ImmutableList.of(LanguageLevel.PYTHON27, LanguageLevel.getLatest());
-
-	// Legacy DefaultJDOMExternalizer requires public fields for proper serialization
-	public JDOMExternalizableStringList ourVersions = new JDOMExternalizableStringList();
-
-	public PyCompatibilityInspection()
-	{
-		if(ApplicationManager.getApplication().isUnitTestMode())
-		{
-			ourVersions.addAll(UnsupportedFeaturesUtil.ALL_LANGUAGE_LEVELS);
-		}
-		else
-		{
-			ourVersions.addAll(ContainerUtil.map(DEFAULT_PYTHON_VERSIONS, LanguageLevel::toString));
-		}
-	}
 
 	@Nullable
 	public static PyCompatibilityInspection getInstance(@Nonnull PsiElement element)
@@ -104,17 +67,24 @@ public class PyCompatibilityInspection extends PyInspection
 		return (PyCompatibilityInspection) inspectionProfile.getUnwrappedTool(toolName, element);
 	}
 
+	@Nonnull
+	@Override
+	public InspectionToolState<?> createStateProvider()
+	{
+		return new PyCompatibilityInspectionState();
+	}
+
 	@Override
 	public boolean isEnabledByDefault()
 	{
 		return false;
 	}
 
-	private List<LanguageLevel> updateVersionsToProcess()
+	private List<LanguageLevel> updateVersionsToProcess(PyCompatibilityInspectionState state)
 	{
 		List<LanguageLevel> result = new ArrayList<>();
 
-		for(String version : ourVersions)
+		for(String version : state.versions)
 		{
 			LanguageLevel level = LanguageLevel.fromPythonVersion(version);
 			result.add(level);
@@ -130,34 +100,11 @@ public class PyCompatibilityInspection extends PyInspection
 		return PyBundle.message("INSP.NAME.compatibility");
 	}
 
-	@Override
-	public JComponent createOptionsPanel()
-	{
-		final ElementsChooser<String> chooser = new ElementsChooser<>(true);
-		chooser.setElements(UnsupportedFeaturesUtil.ALL_LANGUAGE_LEVELS, false);
-		chooser.markElements(ourVersions);
-		chooser.addElementsMarkListener(new ElementsChooser.ElementsMarkListener<String>()
-		{
-			@Override
-			public void elementMarkChanged(String element, boolean isMarked)
-			{
-				ourVersions.clear();
-				ourVersions.addAll(chooser.getMarkedElements());
-			}
-		});
-		final JPanel versionPanel = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Check for compatibility with python versions:");
-		label.setLabelFor(chooser);
-		versionPanel.add(label, BorderLayout.PAGE_START);
-		versionPanel.add(chooser);
-		return versionPanel;
-	}
-
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, LocalInspectionToolSession session, Object state)
 	{
-		return new Visitor(holder, updateVersionsToProcess());
+		return new Visitor(holder, updateVersionsToProcess((PyCompatibilityInspectionState) state));
 	}
 
 	private static class Visitor extends CompatibilityVisitor
@@ -172,7 +119,11 @@ public class PyCompatibilityInspection extends PyInspection
 		}
 
 		@Override
-		protected void registerProblem(@Nonnull PsiElement element, @Nonnull TextRange range, @Nonnull String message, @Nullable LocalQuickFix quickFix, boolean asError)
+		protected void registerProblem(@Nonnull PsiElement element,
+									   @Nonnull TextRange range,
+									   @Nonnull String message,
+									   @Nullable LocalQuickFix quickFix,
+									   boolean asError)
 		{
 			if(element.getTextLength() == 0)
 			{
@@ -195,8 +146,12 @@ public class PyCompatibilityInspection extends PyInspection
 		{
 			super.visitPyCallExpression(node);
 
-			final Optional<PyFunction> optionalFunction = Optional.ofNullable(node.getCallee()).map(PyExpression::getReference).map(PsiReference::resolve).filter(PyFunction.class::isInstance).map
-					(PyFunction.class::cast);
+			final Optional<PyFunction> optionalFunction = Optional.ofNullable(node.getCallee())
+					.map(PyExpression::getReference)
+					.map(PsiReference::resolve)
+					.filter(PyFunction.class::isInstance)
+					.map
+							(PyFunction.class::cast);
 
 			if(optionalFunction.isPresent())
 			{
@@ -204,7 +159,8 @@ public class PyCompatibilityInspection extends PyInspection
 				final PyClass containingClass = function.getContainingClass();
 				final String originalFunctionName = function.getName();
 
-				final String functionName = containingClass != null && PyNames.INIT.equals(originalFunctionName) ? node.getCallee().getText() : originalFunctionName;
+				final String functionName =
+						containingClass != null && PyNames.INIT.equals(originalFunctionName) ? node.getCallee().getText() : originalFunctionName;
 
 				if(containingClass != null)
 				{
@@ -214,7 +170,10 @@ public class PyCompatibilityInspection extends PyInspection
 					{
 						final Map<LanguageLevel, Set<String>> unsupportedMethods = UnsupportedFeaturesUtil.CLASS_METHODS.get(className);
 
-						registerForAllMatchingVersions(level -> unsupportedMethods.getOrDefault(level, Collections.emptySet()).contains(functionName), " not have method " + functionName, node, null);
+						registerForAllMatchingVersions(level -> unsupportedMethods.getOrDefault(level, Collections.emptySet()).contains(functionName),
+								" not have method " + functionName,
+								node,
+								null);
 					}
 				}
 
@@ -223,7 +182,10 @@ public class PyCompatibilityInspection extends PyInspection
 						!"exec".equals(functionName) &&
 						!myUsedImports.contains(functionName))
 				{
-					registerForAllMatchingVersions(level -> UnsupportedFeaturesUtil.BUILTINS.get(level).contains(functionName), " not have method " + functionName, node, null);
+					registerForAllMatchingVersions(level -> UnsupportedFeaturesUtil.BUILTINS.get(level).contains(functionName),
+							" not have method " + functionName,
+							node,
+							null);
 				}
 			}
 		}
@@ -260,7 +222,10 @@ public class PyCompatibilityInspection extends PyInspection
 
 				if(qName != null && sourceQName != null && qName.matches("unicode_literals") && sourceQName.matches("__future__"))
 				{
-					registerForAllMatchingVersions(level -> level.isOlderThan(LanguageLevel.PYTHON26), " not have unicode_literals in __future__ module", importElement, null);
+					registerForAllMatchingVersions(level -> level.isOlderThan(LanguageLevel.PYTHON26),
+							" not have unicode_literals in __future__ module",
+							importElement,
+							null);
 				}
 
 				return;
@@ -271,7 +236,9 @@ public class PyCompatibilityInspection extends PyInspection
 			{
 				final String moduleName = qName.toString();
 
-				registerForAllMatchingVersions(level -> UnsupportedFeaturesUtil.MODULES.get(level).contains(moduleName) && !BACKPORTED_PACKAGES.contains(moduleName), " not have module " +
+				registerForAllMatchingVersions(level -> UnsupportedFeaturesUtil.MODULES.get(level)
+						.contains(moduleName) && !BACKPORTED_PACKAGES.contains(
+						moduleName), " not have module " +
 						moduleName, importElement, null);
 			}
 		}
@@ -292,7 +259,9 @@ public class PyCompatibilityInspection extends PyInspection
 			{
 				final String moduleName = name.toString();
 
-				registerForAllMatchingVersions(level -> UnsupportedFeaturesUtil.MODULES.get(level).contains(moduleName) && !BACKPORTED_PACKAGES.contains(moduleName), " not have module " + name,
+				registerForAllMatchingVersions(level -> UnsupportedFeaturesUtil.MODULES.get(level)
+								.contains(moduleName) && !BACKPORTED_PACKAGES.contains(
+						moduleName), " not have module " + name,
 						source, null);
 			}
 		}
@@ -305,8 +274,10 @@ public class PyCompatibilityInspection extends PyInspection
 				final boolean isPy3 = LanguageLevel.forElement(node).isPy3K();
 				if(myVersionsToProcess.stream().anyMatch(level -> level.isOlderThan(LanguageLevel.PYTHON30)) || !isPy3)
 				{
-					Arrays.stream(node.getArguments()).filter(PyKeywordArgument.class::isInstance).forEach(expression -> myHolder.registerProblem(expression, "This syntax available only since py3",
-							isPy3 ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.GENERIC_ERROR));
+					Arrays.stream(node.getArguments())
+							.filter(PyKeywordArgument.class::isInstance)
+							.forEach(expression -> myHolder.registerProblem(expression, "This syntax available only since py3",
+									isPy3 ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING : ProblemHighlightType.GENERIC_ERROR));
 				}
 			}
 		}
@@ -385,8 +356,11 @@ public class PyCompatibilityInspection extends PyInspection
 
 			if(nameIdentifier != null && ArrayUtil.contains(nameIdentifierOwner.getName(), PyNames.AWAIT, PyNames.ASYNC))
 			{
-				registerOnFirstMatchingVersion(level -> LanguageLevel.PYTHON35.equals(level) || LanguageLevel.PYTHON36.equals(level), "'async' and 'await' are not recommended to be used as variable," +
-						" class, function or module names. " + "They will become proper keywords in Python 3.7.", nameIdentifier, new PyRenameElementQuickFix());
+				registerOnFirstMatchingVersion(level -> LanguageLevel.PYTHON35.equals(level) || LanguageLevel.PYTHON36.equals(level),
+						"'async' and 'await' are not recommended to be used as variable," +
+								" class, function or module names. " + "They will become proper keywords in Python 3.7.",
+						nameIdentifier,
+						new PyRenameElementQuickFix());
 			}
 		}
 	}

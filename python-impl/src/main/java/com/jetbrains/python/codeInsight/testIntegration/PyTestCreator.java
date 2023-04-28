@@ -15,36 +15,34 @@
  */
 package com.jetbrains.python.codeInsight.testIntegration;
 
-import java.util.List;
+import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.codeInsight.imports.AddImportHelper;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationManager;
+import consulo.application.util.function.Computable;
+import consulo.codeEditor.Editor;
+import consulo.language.Language;
+import consulo.language.codeStyle.CodeStyleManager;
+import consulo.language.codeStyle.PostprocessReformattingAspect;
+import consulo.language.editor.testIntegration.TestCreator;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.IncorrectOperationException;
+import consulo.logging.Logger;
+import consulo.project.Project;
 
 import javax.annotation.Nonnull;
-
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.impl.source.PostprocessReformattingAspect;
-import com.intellij.testIntegration.TestCreator;
-import com.intellij.util.IncorrectOperationException;
-import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.codeInsight.imports.AddImportHelper;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyUtil;
+import java.util.List;
 
 /**
  * User: catherine
  */
+@ExtensionImpl
 public class PyTestCreator implements TestCreator
 {
-	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.codeInsight.testIntegration.PyTestCreator");
+	private static final Logger LOG = Logger.getInstance(PyTestCreator.class);
 
 	@Override
 	public boolean isAvailable(Project project, Editor editor, PsiFile file)
@@ -89,7 +87,8 @@ public class PyTestCreator implements TestCreator
 			{
 				try
 				{
-					final PyElement testClass = generateTest(project, dialog);
+					final PyElement testClass =
+							generateTest(project, dialog);
 					testClass.navigate(false);
 					return testClass.getContainingFile();
 				}
@@ -110,7 +109,7 @@ public class PyTestCreator implements TestCreator
 	@Nonnull
 	static PyElement generateTest(@Nonnull final Project project, @Nonnull final CreateTestDialog dialog)
 	{
-		IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
+		consulo.ide.impl.idea.openapi.fileEditor.ex.IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
 
 		String fileName = dialog.getFileName();
 		if(!fileName.endsWith(".py"))
@@ -134,11 +133,19 @@ public class PyTestCreator implements TestCreator
 		PsiFile psiFile = PyUtil.getOrCreateFile(dialog.getTargetDir() + "/" + fileName, project);
 		AddImportHelper.addOrUpdateFromImportStatement(psiFile, "unittest", "TestCase", null, AddImportHelper.ImportPriority.BUILTIN, null);
 
-		PyElement createdClass = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.forElement(psiFile), PyClass.class, fileText.toString());
+		PyElement createdClass =
+				PyElementGenerator.getInstance(project).createFromText(LanguageLevel.forElement(psiFile), PyClass.class, fileText.toString());
 		createdClass = (PyElement) psiFile.addAfter(createdClass, psiFile.getLastChild());
 
 		PostprocessReformattingAspect.getInstance(project).doPostponedFormatting(psiFile.getViewProvider());
 		CodeStyleManager.getInstance(project).reformat(psiFile);
 		return createdClass;
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

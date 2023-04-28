@@ -15,13 +15,14 @@
  */
 package com.jetbrains.python.templateLanguages;
 
-import com.intellij.codeInsight.intention.LowPriorityAction;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
+import consulo.application.Application;
+import consulo.application.ApplicationManager;
+import consulo.ide.setting.ShowSettingsUtil;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.intention.LowPriorityAction;
+import consulo.project.Project;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -47,6 +48,6 @@ public class ConfigureTemplateDirectoriesAction implements LocalQuickFix, LowPri
       public void run() {
         ShowSettingsUtil.getInstance().showSettingsDialog(project, "Template Languages");
       }
-    }, ModalityState.NON_MODAL);
+    }, Application.get().getNoneModalityState());
   }
 }

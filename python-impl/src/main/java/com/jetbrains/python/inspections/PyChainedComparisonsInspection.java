@@ -16,27 +16,28 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.inspections.quickfix.ChainedComparisonsQuickFix;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * User: catherine
- *
+ * <p>
  * Inspection to detect chained comparisons which can be simplified
  * For instance, a < b and b < c  -->  a < b < c
  */
+@ExtensionImpl
 public class PyChainedComparisonsInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -49,7 +50,8 @@ public class PyChainedComparisonsInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -64,7 +66,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
     }
 
     @Override
-    public void visitPyBinaryExpression(final PyBinaryExpression node){
+    public void visitPyBinaryExpression(final PyBinaryExpression node) {
       myIsLeft = false;
       myIsRight = false;
       myOperator = null;
@@ -74,10 +76,10 @@ public class PyChainedComparisonsInspection extends PyInspection {
       PyExpression rightExpression = node.getRightExpression();
 
       if (leftExpression instanceof PyBinaryExpression &&
-                        rightExpression instanceof PyBinaryExpression) {
+        rightExpression instanceof PyBinaryExpression) {
         if (node.getOperator() == PyTokenTypes.AND_KEYWORD) {
           if (isRightSimplified((PyBinaryExpression)leftExpression, (PyBinaryExpression)rightExpression) ||
-              isLeftSimplified((PyBinaryExpression)leftExpression, (PyBinaryExpression)rightExpression))
+            isLeftSimplified((PyBinaryExpression)leftExpression, (PyBinaryExpression)rightExpression))
             registerProblem(node, "Simplify chained comparison", new ChainedComparisonsQuickFix(myIsLeft, myIsRight,
                                                                                                 getInnerRight));
         }
@@ -95,7 +97,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
       }
 
       if (leftRight instanceof PyBinaryExpression &&
-          PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression)leftRight).getOperator())){
+        PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression)leftRight).getOperator())) {
         if (isRightSimplified((PyBinaryExpression)leftRight, rightExpression))
           return true;
       }
@@ -134,7 +136,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
       final PyExpression leftLeft = leftExpression.getLeftExpression();
       final PyExpression leftRight = leftExpression.getRightExpression();
       if (leftRight instanceof PyBinaryExpression
-          && PyTokenTypes.AND_KEYWORD == leftExpression.getOperator()) {
+        && PyTokenTypes.AND_KEYWORD == leftExpression.getOperator()) {
         if (isLeftSimplified((PyBinaryExpression)leftRight, rightExpression)) {
           getInnerRight = true;
           return true;
@@ -142,7 +144,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
       }
 
       if (leftLeft instanceof PyBinaryExpression &&
-        PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression)leftLeft).getOperator())){
+        PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression)leftLeft).getOperator())) {
         if (isLeftSimplified((PyBinaryExpression)leftLeft, rightExpression))
           return true;
       }
@@ -170,7 +172,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
       PyExpression result = expression;
       while (result instanceof PyBinaryExpression && (
         PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression)result).getOperator())
-        || PyTokenTypes.EQUALITY_OPERATIONS.contains(((PyBinaryExpression)result).getOperator()))) {
+          || PyTokenTypes.EQUALITY_OPERATIONS.contains(((PyBinaryExpression)result).getOperator()))) {
 
         final boolean opposite = isOpposite(((PyBinaryExpression)result).getOperator(), myOperator);
         if ((isRight && opposite) || (!isRight && !opposite))
@@ -185,7 +187,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
       PyExpression result = expression;
       while (result instanceof PyBinaryExpression && (
         PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression)result).getOperator())
-        || PyTokenTypes.EQUALITY_OPERATIONS.contains(((PyBinaryExpression)result).getOperator()))) {
+          || PyTokenTypes.EQUALITY_OPERATIONS.contains(((PyBinaryExpression)result).getOperator()))) {
 
         final boolean opposite = isOpposite(((PyBinaryExpression)result).getOperator(), myOperator);
         if ((isRight && !opposite) || (!isRight && opposite))

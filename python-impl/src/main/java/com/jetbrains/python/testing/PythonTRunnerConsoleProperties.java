@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.testing;
 
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ModuleRunConfiguration;
-import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import consulo.execution.executor.Executor;
+import consulo.execution.configuration.ModuleRunConfiguration;
+import consulo.execution.test.sm.runner.SMTRunnerConsoleProperties;
 
 /**
  * @author Roman.Chernyatchik

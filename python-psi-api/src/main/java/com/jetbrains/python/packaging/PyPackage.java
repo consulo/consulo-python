@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.packaging;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.webcore.packaging.InstalledPackage;
+import consulo.application.util.UserHomeFileUtil;
+import consulo.repository.ui.InstalledPackage;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 /**
@@ -53,6 +53,6 @@ public class PyPackage extends InstalledPackage {
   @Nullable
   @Override
   public String getTooltipText() {
-    return FileUtil.getLocationRelativeToUserHome(myLocation);
+    return UserHomeFileUtil.getLocationRelativeToUserHome(myLocation);
   }
 }

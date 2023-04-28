@@ -23,12 +23,12 @@ import javax.annotation.Nullable;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 
-import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
-import com.intellij.ide.hierarchy.HierarchyTreeStructure;
-import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
-import com.intellij.ide.util.treeView.NodeDescriptor;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
+import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
+import consulo.ide.impl.idea.ide.hierarchy.HierarchyTreeStructure;
+import consulo.ide.impl.idea.ide.hierarchy.TypeHierarchyBrowserBase;
+import consulo.ui.ex.tree.NodeDescriptor;
+import consulo.logging.Logger;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.hierarchy.treestructures.PySubTypesHierarchyTreeStructure;
 import com.jetbrains.python.hierarchy.treestructures.PySuperTypesHierarchyTreeStructure;
 import com.jetbrains.python.hierarchy.treestructures.PyTypeHierarchyTreeStructure;
@@ -76,7 +76,7 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 	}
 
 	@Nullable
-	protected HierarchyTreeStructure createHierarchyTreeStructure(@Nonnull String typeName, @Nonnull PsiElement psiElement)
+	protected consulo.ide.impl.idea.ide.hierarchy.HierarchyTreeStructure createHierarchyTreeStructure(@Nonnull String typeName, @Nonnull PsiElement psiElement)
 	{
 		if(SUPERTYPES_HIERARCHY_TYPE.equals(typeName))
 		{

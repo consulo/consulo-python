@@ -18,9 +18,9 @@ package com.jetbrains.python.documentation.doctest;
 
 import javax.annotation.Nullable;
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.text.CharArrayUtil;
+import consulo.language.parser.PsiBuilder;
+import consulo.language.ast.IElementType;
+import consulo.util.lang.CharArrayUtil;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.parsing.ExpressionParsing;
 import com.jetbrains.python.parsing.ParsingContext;

@@ -15,25 +15,19 @@
  */
 package com.jetbrains.python.codeInsight.override;
 
-import java.util.List;
-
-import javax.swing.JTree;
-
-import com.intellij.codeInsight.generation.ClassMember;
-import com.intellij.codeInsight.generation.MemberChooserObject;
-import com.intellij.codeInsight.generation.PsiElementMemberChooserObject;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.SimpleColoredComponent;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyParameter;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.awt.TargetAWT;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.language.editor.generation.ClassMember;
+import consulo.language.editor.generation.MemberChooserObject;
+import consulo.language.editor.generation.PsiElementMemberChooserObject;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.ui.ex.ColoredTextContainer;
+import consulo.util.lang.StringUtil;
+
+import javax.swing.*;
+import java.util.List;
 
 /**
  * @author Alexey.Ivanov
@@ -77,7 +71,7 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 	}
 
 	@Override
-	public void renderTreeNode(SimpleColoredComponent component, JTree tree)
+	public void renderTreeNode(ColoredTextContainer component, JTree tree)
 	{
 		component.append(myFullName, getTextAttributes(tree));
 		component.setIcon(IconDescriptorUpdaters.getIcon(getPsiElement(), 0));

@@ -16,20 +16,23 @@
 
 package com.jetbrains.python.findUsages;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.usages.Usage;
-import com.intellij.usages.rules.ImportFilteringRule;
-import com.intellij.usages.rules.PsiElementUsage;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.usage.Usage;
+import consulo.usage.rule.ImportFilteringRule;
+import consulo.usage.rule.PsiElementUsage;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportStatementBase;
+
 import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public class PyImportFilteringRule extends ImportFilteringRule {
+@ExtensionImpl
+public class PyImportFilteringRule implements ImportFilteringRule {
   @Override
   public boolean isVisible(@Nonnull Usage usage) {
     if (usage instanceof PsiElementUsage) {

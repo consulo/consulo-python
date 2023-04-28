@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.refactoring.classMembers.MemberInfoModel;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 

@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.NonNls;
 import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.util.Pair;
+import consulo.util.lang.Pair;
 import com.jetbrains.python.toolbox.Substring;
 
 /**

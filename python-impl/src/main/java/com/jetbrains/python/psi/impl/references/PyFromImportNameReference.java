@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.impl.references;
 
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyFromImportStatement;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.impl.PyReferenceExpressionImpl;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;

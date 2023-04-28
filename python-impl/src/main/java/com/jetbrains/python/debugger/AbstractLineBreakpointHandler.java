@@ -18,11 +18,11 @@ package com.jetbrains.python.debugger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
-import com.intellij.xdebugger.breakpoints.XBreakpointType;
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import consulo.execution.debug.XSourcePosition;
+import consulo.execution.debug.breakpoint.*;
+import consulo.execution.debug.breakpoint.XLineBreakpoint;
+import consulo.execution.debug.breakpoint.XBreakpointType;
+
 import javax.annotation.Nonnull;
 
 import java.util.List;

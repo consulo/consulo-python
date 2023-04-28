@@ -10,14 +10,11 @@
 	<depends config-file="consulo.microsoft.dotnet.xml" optional="true">consulo.dotnet.microsoft</depends>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<completion.contributor language="Python"
-								implementationClass="consulo.ironPython.psi.impl.PyConstructorArgumentCompletionContributor"/>
 
 		<addTo.listOfElements name="pythonExtensions">iron-python</addTo.listOfElements>
 	</extensions>
 
 	<extensions defaultExtensionNs="consulo.python">
-		<importResolver implementation="consulo.ironPython.psi.impl.PyDotNetImportResolver"/>
 		<typeProvider implementation="consulo.ironPython.psi.impl.PyDotNetTypeProvider"/>
 		<pySuperMethodsSearch implementation="consulo.ironPython.psi.impl.PyDotNetSuperMethodsSearchExecutor"/>
 		<importCandidateProvider implementation="consulo.ironPython.psi.impl.PyDotNetImportCandidateProvider"/>

@@ -15,40 +15,35 @@
  */
 package com.jetbrains.python.run;
 
+import com.jetbrains.python.sdk.PySdkUtil;
+import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.content.bundle.Sdk;
+import consulo.execution.ui.awt.EnvironmentVariablesComponent;
+import consulo.execution.ui.awt.RawCommandLineEditor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.ide.impl.idea.execution.util.PathMappingsComponent;
+import consulo.ide.impl.idea.ide.util.PropertiesComponent;
+import consulo.ide.impl.idea.ui.HideableDecorator;
+import consulo.ide.impl.idea.util.PathMappingSettings;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.module.ModulesAlphaComparator;
+import consulo.module.ui.awt.ModuleListCellRenderer;
+import consulo.module.ui.awt.SdkComboBox;
+import consulo.project.Project;
+import consulo.python.module.extension.PyModuleExtension;
+import consulo.ui.ex.awt.JBCheckBox;
+import consulo.ui.ex.awt.JBLabel;
+import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.function.Conditions;
+
+import javax.annotation.Nullable;
+import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-
-import javax.annotation.Nullable;
-import com.intellij.application.options.ModuleListCellRenderer;
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
-import com.intellij.execution.util.PathMappingsComponent;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ui.configuration.ModulesAlphaComparator;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Conditions;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.ui.HideableDecorator;
-import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.util.PathMappingSettings;
-import com.jetbrains.python.sdk.PySdkUtil;
-import com.jetbrains.python.sdk.PythonSdkType;
-import consulo.python.module.extension.PyModuleExtension;
-import consulo.roots.ui.configuration.SdkComboBox;
 
 /**
  * @author yole
@@ -311,7 +306,7 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm
 
 	private void createUIComponents()
 	{
-		ProjectSdksModel model = new ProjectSdksModel();
+		consulo.ide.impl.idea.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel model = new consulo.ide.impl.idea.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel();
 		model.reset();
 
 		myInterpreterComboBox = new SdkComboBox(model, Conditions.equalTo(PythonSdkType.getInstance()), true);

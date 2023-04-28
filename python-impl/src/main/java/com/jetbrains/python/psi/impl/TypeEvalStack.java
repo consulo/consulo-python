@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 
 import java.util.HashSet;
 import java.util.Set;

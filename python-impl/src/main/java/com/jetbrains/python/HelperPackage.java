@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.openapi.projectRoots.Sdk;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.cmd.ParamsGroup;
+import consulo.content.bundle.Sdk;
 
 /**
  * @author traff

@@ -6,7 +6,7 @@ import java.util.Date;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.diagnostic.Logger;
+import consulo.logging.Logger;
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
 import com.jetbrains.python.debugger.pydev.RemoteDebugger;
 

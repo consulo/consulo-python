@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.enterProcessors;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiElement;
 
 /**
  * Created by IntelliJ IDEA.

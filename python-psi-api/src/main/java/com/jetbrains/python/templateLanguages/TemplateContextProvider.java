@@ -15,21 +15,23 @@
  */
 package com.jetbrains.python.templateLanguages;
 
-import java.util.Collection;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.psi.PsiFile;
 
 import javax.annotation.Nullable;
-
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiFile;
+import java.util.Collection;
 
 /**
  * Returns the list of variables which are available in the context for a template.
  *
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface TemplateContextProvider {
-  ExtensionPointName<TemplateContextProvider> EP_NAME = ExtensionPointName.create("consulo.python.templateContextProvider");
+  ExtensionPointName<TemplateContextProvider> EP_NAME = ExtensionPointName.create(TemplateContextProvider.class);
 
   /**
    * Returns the context for a template. The lookup string of each returned LookupElement in the returned list is the visible

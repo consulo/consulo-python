@@ -1,8 +1,8 @@
 package com.jetbrains.python.debugger;
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.xdebugger.XDebugSession;
+import consulo.execution.debug.XDebugSession;
+import consulo.ide.ServiceManager;
+import consulo.project.Project;
 
 /**
  * @author traff

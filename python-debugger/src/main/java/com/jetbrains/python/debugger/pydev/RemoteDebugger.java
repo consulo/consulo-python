@@ -5,45 +5,29 @@
  */
 package com.jetbrains.python.debugger.pydev;
 
-import static com.jetbrains.python.debugger.pydev.transport.BaseDebuggerTransport.logFrame;
-
-import java.net.ServerSocket;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Maps;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xdebugger.breakpoints.SuspendPolicy;
-import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.debugger.ArrayChunk;
-import com.jetbrains.python.debugger.IPyDebugProcess;
-import com.jetbrains.python.debugger.PyConcurrencyEvent;
-import com.jetbrains.python.debugger.PyDebugValue;
-import com.jetbrains.python.debugger.PyDebuggerException;
-import com.jetbrains.python.debugger.PyIo;
-import com.jetbrains.python.debugger.PyReferringObjectsValue;
-import com.jetbrains.python.debugger.PySignature;
-import com.jetbrains.python.debugger.PyThreadInfo;
+import com.jetbrains.python.debugger.*;
 import com.jetbrains.python.debugger.pydev.transport.ClientModeDebuggerTransport;
 import com.jetbrains.python.debugger.pydev.transport.DebuggerTransport;
 import com.jetbrains.python.debugger.pydev.transport.ServerModeDebuggerTransport;
+import consulo.application.util.SystemInfo;
+import consulo.execution.debug.breakpoint.SuspendPolicy;
+import consulo.execution.debug.frame.XValueChildrenList;
+import consulo.execution.ui.console.ConsoleViewContentType;
+import consulo.logging.Logger;
+import consulo.util.collection.Lists;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.net.ServerSocket;
+import java.security.SecureRandom;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.jetbrains.python.debugger.pydev.transport.BaseDebuggerTransport.logFrame;
 
 
 public class RemoteDebugger implements ProcessDebugger
@@ -68,7 +52,7 @@ public class RemoteDebugger implements ProcessDebugger
 	private Map<Pair<String, Integer>, String> myTempBreakpoints = Maps.newHashMap();
 
 
-	private final List<RemoteDebuggerCloseListener> myCloseListeners = ContainerUtil.createLockFreeCopyOnWriteList();
+	private final List<RemoteDebuggerCloseListener> myCloseListeners = Lists.newLockFreeCopyOnWriteList();
 
 	@Nonnull
 	private final DebuggerTransport myDebuggerTransport;

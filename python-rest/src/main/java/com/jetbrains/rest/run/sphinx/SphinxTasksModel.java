@@ -17,7 +17,7 @@
 package com.jetbrains.rest.run.sphinx;
 
 import com.google.common.collect.Lists;
-import com.intellij.ui.CollectionComboBoxModel;
+import consulo.ui.ex.awt.CollectionComboBoxModel;
 
 import java.util.List;
 

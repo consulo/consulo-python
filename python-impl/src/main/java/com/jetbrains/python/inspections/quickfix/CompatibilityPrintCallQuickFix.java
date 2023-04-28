@@ -16,19 +16,18 @@
 
 package com.jetbrains.python.inspections.quickfix;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * User: catherine
@@ -57,12 +56,7 @@ public class CompatibilityPrintCallQuickFix implements LocalQuickFix {
 
     PyExpression[] target = PsiTreeUtil.getChildrenOfType(expression, PyExpression.class);
     if (target != null) {
-      stringBuilder.append(StringUtil.join(target, new Function<PyExpression, String>() {
-        @Override
-        public String fun(PyExpression o) {
-          return o.getText();
-        }
-      }, ", "));
+      stringBuilder.append(StringUtil.join(target, o -> o.getText(), ", "));
     }
 
     stringBuilder.append(")");

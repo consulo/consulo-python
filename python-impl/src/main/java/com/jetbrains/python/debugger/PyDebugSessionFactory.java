@@ -15,44 +15,44 @@
  */
 package com.jetbrains.python.debugger;
 
+import com.jetbrains.python.run.PythonCommandLineState;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.content.bundle.Sdk;
+import consulo.execution.debug.XDebugSession;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.process.ExecutionException;
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.Contract;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.xdebugger.XDebugSession;
-import com.jetbrains.python.run.PythonCommandLineState;
 
 /**
  * @author Alexander Koshevoy
  */
-public abstract class PyDebugSessionFactory
-{
-	public static final ExtensionPointName<PyDebugSessionFactory> EP_NAME = ExtensionPointName.create("consulo.python.debugSessionFactory");
+@ExtensionAPI(ComponentScope.APPLICATION)
+public abstract class PyDebugSessionFactory {
+  public static final ExtensionPointName<PyDebugSessionFactory> EP_NAME = ExtensionPointName.create(PyDebugSessionFactory.class);
 
-	protected abstract boolean appliesTo(@Nonnull Sdk sdk);
+  protected abstract boolean appliesTo(@Nonnull Sdk sdk);
 
-	@Nonnull
-	public abstract XDebugSession createSession(@Nonnull PyDebugRunner runner, @Nonnull PythonCommandLineState state, @Nonnull ExecutionEnvironment environment) throws ExecutionException;
+  @Nonnull
+  public abstract XDebugSession createSession(@Nonnull PyDebugRunner runner,
+                                              @Nonnull PythonCommandLineState state,
+                                              @Nonnull ExecutionEnvironment environment) throws ExecutionException;
 
-	@Contract("null -> null")
-	@Nullable
-	public static PyDebugSessionFactory findExtension(@Nullable Sdk sdk)
-	{
-		if(sdk == null)
-		{
-			return null;
-		}
-		for(PyDebugSessionFactory sessionCreator : EP_NAME.getExtensions())
-		{
-			if(sessionCreator.appliesTo(sdk))
-			{
-				return sessionCreator;
-			}
-		}
-		return null;
-	}
+  @Contract("null -> null")
+  @Nullable
+  public static PyDebugSessionFactory findExtension(@Nullable Sdk sdk) {
+    if (sdk == null) {
+      return null;
+    }
+    for (PyDebugSessionFactory sessionCreator : EP_NAME.getExtensions()) {
+      if (sessionCreator.appliesTo(sdk)) {
+        return sessionCreator;
+      }
+    }
+    return null;
+  }
 }

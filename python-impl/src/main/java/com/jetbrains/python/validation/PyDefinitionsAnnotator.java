@@ -15,10 +15,10 @@
  */
 package com.jetbrains.python.validation;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.openapi.project.IndexNotReadyException;
-import com.intellij.psi.PsiElement;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.annotation.Annotation;
+import consulo.application.dumb.IndexNotReadyException;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.highlighting.PyHighlighter;
 import com.jetbrains.python.psi.LanguageLevel;

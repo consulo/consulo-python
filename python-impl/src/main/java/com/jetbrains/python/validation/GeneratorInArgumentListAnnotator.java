@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.validation;
 
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.PyArgumentList;
 import com.jetbrains.python.psi.PyExpression;

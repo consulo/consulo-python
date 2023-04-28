@@ -16,27 +16,26 @@
 
 package com.jetbrains.python.codeInsight.highlighting;
 
-import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.codeInsight.controlflow.ControlFlow;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.codeInsight.highlighting.HighlightUsagesHandler;
-import com.intellij.codeInsight.highlighting.HighlightUsagesHandlerBase;
-import com.intellij.featureStatistics.FeatureUsageTracker;
-import com.intellij.featureStatistics.ProductivityFeatureNames;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Consumer;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import javax.annotation.Nullable;
+import consulo.codeEditor.Editor;
+import consulo.externalService.statistic.FeatureUsageTracker;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
+import consulo.ide.impl.idea.codeInsight.highlighting.HighlightUsagesHandler;
+import consulo.ide.impl.idea.featureStatistics.ProductivityFeatureNames;
+import consulo.language.editor.CodeInsightBundle;
+import consulo.language.editor.highlight.usage.HighlightUsagesHandlerBase;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author oleg
@@ -54,7 +53,7 @@ public class PyHighlightExitPointsHandler extends HighlightUsagesHandlerBase<Psi
   }
 
   protected void selectTargets(final List<PsiElement> targets, final Consumer<List<PsiElement>> selectionConsumer) {
-    selectionConsumer.consume(targets);
+    selectionConsumer.accept(targets);
   }
 
   public void computeUsages(final List<PsiElement> targets) {
@@ -112,8 +111,8 @@ public class PyHighlightExitPointsHandler extends HighlightUsagesHandlerBase<Psi
 
   private static Collection<PsiElement> findExitPointsAndStatements(final ControlFlow flow) {
     final List<PsiElement> statements = new ArrayList<PsiElement>();
-    final Instruction[] instructions = flow.getInstructions();
-    for (Instruction instruction : instructions[instructions.length - 1].allPred()){
+    final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = flow.getInstructions();
+    for (consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : instructions[instructions.length - 1].allPred()){
       final PsiElement element = instruction.getElement();
       if (element == null){
         continue;

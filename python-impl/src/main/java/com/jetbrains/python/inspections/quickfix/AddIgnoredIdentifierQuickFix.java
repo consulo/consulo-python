@@ -15,17 +15,18 @@
  */
 package com.jetbrains.python.inspections.quickfix;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.codeInsight.intention.LowPriorityAction;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
+import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspectionState;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.editor.intention.LowPriorityAction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+import consulo.project.Project;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
@@ -70,17 +71,16 @@ public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityA
 	{
 		final PsiElement context = descriptor.getPsiElement();
 		InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-		profile.modifyProfile(model -> {
-			PyUnresolvedReferencesInspection inspection = (PyUnresolvedReferencesInspection) model.getUnwrappedTool(PyUnresolvedReferencesInspection.class.getSimpleName(), context);
+		profile.<PyUnresolvedReferencesInspection, PyUnresolvedReferencesInspectionState>modifyToolSettings(PyUnresolvedReferencesInspection.class.getSimpleName(), context, (i, s) ->
+		{
 			String name = myIdentifier.toString();
 			if(myIgnoreAllAttributes)
 			{
 				name += END_WILDCARD;
 			}
-			assert inspection != null;
-			if(!inspection.ignoredIdentifiers.contains(name))
+			if(!s.ignoredIdentifiers.contains(name))
 			{
-				inspection.ignoredIdentifiers.add(name);
+				s.ignoredIdentifiers.add(name);
 			}
 		});
 	}

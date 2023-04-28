@@ -16,23 +16,23 @@
 
 package com.jetbrains.python.psi.search;
 
+import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.content.base.BinariesOrderRootType;
+import consulo.content.bundle.Sdk;
+import consulo.ide.impl.psi.search.GlobalSearchScopes;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.project.content.scope.ProjectScopes;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopes;
-import com.intellij.psi.search.ProjectScope;
-import com.jetbrains.python.sdk.PythonSdkType;
-import consulo.roots.types.BinariesOrderRootType;
 
 /**
  *
@@ -51,7 +51,7 @@ public class PyProjectScopeBuilder {
     final Sdk sdk = null;
     // TODO cache the scope in project userdata (update when SDK paths change or different project SDK is selected)
     GlobalSearchScope scope = excludeSdkTestsScope(project, sdk);
-    return scope != null ? ProjectScope.getAllScope(project).intersectWith(scope) : ProjectScope.getAllScope(project);
+    return scope != null ? (GlobalSearchScope) ProjectScopes.getAllScope(project).intersectWith(scope) : (GlobalSearchScope) ProjectScopes.getAllScope(project);
   }
 
   public static GlobalSearchScope excludeSdkTestsScope(PsiElement anchor) {

@@ -23,14 +23,14 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.project.Project;
+import consulo.util.lang.function.Condition;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.completion.PyClassInsertHandler;
 import com.jetbrains.python.codeInsight.completion.PyFunctionInsertHandler;
@@ -46,7 +46,7 @@ import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.language.icon.IconDescriptorUpdaters;
 import consulo.ui.image.Image;
 
 /**

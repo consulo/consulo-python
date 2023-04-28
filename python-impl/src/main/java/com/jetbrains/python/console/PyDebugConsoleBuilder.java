@@ -16,24 +16,24 @@
 
 package com.jetbrains.python.console;
 
-import com.google.common.collect.Lists;
-import com.intellij.execution.filters.Filter;
-import com.intellij.execution.filters.TextConsoleBuilder;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.jetbrains.python.run.PythonTracebackFilter;
+import consulo.content.bundle.Sdk;
+import consulo.execution.ui.console.ConsoleState;
+import consulo.execution.ui.console.ConsoleView;
+import consulo.execution.ui.console.Filter;
+import consulo.execution.ui.console.TextConsoleBuilder;
+import consulo.project.Project;
 
-import java.util.ArrayList;
-
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 /**
  * @author traff
  */
 public class PyDebugConsoleBuilder extends TextConsoleBuilder {
   private final Project myProject;
-  private final ArrayList<Filter> myFilters = Lists.newArrayList();
+  private final ArrayList<Filter> myFilters = new ArrayList<>();
   private final Sdk mySdk;
 
   public PyDebugConsoleBuilder(final Project project, @Nullable Sdk sdk) {
@@ -49,7 +49,7 @@ public class PyDebugConsoleBuilder extends TextConsoleBuilder {
     return consoleView;
   }
 
-  protected  ConsoleView createConsole() {
+  protected ConsoleView createConsole() {
     PythonDebugLanguageConsoleView consoleView = new PythonDebugLanguageConsoleView(myProject, mySdk);
     consoleView.addMessageFilter(new PythonTracebackFilter(myProject));
     return consoleView;
@@ -61,6 +61,16 @@ public class PyDebugConsoleBuilder extends TextConsoleBuilder {
 
   @Override
   public void setViewer(boolean isViewer) {
+  }
+
+  @Override
+  public void setState(@Nonnull ConsoleState consoleState) {
+
+  }
+
+  @Override
+  public void setUsePredefinedMessageFilter(boolean b) {
+
   }
 
 }

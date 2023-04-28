@@ -16,11 +16,11 @@
 package com.jetbrains.python.codeInsight.editorActions.smartEnter.fixers;
 
 import javax.annotation.Nonnull;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.codeEditor.Editor;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
 import com.jetbrains.python.psi.PyParenthesizedExpression;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * Created by IntelliJ IDEA.

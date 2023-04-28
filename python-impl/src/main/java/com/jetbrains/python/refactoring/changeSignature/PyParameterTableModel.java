@@ -16,23 +16,23 @@
 
 package com.jetbrains.python.refactoring.changeSignature;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiCodeFragment;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.changeSignature.ParameterInfo;
-import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
-import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
-import com.intellij.refactoring.ui.CodeFragmentTableCellRenderer;
-import com.intellij.ui.BooleanTableCellRenderer;
-import com.intellij.ui.EditorTextField;
-import com.intellij.util.ui.ColumnInfo;
+import consulo.document.Document;
+import consulo.document.event.DocumentListener;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.PsiCodeFragment;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.changeSignature.ParameterInfo;
+import consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelBase;
+import consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase;
+import consulo.ide.impl.idea.refactoring.ui.CodeFragmentTableCellRenderer;
+import consulo.ui.ex.awt.BooleanTableCellRenderer;
+import consulo.language.editor.ui.awt.EditorTextField;
+import consulo.ui.ex.awt.ColumnInfo;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyParameterList;
 
@@ -52,7 +52,8 @@ import java.util.Set;
  * User : ktisha
  */
 
-public class PyParameterTableModel extends ParameterTableModelBase<PyParameterInfo, PyParameterTableModelItem> {
+public class PyParameterTableModel extends consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelBase<PyParameterInfo, PyParameterTableModelItem>
+{
 
   private final Project myProject;
 
@@ -88,7 +89,7 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
     }
   }
 
-  protected static class PyDefaultValueColumn<P extends ParameterInfo, TableItem extends ParameterTableModelItemBase<P>> extends ColumnInfoBase<P, TableItem, Pair<PsiCodeFragment, Boolean>> {
+  protected static class PyDefaultValueColumn<P extends ParameterInfo, TableItem extends consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase<P>> extends ColumnInfoBase<P, TableItem, Pair<PsiCodeFragment, Boolean>> {
 
     private final Project myProject;
 
@@ -123,7 +124,8 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
     }
   }
 
-  private static class MyCodeFragmentTableCellRenderer extends CodeFragmentTableCellRenderer {
+  private static class MyCodeFragmentTableCellRenderer extends consulo.ide.impl.idea.refactoring.ui.CodeFragmentTableCellRenderer
+  {
 
     public MyCodeFragmentTableCellRenderer(Project project) {
       super(project);

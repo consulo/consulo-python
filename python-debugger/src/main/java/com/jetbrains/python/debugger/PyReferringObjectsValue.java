@@ -17,9 +17,9 @@ package com.jetbrains.python.debugger;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XValueChildrenList;
+import consulo.execution.debug.frame.XValueChildrenList;
+import consulo.logging.Logger;
+import consulo.execution.debug.frame.XCompositeNode;
 import com.jetbrains.python.debugger.pydev.PyDebugCallback;
 
 public class PyReferringObjectsValue extends PyDebugValue

@@ -1,7 +1,8 @@
 package com.jetbrains.python.console.pydev;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.net.NetUtils;
+import consulo.logging.Logger;
+import consulo.process.ProcessHandler;
+import consulo.util.io.NetUtil;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.AsyncCallback;
@@ -30,12 +31,12 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 	/**
 	 * The process where the server is being executed.
 	 */
-	private Process process;
+	private ProcessHandler process;
 
 	/**
 	 * ItelliJ Logging
 	 */
-	private static final Logger LOG = Logger.getInstance(PydevXmlRpcClient.class.getName());
+	private static final Logger LOG = Logger.getInstance(PydevXmlRpcClient.class);
 
 	private static final long TIME_LIMIT = 60000;
 
@@ -43,10 +44,9 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 	/**
 	 * Constructor (see fields description)
 	 */
-	public PydevXmlRpcClient(Process process, int port) throws MalformedURLException
+	public PydevXmlRpcClient(ProcessHandler process, int port) throws MalformedURLException
 	{
-
-		String hostname = NetUtils.getLocalHostString();
+		String hostname = NetUtil.getLocalHostString();
 
 		URL url = new URL("http://" + hostname + ':' + port + "/RPC2");
 
@@ -102,7 +102,7 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 			{
 				if(process != null)
 				{
-					int exitValue = process.exitValue();
+					int exitValue = process.getExitCode() != null ? process.getExitCode() : -1;
 					result[0] = new Object[]{String.format("Console already exited with value: %s while waiting for an answer.\n", exitValue)};
 					//ok, we have an exit value!
 					break;

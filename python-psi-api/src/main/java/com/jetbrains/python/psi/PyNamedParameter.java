@@ -18,9 +18,9 @@ package com.jetbrains.python.psi;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.StubBasedPsiElement;
+import consulo.language.psi.PsiNameIdentifierOwner;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyNamedParameterStub;
 
 /**

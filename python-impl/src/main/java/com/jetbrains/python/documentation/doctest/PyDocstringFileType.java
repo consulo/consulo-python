@@ -28,8 +28,8 @@ import javax.annotation.Nonnull;
 public class PyDocstringFileType extends PythonFileType {
   public static PythonFileType INSTANCE = new PyDocstringFileType();
 
-  protected PyDocstringFileType() {
-    super(new PyDocstringLanguageDialect());
+  private PyDocstringFileType() {
+    super(PyDocstringLanguageDialect.INSTANCE);
   }
 
   @Nonnull

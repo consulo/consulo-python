@@ -16,18 +16,20 @@
 
 package com.jetbrains.python.editor;
 
-import com.intellij.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.ide.impl.idea.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
+import consulo.dataContext.DataContext;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.action.EditorActionHandler;
+import consulo.util.lang.ref.Ref;
+import consulo.language.psi.PsiFile;
 import com.jetbrains.python.PythonLanguage;
 import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyEnterBetweenBracketsHandler extends EnterBetweenBracesHandler {
   @Override
   public Result preprocessEnter(@Nonnull PsiFile file,

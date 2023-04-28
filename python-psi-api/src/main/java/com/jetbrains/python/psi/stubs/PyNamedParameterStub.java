@@ -20,7 +20,7 @@
 package com.jetbrains.python.psi.stubs;
 
 import javax.annotation.Nullable;
-import com.intellij.psi.stubs.NamedStub;
+import consulo.language.psi.stub.NamedStub;
 import com.jetbrains.python.psi.PyNamedParameter;
 
 public interface PyNamedParameterStub extends NamedStub<PyNamedParameter>

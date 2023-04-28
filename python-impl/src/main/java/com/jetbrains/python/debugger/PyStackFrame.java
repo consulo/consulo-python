@@ -26,28 +26,28 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.ColoredTextContainer;
-import com.intellij.ui.SimpleTextAttributes;
+import consulo.application.AllIcons;
+import consulo.application.AccessToken;
+import consulo.application.ApplicationManager;
+import consulo.execution.debug.XSourcePosition;
+import consulo.execution.debug.evaluation.XDebuggerEvaluator;
+import consulo.execution.debug.frame.*;
+import consulo.logging.Logger;
+import consulo.document.Document;
+import consulo.document.FileDocumentManager;
+import consulo.project.Project;
+import consulo.module.content.ProjectRootManager;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.ui.ex.ColoredTextContainer;
+import consulo.ui.ex.SimpleTextAttributes;
 import java.util.HashSet;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
-import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XStackFrame;
-import com.intellij.xdebugger.frame.XValue;
-import com.intellij.xdebugger.frame.XValueChildrenList;
-import com.intellij.xdebugger.frame.XValueGroup;
+
+import consulo.execution.debug.frame.XCompositeNode;
+import consulo.execution.debug.frame.XValue;
+import consulo.execution.debug.frame.XValueGroup;
 import com.jetbrains.python.debugger.settings.PyDebuggerSettings;
 import consulo.ui.image.Image;
-import icons.PythonIcons;
+import com.jetbrains.python.PythonIcons;
 
 
 public class PyStackFrame extends XStackFrame

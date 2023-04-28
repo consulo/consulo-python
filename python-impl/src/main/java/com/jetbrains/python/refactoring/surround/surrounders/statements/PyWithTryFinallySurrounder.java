@@ -16,8 +16,8 @@
 
 package com.jetbrains.python.refactoring.surround.surrounders.statements;
 
-import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.openapi.util.TextRange;
+import consulo.language.editor.CodeInsightBundle;
+import consulo.document.util.TextRange;
 import com.jetbrains.python.psi.PyTryExceptStatement;
 
 /**

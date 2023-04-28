@@ -17,10 +17,6 @@
 package com.jetbrains.python.inspections;
 
 import com.google.common.collect.ImmutableList;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.inspections.quickfix.SimplifyBooleanCheckQuickFix;
@@ -28,11 +24,15 @@ import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyConditionalStatementPart;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.InspectionToolState;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import javax.swing.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -40,10 +40,15 @@ import java.util.List;
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
 public class PySimplifyBooleanCheckInspection extends PyInspection {
   private static List<String> COMPARISON_LITERALS = ImmutableList.of("True", "False", "[]");
 
-  public boolean ignoreComparisonToZero = true;
+  @Nonnull
+  @Override
+  public InspectionToolState<?> createStateProvider() {
+    return new PySimplifyBooleanCheckInspectionState();
+  }
 
   @Nls
   @Nonnull
@@ -56,15 +61,10 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
-    return new Visitor(holder, session, ignoreComparisonToZero);
-  }
-
-  @Override
-  public JComponent createOptionsPanel() {
-    MultipleCheckboxOptionsPanel panel = new MultipleCheckboxOptionsPanel(this);
-    panel.addCheckbox("Ignore comparison to zero", "ignoreComparisonToZero");
-    return panel;
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
+    PySimplifyBooleanCheckInspectionState inspectionState = (PySimplifyBooleanCheckInspectionState)state;
+    return new Visitor(holder, session, inspectionState.ignoreComparisonToZero);
   }
 
   private static class Visitor extends PyInspectionVisitor {
@@ -101,12 +101,12 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
       final PyElementType operator = node.getOperator();
       final PyExpression rightExpression = node.getRightExpression();
       if (rightExpression == null || rightExpression instanceof PyBinaryExpression ||
-          node.getLeftExpression() instanceof PyBinaryExpression) {
+        node.getLeftExpression() instanceof PyBinaryExpression) {
         return;
       }
       if (PyTokenTypes.EQUALITY_OPERATIONS.contains(operator)) {
         if (operandsEqualTo(node, COMPARISON_LITERALS) ||
-            (!myIgnoreComparisonToZero && operandsEqualTo(node, Collections.singleton("0")))) {
+          (!myIgnoreComparisonToZero && operandsEqualTo(node, Collections.singleton("0")))) {
           registerProblem(node);
         }
       }
@@ -125,7 +125,9 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
     }
 
     private void registerProblem(PyBinaryExpression binaryExpression) {
-      registerProblem(binaryExpression, PyBundle.message("INSP.expression.can.be.simplified"), new SimplifyBooleanCheckQuickFix(binaryExpression));
+      registerProblem(binaryExpression,
+                      PyBundle.message("INSP.expression.can.be.simplified"),
+                      new SimplifyBooleanCheckQuickFix(binaryExpression));
     }
   }
 }

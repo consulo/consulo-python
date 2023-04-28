@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.sdk.flavors;
 
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
+import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.NewVirtualFile;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.refactoring.unwrap;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyPassStatement;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.impl.PyIfPartElifImpl;
+import consulo.language.util.IncorrectOperationException;
 
 /**
  * User : ktisha
@@ -45,7 +45,8 @@ public class PyElIfRemover extends PyUnwrapper {
   }
 
   @Override
-  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException
+  {
     context.delete(element);
   }
 }

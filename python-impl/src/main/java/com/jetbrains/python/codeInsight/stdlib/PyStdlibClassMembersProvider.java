@@ -15,14 +15,6 @@
  */
 package com.jetbrains.python.codeInsight.stdlib;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import consulo.util.dataholder.Key;
-import com.intellij.psi.PsiElement;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
@@ -31,10 +23,20 @@ import com.jetbrains.python.psi.PyUtil;
 import com.jetbrains.python.psi.types.PyClassMembersProviderBase;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+import consulo.util.dataholder.Key;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyStdlibClassMembersProvider extends PyClassMembersProviderBase
 {
 	private Key<List<PyCustomMember>> mySocketMembersKey = Key.create("socket.members");

@@ -16,17 +16,19 @@
 
 package com.jetbrains.python.refactoring.invertBoolean;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.usageView.UsageViewBundle;
-import com.intellij.usageView.UsageViewDescriptor;
-import com.intellij.usageView.UsageViewUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.usage.UsageViewBundle;
+import consulo.usage.UsageViewDescriptor;
+import consulo.usage.UsageViewUtil;
+
 import javax.annotation.Nonnull;
 
 /**
  * User : ktisha
  */
-public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor {
+public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor
+{
   private final PsiElement myElement;
 
   public PyInvertBooleanUsageViewDescriptor(final PsiElement element) {

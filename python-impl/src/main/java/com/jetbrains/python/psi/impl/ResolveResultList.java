@@ -16,9 +16,9 @@
 
 package com.jetbrains.python.psi.impl;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.impl.light.LightElement;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiInvalidElementAccessException;
+import consulo.language.impl.psi.LightElement;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 
 import java.util.ArrayList;

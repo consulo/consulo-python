@@ -23,11 +23,11 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
+import consulo.virtualFileSystem.fileType.FileType;
+import consulo.application.util.SystemInfo;
+import consulo.document.util.TextRange;
+import consulo.language.psi.PsiReferenceProvider;
+import consulo.language.psi.path.FileReference;
 
 /**
  * @author traff

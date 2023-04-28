@@ -15,35 +15,6 @@
  */
 package com.jetbrains.python.refactoring.move;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Couple;
-import consulo.util.dataholder.Key;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
-import com.intellij.refactoring.RefactoringSettings;
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
@@ -51,24 +22,37 @@ import com.jetbrains.python.actions.CreatePackageAction;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.codeInsight.imports.PyImportOptimizer;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyImportStatementBase;
-import com.jetbrains.python.psi.PyRecursiveElementVisitor;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.refactoring.classes.PyClassRefactoringUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.refactoring.RefactoringSettings;
+import consulo.language.editor.refactoring.move.MoveFileHandler;
+import consulo.language.inject.InjectedLanguageManager;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.IncorrectOperationException;
+import consulo.usage.UsageInfo;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.dataholder.Key;
+import consulo.util.io.PathUtil;
+import consulo.util.lang.Comparing;
+import consulo.util.lang.Couple;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.VirtualFileManager;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * @author vlan
  */
+@ExtensionImpl
 public class PyMoveFileHandler extends MoveFileHandler
 {
 	private static final Key<PsiNamedElement> REFERENCED_ELEMENT = Key.create("PY_REFERENCED_ELEMENT");
@@ -387,7 +371,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 	 * @param importStatement import statement to update
 	 * @param qualifiedName   qualified name of new import source
 	 * @return updated import statement
-	 * @see #replaceWithQualifiedExpression(com.intellij.psi.PsiElement, com.intellij.psi.util.QualifiedName)
+	 * @see #replaceWithQualifiedExpression(PsiElement, QualifiedName)
 	 */
 	@Nonnull
 	private static PsiElement replaceRelativeImportSourceWithQualifiedExpression(@Nonnull PyFromImportStatement importStatement, @Nullable QualifiedName qualifiedName)

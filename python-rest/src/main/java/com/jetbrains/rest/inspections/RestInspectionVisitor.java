@@ -16,14 +16,14 @@
 
 package com.jetbrains.rest.inspections;
 
+import com.jetbrains.rest.validation.RestElementVisitor;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.codeInspection.*;
-import com.intellij.codeInspection.ex.ProblemDescriptorImpl;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.jetbrains.rest.validation.RestElementVisitor;
 
 /**
  * User : catherine
@@ -63,38 +63,6 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
       }
     if (myHolder != null) {
       myHolder.registerProblem(element, message, quickFix);
-    }
-  }
-
-
-  /**
-   * The most full-blown version.
-   * @see com.intellij.codeInspection.ProblemDescriptor
-   */
-  protected final void registerProblem(
-    @Nonnull final PsiElement psiElement,
-    @Nonnull final String descriptionTemplate,
-    final ProblemHighlightType highlightType,
-    @Nullable final HintAction hintAction,
-    final LocalQuickFix... fixes) {
-    registerProblem(psiElement, descriptionTemplate, highlightType, hintAction, null, fixes);
-  }
-
-  /**
-   * The most full-blown version.
-   * @see com.intellij.codeInspection.ProblemDescriptor
-   */
-  protected final void registerProblem(
-    @Nonnull final PsiElement psiElement,
-    @Nonnull final String descriptionTemplate,
-    final ProblemHighlightType highlightType,
-    @Nullable final HintAction hintAction,
-    @Nullable final TextRange rangeInElement,
-    final LocalQuickFix... fixes)
-  {
-    if (myHolder != null) {
-      myHolder.registerProblem(new ProblemDescriptorImpl(psiElement, psiElement, descriptionTemplate, fixes, highlightType, false,
-                                                         rangeInElement, hintAction, myHolder.isOnTheFly()));
     }
   }
 }

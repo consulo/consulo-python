@@ -16,11 +16,11 @@
 
 package com.jetbrains.python.actions;
 
-import com.intellij.ide.actions.CreateFileFromTemplateAction;
-import com.intellij.ide.actions.CreateFileFromTemplateDialog;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
+import consulo.ide.action.CreateFileFromTemplateAction;
+import consulo.ide.action.CreateFileFromTemplateDialog;
+import consulo.application.dumb.DumbAware;
+import consulo.project.Project;
+import consulo.language.psi.PsiDirectory;
 import com.jetbrains.python.PythonFileType;
 
 /**

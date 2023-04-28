@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import com.intellij.psi.PsiElement;
+import consulo.language.psi.PsiElement;
 
 /**
  * @author yole

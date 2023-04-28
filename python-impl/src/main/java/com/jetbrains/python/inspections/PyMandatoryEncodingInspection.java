@@ -16,91 +16,81 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.inspections.quickfix.AddEncodingQuickFix;
 import com.jetbrains.python.psi.PyFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.language.editor.inspection.InspectionToolState;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * User : catherine
  */
-public class PyMandatoryEncodingInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.mandatory.encoding");
-  }
+@ExtensionImpl
+public class PyMandatoryEncodingInspection extends PyInspection
+{
+	@Nonnull
+	@Override
+	public InspectionToolState<?> createStateProvider()
+	{
+		return new PyMandatoryEncodingInspectionState();
+	}
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
+	@Nls
+	@Nonnull
+	@Override
+	public String getDisplayName()
+	{
+		return PyBundle.message("INSP.NAME.mandatory.encoding");
+	}
 
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
-    return new Visitor(holder, session);
-  }
+	@Override
+	public boolean isEnabledByDefault()
+	{
+		return true;
+	}
 
-  private class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
+	@Nonnull
+	@Override
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
+	{
+		return new Visitor(holder, session, (PyMandatoryEncodingInspectionState) state);
+	}
 
-    @Override
-    public void visitPyFile(PyFile node) {
-      final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(node.getText());
-      if (charsetString == null) {
-        TextRange tr = new TextRange(0,0);
-        ProblemsHolder holder = getHolder();
-        if (holder != null)
-          holder.registerProblem(node, tr, "No encoding specified for file", new AddEncodingQuickFix(myDefaultEncoding,
-                                                                                                     myEncodingFormatIndex));
-      }
-    }
-  }
+	private class Visitor extends PyInspectionVisitor
+	{
+		private final PyMandatoryEncodingInspectionState myState;
 
-  public String myDefaultEncoding = "utf-8";
-  public int myEncodingFormatIndex = 0;
+		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyMandatoryEncodingInspectionState state)
+		{
+			super(holder, session);
+			myState = state;
+		}
 
-  @Override
-  public JComponent createOptionsPanel() {
-    final JComboBox defaultEncoding = new JComboBox(PyEncodingUtil.POSSIBLE_ENCODINGS);
-    defaultEncoding.setSelectedItem(myDefaultEncoding);
-
-    defaultEncoding.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        JComboBox cb = (JComboBox)e.getSource();
-        myDefaultEncoding = (String)cb.getSelectedItem();
-      }
-    });
-
-    final JComboBox encodingFormat = new JComboBox(PyEncodingUtil.ENCODING_FORMAT);
-
-    encodingFormat.setSelectedIndex(myEncodingFormatIndex);
-    encodingFormat.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        JComboBox cb = (JComboBox)e.getSource();
-        myEncodingFormatIndex = cb.getSelectedIndex();
-      }
-    });
-
-    return PyEncodingUtil.createEncodingOptionsPanel(defaultEncoding, encodingFormat);
-  }
+		@Override
+		public void visitPyFile(PyFile node)
+		{
+			final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(node.getText());
+			if(charsetString == null)
+			{
+				TextRange tr = new TextRange(0, 0);
+				ProblemsHolder holder = getHolder();
+				if(holder != null)
+				{
+					holder.registerProblem(node, tr, "No encoding specified for file", new AddEncodingQuickFix(myState.myDefaultEncoding,myState.myEncodingFormatIndex));
+				}
+			}
+		}
+	}
 }

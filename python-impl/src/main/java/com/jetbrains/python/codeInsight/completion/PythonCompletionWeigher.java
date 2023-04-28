@@ -18,11 +18,11 @@ package com.jetbrains.python.codeInsight.completion;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.codeInsight.completion.CompletionLocation;
-import com.intellij.codeInsight.completion.CompletionWeigher;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.psi.util.PsiUtilCore;
+import consulo.language.editor.completion.CompletionLocation;
+import consulo.language.editor.completion.CompletionWeigher;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementPresentation;
+import consulo.language.psi.PsiUtilCore;
 import com.jetbrains.python.PythonLanguage;
 import org.jetbrains.annotations.NonNls;
 

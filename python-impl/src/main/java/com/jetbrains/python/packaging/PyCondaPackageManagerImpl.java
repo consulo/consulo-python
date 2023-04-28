@@ -15,224 +15,194 @@
  */
 package com.jetbrains.python.packaging;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.application.progress.ProgressIndicator;
+import consulo.application.progress.ProgressManager;
+import consulo.application.util.SystemInfo;
+import consulo.content.bundle.Sdk;
+import consulo.execution.RunCanceledByUserException;
+import consulo.process.ExecutionException;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.internal.CapturingProcessHandler;
+import consulo.process.local.ProcessOutput;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+public class PyCondaPackageManagerImpl extends PyPackageManagerImpl {
+  public static final String PYTHON = "python";
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.RunCanceledByUserException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.python.sdk.PythonSdkType;
+  PyCondaPackageManagerImpl(@Nonnull final Sdk sdk) {
+    super(sdk);
+  }
 
-public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
-{
-	public static final String PYTHON = "python";
+  @Override
+  public void installManagement() throws ExecutionException {
+  }
 
-	PyCondaPackageManagerImpl(@Nonnull final Sdk sdk)
-	{
-		super(sdk);
-	}
+  @Override
+  public boolean hasManagement() throws ExecutionException {
+    final Sdk sdk = getSdk();
+    return isCondaVEnv(sdk);
+  }
 
-	@Override
-	public void installManagement() throws ExecutionException
-	{
-	}
+  @Override
+  protected void installManagement(@Nonnull String name) throws ExecutionException {
+  }
 
-	@Override
-	public boolean hasManagement() throws ExecutionException
-	{
-		final Sdk sdk = getSdk();
-		return isCondaVEnv(sdk);
-	}
+  @Override
+  public void install(@Nonnull List<PyRequirement> requirements, @Nonnull List<String> extraArgs) throws ExecutionException {
+    final ArrayList<String> arguments = new ArrayList<>();
+    for (PyRequirement requirement : requirements) {
+      arguments.add(requirement.toString());
+    }
+    arguments.add("-y");
+    if (extraArgs.contains("-U")) {
+      getCondaOutput("update", arguments);
+    }
+    else {
+      arguments.addAll(extraArgs);
+      getCondaOutput("install", arguments);
+    }
+  }
 
-	@Override
-	protected void installManagement(@Nonnull String name) throws ExecutionException
-	{
-	}
+  private ProcessOutput getCondaOutput(@Nonnull final String command, List<String> arguments) throws ExecutionException {
+    final Sdk sdk = getSdk();
 
-	@Override
-	public void install(@Nonnull List<PyRequirement> requirements, @Nonnull List<String> extraArgs) throws ExecutionException
-	{
-		final ArrayList<String> arguments = new ArrayList<>();
-		for(PyRequirement requirement : requirements)
-		{
-			arguments.add(requirement.toString());
-		}
-		arguments.add("-y");
-		if(extraArgs.contains("-U"))
-		{
-			getCondaOutput("update", arguments);
-		}
-		else
-		{
-			arguments.addAll(extraArgs);
-			getCondaOutput("install", arguments);
-		}
-	}
+    final String condaExecutable = PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory());
+    if (condaExecutable == null) {
+      throw new PyExecutionException("Cannot find conda", "Conda", Collections.<String>emptyList(), new ProcessOutput());
+    }
 
-	private ProcessOutput getCondaOutput(@Nonnull final String command, List<String> arguments) throws ExecutionException
-	{
-		final Sdk sdk = getSdk();
+    final String path = getCondaDirectory();
+    if (path == null) {
+      throw new PyExecutionException("Empty conda name for " + sdk.getHomePath(), command, arguments);
+    }
 
-		final String condaExecutable = PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory());
-		if(condaExecutable == null)
-		{
-			throw new PyExecutionException("Cannot find conda", "Conda", Collections.<String>emptyList(), new ProcessOutput());
-		}
+    final ArrayList<String> parameters = Lists.newArrayList(condaExecutable, command, "-p", path);
+    parameters.addAll(arguments);
 
-		final String path = getCondaDirectory();
-		if(path == null)
-		{
-			throw new PyExecutionException("Empty conda name for " + sdk.getHomePath(), command, arguments);
-		}
+    final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
+    final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
+    final ProcessOutput result = handler.runProcess();
+    final int exitCode = result.getExitCode();
+    if (exitCode != 0) {
+      final String message =
+        StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
+      throw new PyExecutionException(message, "Conda", parameters, result);
+    }
+    return result;
+  }
 
-		final ArrayList<String> parameters = Lists.newArrayList(condaExecutable, command, "-p", path);
-		parameters.addAll(arguments);
+  @Nullable
+  private String getCondaDirectory() {
+    final VirtualFile homeDirectory = getSdk().getHomeDirectory();
+    if (homeDirectory == null) {
+      return null;
+    }
+    if (SystemInfo.isWindows) {
+      return homeDirectory.getParent().getPath();
+    }
+    return homeDirectory.getParent().getParent().getPath();
+  }
 
-		final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
-		final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
-		final ProcessOutput result = handler.runProcess();
-		final int exitCode = result.getExitCode();
-		if(exitCode != 0)
-		{
-			final String message = StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
-			throw new PyExecutionException(message, "Conda", parameters, result);
-		}
-		return result;
-	}
+  @Override
+  public void install(@Nonnull String requirementString) throws ExecutionException {
+    getCondaOutput("install", Lists.newArrayList(requirementString, "-y"));
+  }
 
-	@Nullable
-	private String getCondaDirectory()
-	{
-		final VirtualFile homeDirectory = getSdk().getHomeDirectory();
-		if(homeDirectory == null)
-		{
-			return null;
-		}
-		if(SystemInfo.isWindows)
-		{
-			return homeDirectory.getParent().getPath();
-		}
-		return homeDirectory.getParent().getParent().getPath();
-	}
+  @Override
+  public void uninstall(@Nonnull List<PyPackage> packages) throws ExecutionException {
+    final ArrayList<String> arguments = new ArrayList<>();
+    for (PyPackage aPackage : packages) {
+      arguments.add(aPackage.getName());
+    }
+    arguments.add("-y");
 
-	@Override
-	public void install(@Nonnull String requirementString) throws ExecutionException
-	{
-		getCondaOutput("install", Lists.newArrayList(requirementString, "-y"));
-	}
+    getCondaOutput("remove", arguments);
+  }
 
-	@Override
-	public void uninstall(@Nonnull List<PyPackage> packages) throws ExecutionException
-	{
-		final ArrayList<String> arguments = new ArrayList<>();
-		for(PyPackage aPackage : packages)
-		{
-			arguments.add(aPackage.getName());
-		}
-		arguments.add("-y");
+  @Nonnull
+  @Override
+  protected List<PyPackage> collectPackages() throws ExecutionException {
+    final ProcessOutput output = getCondaOutput("list", Lists.newArrayList("-e"));
+    final Set<PyPackage> packages = Sets.newConcurrentHashSet(parseCondaToolOutput(output.getStdout()));
+    packages.addAll(super.collectPackages());
+    return Lists.newArrayList(packages);
+  }
 
-		getCondaOutput("remove", arguments);
-	}
+  @Nonnull
+  protected static List<PyPackage> parseCondaToolOutput(@Nonnull String s) throws ExecutionException {
+    final String[] lines = StringUtil.splitByLines(s);
+    final List<PyPackage> packages = new ArrayList<>();
+    for (String line : lines) {
+      if (line.startsWith("#")) {
+        continue;
+      }
+      final List<String> fields = StringUtil.split(line, "=");
+      if (fields.size() < 3) {
+        throw new PyExecutionException("Invalid conda output format", "conda", Collections.<String>emptyList());
+      }
+      final String name = fields.get(0);
+      final String version = fields.get(1);
+      final List<PyRequirement> requirements = new ArrayList<>();
+      if (fields.size() >= 4) {
+        final String requiresLine = fields.get(3);
+        final String requiresSpec = StringUtil.join(StringUtil.split(requiresLine, ":"), "\n");
+        requirements.addAll(PyRequirement.fromText(requiresSpec));
+      }
+      if (!"Python".equals(name)) {
+        packages.add(new PyPackage(name, version, "", requirements));
+      }
+    }
+    return packages;
+  }
 
-	@Nonnull
-	@Override
-	protected List<PyPackage> collectPackages() throws ExecutionException
-	{
-		final ProcessOutput output = getCondaOutput("list", Lists.newArrayList("-e"));
-		final Set<PyPackage> packages = Sets.newConcurrentHashSet(parseCondaToolOutput(output.getStdout()));
-		packages.addAll(super.collectPackages());
-		return Lists.newArrayList(packages);
-	}
+  public static boolean isCondaVEnv(@Nonnull final Sdk sdk) {
+    final String condaName = "conda-meta";
+    final VirtualFile homeDirectory = sdk.getHomeDirectory();
+    if (homeDirectory == null) {
+      return false;
+    }
+    final VirtualFile condaMeta =
+      SystemInfo.isWindows ? homeDirectory.getParent().findChild(condaName) : homeDirectory.getParent().getParent().findChild(condaName);
+    return condaMeta != null;
+  }
 
-	@Nonnull
-	protected static List<PyPackage> parseCondaToolOutput(@Nonnull String s) throws ExecutionException
-	{
-		final String[] lines = StringUtil.splitByLines(s);
-		final List<PyPackage> packages = new ArrayList<>();
-		for(String line : lines)
-		{
-			if(line.startsWith("#"))
-			{
-				continue;
-			}
-			final List<String> fields = StringUtil.split(line, "=");
-			if(fields.size() < 3)
-			{
-				throw new PyExecutionException("Invalid conda output format", "conda", Collections.<String>emptyList());
-			}
-			final String name = fields.get(0);
-			final String version = fields.get(1);
-			final List<PyRequirement> requirements = new ArrayList<>();
-			if(fields.size() >= 4)
-			{
-				final String requiresLine = fields.get(3);
-				final String requiresSpec = StringUtil.join(StringUtil.split(requiresLine, ":"), "\n");
-				requirements.addAll(PyRequirement.fromText(requiresSpec));
-			}
-			if(!"Python".equals(name))
-			{
-				packages.add(new PyPackage(name, version, "", requirements));
-			}
-		}
-		return packages;
-	}
+  @Nonnull
+  public static String createVirtualEnv(@Nonnull String destinationDir, String version) throws ExecutionException {
+    final String condaExecutable = PyCondaPackageService.getSystemCondaExecutable();
+    if (condaExecutable == null) {
+      throw new PyExecutionException("Cannot find conda", "Conda", Collections.<String>emptyList(), new ProcessOutput());
+    }
 
-	public static boolean isCondaVEnv(@Nonnull final Sdk sdk)
-	{
-		final String condaName = "conda-meta";
-		final VirtualFile homeDirectory = sdk.getHomeDirectory();
-		if(homeDirectory == null)
-		{
-			return false;
-		}
-		final VirtualFile condaMeta = SystemInfo.isWindows ? homeDirectory.getParent().findChild(condaName) : homeDirectory.getParent().getParent().findChild(condaName);
-		return condaMeta != null;
-	}
+    final ArrayList<String> parameters = Lists.newArrayList(condaExecutable, "create", "-p", destinationDir, "python=" + version, "-y");
 
-	@Nonnull
-	public static String createVirtualEnv(@Nonnull String destinationDir, String version) throws ExecutionException
-	{
-		final String condaExecutable = PyCondaPackageService.getSystemCondaExecutable();
-		if(condaExecutable == null)
-		{
-			throw new PyExecutionException("Cannot find conda", "Conda", Collections.<String>emptyList(), new ProcessOutput());
-		}
-
-		final ArrayList<String> parameters = Lists.newArrayList(condaExecutable, "create", "-p", destinationDir, "python=" + version, "-y");
-
-		final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
-		final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
-		final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-		final ProcessOutput result = handler.runProcessWithProgressIndicator(indicator);
-		if(result.isCancelled())
-		{
-			throw new RunCanceledByUserException();
-		}
-		final int exitCode = result.getExitCode();
-		if(exitCode != 0)
-		{
-			final String message = StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
-			throw new PyExecutionException(message, "Conda", parameters, result);
-		}
-		final String binary = PythonSdkType.getPythonExecutable(destinationDir);
-		final String binaryFallback = destinationDir + File.separator + "bin" + File.separator + "python";
-		return (binary != null) ? binary : binaryFallback;
-	}
+    final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
+    final CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    final ProcessOutput result = handler.runProcessWithProgressIndicator(indicator);
+    if (result.isCancelled()) {
+      throw new RunCanceledByUserException();
+    }
+    final int exitCode = result.getExitCode();
+    if (exitCode != 0) {
+      final String message =
+        StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
+      throw new PyExecutionException(message, "Conda", parameters, result);
+    }
+    final String binary = PythonSdkType.getPythonExecutable(destinationDir);
+    final String binaryFallback = destinationDir + File.separator + "bin" + File.separator + "python";
+    return (binary != null) ? binary : binaryFallback;
+  }
 
 }

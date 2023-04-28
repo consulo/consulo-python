@@ -15,14 +15,17 @@
  */
 package com.jetbrains.python.run;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.execution.ExecutionException;
 import com.jetbrains.python.remote.PyRemoteSdkAdditionalDataBase;
+import consulo.annotation.DeprecationInfo;
+import consulo.process.ExecutionException;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Alexander Koshevoy
  */
+@Deprecated
+@DeprecationInfo("We don't have remote plugin")
 public class PyRemoteProcessStarterManagerUtil
 {
 	private PyRemoteProcessStarterManagerUtil()

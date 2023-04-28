@@ -16,26 +16,26 @@
 
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.Nls;
-
-import javax.annotation.Nullable;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyFile;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationManager;
+import consulo.ide.setting.ShowSettingsUtil;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.project.Project;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- *
  * User: ktisha
  */
+@ExtensionImpl
 public class PyInterpreterInspection extends PyInspection {
 
   @Nls
@@ -48,7 +48,8 @@ public class PyInterpreterInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         final boolean isOnTheFly,
-                                        @Nonnull final LocalInspectionToolSession session) {
+                                        @Nonnull final LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 

@@ -18,17 +18,18 @@ package com.jetbrains.python.findUsages;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.psi.ElementDescriptionLocation;
-import com.intellij.psi.ElementDescriptionProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.usageView.UsageViewLongNameLocation;
+import consulo.language.psi.ElementDescriptionLocation;
+import consulo.language.psi.ElementDescriptionProvider;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.usage.UsageViewLongNameLocation;
 import com.jetbrains.python.psi.PyElement;
 
 /**
  * @author yole
  */
-public class PyElementDescriptionProvider implements ElementDescriptionProvider {
+public class PyElementDescriptionProvider implements ElementDescriptionProvider
+{
   public String getElementDescription(@Nonnull PsiElement element, @Nonnull ElementDescriptionLocation location) {
     if (location instanceof UsageViewLongNameLocation) {
       if (element instanceof PsiNamedElement && element instanceof PyElement) {

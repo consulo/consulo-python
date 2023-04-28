@@ -1,18 +1,18 @@
 package consulo.jython.module.extension;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.projectRoots.SdkType;
 import com.jetbrains.python.sdk.PythonSdkType;
-import consulo.module.extension.impl.ModuleExtensionWithSdkImpl;
+import consulo.content.bundle.SdkType;
+import consulo.module.content.layer.ModuleRootLayer;
+import consulo.module.content.layer.extension.ModuleExtensionWithSdkBase;
 import consulo.python.module.extension.PyModuleExtension;
-import consulo.roots.ModuleRootLayer;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
  * @since 25.10.13.
  */
-public class JythonModuleExtension extends ModuleExtensionWithSdkImpl<JythonModuleExtension> implements PyModuleExtension<JythonModuleExtension>
+public class JythonModuleExtension extends ModuleExtensionWithSdkBase<JythonModuleExtension> implements PyModuleExtension<JythonModuleExtension>
 {
 	public JythonModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
 	{

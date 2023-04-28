@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.buildout.config;
 
-import com.intellij.psi.tree.IFileElementType;
+import consulo.language.ast.IFileElementType;
 
 /**
  * @author traff

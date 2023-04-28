@@ -16,12 +16,13 @@
 
 package com.jetbrains.python.sdk.flavors;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.process.ExecutionException;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.cmd.ParamsGroup;
+import consulo.process.ProcessHandler;
+import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.PythonHelpersLocator;
 import com.jetbrains.python.run.JythonProcessHandler;
 import com.jetbrains.python.run.PythonCommandLineState;
@@ -38,14 +39,12 @@ import java.util.Map;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class JythonSdkFlavor extends PythonSdkFlavor
 {
 	private static final String JYTHONPATH = "JYTHONPATH";
 	private static final String PYTHON_PATH_PREFIX = "-Dpython.path=";
 
-	private JythonSdkFlavor()
-	{
-	}
 
 	public static String getPythonPathCmdLineArgument(Collection<String> path)
 	{

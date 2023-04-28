@@ -16,23 +16,26 @@
 
 package com.jetbrains.python.editor;
 
-import com.intellij.codeInsight.editorActions.emacs.EmacsProcessingHandler;
-import com.intellij.formatting.IndentInfo;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
-import javax.annotation.Nonnull;
+import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.SelectionModel;
+import consulo.document.Document;
+import consulo.language.Language;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.TokenSet;
+import consulo.language.codeStyle.CodeStyleSettings;
+import consulo.language.codeStyle.CodeStyleSettingsManager;
+import consulo.language.codeStyle.CommonCodeStyleSettings;
+import consulo.language.codeStyle.IndentInfo;
+import consulo.language.editor.action.EmacsProcessingHandler;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.project.Project;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +43,11 @@ import java.util.List;
  * Python-specific Emacs-like processing extension.
  * <p/>
  * Thread-safe.
- * 
+ *
  * @author Denis Zhdanov
  * @since 4/11/11 2:31 PM
  */
+@ExtensionImpl
 public class PyEmacsHandler implements EmacsProcessingHandler {
 
   private static final TokenSet COMPOUND_STATEMENT_TYPES = TokenSet.create(
@@ -55,26 +59,38 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     PyElementTypes.FUNCTION_DECLARATION, PyTokenTypes.DEF_KEYWORD,
     PyElementTypes.CLASS_DECLARATION, PyTokenTypes.CLASS_KEYWORD
   );
-  
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
+
   private enum ProcessingResult {
-    /** Particular sub-routine did the job and no additional processing is necessary. */
+    /**
+     * Particular sub-routine did the job and no additional processing is necessary.
+     */
     STOP_SUCCESSFUL,
 
-    /** Particular sub-routine detected that the processing should be stopped. */
+    /**
+     * Particular sub-routine detected that the processing should be stopped.
+     */
     STOP_UNSUCCESSFUL,
-    
-    /** Processing should be continued */
+
+    /**
+     * Processing should be continued
+     */
     CONTINUE
   }
-  
+
   /**
    * Tries to make active line(s) belong to another code block by changing their indentation.
-   * 
-   * @param project     current project
-   * @param editor      current editor
-   * @param file        current file
-   * @return            {@link Result#STOP} if indentation level is changed and further processing should be stopped;
-   *                    {@link Result#CONTINUE} otherwise
+   *
+   * @param project current project
+   * @param editor  current editor
+   * @param file    current file
+   * @return {@link Result#STOP} if indentation level is changed and further processing should be stopped;
+   * {@link Result#CONTINUE} otherwise
    */
   @Nonnull
   @Override
@@ -83,13 +99,13 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     //     1. Check if the editor has selection. Do nothing then as Emacs behaves so;
     //     2. Indent current line one level right if possible;
     //     3. Indent current line to the left-most position if possible;
-    
+
     SelectionModel selectionModel = editor.getSelectionModel();
     // Emacs Tab doesn't adjust indent in case of active selection. So do we.
     if (selectionModel.hasSelection()) {
       return Result.CONTINUE;
     }
-    
+
     // Check if current line is empty. Return eagerly then.
     Document document = editor.getDocument();
     int caretOffset = editor.getCaretModel().getOffset();
@@ -97,43 +113,46 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     if (caretLine == 0 || isLineContainsWhiteSpacesOnlyEmpty(document, caretLine)) {
       return Result.CONTINUE;
     }
-    
+
     ChangeIndentContext context = new ChangeIndentContext(project, file, editor, document, caretLine);
-    
+
     if (defineSoleIndentIfPossible(context)) {
       return Result.STOP;
     }
 
     switch (tryToIndentToRight(context)) {
-      case STOP_SUCCESSFUL: return Result.STOP;
-      case STOP_UNSUCCESSFUL: return Result.CONTINUE;
-      case CONTINUE: break;
+      case STOP_SUCCESSFUL:
+        return Result.STOP;
+      case STOP_UNSUCCESSFUL:
+        return Result.CONTINUE;
+      case CONTINUE:
+        break;
     }
-    
+
     if (tryToIndentToLeft(context)) {
       return Result.STOP;
     }
-    
+
     return Result.CONTINUE;
   }
 
   /**
    * Checks if target line may have the sole indent (e.g. first expression of compound statement) and applies it in
    * case of success.
-   * 
-   * @param context       current processing context
-   * @return              <code>true</code> if target line has the sole indent and it is applied; <code>false</code> otherwise
+   *
+   * @param context current processing context
+   * @return <code>true</code> if target line has the sole indent and it is applied; <code>false</code> otherwise
    */
   private static boolean defineSoleIndentIfPossible(@Nonnull ChangeIndentContext context) {
     int prevLine = context.targetLine - 1;
     while (prevLine >= 0 && isLineContainsWhiteSpacesOnlyEmpty(context.document, prevLine)) {
       prevLine--;
     }
-    
+
     if (prevLine < 0) {
       return false;
     }
-    
+
     int indent = getLineIndent(context, prevLine);
     int newIndent = -1;
     if (isLineStartsWithCompoundStatement(context, prevLine)) {
@@ -151,17 +170,17 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     changeIndent(context, newIndent);
     return true;
   }
-  
+
   /**
    * Tries to indent active line to the right.
    *
-   * @param context    current processing context
-   * @return           processing result
+   * @param context current processing context
+   * @return processing result
    */
   private static ProcessingResult tryToIndentToRight(@Nonnull ChangeIndentContext context) {
     int targetLineIndent = getLineIndent(context, context.targetLine);
     List<LineInfo> lineInfos = collectIndentsGreaterOrEqualToCurrent(context, context.targetLine);
-    
+
     int newIndent = -1;
     for (int i = lineInfos.size() - 1; i >= 0; i--) {
       LineInfo lineInfo = lineInfos.get(i);
@@ -185,7 +204,7 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
       changeIndent(context, 0);
       return false;
     }
-    
+
     int newIndent = -1;
     for (int line = 0; line < context.targetLine; line++) {
       if (isLineContainsWhiteSpacesOnlyEmpty(context.document, line)) {
@@ -200,11 +219,11 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
         newIndent = indent;
       }
     }
-    
+
     if (newIndent < 0) {
       return false;
     }
-    
+
     changeIndent(context, newIndent);
     return true;
   }
@@ -236,11 +255,11 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
   /**
    * Inspects lines that are located before the given target line and collects information about lines which indents are greater
    * or equal to the target line indent.
-   * 
-   * @param context       current processing context
-   * @param targetLine    target line
-   * @return              list of lines located before the target and that start new indented blocks. Note that they are
-   *                      stored by their indent size in ascending order
+   *
+   * @param context    current processing context
+   * @param targetLine target line
+   * @return list of lines located before the target and that start new indented blocks. Note that they are
+   * stored by their indent size in ascending order
    */
   private static List<LineInfo> collectIndentsGreaterOrEqualToCurrent(@Nonnull ChangeIndentContext context, int targetLine) {
     List<LineInfo> result = new ArrayList<LineInfo>();
@@ -267,7 +286,7 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     }
     return result;
   }
-  
+
   private static boolean isLineContainsWhiteSpacesOnlyEmpty(@Nonnull Document document, int line) {
     int start = document.getLineStartOffset(line);
     int end = document.getLineEndOffset(line);
@@ -280,7 +299,7 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     }
     return true;
   }
-  
+
   private static boolean isLineStartsWithCompoundStatement(@Nonnull ChangeIndentContext context, int line) {
     PsiElement element = context.file.findElementAt(context.document.getLineStartOffset(line) + getLineIndent(context, line));
     if (element == null) {
@@ -292,7 +311,7 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     }
     return COMPOUND_STATEMENT_TYPES.contains(node.getElementType());
   }
-  
+
   private static int getLineIndent(@Nonnull ChangeIndentContext context, int line) {
     int start = context.document.getLineStartOffset(line);
     int end = context.document.getLineEndOffset(line);
@@ -301,14 +320,19 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     for (int i = start; i < end; i++) {
       char c = text.charAt(i);
       switch (c) {
-        case ' ': result++; break;
-        case '\t': result += context.getIndentOptions().TAB_SIZE; break;
-        default: return result;
+        case ' ':
+          result++;
+          break;
+        case '\t':
+          result += context.getIndentOptions().TAB_SIZE;
+          break;
+        default:
+          return result;
       }
     }
     return result;
   }
-  
+
   private static int getFirstNonWsSymbolOffset(@Nonnull Document document, int line) {
     int start = document.getLineStartOffset(line);
     int end = document.getLineEndOffset(line);
@@ -321,11 +345,11 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
     }
     return end;
   }
-  
+
   private static class LineInfo {
 
-    public final int     line;
-    public final int     indent;
+    public final int line;
+    public final int indent;
     public final boolean startsWithCompoundStatement;
 
     LineInfo(int line, int indent, boolean startsWithCompoundStatement) {
@@ -342,20 +366,19 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
 
   private static class ChangeIndentContext {
     @Nonnull
-	public final Project  project;
+    public final Project project;
     @Nonnull
-	public final PsiFile  file;
+    public final PsiFile file;
     @Nonnull
-	public final Editor   editor;
+    public final Editor editor;
     @Nonnull
-	public final Document document;
-    public final          int      targetLine;
-    
+    public final Document document;
+    public final int targetLine;
+
     private CommonCodeStyleSettings.IndentOptions myIndentOptions;
 
     private ChangeIndentContext(@Nonnull Project project, @Nonnull PsiFile file, @Nonnull Editor editor,
-                                @Nonnull Document document, int targetLine)
-    {
+                                @Nonnull Document document, int targetLine) {
       this.project = project;
       this.file = file;
       this.editor = editor;
@@ -368,7 +391,7 @@ public class PyEmacsHandler implements EmacsProcessingHandler {
         CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getInstance(project).getCurrentSettings();
         myIndentOptions = codeStyleSettings.getIndentOptions(file.getFileType());
       }
-      
+
       return myIndentOptions;
     }
   }

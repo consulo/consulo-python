@@ -18,11 +18,11 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.stubs.DefaultStubBuilder;
-import com.intellij.psi.stubs.StubElement;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.stub.DefaultStubBuilder;
+import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyIfStatement;
 import com.jetbrains.python.psi.PyUtil;

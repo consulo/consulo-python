@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.console.parsing;
 
-import com.intellij.psi.tree.IElementType;
+import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;

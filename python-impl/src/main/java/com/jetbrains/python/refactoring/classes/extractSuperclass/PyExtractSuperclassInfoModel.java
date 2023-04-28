@@ -17,7 +17,7 @@ package com.jetbrains.python.refactoring.classes.extractSuperclass;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.refactoring.classMembers.AbstractUsesDependencyMemberInfoModel;
+import consulo.language.editor.refactoring.classMember.AbstractUsesDependencyMemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;

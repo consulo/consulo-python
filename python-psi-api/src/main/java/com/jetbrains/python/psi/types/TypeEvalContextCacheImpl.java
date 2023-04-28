@@ -15,10 +15,10 @@
  */
 package com.jetbrains.python.psi.types;
 
-import javax.annotation.Nonnull;
+import consulo.application.util.CachedValuesManager;
 
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.Function;
+import javax.annotation.Nonnull;
+import java.util.function.Function;
 
 /**
  * Caches context by their constraints (to prevent context cache loss). Flushes cache every PSI change or low memory conditions.
@@ -29,7 +29,6 @@ import com.intellij.util.Function;
  */
 final class TypeEvalContextCacheImpl implements TypeEvalContextCache
 {
-
 	@Nonnull
 	private static final Function<TypeEvalContext, TypeEvalContext> VALUE_PROVIDER = new MyValueProvider();
 	@Nonnull
@@ -51,7 +50,7 @@ final class TypeEvalContextCacheImpl implements TypeEvalContextCache
 	private static class MyValueProvider implements Function<TypeEvalContext, TypeEvalContext>
 	{
 		@Override
-		public TypeEvalContext fun(final TypeEvalContext param)
+		public TypeEvalContext apply(final TypeEvalContext param)
 		{
 			// key and value are both context here. If no context stored, then key is stored. Old one is returned otherwise to cache.
 			return param;

@@ -16,17 +16,23 @@
 
 package com.jetbrains.python.console;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.project.Project;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
+import consulo.component.extension.ExtensionPointName;
+import consulo.project.Project;
 
 /**
  * @author yole
  */
+@ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyConsoleOptionsProvider {
-  ExtensionPointName<PyConsoleOptionsProvider> EP_NAME = ExtensionPointName.create("consulo.python.consoleOptionsProvider");
+  ExtensionPointName<PyConsoleOptionsProvider> EP_NAME = ExtensionPointName.create(PyConsoleOptionsProvider.class);
 
   boolean isApplicableTo(Project project);
+
   String getName();
+
   String getHelpTopic();
+
   PyConsoleOptions.PyConsoleSettings getSettings(Project project);
 }

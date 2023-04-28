@@ -15,15 +15,14 @@
  */
 package com.jetbrains.python.debugger;
 
-import java.util.Collection;
+import com.jetbrains.python.debugger.pydev.AbstractCommand;
+import consulo.application.AllIcons;
+import consulo.execution.debug.frame.XExecutionStack;
+import consulo.execution.debug.frame.XSuspendContext;
+import consulo.ui.image.Image;
 
 import javax.annotation.Nonnull;
-
-import com.intellij.icons.AllIcons;
-import com.intellij.xdebugger.frame.XExecutionStack;
-import com.intellij.xdebugger.frame.XSuspendContext;
-import com.jetbrains.python.debugger.pydev.AbstractCommand;
-import consulo.ui.image.Image;
+import java.util.Collection;
 
 
 public class PySuspendContext extends XSuspendContext

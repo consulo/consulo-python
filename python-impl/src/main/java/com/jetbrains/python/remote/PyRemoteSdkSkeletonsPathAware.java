@@ -15,10 +15,11 @@
  */
 package com.jetbrains.python.remote;
 
-import com.intellij.remote.RemoteSdkProperties;
+import consulo.ide.impl.idea.remote.RemoteSdkProperties;
 
 /**
  * @author traff
  */
-public interface PyRemoteSdkSkeletonsPathAware extends PySkeletonsPathAware, RemoteSdkProperties{
+public interface PyRemoteSdkSkeletonsPathAware extends PySkeletonsPathAware, consulo.ide.impl.idea.remote.RemoteSdkProperties
+{
 }

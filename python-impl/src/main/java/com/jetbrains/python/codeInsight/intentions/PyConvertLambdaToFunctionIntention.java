@@ -16,26 +16,25 @@
 
 package com.jetbrains.python.codeInsight.intentions;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.controlflow.ControlFlow;
-import com.intellij.codeInsight.controlflow.Instruction;
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.template.*;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.codeInsight.codeFragment.PyCodeFragmentUtil;
 import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.refactoring.introduce.IntroduceValidator;
-import javax.annotation.Nonnull;
+import consulo.codeEditor.Editor;
+import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.editor.template.*;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
     if (lambdaExpression != null) {
       if (lambdaExpression.getBody() != null) {
         final ControlFlow flow = ControlFlowCache.getControlFlow(lambdaExpression);
-        final List<Instruction> graph = Arrays.asList(flow.getInstructions());
+        final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> graph = Arrays.asList(flow.getInstructions());
         final List<PsiElement> elements = PyCodeFragmentUtil.getInputElements(graph, graph);
         if (elements.size() > 0) return false;
         return true;
@@ -73,7 +72,8 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
     return false;
   }
 
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
+  {
     PyLambdaExpression lambdaExpression = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
     if (lambdaExpression != null) {
       String name = "function";
@@ -118,13 +118,13 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
 
         ReferenceNameExpression refExpr = new ReferenceNameExpression(name);
 
-        ((TemplateBuilderImpl)builder).replaceElement(lambdaExpression, name, refExpr, true);
-        ((TemplateBuilderImpl)builder).replaceElement(functionName, name, name, false);
+        builder.replaceElement(lambdaExpression, name, refExpr, true);
+        builder.replaceElement(functionName, name, name, false);
 
         int textOffSet = functionName.getTextOffset();
         editor.getCaretModel().moveToOffset(parentScope.getTextRange().getStartOffset());
 
-        Template template = ((TemplateBuilderImpl)builder).buildInlineTemplate();
+        Template template = builder.buildInlineTemplate();
         TemplateManager.getInstance(project).startTemplate(editor, template);
         editor.getCaretModel().moveToOffset(textOffSet);
       }

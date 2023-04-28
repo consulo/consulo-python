@@ -15,27 +15,22 @@
  */
 package com.jetbrains.python.inspections;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.jetbrains.python.psi.PyDocStringOwner;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyQualifiedExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.component.extension.ExtensionPointName;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * @author yole
  */
 public abstract class PyInspectionExtension
 {
-	public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create("consulo.python.inspectionExtension");
+	public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create(PyInspectionExtension.class);
 
 	public boolean ignoreUnused(PsiElement local)
 	{

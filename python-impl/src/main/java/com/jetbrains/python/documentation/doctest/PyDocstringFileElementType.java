@@ -18,7 +18,7 @@ package com.jetbrains.python.documentation.doctest;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.lang.Language;
+import consulo.language.Language;
 import com.jetbrains.python.psi.PyFileElementType;
 
 /**

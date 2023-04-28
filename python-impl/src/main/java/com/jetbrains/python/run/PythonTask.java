@@ -15,42 +15,40 @@
  */
 package com.jetbrains.python.run;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import consulo.python.buildout.module.extension.BuildoutModuleExtension;
-
-import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Output;
-import com.intellij.execution.OutputListener;
-import com.intellij.execution.RunContentExecutor;
-import com.intellij.execution.configurations.EncodingEnvironmentUtil;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.ParamsGroup;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.NotNullFunction;
 import com.jetbrains.python.HelperPackage;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.console.PydevConsoleRunner;
 import com.jetbrains.python.sdk.PySdkUtil;
 import com.jetbrains.python.sdk.PythonEnvUtil;
 import com.jetbrains.python.sdk.PythonSdkType;
+import consulo.application.util.SystemInfo;
+import consulo.content.bundle.Sdk;
+import consulo.execution.RunContentExecutor;
+import consulo.execution.process.ProcessTerminatedListener;
+import consulo.execution.ui.console.ConsoleView;
+import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
+import consulo.ide.impl.idea.openapi.util.text.StringUtil;
+import consulo.ide.impl.idea.util.NotNullFunction;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.process.ExecutionException;
+import consulo.process.ProcessHandler;
+import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.cmd.ParamsGroup;
+import consulo.process.local.CapturingProcessAdapter;
+import consulo.process.local.ProcessOutput;
+import consulo.project.Project;
+import consulo.python.buildout.module.extension.BuildoutModuleExtension;
+import consulo.ui.ex.awt.Messages;
+import consulo.util.io.FileUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * TODO: Use {@link com.jetbrains.python.run.PythonRunner} instead of this class? At already supports rerun and other things
@@ -211,12 +209,12 @@ public class PythonTask
 			StringBuilder paramString;
 			if(myHelper != null)
 			{
-				paramString = new StringBuilder(escaperFunction.fun(homePath) + " " + escaperFunction.fun(myHelper.asParamString()));
+				paramString = new StringBuilder(escaperFunction.apply(homePath) + " " + escaperFunction.apply(myHelper.asParamString()));
 				myHelper.addToPythonPath(cmd.getEnvironment());
 			}
 			else
 			{
-				paramString = new StringBuilder(escaperFunction.fun(homePath) + " " + escaperFunction.fun(myRunnerScript));
+				paramString = new StringBuilder(escaperFunction.apply(homePath) + " " + escaperFunction.apply(myRunnerScript));
 			}
 			for(String p : myParameters)
 			{
@@ -276,24 +274,31 @@ public class PythonTask
 	{
 		final ProcessHandler process = createProcess(env);
 		final Project project = myModule.getProject();
-		new RunContentExecutor(project, process).withFilter(new PythonTracebackFilter(project)).withConsole(consoleView).withTitle(myRunTabTitle).withRerun(() -> {
-			try
-			{
-				process.destroyProcess(); // Stop process before rerunning it
-				if(process.waitFor(TIME_TO_WAIT_PROCESS_STOP))
-				{
-					this.run(env, consoleView);
-				}
-				else
-				{
-					Messages.showErrorDialog(PyBundle.message("unable.to.stop"), myRunTabTitle);
-				}
-			}
-			catch(ExecutionException e)
-			{
-				Messages.showErrorDialog(e.getMessage(), myRunTabTitle);
-			}
-		}).withStop(() -> process.destroyProcess(), () -> !process.isProcessTerminated()).withAfterCompletion(myAfterCompletion).withHelpId(myHelpId).run();
+		new RunContentExecutor(project, process).withFilter(new PythonTracebackFilter(project))
+				.withConsole(consoleView)
+				.withTitle(myRunTabTitle)
+				.withRerun(() -> {
+					try
+					{
+						process.destroyProcess(); // Stop process before rerunning it
+						if(process.waitFor(TIME_TO_WAIT_PROCESS_STOP))
+						{
+							this.run(env, consoleView);
+						}
+						else
+						{
+							Messages.showErrorDialog(PyBundle.message("unable.to.stop"), myRunTabTitle);
+						}
+					}
+					catch(ExecutionException e)
+					{
+						Messages.showErrorDialog(e.getMessage(), myRunTabTitle);
+					}
+				})
+				.withStop(() -> process.destroyProcess(), () -> !process.isProcessTerminated())
+				.withAfterCompletion(myAfterCompletion)
+				.withHelpId(myHelpId)
+				.run();
 	}
 
 
@@ -301,23 +306,25 @@ public class PythonTask
 	 * Runs task with out console
 	 *
 	 * @return stdout
-	 * @throws ExecutionException in case of error. Consider using {@link com.intellij.execution.util.ExecutionErrorDialog}
+	 * @throws ExecutionException in case of error. Consider using {@link consulo.ide.impl.idea.execution.util.ExecutionErrorDialog}
 	 */
 	@Nonnull
 	public final String runNoConsole() throws ExecutionException
 	{
-
 		final ProcessHandler process = createProcess(new HashMap<>());
-		final OutputListener listener = new OutputListener();
+		final CapturingProcessAdapter listener = new CapturingProcessAdapter();
 		process.addProcessListener(listener);
 		process.startNotify();
 		process.waitFor(TIMEOUT_TO_WAIT_FOR_TASK);
-		final Output output = listener.getOutput();
+		final ProcessOutput output = listener.getOutput();
 		final int exitCode = output.getExitCode();
 		if(exitCode == 0)
 		{
 			return output.getStdout();
 		}
-		throw new ExecutionException(String.format("Error on python side. " + "Exit code: %s, err: %s out: %s", exitCode, output.getStderr(), output.getStdout()));
+		throw new ExecutionException(String.format("Error on python side. " + "Exit code: %s, err: %s out: %s",
+				exitCode,
+				output.getStderr(),
+				output.getStdout()));
 	}
 }

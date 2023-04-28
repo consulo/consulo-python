@@ -15,22 +15,21 @@
  */
 package com.jetbrains.rest.run.docutils;
 
-import javax.annotation.Nullable;
-
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.python.HelperPackage;
 import com.jetbrains.python.PythonHelper;
 import com.jetbrains.rest.run.RestCommandLineState;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.fileEditor.FileEditorManager;
+import consulo.platform.Platform;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nullable;
 
 /**
  * User : catherine
  */
 public class DocutilsCommandLineState extends RestCommandLineState
 {
-
 	public DocutilsCommandLineState(DocutilsRunConfiguration configuration, ExecutionEnvironment env)
 	{
 		super(configuration, env);
@@ -45,7 +44,7 @@ public class DocutilsCommandLineState extends RestCommandLineState
 			{
 				if(myConfiguration.openInBrowser())
 				{
-					BrowserUtil.browse(virtualFile);
+					Platform.current().openInBrowser(virtualFile.getUrl());
 				}
 				else
 				{

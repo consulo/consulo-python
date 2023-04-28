@@ -17,7 +17,7 @@ package com.jetbrains.python.testing.pytest;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.util.Pair;
+import consulo.util.lang.Pair;
 
 /**
  * Automata searches for file links and numbers.

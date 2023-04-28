@@ -15,23 +15,24 @@
  */
 package com.jetbrains.python.codeInsight.userSkeletons;
 
+import com.jetbrains.python.codeInsight.PyCustomMember;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.types.PyModuleMembersProvider;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFileSystemItem;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
-import com.jetbrains.python.codeInsight.PyCustomMember;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.types.PyModuleMembersProvider;
-
 /**
  * @author vlan
  */
+@ExtensionImpl
 public class PyUserSkeletonsModuleMembersProvider extends PyModuleMembersProvider
 {
 	@Nullable

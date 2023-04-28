@@ -16,28 +16,32 @@
 
 package com.jetbrains.python.actions;
 
-import com.intellij.codeInsight.editorActions.fillParagraph.ParagraphFillHandler;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.CharFilter;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.PythonStringUtil;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.editor.action.ParagraphFillHandler;
+import consulo.language.psi.PsiComment;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.CharFilter;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 /**
  * User : ktisha
  */
+@ExtensionImpl
 public class PyFillParagraphHandler extends ParagraphFillHandler {
 
   @Nonnull
@@ -46,7 +50,7 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {
       final String text = stringLiteralExpression.getText();
-      final Pair<String,String> quotes =
+      final Pair<String, String> quotes =
         PythonStringUtil.getQuotes(text);
       final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyDocStringOwner.class);
       if (docStringOwner != null && stringLiteralExpression.equals(docStringOwner.getDocStringExpression())) {
@@ -65,9 +69,9 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
         return "\"" + indent;
       }
       else
-        return quotes != null? quotes.getFirst() : "\"";
+        return quotes != null ? quotes.getFirst() : "\"";
     }
-    return element instanceof PsiComment? "# " : "";
+    return element instanceof PsiComment ? "# " : "";
   }
 
   private static String getIndent(PyStringLiteralExpression stringLiteralExpression) {
@@ -90,14 +94,14 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {
       final String text = stringLiteralExpression.getText();
-      final Pair<String,String> quotes =
+      final Pair<String, String> quotes =
         PythonStringUtil.getQuotes(text);
       final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyDocStringOwner.class);
       if (docStringOwner != null && stringLiteralExpression.equals(docStringOwner.getDocStringExpression())) {
         String indent = getIndent(stringLiteralExpression);
         if (quotes != null) {
           final List<String> strings = StringUtil.split(text, "\n");
-          if (strings.get(strings.size()-1).trim().equals(quotes.getSecond())) {
+          if (strings.get(strings.size() - 1).trim().equals(quotes.getSecond())) {
             return indent + quotes.getSecond();
           }
           else {
@@ -107,13 +111,13 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
         return indent + "\"";
       }
       else
-        return quotes != null? quotes.getSecond() : "\"";
+        return quotes != null ? quotes.getSecond() : "\"";
     }
     return "";
   }
 
   @Override
-  protected boolean isAvailableForElement(@Nullable PsiElement element) {
+  public boolean isAvailableForElement(@Nullable PsiElement element) {
     if (element != null) {
       final PyStringLiteralExpression stringLiteral = PsiTreeUtil
         .getParentOfType(element, PyStringLiteralExpression.class);
@@ -123,7 +127,13 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
   }
 
   @Override
-  protected boolean isAvailableForFile(@Nullable PsiFile psiFile) {
+  public boolean isAvailableForFile(@Nullable PsiFile psiFile) {
     return psiFile instanceof PyFile;
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
   }
 }

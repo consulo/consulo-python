@@ -16,36 +16,29 @@
 
 package com.jetbrains.python.codeInsight.regexp;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.jetbrains.python.codeInsight.PyInjectionUtil;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import consulo.language.Language;
+import consulo.language.inject.MultiHostInjector;
+import consulo.language.inject.MultiHostRegistrar;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.collection.ArrayUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.intellij.lang.Language;
-import com.intellij.lang.injection.MultiHostInjector;
-import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
-import com.jetbrains.python.codeInsight.PyInjectionUtil;
-import com.jetbrains.python.psi.PyArgumentList;
-import com.jetbrains.python.psi.PyBinaryExpression;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyKeywordArgument;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yole
  */
-public class PythonRegexpInjector implements MultiHostInjector {
+public abstract class PythonRegexpInjector implements MultiHostInjector {
   private static class RegexpMethodDescriptor {
     @Nonnull
-	private final String methodName;
+    private final String methodName;
     private final int argIndex;
 
     private RegexpMethodDescriptor(@Nonnull String methodName, int argIndex) {
@@ -101,7 +94,7 @@ public class PythonRegexpInjector implements MultiHostInjector {
     if (arguments.length <= 1) {
       return false;
     }
-    return isVerbose(arguments[arguments.length-1]);
+    return isVerbose(arguments[arguments.length - 1]);
   }
 
   private static boolean isVerbose(@Nullable PyExpression expr) {

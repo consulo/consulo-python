@@ -18,12 +18,12 @@ package com.jetbrains.python.inspections.quickfix;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.project.Project;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.PyDictCreationInspection;
 import com.jetbrains.python.psi.*;

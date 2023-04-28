@@ -15,30 +15,23 @@
  */
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.Nls;
-import com.intellij.codeInspection.InspectionProfile;
-import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ex.InspectionToolWrapper;
-import com.intellij.openapi.util.JDOMExternalizableStringList;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.inspections.quickfix.ReplaceFunctionWithSetLiteralQuickFix;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyParenthesizedExpression;
-import com.jetbrains.python.psi.PySequenceExpression;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.psi.PyTupleExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyBuiltinCache;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.inspection.scheme.InspectionProfile;
+import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
+import consulo.language.editor.inspection.scheme.InspectionToolWrapper;
+import consulo.language.psi.PsiElementVisitor;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * User: catherine
@@ -46,6 +39,7 @@ import com.jetbrains.python.psi.impl.PyBuiltinCache;
  * Inspection to find set built-in function and replace it with set literal
  * available if the selected language level supports set literals.
  */
+@ExtensionImpl
 public class PySetFunctionToLiteralInspection extends PyInspection
 {
 
@@ -59,7 +53,10 @@ public class PySetFunctionToLiteralInspection extends PyInspection
 
 	@Nonnull
 	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
+	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+										  boolean isOnTheFly,
+										  @Nonnull LocalInspectionToolSession session,
+										  Object state)
 	{
 		return new Visitor(holder, session);
 	}
@@ -99,10 +96,10 @@ public class PySetFunctionToLiteralInspection extends PyInspection
 			final InspectionToolWrapper inspectionTool = profile.getInspectionTool("PyCompatibilityInspection", node.getProject());
 			if(inspectionTool != null)
 			{
-				final InspectionProfileEntry inspection = inspectionTool.getTool();
-				if(inspection instanceof PyCompatibilityInspection)
+				final Object inspection = inspectionTool.getState();
+				if(inspection instanceof PyCompatibilityInspectionState)
 				{
-					final JDOMExternalizableStringList versions = ((PyCompatibilityInspection) inspection).ourVersions;
+					final List<String> versions = ((PyCompatibilityInspectionState) inspection).versions;
 					for(String s : versions)
 					{
 						if(!LanguageLevel.fromPythonVersion(s).supportsSetLiterals())
@@ -123,7 +120,8 @@ public class PySetFunctionToLiteralInspection extends PyInspection
 		{
 			return PyElement.EMPTY_ARRAY;
 		}
-		if((argument instanceof PySequenceExpression || (argument instanceof PyParenthesizedExpression && ((PyParenthesizedExpression) argument).getContainedExpression() instanceof
+		if((argument instanceof PySequenceExpression || (argument instanceof PyParenthesizedExpression && ((PyParenthesizedExpression) argument)
+				.getContainedExpression() instanceof
 				PyTupleExpression)))
 		{
 

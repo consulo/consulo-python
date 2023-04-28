@@ -15,90 +15,77 @@
  */
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.Nls;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiPolyVariantReference;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.inspections.quickfix.PyAddExceptionSuperClassQuickFix;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyRaiseStatement;
-import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassLikeType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiPolyVariantReference;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov
  */
-public class PyExceptionInheritInspection extends PyInspection
-{
-	@Nls
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return PyBundle.message("INSP.NAME.exception.not.inherit");
-	}
+@ExtensionImpl
+public class PyExceptionInheritInspection extends PyInspection {
+  @Nls
+  @Nonnull
+  @Override
+  public String getDisplayName() {
+    return PyBundle.message("INSP.NAME.exception.not.inherit");
+  }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session)
-	{
-		return new Visitor(holder, session);
-	}
+  @Nonnull
+  @Override
+  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
+                                        boolean isOnTheFly,
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
+    return new Visitor(holder, session);
+  }
 
-	private static class Visitor extends PyInspectionVisitor
-	{
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
-		{
-			super(holder, session);
-		}
+  private static class Visitor extends PyInspectionVisitor {
+    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+      super(holder, session);
+    }
 
-		@Override
-		public void visitPyRaiseStatement(PyRaiseStatement node)
-		{
-			PyExpression[] expressions = node.getExpressions();
-			if(expressions.length == 0)
-			{
-				return;
-			}
-			PyExpression expression = expressions[0];
-			if(expression instanceof PyCallExpression)
-			{
-				PyExpression callee = ((PyCallExpression) expression).getCallee();
-				if(callee instanceof PyReferenceExpression)
-				{
-					final PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference(getResolveContext());
-					if(reference == null)
-					{
-						return;
-					}
-					PsiElement psiElement = reference.resolve();
-					if(psiElement instanceof PyClass)
-					{
-						PyClass aClass = (PyClass) psiElement;
-						for(PyClassLikeType type : aClass.getAncestorTypes(myTypeEvalContext))
-						{
-							if(type == null)
-							{
-								return;
-							}
-							final String name = type.getName();
-							if(name == null || "BaseException".equals(name) || "Exception".equals(name))
-							{
-								return;
-							}
-						}
-						registerProblem(expression, "Exception doesn't inherit from base \'Exception\' class", new PyAddExceptionSuperClassQuickFix());
-					}
-				}
-			}
-		}
-	}
+    @Override
+    public void visitPyRaiseStatement(PyRaiseStatement node) {
+      PyExpression[] expressions = node.getExpressions();
+      if (expressions.length == 0) {
+        return;
+      }
+      PyExpression expression = expressions[0];
+      if (expression instanceof PyCallExpression) {
+        PyExpression callee = ((PyCallExpression)expression).getCallee();
+        if (callee instanceof PyReferenceExpression) {
+          final PsiPolyVariantReference reference = ((PyReferenceExpression)callee).getReference(getResolveContext());
+          if (reference == null) {
+            return;
+          }
+          PsiElement psiElement = reference.resolve();
+          if (psiElement instanceof PyClass) {
+            PyClass aClass = (PyClass)psiElement;
+            for (PyClassLikeType type : aClass.getAncestorTypes(myTypeEvalContext)) {
+              if (type == null) {
+                return;
+              }
+              final String name = type.getName();
+              if (name == null || "BaseException".equals(name) || "Exception".equals(name)) {
+                return;
+              }
+            }
+            registerProblem(expression, "Exception doesn't inherit from base \'Exception\' class", new PyAddExceptionSuperClassQuickFix());
+          }
+        }
+      }
+    }
+  }
 }

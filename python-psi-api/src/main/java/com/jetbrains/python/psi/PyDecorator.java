@@ -18,8 +18,8 @@ package com.jetbrains.python.psi;
 
 import javax.annotation.Nullable;
 
-import com.intellij.psi.StubBasedPsiElement;
-import com.intellij.psi.util.QualifiedName;
+import consulo.language.psi.StubBasedPsiElement;
+import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyDecoratorStub;
 
 /**

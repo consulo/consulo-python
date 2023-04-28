@@ -16,25 +16,29 @@
 
 package com.jetbrains.python.testing.doctest;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.executor.Executor;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
+import consulo.util.xml.serializer.InvalidDataException;
+import consulo.util.xml.serializer.WriteExternalException;
 import org.jdom.Element;
+
 import javax.annotation.Nonnull;
 
 /**
  * User: catherine
  */
 public class PythonDocTestRunConfiguration extends AbstractPythonTestRunConfiguration
-                                          implements PythonDocTestRunConfigurationParams {
+  implements PythonDocTestRunConfigurationParams {
   protected String myPluralTitle = "Doctests";
   protected String myTitle = "Doctest";
+
   public PythonDocTestRunConfiguration(Project project,
                                        ConfigurationFactory configurationFactory) {
     super(project, configurationFactory);

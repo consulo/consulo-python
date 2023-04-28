@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.util.Pair;
+import consulo.util.lang.Pair;
 
 /**
  * Describes an assignment statement.

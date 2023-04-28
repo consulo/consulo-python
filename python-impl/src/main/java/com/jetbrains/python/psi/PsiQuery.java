@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import consulo.util.lang.function.Condition;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.nameResolver.FQNamesProvider;
 
 // TODO: Propogate typization to all class like in PsiTypedQuery

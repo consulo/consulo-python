@@ -18,14 +18,14 @@ package com.jetbrains.python.psi.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.intellij.navigation.ColoredItemPresentation;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
+import consulo.ui.ex.ColoredItemPresentation;
+import consulo.colorScheme.TextAttributesKey;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.language.psi.PsiFile;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
-import consulo.ide.IconDescriptorUpdaters;
+import consulo.language.icon.IconDescriptorUpdaters;
 import consulo.ui.image.Image;
 
 /**

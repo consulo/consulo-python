@@ -17,7 +17,7 @@ package com.jetbrains.python.psi.types;
 
 import javax.annotation.Nullable;
 
-import com.intellij.psi.PsiFile;
+import consulo.language.psi.PsiFile;
 
 /**
  * A pack of constraints that limit behavior of {@link com.jetbrains.python.psi.types.TypeEvalContext}.

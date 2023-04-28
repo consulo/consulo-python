@@ -16,23 +16,25 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.inspections.quickfix.MoveFromFutureImportQuickFix;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiFile;
 import org.jetbrains.annotations.Nls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 /**
  * @author Alexey.Ivanov
  */
+@ExtensionImpl
 public class PyFromFutureImportInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -45,7 +47,8 @@ public class PyFromFutureImportInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -64,8 +67,8 @@ public class PyFromFutureImportInspection extends PyInspection {
           boolean skippedDocString = false;
           for (PyStatement statement : statementList) {
             if (statement instanceof PyExpressionStatement &&
-                ((PyExpressionStatement) statement).getExpression() instanceof PyStringLiteralExpression &&
-                !skippedDocString) {
+              ((PyExpressionStatement)statement).getExpression() instanceof PyStringLiteralExpression &&
+              !skippedDocString) {
               skippedDocString = true;
               continue;
             }

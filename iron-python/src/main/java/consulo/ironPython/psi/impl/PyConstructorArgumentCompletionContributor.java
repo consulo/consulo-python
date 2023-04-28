@@ -16,29 +16,29 @@
 
 package consulo.ironPython.psi.impl;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ProcessingContext;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyArgumentList;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.codeInsight.completion.CompletionProvider;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.dotnet.psi.DotNetConstructorDeclaration;
 import consulo.dotnet.psi.DotNetTypeDeclaration;
+import consulo.language.Language;
+import consulo.language.editor.completion.*;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ProcessingContext;
 
 import javax.annotation.Nonnull;
 
-import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyConstructorArgumentCompletionContributor extends CompletionContributor
 {
 	public PyConstructorArgumentCompletionContributor()
@@ -97,5 +97,12 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
         }
       }
     } */
+	}
+
+	@Nonnull
+	@Override
+	public Language getLanguage()
+	{
+		return PythonLanguage.INSTANCE;
 	}
 }

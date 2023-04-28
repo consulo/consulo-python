@@ -15,155 +15,129 @@
  */
 package com.jetbrains.python.sdk;
 
+import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
+import consulo.application.AllIcons;
+import consulo.application.util.UserHomeFileUtil;
+import consulo.content.bundle.Sdk;
+import consulo.content.bundle.SdkModificator;
+import consulo.content.bundle.SdkType;
+import consulo.ui.ex.awt.ListCellRendererWrapper;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
+import consulo.ui.image.Image;
+import consulo.ui.image.ImageEffects;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
 import java.io.File;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.JList;
+public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
+  private final String myNullText;
+  private final Map<Sdk, SdkModificator> mySdkModifiers;
+  public static final String SEPARATOR = "separator";
 
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.ListCellRendererWrapper;
-import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import consulo.awt.TargetAWT;
-import consulo.ui.image.Image;
-import consulo.ui.image.ImageEffects;
+  final Pattern PYTHON_PATTERN = Pattern.compile("(\\d\\.?\\d\\.?\\d?)[ ]*\\(([^\\(\\)]*)\\)|(\\d\\.?\\d\\.?\\d?)[ ]*([^\\(\\)]*)");
+  private boolean isShortVersion;
 
-public class PySdkListCellRenderer extends ListCellRendererWrapper<Object>
-{
-	private final String myNullText;
-	private final Map<Sdk, SdkModificator> mySdkModifiers;
-	public static final String SEPARATOR = "separator";
+  public PySdkListCellRenderer(boolean shortVersion) {
+    isShortVersion = shortVersion;
+    myNullText = "";
+    mySdkModifiers = null;
+  }
 
-	final Pattern PYTHON_PATTERN = Pattern.compile("(\\d\\.?\\d\\.?\\d?)[ ]*\\(([^\\(\\)]*)\\)|(\\d\\.?\\d\\.?\\d?)[ ]*([^\\(\\)]*)");
-	private boolean isShortVersion;
+  public PySdkListCellRenderer(String nullText, @Nullable Map<Sdk, SdkModificator> sdkModifiers) {
+    myNullText = nullText;
+    mySdkModifiers = sdkModifiers;
+  }
 
-	public PySdkListCellRenderer(boolean shortVersion)
-	{
-		isShortVersion = shortVersion;
-		myNullText = "";
-		mySdkModifiers = null;
-	}
+  @Override
+  public void customize(JList list, Object item, int index, boolean selected, boolean hasFocus) {
+    if (item instanceof Sdk) {
+      Sdk sdk = (Sdk)item;
+      final PythonSdkFlavor flavor = PythonSdkFlavor.getPlatformIndependentFlavor(sdk.getHomePath());
+      final Image baseIcon = flavor != null ? flavor.getIcon() : ((SdkType)sdk.getSdkType()).getIcon();
 
-	public PySdkListCellRenderer(String nullText, @Nullable Map<Sdk, SdkModificator> sdkModifiers)
-	{
-		myNullText = nullText;
-		mySdkModifiers = sdkModifiers;
-	}
+      String name;
+      if (mySdkModifiers != null && mySdkModifiers.containsKey(sdk)) {
+        name = mySdkModifiers.get(sdk).getName();
+      }
+      else {
+        name = sdk.getName();
+      }
+      if (name.startsWith("Remote")) {
+        final String trimmedRemote = StringUtil.trim(name.substring("Remote".length()));
+        if (!trimmedRemote.isEmpty()) {
+          name = trimmedRemote;
+        }
+      }
+      final String flavorName = flavor == null ? "Python" : flavor.getName();
+      if (name.startsWith(flavorName)) {
+        name = StringUtil.trim(name.substring(flavorName.length()));
+      }
 
-	@Override
-	public void customize(JList list, Object item, int index, boolean selected, boolean hasFocus)
-	{
-		if(item instanceof Sdk)
-		{
-			Sdk sdk = (Sdk) item;
-			final PythonSdkFlavor flavor = PythonSdkFlavor.getPlatformIndependentFlavor(sdk.getHomePath());
-			final Image baseIcon = flavor != null ? flavor.getIcon() : ((SdkType) sdk.getSdkType()).getIcon();
+      if (isShortVersion) {
+        name = shortenName(name);
+      }
 
-			String name;
-			if(mySdkModifiers != null && mySdkModifiers.containsKey(sdk))
-			{
-				name = mySdkModifiers.get(sdk).getName();
-			}
-			else
-			{
-				name = sdk.getName();
-			}
-			if(name.startsWith("Remote"))
-			{
-				final String trimmedRemote = StringUtil.trim(name.substring("Remote".length()));
-				if(!trimmedRemote.isEmpty())
-				{
-					name = trimmedRemote;
-				}
-			}
-			final String flavorName = flavor == null ? "Python" : flavor.getName();
-			if(name.startsWith(flavorName))
-			{
-				name = StringUtil.trim(name.substring(flavorName.length()));
-			}
+      Image icon = null;
+      if (PythonSdkType.isInvalid(sdk)) {
+        setText("[invalid] " + name);
+        icon = wrapIconWithWarningDecorator(baseIcon);
+      }
+      else if (PythonSdkType.isIncompleteRemote(sdk)) {
+        setText("[incomplete] " + name);
+        icon = wrapIconWithWarningDecorator(baseIcon);
+      }
+      else if (PythonSdkType.hasInvalidRemoteCredentials(sdk)) {
+        setText("[invalid] " + name);
+        icon = wrapIconWithWarningDecorator(baseIcon);
+      }
+      else if (sdk instanceof PyDetectedSdk) {
+        setText(name);
+        icon = ImageEffects.transparent(baseIcon);
+      }
+      else {
+        setText(name);
+        icon = baseIcon;
+      }
 
-			if(isShortVersion)
-			{
-				name = shortenName(name);
-			}
+      setIcon(TargetAWT.to(icon));
+    }
+    else if (SEPARATOR.equals(item)) {
+      setSeparator();
+    }
+    else if (item == null) {
+      setText(myNullText);
+    }
+  }
 
-			Image icon = null;
-			if(PythonSdkType.isInvalid(sdk))
-			{
-				setText("[invalid] " + name);
-				icon = wrapIconWithWarningDecorator(baseIcon);
-			}
-			else if(PythonSdkType.isIncompleteRemote(sdk))
-			{
-				setText("[incomplete] " + name);
-				icon = wrapIconWithWarningDecorator(baseIcon);
-			}
-			else if(PythonSdkType.hasInvalidRemoteCredentials(sdk))
-			{
-				setText("[invalid] " + name);
-				icon = wrapIconWithWarningDecorator(baseIcon);
-			}
-			else if(sdk instanceof PyDetectedSdk)
-			{
-				setText(name);
-				icon = ImageEffects.transparent(baseIcon);
-			}
-			else
-			{
-				setText(name);
-				icon = baseIcon;
-			}
+  private String shortenName(@Nonnull String name) {
+    final Matcher matcher = PYTHON_PATTERN.matcher(name);
+    if (matcher.matches()) {
+      String path = matcher.group(2);
+      if (path != null) {
+        name = matcher.group(1) + " at " + path;
+      }
+      else {
+        path = matcher.group(4);
+        final int index = path.lastIndexOf(File.separator);
+        if (index > 0) {
+          path = path.substring(index);
+        }
+        name = matcher.group(3) + " at ..." + path;
+      }
+    }
+    else if (new File(name).exists()) {
+      name = UserHomeFileUtil.getLocationRelativeToUserHome(name);
+    }
+    return name;
+  }
 
-			setIcon(TargetAWT.to(icon));
-		}
-		else if(SEPARATOR.equals(item))
-		{
-			setSeparator();
-		}
-		else if(item == null)
-		{
-			setText(myNullText);
-		}
-	}
-
-	private String shortenName(@Nonnull String name)
-	{
-		final Matcher matcher = PYTHON_PATTERN.matcher(name);
-		if(matcher.matches())
-		{
-			String path = matcher.group(2);
-			if(path != null)
-			{
-				name = matcher.group(1) + " at " + path;
-			}
-			else
-			{
-				path = matcher.group(4);
-				final int index = path.lastIndexOf(File.separator);
-				if(index > 0)
-				{
-					path = path.substring(index);
-				}
-				name = matcher.group(3) + " at ..." + path;
-			}
-		}
-		else if(new File(name).exists())
-		{
-			name = FileUtil.getLocationRelativeToUserHome(name);
-		}
-		return name;
-	}
-
-	private static Image wrapIconWithWarningDecorator(Image icon)
-	{
-		return ImageEffects.layered(icon, AllIcons.Actions.Cancel);
-	}
+  private static Image wrapIconWithWarningDecorator(Image icon) {
+    return ImageEffects.layered(icon, AllIcons.Actions.Cancel);
+  }
 }

@@ -19,8 +19,8 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.refactoring.classMembers.MemberInfoModel;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.virtualFileSystem.VirtualFile;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersViewInitializationInfo;

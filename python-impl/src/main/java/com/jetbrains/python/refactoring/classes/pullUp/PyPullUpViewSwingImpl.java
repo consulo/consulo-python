@@ -26,9 +26,9 @@ import javax.annotation.Nonnull;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.project.Project;
+import consulo.ui.ex.awt.ComboBox;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.refactoring.classes.membersManager.vp.MembersBasedViewSwingImpl;
 import com.jetbrains.python.refactoring.classes.ui.PyClassCellRenderer;

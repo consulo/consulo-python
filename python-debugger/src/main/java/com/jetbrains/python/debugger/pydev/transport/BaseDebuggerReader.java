@@ -8,10 +8,10 @@ import java.util.concurrent.Future;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.TimeoutUtil;
-import com.intellij.util.io.BaseOutputReader;
+import consulo.application.ApplicationManager;
+import consulo.logging.Logger;
+import consulo.util.lang.TimeoutUtil;
+import consulo.process.io.BaseOutputReader;
 import com.jetbrains.python.debugger.pydev.RemoteDebugger;
 
 /**

@@ -17,7 +17,7 @@
 package com.jetbrains.python;
 
 import org.jetbrains.annotations.PropertyKey;
-import com.intellij.AbstractBundle;
+import consulo.component.util.localize.AbstractBundle;
 
 public class PyBundle extends AbstractBundle
 {

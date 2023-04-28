@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.util.containers.ContainerUtil;
+import consulo.project.Project;
+import consulo.language.psi.PsiNamedElement;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.stub.StringStubIndexExtension;
+import consulo.language.psi.stub.StubIndex;
+import consulo.language.psi.stub.StubIndexKey;
+import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.psi.PyClass;
 
 /**

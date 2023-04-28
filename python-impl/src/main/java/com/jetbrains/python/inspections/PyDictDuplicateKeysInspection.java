@@ -16,25 +16,27 @@
 
 package com.jetbrains.python.inspections;
 
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import java.util.HashMap;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.inspection.LocalInspectionToolSession;
+import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * User: catherine
- *
+ * <p>
  * Inspection to detect using the same value as dictionary key twice.
  */
+@ExtensionImpl
 public class PyDictDuplicateKeysInspection extends PyInspection {
   @Nls
   @Nonnull
@@ -47,7 +49,8 @@ public class PyDictDuplicateKeysInspection extends PyInspection {
   @Override
   public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
                                         boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session) {
+                                        @Nonnull LocalInspectionToolSession session,
+                                        Object state) {
     return new Visitor(holder, session);
   }
 
@@ -58,12 +61,12 @@ public class PyDictDuplicateKeysInspection extends PyInspection {
 
     @Override
     public void visitPyDictLiteralExpression(PyDictLiteralExpression node) {
-      if (node.getElements().length != 0){
+      if (node.getElements().length != 0) {
         final Map<String, PyElement> map = new HashMap<String, PyElement>();
         for (PyExpression exp : node.getElements()) {
           final PyExpression key = ((PyKeyValueExpression)exp).getKey();
           if (key instanceof PyNumericLiteralExpression
-                  || key instanceof PyStringLiteralExpression || key instanceof PyReferenceExpression) {
+            || key instanceof PyStringLiteralExpression || key instanceof PyReferenceExpression) {
             if (map.keySet().contains(key.getText())) {
               registerProblem(key, "Dictionary contains duplicate keys " + key.getText());
               registerProblem(map.get(key.getText()), "Dictionary contains duplicate keys " + key.getText());

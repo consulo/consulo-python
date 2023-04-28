@@ -16,61 +16,49 @@
 
 package com.jetbrains.python;
 
-import com.intellij.navigation.GotoClassContributor;
-import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.util.ArrayUtil;
-import com.jetbrains.python.psi.PyQualifiedNameOwner;
-import com.jetbrains.python.psi.search.PyProjectScopeBuilder;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.psi.stubs.PyVariableNameIndex;
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.util.function.Processor;
+import consulo.content.scope.SearchScope;
+import consulo.ide.navigation.GotoSymbolContributor;
+import consulo.language.psi.search.FindSymbolParameters;
+import consulo.language.psi.stub.IdFilter;
+import consulo.language.psi.stub.StubIndex;
+import consulo.navigation.NavigationItem;
+import consulo.project.content.scope.ProjectAwareSearchScope;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
-public class PyGotoSymbolContributor implements GotoClassContributor {
-  @Nonnull
-  public String[] getNames(final Project project, final boolean includeNonProjectItems) {
-    Set<String> symbols = new HashSet<String>();
-    symbols.addAll(PyClassNameIndex.allKeys(project));
-    symbols.addAll(StubIndex.getInstance().getAllKeys(PyFunctionNameIndex.KEY, project));
-    symbols.addAll(StubIndex.getInstance().getAllKeys(PyVariableNameIndex.KEY, project));
-    return ArrayUtil.toStringArray(symbols);
-  }
+@ExtensionImpl
+public class PyGotoSymbolContributor implements GotoSymbolContributor
+{
+	@Override
+	public void processNames(@Nonnull Processor<String> processor, @Nonnull SearchScope searchScope, @Nullable IdFilter idFilter)
+	{
+		ProjectAwareSearchScope projectAwareSearchScope = (ProjectAwareSearchScope) searchScope;
 
-  @Nonnull
-  public NavigationItem[] getItemsByName(final String name, final String pattern, final Project project, final boolean includeNonProjectItems) {
-    final GlobalSearchScope scope = includeNonProjectItems
-                                    ? PyProjectScopeBuilder.excludeSdkTestsScope(project)
-                                    : GlobalSearchScope.projectScope(project);
+		StubIndex.getInstance().processAllKeys(PyClassNameIndex.KEY, processor, projectAwareSearchScope, idFilter);
+		StubIndex.getInstance().processAllKeys(PyFunctionNameIndex.KEY, processor, projectAwareSearchScope, idFilter);
+		StubIndex.getInstance().processAllKeys(PyVariableNameIndex.KEY, processor, projectAwareSearchScope, idFilter);
+	}
 
-    List<NavigationItem> symbols = new ArrayList<NavigationItem>();
-    symbols.addAll(PyClassNameIndex.find(name, project, scope));
-    symbols.addAll(PyFunctionNameIndex.find(name, project, scope));
-    symbols.addAll(PyVariableNameIndex.find(name, project, scope));
-
-    return symbols.toArray(new NavigationItem[symbols.size()]);
-  }
-
-  @Override
-  public String getQualifiedName(NavigationItem item) {
-    if (item instanceof PyQualifiedNameOwner) {
-      return ((PyQualifiedNameOwner) item).getQualifiedName();
-    }
-    return null;
-  }
-
-  @Override
-  public String getQualifiedNameSeparator() {
-    return ".";
-  }
+	@Override
+	public void processElementsWithName(@Nonnull String s, @Nonnull Processor<NavigationItem> processor, @Nonnull FindSymbolParameters findSymbolParameters)
+	{
+		StubIndex.getInstance().processElements(PyClassNameIndex.KEY, s, findSymbolParameters.getProject(), findSymbolParameters.getSearchScope(), findSymbolParameters.getIdFilter(), PyClass.class,
+				processor);
+		StubIndex.getInstance().processElements(PyFunctionNameIndex.KEY, s, findSymbolParameters.getProject(), findSymbolParameters.getSearchScope(), findSymbolParameters.getIdFilter(), PyFunction.class,
+				processor);
+		StubIndex.getInstance().processElements(PyVariableNameIndex.KEY, s, findSymbolParameters.getProject(), findSymbolParameters.getSearchScope(), findSymbolParameters.getIdFilter(), PyTargetExpression.class,
+				processor);
+	}
 }

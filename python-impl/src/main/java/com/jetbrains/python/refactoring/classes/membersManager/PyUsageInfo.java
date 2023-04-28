@@ -16,7 +16,7 @@
 package com.jetbrains.python.refactoring.classes.membersManager;
 
 import javax.annotation.Nonnull;
-import com.intellij.usageView.UsageInfo;
+import consulo.usage.UsageInfo;
 import com.jetbrains.python.psi.PyClass;
 
 /**

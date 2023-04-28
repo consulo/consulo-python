@@ -16,22 +16,20 @@
 
 package com.jetbrains.python.sdk.flavors;
 
-import java.io.File;
+import com.jetbrains.python.PythonIcons;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.ui.image.Image;
+import consulo.util.io.FileUtil;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
-
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import consulo.ui.image.Image;
-import icons.PythonIcons;
+import java.io.File;
 
 /**
  * @author traff
  */
+@ExtensionImpl
 public class MayaSdkFlavor extends PythonSdkFlavor {
-  private MayaSdkFlavor() {
-  }
-
   public boolean isValidSdkHome(String path) {
     File file = new File(path);
     return (file.isFile() && isValidSdkPath(file)) || isMayaFolder(file);

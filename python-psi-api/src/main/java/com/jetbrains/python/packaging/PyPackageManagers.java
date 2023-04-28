@@ -15,29 +15,27 @@
  */
 package com.jetbrains.python.packaging;
 
-import javax.annotation.Nonnull;
+import consulo.content.bundle.Sdk;
+import consulo.ide.ServiceManager;
+import consulo.project.Project;
+import consulo.repository.ui.PackageManagementService;
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.webcore.packaging.PackageManagementService;
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public abstract class PyPackageManagers
-{
+public abstract class PyPackageManagers {
 
-	@Nonnull
-	public static PyPackageManagers getInstance()
-	{
-		return ServiceManager.getService(PyPackageManagers.class);
-	}
+  @Nonnull
+  public static PyPackageManagers getInstance() {
+    return ServiceManager.getService(PyPackageManagers.class);
+  }
 
-	@Nonnull
-	public abstract PyPackageManager forSdk(@Nonnull Sdk sdk);
+  @Nonnull
+  public abstract PyPackageManager forSdk(@Nonnull Sdk sdk);
 
-	public abstract PackageManagementService getManagementService(Project project, Sdk sdk);
+  public abstract PackageManagementService getManagementService(Project project, Sdk sdk);
 
-	public abstract void clearCache(@Nonnull final Sdk sdk);
+  public abstract void clearCache(@Nonnull final Sdk sdk);
 }

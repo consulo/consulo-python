@@ -16,36 +16,34 @@
 
 package com.jetbrains.python.actions;
 
-import com.intellij.ide.IdeBundle;
-import com.intellij.ide.IdeView;
-import com.intellij.ide.actions.CreateDirectoryOrPackageHandler;
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.ide.util.DirectoryChooserUtil;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiFileSystemItem;
 import com.jetbrains.python.PyNames;
-import consulo.ide.actions.CreateDirectoryOrPackageType;
+import consulo.fileTemplate.FileTemplate;
+import consulo.fileTemplate.FileTemplateManager;
+import consulo.fileTemplate.FileTemplateUtil;
+import consulo.ide.IdeBundle;
+import consulo.ide.IdeView;
+import consulo.ide.impl.idea.ide.actions.CreateDirectoryOrPackageHandler;
+import consulo.ide.util.DirectoryChooserUtil;
+import consulo.language.editor.CommonDataKeys;
+import consulo.language.psi.PsiDirectory;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiFileFactory;
+import consulo.language.psi.PsiFileSystemItem;
+import consulo.logging.Logger;
+import consulo.project.Project;
+import consulo.ui.ex.action.AnActionEvent;
+import consulo.ui.ex.action.DumbAwareAction;
+import consulo.ui.ex.awt.Messages;
 
 /**
  * @author yole
  */
 public class CreatePackageAction extends DumbAwareAction {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.actions.CreatePackageAction");
+  private static final Logger LOG = Logger.getInstance(CreatePackageAction.class);
 
   @Override
   public void actionPerformed(AnActionEvent e) {
-    final IdeView view = e.getData(LangDataKeys.IDE_VIEW);
+    final IdeView view = e.getData(IdeView.KEY);
     if (view == null) {
       return;
     }
@@ -53,7 +51,7 @@ public class CreatePackageAction extends DumbAwareAction {
     final PsiDirectory directory = DirectoryChooserUtil.getOrChooseDirectory(view);
 
     if (directory == null) return;
-    CreateDirectoryOrPackageHandler validator = new CreateDirectoryOrPackageHandler(project, directory, CreateDirectoryOrPackageType.Package, ".") {
+    CreateDirectoryOrPackageHandler validator = new CreateDirectoryOrPackageHandler(project, directory, consulo.ide.impl.actions.CreateDirectoryOrPackageType.Package, ".") {
       @Override
       protected void createDirectories(String subDirName) {
         super.createDirectories(subDirName);
@@ -108,7 +106,7 @@ public class CreatePackageAction extends DumbAwareAction {
 
   private static boolean isEnabled(AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
-    final IdeView ideView = e.getData(LangDataKeys.IDE_VIEW);
+    final IdeView ideView = e.getData(IdeView.KEY);
     if (project == null || ideView == null) {
       return false;
     }
