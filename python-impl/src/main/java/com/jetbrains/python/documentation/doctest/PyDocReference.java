@@ -28,7 +28,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.annotation.HighlightSeverity;
-import consulo.language.editor.impl.internal.completion.CompletionUtil;
+import consulo.language.editor.completion.CompletionUtilCore;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -136,7 +136,7 @@ public class PyDocReference extends PyReferenceImpl {
   @Nonnull
   public Object[] getVariants() {
     final ArrayList<Object> ret = Lists.newArrayList(super.getVariants());
-    final PsiElement originalElement = CompletionUtil.getOriginalElement(myElement);
+    final PsiElement originalElement = CompletionUtilCore.getOriginalElement(myElement);
     final PyQualifiedExpression element =
       originalElement instanceof PyQualifiedExpression ? (PyQualifiedExpression)originalElement : myElement;
 

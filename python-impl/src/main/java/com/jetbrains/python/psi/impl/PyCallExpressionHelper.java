@@ -15,17 +15,6 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import java.util.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import consulo.language.editor.impl.internal.completion.CompletionUtil;
-import consulo.util.lang.Pair;
-import consulo.util.lang.ref.Ref;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiPolyVariantReference;
-import consulo.language.psi.PsiReference;
-import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.FunctionParameter;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.nameResolver.FQNamesProvider;
@@ -35,6 +24,17 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
 import com.jetbrains.python.psi.types.*;
 import com.jetbrains.python.toolbox.Maybe;
+import consulo.language.editor.completion.CompletionUtilCore;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiPolyVariantReference;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.Pair;
+import consulo.util.lang.ref.Ref;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * Functions common to different implementors of PyCallExpression, with different base classes.
@@ -757,7 +757,7 @@ public class PyCallExpressionHelper
 			{
 				// imitate isinstance(second_arg, possible_class)
 				PyClass secondClass = ((PyClassType) second_type).getPyClass();
-				if(CompletionUtil.getOriginalOrSelf(firstClass) == secondClass)
+				if(CompletionUtilCore.getOriginalOrSelf(firstClass) == secondClass)
 				{
 					return getSuperClassUnionType(firstClass, context);
 				}

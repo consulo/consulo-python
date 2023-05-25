@@ -18,9 +18,10 @@ package com.jetbrains.python.buildout.config;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.python.buildout.module.extension.BuildoutModuleExtension;
+import consulo.virtualFileSystem.fileType.FileNameMatcherFactory;
 import consulo.virtualFileSystem.fileType.FileTypeConsumer;
 import consulo.virtualFileSystem.fileType.FileTypeFactory;
-import consulo.virtualFileSystem.internal.matcher.ExactFileNameMatcher;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 
@@ -28,8 +29,19 @@ import javax.annotation.Nonnull;
  * @author traff
  */
 @ExtensionImpl
-public class BuildoutCfgFileTypeFactory extends FileTypeFactory {
-  public void createFileTypes(final @Nonnull FileTypeConsumer consumer) {
-    consumer.consume(BuildoutCfgFileType.INSTANCE, new ExactFileNameMatcher(BuildoutModuleExtension.BUILDOUT_CFG, true));
-  }
+public class BuildoutCfgFileTypeFactory extends FileTypeFactory
+{
+	private final FileNameMatcherFactory myFileNameMatcherFactory;
+
+	@Inject
+	public BuildoutCfgFileTypeFactory(FileNameMatcherFactory fileNameMatcherFactory)
+	{
+		myFileNameMatcherFactory = fileNameMatcherFactory;
+	}
+
+	@Override
+	public void createFileTypes(final @Nonnull FileTypeConsumer consumer)
+	{
+		consumer.consume(BuildoutCfgFileType.INSTANCE, myFileNameMatcherFactory.createExactFileNameMatcher(BuildoutModuleExtension.BUILDOUT_CFG, true));
+	}
 }

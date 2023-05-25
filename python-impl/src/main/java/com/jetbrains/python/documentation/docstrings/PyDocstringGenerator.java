@@ -360,7 +360,7 @@ public class PyDocstringGenerator {
       return;
     }
     builder.replaceRange(substring.getTextRange(), getDefaultType(getParamToEdit()));
-    Template template = ((consulo.language.editor.impl.internal.template.TemplateBuilderImpl)builder).buildInlineTemplate();
+    Template template = builder.buildInlineTemplate();
     final VirtualFile virtualFile = myDocStringOwner.getContainingFile().getVirtualFile();
     if (virtualFile == null) {
       return;

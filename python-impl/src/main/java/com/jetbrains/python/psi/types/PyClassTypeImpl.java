@@ -18,21 +18,6 @@ package com.jetbrains.python.psi.types;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import consulo.language.editor.completion.lookup.LookupElementBuilder;
-import consulo.language.editor.impl.internal.completion.CompletionUtil;
-import consulo.language.editor.completion.lookup.LookupElement;
-import consulo.component.extension.Extensions;
-import consulo.util.lang.function.Condition;
-import consulo.util.lang.Pair;
-import consulo.util.lang.ref.Ref;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiInvalidElementAccessException;
-import consulo.language.psi.util.PsiTreeUtil;
-import consulo.util.collection.ArrayUtil;
-import consulo.language.util.ProcessingContext;
-import consulo.application.util.function.Processor;
-import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.codeInsight.PyCustomMemberUtils;
@@ -45,8 +30,23 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.PyResolveProcessor;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.toolbox.Maybe;
+import consulo.application.util.function.Processor;
+import consulo.component.extension.Extensions;
+import consulo.language.editor.completion.CompletionUtilCore;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiInvalidElementAccessException;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ProcessingContext;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.collection.ContainerUtil;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolderBase;
+import consulo.util.lang.Pair;
+import consulo.util.lang.function.Condition;
+import consulo.util.lang.ref.Ref;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,7 +82,7 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 	 */
 	public PyClassTypeImpl(@Nonnull PyClass source, boolean isDefinition)
 	{
-		PyClass originalElement = CompletionUtil.getOriginalElement(source);
+		PyClass originalElement = CompletionUtilCore.getOriginalElement(source);
 		myClass = originalElement != null ? originalElement : source;
 		myIsDefinition = isDefinition;
 	}
@@ -152,10 +152,10 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 	@Nullable
 	@Override
 	public List<? extends RatedResolveResult> resolveMember(@Nonnull final String name,
-			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext,
-			boolean inherited)
+															@Nullable PyExpression location,
+															@Nonnull AccessDirection direction,
+															@Nonnull PyResolveContext resolveContext,
+															boolean inherited)
 	{
 		final Set<Pair<PyClass, String>> resolving = ourResolveMemberStack.get();
 		final Pair<PyClass, String> key = Pair.create(myClass, name);
@@ -176,10 +176,10 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 
 	@Nullable
 	private List<? extends RatedResolveResult> doResolveMember(@Nonnull String name,
-			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext,
-			boolean inherited)
+															   @Nullable PyExpression location,
+															   @Nonnull AccessDirection direction,
+															   @Nonnull PyResolveContext resolveContext,
+															   boolean inherited)
 	{
 		final TypeEvalContext context = resolveContext.getTypeEvalContext();
 		PsiElement classMember = resolveByOverridingMembersProviders(this, name, location, context); //overriding members provers have priority to normal resolve
@@ -619,7 +619,7 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 		boolean suppressParentheses = context.get(CTX_SUPPRESS_PARENTHESES) != null;
 		addOwnClassMembers(location, namesAlready, suppressParentheses, ret, prefix);
 
-		PsiFile origin = (location != null) ? CompletionUtil.getOriginalOrSelf(location).getContainingFile() : null;
+		PsiFile origin = (location != null) ? CompletionUtilCore.getOriginalOrSelf(location).getContainingFile() : null;
 		final TypeEvalContext typeEvalContext = TypeEvalContext.codeCompletion(myClass.getProject(), origin);
 		addInheritedMembers(prefix, location, namesAlready, context, ret, typeEvalContext);
 
@@ -734,7 +734,7 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 		PyClass containingClass = PsiTreeUtil.getParentOfType(expressionHook, PyClass.class);
 		if(containingClass != null)
 		{
-			containingClass = CompletionUtil.getOriginalElement(containingClass);
+			containingClass = CompletionUtilCore.getOriginalElement(containingClass);
 		}
 		boolean withinOurClass = containingClass == getPyClass() || isInSuperCall(expressionHook);
 

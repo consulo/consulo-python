@@ -15,24 +15,23 @@
  */
 package com.jetbrains.python.refactoring.classes;
 
-import javax.annotation.Nonnull;
-
-import consulo.application.internal.ApplicationManagerEx;
-import consulo.language.editor.CommonDataKeys;
-import consulo.dataContext.DataContext;
-import consulo.codeEditor.CaretModel;
-import consulo.document.Document;
-import consulo.codeEditor.Editor;
-import consulo.codeEditor.SelectionModel;
-import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.editor.refactoring.action.RefactoringActionHandler;
-import consulo.language.editor.refactoring.ElementsHandler;
 import com.jetbrains.python.PyBundle;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyUtil;
+import consulo.codeEditor.CaretModel;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.SelectionModel;
+import consulo.dataContext.DataContext;
+import consulo.document.Document;
+import consulo.language.editor.CommonDataKeys;
+import consulo.language.editor.refactoring.ElementsHandler;
+import consulo.language.editor.refactoring.action.RefactoringActionHandler;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.project.Project;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Dennis.Ushakov
@@ -77,11 +76,6 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
 
 	private void doRefactor(Project project, PsiElement element1, PsiElement element2, Editor editor, PsiFile file, DataContext dataContext)
 	{
-		if(ApplicationManagerEx.getApplicationEx().isUnitTestMode())
-		{
-			return;
-		}
-
 		CommonRefactoringUtil.checkReadOnlyStatus(project, file);
 
 		final PyClass clazz = PyUtil.getContainingClassOrSelf(element1);

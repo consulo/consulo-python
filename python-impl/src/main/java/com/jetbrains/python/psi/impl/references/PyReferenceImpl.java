@@ -32,6 +32,7 @@ import consulo.document.util.TextRange;
 import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.language.editor.completion.CompletionUtilCore;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.psi.*;
@@ -650,7 +651,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference 
     final List<LookupElement> ret = new ArrayList<>();
 
     // Use real context here to enable correct completion and resolve in case of PyExpressionCodeFragment!!!
-    final PsiElement originalElement = consulo.language.editor.impl.internal.completion.CompletionUtil.getOriginalElement(myElement);
+    final PsiElement originalElement = CompletionUtilCore.getOriginalElement(myElement);
     final PyQualifiedExpression element =
       originalElement instanceof PyQualifiedExpression ? (PyQualifiedExpression)originalElement : myElement;
     final PsiElement realContext = PyPsiUtils.getRealContext(element);
@@ -698,7 +699,7 @@ public class PyReferenceImpl implements PsiReferenceEx, PsiPolyVariantReference 
     for (LookupElement item : processor.getResultList()) {
       final PsiElement e = item.getPsiElement();
       if (e != null) {
-        final PsiElement original = consulo.language.editor.impl.internal.completion.CompletionUtil.getOriginalElement(e);
+        final PsiElement original = CompletionUtilCore.getOriginalElement(e);
         if (original == null) {
           continue;
         }

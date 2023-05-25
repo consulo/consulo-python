@@ -19,9 +19,10 @@ import com.jetbrains.python.PyBundle;
 import consulo.codeEditor.Editor;
 import consulo.document.util.TextRange;
 import consulo.fileEditor.FileEditorManager;
-import consulo.language.editor.impl.internal.template.TemplateBuilderImpl;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.template.TemplateBuilder;
+import consulo.language.editor.template.TemplateBuilderFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.navigation.OpenFileDescriptorFactory;
@@ -48,7 +49,7 @@ public class PyRenameArgumentQuickFix implements LocalQuickFix {
       final Editor editor = FileEditorManager.getInstance(project)
                                              .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
                                                              true);
-      final TemplateBuilderImpl builder = new TemplateBuilderImpl(element);
+      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
       final String name = ((PsiNamedElement)element).getName();
       assert name != null;
       assert editor != null;

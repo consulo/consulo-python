@@ -15,55 +15,33 @@
  */
 package com.jetbrains.python.psi.impl;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import consulo.content.base.BinariesOrderRootType;
-import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.resolve.PythonSdkPathCache;
+import com.jetbrains.python.psi.types.*;
+import com.jetbrains.python.sdk.PythonSdkType;
 import consulo.application.ApplicationManager;
-import consulo.module.Module;
-import consulo.language.util.ModuleUtilCore;
-import consulo.project.Project;
+import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTypeId;
+import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
+import consulo.language.psi.*;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.module.content.ProjectRootManager;
+import consulo.module.content.layer.orderEntry.LibraryOrderEntry;
 import consulo.module.content.layer.orderEntry.ModuleExtensionWithSdkOrderEntry;
 import consulo.module.content.layer.orderEntry.OrderEntry;
-import consulo.module.content.ProjectRootManager;
+import consulo.project.Project;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.LocalFileSystem;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.virtualFileSystem.VirtualFile;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiFileSystemItem;
-import consulo.language.psi.PsiInvalidElementAccessException;
-import consulo.language.psi.PsiManager;
-import consulo.language.psi.PsiReference;
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyDictLiteralExpression;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyQualifiedExpression;
-import com.jetbrains.python.psi.PySequenceExpression;
-import com.jetbrains.python.psi.resolve.PythonSdkPathCache;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyClassTypeImpl;
-import com.jetbrains.python.psi.types.PyCollectionTypeImpl;
-import com.jetbrains.python.psi.types.PyTupleType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.PyUnionType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import com.jetbrains.python.sdk.PythonSdkType;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.*;
 
 /**
  * Provides access to Python builtins via skeletons.
@@ -155,7 +133,7 @@ public class PyBuiltinCache
 				{
 					sdk = ((ModuleExtensionWithSdkOrderEntry) orderEntry).getSdk();
 				}
-				else if(orderEntry instanceof consulo.module.impl.internal.layer.orderEntry.ModuleLibraryOrderEntryImpl)
+				else if(orderEntry instanceof LibraryOrderEntry && ((LibraryOrderEntry) orderEntry).isModuleLevel())
 				{
 					sdk = PythonSdkType.findPythonSdk(orderEntry.getOwnerModule());
 				}

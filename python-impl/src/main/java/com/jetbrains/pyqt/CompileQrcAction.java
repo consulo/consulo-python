@@ -24,8 +24,8 @@ import consulo.language.editor.LangDataKeys;
 import consulo.module.Module;
 import consulo.process.ExecutionException;
 import consulo.process.ProcessHandler;
+import consulo.process.ProcessHandlerBuilder;
 import consulo.process.cmd.GeneralCommandLine;
-import consulo.process.internal.OSProcessHandler;
 import consulo.project.Project;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
@@ -69,7 +69,7 @@ public class CompileQrcAction extends AnAction {
       cmdLine.addParameter(vFile.getPath());
     }
     try {
-      ProcessHandler process = new OSProcessHandler(cmdLine.createProcess(), cmdLine.getCommandLineString());
+      ProcessHandler process = ProcessHandlerBuilder.create(cmdLine).build();
       ProcessTerminatedListener.attach(process);
       new RunContentExecutor(project, process)
         .withTitle("Compile .qrc")

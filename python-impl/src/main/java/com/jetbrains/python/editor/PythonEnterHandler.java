@@ -35,7 +35,6 @@ import consulo.language.editor.action.EnterHandlerDelegateAdapter;
 import consulo.language.editor.inject.EditorWindow;
 import consulo.language.impl.ast.TreeUtil;
 import consulo.language.inject.InjectedLanguageManager;
-import consulo.language.inject.impl.internal.InjectedLanguageUtil;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.ref.Ref;
@@ -88,7 +87,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     int offset = caretOffset.get();
     if (editor instanceof EditorWindow) {
       file = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(file);
-      editor = InjectedLanguageUtil.getTopLevelEditor(editor);
+      editor = EditorWindow.getTopLevelEditor(editor);
       offset = editor.getCaretModel().getOffset();
     }
     if (!(file instanceof PyFile)) {

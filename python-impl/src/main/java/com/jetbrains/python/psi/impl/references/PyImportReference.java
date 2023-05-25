@@ -15,55 +15,34 @@
  */
 package com.jetbrains.python.psi.impl.references;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import consulo.language.editor.impl.internal.completion.CompletionUtil;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.impl.PyReferenceExpressionImpl;
+import com.jetbrains.python.psi.resolve.*;
+import com.jetbrains.python.psi.types.PyModuleType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.codeEditor.Editor;
+import consulo.document.Document;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementType;
+import consulo.language.editor.completion.CompletionUtilCore;
 import consulo.language.editor.completion.lookup.InsertHandler;
 import consulo.language.editor.completion.lookup.InsertionContext;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
-import consulo.language.ast.ASTNode;
-import consulo.document.Document;
-import consulo.codeEditor.Editor;
-import consulo.language.psi.PsiDirectory;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiErrorElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiNamedElement;
-import consulo.language.ast.IElementType;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
-import consulo.util.collection.ArrayUtil;
 import consulo.language.util.ProcessingContext;
-import com.jetbrains.python.PyNames;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyImportStatement;
-import com.jetbrains.python.psi.PyImportStatementBase;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.impl.PyReferenceExpressionImpl;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
-import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolverImpl;
-import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import com.jetbrains.python.psi.resolve.ResolveImportUtil;
-import com.jetbrains.python.psi.types.PyModuleType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.util.collection.ArrayUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * Reference in an import statement:<br/>
@@ -131,7 +110,7 @@ public class PyImportReference extends PyReferenceImpl
 		}
 
 		PyExpression qualifier = myElement.getQualifier();
-		final TypeEvalContext context = TypeEvalContext.codeCompletion(myElement.getProject(), consulo.language.editor.impl.internal.completion.CompletionUtil.getOriginalOrSelf(myElement).getContainingFile());
+		final TypeEvalContext context = TypeEvalContext.codeCompletion(myElement.getProject(), CompletionUtilCore.getOriginalOrSelf(myElement).getContainingFile());
 		if(qualifier != null)
 		{
 			// qualifier's type must be module, it should know how to complete

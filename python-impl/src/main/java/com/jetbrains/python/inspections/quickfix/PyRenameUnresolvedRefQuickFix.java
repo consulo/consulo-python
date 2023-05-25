@@ -28,7 +28,6 @@ import consulo.codeEditor.Editor;
 import consulo.fileEditor.FileEditorManager;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
-import consulo.language.editor.impl.internal.template.TemplateBuilderImpl;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.template.*;
@@ -79,7 +78,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
     final String name = referenceExpression.getReferencedName();
 
     ReferenceNameExpression refExpr = new ReferenceNameExpression(items, name);
-    TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().
+    TemplateBuilder builder = TemplateBuilderFactory.getInstance().
       createTemplateBuilder(parentScope);
     for (PyReferenceExpression expr : refs) {
       if (!expr.equals(referenceExpression)) {

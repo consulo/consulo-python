@@ -34,8 +34,8 @@ import com.jetbrains.python.psi.types.PyModuleType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeParser;
 import consulo.application.AccessToken;
+import consulo.application.Application;
 import consulo.application.ApplicationManager;
-import consulo.application.internal.ApplicationInfo;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
@@ -400,7 +400,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
   private void handshake() throws PyDebuggerException {
     String remoteVersion = myDebugger.handshake();
-    String currentBuild = ApplicationInfo.getInstance().getBuild().asString();
+    String currentBuild = Application.get().getVersion().toString();
     if ("@@BUILD_NUMBER@@".equals(remoteVersion)) {
       remoteVersion = currentBuild;
     }

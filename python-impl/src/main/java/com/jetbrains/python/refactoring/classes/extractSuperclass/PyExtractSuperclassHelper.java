@@ -22,7 +22,6 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.refactoring.classes.PyClassRefactoringUtil;
 import com.jetbrains.python.refactoring.classes.membersManager.MembersManager;
 import com.jetbrains.python.refactoring.classes.membersManager.PyMemberInfo;
-import consulo.application.internal.ApplicationManagerEx;
 import consulo.document.Document;
 import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.editor.refactoring.classMember.MemberInfoBase;
@@ -123,10 +122,7 @@ public final class PyExtractSuperclassHelper {
   }
 
   private static PyClass placeNewClass(final Project project, PyClass newClass, @Nonnull final PyClass clazz, final String targetFile) {
-    VirtualFile file = VirtualFileManager.getInstance()
-                                         .findFileByUrl(ApplicationManagerEx.getApplicationEx()
-                                                                            .isUnitTestMode() ? targetFile : VfsUtilCore.pathToUrl(
-                                           targetFile));
+    VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(targetFile));
     // file is the same as the source
     if (Comparing.equal(file, clazz.getContainingFile().getVirtualFile())) {
       return (PyClass)clazz.getParent().addBefore(newClass, clazz);

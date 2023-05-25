@@ -37,9 +37,9 @@ import com.jetbrains.python.psi.types.*;
 import consulo.application.AllIcons;
 import consulo.ide.impl.psi.stubs.StubUpdatingIndex;
 import consulo.language.editor.completion.AutoCompletionPolicy;
+import consulo.language.editor.completion.CompletionUtilCore;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
-import consulo.language.editor.impl.internal.completion.CompletionUtil;
 import consulo.language.psi.*;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.stub.FileBasedIndex;
@@ -147,7 +147,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 		if(match.size() > 1)
 		{
 			final PyClass ourClass = qualifierType.getPyClass();
-			final PsiElement theirClass = CompletionUtil.getOriginalOrSelf(match.get(match.size() - 1));
+			final PsiElement theirClass = CompletionUtilCore.getOriginalOrSelf(match.get(match.size() - 1));
 			if(ourClass != theirClass)
 			{
 				return true;
@@ -325,13 +325,13 @@ public class PyQualifiedReference extends PyReferenceImpl
 		PyExpression qualifier = myElement.getQualifier();
 		if(qualifier != null)
 		{
-			qualifier = CompletionUtil.getOriginalOrSelf(qualifier);
+			qualifier = CompletionUtilCore.getOriginalOrSelf(qualifier);
 		}
 		if(qualifier == null)
 		{
 			return EMPTY_ARRAY;
 		}
-		final PyQualifiedExpression element = CompletionUtil.getOriginalOrSelf(myElement);
+		final PyQualifiedExpression element = CompletionUtilCore.getOriginalOrSelf(myElement);
 
 		PyType qualifierType = TypeEvalContext.codeCompletion(element.getProject(), element.getContainingFile()).getType(qualifier);
 		ProcessingContext ctx = new ProcessingContext();
@@ -361,7 +361,7 @@ public class PyQualifiedReference extends PyReferenceImpl
 				for(PyExpression ex : attrs)
 				{
 					final String name = ex.getName();
-					if(name != null && name.endsWith(CompletionUtil.DUMMY_IDENTIFIER_TRIMMED))
+					if(name != null && name.endsWith(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED))
 					{
 						continue;
 					}

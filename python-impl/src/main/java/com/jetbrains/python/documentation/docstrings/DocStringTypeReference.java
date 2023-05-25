@@ -15,42 +15,26 @@
  */
 package com.jetbrains.python.documentation.docstrings;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
-import consulo.language.editor.impl.internal.completion.CompletionUtil;
-import consulo.document.util.TextRange;
-import consulo.language.util.IncorrectOperationException;
-import consulo.util.lang.StringUtil;
-import consulo.language.psi.ElementManipulator;
-import consulo.language.psi.ElementManipulators;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiPolyVariantReferenceBase;
-import consulo.language.psi.ResolveResult;
-import consulo.language.psi.util.QualifiedName;
-import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFromImportStatement;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.ResolveResultList;
 import com.jetbrains.python.psi.resolve.ImportedResolveResult;
 import com.jetbrains.python.psi.resolve.QualifiedNameFinder;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyClassTypeImpl;
-import com.jetbrains.python.psi.types.PyImportedModuleType;
-import com.jetbrains.python.psi.types.PyModuleType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import com.jetbrains.python.psi.types.*;
+import consulo.document.util.TextRange;
+import consulo.language.editor.completion.CompletionUtilCore;
+import consulo.language.psi.*;
+import consulo.language.psi.util.QualifiedName;
+import consulo.language.util.IncorrectOperationException;
+import consulo.util.collection.ArrayUtil;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User : catherine
@@ -178,7 +162,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 					{
 						continue;
 					}
-					final PyType type = TypeEvalContext.userInitiated(file.getProject(), consulo.language.editor.impl.internal.completion.CompletionUtil.getOriginalOrSelf(file)).getType(referenceExpression);
+					final PyType type = TypeEvalContext.userInitiated(file.getProject(), CompletionUtilCore.getOriginalOrSelf(file)).getType(referenceExpression);
 					if(type instanceof PyClassType)
 					{
 						variants.add(((PyClassType) type).getPyClass());
