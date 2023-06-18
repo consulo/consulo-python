@@ -15,8 +15,8 @@
  */
 package com.jetbrains.rest.run.docutils;
 
-import com.jetbrains.python.HelperPackage;
-import com.jetbrains.python.PythonHelper;
+import com.jetbrains.python.impl.HelperPackage;
+import com.jetbrains.python.impl.PythonHelper;
 import com.jetbrains.rest.run.RestCommandLineState;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.fileEditor.FileEditorManager;

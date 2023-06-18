@@ -7,12 +7,12 @@ import consulo.language.psi.ResolveResult;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.codeInsight.dataflow.scope.ScopeUtil;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.fixtures.PyResolveTestCase;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
-import com.jetbrains.python.psi.resolve.ImportedResolveResult;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.resolve.ImportedResolveResult;
 import junit.framework.Assert;
 
 public abstract class PyResolveTest extends PyResolveTestCase {

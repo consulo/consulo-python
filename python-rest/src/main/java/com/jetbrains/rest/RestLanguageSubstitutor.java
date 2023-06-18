@@ -16,7 +16,7 @@
 
 package com.jetbrains.rest;
 
-import com.jetbrains.python.ReSTService;
+import com.jetbrains.python.impl.ReSTService;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.plain.PlainTextLanguage;

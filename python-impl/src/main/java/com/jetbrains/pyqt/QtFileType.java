@@ -17,8 +17,8 @@
 package com.jetbrains.pyqt;
 
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
-import com.jetbrains.python.psi.resolve.QualifiedNameResolverImpl;
-import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.impl.psi.resolve.QualifiedNameResolverImpl;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
 import consulo.application.util.SystemInfo;
 import consulo.component.ComponentManager;
 import consulo.content.bundle.Sdk;

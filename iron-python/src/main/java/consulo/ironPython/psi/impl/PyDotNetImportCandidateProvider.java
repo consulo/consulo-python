@@ -16,8 +16,8 @@
 
 package consulo.ironPython.psi.impl;
 
-import com.jetbrains.python.codeInsight.imports.AutoImportQuickFix;
-import com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider;
+import com.jetbrains.python.impl.codeInsight.imports.AutoImportQuickFix;
+import com.jetbrains.python.impl.codeInsight.imports.PyImportCandidateProvider;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.dotnet.psi.resolve.DotNetShortNameSearcher;

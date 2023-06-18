@@ -16,7 +16,7 @@
 package com.jetbrains.rest.inspections;
 
 import com.google.common.collect.ImmutableSet;
-import com.jetbrains.python.ReSTService;
+import com.jetbrains.python.impl.ReSTService;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.rest.RestBundle;
 import com.jetbrains.rest.RestFile;

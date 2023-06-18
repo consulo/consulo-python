@@ -18,6 +18,7 @@ package com.jetbrains.python.psi.impl;
 import com.intellij.java.language.psi.JavaPsiFacade;
 import com.intellij.java.language.psi.PsiClass;
 import com.intellij.java.language.psi.PsiJavaPackage;
+import com.jetbrains.python.impl.psi.impl.ResolveResultList;
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;

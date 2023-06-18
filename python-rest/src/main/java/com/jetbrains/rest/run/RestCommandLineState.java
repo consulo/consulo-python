@@ -29,9 +29,9 @@ import consulo.execution.runner.ExecutionEnvironment;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import com.jetbrains.python.HelperPackage;
-import com.jetbrains.python.run.PythonCommandLineState;
-import com.jetbrains.python.run.PythonProcessRunner;
+import com.jetbrains.python.impl.HelperPackage;
+import com.jetbrains.python.impl.run.PythonCommandLineState;
+import com.jetbrains.python.impl.run.PythonProcessRunner;
 
 /**
  * User : catherine

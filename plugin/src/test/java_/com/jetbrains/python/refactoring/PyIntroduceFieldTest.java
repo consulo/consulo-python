@@ -2,9 +2,9 @@ package com.jetbrains.python.refactoring;
 
 import com.intellij.testFramework.TestDataPath;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.refactoring.introduce.IntroduceHandler;
-import com.jetbrains.python.refactoring.introduce.IntroduceOperation;
-import com.jetbrains.python.refactoring.introduce.field.PyIntroduceFieldHandler;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
+import com.jetbrains.python.impl.refactoring.introduce.field.PyIntroduceFieldHandler;
 import consulo.ide.impl.idea.util.Consumer;
 
 /**

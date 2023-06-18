@@ -31,7 +31,7 @@ public class PythonLanguage extends Language {
 
   @Override
   public boolean isCaseSensitive() {
-    return true; // http://jetbrains-feed.appspot.com/message/372001
+    return true;
   }
 
   protected PythonLanguage() {

@@ -7,7 +7,7 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyTargetExpression;
-import com.jetbrains.python.psi.impl.PyPathEvaluator;
+import com.jetbrains.python.impl.psi.impl.PyPathEvaluator;
 
 import java.util.List;
 

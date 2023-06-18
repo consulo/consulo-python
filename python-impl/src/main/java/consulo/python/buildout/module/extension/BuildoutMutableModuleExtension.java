@@ -16,7 +16,7 @@
 
 package consulo.python.buildout.module.extension;
 
-import com.jetbrains.python.buildout.BuildoutConfigPanel;
+import com.jetbrains.python.impl.buildout.BuildoutConfigPanel;
 import consulo.disposer.Disposable;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.extension.MutableModuleExtension;

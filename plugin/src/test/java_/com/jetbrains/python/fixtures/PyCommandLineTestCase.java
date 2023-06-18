@@ -13,10 +13,10 @@ import consulo.execution.executor.DefaultRunExecutor;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.execution.runner.ExecutionEnvironmentBuilder;
 import consulo.project.Project;
-import com.jetbrains.python.PythonHelpersLocator;
-import com.jetbrains.python.debugger.PyDebugRunner;
-import com.jetbrains.python.run.AbstractPythonRunConfiguration;
-import com.jetbrains.python.run.PythonCommandLineState;
+import com.jetbrains.python.impl.PythonHelpersLocator;
+import com.jetbrains.python.impl.debugger.PyDebugRunner;
+import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
+import com.jetbrains.python.impl.run.PythonCommandLineState;
 
 /**
  * @author yole

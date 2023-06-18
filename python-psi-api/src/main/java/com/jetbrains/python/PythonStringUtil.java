@@ -20,9 +20,9 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.application.util.SystemInfo;
 import consulo.document.util.TextRange;
-import consulo.ide.impl.idea.openapi.util.io.FileUtilRt;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
+import consulo.util.io.FileUtil;
 import consulo.util.io.PathUtil;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.Pair;
@@ -94,7 +94,7 @@ public class PythonStringUtil {
   public static boolean isPath(@Nullable String s) {
     if (!StringUtil.isEmpty(s)) {
       s = ObjectUtil.assertNotNull(s);
-      s = FileUtilRt.toSystemIndependentName(s);
+      s = FileUtil.toSystemIndependentName(s);
       final List<String> components = StringUtil.split(s, "/");
       for (String name : components) {
         if (name == components.get(0) && SystemInfo.isWindows && name.endsWith(":")) {

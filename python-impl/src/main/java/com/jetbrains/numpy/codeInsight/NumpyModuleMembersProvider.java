@@ -18,7 +18,7 @@ package com.jetbrains.numpy.codeInsight;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyPsiFacade;
-import com.jetbrains.python.psi.PyUtil;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 import com.jetbrains.python.psi.types.PyModuleMembersProvider;
 import consulo.annotation.component.ExtensionImpl;

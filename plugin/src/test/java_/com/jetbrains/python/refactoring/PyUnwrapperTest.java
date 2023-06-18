@@ -4,7 +4,7 @@ import consulo.ide.impl.idea.codeInsight.unwrap.UnwrapHandler;
 import consulo.ui.ex.action.AnAction;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiFile;
-import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 

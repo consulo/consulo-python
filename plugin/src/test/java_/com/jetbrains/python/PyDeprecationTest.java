@@ -1,7 +1,7 @@
 package com.jetbrains.python;
 
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.inspections.PyDeprecationInspection;
+import com.jetbrains.python.impl.inspections.PyDeprecationInspection;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 

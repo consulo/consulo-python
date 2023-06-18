@@ -5,7 +5,7 @@ import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
 import consulo.util.lang.StringUtil;
 import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
 import consulo.virtualFileSystem.VirtualFile;
-import com.jetbrains.python.codeInsight.controlflow.ControlFlowCache;
+import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
 import com.jetbrains.python.fixtures.PyTestCase;

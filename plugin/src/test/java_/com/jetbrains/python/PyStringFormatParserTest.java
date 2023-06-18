@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 
 import java.util.List;
 
-import static com.jetbrains.python.inspections.PyStringFormatParser.*;
+import static com.jetbrains.python.impl.inspections.PyStringFormatParser.*;
 
 /**
  * @author yole

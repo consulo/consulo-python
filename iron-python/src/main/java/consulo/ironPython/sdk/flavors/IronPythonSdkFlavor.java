@@ -16,9 +16,9 @@
 
 package consulo.ironPython.sdk.flavors;
 
-import com.jetbrains.python.PythonIcons;
-import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import com.jetbrains.python.sdk.flavors.WinPythonSdkFlavor;
+import com.jetbrains.python.impl.PythonIcons;
+import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
+import com.jetbrains.python.impl.sdk.flavors.WinPythonSdkFlavor;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.ui.image.Image;

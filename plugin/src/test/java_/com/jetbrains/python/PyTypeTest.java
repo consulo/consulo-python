@@ -1,17 +1,17 @@
 package com.jetbrains.python;
 
 import javax.annotation.Nonnull;
-import com.jetbrains.python.documentation.PythonDocumentationProvider;
+import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import com.jetbrains.python.psi.types.PyClassType;
-import com.jetbrains.python.psi.types.PyCollectionType;
+import com.jetbrains.python.impl.psi.types.PyCollectionType;
 import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.PyTypeChecker;
-import com.jetbrains.python.psi.types.PyTypeParser;
-import com.jetbrains.python.psi.types.PyUnionType;
+import com.jetbrains.python.impl.psi.types.PyTypeChecker;
+import com.jetbrains.python.impl.psi.types.PyTypeParser;
+import com.jetbrains.python.impl.psi.types.PyUnionType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
 /**

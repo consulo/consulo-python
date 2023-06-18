@@ -1,7 +1,7 @@
 package com.jetbrains.python;
 
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.inspections.PyMethodOverridingInspection;
+import com.jetbrains.python.impl.inspections.PyMethodOverridingInspection;
 
 /**
  * @author vlan

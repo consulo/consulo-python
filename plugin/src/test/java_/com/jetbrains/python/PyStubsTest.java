@@ -22,11 +22,11 @@ import com.intellij.testFramework.TestDataPath;
 import consulo.language.psi.stub.FileBasedIndex;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyFileImpl;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
-import com.jetbrains.python.psi.stubs.PyClassNameIndex;
+import com.jetbrains.python.impl.psi.impl.PyFileImpl;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.psi.stubs.PyClassStub;
-import com.jetbrains.python.psi.stubs.PyVariableNameIndex;
+import com.jetbrains.python.impl.psi.stubs.PyVariableNameIndex;
 import com.jetbrains.python.toolbox.Maybe;
 
 /**

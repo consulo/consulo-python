@@ -24,9 +24,9 @@ import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.ui.ex.awt.CollectionComboBoxModel;
 import consulo.ui.ex.awt.PanelWithAnchor;
 import consulo.ui.ex.awt.JBLabel;
-import com.jetbrains.python.run.AbstractPyCommonOptionsForm;
-import com.jetbrains.python.run.AbstractPythonRunConfiguration;
-import com.jetbrains.python.run.PyCommonOptionsFormFactory;
+import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
+import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
+import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
 import com.jetbrains.rest.RestBundle;
 import javax.annotation.Nonnull;
 

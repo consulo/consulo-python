@@ -2,7 +2,7 @@ package com.jetbrains.python;
 
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import com.jetbrains.python.toolbox.Maybe;
 
 public abstract class PyDecoratedPropertyTest extends PyTestCase {

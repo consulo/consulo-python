@@ -19,6 +19,7 @@ package com.jetbrains.python.psi.impl;
 import com.intellij.java.language.psi.*;
 import com.intellij.java.language.psi.util.PropertyUtil;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;

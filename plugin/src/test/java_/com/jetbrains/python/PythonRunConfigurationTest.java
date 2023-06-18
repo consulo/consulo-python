@@ -1,10 +1,10 @@
 package com.jetbrains.python;
 
 import com.jetbrains.python.fixtures.PyCommandLineTestCase;
-import com.jetbrains.python.run.PythonConfigurationType;
-import com.jetbrains.python.run.PythonRunConfiguration;
-import com.jetbrains.python.testing.PythonTestConfigurationType;
-import com.jetbrains.python.testing.unittest.PythonUnitTestRunConfiguration;
+import com.jetbrains.python.impl.run.PythonConfigurationType;
+import com.jetbrains.python.impl.run.PythonRunConfiguration;
+import com.jetbrains.python.impl.testing.PythonTestConfigurationType;
+import com.jetbrains.python.impl.testing.unittest.PythonUnitTestRunConfiguration;
 import junit.framework.Assert;
 
 import java.util.List;

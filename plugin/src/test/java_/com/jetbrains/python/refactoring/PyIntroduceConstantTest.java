@@ -3,8 +3,8 @@ package com.jetbrains.python.refactoring;
 import com.intellij.testFramework.TestDataPath;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.refactoring.introduce.IntroduceHandler;
-import com.jetbrains.python.refactoring.introduce.constant.PyIntroduceConstantHandler;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
+import com.jetbrains.python.impl.refactoring.introduce.constant.PyIntroduceConstantHandler;
 
 /**
  * @author yole

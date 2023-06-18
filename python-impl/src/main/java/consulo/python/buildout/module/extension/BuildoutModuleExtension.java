@@ -16,12 +16,12 @@
 
 package consulo.python.buildout.module.extension;
 
-import com.jetbrains.python.PythonHelpersLocator;
-import com.jetbrains.python.facet.FacetLibraryConfigurator;
-import com.jetbrains.python.facet.LibraryContributingFacet;
-import com.jetbrains.python.facet.PythonPathContributingFacet;
-import com.jetbrains.python.run.PythonCommandLineState;
-import com.jetbrains.python.sdk.PythonEnvUtil;
+import com.jetbrains.python.impl.PythonHelpersLocator;
+import com.jetbrains.python.impl.facet.FacetLibraryConfigurator;
+import com.jetbrains.python.impl.facet.LibraryContributingFacet;
+import com.jetbrains.python.impl.facet.PythonPathContributingFacet;
+import com.jetbrains.python.impl.run.PythonCommandLineState;
+import com.jetbrains.python.impl.sdk.PythonEnvUtil;
 import consulo.application.util.LineTokenizer;
 import consulo.application.util.SystemInfo;
 import consulo.ide.impl.idea.openapi.vfs.VfsUtil;

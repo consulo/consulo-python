@@ -19,13 +19,13 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import consulo.ide.impl.idea.util.Consumer;
-import com.jetbrains.python.PythonHelpersLocator;
+import com.jetbrains.python.impl.PythonHelpersLocator;
 import com.jetbrains.python.PythonMockSdk;
 import com.jetbrains.python.PythonTestUtil;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.impl.PyFileImpl;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PyFileImpl;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import consulo.container.boot.ContainerPathManager;
 
 import javax.annotation.Nonnull;

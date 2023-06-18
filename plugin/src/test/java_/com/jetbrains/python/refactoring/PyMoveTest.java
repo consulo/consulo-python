@@ -19,8 +19,8 @@ import com.jetbrains.python.PythonTestUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.stubs.PyClassNameIndex;
-import com.jetbrains.python.psi.stubs.PyFunctionNameIndex;
+import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
+import com.jetbrains.python.impl.psi.stubs.PyFunctionNameIndex;
 
 /**
  * @author vlan

@@ -18,8 +18,8 @@ package consulo.python.debugger;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.debugger.PyDebugSupportUtils;
-import com.jetbrains.python.debugger.PyLineBreakpointType;
+import com.jetbrains.python.impl.debugger.PyDebugSupportUtils;
+import com.jetbrains.python.impl.debugger.PyLineBreakpointType;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.util.function.Processor;

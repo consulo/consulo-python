@@ -2,10 +2,10 @@ package com.jetbrains.python.refactoring;
 
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.TestDataPath;
-import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.refactoring.introduce.IntroduceHandler;
-import com.jetbrains.python.refactoring.introduce.parameter.PyIntroduceParameterHandler;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
+import com.jetbrains.python.impl.refactoring.introduce.parameter.PyIntroduceParameterHandler;
 
 /**
  * User: ktisha

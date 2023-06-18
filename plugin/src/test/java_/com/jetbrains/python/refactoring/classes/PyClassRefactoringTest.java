@@ -7,7 +7,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.stubs.PyClassNameIndex;
+import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 
 /**
  * @author Dennis.Ushakov

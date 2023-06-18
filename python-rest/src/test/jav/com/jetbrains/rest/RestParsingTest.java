@@ -1,6 +1,6 @@
 package com.jetbrains.rest;
 
-import com.jetbrains.python.PythonHelpersLocator;
+import com.jetbrains.python.impl.PythonHelpersLocator;
 import consulo.testFramework.ParsingTestCase;
 
 /**

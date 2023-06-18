@@ -3,7 +3,7 @@ package com.jetbrains.python;
 import java.util.List;
 
 import com.intellij.testFramework.UsefulTestCase;
-import com.jetbrains.python.documentation.docstrings.EpydocString;
+import com.jetbrains.python.impl.documentation.docstrings.EpydocString;
 import com.jetbrains.python.toolbox.Substring;
 
 /**

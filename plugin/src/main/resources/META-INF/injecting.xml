@@ -4,6 +4,6 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<injectionConfig config="pyInjections.xml"/>
 
-		<patterns.patternClass className="com.jetbrains.python.patterns.PythonPatterns" alias="py"/>
+		<patterns.patternClass className="com.jetbrains.python.impl.patterns.PythonPatterns" alias="py"/>
 	</extensions>
 </consulo-plugin>

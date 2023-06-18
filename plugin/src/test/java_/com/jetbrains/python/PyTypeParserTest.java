@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.jetbrains.python.fixtures.PyTestCase;
+import com.jetbrains.python.impl.psi.types.*;
 import com.jetbrains.python.psi.types.*;
 
 /**

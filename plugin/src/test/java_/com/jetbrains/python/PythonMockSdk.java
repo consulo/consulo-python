@@ -14,7 +14,7 @@ import consulo.content.OrderRootType;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.ide.impl.psi.stubs.StubUpdatingIndex;
 import consulo.language.psi.stub.FileBasedIndex;
-import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
 
 /**
  * @author yole

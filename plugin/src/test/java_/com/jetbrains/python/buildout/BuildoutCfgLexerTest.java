@@ -1,7 +1,7 @@
 package com.jetbrains.python.buildout;
 
 import consulo.language.ast.IElementType;
-import com.jetbrains.python.buildout.config.lexer._BuildoutCfgFlexLexer;
+import com.jetbrains.python.impl.buildout.config.lexer._BuildoutCfgFlexLexer;
 import junit.framework.TestCase;
 
 import java.io.IOException;

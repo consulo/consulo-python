@@ -5,11 +5,11 @@ import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.language.psi.PsiElement;
 import com.intellij.testFramework.TestDataFile;
-import com.jetbrains.python.documentation.PythonDocumentationProvider;
+import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import junit.framework.Assert;
 
 import java.io.IOException;

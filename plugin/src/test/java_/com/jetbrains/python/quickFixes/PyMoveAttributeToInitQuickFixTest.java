@@ -1,9 +1,9 @@
 package com.jetbrains.python.quickFixes;
 
 import com.intellij.testFramework.TestDataPath;
-import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyQuickFixTestCase;
-import com.jetbrains.python.inspections.PyAttributeOutsideInitInspection;
+import com.jetbrains.python.impl.inspections.PyAttributeOutsideInitInspection;
 
 /**
  * User: ktisha

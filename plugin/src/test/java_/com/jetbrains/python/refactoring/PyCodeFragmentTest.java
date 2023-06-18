@@ -9,7 +9,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonTestUtil;
-import com.jetbrains.python.codeInsight.codeFragment.PyCodeFragmentUtil;
+import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragmentUtil;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
 import com.jetbrains.python.psi.PyFile;

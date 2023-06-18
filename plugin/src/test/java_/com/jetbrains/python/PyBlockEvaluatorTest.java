@@ -5,7 +5,7 @@ import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.psi.impl.PyBlockEvaluator;
+import com.jetbrains.python.impl.psi.impl.PyBlockEvaluator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

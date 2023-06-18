@@ -11,7 +11,7 @@ import consulo.process.local.ProcessOutput;
 import consulo.content.bundle.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import consulo.util.lang.SystemProperties;
-import com.jetbrains.python.PythonHelpersLocator;
+import com.jetbrains.python.impl.PythonHelpersLocator;
 
 /**
  * @author traff

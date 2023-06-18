@@ -1,10 +1,10 @@
 package com.jetbrains.python;
 
+import com.jetbrains.python.impl.inspections.*;
 import consulo.language.editor.inspection.scheme.InspectionProfileEntry;
 import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.inspection.scheme.LocalInspectionToolWrapper;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.inspections.*;
 import com.jetbrains.python.psi.LanguageLevel;
 
 /**

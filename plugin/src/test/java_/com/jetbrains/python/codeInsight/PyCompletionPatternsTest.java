@@ -3,7 +3,7 @@ package com.jetbrains.python.codeInsight;
 import consulo.language.pattern.ElementPattern;
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.codeInsight.completion.PyKeywordCompletionContributor;
+import com.jetbrains.python.impl.codeInsight.completion.PyKeywordCompletionContributor;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 

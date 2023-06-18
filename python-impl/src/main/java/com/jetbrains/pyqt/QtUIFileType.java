@@ -16,7 +16,7 @@
 
 package com.jetbrains.pyqt;
 
-import com.jetbrains.python.PythonIcons;
+import com.jetbrains.python.impl.PythonIcons;
 import consulo.localize.LocalizeValue;
 import consulo.virtualFileSystem.fileType.FileType;
 

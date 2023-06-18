@@ -4,9 +4,9 @@ import consulo.ide.impl.idea.codeInsight.generation.surroundWith.SurroundWithHan
 import consulo.language.editor.surroundWith.Surrounder;
 import consulo.language.editor.WriteCommandAction;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.refactoring.surround.surrounders.statements.PyWithIfSurrounder;
-import com.jetbrains.python.refactoring.surround.surrounders.statements.PyWithTryExceptSurrounder;
-import com.jetbrains.python.refactoring.surround.surrounders.statements.PyWithWhileSurrounder;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.statements.PyWithIfSurrounder;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.statements.PyWithTryExceptSurrounder;
+import com.jetbrains.python.impl.refactoring.surround.surrounders.statements.PyWithWhileSurrounder;
 
 /**
  * @author yole

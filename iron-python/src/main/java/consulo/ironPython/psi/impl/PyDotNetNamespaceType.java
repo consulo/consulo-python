@@ -18,7 +18,7 @@ package consulo.ironPython.psi.impl;
 
 import com.jetbrains.python.psi.AccessDirection;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.impl.ResolveResultList;
+import com.jetbrains.python.impl.psi.impl.ResolveResultList;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyType;

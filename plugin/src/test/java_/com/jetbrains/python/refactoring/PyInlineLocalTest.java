@@ -4,7 +4,7 @@ import consulo.language.editor.TargetElementUtil;
 import consulo.util.lang.Comparing;
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.refactoring.inline.PyInlineLocalHandler;
+import com.jetbrains.python.impl.refactoring.inline.PyInlineLocalHandler;
 
 /**
  * @author Dennis.Ushakov

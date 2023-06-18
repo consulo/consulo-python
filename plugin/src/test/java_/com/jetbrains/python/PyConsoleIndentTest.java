@@ -3,7 +3,7 @@ package com.jetbrains.python;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
-import com.jetbrains.python.console.PyConsoleIndentUtil;
+import com.jetbrains.python.impl.console.PyConsoleIndentUtil;
 
 import java.io.File;
 import java.io.IOException;

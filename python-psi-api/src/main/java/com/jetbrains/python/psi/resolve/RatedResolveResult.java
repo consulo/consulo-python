@@ -19,7 +19,7 @@ package com.jetbrains.python.psi.resolve;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.ResolveResult;
-import consulo.util.collection.impl.list.SortedList;
+import consulo.util.collection.Lists;
 
 import java.util.Comparator;
 import java.util.List;
@@ -85,7 +85,7 @@ public class RatedResolveResult implements ResolveResult {
     if (targets.size() == 1) {
       return targets;
     }
-    List<RatedResolveResult> ret = new SortedList<RatedResolveResult>(new Comparator<RatedResolveResult>() {
+    List<RatedResolveResult> ret = Lists.newSortedList(new Comparator<RatedResolveResult>() {
       public int compare(final RatedResolveResult one, final RatedResolveResult another) {
         return another.getRate() - one.getRate();
       }

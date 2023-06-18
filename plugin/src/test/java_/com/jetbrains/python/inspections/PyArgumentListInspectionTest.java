@@ -1,8 +1,9 @@
 package com.jetbrains.python.inspections;
 
 import com.jetbrains.python.fixtures.PyTestCase;
+import com.jetbrains.python.impl.inspections.PyArgumentListInspection;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 
 /**
  * @author yole

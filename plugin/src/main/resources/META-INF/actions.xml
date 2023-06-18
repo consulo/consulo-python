@@ -1,6 +1,6 @@
 <consulo-plugin>
 	<actions>
-		<action id="PyManagePackages" class="com.jetbrains.python.packaging.PyManagePackagesAction" text="Manage Python Packages...">
+		<action id="PyManagePackages" class="com.jetbrains.python.impl.packaging.PyManagePackagesAction" text="Manage Python Packages...">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 	</actions>

@@ -8,7 +8,7 @@ import consulo.language.editor.refactoring.action.RefactoringActionHandler;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.refactoring.extractmethod.PyExtractMethodUtil;
+import com.jetbrains.python.impl.refactoring.extractmethod.PyExtractMethodUtil;
 
 /**
  * @author oleg

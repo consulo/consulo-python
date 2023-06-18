@@ -1,7 +1,7 @@
 package com.jetbrains.python.quickFixes;
 
 import com.jetbrains.python.PyQuickFixTestCase;
-import com.jetbrains.python.inspections.PyAugmentAssignmentInspection;
+import com.jetbrains.python.impl.inspections.PyAugmentAssignmentInspection;
 
 /**
  * User: ktisha

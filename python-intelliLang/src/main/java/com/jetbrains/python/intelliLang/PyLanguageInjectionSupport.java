@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.intelliLang;
 
-import com.jetbrains.python.patterns.PythonPatterns;
+import com.jetbrains.python.impl.patterns.PythonPatterns;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;

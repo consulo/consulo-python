@@ -2,7 +2,7 @@ package com.jetbrains.python;
 
 import consulo.application.Result;
 import consulo.language.editor.WriteCommandAction;
-import com.jetbrains.python.codeInsight.imports.AddImportHelper;
+import com.jetbrains.python.impl.codeInsight.imports.AddImportHelper;
 import com.jetbrains.python.fixtures.PyTestCase;
 
 /**

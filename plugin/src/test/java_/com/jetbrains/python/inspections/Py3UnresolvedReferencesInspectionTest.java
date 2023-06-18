@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.intellij.testFramework.TestModuleDescriptor;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
+import com.jetbrains.python.impl.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 import com.jetbrains.python.psi.LanguageLevel;
 
 /**

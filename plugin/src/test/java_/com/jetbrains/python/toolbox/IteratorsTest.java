@@ -1,5 +1,8 @@
 package com.jetbrains.python.toolbox;
 
+import com.jetbrains.python.impl.toolbox.ChainIterable;
+import com.jetbrains.python.impl.toolbox.ChainIterator;
+import com.jetbrains.python.impl.toolbox.RepeatIterable;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;

@@ -21,7 +21,7 @@ import consulo.project.Project;
 import consulo.util.xml.serializer.InvalidDataException;
 import consulo.util.xml.serializer.JDOMExternalizerUtil;
 import consulo.util.xml.serializer.WriteExternalException;
-import com.jetbrains.python.run.AbstractPythonRunConfiguration;
+import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import org.jdom.Element;
 
 /**

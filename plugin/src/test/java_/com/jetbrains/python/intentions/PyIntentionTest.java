@@ -5,12 +5,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 import consulo.language.editor.CodeInsightSettings;
 import consulo.language.editor.intention.IntentionAction;
-import com.jetbrains.python.PyBundle;
-import com.jetbrains.python.documentation.PyDocumentationSettings;
-import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.impl.PyBundle;
+import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
+import com.jetbrains.python.impl.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 
 /**
  * @author Alexey.Ivanov

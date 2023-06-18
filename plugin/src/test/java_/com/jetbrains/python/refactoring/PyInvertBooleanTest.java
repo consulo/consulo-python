@@ -6,7 +6,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import com.intellij.testFramework.TestDataPath;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.refactoring.invertBoolean.PyInvertBooleanProcessor;
+import com.jetbrains.python.impl.refactoring.invertBoolean.PyInvertBooleanProcessor;
 
 import java.util.List;
 

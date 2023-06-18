@@ -4,9 +4,9 @@ import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.TestDataPath;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.refactoring.introduce.IntroduceHandler;
-import com.jetbrains.python.refactoring.introduce.IntroduceOperation;
-import com.jetbrains.python.refactoring.introduce.variable.PyIntroduceVariableHandler;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
+import com.jetbrains.python.impl.refactoring.introduce.variable.PyIntroduceVariableHandler;
 
 import java.util.Collection;
 

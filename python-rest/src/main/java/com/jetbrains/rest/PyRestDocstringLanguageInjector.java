@@ -16,7 +16,7 @@
 
 package com.jetbrains.rest;
 
-import com.jetbrains.python.documentation.doctest.PyDocstringLanguageDialect;
+import com.jetbrains.python.impl.documentation.doctest.PyDocstringLanguageDialect;
 import com.jetbrains.rest.psi.RestLine;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;

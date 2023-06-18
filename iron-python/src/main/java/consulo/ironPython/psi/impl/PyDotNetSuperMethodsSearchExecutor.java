@@ -18,7 +18,7 @@ package consulo.ironPython.psi.impl;
 
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.search.PySuperMethodsSearch;
+import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import consulo.application.util.function.Processor;
 import consulo.application.util.query.QueryExecutor;
 import consulo.language.psi.PsiElement;

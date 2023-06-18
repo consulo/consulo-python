@@ -1,7 +1,7 @@
 package com.jetbrains.python;
 
 import com.jetbrains.python.fixtures.PyLexerTestCase;
-import com.jetbrains.python.lexer.PythonIndentingLexer;
+import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
 
 /**
  * @author yole

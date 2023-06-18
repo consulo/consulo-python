@@ -2,7 +2,7 @@ package com.jetbrains.python.inspections;
 
 import javax.annotation.Nonnull;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
+import com.jetbrains.python.impl.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 
 /**
  * @author yole

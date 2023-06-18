@@ -9,7 +9,7 @@ import consulo.virtualFileSystem.TempFileSystem;
 import com.intellij.psi.*;
 import com.intellij.testFramework.TestDataFile;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import org.jetbrains.annotations.NonNls;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

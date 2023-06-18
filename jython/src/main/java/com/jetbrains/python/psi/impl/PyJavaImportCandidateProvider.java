@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.impl;
 
 import com.intellij.java.language.psi.PsiClass;
 import com.intellij.java.language.psi.search.PsiShortNamesCache;
-import com.jetbrains.python.codeInsight.imports.AutoImportQuickFix;
-import com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider;
+import com.jetbrains.python.impl.codeInsight.imports.AutoImportQuickFix;
+import com.jetbrains.python.impl.codeInsight.imports.PyImportCandidateProvider;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.jython.module.extension.JythonModuleExtension;

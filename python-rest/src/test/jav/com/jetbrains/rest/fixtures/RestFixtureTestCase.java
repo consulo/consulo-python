@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
-import com.jetbrains.python.PythonHelpersLocator;
+import com.jetbrains.python.impl.PythonHelpersLocator;
 
 /**
  * User : catherine

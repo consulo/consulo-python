@@ -9,9 +9,9 @@ import consulo.language.Language;
 import consulo.application.Result;
 import consulo.language.editor.WriteCommandAction;
 import consulo.codeEditor.Editor;
-import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
-import com.jetbrains.python.documentation.PyDocumentationSettings;
-import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
+import com.jetbrains.python.impl.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.fixtures.PyTestCase;
 
 /**

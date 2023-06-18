@@ -4,8 +4,8 @@ import consulo.project.Project;
 import consulo.language.psi.PsiDocumentManager;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.search.PyClassInheritorsSearch;
-import com.jetbrains.python.psi.stubs.PyClassNameIndex;
+import com.jetbrains.python.impl.psi.search.PyClassInheritorsSearch;
+import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 
 import java.util.Collection;
 

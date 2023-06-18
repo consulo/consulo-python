@@ -2,7 +2,7 @@ package com.jetbrains.python;
 
 import consulo.language.editor.completion.CompletionType;
 import consulo.language.editor.completion.lookup.Lookup;
-import com.jetbrains.python.codeInsight.PyCodeInsightSettings;
+import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.fixtures.PyTestCase;
 
 /**

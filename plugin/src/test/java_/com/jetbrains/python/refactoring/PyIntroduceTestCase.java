@@ -7,8 +7,8 @@ import consulo.util.lang.StringUtil;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.refactoring.introduce.IntroduceHandler;
-import com.jetbrains.python.refactoring.introduce.IntroduceOperation;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
 
 import javax.annotation.Nullable;
 

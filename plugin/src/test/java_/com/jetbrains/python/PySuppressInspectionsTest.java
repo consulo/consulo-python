@@ -4,9 +4,9 @@ import java.util.List;
 
 import consulo.language.editor.intention.IntentionAction;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.inspections.PyInspection;
-import com.jetbrains.python.inspections.PyUnusedLocalInspection;
-import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
+import com.jetbrains.python.impl.inspections.PyInspection;
+import com.jetbrains.python.impl.inspections.PyUnusedLocalInspection;
+import com.jetbrains.python.impl.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 
 /**
  * @author yole

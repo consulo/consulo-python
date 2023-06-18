@@ -1,5 +1,7 @@
 package com.jetbrains.python;
 
+import com.jetbrains.python.impl.PythonHelpersLocator;
+
 /**
  * @author yole
  */

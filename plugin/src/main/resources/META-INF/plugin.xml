@@ -7,7 +7,7 @@
 	<depends optional="true" config-file="python-rest-plugin.xml">org.jetbrains.plugins.rest</depends>
 	<depends optional="true" config-file="com.intellij.xml.xml">com.intellij.xml</depends>
 	<depends>com.intellij.regexp</depends>
-	<resource-bundle>com.jetbrains.python.PyBundle</resource-bundle>
+	<resource-bundle>com.jetbrains.python.impl.PyBundle</resource-bundle>
 	<category>Custom Languages</category>
 	<tags>
 		<tag>custom.language</tag>
@@ -21,44 +21,44 @@
 
 	<extensionPoints>
 		<extensionPoint name="importResolver" interface="com.jetbrains.python.psi.impl.PyImportResolver"/>
-		<extensionPoint name="sdkFlavor" interface="com.jetbrains.python.sdk.flavors.PythonSdkFlavor"/>
+		<extensionPoint name="sdkFlavor" interface="com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor"/>
 		<extensionPoint name="typeProvider" interface="com.jetbrains.python.psi.impl.PyTypeProvider"/>
 		<extensionPoint name="pySuperMethodsSearch" interface="consulo.application.util.query.QueryExecutor"/>
 		<extensionPoint name="pyClassInheritorsSearch" interface="consulo.application.util.query.QueryExecutor"/>
 		<extensionPoint name="pyClassMembersProvider" interface="com.jetbrains.python.psi.types.PyClassMembersProvider"/>
 		<extensionPoint name="pyModuleMembersProvider" interface="com.jetbrains.python.psi.types.PyModuleMembersProvider"/>
 		<extensionPoint name="pyOverridingMethodsSearch" interface="consulo.application.util.query.QueryExecutor"/>
-		<extensionPoint name="runnableScriptFilter" interface="com.jetbrains.python.run.RunnableScriptFilter"/>
-		<extensionPoint name="runnableUnitTestFilter" interface="com.jetbrains.python.testing.RunnableUnitTestFilter"/>
+		<extensionPoint name="runnableScriptFilter" interface="com.jetbrains.python.impl.run.RunnableScriptFilter"/>
+		<extensionPoint name="runnableUnitTestFilter" interface="com.jetbrains.python.impl.testing.RunnableUnitTestFilter"/>
 		<extensionPoint name="unresolvedReferenceQuickFixProvider"
 						interface="com.jetbrains.python.inspections.PyUnresolvedReferenceQuickFixProvider"/>
-		<extensionPoint name="dumbAnnotator" interface="com.jetbrains.python.validation.PyAnnotator"/>
+		<extensionPoint name="dumbAnnotator" interface="com.jetbrains.python.impl.validation.PyAnnotator"/>
 		<extensionPoint name="inspectionExtension" interface="com.jetbrains.python.inspections.PyInspectionExtension"/>
 		<extensionPoint name="customTargetExpressionStubType"
 						interface="com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType"/>
 		<extensionPoint name="knownDecoratorProvider" interface="com.jetbrains.python.psi.PyKnownDecoratorProvider"/>
 		<extensionPoint name="documentationLinkProvider" interface="com.jetbrains.python.documentation.PythonDocumentationLinkProvider"/>
-		<extensionPoint name="importCandidateProvider" interface="com.jetbrains.python.codeInsight.imports.PyImportCandidateProvider"/>
+		<extensionPoint name="importCandidateProvider" interface="com.jetbrains.python.impl.codeInsight.imports.PyImportCandidateProvider"/>
 		<extensionPoint name="dialectsTokenSetContributor" interface="com.jetbrains.python.PythonDialectsTokenSetContributor"/>
-		<extensionPoint name="runConfigurationExtension" interface="com.jetbrains.python.run.PythonRunConfigurationExtension"/>
+		<extensionPoint name="runConfigurationExtension" interface="com.jetbrains.python.impl.run.PythonRunConfigurationExtension"/>
 		<extensionPoint name="visitorFilter" beanClass="com.intellij.lang.LanguageExtensionPoint"/>
-		<extensionPoint name="remoteInterpreterManager" interface="com.jetbrains.python.remote.PythonRemoteInterpreterManager"/>
+		<extensionPoint name="remoteInterpreterManager" interface="com.jetbrains.python.impl.remote.PythonRemoteInterpreterManager"/>
 		<extensionPoint name="keywordArgumentProvider" interface="com.jetbrains.python.psi.impl.PyKeywordArgumentProvider"/>
 		<extensionPoint name="canonicalPathProvider" interface="com.jetbrains.python.psi.resolve.PyCanonicalPathProvider"/>
 		<extensionPoint name="templateContextProvider" interface="com.jetbrains.python.templateLanguages.TemplateContextProvider"/>
 		<extensionPoint name="pyReferenceResolveProvider" interface="com.jetbrains.python.psi.resolve.PyReferenceResolveProvider"/>
-		<extensionPoint name="consoleOptionsProvider" interface="com.jetbrains.python.console.PyConsoleOptionsProvider"/>
+		<extensionPoint name="consoleOptionsProvider" interface="com.jetbrains.python.impl.console.PyConsoleOptionsProvider"/>
 		<extensionPoint name="documentationQuickInfoProvider" interface="com.jetbrains.python.documentation.PythonDocumentationQuickInfoProvider"/>
-		<extensionPoint name="debugSessionFactory" interface="com.jetbrains.python.debugger.PyDebugSessionFactory"/>
-		<extensionPoint name="unresolvedReferenceSkipper" interface="com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferenceSkipperExtPoint"/>
-		<extensionPoint name="pep8ProblemSuppressor" interface="com.jetbrains.python.validation.Pep8ProblemSuppressor"/>
-		<extensionPoint name="runConfigurationEditorExtension" interface="com.jetbrains.python.run.PyRunConfigurationEditorExtension"/>
-		<extensionPoint name="resolveResultRater" interface="com.jetbrains.python.psi.impl.PyResolveResultRater" />
+		<extensionPoint name="debugSessionFactory" interface="com.jetbrains.python.impl.debugger.PyDebugSessionFactory"/>
+		<extensionPoint name="unresolvedReferenceSkipper" interface="com.jetbrains.python.impl.inspections.unresolvedReference.PyUnresolvedReferenceSkipperExtPoint"/>
+		<extensionPoint name="pep8ProblemSuppressor" interface="com.jetbrains.python.impl.validation.Pep8ProblemSuppressor"/>
+		<extensionPoint name="runConfigurationEditorExtension" interface="com.jetbrains.python.impl.run.PyRunConfigurationEditorExtension"/>
+		<extensionPoint name="resolveResultRater" interface="com.jetbrains.python.impl.psi.impl.PyResolveResultRater" />
 	</extensionPoints>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<applicationService serviceInterface="com.jetbrains.python.run.PyCommonOptionsFormFactory"
-							serviceImplementation="com.jetbrains.python.run.PyPluginCommonOptionsFormFactory"/>
+		<applicationService serviceInterface="com.jetbrains.python.impl.run.PyCommonOptionsFormFactory"
+							serviceImplementation="com.jetbrains.python.impl.run.PyPluginCommonOptionsFormFactory"/>
 
 		<moduleExtensionProvider key="python"
 								 icon="consulo.python.impl.PythonImplIconGroup@python.python"

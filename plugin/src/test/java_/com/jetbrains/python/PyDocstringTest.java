@@ -9,8 +9,8 @@ import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiLanguageInjectionHost;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.documentation.doctest.PyDocstringFileType;
-import com.jetbrains.python.documentation.doctest.PyDocstringParserDefinition;
+import com.jetbrains.python.impl.documentation.doctest.PyDocstringFileType;
+import com.jetbrains.python.impl.documentation.doctest.PyDocstringParserDefinition;
 import com.jetbrains.python.fixtures.PyTestCase;
 import consulo.language.version.LanguageVersionUtil;
 

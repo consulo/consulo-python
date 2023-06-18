@@ -1,8 +1,8 @@
 package com.jetbrains.python.toolbox;
 
+import com.jetbrains.python.impl.toolbox.FP;
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

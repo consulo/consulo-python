@@ -27,8 +27,8 @@ import consulo.project.Project;
 import consulo.content.bundle.Sdk;
 import com.jetbrains.python.packaging.PyPackage;
 import com.jetbrains.python.packaging.PyPackageManager;
-import com.jetbrains.python.packaging.PyPackageUtil;
-import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.impl.packaging.PyPackageUtil;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
 
 /**
  * User : catherine

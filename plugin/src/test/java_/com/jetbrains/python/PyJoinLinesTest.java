@@ -4,7 +4,7 @@ import consulo.language.editor.action.JoinRawLinesHandlerDelegate;
 import consulo.application.WriteAction;
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
-import com.jetbrains.python.editor.PyJoinLinesHandler;
+import com.jetbrains.python.impl.editor.PyJoinLinesHandler;
 import com.jetbrains.python.fixtures.PyTestCase;
 
 /**

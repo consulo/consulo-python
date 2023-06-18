@@ -1,6 +1,6 @@
 package com.jetbrains.python.intentions;
 
-import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.impl.PyBundle;
 
 /**
  * User : ktisha

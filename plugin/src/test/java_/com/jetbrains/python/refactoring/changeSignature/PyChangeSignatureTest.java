@@ -1,10 +1,11 @@
 package com.jetbrains.python.refactoring.changeSignature;
 
+import com.jetbrains.python.impl.refactoring.changeSignature.*;
 import consulo.language.editor.refactoring.BaseRefactoringProcessor;
 import consulo.project.Project;
 import consulo.disposer.Disposer;
 import com.intellij.testFramework.TestDataPath;
-import com.jetbrains.python.PyBundle;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFunction;
@@ -242,7 +243,8 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
   }
 
 
-  public static class TestPyChangeSignatureDialog extends PyChangeSignatureDialog {
+  public static class TestPyChangeSignatureDialog extends PyChangeSignatureDialog
+  {
 
     public TestPyChangeSignatureDialog(Project project, PyMethodDescriptor method) {
       super(project, method);

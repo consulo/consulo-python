@@ -1,6 +1,6 @@
 package consulo.ironPython.module.extension;
 
-import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
 import consulo.content.bundle.SdkType;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.content.layer.extension.ModuleExtensionWithSdkBase;

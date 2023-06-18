@@ -19,7 +19,7 @@ import consulo.language.impl.psi.template.TemplateDataElementType;
 import consulo.language.lexer.Lexer;
 import consulo.language.psi.PsiFile;
 import consulo.language.template.TemplateLanguageFileViewProvider;
-import com.jetbrains.python.lexer.PythonHighlightingLexer;
+import com.jetbrains.python.impl.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
 
 /**

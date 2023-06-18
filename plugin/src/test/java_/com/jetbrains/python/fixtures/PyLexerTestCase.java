@@ -3,8 +3,8 @@ package com.jetbrains.python.fixtures;
 import consulo.language.lexer.Lexer;
 import com.intellij.testFramework.PlatformLiteFixture;
 import com.jetbrains.python.PythonDialectsTokenSetContributor;
-import com.jetbrains.python.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.PythonTokenSetContributor;
+import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.impl.PythonTokenSetContributor;
 
 /**
  * @author yole

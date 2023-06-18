@@ -2,15 +2,15 @@ package com.jetbrains.python;
 
 import java.util.Collections;
 
-import com.jetbrains.python.codeInsight.override.PyMethodMember;
-import com.jetbrains.python.codeInsight.override.PyOverrideImplementUtil;
+import com.jetbrains.python.impl.codeInsight.override.PyMethodMember;
+import com.jetbrains.python.impl.codeInsight.override.PyOverrideImplementUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
-import com.jetbrains.python.psi.stubs.PyClassNameIndex;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 
 /**
  * @author yole

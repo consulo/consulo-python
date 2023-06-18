@@ -1,8 +1,8 @@
 package com.jetbrains.jython;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.jetbrains.python.inspections.PyCallingNonCallableInspection;
-import com.jetbrains.python.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
+import com.jetbrains.python.impl.inspections.PyCallingNonCallableInspection;
+import com.jetbrains.python.impl.inspections.unresolvedReference.PyUnresolvedReferencesInspection;
 
 /**
  * @author yole

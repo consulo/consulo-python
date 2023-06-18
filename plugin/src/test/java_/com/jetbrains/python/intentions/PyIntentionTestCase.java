@@ -4,7 +4,7 @@ import consulo.language.editor.intention.IntentionAction;
 import com.jetbrains.python.PythonTestUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import org.jetbrains.annotations.NonNls;
 
 /**

@@ -15,9 +15,9 @@
  */
 package com.jetbrains.rest.sphinx;
 
-import static com.jetbrains.python.sdk.PythonEnvUtil.resetHomePathChanges;
-import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonIOEncoding;
-import static com.jetbrains.python.sdk.PythonEnvUtil.setPythonUnbuffered;
+import static com.jetbrains.python.impl.sdk.PythonEnvUtil.resetHomePathChanges;
+import static com.jetbrains.python.impl.sdk.PythonEnvUtil.setPythonIOEncoding;
+import static com.jetbrains.python.impl.sdk.PythonEnvUtil.setPythonUnbuffered;
 
 import java.awt.Dimension;
 import java.util.Collections;
@@ -48,12 +48,12 @@ import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.application.util.SystemInfo;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import com.jetbrains.python.PythonHelper;
-import com.jetbrains.python.ReSTService;
-import com.jetbrains.python.run.PythonCommandLineState;
-import com.jetbrains.python.run.PythonProcessRunner;
-import com.jetbrains.python.run.PythonTracebackFilter;
-import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.impl.PythonHelper;
+import com.jetbrains.python.impl.ReSTService;
+import com.jetbrains.python.impl.run.PythonCommandLineState;
+import com.jetbrains.python.impl.run.PythonProcessRunner;
+import com.jetbrains.python.impl.run.PythonTracebackFilter;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
 
 /**
  * User : catherine

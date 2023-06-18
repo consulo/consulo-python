@@ -1,7 +1,7 @@
 package com.jetbrains.python;
 
 import com.jetbrains.python.fixtures.PyLexerTestCase;
-import com.jetbrains.python.lexer.PythonHighlightingLexer;
+import com.jetbrains.python.impl.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
 
 /**

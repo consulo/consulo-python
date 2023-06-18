@@ -5,11 +5,11 @@ import java.util.List;
 
 import consulo.language.editor.completion.CamelHumpMatcher;
 import consulo.language.editor.completion.lookup.LookupElement;
-import com.jetbrains.python.documentation.PyDocumentationSettings;
-import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
+import com.jetbrains.python.impl.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 
 public abstract class PythonCompletionTest extends PyTestCase {
 

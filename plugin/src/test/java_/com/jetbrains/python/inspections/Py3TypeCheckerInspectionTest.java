@@ -2,6 +2,7 @@ package com.jetbrains.python.inspections;
 
 import com.intellij.testFramework.TestModuleDescriptor;
 import com.jetbrains.python.fixtures.PyTestCase;
+import com.jetbrains.python.impl.inspections.PyTypeCheckerInspection;
 import com.jetbrains.python.psi.LanguageLevel;
 
 /**

@@ -1,6 +1,7 @@
 package com.jetbrains.python.inspections;
 
 import com.jetbrains.python.fixtures.PyTestCase;
+import com.jetbrains.python.impl.inspections.PyNoneFunctionAssignmentInspection;
 
 /**
  * User: ktisha

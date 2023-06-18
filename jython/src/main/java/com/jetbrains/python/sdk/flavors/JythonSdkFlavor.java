@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.sdk.flavors;
 
+import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.process.ExecutionException;
 import consulo.process.cmd.GeneralCommandLine;
@@ -23,9 +24,9 @@ import consulo.process.cmd.ParamsGroup;
 import consulo.process.ProcessHandler;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
-import com.jetbrains.python.PythonHelpersLocator;
-import com.jetbrains.python.run.JythonProcessHandler;
-import com.jetbrains.python.run.PythonCommandLineState;
+import com.jetbrains.python.impl.PythonHelpersLocator;
+import com.jetbrains.python.impl.run.JythonProcessHandler;
+import com.jetbrains.python.impl.run.PythonCommandLineState;
 import consulo.jython.icon.JythonIconGroup;
 import consulo.ui.image.Image;
 

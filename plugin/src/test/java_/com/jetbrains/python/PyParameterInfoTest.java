@@ -1,5 +1,6 @@
 package com.jetbrains.python;
 
+import com.jetbrains.python.impl.PyParameterInfoHandler;
 import consulo.language.editor.parameterInfo.CreateParameterInfoContext;
 import consulo.language.editor.parameterInfo.ParameterInfoHandler;
 import consulo.ide.impl.idea.lang.parameterInfo.ParameterInfoUIContextEx;

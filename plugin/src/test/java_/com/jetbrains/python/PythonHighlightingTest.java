@@ -5,11 +5,11 @@ import consulo.colorScheme.EditorColorsScheme;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.colorScheme.EffectType;
 import consulo.colorScheme.TextAttributes;
-import com.jetbrains.python.documentation.PyDocumentationSettings;
-import com.jetbrains.python.documentation.docstrings.DocStringFormat;
+import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
+import com.jetbrains.python.impl.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import consulo.ui.style.StandardColors;
 
 import java.awt.*;

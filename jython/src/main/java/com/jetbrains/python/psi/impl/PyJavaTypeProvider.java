@@ -16,10 +16,11 @@
 package com.jetbrains.python.psi.impl;
 
 import com.intellij.java.language.psi.*;
+import com.jetbrains.python.impl.psi.impl.ParamHelper;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
-import com.jetbrains.python.psi.search.PySuperMethodsSearch;
+import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
