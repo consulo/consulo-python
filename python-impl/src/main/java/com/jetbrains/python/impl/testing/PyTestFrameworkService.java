@@ -15,37 +15,40 @@
  */
 package com.jetbrains.python.impl.testing;
 
-import java.util.Map;
-
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
-import consulo.ide.ServiceManager;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.component.persist.StoragePathMacros;
-import java.util.HashMap;
+import consulo.ide.ServiceManager;
 import consulo.util.xml.serializer.XmlSerializerUtil;
+import jakarta.inject.Singleton;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
+@Singleton
 @State(name = "PyTestFrameworkService", storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/other.xml"))
-public class PyTestFrameworkService implements PersistentStateComponent<PyTestFrameworkService>
-{
-	public static PyTestFrameworkService getInstance()
-	{
-		return ServiceManager.getService(PyTestFrameworkService.class);
-	}
+public class PyTestFrameworkService implements PersistentStateComponent<PyTestFrameworkService> {
+  public static PyTestFrameworkService getInstance() {
+    return ServiceManager.getService(PyTestFrameworkService.class);
+  }
 
-	public Map<String, Boolean> SDK_TO_PYTEST = new HashMap<>();
-	public Map<String, Boolean> SDK_TO_NOSETEST = new HashMap<>();
-	public Map<String, Boolean> SDK_TO_ATTEST = new HashMap<>();
+  public Map<String, Boolean> SDK_TO_PYTEST = new HashMap<>();
+  public Map<String, Boolean> SDK_TO_NOSETEST = new HashMap<>();
+  public Map<String, Boolean> SDK_TO_ATTEST = new HashMap<>();
 
-	@Override
-	public PyTestFrameworkService getState()
-	{
-		return this;
-	}
+  @Override
+  public PyTestFrameworkService getState() {
+    return this;
+  }
 
-	@Override
-	public void loadState(PyTestFrameworkService state)
-	{
-		XmlSerializerUtil.copyBean(state, this);
-	}
+  @Override
+  public void loadState(PyTestFrameworkService state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
 }

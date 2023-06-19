@@ -16,17 +16,19 @@
 
 package com.jetbrains.python.impl.codeInsight;
 
-import consulo.virtualFileSystem.fileType.FileType;
-import consulo.util.lang.function.Condition;
-import consulo.virtualFileSystem.VirtualFile;
 import com.jetbrains.python.PythonFileType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.wolfAnalyzer.WolfFileProblemFilter;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
 
 /**
  * @author yole
  */
-public class PyProblemFileHighlightFilter implements Condition<VirtualFile> {
+@ExtensionImpl
+public class PyProblemFileHighlightFilter implements WolfFileProblemFilter {
   @Override
-  public boolean value(VirtualFile virtualFile) {
+  public boolean isToBeHighlighted(VirtualFile virtualFile) {
     final FileType fileType = virtualFile.getFileType();
     return fileType == PythonFileType.INSTANCE;
   }

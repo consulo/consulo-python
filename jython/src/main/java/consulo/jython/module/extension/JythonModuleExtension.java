@@ -12,17 +12,14 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 25.10.13.
  */
-public class JythonModuleExtension extends ModuleExtensionWithSdkBase<JythonModuleExtension> implements PyModuleExtension<JythonModuleExtension>
-{
-	public JythonModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
-	{
-		super(id, module);
-	}
+public class JythonModuleExtension extends ModuleExtensionWithSdkBase<JythonModuleExtension> implements PyModuleExtension<JythonModuleExtension> {
+  public JythonModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module) {
+    super(id, module);
+  }
 
-	@Nonnull
-	@Override
-	public Class<? extends SdkType> getSdkTypeClass()
-	{
-		return PythonSdkType.class;
-	}
+  @Nonnull
+  @Override
+  public Class<? extends SdkType> getSdkTypeClass() {
+    return PythonSdkType.class;
+  }
 }

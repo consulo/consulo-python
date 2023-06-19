@@ -20,6 +20,7 @@
 package com.jetbrains.python.impl.psi.stubs;
 
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndex;
@@ -30,6 +31,7 @@ import consulo.project.content.scope.ProjectScopes;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+@ExtensionImpl
 public class PyFunctionNameIndex extends StringStubIndexExtension<PyFunction> {
   public static final StubIndexKey<String, PyFunction> KEY = StubIndexKey.createIndexKey("Py.function.shortName");
 

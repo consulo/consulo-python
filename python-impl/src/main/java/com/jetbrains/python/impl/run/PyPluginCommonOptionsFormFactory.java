@@ -16,9 +16,14 @@
 
 package com.jetbrains.python.impl.run;
 
+import consulo.annotation.component.ServiceImpl;
+import jakarta.inject.Singleton;
+
 /**
  * @author yole
  */
+@ServiceImpl
+@Singleton
 public class PyPluginCommonOptionsFormFactory extends PyCommonOptionsFormFactory {
   @Override
   public AbstractPyCommonOptionsForm createForm(PyCommonOptionsFormData data) {

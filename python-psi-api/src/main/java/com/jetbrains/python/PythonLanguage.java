@@ -16,7 +16,11 @@
 
 package com.jetbrains.python;
 
+import com.jetbrains.python.psi.LanguageLevel;
 import consulo.language.Language;
+import consulo.language.version.LanguageVersion;
+import consulo.python.language.PythonLanguageVersion;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -29,12 +33,31 @@ public class PythonLanguage extends Language {
     return INSTANCE;
   }
 
+  private final LanguageVersion[] myVersions;
+
+  private PythonLanguage() {
+    super("Python");
+    LanguageLevel[] levels = LanguageLevel.values();
+    myVersions = new LanguageVersion[levels.length];
+    for (int i = 0; i < levels.length; i++) {
+      LanguageLevel level = levels[i];
+      myVersions[i] = new PythonLanguageVersion(level, this);
+    }
+  }
+
   @Override
   public boolean isCaseSensitive() {
     return true;
   }
 
-  protected PythonLanguage() {
-    super("Python");
+  @Nonnull
+  @Override
+  protected LanguageVersion[] findVersions() {
+    return myVersions;
+  }
+
+  @Nonnull
+  public LanguageVersion getVersion(LanguageLevel languageLevel) {
+    return myVersions[languageLevel.ordinal()];
   }
 }

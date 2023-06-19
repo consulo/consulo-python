@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.debugger.settings;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.Configurable;
 import consulo.configurable.IdeaSimpleConfigurable;
 import consulo.execution.debug.setting.DebuggerSettingsCategory;
@@ -33,6 +34,7 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 
 
+@ExtensionImpl
 public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> implements Getter<PyDebuggerSettings> {
   private boolean myLibrariesFilterEnabled;
   private boolean mySteppingFiltersEnabled;

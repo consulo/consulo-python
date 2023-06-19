@@ -15,29 +15,30 @@
  */
 package com.jetbrains.python.impl.run;
 
-import java.io.File;
+import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.component.extension.Extensions;
+import consulo.execution.action.ConfigurationContext;
+import consulo.execution.action.ConfigurationFromContext;
+import consulo.execution.action.Location;
+import consulo.execution.action.RunConfigurationProducer;
+import consulo.language.file.light.LightVirtualFile;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.util.lang.ref.Ref;
+import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import consulo.execution.action.Location;
-import consulo.execution.action.ConfigurationContext;
-import consulo.execution.action.ConfigurationFromContext;
-import consulo.execution.action.RunConfigurationProducer;
-import consulo.component.extension.Extensions;
-import consulo.module.Module;
-import consulo.language.util.ModuleUtilCore;
-import consulo.util.lang.ref.Ref;
-import consulo.virtualFileSystem.VirtualFile;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.file.light.LightVirtualFile;
-import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import java.io.File;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonRunConfigurationProducer extends RunConfigurationProducer<PythonRunConfiguration>
 {
 

@@ -16,18 +16,20 @@
 
 package com.jetbrains.python.impl.testing.nosetest;
 
+import com.jetbrains.python.impl.sdk.PythonSdkType;
+import com.jetbrains.python.impl.testing.*;
+import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.content.bundle.Sdk;
+import consulo.execution.action.Location;
+import consulo.language.psi.PsiElement;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.jetbrains.python.impl.testing.*;
-import consulo.execution.action.Location;
-import consulo.module.Module;
-import consulo.module.ModuleManager;
-import consulo.content.bundle.Sdk;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.impl.sdk.PythonSdkType;
-
+@ExtensionImpl
 public class PythonNoseTestConfigurationProducer extends
 		PythonTestConfigurationProducer
 {

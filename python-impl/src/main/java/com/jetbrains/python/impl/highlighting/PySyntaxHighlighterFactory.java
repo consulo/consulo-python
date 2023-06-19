@@ -30,37 +30,22 @@ import consulo.virtualFileSystem.VirtualFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author yole
  */
 @ExtensionImpl
 public class PySyntaxHighlighterFactory extends SyntaxHighlighterFactory {
-  @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
-  private final FactoryMap<LanguageLevel, PyHighlighter> myMap = new FactoryMap<LanguageLevel, PyHighlighter>() {
-    @Override
-    protected PyHighlighter create(LanguageLevel key) {
-      return new PyHighlighter(key);
-    }
-  };
+  private final Map<LanguageLevel, PyHighlighter> myMap = new ConcurrentHashMap<>();
 
-  private final FactoryMap<LanguageLevel, PyHighlighter> myConsoleMap = new FactoryMap<LanguageLevel, PyHighlighter>() {
-    @Override
-    protected PyHighlighter create(LanguageLevel key) {
-      return new PyHighlighter(key) {
-        @Override
-        protected PythonHighlightingLexer createHighlightingLexer(LanguageLevel languageLevel) {
-          return new PyConsoleHighlightingLexer(languageLevel);
-        }
-      };
-    }
-  };
-
+  @Override
   @Nonnull
   public SyntaxHighlighter getSyntaxHighlighter(@Nullable final Project project, @Nullable final VirtualFile virtualFile) {
     final LanguageLevel level =
       project != null && virtualFile != null ? PyUtil.getLanguageLevelForVirtualFile(project, virtualFile) : LanguageLevel.getDefault();
-    return myMap.get(level);
+    return myMap.computeIfAbsent(level, PyHighlighter::new);
   }
 
   @Nonnull

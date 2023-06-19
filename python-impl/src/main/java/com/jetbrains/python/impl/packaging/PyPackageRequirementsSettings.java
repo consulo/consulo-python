@@ -16,20 +16,26 @@
 
 package com.jetbrains.python.impl.packaging;
 
-import javax.annotation.Nonnull;
-
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.module.Module;
-import consulo.ide.impl.idea.openapi.module.ModuleServiceManager;
 import consulo.util.xml.serializer.XmlSerializerUtil;
+import jakarta.inject.Singleton;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author vlan
  */
 @State(name = "PackageRequirementsSettings",
-       storages = {@Storage(file = "$MODULE_FILE$")})
+  storages = {@Storage(file = "$MODULE_FILE$")})
+@ServiceAPI(ComponentScope.MODULE)
+@ServiceImpl
+@Singleton
 public class PyPackageRequirementsSettings implements PersistentStateComponent<PyPackageRequirementsSettings> {
   public static final String DEFAULT_REQUIREMENTS_PATH = "requirements.txt";
 
@@ -58,6 +64,6 @@ public class PyPackageRequirementsSettings implements PersistentStateComponent<P
 
   @Nonnull
   public static PyPackageRequirementsSettings getInstance(@Nonnull Module module) {
-    return ModuleServiceManager.getService(module, PyPackageRequirementsSettings.class);
+    return module.getInstance(PyPackageRequirementsSettings.class);
   }
 }

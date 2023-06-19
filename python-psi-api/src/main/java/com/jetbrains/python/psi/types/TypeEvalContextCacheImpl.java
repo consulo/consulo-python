@@ -15,7 +15,10 @@
  */
 package com.jetbrains.python.psi.types;
 
+import consulo.annotation.component.ServiceImpl;
 import consulo.application.util.CachedValuesManager;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -27,33 +30,31 @@ import java.util.function.Function;
  *
  * @author Ilya.Kazakevich
  */
-final class TypeEvalContextCacheImpl implements TypeEvalContextCache
-{
-	@Nonnull
-	private static final Function<TypeEvalContext, TypeEvalContext> VALUE_PROVIDER = new MyValueProvider();
-	@Nonnull
-	private final TypeEvalContextBasedCache<TypeEvalContext> myCache;
+@ServiceImpl
+@Singleton
+final class TypeEvalContextCacheImpl implements TypeEvalContextCache {
+  @Nonnull
+  private static final Function<TypeEvalContext, TypeEvalContext> VALUE_PROVIDER = new MyValueProvider();
+  @Nonnull
+  private final TypeEvalContextBasedCache<TypeEvalContext> myCache;
 
-	TypeEvalContextCacheImpl(@Nonnull final CachedValuesManager manager)
-	{
-		myCache = new TypeEvalContextBasedCache<>(manager, VALUE_PROVIDER);
-	}
+  @Inject
+  TypeEvalContextCacheImpl(@Nonnull final CachedValuesManager manager) {
+    myCache = new TypeEvalContextBasedCache<>(manager, VALUE_PROVIDER);
+  }
 
 
-	@Nonnull
-	@Override
-	public TypeEvalContext getContext(@Nonnull final TypeEvalContext standard)
-	{
-		return myCache.getValue(standard);
-	}
+  @Nonnull
+  @Override
+  public TypeEvalContext getContext(@Nonnull final TypeEvalContext standard) {
+    return myCache.getValue(standard);
+  }
 
-	private static class MyValueProvider implements Function<TypeEvalContext, TypeEvalContext>
-	{
-		@Override
-		public TypeEvalContext apply(final TypeEvalContext param)
-		{
-			// key and value are both context here. If no context stored, then key is stored. Old one is returned otherwise to cache.
-			return param;
-		}
-	}
+  private static class MyValueProvider implements Function<TypeEvalContext, TypeEvalContext> {
+    @Override
+    public TypeEvalContext apply(final TypeEvalContext param) {
+      // key and value are both context here. If no context stored, then key is stored. Old one is returned otherwise to cache.
+      return param;
+    }
+  }
 }

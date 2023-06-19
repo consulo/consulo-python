@@ -17,29 +17,66 @@ package com.jetbrains.python.psi;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
+import consulo.language.version.LanguageVersion;
+import consulo.python.language.PythonLanguageVersion;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.dataholder.Key;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 /**
  * @author yole
  */
 public enum LanguageLevel {
-  PYTHON24(24, false, true, false, false),
-  PYTHON25(25, false, true, false, false),
-  PYTHON26(26, true, true, false, false),
-  PYTHON27(27, true, true, true, false),
-  PYTHON30(30, true, false, false, true),
-  PYTHON31(31, true, false, true, true),
-  PYTHON32(32, true, false, true, true),
-  PYTHON33(33, true, false, true, true),
-  PYTHON34(34, true, false, true, true),
-  PYTHON35(35, true, false, true, true),
-  PYTHON36(36, true, false, true, true);
 
-  public static List<LanguageLevel> ALL_LEVELS = List.of(values());
+  /**
+   * @apiNote This level is not supported since 2018.1.
+   */
+  PYTHON24(204),
+  /**
+   * @apiNote This level is not supported since 2018.1.
+   */
+  PYTHON25(205),
+  /**
+   * @apiNote This level is not supported since 2019.1.
+   */
+  PYTHON26(206),
+  PYTHON27(207),
+  /**
+   * @apiNote This level is not supported since 2018.1.
+   * Use it only to distinguish Python 2 and Python 3.
+   * Consider using {@link LanguageLevel#isPython2()}.
+   * Replace {@code level.isOlderThan(PYTHON30)} with {@code level.isPython2()}
+   * and {@code level.isAtLeast(PYTHON30)} with {@code !level.isPython2()}.
+   */
+  PYTHON30(300),
+  /**
+   * @apiNote This level is not supported since 2018.1.
+   */
+  PYTHON31(301),
+  /**
+   * @apiNote This level is not supported since 2018.1.
+   */
+  PYTHON32(302),
+  /**
+   * @apiNote This level is not supported since 2018.1.
+   */
+  PYTHON33(303),
+  /**
+   * @apiNote This level is not supported since 2019.1.
+   */
+  PYTHON34(304),
+  /**
+   * @apiNote This level is not supported since 2020.3.
+   */
+  PYTHON35(305),
+  PYTHON36(306),
+  PYTHON37(307),
+  PYTHON38(308),
+  PYTHON39(309),
+  PYTHON310(310),
+  PYTHON311(311),
+  PYTHON312(312);
 
   private static final LanguageLevel DEFAULT2 = PYTHON27;
   private static final LanguageLevel DEFAULT3 = PYTHON35;
@@ -53,17 +90,8 @@ public enum LanguageLevel {
 
   private final int myVersion;
 
-  private final boolean myHasWithStatement;
-  private final boolean myHasPrintStatement;
-  private final boolean mySupportsSetLiterals;
-  private final boolean myIsPy3K;
-
-  LanguageLevel(int version, boolean hasWithStatement, boolean hasPrintStatement, boolean supportsSetLiterals, boolean isPy3K) {
+  LanguageLevel(int version) {
     myVersion = version;
-    myHasWithStatement = hasWithStatement;
-    myHasPrintStatement = hasPrintStatement;
-    mySupportsSetLiterals = supportsSetLiterals;
-    myIsPy3K = isPy3K;
   }
 
   /**
@@ -74,21 +102,33 @@ public enum LanguageLevel {
   }
 
   public boolean hasWithStatement() {
-    return myHasWithStatement;
+    return isAtLeast(PYTHON26);
   }
 
   public boolean hasPrintStatement() {
-    return myHasPrintStatement;
+    return isPython2();
   }
 
   public boolean supportsSetLiterals() {
-    return mySupportsSetLiterals;
+    return this == PYTHON27 || isAtLeast(PYTHON31);
+  }
+
+  public boolean isPython2() {
+    return getMajorVersion() == 2;
   }
 
   public boolean isPy3K() {
-    return myIsPy3K;
+    return getMajorVersion() == 3;
   }
 
+  public int getMajorVersion() {
+    return myVersion / 100;
+  }
+
+  public int getMinorVersion() {
+    return myVersion % 100;
+  }
+  
   public boolean isOlderThan(@Nonnull LanguageLevel other) {
     return myVersion < other.myVersion;
   }
@@ -98,6 +138,8 @@ public enum LanguageLevel {
   }
 
   public static LanguageLevel fromPythonVersion(@Nonnull String pythonVersion) {
+    if (pythonVersion == null) return null;
+
     if (pythonVersion.startsWith("2")) {
       if (pythonVersion.startsWith("2.4")) {
         return PYTHON24;
@@ -117,7 +159,7 @@ public enum LanguageLevel {
       if (pythonVersion.startsWith("3.0")) {
         return PYTHON30;
       }
-      if (pythonVersion.startsWith("3.1")) {
+      if (pythonVersion.startsWith("3.1.") || pythonVersion.equals("3.1")) {
         return PYTHON31;
       }
       if (pythonVersion.startsWith("3.2")) {
@@ -135,6 +177,24 @@ public enum LanguageLevel {
       if (pythonVersion.startsWith("3.6")) {
         return PYTHON36;
       }
+      if (pythonVersion.startsWith("3.7")) {
+        return PYTHON37;
+      }
+      if (pythonVersion.startsWith("3.8")) {
+        return PYTHON38;
+      }
+      if (pythonVersion.startsWith("3.9")) {
+        return PYTHON39;
+      }
+      if (pythonVersion.startsWith("3.10")) {
+        return PYTHON310;
+      }
+      if (pythonVersion.startsWith("3.11")) {
+        return PYTHON311;
+      }
+      if (pythonVersion.startsWith("3.12")) {
+        return PYTHON312;
+      }
       return DEFAULT3;
     }
     return getDefault();
@@ -146,9 +206,18 @@ public enum LanguageLevel {
   public static LanguageLevel forElement(@Nonnull PsiElement element) {
     final PsiFile containingFile = element.getContainingFile();
     if (containingFile instanceof PyFile) {
+      LanguageVersion languageVersion = containingFile.getLanguageVersion();
+      if (languageVersion instanceof PythonLanguageVersion pythonLanguageVersion) {
+        return pythonLanguageVersion.getLanguageLevel();
+      }
       return ((PyFile)containingFile).getLanguageLevel();
     }
     return getDefault();
+  }
+
+  @Nonnull
+  public String toPythonVersion() {
+    return getMajorVersion() + "." + getMinorVersion();
   }
 
   @Nonnull
@@ -159,6 +228,6 @@ public enum LanguageLevel {
 
   @Override
   public String toString() {
-    return myVersion / 10 + "." + myVersion % 10;
+    return toPythonVersion();
   }
 }

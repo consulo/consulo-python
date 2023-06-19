@@ -16,11 +16,14 @@
 
 package com.jetbrains.python.impl.run;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
 import consulo.ide.ServiceManager;
 
 /**
  * @author yole
  */
+@ServiceAPI(ComponentScope.APPLICATION)
 public abstract class PyCommonOptionsFormFactory {
   public static PyCommonOptionsFormFactory getInstance() {
     return ServiceManager.getService(PyCommonOptionsFormFactory.class);

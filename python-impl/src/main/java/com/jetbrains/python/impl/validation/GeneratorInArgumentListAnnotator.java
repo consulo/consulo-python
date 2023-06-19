@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.validation;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.PyArgumentList;
@@ -25,6 +26,7 @@ import com.jetbrains.python.psi.PyGeneratorExpression;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class GeneratorInArgumentListAnnotator extends PyAnnotator {
   @Override
   public void visitPyArgumentList(PyArgumentList node) {

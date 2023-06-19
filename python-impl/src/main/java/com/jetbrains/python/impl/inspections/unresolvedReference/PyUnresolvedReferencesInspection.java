@@ -62,10 +62,7 @@ import consulo.content.bundle.Sdk;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.annotation.HighlightSeverity;
-import consulo.language.editor.inspection.LocalInspectionToolSession;
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemHighlightType;
-import consulo.language.editor.inspection.ProblemsHolder;
+import consulo.language.editor.inspection.*;
 import consulo.language.editor.inspection.scheme.InspectionProfile;
 import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
 import consulo.language.inject.InjectedLanguageManager;
@@ -108,6 +105,12 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
   @Nonnull
   public String getDisplayName() {
     return PyBundle.message("INSP.NAME.unresolved.refs");
+  }
+
+  @Nonnull
+  @Override
+  public InspectionToolState<?> createStateProvider() {
+    return new PyUnresolvedReferencesInspectionState();
   }
 
   @Nonnull

@@ -36,8 +36,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author yole
  */
-public class PythonSdkPathCache extends PythonPathCache implements Disposable
-{
+public class PythonSdkPathCache extends PythonPathCache implements Disposable {
   private static final Key<Map<Project, PythonSdkPathCache>> KEY = Key.create("PythonPathCache");
 
   public static PythonSdkPathCache getInstance(@Nonnull Project project, @Nonnull Sdk sdk) {

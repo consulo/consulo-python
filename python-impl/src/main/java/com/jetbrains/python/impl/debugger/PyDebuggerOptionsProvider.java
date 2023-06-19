@@ -15,102 +15,97 @@
  */
 package com.jetbrains.python.impl.debugger;
 
-import javax.annotation.Nonnull;
-
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
-import consulo.ide.ServiceManager;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.component.persist.StoragePathMacros;
+import consulo.ide.ServiceManager;
 import consulo.project.Project;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author traff
  */
 @State(
-		name = "PyDebuggerOptionsProvider",
-		storages = {
-				@Storage(file = StoragePathMacros.WORKSPACE_FILE)
-		})
-public class PyDebuggerOptionsProvider implements PersistentStateComponent<PyDebuggerOptionsProvider.State>
-{
-	private State myState = new State();
+  name = "PyDebuggerOptionsProvider",
+  storages = {
+    @Storage(file = StoragePathMacros.WORKSPACE_FILE)
+  })
+@ServiceAPI(ComponentScope.PROJECT)
+@ServiceImpl
+@Singleton
+public class PyDebuggerOptionsProvider implements PersistentStateComponent<PyDebuggerOptionsProvider.State> {
+  private State myState = new State();
 
-	@Nonnull
-	private final Project myProject;
+  @Nonnull
+  private final Project myProject;
 
-	public PyDebuggerOptionsProvider(@Nonnull Project project)
-	{
-		myProject = project;
-	}
+  @Inject
+  public PyDebuggerOptionsProvider(@Nonnull Project project) {
+    myProject = project;
+  }
 
-	public static PyDebuggerOptionsProvider getInstance(Project project)
-	{
-		return ServiceManager.getService(project, PyDebuggerOptionsProvider.class);
-	}
+  public static PyDebuggerOptionsProvider getInstance(Project project) {
+    return ServiceManager.getService(project, PyDebuggerOptionsProvider.class);
+  }
 
-	@Override
-	public State getState()
-	{
-		return myState;
-	}
+  @Override
+  public State getState() {
+    return myState;
+  }
 
-	@Override
-	public void loadState(State state)
-	{
-		myState.myAttachToSubprocess = state.myAttachToSubprocess;
-		myState.mySaveCallSignatures = state.mySaveCallSignatures;
-		myState.mySupportGeventDebugging = state.mySupportGeventDebugging;
-		myState.mySupportQtDebugging = state.mySupportQtDebugging;
-	}
+  @Override
+  public void loadState(State state) {
+    myState.myAttachToSubprocess = state.myAttachToSubprocess;
+    myState.mySaveCallSignatures = state.mySaveCallSignatures;
+    myState.mySupportGeventDebugging = state.mySupportGeventDebugging;
+    myState.mySupportQtDebugging = state.mySupportQtDebugging;
+  }
 
-	public static class State
-	{
-		public boolean myAttachToSubprocess = true;
-		public boolean mySaveCallSignatures = false;
-		public boolean mySupportGeventDebugging = false;
-		public boolean mySupportQtDebugging = true;
-	}
+  public static class State {
+    public boolean myAttachToSubprocess = true;
+    public boolean mySaveCallSignatures = false;
+    public boolean mySupportGeventDebugging = false;
+    public boolean mySupportQtDebugging = true;
+  }
 
 
-	public boolean isAttachToSubprocess()
-	{
-		return myState.myAttachToSubprocess;
-	}
+  public boolean isAttachToSubprocess() {
+    return myState.myAttachToSubprocess;
+  }
 
-	public void setAttachToSubprocess(boolean attachToSubprocess)
-	{
-		myState.myAttachToSubprocess = attachToSubprocess;
-	}
+  public void setAttachToSubprocess(boolean attachToSubprocess) {
+    myState.myAttachToSubprocess = attachToSubprocess;
+  }
 
-	public boolean isSaveCallSignatures()
-	{
-		return myState.mySaveCallSignatures;
-	}
+  public boolean isSaveCallSignatures() {
+    return myState.mySaveCallSignatures;
+  }
 
-	public void setSaveCallSignatures(boolean saveCallSignatures)
-	{
-		myState.mySaveCallSignatures = saveCallSignatures;
-	}
+  public void setSaveCallSignatures(boolean saveCallSignatures) {
+    myState.mySaveCallSignatures = saveCallSignatures;
+  }
 
-	public boolean isSupportGeventDebugging()
-	{
-		return myState.mySupportGeventDebugging;
-	}
+  public boolean isSupportGeventDebugging() {
+    return myState.mySupportGeventDebugging;
+  }
 
-	public void setSupportGeventDebugging(boolean supportGeventDebugging)
-	{
-		myState.mySupportGeventDebugging = supportGeventDebugging;
-	}
+  public void setSupportGeventDebugging(boolean supportGeventDebugging) {
+    myState.mySupportGeventDebugging = supportGeventDebugging;
+  }
 
-	public boolean isSupportQtDebugging()
-	{
-		return myState.mySupportQtDebugging;
-	}
+  public boolean isSupportQtDebugging() {
+    return myState.mySupportQtDebugging;
+  }
 
-	public void setSupportQtDebugging(boolean supportQtDebugging)
-	{
-		myState.mySupportQtDebugging = supportQtDebugging;
-	}
+  public void setSupportQtDebugging(boolean supportQtDebugging) {
+    myState.mySupportQtDebugging = supportQtDebugging;
+  }
 }
 

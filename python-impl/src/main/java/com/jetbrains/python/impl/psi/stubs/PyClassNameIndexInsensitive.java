@@ -17,6 +17,7 @@
 package com.jetbrains.python.impl.psi.stubs;
 
 import com.jetbrains.python.psi.PyClass;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndex;
 import consulo.language.psi.stub.StubIndexKey;
@@ -29,6 +30,7 @@ import java.util.Collection;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyClassNameIndexInsensitive extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String,PyClass> KEY = StubIndexKey.createIndexKey("Py.class.shortNameInsensitive");
 

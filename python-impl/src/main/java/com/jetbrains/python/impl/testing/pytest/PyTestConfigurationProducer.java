@@ -25,6 +25,7 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.content.bundle.Sdk;
 import consulo.execution.action.ConfigurationContext;
 import consulo.execution.action.Location;
@@ -44,6 +45,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 
+@ExtensionImpl
 public class PyTestConfigurationProducer extends PythonTestConfigurationProducer
 {
 

@@ -16,11 +16,14 @@
 package com.jetbrains.python.impl.testing;
 
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.packaging.PyPackage;
-import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.impl.packaging.PyPackageUtil;
 import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
+import com.jetbrains.python.packaging.PyPackage;
+import com.jetbrains.python.packaging.PyPackageManager;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.component.messagebus.MessageBus;
@@ -37,6 +40,8 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.event.BulkFileListener;
 import consulo.virtualFileSystem.event.VFileContentChangeEvent;
 import consulo.virtualFileSystem.event.VFileEvent;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -49,7 +54,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * User: catherine
  */
-public class VFSTestFrameworkListener {
+@ServiceAPI(value = ComponentScope.APPLICATION, lazy = false)
+@ServiceImpl
+@Singleton
+public class VFSTestFrameworkListener implements BulkFileListener {
   private static final Logger LOG = Logger.getInstance(VFSTestFrameworkListener.class);
 
   private final AtomicBoolean myIsUpdating = new AtomicBoolean(false);
@@ -57,11 +65,11 @@ public class VFSTestFrameworkListener {
   private final MergingUpdateQueue myQueue;
 
   public static VFSTestFrameworkListener getInstance() {
-    return ApplicationManager.getApplication().getComponent(VFSTestFrameworkListener.class);
+    return ApplicationManager.getApplication().getInstance(VFSTestFrameworkListener.class);
   }
 
-  public VFSTestFrameworkListener() {
-    final Application application = ApplicationManager.getApplication();
+  @Inject
+  public VFSTestFrameworkListener(Application application) {
     final MessageBus messageBus = application.getMessageBus();
     messageBus.connect().subscribe(BulkFileListener.class, new BulkFileListener.Adapter() {
       @Override

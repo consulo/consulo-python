@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.packaging;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
 import consulo.content.bundle.Sdk;
 import consulo.ide.ServiceManager;
 import consulo.project.Project;
@@ -25,6 +27,7 @@ import javax.annotation.Nonnull;
 /**
  * @author yole
  */
+@ServiceAPI(ComponentScope.APPLICATION)
 public abstract class PyPackageManagers {
 
   @Nonnull

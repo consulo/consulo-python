@@ -1365,7 +1365,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
     }
     else {
       final PyClassStub stub = getStub();
-      final QualifiedName name = stub != null ? stub.getMetaClass() : PyPsiUtils.asQualifiedName(getMetaClassExpression());
+      final QualifiedName name = stub != null ? stub.getMetaClass() : PyPsiUtils.toQualifiedName(getMetaClassExpression());
       final PsiFile file = getContainingFile();
       if (file instanceof PyFile) {
         final PyFile pyFile = (PyFile)file;

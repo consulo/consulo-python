@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.application.AllIcons;
 import consulo.application.ApplicationManager;
 import consulo.application.WriteAction;
@@ -52,6 +53,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 
+@ExtensionImpl
 public class PyExceptionBreakpointType
 		extends XBreakpointType<XBreakpoint<PyExceptionBreakpointProperties>, PyExceptionBreakpointProperties>
 {

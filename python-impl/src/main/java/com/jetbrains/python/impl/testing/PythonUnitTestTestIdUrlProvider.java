@@ -15,17 +15,18 @@
  */
 package com.jetbrains.python.impl.testing;
 
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.dumb.DumbAware;
+import consulo.execution.action.Location;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import consulo.execution.action.Location;
-import consulo.application.dumb.DumbAware;
-import consulo.project.Project;
-import consulo.util.lang.StringUtil;
-import consulo.language.psi.scope.GlobalSearchScope;
-
+@ExtensionImpl
 public class PythonUnitTestTestIdUrlProvider implements PythonTestLocator, DumbAware
 {
 	public static final String PROTOCOL_ID = "python_uttestid";

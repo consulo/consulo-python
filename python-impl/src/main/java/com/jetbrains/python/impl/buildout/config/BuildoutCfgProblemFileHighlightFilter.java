@@ -16,16 +16,18 @@
 
 package com.jetbrains.python.impl.buildout.config;
 
-import consulo.virtualFileSystem.fileType.FileType;
-import consulo.util.lang.function.Condition;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.editor.wolfAnalyzer.WolfFileProblemFilter;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.fileType.FileType;
 
 /**
  * @author traff
  */
-public class BuildoutCfgProblemFileHighlightFilter implements Condition<VirtualFile> {
+@ExtensionImpl
+public class BuildoutCfgProblemFileHighlightFilter implements WolfFileProblemFilter {
   @Override
-  public boolean value(VirtualFile virtualFile) {
+  public boolean isToBeHighlighted(VirtualFile virtualFile) {
     final FileType fileType = virtualFile.getFileType();
     return fileType == BuildoutCfgFileType.INSTANCE;
   }

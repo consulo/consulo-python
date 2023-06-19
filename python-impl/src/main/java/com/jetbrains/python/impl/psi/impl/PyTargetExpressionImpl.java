@@ -648,7 +648,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 			}
 			return null;
 		}
-		return PyPsiUtils.asQualifiedName(findAssignedValue());
+		return PyPsiUtils.toQualifiedName(findAssignedValue());
 	}
 
 	@Override
@@ -676,7 +676,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 		if(value instanceof PyCallExpression)
 		{
 			final PyExpression callee = ((PyCallExpression) value).getCallee();
-			return PyPsiUtils.asQualifiedName(callee);
+			return PyPsiUtils.toQualifiedName(callee);
 		}
 		return null;
 	}

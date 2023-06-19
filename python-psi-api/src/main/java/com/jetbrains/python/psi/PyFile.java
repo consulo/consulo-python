@@ -15,100 +15,111 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.List;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.version.LanguageVersion;
+import consulo.python.language.PythonLanguageVersion;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import java.util.List;
 
-public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
-{
-	List<PyStatement> getStatements();
+public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner {
+  List<PyStatement> getStatements();
 
-	List<PyClass> getTopLevelClasses();
+  List<PyClass> getTopLevelClasses();
 
-	@Nonnull
-	List<PyFunction> getTopLevelFunctions();
+  @Nonnull
+  List<PyFunction> getTopLevelFunctions();
 
-	List<PyTargetExpression> getTopLevelAttributes();
+  List<PyTargetExpression> getTopLevelAttributes();
 
-	@Nullable
-	PyFunction findTopLevelFunction(String name);
+  @Nullable
+  PyFunction findTopLevelFunction(String name);
 
-	@Nullable
-	PyClass findTopLevelClass(String name);
+  @Nullable
+  PyClass findTopLevelClass(String name);
 
-	@Nullable
-	PyTargetExpression findTopLevelAttribute(String name);
+  @Nullable
+  PyTargetExpression findTopLevelAttribute(String name);
 
-	LanguageLevel getLanguageLevel();
+  @RequiredReadAction
+  @Nonnull
+  default LanguageLevel getLanguageLevel() {
+    LanguageVersion languageVersion = getLanguageVersion();
+    if (languageVersion instanceof PythonLanguageVersion pythonLanguageVersion) {
+      return pythonLanguageVersion.getLanguageLevel();
+    }
 
-	/**
-	 * Return the list of all 'from ... import' statements in the top-level scope of the file.
-	 *
-	 * @return the list of 'from ... import' statements.
-	 */
-	@Nonnull
-	List<PyFromImportStatement> getFromImports();
+    return LanguageLevel.getDefault();
+  }
 
-	/**
-	 * Return an exported PSI element defined in the file with the given name.
-	 */
-	@Nullable
-	PsiElement findExportedName(String name);
+  /**
+   * Return the list of all 'from ... import' statements in the top-level scope of the file.
+   *
+   * @return the list of 'from ... import' statements.
+   */
+  @Nonnull
+  List<PyFromImportStatement> getFromImports();
 
-	/**
-	 * Iterate over exported PSI elements defined in the file.
-	 */
-	@Nonnull
-	Iterable<PyElement> iterateNames();
+  /**
+   * Return an exported PSI element defined in the file with the given name.
+   */
+  @Nullable
+  PsiElement findExportedName(String name);
 
-	/**
-	 * Return the resolved exported elements.
-	 */
-	@Nonnull
-	List<RatedResolveResult> multiResolveName(@Nonnull String name);
+  /**
+   * Iterate over exported PSI elements defined in the file.
+   */
+  @Nonnull
+  Iterable<PyElement> iterateNames();
 
-	/**
-	 * @deprecated Use {@link #multiResolveName(String)} instead.
-	 */
-	@Deprecated
-	@Nullable
-	PsiElement getElementNamed(String name);
+  /**
+   * Return the resolved exported elements.
+   */
+  @Nonnull
+  List<RatedResolveResult> multiResolveName(@Nonnull String name);
 
-	/**
-	 * Returns the list of import elements in all 'import xxx' statements in the top-level scope of the file.
-	 *
-	 * @return the list of import targets.
-	 */
-	@Nonnull
-	List<PyImportElement> getImportTargets();
+  /**
+   * @deprecated Use {@link #multiResolveName(String)} instead.
+   */
+  @Deprecated
+  @Nullable
+  PsiElement getElementNamed(String name);
 
-	/**
-	 * Returns the list of names in the __all__ declaration, or null if there is no such declaration in the module.
-	 *
-	 * @return the list of names or null.
-	 */
-	@Nullable
-	List<String> getDunderAll();
+  /**
+   * Returns the list of import elements in all 'import xxx' statements in the top-level scope of the file.
+   *
+   * @return the list of import targets.
+   */
+  @Nonnull
+  List<PyImportElement> getImportTargets();
 
-	/**
-	 * Return true if the file contains a 'from __future__ import ...' statement with given feature.
-	 */
-	boolean hasImportFromFuture(FutureFeature feature);
+  /**
+   * Returns the list of names in the __all__ declaration, or null if there is no such declaration in the module.
+   *
+   * @return the list of names or null.
+   */
+  @Nullable
+  List<String> getDunderAll();
 
-	/**
-	 * If the function raises a DeprecationWarning or a PendingDeprecationWarning, returns the explanation text provided for the warning.
-	 *
-	 * @return the deprecation message or null if the function is not deprecated.
-	 */
-	String getDeprecationMessage();
+  /**
+   * Return true if the file contains a 'from __future__ import ...' statement with given feature.
+   */
+  boolean hasImportFromFuture(FutureFeature feature);
 
-	/**
-	 * Returns the sequential list of import statements in the beginning of the file.
-	 */
-	List<PyImportStatementBase> getImportBlock();
+  /**
+   * If the function raises a DeprecationWarning or a PendingDeprecationWarning, returns the explanation text provided for the warning.
+   *
+   * @return the deprecation message or null if the function is not deprecated.
+   */
+  String getDeprecationMessage();
+
+  /**
+   * Returns the sequential list of import statements in the beginning of the file.
+   */
+  List<PyImportStatementBase> getImportBlock();
 }

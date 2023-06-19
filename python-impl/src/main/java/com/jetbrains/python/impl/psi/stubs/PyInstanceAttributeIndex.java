@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.psi.stubs;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.project.Project;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.stub.StringStubIndexExtension;
@@ -29,6 +30,7 @@ import java.util.Collection;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyInstanceAttributeIndex extends StringStubIndexExtension<PyTargetExpression> {
   public static final StubIndexKey<String, PyTargetExpression> KEY = StubIndexKey.createIndexKey("Py.instanceAttribute.name");
 

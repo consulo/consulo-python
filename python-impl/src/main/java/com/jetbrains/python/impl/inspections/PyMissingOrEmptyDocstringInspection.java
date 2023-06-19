@@ -20,7 +20,6 @@ import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
 import com.jetbrains.python.inspections.PyInspectionExtension;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.component.extension.Extensions;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
@@ -52,7 +51,7 @@ public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspecti
       protected void checkDocString(@Nonnull PyDocStringOwner node) {
         final PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
         if (docStringExpression == null) {
-          for (PyInspectionExtension extension : Extensions.getExtensions(PyInspectionExtension.EP_NAME)) {
+          for (PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList()) {
             if (extension.ignoreMissingDocstring(node)) {
               return;
             }

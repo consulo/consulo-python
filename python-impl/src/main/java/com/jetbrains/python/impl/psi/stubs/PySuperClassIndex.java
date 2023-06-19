@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.psi.stubs;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndexKey;
 import com.jetbrains.python.psi.PyClass;
@@ -24,6 +25,7 @@ import javax.annotation.Nonnull;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PySuperClassIndex extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String, PyClass> KEY = StubIndexKey.createIndexKey("Py.class.super");
 

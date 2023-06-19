@@ -1,5 +1,7 @@
 package com.jetbrains.rest.inspections;
 
+import com.jetbrains.python.rest.inspections.RestInspection;
+import com.jetbrains.python.rest.inspections.RestRoleInspection;
 import com.jetbrains.rest.fixtures.RestFixtureTestCase;
 
 /**

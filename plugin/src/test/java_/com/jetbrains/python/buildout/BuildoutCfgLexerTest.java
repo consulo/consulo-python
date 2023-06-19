@@ -17,7 +17,7 @@ public abstract class BuildoutCfgLexerTest extends TestCase {
            "develop = .\n" +
            "parts =\n" +
            "  xprompt\n" +
-           "  test\n",
+             "src/test\n",
            "[[, []",
            "[buildout, SECTION_NAME]",
            "[], ]]",

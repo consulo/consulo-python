@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.codeInsight.editorActions.moveUpDown;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationManager;
 import consulo.codeEditor.CaretModel;
 import consulo.codeEditor.Editor;
@@ -39,6 +40,7 @@ import javax.annotation.Nullable;
 /**
  * User : ktisha
  */
+@ExtensionImpl(id = "pyStatement", order = "before line")
 public class PyStatementMover extends LineMover {
   @Override
   public boolean checkAvailable(@Nonnull Editor editor, @Nonnull PsiFile file, @Nonnull MoveInfo info, boolean down) {

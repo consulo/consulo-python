@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.run;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
 import consulo.execution.RunnerAndConfigurationSettings;
 import consulo.execution.configuration.ConfigurationFactory;
 import consulo.ide.ServiceManager;
@@ -23,6 +25,7 @@ import consulo.module.Module;
 /**
  * @author yole
  */
+@ServiceAPI(ComponentScope.APPLICATION)
 public abstract class PyRunConfigurationFactory {
   public static PyRunConfigurationFactory getInstance() {
     return ServiceManager.getService(PyRunConfigurationFactory.class);

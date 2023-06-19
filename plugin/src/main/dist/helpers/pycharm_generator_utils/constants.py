@@ -330,7 +330,7 @@ return_type = Group(
 )
 
 # this is our ideal target, with balancing paren and a multiline rest of doc.
-paramSeqAndRest = paramSeq + Suppress(')') + Optional(return_type) + Suppress(Optional(Regex(".*(?s)")))
+paramSeqAndRest = paramSeq + Suppress(')') + Optional(return_type) + Suppress(Optional(Regex(r"(?s).*")))
 ############################################################################################
 
 

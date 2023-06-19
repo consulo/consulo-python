@@ -16,9 +16,8 @@
 
 package com.jetbrains.python.impl.run;
 
-import javax.annotation.Nonnull;
-
-import consulo.process.ExecutionException;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.FileDocumentManager;
 import consulo.execution.ExecutionResult;
 import consulo.execution.configuration.RunProfile;
 import consulo.execution.configuration.RunProfileState;
@@ -27,11 +26,14 @@ import consulo.execution.runner.DefaultProgramRunner;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.execution.runner.RunContentBuilder;
 import consulo.execution.ui.RunContentDescriptor;
-import consulo.document.FileDocumentManager;
+import consulo.process.ExecutionException;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonRunner extends DefaultProgramRunner {
 
   @Nonnull

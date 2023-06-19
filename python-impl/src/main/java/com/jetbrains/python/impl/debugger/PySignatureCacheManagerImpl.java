@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.jetbrains.python.debugger.PySignature;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ServiceImpl;
 import consulo.application.progress.ProgressManager;
 import consulo.content.ContentIterator;
 import consulo.language.psi.PsiFile;
@@ -38,6 +39,8 @@ import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.FileAttribute;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,6 +52,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author traff
  */
+@ServiceImpl
+@Singleton
 public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   protected static final Logger LOG = Logger.getInstance(PySignatureCacheManagerImpl.class);
 
@@ -69,6 +74,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
         }
       });
 
+  @Inject
   public PySignatureCacheManagerImpl(Project project) {
     myProject = project;
   }

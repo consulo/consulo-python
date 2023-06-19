@@ -17,6 +17,9 @@
 package com.jetbrains.python.impl.psi.resolve;
 
 import com.jetbrains.python.impl.sdk.PythonSdkType;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.content.bundle.Sdk;
 import consulo.disposer.Disposable;
 import consulo.module.Module;
@@ -24,25 +27,29 @@ import consulo.module.content.layer.event.ModuleRootAdapter;
 import consulo.module.content.layer.event.ModuleRootEvent;
 import consulo.module.content.layer.event.ModuleRootListener;
 import consulo.virtualFileSystem.VirtualFileManager;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * @author yole
  */
-public class PythonModulePathCache extends PythonPathCache implements Disposable
-{
+@ServiceAPI(ComponentScope.MODULE)
+@ServiceImpl
+@Singleton
+public class PythonModulePathCache extends PythonPathCache implements Disposable {
   public static PythonPathCache getInstance(Module module) {
-    return module.getInstance(PythonPathCache.class);
+    return module.getInstance(PythonModulePathCache.class);
   }
 
-  @SuppressWarnings({"UnusedDeclaration"})
-  public PythonModulePathCache(final Module module) {
+  @Inject
+  public PythonModulePathCache(final Module module, VirtualFileManager virtualFileManager) {
     module.getMessageBus().connect().subscribe(ModuleRootListener.class, new ModuleRootAdapter() {
       public void rootsChanged(ModuleRootEvent event) {
         updateCacheForSdk(module);
         clearCache();
       }
     });
-    VirtualFileManager.getInstance().addVirtualFileListener(new MyVirtualFileAdapter(), this);
+    virtualFileManager.addVirtualFileListener(new MyVirtualFileAdapter(), this);
     updateCacheForSdk(module);
   }
 
@@ -56,5 +63,5 @@ public class PythonModulePathCache extends PythonPathCache implements Disposable
 
   @Override
   public void dispose() {
- }
+  }
 }

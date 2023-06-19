@@ -18,6 +18,8 @@ package com.jetbrains.python.impl.debugger;
 
 import com.jetbrains.python.debugger.PySignature;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
 import consulo.ide.ServiceManager;
 import consulo.project.Project;
 
@@ -27,9 +29,8 @@ import javax.annotation.Nullable;
 /**
  * @author traff
  */
+@ServiceAPI(ComponentScope.PROJECT)
 public abstract class PySignatureCacheManager {
-
-
   public static PySignatureCacheManager getInstance(Project project) {
     return ServiceManager.getService(project, PySignatureCacheManager.class);
   }

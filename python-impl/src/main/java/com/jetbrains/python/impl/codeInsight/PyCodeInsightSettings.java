@@ -16,12 +16,16 @@
 
 package com.jetbrains.python.impl.codeInsight;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.component.persist.StoragePathMacros;
 import consulo.ide.ServiceManager;
 import consulo.util.xml.serializer.XmlSerializerUtil;
+import jakarta.inject.Singleton;
 
 /**
  * @author yole
@@ -33,6 +37,9 @@ import consulo.util.xml.serializer.XmlSerializerUtil;
       file = StoragePathMacros.APP_CONFIG + "/other.xml"
     )}
 )
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
+@Singleton
 public class PyCodeInsightSettings implements PersistentStateComponent<PyCodeInsightSettings> {
   public static PyCodeInsightSettings getInstance() {
     return ServiceManager.getService(PyCodeInsightSettings.class);

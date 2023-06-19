@@ -18,18 +18,22 @@ package com.jetbrains.python.impl.run;
 
 import com.jetbrains.python.run.PyRunConfigurationFactory;
 import com.jetbrains.python.run.PythonRunConfigurationParams;
+import consulo.annotation.component.ServiceImpl;
 import consulo.execution.RunManager;
 import consulo.execution.RunnerAndConfigurationSettings;
 import consulo.execution.configuration.ConfigurationFactory;
 import consulo.execution.configuration.ModuleBasedConfiguration;
 import consulo.module.Module;
 import consulo.project.Project;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ServiceImpl
+@Singleton
 public class PyRunConfigurationFactoryImpl extends PyRunConfigurationFactory {
   @Override
   public PythonRunConfigurationParams createPythonScriptRunConfiguration(Module module, String scriptName, boolean singleton) {

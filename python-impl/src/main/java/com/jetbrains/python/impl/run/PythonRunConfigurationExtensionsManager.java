@@ -16,22 +16,26 @@
 
 package com.jetbrains.python.impl.run;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.execution.configuration.RunConfigurationExtensionsManager;
 import consulo.ide.ServiceManager;
+import jakarta.inject.Singleton;
 
 /**
  * @author traff
  */
-public class PythonRunConfigurationExtensionsManager extends RunConfigurationExtensionsManager<AbstractPythonRunConfiguration, PythonRunConfigurationExtension>
-{
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
+@Singleton
+public class PythonRunConfigurationExtensionsManager extends RunConfigurationExtensionsManager<AbstractPythonRunConfiguration, PythonRunConfigurationExtension> {
 
-	public PythonRunConfigurationExtensionsManager()
-	{
-		super(PythonRunConfigurationExtension.class);
-	}
+  public PythonRunConfigurationExtensionsManager() {
+    super(PythonRunConfigurationExtension.class);
+  }
 
-	public static PythonRunConfigurationExtensionsManager getInstance()
-	{
-		return ServiceManager.getService(PythonRunConfigurationExtensionsManager.class);
-	}
+  public static PythonRunConfigurationExtensionsManager getInstance() {
+    return ServiceManager.getService(PythonRunConfigurationExtensionsManager.class);
+  }
 }

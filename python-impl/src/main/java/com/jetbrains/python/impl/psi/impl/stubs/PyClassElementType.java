@@ -15,43 +15,28 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NonNls;
-import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.stub.IStubElementType;
-import consulo.language.psi.stub.IndexSink;
-import consulo.language.psi.stub.StubElement;
-import consulo.language.psi.stub.StubInputStream;
-import consulo.language.psi.stub.StubOutputStream;
-import consulo.language.psi.util.QualifiedName;
-import consulo.index.io.StringRef;
 import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.impl.psi.PyFileElementType;
-import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.PyKeywordArgument;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyClassImpl;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.impl.psi.resolve.PyResolveUtil;
 import com.jetbrains.python.impl.psi.stubs.PyClassAttributesIndex;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndexInsensitive;
-import com.jetbrains.python.psi.stubs.PyClassStub;
 import com.jetbrains.python.impl.psi.stubs.PySuperClassIndex;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.stubs.PyClassStub;
+import consulo.index.io.StringRef;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.stub.*;
+import consulo.language.psi.util.QualifiedName;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author max
@@ -83,7 +68,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 	@Nonnull
 	public PyClassStub createStub(@Nonnull final PyClass psi, final StubElement parentStub)
 	{
-		return new PyClassStubImpl(psi.getName(), parentStub, getSuperClassQNames(psi), PyPsiUtils.asQualifiedName(psi.getMetaClassExpression()), psi.getOwnSlots(), PyPsiUtils.strValue(psi
+		return new PyClassStubImpl(psi.getName(), parentStub, getSuperClassQNames(psi), PyPsiUtils.toQualifiedName(psi.getMetaClassExpression()), psi.getOwnSlots(), PyPsiUtils.strValue(psi
 				.getDocStringExpression()), getStubElementType());
 	}
 
@@ -93,7 +78,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 		final Map<QualifiedName, QualifiedName> result = new LinkedHashMap<>();
 
 		Arrays.stream(pyClass.getSuperClassExpressions()).filter(expression -> !PyKeywordArgument.class.isInstance(expression)).map(PyClassImpl::unfoldClass).forEach(expression -> result.put
-				(PyPsiUtils.asQualifiedName(expression), resolveOriginalSuperClassQName(expression)));
+				(PyPsiUtils.toQualifiedName(expression), resolveOriginalSuperClassQName(expression)));
 
 		return result;
 	}
@@ -108,7 +93,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 
 			if(referenceName == null)
 			{
-				return PyPsiUtils.asQualifiedName(superClassExpression);
+				return PyPsiUtils.toQualifiedName(superClassExpression);
 			}
 
 			final Optional<QualifiedName> qualifiedName = PyResolveUtil.resolveLocally(reference).stream().filter(PyImportElement.class::isInstance).map(PyImportElement.class::cast).filter(element
@@ -120,7 +105,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 			}
 		}
 
-		return PyPsiUtils.asQualifiedName(superClassExpression);
+		return PyPsiUtils.toQualifiedName(superClassExpression);
 	}
 
 	public void serialize(@Nonnull final PyClassStub pyClassStub, @Nonnull final StubOutputStream dataStream) throws IOException

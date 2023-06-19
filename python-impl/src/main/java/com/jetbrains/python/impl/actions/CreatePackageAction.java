@@ -30,10 +30,15 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiFileFactory;
 import consulo.language.psi.PsiFileSystemItem;
 import consulo.logging.Logger;
+import consulo.module.Module;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.project.Project;
+import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.DumbAwareAction;
 import consulo.ui.ex.awt.Messages;
+import consulo.ui.image.Image;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole
@@ -104,8 +109,14 @@ public class CreatePackageAction extends DumbAwareAction {
     e.getPresentation().setEnabled(enabled);
   }
 
+  @Nullable
+  @Override
+  protected Image getTemplateIcon() {
+    return PlatformIconGroup.nodesPackage();
+  }
+
   private static boolean isEnabled(AnActionEvent e) {
-    Project project = e.getData(CommonDataKeys.PROJECT);
+    Project project = e.getData(Project.KEY);
     final IdeView ideView = e.getData(IdeView.KEY);
     if (project == null || ideView == null) {
       return false;
@@ -114,6 +125,7 @@ public class CreatePackageAction extends DumbAwareAction {
     if (directories.length == 0) {
       return false;
     }
-    return true;
+    Module module = e.getData(Module.KEY);
+    return module != null && module.getExtension(PyModuleExtension.class) != null;
   }
 }

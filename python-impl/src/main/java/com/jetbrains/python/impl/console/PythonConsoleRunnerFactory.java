@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.console;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
 import consulo.ide.ServiceManager;
 import consulo.module.Module;
 import consulo.project.Project;
@@ -25,13 +27,12 @@ import javax.annotation.Nullable;
 /**
  * @author traff
  */
-public abstract class PythonConsoleRunnerFactory
-{
-	@Nonnull
-	public static PythonConsoleRunnerFactory getInstance()
-	{
-		return ServiceManager.getService(PythonConsoleRunnerFactory.class);
-	}
+@ServiceAPI(ComponentScope.APPLICATION)
+public abstract class PythonConsoleRunnerFactory {
+  @Nonnull
+  public static PythonConsoleRunnerFactory getInstance() {
+    return ServiceManager.getService(PythonConsoleRunnerFactory.class);
+  }
 
-	public abstract PydevConsoleRunner createConsoleRunner(@Nonnull final Project project, @Nullable Module contextModule);
+  public abstract PydevConsoleRunner createConsoleRunner(@Nonnull final Project project, @Nullable Module contextModule);
 }

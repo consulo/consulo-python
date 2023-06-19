@@ -15,35 +15,24 @@
  */
 package com.jetbrains.python.impl.validation;
 
-import java.io.CharArrayWriter;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.impl.PythonHelpersLocator;
+import com.jetbrains.python.psi.*;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.logging.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
-import consulo.logging.Logger;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiWhiteSpace;
-import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonHelpersLocator;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyComprehensionForComponent;
-import com.jetbrains.python.psi.PyExceptPart;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyListCompExpression;
-import com.jetbrains.python.psi.PyRaiseStatement;
-import com.jetbrains.python.psi.PyTupleExpression;
+
+import java.io.CharArrayWriter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * User: catherine
@@ -53,7 +42,6 @@ public class UnsupportedFeaturesUtil
 	public static Map<LanguageLevel, Set<String>> BUILTINS = new HashMap<>();
 	public static Map<LanguageLevel, Set<String>> MODULES = new HashMap<>();
 	public static Map<String, Map<LanguageLevel, Set<String>>> CLASS_METHODS = new HashMap<>();
-	public static final List<String> ALL_LANGUAGE_LEVELS = new ArrayList<>();
 
 	static
 	{
@@ -66,10 +54,6 @@ public class UnsupportedFeaturesUtil
 		{
 			Logger log = Logger.getInstance(UnsupportedFeaturesUtil.class.getName());
 			log.error("Cannot find \"versions.xml\". " + e.getMessage());
-		}
-		for(LanguageLevel level : LanguageLevel.ALL_LEVELS)
-		{
-			ALL_LANGUAGE_LEVELS.add(level.toString());
 		}
 	}
 

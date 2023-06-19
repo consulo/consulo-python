@@ -15,35 +15,27 @@
  */
 package com.jetbrains.python.impl.testing.attest;
 
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
+import com.jetbrains.python.impl.testing.*;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.types.PyClassLikeType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.content.bundle.Sdk;
+import consulo.execution.action.Location;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.collect.Lists;
-import consulo.execution.action.Location;
-import consulo.module.Module;
-import consulo.language.util.ModuleUtilCore;
-import consulo.content.bundle.Sdk;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyDecorator;
-import com.jetbrains.python.psi.PyDecoratorList;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.psi.types.PyClassLikeType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import com.jetbrains.python.impl.sdk.PythonSdkType;
-import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
-import com.jetbrains.python.impl.testing.PythonTestConfigurationProducer;
-import com.jetbrains.python.impl.testing.PythonTestConfigurationType;
-import com.jetbrains.python.impl.testing.PythonTestConfigurationsModel;
-import com.jetbrains.python.impl.testing.TestRunnerService;
+import java.util.List;
 
 /**
  * User: catherine
  */
+@ExtensionImpl
 public class PythonAtTestConfigurationProducer extends PythonTestConfigurationProducer
 {
 	public PythonAtTestConfigurationProducer()

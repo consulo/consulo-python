@@ -18,7 +18,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="c7f7c" clcom.jetbrains.python.impl.debugger.array.JBTableWithRowHeadersaders" binding="myTable" custom-create="true">
+          <component id="c7f7c" class="com.jetbrains.python.impl.debugger.array.JBTableWithRowHeaders" binding="myTable" custom-create="true">
             <constraints/>
             <properties>
               <autoResizeMode value="0"/>

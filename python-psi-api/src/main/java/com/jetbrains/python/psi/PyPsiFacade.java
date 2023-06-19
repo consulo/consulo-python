@@ -15,56 +15,57 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import consulo.ide.ServiceManager;
-import consulo.project.Project;
-import consulo.virtualFileSystem.VirtualFile;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.ide.ServiceManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.QualifiedName;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author yole
  */
-public abstract class PyPsiFacade
-{
-	public static PyPsiFacade getInstance(Project project)
-	{
-		return ServiceManager.getService(project, PyPsiFacade.class);
-	}
+@ServiceAPI(ComponentScope.PROJECT)
+public abstract class PyPsiFacade {
+  public static PyPsiFacade getInstance(Project project) {
+    return ServiceManager.getService(project, PyPsiFacade.class);
+  }
 
-	public abstract QualifiedNameResolver qualifiedNameResolver(String qNameString);
+  public abstract QualifiedNameResolver qualifiedNameResolver(String qNameString);
 
-	public abstract QualifiedNameResolver qualifiedNameResolver(QualifiedName qualifiedName);
+  public abstract QualifiedNameResolver qualifiedNameResolver(QualifiedName qualifiedName);
 
-	/**
-	 * @deprecated use {@link #createClassByQName(String, PsiElement)} or skeleton may be found
-	 */
-	@Deprecated
-	@Nullable
-	public abstract PyClass findClass(String qName);
+  /**
+   * @deprecated use {@link #createClassByQName(String, PsiElement)} or skeleton may be found
+   */
+  @Deprecated
+  @Nullable
+  public abstract PyClass findClass(String qName);
 
-	@Nonnull
-	public abstract PyClassType createClassType(@Nonnull PyClass pyClass, boolean isDefinition);
+  @Nonnull
+  public abstract PyClassType createClassType(@Nonnull PyClass pyClass, boolean isDefinition);
 
-	@Nullable
-	public abstract PyType createUnionType(@Nonnull Collection<PyType> members);
+  @Nullable
+  public abstract PyType createUnionType(@Nonnull Collection<PyType> members);
 
-	@Nullable
-	public abstract PyType createTupleType(@Nonnull List<PyType> members, @Nonnull PsiElement anchor);
+  @Nullable
+  public abstract PyType createTupleType(@Nonnull List<PyType> members, @Nonnull PsiElement anchor);
 
-	@Nullable
-	public abstract PyType parseTypeAnnotation(@Nonnull String annotation, @Nonnull PsiElement anchor);
+  @Nullable
+  public abstract PyType parseTypeAnnotation(@Nonnull String annotation, @Nonnull PsiElement anchor);
 
-	@Nullable
-	public abstract PyClass createClassByQName(@Nonnull String qName, @Nonnull PsiElement anchor);
+  @Nullable
+  public abstract PyClass createClassByQName(@Nonnull String qName, @Nonnull PsiElement anchor);
 
-	@Nullable
-	public abstract String findShortestImportableName(@Nonnull VirtualFile targetFile, @Nonnull PsiElement anchor);
+  @Nullable
+  public abstract String findShortestImportableName(@Nonnull VirtualFile targetFile, @Nonnull PsiElement anchor);
 }

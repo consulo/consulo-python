@@ -17,10 +17,12 @@
 package com.jetbrains.python.impl.spellchecker;
 
 import com.intellij.spellchecker.BundledDictionaryProvider;
+import consulo.annotation.component.ExtensionImpl;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonBundledDictionaryProvider implements BundledDictionaryProvider {
   @Override
   public String[] getBundledDictionaries() {

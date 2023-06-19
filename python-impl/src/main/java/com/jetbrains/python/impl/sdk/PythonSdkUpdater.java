@@ -232,7 +232,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
    * <p>
    * May be invoked from any thread. May freeze the current thread while evaluating sys.path.
    */
-  private static boolean updateLocalSdkPaths(@Nonnull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project) {
+  public static boolean updateLocalSdkPaths(@Nonnull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project) {
     if (!PythonSdkType.isRemote(sdk)) {
       final List<VirtualFile> localSdkPaths;
       final boolean forceCommit = ensureBinarySkeletonsDirectoryExists(sdk);
@@ -423,16 +423,14 @@ public class PythonSdkUpdater implements PostStartupActivity {
     final SdkModificator modificatorToGetRoots = sdkModificator != null ? sdkModificator : sdk.getSdkModificator();
     final List<VirtualFile> currentSdkPaths = Arrays.asList(modificatorToGetRoots.getRoots(BinariesOrderRootType.getInstance()));
     if (forceCommit || !Sets.newHashSet(sdkPaths).equals(Sets.newHashSet(currentSdkPaths))) {
-      ApplicationManager.getApplication().invokeAndWait(() -> {
-        final Sdk sdkInsideInvoke = PythonSdkType.findSdkByKey(key);
-        final SdkModificator modificatorToCommit =
-          sdkModificator != null ? sdkModificator : sdkInsideInvoke != null ? sdkInsideInvoke.getSdkModificator() : modificatorToGetRoots;
-        modificatorToCommit.removeAllRoots();
-        for (VirtualFile sdkPath : sdkPaths) {
-          modificatorToCommit.addRoot(PythonSdkType.getSdkRootVirtualFile(sdkPath), BinariesOrderRootType.getInstance());
-        }
-        modificatorToCommit.commitChanges();
-      });
+      final Sdk sdkInsideInvoke = PythonSdkType.findSdkByKey(key);
+      final SdkModificator modificatorToCommit =
+        sdkModificator != null ? sdkModificator : sdkInsideInvoke != null ? sdkInsideInvoke.getSdkModificator() : modificatorToGetRoots;
+      modificatorToCommit.removeAllRoots();
+      for (VirtualFile sdkPath : sdkPaths) {
+        modificatorToCommit.addRoot(PythonSdkType.getSdkRootVirtualFile(sdkPath), BinariesOrderRootType.getInstance());
+      }
+      modificatorToCommit.commitChanges();
     }
   }
 

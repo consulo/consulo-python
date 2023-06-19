@@ -16,19 +16,27 @@
 
 package com.jetbrains.python.impl;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.module.Module;
 import consulo.util.xml.serializer.XmlSerializerUtil;
+import jakarta.inject.Singleton;
+
 import javax.annotation.Nonnull;
 
 /**
  * User: catherine
  */
 @State(name = "ReSTService",
-       storages = {@Storage(file = "$MODULE_FILE$")}
+  storages = {@Storage(file = "$MODULE_FILE$")}
 )
+@ServiceAPI(ComponentScope.MODULE)
+@ServiceImpl
+@Singleton
 public class ReSTService implements PersistentStateComponent<ReSTService> {
   public String DOC_DIR = "";
   public boolean TXT_IS_RST = false;

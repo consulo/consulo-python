@@ -17,39 +17,33 @@ import javax.annotation.Nullable;
  * @author VISTALL
  * @since 25.10.13.
  */
-public class JythonMutableModuleExtension extends JythonModuleExtension implements MutableModuleExtensionWithSdk<JythonModuleExtension>
-{
-	public JythonMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
-	{
-		super(id, module);
-	}
+public class JythonMutableModuleExtension extends JythonModuleExtension implements MutableModuleExtensionWithSdk<JythonModuleExtension> {
+  public JythonMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module) {
+    super(id, module);
+  }
 
-	@RequiredUIAccess
-	@Nullable
-	@Override
-	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
-	{
-		VerticalLayout layout = VerticalLayout.create();
-		layout.add(ModuleExtensionBundleBoxBuilder.createAndDefine(this, disposable, runnable).build());
-		return layout;
-	}
+  @RequiredUIAccess
+  @Nullable
+  @Override
+  public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable) {
+    VerticalLayout layout = VerticalLayout.create();
+    layout.add(ModuleExtensionBundleBoxBuilder.createAndDefine(this, disposable, runnable).build());
+    return layout;
+  }
 
-	@Override
-	public void setEnabled(boolean b)
-	{
-		myIsEnabled = b;
-	}
+  @Override
+  public void setEnabled(boolean b) {
+    myIsEnabled = b;
+  }
 
-	@Override
-	public boolean isModified(@Nonnull JythonModuleExtension extension)
-	{
-		return isModifiedImpl(extension);
-	}
+  @Override
+  public boolean isModified(@Nonnull JythonModuleExtension extension) {
+    return isModifiedImpl(extension);
+  }
 
-	@Nonnull
-	@Override
-	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
-	{
-		return (MutableModuleInheritableNamedPointer<Sdk>) super.getInheritableSdk();
-	}
+  @Nonnull
+  @Override
+  public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk() {
+    return (MutableModuleInheritableNamedPointer<Sdk>)super.getInheritableSdk();
+  }
 }

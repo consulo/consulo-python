@@ -16,11 +16,10 @@
 package com.jetbrains.python.impl.psi.search;
 
 import com.google.common.collect.ImmutableSet;
-import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.psi.stubs.PySuperClassIndex;
+import com.jetbrains.python.psi.PyClass;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AccessToken;
-import consulo.application.ApplicationManager;
+import consulo.application.ReadAction;
 import consulo.application.util.function.Processor;
 import consulo.language.psi.stub.StubIndex;
 import consulo.project.Project;
@@ -45,43 +44,41 @@ public class DefaultPyClassInheritorsSearchExecutor implements PyClassInheritors
   public boolean execute(@Nonnull final PyClassInheritorsSearch.SearchParameters queryParameters,
                          @Nonnull final Processor<? super PyClass> consumer) {
     Set<PyClass> processed = new HashSet<>();
-    return processDirectInheritors(queryParameters.getSuperClass(), consumer, queryParameters.isCheckDeepInheritance(), processed);
+
+    return ReadAction.compute(() -> processDirectInheritors(queryParameters.getSuperClass(),
+                                                            consumer,
+                                                            queryParameters.isCheckDeepInheritance(),
+                                                            processed));
   }
 
   private static boolean processDirectInheritors(final PyClass superClass,
                                                  final Processor<? super PyClass> consumer,
                                                  final boolean checkDeep,
                                                  final Set<PyClass> processed) {
-    AccessToken accessToken = ApplicationManager.getApplication().acquireReadActionLock();
-    try {
-      final String superClassName = superClass.getName();
-      if (superClassName == null || IGNORED_BASES.contains(superClassName)) {
-        return true;  // we don't want to look for inheritors of overly general classes
-      }
-      if (processed.contains(superClass)) {
-        return true;
-      }
-      processed.add(superClass);
-      Project project = superClass.getProject();
-      final Collection<PyClass> candidates =
-        StubIndex.getElements(PySuperClassIndex.KEY, superClassName, project, ProjectScopes.getAllScope(project), PyClass.class);
-      for (PyClass candidate : candidates) {
-        final PyClass[] classes = candidate.getSuperClasses(null);
-        for (PyClass superClassCandidate : classes) {
-          if (superClassCandidate.isEquivalentTo(superClass)) {
-            if (!consumer.process(candidate)) {
-              return false;
-            }
-            if (checkDeep && !processDirectInheritors(candidate, consumer, checkDeep, processed)) {
-              return false;
-            }
-            break;
+    final String superClassName = superClass.getName();
+    if (superClassName == null || IGNORED_BASES.contains(superClassName)) {
+      return true;  // we don't want to look for inheritors of overly general classes
+    }
+    if (processed.contains(superClass)) {
+      return true;
+    }
+    processed.add(superClass);
+    Project project = superClass.getProject();
+    final Collection<PyClass> candidates =
+      StubIndex.getElements(PySuperClassIndex.KEY, superClassName, project, ProjectScopes.getAllScope(project), PyClass.class);
+    for (PyClass candidate : candidates) {
+      final PyClass[] classes = candidate.getSuperClasses(null);
+      for (PyClass superClassCandidate : classes) {
+        if (superClassCandidate.isEquivalentTo(superClass)) {
+          if (!consumer.process(candidate)) {
+            return false;
           }
+          if (checkDeep && !processDirectInheritors(candidate, consumer, checkDeep, processed)) {
+            return false;
+          }
+          break;
         }
       }
-    }
-    finally {
-      accessToken.finish();
     }
     return true;
   }

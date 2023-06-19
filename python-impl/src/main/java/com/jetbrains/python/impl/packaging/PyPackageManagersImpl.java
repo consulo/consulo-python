@@ -20,10 +20,12 @@ import com.jetbrains.python.impl.packaging.ui.PyPackageManagementService;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.packaging.PyPackageManagers;
+import consulo.annotation.component.ServiceImpl;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -32,6 +34,8 @@ import java.util.Map;
 /**
  * @author yole
  */
+@ServiceImpl
+@Singleton
 public class PyPackageManagersImpl extends PyPackageManagers {
   private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<>();
 

@@ -20,6 +20,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
@@ -28,6 +31,7 @@ import consulo.ide.ServiceManager;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,6 +50,9 @@ import java.util.Map;
       file = StoragePathMacros.APP_CONFIG + "/other.xml")
   }
 )
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
+@Singleton
 public class PythonDocumentationMap implements PersistentStateComponent<PythonDocumentationMap.State> {
   public static PythonDocumentationMap getInstance() {
     return ServiceManager.getService(PythonDocumentationMap.class);

@@ -15,57 +15,57 @@
  */
 package com.jetbrains.python.impl;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
-import consulo.ide.ServiceManager;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.component.persist.StoragePathMacros;
+import consulo.ide.ServiceManager;
 import consulo.util.xml.serializer.XmlSerializerUtil;
+import jakarta.inject.Singleton;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @State(
-		name = "PythonFoldingSettings",
-		storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/editor.codeinsight.xml"))
-public class PythonFoldingSettings implements PersistentStateComponent<PythonFoldingSettings>
-{
-	public boolean COLLAPSE_LONG_STRINGS;
-	public boolean COLLAPSE_LONG_COLLECTIONS;
-	public boolean COLLAPSE_SEQUENTIAL_COMMENTS;
+  name = "PythonFoldingSettings",
+  storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/editor.codeinsight.xml"))
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
+@Singleton
+public class PythonFoldingSettings implements PersistentStateComponent<PythonFoldingSettings> {
+  public boolean COLLAPSE_LONG_STRINGS;
+  public boolean COLLAPSE_LONG_COLLECTIONS;
+  public boolean COLLAPSE_SEQUENTIAL_COMMENTS;
 
-	@Nullable
-	@Override
-	public PythonFoldingSettings getState()
-	{
-		return this;
-	}
+  @Nullable
+  @Override
+  public PythonFoldingSettings getState() {
+    return this;
+  }
 
-	@Nonnull
-	public static PythonFoldingSettings getInstance()
-	{
-		return ServiceManager.getService(PythonFoldingSettings.class);
-	}
+  @Nonnull
+  public static PythonFoldingSettings getInstance() {
+    return ServiceManager.getService(PythonFoldingSettings.class);
+  }
 
-	@Override
-	public void loadState(PythonFoldingSettings state)
-	{
-		XmlSerializerUtil.copyBean(state, this);
-	}
+  @Override
+  public void loadState(PythonFoldingSettings state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
 
-	public boolean isCollapseLongStrings()
-	{
-		return COLLAPSE_LONG_STRINGS;
-	}
+  public boolean isCollapseLongStrings() {
+    return COLLAPSE_LONG_STRINGS;
+  }
 
-	public boolean isCollapseLongCollections()
-	{
-		return COLLAPSE_LONG_COLLECTIONS;
-	}
+  public boolean isCollapseLongCollections() {
+    return COLLAPSE_LONG_COLLECTIONS;
+  }
 
-	public boolean isCollapseSequentialComments()
-	{
-		return COLLAPSE_SEQUENTIAL_COMMENTS;
-	}
+  public boolean isCollapseSequentialComments() {
+    return COLLAPSE_SEQUENTIAL_COMMENTS;
+  }
 
 }

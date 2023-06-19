@@ -15,11 +15,15 @@
  */
 package com.jetbrains.python.impl.packaging;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.*;
 import consulo.ide.ServiceManager;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.collection.Lists;
 import consulo.util.xml.serializer.XmlSerializerUtil;
+import jakarta.inject.Singleton;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +32,9 @@ import java.util.Map;
  * User: catherine
  */
 @State(name = "PyPackageService", storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/py_packages.xml", roamingType = RoamingType.DISABLED))
+@ServiceAPI(ComponentScope.APPLICATION)
+@ServiceImpl
+@Singleton
 public class PyPackageService implements PersistentStateComponent<PyPackageService> {
   public Map<String, Boolean> sdkToUsersite = ContainerUtil.newConcurrentMap();
   public List<String> additionalRepositories = Lists.newLockFreeCopyOnWriteList();

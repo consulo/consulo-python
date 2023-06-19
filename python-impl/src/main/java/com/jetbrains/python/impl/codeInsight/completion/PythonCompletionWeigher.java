@@ -16,15 +16,16 @@
 
 package com.jetbrains.python.impl.codeInsight.completion;
 
-import javax.annotation.Nonnull;
-
+import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.completion.CompletionLocation;
 import consulo.language.editor.completion.CompletionWeigher;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementPresentation;
 import consulo.language.psi.PsiUtilCore;
-import com.jetbrains.python.PythonLanguage;
 import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nonnull;
 
 /**
  * Weighs down items starting with two underscores.
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NonNls;
  * User: dcheryasov
  * Date: 11/11/10 4:24 PM
  */
+@ExtensionImpl
 public class PythonCompletionWeigher extends CompletionWeigher {
   @NonNls private static final String DOUBLE_UNDER = "__";
 

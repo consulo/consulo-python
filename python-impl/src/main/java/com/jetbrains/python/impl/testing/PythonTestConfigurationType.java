@@ -16,27 +16,29 @@
 
 package com.jetbrains.python.impl.testing;
 
-import javax.annotation.Nonnull;
-
-import consulo.execution.configuration.ConfigurationFactory;
-import consulo.execution.configuration.ConfigurationType;
-import consulo.execution.configuration.ConfigurationTypeUtil;
-import consulo.execution.configuration.RunConfiguration;
-import consulo.project.Project;
 import com.jetbrains.python.impl.PyBundle;
+import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.impl.testing.attest.PythonAtTestRunConfiguration;
 import com.jetbrains.python.impl.testing.doctest.PythonDocTestRunConfiguration;
 import com.jetbrains.python.impl.testing.nosetest.PythonNoseTestRunConfiguration;
 import com.jetbrains.python.impl.testing.pytest.PyTestRunConfiguration;
 import com.jetbrains.python.impl.testing.unittest.PythonUnitTestRunConfiguration;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.ConfigurationType;
+import consulo.execution.configuration.ConfigurationTypeUtil;
+import consulo.execution.configuration.RunConfiguration;
 import consulo.module.extension.ModuleExtensionHelper;
+import consulo.project.Project;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.image.Image;
-import com.jetbrains.python.impl.PythonIcons;
+
+import javax.annotation.Nonnull;
 
 /**
  * User : catherine
  */
+@ExtensionImpl
 public class PythonTestConfigurationType implements ConfigurationType
 {
 	public static final String ID = "PythonTestConfigurationType";

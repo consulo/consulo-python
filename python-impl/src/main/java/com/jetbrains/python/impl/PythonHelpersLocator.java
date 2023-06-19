@@ -17,15 +17,14 @@
 package com.jetbrains.python.impl;
 
 import consulo.container.boot.ContainerPathManager;
+import consulo.container.plugin.PluginManager;
 import consulo.logging.Logger;
-import consulo.util.io.ClassPathUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 
 public class PythonHelpersLocator {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.impl.PythonHelpersLocator");
+  private static final Logger LOG = Logger.getInstance(PythonHelpersLocator.class);
 
   private PythonHelpersLocator() {
   }
@@ -34,16 +33,8 @@ public class PythonHelpersLocator {
    * @return the base directory under which various scripts, etc are stored.
    */
   public static File getHelpersRoot() {
-    @NonNls String jarPath = ClassPathUtil.getJarPathForClass(PythonHelpersLocator.class);
-    if (jarPath.endsWith(".jar")) {
-      final File jarFile = new File(jarPath);
-
-      LOG.assertTrue(jarFile.exists(), "jar file cannot be null");
-      File pluginBaseDir = jarFile.getParentFile().getParentFile();
-      return new File(pluginBaseDir, "helpers");
-    }
-
-    return new File(jarPath + "-helpers");
+    File pluginPath = PluginManager.getPluginPath(PythonHelpersLocator.class);
+    return new File(pluginPath, "helpers");
   }
 
   /**
@@ -65,6 +56,7 @@ public class PythonHelpersLocator {
   }
 
   @TestOnly
+  @Deprecated
   public static String getPythonCommunityPath() {
     File pathFromUltimate = new File(ContainerPathManager.get().getHomePath(), "community/python");
     if (pathFromUltimate.exists()) {

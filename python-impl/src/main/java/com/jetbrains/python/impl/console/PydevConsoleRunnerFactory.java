@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.console;
 import com.google.common.collect.Maps;
 import com.jetbrains.python.impl.run.PythonCommandLineState;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
+import consulo.annotation.component.ServiceImpl;
 import consulo.content.bundle.Sdk;
 import consulo.ide.impl.idea.util.PathMapper;
 import consulo.language.util.ModuleUtilCore;
@@ -29,6 +30,7 @@ import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +42,8 @@ import java.util.function.Consumer;
 /**
  * @author traff
  */
+@ServiceImpl
+@Singleton
 public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory {
   @Override
   @Nonnull

@@ -16,18 +16,20 @@
 
 package com.jetbrains.python.impl.findUsages;
 
-import javax.annotation.Nonnull;
-
+import com.jetbrains.python.psi.PyElement;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.ElementDescriptionLocation;
 import consulo.language.psi.ElementDescriptionProvider;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.usage.UsageViewLongNameLocation;
-import com.jetbrains.python.psi.PyElement;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PyElementDescriptionProvider implements ElementDescriptionProvider
 {
   public String getElementDescription(@Nonnull PsiElement element, @Nonnull ElementDescriptionLocation location) {

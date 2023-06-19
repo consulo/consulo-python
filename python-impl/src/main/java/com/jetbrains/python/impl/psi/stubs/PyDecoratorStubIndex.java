@@ -15,11 +15,12 @@
  */
 package com.jetbrains.python.impl.psi.stubs;
 
-import javax.annotation.Nonnull;
-
+import com.jetbrains.python.psi.PyDecorator;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndexKey;
-import com.jetbrains.python.psi.PyDecorator;
+
+import javax.annotation.Nonnull;
 
 /**
  * Python Decorator stub index.
@@ -27,6 +28,7 @@ import com.jetbrains.python.psi.PyDecorator;
  *
  * @author Ilya.Kazakevich
  */
+@ExtensionImpl
 public class PyDecoratorStubIndex extends StringStubIndexExtension<PyDecorator>
 {
 	/**

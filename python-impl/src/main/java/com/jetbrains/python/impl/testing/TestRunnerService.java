@@ -16,14 +16,18 @@
 
 package com.jetbrains.python.impl.testing;
 
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
-import consulo.module.Module;
 import consulo.ide.impl.idea.openapi.module.ModuleServiceManager;
+import consulo.module.Module;
 import consulo.util.xml.serializer.XmlSerializerUtil;
-import javax.annotation.Nonnull;
+import jakarta.inject.Singleton;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +35,11 @@ import java.util.List;
  * User: catherine
  */
 @State(name = "TestRunnerService",
-       storages = {@Storage(file = "$MODULE_FILE$")}
+  storages = {@Storage(file = "$MODULE_FILE$")}
 )
+@ServiceAPI(ComponentScope.MODULE)
+@ServiceImpl
+@Singleton
 public class TestRunnerService implements PersistentStateComponent<TestRunnerService> {
   private List<String> myConfigurations = new ArrayList<String>();
   public String PROJECT_TEST_RUNNER = "";

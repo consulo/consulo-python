@@ -28,70 +28,57 @@ import java.util.Map;
 /**
  * @author yole
  */
-public abstract class PythonPathCache
-{
-	private final Map<QualifiedName, List<PsiElement>> myCache = new HashMap<QualifiedName, List<PsiElement>>();
-	private final Map<VirtualFile, List<QualifiedName>> myQNameCache = new HashMap<VirtualFile, List<QualifiedName>>();
+public abstract class PythonPathCache {
+  private final Map<QualifiedName, List<PsiElement>> myCache = new HashMap<QualifiedName, List<PsiElement>>();
+  private final Map<VirtualFile, List<QualifiedName>> myQNameCache = new HashMap<VirtualFile, List<QualifiedName>>();
 
-	public void clearCache()
-	{
-		myCache.clear();
-		myQNameCache.clear();
-	}
+  public void clearCache() {
+    myCache.clear();
+    myQNameCache.clear();
+  }
 
-	public synchronized List<PsiElement> get(QualifiedName qualifiedName)
-	{
-		return myCache.get(qualifiedName);
-	}
+  public synchronized List<PsiElement> get(QualifiedName qualifiedName) {
+    return myCache.get(qualifiedName);
+  }
 
-	public synchronized void put(QualifiedName qualifiedName, List<PsiElement> results)
-	{
-		myCache.put(qualifiedName, results);
-	}
+  public synchronized void put(QualifiedName qualifiedName, List<PsiElement> results) {
+    myCache.put(qualifiedName, results);
+  }
 
-	public synchronized List<QualifiedName> getNames(VirtualFile vFile)
-	{
-		return myQNameCache.get(vFile);
-	}
+  public synchronized List<QualifiedName> getNames(VirtualFile vFile) {
+    return myQNameCache.get(vFile);
+  }
 
-	public synchronized void putNames(VirtualFile vFile, List<QualifiedName> qNames)
-	{
-		myQNameCache.put(vFile, qNames);
-	}
+  public synchronized void putNames(VirtualFile vFile, List<QualifiedName> qNames) {
+    myQNameCache.put(vFile, qNames);
+  }
 
-	protected class MyVirtualFileAdapter extends VirtualFileAdapter
-	{
-		@Override
-		public void fileCreated(@Nonnull VirtualFileEvent event)
-		{
-			clearCache();
-		}
+  protected class MyVirtualFileAdapter extends VirtualFileAdapter {
+    @Override
+    public void fileCreated(@Nonnull VirtualFileEvent event) {
+      clearCache();
+    }
 
-		@Override
-		public void fileDeleted(@Nonnull VirtualFileEvent event)
-		{
-			clearCache();
-		}
+    @Override
+    public void fileDeleted(@Nonnull VirtualFileEvent event) {
+      clearCache();
+    }
 
-		@Override
-		public void fileMoved(@Nonnull VirtualFileMoveEvent event)
-		{
-			clearCache();
-		}
+    @Override
+    public void fileMoved(@Nonnull VirtualFileMoveEvent event) {
+      clearCache();
+    }
 
-		@Override
-		public void fileCopied(@Nonnull VirtualFileCopyEvent event)
-		{
-			clearCache();
-		}
+    @Override
+    public void fileCopied(@Nonnull VirtualFileCopyEvent event) {
+      clearCache();
+    }
 
-		@Override
-		public void propertyChanged(@Nonnull VirtualFilePropertyEvent event)
-		{
-			if(event.getPropertyName().equals(VirtualFile.PROP_NAME))
-			{
-				clearCache();
-			}
-		}
-	}
+    @Override
+    public void propertyChanged(@Nonnull VirtualFilePropertyEvent event) {
+      if (event.getPropertyName().equals(VirtualFile.PROP_NAME)) {
+        clearCache();
+      }
+    }
+  }
 }

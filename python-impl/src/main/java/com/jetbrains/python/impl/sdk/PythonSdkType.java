@@ -97,7 +97,7 @@ import java.util.stream.Collectors;
  * @author yole
  */
 @ExtensionImpl
-public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCreateUI {
+public final class PythonSdkType extends SdkType {
   public static final String REMOTE_SOURCES_DIR_NAME = "remote_sources";
   private static final Logger LOG = Logger.getInstance(PythonSdkType.class);
   private static final String[] WINDOWS_EXECUTABLE_SUFFIXES = new String[]{
@@ -138,6 +138,7 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
     super("Python SDK");
   }
 
+  @Override
   public Image getIcon() {
     return PythonIcons.Python.Python;
   }
@@ -215,6 +216,7 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
 
   private static String findDigits(String s) {
     int pos = StringUtil.findFirst(s, new CharFilter() {
+      @Override
       public boolean accept(char ch) {
         return Character.isDigit(ch);
       }
@@ -234,6 +236,7 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
     return false;
   }
 
+  @Override
   public boolean isValidSdkHome(@Nullable final String path) {
     return PythonSdkFlavor.getFlavor(path) != null;
   }
@@ -442,6 +445,7 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
     }
   }
 
+  @Override
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
     String name = getVersionString(sdkHome);
     return suggestSdkNameFromVersion(sdkHome, name);
@@ -465,6 +469,7 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
     return version;
   }
 
+  @Override
   @Nullable
   public AdditionalDataConfigurable createAdditionalDataConfigurable(@Nonnull final SdkModel sdkModel,
                                                                      @Nonnull final SdkModificator sdkModificator) {
@@ -493,10 +498,11 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
     return path.contains(SKELETON_DIR_NAME);
   }
 
+  @Override
   @Nonnull
   @NonNls
   public String getPresentableName() {
-    return "Python SDK";
+    return "Python";
   }
 
   @Override
@@ -512,17 +518,10 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
     return FileUtil.toSystemDependentName(path);
   }
 
+
+  @Override
   public void setupSdkPaths(@Nonnull Sdk sdk) {
-    final Project project;
-    final WeakReference<Component> ownerComponentRef = sdk.getUserData(SDK_CREATOR_COMPONENT_KEY);
-    final Component ownerComponent = SoftReference.dereference(ownerComponentRef);
-    if (ownerComponent != null) {
-      project = DataManager.getInstance().getDataContext(ownerComponent).getData(CommonDataKeys.PROJECT);
-    }
-    else {
-      project = DataManager.getInstance().getDataContext().getData(CommonDataKeys.PROJECT);
-    }
-    PythonSdkUpdater.updateOrShowError(sdk, null, project, ownerComponent);
+    PythonSdkUpdater.updateLocalSdkPaths(sdk, null, null);
   }
 
   public static void notifyRemoteSdkSkeletonsFail(final InvalidSdkException e, @Nullable final Runnable restartAction) {
@@ -678,6 +677,7 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
 //		}
 //	}
 
+  @Override
   @Nullable
   public String getVersionString(final String sdkHome) {
     final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(sdkHome);
@@ -727,10 +727,12 @@ public final class PythonSdkType extends SdkType implements SdkTypeWithCustomCre
     return LanguageLevel.getDefault();
   }
 
+  @Override
   public boolean isRootTypeApplicable(@Nonnull final OrderRootType type) {
     return type == BinariesOrderRootType.getInstance();
   }
 
+  @Override
   public boolean sdkHasValidPath(@Nonnull Sdk sdk) {
     if (PySdkUtil.isRemote(sdk)) {
       return true;

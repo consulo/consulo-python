@@ -44,7 +44,7 @@
                     </constraints>
                     <properties>
                       <labelLocation value="West"/>
-                      <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.unittest.dlg.class_label"/>
+                      <text resource-bundle="com/jetbrains/python/impl/PyBundle" key="runcfg.unittest.dlg.class_label"/>
                     </properties>
                   </component>
                   <component id="cd67b" class="consulo.ui.ex.awt.LabeledComponent" binding="myTestMethodComponent">

@@ -35,7 +35,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <text resource-bundle="com/jetbrains/python/PyBundle" key="runcfg.pytest.target"/>
+                  <text resource-bundle="com/jetbrains/python/impl/PyBundle" key="runcfg.pytest.target"/>
                 </properties>
               </component>
               <component id="7ea78" class="consulo.ui.ex.awt.TextFieldWithBrowseButton" binding="myTestScriptTextField">

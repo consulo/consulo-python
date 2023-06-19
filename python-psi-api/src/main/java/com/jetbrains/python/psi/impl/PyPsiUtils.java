@@ -661,7 +661,7 @@ public class PyPsiUtils
 	}
 
 	@Nullable
-	public static QualifiedName asQualifiedName(@Nullable PyExpression expr)
+	public static QualifiedName toQualifiedName(@Nullable PyExpression expr)
 	{
 		return expr instanceof PyQualifiedExpression ? ((PyQualifiedExpression) expr).asQualifiedName() : null;
 	}
@@ -697,7 +697,7 @@ public class PyPsiUtils
 	}
 
 	@Nullable
-	protected static QualifiedName asQualifiedName(@Nonnull PyQualifiedExpression expr)
+	public static QualifiedName asQualifiedName(@Nonnull PyQualifiedExpression expr)
 	{
 		return fromReferenceChain(unwindQualifiers(expr));
 	}

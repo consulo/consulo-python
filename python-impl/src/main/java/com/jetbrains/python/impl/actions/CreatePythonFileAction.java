@@ -19,9 +19,12 @@ package com.jetbrains.python.impl.actions;
 import consulo.ide.action.CreateFileFromTemplateAction;
 import consulo.ide.action.CreateFileFromTemplateDialog;
 import consulo.application.dumb.DumbAware;
+import consulo.module.extension.ModuleExtension;
 import consulo.project.Project;
 import consulo.language.psi.PsiDirectory;
 import com.jetbrains.python.PythonFileType;
+import consulo.python.module.extension.PyModuleExtension;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole
@@ -42,5 +45,11 @@ public class CreatePythonFileAction extends CreateFileFromTemplateAction impleme
   @Override
   protected String getActionName(PsiDirectory directory, String newName, String templateName) {
     return "Create Python script " + newName; 
+  }
+
+  @Nullable
+  @Override
+  protected Class<? extends ModuleExtension> getModuleExtensionClass() {
+    return PyModuleExtension.class;
   }
 }

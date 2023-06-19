@@ -16,26 +16,22 @@
 
 package com.jetbrains.python.impl;
 
-import org.jetbrains.annotations.PropertyKey;
 import consulo.component.util.localize.AbstractBundle;
+import org.jetbrains.annotations.PropertyKey;
 
-public class PyBundle extends AbstractBundle
-{
-	private static final String BUNDLE = "com.jetbrains.python.impl.PyBundle";
-	private static final PyBundle ourInstance = new PyBundle();
+public class PyBundle extends AbstractBundle {
+  private static final String BUNDLE = "com.jetbrains.python.impl.PyBundle";
+  private static final PyBundle ourInstance = new PyBundle();
 
-	private PyBundle()
-	{
-		super(BUNDLE);
-	}
+  private PyBundle() {
+    super(BUNDLE);
+  }
 
-	public static String message(@PropertyKey(resourceBundle = BUNDLE) String key)
-	{
-		return ourInstance.getMessage(key);
-	}
+  public static String message(@PropertyKey(resourceBundle = BUNDLE) String key) {
+    return ourInstance.getMessage(key);
+  }
 
-	public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params)
-	{
-		return ourInstance.getMessage(key, params);
-	}
+  public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
+    return ourInstance.getMessage(key, params);
+  }
 }

@@ -18,6 +18,8 @@ package com.jetbrains.python.inspections;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
@@ -28,54 +30,46 @@ import java.util.List;
 /**
  * @author yole
  */
-public abstract class PyInspectionExtension
-{
-	public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create(PyInspectionExtension.class);
+@ExtensionAPI(ComponentScope.APPLICATION)
+public abstract class PyInspectionExtension {
+  public static final ExtensionPointName<PyInspectionExtension> EP_NAME = ExtensionPointName.create(PyInspectionExtension.class);
 
-	public boolean ignoreUnused(PsiElement local)
-	{
-		return false;
-	}
+  public boolean ignoreUnused(PsiElement local) {
+    return false;
+  }
 
-	public boolean ignoreMissingDocstring(PyDocStringOwner docStringOwner)
-	{
-		return false;
-	}
+  public boolean ignoreMissingDocstring(PyDocStringOwner docStringOwner) {
+    return false;
+  }
 
-	public List<String> getFunctionParametersFromUsage(PsiElement elt)
-	{
-		return null;
-	}
+  public List<String> getFunctionParametersFromUsage(PsiElement elt) {
+    return null;
+  }
 
-	public boolean ignoreMethodParameters(@Nonnull PyFunction function)
-	{
-		return false;
-	}
+  public boolean ignoreMethodParameters(@Nonnull PyFunction function) {
+    return false;
+  }
 
-	public boolean ignorePackageNameInRequirements(@Nonnull PyQualifiedExpression importedExpression)
-	{
-		return false;
-	}
+  public boolean ignorePackageNameInRequirements(@Nonnull PyQualifiedExpression importedExpression) {
+    return false;
+  }
 
-	public boolean ignoreUnresolvedReference(@Nonnull PyElement node, @Nonnull PsiReference reference)
-	{
-		return false;
-	}
+  public boolean ignoreUnresolvedReference(@Nonnull PyElement node, @Nonnull PsiReference reference) {
+    return false;
+  }
 
-	public boolean ignoreUnresolvedMember(@Nonnull PyType type, @Nonnull String name)
-	{
-		return false;
-	}
+  public boolean ignoreUnresolvedMember(@Nonnull PyType type, @Nonnull String name) {
+    return false;
+  }
 
-	/**
-	 * Returns true if access to protected (the one started with "_") symbol should not be treated as violation.
-	 *
-	 * @param expression access expression i.e. "_foo"
-	 * @param context    type eval to be used
-	 * @return true if ignore
-	 */
-	public boolean ignoreProtectedSymbol(@Nonnull final PyReferenceExpression expression, @Nonnull final TypeEvalContext context)
-	{
-		return false;
-	}
+  /**
+   * Returns true if access to protected (the one started with "_") symbol should not be treated as violation.
+   *
+   * @param expression access expression i.e. "_foo"
+   * @param context    type eval to be used
+   * @return true if ignore
+   */
+  public boolean ignoreProtectedSymbol(@Nonnull final PyReferenceExpression expression, @Nonnull final TypeEvalContext context) {
+    return false;
+  }
 }

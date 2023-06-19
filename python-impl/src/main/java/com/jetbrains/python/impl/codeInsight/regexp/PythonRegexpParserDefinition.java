@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.impl.codeInsight.regexp;
 
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
 import consulo.language.ast.IFileElementType;
 import consulo.language.file.FileViewProvider;
 import consulo.language.lexer.Lexer;
@@ -30,11 +32,18 @@ import java.util.EnumSet;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonRegexpParserDefinition extends RegExpParserDefinition {
   public static final IFileElementType PYTHON_REGEXP_FILE = new IFileElementType("PYTHON_REGEXP_FILE", PythonRegexpLanguage.INSTANCE);
   protected final EnumSet<RegExpCapability> CAPABILITIES = EnumSet.of(RegExpCapability.DANGLING_METACHARACTERS,
                                                                       RegExpCapability.OCTAL_NO_LEADING_ZERO,
                                                                       RegExpCapability.OMIT_NUMBERS_IN_QUANTIFIERS);
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonRegexpLanguage.INSTANCE;
+  }
 
   @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {

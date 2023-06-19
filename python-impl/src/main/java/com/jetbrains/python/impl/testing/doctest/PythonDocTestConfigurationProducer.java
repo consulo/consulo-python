@@ -19,26 +19,28 @@
  */
 package com.jetbrains.python.impl.testing.doctest;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import consulo.execution.action.Location;
-import consulo.module.Module;
-import consulo.project.Project;
-import consulo.virtualFileSystem.VirtualFile;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiRecursiveElementVisitor;
+import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
+import com.jetbrains.python.impl.testing.PythonTestConfigurationProducer;
+import com.jetbrains.python.impl.testing.PythonTestConfigurationType;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
-import com.jetbrains.python.impl.testing.PythonTestConfigurationProducer;
-import com.jetbrains.python.impl.testing.PythonTestConfigurationType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.execution.action.Location;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.PsiRecursiveElementVisitor;
+import consulo.module.Module;
+import consulo.project.Project;
+import consulo.virtualFileSystem.VirtualFile;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
+@ExtensionImpl
 public class PythonDocTestConfigurationProducer extends PythonTestConfigurationProducer
 {
 

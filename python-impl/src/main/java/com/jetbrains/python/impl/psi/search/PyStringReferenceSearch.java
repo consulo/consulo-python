@@ -17,11 +17,10 @@
 package com.jetbrains.python.impl.psi.search;
 
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.PyElement;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AccessToken;
-import consulo.application.ApplicationManager;
+import consulo.application.ReadAction;
 import consulo.application.util.function.Processor;
 import consulo.content.scope.SearchScope;
 import consulo.language.psi.PsiDirectory;
@@ -48,24 +47,21 @@ public class PyStringReferenceSearch extends QueryExecutorBase<PsiReference, Ref
       return;
     }
 
-    AccessToken token = ApplicationManager.getApplication().acquireReadActionLock();
     String name;
-    SearchScope searchScope;
-    try {
-      searchScope = params.getEffectiveSearchScope();
-      if (searchScope instanceof GlobalSearchScope) {
-        searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, PythonFileType.INSTANCE);
+    SearchScope searchScope = ReadAction.compute(() -> {
+      SearchScope s = params.getEffectiveSearchScope();
+      if (s instanceof GlobalSearchScope) {
+        s = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)s, PythonFileType.INSTANCE);
       }
+      return s;
+    });
 
-      name = PyUtil.computeElementNameForStringSearch(element);
-    }
-    finally {
-      token.finish();
-    }
+    name = ReadAction.compute(() -> PyUtil.computeElementNameForStringSearch(element));
 
     if (StringUtil.isEmpty(name)) {
       return;
     }
+    
     params.getOptimizer().searchWord(name, searchScope, UsageSearchContext.IN_STRINGS, true, element);
   }
 }
