@@ -16,31 +16,29 @@
 
 package com.jetbrains.python.impl.documentation;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import javax.annotation.Nullable;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
-
 import com.google.common.collect.Sets;
-import consulo.configurable.Configurable;
-import consulo.configurable.ConfigurationException;
-import consulo.configurable.SearchableConfigurable;
-import consulo.ui.ex.awt.DialogWrapper;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.configurable.*;
+import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.ex.awt.AddEditRemovePanel;
 import consulo.ui.ex.awt.ColoredTableCellRenderer;
-import consulo.ui.ex.SimpleTextAttributes;
+import consulo.ui.ex.awt.DialogWrapper;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * @author yole
  */
-public class PythonDocumentationConfigurable implements SearchableConfigurable, Configurable.NoScroll {
-  public static final String ID = "com.jetbrains.python.documentation.PythonDocumentationConfigurable";
+@ExtensionImpl
+public class PythonDocumentationConfigurable implements SearchableConfigurable, Configurable.NoScroll, ApplicationConfigurable {
+  public static final String ID = "py.external.doc";
+
   private PythonDocumentationPanel myPanel = new PythonDocumentationPanel();
 
   @Nonnull
@@ -49,11 +47,13 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
     return ID;
   }
 
+  @Nullable
   @Override
-  public Runnable enableSearch(String option) {
-    return null;
+  public String getParentId() {
+    return StandardConfigurableIds.EDITOR_GROUP;
   }
 
+  @Nonnull
   @Nls
   @Override
   public String getDisplayName() {

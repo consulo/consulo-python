@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.codeInsight;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.action.TypedHandlerDelegate;
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
@@ -31,6 +32,7 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
  * User: dcheryasov
  * Date: May 29, 2009 4:42:03 AM
  */
+@ExtensionImpl(id = "pyCommaAfterKwd")
 public class KeywordTypedHandler extends TypedHandlerDelegate {
   @Override
   public Result beforeCharTyped(char character, Project project, Editor editor, PsiFile file, FileType fileType) {

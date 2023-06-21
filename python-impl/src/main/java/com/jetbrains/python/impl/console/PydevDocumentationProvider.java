@@ -16,21 +16,33 @@
 
 package com.jetbrains.python.impl.console;
 
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.console.completion.PydevConsoleElement;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
 import consulo.language.editor.documentation.AbstractDocumentationProvider;
+import consulo.language.editor.documentation.LanguageDocumentationProvider;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.StringUtil;
+import jakarta.annotation.Nonnull;
 
 import javax.annotation.Nullable;
 
 /**
  * @author oleg
  */
-public class PydevDocumentationProvider extends AbstractDocumentationProvider {
+@ExtensionImpl
+public class PydevDocumentationProvider extends AbstractDocumentationProvider implements LanguageDocumentationProvider {
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
 
   @Override
   public PsiElement getDocumentationElementForLookupItem(final PsiManager psiManager, final Object object, final PsiElement element) {

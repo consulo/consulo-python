@@ -16,73 +16,72 @@
 
 package com.jetbrains.python.impl.codeInsight.imports;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nullable;
-import consulo.configurable.Configurable;
-import consulo.configurable.ConfigurationException;
 import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.configurable.ApplicationConfigurable;
+import consulo.configurable.ConfigurationException;
+import consulo.ui.annotation.RequiredUIAccess;
+import jakarta.annotation.Nonnull;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nullable;
+import javax.swing.*;
 
 /**
  * @author yole
  */
-public class PyAutoImportConfigurable implements Configurable
-{
-	private JPanel myMainPanel;
-	private JRadioButton myRbFromImport;
-	private JRadioButton myRbImport;
-	private JCheckBox myShowImportPopupCheckBox;
+@ExtensionImpl
+public class PyAutoImportConfigurable implements ApplicationConfigurable {
+  private JPanel myMainPanel;
+  private JRadioButton myRbFromImport;
+  private JRadioButton myRbImport;
+  private JCheckBox myShowImportPopupCheckBox;
 
-	@Override
-	public JComponent createComponent()
-	{
-		return myMainPanel;
-	}
+  @Nonnull
+  @Override
+  public String getId() {
+    return "editor.preferences.import.python";
+  }
 
-	@Override
-	public void reset()
-	{
-		final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
-		myRbFromImport.setSelected(settings.PREFER_FROM_IMPORT);
-		myRbImport.setSelected(!settings.PREFER_FROM_IMPORT);
-		myShowImportPopupCheckBox.setSelected(settings.SHOW_IMPORT_POPUP);
-	}
+  @Nullable
+  @Override
+  public String getParentId() {
+    return "editor.preferences.import";
+  }
 
-	@Override
-	public boolean isModified()
-	{
-		final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
-		return settings.PREFER_FROM_IMPORT != myRbFromImport.isSelected() || settings.SHOW_IMPORT_POPUP != myShowImportPopupCheckBox.isSelected();
-	}
+  @RequiredUIAccess
+  @Override
+  public JComponent createComponent() {
+    return myMainPanel;
+  }
 
-	@Override
-	public void apply() throws ConfigurationException
-	{
-		final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
-		settings.PREFER_FROM_IMPORT = myRbFromImport.isSelected();
-		settings.SHOW_IMPORT_POPUP = myShowImportPopupCheckBox.isSelected();
-	}
+  @RequiredUIAccess
+  @Override
+  public void reset() {
+    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    myRbFromImport.setSelected(settings.PREFER_FROM_IMPORT);
+    myRbImport.setSelected(!settings.PREFER_FROM_IMPORT);
+    myShowImportPopupCheckBox.setSelected(settings.SHOW_IMPORT_POPUP);
+  }
 
-	@Override
-	public void disposeUIResources()
-	{
-	}
+  @RequiredUIAccess
+  @Override
+  public boolean isModified() {
+    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    return settings.PREFER_FROM_IMPORT != myRbFromImport.isSelected() || settings.SHOW_IMPORT_POPUP != myShowImportPopupCheckBox.isSelected();
+  }
 
-	@Nls
-	@Override
-	public String getDisplayName()
-	{
-		return null;
-	}
+  @RequiredUIAccess
+  @Override
+  public void apply() throws ConfigurationException {
+    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    settings.PREFER_FROM_IMPORT = myRbFromImport.isSelected();
+    settings.SHOW_IMPORT_POPUP = myShowImportPopupCheckBox.isSelected();
+  }
 
-	@Nullable
-	@Override
-	public String getHelpTopic()
-	{
-		return null;
-	}
+  @Nls
+  @Override
+  public String getDisplayName() {
+    return "Python";
+  }
 }

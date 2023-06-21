@@ -16,10 +16,12 @@
 
 package com.jetbrains.python.impl.debugger;
 
-import consulo.configurable.Configurable;
-import consulo.configurable.ConfigurationException;
-import consulo.configurable.SearchableConfigurable;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.configurable.*;
 import consulo.project.Project;
+import jakarta.annotation.Nullable;
+import jakarta.inject.Inject;
+
 import javax.annotation.Nonnull;
 
 import javax.swing.*;
@@ -29,7 +31,8 @@ import java.awt.event.ActionListener;
 /**
  * @author traff
  */
-public class PyDebuggerConfigurable implements SearchableConfigurable, Configurable.NoScroll {
+@ExtensionImpl
+public class PyDebuggerConfigurable implements SearchableConfigurable, Configurable.NoScroll, ProjectConfigurable {
   private final PyDebuggerOptionsProvider mySettings;
   private JPanel myMainPanel;
   private JCheckBox myAttachToSubprocess;
@@ -39,22 +42,25 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
 
   private final Project myProject;
 
+  @Inject
   public PyDebuggerConfigurable(Project project, final PyDebuggerOptionsProvider settings) {
     myProject = project;
     mySettings = settings;
+  }
+
+  @Nullable
+  @Override
+  public String getParentId() {
+    return StandardConfigurableIds.EXECUTION_GROUP;
   }
 
   public String getDisplayName() {
     return "Python Debugger";
   }
 
-  public String getHelpTopic() {
-    return "reference.idesettings.debugger.python";
-  }
-
   @Nonnull
   public String getId() {
-    return getHelpTopic();
+    return "py.debugger";
   }
 
   public Runnable enableSearch(String option) {

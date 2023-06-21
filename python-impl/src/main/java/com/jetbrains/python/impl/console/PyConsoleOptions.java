@@ -19,6 +19,9 @@ import com.google.common.collect.Maps;
 import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;
 import com.jetbrains.python.run.PythonRunParams;
+import consulo.annotation.component.ComponentScope;
+import consulo.annotation.component.ServiceAPI;
+import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
@@ -30,6 +33,7 @@ import consulo.module.ModuleManager;
 import consulo.project.Project;
 import consulo.util.lang.ComparatorUtil;
 import consulo.util.xml.serializer.annotation.*;
+import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,6 +47,9 @@ import java.util.Map;
   storages = {
     @Storage(file = StoragePathMacros.WORKSPACE_FILE)
   })
+@ServiceAPI(ComponentScope.PROJECT)
+@ServiceImpl
+@Singleton
 public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptions.State> {
   private State myState = new State();
 

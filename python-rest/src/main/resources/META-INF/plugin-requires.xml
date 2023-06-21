@@ -1,0 +1,5 @@
+<consulo-plugin-requires>
+  <plugins>
+    <plugin>org.jetbrains.plugins.rest</plugin>
+  </plugins>
+</consulo-plugin-requires>

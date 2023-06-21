@@ -16,21 +16,40 @@
 
 package com.jetbrains.python.impl.configuration;
 
+import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.Configurable;
 import consulo.configurable.NonDefaultProjectConfigurable;
+import consulo.configurable.ProjectConfigurable;
+import consulo.configurable.StandardConfigurableIds;
 import consulo.module.Module;
 import consulo.project.Project;
+import jakarta.annotation.Nullable;
+import jakarta.inject.Inject;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author vlan
- *
+ * <p>
  * TODO [VISTALL] move it to python module extension settings
  */
-public class PyIntegratedToolsModulesConfigurable extends ModuleAwareProjectConfigurable implements NonDefaultProjectConfigurable {
+@ExtensionImpl
+public class PyIntegratedToolsModulesConfigurable extends ModuleAwareProjectConfigurable implements NonDefaultProjectConfigurable, ProjectConfigurable {
+  @Inject
   public PyIntegratedToolsModulesConfigurable(@Nonnull Project project) {
     super(project, "Python Integrated Tools", "reference-python-integrated-tools");
+  }
+
+  @Nonnull
+  @Override
+  public String getId() {
+    return "py.integrated.tools";
+  }
+
+  @Nullable
+  @Override
+  public String getParentId() {
+    return StandardConfigurableIds.EXECUTION_GROUP;
   }
 
   @Nonnull

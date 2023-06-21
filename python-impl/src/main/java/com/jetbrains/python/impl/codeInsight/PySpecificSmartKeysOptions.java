@@ -16,35 +16,46 @@
 
 package com.jetbrains.python.impl.codeInsight;
 
-import org.jetbrains.annotations.Nls;
-import javax.annotation.Nullable;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.configurable.ApplicationConfigurable;
 import consulo.configurable.BeanConfigurable;
-import consulo.configurable.Configurable;
+import jakarta.annotation.Nonnull;
+import org.jetbrains.annotations.Nls;
+
+import javax.annotation.Nullable;
 
 /**
  * @author yole
  */
-public class PySpecificSmartKeysOptions extends BeanConfigurable<PyCodeInsightSettings> implements Configurable
-{
-	public PySpecificSmartKeysOptions()
-	{
-		super(PyCodeInsightSettings.getInstance());
-		checkBox("INSERT_BACKSLASH_ON_WRAP", "Insert backslash when pressing Enter inside a statement");
-		checkBox("INSERT_SELF_FOR_METHODS", "Insert 'self' when defining a method");
-		checkBox("INSERT_TYPE_DOCSTUB", "Insert 'type' and 'rtype' to the documentation comment stub");
-	}
+@ExtensionImpl
+public class PySpecificSmartKeysOptions extends BeanConfigurable<PyCodeInsightSettings> implements ApplicationConfigurable {
+  public PySpecificSmartKeysOptions() {
+    super(PyCodeInsightSettings.getInstance());
+    checkBox("INSERT_BACKSLASH_ON_WRAP", "Insert backslash when pressing Enter inside a statement");
+    checkBox("INSERT_SELF_FOR_METHODS", "Insert 'self' when defining a method");
+    checkBox("INSERT_TYPE_DOCSTUB", "Insert 'type' and 'rtype' to the documentation comment stub");
+  }
 
-	@Nls
-	@Override
-	public String getDisplayName()
-	{
-		return null;
-	}
+  @Nonnull
+  @Override
+  public String getId() {
+    return "editor.preferences.smartKeys.python";
+  }
 
-	@Nullable
-	@Override
-	public String getHelpTopic()
-	{
-		return null;
-	}
+  @Nullable
+  @Override
+  public String getParentId() {
+    return "editor.preferences.smartKeys";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return "Python";
+  }
+
+  @Nullable
+  @Override
+  public String getHelpTopic() {
+    return null;
+  }
 }

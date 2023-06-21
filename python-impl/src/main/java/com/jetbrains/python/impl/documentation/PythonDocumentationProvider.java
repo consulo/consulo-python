@@ -16,6 +16,7 @@
 package com.jetbrains.python.impl.documentation;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.documentation.PythonDocumentationLinkProvider;
 import com.jetbrains.python.documentation.PythonDocumentationQuickInfoProvider;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
@@ -32,14 +33,17 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.codeEditor.Editor;
 import consulo.component.extension.Extensions;
 import consulo.content.bundle.Sdk;
 import consulo.ide.setting.ShowSettingsUtil;
+import consulo.language.Language;
 import consulo.language.editor.documentation.AbstractDocumentationProvider;
 import consulo.language.editor.documentation.ExternalDocumentationProvider;
+import consulo.language.editor.documentation.LanguageDocumentationProvider;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
@@ -67,7 +71,8 @@ import static com.jetbrains.python.impl.documentation.DocumentationBuilderKit.*;
  * Provides quick docs for classes, methods, and functions.
  * Generates documentation stub
  */
-public class PythonDocumentationProvider extends AbstractDocumentationProvider implements ExternalDocumentationProvider {
+@ExtensionImpl
+public class PythonDocumentationProvider extends AbstractDocumentationProvider implements ExternalDocumentationProvider, LanguageDocumentationProvider {
   @NonNls
   static final String LINK_TYPE_CLASS = "#class#";
   @NonNls
@@ -76,6 +81,12 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   static final String LINK_TYPE_PARAM = "#param#";
   @NonNls
   static final String LINK_TYPE_TYPENAME = "#typename#";
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonLanguage.INSTANCE;
+  }
 
   // provides ctrl+hover info
   @Override

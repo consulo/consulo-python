@@ -15,61 +15,59 @@
  */
 package com.jetbrains.python.impl.editor;
 
-import javax.annotation.Nonnull;
-
-import consulo.language.editor.CodeInsightSettings;
-import consulo.language.editor.action.TypedHandlerDelegate;
-import consulo.document.Document;
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
-import consulo.document.util.TextRange;
-import consulo.util.lang.StringUtil;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
 import com.jetbrains.python.impl.editor.PythonEnterHandler.DocstringState;
 import com.jetbrains.python.psi.PyDocStringOwner;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.language.editor.CodeInsightSettings;
+import consulo.language.editor.action.TypedHandlerDelegate;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+
+import javax.annotation.Nonnull;
 
 /**
  * User : catherine
  */
-public class PythonSpaceHandler extends TypedHandlerDelegate
-{
-	@Override
-	public Result charTyped(char c, Project project, @Nonnull Editor editor, @Nonnull PsiFile file)
-	{
-		CodeInsightSettings codeInsightSettings = CodeInsightSettings.getInstance();
-		if(c == ' ' && codeInsightSettings.JAVADOC_STUB_ON_ENTER)
-		{
-			int offset = editor.getCaretModel().getOffset();
-			PsiElement element = file.findElementAt(offset);
-			if(element == null && offset > 1)
-			{
-				element = file.findElementAt(offset - 2);
-			}
-			if(element == null)
-			{
-				return Result.CONTINUE;
-			}
-			int expectedStringStart = offset - 4;        // """ or ''' plus space char
-			final Document document = editor.getDocument();
-			if(PythonEnterHandler.canGenerateDocstring(element, expectedStringStart, document) == DocstringState.INCOMPLETE)
-			{
-				final PyDocStringOwner docOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
-				if(docOwner != null)
-				{
-					final String quotes = document.getText(TextRange.from(expectedStringStart, 3));
-					final String docString = PyDocstringGenerator.forDocStringOwner(docOwner).forceNewMode().withInferredParameters(true).withQuotes(quotes).buildDocString();
-					document.insertString(offset, docString.substring(3));
-					if(!StringUtil.isEmptyOrSpaces(docString.substring(3, docString.length() - 3)))
-					{
-						editor.getCaretModel().moveCaretRelatively(100, 1, false, false, false);
-					}
-					return Result.STOP;
-				}
-			}
-		}
-		return Result.CONTINUE;
-	}
+@ExtensionImpl
+public class PythonSpaceHandler extends TypedHandlerDelegate {
+  @Override
+  public Result charTyped(char c, Project project, @Nonnull Editor editor, @Nonnull PsiFile file) {
+    CodeInsightSettings codeInsightSettings = CodeInsightSettings.getInstance();
+    if (c == ' ' && codeInsightSettings.JAVADOC_STUB_ON_ENTER) {
+      int offset = editor.getCaretModel().getOffset();
+      PsiElement element = file.findElementAt(offset);
+      if (element == null && offset > 1) {
+        element = file.findElementAt(offset - 2);
+      }
+      if (element == null) {
+        return Result.CONTINUE;
+      }
+      int expectedStringStart = offset - 4;        // """ or ''' plus space char
+      final Document document = editor.getDocument();
+      if (PythonEnterHandler.canGenerateDocstring(element, expectedStringStart, document) == DocstringState.INCOMPLETE) {
+        final PyDocStringOwner docOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
+        if (docOwner != null) {
+          final String quotes = document.getText(TextRange.from(expectedStringStart, 3));
+          final String docString = PyDocstringGenerator.forDocStringOwner(docOwner)
+                                                       .forceNewMode()
+                                                       .withInferredParameters(true)
+                                                       .withQuotes(quotes)
+                                                       .buildDocString();
+          document.insertString(offset, docString.substring(3));
+          if (!StringUtil.isEmptyOrSpaces(docString.substring(3, docString.length() - 3))) {
+            editor.getCaretModel().moveCaretRelatively(100, 1, false, false, false);
+          }
+          return Result.STOP;
+        }
+      }
+    }
+    return Result.CONTINUE;
+  }
 }

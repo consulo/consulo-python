@@ -16,11 +16,12 @@
 package com.jetbrains.python.impl.console;
 
 import com.google.common.collect.Lists;
-import consulo.configurable.Configurable;
-import consulo.configurable.ConfigurationException;
-import consulo.configurable.SearchableConfigurable;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.configurable.*;
 import consulo.project.Project;
 import consulo.ui.ex.awt.JBCheckBox;
+import jakarta.annotation.Nullable;
+import jakarta.inject.Inject;
 import org.jetbrains.annotations.Nls;
 
 import javax.annotation.Nonnull;
@@ -30,7 +31,8 @@ import java.util.List;
 /**
  * @author traff
  */
-public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.Abstract implements Configurable.NoScroll {
+@ExtensionImpl
+public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.Abstract implements Configurable.NoScroll, ProjectConfigurable {
   public static final String CONSOLE_SETTINGS_HELP_REFERENCE = "reference.project.settings.console";
   public static final String CONSOLE_SETTINGS_HELP_REFERENCE_PYTHON = "reference.project.settings.console.python";
 
@@ -39,6 +41,7 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
   private final PyConsoleOptions myOptionsProvider;
   private final Project myProject;
 
+  @Inject
   public PyConsoleOptionsConfigurable(PyConsoleOptions optionsProvider, Project project) {
     myOptionsProvider = optionsProvider;
     myProject = project;
@@ -48,6 +51,12 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
   @Override
   public String getId() {
     return "pyconsole";
+  }
+
+  @Nullable
+  @Override
+  public String getParentId() {
+    return StandardConfigurableIds.EXECUTION_GROUP;
   }
 
   @Override

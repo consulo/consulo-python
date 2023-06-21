@@ -15,8 +15,10 @@
  */
 package com.jetbrains.python.impl.codeInsight.regexp;
 
+import consulo.annotation.component.ExtensionImpl;
 import org.intellij.lang.regexp.RegExpSyntaxHighlighterFactory;
 
+@ExtensionImpl
 public class PythonVerboseRegexpSyntaxHighlighterFactory extends RegExpSyntaxHighlighterFactory {
   public PythonVerboseRegexpSyntaxHighlighterFactory() {
     super(PythonVerboseRegexpLanguage.INSTANCE);

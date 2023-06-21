@@ -15,23 +15,24 @@
  */
 package com.jetbrains.python.impl.codeInsight;
 
-import consulo.language.editor.action.TypedHandlerDelegate;
-import consulo.language.ast.ASTNode;
-import consulo.document.Document;
-import consulo.codeEditor.Editor;
-import consulo.ide.impl.idea.openapi.editor.EditorModificationUtil;
-import consulo.virtualFileSystem.fileType.FileType;
-import consulo.project.DumbService;
-import consulo.project.Project;
-import consulo.language.psi.PsiDocumentManager;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.codeEditor.Editor;
+import consulo.document.Document;
+import consulo.ide.impl.idea.openapi.editor.EditorModificationUtil;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.action.TypedHandlerDelegate;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.project.DumbService;
+import consulo.project.Project;
+import consulo.virtualFileSystem.fileType.FileType;
 
 /**
  * Adds appropriate first parameter to a freshly-typed method declaration.
@@ -39,80 +40,66 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
  * User: dcheryasov
  * Date: 11/29/10 12:44 AM
  */
-public class PyMethodNameTypedHandler extends TypedHandlerDelegate
-{
-	@Override
-	public Result beforeCharTyped(char character, Project project, Editor editor, PsiFile file, FileType fileType)
-	{
-		if(DumbService.isDumb(project) || !(fileType instanceof PythonFileType))
-		{
-			return Result.CONTINUE; // else we'd mess up with other file types!
-		}
-		if(character == '(')
-		{
-			if(!PyCodeInsightSettings.getInstance().INSERT_SELF_FOR_METHODS)
-			{
-				return Result.CONTINUE;
-			}
-			final Document document = editor.getDocument();
-			final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-			final int offset = editor.getCaretModel().getOffset();
+@ExtensionImpl(id = "pyMethodNameTypedHandler")
+public class PyMethodNameTypedHandler extends TypedHandlerDelegate {
+  @Override
+  public Result beforeCharTyped(char character, Project project, Editor editor, PsiFile file, FileType fileType) {
+    if (DumbService.isDumb(project) || !(fileType instanceof PythonFileType)) {
+      return Result.CONTINUE; // else we'd mess up with other file types!
+    }
+    if (character == '(') {
+      if (!PyCodeInsightSettings.getInstance().INSERT_SELF_FOR_METHODS) {
+        return Result.CONTINUE;
+      }
+      final Document document = editor.getDocument();
+      final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+      final int offset = editor.getCaretModel().getOffset();
 
-			PsiElement token = file.findElementAt(offset - 1);
-			if(token == null)
-			{
-				return Result.CONTINUE; // sanity check: beyond EOL
-			}
+      PsiElement token = file.findElementAt(offset - 1);
+      if (token == null) {
+        return Result.CONTINUE; // sanity check: beyond EOL
+      }
 
-			final ASTNode token_node = token.getNode();
-			if(token_node != null && token_node.getElementType() == PyTokenTypes.IDENTIFIER)
-			{
-				PsiElement maybe_def = PyPsiUtils.getPrevNonCommentSibling(token.getPrevSibling(), false);
-				if(maybe_def != null)
-				{
-					ASTNode def_node = maybe_def.getNode();
-					if(def_node != null && def_node.getElementType() == PyTokenTypes.DEF_KEYWORD)
-					{
-						PsiElement maybe_func = token.getParent();
-						if(maybe_func instanceof PyFunction)
-						{
-							PyFunction func = (PyFunction) maybe_func;
-							PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(func);
-							if(flags != null)
-							{
-								// we're in a method
-								// TODO: all string constants go to Settings
-								String pname = flags.isClassMethod() || flags.isMetaclassMethod() ? "cls" : "self";
-								final boolean is_new = PyNames.NEW.equals(func.getName());
-								if(flags.isMetaclassMethod() && is_new)
-								{
-									pname = "typ";
-								}
-								else if(flags.isClassMethod() || is_new)
-								{
-									pname = "cls";
-								}
-								else if(flags.isStaticMethod())
-								{
-									pname = "";
-								}
-								documentManager.commitDocument(document);
-								// TODO: only print the ")" if Settings require it
-								int caretOffset = editor.getCaretModel().getOffset();
-								String textToType = "(" + pname + ")";
-								CharSequence chars = editor.getDocument().getCharsSequence();
-								if(caretOffset == chars.length() || chars.charAt(caretOffset) != ':')
-								{
-									textToType += ':';
-								}
-								EditorModificationUtil.insertStringAtCaret(editor, textToType, true, 1 + pname.length()); // right after param name
-								return Result.STOP;
-							}
-						}
-					}
-				}
-			}
-		}
-		return Result.CONTINUE; // the default
-	}
+      final ASTNode token_node = token.getNode();
+      if (token_node != null && token_node.getElementType() == PyTokenTypes.IDENTIFIER) {
+        PsiElement maybe_def = PyPsiUtils.getPrevNonCommentSibling(token.getPrevSibling(), false);
+        if (maybe_def != null) {
+          ASTNode def_node = maybe_def.getNode();
+          if (def_node != null && def_node.getElementType() == PyTokenTypes.DEF_KEYWORD) {
+            PsiElement maybe_func = token.getParent();
+            if (maybe_func instanceof PyFunction) {
+              PyFunction func = (PyFunction)maybe_func;
+              PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(func);
+              if (flags != null) {
+                // we're in a method
+                // TODO: all string constants go to Settings
+                String pname = flags.isClassMethod() || flags.isMetaclassMethod() ? "cls" : "self";
+                final boolean is_new = PyNames.NEW.equals(func.getName());
+                if (flags.isMetaclassMethod() && is_new) {
+                  pname = "typ";
+                }
+                else if (flags.isClassMethod() || is_new) {
+                  pname = "cls";
+                }
+                else if (flags.isStaticMethod()) {
+                  pname = "";
+                }
+                documentManager.commitDocument(document);
+                // TODO: only print the ")" if Settings require it
+                int caretOffset = editor.getCaretModel().getOffset();
+                String textToType = "(" + pname + ")";
+                CharSequence chars = editor.getDocument().getCharsSequence();
+                if (caretOffset == chars.length() || chars.charAt(caretOffset) != ':') {
+                  textToType += ':';
+                }
+                EditorModificationUtil.insertStringAtCaret(editor, textToType, true, 1 + pname.length()); // right after param name
+                return Result.STOP;
+              }
+            }
+          }
+        }
+      }
+    }
+    return Result.CONTINUE; // the default
+  }
 }

@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.impl.codeInsight.regexp;
 
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
 import consulo.language.ast.IFileElementType;
 import consulo.language.file.FileViewProvider;
 import consulo.language.lexer.Lexer;
@@ -33,6 +35,7 @@ import java.util.EnumSet;
 /**
  * @author yole
  */
+@ExtensionImpl
 public class PythonVerboseRegexpParserDefinition extends PythonRegexpParserDefinition {
   public static final IFileElementType VERBOSE_PYTHON_REGEXP_FILE = new IFileElementType("VERBOSE_PYTHON_REGEXP_FILE", PythonVerboseRegexpLanguage.INSTANCE);
   private final EnumSet<RegExpCapability> VERBOSE_CAPABILITIES;
@@ -40,6 +43,12 @@ public class PythonVerboseRegexpParserDefinition extends PythonRegexpParserDefin
   public PythonVerboseRegexpParserDefinition() {
     VERBOSE_CAPABILITIES = EnumSet.copyOf(CAPABILITIES);
     VERBOSE_CAPABILITIES.add(RegExpCapability.COMMENT_MODE);
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return PythonVerboseRegexpLanguage.INSTANCE;
   }
 
   @Nonnull
