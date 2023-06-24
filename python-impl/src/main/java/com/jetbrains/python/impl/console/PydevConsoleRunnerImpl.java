@@ -63,7 +63,6 @@ import consulo.ide.impl.idea.execution.console.ConsoleHistoryController;
 import consulo.ide.impl.idea.openapi.actionSystem.ex.ActionUtil;
 import consulo.ide.impl.idea.openapi.editor.actions.SplitLineAction;
 import consulo.ide.impl.idea.util.PathMappingSettings;
-import consulo.ide.impl.idea.util.net.NetUtils;
 import consulo.language.editor.CommonDataKeys;
 import consulo.language.editor.LangDataKeys;
 import consulo.language.editor.completion.lookup.LookupManager;
@@ -95,8 +94,8 @@ import consulo.ui.ex.errorTreeView.NewErrorTreeViewPanelFactory;
 import consulo.ui.ex.toolWindow.ToolWindow;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.collection.ArrayUtil;
-import consulo.util.collection.ContainerUtil;
 import consulo.util.dataholder.Key;
+import consulo.util.io.NetUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.TimeoutUtil;
 import consulo.virtualFileSystem.VirtualFile;
@@ -110,6 +109,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -152,8 +152,6 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
 
   private static final long APPROPRIATE_TO_WAIT = 60000;
 
-  private PyRemoteProcessHandlerBase myRemoteProcessHandlerBase;
-
   private String myConsoleTitle = null;
   private PythonConsoleView myConsoleView;
 
@@ -185,7 +183,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
 
     toolbarActions.add(createRerunAction());
 
-    List<AnAction> actions = ContainerUtil.newArrayList();
+    List<AnAction> actions = new ArrayList<>();
 
     //stop
     actions.add(createStopAction());
@@ -338,7 +336,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
     try {
       // File "pydev/console/pydevconsole.py", line 223, in <module>
       // port, client_port = sys.argv[1:3]
-      ports = NetUtils.findAvailableSocketPorts(2);
+      ports = NetUtil.findAvailableSocketPorts(2);
     }
     catch (IOException e) {
       ExecutionHelper.showErrors(project, Collections.<Exception>singletonList(e), consoleType.getTitle(), null);

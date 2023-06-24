@@ -38,7 +38,6 @@ import java.util.Map;
 public class PyPackageService implements PersistentStateComponent<PyPackageService> {
   public Map<String, Boolean> sdkToUsersite = ContainerUtil.newConcurrentMap();
   public List<String> additionalRepositories = Lists.newLockFreeCopyOnWriteList();
-  public Map<String, String> PY_PACKAGES = ContainerUtil.newConcurrentMap();
   public String virtualEnvBasePath;
   public Boolean PYPI_REMOVED = false;
 

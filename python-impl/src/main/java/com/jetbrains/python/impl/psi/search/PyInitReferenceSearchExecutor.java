@@ -16,22 +16,21 @@
 
 package com.jetbrains.python.impl.psi.search;
 
-import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AccessToken;
-import consulo.application.ApplicationManager;
-import consulo.language.psi.search.ReferencesSearchQueryExecutor;
-import consulo.project.util.query.QueryExecutorBase;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiReference;
-import consulo.language.psi.scope.GlobalSearchScope;
-import consulo.content.scope.SearchScope;
-import consulo.language.psi.search.UsageSearchContext;
-import consulo.language.psi.search.ReferencesSearch;
-import consulo.application.util.function.Processor;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ReadAction;
+import consulo.application.util.function.Processor;
+import consulo.content.scope.SearchScope;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.scope.GlobalSearchScope;
+import consulo.language.psi.search.ReferencesSearch;
+import consulo.language.psi.search.ReferencesSearchQueryExecutor;
+import consulo.language.psi.search.UsageSearchContext;
+import consulo.project.util.query.QueryExecutorBase;
 
 import javax.annotation.Nonnull;
 
@@ -39,41 +38,43 @@ import javax.annotation.Nonnull;
  * @author yole
  */
 @ExtensionImpl
-public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
-  public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer) {
-    PsiElement element = queryParameters.getElementToSearch();
-    if (!(element instanceof PyFunction)) {
-      return;
-    }
+public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor
+{
+	@Override
+	public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer)
+	{
+		PsiElement element = queryParameters.getElementToSearch();
+		if(!(element instanceof PyFunction))
+		{
+			return;
+		}
 
-    final AccessToken accessToken = ApplicationManager.getApplication().acquireReadActionLock();
-    String className;
-    SearchScope searchScope;
-    PyFunction function;
-    try {
-      function = (PyFunction)element;
-      if (!PyNames.INIT.equals(function.getName())) {
-        return;
-      }
-      final PyClass pyClass = function.getContainingClass();
-      if (pyClass == null) {
-        return;
-      }
-      className = pyClass.getName();
-      if (className == null) {
-        return;
-      }
+		String className;
+		SearchScope searchScope;
+		PyFunction function;
+		function = (PyFunction) element;
+		if(!PyNames.INIT.equals(ReadAction.compute(() -> function.getName())))
+		{
+			return;
+		}
+		final PyClass pyClass = ReadAction.compute(() -> function.getContainingClass());
+		if(pyClass == null)
+		{
+			return;
+		}
+		className = ReadAction.compute(() -> pyClass.getName());
+		if(className == null)
+		{
+			return;
+		}
 
-      searchScope = queryParameters.getEffectiveSearchScope();
-      if (searchScope instanceof GlobalSearchScope) {
-        searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, PythonFileType.INSTANCE);
-      }
-    }
-    finally {
-      accessToken.finish();
-    }
+		searchScope = queryParameters.getEffectiveSearchScope();
+		if(searchScope instanceof GlobalSearchScope)
+		{
+			searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) searchScope, PythonFileType.INSTANCE);
+		}
 
 
-    queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, function);
-  }
+		queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, function);
+	}
 }

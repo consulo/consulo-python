@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.jetbrains.python.impl.PythonHelpersLocator;
+import com.jetbrains.python.impl.packaging.pip.PypiPackageCache;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.http.HttpRequests;
@@ -134,7 +135,7 @@ public class PyPIPackageUtil
 
 
 	/**
-	 * Prevents simultaneous updates of {@link PyPackageService#PY_PACKAGES}
+	 * Prevents simultaneous updates of {@link PypiPackageCache}
 	 * because the corresponding response contains tons of data and multiple
 	 * queries at the same time can cause memory issues.
 	 */
@@ -249,7 +250,7 @@ public class PyPIPackageUtil
 
 	public void clearPackagesCache()
 	{
-		PyPackageService.getInstance().PY_PACKAGES.clear();
+		PypiPackageCache.getInstance().dropCache();
 		myAdditionalPackages = null;
 	}
 
@@ -432,32 +433,38 @@ public class PyPIPackageUtil
 	{
 		service.LAST_TIME_CHECKED = System.currentTimeMillis();
 
-		service.PY_PACKAGES.clear();
+		PypiPackageCache.getInstance().dropCache();
+
 		if(service.PYPI_REMOVED)
 		{
 			return;
 		}
+
 		parsePyPIList(parsePyPIListFromWeb(PYPI_LIST_URL, true), service);
 	}
 
 	private void parsePyPIList(@Nonnull List<String> packages, @Nonnull PyPackageService service)
 	{
 		myPackageNames = null;
+
+		List<String> toWritePackages = new ArrayList<>(packages.size());
 		for(String pyPackage : packages)
 		{
 			try
 			{
 				final String packageName = URLDecoder.decode(pyPackage, "UTF-8");
-				if(!packageName.contains(" "))
+				if(!packageName.isBlank())
 				{
-					service.PY_PACKAGES.put(packageName, "");
+					toWritePackages.add(packageName);
 				}
 			}
 			catch(UnsupportedEncodingException e)
 			{
-				LOG.warn(e.getMessage());
+				LOG.warn(e);
 			}
 		}
+
+		PypiPackageCache.getInstance().updateCache(toWritePackages);
 	}
 
 	@Nonnull
@@ -545,7 +552,8 @@ public class PyPIPackageUtil
 	@Nonnull
 	public static Map<String, String> getPyPIPackages()
 	{
-		return PyPackageService.getInstance().PY_PACKAGES;
+		List<String> cache = PypiPackageCache.getInstance().getCache();
+		return cache.stream().collect(Collectors.toMap(s -> s, s -> ""));
 	}
 
 	public boolean isInPyPI(@Nonnull String packageName)
