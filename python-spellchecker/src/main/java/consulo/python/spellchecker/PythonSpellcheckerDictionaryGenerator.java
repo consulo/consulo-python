@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jetbrains.python.impl.spellchecker;
+package consulo.python.spellchecker;
 
 import com.intellij.spellchecker.generator.SpellCheckerDictionaryGenerator;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;

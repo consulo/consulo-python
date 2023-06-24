@@ -16,9 +16,6 @@ open module consulo.python.impl
 
   requires xmlrpc.common;
 
-  // TODO move to own module - without hard dep to spellchecker
-  requires com.intellij.spellchecker;
-
   // TODO remove in future
   requires consulo.ide.impl;
 

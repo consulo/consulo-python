@@ -17,13 +17,17 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>consulo</groupId>
-		<artifactId>arch.managment</artifactId>
+		<artifactId>arch.ide-api-provided</artifactId>
 		<version>3-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
+
+	<groupId>consulo.plugin</groupId>
+	<artifactId>consulo.python.xml</artifactId>
+	<version>3-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
 	<repositories>
 		<repository>
@@ -36,20 +40,19 @@
 		</repository>
 	</repositories>
 
-	<groupId>consulo.plugin</groupId>
-	<artifactId>consulo.python.parent</artifactId>
-	<version>3-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>consulo.python-python.impl</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-	<modules>
-		<module>python-psi-api</module>
-		<module>python-debugger</module>
-		<module>python-impl</module>
-		<module>python-rest</module>
-		<module>python-xml</module>
-		<module>python-spellchecker</module>
-		<module>jython</module>
-		<module>iron-python</module>
-		<module>plugin</module>
-	</modules>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>com.intellij.xml</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

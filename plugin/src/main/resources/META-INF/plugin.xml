@@ -3,7 +3,7 @@
   <name>Python</name>
   <description>Smart editing for Python scripts</description>
   <version>SNAPSHOT</version>
-  <depends>com.intellij.spellchecker</depends>
+  <depends optional="true">com.intellij.spellchecker</depends>
   <depends optional="true">org.jetbrains.plugins.rest</depends>
   <depends optional="true">com.intellij.xml</depends>
   <depends>com.intellij.regexp</depends>
@@ -215,11 +215,6 @@
       <action id="RunSetupPyTask" class="com.jetbrains.python.impl.packaging.setupPy.SetupTaskChooserAction"/>
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
-
-    <action id="PythonGenerateDictionaries" class="com.jetbrains.python.impl.spellchecker.PythonSpellcheckerGenerateDictionariesAction"
-            text="Generate Python Spellchecker Dictionaries" internal="true">
-      <add-to-group group-id="Internal"/>
-    </action>
 
     <action id="PyInvertBooleanAction" class="com.jetbrains.python.impl.refactoring.invertBoolean.PyInvertBooleanAction"
             text="Invert Boolean">

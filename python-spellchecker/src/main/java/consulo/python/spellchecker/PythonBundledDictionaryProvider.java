@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jetbrains.python.impl.spellchecker;
+package consulo.python.spellchecker;
 
 import com.intellij.spellchecker.BundledDictionaryProvider;
 import consulo.annotation.component.ExtensionImpl;
