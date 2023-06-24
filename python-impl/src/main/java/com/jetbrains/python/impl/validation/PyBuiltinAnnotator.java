@@ -15,21 +15,18 @@
  */
 package com.jetbrains.python.impl.validation;
 
-import javax.annotation.Nonnull;
-import consulo.language.ast.ASTNode;
-import consulo.language.editor.annotation.Annotation;
-import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.highlighting.PyHighlighter;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyDecorator;
-import com.jetbrains.python.psi.PyQualifiedExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
+import com.jetbrains.python.psi.*;
+import consulo.language.ast.ASTNode;
+import consulo.language.editor.annotation.AnnotationBuilder;
+import consulo.language.editor.annotation.HighlightSeverity;
+import consulo.language.psi.PsiElement;
+
+import javax.annotation.Nonnull;
 
 /**
  * Marks built-in names.
@@ -49,18 +46,21 @@ public class PyBuiltinAnnotator extends PyAnnotator
 		final boolean highlightedAsAttribute = highlightAsAttribute(node, name);
 		if(!highlightedAsAttribute && PyBuiltinCache.isInBuiltins(node))
 		{
-			final Annotation ann;
 			final PsiElement parent = node.getParent();
+
+			AnnotationBuilder builder = getHolder().newSilentAnnotation(HighlightSeverity.INFORMATION);
 			if(parent instanceof PyDecorator)
 			{
 				// don't mark the entire decorator, only mark the "@", else we'll conflict with deco annotator
-				ann = getHolder().createInfoAnnotation(parent.getFirstChild(), null); // first child is there, or we'd not parse as deco
+				builder = builder.range(parent.getFirstChild()); // first child is there, or we'd not parse as deco
 			}
 			else
 			{
-				ann = getHolder().createInfoAnnotation(node, null);
+				builder = builder.range(node);
 			}
-			ann.setTextAttributes(PyHighlighter.PY_BUILTIN_NAME);
+			
+			builder = builder.textAttributes(PyHighlighter.PY_BUILTIN_NAME);
+			builder.create();
 		}
 	}
 
@@ -94,8 +94,7 @@ public class PyBuiltinAnnotator extends PyAnnotator
 					final ASTNode tgt = astNode.findChildByType(PyTokenTypes.IDENTIFIER); // only the id, not all qualifiers subtree
 					if(tgt != null)
 					{
-						final Annotation ann = getHolder().createInfoAnnotation(tgt, null);
-						ann.setTextAttributes(PyHighlighter.PY_PREDEFINED_USAGE);
+						getHolder().newSilentAnnotation(HighlightSeverity.INFORMATION).range(tgt).textAttributes(PyHighlighter.PY_PREDEFINED_USAGE).create();
 						return true;
 					}
 				}

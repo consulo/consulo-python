@@ -13,7 +13,6 @@ open module consulo.python.impl
   requires com.google.gson;
 
   requires com.intellij.regexp;
-  requires com.intellij.xml;
 
   requires xmlrpc.common;
 

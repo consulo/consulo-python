@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jetbrains.python.impl;
+package consulo.python.xml.impl;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.virtualFileSystem.fileType.FileTypeConsumer;
@@ -28,9 +28,11 @@ import javax.annotation.Nonnull;
  * @since 20.10.13.
  */
 @ExtensionImpl
-public class PythonXmlFileTypeFactory extends FileTypeFactory {
-  @Override
-  public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer) {
-    fileTypeConsumer.consume(XmlFileType.INSTANCE, "qrc");
-  }
+public class PythonXmlFileTypeFactory extends FileTypeFactory
+{
+	@Override
+	public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer)
+	{
+		fileTypeConsumer.consume(XmlFileType.INSTANCE, "qrc");
+	}
 }
