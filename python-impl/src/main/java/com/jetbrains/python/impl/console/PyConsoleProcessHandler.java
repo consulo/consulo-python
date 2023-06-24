@@ -52,8 +52,6 @@ public class PyConsoleProcessHandler extends BaseProcessHandler
 				String string = PyConsoleUtil.processPrompts(myConsoleView, StringUtil.convertLineSeparators(event.getText()));
 
 				myConsoleView.print(string, outputType);
-
-				PyConsoleProcessHandler.this.notifyTextAvailable(string, outputType);
 			}
 		});
 
@@ -97,6 +95,25 @@ public class PyConsoleProcessHandler extends BaseProcessHandler
 	public boolean isSilentlyDestroyOnClose()
 	{
 		return !myPydevConsoleCommunication.isExecuting();
+	}
+
+	@Override
+	public void startNotify()
+	{
+		super.startNotify();
+		myProcessHandler.startNotify();
+	}
+
+	@Override
+	public boolean isProcessTerminated()
+	{
+		return myProcessHandler.isProcessTerminated();
+	}
+
+	@Override
+	public boolean isProcessTerminating()
+	{
+		return myProcessHandler.isProcessTerminating();
 	}
 
 	private void doCloseCommunication()

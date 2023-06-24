@@ -22,7 +22,6 @@ import com.jetbrains.python.impl.PythonHelper;
 import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.impl.console.actions.ShowVarsAction;
 import com.jetbrains.python.impl.debugger.PyDebugRunner;
-import com.jetbrains.python.impl.remote.PyRemoteProcessHandlerBase;
 import com.jetbrains.python.impl.run.PythonCommandLineState;
 import com.jetbrains.python.impl.run.PythonProcessHandler;
 import com.jetbrains.python.impl.run.PythonTracebackFilter;
@@ -96,6 +95,7 @@ import consulo.undoRedo.CommandProcessor;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.dataholder.Key;
 import consulo.util.io.NetUtil;
+import consulo.util.lang.EmptyRunnable;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.TimeoutUtil;
 import consulo.virtualFileSystem.VirtualFile;
@@ -222,11 +222,9 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
 
   @Override
   public void open() {
-    PythonConsoleToolWindow toolWindow = PythonConsoleToolWindow.getInstance(myProject);
+    ToolWindow toolWindow = PythonConsoleToolWindow.getInstance(myProject).getToolWindow();
     if (toolWindow != null) {
-      toolWindow.getToolWindow().activate(() ->
-                                          {
-                                          }, true);
+        toolWindow.activate(EmptyRunnable.getInstance(), true);
     }
     else {
       runSync();
