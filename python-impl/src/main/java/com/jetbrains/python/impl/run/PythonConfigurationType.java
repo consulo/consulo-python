@@ -21,8 +21,10 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.execution.configuration.ConfigurationFactory;
 import consulo.execution.configuration.ConfigurationType;
 import consulo.execution.configuration.RunConfiguration;
+import consulo.localize.LocalizeValue;
 import consulo.module.extension.ModuleExtensionHelper;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.image.Image;
 import org.jetbrains.annotations.NonNls;
@@ -45,6 +47,12 @@ public class PythonConfigurationType implements ConfigurationType {
       super(configurationType);
     }
 
+    @Nonnull
+    @Override
+    public String getId() {
+      return "Python";
+    }
+
     @Override
     public boolean isApplicable(@Nonnull Project project) {
       return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
@@ -57,13 +65,13 @@ public class PythonConfigurationType implements ConfigurationType {
   }
 
   @Override
-  public String getDisplayName() {
-    return "Python";
+  public LocalizeValue getDisplayName() {
+    return PyLocalize.pythonConfigurationName();
   }
 
   @Override
-  public String getConfigurationTypeDescription() {
-    return "Python run configuration";
+  public LocalizeValue getConfigurationTypeDescription() {
+    return PyLocalize.pythonConfigurationDescription();
   }
 
   @Override

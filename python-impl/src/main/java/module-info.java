@@ -141,5 +141,7 @@ open module consulo.python.impl
   exports consulo.python.debugger;
   exports consulo.python.impl;
   exports consulo.python.impl.icon;
+  exports com.jetbrains.python.impl.packaging.pip;
+  exports consulo.python.impl.localize;
   exports consulo.python.module.extension;
 }
