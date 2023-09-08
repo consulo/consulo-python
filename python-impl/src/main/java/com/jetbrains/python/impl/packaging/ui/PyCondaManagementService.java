@@ -21,8 +21,8 @@ import consulo.content.bundle.Sdk;
 import consulo.logging.Logger;
 import consulo.process.ExecutionException;
 import consulo.process.cmd.GeneralCommandLine;
-import consulo.process.local.ExecUtil;
-import consulo.process.local.ProcessOutput;
+import consulo.process.util.CapturingProcessUtil;
+import consulo.process.util.ProcessOutput;
 import consulo.project.Project;
 import consulo.repository.ui.PackageVersionComparator;
 import consulo.repository.ui.RepoPackage;
@@ -73,7 +73,7 @@ public class PyCondaManagementService extends PyPackageManagementService {
     final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
 
     try {
-      final ProcessOutput result = ExecUtil.execAndGetOutput(commandLine);
+      final ProcessOutput result = CapturingProcessUtil.execAndGetOutput(commandLine);
       final int exitCode = result.getExitCode();
       if (exitCode != 0) {
         final String message =
@@ -95,7 +95,7 @@ public class PyCondaManagementService extends PyPackageManagementService {
     final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
 
     try {
-      final ProcessOutput result = ExecUtil.execAndGetOutput(commandLine);
+      final ProcessOutput result = CapturingProcessUtil.execAndGetOutput(commandLine);
       final int exitCode = result.getExitCode();
       if (exitCode != 0) {
         final String message =

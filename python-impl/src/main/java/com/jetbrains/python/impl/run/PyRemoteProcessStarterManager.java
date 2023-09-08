@@ -25,7 +25,7 @@ import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.process.ExecutionException;
 import consulo.process.cmd.GeneralCommandLine;
-import consulo.process.local.ProcessOutput;
+import consulo.process.util.ProcessOutput;
 import consulo.project.Project;
 
 import javax.annotation.Nonnull;

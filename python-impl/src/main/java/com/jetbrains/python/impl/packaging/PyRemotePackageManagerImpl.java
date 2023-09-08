@@ -29,7 +29,7 @@ import consulo.ide.impl.idea.remote.RemoteSdkAdditionalData;
 import consulo.ide.impl.idea.remote.VagrantNotStartedException;
 import consulo.logging.Logger;
 import consulo.process.ExecutionException;
-import consulo.process.local.ProcessOutput;
+import consulo.process.util.ProcessOutput;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 

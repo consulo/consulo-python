@@ -29,8 +29,8 @@ import consulo.process.ExecutionException;
 import consulo.process.ProcessHandler;
 import consulo.process.ProcessHandlerBuilder;
 import consulo.process.cmd.GeneralCommandLine;
-import consulo.process.local.ExecUtil;
 import consulo.process.util.CapturingProcessRunner;
+import consulo.process.util.CapturingProcessUtil;
 import consulo.process.util.ProcessOutput;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
@@ -109,7 +109,7 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 		parameters.addAll(arguments);
 
 		final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
-		final ProcessOutput result = ExecUtil.execAndGetOutput(commandLine);
+		final ProcessOutput result = CapturingProcessUtil.execAndGetOutput(commandLine);
 		final int exitCode = result.getExitCode();
 		if(exitCode != 0)
 		{
