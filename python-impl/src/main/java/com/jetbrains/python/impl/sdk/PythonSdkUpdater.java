@@ -20,11 +20,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.userSkeletons.PyUserSkeletonsUtil;
-import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.remote.PyCredentialsContribution;
 import com.jetbrains.python.impl.remote.PyRemoteSdkAdditionalDataBase;
 import com.jetbrains.python.impl.sdk.skeletons.PySkeletonRefresher;
+import com.jetbrains.python.packaging.PyPackageManager;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
@@ -46,7 +46,6 @@ import consulo.project.Project;
 import consulo.project.startup.PostStartupActivity;
 import consulo.ui.UIAccess;
 import consulo.ui.ex.awt.Messages;
-import consulo.ui.ex.concurrent.EdtExecutorService;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.StandardFileSystems;
 import consulo.virtualFileSystem.VirtualFile;
@@ -79,23 +78,19 @@ public class PythonSdkUpdater implements PostStartupActivity {
    */
   @Override
   public void runActivity(@Nonnull final Project project, UIAccess uiAccess) {
-    final Application application = ApplicationManager.getApplication();
-    if (application.isUnitTestMode()) {
-      return;
-    }
-    EdtExecutorService.getScheduledExecutorInstance()
-                      .schedule(() -> ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Python Paths", false) {
-                        @Override
-                        public void run(@Nonnull ProgressIndicator indicator) {
-                          final Project project = (Project)getProject();
-                          if (project.isDisposed()) {
-                            return;
-                          }
-                          for (final Sdk sdk : getPythonSdks(project)) {
-                            update(sdk, null, project, null);
-                          }
-                        }
-                      }), INITIAL_ACTIVITY_DELAY, TimeUnit.MILLISECONDS);
+    uiAccess.getScheduler()
+            .schedule(() -> ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Python Paths", false) {
+              @Override
+              public void run(@Nonnull ProgressIndicator indicator) {
+                final Project project = (Project)getProject();
+                if (project.isDisposed()) {
+                  return;
+                }
+                for (final Sdk sdk : getPythonSdks(project)) {
+                  update(sdk, null, project, null);
+                }
+              }
+            }), INITIAL_ACTIVITY_DELAY, TimeUnit.MILLISECONDS);
   }
 
   /**
