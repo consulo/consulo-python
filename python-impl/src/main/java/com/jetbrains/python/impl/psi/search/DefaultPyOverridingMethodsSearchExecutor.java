@@ -18,9 +18,7 @@ package com.jetbrains.python.impl.psi.search;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AccessToken;
-import consulo.application.ApplicationManager;
-import consulo.application.util.function.Computable;
+import consulo.application.ReadAction;
 import consulo.application.util.function.Processor;
 
 import javax.annotation.Nonnull;
@@ -35,27 +33,24 @@ public class DefaultPyOverridingMethodsSearchExecutor implements PyOverridingMet
                          @Nonnull final Processor<? super PyFunction> consumer) {
     final PyFunction baseMethod = queryParameters.getFunction();
 
-    final PyClass containingClass =
-      ApplicationManager.getApplication().runReadAction((Computable<PyClass>)() -> baseMethod.getContainingClass());
+    final PyClass containingClass = ReadAction.compute(baseMethod::getContainingClass);
 
     return PyClassInheritorsSearch.search(containingClass, queryParameters.isCheckDeep()).forEach(pyClass -> {
-      final AccessToken accessToken = ApplicationManager.getApplication().acquireReadActionLock();
-      PyFunction overridingMethod;
-      try {
-        overridingMethod = pyClass.findMethodByName(baseMethod.getName(), false, null);
-        if (overridingMethod != null) {
+      PyFunction overridingMethod = ReadAction.compute(() -> {
+        PyFunction func = pyClass.findMethodByName(baseMethod.getName(), false, null);
+        if (func != null) {
           final Property baseProperty = baseMethod.getProperty();
-          final Property overridingProperty = overridingMethod.getProperty();
+          final Property overridingProperty = func.getProperty();
           if (baseProperty != null && overridingProperty != null) {
             final AccessDirection direction = PyUtil.getPropertyAccessDirection(baseMethod);
             final PyCallable callable = overridingProperty.getByDirection(direction).valueOrNull();
-            overridingMethod = (callable instanceof PyFunction) ? (PyFunction)callable : null;
+            func = (callable instanceof PyFunction) ? (PyFunction)callable : null;
           }
         }
-      }
-      finally {
-        accessToken.finish();
-      }
+
+        return func;
+      });
+
       //noinspection SimplifiableIfStatement
       if (overridingMethod != null) {
         return consumer.process(overridingMethod);

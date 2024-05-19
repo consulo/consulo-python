@@ -35,13 +35,11 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
-import consulo.application.AccessToken;
 import consulo.application.Application;
-import consulo.application.ApplicationManager;
+import consulo.application.ReadAction;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
-import consulo.component.extension.Extensions;
 import consulo.document.Document;
 import consulo.document.FileDocumentManager;
 import consulo.execution.debug.*;
@@ -673,23 +671,20 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     dropFrameCaches();
     if (isConnected() && !mySuspendedThreads.isEmpty()) {
       final PySourcePosition pyPosition = myPositionConverter.convertToPython(position);
-      String type = PyLineBreakpointType.ID;
-      AccessToken lock = ApplicationManager.getApplication().acquireReadActionLock();
-      try {
+      String type = ReadAction.compute(() -> {
         final Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
         if (document != null) {
-          for (XBreakpointType breakpointType : Extensions.getExtensions(XBreakpointType.EXTENSION_POINT_NAME)) {
+          for (XBreakpointType breakpointType : XBreakpointType.EXTENSION_POINT_NAME.getExtensionList()) {
             if (breakpointType instanceof PyBreakpointType && ((PyBreakpointType)breakpointType).canPutInDocument(getSession().getProject(),
                                                                                                                   document)) {
-              type = breakpointType.getId();
-              break;
+              return breakpointType.getId();
             }
           }
         }
-      }
-      finally {
-        lock.finish();
-      }
+
+        return PyLineBreakpointType.ID;
+      });
+
       myDebugger.setTempBreakpoint(type, pyPosition.getFile(), pyPosition.getLine());
 
       passToCurrentThread(context, ResumeOrStepCommand.Mode.RESUME);
@@ -831,14 +826,16 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
       return null;
     }
     final VirtualFile file = breakpoint.getSourcePosition().getFile();
-    AccessToken lock = ApplicationManager.getApplication().acquireReadActionLock();
-    try {
+    return ReadAction.compute(() -> {
       final Document document = FileDocumentManager.getInstance().getDocument(file);
       final Project project = getSession().getProject();
       if (document != null) {
         if (file.getFileType() == PythonFileType.INSTANCE) {
           PsiElement psiElement = XDebuggerUtil.getInstance().
-            findContextElement(file, document.getLineStartOffset(breakpoint.getSourcePosition().getLine()), project, false);
+                                               findContextElement(file,
+                                                                  document.getLineStartOffset(breakpoint.getSourcePosition().getLine()),
+                                                                  project,
+                                                                  false);
           PyFunction function = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class);
           if (function != null) {
             return function.getName();
@@ -846,10 +843,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
         }
       }
       return null;
-    }
-    finally {
-      lock.finish();
-    }
+    });
   }
 
   public void addBreakpoint(final PySourcePosition position, final XLineBreakpoint breakpoint) {

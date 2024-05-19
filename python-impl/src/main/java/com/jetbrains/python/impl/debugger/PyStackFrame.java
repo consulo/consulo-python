@@ -22,9 +22,9 @@ import com.jetbrains.python.debugger.PyFrameAccessor;
 import com.jetbrains.python.debugger.PyStackFrameInfo;
 import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.impl.debugger.settings.PyDebuggerSettings;
-import consulo.application.AccessToken;
 import consulo.application.AllIcons;
 import consulo.application.ApplicationManager;
+import consulo.application.ReadAction;
 import consulo.document.Document;
 import consulo.document.FileDocumentManager;
 import consulo.execution.debug.XSourcePosition;
@@ -98,18 +98,15 @@ public class PyStackFrame extends XStackFrame {
       return;
     }
 
-    boolean isExternal = true;
     final VirtualFile file = myPosition.getFile();
-    AccessToken lock = ApplicationManager.getApplication().acquireReadActionLock();
-    try {
+    boolean isExternal = ReadAction.compute(() -> {
       final Document document = FileDocumentManager.getInstance().getDocument(file);
       if (document != null) {
-        isExternal = !ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file);
+        return !ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file);
       }
-    }
-    finally {
-      lock.finish();
-    }
+      return false;
+    });
+
 
     component.append(myFrameInfo.getName(), gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
     component.append(", ", gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
