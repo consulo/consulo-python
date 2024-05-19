@@ -32,6 +32,7 @@ import consulo.execution.debug.evaluation.XDebuggerEvaluator;
 import consulo.execution.debug.frame.*;
 import consulo.logging.Logger;
 import consulo.module.content.ProjectRootManager;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.project.Project;
 import consulo.ui.ex.ColoredTextContainer;
 import consulo.ui.ex.SimpleTextAttributes;
@@ -90,7 +91,7 @@ public class PyStackFrame extends XStackFrame {
 
   @Override
   public void customizePresentation(@Nonnull ColoredTextContainer component) {
-    component.setIcon(AllIcons.Debugger.StackFrame);
+    component.setIcon(PlatformIconGroup.debuggerFrame());
 
     if (myPosition == null) {
       component.append("<frame not available>", SimpleTextAttributes.GRAY_ATTRIBUTES);
