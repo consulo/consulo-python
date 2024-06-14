@@ -30,7 +30,6 @@ import consulo.annotation.access.RequiredWriteAction;
 import consulo.application.AllIcons;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
-import consulo.application.TransactionGuard;
 import consulo.application.dumb.DumbAware;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
@@ -260,7 +259,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
 
   @Override
   public void run() {
-    TransactionGuard.submitTransaction(myProject, () -> FileDocumentManager.getInstance().saveAllDocuments());
+    FileDocumentManager.getInstance().saveAllDocuments();
 
     myPorts = findAvailablePorts(myProject, myConsoleType);
 

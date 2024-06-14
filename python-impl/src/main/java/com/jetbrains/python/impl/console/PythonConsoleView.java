@@ -27,12 +27,14 @@ import com.jetbrains.python.impl.highlighting.PyHighlighter;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.psi.LanguageLevel;
 import consulo.application.ApplicationManager;
-import consulo.application.TransactionGuard;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
 import consulo.application.ui.wm.IdeFocusManager;
-import consulo.codeEditor.*;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.EditorColors;
+import consulo.codeEditor.EditorEx;
+import consulo.codeEditor.EditorHighlighter;
 import consulo.codeEditor.markup.HighlighterTargetArea;
 import consulo.codeEditor.markup.RangeHighlighter;
 import consulo.colorScheme.EditorColorsManager;
@@ -206,18 +208,16 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   public void executeInConsole(final String code) {
     final String codeToExecute = code.endsWith("\n") ? code : code + "\n";
 
-    TransactionGuard.submitTransaction(this, () -> {
-      String text = getConsoleEditor().getDocument().getText();
-      ApplicationManager.getApplication().runWriteAction(() -> setInputText(codeToExecute));
-      int oldOffset = getConsoleEditor().getCaretModel().getOffset();
-      getConsoleEditor().getCaretModel().moveToOffset(codeToExecute.length());
-      myExecuteActionHandler.runExecuteAction(this);
+    String text = getConsoleEditor().getDocument().getText();
+    ApplicationManager.getApplication().runWriteAction(() -> setInputText(codeToExecute));
+    int oldOffset = getConsoleEditor().getCaretModel().getOffset();
+    getConsoleEditor().getCaretModel().moveToOffset(codeToExecute.length());
+    myExecuteActionHandler.runExecuteAction(this);
 
-      if (!StringUtil.isEmpty(text)) {
-        ApplicationManager.getApplication().runWriteAction(() -> setInputText(text));
-        getConsoleEditor().getCaretModel().moveToOffset(oldOffset);
-      }
-    });
+    if (!StringUtil.isEmpty(text)) {
+      ApplicationManager.getApplication().runWriteAction(() -> setInputText(text));
+      getConsoleEditor().getCaretModel().moveToOffset(oldOffset);
+    }
   }
 
   public void executeStatement(@Nonnull String statement, @Nonnull final Key attributes) {

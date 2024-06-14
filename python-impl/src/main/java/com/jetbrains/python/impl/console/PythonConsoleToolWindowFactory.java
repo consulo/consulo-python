@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.console;
 
-import consulo.application.TransactionGuard;
 import consulo.application.dumb.DumbAware;
 import consulo.project.Project;
 import consulo.ui.ex.toolWindow.ToolWindow;
@@ -31,6 +30,6 @@ public class PythonConsoleToolWindowFactory implements DumbAware {
   //@Override
   public void createToolWindowContent(final @Nonnull Project project, final @Nonnull ToolWindow toolWindow) {
     PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(project, null);
-    TransactionGuard.submitTransaction(project, runner::runSync);
+    runner.runSync();
   }
 }
