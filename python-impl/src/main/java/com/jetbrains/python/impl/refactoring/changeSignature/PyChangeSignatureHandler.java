@@ -151,7 +151,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	private static void showCannotRefactorErrorHint(@Nonnull Project project, @Nullable Editor editor, @Nonnull String details)
 	{
 		final String message = RefactoringBundle.getCannotRefactorMessage(details);
-		CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, REFACTORING_NAME);
+		CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME.get(), REFACTORING_NAME.get());
 	}
 
 	private static boolean isNotUnderSourceRoot(@Nonnull final Project project, @Nullable final PsiFile psiFile)
@@ -202,7 +202,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 			}
 			else
 			{
-				choice = Messages.showYesNoCancelDialog(function.getProject(), message, REFACTORING_NAME, Messages.getQuestionIcon());
+				choice = Messages.showYesNoCancelDialog(function.getProject(), message, REFACTORING_NAME.get(), Messages.getQuestionIcon());
 			}
 			switch(choice)
 			{
