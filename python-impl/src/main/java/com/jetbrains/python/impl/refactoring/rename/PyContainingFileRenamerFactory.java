@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.refactoring.rename;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.refactoring.rename.AutomaticRenamer;
+import consulo.localize.LocalizeValue;
 import consulo.util.io.FileUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
@@ -52,8 +53,8 @@ public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
   }
 
   @Override
-  public String getOptionName() {
-    return "Rename containing file";
+  public LocalizeValue getOptionName() {
+    return LocalizeValue.localizeTODO("Rename containing file");
   }
 
   @Override

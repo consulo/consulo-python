@@ -20,6 +20,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.refactoring.rename.AutomaticRenamerFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.editor.refactoring.rename.AutomaticRenamer;
+import consulo.localize.LocalizeValue;
 import consulo.usage.UsageInfo;
 import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.psi.PyClass;
@@ -39,8 +40,8 @@ public class PyInheritorRenameFactory implements AutomaticRenamerFactory
   }
 
   @Override
-  public String getOptionName() {
-    return "Rename inheritors";
+  public LocalizeValue getOptionName() {
+    return LocalizeValue.localizeTODO("Rename inheritors");
   }
 
   @Override

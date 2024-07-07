@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.refactoring.rename;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.refactoring.rename.AutomaticRenamer;
+import consulo.localize.LocalizeValue;
 import consulo.util.lang.Comparing;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -47,8 +48,8 @@ public class PyParametersRenameFactory implements AutomaticRenamerFactory {
   }
 
   @Override
-  public String getOptionName() {
-    return "Rename parameters in hierarchy";
+  public LocalizeValue getOptionName() {
+    return LocalizeValue.localizeTODO("Rename parameters in hierarchy");
   }
 
   @Override

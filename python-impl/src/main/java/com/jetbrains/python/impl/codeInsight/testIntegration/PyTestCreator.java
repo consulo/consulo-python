@@ -19,11 +19,15 @@ import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.codeInsight.imports.AddImportHelper;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementGenerator;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationManager;
 import consulo.application.util.function.Computable;
 import consulo.codeEditor.Editor;
+import consulo.fileEditor.history.IdeDocumentHistory;
 import consulo.language.Language;
 import consulo.language.codeStyle.CodeStyleManager;
 import consulo.language.codeStyle.PostprocessReformattingAspect;
@@ -110,7 +114,7 @@ public class PyTestCreator implements TestCreator
 	@Nonnull
 	static PyElement generateTest(@Nonnull final Project project, @Nonnull final CreateTestDialog dialog)
 	{
-		consulo.ide.impl.idea.openapi.fileEditor.ex.IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
+		IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
 
 		String fileName = dialog.getFileName();
 		if(!fileName.endsWith(".py"))
