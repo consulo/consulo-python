@@ -24,7 +24,6 @@ import consulo.annotation.component.ServiceAPI;
 import consulo.annotation.component.ServiceImpl;
 import consulo.disposer.Disposer;
 import consulo.execution.ui.RunContentDescriptor;
-import consulo.ide.ServiceManager;
 import consulo.ide.impl.wm.impl.ToolWindowContentUI;
 import consulo.project.Project;
 import consulo.project.ui.wm.ToolWindowManager;
@@ -51,153 +50,153 @@ import java.util.List;
 @ServiceAPI(ComponentScope.PROJECT)
 @ServiceImpl
 public class PythonConsoleToolWindow {
-  @Nonnull
-  public static PythonConsoleToolWindow getInstance(@Nonnull Project project) {
-    return ServiceManager.getService(project, PythonConsoleToolWindow.class);
-  }
-
-  public static final Key<RunContentDescriptor> CONTENT_DESCRIPTOR = Key.create("CONTENT_DESCRIPTOR");
-
-  public static final Function<Content, RunContentDescriptor> CONTENT_TO_DESCRIPTOR_FUNCTION =
-    new Function<Content, RunContentDescriptor>() {
-      @Override
-      public RunContentDescriptor apply(@Nullable Content input) {
-        return input != null ? input.getUserData(CONTENT_DESCRIPTOR) : null;
-      }
-    };
-
-  private final Project myProject;
-
-  private boolean myInitialized = false;
-
-  @Inject
-  public PythonConsoleToolWindow(Project project) {
-    myProject = project;
-  }
-
-  public List<RunContentDescriptor> getConsoleContentDescriptors() {
-    return FluentIterable.from(Lists.newArrayList(getToolWindow(myProject).getContentManager().getContents()))
-                         .transform(CONTENT_TO_DESCRIPTOR_FUNCTION)
-                         .filter(Predicates.notNull())
-                         .toList();
-  }
-
-
-  public void init(final @Nonnull ToolWindow toolWindow, final @Nonnull RunContentDescriptor contentDescriptor) {
-    setContent(toolWindow, contentDescriptor);
-
-    if (!myInitialized) {
-      doInit(toolWindow);
+    @Nonnull
+    public static PythonConsoleToolWindow getInstance(@Nonnull Project project) {
+        return project.getInstance(PythonConsoleToolWindow.class);
     }
-  }
 
-  private void doInit(@Nonnull final ToolWindow toolWindow) {
-    myInitialized = true;
+    public static final Key<RunContentDescriptor> CONTENT_DESCRIPTOR = Key.create("CONTENT_DESCRIPTOR");
 
-    toolWindow.setToHideOnEmptyContent(true);
+    public static final Function<Content, RunContentDescriptor> CONTENT_TO_DESCRIPTOR_FUNCTION =
+        new Function<>() {
+            @Override
+            public RunContentDescriptor apply(@Nullable Content input) {
+                return input != null ? input.getUserData(CONTENT_DESCRIPTOR) : null;
+            }
+        };
 
-    ((consulo.ide.impl.idea.openapi.wm.ex.ToolWindowManagerEx)ToolWindowManager.getInstance(myProject)).addToolWindowManagerListener(new ToolWindowManagerListener() {
-      @Override
-      public void toolWindowRegistered(@Nonnull String id) {
-      }
+    private final Project myProject;
 
-      @Override
-      public void stateChanged() {
-        ToolWindow window = getToolWindow(myProject);
-        if (window != null) {
-          boolean visible = window.isVisible();
-          if (visible && toolWindow.getContentManager().getContentCount() == 0) {
-            PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(myProject, null);
-            runner.run();
-          }
+    private boolean myInitialized = false;
+
+    @Inject
+    public PythonConsoleToolWindow(Project project) {
+        myProject = project;
+    }
+
+    public List<RunContentDescriptor> getConsoleContentDescriptors() {
+        return FluentIterable.from(Lists.newArrayList(getToolWindow(myProject).getContentManager().getContents()))
+            .transform(CONTENT_TO_DESCRIPTOR_FUNCTION)
+            .filter(Predicates.notNull())
+            .toList();
+    }
+
+
+    public void init(final @Nonnull ToolWindow toolWindow, final @Nonnull RunContentDescriptor contentDescriptor) {
+        setContent(toolWindow, contentDescriptor);
+
+        if (!myInitialized) {
+            doInit(toolWindow);
         }
-      }
-    });
-  }
-
-  private static void setContent(ToolWindow toolWindow, RunContentDescriptor contentDescriptor) {
-    toolWindow.getComponent().putClientProperty(ToolWindowContentUI.HIDE_ID_LABEL, "true");
-
-    Content content = toolWindow.getContentManager().findContent(contentDescriptor.getDisplayName());
-    if (content == null) {
-      content = createContent(contentDescriptor);
-      toolWindow.getContentManager().addContent(content);
-    }
-    else {
-      SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
-      resetContent(contentDescriptor, panel, content);
     }
 
-    toolWindow.getContentManager().setSelectedContent(content);
-  }
+    private void doInit(@Nonnull final ToolWindow toolWindow) {
+        myInitialized = true;
 
-  public ToolWindow getToolWindow() {
-    return getToolWindow(myProject);
-  }
+        toolWindow.setToHideOnEmptyContent(true);
 
-  public static ToolWindow getToolWindow(Project project) {
-    return ToolWindowManager.getInstance(project).getToolWindow(PythonConsoleToolWindowFactory.ID);
-  }
+        myProject.getMessageBus().connect().subscribe(ToolWindowManagerListener.class, new ToolWindowManagerListener() {
+            @Override
+            public void toolWindowRegistered(@Nonnull String id) {
+            }
 
-  public void setContent(RunContentDescriptor contentDescriptor) {
-    setContent(getToolWindow(myProject), contentDescriptor);
-  }
-
-  private static Content createContent(final @Nonnull RunContentDescriptor contentDescriptor) {
-    SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
-
-    Content content = ContentFactory.getInstance().createContent(panel, contentDescriptor.getDisplayName(), false);
-    content.setCloseable(true);
-
-    resetContent(contentDescriptor, panel, content);
-
-    return content;
-  }
-
-  private static void resetContent(RunContentDescriptor contentDescriptor, SimpleToolWindowPanel panel, Content content) {
-    RunContentDescriptor oldDescriptor =
-      content.getDisposer() instanceof RunContentDescriptor ? (RunContentDescriptor)content.getDisposer() : null;
-    if (oldDescriptor != null) {
-      Disposer.dispose(oldDescriptor);
+            @Override
+            public void stateChanged(ToolWindowManager toolWindowManager) {
+                ToolWindow window = getToolWindow(myProject);
+                if (window != null) {
+                    boolean visible = window.isVisible();
+                    if (visible && toolWindow.getContentManager().getContentCount() == 0) {
+                        PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(myProject, null);
+                        runner.run();
+                    }
+                }
+            }
+        });
     }
 
-    panel.setContent(contentDescriptor.getComponent());
+    private static void setContent(ToolWindow toolWindow, RunContentDescriptor contentDescriptor) {
+        toolWindow.getComponent().putClientProperty(ToolWindowContentUI.HIDE_ID_LABEL, "true");
 
-    content.setComponent(panel);
-    content.setDisposer(contentDescriptor);
-    content.setPreferredFocusableComponent(contentDescriptor.getComponent());
-
-    content.putUserData(CONTENT_DESCRIPTOR, contentDescriptor);
-  }
-
-  private static FocusListener createFocusListener(final ToolWindow toolWindow) {
-    return new FocusListener() {
-      @Override
-      public void focusGained(FocusEvent e) {
-        JComponent component = getComponentToFocus(toolWindow);
-        if (component != null) {
-          component.requestFocusInWindow();
+        Content content = toolWindow.getContentManager().findContent(contentDescriptor.getDisplayName());
+        if (content == null) {
+            content = createContent(contentDescriptor);
+            toolWindow.getContentManager().addContent(content);
         }
-      }
+        else {
+            SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
+            resetContent(contentDescriptor, panel, content);
+        }
 
-      @Override
-      public void focusLost(FocusEvent e) {
+        toolWindow.getContentManager().setSelectedContent(content);
+    }
 
-      }
-    };
-  }
+    public ToolWindow getToolWindow() {
+        return getToolWindow(myProject);
+    }
 
-  private static JComponent getComponentToFocus(ToolWindow window) {
-    return window.getContentManager().getComponent();
-  }
+    public static ToolWindow getToolWindow(Project project) {
+        return ToolWindowManager.getInstance(project).getToolWindow(PythonConsoleToolWindowFactory.ID);
+    }
+
+    public void setContent(RunContentDescriptor contentDescriptor) {
+        setContent(getToolWindow(myProject), contentDescriptor);
+    }
+
+    private static Content createContent(final @Nonnull RunContentDescriptor contentDescriptor) {
+        SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
+
+        Content content = ContentFactory.getInstance().createContent(panel, contentDescriptor.getDisplayName(), false);
+        content.setCloseable(true);
+
+        resetContent(contentDescriptor, panel, content);
+
+        return content;
+    }
+
+    private static void resetContent(RunContentDescriptor contentDescriptor, SimpleToolWindowPanel panel, Content content) {
+        RunContentDescriptor oldDescriptor =
+            content.getDisposer() instanceof RunContentDescriptor ? (RunContentDescriptor) content.getDisposer() : null;
+        if (oldDescriptor != null) {
+            Disposer.dispose(oldDescriptor);
+        }
+
+        panel.setContent(contentDescriptor.getComponent());
+
+        content.setComponent(panel);
+        content.setDisposer(contentDescriptor);
+        content.setPreferredFocusableComponent(contentDescriptor.getComponent());
+
+        content.putUserData(CONTENT_DESCRIPTOR, contentDescriptor);
+    }
+
+    private static FocusListener createFocusListener(final ToolWindow toolWindow) {
+        return new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                JComponent component = getComponentToFocus(toolWindow);
+                if (component != null) {
+                    component.requestFocusInWindow();
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+
+            }
+        };
+    }
+
+    private static JComponent getComponentToFocus(ToolWindow window) {
+        return window.getContentManager().getComponent();
+    }
 
 
-  public void activate(@Nonnull Runnable runnable) {
-    getToolWindow(myProject).activate(runnable);
-  }
+    public void activate(@Nonnull Runnable runnable) {
+        getToolWindow(myProject).activate(runnable);
+    }
 
-  @Nullable
-  public RunContentDescriptor getSelectedContentDescriptor() {
-    return CONTENT_TO_DESCRIPTOR_FUNCTION.apply(getToolWindow(myProject).getContentManager().getSelectedContent());
-  }
+    @Nullable
+    public RunContentDescriptor getSelectedContentDescriptor() {
+        return CONTENT_TO_DESCRIPTOR_FUNCTION.apply(getToolWindow(myProject).getContentManager().getSelectedContent());
+    }
 }
