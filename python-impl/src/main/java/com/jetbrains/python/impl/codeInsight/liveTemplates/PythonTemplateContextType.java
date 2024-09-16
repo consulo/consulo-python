@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.codeInsight.liveTemplates;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.template.context.FileTypeBasedContextType;
 import com.jetbrains.python.PythonFileType;
+import consulo.localize.LocalizeValue;
 
 /**
  * @author yole
@@ -26,6 +27,6 @@ import com.jetbrains.python.PythonFileType;
 @ExtensionImpl
 public class PythonTemplateContextType extends FileTypeBasedContextType {
   public PythonTemplateContextType() {
-    super("Python", "Python", PythonFileType.INSTANCE);
+    super("Python", LocalizeValue.localizeTODO("Python"), PythonFileType.INSTANCE);
   }
 }
