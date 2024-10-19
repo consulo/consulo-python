@@ -15,13 +15,11 @@
  */
 package com.jetbrains.python.impl.sdk;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.packaging.PyPackageService;
 import com.jetbrains.python.impl.packaging.ui.PyPackageManagementService;
 import com.jetbrains.python.impl.sdk.flavors.VirtualEnvSdkFlavor;
 import com.jetbrains.python.impl.ui.IdeaDialog;
 import consulo.application.Application;
-import consulo.application.ApplicationManager;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
@@ -33,8 +31,10 @@ import consulo.process.ExecutionException;
 import consulo.project.DumbModePermission;
 import consulo.project.DumbService;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.repository.ui.PackageManagementService;
 import consulo.ui.UIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.JBCheckBox;
 import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.util.io.FileUtil;
@@ -64,9 +64,11 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
         void virtualEnvCreated(Sdk sdk, boolean associateWithProject);
     }
 
+    @RequiredUIAccess
     public static void setupVirtualEnvSdk(final String path, boolean associateWithProject, VirtualEnvCallback callback) {
-        final VirtualFile sdkHome = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
+        final VirtualFile sdkHome = Application.get().runWriteAction(new Computable<VirtualFile>() {
             @Nullable
+            @Override
             public VirtualFile compute() {
                 return LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
             }
@@ -95,7 +97,7 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
         myMainPanel = new JPanel(layout);
         myName = new JTextField();
         myDestination = new TextFieldWithBrowseButton();
-        myMakeAvailableToAllProjectsCheckbox = new JBCheckBox(PyBundle.message("sdk.create.venv.dialog.make.available.to.all.projects"));
+        myMakeAvailableToAllProjectsCheckbox = new JBCheckBox(PyLocalize.sdkCreateVenvDialogMakeAvailableToAllProjects().get());
         myMakeAvailableToAllProjectsCheckbox.setSelected(true);
         myMakeAvailableToAllProjectsCheckbox.setVisible(false);
 
@@ -120,7 +122,7 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
             myDestination,
             myName,
             myInitialPath,
-            PyBundle.message("sdk.create.venv.dialog.select.venv.location")
+            PyLocalize.sdkCreateVenvDialogSelectVenvLocation().get()
         );
     }
 
@@ -182,28 +184,28 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
             final String[] content = destFile.list();
             if (content != null && content.length != 0) {
                 setOKActionEnabled(false);
-                setErrorText(PyBundle.message("sdk.create.venv.dialog.error.not.empty.directory"));
+                setErrorText(PyLocalize.sdkCreateVenvDialogErrorNotEmptyDirectory());
                 return;
             }
         }
         if (StringUtil.isEmptyOrSpaces(projectName)) {
             setOKActionEnabled(false);
-            setErrorText(PyBundle.message("sdk.create.venv.dialog.error.empty.venv.name"));
+            setErrorText(PyLocalize.sdkCreateVenvDialogErrorEmptyVenvName());
             return;
         }
         if (!PathUtil.isValidFileName(projectName)) {
             setOKActionEnabled(false);
-            setErrorText(PyBundle.message("sdk.create.venv.dialog.error.invalid.directory.name"));
+            setErrorText(PyLocalize.sdkCreateVenvDialogErrorInvalidDirectoryName());
             return;
         }
         if (StringUtil.isEmptyOrSpaces(myDestination.getText())) {
             setOKActionEnabled(false);
-            setErrorText(PyBundle.message("sdk.create.venv.dialog.error.empty.venv.location"));
+            setErrorText(PyLocalize.sdkCreateVenvDialogErrorEmptyVenvLocation());
             return;
         }
 
         setOKActionEnabled(true);
-        setErrorText(null);
+        clearErrorText();
     }
 
     abstract protected void layoutPanel(final List<Sdk> allSdks);
@@ -233,22 +235,23 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
     public void createVirtualEnv(final VirtualEnvCallback callback) {
         final ProgressManager progman = ProgressManager.getInstance();
         final Sdk basicSdk = getSdk();
-        final Task.Modal createTask = new Task.Modal(myProject, PyBundle.message("sdk.create.venv.dialog.creating.venv"), false) {
+        final Task.Modal createTask = new Task.Modal(myProject, PyLocalize.sdkCreateVenvDialogCreatingVenv(), false) {
             String myPath;
 
+            @Override
             public void run(@Nonnull final ProgressIndicator indicator) {
                 try {
-                    indicator.setText(PyBundle.message("sdk.create.venv.dialog.creating.venv"));
+                    indicator.setTextValue(PyLocalize.sdkCreateVenvDialogCreatingVenv());
                     myPath = createEnvironment(basicSdk);
                 }
                 catch (final ExecutionException e) {
-                    ApplicationManager.getApplication().invokeLater(
+                    Application.get().invokeLater(
                         () -> {
                             final PackageManagementService.ErrorDescription description =
                                 PyPackageManagementService.toErrorDescription(Collections.singletonList(e), basicSdk);
                             if (description != null) {
                                 PackagesNotificationPanel.showError(
-                                    PyBundle.message("sdk.create.venv.dialog.error.failed.to.create.venv"),
+                                    PyLocalize.sdkCreateVenvDialogErrorFailedToCreateVenv().get(),
                                     description
                                 );
                             }
@@ -258,11 +261,11 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
                 }
             }
 
-
             @Override
+            @RequiredUIAccess
             public void onSuccess() {
                 if (myPath != null) {
-                    ApplicationManager.getApplication().invokeLater(() -> DumbService.allowStartingDumbModeInside(
+                    Application.get().invokeLater(() -> DumbService.allowStartingDumbModeInside(
                         DumbModePermission.MAY_START_BACKGROUND,
                         () -> setupVirtualEnvSdk(
                             myPath,
@@ -279,6 +282,7 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
     abstract protected String createEnvironment(Sdk basicSdk) throws ExecutionException;
 
     @Override
+    @RequiredUIAccess
     public JComponent getPreferredFocusedComponent() {
         return myName;
     }
