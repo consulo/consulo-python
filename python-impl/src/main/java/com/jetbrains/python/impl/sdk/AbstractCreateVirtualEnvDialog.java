@@ -15,13 +15,11 @@
  */
 package com.jetbrains.python.impl.sdk;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.packaging.PyPackageService;
 import com.jetbrains.python.impl.packaging.ui.PyPackageManagementService;
 import com.jetbrains.python.impl.sdk.flavors.VirtualEnvSdkFlavor;
 import com.jetbrains.python.impl.ui.IdeaDialog;
 import consulo.application.Application;
-import consulo.application.ApplicationManager;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
@@ -33,8 +31,10 @@ import consulo.process.ExecutionException;
 import consulo.project.DumbModePermission;
 import consulo.project.DumbService;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.repository.ui.PackageManagementService;
 import consulo.ui.UIAccess;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.JBCheckBox;
 import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.util.io.FileUtil;
@@ -51,285 +51,252 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog
-{
-	@Nullable
-	protected Project myProject;
-	protected JPanel myMainPanel;
-	protected JTextField myName;
-	protected TextFieldWithBrowseButton myDestination;
-	protected JBCheckBox myMakeAvailableToAllProjectsCheckbox;
-	protected String myInitialPath;
+public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
+    @Nullable
+    protected Project myProject;
+    protected JPanel myMainPanel;
+    protected JTextField myName;
+    protected TextFieldWithBrowseButton myDestination;
+    protected JBCheckBox myMakeAvailableToAllProjectsCheckbox;
+    protected String myInitialPath;
 
-	public interface VirtualEnvCallback
-	{
-		void virtualEnvCreated(Sdk sdk, boolean associateWithProject);
-	}
+    public interface VirtualEnvCallback {
+        void virtualEnvCreated(Sdk sdk, boolean associateWithProject);
+    }
 
-	public static void setupVirtualEnvSdk(final String path, boolean associateWithProject, VirtualEnvCallback callback)
-	{
-		final VirtualFile sdkHome = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>()
-		{
-			@Nullable
-			public VirtualFile compute()
-			{
-				return LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
-			}
-		});
-		if(sdkHome != null)
-		{
-			final Sdk sdk =
-					SdkUtil.createAndAddSDK(FileUtil.toSystemDependentName(sdkHome.getPath()), PythonSdkType.getInstance(), UIAccess.current());
-			callback.virtualEnvCreated(sdk, associateWithProject);
-		}
-	}
+    @RequiredUIAccess
+    public static void setupVirtualEnvSdk(final String path, boolean associateWithProject, VirtualEnvCallback callback) {
+        final VirtualFile sdkHome = Application.get().runWriteAction(new Computable<VirtualFile>() {
+            @Nullable
+            @Override
+            public VirtualFile compute() {
+                return LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
+            }
+        });
+        if (sdkHome != null) {
+            final Sdk sdk =
+                SdkUtil.createAndAddSDK(FileUtil.toSystemDependentName(sdkHome.getPath()), PythonSdkType.getInstance(), UIAccess.current());
+            callback.virtualEnvCreated(sdk, associateWithProject);
+        }
+    }
 
-	public AbstractCreateVirtualEnvDialog(Project project, final List<Sdk> allSdks)
-	{
-		super(project);
-		setupDialog(project, allSdks);
-	}
+    public AbstractCreateVirtualEnvDialog(Project project, final List<Sdk> allSdks) {
+        super(project);
+        setupDialog(project, allSdks);
+    }
 
-	public AbstractCreateVirtualEnvDialog(Component owner, final List<Sdk> allSdks)
-	{
-		super(owner);
-		setupDialog(null, allSdks);
-	}
+    public AbstractCreateVirtualEnvDialog(Component owner, final List<Sdk> allSdks) {
+        super(owner);
+        setupDialog(null, allSdks);
+    }
 
-	void setupDialog(Project project, final List<Sdk> allSdks)
-	{
-		myProject = project;
+    void setupDialog(Project project, final List<Sdk> allSdks) {
+        myProject = project;
 
-		final GridBagLayout layout = new GridBagLayout();
-		myMainPanel = new JPanel(layout);
-		myName = new JTextField();
-		myDestination = new TextFieldWithBrowseButton();
-		myMakeAvailableToAllProjectsCheckbox = new JBCheckBox(PyBundle.message("sdk.create.venv.dialog.make.available.to.all.projects"));
-		myMakeAvailableToAllProjectsCheckbox.setSelected(true);
-		myMakeAvailableToAllProjectsCheckbox.setVisible(false);
+        final GridBagLayout layout = new GridBagLayout();
+        myMainPanel = new JPanel(layout);
+        myName = new JTextField();
+        myDestination = new TextFieldWithBrowseButton();
+        myMakeAvailableToAllProjectsCheckbox = new JBCheckBox(PyLocalize.sdkCreateVenvDialogMakeAvailableToAllProjects().get());
+        myMakeAvailableToAllProjectsCheckbox.setSelected(true);
+        myMakeAvailableToAllProjectsCheckbox.setVisible(false);
 
-		layoutPanel(allSdks);
-		init();
-		setOKActionEnabled(false);
-	/*registerValidators(new FacetValidatorsManager()
-		{
-			public void registerValidator(FacetEditorValidator validator, JComponent... componentsToWatch)
-			{
-			}
+        layoutPanel(allSdks);
+        init();
+        setOKActionEnabled(false);
+        /*registerValidators(new FacetValidatorsManager() {
+            public void registerValidator(FacetEditorValidator validator, JComponent... componentsToWatch) {
+            }
 
-			public void validate()
-			{
-				checkValid();
-			}
-		});*/
-		myMainPanel.setPreferredSize(new Dimension(300, 50));
-		checkValid();
-		setInitialDestination();
-		addUpdater(myName);
-		new LocationNameFieldsBinding(project,
-				myDestination,
-				myName,
-				myInitialPath,
-				PyBundle.message("sdk.create.venv.dialog.select.venv.location"));
-	}
+            public void validate() {
+                checkValid();
+            }
+        });*/
 
-	protected void setInitialDestination()
-	{
-		myInitialPath = "";
+        myMainPanel.setPreferredSize(new Dimension(300, 50));
+        checkValid();
+        setInitialDestination();
+        addUpdater(myName);
+        new LocationNameFieldsBinding(
+            project,
+            myDestination,
+            myName,
+            myInitialPath,
+            PyLocalize.sdkCreateVenvDialogSelectVenvLocation().get()
+        );
+    }
 
-		final VirtualFile file = VirtualEnvSdkFlavor.getDefaultLocation();
+    protected void setInitialDestination() {
+        myInitialPath = "";
 
-		if(file != null)
-		{
-			myInitialPath = file.getPath();
-		}
-		else
-		{
-			final String savedPath = PyPackageService.getInstance().getVirtualEnvBasePath();
-			if(!StringUtil.isEmptyOrSpaces(savedPath))
-			{
-				myInitialPath = savedPath;
-			}
-			else if(myProject != null)
-			{
-				final VirtualFile baseDir = myProject.getBaseDir();
-				if(baseDir != null)
-				{
-					myInitialPath = baseDir.getPath();
-				}
-			}
-		}
-	}
+        final VirtualFile file = VirtualEnvSdkFlavor.getDefaultLocation();
 
+        if (file != null) {
+            myInitialPath = file.getPath();
+        }
+        else {
+            final String savedPath = PyPackageService.getInstance().getVirtualEnvBasePath();
+            if (!StringUtil.isEmptyOrSpaces(savedPath)) {
+                myInitialPath = savedPath;
+            }
+            else if (myProject != null) {
+                final VirtualFile baseDir = myProject.getBaseDir();
+                if (baseDir != null) {
+                    myInitialPath = baseDir.getPath();
+                }
+            }
+        }
+    }
 
-/*	protected void registerValidators(final FacetValidatorsManager validatorsManager)
-	{
-		myDestination.getTextField().getDocument().addDocumentListener(new DocumentAdapter()
-		{
-			@Override
-			protected void textChanged(DocumentEvent e)
-			{
-				validatorsManager.validate();
-			}
-		});
+    /*protected void registerValidators(final FacetValidatorsManager validatorsManager) {
+        myDestination.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(DocumentEvent e) {
+                validatorsManager.validate();
+            }
+        });
 
-		myDestination.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent event)
-			{
-				validatorsManager.validate();
-			}
-		});
-		myName.addCaretListener(new CaretListener()
-		{
-			@Override
-			public void caretUpdate(CaretEvent event)
-			{
-				validatorsManager.validate();
-			}
-		});
+        myDestination.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                validatorsManager.validate();
+            }
+        });
+        myName.addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent event) {
+                validatorsManager.validate();
+            }
+        });
 
-		myDestination.getTextField().addCaretListener(new CaretListener()
-		{
-			@Override
-			public void caretUpdate(CaretEvent event)
-			{
-				validatorsManager.validate();
-			}
-		});
-	}
-	*/
+        myDestination.getTextField().addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent event) {
+                validatorsManager.validate();
+            }
+        });
+    }*/
 
-	protected void checkValid()
-	{
-		final String projectName = myName.getText();
-		final File destFile = new File(getDestination());
-		if(destFile.exists())
-		{
-			final String[] content = destFile.list();
-			if(content != null && content.length != 0)
-			{
-				setOKActionEnabled(false);
-				setErrorText(PyBundle.message("sdk.create.venv.dialog.error.not.empty.directory"));
-				return;
-			}
-		}
-		if(StringUtil.isEmptyOrSpaces(projectName))
-		{
-			setOKActionEnabled(false);
-			setErrorText(PyBundle.message("sdk.create.venv.dialog.error.empty.venv.name"));
-			return;
-		}
-		if(!PathUtil.isValidFileName(projectName))
-		{
-			setOKActionEnabled(false);
-			setErrorText(PyBundle.message("sdk.create.venv.dialog.error.invalid.directory.name"));
-			return;
-		}
-		if(StringUtil.isEmptyOrSpaces(myDestination.getText()))
-		{
-			setOKActionEnabled(false);
-			setErrorText(PyBundle.message("sdk.create.venv.dialog.error.empty.venv.location"));
-			return;
-		}
+    protected void checkValid() {
+        final String projectName = myName.getText();
+        final File destFile = new File(getDestination());
+        if (destFile.exists()) {
+            final String[] content = destFile.list();
+            if (content != null && content.length != 0) {
+                setOKActionEnabled(false);
+                setErrorText(PyLocalize.sdkCreateVenvDialogErrorNotEmptyDirectory());
+                return;
+            }
+        }
+        if (StringUtil.isEmptyOrSpaces(projectName)) {
+            setOKActionEnabled(false);
+            setErrorText(PyLocalize.sdkCreateVenvDialogErrorEmptyVenvName());
+            return;
+        }
+        if (!PathUtil.isValidFileName(projectName)) {
+            setOKActionEnabled(false);
+            setErrorText(PyLocalize.sdkCreateVenvDialogErrorInvalidDirectoryName());
+            return;
+        }
+        if (StringUtil.isEmptyOrSpaces(myDestination.getText())) {
+            setOKActionEnabled(false);
+            setErrorText(PyLocalize.sdkCreateVenvDialogErrorEmptyVenvLocation());
+            return;
+        }
 
-		setOKActionEnabled(true);
-		setErrorText(null);
-	}
+        setOKActionEnabled(true);
+        clearErrorText();
+    }
 
-	abstract protected void layoutPanel(final List<Sdk> allSdks);
+    abstract protected void layoutPanel(final List<Sdk> allSdks);
 
-	@Override
-	protected JComponent createCenterPanel()
-	{
-		return myMainPanel;
-	}
+    @Override
+    protected JComponent createCenterPanel() {
+        return myMainPanel;
+    }
 
-	@Nullable
-	abstract public Sdk getSdk();
+    @Nullable
+    abstract public Sdk getSdk();
 
-	abstract public boolean useGlobalSitePackages();
+    abstract public boolean useGlobalSitePackages();
 
-	public String getDestination()
-	{
-		return myDestination.getText();
-	}
+    public String getDestination() {
+        return myDestination.getText();
+    }
 
-	public String getName()
-	{
-		return myName.getText();
-	}
+    public String getName() {
+        return myName.getText();
+    }
 
-	public boolean associateWithProject()
-	{
-		return !myMakeAvailableToAllProjectsCheckbox.isSelected();
-	}
+    public boolean associateWithProject() {
+        return !myMakeAvailableToAllProjectsCheckbox.isSelected();
+    }
 
-	public void createVirtualEnv(final VirtualEnvCallback callback)
-	{
-		final ProgressManager progman = ProgressManager.getInstance();
-		final Sdk basicSdk = getSdk();
-		final Task.Modal createTask = new Task.Modal(myProject, PyBundle.message("sdk.create.venv.dialog.creating.venv"), false)
-		{
-			String myPath;
+    public void createVirtualEnv(final VirtualEnvCallback callback) {
+        final ProgressManager progman = ProgressManager.getInstance();
+        final Sdk basicSdk = getSdk();
+        final Task.Modal createTask = new Task.Modal(myProject, PyLocalize.sdkCreateVenvDialogCreatingVenv(), false) {
+            String myPath;
 
-			public void run(@Nonnull final ProgressIndicator indicator)
-			{
+            @Override
+            public void run(@Nonnull final ProgressIndicator indicator) {
+                try {
+                    indicator.setTextValue(PyLocalize.sdkCreateVenvDialogCreatingVenv());
+                    myPath = createEnvironment(basicSdk);
+                }
+                catch (final ExecutionException e) {
+                    Application.get().invokeLater(
+                        () -> {
+                            final PackageManagementService.ErrorDescription description =
+                                PyPackageManagementService.toErrorDescription(Collections.singletonList(e), basicSdk);
+                            if (description != null) {
+                                PackagesNotificationPanel.showError(
+                                    PyLocalize.sdkCreateVenvDialogErrorFailedToCreateVenv().get(),
+                                    description
+                                );
+                            }
+                        },
+                        Application.get().getAnyModalityState()
+                    );
+                }
+            }
 
-				try
-				{
-					indicator.setText(PyBundle.message("sdk.create.venv.dialog.creating.venv"));
-					myPath = createEnvironment(basicSdk);
-				}
-				catch(final ExecutionException e)
-				{
-					ApplicationManager.getApplication().invokeLater(() -> {
-						final PackageManagementService.ErrorDescription description =
-								PyPackageManagementService.toErrorDescription(Collections.singletonList(e), basicSdk);
-						if(description != null)
-						{
-							PackagesNotificationPanel.showError(PyBundle.message("sdk.create.venv.dialog.error.failed.to.create.venv"), description);
-						}
-					}, Application.get().getAnyModalityState());
-				}
-			}
+            @Override
+            @RequiredUIAccess
+            public void onSuccess() {
+                if (myPath != null) {
+                    Application.get().invokeLater(() -> DumbService.allowStartingDumbModeInside(
+                        DumbModePermission.MAY_START_BACKGROUND,
+                        () -> setupVirtualEnvSdk(
+                            myPath,
+                            associateWithProject(),
+                            callback
+                        )
+                    ));
+                }
+            }
+        };
+        progman.run(createTask);
+    }
 
+    abstract protected String createEnvironment(Sdk basicSdk) throws ExecutionException;
 
-			@Override
-			public void onSuccess()
-			{
-				if(myPath != null)
-				{
-					ApplicationManager.getApplication()
-							.invokeLater(() -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
-									() -> setupVirtualEnvSdk(myPath,
-											associateWithProject(),
-											callback)));
-				}
-			}
-		};
-		progman.run(createTask);
-	}
+    @Override
+    @RequiredUIAccess
+    public JComponent getPreferredFocusedComponent() {
+        return myName;
+    }
 
-	abstract protected String createEnvironment(Sdk basicSdk) throws ExecutionException;
-
-	@Override
-	public JComponent getPreferredFocusedComponent()
-	{
-		return myName;
-	}
-
-	@Override
-	protected void doOKAction()
-	{
-		super.doOKAction();
-		VirtualFile baseDir = myProject != null ? myProject.getBaseDir() : null;
-		if(!myDestination.getText().startsWith(myInitialPath) && (baseDir == null || !myDestination.getText().startsWith(baseDir.getPath())))
-		{
-			String path = myDestination.getText();
-			PyPackageService.getInstance()
-					.setVirtualEnvBasePath(!path.contains(File.separator) ? path : path.substring(0, path.lastIndexOf(File.separator)));
-		}
-	}
+    @Override
+    protected void doOKAction() {
+        super.doOKAction();
+        VirtualFile baseDir = myProject != null ? myProject.getBaseDir() : null;
+        if (!myDestination.getText().startsWith(myInitialPath)
+            && (baseDir == null || !myDestination.getText().startsWith(baseDir.getPath()))) {
+            String path = myDestination.getText();
+            PyPackageService.getInstance().setVirtualEnvBasePath(
+                !path.contains(File.separator) ? path : path.substring(0, path.lastIndexOf(File.separator))
+            );
+        }
+    }
 }
