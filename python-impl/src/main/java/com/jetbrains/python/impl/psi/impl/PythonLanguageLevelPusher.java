@@ -16,14 +16,13 @@
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.resolve.PythonSdkPathCache;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
+import com.jetbrains.python.psi.LanguageLevel;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
-import consulo.component.messagebus.MessageBus;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
 import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
@@ -46,8 +45,6 @@ import consulo.util.collection.Maps;
 import consulo.util.dataholder.Key;
 import consulo.virtualFileSystem.FileAttribute;
 import consulo.virtualFileSystem.VirtualFile;
-import consulo.virtualFileSystem.fileType.FileType;
-import consulo.virtualFileSystem.fileType.FileTypeRegistry;
 import consulo.virtualFileSystem.util.VirtualFileVisitor;
 
 import javax.annotation.Nonnull;
@@ -70,7 +67,8 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     PushedFilePropertiesUpdater.getInstance(project).pushAll(new PythonLanguageLevelPusher());
   }
 
-  public void initExtra(@Nonnull Project project, @Nonnull MessageBus bus, @Nonnull Engine languageLevelUpdater) {
+  @Override
+  public void initExtra(@Nonnull Project project) {
     final Module[] modules = ModuleManager.getInstance(project).getModules();
     Set<Sdk> usedSdks = new HashSet<>();
     for (Module module : modules) {
@@ -86,20 +84,24 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     project.putUserData(PYTHON_LANGUAGE_LEVEL, PyUtil.guessLanguageLevel(project));
   }
 
+  @Override
   @Nonnull
   public Key<LanguageLevel> getFileDataKey() {
     return LanguageLevel.KEY;
   }
 
+  @Override
   public boolean pushDirectoriesOnly() {
     return true;
   }
 
+  @Override
   @Nonnull
   public LanguageLevel getDefaultValue() {
     return LanguageLevel.getDefault();
   }
 
+  @Override
   @Nullable
   public LanguageLevel getImmediateValue(@Nonnull Project project, @Nullable VirtualFile file) {
     return getFileLanguageLevel(project, file);
@@ -148,6 +150,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     return null;
   }
 
+  @Override
   public LanguageLevel getImmediateValue(@Nonnull Module module) {
     if (ApplicationManager.getApplication().isUnitTestMode() && LanguageLevel.FORCE_LANGUAGE_LEVEL != null) {
       return LanguageLevel.FORCE_LANGUAGE_LEVEL;
@@ -157,7 +160,8 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     return PythonSdkType.getLanguageLevelForSdk(sdk);
   }
 
-  public boolean acceptsFile(@Nonnull VirtualFile file) {
+  @Override
+  public boolean acceptsFile(@Nonnull VirtualFile virtualFile, @Nonnull Project project) {
     return false;
   }
 
@@ -168,6 +172,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
 
   private static final FileAttribute PERSISTENCE = new FileAttribute("python_language_level_persistence", 2, true);
 
+  @Override
   public void persistAttribute(@Nonnull Project project, @Nonnull VirtualFile fileOrDir, @Nonnull LanguageLevel level) throws IOException {
     final DataInputStream iStream = PERSISTENCE.readAttribute(fileOrDir);
     if (iStream != null) {
@@ -187,8 +192,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     oStream.close();
 
     for (VirtualFile child : fileOrDir.getChildren()) {
-      final FileType fileType = FileTypeRegistry.getInstance().getFileTypeByFileName(child.getName());
-      if (!child.isDirectory() && PythonFileType.INSTANCE.equals(fileType)) {
+      if (!child.isDirectory() && child.getFileType() == PythonFileType.INSTANCE) {
         clearSdkPathCache(child);
         PushedFilePropertiesUpdater.getInstance(project).filePropertiesChanged(child);
       }
@@ -206,6 +210,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
     }
   }
 
+  @Override
   public void afterRootsChanged(@Nonnull final Project project) {
     Set<Sdk> updatedSdks = new HashSet<>();
     final Module[] modules = ModuleManager.getInstance(project).getModules();
