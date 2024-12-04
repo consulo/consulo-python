@@ -1,21 +1,17 @@
 package com.jetbrains.python.debugger;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.base.Strings;
+import com.jetbrains.python.debugger.pydev.PyVariableLocator;
+import consulo.application.ApplicationManager;
+import consulo.execution.debug.frame.*;
+import consulo.execution.debug.icon.ExecutionDebugIconGroup;
+import consulo.logging.Logger;
+import consulo.ui.image.Image;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Strings;
-import consulo.application.AllIcons;
-import consulo.application.ApplicationManager;
-import consulo.execution.debug.frame.*;
-import consulo.logging.Logger;
-import consulo.execution.debug.frame.XReferrersProvider;
-import consulo.execution.debug.frame.XValueNode;
-import consulo.execution.debug.frame.XValuePlace;
-import com.jetbrains.python.debugger.pydev.PyVariableLocator;
-import consulo.ui.image.Image;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // todo: load long lists by parts
 // todo: null modifier for modify modules, class objects etc.
@@ -327,15 +323,15 @@ public class PyDebugValue extends XNamedValue
 	{
 		if(!myContainer)
 		{
-			return AllIcons.Debugger.Db_primitive;
+			return ExecutionDebugIconGroup.nodePrimitive();
 		}
 		else if("list".equals(myType) || "tuple".equals(myType))
 		{
-			return AllIcons.Debugger.Db_array;
+			return ExecutionDebugIconGroup.nodeArray();
 		}
 		else
 		{
-			return AllIcons.Debugger.Value;
+			return ExecutionDebugIconGroup.nodeValue();
 		}
 	}
 
