@@ -91,8 +91,6 @@ public class PyStackFrame extends XStackFrame {
 
   @Override
   public void customizePresentation(@Nonnull ColoredTextContainer component) {
-    component.setIcon(PlatformIconGroup.debuggerFrame());
-
     if (myPosition == null) {
       component.append("<frame not available>", SimpleTextAttributes.GRAY_ATTRIBUTES);
       return;

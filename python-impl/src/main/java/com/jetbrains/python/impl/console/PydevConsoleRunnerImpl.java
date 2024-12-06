@@ -49,6 +49,7 @@ import consulo.execution.ExecutionManager;
 import consulo.execution.action.CloseAction;
 import consulo.execution.debug.XDebugSession;
 import consulo.execution.debug.XDebuggerManager;
+import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.execution.executor.DefaultRunExecutor;
 import consulo.execution.executor.Executor;
 import consulo.execution.process.ProcessTerminatedListener;
@@ -825,7 +826,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
     private XDebugSession mySession = null;
 
     public ConnectDebuggerAction() {
-      super("Attach Debugger", "Enables tracing of code executed in console", AllIcons.Actions.StartDebugger);
+      super("Attach Debugger", "Enables tracing of code executed in console", ExecutionDebugIconGroup.actionStartdebugger());
     }
 
     @Override

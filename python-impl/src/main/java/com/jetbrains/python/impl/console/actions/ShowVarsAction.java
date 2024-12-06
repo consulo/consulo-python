@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.console.actions;
 import com.jetbrains.python.impl.console.PydevConsoleCommunication;
 import com.jetbrains.python.impl.console.PythonConsoleView;
 import consulo.application.dumb.DumbAware;
-import consulo.platform.base.icon.PlatformIconGroup;
+import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.ToggleAction;
 
@@ -33,7 +33,7 @@ public class ShowVarsAction extends ToggleAction implements DumbAware {
   private PydevConsoleCommunication myConsoleCommunication;
 
   public ShowVarsAction(PythonConsoleView consoleView, PydevConsoleCommunication consoleCommunication) {
-    super("Show Variables", "Shows active console variables", PlatformIconGroup.debuggerWatch());
+    super("Show Variables", "Shows active console variables", ExecutionDebugIconGroup.nodeWatch());
     myConsoleView = consoleView;
     myConsoleCommunication = consoleCommunication;
   }

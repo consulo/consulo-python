@@ -17,66 +17,56 @@ package com.jetbrains.python.impl.debugger;
 
 import com.jetbrains.python.debugger.PyThreadInfo;
 import com.jetbrains.python.debugger.pydev.AbstractCommand;
-import consulo.application.AllIcons;
 import consulo.execution.debug.frame.XExecutionStack;
 import consulo.execution.debug.frame.XSuspendContext;
+import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.ui.image.Image;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
 
-public class PySuspendContext extends XSuspendContext
-{
+public class PySuspendContext extends XSuspendContext {
 
-	private final PyExecutionStack myActiveStack;
-	private PyDebugProcess myDebugProcess;
+    private final PyExecutionStack myActiveStack;
+    private PyDebugProcess myDebugProcess;
 
-	public PySuspendContext(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo)
-	{
-		myDebugProcess = debugProcess;
-		myActiveStack = new PyExecutionStack(debugProcess, threadInfo, getThreadIcon(threadInfo));
-	}
+    public PySuspendContext(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo) {
+        myDebugProcess = debugProcess;
+        myActiveStack = new PyExecutionStack(debugProcess, threadInfo, getThreadIcon(threadInfo));
+    }
 
-	@Override
-	@Nonnull
-	public PyExecutionStack getActiveExecutionStack()
-	{
-		return myActiveStack;
-	}
+    @Override
+    @Nonnull
+    public PyExecutionStack getActiveExecutionStack() {
+        return myActiveStack;
+    }
 
-	@Nonnull
-	public static Image getThreadIcon(@Nonnull PyThreadInfo threadInfo)
-	{
-		if((threadInfo.getState() == PyThreadInfo.State.SUSPENDED) && (threadInfo.getStopReason() == AbstractCommand.SET_BREAKPOINT))
-		{
-			return AllIcons.Debugger.ThreadAtBreakpoint;
-		}
-		else
-		{
-			return AllIcons.Debugger.ThreadSuspended;
-		}
-	}
+    @Nonnull
+    public static Image getThreadIcon(@Nonnull PyThreadInfo threadInfo) {
+        if ((threadInfo.getState() == PyThreadInfo.State.SUSPENDED) && (threadInfo.getStopReason() == AbstractCommand.SET_BREAKPOINT)) {
+            return ExecutionDebugIconGroup.threadThreadatbreakpoint();
+        }
+        else {
+            return ExecutionDebugIconGroup.threadThreadsuspended();
+        }
+    }
 
-	@Nonnull
-	@Override
-	public XExecutionStack[] getExecutionStacks()
-	{
-		final Collection<PyThreadInfo> threads = myDebugProcess.getThreads();
-		if(threads.size() < 1)
-		{
-			return XExecutionStack.EMPTY_ARRAY;
-		}
-		else
-		{
-			XExecutionStack[] stacks = new XExecutionStack[threads.size()];
-			int i = 0;
-			for(PyThreadInfo thread : threads)
-			{
-				stacks[i++] = new PyExecutionStack(myDebugProcess, thread, getThreadIcon(thread));
-			}
-			return stacks;
-		}
-	}
+    @Nonnull
+    @Override
+    public XExecutionStack[] getExecutionStacks() {
+        final Collection<PyThreadInfo> threads = myDebugProcess.getThreads();
+        if (threads.size() < 1) {
+            return XExecutionStack.EMPTY_ARRAY;
+        }
+        else {
+            XExecutionStack[] stacks = new XExecutionStack[threads.size()];
+            int i = 0;
+            for (PyThreadInfo thread : threads) {
+                stacks[i++] = new PyExecutionStack(myDebugProcess, thread, getThreadIcon(thread));
+            }
+            return stacks;
+        }
+    }
 
 }
