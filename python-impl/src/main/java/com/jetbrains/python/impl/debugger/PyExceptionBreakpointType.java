@@ -21,7 +21,6 @@ import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.psi.PyClass;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AllIcons;
 import consulo.application.ApplicationManager;
 import consulo.application.WriteAction;
 import consulo.application.util.function.Computable;
@@ -184,10 +183,9 @@ public class PyExceptionBreakpointType
     }
 
     @Override
-    public XBreakpointCustomPropertiesPanel<XBreakpoint<PyExceptionBreakpointProperties>> createCustomPropertiesPanel() {
+    public XBreakpointCustomPropertiesPanel<XBreakpoint<PyExceptionBreakpointProperties>> createCustomPropertiesPanel(Project project) {
         return new PyExceptionBreakpointPropertiesPanel();
     }
-
 
     private static class PyExceptionBreakpointPropertiesPanel
         extends XBreakpointCustomPropertiesPanel<XBreakpoint<PyExceptionBreakpointProperties>> {

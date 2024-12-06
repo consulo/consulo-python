@@ -22,7 +22,6 @@ import com.jetbrains.python.debugger.PyFrameAccessor;
 import com.jetbrains.python.debugger.PyStackFrameInfo;
 import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.impl.debugger.settings.PyDebuggerSettings;
-import consulo.application.AllIcons;
 import consulo.application.ApplicationManager;
 import consulo.application.ReadAction;
 import consulo.document.Document;
@@ -30,9 +29,9 @@ import consulo.document.FileDocumentManager;
 import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.evaluation.XDebuggerEvaluator;
 import consulo.execution.debug.frame.*;
+import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.logging.Logger;
 import consulo.module.content.ProjectRootManager;
-import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.project.Project;
 import consulo.ui.ex.ColoredTextContainer;
 import consulo.ui.ex.SimpleTextAttributes;
@@ -215,7 +214,7 @@ public class PyStackFrame extends XStackFrame {
       @Nullable
       @Override
       public Image getIcon() {
-        return AllIcons.Debugger.WatchLastReturnValue;
+        return ExecutionDebugIconGroup.nodeMethodlevelwatch();
       }
     });
     node.addChildren(XValueChildrenList.topGroups(group), true);
