@@ -18,33 +18,12 @@ package com.jetbrains.python.impl.debugger.containerview;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.impl.debugger.array.NumpyArrayTable;
 import com.jetbrains.python.impl.debugger.dataframe.DataFrameTable;
-import consulo.dataContext.DataContext;
-import consulo.ide.impl.idea.xdebugger.impl.ui.tree.XDebuggerTree;
-import consulo.ide.impl.idea.xdebugger.impl.ui.tree.actions.XDebuggerTreeActionBase;
 import consulo.project.Project;
-import consulo.ui.ex.action.AnActionEvent;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.swing.tree.TreePath;
 
 /**
  * @author amarch
  */
-
-public class PyViewNumericContainerAction extends XDebuggerTreeActionBase {
-
-  @Override
-  protected void perform(consulo.ide.impl.idea.xdebugger.impl.ui.tree.nodes.XValueNodeImpl node,
-                         @Nonnull String nodeName,
-                         AnActionEvent e) {
-    Project p = e.getData(Project.KEY);
-    if (p != null && node != null && node.getValueContainer() instanceof PyDebugValue && node.isComputed()) {
-      PyDebugValue debugValue = (PyDebugValue)node.getValueContainer();
-      showNumericViewer(p, debugValue);
-    }
-  }
-
+public class PyViewNumericContainerAction {
   public static void showNumericViewer(Project project, PyDebugValue debugValue) {
     String nodeType = debugValue.getType();
     final ViewNumericContainerDialog dialog;
@@ -67,44 +46,5 @@ public class PyViewNumericContainerAction extends XDebuggerTreeActionBase {
     }
 
     dialog.show();
-  }
-
-  @Nullable
-  private static TreePath[] getSelectedPaths(DataContext dataContext) {
-    XDebuggerTree tree = consulo.ide.impl.idea.xdebugger.impl.ui.tree.XDebuggerTree.getTree(dataContext);
-    return tree == null ? null : tree.getSelectionPaths();
-  }
-
-  @Override
-  public void update(AnActionEvent e) {
-    e.getPresentation().setVisible(false);
-    TreePath[] paths = getSelectedPaths(e.getDataContext());
-    if (paths != null) {
-      if (paths.length > 1) {
-        e.getPresentation().setVisible(false);
-        return;
-      }
-
-      consulo.ide.impl.idea.xdebugger.impl.ui.tree.nodes.XValueNodeImpl node = getSelectedNode(e.getDataContext());
-      if (node != null && node.getValueContainer() instanceof PyDebugValue && node.isComputed()) {
-        PyDebugValue debugValue = (PyDebugValue)node.getValueContainer();
-
-        String nodeType = debugValue.getType();
-        if ("ndarray".equals(nodeType)) {
-          e.getPresentation().setText("View as Array");
-          e.getPresentation().setVisible(true);
-        }
-        else if (("DataFrame".equals(nodeType))) {
-          e.getPresentation().setText("View as DataFrame");
-          e.getPresentation().setVisible(true);
-        }
-        else {
-          e.getPresentation().setVisible(false);
-        }
-      }
-      else {
-        e.getPresentation().setVisible(false);
-      }
-    }
   }
 }
