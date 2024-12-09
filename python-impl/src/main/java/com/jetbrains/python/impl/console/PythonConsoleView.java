@@ -40,9 +40,12 @@ import consulo.codeEditor.markup.RangeHighlighter;
 import consulo.colorScheme.EditorColorsManager;
 import consulo.colorScheme.EditorColorsScheme;
 import consulo.content.bundle.Sdk;
+import consulo.disposer.Disposable;
 import consulo.disposer.Disposer;
 import consulo.document.Document;
 import consulo.document.util.TextRange;
+import consulo.execution.debug.frame.XStandaloneVariablesView;
+import consulo.execution.debug.frame.XStandaloneVariablesViewFactory;
 import consulo.execution.ui.console.ConsoleViewContentType;
 import consulo.execution.ui.console.ConsoleViewUtil;
 import consulo.execution.ui.console.ObservableConsoleView;
@@ -88,7 +91,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   private boolean myHyperlink;
   private boolean myFirstRun = true;
 
-  private consulo.ide.impl.idea.xdebugger.impl.frame.XStandaloneVariablesView mySplitView;
+  private XStandaloneVariablesView mySplitView;
   private ActionCallback myInitialized = new ActionCallback();
 
   public PythonConsoleView(final Project project, final String title, final Sdk sdk) {
@@ -321,8 +324,8 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
 
   public void showVariables(PydevConsoleCommunication consoleCommunication) {
     PyStackFrame stackFrame = new PyStackFrame(getProject(), consoleCommunication, new PyStackFrameInfo("", "", "", null), null);
-    final consulo.ide.impl.idea.xdebugger.impl.frame.XStandaloneVariablesView view =
-      new consulo.ide.impl.idea.xdebugger.impl.frame.XStandaloneVariablesView(getProject(), new PyDebuggerEditorsProvider(), stackFrame);
+    XStandaloneVariablesViewFactory viewFactory = getProject().getInstance(XStandaloneVariablesViewFactory.class);
+    XStandaloneVariablesView view = viewFactory.create(new PyDebuggerEditorsProvider(), stackFrame);
     consoleCommunication.addCommunicationListener(new ConsoleCommunicationListener() {
       @Override
       public void commandExecuted(boolean more) {
@@ -334,7 +337,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
       }
     });
     mySplitView = view;
-    Disposer.register(this, view);
+    Disposer.register(this, (Disposable) view);
     splitWindow();
   }
 
@@ -417,7 +420,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     removeAll();
     JBSplitter p = new JBSplitter(false, 2f / 3);
     p.setFirstComponent((JComponent)console);
-    p.setSecondComponent(mySplitView.getPanel());
+    p.setSecondComponent(mySplitView.getComponent());
     p.setShowDividerControls(true);
     p.setHonorComponentsMinimumSize(true);
 
@@ -430,7 +433,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     JBSplitter pane = (JBSplitter)getComponent(0);
     removeAll();
     if (mySplitView != null) {
-      Disposer.dispose(mySplitView);
+      Disposer.dispose((Disposable) mySplitView);
       mySplitView = null;
     }
     add(pane.getFirstComponent(), BorderLayout.CENTER);
