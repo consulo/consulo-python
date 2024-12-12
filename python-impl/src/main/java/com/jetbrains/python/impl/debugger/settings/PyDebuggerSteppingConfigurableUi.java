@@ -17,10 +17,10 @@ package com.jetbrains.python.impl.debugger.settings;
 
 import consulo.configurable.IdeaConfigurableUi;
 import consulo.ide.impl.idea.openapi.ui.NonEmptyInputValidator;
-import consulo.ide.impl.idea.util.ui.table.TableModelEditor;
 import consulo.ui.ex.awt.ColumnInfo;
 import consulo.ui.ex.awt.JBCheckBox;
 import consulo.ui.ex.awt.Messages;
+import consulo.ui.ex.awt.table.TableModelEditor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,9 +51,9 @@ public class PyDebuggerSteppingConfigurableUi implements IdeaConfigurableUi<PyDe
   }
 
   private void createUIComponents() {
-    consulo.ide.impl.idea.util.ui.table.TableModelEditor.DialogItemEditor<PySteppingFilter> itemEditor = new DialogEditor();
+    TableModelEditor.DialogItemEditor<PySteppingFilter> itemEditor = new DialogEditor();
     myPySteppingFilterEditor =
-      new consulo.ide.impl.idea.util.ui.table.TableModelEditor<>(COLUMNS, itemEditor, "No script filters configured");
+      new TableModelEditor<>(COLUMNS, itemEditor, "No script filters configured", PySteppingFilter::new);
     mySteppingPanel = new JPanel(new BorderLayout());
     mySteppingPanel.add(myPySteppingFilterEditor.createComponent());
   }
@@ -106,7 +106,7 @@ public class PyDebuggerSteppingConfigurableUi implements IdeaConfigurableUi<PyDe
     }
   }
 
-  private static class FilterColumn extends consulo.ide.impl.idea.util.ui.table.TableModelEditor.EditableColumnInfo<PySteppingFilter, String> {
+  private static class FilterColumn extends TableModelEditor.EditableColumnInfo<PySteppingFilter, String> {
     @Nullable
     @Override
     public String valueOf(PySteppingFilter filter) {
