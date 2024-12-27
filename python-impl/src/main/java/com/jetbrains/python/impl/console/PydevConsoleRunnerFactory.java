@@ -20,7 +20,6 @@ import com.jetbrains.python.impl.run.PythonCommandLineState;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
 import consulo.annotation.component.ServiceImpl;
 import consulo.content.bundle.Sdk;
-import consulo.ide.impl.idea.util.PathMapper;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
@@ -57,16 +56,10 @@ public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory {
 
     PyConsoleOptions.PyConsoleSettings settingsProvider = PyConsoleOptions.getInstance(project).getPythonConsoleSettings();
 
-    PathMapper pathMapper = PydevConsoleRunner.getPathMapper(project, sdk, settingsProvider);
-
     String[] setupFragment;
 
     Collection<String> pythonPath =
       PythonCommandLineState.collectPythonPath(module, settingsProvider.shouldAddContentRoots(), settingsProvider.shouldAddSourceRoots());
-
-    if (pathMapper != null) {
-      pythonPath = pathMapper.convertToRemote(pythonPath);
-    }
 
     String customStartScript = settingsProvider.getCustomStartScript();
 
@@ -91,10 +84,6 @@ public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory {
       }
     }
 
-    if (pathMapper != null && workingDir != null) {
-      workingDir = pathMapper.convertToRemote(workingDir);
-    }
-
     BuildoutModuleExtension facet = null;
     if (module != null) {
       facet = ModuleUtilCore.getExtension(module, BuildoutModuleExtension.class);
@@ -102,9 +91,6 @@ public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory {
 
     if (facet != null) {
       List<String> path = facet.getAdditionalPythonPath();
-      if (pathMapper != null) {
-        path = pathMapper.convertToRemote(path);
-      }
       String prependStatement = facet.getPathPrependStatement(path);
       setupFragment = new String[]{
         prependStatement,

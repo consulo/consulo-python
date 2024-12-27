@@ -54,7 +54,6 @@ import consulo.execution.debug.step.XSmartStepIntoHandler;
 import consulo.execution.ui.ExecutionConsole;
 import consulo.execution.ui.console.ConsoleView;
 import consulo.execution.ui.console.ConsoleViewContentType;
-import consulo.ide.impl.idea.remote.RemoteProcessControl;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
@@ -332,21 +331,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
   @Override
   public int handleDebugPort(int localPort) throws IOException {
-    if (myProcessHandler instanceof consulo.ide.impl.idea.remote.RemoteProcessControl) {
-      return getRemoteTunneledPort(localPort, (consulo.ide.impl.idea.remote.RemoteProcessControl)myProcessHandler);
-    }
-    else {
       return localPort;
-    }
-  }
-
-  protected static int getRemoteTunneledPort(int localPort, @Nonnull RemoteProcessControl handler) throws IOException {
-    try {
-      return handler.getRemoteSocket(localPort).getSecond();
-    }
-    catch (Exception e) {
-      throw new IOException(e);
-    }
   }
 
   @Override

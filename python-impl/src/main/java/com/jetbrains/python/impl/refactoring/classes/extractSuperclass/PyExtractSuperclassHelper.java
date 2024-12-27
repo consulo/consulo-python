@@ -19,12 +19,14 @@ import com.google.common.base.Predicate;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.MembersManager;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
+import com.jetbrains.python.psi.LanguageLevel;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyElementGenerator;
 import consulo.document.Document;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.editor.refactoring.classMember.MemberInfoBase;
 import consulo.language.editor.refactoring.event.RefactoringEventData;
 import consulo.language.editor.refactoring.event.RefactoringEventListener;
@@ -39,6 +41,7 @@ import consulo.util.lang.Comparing;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileManager;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -123,7 +126,7 @@ public final class PyExtractSuperclassHelper {
   }
 
   private static PyClass placeNewClass(final Project project, PyClass newClass, @Nonnull final PyClass clazz, final String targetFile) {
-    VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(targetFile));
+    VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(VirtualFileUtil.pathToUrl(targetFile));
     // file is the same as the source
     if (Comparing.equal(file, clazz.getContainingFile().getVirtualFile())) {
       return (PyClass)clazz.getParent().addBefore(newClass, clazz);

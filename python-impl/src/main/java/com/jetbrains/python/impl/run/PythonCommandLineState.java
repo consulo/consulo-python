@@ -23,8 +23,6 @@ import com.jetbrains.python.impl.debugger.PyDebugRunner;
 import com.jetbrains.python.impl.debugger.PyDebuggerOptionsProvider;
 import com.jetbrains.python.impl.facet.LibraryContributingFacet;
 import com.jetbrains.python.impl.facet.PythonPathContributingFacet;
-import com.jetbrains.python.impl.remote.PyRemotePathMapper;
-import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkAdditionalData;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
@@ -154,16 +152,8 @@ public abstract class PythonCommandLineState extends CommandLineState {
   }
 
   protected void addTracebackFilter(Project project, ConsoleView consoleView, ProcessHandler processHandler) {
-    if (PySdkUtil.isRemote(myConfig.getSdk())) {
-      assert processHandler instanceof consulo.ide.impl.idea.remote.RemoteProcessControl;
-      consoleView.addMessageFilter(new PyRemoteTracebackFilter(project,
-                                                               myConfig.getWorkingDirectory(),
-                                                               (consulo.ide.impl.idea.remote.RemoteProcessControl)processHandler));
-    }
-    else {
       consoleView.addMessageFilter(new PythonTracebackFilter(project, myConfig.getWorkingDirectorySafe()));
-    }
-    consoleView.addMessageFilter(createUrlFilter(processHandler)); // Url filter is always nice to have
+      consoleView.addMessageFilter(createUrlFilter(processHandler)); // Url filter is always nice to have
   }
 
   private TextConsoleBuilder createConsoleBuilder(Project project) {
@@ -197,38 +187,16 @@ public abstract class PythonCommandLineState extends CommandLineState {
                                                              getRunnerSettings(),
                                                              commandLine,
                                                              getEnvironment().getRunner().getRunnerId());
-    Sdk sdk = PythonSdkType.findSdkByPath(myConfig.getInterpreterPath());
     final ProcessHandler processHandler;
-    if (PySdkUtil.isRemote(sdk)) {
-      PyRemotePathMapper pathMapper = createRemotePathMapper();
-      processHandler = createRemoteProcessStarter().startRemoteProcess(sdk, commandLine, myConfig.getProject(), pathMapper);
-    }
-    else {
-      EncodingEnvironmentUtil.setLocaleEnvironmentIfMac(commandLine);
-      processHandler = doCreateProcess(commandLine);
-      ProcessTerminatedListener.attach(processHandler);
-    }
+    EncodingEnvironmentUtil.setLocaleEnvironmentIfMac(commandLine);
+    processHandler = doCreateProcess(commandLine);
+    ProcessTerminatedListener.attach(processHandler);
 
     // attach extensions
     PythonRunConfigurationExtensionsManager.getInstance().attachExtensionsToProcess(myConfig, processHandler, getRunnerSettings());
 
     return processHandler;
   }
-
-  @Nullable
-  private PyRemotePathMapper createRemotePathMapper() {
-    if (myConfig.getMappingSettings() == null) {
-      return null;
-    }
-    else {
-      return PyRemotePathMapper.fromSettings(myConfig.getMappingSettings(), PyRemotePathMapper.PyPathMappingType.USER_DEFINED);
-    }
-  }
-
-  protected PyRemoteProcessStarter createRemoteProcessStarter() {
-    return new PyRemoteProcessStarter();
-  }
-
 
   public GeneralCommandLine generateCommandLine(CommandLinePatcher[] patchers) {
     GeneralCommandLine commandLine = generateCommandLine();

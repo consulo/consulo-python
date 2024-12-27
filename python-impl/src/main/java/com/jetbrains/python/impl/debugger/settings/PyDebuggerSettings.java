@@ -20,7 +20,6 @@ import consulo.configurable.Configurable;
 import consulo.configurable.IdeaSimpleConfigurable;
 import consulo.execution.debug.setting.DebuggerSettingsCategory;
 import consulo.execution.debug.setting.XDebuggerSettings;
-import consulo.ide.impl.idea.openapi.util.Getter;
 import consulo.project.Project;
 import consulo.util.collection.SmartList;
 import consulo.util.xml.serializer.XmlSerializerUtil;
@@ -30,12 +29,13 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.util.Collections.singletonList;
 
 
 @ExtensionImpl
-public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> implements Getter<PyDebuggerSettings> {
+public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> implements Supplier<PyDebuggerSettings> {
   private boolean myLibrariesFilterEnabled;
   private boolean mySteppingFiltersEnabled;
   private

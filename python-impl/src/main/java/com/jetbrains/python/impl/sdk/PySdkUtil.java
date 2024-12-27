@@ -192,8 +192,9 @@ public class PySdkUtil {
     return result;
   }
 
+  @Deprecated
   public static boolean isRemote(@Nullable Sdk sdk) {
-    return sdk != null && sdk.getSdkAdditionalData() instanceof RemoteSdkAdditionalData;
+    return false;
   }
 
   public static String getUserSite() {

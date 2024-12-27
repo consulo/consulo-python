@@ -51,7 +51,7 @@ public class PyDocumentationSettings implements PersistentStateComponent<PyDocum
   public static final DocStringFormat DEFAULT_DOCSTRING_FORMAT = DocStringFormat.REST;
 
   public static PyDocumentationSettings getInstance(@Nonnull Module module) {
-    return ModuleServiceManager.getService(module, PyDocumentationSettings.class);
+    return module.getInstance(PyDocumentationSettings.class);
   }
 
   @Nonnull

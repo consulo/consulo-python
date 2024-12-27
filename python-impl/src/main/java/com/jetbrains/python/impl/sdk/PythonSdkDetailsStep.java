@@ -16,14 +16,10 @@
 package com.jetbrains.python.impl.sdk;
 
 import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.impl.packaging.PyCondaPackageService;
-import com.jetbrains.python.impl.remote.PythonRemoteInterpreterManager;
-import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
 import consulo.content.bundle.*;
 import consulo.disposer.Disposer;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.fileChooser.IdeaFileChooser;
-import consulo.ide.setting.ShowSettingsUtil;
 import consulo.project.Project;
 import consulo.project.ProjectBundle;
 import consulo.ui.ex.awt.DialogWrapper;
@@ -43,7 +39,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
   @Nullable

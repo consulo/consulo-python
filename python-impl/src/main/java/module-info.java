@@ -118,7 +118,6 @@ open module consulo.python.impl
   exports com.jetbrains.python.impl.refactoring.surround.surrounders.expressions;
   exports com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
   exports com.jetbrains.python.impl.refactoring.unwrap;
-  exports com.jetbrains.python.impl.remote;
   exports com.jetbrains.python.impl.run;
   exports com.jetbrains.python.impl.sdk;
   exports com.jetbrains.python.impl.sdk.flavors;

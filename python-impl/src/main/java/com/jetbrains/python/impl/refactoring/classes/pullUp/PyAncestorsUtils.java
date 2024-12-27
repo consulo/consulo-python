@@ -19,11 +19,11 @@ package com.jetbrains.python.impl.refactoring.classes.pullUp;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.jetbrains.python.impl.NotNullPredicate;
-import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -59,6 +59,6 @@ class PyAncestorsUtils extends NotNullPredicate<PyClass>
 	@Override
 	public boolean applyNotNull(@Nonnull final PyClass input)
 	{
-		return VfsUtilCore.isUnder(input.getContainingFile().getVirtualFile(), mySourceRoots);
+		return VirtualFileUtil.isUnder(input.getContainingFile().getVirtualFile(), mySourceRoots);
 	}
 }

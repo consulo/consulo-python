@@ -18,19 +18,14 @@ package com.jetbrains.python.impl.console;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
+import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.impl.console.completion.PydevConsoleElement;
 import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
-import com.jetbrains.python.console.pydev.ConsoleCommunication;
-import com.jetbrains.python.impl.remote.PyRemotePathMapper;
-import com.jetbrains.python.impl.remote.PyRemoteSdkAdditionalDataBase;
-import com.jetbrains.python.impl.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.impl.run.PythonCommandLineState;
-import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
 import consulo.content.bundle.Sdk;
 import consulo.execution.ui.console.language.LanguageConsoleView;
-import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -63,26 +58,6 @@ public interface PydevConsoleRunner {
 
   interface ConsoleListener {
     void handleConsoleInitialized(LanguageConsoleView consoleView);
-  }
-
-
-  @Nullable
-  static PyRemotePathMapper getPathMapper(@Nonnull Project project, Sdk sdk, PyConsoleOptions.PyConsoleSettings consoleSettings) {
-    if (PySdkUtil.isRemote(sdk)) {
-      PythonRemoteInterpreterManager instance = PythonRemoteInterpreterManager.getInstance();
-      if (instance != null) {
-        //noinspection ConstantConditions
-        PyRemotePathMapper remotePathMapper =
-          instance.setupMappings(project, (PyRemoteSdkAdditionalDataBase)sdk.getSdkAdditionalData(), null);
-
-        PathMappingSettings mappingSettings = consoleSettings.getMappingSettings();
-
-        remotePathMapper.addAll(mappingSettings.getPathMappings(), PyRemotePathMapper.PyPathMappingType.USER_DEFINED);
-
-        return remotePathMapper;
-      }
-    }
-    return null;
   }
 
   @Nonnull

@@ -44,10 +44,7 @@ public class PyPackageManagersImpl extends PyPackageManagers {
     final String key = PythonSdkType.getSdkKey(sdk);
     PyPackageManagerImpl manager = myInstances.get(key);
     if (manager == null) {
-      if (PythonSdkType.isRemote(sdk)) {
-        manager = new PyRemotePackageManagerImpl(sdk);
-      }
-      else if (PyCondaPackageManagerImpl.isCondaVEnv(sdk) && PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory()) != null) {
+      if (PyCondaPackageManagerImpl.isCondaVEnv(sdk) && PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory()) != null) {
         manager = new PyCondaPackageManagerImpl(sdk);
       }
       else {

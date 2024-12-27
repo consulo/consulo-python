@@ -23,9 +23,6 @@ import com.jetbrains.python.impl.packaging.PyCondaPackageManagerImpl;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.search.PyProjectScopeBuilder;
-import com.jetbrains.python.impl.remote.PyCredentialsContribution;
-import com.jetbrains.python.impl.remote.PyRemoteSdkAdditionalDataBase;
-import com.jetbrains.python.impl.remote.PythonRemoteInterpreterManager;
 import com.jetbrains.python.impl.sdk.flavors.CPythonSdkFlavor;
 import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
 import consulo.annotation.component.ExtensionImpl;
@@ -38,23 +35,15 @@ import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.*;
 import consulo.dataContext.DataManager;
 import consulo.fileChooser.FileChooserDescriptor;
-import consulo.ide.impl.idea.remote.*;
-import consulo.ide.impl.idea.remote.ext.CredentialsCase;
-import consulo.ide.impl.idea.remote.ext.LanguageCaseCollector;
 import consulo.language.editor.CommonDataKeys;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.ModuleUtilCore;
 import consulo.logging.Logger;
 import consulo.module.Module;
-import consulo.process.ExecutionException;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.ProcessOutput;
 import consulo.project.Project;
-import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationGroup;
-import consulo.project.ui.notification.NotificationType;
-import consulo.project.ui.notification.Notifications;
-import consulo.project.ui.notification.event.NotificationListener;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.image.Image;
 import consulo.util.collection.ArrayUtil;
@@ -63,10 +52,7 @@ import consulo.util.dataholder.Key;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.CharFilter;
 import consulo.util.lang.Comparing;
-import consulo.util.lang.ExceptionUtil;
 import consulo.util.lang.StringUtil;
-import consulo.util.lang.ref.Ref;
-import consulo.util.lang.ref.SoftReference;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
@@ -78,7 +64,6 @@ import org.jetbrains.annotations.NonNls;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -242,23 +227,17 @@ public final class PythonSdkType extends SdkType {
   }
 
   public static boolean isInvalid(@Nonnull Sdk sdk) {
-    if (isRemote(sdk)) {
-      return false;
-    }
     final VirtualFile interpreter = sdk.getHomeDirectory();
     return interpreter == null || !interpreter.exists();
   }
 
+  @Deprecated
   public static boolean isRemote(@Nullable Sdk sdk) {
-    return PySdkUtil.isRemote(sdk);
+    return false;
   }
 
+  @Deprecated
   public static boolean isVagrant(@Nullable Sdk sdk) {
-    if (sdk != null && sdk.getSdkAdditionalData() instanceof PyRemoteSdkAdditionalDataBase) {
-      PyRemoteSdkAdditionalDataBase data = (PyRemoteSdkAdditionalDataBase)sdk.getSdkAdditionalData();
-
-      return data.connectionCredentials().getRemoteConnectionType() == CredentialsType.VAGRANT;
-    }
     return false;
   }
 
@@ -485,12 +464,6 @@ public final class PythonSdkType extends SdkType {
 
   @Override
   public SdkAdditionalData loadAdditionalData(@Nonnull final Sdk currentSdk, final Element additional) {
-    if (RemoteSdkCredentialsHolder.isRemoteSdk(currentSdk.getHomePath())) {
-      PythonRemoteInterpreterManager manager = PythonRemoteInterpreterManager.getInstance();
-      if (manager != null) {
-        return manager.loadRemoteSdkData(currentSdk, additional);
-      }
-    }
     return PythonSdkAdditionalData.load(currentSdk, additional);
   }
 
@@ -522,56 +495,6 @@ public final class PythonSdkType extends SdkType {
   @Override
   public void setupSdkPaths(@Nonnull Sdk sdk) {
     PythonSdkUpdater.updateLocalSdkPaths(sdk, null, null);
-  }
-
-  public static void notifyRemoteSdkSkeletonsFail(final InvalidSdkException e, @Nullable final Runnable restartAction) {
-    NotificationListener notificationListener;
-    String notificationMessage;
-    if (e.getCause() instanceof VagrantNotStartedException) {
-      notificationListener = new NotificationListener() {
-        @Override
-        public void hyperlinkUpdate(@Nonnull Notification notification, @Nonnull HyperlinkEvent event) {
-          final PythonRemoteInterpreterManager manager = PythonRemoteInterpreterManager.getInstance();
-          if (manager != null) {
-            try {
-              VagrantNotStartedException cause = (VagrantNotStartedException)e.getCause();
-              manager.runVagrant(cause.getVagrantFolder(), cause.getMachineName());
-            }
-            catch (ExecutionException e1) {
-              throw new RuntimeException(e1);
-            }
-          }
-          if (restartAction != null) {
-            restartAction.run();
-          }
-        }
-      };
-      notificationMessage = e.getMessage() + "\n<a href=\"#\">Launch vagrant and refresh skeletons</a>";
-    }
-    else if (ExceptionUtil.causedBy(e, ExceptionFix.class)) {
-      //noinspection ThrowableResultOfMethodCallIgnored
-      final ExceptionFix fix = ExceptionUtil.findCause(e, ExceptionFix.class);
-      notificationListener = new NotificationListener() {
-        @Override
-        public void hyperlinkUpdate(@Nonnull Notification notification, @Nonnull HyperlinkEvent event) {
-          fix.apply();
-          if (restartAction != null) {
-            restartAction.run();
-          }
-        }
-      };
-      notificationMessage = fix.getNotificationMessage(e.getMessage());
-    }
-    else {
-      notificationListener = null;
-      notificationMessage = e.getMessage();
-    }
-
-    Notifications.Bus.notify(new Notification(SKELETONS_TOPIC,
-                                              "Couldn't refresh skeletons for remote interpreter",
-                                              notificationMessage,
-                                              NotificationType.WARNING,
-                                              notificationListener));
   }
 
   @Nonnull
@@ -642,40 +565,6 @@ public final class PythonSdkType extends SdkType {
     }
     return null;
   }
-
-//	@Nullable
-//	@Override
-//	public String getVersionString(@Nonnull Sdk sdk)
-//	{
-//		if(isRemote(sdk))
-//		{
-//			final PyRemoteSdkAdditionalDataBase data = (PyRemoteSdkAdditionalDataBase) sdk.getSdkAdditionalData();
-//			assert data != null;
-//			String versionString = data.getVersionString();
-//			if(StringUtil.isEmpty(versionString))
-//			{
-//				final PythonRemoteInterpreterManager remoteInterpreterManager = PythonRemoteInterpreterManager.getInstance();
-//				if(remoteInterpreterManager != null)
-//				{
-//					try
-//					{
-//						versionString = remoteInterpreterManager.getInterpreterVersion(null, data);
-//					}
-//					catch(Exception e)
-//					{
-//						LOG.warn("Couldn't get interpreter version:" + e.getMessage(), e);
-//						versionString = "undefined";
-//					}
-//				}
-//				data.setVersionString(versionString);
-//			}
-//			return versionString;
-//		}
-//		else
-//		{
-//			return getVersionString(sdk.getHomePath());
-//		}
-//	}
 
   @Override
   @Nullable
@@ -893,37 +782,6 @@ public final class PythonSdkType extends SdkType {
     else {
       return WIN_BINARY_NAMES;
     }
-  }
-
-  public static boolean isIncompleteRemote(Sdk sdk) {
-    if (PySdkUtil.isRemote(sdk)) {
-      //noinspection ConstantConditions
-      if (!((PyRemoteSdkAdditionalDataBase)sdk.getSdkAdditionalData()).isValid()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public static boolean hasInvalidRemoteCredentials(Sdk sdk) {
-    if (PySdkUtil.isRemote(sdk)) {
-      final Ref<Boolean> result = Ref.create(false);
-      //noinspection ConstantConditions
-      ((PyRemoteSdkAdditionalDataBase)sdk.getSdkAdditionalData()).switchOnConnectionType(new LanguageCaseCollector<PyCredentialsContribution>() {
-
-        @Override
-        protected void processLanguageContribution(PyCredentialsContribution languageContribution, Object credentials) {
-          result.set(!languageContribution.isValid(credentials));
-        }
-      }.collectCases(PyCredentialsContribution.class, new CredentialsCase.Vagrant() {
-        @Override
-        public void process(VagrantBasedCredentialsHolder cred) {
-          result.set(StringUtil.isEmpty(cred.getVagrantFolder()));
-        }
-      }));
-      return result.get();
-    }
-    return false;
   }
 
   @Nullable

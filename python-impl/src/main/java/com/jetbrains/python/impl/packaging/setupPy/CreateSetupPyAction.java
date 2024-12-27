@@ -26,7 +26,6 @@ import consulo.fileTemplate.FileTemplateManager;
 import consulo.ide.IdeView;
 import consulo.ide.action.ui.CreateFromTemplateDialog;
 import consulo.ide.impl.idea.ide.fileTemplates.actions.CreateFromTemplateAction;
-import consulo.ide.impl.idea.ide.util.PropertiesComponent;
 import consulo.language.editor.CommonDataKeys;
 import consulo.language.editor.LangDataKeys;
 import consulo.language.psi.PsiDirectory;
@@ -142,7 +141,7 @@ public class CreateSetupPyAction extends CreateFromTemplateAction
 	@Override
 	protected void elementCreated(CreateFromTemplateDialog dialog, PsiElement createdElement)
 	{
-		final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+		final ApplicationPropertiesComponent propertiesComponent = ApplicationPropertiesComponent.getInstance();
 		final Properties properties = dialog.getEnteredProperties();
 		final String author = properties.getProperty("Author");
 		if(author != null)

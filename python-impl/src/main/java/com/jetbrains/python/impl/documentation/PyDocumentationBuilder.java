@@ -15,29 +15,32 @@
  */
 package com.jetbrains.python.impl.documentation;
 
-import com.jetbrains.python.*;
+import com.jetbrains.python.PyNames;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.PythonHelpersLocator;
 import com.jetbrains.python.impl.console.PyConsoleUtil;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.types.PyDynamicallyEvaluatedType;
-import com.jetbrains.python.impl.psi.types.PyTypeParser;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.impl.PyCallExpressionHelper;
+import com.jetbrains.python.impl.psi.resolve.RootVisitor;
+import com.jetbrains.python.impl.psi.resolve.RootVisitorHost;
+import com.jetbrains.python.impl.psi.types.PyDynamicallyEvaluatedType;
+import com.jetbrains.python.impl.psi.types.PyTypeParser;
+import com.jetbrains.python.impl.toolbox.ChainIterable;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
-import com.jetbrains.python.impl.psi.resolve.RootVisitor;
-import com.jetbrains.python.impl.psi.resolve.RootVisitorHost;
-import com.jetbrains.python.psi.types.*;
-import com.jetbrains.python.impl.toolbox.ChainIterable;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.toolbox.Maybe;
 import consulo.application.util.LineTokenizer;
 import consulo.content.bundle.Sdk;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.ast.ASTNode;
 import consulo.language.codeStyle.CodeStyleSettingsManager;
 import consulo.language.psi.PsiElement;
@@ -49,6 +52,7 @@ import consulo.util.io.FileUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -617,7 +621,7 @@ public class PyDocumentationBuilder {
     }
 
     public boolean visitRoot(@Nonnull VirtualFile root, Module module, Sdk sdk, boolean isModuleSource) {
-      final String vpath = VfsUtilCore.urlToPath(root.getUrl());
+      final String vpath = VirtualFileUtil.urlToPath(root.getUrl());
       if (myPath.startsWith(vpath)) {
         myResult = vpath;
         return false;
