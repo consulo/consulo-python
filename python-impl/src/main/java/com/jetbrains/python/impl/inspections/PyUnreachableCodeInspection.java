@@ -16,13 +16,14 @@
 
 package com.jetbrains.python.impl.inspections;
 
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.controlFlow.ControlFlow;
+import consulo.language.controlFlow.ControlFlowUtil;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
@@ -69,12 +70,12 @@ public class PyUnreachableCodeInspection extends PyInspection
 		{
 			if(element instanceof ScopeOwner)
 			{
-				final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner) element);
-				final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = flow.getInstructions();
+				final ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner) element);
+				final Instruction[] instructions = flow.getInstructions();
 				final List<PsiElement> unreachable = new ArrayList<PsiElement>();
 				if(instructions.length > 0)
 				{
-					consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.iteratePrev(instructions.length - 1, instructions, instruction ->
+					ControlFlowUtil.iteratePrev(instructions.length - 1, instructions, instruction ->
 					{
 						if(instruction.allPred().isEmpty() && !isFirstInstruction(instruction))
 						{
@@ -96,9 +97,9 @@ public class PyUnreachableCodeInspection extends PyInspection
 		final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
 		if(owner != null)
 		{
-			final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow(owner);
+			final ControlFlow flow = ControlFlowCache.getControlFlow(owner);
 			final Instruction[] instructions = flow.getInstructions();
-			final int start = consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, element);
+			final int start = ControlFlowUtil.findInstructionNumberByElement(instructions, element);
 			if(start >= 0)
 			{
 				final Ref<Boolean> resultRef = Ref.create(false);
@@ -117,7 +118,7 @@ public class PyUnreachableCodeInspection extends PyInspection
 		return false;
 	}
 
-	private static boolean isFirstInstruction(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction)
+	private static boolean isFirstInstruction(Instruction instruction)
 	{
 		return instruction.num() == 0;
 	}

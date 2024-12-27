@@ -16,21 +16,21 @@
 
 package com.jetbrains.python.impl.codeInsight.dataflow.scope;
 
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.StubBasedPsiElement;
-import consulo.language.psi.stub.StubElement;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyExceptPartNavigator;
 import com.jetbrains.python.impl.psi.impl.PyForStatementNavigator;
 import com.jetbrains.python.impl.psi.impl.PyListCompExpressionNavigator;
+import com.jetbrains.python.psi.*;
+import consulo.language.controlFlow.ControlFlow;
+import consulo.language.controlFlow.Instruction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.StubBasedPsiElement;
+import consulo.language.psi.stub.StubElement;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 

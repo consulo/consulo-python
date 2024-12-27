@@ -15,21 +15,23 @@
  */
 package com.jetbrains.python.impl.inspections;
 
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
 import com.jetbrains.python.impl.inspections.quickfix.AddGlobalQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.impl.PyGlobalStatementNavigator;
+import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
-import consulo.ide.impl.idea.codeInsight.dataflow.DFALimitExceededException;
+import consulo.language.controlFlow.ControlFlow;
+import consulo.language.controlFlow.ControlFlowUtil;
+import consulo.language.controlFlow.Instruction;
+import consulo.language.dataFlow.DFALimitExceededException;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.inspection.ProblemsHolder;
@@ -166,14 +168,14 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
     private static boolean isFirstUnboundRead(@Nonnull PyReferenceExpression node, @Nonnull ScopeOwner owner) {
       final String nodeName = node.getReferencedName();
       final Scope scope = ControlFlowCache.getScope(owner);
-      final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow(owner);
-      final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = flow.getInstructions();
-      final int num = consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, node);
+      final ControlFlow flow = ControlFlowCache.getControlFlow(owner);
+      final Instruction[] instructions = flow.getInstructions();
+      final int num = ControlFlowUtil.findInstructionNumberByElement(instructions, node);
       if (num < 0) {
         return true;
       }
       final Ref<Boolean> first = Ref.create(true);
-      consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.iteratePrev(num, instructions, instruction -> {
+      ControlFlowUtil.iteratePrev(num, instructions, instruction -> {
         if (instruction instanceof ReadWriteInstruction) {
           final ReadWriteInstruction rwInstruction = (ReadWriteInstruction)instruction;
           final String name = rwInstruction.getName();
@@ -184,14 +186,14 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
                 final ReadWriteInstruction.ACCESS access = rwInstruction.getAccess();
                 if (access.isReadAccess()) {
                   first.set(false);
-                  return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.BREAK;
+                  return ControlFlowUtil.Operation.BREAK;
                 }
               }
             }
             catch (DFALimitExceededException e) {
               first.set(false);
             }
-            return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.CONTINUE;
+            return ControlFlowUtil.Operation.CONTINUE;
           }
         }
         return ControlFlowUtil.Operation.NEXT;

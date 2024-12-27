@@ -22,7 +22,6 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
-import consulo.ide.impl.idea.util.containers.EmptyIterable;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -232,7 +231,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		}
 		if(ret == null)
 		{
-			return EmptyIterable.getInstance();
+			return List.of();
 		}
 		return Collections.singleton(ret);
 	}

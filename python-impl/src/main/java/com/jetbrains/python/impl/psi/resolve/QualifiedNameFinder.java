@@ -27,13 +27,13 @@ import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import consulo.component.extension.Extensions;
 import consulo.content.bundle.Sdk;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.psi.*;
 import consulo.language.psi.util.QualifiedName;
 import consulo.module.Module;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -250,7 +250,7 @@ public class QualifiedNameFinder
 		{
 			if(myVFile != null)
 			{
-				final String relativePath = VfsUtilCore.getRelativePath(myVFile, root, '/');
+				final String relativePath = VirtualFileUtil.getRelativePath(myVFile, root, '/');
 				if(relativePath != null && !relativePath.isEmpty())
 				{
 					List<String> result = StringUtil.split(relativePath, "/");

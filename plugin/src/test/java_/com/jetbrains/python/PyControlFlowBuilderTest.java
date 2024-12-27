@@ -1,18 +1,18 @@
 package com.jetbrains.python;
 
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
-import consulo.util.lang.StringUtil;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
-import consulo.virtualFileSystem.VirtualFile;
-import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
 import com.jetbrains.python.fixtures.PyTestCase;
+import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
+import consulo.language.controlFlow.ControlFlow;
+import consulo.language.controlFlow.Instruction;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 import junit.framework.Assert;
 
 import java.io.IOException;
@@ -234,7 +234,7 @@ public abstract class PyControlFlowBuilderTest extends LightMarkedTestCase {
 
   private static void check(final String fullPath, final ControlFlow flow) {
     final StringBuffer buffer = new StringBuffer();
-    final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = flow.getInstructions();
+    final Instruction[] instructions = flow.getInstructions();
     for (Instruction instruction : instructions) {
       buffer.append(instruction).append("\n");
     }

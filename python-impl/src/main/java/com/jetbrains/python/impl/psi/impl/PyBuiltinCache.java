@@ -31,7 +31,6 @@ import consulo.application.ApplicationManager;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkTypeId;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.psi.*;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
@@ -43,6 +42,7 @@ import consulo.project.Project;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nonnull;
@@ -168,7 +168,7 @@ public class PyBuiltinCache
 				if(url.contains(PythonSdkType.SKELETON_DIR_NAME))
 				{
 					final String builtins_url = url + "/" + name;
-					File builtins = new File(VfsUtilCore.urlToPath(builtins_url));
+					File builtins = new File(VirtualFileUtil.urlToPath(builtins_url));
 					if(builtins.isFile() && builtins.canRead())
 					{
 						final VirtualFile builtins_vfile = LocalFileSystem.getInstance().findFileByIoFile(builtins);

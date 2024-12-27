@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.packaging.setupPy;
 
 import com.jetbrains.python.impl.packaging.PyPackageUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
+import consulo.application.ApplicationPropertiesComponent;
 import consulo.dataContext.DataContext;
 import consulo.fileTemplate.AttributesDefaults;
 import consulo.fileTemplate.FileTemplate;
@@ -26,7 +27,6 @@ import consulo.ide.IdeView;
 import consulo.ide.action.ui.CreateFromTemplateDialog;
 import consulo.ide.impl.idea.ide.fileTemplates.actions.CreateFromTemplateAction;
 import consulo.ide.impl.idea.ide.util.PropertiesComponent;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.editor.CommonDataKeys;
 import consulo.language.editor.LangDataKeys;
 import consulo.language.psi.PsiDirectory;
@@ -41,6 +41,7 @@ import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -81,7 +82,7 @@ public class CreateSetupPyAction extends CreateFromTemplateAction
 		if(project != null)
 		{
 			defaults.add("Package_name", project.getName());
-			final PropertiesComponent properties = PropertiesComponent.getInstance();
+			final ApplicationPropertiesComponent properties = ApplicationPropertiesComponent.getInstance();
 			defaults.add("Author", properties.getValue(AUTHOR_PROPERTY, SystemProperties.getUserName()));
 			defaults.add("Author_Email", properties.getValue(EMAIL_PROPERTY, ""));
 			defaults.addPredefined("PackageList", getPackageList(dataContext));
@@ -114,7 +115,7 @@ public class CreateSetupPyAction extends CreateFromTemplateAction
 					final VirtualFile contentRoot = ProjectFileIndex.getInstance(module.getProject()).getContentRootForFile(sourceRoot);
 					if(contentRoot != null && !Comparing.equal(contentRoot, sourceRoot))
 					{
-						final String relativePath = VfsUtilCore.getRelativePath(sourceRoot, contentRoot, '/');
+						final String relativePath = VirtualFileUtil.getRelativePath(sourceRoot, contentRoot, '/');
 						return "\n    package_dir={'': '" + relativePath + "'},";
 					}
 				}

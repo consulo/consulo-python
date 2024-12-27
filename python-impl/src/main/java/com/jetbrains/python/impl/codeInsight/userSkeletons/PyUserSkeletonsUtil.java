@@ -15,33 +15,38 @@
  */
 package com.jetbrains.python.impl.codeInsight.userSkeletons;
 
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PythonHelpersLocator;
+import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.resolve.PythonSdkPathCache;
 import com.jetbrains.python.impl.psi.resolve.QualifiedNameFinder;
 import com.jetbrains.python.impl.psi.resolve.QualifiedNameResolverImpl;
-import consulo.logging.Logger;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
+import com.jetbrains.python.psi.AccessDirection;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.resolve.RatedResolveResult;
+import com.jetbrains.python.psi.types.PyClassLikeType;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.component.extension.Extensions;
-import consulo.project.Project;
+import consulo.container.boot.ContainerPathManager;
 import consulo.content.bundle.Sdk;
-import consulo.virtualFileSystem.StandardFileSystems;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
-import consulo.virtualFileSystem.VirtualFile;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.impl.PythonHelpersLocator;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.resolve.*;
-import com.jetbrains.python.psi.types.PyClassLikeType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import com.jetbrains.python.impl.sdk.PythonSdkType;
-import consulo.container.boot.ContainerPathManager;
+import consulo.logging.Logger;
+import consulo.project.Project;
 import consulo.util.dataholder.Key;
+import consulo.virtualFileSystem.StandardFileSystems;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -107,7 +112,7 @@ public class PyUserSkeletonsUtil
 	public static boolean isUnderUserSkeletonsDirectory(@Nonnull final VirtualFile virtualFile)
 	{
 		final VirtualFile skeletonsDir = getUserSkeletonsDirectory();
-		return skeletonsDir != null && VfsUtilCore.isAncestor(skeletonsDir, virtualFile, false);
+		return skeletonsDir != null && VirtualFileUtil.isAncestor(skeletonsDir, virtualFile, false);
 	}
 
 	@Nullable

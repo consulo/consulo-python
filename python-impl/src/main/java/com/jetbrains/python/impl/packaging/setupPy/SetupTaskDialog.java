@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.packaging.setupPy;
 
-import consulo.ide.impl.idea.ide.util.PropertiesComponent;
+import consulo.application.ApplicationPropertiesComponent;
 import consulo.project.Project;
 import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.LabeledComponent;
@@ -83,7 +83,7 @@ public class SetupTaskDialog extends DialogWrapper {
     });
     myMainPanel.add(myExpandCollapseButton, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
                                                                    new Insets(8, 0, 0, 0), 0, 0));
-    if (CARD_OPTIONS.equals(PropertiesComponent.getInstance().getValue(CURRENT_CARD_PROPERTY))) {
+    if (CARD_OPTIONS.equals(ApplicationPropertiesComponent.getInstance().getValue(CURRENT_CARD_PROPERTY))) {
       showOptions();
     }
     else {
@@ -168,7 +168,7 @@ public class SetupTaskDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
-    PropertiesComponent.getInstance().setValue(CURRENT_CARD_PROPERTY, myCurrentCard);
+    ApplicationPropertiesComponent.getInstance().setValue(CURRENT_CARD_PROPERTY, myCurrentCard);
     super.doOKAction();
   }
 }

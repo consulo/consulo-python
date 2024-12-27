@@ -29,7 +29,6 @@ import consulo.execution.process.ProcessTerminatedListener;
 import consulo.execution.ui.console.ConsoleView;
 import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
 import consulo.ide.impl.idea.openapi.util.text.StringUtil;
-import consulo.ide.impl.idea.util.NotNullFunction;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 import consulo.process.ExecutionException;
@@ -49,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * TODO: Use {@link PythonRunner} instead of this class? At already supports rerun and other things
@@ -205,7 +205,7 @@ public class PythonTask
 			ParamsGroup bashParams = cmd.getParametersList().addParamsGroupAt(0, "Bash");
 			bashParams.addParameter("-cl");
 
-			NotNullFunction<String, String> escaperFunction = StringUtil.escaper(false, "|>$\"'& ");
+			Function<String, String> escaperFunction = StringUtil.escaper(false, "|>$\"'& ");
 			StringBuilder paramString;
 			if(myHelper != null)
 			{

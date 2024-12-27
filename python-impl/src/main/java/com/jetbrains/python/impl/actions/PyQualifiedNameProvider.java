@@ -15,13 +15,13 @@
  */
 package com.jetbrains.python.impl.actions;
 
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.impl.psi.stubs.PyFunctionNameIndex;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
-import consulo.ide.impl.idea.openapi.editor.EditorModificationUtil;
+import consulo.codeEditor.util.EditorModificationUtil;
 import consulo.language.editor.QualifiedNameProvider;
 import consulo.language.psi.PsiElement;
 import consulo.project.Project;

@@ -23,8 +23,9 @@ import com.jetbrains.python.impl.psi.impl.PyAugAssignmentStatementNavigator;
 import com.jetbrains.python.impl.psi.impl.PyConstantExpressionEvaluator;
 import com.jetbrains.python.impl.psi.impl.PyImportStatementNavigator;
 import com.jetbrains.python.psi.*;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowBuilder;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.controlFlow.ControlFlow;
+import consulo.language.controlFlow.ControlFlowBuilder;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -40,9 +41,9 @@ import java.util.List;
  */
 public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 {
-	private final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowBuilder myBuilder = new ControlFlowBuilder();
+	private final ControlFlowBuilder myBuilder = new ControlFlowBuilder();
 
-	public consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow buildControlFlow(@Nonnull final ScopeOwner owner)
+	public ControlFlow buildControlFlow(@Nonnull final ScopeOwner owner)
 	{
 		return myBuilder.build(this, owner);
 	}
@@ -301,7 +302,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 		}
 	}
 
-	private consulo.ide.impl.idea.codeInsight.controlflow.Instruction getPrevInstruction(final PyElement condition)
+	private Instruction getPrevInstruction(final PyElement condition)
 	{
 		final Ref<Instruction> head = new Ref<>(myBuilder.prevInstruction);
 		myBuilder.processPending((pendingScope, instruction) -> {
@@ -328,7 +329,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 			condition.accept(this);
 			condition.accept(assertionEvaluator);
 		}
-		final consulo.ide.impl.idea.codeInsight.controlflow.Instruction branchingPoint = myBuilder.prevInstruction;
+		final Instruction branchingPoint = myBuilder.prevInstruction;
 		final PyExpression truePart = node.getTruePart();
 		final PyExpression falsePart = node.getFalsePart();
 		if(truePart != null)
@@ -359,7 +360,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 		}
 		// Set the head as the last instruction of condition
 		PyElement lastCondition = condition;
-		consulo.ide.impl.idea.codeInsight.controlflow.Instruction lastBranchingPoint = getPrevInstruction(condition);
+		Instruction lastBranchingPoint = getPrevInstruction(condition);
 		myBuilder.prevInstruction = lastBranchingPoint;
 		final PyStatementList thenStatements = ifPart.getStatementList();
 		myBuilder.startConditionalNode(thenStatements, condition, true);
@@ -654,7 +655,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 			pendingBackup.addAll(myBuilder.pending);
 			myBuilder.pending = emptyMutableList();
 			myBuilder.flowAbrupted();
-			final consulo.ide.impl.idea.codeInsight.controlflow.Instruction exceptInstruction = myBuilder.startNode(exceptPart);
+			final Instruction exceptInstruction = myBuilder.startNode(exceptPart);
 			exceptPart.accept(this);
 			myBuilder.addPendingEdge(node, myBuilder.prevInstruction);
 			exceptInstructions.add(exceptInstruction);
@@ -664,7 +665,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 			myBuilder.addPendingEdge(pair.first, pair.second);
 		}
 
-		final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> normalExits = new ArrayList<>();
+		final List<Instruction> normalExits = new ArrayList<>();
 		final PyFinallyPart finallyPart = node.getFinallyPart();
 		final Instruction finallyFailInstruction;
 
@@ -787,7 +788,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 			}
 
 			// Connect normal exits from try and else parts to the finally part
-			for(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instr : normalExits)
+			for(Instruction instr : normalExits)
 			{
 				myBuilder.addEdge(instr, finallyInstruction);
 			}
@@ -945,7 +946,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 		myBuilder.flowAbrupted();
 	}
 
-	private static boolean canRaiseExceptions(final consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction)
+	private static boolean canRaiseExceptions(final Instruction instruction)
 	{
 		if(instruction instanceof ReadWriteInstruction)
 		{

@@ -16,15 +16,15 @@
 
 package com.jetbrains.python.impl.codeInsight.dataflow;
 
-import consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap;
-import consulo.ide.impl.idea.codeInsight.dataflow.map.MapSemilattice;
-import consulo.language.psi.PsiElement;
-import java.util.HashSet;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.impl.ScopeVariableImpl;
-import javax.annotation.Nullable;
+import consulo.language.dataFlow.map.DFAMap;
+import consulo.language.dataFlow.map.MapSemilattice;
+import consulo.language.psi.PsiElement;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -39,9 +39,9 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
     return e1.equals(e2);
   }
 
-  public consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> join(ArrayList<DFAMap<ScopeVariable>> ins) {
+  public DFAMap<ScopeVariable> join(ArrayList<DFAMap<ScopeVariable>> ins) {
     if (ins.isEmpty()) {
-      return consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap.empty();
+      return DFAMap.empty();
     }
     if (ins.size() == 1) {
       return ins.get(0);
@@ -52,7 +52,7 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
       return new DFAMap<ScopeVariable>();
     }
 
-    final consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable> result = new DFAMap<ScopeVariable>();
+    final DFAMap<ScopeVariable> result = new DFAMap<ScopeVariable>();
     for (String name : resultNames) {
 
       boolean isParameter = true;
@@ -74,7 +74,7 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
   }
 
   @Nullable
-  private static Set<String> getResultNames(final ArrayList<consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap<ScopeVariable>> ins) {
+  private static Set<String> getResultNames(final ArrayList<DFAMap<ScopeVariable>> ins) {
     // Compute intersection of all the names
     Set<String> names2Include = null;
     for (DFAMap<ScopeVariable> map : ins) {

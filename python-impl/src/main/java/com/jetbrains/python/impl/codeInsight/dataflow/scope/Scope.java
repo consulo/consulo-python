@@ -15,17 +15,16 @@
  */
 package com.jetbrains.python.impl.codeInsight.dataflow.scope;
 
-import java.util.Collection;
-import java.util.List;
+import com.jetbrains.python.psi.PyImportedNameDefiner;
+import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.language.dataFlow.DFALimitExceededException;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import consulo.ide.impl.idea.codeInsight.dataflow.DFALimitExceededException;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiNamedElement;
-import com.jetbrains.python.psi.PyImportedNameDefiner;
-import com.jetbrains.python.psi.PyTargetExpression;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author oleg

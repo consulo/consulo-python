@@ -15,15 +15,16 @@
  */
 package com.jetbrains.python.impl.codeInsight.controlflow;
 
-import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nullable;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowBuilder;
-import consulo.ide.impl.idea.codeInsight.controlflow.impl.InstructionImpl;
-import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.controlFlow.ControlFlowBuilder;
+import consulo.language.controlFlow.base.InstructionImpl;
+import consulo.language.psi.PsiElement;
+import org.jetbrains.annotations.NonNls;
+
+import javax.annotation.Nullable;
 
 public class ReadWriteInstruction extends InstructionImpl
 {

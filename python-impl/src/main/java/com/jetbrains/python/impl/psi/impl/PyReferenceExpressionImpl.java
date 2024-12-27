@@ -44,6 +44,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.component.extension.ExtensionException;
 import consulo.component.extension.Extensions;
 import consulo.language.ast.ASTNode;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
@@ -539,7 +540,7 @@ public class PyReferenceExpressionImpl extends PyElementImpl implements PyRefere
 		final PyElement element = augAssignment != null ? augAssignment : anchor;
 		try
 		{
-			final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> defs = PyDefUseUtil.getLatestDefs(scopeOwner, name, element, true, false);
+			final List<Instruction> defs = PyDefUseUtil.getLatestDefs(scopeOwner, name, element, true, false);
 			if(!defs.isEmpty())
 			{
 				final ReadWriteInstruction firstInstruction = PyUtil.as(defs.get(0), ReadWriteInstruction.class);

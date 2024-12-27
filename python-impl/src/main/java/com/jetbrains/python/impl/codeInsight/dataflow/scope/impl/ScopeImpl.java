@@ -15,33 +15,26 @@
  */
 package com.jetbrains.python.impl.codeInsight.dataflow.scope.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
-import consulo.ide.impl.idea.codeInsight.dataflow.DFALimitExceededException;
-import consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMap;
-import consulo.ide.impl.idea.codeInsight.dataflow.map.DFAMapEngine;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiNamedElement;
-import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.dataflow.PyReachingDefsDfaInstance;
 import com.jetbrains.python.impl.codeInsight.dataflow.PyReachingDefsSemilattice;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyAugAssignmentStatementNavigator;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.language.controlFlow.Instruction;
+import consulo.language.dataFlow.DFALimitExceededException;
+import consulo.language.dataFlow.map.DFAMap;
+import consulo.language.dataFlow.map.DFAMapEngine;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
+
+import javax.annotation.Nonnull;
+import java.util.*;
 
 /**
  * @author oleg

@@ -21,7 +21,6 @@ import consulo.application.util.function.Processor;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.base.SourcesOrderRootType;
 import consulo.content.bundle.Sdk;
-import consulo.ide.impl.idea.openapi.module.ModuleUtil;
 import consulo.language.content.LanguageContentFolderScopes;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -49,7 +48,7 @@ import java.util.Set;
 public class RootVisitorHost {
   public static void visitRoots(@Nonnull final PsiElement elt, @Nonnull final RootVisitor visitor) {
     // real search
-    final Module module = ModuleUtil.findModuleForPsiElement(elt);
+    final Module module = elt.getModule();
     if (module != null) {
       visitRoots(module, false, visitor);
     }

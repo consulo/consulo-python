@@ -15,14 +15,14 @@
  */
 package com.jetbrains.python.impl.refactoring.inline;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.refactoring.PyDefUseUtil;
 import com.jetbrains.python.impl.refactoring.PyReplaceExpressionUtil;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationManager;
 import consulo.application.util.query.Query;
@@ -31,9 +31,9 @@ import consulo.codeEditor.EditorColors;
 import consulo.colorScheme.EditorColorsManager;
 import consulo.colorScheme.TextAttributes;
 import consulo.document.util.TextRange;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
 import consulo.language.Language;
 import consulo.language.codeStyle.CodeStyleManager;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.TargetElementUtil;
 import consulo.language.editor.highlight.HighlightManager;
 import consulo.language.editor.refactoring.RefactoringBundle;
@@ -167,7 +167,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
 
     for (final PsiElement ref : refsToInline) {
       final List<PsiElement> elems = new ArrayList<>();
-      final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> latestDefs =
+      final List<Instruction> latestDefs =
         PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), ref, false, false);
       for (Instruction i : latestDefs) {
         elems.add(i.getElement());

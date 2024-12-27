@@ -19,11 +19,12 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragmentUtil;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
+import com.jetbrains.python.psi.*;
 import consulo.codeEditor.Editor;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
+import consulo.language.controlFlow.ControlFlow;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.intention.BaseIntentionAction;
@@ -63,7 +64,7 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
     if (lambdaExpression != null) {
       if (lambdaExpression.getBody() != null) {
         final ControlFlow flow = ControlFlowCache.getControlFlow(lambdaExpression);
-        final List<consulo.ide.impl.idea.codeInsight.controlflow.Instruction> graph = Arrays.asList(flow.getInstructions());
+        final List<Instruction> graph = Arrays.asList(flow.getInstructions());
         final List<PsiElement> elements = PyCodeFragmentUtil.getInputElements(graph, graph);
         if (elements.size() > 0) return false;
         return true;

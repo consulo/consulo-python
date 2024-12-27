@@ -39,8 +39,8 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import consulo.application.ApplicationManager;
 import consulo.component.extension.Extensions;
 import consulo.document.util.TextRange;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.controlFlow.ControlFlowUtil;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.FileModificationService;
 import consulo.language.editor.inspection.*;
 import consulo.language.inject.InjectedLanguageManager;
@@ -125,7 +125,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 				return;
 			}
 			final Instruction[] instructions = ControlFlowCache.getControlFlow(owner).getInstructions();
-			final int startInstruction = consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, instrAnchor);
+			final int startInstruction = ControlFlowUtil.findInstructionNumberByElement(instructions, instrAnchor);
 			if(startInstruction < 0)
 			{
 				return;
@@ -288,7 +288,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 				}
 			}
 		}
-		consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.iteratePrev(startInstruction, instructions, inst -> {
+		ControlFlowUtil.iteratePrev(startInstruction, instructions, inst -> {
 			final PsiElement instElement = inst.getElement();
 			// Mark function as used
 			if(instElement instanceof PyFunction)
@@ -297,7 +297,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 				{
 					myUsedElements.add(instElement);
 					myUnusedElements.remove(instElement);
-					return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.CONTINUE;
+					return ControlFlowUtil.Operation.CONTINUE;
 				}
 			}
 			// Mark write access as used
@@ -312,10 +312,10 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor
 						myUsedElements.add(instElement);
 						myUnusedElements.remove(instElement);
 					}
-					return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.CONTINUE;
+					return ControlFlowUtil.Operation.CONTINUE;
 				}
 			}
-			return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.NEXT;
+			return ControlFlowUtil.Operation.NEXT;
 		});
 	}
 

@@ -16,16 +16,16 @@
 
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil;
-import consulo.ide.impl.idea.codeInsight.controlflow.Instruction;
+import consulo.language.controlFlow.ControlFlowUtil;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemHighlightType;
@@ -124,8 +124,7 @@ public class PyRedeclarationInspection extends PyInspection {
             elementInControlFlow = importStatement;
           }
         }
-        final int startInstruction =
-          consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.findInstructionNumberByElement(instructions, elementInControlFlow);
+        final int startInstruction = ControlFlowUtil.findInstructionNumberByElement(instructions, elementInControlFlow);
         if (startInstruction < 0) {
           return;
         }
@@ -134,7 +133,7 @@ public class PyRedeclarationInspection extends PyInspection {
         ControlFlowUtil.iteratePrev(startInstruction,
                                     instructions, new Function<Instruction, ControlFlowUtil.Operation>() {
             @Override
-            public consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation apply(consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction) {
+            public ControlFlowUtil.Operation apply(Instruction instruction) {
               if (instruction instanceof ReadWriteInstruction && instruction.num() != startInstruction) {
                 final ReadWriteInstruction rwInstruction = (ReadWriteInstruction)instruction;
                 if (name.equals(rwInstruction.getName())) {
@@ -152,7 +151,7 @@ public class PyRedeclarationInspection extends PyInspection {
                   return ControlFlowUtil.Operation.CONTINUE;
                 }
               }
-              return consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.Operation.NEXT;
+              return ControlFlowUtil.Operation.NEXT;
             }
           });
         final PsiElement writeElement = writeElementRef.get();

@@ -21,9 +21,10 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.codeEditor.Editor;
 import consulo.externalService.statistic.FeatureUsageTracker;
-import consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow;
 import consulo.ide.impl.idea.codeInsight.highlighting.HighlightUsagesHandler;
 import consulo.ide.impl.idea.featureStatistics.ProductivityFeatureNames;
+import consulo.language.controlFlow.ControlFlow;
+import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.CodeInsightBundle;
 import consulo.language.editor.highlight.usage.HighlightUsagesHandlerBase;
 import consulo.language.psi.PsiElement;
@@ -111,8 +112,8 @@ public class PyHighlightExitPointsHandler extends HighlightUsagesHandlerBase<Psi
 
   private static Collection<PsiElement> findExitPointsAndStatements(final ControlFlow flow) {
     final List<PsiElement> statements = new ArrayList<PsiElement>();
-    final consulo.ide.impl.idea.codeInsight.controlflow.Instruction[] instructions = flow.getInstructions();
-    for (consulo.ide.impl.idea.codeInsight.controlflow.Instruction instruction : instructions[instructions.length - 1].allPred()){
+    final Instruction[] instructions = flow.getInstructions();
+    for (Instruction instruction : instructions[instructions.length - 1].allPred()){
       final PsiElement element = instruction.getElement();
       if (element == null){
         continue;

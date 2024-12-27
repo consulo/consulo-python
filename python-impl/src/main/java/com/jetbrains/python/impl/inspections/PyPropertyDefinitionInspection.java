@@ -16,20 +16,21 @@
 package com.jetbrains.python.impl.inspections;
 
 import com.google.common.collect.ImmutableList;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.inspections.quickfix.PyUpdatePropertySignatureQuickFix;
 import com.jetbrains.python.impl.inspections.quickfix.RenameParameterQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
-import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.impl.psi.types.PyNoneType;
-import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.impl.psi.types.PyTypeChecker;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.types.PyClassType;
+import com.jetbrains.python.psi.types.PyType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.ast.ASTNode;
+import consulo.language.controlFlow.ControlFlowUtil;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.inspection.ProblemsHolder;
@@ -347,12 +348,12 @@ public class PyPropertyDefinitionInspection extends PyInspection {
     private static boolean someFlowHasExitPoint(@Nonnull PyFunction function, @Nonnull Predicate<PsiElement> exitPointPredicate) {
       final Ref<Boolean> result = new Ref<>(false);
 
-      consulo.ide.impl.idea.codeInsight.controlflow.ControlFlowUtil.process(ControlFlowCache.getControlFlow(function).getInstructions(),
-                                                                            0,
-                                                                            instruction -> {
-                                                                              result.set(exitPointPredicate.test(instruction.getElement()));
-                                                                              return !result.get();
-                                                                            });
+        ControlFlowUtil.process(ControlFlowCache.getControlFlow(function).getInstructions(),
+            0,
+            instruction -> {
+                result.set(exitPointPredicate.test(instruction.getElement()));
+                return !result.get();
+            });
 
       return result.get();
     }

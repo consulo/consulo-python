@@ -21,7 +21,6 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.ide.impl.idea.util.NullableFunction;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.ProcessingContext;
 import consulo.util.collection.SmartList;
@@ -78,7 +77,7 @@ public class PyUnionType implements PyType
 
 	public String getName()
 	{
-		return StringUtil.join(myMembers, (NullableFunction<PyType, String>) type -> type != null ? type.getName() : null, " | ");
+		return StringUtil.join(myMembers, type -> type != null ? type.getName() : null, " | ");
 	}
 
 	/**

@@ -22,7 +22,6 @@ import consulo.annotation.component.ServiceImpl;
 import consulo.component.persist.PersistentStateComponent;
 import consulo.component.persist.State;
 import consulo.component.persist.Storage;
-import consulo.ide.impl.idea.openapi.module.ModuleServiceManager;
 import consulo.module.Module;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 import jakarta.inject.Singleton;
@@ -70,7 +69,7 @@ public class TestRunnerService implements PersistentStateComponent<TestRunnerSer
   }
 
   public static TestRunnerService getInstance(@Nonnull Module module) {
-    return ModuleServiceManager.getService(module, TestRunnerService.class);
+    return module.getInstance(TestRunnerService.class);
   }
 
   public String getProjectConfiguration() {
