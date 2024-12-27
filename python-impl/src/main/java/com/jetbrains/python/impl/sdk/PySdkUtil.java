@@ -21,7 +21,6 @@ import consulo.content.OrderRootType;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
 import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
-import consulo.ide.impl.idea.remote.RemoteSdkAdditionalData;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.logging.Logger;
@@ -35,6 +34,7 @@ import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import org.jetbrains.annotations.NonNls;
 
 import javax.annotation.Nonnull;
@@ -216,25 +216,13 @@ public class PySdkUtil {
         final Sdk sdk = PythonSdkType.getSdk(element);
         if (sdk != null) {
           final VirtualFile skeletonsDir = findSkeletonsDir(sdk);
-          if (skeletonsDir != null && VfsUtilCore.isAncestor(skeletonsDir, virtualFile, false)) {
+          if (skeletonsDir != null && VirtualFileUtil.isAncestor(skeletonsDir, virtualFile, false)) {
             return true;
           }
         }
       }
     }
     return false;
-  }
-
-  public static String getRemoteSourcesLocalPath(String sdkHome) {
-    String sep = File.separator;
-
-    String basePath = ContainerPathManager.get().getSystemPath();
-    return basePath +
-      File.separator +
-      PythonSdkType.REMOTE_SOURCES_DIR_NAME +
-      sep +
-      FileUtil.toSystemIndependentName(sdkHome).hashCode() +
-      sep;
   }
 
   @Nullable
