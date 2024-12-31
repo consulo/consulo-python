@@ -20,7 +20,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndexKey;
 import com.jetbrains.python.psi.PyClass;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

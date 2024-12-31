@@ -28,7 +28,7 @@ import consulo.execution.runner.RunContentBuilder;
 import consulo.execution.ui.RunContentDescriptor;
 import consulo.process.ExecutionException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

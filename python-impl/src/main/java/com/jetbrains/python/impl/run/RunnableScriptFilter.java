@@ -23,8 +23,8 @@ import consulo.execution.action.Location;
 import consulo.language.psi.PsiFile;
 import consulo.module.Module;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Filters out Python scripts for which it doesn't make sense to run the standard Python configuration,

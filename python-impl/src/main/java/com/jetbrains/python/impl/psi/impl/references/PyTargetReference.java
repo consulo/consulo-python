@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.psi.impl.references;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementResolveResult;

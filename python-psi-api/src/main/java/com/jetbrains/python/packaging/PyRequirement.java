@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.document.Document;
 import consulo.document.FileDocumentManager;
 import consulo.util.io.FileUtil;

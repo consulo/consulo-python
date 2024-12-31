@@ -23,7 +23,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public class PyFillParagraphFix extends BaseIntentionAction implements HighPriorityAction {
 

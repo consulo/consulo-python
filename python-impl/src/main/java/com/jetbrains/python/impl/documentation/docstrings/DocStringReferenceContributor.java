@@ -21,7 +21,7 @@ import consulo.language.Language;
 import consulo.language.psi.PsiReferenceContributor;
 import consulo.language.psi.PsiReferenceRegistrar;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

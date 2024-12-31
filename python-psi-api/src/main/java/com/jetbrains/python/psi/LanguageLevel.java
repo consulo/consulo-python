@@ -22,7 +22,7 @@ import consulo.python.language.PythonLanguageVersion;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.dataholder.Key;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

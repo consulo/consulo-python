@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.hierarchy.treestructures;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
 import com.jetbrains.python.impl.hierarchy.PyHierarchyNodeDescriptor;

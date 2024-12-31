@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.logging.Logger;
 import consulo.util.io.CharsetToolkit;

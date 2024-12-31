@@ -37,7 +37,7 @@ import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.CharArrayUtil;
 import consulo.util.lang.xml.XmlStringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 
 import static com.jetbrains.python.psi.PyCallExpression.PyMarkedCallee;

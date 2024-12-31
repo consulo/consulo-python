@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

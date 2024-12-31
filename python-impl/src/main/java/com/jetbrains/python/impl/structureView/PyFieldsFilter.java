@@ -23,7 +23,7 @@ import consulo.fileEditor.structureView.tree.Filter;
 import consulo.fileEditor.structureView.tree.TreeElement;
 import consulo.ide.IdeBundle;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan

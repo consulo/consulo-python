@@ -11,8 +11,8 @@ import com.intellij.testFramework.TestDataFile;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;

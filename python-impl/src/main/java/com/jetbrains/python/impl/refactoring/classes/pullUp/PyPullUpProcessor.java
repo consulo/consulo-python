@@ -17,8 +17,8 @@ package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyClass;

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.debugger.settings;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.project.Project;
 import consulo.util.io.FileUtil;
 

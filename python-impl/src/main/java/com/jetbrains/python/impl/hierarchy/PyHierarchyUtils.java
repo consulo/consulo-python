@@ -20,7 +20,7 @@ import consulo.ide.impl.idea.ide.hierarchy.HierarchyBrowserManager;
 import consulo.ui.ex.tree.AlphaComparator;
 import consulo.ui.ex.tree.NodeDescriptor;
 import consulo.project.Project;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Comparator;
 

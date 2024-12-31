@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.expressions;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightBundle;
 import consulo.language.editor.CodeInsightUtilCore;

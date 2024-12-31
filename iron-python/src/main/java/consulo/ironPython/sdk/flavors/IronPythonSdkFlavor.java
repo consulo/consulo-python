@@ -24,7 +24,7 @@ import consulo.process.cmd.GeneralCommandLine;
 import consulo.ui.image.Image;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.File;
 import java.util.*;
 

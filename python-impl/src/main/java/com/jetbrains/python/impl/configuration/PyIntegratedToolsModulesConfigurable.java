@@ -26,7 +26,7 @@ import consulo.project.Project;
 import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan

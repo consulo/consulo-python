@@ -23,7 +23,7 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.intention.LowPriorityAction;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
 * @author yole

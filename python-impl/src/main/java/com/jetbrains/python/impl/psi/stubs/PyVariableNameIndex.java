@@ -23,7 +23,7 @@ import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndex;
 import consulo.language.psi.stub.StubIndexKey;
 import com.jetbrains.python.psi.PyTargetExpression;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 

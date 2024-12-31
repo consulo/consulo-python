@@ -25,7 +25,7 @@ import consulo.codeEditor.markup.SeparatorPlacement;
 import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author oleg

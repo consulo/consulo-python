@@ -27,7 +27,7 @@ import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 

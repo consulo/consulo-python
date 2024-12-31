@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.vp;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.google.common.base.Preconditions;
 

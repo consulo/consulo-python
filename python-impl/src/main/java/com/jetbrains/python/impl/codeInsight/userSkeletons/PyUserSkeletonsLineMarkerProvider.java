@@ -30,8 +30,8 @@ import consulo.language.editor.gutter.LineMarkerProvider;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiNavigateUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;

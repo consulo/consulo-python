@@ -25,7 +25,7 @@ import com.jetbrains.python.PythonStringUtil;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgFile;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgSection;
 import com.jetbrains.python.psi.PyElementGenerator;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 

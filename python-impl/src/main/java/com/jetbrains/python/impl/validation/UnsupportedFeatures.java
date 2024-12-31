@@ -25,8 +25,8 @@ import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.intention.IntentionAction;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 

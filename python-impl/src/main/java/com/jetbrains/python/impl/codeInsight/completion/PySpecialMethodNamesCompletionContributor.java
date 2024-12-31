@@ -31,7 +31,7 @@ import consulo.language.editor.completion.lookup.TailType;
 import consulo.language.editor.completion.lookup.TailTypeDecorator;
 import consulo.language.util.ProcessingContext;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Map;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;

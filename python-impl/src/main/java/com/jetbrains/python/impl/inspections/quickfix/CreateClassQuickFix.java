@@ -29,7 +29,7 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

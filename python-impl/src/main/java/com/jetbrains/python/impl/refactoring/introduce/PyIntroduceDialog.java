@@ -28,9 +28,9 @@ import consulo.language.editor.ui.awt.StringComboboxEditor;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyExpression;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.Collection;

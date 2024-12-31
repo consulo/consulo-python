@@ -9,7 +9,7 @@ import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFunction;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.List;

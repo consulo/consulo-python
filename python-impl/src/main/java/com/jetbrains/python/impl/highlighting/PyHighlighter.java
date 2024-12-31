@@ -28,7 +28,7 @@ import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.lexer.PyStringLiteralLexer;
 import com.jetbrains.python.impl.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.Map;

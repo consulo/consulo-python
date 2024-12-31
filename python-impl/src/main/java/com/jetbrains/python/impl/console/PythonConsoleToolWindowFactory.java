@@ -19,7 +19,7 @@ import consulo.application.dumb.DumbAware;
 import consulo.project.Project;
 import consulo.ui.ex.toolWindow.ToolWindow;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author traff

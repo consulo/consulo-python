@@ -22,7 +22,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.*;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

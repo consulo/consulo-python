@@ -26,7 +26,7 @@ import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.*;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg

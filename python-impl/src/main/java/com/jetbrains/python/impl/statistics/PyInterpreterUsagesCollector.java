@@ -26,7 +26,7 @@ import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 

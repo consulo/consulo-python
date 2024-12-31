@@ -43,8 +43,8 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 
 /**

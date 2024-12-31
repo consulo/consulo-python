@@ -21,8 +21,8 @@ import consulo.language.psi.PsiElement;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.PythonFileType;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.lang.reflect.Constructor;
 

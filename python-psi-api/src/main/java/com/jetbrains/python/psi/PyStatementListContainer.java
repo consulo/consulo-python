@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Ilya.Kazakevich

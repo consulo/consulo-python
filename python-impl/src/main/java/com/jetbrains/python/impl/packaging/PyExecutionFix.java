@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.packaging;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.content.bundle.Sdk;
 
 /**

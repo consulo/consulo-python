@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.util.lang.StringUtil;
 import com.jetbrains.python.impl.psi.PyIndentUtil;

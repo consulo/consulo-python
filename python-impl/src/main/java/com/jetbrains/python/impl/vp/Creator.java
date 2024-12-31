@@ -16,7 +16,7 @@
 package com.jetbrains.python.impl.vp;
 
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Creates view and presenter allowing them to have links to each other.

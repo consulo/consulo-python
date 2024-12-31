@@ -1,7 +1,7 @@
 package com.jetbrains.python.debugger.pydev;
 
 import com.jetbrains.python.debugger.PyDebuggerException;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.io.UnsupportedEncodingException;
 

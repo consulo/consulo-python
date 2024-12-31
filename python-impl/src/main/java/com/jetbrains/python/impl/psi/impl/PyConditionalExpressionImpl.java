@@ -24,7 +24,7 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.impl.psi.types.PyUnionType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 

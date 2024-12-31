@@ -31,7 +31,7 @@ import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.util.io.FileUtil;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.types.PyClassLikeType;

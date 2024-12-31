@@ -34,7 +34,7 @@ import consulo.util.collection.MultiMap;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;

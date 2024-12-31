@@ -40,8 +40,8 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.collection.MultiMap;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;

@@ -19,8 +19,8 @@ package com.jetbrains.python.impl.psi.types.functionalParser;
 import consulo.util.lang.Pair;
 import consulo.util.lang.ref.SoftReference;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

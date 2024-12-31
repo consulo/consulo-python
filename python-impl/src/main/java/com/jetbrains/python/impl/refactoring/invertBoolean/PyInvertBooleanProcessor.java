@@ -31,7 +31,7 @@ import consulo.usage.UsageInfo;
 import consulo.usage.UsageViewDescriptor;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 
 /**

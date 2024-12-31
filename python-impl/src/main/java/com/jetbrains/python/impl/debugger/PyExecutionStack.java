@@ -20,8 +20,8 @@ import com.jetbrains.python.debugger.PyThreadInfo;
 import consulo.execution.debug.frame.XExecutionStack;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

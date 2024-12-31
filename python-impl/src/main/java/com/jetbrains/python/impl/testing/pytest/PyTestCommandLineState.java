@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.testing.pytest;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.process.ExecutionException;
 import consulo.execution.executor.Executor;

@@ -20,7 +20,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.event.*;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

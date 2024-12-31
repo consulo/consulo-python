@@ -26,7 +26,7 @@ import consulo.util.io.FileUtil;
 import consulo.util.lang.Comparing;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 

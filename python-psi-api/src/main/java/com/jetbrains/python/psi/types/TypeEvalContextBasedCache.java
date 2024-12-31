@@ -20,8 +20,8 @@ import consulo.application.util.CachedValueProvider;
 import consulo.application.util.CachedValuesManager;
 import consulo.language.psi.PsiModificationTracker;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;

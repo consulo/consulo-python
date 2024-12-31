@@ -7,7 +7,7 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.ast.ASTNode;
 import consulo.util.collection.ArrayUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Mikhail Golubev

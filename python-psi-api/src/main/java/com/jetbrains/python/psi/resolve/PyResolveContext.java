@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi.resolve;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.psi.types.TypeEvalContext;
 

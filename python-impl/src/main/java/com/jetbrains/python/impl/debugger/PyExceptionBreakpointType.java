@@ -39,7 +39,7 @@ import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

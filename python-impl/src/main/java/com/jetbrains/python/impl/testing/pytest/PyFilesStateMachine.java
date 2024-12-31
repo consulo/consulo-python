@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.testing.pytest;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.util.lang.Pair;
 

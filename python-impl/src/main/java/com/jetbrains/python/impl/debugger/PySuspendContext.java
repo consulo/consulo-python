@@ -22,7 +22,7 @@ import consulo.execution.debug.frame.XSuspendContext;
 import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Collection;
 
 

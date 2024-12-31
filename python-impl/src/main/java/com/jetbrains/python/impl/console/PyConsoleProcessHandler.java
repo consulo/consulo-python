@@ -24,7 +24,7 @@ import consulo.ui.ex.awt.UIUtil;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.OutputStream;
 
 /**

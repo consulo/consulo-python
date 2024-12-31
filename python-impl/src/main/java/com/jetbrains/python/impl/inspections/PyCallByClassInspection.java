@@ -28,7 +28,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 

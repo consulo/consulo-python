@@ -1,6 +1,6 @@
 package com.jetbrains.python.console.pydev;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
 

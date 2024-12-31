@@ -35,8 +35,8 @@ import consulo.util.lang.ComparatorUtil;
 import consulo.util.xml.serializer.annotation.*;
 import jakarta.inject.Singleton;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 
 /**

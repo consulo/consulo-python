@@ -23,7 +23,7 @@ import consulo.language.controlFlow.ControlFlow;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.ref.SoftReference;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

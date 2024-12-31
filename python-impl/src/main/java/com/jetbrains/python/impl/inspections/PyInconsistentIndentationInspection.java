@@ -29,7 +29,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.inspections.quickfix.ConvertIndentsFix;
 import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
 import org.jetbrains.annotations.Nls;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;

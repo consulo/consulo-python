@@ -16,12 +16,12 @@
 
 package com.jetbrains.python.psi;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A list of function decorators.

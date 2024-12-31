@@ -25,7 +25,7 @@ import consulo.language.editor.completion.lookup.LookupElementPresentation;
 import consulo.language.psi.PsiUtilCore;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Weighs down items starting with two underscores.

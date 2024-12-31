@@ -17,7 +17,7 @@ package com.jetbrains.python.packaging.requirement;
 
 import consulo.util.lang.Pair;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import static consulo.repository.ui.PackageVersionComparator.VERSION_COMPARATOR;
 

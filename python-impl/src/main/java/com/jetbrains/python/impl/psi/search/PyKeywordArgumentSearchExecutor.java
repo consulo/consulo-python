@@ -26,7 +26,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.application.util.function.Processor;
 import com.jetbrains.python.psi.*;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

@@ -27,8 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.codeStyle.Block;

@@ -2,7 +2,7 @@ package com.jetbrains.python.debugger.pydev.transport;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
 

@@ -18,8 +18,8 @@ package com.jetbrains.python.impl.psi.types;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

@@ -1,7 +1,7 @@
 package com.jetbrains.python.debugger.pydev;
 
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public class RemoveBreakpointCommand extends LineBreakpointCommand {
 

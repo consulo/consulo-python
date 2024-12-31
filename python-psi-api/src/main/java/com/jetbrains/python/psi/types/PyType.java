@@ -18,8 +18,8 @@ package com.jetbrains.python.psi.types;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.util.dataholder.Key;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.ProcessingContext;

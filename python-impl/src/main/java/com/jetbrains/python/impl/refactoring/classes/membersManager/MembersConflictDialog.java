@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.refactoring.classes.membersManager;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.ui.ConflictsDialog;
 import consulo.language.editor.refactoring.ui.RefactoringUIUtil;

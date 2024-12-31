@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.codeInsight.testIntegration;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 import consulo.language.editor.CodeInsightBundle;

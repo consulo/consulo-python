@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.debugger.containerview;
 import consulo.project.Project;
 import consulo.ui.ex.awt.DialogWrapper;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.util.function.Function;
 

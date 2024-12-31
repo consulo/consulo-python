@@ -36,8 +36,8 @@ import consulo.ui.image.Image;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolderBase;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.function.Function;
 
 /**

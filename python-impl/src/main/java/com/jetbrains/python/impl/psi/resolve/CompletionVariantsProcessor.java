@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;

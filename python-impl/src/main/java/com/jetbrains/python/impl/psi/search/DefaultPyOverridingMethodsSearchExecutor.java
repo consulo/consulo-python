@@ -21,7 +21,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ReadAction;
 import consulo.application.util.function.Processor;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

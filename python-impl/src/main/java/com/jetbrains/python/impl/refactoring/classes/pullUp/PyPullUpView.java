@@ -16,7 +16,7 @@
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersBasedView;

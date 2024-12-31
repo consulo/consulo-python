@@ -30,7 +30,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 

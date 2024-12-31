@@ -37,7 +37,7 @@ import consulo.project.Project;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.awt.*;
 
 /**

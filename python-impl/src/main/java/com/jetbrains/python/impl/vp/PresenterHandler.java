@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.vp;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Wrapper for presenter.

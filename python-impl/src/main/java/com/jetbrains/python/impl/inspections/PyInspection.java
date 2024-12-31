@@ -27,8 +27,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public abstract class PyInspection extends LocalInspectionTool {
   @Pattern(VALID_ID_PATTERN)

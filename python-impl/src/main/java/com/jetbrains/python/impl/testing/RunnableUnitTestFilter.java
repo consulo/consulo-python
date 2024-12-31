@@ -22,7 +22,7 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiFile;
 import consulo.module.Module;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Filters out Python unit tests for which it doesn't make sense to run the standard unit test configuration,

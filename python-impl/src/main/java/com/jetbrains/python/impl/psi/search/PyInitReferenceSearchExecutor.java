@@ -32,7 +32,7 @@ import consulo.language.psi.search.ReferencesSearchQueryExecutor;
 import consulo.language.psi.search.UsageSearchContext;
 import consulo.project.util.query.QueryExecutorBase;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

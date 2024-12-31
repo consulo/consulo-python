@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import com.jetbrains.python.debugger.PydevXmlUtils;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 

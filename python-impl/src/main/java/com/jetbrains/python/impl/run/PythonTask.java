@@ -42,8 +42,8 @@ import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.io.FileUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

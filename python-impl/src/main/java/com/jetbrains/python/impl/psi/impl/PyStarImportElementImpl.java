@@ -33,8 +33,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.navigation.ItemPresentation;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;

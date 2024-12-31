@@ -22,7 +22,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.JTable;
 
 import consulo.application.ApplicationManager;

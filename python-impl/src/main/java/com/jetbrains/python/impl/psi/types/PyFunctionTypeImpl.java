@@ -30,8 +30,8 @@ import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.collection.ContainerUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

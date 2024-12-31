@@ -19,7 +19,7 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import consulo.language.psi.stub.IStubElementType;
 import consulo.language.psi.stub.StubBase;

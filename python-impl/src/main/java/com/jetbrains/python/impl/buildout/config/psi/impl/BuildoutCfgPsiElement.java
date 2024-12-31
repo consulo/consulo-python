@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.buildout.config.psi.impl;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.impl.psi.ASTWrapperPsiElement;
 import consulo.language.ast.ASTNode;

@@ -24,8 +24,8 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

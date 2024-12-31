@@ -24,8 +24,8 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

@@ -15,20 +15,20 @@
  */
 package com.jetbrains.python.impl.refactoring.introduce;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.impl.psi.types.PyNoneType;
-import com.jetbrains.python.psi.types.PyType;
-import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.impl.refactoring.NameSuggesterUtil;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.impl.refactoring.PyReplaceExpressionUtil;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.resolve.PyResolveContext;
+import com.jetbrains.python.psi.types.PyType;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.application.ApplicationManager;
 import consulo.application.Result;
 import consulo.codeEditor.CaretModel;
@@ -41,10 +41,10 @@ import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenType;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.WriteCommandAction;
-import consulo.language.editor.refactoring.IntroduceTargetChooser;
 import consulo.language.editor.refactoring.action.RefactoringActionHandler;
 import consulo.language.editor.refactoring.event.RefactoringEventData;
 import consulo.language.editor.refactoring.event.RefactoringEventListener;
+import consulo.language.editor.refactoring.introduce.IntroduceTargetChooser;
 import consulo.language.editor.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import consulo.language.editor.refactoring.introduce.inplace.OccurrencesChooser;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
@@ -57,9 +57,9 @@ import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.Pair;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 

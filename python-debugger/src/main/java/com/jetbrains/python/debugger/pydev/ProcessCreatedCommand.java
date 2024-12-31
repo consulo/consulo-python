@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger.pydev;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexander Koshevoy

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.ast.ASTNode;

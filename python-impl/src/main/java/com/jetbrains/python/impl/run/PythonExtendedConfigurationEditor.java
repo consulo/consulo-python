@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.run;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 

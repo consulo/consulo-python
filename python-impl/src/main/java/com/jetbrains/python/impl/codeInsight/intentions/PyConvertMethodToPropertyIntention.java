@@ -29,7 +29,7 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import consulo.language.util.IncorrectOperationException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;

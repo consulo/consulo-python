@@ -38,8 +38,8 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;

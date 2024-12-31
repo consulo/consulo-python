@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;

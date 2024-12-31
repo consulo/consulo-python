@@ -19,7 +19,7 @@ import com.jetbrains.python.psi.PyImportedNameDefiner;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

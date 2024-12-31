@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.annotation.HighlightSeverity;
 import consulo.util.lang.Comparing;

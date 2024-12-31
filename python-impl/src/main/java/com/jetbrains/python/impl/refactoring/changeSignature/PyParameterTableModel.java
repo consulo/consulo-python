@@ -33,7 +33,7 @@ import consulo.ui.ex.awt.ColumnInfo;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyParameterList;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;

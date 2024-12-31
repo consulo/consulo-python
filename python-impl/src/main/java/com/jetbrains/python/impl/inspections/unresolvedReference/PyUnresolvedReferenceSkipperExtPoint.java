@@ -20,7 +20,7 @@ import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Inject this point to ask "unused reference" inspection to skip some unused references.

@@ -20,8 +20,8 @@ import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

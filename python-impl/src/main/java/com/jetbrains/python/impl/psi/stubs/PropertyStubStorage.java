@@ -26,8 +26,8 @@ import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType;
 import com.jetbrains.python.impl.psi.impl.stubs.PropertyStubType;
 import com.jetbrains.python.toolbox.Maybe;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.io.IOException;
 

@@ -27,7 +27,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author traff

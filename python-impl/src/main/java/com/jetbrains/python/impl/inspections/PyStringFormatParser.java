@@ -23,8 +23,8 @@ import java.util.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

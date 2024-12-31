@@ -22,7 +22,7 @@ import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.File;
 
 /**

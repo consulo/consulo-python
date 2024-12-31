@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.codeEditor.Editor;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;

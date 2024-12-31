@@ -3,7 +3,7 @@ package com.jetbrains.python.refactoring;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import consulo.language.editor.refactoring.move.fileOrDirectory.MoveFilesOrDirectoriesProcessor;
 import consulo.project.Project;

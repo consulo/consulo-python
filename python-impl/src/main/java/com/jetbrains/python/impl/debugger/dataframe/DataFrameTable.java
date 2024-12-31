@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.debugger.dataframe;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.project.Project;
 import com.jetbrains.python.debugger.ArrayChunk;

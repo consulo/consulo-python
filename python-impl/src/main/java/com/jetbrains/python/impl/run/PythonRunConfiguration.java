@@ -40,7 +40,7 @@ import consulo.util.xml.serializer.WriteExternalException;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jdom.Element;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.File;
 
 /**

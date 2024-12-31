@@ -21,7 +21,7 @@ import consulo.language.psi.PsiUtilCore;
 import consulo.language.editor.refactoring.ui.UsageViewDescriptorAdapter;
 import consulo.usage.UsageInfo;
 import com.jetbrains.python.impl.PyBundle;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;

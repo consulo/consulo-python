@@ -29,7 +29,7 @@ import consulo.project.Project;
 import consulo.reStructuredText.localize.RestLocalize;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine

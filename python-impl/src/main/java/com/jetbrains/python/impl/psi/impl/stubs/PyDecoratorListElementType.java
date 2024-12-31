@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.PyDecoratorList;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyDecoratorListImpl;
 import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 

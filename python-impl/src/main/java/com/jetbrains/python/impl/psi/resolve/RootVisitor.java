@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.psi.resolve;
 import consulo.module.Module;
 import consulo.content.bundle.Sdk;
 import consulo.virtualFileSystem.VirtualFile;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
 * Simple visitor to use with ResolveImportUtil.

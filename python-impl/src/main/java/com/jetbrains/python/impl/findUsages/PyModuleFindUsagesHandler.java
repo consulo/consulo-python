@@ -32,7 +32,7 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyImportedModule;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -41,7 +41,7 @@ import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

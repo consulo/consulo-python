@@ -1,6 +1,6 @@
 package com.jetbrains.python.inspections;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.intellij.testFramework.TestModuleDescriptor;
 import com.jetbrains.python.fixtures.PyTestCase;

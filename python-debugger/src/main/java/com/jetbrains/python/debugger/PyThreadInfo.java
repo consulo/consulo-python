@@ -3,7 +3,7 @@ package com.jetbrains.python.debugger;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import com.jetbrains.python.debugger.pydev.AbstractCommand;
 
 

@@ -23,8 +23,8 @@ import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
 import consulo.python.language.PythonLanguageVersion;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner {

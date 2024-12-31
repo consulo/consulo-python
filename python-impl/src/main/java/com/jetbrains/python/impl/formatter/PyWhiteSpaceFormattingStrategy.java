@@ -27,7 +27,7 @@ import consulo.util.collection.primitive.ints.IntSet;
 import consulo.util.collection.primitive.ints.IntSets;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.PrimitiveIterator;
 
 /**

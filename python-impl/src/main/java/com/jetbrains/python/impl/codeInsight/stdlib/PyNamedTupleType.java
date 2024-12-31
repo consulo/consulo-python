@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.psi.PsiElement;
 import consulo.util.collection.ArrayUtil;

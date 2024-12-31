@@ -17,7 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 

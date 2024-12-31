@@ -29,8 +29,8 @@ import com.jetbrains.python.impl.codeInsight.override.PyOverrideImplementUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.Set;
 

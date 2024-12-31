@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import consulo.util.lang.Pair;

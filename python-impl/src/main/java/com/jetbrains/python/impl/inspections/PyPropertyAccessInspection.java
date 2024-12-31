@@ -29,7 +29,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.util.lang.Pair;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.HashMap;
 
 /**

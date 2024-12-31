@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Lists interesting features importable from __future__.

@@ -23,7 +23,7 @@ import consulo.language.lexer.LexerBase;
 import consulo.logging.Logger;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Specialized lexer for string literals. To be used as a layer in a LayeredLexer.

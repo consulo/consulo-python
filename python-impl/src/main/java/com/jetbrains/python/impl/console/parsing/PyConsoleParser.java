@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.console.parsing;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.language.ast.ASTNode;
 import consulo.language.parser.PsiBuilder;
 import consulo.language.ast.IElementType;

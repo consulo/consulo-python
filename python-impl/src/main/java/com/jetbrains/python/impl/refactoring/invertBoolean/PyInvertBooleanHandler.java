@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.invertBoolean;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.language.editor.CommonDataKeys;
 import consulo.dataContext.DataContext;
 import consulo.codeEditor.Editor;

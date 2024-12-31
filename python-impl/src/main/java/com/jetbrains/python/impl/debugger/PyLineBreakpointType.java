@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.debugger;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.execution.debug.breakpoint.XLineBreakpointTypeBase;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 @ExtensionImpl
 public class PyLineBreakpointType extends XLineBreakpointTypeBase

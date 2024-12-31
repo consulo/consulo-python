@@ -1,6 +1,6 @@
 package com.jetbrains.python;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;

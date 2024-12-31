@@ -45,8 +45,8 @@ import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.fileType.FileNameMatcher;
 import consulo.virtualFileSystem.fileType.matcher.ExtensionFileNameMatcher;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 
 import static com.jetbrains.python.psi.FutureFeature.ABSOLUTE_IMPORT;

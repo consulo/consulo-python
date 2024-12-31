@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.findUsages;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;

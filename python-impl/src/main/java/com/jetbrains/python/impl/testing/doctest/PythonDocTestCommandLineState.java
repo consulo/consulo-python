@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.testing.doctest;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.execution.runner.ExecutionEnvironment;
 import com.jetbrains.python.impl.PythonHelper;

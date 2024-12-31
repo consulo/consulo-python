@@ -1,6 +1,6 @@
 package com.jetbrains.python.debugger;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.application.ApplicationManager;
 import consulo.execution.debug.frame.XValueModifier;

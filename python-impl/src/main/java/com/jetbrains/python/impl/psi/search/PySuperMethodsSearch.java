@@ -22,7 +22,7 @@ import consulo.application.util.query.ExtensibleQueryFactory;
 import consulo.application.util.query.Query;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

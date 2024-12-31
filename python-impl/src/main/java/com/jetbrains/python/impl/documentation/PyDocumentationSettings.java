@@ -35,8 +35,8 @@ import consulo.util.xml.serializer.annotation.OptionTag;
 import consulo.util.xml.serializer.annotation.Transient;
 import jakarta.inject.Singleton;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

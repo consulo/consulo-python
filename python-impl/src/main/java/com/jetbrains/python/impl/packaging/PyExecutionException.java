@@ -19,7 +19,7 @@ import consulo.process.ExecutionException;
 import consulo.process.util.ProcessOutput;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 

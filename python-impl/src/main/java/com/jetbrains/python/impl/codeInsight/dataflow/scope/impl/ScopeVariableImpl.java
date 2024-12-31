@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.codeInsight.dataflow.scope.impl;
 
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;

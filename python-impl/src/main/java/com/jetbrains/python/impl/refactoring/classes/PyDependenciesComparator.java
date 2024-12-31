@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.refactoring.classes;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyElement;

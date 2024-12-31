@@ -22,7 +22,7 @@ import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 

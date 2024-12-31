@@ -27,7 +27,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

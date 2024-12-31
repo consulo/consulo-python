@@ -4,7 +4,7 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

@@ -101,8 +101,8 @@ import consulo.util.lang.TimeoutUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import org.apache.xmlrpc.XmlRpcException;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;

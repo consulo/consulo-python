@@ -20,7 +20,7 @@ import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.execution.test.sm.runner.SMTestLocator;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Test locators are injected with their protocol id to support new test locators

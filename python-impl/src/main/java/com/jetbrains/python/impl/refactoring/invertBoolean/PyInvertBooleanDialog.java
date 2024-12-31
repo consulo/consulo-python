@@ -25,7 +25,7 @@ import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.usage.UsageViewUtil;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import javax.swing.*;
 

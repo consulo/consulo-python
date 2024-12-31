@@ -20,7 +20,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.InspectionToolState;
 import consulo.util.dataholder.Key;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Dummy inspection for configuring the PEP8 checker. The checking itself is performed by

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.codeEditor.Editor;
@@ -29,7 +29,7 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyWhileStatement;
 import consulo.language.util.IncorrectOperationException;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Created by IntelliJ IDEA.

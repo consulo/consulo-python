@@ -41,7 +41,7 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.icon.IconDescriptorUpdaters;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;

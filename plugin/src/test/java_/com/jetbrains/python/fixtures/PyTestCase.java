@@ -28,8 +28,8 @@ import com.jetbrains.python.impl.psi.impl.PyFileImpl;
 import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import consulo.container.boot.ContainerPathManager;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.File;
 
 /**

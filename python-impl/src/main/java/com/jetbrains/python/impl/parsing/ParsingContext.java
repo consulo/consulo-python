@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.parsing;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.language.parser.PsiBuilder;
 import com.jetbrains.python.psi.LanguageLevel;
 

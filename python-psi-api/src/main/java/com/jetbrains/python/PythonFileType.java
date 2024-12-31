@@ -27,8 +27,8 @@ import consulo.localize.LocalizeValue;
 import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;

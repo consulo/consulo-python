@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PySetLiteralExpression;

@@ -29,7 +29,7 @@ import consulo.project.Project;
 import consulo.project.startup.PostStartupActivity;
 import consulo.ui.UIAccess;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 
 /**

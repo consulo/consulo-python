@@ -36,7 +36,7 @@ import consulo.module.content.layer.orderEntry.ModuleSourceOrderEntry;
 import consulo.module.content.layer.orderEntry.OrderEntry;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;

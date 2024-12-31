@@ -25,7 +25,7 @@ import consulo.ide.IdeBundle;
 import consulo.ui.ex.action.Shortcut;
 import consulo.ui.ex.keymap.KeymapManager;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan

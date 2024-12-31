@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.util.lang.StringUtil;
 import consulo.ide.impl.idea.xml.util.XmlTagUtilBase;
 import com.jetbrains.python.toolbox.Substring;

@@ -20,8 +20,8 @@ import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType;
 import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
 import consulo.language.psi.stub.StubInputStream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 
 public class PyNamedTupleStubType extends CustomTargetExpressionStubType<PyNamedTupleStub>

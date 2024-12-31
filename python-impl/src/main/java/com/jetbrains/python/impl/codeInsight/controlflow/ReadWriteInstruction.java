@@ -24,7 +24,7 @@ import consulo.language.controlFlow.base.InstructionImpl;
 import consulo.language.psi.PsiElement;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public class ReadWriteInstruction extends InstructionImpl
 {

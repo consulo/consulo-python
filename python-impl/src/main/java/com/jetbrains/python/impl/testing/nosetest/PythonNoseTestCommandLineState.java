@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.testing.nosetest;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParamsGroup;
 import consulo.execution.runner.ExecutionEnvironment;

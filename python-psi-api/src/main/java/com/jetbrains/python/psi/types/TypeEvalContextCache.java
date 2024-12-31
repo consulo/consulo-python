@@ -18,7 +18,7 @@ package com.jetbrains.python.psi.types;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Project service to cache {@link TypeEvalContext}

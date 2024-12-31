@@ -40,8 +40,8 @@ import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.regex.Matcher;
 
 /**

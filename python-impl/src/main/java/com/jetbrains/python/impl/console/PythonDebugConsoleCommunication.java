@@ -26,7 +26,7 @@ import consulo.project.Project;
 import consulo.util.lang.Pair;
 import consulo.virtualFileSystem.encoding.EncodingProjectManager;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;

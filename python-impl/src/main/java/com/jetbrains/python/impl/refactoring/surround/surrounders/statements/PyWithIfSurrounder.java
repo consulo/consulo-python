@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightBundle;
 import consulo.language.editor.CodeInsightUtilCore;
@@ -30,7 +30,7 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyIfStatement;
 import com.jetbrains.python.psi.PyStatementList;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author Alexey.Ivanov

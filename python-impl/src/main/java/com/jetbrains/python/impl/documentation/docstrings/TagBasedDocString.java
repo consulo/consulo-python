@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Maps;
 import consulo.document.util.TextRange;
 import consulo.util.lang.StringUtil;

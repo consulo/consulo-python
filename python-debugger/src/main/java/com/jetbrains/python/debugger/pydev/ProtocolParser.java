@@ -6,7 +6,7 @@ import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import org.jetbrains.annotations.Contract;
 import org.xmlpull.mxp1.MXParser;

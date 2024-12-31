@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * The "if" part of list comprehensions and generators.

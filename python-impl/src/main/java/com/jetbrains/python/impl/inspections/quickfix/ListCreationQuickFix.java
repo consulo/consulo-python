@@ -21,7 +21,7 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;

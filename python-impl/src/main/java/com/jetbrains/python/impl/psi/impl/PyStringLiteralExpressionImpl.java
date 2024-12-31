@@ -39,8 +39,8 @@ import org.intellij.lang.regexp.psi.RegExpChar;
 import org.intellij.lang.regexp.psi.RegExpGroup;
 import org.intellij.lang.regexp.psi.RegExpNamedGroupRef;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

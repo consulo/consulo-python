@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.expressions;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.surroundWith.Surrounder;
 import consulo.logging.Logger;

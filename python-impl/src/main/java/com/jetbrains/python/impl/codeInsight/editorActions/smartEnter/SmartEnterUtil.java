@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.ui.ex.action.IdeActions;
 import consulo.codeEditor.Editor;

@@ -24,7 +24,7 @@ import consulo.language.editor.highlight.SyntaxHighlighterBase;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.impl.buildout.config.lexer.BuildoutCfgFlexLexer;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 

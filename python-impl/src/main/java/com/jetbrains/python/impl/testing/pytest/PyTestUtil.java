@@ -18,8 +18,8 @@ package com.jetbrains.python.impl.testing.pytest;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;

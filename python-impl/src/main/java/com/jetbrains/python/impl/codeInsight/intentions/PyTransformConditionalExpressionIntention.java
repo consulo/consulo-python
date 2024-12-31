@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.codeEditor.Editor;

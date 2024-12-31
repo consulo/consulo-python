@@ -29,7 +29,7 @@ import consulo.util.collection.Maps;
 import consulo.util.dataholder.Key;
 import consulo.virtualFileSystem.VirtualFileManager;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 

@@ -23,7 +23,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFileSystemItem;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

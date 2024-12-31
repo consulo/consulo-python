@@ -22,7 +22,7 @@ import consulo.usage.UsageInfo;
 import consulo.usage.UsageViewDescriptor;
 import com.jetbrains.python.psi.PyFunction;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha

@@ -24,8 +24,8 @@ import consulo.language.ast.TokenSet;
 import consulo.language.psi.PsiNamedElement;
 import consulo.util.collection.ArrayUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 

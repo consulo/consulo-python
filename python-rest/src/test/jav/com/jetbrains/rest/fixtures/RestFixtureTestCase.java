@@ -1,6 +1,6 @@
 package com.jetbrains.rest.fixtures;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.TestModuleDescriptor;

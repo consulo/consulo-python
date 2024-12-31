@@ -18,8 +18,8 @@ package com.jetbrains.python.impl.psi.resolve;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;

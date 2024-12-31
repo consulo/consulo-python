@@ -17,8 +17,8 @@ package com.jetbrains.python.impl.testing;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.process.ExecutionException;
 import consulo.execution.executor.Executor;

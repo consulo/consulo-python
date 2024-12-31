@@ -17,7 +17,7 @@
 package com.jetbrains.python.impl.toolbox;
 
 import consulo.util.lang.Pair;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.*;
 

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

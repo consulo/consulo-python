@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.module.Module;
 import consulo.language.util.ModuleUtilCore;
@@ -28,7 +28,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import com.jetbrains.python.PyNames;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

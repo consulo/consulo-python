@@ -1,7 +1,7 @@
 package com.jetbrains.python.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.execution.debug.XSourcePosition;
 

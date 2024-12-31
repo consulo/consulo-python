@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.QualifiedName;
 

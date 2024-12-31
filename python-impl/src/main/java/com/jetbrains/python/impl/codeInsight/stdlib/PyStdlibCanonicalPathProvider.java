@@ -20,8 +20,8 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

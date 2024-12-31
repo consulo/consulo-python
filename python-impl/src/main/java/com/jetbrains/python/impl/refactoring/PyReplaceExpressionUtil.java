@@ -22,8 +22,8 @@ import static com.jetbrains.python.impl.inspections.PyStringFormatParser.parsePe
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
 import com.jetbrains.python.impl.psi.PyUtil;

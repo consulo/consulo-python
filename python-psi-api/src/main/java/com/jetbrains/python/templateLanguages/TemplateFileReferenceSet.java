@@ -30,8 +30,8 @@ import consulo.language.psi.PsiManager;
 import consulo.language.psi.PsiReferenceProvider;
 import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PythonStringUtil;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.List;

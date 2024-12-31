@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.PyTupleParameter;
 import com.jetbrains.python.impl.psi.impl.PyTupleParameterImpl;
 import com.jetbrains.python.psi.stubs.PyTupleParameterStub;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 

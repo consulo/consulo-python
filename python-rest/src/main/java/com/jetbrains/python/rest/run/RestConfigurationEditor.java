@@ -28,9 +28,9 @@ import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
 import com.jetbrains.rest.RestBundle;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

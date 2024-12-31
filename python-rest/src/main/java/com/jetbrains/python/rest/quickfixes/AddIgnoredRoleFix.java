@@ -26,7 +26,7 @@ import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager
 import consulo.language.editor.intention.LowPriorityAction;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine

@@ -29,7 +29,7 @@ import consulo.usage.rule.UsageGroupingRule;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

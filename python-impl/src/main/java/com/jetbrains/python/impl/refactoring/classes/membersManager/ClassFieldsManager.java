@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.google.common.collect.FluentIterable;
 import com.jetbrains.python.impl.NotNullPredicate;

@@ -42,7 +42,7 @@ import consulo.project.Project;
 import consulo.ui.NotificationType;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 

@@ -10,7 +10,7 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.Collection;
 

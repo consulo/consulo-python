@@ -15,13 +15,13 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.impl.psi.stub.StubBasedPsiElementBase;
 import consulo.language.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;

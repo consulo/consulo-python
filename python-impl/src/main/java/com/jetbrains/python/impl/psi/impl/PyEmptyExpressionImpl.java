@@ -20,7 +20,7 @@ import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyEmptyExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

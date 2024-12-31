@@ -23,8 +23,8 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReprExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

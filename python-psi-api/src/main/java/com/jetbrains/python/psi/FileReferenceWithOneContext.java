@@ -27,7 +27,7 @@ import consulo.language.psi.PsiFileSystemItem;
 import consulo.language.psi.CachingReference;
 import consulo.language.psi.path.FileReferenceSet;
 import consulo.language.util.IncorrectOperationException;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 

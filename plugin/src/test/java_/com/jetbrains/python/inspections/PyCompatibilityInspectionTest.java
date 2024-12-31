@@ -3,7 +3,7 @@ package com.jetbrains.python.inspections;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.impl.inspections.PyCompatibilityInspection;
 import com.jetbrains.python.psi.LanguageLevel;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine

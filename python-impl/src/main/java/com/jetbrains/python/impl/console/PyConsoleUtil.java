@@ -23,8 +23,8 @@ import consulo.execution.ui.console.language.LanguageConsoleView;
 import consulo.util.dataholder.Key;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author traff

@@ -18,11 +18,11 @@ package com.jetbrains.python.psi;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNameIdentifierOwner;

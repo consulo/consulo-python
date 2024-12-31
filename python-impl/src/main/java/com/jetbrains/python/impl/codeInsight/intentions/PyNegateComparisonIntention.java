@@ -27,7 +27,7 @@ import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.Map;

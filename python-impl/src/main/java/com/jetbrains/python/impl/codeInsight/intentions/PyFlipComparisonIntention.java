@@ -32,7 +32,7 @@ import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyFile;
 import consulo.language.util.IncorrectOperationException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 

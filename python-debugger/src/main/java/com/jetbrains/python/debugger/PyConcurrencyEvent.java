@@ -18,7 +18,7 @@ package com.jetbrains.python.debugger;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 
 public abstract class PyConcurrencyEvent

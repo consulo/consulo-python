@@ -19,7 +19,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import consulo.language.parser.ITokenTypeRemapper;
 import consulo.language.parser.PsiBuilder;
 import consulo.logging.Logger;

@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.inspections.quickfix;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.editor.inspection.LocalInspectionToolSession;

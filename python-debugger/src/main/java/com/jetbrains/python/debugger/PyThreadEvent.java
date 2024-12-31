@@ -1,7 +1,7 @@
 package com.jetbrains.python.debugger;
 
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public class PyThreadEvent extends PyConcurrencyEvent
 {

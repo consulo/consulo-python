@@ -2,8 +2,8 @@ package com.jetbrains.python.debugger;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Lists;
 import consulo.util.lang.StringUtil;
 

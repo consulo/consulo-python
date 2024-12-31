@@ -27,7 +27,7 @@ import consulo.language.codeStyle.*;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import static com.jetbrains.python.impl.PyElementTypes.*;
 import static com.jetbrains.python.PyTokenTypes.*;

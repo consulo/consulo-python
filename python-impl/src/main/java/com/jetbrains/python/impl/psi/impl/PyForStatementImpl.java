@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;

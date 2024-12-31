@@ -29,7 +29,7 @@ import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormData;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 import java.awt.*;

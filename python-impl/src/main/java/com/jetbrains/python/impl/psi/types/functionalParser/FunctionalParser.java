@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.psi.types.functionalParser;
 
 import consulo.util.lang.Pair;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
 

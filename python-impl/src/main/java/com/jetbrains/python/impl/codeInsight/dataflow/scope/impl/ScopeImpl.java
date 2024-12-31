@@ -33,7 +33,7 @@ import consulo.language.dataFlow.map.DFAMapEngine;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 
 /**

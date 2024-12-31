@@ -17,8 +17,8 @@ package com.jetbrains.python.impl.psi.impl;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.language.psi.PsiFile;
 import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.PyNames;

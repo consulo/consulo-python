@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.util.lang.function.Condition;
 import consulo.language.psi.PsiElement;

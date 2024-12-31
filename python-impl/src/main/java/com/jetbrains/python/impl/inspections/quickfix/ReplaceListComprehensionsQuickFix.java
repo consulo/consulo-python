@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpressionStatement;
 import com.jetbrains.python.psi.PyTupleExpression;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.

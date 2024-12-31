@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.nameResolver;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Some enum value that represents one or more fully qualified names for some function

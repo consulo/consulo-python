@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PyElementTypes;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyStatementPart;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Common parts functionality.

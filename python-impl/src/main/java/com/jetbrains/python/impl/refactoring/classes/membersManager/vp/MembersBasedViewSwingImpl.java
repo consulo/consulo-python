@@ -28,7 +28,7 @@ import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.collection.MultiMap;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;

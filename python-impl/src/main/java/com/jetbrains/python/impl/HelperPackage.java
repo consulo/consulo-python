@@ -18,7 +18,7 @@ package com.jetbrains.python.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParamsGroup;
 import consulo.content.bundle.Sdk;

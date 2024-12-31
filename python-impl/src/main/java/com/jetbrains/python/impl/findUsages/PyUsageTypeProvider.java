@@ -28,7 +28,7 @@ import consulo.usage.UsageTarget;
 import consulo.usage.UsageType;
 import consulo.usage.UsageTypeProviderEx;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

@@ -22,8 +22,8 @@ import consulo.language.psi.PsiModificationTracker;
 import consulo.language.psi.util.PsiCacheKey;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.function.Function;
 
 /**

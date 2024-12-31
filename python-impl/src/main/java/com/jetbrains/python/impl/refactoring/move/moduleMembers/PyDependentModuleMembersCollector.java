@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.move.moduleMembers;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.editor.refactoring.classMember.DependentMembersCollectorBase;

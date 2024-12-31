@@ -37,8 +37,8 @@ import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.ProcessOutput;
 import consulo.util.io.CharsetToolkit;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;

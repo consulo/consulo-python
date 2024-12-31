@@ -21,7 +21,7 @@ import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyDelStatement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

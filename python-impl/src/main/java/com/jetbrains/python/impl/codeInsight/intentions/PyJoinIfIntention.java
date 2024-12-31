@@ -28,8 +28,8 @@ import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.List;
 

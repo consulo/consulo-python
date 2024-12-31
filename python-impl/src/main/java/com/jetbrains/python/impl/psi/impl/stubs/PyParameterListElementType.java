@@ -30,7 +30,7 @@ import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyParameterListImpl;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 

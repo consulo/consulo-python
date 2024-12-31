@@ -21,7 +21,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyRaiseStatement;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Describes 'raise' statement.

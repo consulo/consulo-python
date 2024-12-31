@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.parsing;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.parser.PsiBuilder;
 import consulo.language.parser.WhitespacesBinders;

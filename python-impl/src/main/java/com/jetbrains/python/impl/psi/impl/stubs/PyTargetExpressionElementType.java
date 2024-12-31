@@ -42,7 +42,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 
 /**

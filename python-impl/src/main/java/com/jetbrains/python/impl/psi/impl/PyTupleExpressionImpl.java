@@ -23,7 +23,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.ast.ASTNode;
 import consulo.util.collection.ContainerUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Iterator;
 

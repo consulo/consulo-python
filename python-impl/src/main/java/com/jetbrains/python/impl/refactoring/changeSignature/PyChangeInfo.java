@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.Language;
 import consulo.language.editor.refactoring.changeSignature.ChangeInfo;

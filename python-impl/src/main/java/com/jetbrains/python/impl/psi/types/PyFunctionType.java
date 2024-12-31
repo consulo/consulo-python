@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.psi.types;
 import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.types.PyCallableType;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Type of a particular function that is represented as a {@link PyCallable} in the PSI tree like lambda or function.

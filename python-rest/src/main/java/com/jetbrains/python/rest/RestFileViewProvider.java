@@ -27,7 +27,7 @@ import consulo.language.psi.PsiManager;
 import consulo.language.template.TemplateLanguageFileViewProvider;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

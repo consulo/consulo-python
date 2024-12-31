@@ -3,7 +3,7 @@ package com.jetbrains.python.debugger;
 import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.frame.XValueChildrenList;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Facade to access python variables frame

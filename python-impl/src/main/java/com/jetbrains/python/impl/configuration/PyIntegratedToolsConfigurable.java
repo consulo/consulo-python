@@ -44,7 +44,7 @@ import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.Collections;

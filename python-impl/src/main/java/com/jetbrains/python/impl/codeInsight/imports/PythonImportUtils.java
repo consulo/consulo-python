@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.component.extension.Extensions;

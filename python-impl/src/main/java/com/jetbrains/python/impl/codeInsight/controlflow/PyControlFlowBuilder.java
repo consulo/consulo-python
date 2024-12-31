@@ -32,7 +32,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 

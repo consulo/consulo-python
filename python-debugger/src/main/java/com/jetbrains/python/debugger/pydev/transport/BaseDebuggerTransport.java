@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Date;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.logging.Logger;
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;

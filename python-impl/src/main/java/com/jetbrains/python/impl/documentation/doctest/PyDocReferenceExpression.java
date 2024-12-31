@@ -27,7 +27,7 @@ import com.jetbrains.python.impl.psi.impl.PyReferenceExpressionImpl;
 import com.jetbrains.python.impl.psi.impl.references.PyImportReference;
 import com.jetbrains.python.impl.psi.impl.references.PyQualifiedReference;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  *

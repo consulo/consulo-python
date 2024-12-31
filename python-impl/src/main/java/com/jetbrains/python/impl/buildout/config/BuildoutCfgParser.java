@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.buildout.config;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.version.LanguageVersion;

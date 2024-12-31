@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.sdk.flavors;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.regex.Pattern;
 
 /**

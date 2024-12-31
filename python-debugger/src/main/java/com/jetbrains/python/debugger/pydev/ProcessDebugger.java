@@ -3,8 +3,8 @@ package com.jetbrains.python.debugger.pydev;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.execution.debug.breakpoint.SuspendPolicy;
 import consulo.execution.debug.frame.XValueChildrenList;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;

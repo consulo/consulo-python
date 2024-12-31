@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.PySingleStarParameter;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PySingleStarParameterImpl;
 import com.jetbrains.python.psi.stubs.PySingleStarParameterStub;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 

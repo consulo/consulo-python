@@ -25,7 +25,7 @@ import consulo.language.psi.PsiNamedElement;
 import com.jetbrains.python.psi.PyElement;
 import consulo.language.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

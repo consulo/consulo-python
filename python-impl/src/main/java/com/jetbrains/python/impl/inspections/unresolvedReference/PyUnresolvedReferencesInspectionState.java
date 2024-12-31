@@ -3,7 +3,7 @@ package com.jetbrains.python.impl.inspections.unresolvedReference;
 import consulo.language.editor.inspection.InspectionToolState;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

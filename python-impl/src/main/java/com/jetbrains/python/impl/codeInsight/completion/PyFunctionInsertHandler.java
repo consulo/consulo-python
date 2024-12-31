@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.impl.codeInsight.completion;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.language.editor.AutoPopupController;
 import consulo.language.editor.completion.lookup.InsertionContext;

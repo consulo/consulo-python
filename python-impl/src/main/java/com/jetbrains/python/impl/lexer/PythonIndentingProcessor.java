@@ -25,8 +25,8 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import consulo.util.collection.primitive.ints.IntStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

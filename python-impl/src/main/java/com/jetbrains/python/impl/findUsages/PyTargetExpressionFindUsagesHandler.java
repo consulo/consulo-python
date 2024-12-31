@@ -1,6 +1,6 @@
 package com.jetbrains.python.impl.findUsages;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.find.FindUsagesHandler;
 import com.jetbrains.python.psi.PyTargetExpression;

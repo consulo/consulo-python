@@ -25,7 +25,7 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 

@@ -25,7 +25,7 @@ import consulo.language.editor.generation.OverrideMethodHandler;
 import consulo.language.psi.PsiFile;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov

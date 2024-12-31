@@ -19,7 +19,7 @@ package com.jetbrains.python.psi;
 import java.math.BigInteger;
 import java.math.BigDecimal;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface PyNumericLiteralExpression extends PyLiteralExpression {
   /**

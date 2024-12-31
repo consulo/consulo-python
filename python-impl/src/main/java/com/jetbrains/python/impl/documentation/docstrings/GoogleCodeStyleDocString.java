@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 import consulo.util.lang.Pair;
 import consulo.util.collection.ContainerUtil;

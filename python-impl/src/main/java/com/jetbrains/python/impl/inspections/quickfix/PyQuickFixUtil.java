@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.EditorFactory;

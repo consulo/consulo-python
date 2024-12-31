@@ -26,7 +26,7 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 

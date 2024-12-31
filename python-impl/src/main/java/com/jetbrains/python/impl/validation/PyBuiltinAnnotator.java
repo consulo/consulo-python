@@ -26,7 +26,7 @@ import consulo.language.editor.annotation.AnnotationBuilder;
 import consulo.language.editor.annotation.HighlightSeverity;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Marks built-in names.

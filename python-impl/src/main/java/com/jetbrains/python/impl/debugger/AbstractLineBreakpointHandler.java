@@ -23,7 +23,7 @@ import consulo.execution.debug.breakpoint.*;
 import consulo.execution.debug.breakpoint.XLineBreakpoint;
 import consulo.execution.debug.breakpoint.XBreakpointType;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Map;

@@ -23,7 +23,7 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 
 import java.math.BigInteger;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

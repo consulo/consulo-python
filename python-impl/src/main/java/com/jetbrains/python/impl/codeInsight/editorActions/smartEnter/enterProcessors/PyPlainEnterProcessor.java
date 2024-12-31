@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.enterProcessors;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import consulo.codeEditor.CaretModel;
 import consulo.codeEditor.Editor;

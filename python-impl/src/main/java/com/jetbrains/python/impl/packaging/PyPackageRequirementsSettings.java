@@ -26,7 +26,7 @@ import consulo.module.Module;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 import jakarta.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan

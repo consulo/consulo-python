@@ -17,8 +17,8 @@
 package com.jetbrains.python.impl.console;
 
 import consulo.codeEditor.Editor;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author traff

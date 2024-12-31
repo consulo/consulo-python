@@ -24,7 +24,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.usage.UsageViewLongNameLocation;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

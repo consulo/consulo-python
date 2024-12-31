@@ -28,7 +28,7 @@ import consulo.language.psi.PsiFile;
 import consulo.project.Project;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * add missing encoding declaration

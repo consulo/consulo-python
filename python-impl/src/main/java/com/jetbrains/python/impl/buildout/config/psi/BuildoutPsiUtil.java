@@ -21,8 +21,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgFile;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgOption;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgSection;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.List;
 

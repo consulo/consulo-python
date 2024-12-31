@@ -26,7 +26,7 @@ import consulo.language.psi.PsiManager;
 import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyStringLiteralFileReferenceSet;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.List;

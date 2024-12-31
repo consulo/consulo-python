@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.*;
 import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.util.collection.MultiMap;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.*;
 
 /**

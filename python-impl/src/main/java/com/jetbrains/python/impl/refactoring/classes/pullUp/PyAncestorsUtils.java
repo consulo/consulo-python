@@ -25,7 +25,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;

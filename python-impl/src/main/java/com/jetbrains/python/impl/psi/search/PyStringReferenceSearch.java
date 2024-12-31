@@ -33,7 +33,7 @@ import consulo.language.psi.search.UsageSearchContext;
 import consulo.project.util.query.QueryExecutorBase;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author traff

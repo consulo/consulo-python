@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.membersManager.vp;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.application.ApplicationManager;
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;

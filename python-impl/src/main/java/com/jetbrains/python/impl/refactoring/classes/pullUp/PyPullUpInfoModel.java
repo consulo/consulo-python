@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.classMember.AbstractUsesDependencyMemberInfoModel;
 import com.jetbrains.python.psi.PyClass;

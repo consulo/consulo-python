@@ -29,7 +29,7 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.impl.refactoring.move.moduleMembers.PyDependentModuleMembersCollector;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Dennis.Ushakov

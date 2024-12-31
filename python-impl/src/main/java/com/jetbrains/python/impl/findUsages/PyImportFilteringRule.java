@@ -26,7 +26,7 @@ import consulo.usage.rule.PsiElementUsage;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportStatementBase;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

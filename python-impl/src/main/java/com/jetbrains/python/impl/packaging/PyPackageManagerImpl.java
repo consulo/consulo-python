@@ -53,8 +53,8 @@ import consulo.virtualFileSystem.event.BulkFileListener;
 import consulo.virtualFileSystem.event.VFileEvent;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;

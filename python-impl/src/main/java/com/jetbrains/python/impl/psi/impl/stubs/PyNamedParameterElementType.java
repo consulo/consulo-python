@@ -21,7 +21,7 @@ package com.jetbrains.python.impl.psi.impl.stubs;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import org.jetbrains.annotations.NonNls;
 import consulo.language.ast.ASTNode;

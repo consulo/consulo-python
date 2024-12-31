@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.surroundWith.Surrounder;
 import consulo.logging.Logger;
@@ -26,7 +26,7 @@ import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Created by IntelliJ IDEA.

@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;
 import consulo.virtualFileSystem.VirtualFile;

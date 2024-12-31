@@ -26,7 +26,7 @@ import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.impl.PyElementTypes;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyIfPartIfImpl;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.List;
 

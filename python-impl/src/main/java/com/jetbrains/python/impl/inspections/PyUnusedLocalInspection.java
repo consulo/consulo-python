@@ -25,7 +25,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.util.dataholder.Key;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg

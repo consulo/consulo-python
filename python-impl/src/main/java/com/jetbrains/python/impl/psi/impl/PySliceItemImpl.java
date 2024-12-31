@@ -20,7 +20,7 @@ import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PySliceItem;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

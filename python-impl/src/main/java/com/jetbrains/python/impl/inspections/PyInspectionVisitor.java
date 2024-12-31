@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.language.editor.intention.HintAction;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.LocalQuickFix;

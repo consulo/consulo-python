@@ -27,7 +27,7 @@ import consulo.language.parser.PsiParser;
 import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha

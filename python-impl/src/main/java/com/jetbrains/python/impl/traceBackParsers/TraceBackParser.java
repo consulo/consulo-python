@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.impl.traceBackParsers;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.jetbrains.python.impl.run.PyTracebackParser;
 import com.jetbrains.python.impl.testing.pytest.PyTestTracebackParser;
 

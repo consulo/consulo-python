@@ -22,7 +22,7 @@ import consulo.language.psi.stub.StubElement;
 import com.jetbrains.python.psi.PyImportElement;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

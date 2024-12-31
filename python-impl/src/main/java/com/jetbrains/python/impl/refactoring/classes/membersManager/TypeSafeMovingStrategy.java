@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.refactoring.classes.membersManager;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;

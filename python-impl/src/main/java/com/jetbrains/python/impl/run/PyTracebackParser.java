@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.run;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.jetbrains.python.impl.traceBackParsers.LinkInTrace;
 import com.jetbrains.python.impl.traceBackParsers.TraceBackParserAdapter;
 

@@ -30,7 +30,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov

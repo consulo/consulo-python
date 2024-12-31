@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.impl.documentation.docstrings.SectionBasedDocString.Section;
 import com.jetbrains.python.toolbox.Substring;

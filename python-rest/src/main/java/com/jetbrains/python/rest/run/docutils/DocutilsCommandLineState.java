@@ -23,7 +23,7 @@ import consulo.fileEditor.FileEditorManager;
 import consulo.platform.Platform;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * User : catherine

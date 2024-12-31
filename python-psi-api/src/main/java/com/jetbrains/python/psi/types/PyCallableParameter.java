@@ -17,8 +17,8 @@
 package com.jetbrains.python.psi.types;
 
 import com.jetbrains.python.psi.PyParameter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author vlan

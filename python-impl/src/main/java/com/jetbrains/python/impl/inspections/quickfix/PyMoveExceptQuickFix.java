@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import java.util.ArrayList;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;

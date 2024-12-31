@@ -29,8 +29,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

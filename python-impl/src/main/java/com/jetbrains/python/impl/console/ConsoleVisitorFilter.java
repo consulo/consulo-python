@@ -22,7 +22,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.psi.PsiFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine

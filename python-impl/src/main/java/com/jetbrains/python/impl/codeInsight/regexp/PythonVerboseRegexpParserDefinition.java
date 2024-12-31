@@ -29,7 +29,7 @@ import org.intellij.lang.regexp.RegExpFile;
 import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpParser;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.EnumSet;
 
 /**

@@ -24,7 +24,7 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.stub.IndexSink;
 import consulo.language.psi.stub.StubInputStream;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 
 /**

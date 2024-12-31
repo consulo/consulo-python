@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.language.editor.refactoring.event.RefactoringEventData;
 import consulo.project.Project;

@@ -27,7 +27,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.PyDictCreationInspection;
 import com.jetbrains.python.psi.*;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Map;

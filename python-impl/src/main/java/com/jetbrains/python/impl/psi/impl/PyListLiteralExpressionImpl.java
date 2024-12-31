@@ -25,7 +25,7 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implements PyListLiteralExpression
 {

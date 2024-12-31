@@ -36,7 +36,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.LanguageUtil;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

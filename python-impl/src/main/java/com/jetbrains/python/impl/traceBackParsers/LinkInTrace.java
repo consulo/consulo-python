@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.traceBackParsers;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Information about trace produced by {@link TraceBackParser}

@@ -28,8 +28,8 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiReference;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

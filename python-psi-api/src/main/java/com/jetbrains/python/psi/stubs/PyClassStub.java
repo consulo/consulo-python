@@ -22,8 +22,8 @@ package com.jetbrains.python.psi.stubs;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.language.psi.stub.NamedStub;
 import consulo.language.psi.util.QualifiedName;

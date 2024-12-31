@@ -19,8 +19,8 @@ import com.jetbrains.python.psi.PyArgumentList;
 import consulo.util.dataholder.UserDataHolderEx;
 import junit.framework.Assert;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.awt.*;
 import java.util.EnumSet;
 import java.util.Map;

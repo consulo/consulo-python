@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.refactoring.introduce.constant;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;

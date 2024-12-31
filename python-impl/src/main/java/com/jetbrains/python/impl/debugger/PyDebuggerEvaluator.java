@@ -26,8 +26,8 @@ import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.evaluation.XDebuggerEvaluator;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 
 public class PyDebuggerEvaluator extends XDebuggerEvaluator

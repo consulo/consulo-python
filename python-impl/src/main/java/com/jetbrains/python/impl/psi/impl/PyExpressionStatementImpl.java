@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.psi.impl;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyExpressionStatement;
 

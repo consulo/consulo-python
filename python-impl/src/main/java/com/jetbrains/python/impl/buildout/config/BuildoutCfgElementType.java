@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.buildout.config;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.IElementType;
 import org.jetbrains.annotations.NonNls;

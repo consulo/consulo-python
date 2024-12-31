@@ -31,7 +31,7 @@ import consulo.process.ExecutionException;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine

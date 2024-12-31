@@ -24,8 +24,8 @@ import consulo.execution.ui.console.Filter;
 import consulo.execution.ui.console.TextConsoleBuilder;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 
 /**

@@ -28,7 +28,7 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.search.PyOverridingMethodsSearch;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.toolbox.Maybe;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 

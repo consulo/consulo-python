@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.impl;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyElementVisitor;

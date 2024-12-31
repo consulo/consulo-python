@@ -34,7 +34,7 @@ import consulo.language.editor.completion.CompletionProvider;
 import consulo.language.editor.completion.CompletionContributor;
 import consulo.python.module.extension.PyModuleExtension;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 import static consulo.language.pattern.StandardPatterns.or;

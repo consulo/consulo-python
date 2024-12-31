@@ -28,7 +28,7 @@ import consulo.project.Project;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 

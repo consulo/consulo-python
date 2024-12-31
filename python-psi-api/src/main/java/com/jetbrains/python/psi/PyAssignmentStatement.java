@@ -17,8 +17,8 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.util.lang.Pair;
 
 /**

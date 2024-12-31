@@ -40,7 +40,7 @@ import consulo.ui.ex.InputValidator;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.lang.Pair;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

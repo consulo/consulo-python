@@ -19,7 +19,7 @@ import consulo.language.editor.annotation.HighlightSeverity;
 import consulo.document.util.TextRange;
 import consulo.language.psi.path.FileReferenceSet;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

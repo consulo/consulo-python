@@ -28,7 +28,7 @@ import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiFile;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

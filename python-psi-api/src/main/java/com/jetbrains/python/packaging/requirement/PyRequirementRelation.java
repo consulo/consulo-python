@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.packaging.requirement;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public enum PyRequirementRelation
 {

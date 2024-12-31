@@ -18,7 +18,7 @@ package com.jetbrains.python.toolbox;
 
 import consulo.annotation.DeprecationInfo;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.NoSuchElementException;
 

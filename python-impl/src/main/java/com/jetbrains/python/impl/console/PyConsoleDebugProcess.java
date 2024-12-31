@@ -25,7 +25,7 @@ import consulo.execution.ui.console.ConsoleViewContentType;
 import consulo.project.Project;
 import consulo.ui.ex.awt.UIUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.net.ServerSocket;
 import java.util.Map;
 

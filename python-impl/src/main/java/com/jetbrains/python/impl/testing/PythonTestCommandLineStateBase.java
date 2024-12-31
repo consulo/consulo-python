@@ -40,7 +40,7 @@ import com.jetbrains.python.impl.run.CommandLinePatcher;
 import com.jetbrains.python.impl.run.PythonCommandLineState;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 

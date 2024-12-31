@@ -32,7 +32,7 @@ import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.Pair;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

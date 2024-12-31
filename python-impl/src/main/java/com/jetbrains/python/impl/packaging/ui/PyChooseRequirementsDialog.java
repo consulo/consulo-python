@@ -21,7 +21,7 @@ import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.ElementsChooser;
 import consulo.ui.ex.awt.JBLabel;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;

@@ -23,7 +23,7 @@ import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.util.QualifiedName;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

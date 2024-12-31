@@ -20,7 +20,7 @@ import consulo.application.util.CachedValuesManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.function.Function;
 
 /**

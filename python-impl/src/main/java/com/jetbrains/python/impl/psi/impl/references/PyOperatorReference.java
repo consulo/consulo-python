@@ -26,8 +26,8 @@ import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

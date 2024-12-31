@@ -22,7 +22,7 @@ import consulo.usage.UsageViewBundle;
 import consulo.usage.UsageViewDescriptor;
 import consulo.usage.UsageViewUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha

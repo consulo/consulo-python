@@ -20,12 +20,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.python.module.extension.PyModuleExtension;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Sets;
 import consulo.execution.action.Location;
 import consulo.execution.action.ConfigurationContext;

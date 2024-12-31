@@ -23,7 +23,7 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.AbstractElementManipulator;
 import consulo.language.util.IncorrectOperationException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg

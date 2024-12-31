@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.findUsages;
 import consulo.find.FindUsagesHandler;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 

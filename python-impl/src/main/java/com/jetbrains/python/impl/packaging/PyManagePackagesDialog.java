@@ -28,7 +28,7 @@ import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.JBUI;
 import consulo.ui.ex.awt.LabeledComponent;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

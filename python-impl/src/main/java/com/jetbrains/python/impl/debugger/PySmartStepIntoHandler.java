@@ -32,8 +32,8 @@ import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyExpression;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import java.util.List;
 import java.util.Set;

@@ -21,7 +21,7 @@ import consulo.content.bundle.SdkType;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.content.layer.extension.ModuleExtensionWithSdkBase;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

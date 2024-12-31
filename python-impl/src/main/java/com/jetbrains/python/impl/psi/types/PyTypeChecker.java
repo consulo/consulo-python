@@ -28,8 +28,8 @@ import consulo.language.psi.PsiNamedElement;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.collection.ContainerUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 

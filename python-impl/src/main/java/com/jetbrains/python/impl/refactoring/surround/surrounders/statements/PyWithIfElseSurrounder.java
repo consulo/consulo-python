@@ -27,8 +27,8 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyIfStatement;
 import com.jetbrains.python.psi.PyStatementList;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Created by IntelliJ IDEA.

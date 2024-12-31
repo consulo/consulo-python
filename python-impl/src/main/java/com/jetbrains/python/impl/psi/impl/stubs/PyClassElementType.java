@@ -33,8 +33,8 @@ import consulo.language.psi.stub.*;
 import consulo.language.psi.util.QualifiedName;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 

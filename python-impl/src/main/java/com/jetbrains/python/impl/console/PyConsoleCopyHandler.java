@@ -29,7 +29,7 @@ import consulo.ui.ex.awt.CopyPasteManager;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.awt.datatransfer.StringSelection;
 
 /**

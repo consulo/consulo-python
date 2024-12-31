@@ -20,7 +20,7 @@ package com.jetbrains.python.impl.documentation.doctest;
 import com.jetbrains.python.PythonFileType;
 import consulo.localize.LocalizeValue;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha

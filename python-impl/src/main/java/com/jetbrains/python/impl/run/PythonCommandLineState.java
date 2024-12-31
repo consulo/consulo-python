@@ -69,8 +69,8 @@ import consulo.virtualFileSystem.archive.ArchiveFileSystem;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 import consulo.virtualFileSystem.encoding.EncodingProjectManager;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;

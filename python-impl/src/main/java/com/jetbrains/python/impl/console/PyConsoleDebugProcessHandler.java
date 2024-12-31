@@ -26,8 +26,8 @@ import consulo.process.event.ProcessEvent;
 import consulo.process.event.ProcessListener;
 import consulo.util.dataholder.Key;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.OutputStream;
 
 /**

@@ -34,7 +34,7 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine

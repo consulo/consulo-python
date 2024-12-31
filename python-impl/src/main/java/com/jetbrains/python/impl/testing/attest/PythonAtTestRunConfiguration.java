@@ -16,7 +16,7 @@
 package com.jetbrains.python.impl.testing.attest;
 
 import org.jdom.Element;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.process.ExecutionException;
 import consulo.execution.executor.Executor;
 import consulo.execution.configuration.ConfigurationFactory;

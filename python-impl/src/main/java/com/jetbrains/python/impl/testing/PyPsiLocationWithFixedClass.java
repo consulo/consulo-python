@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.testing;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.execution.action.PsiLocation;
 import consulo.project.Project;

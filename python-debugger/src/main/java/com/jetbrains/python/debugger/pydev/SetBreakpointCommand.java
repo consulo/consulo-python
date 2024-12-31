@@ -1,8 +1,8 @@
 package com.jetbrains.python.debugger.pydev;
 
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.execution.debug.breakpoint.SuspendPolicy;
 
 public class SetBreakpointCommand extends LineBreakpointCommand

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;

@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.jetbrains.python.impl.psi.types.*;

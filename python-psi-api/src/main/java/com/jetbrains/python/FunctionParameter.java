@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * This class (possibly enum) represents function parameter

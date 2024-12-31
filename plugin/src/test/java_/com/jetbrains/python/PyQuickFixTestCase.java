@@ -3,7 +3,7 @@ package com.jetbrains.python;
 import consulo.language.editor.intention.IntentionAction;
 import com.jetbrains.python.fixtures.PyTestCase;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Arrays;
 

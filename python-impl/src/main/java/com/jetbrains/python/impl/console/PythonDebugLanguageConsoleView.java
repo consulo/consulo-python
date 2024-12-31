@@ -25,8 +25,8 @@ import consulo.execution.ui.console.TextConsoleBuilderFactory;
 import consulo.ide.impl.idea.execution.impl.ConsoleViewImpl;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author traff

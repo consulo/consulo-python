@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.documentation.doctest;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PythonDialectsTokenSetContributorBase;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha

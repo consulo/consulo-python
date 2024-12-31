@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.debugger.array;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import com.jetbrains.python.debugger.ArrayChunk;
 import com.jetbrains.python.debugger.PyDebuggerException;
 

@@ -16,14 +16,14 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.*;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole

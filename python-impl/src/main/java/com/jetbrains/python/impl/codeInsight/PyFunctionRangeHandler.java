@@ -23,7 +23,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.editor.hint.DeclarationRangeHandler;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

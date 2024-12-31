@@ -20,7 +20,7 @@ import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

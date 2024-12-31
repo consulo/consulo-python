@@ -23,8 +23,8 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.psi.PsiElement;
 import consulo.virtualFileSystem.VirtualFile;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 
 /**

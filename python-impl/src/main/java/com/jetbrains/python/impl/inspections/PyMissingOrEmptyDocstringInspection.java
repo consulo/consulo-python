@@ -27,7 +27,7 @@ import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.util.lang.StringUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Mikhail Golubev

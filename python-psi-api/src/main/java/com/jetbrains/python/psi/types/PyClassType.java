@@ -19,7 +19,7 @@ package com.jetbrains.python.psi.types;
 import com.jetbrains.python.psi.PyClass;
 import consulo.util.dataholder.UserDataHolder;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

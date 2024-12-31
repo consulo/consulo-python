@@ -17,7 +17,7 @@ package com.jetbrains.python.psi.stubs;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.psi.types.functionalParser;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
 * @author vlan

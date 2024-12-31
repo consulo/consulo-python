@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.run;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import consulo.module.Module;
 
 /**

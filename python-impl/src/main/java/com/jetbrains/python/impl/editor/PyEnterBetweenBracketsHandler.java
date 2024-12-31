@@ -24,7 +24,7 @@ import consulo.codeEditor.action.EditorActionHandler;
 import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiFile;
 import com.jetbrains.python.PythonLanguage;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

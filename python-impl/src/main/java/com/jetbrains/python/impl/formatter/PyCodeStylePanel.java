@@ -27,7 +27,7 @@ import com.jetbrains.python.impl.highlighting.PyHighlighter;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 

@@ -18,8 +18,8 @@ package com.jetbrains.python.impl.refactoring.introduce.parameter;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.psi.PsiElement;

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.FileModificationService;
 import consulo.language.editor.inspection.LocalQuickFix;

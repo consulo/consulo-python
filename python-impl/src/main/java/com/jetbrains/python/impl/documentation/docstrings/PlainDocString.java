@@ -18,8 +18,8 @@ package com.jetbrains.python.impl.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import com.jetbrains.python.impl.psi.PyIndentUtil;
 import com.jetbrains.python.psi.StructuredDocString;

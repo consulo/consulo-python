@@ -20,8 +20,8 @@ import static com.jetbrains.python.impl.psi.PyUtil.as;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;

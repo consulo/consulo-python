@@ -23,7 +23,7 @@ import consulo.application.util.function.Processor;
 import consulo.application.util.query.QueryExecutor;
 import consulo.language.psi.PsiElement;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

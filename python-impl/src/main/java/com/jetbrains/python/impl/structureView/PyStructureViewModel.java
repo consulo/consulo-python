@@ -24,7 +24,7 @@ import consulo.fileEditor.structureView.tree.Sorter;
 import consulo.language.editor.structureView.StructureViewModelBase;
 import consulo.language.psi.PsiFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole

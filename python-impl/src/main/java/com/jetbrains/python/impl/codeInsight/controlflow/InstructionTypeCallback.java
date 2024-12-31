@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.codeInsight.controlflow;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.types.PyType;

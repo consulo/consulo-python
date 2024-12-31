@@ -24,7 +24,7 @@ import consulo.ui.annotation.RequiredUIAccess;
 import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.swing.*;
 
 /**

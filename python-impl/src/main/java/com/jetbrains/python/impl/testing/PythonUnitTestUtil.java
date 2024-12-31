@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import consulo.execution.action.Location;

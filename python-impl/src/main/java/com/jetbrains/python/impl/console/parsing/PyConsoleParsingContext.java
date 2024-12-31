@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.console.parsing;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import consulo.language.parser.PsiBuilder;
 import com.jetbrains.python.impl.PyElementTypes;

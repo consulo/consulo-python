@@ -15,8 +15,8 @@
  */
 package com.jetbrains.python.impl.refactoring.extractmethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.dataContext.DataContext;
 import consulo.codeEditor.CaretModel;

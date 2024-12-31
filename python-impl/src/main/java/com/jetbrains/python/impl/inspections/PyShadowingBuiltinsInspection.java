@@ -32,8 +32,8 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.project.Project;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 

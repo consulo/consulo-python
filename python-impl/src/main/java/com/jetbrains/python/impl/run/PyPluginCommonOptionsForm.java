@@ -38,7 +38,7 @@ import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.function.Conditions;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.Collections;

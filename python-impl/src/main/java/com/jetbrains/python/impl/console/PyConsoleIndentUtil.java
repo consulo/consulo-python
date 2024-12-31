@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import consulo.util.lang.StringUtil;
 import consulo.util.collection.ArrayUtil;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Scanner;

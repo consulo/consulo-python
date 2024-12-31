@@ -25,7 +25,7 @@ import consulo.language.psi.stub.StubIndex;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.testing.attest;
 import consulo.configurable.ConfigurationException;
 import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.project.Project;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 

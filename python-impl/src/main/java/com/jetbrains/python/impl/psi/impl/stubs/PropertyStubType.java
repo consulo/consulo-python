@@ -22,7 +22,7 @@ import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.stub.StubInputStream;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 
 /**

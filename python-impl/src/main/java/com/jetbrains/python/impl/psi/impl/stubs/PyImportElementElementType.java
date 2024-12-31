@@ -30,7 +30,7 @@ import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.impl.psi.impl.PyImportElementImpl;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 

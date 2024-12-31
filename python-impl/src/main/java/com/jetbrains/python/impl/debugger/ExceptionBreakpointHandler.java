@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.debugger;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.execution.debug.breakpoint.XBreakpoint;
 import consulo.execution.debug.breakpoint.XBreakpointHandler;

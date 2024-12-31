@@ -13,8 +13,8 @@ import consulo.execution.debug.frame.XValueChildrenList;
 import consulo.logging.Logger;
 import consulo.process.ExecutionException;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;

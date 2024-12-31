@@ -27,7 +27,7 @@ import consulo.util.lang.Pair;
 import consulo.ui.annotation.RequiredUIAccess;
 import com.jetbrains.python.impl.PythonIcons;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg

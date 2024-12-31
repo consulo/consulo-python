@@ -34,7 +34,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.archive.ArchiveFileType;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;

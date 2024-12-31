@@ -8,8 +8,8 @@ import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.logging.Logger;
 import consulo.ui.image.Image;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

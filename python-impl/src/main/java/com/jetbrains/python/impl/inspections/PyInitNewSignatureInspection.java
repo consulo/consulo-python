@@ -28,8 +28,8 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.util.lang.ObjectUtil;
 import org.jetbrains.annotations.Nls;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Detect and report incompatibilities between __new__ and __init__ signatures.

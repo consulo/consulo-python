@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.imports;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import consulo.language.editor.intention.HighPriorityAction;
 import consulo.language.editor.intention.IntentionAction;
 import consulo.language.editor.inspection.LocalQuickFix;

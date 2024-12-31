@@ -21,12 +21,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import org.jetbrains.annotations.NonNls;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import com.google.common.collect.Collections2;
 import consulo.language.ast.ASTNode;
 import consulo.language.inject.InjectedLanguageManager;

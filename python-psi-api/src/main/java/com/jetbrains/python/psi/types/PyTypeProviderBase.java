@@ -22,8 +22,8 @@ import consulo.util.collection.FactoryMap;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.ref.Ref;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

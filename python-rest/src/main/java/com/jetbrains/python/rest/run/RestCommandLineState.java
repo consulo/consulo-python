@@ -17,7 +17,7 @@ package com.jetbrains.python.rest.run;
 
 import javax.swing.SwingUtilities;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import consulo.process.ExecutionException;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParametersList;

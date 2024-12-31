@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.patterns;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import consulo.language.pattern.InitialPatternCondition;
 import consulo.language.pattern.PsiElementPattern;

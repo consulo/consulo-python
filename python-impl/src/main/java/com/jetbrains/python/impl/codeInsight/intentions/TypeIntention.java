@@ -17,8 +17,8 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import com.google.common.base.Function;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.ast.ASTNode;

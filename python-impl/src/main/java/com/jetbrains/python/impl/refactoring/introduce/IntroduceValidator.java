@@ -30,8 +30,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
