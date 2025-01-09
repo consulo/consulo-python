@@ -15,18 +15,18 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.ui;
 
-import consulo.application.AllIcons;
-import consulo.language.psi.PsiElement;
-import consulo.language.editor.refactoring.RefactoringBundle;
-import consulo.language.editor.refactoring.classMember.MemberInfoModel;
-import consulo.ide.impl.idea.refactoring.ui.AbstractMemberSelectionTable;
+import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
+import consulo.application.AllIcons;
+import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.language.editor.refactoring.ui.AbstractMemberSelectionTable;
+import consulo.language.psi.PsiElement;
 import consulo.ui.image.Image;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.List;
 
 /**
@@ -34,7 +34,6 @@ import java.util.List;
  */
 public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyElement, PyMemberInfo<PyElement>>
 {
-
 	private static final String ABSTRACT_TITLE = RefactoringBundle.message("make.abstract");
 	private final boolean mySupportAbstract;
 
