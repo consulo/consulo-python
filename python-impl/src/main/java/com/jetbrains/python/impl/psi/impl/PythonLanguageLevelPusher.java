@@ -25,8 +25,7 @@ import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
-import consulo.ide.impl.idea.util.FileContentUtil;
+import consulo.fileEditor.util.FileContentUtil;
 import consulo.index.io.data.DataInputOutputUtil;
 import consulo.language.file.FileTypeManager;
 import consulo.language.impl.file.SingleRootFileViewProvider;
@@ -45,10 +44,11 @@ import consulo.util.collection.Maps;
 import consulo.util.dataholder.Key;
 import consulo.virtualFileSystem.FileAttribute;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import consulo.virtualFileSystem.util.VirtualFileVisitor;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -272,7 +272,7 @@ public class PythonLanguageLevelPusher implements FilePropertyPusher<LanguageLev
                                final LanguageLevel languageLevel,
                                final boolean suppressSizeLimit) {
     final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+    VirtualFileUtil.visitChildrenRecursively(file, new VirtualFileVisitor() {
       @Override
       public boolean visitFile(@Nonnull VirtualFile file) {
         if (fileTypeManager.isFileIgnored(file)) {

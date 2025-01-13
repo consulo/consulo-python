@@ -20,14 +20,14 @@ import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
-import consulo.ide.impl.intelliLang.inject.config.BaseInjection;
-import consulo.ide.impl.psi.injection.AbstractLanguageInjectionSupport;
 import consulo.language.Language;
+import consulo.language.inject.advanced.AbstractLanguageInjectionSupport;
+import consulo.language.inject.advanced.BaseInjection;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiLanguageInjectionHost;
+import jakarta.annotation.Nonnull;
 import org.jdom.Element;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
