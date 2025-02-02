@@ -33,6 +33,7 @@ import consulo.codeEditor.Editor;
 import consulo.codeEditor.ScrollType;
 import consulo.externalService.statistic.FeatureUsageTracker;
 import consulo.ide.impl.idea.ide.util.MemberChooser;
+import consulo.ide.impl.idea.openapi.util.text.StringUtil;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.WriteCommandAction;
 import consulo.language.editor.util.ProductivityFeatureNames;
@@ -43,7 +44,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.speedSearch.SpeedSearchComparator;
-import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
