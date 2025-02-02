@@ -19,12 +19,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.impl.psi.types.PyNoneType;
 import com.jetbrains.python.impl.psi.types.PyTypeUtil;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.application.ApplicationManager;
 import consulo.application.Result;
@@ -32,11 +32,10 @@ import consulo.application.util.matcher.MatcherTextRange;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.ScrollType;
 import consulo.externalService.statistic.FeatureUsageTracker;
-import consulo.ide.impl.idea.featureStatistics.ProductivityFeatureNames;
 import consulo.ide.impl.idea.ide.util.MemberChooser;
-import consulo.ide.impl.idea.openapi.util.text.StringUtil;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.WriteCommandAction;
+import consulo.language.editor.util.ProductivityFeatureNames;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiWhiteSpace;
@@ -44,9 +43,10 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.speedSearch.SpeedSearchComparator;
-
+import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.*;
 
 /**

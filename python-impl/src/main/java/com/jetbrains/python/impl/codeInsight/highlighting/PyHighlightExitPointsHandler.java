@@ -22,16 +22,16 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.codeEditor.Editor;
 import consulo.externalService.statistic.FeatureUsageTracker;
 import consulo.ide.impl.idea.codeInsight.highlighting.HighlightUsagesHandler;
-import consulo.ide.impl.idea.featureStatistics.ProductivityFeatureNames;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.Instruction;
 import consulo.language.editor.CodeInsightBundle;
 import consulo.language.editor.highlight.usage.HighlightUsagesHandlerBase;
+import consulo.language.editor.util.ProductivityFeatureNames;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
-
 import jakarta.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
