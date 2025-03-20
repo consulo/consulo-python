@@ -14,7 +14,7 @@ import jakarta.annotation.Nonnull;
  * @since 21/06/2023
  */
 @ExtensionImpl
-public class PythonDarkAdditionalTextAttributesProvider implements EditorColorSchemeExtender {
+public class PythonLightAdditionalTextAttributesProvider implements EditorColorSchemeExtender {
     @Nonnull
     @Override
     public String getColorSchemeId() {
@@ -28,22 +28,21 @@ public class PythonDarkAdditionalTextAttributesProvider implements EditorColorSc
             .build());
 
         builder.add(PyHighlighter.PY_CLASS_DEFINITION, AttributesFlyweightBuilder.create()
-            .withBoldFont()
+            .withForeground(new RGBColor(0, 0, 0))
             .withEffect(EffectType.WAVE_UNDERSCORE, null)
             .build());
 
         builder.add(PyHighlighter.PY_DECORATOR, AttributesFlyweightBuilder.create()
-            .withForeground(new RGBColor(0xbb, 0xb5, 0x29))
-            .withEffect(EffectType.WAVE_UNDERSCORE, null)
+            .withForeground(new RGBColor(0x00, 0x00, 0xB2))
             .build());
 
         builder.add(PyHighlighter.PY_FUNC_DEFINITION, AttributesFlyweightBuilder.create()
-            .withBoldFont()
+            .withForeground(new RGBColor(0, 0, 0))
             .withEffect(EffectType.WAVE_UNDERSCORE, null)
             .build());
 
         builder.add(PyHighlighter.PY_KEYWORD_ARGUMENT, AttributesFlyweightBuilder.create()
-            .withForeground(new RGBColor(0xaa, 0x49, 0x26))
+            .withForeground(new RGBColor(0x66, 0x00, 0x99))
             .build());
 
         builder.add(PyHighlighter.PY_PREDEFINED_DEFINITION, AttributesFlyweightBuilder.create()
@@ -56,11 +55,6 @@ public class PythonDarkAdditionalTextAttributesProvider implements EditorColorSc
 
         builder.add(PyHighlighter.PY_SELF_PARAMETER, AttributesFlyweightBuilder.create()
             .withForeground(new RGBColor(0x94, 0x55, 0x8D))
-            .build());
-
-        builder.add(PyHighlighter.PY_BYTE_STRING, AttributesFlyweightBuilder.create()
-            .withForeground(new RGBColor(0xa5, 0xc2, 0x61))
-            .withBoldFont()
             .build());
 
         builder.add(PyHighlighter.PY_UNICODE_STRING, AttributesFlyweightBuilder.create()
