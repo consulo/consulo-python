@@ -16,6 +16,7 @@
 package com.jetbrains.python.impl.debugger.settings;
 
 import consulo.configurable.IdeaConfigurableUi;
+import consulo.disposer.Disposable;
 import consulo.ide.impl.idea.openapi.ui.NonEmptyInputValidator;
 import consulo.ui.ex.awt.ColumnInfo;
 import consulo.ui.ex.awt.JBCheckBox;
@@ -84,7 +85,7 @@ public class PyDebuggerSteppingConfigurableUi implements IdeaConfigurableUi<PyDe
 
   @Nonnull
   @Override
-  public JComponent getComponent() {
+  public JComponent getComponent(@Nonnull Disposable parentDisposable) {
     return myPanel;
   }
 
