@@ -19,18 +19,21 @@ package com.jetbrains.python.impl.refactoring.invertBoolean;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.refactoring.BaseRefactoringProcessor;
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.editor.refactoring.rename.RenameProcessor;
 import consulo.language.editor.refactoring.rename.RenameUtil;
 import consulo.language.psi.*;
 import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.usage.MoveRenameUsageInfo;
 import consulo.usage.UsageInfo;
 import consulo.usage.UsageViewDescriptor;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 import jakarta.annotation.Nonnull;
 
 import java.util.*;
@@ -42,10 +45,10 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     private PsiElement myElement;
     private String myNewName;
     private final RenameProcessor myRenameProcessor;
-    private final Map<UsageInfo, SmartPsiElementPointer> myToInvert = new HashMap<UsageInfo, SmartPsiElementPointer>();
+    private final Map<UsageInfo, SmartPsiElementPointer> myToInvert = new HashMap<>();
     private final SmartPointerManager mySmartPointerManager;
 
-    public PyInvertBooleanProcessor(@Nonnull final PsiElement namedElement, @Nonnull final String newName) {
+    public PyInvertBooleanProcessor(@Nonnull PsiElement namedElement, @Nonnull String newName) {
         super(namedElement.getProject());
         myElement = namedElement;
         myNewName = newName;
@@ -55,13 +58,14 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
 
     @Override
     @Nonnull
-    protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
+    protected UsageViewDescriptor createUsageViewDescriptor(@Nonnull UsageInfo[] usages) {
         return new PyInvertBooleanUsageViewDescriptor(myElement);
     }
 
     @Override
-    protected boolean preprocessUsages(Ref<UsageInfo[]> refUsages) {
-        if (!myNewName.equals(myElement instanceof PsiNamedElement ? ((PsiNamedElement)myElement).getName() : myElement.getText())) {
+    @RequiredUIAccess
+    protected boolean preprocessUsages(@Nonnull SimpleReference<UsageInfo[]> refUsages) {
+        if (!myNewName.equals(myElement instanceof PsiNamedElement namedElement ? namedElement.getName() : myElement.getText())) {
             if (myRenameProcessor.preprocessUsages(refUsages)) {
                 prepareSuccessful();
                 return true;
@@ -72,26 +76,27 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         return true;
     }
 
-    @Override
     @Nonnull
+    @Override
+    @RequiredReadAction
     protected UsageInfo[] findUsages() {
-        final List<SmartPsiElementPointer> toInvert = new ArrayList<SmartPsiElementPointer>();
+        List<SmartPsiElementPointer> toInvert = new ArrayList<>();
 
         addRefsToInvert(toInvert, myElement);
 
-        final UsageInfo[] renameUsages = myRenameProcessor.findUsages();
+        UsageInfo[] renameUsages = myRenameProcessor.findUsages();
 
-        final Map<PsiElement, UsageInfo> expressionsToUsages = new HashMap<PsiElement, UsageInfo>();
-        final List<UsageInfo> result = new ArrayList<UsageInfo>();
+        Map<PsiElement, UsageInfo> expressionsToUsages = new HashMap<>();
+        List<UsageInfo> result = new ArrayList<>();
         for (UsageInfo renameUsage : renameUsages) {
             expressionsToUsages.put(renameUsage.getElement(), renameUsage);
             result.add(renameUsage);
         }
 
         for (SmartPsiElementPointer pointer : toInvert) {
-            final PyExpression expression = (PyExpression)pointer.getElement();
+            PyExpression expression = (PyExpression)pointer.getElement();
             if (!expressionsToUsages.containsKey(expression) && expression != null) {
-                final UsageInfo usageInfo = new UsageInfo(expression);
+                UsageInfo usageInfo = new UsageInfo(expression);
                 expressionsToUsages.put(expression, usageInfo);
                 result.add(usageInfo);
                 myToInvert.put(usageInfo, pointer);
@@ -104,31 +109,30 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         return result.toArray(new UsageInfo[result.size()]);
     }
 
-    private void addRefsToInvert(@Nonnull final List<SmartPsiElementPointer> toInvert, @Nonnull final PsiElement psiElement) {
-        final Collection<PsiReference> refs = ReferencesSearch.search(psiElement).findAll();
+    @RequiredReadAction
+    private void addRefsToInvert(@Nonnull List<SmartPsiElementPointer> toInvert, @Nonnull PsiElement psiElement) {
+        Collection<PsiReference> refs = ReferencesSearch.search(psiElement).findAll();
 
         for (PsiReference ref : refs) {
-            final PsiElement element = ref.getElement();
-            if (element instanceof PyTargetExpression) {
-                final PyTargetExpression target = (PyTargetExpression)element;
-                final PyAssignmentStatement parent = PsiTreeUtil.getParentOfType(target, PyAssignmentStatement.class);
+            PsiElement element = ref.getElement();
+            if (element instanceof PyTargetExpression target) {
+                PyAssignmentStatement parent = PsiTreeUtil.getParentOfType(target, PyAssignmentStatement.class);
                 if (parent != null && parent.getTargets().length == 1) {
-                    final PyExpression value = parent.getAssignedValue();
+                    PyExpression value = parent.getAssignedValue();
                     if (value != null) {
                         toInvert.add(mySmartPointerManager.createSmartPsiElementPointer(value));
                     }
                 }
             }
-            else if (element.getParent() instanceof PyPrefixExpression) {
-                toInvert.add(mySmartPointerManager.createSmartPsiElementPointer(element.getParent()));
+            else if (element.getParent() instanceof PyPrefixExpression prefixExpression) {
+                toInvert.add(mySmartPointerManager.createSmartPsiElementPointer(prefixExpression));
             }
-            else if (element instanceof PyReferenceExpression) {
-                final PyReferenceExpression refExpr = (PyReferenceExpression)element;
+            else if (element instanceof PyReferenceExpression refExpr) {
                 toInvert.add(mySmartPointerManager.createSmartPsiElementPointer(refExpr));
             }
         }
-        if (psiElement instanceof PyNamedParameter) {
-            final PyExpression defaultValue = ((PyNamedParameter)psiElement).getDefaultValue();
+        if (psiElement instanceof PyNamedParameter namedParam) {
+            PyExpression defaultValue = namedParam.getDefaultValue();
             if (defaultValue != null) {
                 toInvert.add(mySmartPointerManager.createSmartPsiElementPointer(defaultValue));
             }
@@ -136,23 +140,20 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     }
 
     @Nonnull
-    private static UsageInfo[] extractUsagesForElement(@Nonnull final PsiElement element, @Nonnull final UsageInfo[] usages) {
-        final ArrayList<UsageInfo> extractedUsages = new ArrayList<UsageInfo>(usages.length);
+    private static UsageInfo[] extractUsagesForElement(@Nonnull PsiElement element, @Nonnull UsageInfo[] usages) {
+        ArrayList<UsageInfo> extractedUsages = new ArrayList<>(usages.length);
         for (UsageInfo usage : usages) {
-            if (usage instanceof MoveRenameUsageInfo) {
-                MoveRenameUsageInfo usageInfo = (MoveRenameUsageInfo)usage;
-                if (element.equals(usageInfo.getReferencedElement())) {
-                    extractedUsages.add(usageInfo);
-                }
+            if (usage instanceof MoveRenameUsageInfo usageInfo && element.equals(usageInfo.getReferencedElement())) {
+                extractedUsages.add(usageInfo);
             }
         }
         return extractedUsages.toArray(new UsageInfo[extractedUsages.size()]);
     }
 
-
     @Override
-    protected void performRefactoring(UsageInfo[] usages) {
-        for (final PsiElement element : myRenameProcessor.getElements()) {
+    @RequiredWriteAction
+    protected void performRefactoring(@Nonnull UsageInfo[] usages) {
+        for (PsiElement element : myRenameProcessor.getElements()) {
             try {
                 RenameUtil.doRename(
                     element,
@@ -162,17 +163,17 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
                     null
                 );
             }
-            catch (final IncorrectOperationException e) {
+            catch (IncorrectOperationException e) {
                 RenameUtil.showErrorMessage(e, element, myProject);
                 return;
             }
         }
         for (UsageInfo usage : usages) {
-            final SmartPsiElementPointer pointerToInvert = myToInvert.get(usage);
+            SmartPsiElementPointer pointerToInvert = myToInvert.get(usage);
             if (pointerToInvert != null) {
                 PsiElement expression = pointerToInvert.getElement();
                 if (expression != null && PsiTreeUtil.getParentOfType(expression, PyImportStatementBase.class, false) == null) {
-                    final PyExpression replacement = invertExpression(expression);
+                    PyExpression replacement = invertExpression(expression);
                     expression.replace(replacement);
                 }
             }
@@ -180,21 +181,22 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     }
 
     @Nonnull
-    private PyExpression invertExpression(@Nonnull final PsiElement expression) {
-        final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(myProject);
-        if (expression instanceof PyBoolLiteralExpression) {
-            final String value = ((PyBoolLiteralExpression)expression).getValue() ? PyNames.FALSE : PyNames.TRUE;
+    @RequiredReadAction
+    private PyExpression invertExpression(@Nonnull PsiElement expression) {
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(myProject);
+        if (expression instanceof PyBoolLiteralExpression boolLiteralExpression) {
+            String value = boolLiteralExpression.getValue() ? PyNames.FALSE : PyNames.TRUE;
             return elementGenerator.createExpressionFromText(LanguageLevel.forElement(expression), value);
         }
-        if (expression instanceof PyReferenceExpression && (PyNames.FALSE.equals(expression.getText()) ||
-            PyNames.TRUE.equals(expression.getText()))) {
+        if (expression instanceof PyReferenceExpression
+            && (PyNames.FALSE.equals(expression.getText()) || PyNames.TRUE.equals(expression.getText()))) {
 
-            final String value = PyNames.TRUE.equals(expression.getText()) ? PyNames.FALSE : PyNames.TRUE;
+            String value = PyNames.TRUE.equals(expression.getText()) ? PyNames.FALSE : PyNames.TRUE;
             return elementGenerator.createExpressionFromText(LanguageLevel.forElement(expression), value);
         }
-        else if (expression instanceof PyPrefixExpression) {
-            if (((PyPrefixExpression)expression).getOperator() == PyTokenTypes.NOT_KEYWORD) {
-                final PyExpression operand = ((PyPrefixExpression)expression).getOperand();
+        else if (expression instanceof PyPrefixExpression prefixExpression) {
+            if (prefixExpression.getOperator() == PyTokenTypes.NOT_KEYWORD) {
+                PyExpression operand = prefixExpression.getOperand();
                 if (operand != null) {
                     return elementGenerator.createExpressionFromText(LanguageLevel.forElement(expression), operand.getText());
                 }
@@ -203,8 +205,9 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         return elementGenerator.createExpressionFromText(LanguageLevel.forElement(expression), "not " + expression.getText());
     }
 
+    @Nonnull
     @Override
     protected String getCommandName() {
-        return PyInvertBooleanHandler.REFACTORING_NAME;
+        return RefactoringLocalize.invertBooleanTitle().get();
     }
 }

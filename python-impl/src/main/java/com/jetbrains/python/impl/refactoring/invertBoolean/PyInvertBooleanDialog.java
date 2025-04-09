@@ -16,14 +16,16 @@
 
 package com.jetbrains.python.impl.refactoring.invertBoolean;
 
-import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.editor.refactoring.rename.RenameUtil;
 import consulo.language.editor.refactoring.ui.RefactoringDialog;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.language.findUsage.DescriptiveNameUtil;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
+import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.usage.UsageViewUtil;
 import jakarta.annotation.Nullable;
 
@@ -41,38 +43,38 @@ public class PyInvertBooleanDialog extends RefactoringDialog {
     private final PsiElement myElement;
     private final String myName;
 
-    public PyInvertBooleanDialog(final PsiElement element) {
+    @RequiredReadAction
+    public PyInvertBooleanDialog(PsiElement element) {
         super(element.getProject(), false);
         myElement = element;
-        myName = element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : element.getText();
+        myName = element instanceof PsiNamedElement namedElement ? namedElement.getName() : element.getText();
         myNameField.setText(myName);
         myLabel.setLabelFor(myNameField);
-        final String typeString = UsageViewUtil.getType(myElement);
-        myLabel.setText(RefactoringBundle.message("invert.boolean.name.of.inverted.element", typeString));
-        myCaptionLabel.setText(RefactoringBundle.message(
-            "invert.0.1",
-            typeString,
-            DescriptiveNameUtil.getDescriptiveName(myElement)
-        ));
+        String typeString = UsageViewUtil.getType(myElement);
+        myLabel.setText(RefactoringLocalize.invertBooleanNameOfInvertedElement(typeString).get());
+        myCaptionLabel.setText(RefactoringLocalize.invert01(typeString, DescriptiveNameUtil.getDescriptiveName(myElement)).get());
 
-        setTitle(PyInvertBooleanHandler.REFACTORING_NAME);
+        setTitle(RefactoringLocalize.invertBooleanTitle());
         init();
     }
 
+    @Override
+    @RequiredUIAccess
     public JComponent getPreferredFocusedComponent() {
         return myNameField;
     }
 
+    @Override
+    @RequiredUIAccess
     protected void doAction() {
         Project project = myElement.getProject();
-        final String name = myNameField.getText().trim();
-        if (name.length() == 0 || (!name.equals(myName) && !RenameUtil.isValidName(myProject, myElement, name))) {
-            CommonRefactoringUtil.showErrorMessage(PyInvertBooleanHandler.REFACTORING_NAME,
-                RefactoringBundle.message(
-                    "please.enter.a.valid.name.for.inverted.element",
-                    UsageViewUtil.getType(myElement)
-                ),
-                "refactoring.invertBoolean", project
+        String name = myNameField.getText().trim();
+        if (name.isEmpty() || (!name.equals(myName) && !RenameUtil.isValidName(myProject, myElement, name))) {
+            CommonRefactoringUtil.showErrorMessage(
+                RefactoringLocalize.invertBooleanTitle().get(),
+                RefactoringLocalize.pleaseEnterAValidNameForInvertedElement(UsageViewUtil.getType(myElement)).get(),
+                "refactoring.invertBoolean",
+                project
             );
             return;
         }
@@ -80,6 +82,7 @@ public class PyInvertBooleanDialog extends RefactoringDialog {
         invokeRefactoring(new PyInvertBooleanProcessor(myElement, name));
     }
 
+    @Override
     protected JComponent createCenterPanel() {
         return myPanel;
     }

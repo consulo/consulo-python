@@ -16,12 +16,11 @@
 
 package com.jetbrains.python.impl.refactoring.invertBoolean;
 
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.psi.PsiElement;
-import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.usage.UsageViewBundle;
 import consulo.usage.UsageViewDescriptor;
 import consulo.usage.UsageViewUtil;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -35,18 +34,22 @@ public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor {
     }
 
     @Nonnull
+    @Override
     public PsiElement[] getElements() {
         return new PsiElement[]{myElement};
     }
 
+    @Override
     public String getProcessedElementsHeader() {
-        return RefactoringBundle.message("invert.boolean.elements.header", UsageViewUtil.getType(myElement));
+        return RefactoringLocalize.invertBooleanElementsHeader(UsageViewUtil.getType(myElement)).get();
     }
 
+    @Override
     public String getCodeReferencesText(int usagesCount, int filesCount) {
-        return RefactoringBundle.message("invert.boolean.refs.to.invert", UsageViewBundle.getReferencesString(usagesCount, filesCount));
+        return RefactoringLocalize.invertBooleanRefsToInvert(UsageViewBundle.getReferencesString(usagesCount, filesCount)).get();
     }
 
+    @Override
     public String getCommentReferencesText(int usagesCount, int filesCount) {
         return null;
     }
