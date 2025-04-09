@@ -16,39 +16,41 @@
 
 package com.jetbrains.python.impl.refactoring.invertBoolean;
 
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.psi.PsiElement;
-import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.usage.UsageViewBundle;
 import consulo.usage.UsageViewDescriptor;
 import consulo.usage.UsageViewUtil;
-
 import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
  */
-public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor
-{
-  private final PsiElement myElement;
+public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor {
+    private final PsiElement myElement;
 
-  public PyInvertBooleanUsageViewDescriptor(final PsiElement element) {
-    myElement = element;
-  }
+    public PyInvertBooleanUsageViewDescriptor(final PsiElement element) {
+        myElement = element;
+    }
 
-  @Nonnull
-  public PsiElement[] getElements() {
-    return new PsiElement[] {myElement};
-  }
+    @Nonnull
+    @Override
+    public PsiElement[] getElements() {
+        return new PsiElement[]{myElement};
+    }
 
-  public String getProcessedElementsHeader() {
-    return RefactoringBundle.message("invert.boolean.elements.header", UsageViewUtil.getType(myElement));
-  }
+    @Override
+    public String getProcessedElementsHeader() {
+        return RefactoringLocalize.invertBooleanElementsHeader(UsageViewUtil.getType(myElement)).get();
+    }
 
-  public String getCodeReferencesText(int usagesCount, int filesCount) {
-    return RefactoringBundle.message("invert.boolean.refs.to.invert", UsageViewBundle.getReferencesString(usagesCount, filesCount));
-  }
+    @Override
+    public String getCodeReferencesText(int usagesCount, int filesCount) {
+        return RefactoringLocalize.invertBooleanRefsToInvert(UsageViewBundle.getReferencesString(usagesCount, filesCount)).get();
+    }
 
-  public String getCommentReferencesText(int usagesCount, int filesCount) {
-    return null;
-  }
+    @Override
+    public String getCommentReferencesText(int usagesCount, int filesCount) {
+        return null;
+    }
 }
