@@ -34,38 +34,44 @@ import com.jetbrains.python.psi.PyNamedParameter;
  * User : ktisha
  */
 public class PyInvertBooleanHandler implements RefactoringActionHandler {
-  static final String REFACTORING_NAME = RefactoringBundle.message("invert.boolean.title");
+    static final String REFACTORING_NAME = RefactoringBundle.message("invert.boolean.title");
 
-  @Override
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
-    PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
-    if (element == null && editor != null && file != null) {
-      element = file.findElementAt(editor.getCaretModel().getOffset());
+    @Override
+    public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+        PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
+        if (element == null && editor != null && file != null) {
+            element = file.findElementAt(editor.getCaretModel().getOffset());
+        }
+        final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
+        if (assignmentStatement != null) {
+            invoke(assignmentStatement.getTargets()[0]);
+        }
+        else if (element instanceof PyNamedParameter) {
+            invoke(element);
+        }
+        else {
+            CommonRefactoringUtil.showErrorHint(
+                project,
+                editor,
+                RefactoringBundle.getCannotRefactorMessage(
+                    RefactoringBundle.message("error.wrong.caret.position.local.or.expression.name")),
+                REFACTORING_NAME,
+                "refactoring.invertBoolean"
+            );
+        }
     }
-    final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
-    if (assignmentStatement != null) {
-      invoke(assignmentStatement.getTargets()[0]);
-    }
-    else if (element instanceof PyNamedParameter) {
-      invoke(element);
-    }
-    else {
-      CommonRefactoringUtil.showErrorHint(project, editor, RefactoringBundle.getCannotRefactorMessage(
-          RefactoringBundle.message("error.wrong.caret.position.local.or.expression.name")), REFACTORING_NAME, "refactoring.invertBoolean");
-    }
-  }
 
-  @Override
-  public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext) {
-    if (elements.length == 1) {
-      final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(elements[0], PyAssignmentStatement.class);
-      if (assignmentStatement != null) {
-        invoke(assignmentStatement.getTargets()[0]);
-      }
+    @Override
+    public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext) {
+        if (elements.length == 1) {
+            final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(elements[0], PyAssignmentStatement.class);
+            if (assignmentStatement != null) {
+                invoke(assignmentStatement.getTargets()[0]);
+            }
+        }
     }
-  }
 
-  private static void invoke(@Nonnull final PsiElement element) {
-    new PyInvertBooleanDialog(element).show();
-  }
+    private static void invoke(@Nonnull final PsiElement element) {
+        new PyInvertBooleanDialog(element).show();
+    }
 }

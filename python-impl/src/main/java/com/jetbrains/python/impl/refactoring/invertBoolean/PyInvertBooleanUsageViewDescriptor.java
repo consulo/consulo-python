@@ -27,28 +27,27 @@ import jakarta.annotation.Nonnull;
 /**
  * User : ktisha
  */
-public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor
-{
-  private final PsiElement myElement;
+public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor {
+    private final PsiElement myElement;
 
-  public PyInvertBooleanUsageViewDescriptor(final PsiElement element) {
-    myElement = element;
-  }
+    public PyInvertBooleanUsageViewDescriptor(final PsiElement element) {
+        myElement = element;
+    }
 
-  @Nonnull
-  public PsiElement[] getElements() {
-    return new PsiElement[] {myElement};
-  }
+    @Nonnull
+    public PsiElement[] getElements() {
+        return new PsiElement[]{myElement};
+    }
 
-  public String getProcessedElementsHeader() {
-    return RefactoringBundle.message("invert.boolean.elements.header", UsageViewUtil.getType(myElement));
-  }
+    public String getProcessedElementsHeader() {
+        return RefactoringBundle.message("invert.boolean.elements.header", UsageViewUtil.getType(myElement));
+    }
 
-  public String getCodeReferencesText(int usagesCount, int filesCount) {
-    return RefactoringBundle.message("invert.boolean.refs.to.invert", UsageViewBundle.getReferencesString(usagesCount, filesCount));
-  }
+    public String getCodeReferencesText(int usagesCount, int filesCount) {
+        return RefactoringBundle.message("invert.boolean.refs.to.invert", UsageViewBundle.getReferencesString(usagesCount, filesCount));
+    }
 
-  public String getCommentReferencesText(int usagesCount, int filesCount) {
-    return null;
-  }
+    public String getCommentReferencesText(int usagesCount, int filesCount) {
+        return null;
+    }
 }

@@ -32,57 +32,61 @@ import javax.swing.*;
 /**
  * User : ktisha
  */
-public class PyInvertBooleanDialog extends RefactoringDialog
-{
-  private JTextField myNameField;
-  private JPanel myPanel;
-  private JLabel myLabel;
-  private JLabel myCaptionLabel;
+public class PyInvertBooleanDialog extends RefactoringDialog {
+    private JTextField myNameField;
+    private JPanel myPanel;
+    private JLabel myLabel;
+    private JLabel myCaptionLabel;
 
-  private final PsiElement myElement;
-  private final String myName;
+    private final PsiElement myElement;
+    private final String myName;
 
-  public PyInvertBooleanDialog(final PsiElement element) {
-    super(element.getProject(), false);
-    myElement = element;
-    myName = element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : element.getText();
-    myNameField.setText(myName);
-    myLabel.setLabelFor(myNameField);
-    final String typeString = UsageViewUtil.getType(myElement);
-    myLabel.setText(RefactoringBundle.message("invert.boolean.name.of.inverted.element", typeString));
-    myCaptionLabel.setText(RefactoringBundle.message("invert.0.1",
-                                                     typeString,
-                                                     DescriptiveNameUtil.getDescriptiveName(myElement)));
+    public PyInvertBooleanDialog(final PsiElement element) {
+        super(element.getProject(), false);
+        myElement = element;
+        myName = element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : element.getText();
+        myNameField.setText(myName);
+        myLabel.setLabelFor(myNameField);
+        final String typeString = UsageViewUtil.getType(myElement);
+        myLabel.setText(RefactoringBundle.message("invert.boolean.name.of.inverted.element", typeString));
+        myCaptionLabel.setText(RefactoringBundle.message(
+            "invert.0.1",
+            typeString,
+            DescriptiveNameUtil.getDescriptiveName(myElement)
+        ));
 
-    setTitle(PyInvertBooleanHandler.REFACTORING_NAME);
-    init();
-  }
-
-  public JComponent getPreferredFocusedComponent() {
-    return myNameField;
-  }
-
-  protected void doAction() {
-    Project project = myElement.getProject();
-    final String name = myNameField.getText().trim();
-    if (name.length() == 0 || (!name.equals(myName) && !RenameUtil.isValidName(myProject, myElement, name))) {
-      CommonRefactoringUtil.showErrorMessage(PyInvertBooleanHandler.REFACTORING_NAME,
-                                             RefactoringBundle.message("please.enter.a.valid.name.for.inverted.element",
-                                                                       UsageViewUtil.getType(myElement)),
-                                             "refactoring.invertBoolean", project);
-      return;
+        setTitle(PyInvertBooleanHandler.REFACTORING_NAME);
+        init();
     }
 
-    invokeRefactoring(new PyInvertBooleanProcessor(myElement, name));
-  }
+    public JComponent getPreferredFocusedComponent() {
+        return myNameField;
+    }
 
-  protected JComponent createCenterPanel() {
-    return myPanel;
-  }
+    protected void doAction() {
+        Project project = myElement.getProject();
+        final String name = myNameField.getText().trim();
+        if (name.length() == 0 || (!name.equals(myName) && !RenameUtil.isValidName(myProject, myElement, name))) {
+            CommonRefactoringUtil.showErrorMessage(PyInvertBooleanHandler.REFACTORING_NAME,
+                RefactoringBundle.message(
+                    "please.enter.a.valid.name.for.inverted.element",
+                    UsageViewUtil.getType(myElement)
+                ),
+                "refactoring.invertBoolean", project
+            );
+            return;
+        }
 
-  @Nullable
-  @Override
-  protected String getHelpId() {
-    return "reference.invert.boolean";
-  }
+        invokeRefactoring(new PyInvertBooleanProcessor(myElement, name));
+    }
+
+    protected JComponent createCenterPanel() {
+        return myPanel;
+    }
+
+    @Nullable
+    @Override
+    protected String getHelpId() {
+        return "reference.invert.boolean";
+    }
 }
