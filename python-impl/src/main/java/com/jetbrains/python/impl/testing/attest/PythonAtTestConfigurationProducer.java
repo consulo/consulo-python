@@ -21,6 +21,7 @@ import com.jetbrains.python.impl.testing.*;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.content.bundle.Sdk;
 import consulo.execution.action.Location;
@@ -30,101 +31,91 @@ import consulo.module.Module;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.List;
 
 /**
  * User: catherine
  */
 @ExtensionImpl
-public class PythonAtTestConfigurationProducer extends PythonTestConfigurationProducer
-{
-	public PythonAtTestConfigurationProducer()
-	{
-		super(PythonTestConfigurationType.getInstance().PY_ATTEST_FACTORY);
-	}
+public class PythonAtTestConfigurationProducer extends PythonTestConfigurationProducer {
+    public PythonAtTestConfigurationProducer() {
+        super(PythonTestConfigurationType.getInstance().PY_ATTEST_FACTORY);
+    }
 
-	protected boolean isAvailable(@Nonnull final Location location)
-	{
-		final PsiElement element = location.getPsiElement();
-		Module module = location.getModule();
-		if(module == null)
-		{
-			module = ModuleUtilCore.findModuleForPsiElement(element);
-		}
+    @Override
+    @RequiredReadAction
+    protected boolean isAvailable(@Nonnull Location location) {
+        PsiElement element = location.getPsiElement();
+        Module module = location.getModule();
+        if (module == null) {
+            module = ModuleUtilCore.findModuleForPsiElement(element);
+        }
 
-		final Sdk sdk = PythonSdkType.findPythonSdk(module);
-		return module != null && TestRunnerService.getInstance(module).getProjectConfiguration().equals(PythonTestConfigurationsModel.PYTHONS_ATTEST_NAME) && sdk != null;
-	}
+        Sdk sdk = PythonSdkType.findPythonSdk(module);
+        return module != null && TestRunnerService.getInstance(module)
+            .getProjectConfiguration()
+            .equals(PythonTestConfigurationsModel.PYTHONS_ATTEST_NAME) && sdk != null;
+    }
 
-	@Override
-	protected boolean isTestClass(@Nonnull final PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, @Nullable final TypeEvalContext context)
-	{
-		for(PyClassLikeType type : pyClass.getAncestorTypes(TypeEvalContext.codeInsightFallback(pyClass.getProject())))
-		{
-			if(type != null && "TestBase".equals(type.getName()) && hasTestFunction(pyClass))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    protected boolean isTestClass(
+        @Nonnull PyClass pyClass,
+        @Nullable AbstractPythonTestRunConfiguration configuration,
+        @Nullable TypeEvalContext context
+    ) {
+        for (PyClassLikeType type : pyClass.getAncestorTypes(TypeEvalContext.codeInsightFallback(pyClass.getProject()))) {
+            if (type != null && "TestBase".equals(type.getName()) && hasTestFunction(pyClass)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private static boolean hasTestFunction(@Nonnull final PyClass pyClass)
-	{
-		PyFunction[] methods = pyClass.getMethods();
-		for(PyFunction function : methods)
-		{
-			PyDecoratorList decorators = function.getDecoratorList();
-			if(decorators == null)
-			{
-				continue;
-			}
-			for(PyDecorator decorator : decorators.getDecorators())
-			{
-				if("test".equals(decorator.getName()) || "test_if".equals(decorator.getName()))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    private static boolean hasTestFunction(@Nonnull PyClass pyClass) {
+        PyFunction[] methods = pyClass.getMethods();
+        for (PyFunction function : methods) {
+            PyDecoratorList decorators = function.getDecoratorList();
+            if (decorators == null) {
+                continue;
+            }
+            for (PyDecorator decorator : decorators.getDecorators()) {
+                if ("test".equals(decorator.getName()) || "test_if".equals(decorator.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
-	{
-		PyDecoratorList decorators = pyFunction.getDecoratorList();
-		if(decorators == null)
-		{
-			return false;
-		}
-		for(PyDecorator decorator : decorators.getDecorators())
-		{
-			if("test".equals(decorator.getName()) || "test_if".equals(decorator.getName()))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    protected boolean isTestFunction(@Nonnull PyFunction pyFunction, @Nullable AbstractPythonTestRunConfiguration configuration) {
+        PyDecoratorList decorators = pyFunction.getDecoratorList();
+        if (decorators == null) {
+            return false;
+        }
+        for (PyDecorator decorator : decorators.getDecorators()) {
+            if ("test".equals(decorator.getName()) || "test_if".equals(decorator.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	protected List<PyStatement> getTestCaseClassesFromFile(@Nonnull final PyFile file)
-	{
-		List<PyStatement> result = Lists.newArrayList();
-		for(PyClass cls : file.getTopLevelClasses())
-		{
-			if(isTestClass(cls, null, null))
-			{
-				result.add(cls);
-			}
-		}
+    @Override
+    protected List<PyStatement> getTestCaseClassesFromFile(@Nonnull PyFile file) {
+        List<PyStatement> result = Lists.newArrayList();
+        for (PyClass cls : file.getTopLevelClasses()) {
+            if (isTestClass(cls, null, null)) {
+                result.add(cls);
+            }
+        }
 
-		for(PyFunction cls : file.getTopLevelFunctions())
-		{
-			if(isTestFunction(cls, null))
-			{
-				result.add(cls);
-			}
-		}
-		return result;
-	}
+        for (PyFunction cls : file.getTopLevelFunctions()) {
+            if (isTestFunction(cls, null)) {
+                result.add(cls);
+            }
+        }
+        return result;
+    }
 }

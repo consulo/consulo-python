@@ -27,65 +27,61 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.execution.action.Location;
 import consulo.language.psi.PsiElement;
-import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.List;
 
 @ExtensionImpl
-public class PythonUnitTestConfigurationProducer extends PythonTestConfigurationProducer
-{
-	public PythonUnitTestConfigurationProducer()
-	{
-		super(PythonTestConfigurationType.getInstance().PY_UNITTEST_FACTORY);
-	}
+public class PythonUnitTestConfigurationProducer extends PythonTestConfigurationProducer {
+    public PythonUnitTestConfigurationProducer() {
+        super(PythonTestConfigurationType.getInstance().PY_UNITTEST_FACTORY);
+    }
 
-	protected boolean isAvailable(@Nonnull final Location location)
-	{
-		PsiElement element = location.getPsiElement();
-		final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-		if(module == null)
-		{
-			return false;
-		}
-		if((TestRunnerService.getInstance(module).getProjectConfiguration().equals(PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME)))
-		{
-			return true;
-		}
-		return false;
-	}
+    @Override
+    @RequiredReadAction
+    protected boolean isAvailable(@Nonnull final Location location) {
+        PsiElement element = location.getPsiElement();
+        final Module module = element.getModule();
+        return module != null && TestRunnerService.getInstance(module)
+            .getProjectConfiguration()
+            .equals(PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME);
+    }
 
-	@Override
-	protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
-	{
-		final boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
-		return isTestFunction || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration) configuration).isPureUnittest());
-	}
+    @Override
+    protected boolean isTestFunction(
+        @Nonnull final PyFunction pyFunction,
+        @Nullable final AbstractPythonTestRunConfiguration configuration
+    ) {
+        final boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
+        return isTestFunction
+            || (configuration instanceof PythonUnitTestRunConfiguration unitTestRunConfig && !unitTestRunConfig.isPureUnittest());
+    }
 
-	@Override
-	protected boolean isTestClass(@Nonnull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, TypeEvalContext context)
-	{
-		final boolean isTestClass = super.isTestClass(pyClass, configuration, context);
-		return isTestClass || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration) configuration).isPureUnittest());
-	}
+    @Override
+    protected boolean isTestClass(
+        @Nonnull PyClass pyClass,
+        @Nullable final AbstractPythonTestRunConfiguration configuration,
+        TypeEvalContext context
+    ) {
+        final boolean isTestClass = super.isTestClass(pyClass, configuration, context);
+        return isTestClass
+            || (configuration instanceof PythonUnitTestRunConfiguration unitTestRunConfig && !unitTestRunConfig.isPureUnittest());
+    }
 
-	@Override
-	protected boolean isTestFile(@Nonnull final PyFile file)
-	{
-		if(PyNames.SETUP_DOT_PY.equals(file.getName()))
-		{
-			return true;
-		}
-		final List<PyStatement> testCases = getTestCaseClassesFromFile(file);
-		if(testCases.isEmpty())
-		{
-			return false;
-		}
-		return true;
-	}
+    @Override
+    @RequiredReadAction
+    protected boolean isTestFile(@Nonnull final PyFile file) {
+        if (PyNames.SETUP_DOT_PY.equals(file.getName())) {
+            return true;
+        }
+        final List<PyStatement> testCases = getTestCaseClassesFromFile(file);
+        return !testCases.isEmpty();
+    }
 }

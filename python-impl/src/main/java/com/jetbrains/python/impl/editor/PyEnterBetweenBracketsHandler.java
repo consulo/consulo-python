@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.editor;
 
+import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.ide.impl.idea.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
-import consulo.dataContext.DataContext;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.action.EditorActionHandler;
-import consulo.util.lang.ref.Ref;
+import consulo.dataContext.DataContext;
+import consulo.ide.impl.idea.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
 import consulo.language.psi.PsiFile;
-import com.jetbrains.python.PythonLanguage;
+import consulo.util.lang.ref.SimpleReference;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -31,21 +31,24 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyEnterBetweenBracketsHandler extends EnterBetweenBracesHandler {
-  @Override
-  public Result preprocessEnter(@Nonnull PsiFile file,
-                                @Nonnull Editor editor,
-                                @Nonnull Ref<Integer> caretOffsetRef,
-                                @Nonnull Ref<Integer> caretAdvance,
-                                @Nonnull DataContext dataContext,
-                                EditorActionHandler originalHandler) {
-    if (!file.getLanguage().is(PythonLanguage.getInstance())) {
-      return Result.Continue;
+    @Override
+    @RequiredReadAction
+    public Result preprocessEnter(
+        @Nonnull PsiFile file,
+        @Nonnull Editor editor,
+        @Nonnull SimpleReference<Integer> caretOffsetRef,
+        @Nonnull SimpleReference<Integer> caretAdvance,
+        @Nonnull DataContext dataContext,
+        EditorActionHandler originalHandler
+    ) {
+        if (!file.getLanguage().is(PythonLanguage.getInstance())) {
+            return Result.Continue;
+        }
+        return super.preprocessEnter(file, editor, caretOffsetRef, caretAdvance, dataContext, originalHandler);
     }
-    return super.preprocessEnter(file, editor, caretOffsetRef, caretAdvance, dataContext, originalHandler);
-  }
 
-  @Override
-  protected boolean isBracePair(char c1, char c2) {
-    return c1 == '[' && c2  == ']';
-  }
+    @Override
+    protected boolean isBracePair(char c1, char c2) {
+        return c1 == '[' && c2 == ']';
+    }
 }
