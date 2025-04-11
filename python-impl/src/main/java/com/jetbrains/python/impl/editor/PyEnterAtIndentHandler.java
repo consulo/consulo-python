@@ -35,27 +35,29 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
-  @Override
-  public Result preprocessEnter(@Nonnull PsiFile file,
-                                @Nonnull Editor editor,
-                                @Nonnull Ref<Integer> caretOffset,
-                                @Nonnull Ref<Integer> caretAdvance,
-                                @Nonnull DataContext dataContext,
-                                EditorActionHandler originalHandler) {
-    int offset = caretOffset.get();
-    if (editor instanceof EditorWindow) {
-      file = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(file);
-      editor = EditorWindow.getTopLevelEditor(editor);
-      offset = editor.getCaretModel().getOffset();
-    }
-    if (!(file instanceof PyFile)) {
-      return Result.Continue;
-    }
+    @Override
+    public Result preprocessEnter(
+        @Nonnull PsiFile file,
+        @Nonnull Editor editor,
+        @Nonnull Ref<Integer> caretOffset,
+        @Nonnull Ref<Integer> caretAdvance,
+        @Nonnull DataContext dataContext,
+        EditorActionHandler originalHandler
+    ) {
+        int offset = caretOffset.get();
+        if (editor instanceof EditorWindow) {
+            file = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(file);
+            editor = EditorWindow.getTopLevelEditor(editor);
+            offset = editor.getCaretModel().getOffset();
+        }
+        if (!(file instanceof PyFile)) {
+            return Result.Continue;
+        }
 
-    // honor dedent (PY-3009)
-    if (EditorBackspaceUtil.isWhitespaceBeforeCaret(editor)) {
-      return Result.DefaultSkipIndent;
+        // honor dedent (PY-3009)
+        if (EditorBackspaceUtil.isWhitespaceBeforeCaret(editor)) {
+            return Result.DefaultSkipIndent;
+        }
+        return Result.Continue;
     }
-    return Result.Continue;
-  }
 }

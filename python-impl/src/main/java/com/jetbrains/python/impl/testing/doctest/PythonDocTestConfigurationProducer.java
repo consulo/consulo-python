@@ -38,86 +38,76 @@ import consulo.virtualFileSystem.VirtualFile;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.List;
 
 @ExtensionImpl
-public class PythonDocTestConfigurationProducer extends PythonTestConfigurationProducer
-{
+public class PythonDocTestConfigurationProducer extends PythonTestConfigurationProducer {
+    public PythonDocTestConfigurationProducer() {
+        super(PythonTestConfigurationType.getInstance().PY_DOCTEST_FACTORY);
+    }
 
-	public PythonDocTestConfigurationProducer()
-	{
-		super(PythonTestConfigurationType.getInstance().PY_DOCTEST_FACTORY);
-	}
+    @Override
+    protected boolean isTestFunction(
+        @Nonnull final PyFunction pyFunction,
+        @Nullable final AbstractPythonTestRunConfiguration configuration
+    ) {
+        return PythonDocTestUtil.isDocTestFunction(pyFunction);
+    }
 
-	@Override
-	protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration)
-	{
-		return PythonDocTestUtil.isDocTestFunction(pyFunction);
-	}
+    @Override
+    protected boolean isTestClass(
+        @Nonnull PyClass pyClass,
+        @Nullable final AbstractPythonTestRunConfiguration configuration,
+        @Nullable final TypeEvalContext context
+    ) {
+        return PythonDocTestUtil.isDocTestClass(pyClass);
+    }
 
-	@Override
-	protected boolean isTestClass(@Nonnull PyClass pyClass, @Nullable final AbstractPythonTestRunConfiguration configuration, @Nullable final TypeEvalContext context)
-	{
-		return PythonDocTestUtil.isDocTestClass(pyClass);
-	}
+    @Override
+    protected boolean isTestFile(@Nonnull PyFile file) {
+        final List<PyElement> testCases = PythonDocTestUtil.getDocTestCasesFromFile(file);
+        return !testCases.isEmpty();
+    }
 
-	@Override
-	protected boolean isTestFile(@Nonnull PyFile file)
-	{
-		final List<PyElement> testCases = PythonDocTestUtil.getDocTestCasesFromFile(file);
-		return !testCases.isEmpty();
-	}
+    protected boolean isAvailable(@Nonnull final Location location) {
+        final Module module = location.getModule();
+        if (!isPythonModule(module)) {
+            return false;
+        }
+        final PsiElement element = location.getPsiElement();
+        if (element instanceof PsiFile) {
+            final PyDocTestVisitor visitor = new PyDocTestVisitor();
+            element.accept(visitor);
+            return visitor.hasTests;
+        }
+        else {
+            return true;
+        }
+    }
 
-	protected boolean isAvailable(@Nonnull final Location location)
-	{
-		final Module module = location.getModule();
-		if(!isPythonModule(module))
-		{
-			return false;
-		}
-		final PsiElement element = location.getPsiElement();
-		if(element instanceof PsiFile)
-		{
-			final PyDocTestVisitor visitor = new PyDocTestVisitor();
-			element.accept(visitor);
-			return visitor.hasTests;
-		}
-		else
-		{
-			return true;
-		}
-	}
+    private static class PyDocTestVisitor extends PsiRecursiveElementVisitor {
+        boolean hasTests = false;
 
-	private static class PyDocTestVisitor extends PsiRecursiveElementVisitor
-	{
-		boolean hasTests = false;
+        @Override
+        public void visitFile(PsiFile node) {
+            if (node instanceof PyFile) {
+                List<PyElement> testClasses = PythonDocTestUtil.getDocTestCasesFromFile((PyFile)node);
+                if (!testClasses.isEmpty()) {
+                    hasTests = true;
+                }
+            }
+            else {
+                final String text = node.getText();
+                if (PythonDocTestUtil.hasExample(text)) {
+                    hasTests = true;
+                }
+            }
+        }
+    }
 
-		@Override
-		public void visitFile(PsiFile node)
-		{
-			if(node instanceof PyFile)
-			{
-				List<PyElement> testClasses = PythonDocTestUtil.getDocTestCasesFromFile((PyFile) node);
-				if(!testClasses.isEmpty())
-				{
-					hasTests = true;
-				}
-			}
-			else
-			{
-				final String text = node.getText();
-				if(PythonDocTestUtil.hasExample(text))
-				{
-					hasTests = true;
-				}
-			}
-		}
-	}
-
-	@Override
-	protected boolean isTestFolder(@Nonnull VirtualFile virtualFile, @Nonnull Project project)
-	{
-		return false;
-	}
-
+    @Override
+    protected boolean isTestFolder(@Nonnull VirtualFile virtualFile, @Nonnull Project project) {
+        return false;
+    }
 }
