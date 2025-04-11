@@ -26,8 +26,7 @@ import consulo.language.editor.action.EnterHandlerDelegateAdapter;
 import consulo.language.editor.inject.EditorWindow;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiFile;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -39,8 +38,8 @@ public class PyEnterAtIndentHandler extends EnterHandlerDelegateAdapter {
     public Result preprocessEnter(
         @Nonnull PsiFile file,
         @Nonnull Editor editor,
-        @Nonnull Ref<Integer> caretOffset,
-        @Nonnull Ref<Integer> caretAdvance,
+        @Nonnull SimpleReference<Integer> caretOffset,
+        @Nonnull SimpleReference<Integer> caretAdvance,
         @Nonnull DataContext dataContext,
         EditorActionHandler originalHandler
     ) {

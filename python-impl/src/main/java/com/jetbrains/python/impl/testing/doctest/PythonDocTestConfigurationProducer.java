@@ -27,6 +27,7 @@ import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.execution.action.Location;
 import consulo.language.psi.PsiElement;
@@ -49,8 +50,8 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
 
     @Override
     protected boolean isTestFunction(
-        @Nonnull final PyFunction pyFunction,
-        @Nullable final AbstractPythonTestRunConfiguration configuration
+        @Nonnull PyFunction pyFunction,
+        @Nullable AbstractPythonTestRunConfiguration configuration
     ) {
         return PythonDocTestUtil.isDocTestFunction(pyFunction);
     }
@@ -58,26 +59,27 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
     @Override
     protected boolean isTestClass(
         @Nonnull PyClass pyClass,
-        @Nullable final AbstractPythonTestRunConfiguration configuration,
-        @Nullable final TypeEvalContext context
+        @Nullable AbstractPythonTestRunConfiguration configuration,
+        @Nullable TypeEvalContext context
     ) {
         return PythonDocTestUtil.isDocTestClass(pyClass);
     }
 
     @Override
     protected boolean isTestFile(@Nonnull PyFile file) {
-        final List<PyElement> testCases = PythonDocTestUtil.getDocTestCasesFromFile(file);
+        List<PyElement> testCases = PythonDocTestUtil.getDocTestCasesFromFile(file);
         return !testCases.isEmpty();
     }
 
-    protected boolean isAvailable(@Nonnull final Location location) {
-        final Module module = location.getModule();
+    @Override
+    protected boolean isAvailable(@Nonnull Location location) {
+        Module module = location.getModule();
         if (!isPythonModule(module)) {
             return false;
         }
-        final PsiElement element = location.getPsiElement();
+        PsiElement element = location.getPsiElement();
         if (element instanceof PsiFile) {
-            final PyDocTestVisitor visitor = new PyDocTestVisitor();
+            PyDocTestVisitor visitor = new PyDocTestVisitor();
             element.accept(visitor);
             return visitor.hasTests;
         }
@@ -90,15 +92,16 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
         boolean hasTests = false;
 
         @Override
+        @RequiredReadAction
         public void visitFile(PsiFile node) {
-            if (node instanceof PyFile) {
-                List<PyElement> testClasses = PythonDocTestUtil.getDocTestCasesFromFile((PyFile)node);
+            if (node instanceof PyFile pyFile) {
+                List<PyElement> testClasses = PythonDocTestUtil.getDocTestCasesFromFile(pyFile);
                 if (!testClasses.isEmpty()) {
                     hasTests = true;
                 }
             }
             else {
-                final String text = node.getText();
+                String text = node.getText();
                 if (PythonDocTestUtil.hasExample(text)) {
                     hasTests = true;
                 }
@@ -107,6 +110,7 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
     }
 
     @Override
+    @RequiredReadAction
     protected boolean isTestFolder(@Nonnull VirtualFile virtualFile, @Nonnull Project project) {
         return false;
     }

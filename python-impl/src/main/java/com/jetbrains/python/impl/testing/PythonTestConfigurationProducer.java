@@ -15,96 +15,87 @@
  */
 package com.jetbrains.python.impl.testing;
 
+import com.google.common.collect.Sets;
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.run.PythonRunConfigurationProducer;
+import com.jetbrains.python.impl.testing.unittest.PythonUnitTestRunConfiguration;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
+import consulo.execution.action.ConfigurationContext;
+import consulo.execution.action.ConfigurationFromContext;
+import consulo.execution.action.Location;
+import consulo.execution.action.RunConfigurationProducer;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.RunConfiguration;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.module.ModuleManager;
+import consulo.module.content.ProjectRootManager;
+import consulo.project.Project;
+import consulo.python.module.extension.PyModuleExtension;
+import consulo.util.lang.StringUtil;
+import consulo.util.lang.ref.SimpleReference;
+import consulo.virtualFileSystem.VirtualFile;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.python.module.extension.PyModuleExtension;
-import org.jetbrains.annotations.NonNls;
-
-import jakarta.annotation.Nullable;
-import com.google.common.collect.Sets;
-import consulo.execution.action.Location;
-import consulo.execution.action.ConfigurationContext;
-import consulo.execution.action.ConfigurationFromContext;
-import consulo.execution.action.RunConfigurationProducer;
-import consulo.execution.configuration.ConfigurationFactory;
-import consulo.execution.configuration.RunConfiguration;
-import consulo.module.Module;
-import consulo.module.ModuleManager;
-import consulo.language.util.ModuleUtilCore;
-import consulo.project.Project;
-import consulo.module.content.ProjectRootManager;
-import consulo.util.lang.ref.Ref;
-import consulo.util.lang.StringUtil;
-import consulo.virtualFileSystem.VirtualFile;
-import consulo.language.psi.PsiDirectory;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.PsiFileSystemItem;
-import consulo.language.psi.PsiWhiteSpace;
-import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyStatement;
-import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.types.TypeEvalContext;
-import com.jetbrains.python.impl.run.PythonRunConfigurationProducer;
-import com.jetbrains.python.impl.testing.unittest.PythonUnitTestRunConfiguration;
-
 /**
  * User: ktisha
  */
 abstract public class PythonTestConfigurationProducer extends RunConfigurationProducer<AbstractPythonTestRunConfiguration> {
-    public PythonTestConfigurationProducer(final ConfigurationFactory configurationFactory) {
+    public PythonTestConfigurationProducer(ConfigurationFactory configurationFactory) {
         super(configurationFactory);
     }
 
     @Override
+    @RequiredReadAction
     public boolean isConfigurationFromContext(AbstractPythonTestRunConfiguration configuration, ConfigurationContext context) {
-        final Location location = context.getLocation();
+        Location location = context.getLocation();
         if (location == null || !isAvailable(location)) {
             return false;
         }
-        final PsiElement element = location.getPsiElement();
-        final PsiFileSystemItem file = element.getContainingFile();
+        PsiElement element = location.getPsiElement();
+        PsiFileSystemItem file = element.getContainingFile();
         if (file == null) {
             return false;
         }
-        final VirtualFile virtualFile = element instanceof PsiDirectory ? ((PsiDirectory)element).getVirtualFile() : file.getVirtualFile();
+        VirtualFile virtualFile = element instanceof PsiDirectory directory ? directory.getVirtualFile() : file.getVirtualFile();
         if (virtualFile == null) {
             return false;
         }
-        final PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class, false);
-        final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class, false);
+        PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
 
-        final AbstractPythonTestRunConfiguration.TestType confType = configuration.getTestType();
-        final String workingDirectory = configuration.getWorkingDirectory();
+        AbstractPythonTestRunConfiguration.TestType confType = configuration.getTestType();
+        String workingDirectory = configuration.getWorkingDirectory();
 
-        if (element instanceof PsiDirectory) {
-            final String path = ((PsiDirectory)element).getVirtualFile().getPath();
+        if (element instanceof PsiDirectory directory) {
+            String path = directory.getVirtualFile().getPath();
             return confType == AbstractPythonTestRunConfiguration.TestType.TEST_FOLDER && path.equals(configuration.getFolderName())
                 || path.equals(new File(workingDirectory, configuration.getFolderName()).getAbsolutePath());
         }
 
-        final String scriptName = configuration.getScriptName();
-        final String path = virtualFile.getPath();
-        final boolean isTestFileEquals = scriptName.equals(path)
-            || path.equals(new File(workingDirectory, scriptName).getAbsolutePath());
+        String scriptName = configuration.getScriptName();
+        String path = virtualFile.getPath();
+        boolean isTestFileEquals = scriptName.equals(path) || path.equals(new File(workingDirectory, scriptName).getAbsolutePath());
 
         if (pyFunction != null) {
-            final String methodName = configuration.getMethodName();
+            String methodName = configuration.getMethodName();
             if (pyFunction.getContainingClass() == null) {
                 return confType == AbstractPythonTestRunConfiguration.TestType.TEST_FUNCTION
                     && methodName.equals(pyFunction.getName()) && isTestFileEquals;
             }
             else {
-                final String className = configuration.getClassName();
+                String className = configuration.getClassName();
 
                 return confType == AbstractPythonTestRunConfiguration.TestType.TEST_METHOD
                     && methodName.equals(pyFunction.getName())
@@ -112,7 +103,7 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
             }
         }
         if (pyClass != null) {
-            final String className = configuration.getClassName();
+            String className = configuration.getClassName();
             return confType == AbstractPythonTestRunConfiguration.TestType.TEST_CLASS
                 && className.equals(pyClass.getName()) && isTestFileEquals;
         }
@@ -120,15 +111,16 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
     }
 
     @Override
+    @RequiredWriteAction
     protected boolean setupConfigurationFromContext(
         AbstractPythonTestRunConfiguration configuration,
         ConfigurationContext context,
-        Ref<PsiElement> sourceElement
+        SimpleReference<PsiElement> sourceElement
     ) {
         if (context == null) {
             return false;
         }
-        final Location location = context.getLocation();
+        Location location = context.getLocation();
         if (location == null || !isAvailable(location)) {
             return false;
         }
@@ -140,20 +132,20 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         if (PythonUnitTestRunnableScriptFilter.isIfNameMain(location)) {
             return false;
         }
-        final Module module = location.getModule();
+        Module module = location.getModule();
         if (!isPythonModule(module)) {
             return false;
         }
 
-        if (element instanceof PsiDirectory) {
-            return setupConfigurationFromFolder((PsiDirectory)element, configuration);
+        if (element instanceof PsiDirectory directory) {
+            return setupConfigurationFromFolder(directory, configuration);
         }
 
-        final PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class, false);
+        PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class, false);
         if (pyFunction != null && isTestFunction(pyFunction, configuration)) {
             return setupConfigurationFromFunction(pyFunction, configuration);
         }
-        final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
+        PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
         if (pyClass != null && isTestClass(
             pyClass,
             configuration,
@@ -164,23 +156,17 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         if (element == null) {
             return false;
         }
-        final PsiFile file = element.getContainingFile();
-        if (file instanceof PyFile && isTestFile((PyFile)file)) {
-            return setupConfigurationFromFile((PyFile)file, configuration);
-        }
-
-        return false;
+        PsiFile file = element.getContainingFile();
+        return file instanceof PyFile pyFile && isTestFile(pyFile) && setupConfigurationFromFile(pyFile, configuration);
     }
 
-    private boolean setupConfigurationFromFolder(
-        @Nonnull final PsiDirectory element,
-        @Nonnull final AbstractPythonTestRunConfiguration configuration
-    ) {
-        final VirtualFile virtualFile = element.getVirtualFile();
+    @RequiredWriteAction
+    private boolean setupConfigurationFromFolder(@Nonnull PsiDirectory element, @Nonnull AbstractPythonTestRunConfiguration configuration) {
+        VirtualFile virtualFile = element.getVirtualFile();
         if (!isTestFolder(virtualFile, element.getProject())) {
             return false;
         }
-        final String path = virtualFile.getPath();
+        String path = virtualFile.getPath();
 
         configuration.setTestType(AbstractPythonTestRunConfiguration.TestType.TEST_FOLDER);
         configuration.setFolderName(path);
@@ -190,16 +176,18 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return true;
     }
 
-    private static void setModuleSdk(@Nonnull final PsiElement element, @Nonnull final AbstractPythonTestRunConfiguration configuration) {
+    @RequiredWriteAction
+    private static void setModuleSdk(@Nonnull PsiElement element, @Nonnull AbstractPythonTestRunConfiguration configuration) {
         configuration.setUseModuleSdk(true);
-        configuration.setModule(ModuleUtilCore.findModuleForPsiElement(element));
+        configuration.setModule(element.getModule());
     }
 
+    @RequiredWriteAction
     protected boolean setupConfigurationFromFunction(
-        @Nonnull final PyFunction pyFunction,
-        @Nonnull final AbstractPythonTestRunConfiguration configuration
+        @Nonnull PyFunction pyFunction,
+        @Nonnull AbstractPythonTestRunConfiguration configuration
     ) {
-        final PyClass containingClass = pyFunction.getContainingClass();
+        PyClass containingClass = pyFunction.getContainingClass();
         configuration.setMethodName(pyFunction.getName());
 
         if (containingClass != null) {
@@ -212,36 +200,39 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return setupConfigurationScript(configuration, pyFunction);
     }
 
+    @RequiredWriteAction
     protected boolean setupConfigurationFromClass(
-        @Nonnull final PyClass pyClass,
-        @Nonnull final AbstractPythonTestRunConfiguration configuration
+        @Nonnull PyClass pyClass,
+        @Nonnull AbstractPythonTestRunConfiguration configuration
     ) {
         configuration.setTestType(AbstractPythonTestRunConfiguration.TestType.TEST_CLASS);
         configuration.setClassName(pyClass.getName());
         return setupConfigurationScript(configuration, pyClass);
     }
 
+    @RequiredWriteAction
     protected boolean setupConfigurationFromFile(
-        @Nonnull final PyFile pyFile,
-        @Nonnull final AbstractPythonTestRunConfiguration configuration
+        @Nonnull PyFile pyFile,
+        @Nonnull AbstractPythonTestRunConfiguration configuration
     ) {
         configuration.setTestType(AbstractPythonTestRunConfiguration.TestType.TEST_SCRIPT);
         return setupConfigurationScript(configuration, pyFile);
     }
 
+    @RequiredWriteAction
     protected static boolean setupConfigurationScript(
-        @Nonnull final AbstractPythonTestRunConfiguration cfg,
-        @Nonnull final PyElement element
+        @Nonnull AbstractPythonTestRunConfiguration cfg,
+        @Nonnull PyElement element
     ) {
-        final PyFile containingFile = PyUtil.getContainingPyFile(element);
+        PyFile containingFile = PyUtil.getContainingPyFile(element);
         if (containingFile == null) {
             return false;
         }
-        final VirtualFile vFile = containingFile.getVirtualFile();
+        VirtualFile vFile = containingFile.getVirtualFile();
         if (vFile == null) {
             return false;
         }
-        final VirtualFile parent = vFile.getParent();
+        VirtualFile parent = vFile.getParent();
         if (parent == null) {
             return false;
         }
@@ -256,10 +247,11 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return true;
     }
 
-    protected boolean isTestFolder(@Nonnull final VirtualFile virtualFile, @Nonnull final Project project) {
-        @NonNls final String name = virtualFile.getName();
-        final HashSet<VirtualFile> roots = Sets.newHashSet();
-        final Module[] modules = ModuleManager.getInstance(project).getModules();
+    @RequiredReadAction
+    protected boolean isTestFolder(@Nonnull VirtualFile virtualFile, @Nonnull Project project) {
+        String name = virtualFile.getName();
+        HashSet<VirtualFile> roots = Sets.newHashSet();
+        Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules) {
             roots.addAll(PyUtil.getSourceRoots(module));
         }
@@ -267,51 +259,44 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return name.toLowerCase().contains("test") || roots.contains(virtualFile);
     }
 
-    protected boolean isAvailable(@Nonnull final Location location) {
+    protected boolean isAvailable(@Nonnull Location location) {
         return false;
     }
 
     protected boolean isTestClass(
-        @Nonnull final PyClass pyClass,
-        @Nullable final AbstractPythonTestRunConfiguration configuration,
-        @Nullable final TypeEvalContext context
+        @Nonnull PyClass pyClass,
+        @Nullable AbstractPythonTestRunConfiguration configuration,
+        @Nullable TypeEvalContext context
     ) {
         return PythonUnitTestUtil.isTestCaseClass(pyClass, context);
     }
 
     protected boolean isTestFunction(
-        @Nonnull final PyFunction pyFunction,
-        @Nullable final AbstractPythonTestRunConfiguration configuration
+        @Nonnull PyFunction pyFunction,
+        @Nullable AbstractPythonTestRunConfiguration configuration
     ) {
         return PythonUnitTestUtil.isTestCaseFunction(pyFunction);
     }
 
-    protected boolean isTestFile(@Nonnull final PyFile file) {
-        final List<PyStatement> testCases = getTestCaseClassesFromFile(file);
-        if (testCases.isEmpty()) {
-            return false;
-        }
-        return true;
+    protected boolean isTestFile(@Nonnull PyFile file) {
+        List<PyStatement> testCases = getTestCaseClassesFromFile(file);
+        return !testCases.isEmpty();
     }
 
     protected static boolean isPythonModule(Module module) {
-        if (module == null) {
-            return false;
-        }
-        return ModuleUtilCore.getExtension(module, PyModuleExtension.class) != null;
+        return module != null && ModuleUtilCore.getExtension(module, PyModuleExtension.class) != null;
     }
 
-    protected List<PyStatement> getTestCaseClassesFromFile(@Nonnull final PyFile pyFile) {
+    protected List<PyStatement> getTestCaseClassesFromFile(@Nonnull PyFile pyFile) {
         return PythonUnitTestUtil.getTestCaseClassesFromFile(pyFile, TypeEvalContext.userInitiated(pyFile.getProject(), pyFile));
     }
 
     @Override
     public boolean isPreferredConfiguration(ConfigurationFromContext self, ConfigurationFromContext other) {
-        final RunConfiguration configuration = self.getConfiguration();
-        if (configuration instanceof PythonUnitTestRunConfiguration
-            && ((PythonUnitTestRunConfiguration)configuration).getTestType() == AbstractPythonTestRunConfiguration.TestType.TEST_FOLDER) {
-            return true;
-        }
-        return other.isProducedBy(PythonTestConfigurationProducer.class) || other.isProducedBy(PythonRunConfigurationProducer.class);
+        RunConfiguration configuration = self.getConfiguration();
+        return configuration instanceof PythonUnitTestRunConfiguration unitTestRunConfiguration
+            && unitTestRunConfiguration.getTestType() == AbstractPythonTestRunConfiguration.TestType.TEST_FOLDER
+            || other.isProducedBy(PythonTestConfigurationProducer.class)
+            || other.isProducedBy(PythonRunConfigurationProducer.class);
     }
 }

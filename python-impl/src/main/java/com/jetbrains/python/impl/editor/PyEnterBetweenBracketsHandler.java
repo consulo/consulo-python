@@ -15,14 +15,15 @@
  */
 package com.jetbrains.python.impl.editor;
 
+import com.jetbrains.python.PythonLanguage;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.ide.impl.idea.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
-import consulo.dataContext.DataContext;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.action.EditorActionHandler;
-import consulo.util.lang.ref.Ref;
+import consulo.dataContext.DataContext;
+import consulo.ide.impl.idea.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
 import consulo.language.psi.PsiFile;
-import com.jetbrains.python.PythonLanguage;
+import consulo.util.lang.ref.SimpleReference;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -31,11 +32,12 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyEnterBetweenBracketsHandler extends EnterBetweenBracesHandler {
     @Override
+    @RequiredReadAction
     public Result preprocessEnter(
         @Nonnull PsiFile file,
         @Nonnull Editor editor,
-        @Nonnull Ref<Integer> caretOffsetRef,
-        @Nonnull Ref<Integer> caretAdvance,
+        @Nonnull SimpleReference<Integer> caretOffsetRef,
+        @Nonnull SimpleReference<Integer> caretAdvance,
         @Nonnull DataContext dataContext,
         EditorActionHandler originalHandler
     ) {

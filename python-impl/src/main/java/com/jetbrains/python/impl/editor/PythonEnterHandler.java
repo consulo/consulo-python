@@ -19,8 +19,9 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.impl.documentation.docstrings.*;
 import com.jetbrains.python.impl.psi.PyIndentUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.util.LineTokenizer;
 import consulo.codeEditor.Editor;
@@ -38,8 +39,8 @@ import consulo.language.impl.ast.TreeUtil;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.util.lang.ref.Ref;
-
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.util.lang.ref.SimpleReference;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -80,11 +81,12 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     };
 
     @Override
+    @RequiredReadAction
     public Result preprocessEnter(
         @Nonnull PsiFile file,
         @Nonnull Editor editor,
-        @Nonnull Ref<Integer> caretOffset,
-        @Nonnull Ref<Integer> caretAdvance,
+        @Nonnull SimpleReference<Integer> caretOffset,
+        @Nonnull SimpleReference<Integer> caretAdvance,
         @Nonnull DataContext dataContext,
         EditorActionHandler originalHandler
     ) {
@@ -97,16 +99,16 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         if (!(file instanceof PyFile)) {
             return Result.Continue;
         }
-        final Boolean isSplitLine = DataManager.getInstance().loadFromDataContext(
+        Boolean isSplitLine = DataManager.getInstance().loadFromDataContext(
             dataContext,
             consulo.ide.impl.idea.openapi.editor.actions.SplitLineAction.SPLIT_LINE_KEY
         );
         if (isSplitLine != null) {
             return Result.Continue;
         }
-        final Document doc = editor.getDocument();
+        Document doc = editor.getDocument();
         PsiDocumentManager.getInstance(file.getProject()).commitDocument(doc);
-        final PsiElement element = file.findElementAt(offset);
+        PsiElement element = file.findElementAt(offset);
         CodeInsightSettings codeInsightSettings = CodeInsightSettings.getInstance();
         if (codeInsightSettings.JAVADOC_STUB_ON_ENTER) {
             PsiElement comment = element;
@@ -115,7 +117,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
             }
             int expectedStringStart = editor.getCaretModel().getOffset() - 3; // """ or '''
             if (comment != null) {
-                final DocstringState state = canGenerateDocstring(comment, expectedStringStart, doc);
+                DocstringState state = canGenerateDocstring(comment, expectedStringStart, doc);
                 if (state != DocstringState.NONE) {
                     insertDocStringStub(editor, comment, state);
                     return Result.Continue;
@@ -136,40 +138,42 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         }
 
         if (offset > 0 && !(PyTokenTypes.STRING_NODES.contains(element.getNode().getElementType()))) {
-            final PsiElement prevElement = file.findElementAt(offset - 1);
+            PsiElement prevElement = file.findElementAt(offset - 1);
             if (prevElement == element) {
                 return Result.Continue;
             }
         }
 
-        if (PyTokenTypes.TRIPLE_NODES.contains(element.getNode().getElementType()) || element.getNode()
-            .getElementType() == PyTokenTypes.DOCSTRING) {
+        if (PyTokenTypes.TRIPLE_NODES.contains(element.getNode().getElementType())
+            || element.getNode().getElementType() == PyTokenTypes.DOCSTRING) {
             return Result.Continue;
         }
 
-        final PsiElement prevElement = file.findElementAt(offset - 1);
-        PyStringLiteralExpression string = PsiTreeUtil.findElementOfClassAtOffset(file, offset, PyStringLiteralExpression.class, false);
+        PsiElement prevElement = file.findElementAt(offset - 1);
+        PyStringLiteralExpression string =
+            PsiTreeUtil.findElementOfClassAtOffset(file, offset, PyStringLiteralExpression.class, false);
 
         if (string != null && prevElement != null
             && PyTokenTypes.STRING_NODES.contains(prevElement.getNode().getElementType())
             && string.getTextOffset() < offset && !(element.getNode() instanceof PsiWhiteSpace)) {
-            final String stringText = element.getText();
-            final int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
+            String stringText = element.getText();
+            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
             if (string.getTextOffset() + prefixLength >= offset) {
                 return Result.Continue;
             }
-            final String pref = element.getText().substring(0, prefixLength);
-            final String quote = element.getText().substring(prefixLength, prefixLength + 1);
-            final boolean nextIsBackslash = "\\".equals(doc.getText(TextRange.create(offset - 1, offset)));
-            final boolean isEscapedQuote = quote.equals(doc.getText(TextRange.create(offset, offset + 1))) && nextIsBackslash;
-            final boolean isEscapedBackslash = "\\".equals(doc.getText(TextRange.create(offset - 2, offset - 1))) && nextIsBackslash;
+            String pref = element.getText().substring(0, prefixLength);
+            String quote = element.getText().substring(prefixLength, prefixLength + 1);
+            boolean nextIsBackslash = "\\".equals(doc.getText(TextRange.create(offset - 1, offset)));
+            boolean isEscapedQuote = quote.equals(doc.getText(TextRange.create(offset, offset + 1))) && nextIsBackslash;
+            boolean isEscapedBackslash = "\\".equals(doc.getText(TextRange.create(offset - 2, offset - 1))) && nextIsBackslash;
             if (nextIsBackslash && !isEscapedQuote && !isEscapedBackslash) {
                 return Result.Continue;
             }
 
-            final StringBuilder replacementString = new StringBuilder();
+            StringBuilder replacementString = new StringBuilder();
             myPostprocessShift = prefixLength + quote.length();
 
+            //noinspection unchecked
             if (PsiTreeUtil.getParentOfType(string, IMPLICIT_WRAP_CLASSES) != null) {
                 replacementString.append(quote).append(pref).append(quote);
                 doc.insertString(offset, replacementString);
@@ -197,7 +201,14 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         return checkInsertBackslash(file, caretOffset, dataContext, offset, doc);
     }
 
-    private static Result checkInsertBackslash(PsiFile file, Ref<Integer> caretOffset, DataContext dataContext, int offset, Document doc) {
+    @RequiredReadAction
+    private static Result checkInsertBackslash(
+        PsiFile file,
+        SimpleReference<Integer> caretOffset,
+        DataContext dataContext,
+        int offset,
+        Document doc
+    ) {
         boolean autoWrapInProgress = DataManager.getInstance().loadFromDataContext(
             dataContext,
             consulo.ide.impl.idea.codeInsight.editorActions.AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY
@@ -209,9 +220,10 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         return Result.Continue;
     }
 
+    @RequiredReadAction
     public static boolean needInsertBackslash(PsiFile file, int offset, boolean autoWrapInProgress) {
         if (offset > 0) {
-            final PsiElement beforeCaret = file.findElementAt(offset - 1);
+            PsiElement beforeCaret = file.findElementAt(offset - 1);
             if (beforeCaret instanceof PsiWhiteSpace && beforeCaret.getText().indexOf('\\') >= 0) {
                 // we've got a backslash at EOL already, don't need another one
                 return false;
@@ -225,6 +237,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         return needInsertBackslash(nodeAtCaret, autoWrapInProgress);
     }
 
+    @RequiredReadAction
     public static boolean needInsertBackslash(ASTNode nodeAtCaret, boolean autoWrapInProgress) {
         PsiElement statementBefore = findStatementBeforeCaret(nodeAtCaret);
         PsiElement statementAfter = findStatementAfterCaret(nodeAtCaret);
@@ -251,6 +264,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         PsiElement wrappableAfter = findWrappable(nodeAtCaret, false);
         if (!(wrappableBefore instanceof PsiComment)) {
             while (wrappableBefore != null) {
+                @SuppressWarnings("unchecked")
                 PsiElement next = PsiTreeUtil.getParentOfType(wrappableBefore, WRAPPABLE_CLASSES);
                 if (next == null) {
                     break;
@@ -260,6 +274,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         }
         if (!(wrappableAfter instanceof PsiComment)) {
             while (wrappableAfter != null) {
+                @SuppressWarnings("unchecked")
                 PsiElement next = PsiTreeUtil.getParentOfType(wrappableAfter, WRAPPABLE_CLASSES);
                 if (next == null) {
                     break;
@@ -279,10 +294,10 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     private static void insertDocStringStub(Editor editor, PsiElement element, DocstringState state) {
         PyDocStringOwner docOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
         if (docOwner != null) {
-            final int caretOffset = editor.getCaretModel().getOffset();
-            final Document document = editor.getDocument();
-            final String quotes = document.getText(TextRange.from(caretOffset - 3, 3));
-            final String docString = PyDocstringGenerator.forDocStringOwner(docOwner)
+            int caretOffset = editor.getCaretModel().getOffset();
+            Document document = editor.getDocument();
+            String quotes = document.getText(TextRange.from(caretOffset - 3, 3));
+            String docString = PyDocstringGenerator.forDocStringOwner(docOwner)
                 .withInferredParameters(true)
                 .withQuotes(quotes)
                 .forceNewMode()
@@ -297,6 +312,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     private static PsiElement findWrappable(ASTNode nodeAtCaret, boolean before) {
         PsiElement wrappable = before ? findBeforeCaret(nodeAtCaret, WRAPPABLE_CLASSES) : findAfterCaret(nodeAtCaret, WRAPPABLE_CLASSES);
         if (wrappable == null) {
@@ -311,15 +327,18 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     private static PsiElement findStatementBeforeCaret(ASTNode node) {
         return findBeforeCaret(node, PyStatement.class);
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     private static PsiElement findStatementAfterCaret(ASTNode node) {
         return findAfterCaret(node, PyStatement.class);
     }
 
+    @SafeVarargs
     private static PsiElement findBeforeCaret(ASTNode atCaret, Class<? extends PsiElement>... classes) {
         while (atCaret != null) {
             atCaret = TreeUtil.prevLeaf(atCaret);
@@ -330,6 +349,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         return null;
     }
 
+    @SafeVarargs
     private static PsiElement findAfterCaret(ASTNode atCaret, Class<? extends PsiElement>... classes) {
         while (atCaret != null) {
             if (atCaret.getElementType() != TokenType.WHITE_SPACE) {
@@ -341,6 +361,8 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     }
 
     @Nullable
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
     private static <T extends PsiElement> T getNonStrictParentOfType(@Nonnull PsiElement element, @Nonnull Class<? extends T>... classes) {
         PsiElement run = element;
         while (run != null) {
@@ -358,19 +380,17 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         return null;
     }
 
+    @RequiredReadAction
     private static boolean inFromImportParentheses(PsiElement statement, int offset) {
-        if (!(statement instanceof PyFromImportStatement)) {
+        if (!(statement instanceof PyFromImportStatement fromImportStatement)) {
             return false;
         }
-        PyFromImportStatement fromImportStatement = (PyFromImportStatement)statement;
         PsiElement leftParen = fromImportStatement.getLeftParen();
-        if (leftParen != null && offset >= leftParen.getTextRange().getEndOffset()) {
-            return true;
-        }
-        return false;
+        return leftParen != null && offset >= leftParen.getTextRange().getEndOffset();
     }
 
     @Override
+    @RequiredUIAccess
     public Result postProcessEnter(@Nonnull PsiFile file, @Nonnull Editor editor, @Nonnull DataContext dataContext) {
         if (!(file instanceof PyFile)) {
             return Result.Continue;
@@ -384,21 +404,22 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         return super.postProcessEnter(file, editor, dataContext);
     }
 
+    @RequiredUIAccess
     private static void addGoogleDocStringSectionIndent(@Nonnull PsiFile file, @Nonnull Editor editor, int offset) {
-        final Document document = editor.getDocument();
+        Document document = editor.getDocument();
         PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
-        final PsiElement element = file.findElementAt(offset);
+        PsiElement element = file.findElementAt(offset);
         if (element != null) {
             // Insert additional indentation after section header in Google code style docstrings
-            final PyStringLiteralExpression pyString = DocStringUtil.getParentDefinitionDocString(element);
+            PyStringLiteralExpression pyString = DocStringUtil.getParentDefinitionDocString(element);
             if (pyString != null) {
-                final String docStringText = pyString.getText();
-                final DocStringFormat format = DocStringUtil.guessDocStringFormat(docStringText, pyString);
+                String docStringText = pyString.getText();
+                DocStringFormat format = DocStringUtil.guessDocStringFormat(docStringText, pyString);
                 if (format == DocStringFormat.GOOGLE && offset + 1 < document.getTextLength()) {
-                    final int lineNum = document.getLineNumber(offset);
-                    final TextRange lineRange =
+                    int lineNum = document.getLineNumber(offset);
+                    TextRange lineRange =
                         TextRange.create(document.getLineStartOffset(lineNum - 1), document.getLineEndOffset(lineNum - 1));
-                    final Matcher matcher = GoogleCodeStyleDocString.SECTION_HEADER.matcher(document.getText(lineRange));
+                    Matcher matcher = GoogleCodeStyleDocString.SECTION_HEADER.matcher(document.getText(lineRange));
                     if (matcher.matches() && SectionBasedDocString.isValidSectionTitle(matcher.group(1))) {
                         document.insertString(offset, GoogleCodeStyleDocStringBuilder.getDefaultSectionIndent(file.getProject()));
                         editor.getCaretModel().moveCaretRelatively(2, 0, false, false, false);
@@ -415,22 +436,23 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     }
 
     @Nonnull
+    @RequiredReadAction
     public static DocstringState canGenerateDocstring(@Nonnull PsiElement element, int firstQuoteOffset, @Nonnull Document document) {
         if (firstQuoteOffset < 0 || firstQuoteOffset > document.getTextLength() - 3) {
             return DocstringState.NONE;
         }
-        final String quotes = document.getText(TextRange.from(firstQuoteOffset, 3));
+        String quotes = document.getText(TextRange.from(firstQuoteOffset, 3));
         if (!quotes.equals("\"\"\"") && !quotes.equals("'''")) {
             return DocstringState.NONE;
         }
-        final PyStringLiteralExpression pyString = DocStringUtil.getParentDefinitionDocString(element);
+        PyStringLiteralExpression pyString = DocStringUtil.getParentDefinitionDocString(element);
         if (pyString != null) {
 
             String nodeText = element.getText();
-            final int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(nodeText);
+            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(nodeText);
             nodeText = nodeText.substring(prefixLength);
 
-            final String literalText = pyString.getText();
+            String literalText = pyString.getText();
             if (literalText.endsWith(nodeText) && nodeText.startsWith(quotes)) {
                 if (firstQuoteOffset == pyString.getTextOffset() + prefixLength) {
                     PsiErrorElement error = PsiTreeUtil.getNextSiblingOfType(pyString, PsiErrorElement.class);
@@ -450,10 +472,10 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
                     }
                     // Sometimes if incomplete docstring is followed by another declaration with a docstring, it might be treated
                     // as complete docstring, because we can't understand that closing quotes actually belong to another docstring.
-                    final String docstringIndent = PyIndentUtil.getLineIndent(document, document.getLineNumber(firstQuoteOffset));
+                    String docstringIndent = PyIndentUtil.getLineIndent(document, document.getLineNumber(firstQuoteOffset));
                     for (String line : LineTokenizer.tokenizeIntoList(nodeText, false)) {
-                        final String lineIndent = PyIndentUtil.getLineIndent(line);
-                        final String lineContent = line.substring(lineIndent.length());
+                        String lineIndent = PyIndentUtil.getLineIndent(line);
+                        String lineContent = line.substring(lineIndent.length());
                         if ((lineContent.startsWith("def ") || lineContent.startsWith("class ")) &&
                             docstringIndent.length() > lineIndent.length() && docstringIndent.startsWith(lineIndent)) {
                             return DocstringState.INCOMPLETE;

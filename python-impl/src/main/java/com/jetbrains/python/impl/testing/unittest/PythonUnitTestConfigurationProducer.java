@@ -27,10 +27,10 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.execution.action.Location;
 import consulo.language.psi.PsiElement;
-import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 
 import jakarta.annotation.Nonnull;
@@ -44,16 +44,14 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
         super(PythonTestConfigurationType.getInstance().PY_UNITTEST_FACTORY);
     }
 
+    @Override
+    @RequiredReadAction
     protected boolean isAvailable(@Nonnull final Location location) {
         PsiElement element = location.getPsiElement();
-        final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-        if (module == null) {
-            return false;
-        }
-        if ((TestRunnerService.getInstance(module).getProjectConfiguration().equals(PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME))) {
-            return true;
-        }
-        return false;
+        final Module module = element.getModule();
+        return module != null && TestRunnerService.getInstance(module)
+            .getProjectConfiguration()
+            .equals(PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME);
     }
 
     @Override
@@ -62,7 +60,8 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
         @Nullable final AbstractPythonTestRunConfiguration configuration
     ) {
         final boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
-        return isTestFunction || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration)configuration).isPureUnittest());
+        return isTestFunction
+            || (configuration instanceof PythonUnitTestRunConfiguration unitTestRunConfig && !unitTestRunConfig.isPureUnittest());
     }
 
     @Override
@@ -72,18 +71,17 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
         TypeEvalContext context
     ) {
         final boolean isTestClass = super.isTestClass(pyClass, configuration, context);
-        return isTestClass || (configuration instanceof PythonUnitTestRunConfiguration && !((PythonUnitTestRunConfiguration)configuration).isPureUnittest());
+        return isTestClass
+            || (configuration instanceof PythonUnitTestRunConfiguration unitTestRunConfig && !unitTestRunConfig.isPureUnittest());
     }
 
     @Override
+    @RequiredReadAction
     protected boolean isTestFile(@Nonnull final PyFile file) {
         if (PyNames.SETUP_DOT_PY.equals(file.getName())) {
             return true;
         }
         final List<PyStatement> testCases = getTestCaseClassesFromFile(file);
-        if (testCases.isEmpty()) {
-            return false;
-        }
-        return true;
+        return !testCases.isEmpty();
     }
 }
