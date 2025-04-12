@@ -21,8 +21,7 @@ import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ReadAction;
-import consulo.application.util.function.Processor;
+import consulo.application.AccessRule;
 import consulo.content.scope.SearchScope;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
@@ -31,50 +30,42 @@ import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.search.ReferencesSearchQueryExecutor;
 import consulo.language.psi.search.UsageSearchContext;
 import consulo.project.util.query.QueryExecutorBase;
-
 import jakarta.annotation.Nonnull;
+
+import java.util.function.Predicate;
 
 /**
  * @author yole
  */
 @ExtensionImpl
-public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor
-{
-	@Override
-	public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer)
-	{
-		PsiElement element = queryParameters.getElementToSearch();
-		if(!(element instanceof PyFunction))
-		{
-			return;
-		}
+public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
+    @Override
+    public void processQuery(
+        @Nonnull ReferencesSearch.SearchParameters queryParameters,
+        @Nonnull Predicate<? super PsiReference> consumer
+    ) {
+        PsiElement element = queryParameters.getElementToSearch();
+        if (!(element instanceof PyFunction function)) {
+            return;
+        }
 
-		String className;
-		SearchScope searchScope;
-		PyFunction function;
-		function = (PyFunction) element;
-		if(!PyNames.INIT.equals(ReadAction.compute(() -> function.getName())))
-		{
-			return;
-		}
-		final PyClass pyClass = ReadAction.compute(() -> function.getContainingClass());
-		if(pyClass == null)
-		{
-			return;
-		}
-		className = ReadAction.compute(() -> pyClass.getName());
-		if(className == null)
-		{
-			return;
-		}
+        if (!PyNames.INIT.equals(AccessRule.read(function::getName))) {
+            return;
+        }
+        PyClass pyClass = AccessRule.read(function::getContainingClass);
+        if (pyClass == null) {
+            return;
+        }
+        String className = AccessRule.read(pyClass::getName);
+        if (className == null) {
+            return;
+        }
 
-		searchScope = queryParameters.getEffectiveSearchScope();
-		if(searchScope instanceof GlobalSearchScope)
-		{
-			searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) searchScope, PythonFileType.INSTANCE);
-		}
+        SearchScope searchScope = queryParameters.getEffectiveSearchScope();
+        if (searchScope instanceof GlobalSearchScope globalSearchScope) {
+            searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, PythonFileType.INSTANCE);
+        }
 
-
-		queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, function);
-	}
+        queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, function);
+    }
 }
