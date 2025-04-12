@@ -18,37 +18,37 @@ package com.jetbrains.python.impl.psi.search;
 import com.google.common.collect.ImmutableSet;
 import com.jetbrains.python.impl.psi.stubs.PySuperClassIndex;
 import com.jetbrains.python.psi.PyClass;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ReadAction;
-import consulo.application.util.function.Processor;
+import consulo.application.AccessRule;
 import consulo.language.psi.stub.StubIndex;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
-
 import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * @author yole
  */
 @ExtensionImpl
 public class DefaultPyClassInheritorsSearchExecutor implements PyClassInheritorsSearchExecutor {
-
     /**
      * These base classes are to general to look for inheritors list.
      */
     protected static final ImmutableSet<String> IGNORED_BASES = ImmutableSet.of("object", "BaseException", "Exception");
 
+    @Override
     public boolean execute(
-        @Nonnull final PyClassInheritorsSearch.SearchParameters queryParameters,
-        @Nonnull final Processor<? super PyClass> consumer
+        @Nonnull PyClassInheritorsSearch.SearchParameters queryParameters,
+        @Nonnull Predicate<? super PyClass> consumer
     ) {
         Set<PyClass> processed = new HashSet<>();
 
-        return ReadAction.compute(() -> processDirectInheritors(
+        return AccessRule.read(() -> processDirectInheritors(
             queryParameters.getSuperClass(),
             consumer,
             queryParameters.isCheckDeepInheritance(),
@@ -56,13 +56,14 @@ public class DefaultPyClassInheritorsSearchExecutor implements PyClassInheritors
         ));
     }
 
+    @RequiredReadAction
     private static boolean processDirectInheritors(
-        final PyClass superClass,
-        final Processor<? super PyClass> consumer,
-        final boolean checkDeep,
-        final Set<PyClass> processed
+        PyClass superClass,
+        Predicate<? super PyClass> consumer,
+        boolean checkDeep,
+        Set<PyClass> processed
     ) {
-        final String superClassName = superClass.getName();
+        String superClassName = superClass.getName();
         if (superClassName == null || IGNORED_BASES.contains(superClassName)) {
             return true;  // we don't want to look for inheritors of overly general classes
         }
@@ -71,16 +72,13 @@ public class DefaultPyClassInheritorsSearchExecutor implements PyClassInheritors
         }
         processed.add(superClass);
         Project project = superClass.getProject();
-        final Collection<PyClass> candidates =
+        Collection<PyClass> candidates =
             StubIndex.getElements(PySuperClassIndex.KEY, superClassName, project, ProjectScopes.getAllScope(project), PyClass.class);
         for (PyClass candidate : candidates) {
-            final PyClass[] classes = candidate.getSuperClasses(null);
+            PyClass[] classes = candidate.getSuperClasses(null);
             for (PyClass superClassCandidate : classes) {
                 if (superClassCandidate.isEquivalentTo(superClass)) {
-                    if (!consumer.process(candidate)) {
-                        return false;
-                    }
-                    if (checkDeep && !processDirectInheritors(candidate, consumer, checkDeep, processed)) {
+                    if (!consumer.test(candidate) || checkDeep && !processDirectInheritors(candidate, consumer, checkDeep, processed)) {
                         return false;
                     }
                     break;

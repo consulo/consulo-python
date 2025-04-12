@@ -20,8 +20,7 @@ import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyElement;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ReadAction;
-import consulo.application.util.function.Processor;
+import consulo.application.AccessRule;
 import consulo.content.scope.SearchScope;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
@@ -32,33 +31,35 @@ import consulo.language.psi.search.ReferencesSearchQueryExecutor;
 import consulo.language.psi.search.UsageSearchContext;
 import consulo.project.util.query.QueryExecutorBase;
 import consulo.util.lang.StringUtil;
-
 import jakarta.annotation.Nonnull;
+
+import java.util.function.Predicate;
 
 /**
  * @author traff
  */
 @ExtensionImpl
 public class PyStringReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
+    @Override
     public void processQuery(
-        @Nonnull final ReferencesSearch.SearchParameters params,
-        @Nonnull final Processor<? super PsiReference> consumer
+        @Nonnull ReferencesSearch.SearchParameters params,
+        @Nonnull Predicate<? super PsiReference> consumer
     ) {
-        final PsiElement element = params.getElementToSearch();
+        PsiElement element = params.getElementToSearch();
         if (!(element instanceof PyElement) && !(element instanceof PsiDirectory)) {
             return;
         }
 
         String name;
-        SearchScope searchScope = ReadAction.compute(() -> {
+        SearchScope searchScope = AccessRule.read(() -> {
             SearchScope s = params.getEffectiveSearchScope();
-            if (s instanceof GlobalSearchScope) {
-                s = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)s, PythonFileType.INSTANCE);
+            if (s instanceof GlobalSearchScope globalSearchScope) {
+                s = GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, PythonFileType.INSTANCE);
             }
             return s;
         });
 
-        name = ReadAction.compute(() -> PyUtil.computeElementNameForStringSearch(element));
+        name = AccessRule.read(() -> PyUtil.computeElementNameForStringSearch(element));
 
         if (StringUtil.isEmpty(name)) {
             return;
