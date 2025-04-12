@@ -38,43 +38,38 @@ import jakarta.annotation.Nonnull;
  * @author yole
  */
 @ExtensionImpl
-public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor
-{
-	@Override
-	public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer)
-	{
-		PsiElement element = queryParameters.getElementToSearch();
-		if(!(element instanceof PyFunction))
-		{
-			return;
-		}
+public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
+    @Override
+    public void processQuery(
+        @Nonnull ReferencesSearch.SearchParameters queryParameters,
+        @Nonnull final Processor<? super PsiReference> consumer
+    ) {
+        PsiElement element = queryParameters.getElementToSearch();
+        if (!(element instanceof PyFunction)) {
+            return;
+        }
 
-		String className;
-		SearchScope searchScope;
-		PyFunction function;
-		function = (PyFunction) element;
-		if(!PyNames.INIT.equals(ReadAction.compute(() -> function.getName())))
-		{
-			return;
-		}
-		final PyClass pyClass = ReadAction.compute(() -> function.getContainingClass());
-		if(pyClass == null)
-		{
-			return;
-		}
-		className = ReadAction.compute(() -> pyClass.getName());
-		if(className == null)
-		{
-			return;
-		}
+        String className;
+        SearchScope searchScope;
+        PyFunction function;
+        function = (PyFunction)element;
+        if (!PyNames.INIT.equals(ReadAction.compute(() -> function.getName()))) {
+            return;
+        }
+        final PyClass pyClass = ReadAction.compute(() -> function.getContainingClass());
+        if (pyClass == null) {
+            return;
+        }
+        className = ReadAction.compute(() -> pyClass.getName());
+        if (className == null) {
+            return;
+        }
 
-		searchScope = queryParameters.getEffectiveSearchScope();
-		if(searchScope instanceof GlobalSearchScope)
-		{
-			searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) searchScope, PythonFileType.INSTANCE);
-		}
+        searchScope = queryParameters.getEffectiveSearchScope();
+        if (searchScope instanceof GlobalSearchScope) {
+            searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, PythonFileType.INSTANCE);
+        }
 
-
-		queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, function);
-	}
+        queryParameters.getOptimizer().searchWord(className, searchScope, UsageSearchContext.IN_CODE, true, function);
+    }
 }

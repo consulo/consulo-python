@@ -33,32 +33,35 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyKeywordArgumentSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
-  @Override
-  public void processQuery(@Nonnull ReferencesSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiReference> consumer) {
-    final PsiElement element = queryParameters.getElementToSearch();
-    if (!(element instanceof PyNamedParameter)) {
-      return;
-    }
-    PyFunction owner = PsiTreeUtil.getParentOfType(element, PyFunction.class);
-    if (owner == null) {
-      return;
-    }
-    ReferencesSearch.search(owner, queryParameters.getScope()).forEach(new Processor<PsiReference>() {
-      @Override
-      public boolean process(PsiReference reference) {
-        final PsiElement refElement = reference.getElement();
-        final PyCallExpression call = PsiTreeUtil.getParentOfType(refElement, PyCallExpression.class);
-        if (call != null && PsiTreeUtil.isAncestor(call.getCallee(), refElement, false)) {
-          final PyArgumentList argumentList = call.getArgumentList();
-          if (argumentList != null) {
-            final PyKeywordArgument keywordArgument = argumentList.getKeywordArgument(((PyNamedParameter)element).getName());
-            if (keywordArgument != null) {
-              return consumer.process(keywordArgument.getReference());
-            }
-          }
+    @Override
+    public void processQuery(
+        @Nonnull ReferencesSearch.SearchParameters queryParameters,
+        @Nonnull final Processor<? super PsiReference> consumer
+    ) {
+        final PsiElement element = queryParameters.getElementToSearch();
+        if (!(element instanceof PyNamedParameter)) {
+            return;
         }
-        return true;
-      }
-    });
-  }
+        PyFunction owner = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        if (owner == null) {
+            return;
+        }
+        ReferencesSearch.search(owner, queryParameters.getScope()).forEach(new Processor<PsiReference>() {
+            @Override
+            public boolean process(PsiReference reference) {
+                final PsiElement refElement = reference.getElement();
+                final PyCallExpression call = PsiTreeUtil.getParentOfType(refElement, PyCallExpression.class);
+                if (call != null && PsiTreeUtil.isAncestor(call.getCallee(), refElement, false)) {
+                    final PyArgumentList argumentList = call.getArgumentList();
+                    if (argumentList != null) {
+                        final PyKeywordArgument keywordArgument = argumentList.getKeywordArgument(((PyNamedParameter)element).getName());
+                        if (keywordArgument != null) {
+                            return consumer.process(keywordArgument.getReference());
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+    }
 }

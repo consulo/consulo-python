@@ -34,27 +34,29 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyDefinitionsSearch implements DefinitionsScopedSearchExecutor {
-  public boolean execute(@Nonnull final DefinitionsScopedSearch.SearchParameters parameters,
-                         @Nonnull final Processor<? super PsiElement> consumer) {
-    PsiElement element = parameters.getElement();
-    if (element instanceof PyClass) {
-      final Query<PyClass> query = PyClassInheritorsSearch.search((PyClass)element, true);
-      return query.forEach(consumer::process);
-    }
-    else if (element instanceof PyFunction) {
-      final Query<PyFunction> query = PyOverridingMethodsSearch.search((PyFunction)element, true);
-      return query.forEach(new Processor<PyFunction>() {
-        public boolean process(final PyFunction pyFunction) {
-          return consumer.process(pyFunction);
+    public boolean execute(
+        @Nonnull final DefinitionsScopedSearch.SearchParameters parameters,
+        @Nonnull final Processor<? super PsiElement> consumer
+    ) {
+        PsiElement element = parameters.getElement();
+        if (element instanceof PyClass) {
+            final Query<PyClass> query = PyClassInheritorsSearch.search((PyClass)element, true);
+            return query.forEach(consumer::process);
         }
-      });
+        else if (element instanceof PyFunction) {
+            final Query<PyFunction> query = PyOverridingMethodsSearch.search((PyFunction)element, true);
+            return query.forEach(new Processor<PyFunction>() {
+                public boolean process(final PyFunction pyFunction) {
+                    return consumer.process(pyFunction);
+                }
+            });
+        }
+        else if (element instanceof PyTargetExpression) {  // PY-237
+            final PsiElement parent = element.getParent();
+            if (parent instanceof PyAssignmentStatement) {
+                return consumer.process(parent);
+            }
+        }
+        return true;
     }
-    else if (element instanceof PyTargetExpression) {  // PY-237
-      final PsiElement parent = element.getParent();
-      if (parent instanceof PyAssignmentStatement) {
-        return consumer.process(parent);
-      }
-    }
-    return true;
-  }
 }

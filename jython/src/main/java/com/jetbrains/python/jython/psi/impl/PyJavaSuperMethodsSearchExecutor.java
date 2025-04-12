@@ -34,28 +34,25 @@ import jakarta.annotation.Nonnull;
  * @author yole
  */
 @ExtensionImpl
-public class PyJavaSuperMethodsSearchExecutor implements PySuperMethodsSearchExecutor
-{
-	public boolean execute(@Nonnull final PySuperMethodsSearch.SearchParameters queryParameters, @Nonnull final Processor<? super PsiElement> consumer)
-	{
-		PyFunction func = queryParameters.getDerivedMethod();
-		PyClass containingClass = func.getContainingClass();
-		if(containingClass != null)
-		{
-			for(PyClassLikeType type : containingClass.getSuperClassTypes(TypeEvalContext.codeInsightFallback(containingClass.getProject())))
-			{
-				if(type instanceof PyJavaClassType)
-				{
-					final PsiClass psiClass = ((PyJavaClassType) type).getPsiClass();
-					PsiMethod[] methods = psiClass.findMethodsByName(func.getName(), true);
-					// the Python method actually does override/implement all of Java super methods with the same name
-					if(!ContainerUtil.process(methods, consumer))
-					{
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+public class PyJavaSuperMethodsSearchExecutor implements PySuperMethodsSearchExecutor {
+    public boolean execute(
+        @Nonnull final PySuperMethodsSearch.SearchParameters queryParameters,
+        @Nonnull final Processor<? super PsiElement> consumer
+    ) {
+        PyFunction func = queryParameters.getDerivedMethod();
+        PyClass containingClass = func.getContainingClass();
+        if (containingClass != null) {
+            for (PyClassLikeType type : containingClass.getSuperClassTypes(TypeEvalContext.codeInsightFallback(containingClass.getProject()))) {
+                if (type instanceof PyJavaClassType) {
+                    final PsiClass psiClass = ((PyJavaClassType)type).getPsiClass();
+                    PsiMethod[] methods = psiClass.findMethodsByName(func.getName(), true);
+                    // the Python method actually does override/implement all of Java super methods with the same name
+                    if (!ContainerUtil.process(methods, consumer)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }

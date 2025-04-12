@@ -40,28 +40,30 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyStringReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
-  public void processQuery(@Nonnull final ReferencesSearch.SearchParameters params,
-                           @Nonnull final Processor<? super PsiReference> consumer) {
-    final PsiElement element = params.getElementToSearch();
-    if (!(element instanceof PyElement) && !(element instanceof PsiDirectory)) {
-      return;
+    public void processQuery(
+        @Nonnull final ReferencesSearch.SearchParameters params,
+        @Nonnull final Processor<? super PsiReference> consumer
+    ) {
+        final PsiElement element = params.getElementToSearch();
+        if (!(element instanceof PyElement) && !(element instanceof PsiDirectory)) {
+            return;
+        }
+
+        String name;
+        SearchScope searchScope = ReadAction.compute(() -> {
+            SearchScope s = params.getEffectiveSearchScope();
+            if (s instanceof GlobalSearchScope) {
+                s = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)s, PythonFileType.INSTANCE);
+            }
+            return s;
+        });
+
+        name = ReadAction.compute(() -> PyUtil.computeElementNameForStringSearch(element));
+
+        if (StringUtil.isEmpty(name)) {
+            return;
+        }
+
+        params.getOptimizer().searchWord(name, searchScope, UsageSearchContext.IN_STRINGS, true, element);
     }
-
-    String name;
-    SearchScope searchScope = ReadAction.compute(() -> {
-      SearchScope s = params.getEffectiveSearchScope();
-      if (s instanceof GlobalSearchScope) {
-        s = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)s, PythonFileType.INSTANCE);
-      }
-      return s;
-    });
-
-    name = ReadAction.compute(() -> PyUtil.computeElementNameForStringSearch(element));
-
-    if (StringUtil.isEmpty(name)) {
-      return;
-    }
-    
-    params.getOptimizer().searchWord(name, searchScope, UsageSearchContext.IN_STRINGS, true, element);
-  }
 }

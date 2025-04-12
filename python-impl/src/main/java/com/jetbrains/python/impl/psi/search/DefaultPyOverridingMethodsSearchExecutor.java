@@ -28,34 +28,36 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class DefaultPyOverridingMethodsSearchExecutor implements PyOverridingMethodsSearchExecutor {
-  @Override
-  public boolean execute(@Nonnull final PyOverridingMethodsSearch.SearchParameters queryParameters,
-                         @Nonnull final Processor<? super PyFunction> consumer) {
-    final PyFunction baseMethod = queryParameters.getFunction();
+    @Override
+    public boolean execute(
+        @Nonnull final PyOverridingMethodsSearch.SearchParameters queryParameters,
+        @Nonnull final Processor<? super PyFunction> consumer
+    ) {
+        final PyFunction baseMethod = queryParameters.getFunction();
 
-    final PyClass containingClass = ReadAction.compute(baseMethod::getContainingClass);
+        final PyClass containingClass = ReadAction.compute(baseMethod::getContainingClass);
 
-    return PyClassInheritorsSearch.search(containingClass, queryParameters.isCheckDeep()).forEach(pyClass -> {
-      PyFunction overridingMethod = ReadAction.compute(() -> {
-        PyFunction func = pyClass.findMethodByName(baseMethod.getName(), false, null);
-        if (func != null) {
-          final Property baseProperty = baseMethod.getProperty();
-          final Property overridingProperty = func.getProperty();
-          if (baseProperty != null && overridingProperty != null) {
-            final AccessDirection direction = PyUtil.getPropertyAccessDirection(baseMethod);
-            final PyCallable callable = overridingProperty.getByDirection(direction).valueOrNull();
-            func = (callable instanceof PyFunction) ? (PyFunction)callable : null;
-          }
-        }
+        return PyClassInheritorsSearch.search(containingClass, queryParameters.isCheckDeep()).forEach(pyClass -> {
+            PyFunction overridingMethod = ReadAction.compute(() -> {
+                PyFunction func = pyClass.findMethodByName(baseMethod.getName(), false, null);
+                if (func != null) {
+                    final Property baseProperty = baseMethod.getProperty();
+                    final Property overridingProperty = func.getProperty();
+                    if (baseProperty != null && overridingProperty != null) {
+                        final AccessDirection direction = PyUtil.getPropertyAccessDirection(baseMethod);
+                        final PyCallable callable = overridingProperty.getByDirection(direction).valueOrNull();
+                        func = (callable instanceof PyFunction) ? (PyFunction)callable : null;
+                    }
+                }
 
-        return func;
-      });
+                return func;
+            });
 
-      //noinspection SimplifiableIfStatement
-      if (overridingMethod != null) {
-        return consumer.process(overridingMethod);
-      }
-      return true;
-    });
-  }
+            //noinspection SimplifiableIfStatement
+            if (overridingMethod != null) {
+                return consumer.process(overridingMethod);
+            }
+            return true;
+        });
+    }
 }
