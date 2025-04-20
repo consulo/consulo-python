@@ -15,28 +15,24 @@
  */
 package com.jetbrains.python.impl.sdk;
 
-import consulo.application.util.SystemInfo;
-import consulo.container.boot.ContainerPathManager;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.content.OrderRootType;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.logging.Logger;
+import consulo.platform.Platform;
 import consulo.process.ExecutionException;
 import consulo.process.ProcessHandler;
 import consulo.process.ProcessHandlerBuilder;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.CapturingProcessAdapter;
 import consulo.process.util.ProcessOutput;
-import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-import org.jetbrains.annotations.NonNls;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -73,7 +69,7 @@ public class PySdkUtil {
      * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
      */
     @Nonnull
-    public static ProcessOutput getProcessOutput(String homePath, @NonNls String[] command) {
+    public static ProcessOutput getProcessOutput(String homePath, String[] command) {
         return getProcessOutput(homePath, command, -1);
     }
 
@@ -87,16 +83,16 @@ public class PySdkUtil {
      * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
      */
     @Nonnull
-    public static ProcessOutput getProcessOutput(String homePath, @NonNls String[] command, final int timeout) {
+    public static ProcessOutput getProcessOutput(String homePath, String[] command, int timeout) {
         return getProcessOutput(homePath, command, null, timeout);
     }
 
     @Nonnull
     public static ProcessOutput getProcessOutput(
         String homePath,
-        @NonNls String[] command,
-        @Nullable @NonNls Map<String, String> extraEnv,
-        final int timeout
+        String[] command,
+        @Nullable Map<String, String> extraEnv,
+        int timeout
     ) {
         return getProcessOutput(homePath, command, extraEnv, timeout, null, true);
     }
@@ -104,9 +100,9 @@ public class PySdkUtil {
     @Nonnull
     public static ProcessOutput getProcessOutput(
         String homePath,
-        @NonNls String[] command,
-        @Nullable @NonNls Map<String, String> extraEnv,
-        final int timeout,
+        String[] command,
+        @Nullable Map<String, String> extraEnv,
+        int timeout,
         @Nullable byte[] stdin,
         boolean needEOFMarker
     ) {
@@ -116,7 +112,7 @@ public class PySdkUtil {
     public static ProcessOutput getProcessOutput(
         @Nonnull GeneralCommandLine cmd,
         @Nullable String homePath,
-        @Nullable @NonNls Map<String, String> extraEnv,
+        @Nullable Map<String, String> extraEnv,
         int timeout
     ) {
         return getProcessOutput(cmd, homePath, extraEnv, timeout, null, true);
@@ -125,7 +121,7 @@ public class PySdkUtil {
     public static ProcessOutput getProcessOutput(
         @Nonnull GeneralCommandLine cmd,
         @Nullable String homePath,
-        @Nullable @NonNls Map<String, String> extraEnv,
+        @Nullable Map<String, String> extraEnv,
         int timeout,
         @Nullable byte[] stdin,
         boolean needEOFMarker
@@ -133,19 +129,18 @@ public class PySdkUtil {
         if (homePath == null || !new File(homePath).exists()) {
             return new ProcessOutput();
         }
-        final Map<String, String> systemEnv = System.getenv();
-        final Map<String, String> expandedCmdEnv = mergeEnvVariables(systemEnv, cmd.getEnvironment());
-        final Map<String, String> env = extraEnv != null ? mergeEnvVariables(expandedCmdEnv, extraEnv) : expandedCmdEnv;
+        Map<String, String> systemEnv = System.getenv();
+        Map<String, String> expandedCmdEnv = mergeEnvVariables(systemEnv, cmd.getEnvironment());
+        Map<String, String> env = extraEnv != null ? mergeEnvVariables(expandedCmdEnv, extraEnv) : expandedCmdEnv;
         PythonEnvUtil.resetHomePathChanges(homePath, env);
         try {
-
-            final GeneralCommandLine commandLine = cmd.withWorkDirectory(homePath).withEnvironment(env);
-            final ProcessHandler processHandler = ProcessHandlerBuilder.create(commandLine).build();
+            GeneralCommandLine commandLine = cmd.withWorkDirectory(homePath).withEnvironment(env);
+            ProcessHandler processHandler = ProcessHandlerBuilder.create(commandLine).build();
             if (stdin != null) {
-                final OutputStream processInput = processHandler.getProcessInput();
+                OutputStream processInput = processHandler.getProcessInput();
                 assert processInput != null;
                 processInput.write(stdin);
-                if (SystemInfo.isWindows && needEOFMarker) {
+                if (Platform.current().os().isWindows() && needEOFMarker) {
                     processInput.write(SUBSTITUTE);
                     processInput.flush();
                 }
@@ -167,7 +162,7 @@ public class PySdkUtil {
         }
     }
 
-    private static ProcessOutput getOutputForException(final Exception e) {
+    private static ProcessOutput getOutputForException(Exception e) {
         LOG.warn(e);
         return new ProcessOutput() {
             @Nonnull
@@ -190,9 +185,9 @@ public class PySdkUtil {
         @Nonnull Map<String, String> environment,
         @Nonnull Map<String, String> extraEnvironment
     ) {
-        final Map<String, String> result = new HashMap<>(environment);
+        Map<String, String> result = new HashMap<>(environment);
         for (Map.Entry<String, String> entry : extraEnvironment.entrySet()) {
-            final String name = entry.getKey();
+            String name = entry.getKey();
             if (PATH_ENV_VARIABLE.equals(name) || PythonEnvUtil.PYTHONPATH.equals(name)) {
                 PythonEnvUtil.addPathToEnv(result, name, entry.getValue());
             }
@@ -209,24 +204,25 @@ public class PySdkUtil {
     }
 
     public static String getUserSite() {
-        if (SystemInfo.isWindows) {
-            final String appdata = System.getenv("APPDATA");
+        if (Platform.current().os().isWindows()) {
+            String appdata = System.getenv("APPDATA");
             return appdata + File.separator + "Python";
         }
         else {
-            final String userHome = SystemProperties.getUserHome();
+            String userHome = SystemProperties.getUserHome();
             return userHome + File.separator + ".local";
         }
     }
 
-    public static boolean isElementInSkeletons(@Nonnull final PsiElement element) {
-        final PsiFile file = element.getContainingFile();
+    @RequiredReadAction
+    public static boolean isElementInSkeletons(@Nonnull PsiElement element) {
+        PsiFile file = element.getContainingFile();
         if (file != null) {
-            final VirtualFile virtualFile = file.getVirtualFile();
+            VirtualFile virtualFile = file.getVirtualFile();
             if (virtualFile != null) {
-                final Sdk sdk = PythonSdkType.getSdk(element);
+                Sdk sdk = PythonSdkType.getSdk(element);
                 if (sdk != null) {
-                    final VirtualFile skeletonsDir = findSkeletonsDir(sdk);
+                    VirtualFile skeletonsDir = findSkeletonsDir(sdk);
                     if (skeletonsDir != null && VirtualFileUtil.isAncestor(skeletonsDir, virtualFile, false)) {
                         return true;
                     }
@@ -237,17 +233,17 @@ public class PySdkUtil {
     }
 
     @Nullable
-    public static VirtualFile findSkeletonsDir(@Nonnull final Sdk sdk) {
+    public static VirtualFile findSkeletonsDir(@Nonnull Sdk sdk) {
         return findLibraryDir(sdk, PythonSdkType.SKELETON_DIR_NAME, BinariesOrderRootType.getInstance());
     }
 
     @Nullable
-    public static VirtualFile findAnyRemoteLibrary(@Nonnull final Sdk sdk) {
+    public static VirtualFile findAnyRemoteLibrary(@Nonnull Sdk sdk) {
         return findLibraryDir(sdk, PythonSdkType.REMOTE_SOURCES_DIR_NAME, BinariesOrderRootType.getInstance());
     }
 
     private static VirtualFile findLibraryDir(Sdk sdk, String dirName, OrderRootType rootType) {
-        final VirtualFile[] virtualFiles = sdk.getRootProvider().getFiles(rootType);
+        VirtualFile[] virtualFiles = sdk.getRootProvider().getFiles(rootType);
         for (VirtualFile virtualFile : virtualFiles) {
             if (virtualFile.isValid() && virtualFile.getPath().contains(dirName)) {
                 return virtualFile;

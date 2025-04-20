@@ -16,11 +16,11 @@
 package com.jetbrains.python.impl.sdk;
 
 import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
-import consulo.application.AllIcons;
 import consulo.application.util.UserHomeFileUtil;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkModificator;
 import consulo.content.bundle.SdkType;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.ex.awt.ListCellRendererWrapper;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.ui.image.Image;
@@ -41,7 +41,8 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
     private final Map<Sdk, SdkModificator> mySdkModifiers;
     public static final String SEPARATOR = "separator";
 
-    final Pattern PYTHON_PATTERN = Pattern.compile("(\\d\\.?\\d\\.?\\d?)[ ]*\\(([^\\(\\)]*)\\)|(\\d\\.?\\d\\.?\\d?)[ ]*([^\\(\\)]*)");
+    private static final Pattern PYTHON_PATTERN =
+        Pattern.compile("(\\d\\.?\\d\\.?\\d?)[ ]*\\(([^\\(\\)]*)\\)|(\\d\\.?\\d\\.?\\d?)[ ]*([^\\(\\)]*)");
     private boolean isShortVersion;
 
     public PySdkListCellRenderer(boolean shortVersion) {
@@ -57,10 +58,9 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
 
     @Override
     public void customize(JList list, Object item, int index, boolean selected, boolean hasFocus) {
-        if (item instanceof Sdk) {
-            Sdk sdk = (Sdk)item;
-            final PythonSdkFlavor flavor = PythonSdkFlavor.getPlatformIndependentFlavor(sdk.getHomePath());
-            final Image baseIcon = flavor != null ? flavor.getIcon() : ((SdkType)sdk.getSdkType()).getIcon();
+        if (item instanceof Sdk sdk) {
+            PythonSdkFlavor flavor = PythonSdkFlavor.getPlatformIndependentFlavor(sdk.getHomePath());
+            Image baseIcon = flavor != null ? flavor.getIcon() : ((SdkType)sdk.getSdkType()).getIcon();
 
             String name;
             if (mySdkModifiers != null && mySdkModifiers.containsKey(sdk)) {
@@ -70,12 +70,12 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
                 name = sdk.getName();
             }
             if (name.startsWith("Remote")) {
-                final String trimmedRemote = StringUtil.trim(name.substring("Remote".length()));
+                String trimmedRemote = StringUtil.trim(name.substring("Remote".length()));
                 if (!trimmedRemote.isEmpty()) {
                     name = trimmedRemote;
                 }
             }
-            final String flavorName = flavor == null ? "Python" : flavor.getName();
+            String flavorName = flavor == null ? "Python" : flavor.getName();
             if (name.startsWith(flavorName)) {
                 name = StringUtil.trim(name.substring(flavorName.length()));
             }
@@ -84,7 +84,7 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
                 name = shortenName(name);
             }
 
-            Image icon = null;
+            Image icon;
             if (PythonSdkType.isInvalid(sdk)) {
                 setText("[invalid] " + name);
                 icon = wrapIconWithWarningDecorator(baseIcon);
@@ -105,7 +105,7 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
     }
 
     private String shortenName(@Nonnull String name) {
-        final Matcher matcher = PYTHON_PATTERN.matcher(name);
+        Matcher matcher = PYTHON_PATTERN.matcher(name);
         if (matcher.matches()) {
             String path = matcher.group(2);
             if (path != null) {
@@ -113,7 +113,7 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
             }
             else {
                 path = matcher.group(4);
-                final int index = path.lastIndexOf(File.separator);
+                int index = path.lastIndexOf(File.separator);
                 if (index > 0) {
                     path = path.substring(index);
                 }
@@ -127,6 +127,6 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
     }
 
     private static Image wrapIconWithWarningDecorator(Image icon) {
-        return ImageEffects.layered(icon, AllIcons.Actions.Cancel);
+        return ImageEffects.layered(icon, PlatformIconGroup.actionsCancel());
     }
 }

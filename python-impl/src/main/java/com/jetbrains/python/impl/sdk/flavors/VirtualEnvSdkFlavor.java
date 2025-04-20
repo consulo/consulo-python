@@ -17,18 +17,17 @@ package com.jetbrains.python.impl.sdk.flavors;
 
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.util.SystemInfo;
 import consulo.application.util.UserHomeFileUtil;
 import consulo.dataContext.DataManager;
-import consulo.language.editor.CommonDataKeys;
+import consulo.platform.Platform;
 import consulo.project.Project;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import com.jetbrains.python.impl.PythonIcons;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -65,7 +64,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
 
     @Override
     public Collection<String> suggestHomePaths() {
-        final Project project = DataManager.getInstance().getDataContext().getData(CommonDataKeys.PROJECT);
+        Project project = DataManager.getInstance().getDataContext().getData(Project.KEY);
         List<String> candidates = new ArrayList<>();
         if (project != null) {
             VirtualFile rootDir = project.getBaseDir();
@@ -74,7 +73,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
             }
         }
 
-        final VirtualFile path = getDefaultLocation();
+        VirtualFile path = getDefaultLocation();
         if (path != null) {
             candidates.addAll(findInDirectory(path));
         }
@@ -83,7 +82,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
             candidates.addAll(findInDirectory(file));
         }
 
-        final VirtualFile pyEnvLocation = getPyEnvDefaultLocations();
+        VirtualFile pyEnvLocation = getPyEnvDefaultLocations();
         if (pyEnvLocation != null) {
             candidates.addAll(findInDirectory(pyEnvLocation));
         }
@@ -92,15 +91,15 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
 
     @Nullable
     public static VirtualFile getPyEnvDefaultLocations() {
-        final String path = System.getenv().get("PYENV_ROOT");
+        String path = System.getenv().get("PYENV_ROOT");
         if (!StringUtil.isEmpty(path)) {
-            final VirtualFile pyEnvRoot =
+            VirtualFile pyEnvRoot =
                 LocalFileSystem.getInstance().findFileByPath(UserHomeFileUtil.expandUserHome(path).replace('\\', '/'));
             if (pyEnvRoot != null) {
                 return pyEnvRoot.findFileByRelativePath("versions");
             }
         }
-        final VirtualFile userHome = LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
+        VirtualFile userHome = LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
         if (userHome != null) {
             return userHome.findFileByRelativePath(".pyenv/versions");
         }
@@ -109,19 +108,19 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
 
     public static List<VirtualFile> getCondaDefaultLocations() {
         List<VirtualFile> roots = new ArrayList<>();
-        final VirtualFile userHome = LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
+        VirtualFile userHome = LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
         if (userHome != null) {
             for (String root : CONDA_DEFAULT_ROOTS) {
                 VirtualFile condaFolder = userHome.findChild(root);
                 addEnvsFolder(roots, condaFolder);
-                if (SystemInfo.isWindows) {
-                    final VirtualFile appData = userHome.findFileByRelativePath("AppData\\Local\\Continuum\\" + root);
+                if (Platform.current().os().isWindows()) {
+                    VirtualFile appData = userHome.findFileByRelativePath("AppData\\Local\\Continuum\\" + root);
                     addEnvsFolder(roots, appData);
                     condaFolder = LocalFileSystem.getInstance().findFileByPath("C:\\" + root);
                     addEnvsFolder(roots, condaFolder);
                 }
                 else {
-                    final String systemWidePath = "/opt/anaconda";
+                    String systemWidePath = "/opt/anaconda";
                     condaFolder = LocalFileSystem.getInstance().findFileByPath(systemWidePath);
                     addEnvsFolder(roots, condaFolder);
                 }
@@ -130,9 +129,9 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
         return roots;
     }
 
-    private static void addEnvsFolder(@Nonnull final List<VirtualFile> roots, @Nullable final VirtualFile condaFolder) {
+    private static void addEnvsFolder(@Nonnull List<VirtualFile> roots, @Nullable VirtualFile condaFolder) {
         if (condaFolder != null) {
-            final VirtualFile envs = condaFolder.findChild("envs");
+            VirtualFile envs = condaFolder.findChild("envs");
             if (envs != null) {
                 roots.add(envs);
             }
@@ -140,14 +139,15 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
     }
 
     public static VirtualFile getDefaultLocation() {
-        final String path = System.getenv().get("WORKON_HOME");
+        String path = System.getenv().get("WORKON_HOME");
         if (!StringUtil.isEmpty(path)) {
             return LocalFileSystem.getInstance().findFileByPath(UserHomeFileUtil.expandUserHome(path).replace('\\', '/'));
         }
 
-        final VirtualFile userHome = LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
+        VirtualFile userHome =
+            LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
         if (userHome != null) {
-            final VirtualFile predefinedFolder = userHome.findChild(".virtualenvs");
+            VirtualFile predefinedFolder = userHome.findChild(".virtualenvs");
             if (predefinedFolder == null) {
                 return userHome;
             }
@@ -163,16 +163,16 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
             VirtualFile[] suspects = rootDir.getChildren();
             for (VirtualFile child : suspects) {
                 if (child.isDirectory()) {
-                    final VirtualFile bin = child.findChild("bin");
-                    final VirtualFile scripts = child.findChild("Scripts");
+                    VirtualFile bin = child.findChild("bin");
+                    VirtualFile scripts = child.findChild("Scripts");
                     if (bin != null) {
-                        final String interpreter = findInterpreter(bin);
+                        String interpreter = findInterpreter(bin);
                         if (interpreter != null) {
                             candidates.add(interpreter);
                         }
                     }
                     if (scripts != null) {
-                        final String interpreter = findInterpreter(scripts);
+                        String interpreter = findInterpreter(scripts);
                         if (interpreter != null) {
                             candidates.add(interpreter);
                         }
@@ -187,9 +187,9 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
     private static String findInterpreter(VirtualFile dir) {
         for (VirtualFile child : dir.getChildren()) {
             if (!child.isDirectory()) {
-                final String childName = child.getName().toLowerCase();
+                String childName = child.getName().toLowerCase();
                 for (String name : NAMES) {
-                    if (SystemInfo.isWindows) {
+                    if (Platform.current().os().isWindows()) {
                         if (childName.equals(name)) {
                             return FileUtil.toSystemDependentName(child.getPath());
                         }
@@ -215,8 +215,9 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
         return PythonSdkType.getVirtualEnvRoot(file.getPath()) != null;
     }
 
+    @Nonnull
     @Override
     public Image getIcon() {
-        return PythonIcons.Python.Virtualenv;
+        return PythonImplIconGroup.pythonVirtualenv();
     }
 }

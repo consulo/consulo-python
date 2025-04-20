@@ -16,10 +16,9 @@
 
 package com.jetbrains.python.impl.sdk.skeletons;
 
-import consulo.logging.Logger;
 import com.jetbrains.python.impl.PythonHelpersLocator;
 import consulo.language.psi.util.QualifiedName;
-import org.jetbrains.annotations.NonNls;
+import consulo.logging.Logger;
 
 import java.io.*;
 import java.util.Comparator;
@@ -33,20 +32,18 @@ import java.util.regex.Pattern;
  * Parses required_gen_version file.
  * Efficiently checks file versions against it.
  * Is immutable.
- * <br/>
- * User: dcheryasov
- * Date: 2/23/11 5:32 PM
+ *
+ * @author dcheryasov
+ * @since 2011-02-23
  */
 public class SkeletonVersionChecker {
     private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.sdk.PythonSdkType.SkeletonVersionChecker");
 
-    final static Pattern ONE_LINE = Pattern.compile("^(?:(\\w+(?:\\.\\w+)*|\\(built-in\\)|\\(default\\))\\s+(\\d+\\.\\d+))?\\s*(?:#.*)?$");
+    private static final Pattern ONE_LINE =
+        Pattern.compile("^(?:(\\w+(?:\\.\\w+)*|\\(built-in\\)|\\(default\\))\\s+(\\d+\\.\\d+))?\\s*(?:#.*)?$");
 
-    @NonNls
     static final String REQUIRED_VERSION_FNAME = "required_gen_version";
-    @NonNls
     static final String DEFAULT_NAME = "(default)"; // version required if a package is not explicitly mentioned
-    @NonNls
     public static final String BUILTIN_NAME = "(built-in)"; // version required for built-ins
     private TreeMap<QualifiedName, Integer> myExplicitVersion; // versions of regularly named packages
     private Integer myDefaultVersion; // version of (default)
@@ -62,25 +59,22 @@ public class SkeletonVersionChecker {
     }
 
     private static TreeMap<QualifiedName, Integer> createTreeMap() {
-        return new TreeMap<QualifiedName, Integer>(new Comparator<QualifiedName>() {
-            @Override
-            public int compare(QualifiedName left, QualifiedName right) {
-                Iterator<String> lefts = left.getComponents().iterator();
-                Iterator<String> rights = right.getComponents().iterator();
-                while (lefts.hasNext() && rights.hasNext()) {
-                    int res = lefts.next().compareTo(rights.next());
-                    if (res != 0) {
-                        return res;
-                    }
+        return new TreeMap<>((Comparator<QualifiedName>)(left, right) -> {
+            Iterator<String> lefts = left.getComponents().iterator();
+            Iterator<String> rights = right.getComponents().iterator();
+            while (lefts.hasNext() && rights.hasNext()) {
+                int res = lefts.next().compareTo(rights.next());
+                if (res != 0) {
+                    return res;
                 }
-                if (lefts.hasNext()) {
-                    return 1;
-                }
-                if (rights.hasNext()) {
-                    return -1;
-                }
-                return 0;  // equal
             }
+            if (lefts.hasNext()) {
+                return 1;
+            }
+            if (rights.hasNext()) {
+                return -1;
+            }
+            return 0;  // equal
         });
     }
 
@@ -105,8 +99,7 @@ public class SkeletonVersionChecker {
         try {
             if (infile.canRead()) {
                 Reader input = new FileReader(infile);
-                LineNumberReader lines = new LineNumberReader(input);
-                try {
+                try (LineNumberReader lines = new LineNumberReader(input)) {
                     String line;
                     do {
                         line = lines.readLine();
@@ -116,7 +109,7 @@ public class SkeletonVersionChecker {
                                 String package_name = matcher.group(1);
                                 String ver = matcher.group(2);
                                 if (package_name != null) {
-                                    final int version = fromVersionString(ver);
+                                    int version = fromVersionString(ver);
                                     if (DEFAULT_NAME.equals(package_name)) {
                                         myDefaultVersion = version;
                                     }
@@ -139,9 +132,6 @@ public class SkeletonVersionChecker {
                         LOG.warn("Assuming default version for built-ins");
                     }
                     assert (myDefaultVersion != null) : "Default version not known somehow!";
-                }
-                finally {
-                    lines.close();
                 }
             }
         }
@@ -173,7 +163,7 @@ public class SkeletonVersionChecker {
      * @param input
      * @return an int representing the version: major number shifted 8 bit and minor number added. or 0 if version can't be parsed.
      */
-    public static int fromVersionString(final String input) {
+    public static int fromVersionString(String input) {
         int dot_pos = input.indexOf('.');
         try {
             if (dot_pos > 0) {
@@ -187,7 +177,7 @@ public class SkeletonVersionChecker {
         return 0;
     }
 
-    public static String toVersionString(final int input) {
+    public static String toVersionString(int input) {
         int major = input >> 8;
         int minor = input - (major << 8);
         return String.valueOf(major) + "." + minor;

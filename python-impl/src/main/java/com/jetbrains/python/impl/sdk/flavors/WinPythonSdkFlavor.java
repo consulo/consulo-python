@@ -38,7 +38,7 @@ public class WinPythonSdkFlavor extends CPythonSdkFlavor {
 
     @Override
     public Collection<String> suggestHomePaths() {
-        Set<String> candidates = new TreeSet<String>();
+        Set<String> candidates = new TreeSet<>();
         findInCandidatePaths(candidates, "python.exe", "jython.bat", "pypy.exe");
         return candidates;
     }
@@ -57,7 +57,7 @@ public class WinPythonSdkFlavor extends CPythonSdkFlavor {
     }
 
     public static void findInPath(Collection<String> candidates, String exeName) {
-        final String path = System.getenv("PATH");
+        String path = System.getenv("PATH");
         for (String pathEntry : StringUtil.split(path, ";")) {
             if (pathEntry.startsWith("\"") && pathEntry.endsWith("\"")) {
                 if (pathEntry.length() < 2) {
@@ -72,18 +72,18 @@ public class WinPythonSdkFlavor extends CPythonSdkFlavor {
         }
     }
 
-    private static void findSubdirInstallations(Collection<String> candidates, String rootDir, String dir_prefix, String exe_name) {
+    private static void findSubdirInstallations(Collection<String> candidates, String rootDir, String dirPrefix, String exeName) {
         VirtualFile rootVDir = LocalFileSystem.getInstance().findFileByPath(rootDir);
         if (rootVDir != null) {
-            if (rootVDir instanceof NewVirtualFile) {
-                ((NewVirtualFile)rootVDir).markDirty();
+            if (rootVDir instanceof NewVirtualFile newVirtualFile) {
+                newVirtualFile.markDirty();
             }
             rootVDir.refresh(false, false);
             for (VirtualFile dir : rootVDir.getChildren()) {
-                if (dir.isDirectory() && dir.getName().toLowerCase().startsWith(dir_prefix)) {
-                    VirtualFile python_exe = dir.findChild(exe_name);
-                    if (python_exe != null) {
-                        candidates.add(FileUtil.toSystemIndependentName(python_exe.getPath()));
+                if (dir.isDirectory() && dir.getName().toLowerCase().startsWith(dirPrefix)) {
+                    VirtualFile pythonExe = dir.findChild(exeName);
+                    if (pythonExe != null) {
+                        candidates.add(FileUtil.toSystemIndependentName(pythonExe.getPath()));
                     }
                 }
             }

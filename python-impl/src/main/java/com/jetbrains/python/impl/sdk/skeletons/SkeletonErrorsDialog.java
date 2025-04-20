@@ -16,14 +16,12 @@
 
 package com.jetbrains.python.impl.sdk.skeletons;
 
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.ex.awt.JBScrollPane;
-import com.jetbrains.python.impl.PyBundle;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Map;
 
@@ -38,18 +36,14 @@ public class SkeletonErrorsDialog extends JDialog {
     setModal(true);
     getRootPane().setDefaultButton(buttonOK);
 
-    buttonOK.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        dispose();
-      }
-    });
+    buttonOK.addActionListener(e -> dispose());
 
     // fill data
     myMessagePane.setContentType("text/html");
     myMessagePane.setBorder(new EmptyBorder(0, 0, 0, 0));
     StringBuilder sb = new StringBuilder("<html><body style='margin: 4pt;' ");
-    final Color foreground = getParent().getForeground();
-    final Color background = getParent().getBackground();
+    Color foreground = getParent().getForeground();
+    Color background = getParent().getBackground();
     if (foreground != null && background != null) {
       sb.append("text='").append(getHTMLColor(foreground)).append("' ");
       sb.append("bgcolor='").append(getHTMLColor(background)).append("'");
@@ -57,7 +51,7 @@ public class SkeletonErrorsDialog extends JDialog {
     sb.append(">");
 
     if (failed_sdks.size() > 0) {
-      sb.append("<h1>").append(PyBundle.message("sdk.error.dialog.failed.sdks")).append("</h1>");
+      sb.append("<h1>").append(PyLocalize.sdkErrorDialogFailedSdks()).append("</h1>");
       sb.append("<ul>");
       for (String sdk_name : failed_sdks) {
         sb.append("<li>").append(sdk_name).append("</li>");
@@ -66,7 +60,7 @@ public class SkeletonErrorsDialog extends JDialog {
     }
 
     if (errors.size() > 0) {
-      sb.append("<h1>").append(PyBundle.message("sdk.error.dialog.failed.modules")).append("</h1>");
+      sb.append("<h1>").append(PyLocalize.sdkErrorDialogFailedModules()).append("</h1>");
       for (String sdk_name : errors.keySet()) {
         sb.append("<b>").append(sdk_name).append("</b><br>");
         sb.append("<ul>");
@@ -75,13 +69,13 @@ public class SkeletonErrorsDialog extends JDialog {
         }
         sb.append("</ul>");
       }
-      sb.append(PyBundle.message("sdk.error.dialog.were.blacklisted"));
+      sb.append(PyLocalize.sdkErrorDialogWereBlacklisted());
     }
 
     sb.append("</body></html>");
     myMessagePane.setText(sb.toString());
 
-    setTitle(PyBundle.message("sdk.error.dialog.problems"));
+    setTitle(PyLocalize.sdkErrorDialogProblems().get());
 
     pack();
     setLocationRelativeTo(getParent());

@@ -29,11 +29,9 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileManager;
 import consulo.virtualFileSystem.pointer.VirtualFilePointerContainer;
 import consulo.virtualFileSystem.pointer.VirtualFilePointerManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.jdom.Element;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,15 +42,10 @@ import java.util.Set;
  * @author traff
  */
 public class PythonSdkAdditionalData implements SdkAdditionalData {
-    @NonNls
     private static final String PATHS_ADDED_BY_USER_ROOT = "PATHS_ADDED_BY_USER_ROOT";
-    @NonNls
     private static final String PATH_ADDED_BY_USER = "PATH_ADDED_BY_USER";
-    @NonNls
     private static final String PATHS_REMOVED_BY_USER_ROOT = "PATHS_REMOVED_BY_USER_ROOT";
-    @NonNls
     private static final String PATH_REMOVED_BY_USER = "PATH_REMOVED_BY_USER";
-    @NonNls
     private static final String ASSOCIATED_PROJECT_PATH = "ASSOCIATED_PROJECT_PATH";
 
     private final VirtualFilePointerContainer myAddedPaths;
@@ -103,7 +96,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
     }
 
     public void associateWithProject(Project project) {
-        final String path = project.getBasePath();
+        String path = project.getBasePath();
         if (path != null) {
             myAssociatedProjectPath = FileUtil.toSystemIndependentName(path);
         }
@@ -119,7 +112,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
         }
     }
 
-    public void save(@Nonnull final Element rootElement) {
+    public void save(@Nonnull Element rootElement) {
         savePaths(rootElement, myAddedPaths, PATHS_ADDED_BY_USER_ROOT, PATH_ADDED_BY_USER);
         savePaths(rootElement, myExcludedPaths, PATHS_REMOVED_BY_USER_ROOT, PATH_REMOVED_BY_USER);
 
@@ -130,7 +123,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
 
     private static void savePaths(Element rootElement, VirtualFilePointerContainer paths, String root, String element) {
         for (String addedPath : paths.getUrls()) {
-            final Element child = new Element(root);
+            Element child = new Element(root);
             child.setAttribute(element, addedPath);
             rootElement.addContent(child);
         }
@@ -143,7 +136,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
 
     @Nonnull
     public static PythonSdkAdditionalData load(Sdk sdk, @Nullable Element element) {
-        final PythonSdkAdditionalData data = new PythonSdkAdditionalData(PythonSdkFlavor.getFlavor(sdk.getHomePath()));
+        PythonSdkAdditionalData data = new PythonSdkAdditionalData(PythonSdkFlavor.getFlavor(sdk.getHomePath()));
         data.load(element);
         return data;
     }
@@ -161,8 +154,8 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
             if (StringUtil.isEmpty(path)) {
                 continue;
             }
-            final String protocol = VirtualFileManager.extractProtocol(path);
-            final String url = protocol != null ? path : VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, path);
+            String protocol = VirtualFileManager.extractProtocol(path);
+            String url = protocol != null ? path : VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, path);
             container.add(url);
         }
     }

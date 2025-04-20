@@ -35,7 +35,7 @@ public class MacPythonSdkFlavor extends CPythonSdkFlavor {
 
     @Override
     public Collection<String> suggestHomePaths() {
-        List<String> candidates = new ArrayList<String>();
+        List<String> candidates = new ArrayList<>();
         collectPythonInstallations("/Library/Frameworks/Python.framework/Versions", candidates);
         collectPythonInstallations("/System/Library/Frameworks/Python.framework/Versions", candidates);
         UnixPythonSdkFlavor.collectUnixPythons("/usr/local/bin", candidates);
@@ -45,18 +45,18 @@ public class MacPythonSdkFlavor extends CPythonSdkFlavor {
     private static void collectPythonInstallations(String pythonPath, List<String> candidates) {
         VirtualFile rootVDir = LocalFileSystem.getInstance().findFileByPath(pythonPath);
         if (rootVDir != null) {
-            if (rootVDir instanceof NewVirtualFile) {
-                ((NewVirtualFile)rootVDir).markDirty();
+            if (rootVDir instanceof NewVirtualFile newVirtualFile) {
+                newVirtualFile.markDirty();
             }
             rootVDir.refresh(false, false);
             for (VirtualFile dir : rootVDir.getChildren()) {
-                final String dir_name = dir.getName().toLowerCase();
+                String dir_name = dir.getName().toLowerCase();
                 if (dir.isDirectory()) {
                     if ("Current".equals(dir_name) || dir_name.startsWith("2") || dir_name.startsWith("3")) {
-                        final VirtualFile binDir = dir.findChild("bin");
+                        VirtualFile binDir = dir.findChild("bin");
                         if (binDir != null && binDir.isDirectory()) {
                             for (String name : POSSIBLE_BINARY_NAMES) {
-                                final VirtualFile child = binDir.findChild(name);
+                                VirtualFile child = binDir.findChild(name);
                                 if (child != null) {
                                     candidates.add(child.getPath());
                                     break;

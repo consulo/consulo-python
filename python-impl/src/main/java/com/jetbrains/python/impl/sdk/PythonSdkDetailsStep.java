@@ -20,8 +20,10 @@ import consulo.content.bundle.*;
 import consulo.disposer.Disposer;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.fileChooser.IdeaFileChooser;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import consulo.project.ProjectBundle;
+import consulo.project.localize.ProjectLocalize;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.popup.*;
@@ -29,7 +31,6 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -54,30 +55,30 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     private boolean myNewProject;
 
     public static void show(
-        final Project project,
-        final Sdk[] existingSdks,
-        @Nullable final DialogWrapper moreDialog,
+        Project project,
+        Sdk[] existingSdks,
+        @Nullable DialogWrapper moreDialog,
         JComponent ownerComponent,
-        final Point popupPoint,
-        final Consumer<Sdk> sdkAddedCallback
+        Point popupPoint,
+        Consumer<Sdk> sdkAddedCallback
     ) {
         show(project, existingSdks, moreDialog, ownerComponent, popupPoint, sdkAddedCallback, false);
 
     }
 
     public static void show(
-        final Project project,
-        final Sdk[] existingSdks,
-        @Nullable final DialogWrapper moreDialog,
+        Project project,
+        Sdk[] existingSdks,
+        @Nullable DialogWrapper moreDialog,
         JComponent ownerComponent,
-        final Point popupPoint,
-        final Consumer<Sdk> sdkAddedCallback,
+        Point popupPoint,
+        Consumer<Sdk> sdkAddedCallback,
         boolean isNewProject
     ) {
-        final PythonSdkDetailsStep sdkHomesStep =
+        PythonSdkDetailsStep sdkHomesStep =
             new PythonSdkDetailsStep(project, moreDialog, ownerComponent, existingSdks, sdkAddedCallback);
         sdkHomesStep.setNewProject(isNewProject);
-        final ListPopup popup = JBPopupFactory.getInstance().createListPopup(sdkHomesStep);
+        ListPopup popup = JBPopupFactory.getInstance().createListPopup(sdkHomesStep);
         popup.showInScreenCoordinates(ownerComponent, popupPoint);
     }
 
@@ -86,11 +87,11 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     public PythonSdkDetailsStep(
-        @Nullable final Project project,
-        @Nullable final DialogWrapper moreDialog,
-        @Nonnull final Component ownerComponent,
-        @Nonnull final Sdk[] existingSdks,
-        @Nonnull final Consumer<Sdk> sdkAddedCallback
+        @Nullable Project project,
+        @Nullable DialogWrapper moreDialog,
+        @Nonnull Component ownerComponent,
+        @Nonnull Sdk[] existingSdks,
+        @Nonnull Consumer<Sdk> sdkAddedCallback
     ) {
         super(null, getAvailableOptions(moreDialog != null));
         myProject = project;
@@ -101,12 +102,12 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     private static List<String> getAvailableOptions(boolean showMore) {
-        final List<String> options = new ArrayList<>();
+        List<String> options = new ArrayList<>();
         options.add(LOCAL);
-//  options.add(VIRTUALENV);
-//    if (PyCondaPackageService.getSystemCondaExecutable() != null) {
-//      options.add(CONDA);
-//    }
+//        options.add(VIRTUALENV);
+//        if (PyCondaPackageService.getSystemCondaExecutable() != null) {
+//            options.add(CONDA);
+//        }
 
         if (showMore) {
             options.add(MORE);
@@ -120,7 +121,8 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
         return MORE.equals(value) ? new ListSeparator() : null;
     }
 
-    private void optionSelected(final String selectedValue) {
+    @RequiredUIAccess
+    private void optionSelected(String selectedValue) {
         if (!MORE.equals(selectedValue) && myMore != null) {
             Disposer.dispose(myMore.getDisposable());
         }
@@ -137,11 +139,11 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     public static void createSdk(
-        @Nullable final Project project,
-        final Sdk[] existingSdks,
-        final Consumer<Sdk> onSdkCreatedCallBack,
-        final boolean createIfExists,
-        final SdkType... sdkTypes
+        @Nullable Project project,
+        Sdk[] existingSdks,
+        Consumer<Sdk> onSdkCreatedCallBack,
+        boolean createIfExists,
+        SdkType... sdkTypes
     ) {
         if (sdkTypes.length == 0) {
             onSdkCreatedCallBack.accept(null);
@@ -150,60 +152,68 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
 
         FileChooserDescriptor descriptor = createCompositeDescriptor(sdkTypes);
         VirtualFile suggestedDir = getSuggestedSdkRoot(sdkTypes[0]);
-        IdeaFileChooser.chooseFiles(descriptor, project, suggestedDir, new IdeaFileChooser.FileChooserConsumer() {
-            @Override
-            public void accept(List<VirtualFile> selectedFiles) {
-                for (SdkType sdkType : sdkTypes) {
-                    final String path = selectedFiles.get(0).getPath();
-                    if (sdkType.isValidSdkHome(path)) {
-                        Sdk newSdk = null;
-                        if (!createIfExists) {
-                            for (Sdk sdk : existingSdks) {
-                                if (path.equals(sdk.getHomePath())) {
-                                    newSdk = sdk;
-                                    break;
+        IdeaFileChooser.chooseFiles(
+            descriptor,
+            project,
+            suggestedDir,
+            new IdeaFileChooser.FileChooserConsumer() {
+                @Override
+                @RequiredUIAccess
+                public void accept(List<VirtualFile> selectedFiles) {
+                    for (SdkType sdkType : sdkTypes) {
+                        String path = selectedFiles.get(0).getPath();
+                        if (sdkType.isValidSdkHome(path)) {
+                            Sdk newSdk = null;
+                            if (!createIfExists) {
+                                for (Sdk sdk : existingSdks) {
+                                    if (path.equals(sdk.getHomePath())) {
+                                        newSdk = sdk;
+                                        break;
+                                    }
                                 }
                             }
+                            if (newSdk == null) {
+                                newSdk = setupSdk(existingSdks, selectedFiles.get(0), sdkType, false, null, null);
+                            }
+                            onSdkCreatedCallBack.accept(newSdk);
+                            return;
                         }
-                        if (newSdk == null) {
-                            newSdk = setupSdk(existingSdks, selectedFiles.get(0), sdkType, false, null, null);
-                        }
-                        onSdkCreatedCallBack.accept(newSdk);
-                        return;
                     }
+                    onSdkCreatedCallBack.accept(null);
                 }
-                onSdkCreatedCallBack.accept(null);
-            }
 
-            @Override
-            public void cancelled() {
-                onSdkCreatedCallBack.accept(null);
+                @Override
+                public void cancelled() {
+                    onSdkCreatedCallBack.accept(null);
+                }
             }
-        });
+        );
     }
 
     @Nullable
+    @RequiredUIAccess
     public static Sdk setupSdk(
         @Nonnull Sdk[] allSdks,
         @Nonnull VirtualFile homeDir,
-        final SdkType sdkType,
-        final boolean silent,
-        @Nullable final SdkAdditionalData additionalData,
-        @Nullable final String customSdkSuggestedName
+        SdkType sdkType,
+        boolean silent,
+        @Nullable SdkAdditionalData additionalData,
+        @Nullable String customSdkSuggestedName
     ) {
-        final Sdk sdk;
+        Sdk sdk;
         try {
             sdk = createSdk(allSdks, homeDir, sdkType, additionalData, customSdkSuggestedName);
 
-            sdkType.setupSdkPaths((Sdk)sdk);
+            sdkType.setupSdkPaths(sdk);
         }
         catch (Exception e) {
             if (!silent) {
-                Messages.showErrorDialog("Error configuring SDK: " +
-                    e.getMessage() +
-                    ".\nPlease make sure that " +
-                    FileUtil.toSystemDependentName(homeDir.getPath()) +
-                    " is a valid home path for this SDK type.", "Error Configuring SDK");
+                Messages.showErrorDialog(
+                    "Error configuring SDK: " + e.getMessage() + ".\n" +
+                        "Please make sure that " + FileUtil.toSystemDependentName(homeDir.getPath()) +
+                        " is a valid home path for this SDK type.",
+                    "Error Configuring SDK"
+                );
             }
             return null;
         }
@@ -217,12 +227,12 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
         @Nullable SdkAdditionalData additionalData,
         @Nullable String customSdkSuggestedName
     ) {
-        final List<Sdk> sdksList = Arrays.asList(allSdks);
+        List<Sdk> sdksList = Arrays.asList(allSdks);
 
         String sdkPath = sdkType.sdkPath(homeDir);
 
         Sdk[] sdks = sdksList.toArray(new Sdk[sdksList.size()]);
-        final String sdkName = customSdkSuggestedName == null
+        String sdkName = customSdkSuggestedName == null
             ? SdkUtil.createUniqueSdkName(sdkType, sdkPath, sdks)
             : SdkUtil.createUniqueSdkName(customSdkSuggestedName, sdks);
 
@@ -243,10 +253,10 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
         return sdk;
     }
 
-    private static FileChooserDescriptor createCompositeDescriptor(final SdkType... sdkTypes) {
+    private static FileChooserDescriptor createCompositeDescriptor(SdkType... sdkTypes) {
         return new FileChooserDescriptor(sdkTypes[0].getHomeChooserDescriptor()) {
             @Override
-            public void validateSelectedFiles(final VirtualFile[] files) throws Exception {
+            public void validateSelectedFiles(VirtualFile[] files) throws Exception {
                 if (files.length > 0) {
                     for (SdkType type : sdkTypes) {
                         if (type.isValidSdkHome(files[0].getPath())) {
@@ -254,21 +264,23 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
                         }
                     }
                 }
-                String key =
-                    files.length > 0 && files[0].isDirectory() ? "sdk.configure.home.invalid.error" : "sdk.configure.home.file.invalid.error";
-                throw new Exception(ProjectBundle.message(key, sdkTypes[0].getPresentableName()));
+                String presentableName = sdkTypes[0].getPresentableName();
+                LocalizeValue message = files.length > 0 && files[0].isDirectory()
+                    ? ProjectLocalize.sdkConfigureHomeInvalidError(presentableName)
+                    : ProjectLocalize.sdkConfigureHomeFileInvalidError(presentableName);
+                throw new Exception(message.get());
             }
         };
     }
 
     @Nullable
     public static VirtualFile getSuggestedSdkRoot(@Nonnull SdkType sdkType) {
-        final String homePath = ContainerUtil.getFirstItem(sdkType.suggestHomePaths());
+        String homePath = ContainerUtil.getFirstItem(sdkType.suggestHomePaths());
         return homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);
     }
 
     @Nonnull
-    public static List<String> filterExistingPaths(@Nonnull SdkType sdkType, Collection<String> sdkHomes, final Sdk[] sdks) {
+    public static List<String> filterExistingPaths(@Nonnull SdkType sdkType, Collection<String> sdkHomes, Sdk[] sdks) {
         List<String> result = new ArrayList<>();
         for (String sdkHome : sdkHomes) {
             if (findByPath(sdkType, sdks, sdkHome) == null) {
@@ -281,9 +293,9 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     @Nullable
     private static Sdk findByPath(@Nonnull SdkType sdkType, @Nonnull Sdk[] sdks, @Nonnull String sdkHome) {
         for (Sdk sdk : sdks) {
-            final String path = sdk.getHomePath();
-            if (sdk.getSdkType() == sdkType && path != null &&
-                FileUtil.pathsEqual(FileUtil.toSystemIndependentName(path), FileUtil.toSystemIndependentName(sdkHome))) {
+            String path = sdk.getHomePath();
+            if (sdk.getSdkType() == sdkType && path != null
+                && FileUtil.pathsEqual(FileUtil.toSystemIndependentName(path), FileUtil.toSystemIndependentName(sdkHome))) {
                 return sdk;
             }
         }
@@ -303,7 +315,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     @Override
-    public PopupStep onChosen(final String selectedValue, boolean finalChoice) {
+    public PopupStep onChosen(String selectedValue, boolean finalChoice) {
         return doFinalStep(() -> optionSelected(selectedValue));
     }
 }

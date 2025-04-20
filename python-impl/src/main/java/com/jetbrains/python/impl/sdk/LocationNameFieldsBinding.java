@@ -1,9 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.sdk;
 
-import consulo.application.util.SystemInfo;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.platform.Platform;
 import consulo.project.Project;
 import consulo.ui.ex.awt.ComponentWithBrowseButton.BrowseFolderActionListener;
 import consulo.ui.ex.awt.TextComponentAccessor;
@@ -12,7 +12,6 @@ import consulo.ui.ex.awt.event.DocumentAdapter;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -37,8 +36,8 @@ public class LocationNameFieldsBinding {
 
     public LocationNameFieldsBinding(
         @Nullable Project project,
-        final TextFieldWithBrowseButton locationField,
-        final JTextField nameField,
+        TextFieldWithBrowseButton locationField,
+        JTextField nameField,
         String baseDir,
         String title
     ) {
@@ -108,10 +107,10 @@ public class LocationNameFieldsBinding {
     }
 
     private class NameFieldDocument extends PlainDocument {
-        NameFieldDocument(final JTextField projectNameTextField, final TextFieldWithBrowseButton locationField) {
+        NameFieldDocument(JTextField projectNameTextField, TextFieldWithBrowseButton locationField) {
             addDocumentListener(new DocumentAdapter() {
                 @Override
-                protected void textChanged(@Nonnull final DocumentEvent e) {
+                protected void textChanged(@Nonnull DocumentEvent e) {
                     if (!myModifyingLocation && !myExternalModify) {
                         myModifyingProjectName = true;
                         File f = new File(myBaseDir);
@@ -126,7 +125,7 @@ public class LocationNameFieldsBinding {
             StringBuilder sb = null;
             for (int i = 0; i < str.length(); i++) {
                 char c = str.charAt(i);
-                boolean replace = c == '\\' || c == '/' || SystemInfo.isWindows && (c == '|' || c == ':');
+                boolean replace = c == '\\' || c == '/' || Platform.current().os().isWindows() && (c == '|' || c == ':');
                 if (replace) {
                     if (sb == null) {
                         sb = new StringBuilder(str.length());

@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.sdk.flavors;
 
-import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.impl.run.PythonProcessHandler;
 import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
@@ -24,15 +23,17 @@ import com.jetbrains.python.impl.sdk.PythonSdkAdditionalData;
 import com.jetbrains.python.psi.LanguageLevel;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
-import consulo.application.util.SystemInfo;
 import consulo.component.extension.ExtensionPointName;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkAdditionalData;
 import consulo.logging.Logger;
+import consulo.platform.Platform;
+import consulo.platform.PlatformOperatingSystem;
 import consulo.process.ExecutionException;
 import consulo.process.ProcessHandler;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.ProcessOutput;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.PatternUtil;
@@ -82,13 +83,14 @@ public abstract class PythonSdkFlavor {
     public static List<PythonSdkFlavor> getApplicableFlavors() {
         List<PythonSdkFlavor> result = new ArrayList<PythonSdkFlavor>();
 
-        if (SystemInfo.isWindows) {
+        PlatformOperatingSystem os = Platform.current().os();
+        if (os.isWindows()) {
             result.add(WinPythonSdkFlavor.INSTANCE);
         }
-        else if (SystemInfo.isMac) {
+        else if (os.isMac()) {
             result.add(MacPythonSdkFlavor.INSTANCE);
         }
-        else if (SystemInfo.isUnix) {
+        else if (os.isUnix()) {
             result.add(UnixPythonSdkFlavor.INSTANCE);
         }
 
@@ -99,9 +101,9 @@ public abstract class PythonSdkFlavor {
 
     @Nullable
     public static PythonSdkFlavor getFlavor(Sdk sdk) {
-        final SdkAdditionalData data = sdk.getSdkAdditionalData();
-        if (data instanceof PythonSdkAdditionalData) {
-            PythonSdkFlavor flavor = ((PythonSdkAdditionalData)data).getFlavor();
+        SdkAdditionalData data = sdk.getSdkAdditionalData();
+        if (data instanceof PythonSdkAdditionalData pythonSdkAdditionalData) {
+            PythonSdkFlavor flavor = pythonSdkAdditionalData.getFlavor();
             if (flavor != null) {
                 return flavor;
             }
@@ -124,7 +126,7 @@ public abstract class PythonSdkFlavor {
     }
 
     @Nullable
-    public static PythonSdkFlavor getPlatformIndependentFlavor(@Nullable final String sdkPath) {
+    public static PythonSdkFlavor getPlatformIndependentFlavor(@Nullable String sdkPath) {
         if (sdkPath == null) {
             return null;
         }
@@ -140,7 +142,7 @@ public abstract class PythonSdkFlavor {
     @Nullable
     protected static String getVersionFromOutput(String sdkHome, String version_opt, String version_regexp) {
         String run_dir = new File(sdkHome).getParent();
-        final ProcessOutput process_output = PySdkUtil.getProcessOutput(run_dir, new String[]{
+        ProcessOutput process_output = PySdkUtil.getProcessOutput(run_dir, new String[]{
             sdkHome,
             version_opt
         });
@@ -159,14 +161,14 @@ public abstract class PythonSdkFlavor {
             return null;
         }
         Pattern pattern = Pattern.compile(version_regexp);
-        final String result = PatternUtil.getFirstMatch(process_output.getStderrLines(), pattern);
+        String result = PatternUtil.getFirstMatch(process_output.getStderrLines(), pattern);
         if (result != null) {
             return result;
         }
         return PatternUtil.getFirstMatch(process_output.getStdoutLines(), pattern);
     }
 
-    public static void addToEnv(final String key, String value, Map<String, String> envs) {
+    public static void addToEnv(String key, String value, Map<String, String> envs) {
         PythonEnvUtil.addPathToEnv(envs, key, value);
     }
 
@@ -227,7 +229,7 @@ public abstract class PythonSdkFlavor {
     }
 
     public static void setupEncodingEnvs(Map<String, String> envs, @Nonnull Charset charset) {
-        final String encoding = charset.name();
+        String encoding = charset.name();
         PythonEnvUtil.setPythonIOEncoding(envs, encoding);
     }
 
@@ -235,7 +237,7 @@ public abstract class PythonSdkFlavor {
     public void addPredefinedEnvironmentVariables(Map<String, String> envs) {
         Charset defaultCharset = EncodingManager.getInstance().getDefaultCharset();
         if (defaultCharset != null) {
-            final String encoding = defaultCharset.name();
+            String encoding = defaultCharset.name();
             PythonEnvUtil.setPythonIOEncoding(envs, encoding);
         }
     }
@@ -244,8 +246,8 @@ public abstract class PythonSdkFlavor {
     public abstract String getName();
 
     public LanguageLevel getLanguageLevel(Sdk sdk) {
-        final String version = sdk.getVersionString();
-        final String prefix = getName() + " ";
+        String version = sdk.getVersionString();
+        String prefix = getName() + " ";
         if (version != null && version.startsWith(prefix)) {
             return LanguageLevel.fromPythonVersion(version.substring(prefix.length()));
         }
@@ -254,7 +256,7 @@ public abstract class PythonSdkFlavor {
 
     @Nonnull
     public Image getIcon() {
-        return PythonIcons.Python.Python;
+        return PythonImplIconGroup.pythonPython();
     }
 
     public void initPythonPath(Collection<String> path, Map<String, String> env) {

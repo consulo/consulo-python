@@ -16,12 +16,11 @@
 
 package com.jetbrains.python.impl.sdk.flavors;
 
-import com.jetbrains.python.impl.PythonIcons;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 
 import java.io.File;
@@ -31,6 +30,7 @@ import java.io.File;
  */
 @ExtensionImpl
 public class MayaSdkFlavor extends PythonSdkFlavor {
+    @Override
     public boolean isValidSdkHome(String path) {
         File file = new File(path);
         return (file.isFile() && isValidSdkPath(file)) || isMayaFolder(file);
@@ -40,11 +40,13 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
         return file.isDirectory() && file.getName().equals("Maya.app");
     }
 
+    @Override
     public boolean isValidSdkPath(@Nonnull File file) {
         String name = FileUtil.getNameWithoutExtension(file).toLowerCase();
         return name.startsWith("mayapy");
     }
 
+    @Override
     public String getVersionOption() {
         return "--version";
     }
@@ -55,9 +57,10 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
         return "MayaPy";
     }
 
+    @Nonnull
     @Override
     public Image getIcon() {
-        return PythonIcons.Python.Python; //TODO: maya icon
+        return PythonImplIconGroup.pythonPython(); //TODO: maya icon
     }
 
     @Override

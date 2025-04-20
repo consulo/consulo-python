@@ -16,10 +16,10 @@
 
 package com.jetbrains.python.impl.sdk.flavors;
 
-import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.psi.LanguageLevel;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.content.bundle.Sdk;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
@@ -57,8 +57,8 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
 
     @Override
     public LanguageLevel getLanguageLevel(Sdk sdk) {
-        final String version = sdk.getVersionString();
-        final String prefix = getName() + " ";
+        String version = sdk.getVersionString();
+        String prefix = getName() + " ";
         if (version != null && version.startsWith(prefix)) {
             String pypyVersion = version.substring(prefix.length());
             return LanguageLevel.fromPythonVersion(getPythonVersion(pypyVersion));
@@ -67,13 +67,13 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
     }
 
     private static String getPythonVersion(@Nonnull String pypyVersion) {
-        final String DEFAULT = "2.4";
-        final String LATEST = "2.7";
-        final List<String> vs = StringUtil.split(pypyVersion, ".");
+        String DEFAULT = "2.4";
+        String LATEST = "2.7";
+        List<String> vs = StringUtil.split(pypyVersion, ".");
         try {
             if (vs.size() >= 2) {
-                final int major = Integer.parseInt(vs.get(0));
-                final int minor = Integer.parseInt(vs.get(1));
+                int major = Integer.parseInt(vs.get(0));
+                int minor = Integer.parseInt(vs.get(1));
                 if (major > 1) {
                     return LATEST;
                 }
@@ -92,8 +92,9 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
         return DEFAULT;
     }
 
+    @Nonnull
     @Override
     public Image getIcon() {
-        return PythonIcons.Python.Pypy;
+        return PythonImplIconGroup.pythonPypy();
     }
 }
