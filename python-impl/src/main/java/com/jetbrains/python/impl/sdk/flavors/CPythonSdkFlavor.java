@@ -16,17 +16,18 @@
 package com.jetbrains.python.impl.sdk.flavors;
 
 import jakarta.annotation.Nonnull;
+
 import java.util.regex.Pattern;
 
 /**
  * @author yole
  */
 public abstract class CPythonSdkFlavor extends PythonSdkFlavor {
-  public final static Pattern PYTHON_RE = Pattern.compile("python-?(\\d\\.\\d)?|python-?(\\d)?");
+    public final static Pattern PYTHON_RE = Pattern.compile("python-?(\\d\\.\\d)?|python-?(\\d)?");
 
-  @Nonnull
-  @Override
-  public String getName() {
-    return "Python";
-  }
+    @Nonnull
+    @Override
+    public String getName() {
+        return "Python";
+    }
 }

@@ -16,13 +16,13 @@
 
 package com.jetbrains.python.impl.sdk.flavors;
 
-import com.jetbrains.python.impl.PythonIcons;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
+
 import java.io.File;
 
 /**
@@ -30,40 +30,44 @@ import java.io.File;
  */
 @ExtensionImpl
 public class MayaSdkFlavor extends PythonSdkFlavor {
-  public boolean isValidSdkHome(String path) {
-    File file = new File(path);
-    return (file.isFile() && isValidSdkPath(file)) || isMayaFolder(file);
-  }
-
-  private static boolean isMayaFolder(File file) {
-    return file.isDirectory() && file.getName().equals("Maya.app");
-  }
-
-  public boolean isValidSdkPath(@Nonnull File file) {
-    String name = FileUtil.getNameWithoutExtension(file).toLowerCase();
-    return name.startsWith("mayapy");
-  }
-
-  public String getVersionOption() {
-    return "--version";
-  }
-
-  @Nonnull
-  @Override
-  public String getName() {
-    return "MayaPy";
-  }
-
-  @Override
-  public Image getIcon() {
-    return PythonIcons.Python.Python; //TODO: maya icon
-  }
-
-  @Override
-  public VirtualFile getSdkPath(VirtualFile path) {
-    if (isMayaFolder(new File(path.getPath()))) {
-      return path.findFileByRelativePath("Contents/bin/mayapy");
+    @Override
+    public boolean isValidSdkHome(String path) {
+        File file = new File(path);
+        return (file.isFile() && isValidSdkPath(file)) || isMayaFolder(file);
     }
-    return path;
-  }
+
+    private static boolean isMayaFolder(File file) {
+        return file.isDirectory() && file.getName().equals("Maya.app");
+    }
+
+    @Override
+    public boolean isValidSdkPath(@Nonnull File file) {
+        String name = FileUtil.getNameWithoutExtension(file).toLowerCase();
+        return name.startsWith("mayapy");
+    }
+
+    @Override
+    public String getVersionOption() {
+        return "--version";
+    }
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "MayaPy";
+    }
+
+    @Nonnull
+    @Override
+    public Image getIcon() {
+        return PythonImplIconGroup.pythonPython(); //TODO: maya icon
+    }
+
+    @Override
+    public VirtualFile getSdkPath(VirtualFile path) {
+        if (isMayaFolder(new File(path.getPath()))) {
+            return path.findFileByRelativePath("Contents/bin/mayapy");
+        }
+        return path;
+    }
 }
