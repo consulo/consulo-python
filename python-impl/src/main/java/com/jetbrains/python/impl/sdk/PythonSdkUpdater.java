@@ -49,6 +49,7 @@ import consulo.virtualFileSystem.VirtualFile;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.awt.*;
 import java.io.File;
 import java.util.List;
@@ -75,19 +76,24 @@ public class PythonSdkUpdater implements PostStartupActivity {
      */
     @Override
     public void runActivity(@Nonnull final Project project, UIAccess uiAccess) {
-        uiAccess.getScheduler()
-            .schedule(() -> ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Python Paths", false) {
-                @Override
-                public void run(@Nonnull ProgressIndicator indicator) {
-                    final Project project = (Project) getProject();
-                    if (project.isDisposed()) {
-                        return;
-                    }
-                    for (final Sdk sdk : getPythonSdks(project)) {
-                        update(sdk, null, project, null);
+        uiAccess.getScheduler().schedule(
+            () -> ProgressManager.getInstance().run(
+                new Task.Backgroundable(project, "Updating Python Paths", false) {
+                    @Override
+                    public void run(@Nonnull ProgressIndicator indicator) {
+                        final Project project = (Project)getProject();
+                        if (project.isDisposed()) {
+                            return;
+                        }
+                        for (final Sdk sdk : getPythonSdks(project)) {
+                            update(sdk, null, project, null);
+                        }
                     }
                 }
-            }), INITIAL_ACTIVITY_DELAY, TimeUnit.MILLISECONDS);
+            ),
+            INITIAL_ACTIVITY_DELAY,
+            TimeUnit.MILLISECONDS
+        );
     }
 
     /**
@@ -104,10 +110,12 @@ public class PythonSdkUpdater implements PostStartupActivity {
      *                       passed as an argument accessed from the AWT thread
      * @return false if there was an immediate problem updating the SDK. Other problems are reported as log entries and balloons.
      */
-    public static boolean update(@Nonnull Sdk sdk,
-                                 @Nullable SdkModificator sdkModificator,
-                                 @Nullable final Project project,
-                                 @Nullable final Component ownerComponent) {
+    public static boolean update(
+        @Nonnull Sdk sdk,
+        @Nullable SdkModificator sdkModificator,
+        @Nullable final Project project,
+        @Nullable final Component ownerComponent
+    ) {
         final String key = PythonSdkType.getSdkKey(sdk);
         synchronized (ourLock) {
             ourScheduledToRefresh.add(key);
@@ -136,7 +144,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
             ProgressManager.getInstance().run(new Task.Backgroundable(project, PyBundle.message("sdk.gen.updating.interpreter"), false) {
                 @Override
                 public void run(@Nonnull ProgressIndicator indicator) {
-                    final Project project1 = (Project) getProject();
+                    final Project project1 = (Project)getProject();
                     final Sdk sdkInsideTask = PythonSdkType.findSdkByKey(key);
                     if (sdkInsideTask != null) {
                         ourUnderRefresh.put(key);
@@ -144,7 +152,10 @@ public class PythonSdkUpdater implements PostStartupActivity {
                             final String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
                             try {
                                 if (PythonSdkType.isRemote(sdkInsideTask) && project1 == null && ownerComponent == null) {
-                                    LOG.error("For refreshing skeletons of remote SDK, either project or owner component must be specified");
+                                    LOG.error(
+                                        "For refreshing skeletons of remote SDK, " +
+                                            "either project or owner component must be specified"
+                                    );
                                 }
                                 final String sdkPresentableName = getSdkPresentableName(sdk);
                                 LOG.info("Performing background update of skeletons for SDK " + sdkPresentableName);
@@ -193,15 +204,19 @@ public class PythonSdkUpdater implements PostStartupActivity {
      *
      * @see {@link #update(Sdk, SdkModificator, Project, Component)}
      */
-    public static void updateOrShowError(@Nonnull Sdk sdk,
-                                         @Nullable SdkModificator sdkModificator,
-                                         @Nullable Project project,
-                                         @Nullable Component ownerComponent) {
+    public static void updateOrShowError(
+        @Nonnull Sdk sdk,
+        @Nullable SdkModificator sdkModificator,
+        @Nullable Project project,
+        @Nullable Component ownerComponent
+    ) {
         final boolean success = update(sdk, sdkModificator, project, ownerComponent);
         if (!success) {
-            Messages.showErrorDialog(project,
+            Messages.showErrorDialog(
+                project,
                 PyBundle.message("MSG.cant.setup.sdk.$0", getSdkPresentableName(sdk)),
-                PyBundle.message("MSG.title.bad.sdk"));
+                PyBundle.message("MSG.title.bad.sdk")
+            );
         }
     }
 
@@ -346,10 +361,12 @@ public class PythonSdkUpdater implements PostStartupActivity {
      * <p>
      * You may invoke it from any thread. Blocks until the commit is done in the AWT thread.
      */
-    private static void commitSdkPathsIfChanged(@Nonnull Sdk sdk,
-                                                @Nullable final SdkModificator sdkModificator,
-                                                @Nonnull final List<VirtualFile> sdkPaths,
-                                                boolean forceCommit) {
+    private static void commitSdkPathsIfChanged(
+        @Nonnull Sdk sdk,
+        @Nullable final SdkModificator sdkModificator,
+        @Nonnull final List<VirtualFile> sdkPaths,
+        boolean forceCommit
+    ) {
         final String key = PythonSdkType.getSdkKey(sdk);
         final SdkModificator modificatorToGetRoots = sdkModificator != null ? sdkModificator : sdk.getSdkModificator();
         final List<VirtualFile> currentSdkPaths = Arrays.asList(modificatorToGetRoots.getRoots(BinariesOrderRootType.getInstance()));

@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.sdk;
 
 public class InvalidSdkException extends Exception {
-  public InvalidSdkException(String s) {
-    super(s);
-  }
+    public InvalidSdkException(String s) {
+        super(s);
+    }
 
-  public InvalidSdkException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public InvalidSdkException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -25,6 +25,7 @@ import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 
 import jakarta.annotation.Nonnull;
+
 import java.io.File;
 import java.util.List;
 
@@ -33,66 +34,66 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyPySdkFlavor extends PythonSdkFlavor {
-  @Override
-  public boolean isValidSdkPath(@Nonnull File file) {
-    return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("pypy");
-  }
-
-  @Override
-  public String getVersionRegexp() {
-    return "\\[(PyPy \\S+).*\\]";
-  }
-
-  @Override
-  public String getVersionOption() {
-    return "--version";
-  }
-
-  @Nonnull
-  @Override
-  public String getName() {
-    return "PyPy";
-  }
-
-  @Override
-  public LanguageLevel getLanguageLevel(Sdk sdk) {
-    final String version = sdk.getVersionString();
-    final String prefix = getName() + " ";
-    if (version != null && version.startsWith(prefix)) {
-      String pypyVersion = version.substring(prefix.length());
-      return LanguageLevel.fromPythonVersion(getPythonVersion(pypyVersion));
+    @Override
+    public boolean isValidSdkPath(@Nonnull File file) {
+        return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("pypy");
     }
-    return LanguageLevel.getDefault();
-  }
 
-  private static String getPythonVersion(@Nonnull String pypyVersion) {
-    final String DEFAULT = "2.4";
-    final String LATEST = "2.7";
-    final List<String> vs = StringUtil.split(pypyVersion, ".");
-    try {
-      if (vs.size() >= 2) {
-        final int major = Integer.parseInt(vs.get(0));
-        final int minor = Integer.parseInt(vs.get(1));
-        if (major > 1) {
-          return LATEST;
+    @Override
+    public String getVersionRegexp() {
+        return "\\[(PyPy \\S+).*\\]";
+    }
+
+    @Override
+    public String getVersionOption() {
+        return "--version";
+    }
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "PyPy";
+    }
+
+    @Override
+    public LanguageLevel getLanguageLevel(Sdk sdk) {
+        final String version = sdk.getVersionString();
+        final String prefix = getName() + " ";
+        if (version != null && version.startsWith(prefix)) {
+            String pypyVersion = version.substring(prefix.length());
+            return LanguageLevel.fromPythonVersion(getPythonVersion(pypyVersion));
         }
-        else if (major == 1) {
-          if (minor >= 5) {
-            return "2.7";
-          }
-          else if (minor >= 4) {
-            return "2.5";
-          }
-        }
-      }
+        return LanguageLevel.getDefault();
     }
-    catch (NumberFormatException ignored) {
-    }
-    return DEFAULT;
-  }
 
-  @Override
-  public Image getIcon() {
-    return PythonIcons.Python.Pypy;
-  }
+    private static String getPythonVersion(@Nonnull String pypyVersion) {
+        final String DEFAULT = "2.4";
+        final String LATEST = "2.7";
+        final List<String> vs = StringUtil.split(pypyVersion, ".");
+        try {
+            if (vs.size() >= 2) {
+                final int major = Integer.parseInt(vs.get(0));
+                final int minor = Integer.parseInt(vs.get(1));
+                if (major > 1) {
+                    return LATEST;
+                }
+                else if (major == 1) {
+                    if (minor >= 5) {
+                        return "2.7";
+                    }
+                    else if (minor >= 4) {
+                        return "2.5";
+                    }
+                }
+            }
+        }
+        catch (NumberFormatException ignored) {
+        }
+        return DEFAULT;
+    }
+
+    @Override
+    public Image getIcon() {
+        return PythonIcons.Python.Pypy;
+    }
 }
