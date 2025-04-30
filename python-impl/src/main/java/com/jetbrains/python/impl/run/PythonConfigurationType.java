@@ -15,14 +15,15 @@
  */
 package com.jetbrains.python.impl.run;
 
-import com.jetbrains.python.impl.PythonIcons;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.Application;
 import consulo.execution.configuration.ConfigurationFactory;
 import consulo.execution.configuration.ConfigurationType;
 import consulo.execution.configuration.RunConfiguration;
 import consulo.localize.LocalizeValue;
 import consulo.module.extension.ModuleExtensionHelper;
 import consulo.project.Project;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.image.Image;
@@ -38,7 +39,8 @@ public class PythonConfigurationType implements ConfigurationType {
     private final PythonConfigurationFactory myFactory = new PythonConfigurationFactory(this);
 
     public static PythonConfigurationType getInstance() {
-        return EP_NAME.findExtensionOrFail(PythonConfigurationType.class);
+        return Application.get().getExtensionPoint(ConfigurationType.class)
+            .findExtensionOrFail(PythonConfigurationType.class);
     }
 
     private static class PythonConfigurationFactory extends ConfigurationFactory {
@@ -63,11 +65,13 @@ public class PythonConfigurationType implements ConfigurationType {
         }
     }
 
+    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.pythonConfigurationName();
     }
 
+    @Nonnull
     @Override
     public LocalizeValue getConfigurationTypeDescription() {
         return PyLocalize.pythonConfigurationDescription();
@@ -75,7 +79,7 @@ public class PythonConfigurationType implements ConfigurationType {
 
     @Override
     public Image getIcon() {
-        return PythonIcons.Python.Python;
+        return PythonImplIconGroup.pythonPython();
     }
 
     @Override
@@ -87,9 +91,8 @@ public class PythonConfigurationType implements ConfigurationType {
         return myFactory;
     }
 
-    @Override
     @Nonnull
-    @NonNls
+    @Override
     public String getId() {
         return "PythonConfigurationType";
     }
