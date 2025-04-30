@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.run;
 
 import com.jetbrains.python.impl.PythonIcons;
@@ -36,62 +35,62 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PythonConfigurationType implements ConfigurationType {
-  private final PythonConfigurationFactory myFactory = new PythonConfigurationFactory(this);
+    private final PythonConfigurationFactory myFactory = new PythonConfigurationFactory(this);
 
-  public static PythonConfigurationType getInstance() {
-    return EP_NAME.findExtensionOrFail(PythonConfigurationType.class);
-  }
-
-  private static class PythonConfigurationFactory extends ConfigurationFactory {
-    protected PythonConfigurationFactory(ConfigurationType configurationType) {
-      super(configurationType);
+    public static PythonConfigurationType getInstance() {
+        return EP_NAME.findExtensionOrFail(PythonConfigurationType.class);
     }
 
+    private static class PythonConfigurationFactory extends ConfigurationFactory {
+        protected PythonConfigurationFactory(ConfigurationType configurationType) {
+            super(configurationType);
+        }
+
+        @Nonnull
+        @Override
+        public String getId() {
+            return "Python";
+        }
+
+        @Override
+        public boolean isApplicable(@Nonnull Project project) {
+            return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
+        }
+
+        @Override
+        public RunConfiguration createTemplateConfiguration(Project project) {
+            return new PythonRunConfiguration(project, this);
+        }
+    }
+
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.pythonConfigurationName();
+    }
+
+    @Override
+    public LocalizeValue getConfigurationTypeDescription() {
+        return PyLocalize.pythonConfigurationDescription();
+    }
+
+    @Override
+    public Image getIcon() {
+        return PythonIcons.Python.Python;
+    }
+
+    @Override
+    public ConfigurationFactory[] getConfigurationFactories() {
+        return new ConfigurationFactory[]{myFactory};
+    }
+
+    public PythonConfigurationFactory getFactory() {
+        return myFactory;
+    }
+
+    @Override
     @Nonnull
-    @Override
+    @NonNls
     public String getId() {
-      return "Python";
+        return "PythonConfigurationType";
     }
-
-    @Override
-    public boolean isApplicable(@Nonnull Project project) {
-      return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
-    }
-
-    @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
-      return new PythonRunConfiguration(project, this);
-    }
-  }
-
-  @Override
-  public LocalizeValue getDisplayName() {
-    return PyLocalize.pythonConfigurationName();
-  }
-
-  @Override
-  public LocalizeValue getConfigurationTypeDescription() {
-    return PyLocalize.pythonConfigurationDescription();
-  }
-
-  @Override
-  public Image getIcon() {
-    return PythonIcons.Python.Python;
-  }
-
-  @Override
-  public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[]{myFactory};
-  }
-
-  public PythonConfigurationFactory getFactory() {
-    return myFactory;
-  }
-
-  @Override
-  @Nonnull
-  @NonNls
-  public String getId() {
-    return "PythonConfigurationType";
-  }
 }
