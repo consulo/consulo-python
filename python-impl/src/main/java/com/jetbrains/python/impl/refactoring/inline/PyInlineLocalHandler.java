@@ -28,8 +28,7 @@ import consulo.application.ApplicationManager;
 import consulo.application.util.query.Query;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.EditorColors;
-import consulo.colorScheme.EditorColorsManager;
-import consulo.colorScheme.TextAttributes;
+import consulo.colorScheme.TextAttributesKey;
 import consulo.document.util.TextRange;
 import consulo.language.Language;
 import consulo.language.codeStyle.CodeStyleManager;
@@ -49,12 +48,13 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.logging.Logger;
 import consulo.project.Project;
 import consulo.project.ui.wm.WindowManager;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +99,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
     invoke(project, editor, (PyTargetExpression)element, refExpr);
   }
 
+  @RequiredUIAccess
   private static void invoke(@Nonnull final Project project,
                              @Nonnull final Editor editor,
                              @Nonnull final PyTargetExpression local,
@@ -108,8 +109,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
     }
 
     final HighlightManager highlightManager = HighlightManager.getInstance(project);
-    final TextAttributes writeAttributes =
-      EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.WRITE_SEARCH_RESULT_ATTRIBUTES);
+    final TextAttributesKey writeAttributes = EditorColors.WRITE_SEARCH_RESULT_ATTRIBUTES;
 
     final String localName = local.getName();
     final ScopeOwner containerBlock = getContext(local);
@@ -140,8 +140,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
       return;
     }
 
-    final TextAttributes attributes =
-      EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
+    final TextAttributesKey attributes = EditorColors.SEARCH_RESULT_ATTRIBUTES;
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       highlightManager.addOccurrenceHighlights(editor, refsToInline, attributes, true, null);
       final int occurrencesCount = refsToInline.length;
