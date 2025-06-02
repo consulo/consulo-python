@@ -107,7 +107,7 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
     return null;
   }
 
-  public int compareTo(final Object o) {
+  public int compareTo(final RuntimeConfigurationProducer o) {
     return PREFERED;
   }
 }

@@ -115,7 +115,7 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
     return null;
   }
 
-  public int compareTo(final Object o) {
+  public int compareTo(final RuntimeConfigurationProducer o) {
     return PREFERED;
   }
 }
