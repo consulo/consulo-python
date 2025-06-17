@@ -15,10 +15,9 @@
  */
 package com.jetbrains.python.impl.formatter;
 
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.ide.impl.idea.formatting.FormattingModelDumper;
 import consulo.language.Language;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
@@ -26,11 +25,10 @@ import consulo.language.ast.TokenSet;
 import consulo.language.codeStyle.*;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
-
 import jakarta.annotation.Nonnull;
 
-import static com.jetbrains.python.impl.PyElementTypes.*;
 import static com.jetbrains.python.PyTokenTypes.*;
+import static com.jetbrains.python.impl.PyElementTypes.*;
 
 /**
  * @author yole
@@ -38,7 +36,6 @@ import static com.jetbrains.python.PyTokenTypes.*;
 @ExtensionImpl
 public class PythonFormattingModelBuilder implements FormattingModelBuilder, CustomFormattingModelBuilder
 {
-	private static final boolean DUMP_FORMATTING_AST = false;
 	public static final TokenSet STATEMENT_OR_DECLARATION = PythonDialectsTokenSetProvider.INSTANCE.getStatementTokens();
 
 	@Nonnull
@@ -47,18 +44,8 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilder, Cus
 	{
 		PsiElement element = formattingContext.getPsiElement();
 		CodeStyleSettings settings = formattingContext.getCodeStyleSettings();
-		if(DUMP_FORMATTING_AST)
-		{
-			ASTNode fileNode = element.getContainingFile().getNode();
-			System.out.println("AST tree for " + element.getContainingFile().getName() + ":");
-			printAST(fileNode, 0);
-		}
 		final PyBlockContext context = new PyBlockContext(settings, createSpacingBuilder(settings), formattingContext.getFormattingMode());
 		final PyBlock block = new PyBlock(null, element.getNode(), null, Indent.getNoneIndent(), null, context);
-		if(DUMP_FORMATTING_AST)
-		{
-			FormattingModelDumper.dumpFormattingModel(block, 2, System.out);
-		}
 		return FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), block, settings);
 	}
 
