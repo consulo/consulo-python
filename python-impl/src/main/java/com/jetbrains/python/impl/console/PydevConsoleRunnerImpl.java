@@ -59,7 +59,7 @@ import consulo.execution.ui.console.language.LanguageConsoleView;
 import consulo.execution.util.ConsoleTitleGen;
 import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
 import consulo.ide.impl.idea.execution.console.ConsoleHistoryController;
-import consulo.ide.impl.idea.openapi.actionSystem.ex.ActionUtil;
+import consulo.ide.impl.idea.openapi.actionSystem.ex.ActionImplUtil;
 import consulo.ide.impl.idea.openapi.editor.actions.SplitLineAction;
 import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.editor.CommonDataKeys;
@@ -99,10 +99,10 @@ import consulo.util.lang.EmptyRunnable;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.TimeoutUtil;
 import consulo.virtualFileSystem.VirtualFile;
-import org.apache.xmlrpc.XmlRpcException;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.apache.xmlrpc.XmlRpcException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -565,14 +565,14 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
         Editor editor = myConsoleView.getConsoleEditor();
         if (LookupManager.getActiveLookup(editor) != null) {
           AnAction replace = ActionManager.getInstance().getAction("EditorChooseLookupItemReplace");
-          ActionUtil.performActionDumbAware(replace, e);
+          ActionImplUtil.performActionDumbAware(replace, e);
           return;
         }
         AnAction completionAction = ActionManager.getInstance().getAction("CodeCompletion");
         if (completionAction == null) {
           return;
         }
-        ActionUtil.performActionDumbAware(completionAction, e);
+        ActionImplUtil.performActionDumbAware(completionAction, e);
       }
 
       @RequiredUIAccess
