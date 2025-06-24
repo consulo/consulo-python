@@ -97,8 +97,6 @@ public class CleanPycAction extends AnAction
 				Application.get().getInstance(AsyncFileService.class).asyncDelete(pycFiles);
 			}
 		}, "Cleaning up .py files...", false, e.getData(Project.KEY));
-		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(e.getData(Project.KEY)).getStatusBar();
-		statusBar.setInfo("Deleted " + pycFiles.size() + " bytecode file" + (pycFiles.size() > 1 ? "s" : ""));
 	}
 
 	@Override

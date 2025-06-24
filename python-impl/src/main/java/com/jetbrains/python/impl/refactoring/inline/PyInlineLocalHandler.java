@@ -47,7 +47,6 @@ import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.logging.Logger;
 import consulo.project.Project;
-import consulo.project.ui.wm.WindowManager;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.collection.ContainerUtil;
@@ -149,7 +148,6 @@ public class PyInlineLocalHandler extends InlineActionHandler {
       final RefactoringMessageDialog dialog =
         new RefactoringMessageDialog(REFACTORING_NAME, question, HELP_ID, "OptionPane.questionIcon", true, project);
       if (!dialog.showAndGet()) {
-        WindowManager.getInstance().getStatusBar(project).setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
         return;
       }
     }
@@ -183,7 +181,6 @@ public class PyInlineLocalHandler extends InlineActionHandler {
           "variable.is.accessed.for.writing.and.used.with.inlined",
           localName));
         CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HELP_ID);
-        WindowManager.getInstance().getStatusBar(project).setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
         return;
       }
     }
@@ -232,7 +229,6 @@ public class PyInlineLocalHandler extends InlineActionHandler {
 
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
           highlightManager.addOccurrenceHighlights(editor, exprs, attributes, true, null);
-          WindowManager.getInstance().getStatusBar(project).setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
         }
       }
       finally {
