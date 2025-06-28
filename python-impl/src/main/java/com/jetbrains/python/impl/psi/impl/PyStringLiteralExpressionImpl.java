@@ -93,6 +93,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     pyVisitor.visitPyStringLiteralExpression(this);
   }
 
+  @Override
   public void subtreeChanged() {
     super.subtreeChanged();
     stringValue = null;
@@ -100,6 +101,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     myDecodedFragments = null;
   }
 
+  @Override
   @Nonnull
   public List<TextRange> getStringValueTextRanges() {
     if (valueTextRanges == null) {
@@ -242,11 +244,13 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     return matcher.group(group.ordinal());
   }
 
+  @Override
   @Nonnull
   public List<ASTNode> getStringNodes() {
     return Arrays.asList(getNode().getChildren(PyTokenTypes.STRING_NODES));
   }
 
+  @Override
   public String getStringValue() {
     //ASTNode child = getNode().getFirstChildNode();
     //assert child != null;
@@ -282,6 +286,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     return true;
   }
 
+  @Override
   public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     final List<ASTNode> nodes = getStringNodes();
     if (nodes.size() > 0) {
@@ -302,6 +307,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     return PyBuiltinCache.getInstance(this).getBytesType(LanguageLevel.forElement(this));
   }
 
+  @Override
   @Nonnull
   public PsiReference[] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
@@ -330,10 +336,12 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     };
   }
 
+  @Override
   public PsiLanguageInjectionHost updateText(@Nonnull String text) {
     return ElementManipulators.handleContentChange(this, text);
   }
 
+  @Override
   @Nonnull
   public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
     return new StringLiteralTextEscaper(this);
@@ -424,6 +432,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     return getClass();
   }
 
+  @Override
   public boolean characterNeedsEscaping(char c) {
     if (c == '#') {
       return isVerboseInjection();
@@ -444,20 +453,24 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     return false;
   }
 
+  @Override
   public boolean supportsPerl5EmbeddedComments() {
     return true;
   }
 
+  @Override
   public boolean supportsPossessiveQuantifiers() {
     return false;
   }
 
+  @Override
   public boolean supportsPythonConditionalRefs() {
     return true;
   }
 
+  @Override
   public boolean supportsNamedGroupSyntax(RegExpGroup group) {
-    return group.isPythonNamedGroup();
+    return group.getType() == RegExpGroup.Type.PYTHON_NAMED_GROUP;
   }
 
   @Override
