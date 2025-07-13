@@ -16,42 +16,47 @@
 
 package com.jetbrains.python.impl.formatter;
 
+import com.jetbrains.python.PythonLanguage;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.Configurable;
+import consulo.language.Language;
 import consulo.language.codeStyle.CodeStyleSettings;
 import consulo.language.codeStyle.CustomCodeStyleSettings;
 import consulo.language.codeStyle.setting.CodeStyleSettingsProvider;
 import consulo.language.codeStyle.ui.setting.CodeStyleAbstractConfigurable;
 import consulo.language.codeStyle.ui.setting.CodeStyleAbstractPanel;
-
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author yole
  */
 @ExtensionImpl
 public class PyCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
-  @Override
-  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
-    return new PyCodeStyleSettings(settings);
-  }
+    @Override
+    public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+        return new PyCodeStyleSettings(settings);
+    }
 
-  @Nonnull
-  @Override
-  public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
-    return new CodeStyleAbstractConfigurable(settings, originalSettings, "Python") {
-      protected CodeStyleAbstractPanel createPanel(final CodeStyleSettings settings) {
-        return new PyCodeStyleMainPanel(getCurrentSettings(), settings);
-      }
+    @Nonnull
+    @Override
+    public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
+        return new CodeStyleAbstractConfigurable(settings, originalSettings, getConfigurableDisplayName().get()) {
+            @Override
+            protected CodeStyleAbstractPanel createPanel(final CodeStyleSettings settings) {
+                return new PyCodeStyleMainPanel(getCurrentSettings(), settings);
+            }
 
-      public String getHelpTopic() {
-        return "reference.settingsdialog.codestyle.python";
-      }
-    };
-  }
+            @Override
+            public String getHelpTopic() {
+                return "reference.settingsdialog.codestyle.python";
+            }
+        };
+    }
 
-  @Override
-  public String getConfigurableDisplayName() {
-    return "Python";
-  }
+    @Nullable
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
+    }
 }

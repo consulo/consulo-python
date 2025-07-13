@@ -17,6 +17,7 @@
 package com.jetbrains.python.impl.buildout.config;
 
 import consulo.language.Language;
+import consulo.localize.LocalizeValue;
 
 /**
  * @author traff
@@ -29,7 +30,7 @@ public class BuildoutCfgLanguage extends Language {
   }
 
   @Override
-  public String getDisplayName() {
-    return "Buildout config";
+  public LocalizeValue getDisplayName() {
+    return LocalizeValue.localizeTODO("Buildout config");
   }
 }
