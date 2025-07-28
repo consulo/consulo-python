@@ -24,7 +24,6 @@ import consulo.annotation.component.ServiceAPI;
 import consulo.annotation.component.ServiceImpl;
 import consulo.disposer.Disposer;
 import consulo.execution.ui.RunContentDescriptor;
-import consulo.ide.impl.wm.impl.ToolWindowContentUI;
 import consulo.project.Project;
 import consulo.project.ui.wm.ToolWindowManager;
 import consulo.project.ui.wm.ToolWindowManagerListener;
@@ -33,11 +32,11 @@ import consulo.ui.ex.content.Content;
 import consulo.ui.ex.content.ContentFactory;
 import consulo.ui.ex.toolWindow.ToolWindow;
 import consulo.util.dataholder.Key;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -115,8 +114,6 @@ public class PythonConsoleToolWindow {
     }
 
     private static void setContent(ToolWindow toolWindow, RunContentDescriptor contentDescriptor) {
-        toolWindow.getComponent().putClientProperty(ToolWindowContentUI.HIDE_ID_LABEL, "true");
-
         Content content = toolWindow.getContentManager().findContent(contentDescriptor.getDisplayName());
         if (content == null) {
             content = createContent(contentDescriptor);
