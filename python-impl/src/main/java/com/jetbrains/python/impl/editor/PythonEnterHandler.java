@@ -26,6 +26,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.application.util.LineTokenizer;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.action.EditorActionHandler;
+import consulo.codeEditor.action.SplitLineAction;
 import consulo.dataContext.DataContext;
 import consulo.dataContext.DataManager;
 import consulo.document.Document;
@@ -101,7 +102,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         }
         Boolean isSplitLine = DataManager.getInstance().loadFromDataContext(
             dataContext,
-            consulo.ide.impl.idea.openapi.editor.actions.SplitLineAction.SPLIT_LINE_KEY
+            SplitLineAction.SPLIT_LINE_KEY
         );
         if (isSplitLine != null) {
             return Result.Continue;

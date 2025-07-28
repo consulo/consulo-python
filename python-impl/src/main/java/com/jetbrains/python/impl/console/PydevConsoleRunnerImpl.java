@@ -60,7 +60,6 @@ import consulo.execution.util.ConsoleTitleGen;
 import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
 import consulo.ide.impl.idea.execution.console.ConsoleHistoryController;
 import consulo.ide.impl.idea.openapi.actionSystem.ex.ActionImplUtil;
-import consulo.ide.impl.idea.openapi.editor.actions.SplitLineAction;
 import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.editor.CommonDataKeys;
 import consulo.language.editor.LangDataKeys;
@@ -711,8 +710,8 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
 
             public ConsoleSplitLineAction() {
                 super(new EditorWriteActionHandler() {
-
-                    private final consulo.ide.impl.idea.openapi.editor.actions.SplitLineAction mySplitLineAction = new SplitLineAction();
+                    private final EditorAction mySplitLineAction =
+                        (EditorAction) ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_SPLIT);
 
                     @Override
                     public boolean isEnabled(Editor editor, DataContext dataContext) {
