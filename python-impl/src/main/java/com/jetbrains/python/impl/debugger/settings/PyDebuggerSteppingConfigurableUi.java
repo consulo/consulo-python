@@ -17,14 +17,14 @@ package com.jetbrains.python.impl.debugger.settings;
 
 import consulo.configurable.IdeaConfigurableUi;
 import consulo.disposer.Disposable;
-import consulo.ide.impl.idea.openapi.ui.NonEmptyInputValidator;
+import consulo.ui.ex.NonEmptyInputValidator;
 import consulo.ui.ex.awt.ColumnInfo;
 import consulo.ui.ex.awt.JBCheckBox;
 import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.awt.table.TableModelEditor;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -145,7 +145,7 @@ public class PyDebuggerSteppingConfigurableUi implements IdeaConfigurableUi<PyDe
                                                 null,
                                                 item.getFilter(),
                                                 new
-                                                  NonEmptyInputValidator());
+                                                    NonEmptyInputValidator());
       if (pattern != null) {
         mutator.apply(item).setFilter(pattern);
         myPySteppingFilterEditor.getModel().fireTableDataChanged();
