@@ -17,18 +17,18 @@ package com.jetbrains.python.impl;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.ParamHelper;
 import com.jetbrains.python.impl.psi.impl.PyCallExpressionHelper;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
-import consulo.ide.impl.idea.lang.parameterInfo.ParameterInfoUIContextEx;
 import consulo.language.Language;
-import consulo.language.editor.CodeInsightBundle;
 import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.localize.CodeInsightLocalize;
 import consulo.language.editor.parameterInfo.*;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -36,8 +36,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.CharArrayUtil;
 import consulo.util.lang.xml.XmlStringUtil;
-
 import jakarta.annotation.Nonnull;
+
 import java.util.*;
 
 import static com.jetbrains.python.psi.PyCallExpression.PyMarkedCallee;
@@ -47,7 +47,6 @@ import static com.jetbrains.python.psi.PyCallExpression.PyMarkedCallee;
  */
 @ExtensionImpl
 public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentList, PyCallExpression.PyArgumentsMapping> {
-  private static final String NO_PARAMS_MSG = CodeInsightBundle.message("parameter.info.no.parameters");
 
   @Override
   public boolean couldShowInLookup() {
@@ -56,11 +55,6 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
 
   @Override
   public Object[] getParametersForLookup(final LookupElement item, final ParameterInfoContext context) {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
-
-  @Override
-  public Object[] getParametersForDocumentation(final PyCallExpression.PyArgumentsMapping p, final ParameterInfoContext context) {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
@@ -109,6 +103,8 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
    * We cannot store an index since we cannot determine what is an argument until we actually map arguments to parameters.
    * This is because a tuple in arguments may be a whole argument or map to a tuple parameter.
    */
+  @Override
+  @RequiredReadAction
   public void updateParameterInfo(@Nonnull final PyArgumentList argumentList, @Nonnull final UpdateParameterInfoContext context) {
     if (context.getParameterOwner() != argumentList) {
       context.removeHint();
@@ -143,10 +139,12 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
     context.setCurrentParameter(offset);
   }
 
+  @Override
   public String getParameterCloseChars() {
     return ",()"; // lpar may mean a nested tuple param, so it's included
   }
 
+  @Override
   public boolean tracksParameterIndex() {
     return false;
   }
@@ -191,14 +189,13 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
     highlightNext(marked, parameterList, namedParameters, parameterToIndex, hintFlags, flattenedArgs.isEmpty(), lastParamIndex);
 
     String[] hints = ArrayUtil.toStringArray(hintsList);
-    if (context instanceof ParameterInfoUIContextEx) {
-      final ParameterInfoUIContextEx pic = (consulo.ide.impl.idea.lang.parameterInfo.ParameterInfoUIContextEx)context;
+    if (context instanceof ParameterInfoUIContextEx pic) {
       EnumSet[] flags = new EnumSet[hintFlags.size()];
       for (int i = 0; i < flags.length; i += 1) {
         flags[i] = hintFlags.get(i);
       }
       if (hints.length < 1) {
-        hints = new String[]{NO_PARAMS_MSG};
+        hints = new String[]{CodeInsightLocalize.parameterInfoNoParameters().get()};
         flags = new EnumSet[]{EnumSet.of(ParameterInfoUIContextEx.Flag.DISABLE)};
       }
 
@@ -213,12 +210,13 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
         }
       }
       else {
-        signatureBuilder.append(XmlStringUtil.escapeString(NO_PARAMS_MSG));
+        signatureBuilder.append(XmlStringUtil.escapeString(CodeInsightLocalize.parameterInfoNoParameters().get()));
       }
       context.setupUIComponentPresentation(signatureBuilder.toString(), -1, 0, false, false, false, context.getDefaultParameterColor());
     }
   }
 
+  @RequiredReadAction
   private static void highlightNext(@Nonnull final PyMarkedCallee marked,
                                     @Nonnull final List<PyParameter> parameterList,
                                     @Nonnull final List<PyNamedParameter> namedParameters,
@@ -227,7 +225,7 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
                                     boolean isArgsEmpty,
                                     int lastParamIndex) {
     boolean canOfferNext = true; // can we highlight next unfilled parameter
-    for (EnumSet<consulo.ide.impl.idea.lang.parameterInfo.ParameterInfoUIContextEx.Flag> set : hintFlags.values()) {
+    for (EnumSet<ParameterInfoUIContextEx.Flag> set : hintFlags.values()) {
       if (set.contains(ParameterInfoUIContextEx.Flag.HIGHLIGHT)) {
         canOfferNext = false;
       }
@@ -262,10 +260,11 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
    *
    * @return index of last parameter
    */
+  @RequiredReadAction
   private static int collectHighlights(@Nonnull final PyCallExpression.PyArgumentsMapping mapping,
                                        @Nonnull final List<PyParameter> parameterList,
                                        @Nonnull final Map<PyNamedParameter, Integer> parameterToIndex,
-                                       @Nonnull final Map<Integer, EnumSet<consulo.ide.impl.idea.lang.parameterInfo.ParameterInfoUIContextEx.Flag>> hintFlags,
+                                       @Nonnull final Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags,
                                        @Nonnull final List<PyExpression> flatArgs,
                                        int currentParamOffset) {
     final PyMarkedCallee callee = mapping.getMarkedCallee();
@@ -350,16 +349,19 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
                                                      @Nonnull final Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags) {
     final List<String> hintsList = new ArrayList<>();
     ParamHelper.walkDownParamArray(parameters.toArray(new PyParameter[parameters.size()]), new ParamHelper.ParamWalker() {
+      @Override
       public void enterTupleParameter(PyTupleParameter param, boolean first, boolean last) {
         hintFlags.put(hintsList.size(), EnumSet.noneOf(ParameterInfoUIContextEx.Flag.class));
         hintsList.add("(");
       }
 
+      @Override
       public void leaveTupleParameter(PyTupleParameter param, boolean first, boolean last) {
         hintFlags.put(hintsList.size(), EnumSet.noneOf(ParameterInfoUIContextEx.Flag.class));
         hintsList.add(last ? ")" : "), ");
       }
 
+      @Override
       public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) {
         namedParameters.add(param);
         StringBuilder stringBuilder = new StringBuilder();
@@ -369,10 +371,11 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
         }
         int hintIndex = hintsList.size();
         parameterToIndex.put(param, hintIndex);
-        hintFlags.put(hintIndex, EnumSet.noneOf(consulo.ide.impl.idea.lang.parameterInfo.ParameterInfoUIContextEx.Flag.class));
+        hintFlags.put(hintIndex, EnumSet.noneOf(ParameterInfoUIContextEx.Flag.class));
         hintsList.add(stringBuilder.toString());
       }
 
+      @Override
       public void visitSingleStarParameter(PySingleStarParameter param, boolean first, boolean last) {
         hintFlags.put(hintsList.size(), EnumSet.noneOf(ParameterInfoUIContextEx.Flag.class));
         hintsList.add(last ? "*" : "*, ");
