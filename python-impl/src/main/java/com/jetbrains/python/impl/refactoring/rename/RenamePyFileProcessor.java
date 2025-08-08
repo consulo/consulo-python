@@ -22,6 +22,7 @@ import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyImportStatementBase;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.refactoring.rename.RenamePsiFileProcessorBase;
 import consulo.language.editor.refactoring.rename.UnresolvableCollisionUsageInfo;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiPolyVariantReference;
@@ -42,7 +43,7 @@ import java.util.Map;
  * @author yole
  */
 @ExtensionImpl(id = "pyFile")
-public class RenamePyFileProcessor extends consulo.ide.impl.idea.refactoring.rename.RenamePsiFileProcessor {
+public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
   @Override
   public boolean canProcessElement(@Nonnull PsiElement element) {
     return element instanceof PyFile;
