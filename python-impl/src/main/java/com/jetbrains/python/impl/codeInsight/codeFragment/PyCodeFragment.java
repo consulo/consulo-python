@@ -15,14 +15,14 @@
  */
 package com.jetbrains.python.impl.codeInsight.codeFragment;
 
-import java.util.Set;
+import consulo.language.editor.codeFragment.CodeFragment;
 
-import consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragment;
+import java.util.Set;
 
 /**
  * @author vlan
  */
-public class PyCodeFragment extends consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragment
+public class PyCodeFragment extends CodeFragment
 {
 	private final Set<String> myGlobalWrites;
 	private final Set<String> myNonlocalWrites;

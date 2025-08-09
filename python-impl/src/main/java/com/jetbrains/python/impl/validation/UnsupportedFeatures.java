@@ -19,14 +19,14 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElement;
 import consulo.document.util.TextRange;
 import consulo.ide.impl.idea.codeInspection.ex.ProblemDescriptorImpl;
-import consulo.ide.impl.idea.codeInspection.ex.QuickFixWrapper;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.intention.IntentionAction;
+import consulo.language.editor.intention.QuickFixWrapper;
 import consulo.language.psi.PsiElement;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 

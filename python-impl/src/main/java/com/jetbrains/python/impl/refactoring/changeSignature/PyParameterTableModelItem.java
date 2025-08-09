@@ -16,34 +16,35 @@
 
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
+import consulo.language.editor.refactoring.changeSignature.ParameterTableModelItemBase;
 import consulo.language.psi.PsiCodeFragment;
 
 /**
-* User : ktisha
-*/
-class PyParameterTableModelItem extends consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase<PyParameterInfo>
-{
+ * User : ktisha
+ */
+class PyParameterTableModelItem extends ParameterTableModelItemBase<PyParameterInfo> {
 
-  public PyParameterTableModelItem(PyParameterInfo parameter,
-                                   PsiCodeFragment typeCodeFragment,
-                                   PsiCodeFragment defaultValueCodeFragment, boolean defaultInSignature) {
-    super(parameter, typeCodeFragment, defaultValueCodeFragment);
-  }
+    public PyParameterTableModelItem(PyParameterInfo parameter,
+                                     PsiCodeFragment typeCodeFragment,
+                                     PsiCodeFragment defaultValueCodeFragment,
+                                     boolean defaultInSignature) {
+        super(parameter, typeCodeFragment, defaultValueCodeFragment);
+    }
 
-  @Override
-  public boolean isEllipsisType() {
-    return parameter.getName().startsWith("*");
-  }
+    @Override
+    public boolean isEllipsisType() {
+        return parameter.getName().startsWith("*");
+    }
 
-  public void setDefaultInSignature(boolean isDefault) {
-    parameter.setDefaultInSignature(isDefault);
-  }
+    public void setDefaultInSignature(boolean isDefault) {
+        parameter.setDefaultInSignature(isDefault);
+    }
 
-  public boolean isDefaultInSignature() {
-    return parameter.getDefaultInSignature();
-  }
+    public boolean isDefaultInSignature() {
+        return parameter.getDefaultInSignature();
+    }
 
-  public String getDefaultValue() {
-    return defaultValueCodeFragment.getText();
-  }
+    public String getDefaultValue() {
+        return defaultValueCodeFragment.getText();
+    }
 }

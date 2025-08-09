@@ -16,23 +16,25 @@
 
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.impl.PyBundle;
+import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyParameterList;
-import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
 import consulo.document.Document;
 import consulo.document.event.DocumentAdapter;
 import consulo.document.event.DocumentEvent;
-import consulo.ide.impl.idea.refactoring.changeSignature.CallerChooserBase;
-import consulo.ide.impl.idea.refactoring.changeSignature.ChangeSignatureDialogBase;
-import consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase;
-import consulo.ide.impl.idea.util.ui.table.JBListTable;
 import consulo.language.editor.refactoring.BaseRefactoringProcessor;
 import consulo.language.editor.refactoring.NamesValidator;
+import consulo.language.editor.refactoring.changeSignature.CallerChooserBase;
+import consulo.language.editor.refactoring.changeSignature.ChangeSignatureDialogBase;
+import consulo.language.editor.refactoring.changeSignature.ParameterTableModelItemBase;
+import consulo.language.editor.refactoring.ui.ComboBoxVisibilityPanel;
+import consulo.language.editor.refactoring.ui.JBListTableWitEditors;
+import consulo.language.editor.refactoring.ui.VisibilityPanelBase;
 import consulo.language.editor.ui.awt.EditorTextField;
 import consulo.language.file.LanguageFileType;
 import consulo.language.psi.PsiCodeFragment;
@@ -43,12 +45,14 @@ import consulo.ui.ex.awt.JBLabel;
 import consulo.ui.ex.awt.UIUtil;
 import consulo.ui.ex.awt.ValidationInfo;
 import consulo.ui.ex.awt.VerticalFlowLayout;
+import consulo.ui.ex.awt.table.JBTableRow;
+import consulo.ui.ex.awt.table.JBTableRowEditor;
 import consulo.ui.ex.awt.tree.Tree;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
+import jakarta.annotation.Nullable;
 import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -62,7 +66,6 @@ import java.util.function.Consumer;
 /**
  * User : ktisha
  */
-
 public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParameterInfo, PyFunction, String, PyMethodDescriptor, PyParameterTableModelItem, PyParameterTableModel> {
 
   public PyChangeSignatureDialog(Project project,
@@ -235,8 +238,8 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   @Override
-  protected consulo.ide.impl.idea.refactoring.ui.VisibilityPanelBase<String> createVisibilityControl() {
-    return new consulo.ide.impl.idea.refactoring.ui.ComboBoxVisibilityPanel<String>(new String[0]);
+  protected VisibilityPanelBase<String> createVisibilityControl() {
+    return new ComboBoxVisibilityPanel<String>(new String[0]);
   }
 
   @Override
@@ -257,7 +260,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
     if (!StringUtil.isEmpty(tail)) {
       text += " //" + tail;
     }
-    return JBListTable.createEditorTextFieldPresentation(getProject(), getFileType(), " " + text, selected, focused);
+    return JBListTableWitEditors.createEditorTextFieldPresentation(getProject(), getFileType(), " " + text, selected, focused);
   }
 
   @Override
@@ -266,9 +269,9 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   @Override
-  protected consulo.ide.impl.idea.util.ui.table.JBTableRowEditor getTableEditor(final JTable t,
-                                                                                final consulo.ide.impl.idea.refactoring.changeSignature.ParameterTableModelItemBase<PyParameterInfo> item) {
-    return new consulo.ide.impl.idea.util.ui.table.JBTableRowEditor() {
+  protected JBTableRowEditor getTableEditor(final JTable t,
+                                            final ParameterTableModelItemBase<PyParameterInfo> item) {
+    return new JBTableRowEditor() {
       private EditorTextField myNameEditor;
       private EditorTextField myDefaultValueEditor;
       private JCheckBox myDefaultInSignature;
@@ -348,8 +351,8 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
       }
 
       @Override
-      public consulo.ide.impl.idea.util.ui.table.JBTableRow getValue() {
-        return new consulo.ide.impl.idea.util.ui.table.JBTableRow() {
+      public JBTableRow getValue() {
+        return new JBTableRow() {
           @Override
           public Object getValueAt(int column) {
             switch (column) {

@@ -15,32 +15,32 @@
  */
 package com.jetbrains.python.impl.refactoring.extractmethod;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
-import consulo.dataContext.DataContext;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PyBundle;
+import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragment;
+import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragmentUtil;
+import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.codeEditor.CaretModel;
-import consulo.document.Document;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.ScrollType;
 import consulo.codeEditor.SelectionModel;
+import consulo.dataContext.DataContext;
+import consulo.document.Document;
+import consulo.language.editor.codeFragment.CannotCreateCodeFragmentException;
 import consulo.language.editor.refactoring.RefactoringBundle;
+import consulo.language.editor.refactoring.action.RefactoringActionHandler;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
-import consulo.project.Project;
-import consulo.util.lang.Couple;
 import consulo.language.psi.PsiComment;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
-import consulo.language.editor.refactoring.action.RefactoringActionHandler;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragment;
-import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragmentUtil;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
+import consulo.project.Project;
+import consulo.util.lang.Couple;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author oleg
@@ -115,7 +115,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 			{
 				fragment = PyCodeFragmentUtil.createCodeFragment(owner, element1, element2);
 			}
-			catch(consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException e)
+			catch(CannotCreateCodeFragmentException e)
 			{
 				CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), RefactoringBundle.message("extract.method.title"), "refactoring.extractMethod");
 				return;
@@ -137,7 +137,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 			{
 				fragment = PyCodeFragmentUtil.createCodeFragment(owner, element1, element2);
 			}
-			catch(consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException e)
+			catch(CannotCreateCodeFragmentException e)
 			{
 				CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), RefactoringBundle.message("extract.method.title"), "refactoring.extractMethod");
 				return;

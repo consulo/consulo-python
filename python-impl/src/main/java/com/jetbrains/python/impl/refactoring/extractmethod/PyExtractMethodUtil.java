@@ -15,32 +15,32 @@
  */
 package com.jetbrains.python.impl.refactoring.extractmethod;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
+import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragment;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
-import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
-import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.impl.refactoring.PyReplaceExpressionUtil;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.application.ApplicationManager;
 import consulo.application.WriteAction;
 import consulo.codeEditor.Editor;
 import consulo.document.util.TextRange;
-import consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragment;
-import consulo.ide.impl.idea.refactoring.extractMethod.*;
 import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.codeFragment.CodeFragment;
 import consulo.language.editor.refactoring.NamesValidator;
 import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.language.editor.refactoring.event.RefactoringElementListenerComposite;
 import consulo.language.editor.refactoring.event.RefactoringEventData;
 import consulo.language.editor.refactoring.event.RefactoringEventListener;
+import consulo.language.editor.refactoring.extractMethod.*;
 import consulo.language.editor.refactoring.rename.RenameUtil;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.language.impl.psi.CodeEditUtil;
@@ -55,9 +55,9 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Couple;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.*;
 import java.util.function.Function;
 
