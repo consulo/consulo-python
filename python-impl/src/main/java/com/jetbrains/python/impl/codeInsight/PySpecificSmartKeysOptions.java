@@ -19,9 +19,9 @@ package com.jetbrains.python.impl.codeInsight;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.ApplicationConfigurable;
 import consulo.configurable.BeanConfigurable;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.Nls;
-
 import jakarta.annotation.Nullable;
 
 /**
@@ -49,8 +49,8 @@ public class PySpecificSmartKeysOptions extends BeanConfigurable<PyCodeInsightSe
   }
 
   @Override
-  public String getDisplayName() {
-    return "Python";
+  public LocalizeValue getDisplayName() {
+    return PyLocalize.python();
   }
 
   @Nullable

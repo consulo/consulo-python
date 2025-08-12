@@ -21,6 +21,7 @@ import consulo.configurable.Configurable;
 import consulo.configurable.NonDefaultProjectConfigurable;
 import consulo.configurable.ProjectConfigurable;
 import consulo.configurable.StandardConfigurableIds;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.project.Project;
 import jakarta.annotation.Nullable;
@@ -37,7 +38,7 @@ import jakarta.annotation.Nonnull;
 public class PyIntegratedToolsModulesConfigurable extends ModuleAwareProjectConfigurable implements NonDefaultProjectConfigurable, ProjectConfigurable {
   @Inject
   public PyIntegratedToolsModulesConfigurable(@Nonnull Project project) {
-    super(project, "Python Integrated Tools", "reference-python-integrated-tools");
+    super(project, LocalizeValue.localizeTODO("Python Integrated Tools"), "reference-python-integrated-tools");
   }
 
   @Nonnull

@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.documentation;
 import com.google.common.collect.Sets;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
+import consulo.localize.LocalizeValue;
 import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.ex.awt.AddEditRemovePanel;
 import consulo.ui.ex.awt.ColoredTableCellRenderer;
@@ -56,8 +57,8 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
   @Nonnull
   @Nls
   @Override
-  public String getDisplayName() {
-    return "Python External Documentation";
+  public LocalizeValue getDisplayName() {
+    return LocalizeValue.localizeTODO("Python External Documentation");
   }
 
   @Override

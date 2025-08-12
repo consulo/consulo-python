@@ -19,6 +19,7 @@ package com.jetbrains.python.impl.console;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
 /**
@@ -30,7 +31,9 @@ public interface PyConsoleOptionsProvider {
 
   boolean isApplicableTo(Project project);
 
-  String getName();
+  String getId();
+
+  LocalizeValue getName();
 
   String getHelpTopic();
 

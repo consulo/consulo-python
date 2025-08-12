@@ -1,1325 +1,1327 @@
-generic.words.x:
-  text: 'Generic words ###'
-GNAME.function:
-  text: function
-GNAME.class:
-  text: class
-GNAME.var:
-  text: variable
-GNAME.item:
-  text: item
 ACT.CMD.use.import:
-  text: Use an imported module
-ACT.qualify.with.module:
-  text: Qualify with an imported module
+    text: Use an imported module
 ACT.from.some.module.import:
-  text: Import from ...
-QFIX.auto.import.family:
-  text: Import
-QFIX.auto.import.import.this.name:
-  text: Import this name
-QFIX.auto.import.import.name:
-  text: Import ''{0}''
-QFIX.local.auto.import.family:
-  text: Import locally
-QFIX.local.auto.import.import.locally:
-  text: '{0} locally'
-QFIX.add.import.add.import:
-  text: Add "''{0}''"
-QFIX.add.parameter.self:
-  text: Add parameter ''{0}''
-QFIX.add.super:
-  text: Add super class call
-QFIX.add.property:
-  text: Add property for the field
-QFIX.use.property:
-  text: Use property for the field
-QFIX.make.public:
-  text: Make public
-QFIX.convert.to.new.style:
-  text: Convert to New-style class
-QFIX.change.base.class:
-  text: Change base class
-QFIX.create.property:
-  text: Create property
-QFIX.add.encoding:
-  text: Add encoding declaration
-QFIX.NAME.parameters:
-  text: Parameters of functions and methods
-QFIX.rename.parameter.to.$0:
-  text: Rename to ''{0}''
-QFIX.NAME.add.field.$0.to.class.$1:
-  text: Add field ''{0}'' to class {1}
-QFIX.added.constructor.$0.for.field.$1:
-  text: Added a __init__ to class <code>{0}</code><br/>to accommodate new field <code>{1}</code>
-QFIX.failed.to.add.field:
-  text: <br/>Failed to add a field!<br/><br/>
-QFIX.NAME.add.method.$0.to.class.$1:
-  text: Add method {0}() to class {1}
-QFIX.failed.to.add.method:
-  text: <br/>Failed to add a method!<br/><br/>
-QFIX.NAME.add.function.$0.to.module.$1:
-  text: Create function {0}() in module {1}
-QFIX.failed.to.add.function:
-  text: <br/>Failed to add a function!<br/><br/>
-QFIX.action.failed:
-  text: Action failed
-QFIX.remove.trailing.semicolon:
-  text: Remove trailing semicolon
-QFIX.dict.creation:
-  text: Replace dictionary creation
-QFIX.list.creation:
-  text: Replace list creation
-QFIX.classic.class.transform:
-  text: Inherit from object
-QFIX.add.global:
-  text: Add global statement
-QFIX.simplify.$0:
-  text: Replace boolean expression with ''{0}''
-QFIX.move.from.future.import:
-  text: Move 'from __future__ import' to a correct place
-QFIX.replace.equality:
-  text: Replace equality
-QFIX.redundant.parentheses:
-  text: Remove redundant parentheses
-QFIX.augment.assignment:
-  text: Replace assignment with augmented assignment
-QFIX.chained.comparison:
-  text: Simplify chained comparison
-QFIX.statement.effect:
-  text: Replace with function call
-QFIX.statement.effect.move.docstring:
-  text: Move docstring to the proper place
-QFIX.statement.effect.introduce.variable:
-  text: Introduce variable
-QFIX.unresolved.reference:
-  text: Replace ''{0}'' with ''{1}.{0}''
-QFIX.unresolved.reference.add.param.$0:
-  text: Create parameter ''{0}''
-QFIX.unresolved.reference.add.param:
-  text: Create parameter for reference
-QFIX.unresolved.reference.create.function.$0:
-  text: Create function ''{0}''
-QFIX.introduce.variable:
-  text: Introduce variable for statement
-QFIX.unresolved.reference.add.future:
-  text: Add 'from __future__ import with_statement''
-QFIX.remove.unnecessary.backslash:
-  text: Remove unnecessary backslash in expression
-QFIX.convert.single.quoted.docstring:
-  text: Convert docstring to the triple double-quoted string form
-QFIX.unresolved.reference.replace.$0:
-  text: Replace with {0}
-QFIX.default.argument:
-  text: Replace mutable default argument
-QFIX.remove.argument.equal.default:
-  text: Remove arguments equal to default
-QFIX.replace.function.set.with.literal:
-  text: Replace function call with set literal
-QFIX.docstring.add.$0:
-  text: Add docstring parameter ''{0}''
-QFIX.docstring.remove.$0:
-  text: Remove docstring parameter ''{0}''
-QFIX.docstring.insert.stub:
-  text: Insert docstring
-QFIX.remove.decorator:
-  text: Remove decorator
-QFIX.rename.unresolved.reference:
-  text: Rename reference
-QFIX.move.attribute:
-  text: Move attribute to __init__ method
-QFIX.NAME.make.static:
-  text: Make method static
-QFIX.NAME.make.function:
-  text: Make function from method
-QFIX.NAME.make.$0.return.$1:
-  text: Make ''{0}'' return ''{1}''
-QFIX.NAME.implement.methods:
-  text: Implement abstract methods
-QFIX.NAME.remove.assignment:
-  text: Remove assignment
-QFIX.NAME.remove.statement:
-  text: Remove statement
-QFIX.NAME.update.parameters:
-  text: Update parameters
-QFIX.NAME.remove.call:
-  text: Remove call
-QFIX.NAME.move.except.up:
-  text: Move except clause up
-QFIX.NAME.remove.dict.key:
-  text: Remove this key
-QFIX.NAME.add.specifier:
-  text: Add format specifier character
-QFIX.NAME.add.exception.base:
-  text: Add Exception base class
-QFIX.NAME.change.signature:
-  text: Change signature
-QFIX.NAME.remove.argument:
-  text: Remove argument
-QFIX.NAME.remove.parameter:
-  text: Remove parameter
-QFIX.NAME.rename.argument:
-  text: Rename argument
-QFIX.NAME.rename.element:
-  text: Rename element
-QFIX.NAME.wrap.in.exception:
-  text: Wrap with Exception call
-QFIX.NAME.make.list:
-  text: Replace tuple with list
-QFIX.NAME.remove.underscores.in.numeric:
-  text: Remove underscores in numeric literals
-INTN.Family.convert.import.unqualify:
-  text: Convert 'import module' to 'from module import'
-INTN.Family.convert.import.qualify:
-  text: Convert 'from module import' to 'import module'
-INTN.Family.toggle.import.alias:
-  text: Toggle import alias
-INTN.Family.convert.except.part:
-  text: Convert except part to supported form
-INTN.Family.convert.set.literal:
-  text: Convert set literal two supported forms
-INTN.Family.convert.builtin:
-  text: Convert builtin module import
-INTN.Family.convert.dict.comp.expression:
-  text: Convert dictionary comprehension expression
-INTN.Family.convert.string:
-  text: Convert single-quoted string to double-quoted
-INTN.convert.to.from.$0.import.$1:
-  text: Convert to ''from {0} import {1}''
-INTN.convert.to.import.$0:
-  text: Convert to ''import {0}''
-INTN.alias.for.$0.dialog.title:
-  text: 'Alias for ''''{0}'''':'
-INTN.add.alias.for.import.$0:
-  text: Add alias to ''{0}''
-INTN.remove.alias.for.import.$0:
-  text: Remove alias ''{0}''
-INTN.Family.migration.to.python3:
-  text: Migration to Python 3
-INTN.convert.except.to:
-  text: Convert 'except exceptClass, Target' to 'except exceptClass as Target'
-INTN.convert.set.literal.to:
-  text: Convert set literal to 'set' method call
-INTN.convert.builtin.import:
-  text: Convert builtin module import to supported form
-INTN.convert.dict.comp.to:
-  text: Convert dictionary comprehension to 'dict' method call
-INTN.replace.noteq.operator:
-  text: Replace not equal operator
-INTN.remove.leading.$0:
-  text: Remove leading {0}
-INTN.remove.leading.prefix:
-  text: Remove prefix
-INTN.remove.trailing.l:
-  text: Remove trailing L
-INTN.replace.list.comprehensions:
-  text: Convert list comprehensions to supported form
-INTN.replace.list.comprehensions.with.for:
-  text: Convert list comprehensions to for loop
-INTN.replace.octal.numeric.literal:
-  text: Convert octal numeric literal to supported form
-INTN.replace.raise.statement:
-  text: Convert raise statement to supported form
-INTN.replace.backquote.expression:
-  text: Replace backquote expression
-INTN.replace.method:
-  text: Replace method which is not supported in current Python version
-INTN.split.if:
-  text: Split if
-INTN.split.if.text:
-  text: Split into 2 if's
-INTN.negate.comparison:
-  text: Negate comparison
-INTN.negate.$0.to.$1:
-  text: Negate ''{0}'' to ''{1}''
-INTN.string.concatenation.to.format:
-  text: Replace string concatenation with format operator
-INTN.replace.plus.with.format.operator:
-  text: Replace + with string formatting operator
-INTN.replace.plus.with.str.format:
-  text: Replace + with str.format method call
-INTN.format.operator.to.method:
-  text: Convert format operator usage to str.format method call
-INTN.convert.to.fstring.literal:
-  text: Convert to f-string literal
-INTN.replace.with.method:
-  text: Replace with str.format method call
-INTN.flip.comparison:
-  text: Flip comparison
-INTN.flip.$0:
-  text: Flip ''{0}''
-INTN.flip.$0.to.$1:
-  text: Flip ''{0}'' to ''{1}''
-INTN.convert.string:
-  text: Convert single-quoted string to double-quoted
-INTN.join.if:
-  text: Join if's
-INTN.join.if.text:
-  text: Join two if's
-INTN.convert.dict.constructor.to.dict.literal:
-  text: Convert dict constructor to dict literal form
-INTN.convert.dict.literal.to.dict.constructor:
-  text: Convert dict literal to dict constructor
-INTN.quoted.string:
-  text: Convert between single-quoted and double-quoted strings
-INTN.quoted.string.single.to.double:
-  text: Convert single-quoted string to double-quoted string
-INTN.quoted.string.double.to.single:
-  text: Convert double-quoted string to single-quoted string
-INTN.convert.lambda.to.function:
-  text: Convert lambda to function
-INTN.convert.variadic.param:
-  text: Convert from variadic to normal parameter(s)
-INTN.triple.quoted.string:
-  text: Convert triple-quoted string to single-quoted string
-INTN.convert.collection.literal.family:
-  text: Convert collection to {0}
-INTN.convert.collection.literal.text:
-  text: Convert {0} to {1}
-INTN.convert.type.comment.to.variable.annotation.family:
-  text: Convert type comment to variable annotation
-INTN.convert.type.comment.to.variable.annotation.text:
-  text: Convert to variable annotation
-INTN.demorgan.law:
-  text: DeMorgan law
-INTN.transform.into.if.else.statement:
-  text: Transform conditional expression into if/else statement
-INTN.doc.string.stub:
-  text: Insert documentation string stub
-INTN.specify.type:
-  text: Specify type for reference in docstring
-INTN.specify.return.type:
-  text: Specify return type in docstring
-INTN.add.parameters.to.docstring:
-  text: Add parameters to docstring
-INTN.specify.type.in.annotation:
-  text: Specify type for reference using annotation
-INTN.specify.return.type.in.annotation:
-  text: Specify return type using annotation
-INTN.annotate.types:
-  text: Annotate types
-INTN.insert.assertion:
-  text: Insert type assertion
-INTN.yield.from:
-  text: Transform explicit iteration with 'yield' into 'yield from' expression
-INTN.convert.static.method.to.function:
-  text: Convert static method to function
-INTN.convert.method.to.property:
-  text: Convert method to property
-CONFLICT.name.$0.obscured:
-  text: Name ''{0}'' obscured by local definitions
-CONFLICT.name.$0.obscured.cannot.convert:
-  text: Name ''{0}'' obscured. Cannot convert.
-CONFLICT.occurrence.sing:
-  text: occurrence
-CONFLICT.occurrence.pl:
-  text: occurrences
-surround.with.whileelse.template:
-  text: while / else
-surround.with.return.template:
-  text: return
-surround.with.try.except.template:
-  text: try / except
-unwrap.if:
-  text: Unwrap if...
-unwrap.while:
-  text: Unwrap while...
-unwrap.for:
-  text: Unwrap for...
-unwrap.with:
-  text: Unwrap with...
-unwrap.try:
-  text: Unwrap try...
-unwrap.else:
-  text: Unwrap else...
-unwrap.elif:
-  text: Unwrap elif...
-remove.else:
-  text: Remove else...
-remove.elif:
-  text: Remove elif...
-INSP.GROUP.python:
-  text: Python
-INSP.GROUP.mako:
-  text: Mako
-INSP.NAME.incorrect.call.arguments:
-  text: Incorrect call arguments
-INSP.cannot.appear.past.keyword.arg:
-  text: Cannot appear past keyword arguments or *arg or **kwarg
-INSP.unexpected.arg:
-  text: Unexpected argument
-INSP.parameter.$0.unfilled:
-  text: Parameter ''{0}'' unfilled
-INSP.func.$0.lacks.first.arg:
-  text: Function ''{0}'' lacks a positional argument
-INSP.expected.dict.got.$0:
-  text: Expected a dictionary, got {0}
-INSP.expected.iter.got.$0:
-  text: Expected an iterable, got {0}
-INSP.more.args.that.pos.params:
-  text: Multiple values resolve to one positional parameter
-INSP.multiple.values.resolve.to.positional.$0:
-  text: Multiple values resolve to positional parameter ''{0}''
-INSP.cannot.analyze:
-  text: This argument list cannot be analyzed
-INSP.NAME.problematic.first.parameter:
-  text: Methods having troubles with first parameter
-INSP.must.have.first.parameter:
-  text: Method must have a first parameter, usually called ''{0}''
-INSP.probably.mistyped.self:
-  text: Did not you mean 'self'?
-INSP.usually.named.self:
-  text: Usually first parameter of a method is named 'self'
-INSP.usually.named.$0:
-  text: Usually first parameter of such methods is named ''{0}''
-INSP.first.param.must.not.be.tuple:
-  text: First parameter of a non-static method must not be a tuple
-INSP.NAME.nested.decorators:
-  text: Problematic nesting of decorators
-INSP.decorator.receives.unexpected.builtin:
-  text: This decorator will not receive a callable it may expect; the built-in decorator returns a special object
-INSP.NAME.redeclaration:
-  text: Redeclared names without usage
-INSP.redeclared.name:
-  text: Redeclared ''{0}'' defined above without usage
-INSP.NAME.unresolved.refs:
-  text: Unresolved references
-INSP.module.$0.not.found:
-  text: Module ''{0}'' not found
-INSP.unresolved.ref.$0:
-  text: Unresolved reference ''{0}''
-INSP.unresolved.ref.$0.for.class.$1:
-  text: Unresolved attribute reference ''{0}'' for class ''{1}''
-INSP.cannot.find.$0.in.$1:
-  text: Cannot find reference ''{0}'' in ''{1}''
-INSP.try.except.import.error:
-  text: '''''{0}'''' in try block with ''''except ImportError'''' should also be defined in except block'
-INSP.unresolved.operator.ref:
-  text: Class ''{0}'' does not define ''{1}'', so the ''{2}'' operator cannot be used on its instances
-INSP.NAME.invalid.interpreter:
-  text: Invalid interpreter configured
-INSP.NAME.init.return:
-  text: __init__ method that returns a value
-INSP.cant.return.value.from.init:
-  text: Cannot return a value from __init__
-INSP.NAME.unreachable.code:
-  text: Unreachable code
-INSP.unreachable.code:
-  text: This code is unreachable
-INSP.NAME.first.arg.assign:
-  text: Reassignment of method's first argument
-INSP.first.arg.$0.assigned:
-  text: Method''s parameter ''{0}'' reassigned
-INSP.NAME.str.format:
-  text: Errors in string formatting operations
-INSP.format.requires.no.mapping:
-  text: Format doesn't require a mapping
-INSP.key.$0.has.no.arg:
-  text: Key ''{0}'' has no following argument
-INSP.unexpected.type.$0:
-  text: Unexpected type {0}
-INSP.too.few.keys:
-  text: Too few mapping keys
-INSP.no.format.specifier.char:
-  text: Format specifier character missing
-INSP.format.requires.mapping:
-  text: Format requires a mapping
-INSP.too.many.args.for.fmt.string:
-  text: Too many arguments for format string
-INSP.too.few.args.for.fmt.string:
-  text: Too few arguments for format string
-INSP.NAME.method.over:
-  text: Method signature does not match signature of overridden method
-INSP.signature.mismatch:
-  text: Signature of method ''{0}'' does not match signature of base method in class ''{1}''
-INSP.NAME.new.init.signature:
-  text: Incompatible signatures of __new__ and __init__
-INSP.new.incompatible.to.init:
-  text: Signature is not compatible to __init__
-INSP.init.incompatible.to.new:
-  text: Signature is not compatible to __new__
-INSP.NAME.trailing.semicolon:
-  text: Trailing semicolon in statement
-INSP.NAME.unused:
-  text: Unused local
-INSP.unused.locals.parameter.isnot.used:
-  text: Parameter ''{0}'' value is not used
-INSP.unused.locals.local.variable.isnot.used:
-  text: Local variable ''{0}'' value is not used
-INSP.unused.locals.replace.with.wildcard:
-  text: Replace with _
-INSP.unused.locals.local.function.isnot.used:
-  text: Local function ''{0}'' is not used
-INSP.unused.locals.local.class.isnot.used:
-  text: Local class ''{0}'' is not used
-INSP.NAME.unbound:
-  text: Unbound local variable
-INSP.unbound.local.variable:
-  text: Local variable ''{0}'' might be referenced before assignment
-INSP.unbound.nonlocal.variable:
-  text: Nonlocal variable ''{0}'' must be bound in an outer function scope
-INSP.unbound.name.not.defined:
-  text: Name ''{0}'' can be not defined
-INSP.unbound.function.too.large:
-  text: Function ''{0}'' is too large to analyse
-INSP.NAME.dict.creation:
-  text: Dictionary creation could be rewritten by dictionary literal
-INSP.NAME.list.creation:
-  text: List creation could be rewritten by list literal
-INSP.NAME.bad.except.clauses.order:
-  text: Bad except clauses order
-INSP.class.$0.already.caught:
-  text: Exception class ''{0}'' has already been caught
-INSP.class.$0.superclass.$1.already.caught:
-  text: '''''{0}'''', superclass of exception class ''''{1}'''', has already been caught'
-INSP.NAME.incorrect.assignment:
-  text: Tuple assignment balance is incorrect
-INSP.NAME.classic.class.usage:
-  text: Classic style class usage
-INSP.classic.class.usage.old.style.class:
-  text: Old-style class
-INSP.classic.class.usage.old.style.class.ancestors:
-  text: Old-style class, because all classes from whom it inherits are old-style
-INSP.NAME.exception.not.inherit:
-  text: Exception doesn't inherit from standard ''Exception'' class
-INSP.NAME.default.argument:
-  text: Default argument is mutable
-INSP.NAME.raising.new.style.class:
-  text: Raising a new style class
-INSP.NAME.incorrect.docstring:
-  text: Incorrect docstring
-INSP.missing.parameter.in.docstring:
-  text: Missing parameter {0} in docstring
-INSP.unexpected.parameter.in.docstring:
-  text: Unexpected parameter {0} in docstring
-INSP.NAME.missing.or.empty.docstring:
-  text: Missing or empty docstring
-INSP.no.docstring:
-  text: Missing docstring
-INSP.empty.docstring:
-  text: Empty docstring
-INSP.NAME.docstring.types:
-  text: Type in docstring doesn't match inferred type
-INSP.NAME.statement.effect:
-  text: Statement has no effect
-INSP.NAME.statement.message:
-  text: Statement seems to have no effect
-INSP.NAME.check.can.be.simplified:
-  text: Boolean variable check can be simplified
-INSP.expression.can.be.simplified:
-  text: Expression can be simplified
-INSP.NAME.from.future.import:
-  text: from __future__ import must be the first executable statement
-INSP.NAME.comparison.with.none:
-  text: Comparison with None performed with equality operators
-INSP.NAME.raising.string.exception:
-  text: Raising a string exception
-INSP.NAME.wrong.super.arguments:
-  text: Wrong arguments to call super
-INSP.$0.is.not.superclass.of.$1:
-  text: '''''{0}'''' is not an instance or a subclass of ''''{1}'''''
-INSP.NAME.byte.literal:
-  text: Byte literal contains characters > 255
-INSP.NAME.non.ascii:
-  text: File contains non-ASCII character
-INSP.NAME.mandatory.encoding:
-  text: No encoding specified for file
-INSP.NAME.tuple.item.assignment:
-  text: Tuple item assignment
-INSP.tuples.never.assign.items:
-  text: Tuples don't support item assignment
-INSP.NAME.property.access:
-  text: Access to properties
-INSP.property.$0.cant.be.set:
-  text: Property ''{0}'' cannot be set
-INSP.property.$0.cant.be.read:
-  text: Property ''{0}'' cannot be read
-INSP.property.$0.cant.be.deleted:
-  text: Property ''{0}'' cannot be deleted
-INSP.NAME.property.definition:
-  text: Property definitions
-INSP.doc.param.should.be.str:
-  text: The doc parameter should be a string
-INSP.strange.arg.want.callable:
-  text: Strange argument; a callable is expected
-INSP.func.property.name.mismatch:
-  text: Names of function and decorator don't match; property accessor is not created
-INSP.getter.return.smth:
-  text: Getter should return or yield something
-INSP.setter.should.not.return:
-  text: Setter should not return a value
-INSP.deleter.should.not.return:
-  text: Deleter should not return a value
-INSP.getter.signature.advice:
-  text: Getter signature should be (self)
-INSP.setter.signature.advice:
-  text: Setter signature should be (self, value)
-INSP.deleter.signature.advice:
-  text: Deleter signature should be (self)
-INSP.accessor.first.param.is.$0:
-  text: First parameter of an accessor is usually called ''{0}''
-INSP.NAME.different.class.call:
-  text: Calling a method by class using an instance of a different class
-INSP.instance.of.$0.excpected:
-  text: An instance of {0} expected, not the class itself
-INSP.passing.$0.instead.of.$1:
-  text: Passing {0} instead of {1}. Is this intentional?
-INSP.NAME.too.broad.exception.clauses:
-  text: Too broad exception clauses
-INSP.NAME.duplicate.keys:
-  text: Dictionary contains duplicate keys
-INSP.NAME.redundant.parentheses:
-  text: Redundant parentheses
-INSP.NAME.augment.assignment:
-  text: Assignment can be replaced with augmented assignment
-INSP.NAME.chained.comparisons:
-  text: Chained comparisons can be simplified
-INSP.NAME.attribute.outside.init:
-  text: Instance attribute defined outside __init__
-INSP.attribute.$0.outside.init:
-  text: Instance attribute {0} defined outside __init__
-INSP.NAME.protected.member.access:
-  text: Access to a protected member of a class
-INSP.protected.member.$0.access:
-  text: Access to a protected member {0} of a class
-INSP.protected.member.$0.access.module:
-  text: Access to a protected member {0} of a module
-INSP.NAME.argument.equal.default:
-  text: Argument passed to function is equal to default parameter value
-INSP.argument.equals.to.default:
-  text: Argument equals to default parameter value
-INSP.NAME.abstract.class:
-  text: Class must implement all abstract methods
-INSP.NAME.abstract.class.$0.must.implement:
-  text: Class {0} must implement all abstract methods
-INSP.NAME.oldstyle.class:
-  text: Old-style class contains new-style class features
-INSP.oldstyle.class.slots:
-  text: Old-style class contains __slots__ definition
-INSP.oldstyle.class.getattribute:
-  text: Old-style class contains __getattribute__ definition
-INSP.oldstyle.class.super:
-  text: Old-style class contains call for super method
-INSP.NAME.compatibility:
-  text: Code compatibility inspection
-INSP.NAME.unnecessary.backslash:
-  text: Unnecessary backslash
-INSP.NAME.single.quoted.docstring:
-  text: Single quoted docstring
-INSP.message.single.quoted.docstring:
-  text: Triple double-quoted strings should be used for docstrings.
-INSP.NAME.missing.super.constructor:
-  text: Missed call to __init__ of super class
-INSP.missing.super.constructor.message:
-  text: Call to __init__ of super class is missed
-INSP.NAME.set.function.to.literal:
-  text: Function call can be replaced with set literal
-INSP.NAME.decorator.outside.class:
-  text: Class specific decorator on method outside class
-INSP.NAME.requirements:
-  text: Package requirements
-INSP.NAME.method.may.be.static:
-  text: Method may be static
-INSP.method.may.be.static:
-  text: Method <code>#ref</code> may be 'static'
-INSP.NAME.class.has.no.init:
-  text: Class has no __init__ method
-INSP.class.has.no.init:
-  text: Class has no __init__ method
-INSP.parent.$0.has.no.init:
-  text: Parent ''{0}'' has no __init__ method
-INSP.NAME.none.function.assignment:
-  text: Assigning function call that doesn't return anything (None)
-INSP.none.function.assignment:
-  text: Function ''{0}'' doesn''t return anything
-INSP.NAME.global.undefined:
-  text: Global variable is undefined at the module level
-INSP.NAME.global.$0.undefined:
-  text: Global variable ''{0}'' is undefined at the module level
-INSP.NAME.assignment.to.loop.or.with.parameter.display.name:
-  text: Assignment to 'for' loop or 'with' statement parameter
-INSP.NAME.assignment.to.loop.or.with.parameter.display.message:
-  text: Variable ''{0}'' already declared in ''for'' loop or ''with'' statement above
-refactoring.will.not.be.accessible:
-  text: Member, you are trying to move depends on ''{0}'' which will not be accessible after this refactoring
-refactoring.error.file.exists:
-  text: File "{0}" already exists
-refactoring.error.directory.exists:
-  text: Directory "{0}" already exists
-refactoring.introduce.name.error:
-  text: Incorrect name
-refactoring.introduce.selection.error:
-  text: Cannot perform refactoring using selected element(s)
-refactoring.introduce.variable.dialog.title:
-  text: Extract Variable
-refactoring.introduce.variable.scope.error:
-  text: Name clashes with existing variable or parameter
-refactoring.introduce.constant.dialog.title:
-  text: Extract Constant
-refactoring.introduce.constant.scope.error:
-  text: Name is already declared in scope
-refactoring.introduce.parameter.dialog.title:
-  text: Extract Parameter
-refactoring.pull.up.dialog.title:
-  text: Pull members up to
-refactoring.pull.up.dialog.move.members.to.class:
-  text: Move members to class
-refactoring.pull.up.dialog.members.to.be.moved:
-  text: Following members would be moved
-refactoring.pull.up.error.cannot.perform.refactoring.using.selected.elements:
-  text: Cannot perform pull member up using selected element(s)
-refactoring.pull.up.error.cannot.perform.refactoring.not.inside.class:
-  text: 'Cannot perform pull member up: not inside the class'
-refactoring.pull.up.error.cannot.perform.refactoring.no.base.classes:
-  text: Class {0} has no super classes or none of them could be used for refactoring
-refactoring.push.down.dialog.title:
-  text: Push members down from
-refactoring.push.down.error.cannot.perform.refactoring.using.selected.elements:
-  text: Cannot perform push member down using selected element(s)
-refactoring.push.down.error.cannot.perform.refactoring.not.inside.class:
-  text: 'Cannot perform pull member down: not inside the class'
-refactoring.inline.local.multiassignment:
-  text: Definition is in multi-assign
-refactoring.extract.method:
-  text: Extract method
-refactoring.extract.method.error.interrupted.execution.flow:
-  text: Cannot perform refactoring when execution flow is interrupted
-refactoring.extract.method.error.star.import:
-  text: Cannot perform refactoring with star import statement inside code block
-refactoring.extract.method.error.bad.selection:
-  text: Cannot perform extract method using selected element(s)
-refactoring.extract.method.error.name.clash:
-  text: Method name clashes with already existing name
-refactoring.extract.method.error.returns:
-  text: Cannot extract method with return instructions inside code fragment
-refactoring.extract.method.error.local.variable.modifications:
-  text: Cannot perform refactoring from expression with local variable modifications inside code fragment
-refactoring.extract.method.error.local.variable.modifications.and.returns:
-  text: Cannot perform refactoring from expression with local variables modifications and return instructions inside code fragment
-refactoring.extract.method.error.empty.fragment:
-  text: Cannot perform refactoring from empty code fragment
-refactoring.extract.method.error.undetermined.execution.flow:
-  text: Cannot determine execution flow for the code fragment
-refactoring.extract.method.error.yield:
-  text: Cannot perform refactoring with 'yield' statement inside code block
-refactoring.extract.method.error.class.level:
-  text: Cannot perform refactoring at class level
-refactoring.extract.super.target.path.outside.roots:
-  text: Target directory is outside the project. Must be within content roots
-refactoring.extract.super.target.class.already.exists:
-  text: Class ''{0}'' already exists in this module
-refactoring.extract.super.name.0.must.be.ident:
-  text: Name ''{0}'' is invalid. Must be a valid Python identifier
-refactoring.extract.super.class.no.members.allowed:
-  text: None of members could be extracted
-refactoring.move.choose.destination.file.title:
-  text: Choose Destination File
-refactoring.move.error.destination.file.contains.class.$0:
-  text: Destination file already contains class named ''{0}''
-refactoring.move.error.destination.file.contains.function.$0:
-  text: Destination file already contains function named ''{0}''
-refactoring.move.error.destination.file.contains.global.variable.$0:
-  text: Destination file already contains global variable named ''{0}''
-refactoring.move.error.cannot.use.module.name.$0:
-  text: Cannot use module name ''{0}'' in imports
-refactoring.move.module.members:
-  text: Move module members
-refactoring.move.module.members.dialog.title:
-  text: Move Module Members
-refactoring.move.module.members.dialog.table.title:
-  text: Bulk &move
-refactoring.move.module.members.dialog.description.class:
-  text: Move class {0}
-refactoring.move.module.members.dialog.description.function:
-  text: Move function {0}
-refactoring.move.module.members.dialog.description.variable:
-  text: Move global variable {0}
-refactoring.move.module.members.dialog.description.selection:
-  text: Move selected elements
-refactoring.move.module.members.error.cannot.place.elements.into.nonpython.file:
-  text: Cannot place elements into a non-Python file
-refactoring.move.module.members.error.selection:
-  text: Cannot perform refactoring using selected element(s)
-refactoring.make.method.top.level.dialog.title:
-  text: Make Method Top-Level
-refactoring.make.method.top.level.dialog.description:
-  text: Move method {0} to top-level
-refactoring.make.local.function.top.level.dialog.title:
-  text: Make Local Function Top-Level
-refactoring.make.local.function.top.level.dialog.description:
-  text: Move local function {0} to top-level
-refactoring.make.function.top.level.error.nonlocal.writes:
-  text: Cannot move function with nonlocal writes
-refactoring.make.function.top.level.error.self.reads:
-  text: Cannot move function that contains usages of "self" parameter from outer scope
-refactoring.make.function.top.level.error.outer.scope.reads:
-  text: Cannon move method that references names from the outer scope
-refactoring.make.function.top.level.error.private.attributes:
-  text: Cannot move method that references private instance attributes
-refactoring.make.function.top.level.error.attribute.writes:
-  text: Cannot move method that writes to instance attributes
-refactoring.make.function.top.level.error.method.calls:
-  text: Cannot move method that calls other methods of the same class
-refactoring.make.function.top.level.error.special.usage.of.self:
-  text: Cannot move method that contains special usages of "self" parameter
-refactoring.change.signature.usage.view.declarations.header:
-  text: Functions to be refactored
-refactoring.change.signature.dialog.validation.name.defined:
-  text: Name is already defined in scope
-refactoring.change.signature.dialog.validation.function.name:
-  text: Incorrect function name
-refactoring.change.signature.dialog.validation.parameter.name:
-  text: Incorrect parameter name
-refactoring.change.signature.dialog.validation.multiple.star:
-  text: Multiple * arguments are not allowed
-refactoring.change.signature.dialog.validation.multiple.double.star:
-  text: Multiple ** arguments are not allowed
-refactoring.change.signature.dialog.validation.default.missing:
-  text: Default value is missing
-refactoring.change.signature.dialog.validation.parameter.missing:
-  text: Parameter name is missing
-refactoring.change.signature.dialog.default.value.checkbox:
-  text: 'Use default value in signature:'
-refactoring.change.signature.dialog.default.value.label:
-  text: 'Default value:'
-refactoring.change.signature.dialog.name.label:
-  text: 'Name:'
-refactoring.change.signature.find.usages.of.base.class:
-  text: |-
-    Method {0} of class {1}
-    overrides method of class {2}.
-    Do you want to refactor the base method?
-refactoring.change.signature.error.wrong.caret.position.method.name:
-  text: The caret should be positioned at the name of the method to be refactored
-refactoring.change.signature.error.lambda.call:
-  text: Caret is positioned on lambda call
-refactoring.change.signature.error.tuple.parameters:
-  text: Function contains tuple parameters
-refactoring.change.signature.error.not.under.source.root:
-  text: Function is not under the source root
-refactoring.convert.module.to.package.title:
-  text: Convert Module to Package
-refactoring.convert.package.to.module.title:
-  text: Convert Module to Package
-refactoring.convert.package.to.module.error.not.empty.package:
-  text: Package "{0}" is not empty
-ANN.deleting.none:
-  text: Deleting None
-ANN.assign.to.none:
-  text: Assignment to None
-ANN.cant.assign.to.call:
-  text: Can't assign to function call
-ANN.cant.delete.call:
-  text: Can't delete function call
-ANN.cant.aug.assign.to.generator:
-  text: Augmented assign to generator expression not possible
-ANN.cant.aug.assign.to.tuple.or.generator:
-  text: Augmented assign to tuple literal or generator expression not possible
-ANN.cant.assign.to.generator:
-  text: Assign to generator expression not possible
-ANN.cant.assign.to.operator:
-  text: Can't assign to operator
-ANN.cant.assign.to.parens:
-  text: Can't assign to ()
-ANN.cant.assign.to.brackets:
-  text: Can't assign to []
-ANN.cant.aug.assign.to.list.or.comprh:
-  text: Augmented assign to list literal or comprehension not possible
-ANN.cant.assign.to.comprh:
-  text: Can't assign to list comprehension
-ANN.cant.assign.to.dict.comprh:
-  text: Can't assign to dict comprehension
-ANN.cant.assign.to.set.comprh:
-  text: Can't assign to set comprehension
-ANN.cant.aug.assign.to.comprh:
-  text: Augmented assign to list comprehension not possible
-ANN.cant.aug.assign.to.dict.comprh:
-  text: Augmented assign to dict comprehension not possible
-ANN.cant.aug.assign.to.set.comprh:
-  text: Augmented assign to set comprehension not possible
-ANN.cant.assign.to.literal:
-  text: Can't assign to literal
-ANN.cant.delete.literal:
-  text: Can't delete literal
-ANN.cant.assign.to.lambda:
-  text: Can't assign to lambda
-ANN.break.outside.loop:
-  text: '''break'' outside loop'
-ANN.continue.outside.loop:
-  text: '''continue'' outside loop'
-ANN.cant.continue.in.finally:
-  text: '''continue'' not supported inside ''finally'' clause'
-ANN.default.except.must.be.last:
-  text: default 'except:' must be last
-ANN.$0.both.global.and.param:
-  text: Name ''{0}'' used both as a parameter and as a global
+    text: Import from ...
+ACT.qualify.with.module:
+    text: Qualify with an imported module
 ANN.$0.assigned.before.global.decl:
-  text: Name ''{0}'' is assigned before global declaration
+    text: Name ''{0}'' is assigned before global declaration
+ANN.$0.both.global.and.param:
+    text: Name ''{0}'' used both as a parameter and as a global
+ANN.assign.to.none:
+    text: Assignment to None
+ANN.break.outside.loop:
+    text: '''break'' outside loop'
+ANN.cant.assign.to.brackets:
+    text: Can't assign to []
+ANN.cant.assign.to.call:
+    text: Can't assign to function call
+ANN.cant.assign.to.comprh:
+    text: Can't assign to list comprehension
+ANN.cant.assign.to.dict.comprh:
+    text: Can't assign to dict comprehension
+ANN.cant.assign.to.generator:
+    text: Assign to generator expression not possible
+ANN.cant.assign.to.lambda:
+    text: Can't assign to lambda
+ANN.cant.assign.to.literal:
+    text: Can't assign to literal
+ANN.cant.assign.to.operator:
+    text: Can't assign to operator
+ANN.cant.assign.to.parens:
+    text: Can't assign to ()
+ANN.cant.assign.to.set.comprh:
+    text: Can't assign to set comprehension
+ANN.cant.aug.assign.to.comprh:
+    text: Augmented assign to list comprehension not possible
+ANN.cant.aug.assign.to.dict.comprh:
+    text: Augmented assign to dict comprehension not possible
+ANN.cant.aug.assign.to.generator:
+    text: Augmented assign to generator expression not possible
+ANN.cant.aug.assign.to.list.or.comprh:
+    text: Augmented assign to list literal or comprehension not possible
+ANN.cant.aug.assign.to.set.comprh:
+    text: Augmented assign to set comprehension not possible
+ANN.cant.aug.assign.to.tuple.or.generator:
+    text: Augmented assign to tuple literal or generator expression not possible
+ANN.cant.continue.in.finally:
+    text: '''continue'' not supported inside ''finally'' clause'
+ANN.cant.delete.call:
+    text: Can't delete function call
+ANN.cant.delete.literal:
+    text: Can't delete literal
+ANN.continue.outside.loop:
+    text: '''continue'' outside loop'
+ANN.default.except.must.be.last:
+    text: default 'except:' must be last
+ANN.deleting.none:
+    text: Deleting None
 ANN.duplicate.param.name:
-  text: duplicate parameter name
-ANN.starred.param.after.kwparam:
-  text: '* parameter after ** parameter'
-ANN.regular.param.after.vararg:
-  text: regular parameter after * parameter
-ANN.regular.param.after.keyword:
-  text: regular parameter after ** parameter
-ANN.non.default.param.after.default:
-  text: non-default parameter follows default parameter
-ANN.named.arguments.after.star:
-  text: named arguments must follow bare *
-ANN.tuple.py3:
-  text: tuple parameter unpacking is not supported in Python 3
-ANN.star.import.at.top.only:
-  text: '''import *'' only allowed at module level'
-ANN.missing.closing.quote:
-  text: Missing closing quote [{0}]
-ANN.missing.closing.triple.quotes:
-  text: Missing closing triple quotes
-ANN.method.$0.removed.use.$1:
-  text: Method ''{0}'' has been removed, use ''{1}'' instead
+    text: duplicate parameter name
 ANN.method.$0.removed:
-  text: Method ''{0}'' removed
-PARSE.expected.expression:
-  text: expression expected
-PARSE.expected.rbracket:
-  text: ''']'' expected'
-PARSE.expected.expr.or.comma.or.bracket:
-  text: expected expression, ',' or ']'
-PARSE.expected.in:
-  text: '''in'' expected'
-PARSE.expected.for.or.bracket:
-  text: ''']'' or ''for'' expected'
-PARSE.expected.comma:
-  text: ''','' expected'
-PARSE.expected.colon:
-  text: ''':'' expected'
-PARSE.expected.rpar:
-  text: ''')'' expected'
-PARSE.expected.lpar:
-  text: '''('' expected'
-PARSE.expected.rbrace:
-  text: '''}'' expected'
-PARSE.expected.tick:
-  text: '''`'' (backtick) expected'
-PARSE.expected.name:
-  text: name expected
-PARSE.expected.colon.or.rbracket:
-  text: ''':'' or '']'' expected'
-PARSE.expected.comma.or.rpar:
-  text: ''','' or '')'' expected'
-PARSE.expected.else:
-  text: '''else'' expected'
-PARSE.expected.identifier:
-  text: Identifier expected
-PARSE.expected.comma.lpar.rpar:
-  text: ''','' or ''('' or '')'' expected'
-PARSE.expected.statement.break:
-  text: Statement break expected
-PARSE.expected.at.or.def:
-  text: '''@'' or ''def'' expected'
-PARSE.expected.formal.param.name:
-  text: formal parameter name expected
-QDOC.copied.from.$0.$1:
-  text: <i>Documentation is missing.</i> The following is copied from <code>{0}.{1}</code>.
-QDOC.copied.from.builtin:
-  text: <small>(copied from built-in description)</small>
-QDOC.copied.from.class.$0:
-  text: <i>Documentation is missing.</i> The following is copied from class <code>{0}</code>.
-QDOC.assigned.to.$0:
-  text: Assigned to <code>{0}</code>
-QDOC.wrapped.in.$0:
-  text: Wrapped in <code>{0}</code>
-QDOC.module.path.unknown:
-  text: (Module path is unknown)
-QDOC.epydoc.python2.sdk.not.found:
-  text: You need configured Python 2 SDK to render <a href='http://epydoc.sourceforge.net/'>Epydoc</a> docstrings
-QDOC.sdk.not.found:
-  text: You need configured Python SDK to render docstrings
-runcfg.tests.cant_rerun:
-  text: Can't rerun tests since test IDs can't be resolved. Try to delete run configuration, and create new one using right click.
-runcfg.doctest.display_name:
-  text: Doctests
-runcfg.doctest.description:
-  text: Python's doctests run configuration
-runcfg.nosetests.display_name:
-  text: Nosetests
-runcfg.nosetests.description:
-  text: Python's nosetests run configuration
-runcfg.pytest.display_name:
-  text: py.test
-runcfg.pytest.description:
-  text: py.test run configuration
-runcfg.pytest.target:
-  text: '&Target:'
-runcfg.pytest.parameters:
-  text: '&Options:'
-runcfg.pytest.keywords:
-  text: '&Keywords:'
-runcfg.attest.display_name:
-  text: Attests
-runcfg.attest.description:
-  text: Python's attests run configuration
-runcfg.test.display_name:
-  text: Python tests
-runcfg.test.description:
-  text: Python frameworks supported by IDE
-runcfg.unittest.display_name:
-  text: Unittests
-runcfg.unittest.description:
-  text: Python's unittest run configuration
-runcfg.unittest.no_script_name:
-  text: Please specify script name
-runcfg.unittest.no_class_name:
-  text: Please specify class name
-runcfg.unittest.no_method_name:
-  text: Please specify method name
-runcfg.unittest.no_folder_name:
-  text: Please specify folder with tests
-runcfg.unittest.incorrect.script:
-  text: Test script name should start with "test" prefix
-runcfg.unittest.dlg.tests_group_title:
-  text: 'Tests:'
-runcfg.unittest.dlg.test_script_label:
-  text: 'Script:'
-runcfg.unittest.dlg.class_label:
-  text: 'Class:'
-runcfg.unittest.dlg.method_label:
-  text: 'Method:'
-runcfg.unittest.dlg.function_label:
-  text: 'Function:'
-runcfg.unittest.dlg.folder_path:
-  text: 'Folder:'
-runcfg.unittest.dlg.test_type_title:
-  text: 'Test:'
-runcfg.unittest.dlg.all_in_folder_title:
-  text: All in folder
-runcfg.unittest.dlg.all_in_script_title:
-  text: Script
-runcfg.unittest.dlg.test_class_title:
-  text: Class
-runcfg.unittest.dlg.test_method_title:
-  text: Method
-runcfg.unittest.dlg.folder_title:
-  text: 'Tests folder:'
-runcfg.unittest.no_valid_sdk:
-  text: Please select a valid Python interpeter
-runcfg.unittest.no_module_sdk:
-  text: Please select a module with a valid Python SDK
-runcfg.unittest.no_sdk:
-  text: Please specify a Python SDK
-runcfg.unittest.dlg.select.folder.path:
-  text: 'Select folder path:'
-runcfg.unittest.dlg.select.script.path:
-  text: 'Select script path:'
-runcfg.unittest.dlg.interpreter_options_title:
-  text: 'Interpreter options:'
-runcfg.unittest.dlg.messages.working.dir:
-  text: 'Working directory:'
-runcfg.labels.script_parameters:
-  text: 'Script &parameters:'
-runcfg.labels.script:
-  text: '&Script:'
-runcfg.labels.environment_variables:
-  text: '&Environment variables:'
-runcfg.labels.interpreter:
-  text: '&Use specified interpreter:'
-runcfg.labels.interpreter_options:
-  text: 'Interpreter &options:'
-runcfg.labels.working_directory:
-  text: '&Working directory:'
-runcfg.captions.script_parameters_dialog:
-  text: Enter script parameters
-runcfg.captions.interpreter_options_dialog:
-  text: Enter interpreter options
-sdk.error.invalid.interpreter.name.$0:
-  text: Invalid Python interpeter name ''{0}''!
-sdk.select.path:
-  text: Select Python Interpreter
-runcfg.unittest.dlg.pattern:
-  text: 'Pattern:'
-runcfg.testing.no.test.framework:
-  text: No {0} runner found in selected interpreter
-python.console:
-  text: Python Console
-MSG.title.bad.sdk:
-  text: Invalid Python SDK
+    text: Method ''{0}'' removed
+ANN.method.$0.removed.use.$1:
+    text: Method ''{0}'' has been removed, use ''{1}'' instead
+ANN.missing.closing.quote:
+    text: Missing closing quote [{0}]
+ANN.missing.closing.triple.quotes:
+    text: Missing closing triple quotes
+ANN.named.arguments.after.star:
+    text: named arguments must follow bare *
+ANN.non.default.param.after.default:
+    text: non-default parameter follows default parameter
+ANN.regular.param.after.keyword:
+    text: regular parameter after ** parameter
+ANN.regular.param.after.vararg:
+    text: regular parameter after * parameter
+ANN.star.import.at.top.only:
+    text: '''import *'' only allowed at module level'
+ANN.starred.param.after.kwparam:
+    text: '* parameter after ** parameter'
+ANN.tuple.py3:
+    text: tuple parameter unpacking is not supported in Python 3
+CONFLICT.name.$0.obscured:
+    text: Name ''{0}'' obscured by local definitions
+CONFLICT.name.$0.obscured.cannot.convert:
+    text: Name ''{0}'' obscured. Cannot convert.
+CONFLICT.occurrence.pl:
+    text: occurrences
+CONFLICT.occurrence.sing:
+    text: occurrence
+GNAME.class:
+    text: class
+GNAME.function:
+    text: function
+GNAME.item:
+    text: item
+GNAME.var:
+    text: variable
+INSP.$0.is.not.superclass.of.$1:
+    text: '''''{0}'''' is not an instance or a subclass of ''''{1}'''''
+INSP.GROUP.mako:
+    text: Mako
+INSP.GROUP.python:
+    text: Python
+INSP.NAME.abstract.class:
+    text: Class must implement all abstract methods
+INSP.NAME.abstract.class.$0.must.implement:
+    text: Class {0} must implement all abstract methods
+INSP.NAME.argument.equal.default:
+    text: Argument passed to function is equal to default parameter value
+INSP.NAME.assignment.to.loop.or.with.parameter.display.message:
+    text: Variable ''{0}'' already declared in ''for'' loop or ''with'' statement above
+INSP.NAME.assignment.to.loop.or.with.parameter.display.name:
+    text: Assignment to 'for' loop or 'with' statement parameter
+INSP.NAME.attribute.outside.init:
+    text: Instance attribute defined outside __init__
+INSP.NAME.augment.assignment:
+    text: Assignment can be replaced with augmented assignment
+INSP.NAME.bad.except.clauses.order:
+    text: Bad except clauses order
+INSP.NAME.byte.literal:
+    text: Byte literal contains characters > 255
+INSP.NAME.chained.comparisons:
+    text: Chained comparisons can be simplified
+INSP.NAME.check.can.be.simplified:
+    text: Boolean variable check can be simplified
+INSP.NAME.class.has.no.init:
+    text: Class has no __init__ method
+INSP.NAME.classic.class.usage:
+    text: Classic style class usage
+INSP.NAME.comparison.with.none:
+    text: Comparison with None performed with equality operators
+INSP.NAME.compatibility:
+    text: Code compatibility inspection
+INSP.NAME.decorator.outside.class:
+    text: Class specific decorator on method outside class
+INSP.NAME.default.argument:
+    text: Default argument is mutable
+INSP.NAME.dict.creation:
+    text: Dictionary creation could be rewritten by dictionary literal
+INSP.NAME.different.class.call:
+    text: Calling a method by class using an instance of a different class
+INSP.NAME.docstring.types:
+    text: Type in docstring doesn't match inferred type
+INSP.NAME.duplicate.keys:
+    text: Dictionary contains duplicate keys
+INSP.NAME.exception.not.inherit:
+    text: Exception doesn't inherit from standard ''Exception'' class
+INSP.NAME.first.arg.assign:
+    text: Reassignment of method's first argument
+INSP.NAME.from.future.import:
+    text: from __future__ import must be the first executable statement
+INSP.NAME.global.$0.undefined:
+    text: Global variable ''{0}'' is undefined at the module level
+INSP.NAME.global.undefined:
+    text: Global variable is undefined at the module level
+INSP.NAME.incorrect.assignment:
+    text: Tuple assignment balance is incorrect
+INSP.NAME.incorrect.call.arguments:
+    text: Incorrect call arguments
+INSP.NAME.incorrect.docstring:
+    text: Incorrect docstring
+INSP.NAME.init.return:
+    text: __init__ method that returns a value
+INSP.NAME.invalid.interpreter:
+    text: Invalid interpreter configured
+INSP.NAME.list.creation:
+    text: List creation could be rewritten by list literal
+INSP.NAME.mandatory.encoding:
+    text: No encoding specified for file
+INSP.NAME.method.may.be.static:
+    text: Method may be static
+INSP.NAME.method.over:
+    text: Method signature does not match signature of overridden method
+INSP.NAME.missing.or.empty.docstring:
+    text: Missing or empty docstring
+INSP.NAME.missing.super.constructor:
+    text: Missed call to __init__ of super class
+INSP.NAME.nested.decorators:
+    text: Problematic nesting of decorators
+INSP.NAME.new.init.signature:
+    text: Incompatible signatures of __new__ and __init__
+INSP.NAME.non.ascii:
+    text: File contains non-ASCII character
+INSP.NAME.none.function.assignment:
+    text: Assigning function call that doesn't return anything (None)
+INSP.NAME.oldstyle.class:
+    text: Old-style class contains new-style class features
+INSP.NAME.problematic.first.parameter:
+    text: Methods having troubles with first parameter
+INSP.NAME.property.access:
+    text: Access to properties
+INSP.NAME.property.definition:
+    text: Property definitions
+INSP.NAME.protected.member.access:
+    text: Access to a protected member of a class
+INSP.NAME.raising.new.style.class:
+    text: Raising a new style class
+INSP.NAME.raising.string.exception:
+    text: Raising a string exception
+INSP.NAME.redeclaration:
+    text: Redeclared names without usage
+INSP.NAME.redundant.parentheses:
+    text: Redundant parentheses
+INSP.NAME.requirements:
+    text: Package requirements
+INSP.NAME.set.function.to.literal:
+    text: Function call can be replaced with set literal
+INSP.NAME.single.quoted.docstring:
+    text: Single quoted docstring
+INSP.NAME.statement.effect:
+    text: Statement has no effect
+INSP.NAME.statement.message:
+    text: Statement seems to have no effect
+INSP.NAME.str.format:
+    text: Errors in string formatting operations
+INSP.NAME.too.broad.exception.clauses:
+    text: Too broad exception clauses
+INSP.NAME.trailing.semicolon:
+    text: Trailing semicolon in statement
+INSP.NAME.tuple.item.assignment:
+    text: Tuple item assignment
+INSP.NAME.unbound:
+    text: Unbound local variable
+INSP.NAME.unnecessary.backslash:
+    text: Unnecessary backslash
+INSP.NAME.unreachable.code:
+    text: Unreachable code
+INSP.NAME.unresolved.refs:
+    text: Unresolved references
+INSP.NAME.unused:
+    text: Unused local
+INSP.NAME.wrong.super.arguments:
+    text: Wrong arguments to call super
+INSP.accessor.first.param.is.$0:
+    text: First parameter of an accessor is usually called ''{0}''
+INSP.argument.equals.to.default:
+    text: Argument equals to default parameter value
+INSP.attribute.$0.outside.init:
+    text: Instance attribute {0} defined outside __init__
+INSP.cannot.analyze:
+    text: This argument list cannot be analyzed
+INSP.cannot.appear.past.keyword.arg:
+    text: Cannot appear past keyword arguments or *arg or **kwarg
+INSP.cannot.find.$0.in.$1:
+    text: Cannot find reference ''{0}'' in ''{1}''
+INSP.cant.return.value.from.init:
+    text: Cannot return a value from __init__
+INSP.class.$0.already.caught:
+    text: Exception class ''{0}'' has already been caught
+INSP.class.$0.superclass.$1.already.caught:
+    text: '''''{0}'''', superclass of exception class ''''{1}'''', has already been caught'
+INSP.class.has.no.init:
+    text: Class has no __init__ method
+INSP.classic.class.usage.old.style.class:
+    text: Old-style class
+INSP.classic.class.usage.old.style.class.ancestors:
+    text: Old-style class, because all classes from whom it inherits are old-style
+INSP.decorator.receives.unexpected.builtin:
+    text: This decorator will not receive a callable it may expect; the built-in decorator returns a special object
+INSP.deleter.should.not.return:
+    text: Deleter should not return a value
+INSP.deleter.signature.advice:
+    text: Deleter signature should be (self)
+INSP.doc.param.should.be.str:
+    text: The doc parameter should be a string
+INSP.empty.docstring:
+    text: Empty docstring
+INSP.expected.dict.got.$0:
+    text: Expected a dictionary, got {0}
+INSP.expected.iter.got.$0:
+    text: Expected an iterable, got {0}
+INSP.expression.can.be.simplified:
+    text: Expression can be simplified
+INSP.first.arg.$0.assigned:
+    text: Method''s parameter ''{0}'' reassigned
+INSP.first.param.must.not.be.tuple:
+    text: First parameter of a non-static method must not be a tuple
+INSP.format.requires.mapping:
+    text: Format requires a mapping
+INSP.format.requires.no.mapping:
+    text: Format doesn't require a mapping
+INSP.func.$0.lacks.first.arg:
+    text: Function ''{0}'' lacks a positional argument
+INSP.func.property.name.mismatch:
+    text: Names of function and decorator don't match; property accessor is not created
+INSP.getter.return.smth:
+    text: Getter should return or yield something
+INSP.getter.signature.advice:
+    text: Getter signature should be (self)
+INSP.init.incompatible.to.new:
+    text: Signature is not compatible to __new__
+INSP.instance.of.$0.excpected:
+    text: An instance of {0} expected, not the class itself
+INSP.key.$0.has.no.arg:
+    text: Key ''{0}'' has no following argument
+INSP.message.single.quoted.docstring:
+    text: Triple double-quoted strings should be used for docstrings.
+INSP.method.may.be.static:
+    text: Method <code>#ref</code> may be 'static'
+INSP.missing.parameter.in.docstring:
+    text: Missing parameter {0} in docstring
+INSP.missing.super.constructor.message:
+    text: Call to __init__ of super class is missed
+INSP.module.$0.not.found:
+    text: Module ''{0}'' not found
+INSP.more.args.that.pos.params:
+    text: Multiple values resolve to one positional parameter
+INSP.multiple.values.resolve.to.positional.$0:
+    text: Multiple values resolve to positional parameter ''{0}''
+INSP.must.have.first.parameter:
+    text: Method must have a first parameter, usually called ''{0}''
+INSP.new.incompatible.to.init:
+    text: Signature is not compatible to __init__
+INSP.no.docstring:
+    text: Missing docstring
+INSP.no.format.specifier.char:
+    text: Format specifier character missing
+INSP.none.function.assignment:
+    text: Function ''{0}'' doesn''t return anything
+INSP.oldstyle.class.getattribute:
+    text: Old-style class contains __getattribute__ definition
+INSP.oldstyle.class.slots:
+    text: Old-style class contains __slots__ definition
+INSP.oldstyle.class.super:
+    text: Old-style class contains call for super method
+INSP.parameter.$0.unfilled:
+    text: Parameter ''{0}'' unfilled
+INSP.parent.$0.has.no.init:
+    text: Parent ''{0}'' has no __init__ method
+INSP.passing.$0.instead.of.$1:
+    text: Passing {0} instead of {1}. Is this intentional?
+INSP.probably.mistyped.self:
+    text: Did not you mean 'self'?
+INSP.property.$0.cant.be.deleted:
+    text: Property ''{0}'' cannot be deleted
+INSP.property.$0.cant.be.read:
+    text: Property ''{0}'' cannot be read
+INSP.property.$0.cant.be.set:
+    text: Property ''{0}'' cannot be set
+INSP.protected.member.$0.access:
+    text: Access to a protected member {0} of a class
+INSP.protected.member.$0.access.module:
+    text: Access to a protected member {0} of a module
+INSP.redeclared.name:
+    text: Redeclared ''{0}'' defined above without usage
+INSP.setter.should.not.return:
+    text: Setter should not return a value
+INSP.setter.signature.advice:
+    text: Setter signature should be (self, value)
+INSP.signature.mismatch:
+    text: Signature of method ''{0}'' does not match signature of base method in class ''{1}''
+INSP.strange.arg.want.callable:
+    text: Strange argument; a callable is expected
+INSP.too.few.args.for.fmt.string:
+    text: Too few arguments for format string
+INSP.too.few.keys:
+    text: Too few mapping keys
+INSP.too.many.args.for.fmt.string:
+    text: Too many arguments for format string
+INSP.try.except.import.error:
+    text: '''''{0}'''' in try block with ''''except ImportError'''' should also be defined in except block'
+INSP.tuples.never.assign.items:
+    text: Tuples don't support item assignment
+INSP.unbound.function.too.large:
+    text: Function ''{0}'' is too large to analyse
+INSP.unbound.local.variable:
+    text: Local variable ''{0}'' might be referenced before assignment
+INSP.unbound.name.not.defined:
+    text: Name ''{0}'' can be not defined
+INSP.unbound.nonlocal.variable:
+    text: Nonlocal variable ''{0}'' must be bound in an outer function scope
+INSP.unexpected.arg:
+    text: Unexpected argument
+INSP.unexpected.parameter.in.docstring:
+    text: Unexpected parameter {0} in docstring
+INSP.unexpected.type.$0:
+    text: Unexpected type {0}
+INSP.unreachable.code:
+    text: This code is unreachable
+INSP.unresolved.operator.ref:
+    text: Class ''{0}'' does not define ''{1}'', so the ''{2}'' operator cannot be used on its instances
+INSP.unresolved.ref.$0:
+    text: Unresolved reference ''{0}''
+INSP.unresolved.ref.$0.for.class.$1:
+    text: Unresolved attribute reference ''{0}'' for class ''{1}''
+INSP.unused.locals.local.class.isnot.used:
+    text: Local class ''{0}'' is not used
+INSP.unused.locals.local.function.isnot.used:
+    text: Local function ''{0}'' is not used
+INSP.unused.locals.local.variable.isnot.used:
+    text: Local variable ''{0}'' value is not used
+INSP.unused.locals.parameter.isnot.used:
+    text: Parameter ''{0}'' value is not used
+INSP.unused.locals.replace.with.wildcard:
+    text: Replace with _
+INSP.usually.named.$0:
+    text: Usually first parameter of such methods is named ''{0}''
+INSP.usually.named.self:
+    text: Usually first parameter of a method is named 'self'
+INTN.Family.convert.builtin:
+    text: Convert builtin module import
+INTN.Family.convert.dict.comp.expression:
+    text: Convert dictionary comprehension expression
+INTN.Family.convert.except.part:
+    text: Convert except part to supported form
+INTN.Family.convert.import.qualify:
+    text: Convert 'from module import' to 'import module'
+INTN.Family.convert.import.unqualify:
+    text: Convert 'import module' to 'from module import'
+INTN.Family.convert.set.literal:
+    text: Convert set literal two supported forms
+INTN.Family.convert.string:
+    text: Convert single-quoted string to double-quoted
+INTN.Family.migration.to.python3:
+    text: Migration to Python 3
+INTN.Family.toggle.import.alias:
+    text: Toggle import alias
+INTN.add.alias.for.import.$0:
+    text: Add alias to ''{0}''
+INTN.add.parameters.to.docstring:
+    text: Add parameters to docstring
+INTN.alias.for.$0.dialog.title:
+    text: 'Alias for ''''{0}'''':'
+INTN.annotate.types:
+    text: Annotate types
+INTN.convert.builtin.import:
+    text: Convert builtin module import to supported form
+INTN.convert.collection.literal.family:
+    text: Convert collection to {0}
+INTN.convert.collection.literal.text:
+    text: Convert {0} to {1}
+INTN.convert.dict.comp.to:
+    text: Convert dictionary comprehension to 'dict' method call
+INTN.convert.dict.constructor.to.dict.literal:
+    text: Convert dict constructor to dict literal form
+INTN.convert.dict.literal.to.dict.constructor:
+    text: Convert dict literal to dict constructor
+INTN.convert.except.to:
+    text: Convert 'except exceptClass, Target' to 'except exceptClass as Target'
+INTN.convert.lambda.to.function:
+    text: Convert lambda to function
+INTN.convert.method.to.property:
+    text: Convert method to property
+INTN.convert.set.literal.to:
+    text: Convert set literal to 'set' method call
+INTN.convert.static.method.to.function:
+    text: Convert static method to function
+INTN.convert.string:
+    text: Convert single-quoted string to double-quoted
+INTN.convert.to.from.$0.import.$1:
+    text: Convert to ''from {0} import {1}''
+INTN.convert.to.fstring.literal:
+    text: Convert to f-string literal
+INTN.convert.to.import.$0:
+    text: Convert to ''import {0}''
+INTN.convert.type.comment.to.variable.annotation.family:
+    text: Convert type comment to variable annotation
+INTN.convert.type.comment.to.variable.annotation.text:
+    text: Convert to variable annotation
+INTN.convert.variadic.param:
+    text: Convert from variadic to normal parameter(s)
+INTN.demorgan.law:
+    text: DeMorgan law
+INTN.doc.string.stub:
+    text: Insert documentation string stub
+INTN.flip.$0:
+    text: Flip ''{0}''
+INTN.flip.$0.to.$1:
+    text: Flip ''{0}'' to ''{1}''
+INTN.flip.comparison:
+    text: Flip comparison
+INTN.format.operator.to.method:
+    text: Convert format operator usage to str.format method call
+INTN.insert.assertion:
+    text: Insert type assertion
+INTN.join.if:
+    text: Join if's
+INTN.join.if.text:
+    text: Join two if's
+INTN.negate.$0.to.$1:
+    text: Negate ''{0}'' to ''{1}''
+INTN.negate.comparison:
+    text: Negate comparison
+INTN.quoted.string:
+    text: Convert between single-quoted and double-quoted strings
+INTN.quoted.string.double.to.single:
+    text: Convert double-quoted string to single-quoted string
+INTN.quoted.string.single.to.double:
+    text: Convert single-quoted string to double-quoted string
+INTN.remove.alias.for.import.$0:
+    text: Remove alias ''{0}''
+INTN.remove.leading.$0:
+    text: Remove leading {0}
+INTN.remove.leading.prefix:
+    text: Remove prefix
+INTN.remove.trailing.l:
+    text: Remove trailing L
+INTN.replace.backquote.expression:
+    text: Replace backquote expression
+INTN.replace.list.comprehensions:
+    text: Convert list comprehensions to supported form
+INTN.replace.list.comprehensions.with.for:
+    text: Convert list comprehensions to for loop
+INTN.replace.method:
+    text: Replace method which is not supported in current Python version
+INTN.replace.noteq.operator:
+    text: Replace not equal operator
+INTN.replace.octal.numeric.literal:
+    text: Convert octal numeric literal to supported form
+INTN.replace.plus.with.format.operator:
+    text: Replace + with string formatting operator
+INTN.replace.plus.with.str.format:
+    text: Replace + with str.format method call
+INTN.replace.raise.statement:
+    text: Convert raise statement to supported form
+INTN.replace.with.method:
+    text: Replace with str.format method call
+INTN.specify.return.type:
+    text: Specify return type in docstring
+INTN.specify.return.type.in.annotation:
+    text: Specify return type using annotation
+INTN.specify.type:
+    text: Specify type for reference in docstring
+INTN.specify.type.in.annotation:
+    text: Specify type for reference using annotation
+INTN.split.if:
+    text: Split if
+INTN.split.if.text:
+    text: Split into 2 if's
+INTN.string.concatenation.to.format:
+    text: Replace string concatenation with format operator
+INTN.transform.into.if.else.statement:
+    text: Transform conditional expression into if/else statement
+INTN.triple.quoted.string:
+    text: Convert triple-quoted string to single-quoted string
+INTN.yield.from:
+    text: Transform explicit iteration with 'yield' into 'yield from' expression
 MSG.cant.setup.sdk.$0:
-  text: "Cannot set up a python SDK \nat {0}.\nThe SDK seems invalid."
-buildout:
-  text: Buildout
-buildout.unresolved.part.inspection:
-  text: Buildout config unresolved part inspection
-buildout.unresolved.part.inspection.msg:
-  text: Unresolved part reference
-runcfg.unittest.dlg.test_function_title:
-  text: Function
-runcfg.unittest.dlg.keywords:
-  text: 'Keywords:'
-run.configuration.remote.debug.name:
-  text: Python Remote Debug
-run.configuration.type.description:
-  text: Starts server for remote debug
-run.configuration.show.command.line.action.name:
-  text: Show Python Prompt
-unable.to.stop:
-  text: Currently running process can't be stopped. Kill it manually first.
-debug.popup.title.step.into.function:
-  text: Step Into Function
-remote.debug.info:
-  text: Info
-remote.debug.server.hint:
-  text: Launch this debug configuration to start the debug server.
-remote.debug.server.hint1.5:
-  text: 'Update your script:'
-remote.debug.server.hint2:
-  text: 1. Add pycharm-debug.egg from the IDE installation to the Python path.
-remote.debug.server.hint2.5:
-  text: '2. Add the following import statement:'
-remote.debug.server.hint3:
-  text: '3. Add the following command to connect to the debug server:'
-remote.debug.settings:
-  text: Settings
-remote.debug.remote.host:
-  text: Remote host
-remote.debug.port:
-  text: 'Port:'
-remote.debug.use.path.mapping:
-  text: Use path mapping
-remote.debug.remote.root.folder:
-  text: 'Remote paths prefix:'
-remote.debug.local.root.folder:
-  text: 'Local paths prefix:'
-remote.debug.server.hint4:
-  text: 'If you want to enable stdout and stderr redirection to IDE console, use following command in your script:'
-remote.debug.local.host:
-  text: 'Local host name:'
-remote.debug.redirect.output:
-  text: Redirect output to console
-remote.debug.suspend.on.connect:
-  text: Suspend after connect
-sdk.errorlog.$0.mods.fail.in.$1.sdks:
-  text: '{0,choice,1#1 module|2#{0,number} modules} failed in {1,choice,1#1 interpreter|2#{1,number} interpreters}. <a href="#">Details...</a>'
-sdk.errorlog.$0.mods.fail.in.$1.sdks.$2.completely:
-  text: '{0,choice,1#1 module|2#{0,number} modules} failed in {1,choice,1#1 interpreter|2#{1,number} interpreters}, {2,choice,1#1 interpreter|2#{2,number} interpreters} failed <i>completely</i>. <a href="#">Details...</a>'
-sdk.some.skeletons.failed:
-  text: Some skeletons failed to generate
-sdk.error.dialog.problems:
-  text: Skeleton Generation Problems
-sdk.error.dialog.failed.sdks:
-  text: Failed interpreters
-sdk.error.dialog.failed.modules:
-  text: Failed modules
-sdk.error.dialog.were.blacklisted:
-  text: Generation of skeletons for the modules above will be tried again when the modules are updated or a new version of generator is available.
-sdk.gen.querying.$0:
-  text: Querying skeleton generator for {0}...
-sdk.gen.updating.builtins.$0:
-  text: Updating skeletons of builtins for {0}...
-sdk.gen.updating.$0:
-  text: Updating skeletons for {0}...
-sdk.gen.cleaning.$0:
-  text: Cleaning up skeletons for {0}...
-sdk.gen.reloading:
-  text: Reloading generated skeletons...
-sdk.gen.reading.versions.file:
-  text: Reading versions file...
-sdk.gen.notify.converting.old.skels:
-  text: Converting old skeletons
-sdk.gen.notify.converting.text:
-  text: Skeletons of binary modules seem to be from an older version.<br/>These will be fully re-generated, which will take some time, but will happen <i>only once</i>.<br/>Next time you open the project, only skeletons of new or updated binary modules will be re-generated.
-sdk.gen.updating.interpreter:
-  text: Updating Python Interpreter
-sdk.scanning.installed.packages:
-  text: Scanning Installed Packages
-sdk.gen.stubs.for.binary.modules:
-  text: Generate stubs for binary module {0}
-active.sdk.dialog.show.all.item:
-  text: Show All
+    text: "Cannot set up a python SDK \nat {0}.\nThe SDK seems invalid."
+MSG.title.bad.sdk:
+    text: Invalid Python SDK
+PARSE.expected.at.or.def:
+    text: '''@'' or ''def'' expected'
+PARSE.expected.colon:
+    text: ''':'' expected'
+PARSE.expected.colon.or.rbracket:
+    text: ''':'' or '']'' expected'
+PARSE.expected.comma:
+    text: ''','' expected'
+PARSE.expected.comma.lpar.rpar:
+    text: ''','' or ''('' or '')'' expected'
+PARSE.expected.comma.or.rpar:
+    text: ''','' or '')'' expected'
+PARSE.expected.else:
+    text: '''else'' expected'
+PARSE.expected.expr.or.comma.or.bracket:
+    text: expected expression, ',' or ']'
+PARSE.expected.expression:
+    text: expression expected
+PARSE.expected.for.or.bracket:
+    text: ''']'' or ''for'' expected'
+PARSE.expected.formal.param.name:
+    text: formal parameter name expected
+PARSE.expected.identifier:
+    text: Identifier expected
+PARSE.expected.in:
+    text: '''in'' expected'
+PARSE.expected.lpar:
+    text: '''('' expected'
+PARSE.expected.name:
+    text: name expected
+PARSE.expected.rbrace:
+    text: '''}'' expected'
+PARSE.expected.rbracket:
+    text: ''']'' expected'
+PARSE.expected.rpar:
+    text: ''')'' expected'
+PARSE.expected.statement.break:
+    text: Statement break expected
+PARSE.expected.tick:
+    text: '''`'' (backtick) expected'
+QDOC.assigned.to.$0:
+    text: Assigned to <code>{0}</code>
+QDOC.copied.from.$0.$1:
+    text: <i>Documentation is missing.</i> The following is copied from <code>{0}.{1}</code>.
+QDOC.copied.from.builtin:
+    text: <small>(copied from built-in description)</small>
+QDOC.copied.from.class.$0:
+    text: <i>Documentation is missing.</i> The following is copied from class <code>{0}</code>.
+QDOC.epydoc.python2.sdk.not.found:
+    text: You need configured Python 2 SDK to render <a href='http://epydoc.sourceforge.net/'>Epydoc</a> docstrings
+QDOC.module.path.unknown:
+    text: (Module path is unknown)
+QDOC.sdk.not.found:
+    text: You need configured Python SDK to render docstrings
+QDOC.wrapped.in.$0:
+    text: Wrapped in <code>{0}</code>
+QFIX.NAME.add.exception.base:
+    text: Add Exception base class
+QFIX.NAME.add.field.$0.to.class.$1:
+    text: Add field ''{0}'' to class {1}
+QFIX.NAME.add.function.$0.to.module.$1:
+    text: Create function {0}() in module {1}
+QFIX.NAME.add.method.$0.to.class.$1:
+    text: Add method {0}() to class {1}
+QFIX.NAME.add.specifier:
+    text: Add format specifier character
+QFIX.NAME.change.signature:
+    text: Change signature
+QFIX.NAME.implement.methods:
+    text: Implement abstract methods
+QFIX.NAME.make.$0.return.$1:
+    text: Make ''{0}'' return ''{1}''
+QFIX.NAME.make.function:
+    text: Make function from method
+QFIX.NAME.make.list:
+    text: Replace tuple with list
+QFIX.NAME.make.static:
+    text: Make method static
+QFIX.NAME.move.except.up:
+    text: Move except clause up
+QFIX.NAME.parameters:
+    text: Parameters of functions and methods
+QFIX.NAME.remove.argument:
+    text: Remove argument
+QFIX.NAME.remove.assignment:
+    text: Remove assignment
+QFIX.NAME.remove.call:
+    text: Remove call
+QFIX.NAME.remove.dict.key:
+    text: Remove this key
+QFIX.NAME.remove.parameter:
+    text: Remove parameter
+QFIX.NAME.remove.statement:
+    text: Remove statement
+QFIX.NAME.remove.underscores.in.numeric:
+    text: Remove underscores in numeric literals
+QFIX.NAME.rename.argument:
+    text: Rename argument
+QFIX.NAME.rename.element:
+    text: Rename element
+QFIX.NAME.update.parameters:
+    text: Update parameters
+QFIX.NAME.wrap.in.exception:
+    text: Wrap with Exception call
+QFIX.action.failed:
+    text: Action failed
+QFIX.add.encoding:
+    text: Add encoding declaration
+QFIX.add.global:
+    text: Add global statement
+QFIX.add.import.add.import:
+    text: Add "''{0}''"
+QFIX.add.parameter.self:
+    text: Add parameter ''{0}''
+QFIX.add.property:
+    text: Add property for the field
+QFIX.add.super:
+    text: Add super class call
+QFIX.added.constructor.$0.for.field.$1:
+    text: Added a __init__ to class <code>{0}</code><br/>to accommodate new field <code>{1}</code>
+QFIX.augment.assignment:
+    text: Replace assignment with augmented assignment
+QFIX.auto.import.family:
+    text: Import
+QFIX.auto.import.import.name:
+    text: Import ''{0}''
+QFIX.auto.import.import.this.name:
+    text: Import this name
+QFIX.chained.comparison:
+    text: Simplify chained comparison
+QFIX.change.base.class:
+    text: Change base class
+QFIX.classic.class.transform:
+    text: Inherit from object
+QFIX.convert.single.quoted.docstring:
+    text: Convert docstring to the triple double-quoted string form
+QFIX.convert.to.new.style:
+    text: Convert to New-style class
+QFIX.create.property:
+    text: Create property
+QFIX.default.argument:
+    text: Replace mutable default argument
+QFIX.dict.creation:
+    text: Replace dictionary creation
+QFIX.docstring.add.$0:
+    text: Add docstring parameter ''{0}''
+QFIX.docstring.insert.stub:
+    text: Insert docstring
+QFIX.docstring.remove.$0:
+    text: Remove docstring parameter ''{0}''
+QFIX.failed.to.add.field:
+    text: <br/>Failed to add a field!<br/><br/>
+QFIX.failed.to.add.function:
+    text: <br/>Failed to add a function!<br/><br/>
+QFIX.failed.to.add.method:
+    text: <br/>Failed to add a method!<br/><br/>
+QFIX.introduce.variable:
+    text: Introduce variable for statement
+QFIX.list.creation:
+    text: Replace list creation
+QFIX.local.auto.import.family:
+    text: Import locally
+QFIX.local.auto.import.import.locally:
+    text: '{0} locally'
+QFIX.make.public:
+    text: Make public
+QFIX.move.attribute:
+    text: Move attribute to __init__ method
+QFIX.move.from.future.import:
+    text: Move 'from __future__ import' to a correct place
+QFIX.redundant.parentheses:
+    text: Remove redundant parentheses
+QFIX.remove.argument.equal.default:
+    text: Remove arguments equal to default
+QFIX.remove.decorator:
+    text: Remove decorator
+QFIX.remove.trailing.semicolon:
+    text: Remove trailing semicolon
+QFIX.remove.unnecessary.backslash:
+    text: Remove unnecessary backslash in expression
+QFIX.rename.parameter.to.$0:
+    text: Rename to ''{0}''
+QFIX.rename.unresolved.reference:
+    text: Rename reference
+QFIX.replace.equality:
+    text: Replace equality
+QFIX.replace.function.set.with.literal:
+    text: Replace function call with set literal
+QFIX.simplify.$0:
+    text: Replace boolean expression with ''{0}''
+QFIX.statement.effect:
+    text: Replace with function call
+QFIX.statement.effect.introduce.variable:
+    text: Introduce variable
+QFIX.statement.effect.move.docstring:
+    text: Move docstring to the proper place
+QFIX.unresolved.reference:
+    text: Replace ''{0}'' with ''{1}.{0}''
+QFIX.unresolved.reference.add.future:
+    text: Add 'from __future__ import with_statement''
+QFIX.unresolved.reference.add.param:
+    text: Create parameter for reference
+QFIX.unresolved.reference.add.param.$0:
+    text: Create parameter ''{0}''
+QFIX.unresolved.reference.create.function.$0:
+    text: Create function ''{0}''
+QFIX.unresolved.reference.replace.$0:
+    text: Replace with {0}
+QFIX.use.property:
+    text: Use property for the field
 active.sdk.dialog.project.interpreter:
-  text: 'Project Interpreter:'
+    text: 'Project Interpreter:'
 active.sdk.dialog.project.interpreter.path.mappings:
-  text: 'Path mappings:'
+    text: 'Path mappings:'
 active.sdk.dialog.project.interpreter.path.mappings.default.project.error:
-  text: Open or create project to configure mappings
-sdk.details.step.add.local:
-  text: Add Local
-sdk.details.step.add.remote:
-  text: Add Remote
-sdk.details.step.create.virtual.env:
-  text: Create VirtualEnv
-sdk.details.step.create.conda.env:
-  text: Create Conda Env
-sdk.details.step.show.more:
-  text: More...
-sdk.details.dialog.title:
-  text: Project Interpreters
-sdk.details.dialog.show.all.virtual.envs:
-  text: Show virtual environments associated with other projects
-sdk.details.dialog.show.interpreter.paths:
-  text: Show paths for the selected interpreter
-sdk.details.dialog.error.duplicate.name:
-  text: Please specify a unique name for the interpreter
-sdk.edit.dialog.title:
-  text: Edit Python Interpreter
-sdk.edit.dialog.associate.virtual.env.with.path:
-  text: Associate this virtual environment with {0}
-sdk.edit.dialog.associate.virtual.env.current.project:
-  text: Associate this environment with current project
-sdk.edit.dialog.specify.interpreter.path:
-  text: Specify Interpreter Path
-sdk.paths.dialog.title:
-  text: Interpreter Paths
-sdk.paths.dialog.reload.paths:
-  text: Reload list of paths
-sdk.paths.dialog.added.by.user.suffix:
-  text: (added by user)
-sdk.paths.dialog.removed.by.user.suffix:
-  text: (removed by user)
-sdk.create.venv.dialog.creating.venv:
-  text: Creating virtual environment
-sdk.create.venv.dialog.make.available.to.all.projects:
-  text: Make available to all projects
-sdk.create.venv.dialog.select.venv.location:
-  text: Select Location for Virtual Environment
-sdk.create.venv.dialog.error.not.empty.directory:
-  text: Directory is not empty
-sdk.create.venv.dialog.error.empty.venv.name:
-  text: VirtualEnv name can't be empty
-sdk.create.venv.dialog.error.empty.venv.location:
-  text: Destination directory path can't be empty
-sdk.create.venv.dialog.error.invalid.directory.name:
-  text: Invalid directory name
-sdk.create.venv.dialog.error.failed.to.create.venv:
-  text: Failed to Create Virtual Environment
-sdk.create.venv.dialog.title:
-  text: Create Virtual Environment
-sdk.create.venv.dialog.label.name:
-  text: 'Name:'
-sdk.create.venv.dialog.label.location:
-  text: 'Location:'
-sdk.create.venv.dialog.label.base.interpreter:
-  text: 'Base interpreter:'
-sdk.create.venv.dialog.label.inherit.global.site.packages:
-  text: Inherit global site-packages
-sdk.create.venv.dialog.error.no.base.interpreter:
-  text: Select base interpreter
-sdk.create.venv.conda.dialog.title:
-  text: Create Conda Environment
-sdk.create.venv.conda.dialog.error.no.python.version:
-  text: Select python version
-sdk.create.venv.conda.dialog.label.python.version:
-  text: 'Python version:'
-remote.interpreter.add.title:
-  text: Add Remote Interpreter
-remote.interpreter.configure.title:
-  text: Configure Remote Python Interpreter
-remote.interpreter.configure.path.title:
-  text: Select Python Interpreter
-remote.interpreter.configure.temp.files.path.title:
-  text: Select Folder for IDE Helpers
-remote.interpreter.default.interpreter.path:
-  text: /usr/bin/python
-remote.interpreter.docker.default.interpreter.path:
-  text: python
-remote.interpreter.unspecified.interpreter.path:
-  text: Specify Python interpreter path
-remote.interpreter.unspecified.temp.files.path:
-  text: Specify path for IDE helpers
-remote.interpreter.configure.path.label:
-  text: 'Python interpreter path:'
-remote.interpreter.configure.temp.files.path.label:
-  text: 'IDE helpers path:'
-remote.interpreter.error.plugin.missing:
-  text: The Remote Hosts Access plugin is missing. Please enable the plugin in {0}.
-custom.type.mimic.name:
-  text: Dynamic class based on {0}
-commandLine.inspection.name:
-  text: Command-line inspection
-commandLine.inspection.badCommand:
-  text: Bad or unknown command. make sure this command really exists.
-commandLine.inspection.badOption:
-  text: Bad or unknown option. make sure this option really exists.
-commandLine.inspection.badArgument:
-  text: Argument can't have this value. use autocompletion to check list of possible values.
-commandLine.inspection.excessArgument:
-  text: Excess argument or argument is not possible here
+    text: Open or create project to configure mappings
+active.sdk.dialog.show.all.item:
+    text: Show All
+buildout:
+    text: Buildout
+buildout.unresolved.part.inspection:
+    text: Buildout config unresolved part inspection
+buildout.unresolved.part.inspection.msg:
+    text: Unresolved part reference
 commandLine.argumentHint.defaultName:
-  text: arguments
+    text: arguments
 commandLine.commandNotFound:
-  text: '{0}: command not found'
-windowWithActions.closeWindow:
-  text: Close window
-windowWithActions.stopProcess:
-  text: Stop currently running process
-formatter.imports.panel.title:
-  text: Imports
-formatter.imports.panel.optimize.imports:
-  text: Optimize Imports
-formatter.imports.panel.sort.imports:
-  text: Sort import statements
-formatter.imports.panel.sort.names.in.from.imports:
-  text: Sort imported names in "from" imports
-formatter.imports.panel.join.from.imports.with.same.source:
-  text: Join "from" imports with the same source
-formatter.imports.panel.sort.by.type:
-  text: Sort plain and "from" imports separately within a group
-formatter.panel.dict.alignment.do.not.align:
-  text: Do not align
-formatter.panel.dict.alignment.align.on.colon:
-  text: Align on colon
-formatter.panel.dict.alignment.align.on.value:
-  text: Align on value
-formatter.panel.dict.alignment.label:
-  text: 'Dict alignment:'
-formatter.panel.add.trailing.line.feed:
-  text: Add line feed at the end of file
-formatter.panel.use.continuation.indent.for.arguments:
-  text: Use continuation indent for arguments
-formatter.left.bracket:
-  text: Left bracket
-formatter.around.eq.in.named.parameter:
-  text: Around = in named parameter
-formatter.around.eq.in.keyword.argument:
-  text: Around = in keyword argument
-formatter.braces:
-  text: Braces
-formatter.before.backslash:
-  text: Before '\'
-formatter.before.hash:
-  text: Before '#'
+    text: '{0}: command not found'
+commandLine.inspection.badArgument:
+    text: Argument can't have this value. use autocompletion to check list of possible values.
+commandLine.inspection.badCommand:
+    text: Bad or unknown command. make sure this command really exists.
+commandLine.inspection.badOption:
+    text: Bad or unknown option. make sure this option really exists.
+commandLine.inspection.excessArgument:
+    text: Excess argument or argument is not possible here
+commandLine.inspection.name:
+    text: Command-line inspection
+custom.type.mimic.name:
+    text: Dynamic class based on {0}
+debug.popup.title.step.into.function:
+    text: Step Into Function
 formatter.after.hash:
-  text: After '#'
-formatter.around.top.level.imports:
-  text: 'After top-level imports:'
+    text: After '#'
 formatter.after.local.imports:
-  text: 'After local imports:'
-formatter.around.top.level.classes.and.function:
-  text: 'Around top-level classes and functions:'
-formatter.around.multiplicative.operators:
-  text: Multiplicative operators (*, @, /, %)
-formatter.around.power.operator:
-  text: Power operator (**)
-formatter.single.clause.statements:
-  text: Single-clause statements
-formatter.multi.clause.statements:
-  text: Multi-clause statements
-formatter.force.new.line.after.colon:
-  text: Force new line after colon
+    text: 'After local imports:'
 formatter.align.when.multiline:
-  text: Align when multiline
+    text: Align when multiline
+formatter.around.eq.in.keyword.argument:
+    text: Around = in keyword argument
+formatter.around.eq.in.named.parameter:
+    text: Around = in named parameter
+formatter.around.multiplicative.operators:
+    text: Multiplicative operators (*, @, /, %)
+formatter.around.power.operator:
+    text: Power operator (**)
+formatter.around.top.level.classes.and.function:
+    text: 'Around top-level classes and functions:'
+formatter.around.top.level.imports:
+    text: 'After top-level imports:'
+formatter.before.backslash:
+    text: Before '\'
+formatter.before.hash:
+    text: Before '#'
+formatter.braces:
+    text: Braces
 formatter.collections.and.comprehensions:
-  text: Collections and Comprehensions
-formatter.import.statements:
-  text: Import Statements
+    text: Collections and Comprehensions
 formatter.dictionary.literals:
-  text: Dictionary literals
-smartKeys.insert.backslash.in.statement.on.enter:
-  text: Insert backslash when pressing Enter inside a statement
-smartKeys.insert.self.in.method:
-  text: Insert 'self' when defining a method
-smartKeys.insert.type.placeholder.in.docstring.stub:
-  text: Insert type placeholders in the documentation comment stub
-python.configuration.name:
-  text: Python
+    text: Dictionary literals
+formatter.force.new.line.after.colon:
+    text: Force new line after colon
+formatter.import.statements:
+    text: Import Statements
+formatter.imports.panel.join.from.imports.with.same.source:
+    text: Join "from" imports with the same source
+formatter.imports.panel.optimize.imports:
+    text: Optimize Imports
+formatter.imports.panel.sort.by.type:
+    text: Sort plain and "from" imports separately within a group
+formatter.imports.panel.sort.imports:
+    text: Sort import statements
+formatter.imports.panel.sort.names.in.from.imports:
+    text: Sort imported names in "from" imports
+formatter.imports.panel.title:
+    text: Imports
+formatter.left.bracket:
+    text: Left bracket
+formatter.multi.clause.statements:
+    text: Multi-clause statements
+formatter.panel.add.trailing.line.feed:
+    text: Add line feed at the end of file
+formatter.panel.dict.alignment.align.on.colon:
+    text: Align on colon
+formatter.panel.dict.alignment.align.on.value:
+    text: Align on value
+formatter.panel.dict.alignment.do.not.align:
+    text: Do not align
+formatter.panel.dict.alignment.label:
+    text: 'Dict alignment:'
+formatter.panel.use.continuation.indent.for.arguments:
+    text: Use continuation indent for arguments
+formatter.single.clause.statements:
+    text: Single-clause statements
+generic.words.x:
+    text: 'Generic words ###'
+python:
+    text: Python
 python.configuration.description:
-  text: Python run configuration
+    text: Python run configuration
+python.configuration.name:
+    text: Python
+python.console:
+    text: Python Console
+refactoring.change.signature.dialog.default.value.checkbox:
+    text: 'Use default value in signature:'
+refactoring.change.signature.dialog.default.value.label:
+    text: 'Default value:'
+refactoring.change.signature.dialog.name.label:
+    text: 'Name:'
+refactoring.change.signature.dialog.validation.default.missing:
+    text: Default value is missing
+refactoring.change.signature.dialog.validation.function.name:
+    text: Incorrect function name
+refactoring.change.signature.dialog.validation.multiple.double.star:
+    text: Multiple ** arguments are not allowed
+refactoring.change.signature.dialog.validation.multiple.star:
+    text: Multiple * arguments are not allowed
+refactoring.change.signature.dialog.validation.name.defined:
+    text: Name is already defined in scope
+refactoring.change.signature.dialog.validation.parameter.missing:
+    text: Parameter name is missing
+refactoring.change.signature.dialog.validation.parameter.name:
+    text: Incorrect parameter name
+refactoring.change.signature.error.lambda.call:
+    text: Caret is positioned on lambda call
+refactoring.change.signature.error.not.under.source.root:
+    text: Function is not under the source root
+refactoring.change.signature.error.tuple.parameters:
+    text: Function contains tuple parameters
+refactoring.change.signature.error.wrong.caret.position.method.name:
+    text: The caret should be positioned at the name of the method to be refactored
+refactoring.change.signature.find.usages.of.base.class:
+    text: |-
+        Method {0} of class {1}
+        overrides method of class {2}.
+        Do you want to refactor the base method?
+refactoring.change.signature.usage.view.declarations.header:
+    text: Functions to be refactored
+refactoring.convert.module.to.package.title:
+    text: Convert Module to Package
+refactoring.convert.package.to.module.error.not.empty.package:
+    text: Package "{0}" is not empty
+refactoring.convert.package.to.module.title:
+    text: Convert Module to Package
+refactoring.error.directory.exists:
+    text: Directory "{0}" already exists
+refactoring.error.file.exists:
+    text: File "{0}" already exists
+refactoring.extract.method:
+    text: Extract method
+refactoring.extract.method.error.bad.selection:
+    text: Cannot perform extract method using selected element(s)
+refactoring.extract.method.error.class.level:
+    text: Cannot perform refactoring at class level
+refactoring.extract.method.error.empty.fragment:
+    text: Cannot perform refactoring from empty code fragment
+refactoring.extract.method.error.interrupted.execution.flow:
+    text: Cannot perform refactoring when execution flow is interrupted
+refactoring.extract.method.error.local.variable.modifications:
+    text: Cannot perform refactoring from expression with local variable modifications inside code fragment
+refactoring.extract.method.error.local.variable.modifications.and.returns:
+    text: Cannot perform refactoring from expression with local variables modifications and return instructions inside code fragment
+refactoring.extract.method.error.name.clash:
+    text: Method name clashes with already existing name
+refactoring.extract.method.error.returns:
+    text: Cannot extract method with return instructions inside code fragment
+refactoring.extract.method.error.star.import:
+    text: Cannot perform refactoring with star import statement inside code block
+refactoring.extract.method.error.undetermined.execution.flow:
+    text: Cannot determine execution flow for the code fragment
+refactoring.extract.method.error.yield:
+    text: Cannot perform refactoring with 'yield' statement inside code block
+refactoring.extract.super.class.no.members.allowed:
+    text: None of members could be extracted
+refactoring.extract.super.name.0.must.be.ident:
+    text: Name ''{0}'' is invalid. Must be a valid Python identifier
+refactoring.extract.super.target.class.already.exists:
+    text: Class ''{0}'' already exists in this module
+refactoring.extract.super.target.path.outside.roots:
+    text: Target directory is outside the project. Must be within content roots
+refactoring.inline.local.multiassignment:
+    text: Definition is in multi-assign
+refactoring.introduce.constant.dialog.title:
+    text: Extract Constant
+refactoring.introduce.constant.scope.error:
+    text: Name is already declared in scope
+refactoring.introduce.name.error:
+    text: Incorrect name
+refactoring.introduce.parameter.dialog.title:
+    text: Extract Parameter
+refactoring.introduce.selection.error:
+    text: Cannot perform refactoring using selected element(s)
+refactoring.introduce.variable.dialog.title:
+    text: Extract Variable
+refactoring.introduce.variable.scope.error:
+    text: Name clashes with existing variable or parameter
+refactoring.make.function.top.level.error.attribute.writes:
+    text: Cannot move method that writes to instance attributes
+refactoring.make.function.top.level.error.method.calls:
+    text: Cannot move method that calls other methods of the same class
+refactoring.make.function.top.level.error.nonlocal.writes:
+    text: Cannot move function with nonlocal writes
+refactoring.make.function.top.level.error.outer.scope.reads:
+    text: Cannon move method that references names from the outer scope
+refactoring.make.function.top.level.error.private.attributes:
+    text: Cannot move method that references private instance attributes
+refactoring.make.function.top.level.error.self.reads:
+    text: Cannot move function that contains usages of "self" parameter from outer scope
+refactoring.make.function.top.level.error.special.usage.of.self:
+    text: Cannot move method that contains special usages of "self" parameter
+refactoring.make.local.function.top.level.dialog.description:
+    text: Move local function {0} to top-level
+refactoring.make.local.function.top.level.dialog.title:
+    text: Make Local Function Top-Level
+refactoring.make.method.top.level.dialog.description:
+    text: Move method {0} to top-level
+refactoring.make.method.top.level.dialog.title:
+    text: Make Method Top-Level
+refactoring.move.choose.destination.file.title:
+    text: Choose Destination File
+refactoring.move.error.cannot.use.module.name.$0:
+    text: Cannot use module name ''{0}'' in imports
+refactoring.move.error.destination.file.contains.class.$0:
+    text: Destination file already contains class named ''{0}''
+refactoring.move.error.destination.file.contains.function.$0:
+    text: Destination file already contains function named ''{0}''
+refactoring.move.error.destination.file.contains.global.variable.$0:
+    text: Destination file already contains global variable named ''{0}''
+refactoring.move.module.members:
+    text: Move module members
+refactoring.move.module.members.dialog.description.class:
+    text: Move class {0}
+refactoring.move.module.members.dialog.description.function:
+    text: Move function {0}
+refactoring.move.module.members.dialog.description.selection:
+    text: Move selected elements
+refactoring.move.module.members.dialog.description.variable:
+    text: Move global variable {0}
+refactoring.move.module.members.dialog.table.title:
+    text: Bulk &move
+refactoring.move.module.members.dialog.title:
+    text: Move Module Members
+refactoring.move.module.members.error.cannot.place.elements.into.nonpython.file:
+    text: Cannot place elements into a non-Python file
+refactoring.move.module.members.error.selection:
+    text: Cannot perform refactoring using selected element(s)
+refactoring.pull.up.dialog.members.to.be.moved:
+    text: Following members would be moved
+refactoring.pull.up.dialog.move.members.to.class:
+    text: Move members to class
+refactoring.pull.up.dialog.title:
+    text: Pull members up to
+refactoring.pull.up.error.cannot.perform.refactoring.no.base.classes:
+    text: Class {0} has no super classes or none of them could be used for refactoring
+refactoring.pull.up.error.cannot.perform.refactoring.not.inside.class:
+    text: 'Cannot perform pull member up: not inside the class'
+refactoring.pull.up.error.cannot.perform.refactoring.using.selected.elements:
+    text: Cannot perform pull member up using selected element(s)
+refactoring.push.down.dialog.title:
+    text: Push members down from
+refactoring.push.down.error.cannot.perform.refactoring.not.inside.class:
+    text: 'Cannot perform pull member down: not inside the class'
+refactoring.push.down.error.cannot.perform.refactoring.using.selected.elements:
+    text: Cannot perform push member down using selected element(s)
+refactoring.will.not.be.accessible:
+    text: Member, you are trying to move depends on ''{0}'' which will not be accessible after this refactoring
+remote.debug.info:
+    text: Info
+remote.debug.local.host:
+    text: 'Local host name:'
+remote.debug.local.root.folder:
+    text: 'Local paths prefix:'
+remote.debug.port:
+    text: 'Port:'
+remote.debug.redirect.output:
+    text: Redirect output to console
+remote.debug.remote.host:
+    text: Remote host
+remote.debug.remote.root.folder:
+    text: 'Remote paths prefix:'
+remote.debug.server.hint:
+    text: Launch this debug configuration to start the debug server.
+remote.debug.server.hint1.5:
+    text: 'Update your script:'
+remote.debug.server.hint2:
+    text: 1. Add pycharm-debug.egg from the IDE installation to the Python path.
+remote.debug.server.hint2.5:
+    text: '2. Add the following import statement:'
+remote.debug.server.hint3:
+    text: '3. Add the following command to connect to the debug server:'
+remote.debug.server.hint4:
+    text: 'If you want to enable stdout and stderr redirection to IDE console, use following command in your script:'
+remote.debug.settings:
+    text: Settings
+remote.debug.suspend.on.connect:
+    text: Suspend after connect
+remote.debug.use.path.mapping:
+    text: Use path mapping
+remote.interpreter.add.title:
+    text: Add Remote Interpreter
+remote.interpreter.configure.path.label:
+    text: 'Python interpreter path:'
+remote.interpreter.configure.path.title:
+    text: Select Python Interpreter
+remote.interpreter.configure.temp.files.path.label:
+    text: 'IDE helpers path:'
+remote.interpreter.configure.temp.files.path.title:
+    text: Select Folder for IDE Helpers
+remote.interpreter.configure.title:
+    text: Configure Remote Python Interpreter
+remote.interpreter.default.interpreter.path:
+    text: /usr/bin/python
+remote.interpreter.docker.default.interpreter.path:
+    text: python
+remote.interpreter.error.plugin.missing:
+    text: The Remote Hosts Access plugin is missing. Please enable the plugin in {0}.
+remote.interpreter.unspecified.interpreter.path:
+    text: Specify Python interpreter path
+remote.interpreter.unspecified.temp.files.path:
+    text: Specify path for IDE helpers
+remove.elif:
+    text: Remove elif...
+remove.else:
+    text: Remove else...
+run.configuration.remote.debug.name:
+    text: Python Remote Debug
+run.configuration.show.command.line.action.name:
+    text: Show Python Prompt
+run.configuration.type.description:
+    text: Starts server for remote debug
+runcfg.attest.description:
+    text: Python's attests run configuration
+runcfg.attest.display_name:
+    text: Attests
+runcfg.captions.interpreter_options_dialog:
+    text: Enter interpreter options
+runcfg.captions.script_parameters_dialog:
+    text: Enter script parameters
+runcfg.doctest.description:
+    text: Python's doctests run configuration
+runcfg.doctest.display_name:
+    text: Doctests
+runcfg.labels.environment_variables:
+    text: '&Environment variables:'
+runcfg.labels.interpreter:
+    text: '&Use specified interpreter:'
+runcfg.labels.interpreter_options:
+    text: 'Interpreter &options:'
+runcfg.labels.script:
+    text: '&Script:'
+runcfg.labels.script_parameters:
+    text: 'Script &parameters:'
+runcfg.labels.working_directory:
+    text: '&Working directory:'
+runcfg.nosetests.description:
+    text: Python's nosetests run configuration
+runcfg.nosetests.display_name:
+    text: Nosetests
+runcfg.pytest.description:
+    text: py.test run configuration
+runcfg.pytest.display_name:
+    text: py.test
+runcfg.pytest.keywords:
+    text: '&Keywords:'
+runcfg.pytest.parameters:
+    text: '&Options:'
+runcfg.pytest.target:
+    text: '&Target:'
+runcfg.test.description:
+    text: Python frameworks supported by IDE
+runcfg.test.display_name:
+    text: Python tests
+runcfg.testing.no.test.framework:
+    text: No {0} runner found in selected interpreter
+runcfg.tests.cant_rerun:
+    text: Can't rerun tests since test IDs can't be resolved. Try to delete run configuration, and create new one using right click.
+runcfg.unittest.description:
+    text: Python's unittest run configuration
+runcfg.unittest.display_name:
+    text: Unittests
+runcfg.unittest.dlg.all_in_folder_title:
+    text: All in folder
+runcfg.unittest.dlg.all_in_script_title:
+    text: Script
+runcfg.unittest.dlg.class_label:
+    text: 'Class:'
+runcfg.unittest.dlg.folder_path:
+    text: 'Folder:'
+runcfg.unittest.dlg.folder_title:
+    text: 'Tests folder:'
+runcfg.unittest.dlg.function_label:
+    text: 'Function:'
+runcfg.unittest.dlg.interpreter_options_title:
+    text: 'Interpreter options:'
+runcfg.unittest.dlg.keywords:
+    text: 'Keywords:'
+runcfg.unittest.dlg.messages.working.dir:
+    text: 'Working directory:'
+runcfg.unittest.dlg.method_label:
+    text: 'Method:'
+runcfg.unittest.dlg.pattern:
+    text: 'Pattern:'
+runcfg.unittest.dlg.select.folder.path:
+    text: 'Select folder path:'
+runcfg.unittest.dlg.select.script.path:
+    text: 'Select script path:'
+runcfg.unittest.dlg.test_class_title:
+    text: Class
+runcfg.unittest.dlg.test_function_title:
+    text: Function
+runcfg.unittest.dlg.test_method_title:
+    text: Method
+runcfg.unittest.dlg.test_script_label:
+    text: 'Script:'
+runcfg.unittest.dlg.test_type_title:
+    text: 'Test:'
+runcfg.unittest.dlg.tests_group_title:
+    text: 'Tests:'
+runcfg.unittest.incorrect.script:
+    text: Test script name should start with "test" prefix
+runcfg.unittest.no_class_name:
+    text: Please specify class name
+runcfg.unittest.no_folder_name:
+    text: Please specify folder with tests
+runcfg.unittest.no_method_name:
+    text: Please specify method name
+runcfg.unittest.no_module_sdk:
+    text: Please select a module with a valid Python SDK
+runcfg.unittest.no_script_name:
+    text: Please specify script name
+runcfg.unittest.no_sdk:
+    text: Please specify a Python SDK
+runcfg.unittest.no_valid_sdk:
+    text: Please select a valid Python interpeter
+sdk.create.venv.conda.dialog.error.no.python.version:
+    text: Select python version
+sdk.create.venv.conda.dialog.label.python.version:
+    text: 'Python version:'
+sdk.create.venv.conda.dialog.title:
+    text: Create Conda Environment
+sdk.create.venv.dialog.creating.venv:
+    text: Creating virtual environment
+sdk.create.venv.dialog.error.empty.venv.location:
+    text: Destination directory path can't be empty
+sdk.create.venv.dialog.error.empty.venv.name:
+    text: VirtualEnv name can't be empty
+sdk.create.venv.dialog.error.failed.to.create.venv:
+    text: Failed to Create Virtual Environment
+sdk.create.venv.dialog.error.invalid.directory.name:
+    text: Invalid directory name
+sdk.create.venv.dialog.error.no.base.interpreter:
+    text: Select base interpreter
+sdk.create.venv.dialog.error.not.empty.directory:
+    text: Directory is not empty
+sdk.create.venv.dialog.label.base.interpreter:
+    text: 'Base interpreter:'
+sdk.create.venv.dialog.label.inherit.global.site.packages:
+    text: Inherit global site-packages
+sdk.create.venv.dialog.label.location:
+    text: 'Location:'
+sdk.create.venv.dialog.label.name:
+    text: 'Name:'
+sdk.create.venv.dialog.make.available.to.all.projects:
+    text: Make available to all projects
+sdk.create.venv.dialog.select.venv.location:
+    text: Select Location for Virtual Environment
+sdk.create.venv.dialog.title:
+    text: Create Virtual Environment
+sdk.details.dialog.error.duplicate.name:
+    text: Please specify a unique name for the interpreter
+sdk.details.dialog.show.all.virtual.envs:
+    text: Show virtual environments associated with other projects
+sdk.details.dialog.show.interpreter.paths:
+    text: Show paths for the selected interpreter
+sdk.details.dialog.title:
+    text: Project Interpreters
+sdk.details.step.add.local:
+    text: Add Local
+sdk.details.step.add.remote:
+    text: Add Remote
+sdk.details.step.create.conda.env:
+    text: Create Conda Env
+sdk.details.step.create.virtual.env:
+    text: Create VirtualEnv
+sdk.details.step.show.more:
+    text: More...
+sdk.edit.dialog.associate.virtual.env.current.project:
+    text: Associate this environment with current project
+sdk.edit.dialog.associate.virtual.env.with.path:
+    text: Associate this virtual environment with {0}
+sdk.edit.dialog.specify.interpreter.path:
+    text: Specify Interpreter Path
+sdk.edit.dialog.title:
+    text: Edit Python Interpreter
+sdk.error.dialog.failed.modules:
+    text: Failed modules
+sdk.error.dialog.failed.sdks:
+    text: Failed interpreters
+sdk.error.dialog.problems:
+    text: Skeleton Generation Problems
+sdk.error.dialog.were.blacklisted:
+    text: Generation of skeletons for the modules above will be tried again when the modules are updated or a new version of generator is available.
+sdk.error.invalid.interpreter.name.$0:
+    text: Invalid Python interpeter name ''{0}''!
+sdk.errorlog.$0.mods.fail.in.$1.sdks:
+    text: '{0,choice,1#1 module|2#{0,number} modules} failed in {1,choice,1#1 interpreter|2#{1,number} interpreters}. <a href="#">Details...</a>'
+sdk.errorlog.$0.mods.fail.in.$1.sdks.$2.completely:
+    text: '{0,choice,1#1 module|2#{0,number} modules} failed in {1,choice,1#1 interpreter|2#{1,number} interpreters}, {2,choice,1#1 interpreter|2#{2,number} interpreters} failed <i>completely</i>. <a href="#">Details...</a>'
+sdk.gen.cleaning.$0:
+    text: Cleaning up skeletons for {0}...
+sdk.gen.notify.converting.old.skels:
+    text: Converting old skeletons
+sdk.gen.notify.converting.text:
+    text: Skeletons of binary modules seem to be from an older version.<br/>These will be fully re-generated, which will take some time, but will happen <i>only once</i>.<br/>Next time you open the project, only skeletons of new or updated binary modules will be re-generated.
+sdk.gen.querying.$0:
+    text: Querying skeleton generator for {0}...
+sdk.gen.reading.versions.file:
+    text: Reading versions file...
+sdk.gen.reloading:
+    text: Reloading generated skeletons...
+sdk.gen.stubs.for.binary.modules:
+    text: Generate stubs for binary module {0}
+sdk.gen.updating.$0:
+    text: Updating skeletons for {0}...
+sdk.gen.updating.builtins.$0:
+    text: Updating skeletons of builtins for {0}...
+sdk.gen.updating.interpreter:
+    text: Updating Python Interpreter
+sdk.paths.dialog.added.by.user.suffix:
+    text: (added by user)
+sdk.paths.dialog.reload.paths:
+    text: Reload list of paths
+sdk.paths.dialog.removed.by.user.suffix:
+    text: (removed by user)
+sdk.paths.dialog.title:
+    text: Interpreter Paths
+sdk.scanning.installed.packages:
+    text: Scanning Installed Packages
+sdk.select.path:
+    text: Select Python Interpreter
+sdk.some.skeletons.failed:
+    text: Some skeletons failed to generate
+smartKeys.insert.backslash.in.statement.on.enter:
+    text: Insert backslash when pressing Enter inside a statement
+smartKeys.insert.self.in.method:
+    text: Insert 'self' when defining a method
+smartKeys.insert.type.placeholder.in.docstring.stub:
+    text: Insert type placeholders in the documentation comment stub
+surround.with.return.template:
+    text: return
+surround.with.try.except.template:
+    text: try / except
+surround.with.whileelse.template:
+    text: while / else
+unable.to.stop:
+    text: Currently running process can't be stopped. Kill it manually first.
+unwrap.elif:
+    text: Unwrap elif...
+unwrap.else:
+    text: Unwrap else...
+unwrap.for:
+    text: Unwrap for...
+unwrap.if:
+    text: Unwrap if...
+unwrap.try:
+    text: Unwrap try...
+unwrap.while:
+    text: Unwrap while...
+unwrap.with:
+    text: Unwrap with...
+windowWithActions.closeWindow:
+    text: Close window
+windowWithActions.stopProcess:
+    text: Stop currently running process

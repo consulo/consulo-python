@@ -21,13 +21,14 @@ import com.jetbrains.python.PythonFileType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.colorScheme.setting.AttributesDescriptor;
-import consulo.colorScheme.setting.ColorDescriptor;
 import consulo.language.editor.colorScheme.setting.ColorSettingsPage;
 import consulo.language.editor.highlight.SyntaxHighlighter;
 import consulo.language.editor.highlight.SyntaxHighlighterFactory;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -78,18 +79,13 @@ public class PythonColorsPage implements ColorSettingsPage {
     .build();
 
   @Nonnull
-  public String getDisplayName() {
-    return "Python";
+  public LocalizeValue getDisplayName() {
+    return PyLocalize.python();
   }
 
   @Nonnull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
-  }
-
-  @Nonnull
-  public ColorDescriptor[] getColorDescriptors() {
-    return ColorDescriptor.EMPTY_ARRAY;
   }
 
   @Nonnull

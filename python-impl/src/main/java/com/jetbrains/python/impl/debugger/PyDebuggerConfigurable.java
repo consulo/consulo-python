@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.debugger;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
@@ -54,17 +55,13 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
     return StandardConfigurableIds.EXECUTION_GROUP;
   }
 
-  public String getDisplayName() {
-    return "Python Debugger";
+  public LocalizeValue getDisplayName() {
+    return LocalizeValue.localizeTODO("Python Debugger");
   }
 
   @Nonnull
   public String getId() {
     return "py.debugger";
-  }
-
-  public Runnable enableSearch(String option) {
-    return null;
   }
 
   public JComponent createComponent() {

@@ -41,7 +41,7 @@ public class PyCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     @Nonnull
     @Override
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
-        return new CodeStyleAbstractConfigurable(settings, originalSettings, getConfigurableDisplayName().get()) {
+        return new CodeStyleAbstractConfigurable(settings, originalSettings, getConfigurableDisplayName()) {
             @Override
             protected CodeStyleAbstractPanel createPanel(final CodeStyleSettings settings) {
                 return new PyCodeStyleMainPanel(getCurrentSettings(), settings);

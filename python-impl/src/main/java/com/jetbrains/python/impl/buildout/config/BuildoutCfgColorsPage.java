@@ -23,6 +23,7 @@ import consulo.colorScheme.setting.ColorDescriptor;
 import consulo.language.editor.colorScheme.setting.ColorSettingsPage;
 import consulo.language.editor.highlight.SyntaxHighlighter;
 import consulo.language.editor.highlight.SyntaxHighlighterFactory;
+import consulo.localize.LocalizeValue;
 import org.jetbrains.annotations.NonNls;
 
 import jakarta.annotation.Nonnull;
@@ -50,8 +51,8 @@ public class BuildoutCfgColorsPage implements ColorSettingsPage {
   }
 
   @Nonnull
-  public String getDisplayName() {
-    return "Buildout config";
+  public LocalizeValue getDisplayName() {
+    return LocalizeValue.localizeTODO("Buildout config");
   }
 
   @Nonnull

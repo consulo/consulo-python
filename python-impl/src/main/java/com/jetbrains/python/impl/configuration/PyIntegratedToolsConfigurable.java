@@ -34,6 +34,7 @@ import consulo.fileChooser.FileChooserDescriptorFactory;
 import consulo.fileEditor.util.FileContentUtil;
 import consulo.language.editor.DaemonCodeAnalyzer;
 import consulo.language.plain.PlainTextFileType;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.content.ProjectRootManager;
 import consulo.project.Project;
@@ -186,8 +187,8 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
 
   @Nls
   @Override
-  public String getDisplayName() {
-    return "Python Integrated Tools";
+  public LocalizeValue getDisplayName() {
+    return LocalizeValue.localizeTODO("Python Integrated Tools");
   }
 
   @Override

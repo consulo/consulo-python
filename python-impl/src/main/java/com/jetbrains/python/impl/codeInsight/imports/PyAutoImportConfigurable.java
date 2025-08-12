@@ -20,6 +20,8 @@ import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.ApplicationConfigurable;
 import consulo.configurable.ConfigurationException;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
 import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.Nls;
@@ -81,7 +83,7 @@ public class PyAutoImportConfigurable implements ApplicationConfigurable {
 
   @Nls
   @Override
-  public String getDisplayName() {
-    return "Python";
+  public LocalizeValue getDisplayName() {
+    return PyLocalize.python();
   }
 }

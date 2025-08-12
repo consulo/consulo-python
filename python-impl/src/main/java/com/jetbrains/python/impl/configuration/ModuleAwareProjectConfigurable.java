@@ -19,6 +19,7 @@ import consulo.configurable.Configurable;
 import consulo.configurable.ConfigurationException;
 import consulo.configurable.SearchableConfigurable;
 import consulo.configurable.UnnamedConfigurable;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.module.ui.awt.ModuleListCellRenderer;
@@ -50,11 +51,11 @@ import java.util.Map;
 public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurable> implements SearchableConfigurable, Configurable.NoScroll {
   @Nonnull
   private final Project myProject;
-  private final String myDisplayName;
+  private final LocalizeValue myDisplayName;
   private final String myHelpTopic;
   private final Map<Module, T> myModuleConfigurables = new HashMap<Module, T>();
 
-  public ModuleAwareProjectConfigurable(@Nonnull Project project, String displayName, String helpTopic) {
+  public ModuleAwareProjectConfigurable(@Nonnull Project project, LocalizeValue displayName, String helpTopic) {
     myProject = project;
     myDisplayName = displayName;
     myHelpTopic = helpTopic;
@@ -62,7 +63,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
 
   @Nls
   @Override
-  public String getDisplayName() {
+  public LocalizeValue getDisplayName() {
     return myDisplayName;
   }
 
