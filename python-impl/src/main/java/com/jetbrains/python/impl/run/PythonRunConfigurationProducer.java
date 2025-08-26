@@ -19,6 +19,7 @@ import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ReadAction;
 import consulo.execution.action.ConfigurationContext;
 import consulo.execution.action.ConfigurationFromContext;
 import consulo.execution.action.Location;
@@ -55,7 +56,7 @@ public class PythonRunConfigurationProducer extends RunConfigurationProducer<Pyt
             return false;
         }
         PsiFile script = location.getPsiElement().getContainingFile();
-        if (!isAvailable(location, script)) {
+        if (!ReadAction.compute(() -> isAvailable(location, script))) {
             return false;
         }
 
@@ -78,14 +79,13 @@ public class PythonRunConfigurationProducer extends RunConfigurationProducer<Pyt
     }
 
     @Override
-    @RequiredReadAction
     public boolean isConfigurationFromContext(PythonRunConfiguration configuration, ConfigurationContext context) {
         Location location = context.getLocation();
         if (location == null) {
             return false;
         }
         PsiFile script = location.getPsiElement().getContainingFile();
-        if (!isAvailable(location, script)) {
+        if (!ReadAction.compute(() -> isAvailable(location, script))) {
             return false;
         }
         VirtualFile virtualFile = script.getVirtualFile();

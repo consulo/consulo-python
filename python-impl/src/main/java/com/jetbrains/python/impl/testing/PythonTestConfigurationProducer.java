@@ -22,7 +22,7 @@ import com.jetbrains.python.impl.testing.unittest.PythonUnitTestRunConfiguration
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
+import consulo.application.ReadAction;
 import consulo.execution.action.ConfigurationContext;
 import consulo.execution.action.ConfigurationFromContext;
 import consulo.execution.action.Location;
@@ -111,7 +111,6 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
     }
 
     @Override
-    @RequiredWriteAction
     protected boolean setupConfigurationFromContext(
         AbstractPythonTestRunConfiguration configuration,
         ConfigurationContext context,
@@ -121,7 +120,7 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
             return false;
         }
         Location location = context.getLocation();
-        if (location == null || !isAvailable(location)) {
+        if (location == null || !ReadAction.compute(() -> isAvailable(location))) {
             return false;
         }
         PsiElement element = location.getPsiElement();
@@ -160,7 +159,6 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return file instanceof PyFile pyFile && isTestFile(pyFile) && setupConfigurationFromFile(pyFile, configuration);
     }
 
-    @RequiredWriteAction
     private boolean setupConfigurationFromFolder(@Nonnull PsiDirectory element, @Nonnull AbstractPythonTestRunConfiguration configuration) {
         VirtualFile virtualFile = element.getVirtualFile();
         if (!isTestFolder(virtualFile, element.getProject())) {
@@ -176,13 +174,11 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return true;
     }
 
-    @RequiredWriteAction
     private static void setModuleSdk(@Nonnull PsiElement element, @Nonnull AbstractPythonTestRunConfiguration configuration) {
         configuration.setUseModuleSdk(true);
         configuration.setModule(element.getModule());
     }
 
-    @RequiredWriteAction
     protected boolean setupConfigurationFromFunction(
         @Nonnull PyFunction pyFunction,
         @Nonnull AbstractPythonTestRunConfiguration configuration
@@ -200,7 +196,6 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return setupConfigurationScript(configuration, pyFunction);
     }
 
-    @RequiredWriteAction
     protected boolean setupConfigurationFromClass(
         @Nonnull PyClass pyClass,
         @Nonnull AbstractPythonTestRunConfiguration configuration
@@ -210,7 +205,6 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return setupConfigurationScript(configuration, pyClass);
     }
 
-    @RequiredWriteAction
     protected boolean setupConfigurationFromFile(
         @Nonnull PyFile pyFile,
         @Nonnull AbstractPythonTestRunConfiguration configuration
@@ -219,7 +213,6 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return setupConfigurationScript(configuration, pyFile);
     }
 
-    @RequiredWriteAction
     protected static boolean setupConfigurationScript(
         @Nonnull AbstractPythonTestRunConfiguration cfg,
         @Nonnull PyElement element
@@ -259,6 +252,7 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return name.toLowerCase().contains("test") || roots.contains(virtualFile);
     }
 
+    @RequiredReadAction
     protected boolean isAvailable(@Nonnull Location location) {
         return false;
     }

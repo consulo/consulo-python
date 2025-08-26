@@ -16,23 +16,22 @@
 
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import consulo.codeEditor.Editor;
+import consulo.language.codeStyle.CodeStyleManager;
 import consulo.language.editor.FileModificationService;
-import consulo.language.editor.intention.HighPriorityAction;
-import consulo.language.editor.intention.IntentionAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
+import consulo.language.editor.intention.HighPriorityAction;
+import consulo.language.editor.intention.SyntheticIntentionAction;
 import consulo.language.psi.PsiFile;
-import consulo.language.codeStyle.CodeStyleManager;
 import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public class ReformatFix implements IntentionAction, LocalQuickFix, HighPriorityAction {
+public class ReformatFix implements SyntheticIntentionAction, LocalQuickFix, HighPriorityAction {
   @Nonnull
   @Override
   public String getText() {
