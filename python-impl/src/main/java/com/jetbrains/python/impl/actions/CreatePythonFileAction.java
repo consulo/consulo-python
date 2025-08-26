@@ -16,14 +16,17 @@
 
 package com.jetbrains.python.impl.actions;
 
+import com.jetbrains.python.PythonFileType;
+import consulo.application.dumb.DumbAware;
 import consulo.ide.action.CreateFileFromTemplateAction;
 import consulo.ide.action.CreateFileFromTemplateDialog;
-import consulo.application.dumb.DumbAware;
+import consulo.language.psi.PsiDirectory;
+import consulo.localize.LocalizeValue;
 import consulo.module.extension.ModuleExtension;
 import consulo.project.Project;
-import consulo.language.psi.PsiDirectory;
-import com.jetbrains.python.PythonFileType;
 import consulo.python.module.extension.PyModuleExtension;
+import consulo.python.psi.icon.PythonPsiIconGroup;
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
@@ -31,20 +34,21 @@ import jakarta.annotation.Nullable;
  */
 public class CreatePythonFileAction extends CreateFileFromTemplateAction implements DumbAware {
   public CreatePythonFileAction() {
-    super("Python File", "Creates a Python file from the specified template", PythonFileType.INSTANCE.getIcon());
+    super(LocalizeValue.localizeTODO("Python File"), LocalizeValue.localizeTODO("Creates a Python file from the specified template"), PythonPsiIconGroup.pythonfile());
   }
 
   @Override
   protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
     builder
-      .setTitle("New Python file")
-      .addKind("Python file", PythonFileType.INSTANCE.getIcon(), "Python Script")
-      .addKind("Python unit test", PythonFileType.INSTANCE.getIcon(), "Python Unit Test");
+      .setTitle(LocalizeValue.localizeTODO("New Python file"))
+      .addKind(LocalizeValue.localizeTODO("Python file"), PythonFileType.INSTANCE.getIcon(), "Python Script")
+      .addKind(LocalizeValue.localizeTODO("Python unit test"), PythonFileType.INSTANCE.getIcon(), "Python Unit Test");
   }
 
+  @Nonnull
   @Override
-  protected String getActionName(PsiDirectory directory, String newName, String templateName) {
-    return "Create Python script " + newName; 
+  protected LocalizeValue getActionName(PsiDirectory directory, String newName, String templateName) {
+    return LocalizeValue.localizeTODO("Create Python script " + newName);
   }
 
   @Nullable
