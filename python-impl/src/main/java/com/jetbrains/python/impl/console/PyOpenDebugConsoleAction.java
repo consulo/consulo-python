@@ -15,19 +15,19 @@
  */
 package com.jetbrains.python.impl.console;
 
-import com.jetbrains.python.impl.PythonIcons;
 import consulo.application.dumb.DumbAware;
 import consulo.application.ui.wm.ApplicationIdeFocusManager;
 import consulo.dataContext.DataContext;
 import consulo.execution.ExecutionHelper;
+import consulo.execution.icon.ExecutionIconGroup;
 import consulo.execution.ui.RunContentDescriptor;
 import consulo.language.editor.CommonDataKeys;
 import consulo.process.ProcessHandler;
 import consulo.project.Project;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
-
 import jakarta.annotation.Nonnull;
+
 import java.util.Collection;
 import java.util.function.Consumer;
 
@@ -38,7 +38,7 @@ public class PyOpenDebugConsoleAction extends AnAction implements DumbAware {
 
   public PyOpenDebugConsoleAction() {
     super();
-    getTemplatePresentation().setIcon(PythonIcons.Python.Debug.CommandLine);
+    getTemplatePresentation().setIcon(ExecutionIconGroup.console());
   }
 
   @Override

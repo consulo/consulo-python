@@ -33,14 +33,13 @@ import consulo.process.ExecutionException;
 import consulo.process.ProcessHandler;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.ProcessOutput;
-import consulo.python.impl.icon.PythonImplIconGroup;
+import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.PatternUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.encoding.EncodingManager;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -256,7 +255,7 @@ public abstract class PythonSdkFlavor {
 
     @Nonnull
     public Image getIcon() {
-        return PythonImplIconGroup.pythonPython();
+        return PythonPsiIconGroup.python();
     }
 
     public void initPythonPath(Collection<String> path, Map<String, String> env) {

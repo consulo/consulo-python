@@ -56,6 +56,7 @@ import consulo.language.psi.util.LanguageCachedValueUtil;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.navigation.ItemPresentation;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.collection.JBIterable;
@@ -143,7 +144,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
       if (property.getDeleter().valueOrNull() == this) {
         return PythonIcons.Python.PropertyDeleter;
       }
-      return AllIcons.Nodes.Property;
+      return PlatformIconGroup.nodesProperty();
     }
     if (getContainingClass() != null) {
       return AllIcons.Nodes.Method;

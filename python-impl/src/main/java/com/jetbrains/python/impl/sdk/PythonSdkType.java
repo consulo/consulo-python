@@ -43,9 +43,9 @@ import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.ProcessOutput;
 import consulo.project.Project;
 import consulo.project.ui.notification.NotificationGroup;
-import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
+import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.collection.ContainerUtil;
@@ -125,7 +125,7 @@ public final class PythonSdkType extends SdkType {
     @Nonnull
     @Override
     public Image getIcon() {
-        return PythonImplIconGroup.pythonPython();
+        return PythonPsiIconGroup.python();
     }
 
     @Nonnull

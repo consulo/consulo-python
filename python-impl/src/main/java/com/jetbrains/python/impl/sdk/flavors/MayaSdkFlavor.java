@@ -17,7 +17,7 @@
 package com.jetbrains.python.impl.sdk.flavors;
 
 import consulo.annotation.component.ExtensionImpl;
-import consulo.python.impl.icon.PythonImplIconGroup;
+import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.VirtualFile;
@@ -60,7 +60,7 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
     @Nonnull
     @Override
     public Image getIcon() {
-        return PythonImplIconGroup.pythonPython(); //TODO: maya icon
+        return PythonPsiIconGroup.python(); //TODO: maya icon
     }
 
     @Override

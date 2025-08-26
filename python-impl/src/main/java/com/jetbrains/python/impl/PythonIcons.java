@@ -18,46 +18,44 @@ package com.jetbrains.python.impl;
 
 import consulo.annotation.DeprecationInfo;
 import consulo.python.impl.icon.PythonImplIconGroup;
+import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 
 @Deprecated
 @DeprecationInfo("Use PythonIcons")
 public class PythonIcons {
-  public static class Pyqt {
-    public static final Image UiForm = PythonImplIconGroup.pyqtUiform();
-  }
-
-  public static class Python {
-
-    public static class Buildout {
-      public static final Image Buildout = PythonImplIconGroup.pythonBuildoutBuildout();
+    public static class Pyqt {
+        public static final Image UiForm = PythonImplIconGroup.pyqtUiform();
     }
 
-    public static class Debug {
-      public static final Image CommandLine = PythonImplIconGroup.pythonDebugCommandline();
-      public static final Image SpecialVar = PythonImplIconGroup.pythonDebugSpecialvar();
-      public static final Image StepIntoMyCode = PythonImplIconGroup.pythonDebugStepintomycode();
+    public static class Python {
+
+        public static class Buildout {
+            public static final Image Buildout = PythonImplIconGroup.pythonBuildoutBuildout();
+        }
+
+        public static class Debug {
+            public static final Image SpecialVar = PythonImplIconGroup.pythonDebugSpecialvar();
+            public static final Image StepIntoMyCode = PythonImplIconGroup.pythonDebugStepintomycode();
+        }
+
+        public static final Image Dotnet = PythonImplIconGroup.pythonDotnet();
+
+        public static class Nodes {
+            public static final Image Cyan_dot = PythonImplIconGroup.pythonNodesCyan_dot();
+            public static final Image Lock = PythonImplIconGroup.pythonNodesLock();
+            public static final Image Red_inv_triangle = PythonImplIconGroup.pythonNodesRed_inv_triangle();
+
+        }
+
+        public static final Image PropertyDeleter = PythonImplIconGroup.pythonPropertydeleter();
+        public static final Image PropertyGetter = PythonImplIconGroup.pythonPropertygetter();
+        public static final Image PropertySetter = PythonImplIconGroup.pythonPropertysetter();
+        @Deprecated
+        public static final Image Python = PythonPsiIconGroup.python();
+        public static final Image PythonConsole = PythonImplIconGroup.pythonPythonconsole();
+        public static final Image PythonTests = PythonImplIconGroup.pythonPythontests();
+        public static final Image RemoteInterpreter = PythonImplIconGroup.pythonRemoteinterpreter();
+        public static final Image Virtualenv = PythonImplIconGroup.pythonVirtualenv();
     }
-
-    public static final Image Dotnet = PythonImplIconGroup.pythonDotnet();
-
-    public static class Nodes {
-      public static final Image Cyan_dot = PythonImplIconGroup.pythonNodesCyan_dot();
-      public static final Image Lock = PythonImplIconGroup.pythonNodesLock();
-      public static final Image Red_inv_triangle = PythonImplIconGroup.pythonNodesRed_inv_triangle();
-
-    }
-
-    public static final Image PropertyDeleter = PythonImplIconGroup.pythonPropertydeleter();
-    public static final Image PropertyGetter = PythonImplIconGroup.pythonPropertygetter();
-    public static final Image PropertySetter = PythonImplIconGroup.pythonPropertysetter();
-    public static final Image Pypy = PythonImplIconGroup.pythonPypy();
-    public static final Image Python = PythonImplIconGroup.pythonPython();
-    public static final Image Python_24 = PythonImplIconGroup.pythonPython_24();
-    public static final Image PythonConsole = PythonImplIconGroup.pythonPythonconsole();
-    public static final Image PythonClosed = PythonImplIconGroup.pythonPythonclosed();
-    public static final Image PythonTests = PythonImplIconGroup.pythonPythontests();
-    public static final Image RemoteInterpreter = PythonImplIconGroup.pythonRemoteinterpreter();
-    public static final Image Virtualenv = PythonImplIconGroup.pythonVirtualenv();
-  }
 }

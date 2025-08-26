@@ -15,16 +15,15 @@
  */
 package com.jetbrains.python.impl.console;
 
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.impl.PythonIcons;
 import consulo.application.ui.wm.IdeFocusManager;
 import consulo.codeEditor.Editor;
 import consulo.content.bundle.Sdk;
+import consulo.execution.icon.ExecutionIconGroup;
 import consulo.execution.ui.console.ConsoleView;
 import consulo.execution.ui.console.TextConsoleBuilderFactory;
 import consulo.ide.impl.idea.execution.impl.ConsoleViewImpl;
 import consulo.project.Project;
-
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -40,8 +39,8 @@ public class PythonDebugLanguageConsoleView extends consulo.ide.impl.idea.execut
 
     enableConsole(!PyConsoleOptions.getInstance(project).isShowDebugConsoleByDefault());
 
-    getSwitchConsoleActionPresentation().setIcon(PythonIcons.Python.Debug.CommandLine);
-    getSwitchConsoleActionPresentation().setText(PyBundle.message("run.configuration.show.command.line.action.name"));
+    getSwitchConsoleActionPresentation().setIcon(ExecutionIconGroup.console());
+    getSwitchConsoleActionPresentation().setTextValue(PyLocalize.runConfigurationShowCommandLineActionName());
   }
 
   public PythonDebugLanguageConsoleView(final Project project, Sdk sdk) {

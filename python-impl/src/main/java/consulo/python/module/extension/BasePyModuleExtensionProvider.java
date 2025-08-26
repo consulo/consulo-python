@@ -6,7 +6,7 @@ import consulo.module.content.layer.ModuleExtensionProvider;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.extension.ModuleExtension;
 import consulo.module.extension.MutableModuleExtension;
-import consulo.python.impl.icon.PythonImplIconGroup;
+import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 import jakarta.annotation.Nonnull;
 
@@ -31,7 +31,7 @@ public class BasePyModuleExtensionProvider implements ModuleExtensionProvider<Ba
   @Nonnull
   @Override
   public Image getIcon() {
-    return PythonImplIconGroup.pythonPython();
+    return PythonPsiIconGroup.python();
   }
 
   @Nonnull

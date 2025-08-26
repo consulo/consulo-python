@@ -23,12 +23,10 @@ import consulo.execution.configuration.RunConfiguration;
 import consulo.localize.LocalizeValue;
 import consulo.module.extension.ModuleExtensionHelper;
 import consulo.project.Project;
-import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
+import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
-import org.jetbrains.annotations.NonNls;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -79,7 +77,7 @@ public class PythonConfigurationType implements ConfigurationType {
 
     @Override
     public Image getIcon() {
-        return PythonImplIconGroup.pythonPython();
+        return PythonPsiIconGroup.python();
     }
 
     @Override

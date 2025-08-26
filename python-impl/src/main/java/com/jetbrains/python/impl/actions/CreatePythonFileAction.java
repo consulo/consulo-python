@@ -34,7 +34,7 @@ import jakarta.annotation.Nullable;
  */
 public class CreatePythonFileAction extends CreateFileFromTemplateAction implements DumbAware {
   public CreatePythonFileAction() {
-    super(LocalizeValue.localizeTODO("Python File"), LocalizeValue.localizeTODO("Creates a Python file from the specified template"), PythonPsiIconGroup.pythonfile());
+    super(LocalizeValue.localizeTODO("Python File"), LocalizeValue.localizeTODO("Creates a Python file from the specified template"), PythonPsiIconGroup.python());
   }
 
   @Override
