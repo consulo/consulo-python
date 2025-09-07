@@ -33,7 +33,6 @@ import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkAdditionalData;
 import consulo.content.bundle.SdkModificator;
-import consulo.ide.impl.idea.util.concurrency.BlockingSet;
 import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.Module;
@@ -69,8 +68,8 @@ public class PythonSdkUpdater implements PostStartupActivity {
     public static final int INITIAL_ACTIVITY_DELAY = 7000;
 
     private static final Object ourLock = new Object();
-    private static final Set<String> ourScheduledToRefresh = Sets.newHashSet();
-    private static final BlockingSet<String> ourUnderRefresh = new BlockingSet<>();
+    private static final Set<String> ourScheduledToRefresh = new HashSet<>();
+    private static final Set<String> ourUnderRefresh = new HashSet<>();
 
     /**
      * Refreshes the SDKs of the modules for the open project after some delay.
@@ -148,7 +147,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
                     Project project1 = (Project)getProject();
                     Sdk sdkInsideTask = PythonSdkType.findSdkByKey(key);
                     if (sdkInsideTask != null) {
-                        ourUnderRefresh.put(key);
+                        ourUnderRefresh.add(key);
                         try {
                             String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
                             try {
