@@ -23,6 +23,7 @@ import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
 import consulo.application.ApplicationManager;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
+
 import consulo.application.progress.Task;
 import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.frame.XValueChildrenList;

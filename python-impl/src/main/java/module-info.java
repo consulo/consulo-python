@@ -15,6 +15,7 @@ open module consulo.python.impl
   requires com.intellij.regexp;
 
   requires xmlrpc.common;
+  requires xmlrpc.server;
 
   // TODO remove in future
   requires consulo.ide.impl;
