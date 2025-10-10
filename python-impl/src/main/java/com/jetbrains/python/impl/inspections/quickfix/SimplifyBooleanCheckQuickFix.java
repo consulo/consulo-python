@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -23,7 +24,6 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.ast.TokenSet;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyBinaryExpression;
@@ -31,10 +31,8 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 
 /**
- * Created by IntelliJ IDEA.
- * Author: Alexey.Ivanov
- * Date:   17.03.2010
- * Time:   19:41:07
+ * @author Alexey.Ivanov
+ * @since 2010-03-17
  */
 public class SimplifyBooleanCheckQuickFix implements LocalQuickFix {
   private String myReplacementText;
@@ -60,13 +58,9 @@ public class SimplifyBooleanCheckQuickFix implements LocalQuickFix {
   }
 
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.simplify.$0", myReplacementText);
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return "Simplify boolean expression";
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixSimplify$0(myReplacementText);
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {

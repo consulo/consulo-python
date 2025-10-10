@@ -13,67 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.impl.editor.PythonEnterHandler;
+import com.jetbrains.python.psi.PyParenthesizedExpression;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.Stack;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.impl.editor.PythonEnterHandler;
-import com.jetbrains.python.psi.*;
+import jakarta.annotation.Nonnull;
 
 /**
- * User: catherine
- *
  * QuickFix to remove all unnecessary backslashes in expression
+ *
+ * @author catherine
  */
 public class RemoveUnnecessaryBackslashQuickFix implements LocalQuickFix {
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.remove.unnecessary.backslash");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement problemElement = descriptor.getPsiElement();
-    if (problemElement != null) {
-      PsiElement parent = PsiTreeUtil.getParentOfType(problemElement, PythonEnterHandler.IMPLICIT_WRAP_CLASSES);
-      removeBackSlash(parent);
+    @Nonnull
+    public LocalizeValue getName() {
+        return PyLocalize.qfixRemoveUnnecessaryBackslash();
     }
-  }
-  
-  public static void removeBackSlash(PsiElement parent) {
-    if (parent != null) {
-      Stack<PsiElement> stack = new Stack<PsiElement>();
-      if (parent instanceof PyParenthesizedExpression)
-        stack.push(((PyParenthesizedExpression)parent).getContainedExpression());
-      else
-        stack.push(parent);
-      while (!stack.isEmpty()) {
-        PsiElement el = stack.pop();
-        PsiWhiteSpace[] children = PsiTreeUtil.getChildrenOfType(el, PsiWhiteSpace.class);
-        if (children != null) {
-          for (PsiWhiteSpace ws : children) {
-            if (ws.getText().contains("\\")) {
-              ws.delete();
+
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement problemElement = descriptor.getPsiElement();
+        if (problemElement != null) {
+            PsiElement parent = PsiTreeUtil.getParentOfType(problemElement, PythonEnterHandler.IMPLICIT_WRAP_CLASSES);
+            removeBackSlash(parent);
+        }
+    }
+
+    public static void removeBackSlash(PsiElement parent) {
+        if (parent != null) {
+            Stack<PsiElement> stack = new Stack<PsiElement>();
+            if (parent instanceof PyParenthesizedExpression) {
+                stack.push(((PyParenthesizedExpression) parent).getContainedExpression());
             }
-          }
+            else {
+                stack.push(parent);
+            }
+            while (!stack.isEmpty()) {
+                PsiElement el = stack.pop();
+                PsiWhiteSpace[] children = PsiTreeUtil.getChildrenOfType(el, PsiWhiteSpace.class);
+                if (children != null) {
+                    for (PsiWhiteSpace ws : children) {
+                        if (ws.getText().contains("\\")) {
+                            ws.delete();
+                        }
+                    }
+                }
+                for (PsiElement psiElement : el.getChildren()) {
+                    stack.push(psiElement);
+                }
+            }
         }
-        for (PsiElement psiElement : el.getChildren()) {
-          stack.push(psiElement);
-        }
-      }
     }
-  } 
 }

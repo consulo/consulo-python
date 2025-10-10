@@ -13,51 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.PySetFunctionToLiteralInspection;
 import com.jetbrains.python.psi.*;
 
 /**
- * User : catherine
- * Quick Fix to replace function call of built-in function "set" with
- * set literal if applicable
+ * Quick Fix to replace function call of built-in function "set" with set literal if applicable.
+ *
+ * @author catherine
  */
 public class ReplaceFunctionWithSetLiteralQuickFix implements LocalQuickFix {
-  @Override
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.replace.function.set.with.literal");
-  }
-
-  @Override
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PyElement[] elements = PySetFunctionToLiteralInspection.getSetCallArguments((PyCallExpression)descriptor.getPsiElement());
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    PsiElement functionCall = descriptor.getPsiElement();
-    StringBuilder str = new StringBuilder("{");
-    for (int i = 0; i != elements.length; ++i) {
-      PyElement e = elements[i];
-      str.append(e.getText());
-      if (i != elements.length-1)
-        str.append(", ");
+    @Override
+    @Nonnull
+    public LocalizeValue getName() {
+        return PyLocalize.qfixReplaceFunctionSetWithLiteral();
     }
-    str.append("}");
-    functionCall.replace(elementGenerator.createFromText(LanguageLevel.forElement(functionCall), PyExpressionStatement.class,
-                                                             str.toString()).getExpression());
-  }
+
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PyElement[] elements = PySetFunctionToLiteralInspection.getSetCallArguments((PyCallExpression) descriptor.getPsiElement());
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        PsiElement functionCall = descriptor.getPsiElement();
+        StringBuilder str = new StringBuilder("{");
+        for (int i = 0; i != elements.length; ++i) {
+            PyElement e = elements[i];
+            str.append(e.getText());
+            if (i != elements.length - 1) {
+                str.append(", ");
+            }
+        }
+        str.append("}");
+        functionCall.replace(elementGenerator.createFromText(LanguageLevel.forElement(functionCall), PyExpressionStatement.class,
+            str.toString()
+        ).getExpression());
+    }
 }

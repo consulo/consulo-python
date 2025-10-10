@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
@@ -34,72 +33,67 @@ import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.language.psi.scope.LocalSearchScope;
 import consulo.language.psi.search.PsiSearchHelper;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * User: ktisha
+ * @author ktisha
  */
 public class PyRenameElementQuickFix implements LocalQuickFix {
-  @Nonnull
-  @Override
-  public String getName() {
-    return "Rename element";
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return LocalizeValue.localizeTODO("Rename element");
+    }
 
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return "Rename element";
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    final PsiElement element = descriptor.getPsiElement();
-    final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
-      (PsiNameIdentifierOwner)element :
-      PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
-    if (nameOwner != null) {
-      final VirtualFile virtualFile = nameOwner.getContainingFile().getVirtualFile();
-      if (virtualFile != null) {
-        final Editor editor = FileEditorManager.getInstance(project)
-                                               .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
-                                                               true);
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          renameInUnitTestMode(project, nameOwner, editor);
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
+            (PsiNameIdentifierOwner) element :
+            PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
+        if (nameOwner != null) {
+            final VirtualFile virtualFile = nameOwner.getContainingFile().getVirtualFile();
+            if (virtualFile != null) {
+                final Editor editor = FileEditorManager.getInstance(project)
+                    .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(), true);
+                if (ApplicationManager.getApplication().isUnitTestMode()) {
+                    renameInUnitTestMode(project, nameOwner, editor);
+                }
+                else {
+                    if (checkLocalScope(element) != null && (nameOwner instanceof PyNamedParameter || nameOwner instanceof PyTargetExpression)) {
+                        new VariableInplaceRenamer(nameOwner, editor).performInplaceRename();
+                    }
+                    else {
+                        PsiElementRenameHandler.invoke(nameOwner, project, ScopeUtil.getScopeOwner(nameOwner), editor);
+                    }
+                }
+            }
         }
-        else {
-          if (checkLocalScope(element) != null && (nameOwner instanceof PyNamedParameter || nameOwner instanceof PyTargetExpression)) {
-            new VariableInplaceRenamer(nameOwner, editor).performInplaceRename();
-          }
-          else {
-            PsiElementRenameHandler.invoke(nameOwner, project, ScopeUtil.getScopeOwner(nameOwner), editor);
-          }
+    }
+
+    @Nullable
+    protected PsiElement checkLocalScope(PsiElement element) {
+        final SearchScope searchScope = PsiSearchHelper.SERVICE.getInstance(element.getProject()).getUseScope(element);
+        if (searchScope instanceof LocalSearchScope) {
+            final PsiElement[] elements = ((LocalSearchScope) searchScope).getScope();
+            return PsiTreeUtil.findCommonParent(elements);
         }
-      }
-    }
-  }
 
-  @Nullable
-  protected PsiElement checkLocalScope(PsiElement element) {
-    final SearchScope searchScope = PsiSearchHelper.SERVICE.getInstance(element.getProject()).getUseScope(element);
-    if (searchScope instanceof LocalSearchScope) {
-      final PsiElement[] elements = ((LocalSearchScope)searchScope).getScope();
-      return PsiTreeUtil.findCommonParent(elements);
+        return null;
     }
 
-    return null;
-  }
-
-  private static void renameInUnitTestMode(@Nonnull Project project, @Nonnull PsiNameIdentifierOwner nameOwner,
-                                           @Nullable Editor editor) {
-    final PsiElement substitution = RenamePsiElementProcessor.forElement(nameOwner).substituteElementToRename(nameOwner, editor);
-    if (substitution != null) {
-      new RenameProcessor(project, substitution, "a", false, false).run();
+    private static void renameInUnitTestMode(
+        @Nonnull Project project, @Nonnull PsiNameIdentifierOwner nameOwner,
+        @Nullable Editor editor
+    ) {
+        final PsiElement substitution = RenamePsiElementProcessor.forElement(nameOwner).substituteElementToRename(nameOwner, editor);
+        if (substitution != null) {
+            new RenameProcessor(project, substitution, "a", false, false).run();
+        }
     }
-  }
 }

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
 import jakarta.annotation.Nonnull;
 
@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * User: catherine
- *
  * QuickFix to remove redundant argument equal default
+ *
+ * @author catherine
  */
 public class RemoveArgumentEqualDefaultQuickFix implements LocalQuickFix {
   Set<PyExpression> myProblemElements;
@@ -42,13 +42,9 @@ public class RemoveArgumentEqualDefaultQuickFix implements LocalQuickFix {
   }
 
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.remove.argument.equal.default");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixRemoveArgumentEqualDefault();
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {

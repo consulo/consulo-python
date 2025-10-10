@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
@@ -25,42 +26,39 @@ import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NonNls;
 
 /**
- * User: catherine
- *
  * Quickfix to introduce variable if statement seems to have no effect
+ *
+ * @author catherine
  */
 public class StatementEffectIntroduceVariableQuickFix implements LocalQuickFix {
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.introduce.variable");
-  }
-
-  @NonNls
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-    PsiElement expression = descriptor.getPsiElement();
-    if (expression != null && expression.isValid()) {
-      final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-      final PyAssignmentStatement assignment = elementGenerator.createFromText(LanguageLevel.forElement(expression), PyAssignmentStatement.class,
-                                                         "var = " + expression.getText());
-
-      expression = expression.replace(assignment);
-      if (expression == null) return;
-      expression = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(expression);
-      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(expression);
-      final PyExpression leftHandSideExpression = ((PyAssignmentStatement)expression).getLeftHandSideExpression();
-      assert leftHandSideExpression != null;
-      builder.replaceElement(leftHandSideExpression, "var");
-      builder.run();
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixIntroduceVariable();
     }
-  }
+
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        PsiElement expression = descriptor.getPsiElement();
+        if (expression != null && expression.isValid()) {
+            final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            final PyAssignmentStatement assignment =
+                elementGenerator.createFromText(LanguageLevel.forElement(expression), PyAssignmentStatement.class,
+                    "var = " + expression.getText()
+                );
+
+            expression = expression.replace(assignment);
+            if (expression == null) {
+                return;
+            }
+            expression = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(expression);
+            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(expression);
+            final PyExpression leftHandSideExpression = ((PyAssignmentStatement) expression).getLeftHandSideExpression();
+            assert leftHandSideExpression != null;
+            builder.replaceElement(leftHandSideExpression, "var");
+            builder.run();
+        }
+    }
 }

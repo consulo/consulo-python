@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -23,7 +24,6 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
@@ -31,20 +31,13 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: 03.03.2010
- * Time: 16:49:59
+ * @author Alexey.Ivanov
+ * @since 2010-03-03
  */
 public class TransformClassicClassQuickFix implements LocalQuickFix {
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.classic.class.transform");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
+  public LocalizeValue getName() {
+    return PyLocalize.qfixClassicClassTransform();
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {

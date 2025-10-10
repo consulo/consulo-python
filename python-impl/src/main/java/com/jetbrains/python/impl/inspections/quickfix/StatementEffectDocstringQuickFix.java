@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -23,44 +24,38 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
 
 /**
- * User: catherine
- *
  * QuickFix to move misplaced docstring
+ *
+ * @author catherine
  */
 public class StatementEffectDocstringQuickFix implements LocalQuickFix {
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.statement.effect.move.docstring");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement expression = descriptor.getPsiElement();
-    if (expression instanceof PyStringLiteralExpression) {
-      PyStatement st = PsiTreeUtil.getParentOfType(expression, PyStatement.class);
-      if (st != null) {
-        PyDocStringOwner parent = PsiTreeUtil.getParentOfType(expression, PyDocStringOwner.class);
-
-        if (parent instanceof PyClass || parent instanceof PyFunction) {
-          PyStatementList statementList = PsiTreeUtil.findChildOfType(parent, PyStatementList.class);
-          if (statementList != null) {
-            PyStatement[] statements = statementList.getStatements();
-            if (statements.length > 0) {
-              statementList.addBefore(st, statements[0]);
-              st.delete();
-            }
-          }
-        }
-      }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixStatementEffectMoveDocstring();
     }
-  }
 
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement expression = descriptor.getPsiElement();
+        if (expression instanceof PyStringLiteralExpression) {
+            PyStatement st = PsiTreeUtil.getParentOfType(expression, PyStatement.class);
+            if (st != null) {
+                PyDocStringOwner parent = PsiTreeUtil.getParentOfType(expression, PyDocStringOwner.class);
+
+                if (parent instanceof PyClass || parent instanceof PyFunction) {
+                    PyStatementList statementList = PsiTreeUtil.findChildOfType(parent, PyStatementList.class);
+                    if (statementList != null) {
+                        PyStatement[] statements = statementList.getStatements();
+                        if (statements.length > 0) {
+                            statementList.addBefore(st, statements[0]);
+                            st.delete();
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

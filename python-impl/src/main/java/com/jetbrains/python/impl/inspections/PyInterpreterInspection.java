@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyFile;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationManager;
@@ -26,80 +24,73 @@ import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import org.jetbrains.annotations.Nls;
-
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * User: ktisha
+ * @author ktisha
  */
 @ExtensionImpl
 public class PyInterpreterInspection extends PyInspection {
-
-  @Nls
-  @Nonnull
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.invalid.interpreter");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        final boolean isOnTheFly,
-                                        @Nonnull final LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  public static class Visitor extends PyInspectionVisitor {
-
-    public Visitor(@Nullable ProblemsHolder holder,
-                   @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameInvalidInterpreter();
     }
 
+    @Nonnull
     @Override
-    public void visitPyFile(PyFile node) {
-      super.visitPyFile(node);
-      /*if (PlatformUtils.isPyCharm()) {
-        final Module module = ModuleUtilCore.findModuleForPsiElement(node);
-        if (module != null) {
-          final Sdk sdk = PythonSdkType.findPythonSdk(module);
-          if (sdk == null) {
-            registerProblem(node, "No Python interpreter configured for the project", new ConfigureInterpreterFix());
-          }
-          else if (PythonSdkType.isInvalid(sdk)) {
-            registerProblem(node, "Invalid Python interpreter selected for the project", new ConfigureInterpreterFix());
-          }
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        final boolean isOnTheFly,
+        @Nonnull final LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    public static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
         }
-      } */
-    }
-  }
 
-  private static class ConfigureInterpreterFix implements LocalQuickFix {
-    @Nonnull
-    @Override
-    public String getName() {
-      return "Configure Python Interpreter";
-    }
-
-    @Nonnull
-    @Override
-    public String getFamilyName() {
-      return "Configure Python Interpreter";
-    }
-
-    @Override
-    public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
-        public void run() {
-          // outside of read action
-          ShowSettingsUtil.getInstance().showSettingsDialog(project, "Project Interpreter");
+        public void visitPyFile(PyFile node) {
+            super.visitPyFile(node);
+            /*if (PlatformUtils.isPyCharm()) {
+                final Module module = ModuleUtilCore.findModuleForPsiElement(node);
+                if (module != null) {
+                    final Sdk sdk = PythonSdkType.findPythonSdk(module);
+                    if (sdk == null) {
+                        registerProblem(node, "No Python interpreter configured for the project", new ConfigureInterpreterFix());
+                    }
+                    else if (PythonSdkType.isInvalid(sdk)) {
+                        registerProblem(node, "Invalid Python interpreter selected for the project", new ConfigureInterpreterFix());
+                    }
+                }
+            } */
         }
-      });
     }
-  }
+
+    private static class ConfigureInterpreterFix implements LocalQuickFix {
+        @Nonnull
+        @Override
+        public LocalizeValue getName() {
+            return LocalizeValue.localizeTODO("Configure Python Interpreter");
+        }
+
+        @Override
+        public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    // outside of read action
+                    ShowSettingsUtil.getInstance().showSettingsDialog(project, "Project Interpreter");
+                }
+            });
+        }
+    }
 }

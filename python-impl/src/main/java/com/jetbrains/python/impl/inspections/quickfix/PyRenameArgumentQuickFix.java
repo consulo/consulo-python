@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.impl.PyBundle;
 import consulo.codeEditor.Editor;
 import consulo.document.util.TextRange;
 import consulo.fileEditor.FileEditorManager;
@@ -25,37 +24,39 @@ import consulo.language.editor.template.TemplateBuilder;
 import consulo.language.editor.template.TemplateBuilderFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 
 public class PyRenameArgumentQuickFix implements LocalQuickFix {
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return PyBundle.message("QFIX.NAME.rename.argument");
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    final PsiElement element = descriptor.getPsiElement();
-    if (!(element instanceof PsiNamedElement)) {
-      return;
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameRenameArgument();
     }
-    final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-    if (virtualFile != null) {
-      final Editor editor = FileEditorManager.getInstance(project)
-                                             .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
-                                                             true);
-      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
-      final String name = ((PsiNamedElement)element).getName();
-      assert name != null;
-      assert editor != null;
-      builder.replaceElement(element, TextRange.create(0, name.length()), name);
-      builder.run(editor, false);
-    }
-  }
 
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        if (!(element instanceof PsiNamedElement)) {
+            return;
+        }
+        final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+        if (virtualFile != null) {
+            final Editor editor = FileEditorManager.getInstance(project)
+                .openTextEditor(
+                    OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
+                    true
+                );
+            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
+            final String name = ((PsiNamedElement) element).getName();
+            assert name != null;
+            assert editor != null;
+            builder.replaceElement(element, TextRange.create(0, name.length()), name);
+            builder.run(editor, false);
+        }
+    }
 }

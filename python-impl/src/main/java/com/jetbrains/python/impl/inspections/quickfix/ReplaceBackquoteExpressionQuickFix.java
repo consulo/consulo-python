@@ -13,35 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyReprExpression;
 
 /**
- * Created by IntelliJ IDEA.
- * Author: Alexey.Ivanov
- * Date:   06.03.2010
- * Time:   16:50:53
+ * @author Alexey.Ivanov
+ * @since 2010-03-06
  */
 public class ReplaceBackquoteExpressionQuickFix implements LocalQuickFix {
   @Nonnull
   @Override
-  public String getName() {
-    return PyBundle.message("INTN.replace.backquote.expression");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
+  public LocalizeValue getName() {
+    return PyLocalize.intnReplaceBackquoteExpression();
   }
 
   @Override

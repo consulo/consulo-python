@@ -16,73 +16,72 @@
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.psi.PyExpressionCodeFragment;
 import com.jetbrains.python.impl.psi.impl.PyFileImpl;
+import com.jetbrains.python.psi.PyExpressionCodeFragment;
 import consulo.language.Language;
 import consulo.language.editor.inspection.LocalInspectionTool;
+import consulo.language.editor.inspection.localize.InspectionLocalize;
 import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
-import org.intellij.lang.annotations.Pattern;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.intellij.lang.annotations.Pattern;
 
 public abstract class PyInspection extends LocalInspectionTool {
-  @Pattern(VALID_ID_PATTERN)
-  @Nonnull
-  @Override
-  public String getID() {
-    //noinspection PatternValidation
-    return getShortName(super.getID());
-  }
-
-  @Nullable
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.getInstance();
-  }
-
-  @Nls
-  @Nonnull
-  @Override
-  public String getGroupDisplayName() {
-    return "General";
-  }
-
-  @Nonnull
-  @Override
-  public String getShortName() {
-    return getClass().getSimpleName();
-  }
-
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
-
-  @Nonnull
-  @Override
-  public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.WARNING;
-  }
-
-  @Override
-  public boolean isSuppressedFor(@Nonnull PsiElement element) {
-    final PsiFile file = element.getContainingFile();
-    if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(this.getClass())) {
-      return true;
+    @Pattern(VALID_ID_PATTERN)
+    @Nonnull
+    @Override
+    public String getID() {
+        //noinspection PatternValidation
+        return getShortName(super.getID());
     }
-    return isSuppressForCodeFragment(element) || super.isSuppressedFor(element);
-  }
 
-  private boolean isSuppressForCodeFragment(@Nullable PsiElement element) {
-    return isSuppressForCodeFragment() && PsiTreeUtil.getParentOfType(element, PyExpressionCodeFragment.class) != null;
-  }
+    @Nullable
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.getInstance();
+    }
 
-  protected boolean isSuppressForCodeFragment() {
-    return false;
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return InspectionLocalize.inspectionGeneralToolsGroupName();
+    }
+
+    @Nonnull
+    @Override
+    public String getShortName() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public boolean isEnabledByDefault() {
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WARNING;
+    }
+
+    @Override
+    public boolean isSuppressedFor(@Nonnull PsiElement element) {
+        final PsiFile file = element.getContainingFile();
+        if (file instanceof PyFileImpl && !((PyFileImpl) file).isAcceptedFor(this.getClass())) {
+            return true;
+        }
+        return isSuppressForCodeFragment(element) || super.isSuppressedFor(element);
+    }
+
+    private boolean isSuppressForCodeFragment(@Nullable PsiElement element) {
+        return isSuppressForCodeFragment() && PsiTreeUtil.getParentOfType(element, PyExpressionCodeFragment.class) != null;
+    }
+
+    protected boolean isSuppressForCodeFragment() {
+        return false;
+    }
 }

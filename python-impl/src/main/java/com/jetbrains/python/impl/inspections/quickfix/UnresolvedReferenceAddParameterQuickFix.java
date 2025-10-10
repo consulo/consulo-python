@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
@@ -27,16 +28,15 @@ import consulo.project.Project;
 import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
 
 /**
- * User: ktisha
- *
  * QuickFix to add parameter to unresolved reference
+ *
+ * @author ktisha
  */
 public class UnresolvedReferenceAddParameterQuickFix implements LocalQuickFix {
   private String myName;
@@ -45,13 +45,9 @@ public class UnresolvedReferenceAddParameterQuickFix implements LocalQuickFix {
   }
 
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.unresolved.reference.add.param.$0", myName);
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return PyBundle.message("QFIX.unresolved.reference.add.param");
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixUnresolvedReferenceAddParam$0(myName);
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {

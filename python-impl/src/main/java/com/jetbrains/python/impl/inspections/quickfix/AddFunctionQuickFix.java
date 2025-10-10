@@ -36,8 +36,10 @@ import consulo.language.editor.template.TemplateBuilderFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
 import consulo.virtualFileSystem.VirtualFile;
 
@@ -48,10 +50,9 @@ import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
 /**
  * Adds a missing top-level function to a module.
- * <br/>
- * User: dcheryasov
- * Date: Sep 15, 2010 4:34:23 PM
  *
+ * @author dcheryasov
+ * @since 2010-09-15
  * @see AddMethodQuickFix AddMethodQuickFix
  */
 public class AddFunctionQuickFix implements LocalQuickFix {
@@ -65,13 +66,9 @@ public class AddFunctionQuickFix implements LocalQuickFix {
   }
 
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.NAME.add.function.$0.to.module.$1", myIdentifier, myModuleName);
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return "Create function in module";
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixNameAddFunction$0ToModule$1(myIdentifier, myModuleName);
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
