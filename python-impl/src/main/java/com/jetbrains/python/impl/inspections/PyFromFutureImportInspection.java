@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.inspections.quickfix.MoveFromFutureImportQuickFix;
 import com.jetbrains.python.psi.*;
@@ -25,10 +23,11 @@ import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiFile;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.List;
 
 /**
@@ -36,57 +35,59 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyFromFutureImportInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.from.future.import");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyFromImportStatement(PyFromImportStatement node) {
-      PyReferenceExpression importSource = node.getImportSource();
-      if (importSource != null && PyNames.FUTURE_MODULE.equals(importSource.getName())) {
-        PsiFile file = importSource.getContainingFile();
-        if (file instanceof PyFile) {
-          final List<PyStatement> statementList = ((PyFile)file).getStatements();
-          boolean skippedDocString = false;
-          for (PyStatement statement : statementList) {
-            if (statement instanceof PyExpressionStatement &&
-              ((PyExpressionStatement)statement).getExpression() instanceof PyStringLiteralExpression &&
-              !skippedDocString) {
-              skippedDocString = true;
-              continue;
-            }
-            if (statement instanceof PyFromImportStatement) {
-              if (statement == node) {
-                return;
-              }
-              PyReferenceExpression source = ((PyFromImportStatement)statement).getImportSource();
-              if (source != null && PyNames.FUTURE_MODULE.equals(source.getName())) {
-                continue;
-              }
-            }
-            registerProblem(node, "from __future__ imports must occur at the beginning of the file",
-                            new MoveFromFutureImportQuickFix());
-            return;
-          }
-        }
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameFromFutureImport();
     }
-  }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    private static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyFromImportStatement(PyFromImportStatement node) {
+            PyReferenceExpression importSource = node.getImportSource();
+            if (importSource != null && PyNames.FUTURE_MODULE.equals(importSource.getName())) {
+                PsiFile file = importSource.getContainingFile();
+                if (file instanceof PyFile) {
+                    final List<PyStatement> statementList = ((PyFile) file).getStatements();
+                    boolean skippedDocString = false;
+                    for (PyStatement statement : statementList) {
+                        if (statement instanceof PyExpressionStatement &&
+                            ((PyExpressionStatement) statement).getExpression() instanceof PyStringLiteralExpression &&
+                            !skippedDocString) {
+                            skippedDocString = true;
+                            continue;
+                        }
+                        if (statement instanceof PyFromImportStatement) {
+                            if (statement == node) {
+                                return;
+                            }
+                            PyReferenceExpression source = ((PyFromImportStatement) statement).getImportSource();
+                            if (source != null && PyNames.FUTURE_MODULE.equals(source.getName())) {
+                                continue;
+                            }
+                        }
+                        registerProblem(node, "from __future__ imports must occur at the beginning of the file",
+                            new MoveFromFutureImportQuickFix()
+                        );
+                        return;
+                    }
+                }
+            }
+        }
+    }
 }

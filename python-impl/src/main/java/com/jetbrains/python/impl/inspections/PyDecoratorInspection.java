@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.quickfix.RemoveDecoratorQuickFix;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyDecorator;
@@ -26,54 +24,57 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * User: catherine
- * <p>
- * Inspection to detect occurrences of @classmethod and @staticmethod
- * on methods outside of a class
+ * Inspection to detect occurrences of @classmethod and @staticmethod on methods outside of a class.
+ *
+ * @author catherine
  */
 @ExtensionImpl
 public class PyDecoratorInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.decorator.outside.class");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyFunction(final PyFunction node) {
-      PyClass containingClass = node.getContainingClass();
-      if (containingClass != null)
-        return;
-
-      PyDecoratorList decorators = node.getDecoratorList();
-      if (decorators == null)
-        return;
-      for (PyDecorator decorator : decorators.getDecorators()) {
-        String name = decorator.getText();
-        if (name.equals("@classmethod") || name.equals("@staticmethod"))
-          registerProblem(decorator, "Decorator " + name + " on method outside class", new RemoveDecoratorQuickFix());
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameDecoratorOutsideClass();
     }
-  }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    private static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyFunction(final PyFunction node) {
+            PyClass containingClass = node.getContainingClass();
+            if (containingClass != null) {
+                return;
+            }
+
+            PyDecoratorList decorators = node.getDecoratorList();
+            if (decorators == null) {
+                return;
+            }
+            for (PyDecorator decorator : decorators.getDecorators()) {
+                String name = decorator.getText();
+                if (name.equals("@classmethod") || name.equals("@staticmethod")) {
+                    registerProblem(decorator, "Decorator " + name + " on method outside class", new RemoveDecoratorQuickFix());
+                }
+            }
+        }
+    }
 }

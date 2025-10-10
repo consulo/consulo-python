@@ -15,28 +15,27 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.psi.PyElement;
 import consulo.language.editor.inspection.AbstractBatchSuppressByNoInspectionCommentFix;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.psi.PyElement;
+import consulo.localize.LocalizeValue;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public class PySuppressInspectionFix extends AbstractBatchSuppressByNoInspectionCommentFix
-{
-	private final Class<? extends PyElement> myContainerClass;
+public class PySuppressInspectionFix extends AbstractBatchSuppressByNoInspectionCommentFix {
+    private final Class<? extends PyElement> myContainerClass;
 
-	public PySuppressInspectionFix(final String ID, final String text, final Class<? extends PyElement> containerClass)
-	{
-		super(ID, false);
-		setText(text);
-		myContainerClass = containerClass;
-	}
+    public PySuppressInspectionFix(String ID, @Nonnull LocalizeValue text, Class<? extends PyElement> containerClass) {
+        super(ID, false);
+        setText(text);
+        myContainerClass = containerClass;
+    }
 
-	@Override
-	public PsiElement getContainer(PsiElement context)
-	{
-		return PsiTreeUtil.getParentOfType(context, myContainerClass);
-	}
+    @Override
+    public PsiElement getContainer(PsiElement context) {
+        return PsiTreeUtil.getParentOfType(context, myContainerClass);
+    }
 }

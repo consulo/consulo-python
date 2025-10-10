@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
 import com.google.common.collect.ImmutableList;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.inspections.quickfix.SimplifyBooleanCheckQuickFix;
 import com.jetbrains.python.psi.PyBinaryExpression;
@@ -29,10 +27,11 @@ import consulo.language.editor.inspection.InspectionToolState;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -42,92 +41,97 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PySimplifyBooleanCheckInspection extends PyInspection {
-  private static List<String> COMPARISON_LITERALS = ImmutableList.of("True", "False", "[]");
+    private static List<String> COMPARISON_LITERALS = ImmutableList.of("True", "False", "[]");
 
-  @Nonnull
-  @Override
-  public InspectionToolState<?> createStateProvider() {
-    return new PySimplifyBooleanCheckInspectionState();
-  }
-
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.check.can.be.simplified");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    PySimplifyBooleanCheckInspectionState inspectionState = (PySimplifyBooleanCheckInspectionState)state;
-    return new Visitor(holder, session, inspectionState.ignoreComparisonToZero);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    private final boolean myIgnoreComparisonToZero;
-
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, boolean ignoreComparisonToZero) {
-      super(holder, session);
-      myIgnoreComparisonToZero = ignoreComparisonToZero;
-    }
-
+    @Nonnull
     @Override
-    public void visitPyConditionalStatementPart(PyConditionalStatementPart node) {
-      super.visitPyConditionalStatementPart(node);
-      final PyExpression condition = node.getCondition();
-      if (condition != null) {
-        condition.accept(new PyBinaryExpressionVisitor(getHolder(), getSession(), myIgnoreComparisonToZero));
-      }
-    }
-  }
-
-  private static class PyBinaryExpressionVisitor extends PyInspectionVisitor {
-    private final boolean myIgnoreComparisonToZero;
-
-    public PyBinaryExpressionVisitor(@Nullable ProblemsHolder holder,
-                                     @Nonnull LocalInspectionToolSession session,
-                                     boolean ignoreComparisonToZero) {
-      super(holder, session);
-      myIgnoreComparisonToZero = ignoreComparisonToZero;
+    public InspectionToolState<?> createStateProvider() {
+        return new PySimplifyBooleanCheckInspectionState();
     }
 
+    @Nonnull
     @Override
-    public void visitPyBinaryExpression(PyBinaryExpression node) {
-      super.visitPyBinaryExpression(node);
-      final PyElementType operator = node.getOperator();
-      final PyExpression rightExpression = node.getRightExpression();
-      if (rightExpression == null || rightExpression instanceof PyBinaryExpression ||
-        node.getLeftExpression() instanceof PyBinaryExpression) {
-        return;
-      }
-      if (PyTokenTypes.EQUALITY_OPERATIONS.contains(operator)) {
-        if (operandsEqualTo(node, COMPARISON_LITERALS) ||
-          (!myIgnoreComparisonToZero && operandsEqualTo(node, Collections.singleton("0")))) {
-          registerProblem(node);
-        }
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameCheckCanBeSimplified();
     }
 
-    private static boolean operandsEqualTo(@Nonnull PyBinaryExpression expr, @Nonnull Collection<String> literals) {
-      final String leftExpressionText = expr.getLeftExpression().getText();
-      final PyExpression rightExpression = expr.getRightExpression();
-      final String rightExpressionText = rightExpression != null ? rightExpression.getText() : null;
-      for (String literal : literals) {
-        if (literal.equals(leftExpressionText) || literal.equals(rightExpressionText)) {
-          return true;
-        }
-      }
-      return false;
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        PySimplifyBooleanCheckInspectionState inspectionState = (PySimplifyBooleanCheckInspectionState) state;
+        return new Visitor(holder, session, inspectionState.ignoreComparisonToZero);
     }
 
-    private void registerProblem(PyBinaryExpression binaryExpression) {
-      registerProblem(binaryExpression,
-                      PyBundle.message("INSP.expression.can.be.simplified"),
-                      new SimplifyBooleanCheckQuickFix(binaryExpression));
+    private static class Visitor extends PyInspectionVisitor {
+        private final boolean myIgnoreComparisonToZero;
+
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, boolean ignoreComparisonToZero) {
+            super(holder, session);
+            myIgnoreComparisonToZero = ignoreComparisonToZero;
+        }
+
+        @Override
+        public void visitPyConditionalStatementPart(PyConditionalStatementPart node) {
+            super.visitPyConditionalStatementPart(node);
+            final PyExpression condition = node.getCondition();
+            if (condition != null) {
+                condition.accept(new PyBinaryExpressionVisitor(getHolder(), getSession(), myIgnoreComparisonToZero));
+            }
+        }
     }
-  }
+
+    private static class PyBinaryExpressionVisitor extends PyInspectionVisitor {
+        private final boolean myIgnoreComparisonToZero;
+
+        public PyBinaryExpressionVisitor(
+            @Nullable ProblemsHolder holder,
+            @Nonnull LocalInspectionToolSession session,
+            boolean ignoreComparisonToZero
+        ) {
+            super(holder, session);
+            myIgnoreComparisonToZero = ignoreComparisonToZero;
+        }
+
+        @Override
+        public void visitPyBinaryExpression(PyBinaryExpression node) {
+            super.visitPyBinaryExpression(node);
+            final PyElementType operator = node.getOperator();
+            final PyExpression rightExpression = node.getRightExpression();
+            if (rightExpression == null || rightExpression instanceof PyBinaryExpression ||
+                node.getLeftExpression() instanceof PyBinaryExpression) {
+                return;
+            }
+            if (PyTokenTypes.EQUALITY_OPERATIONS.contains(operator)) {
+                if (operandsEqualTo(node, COMPARISON_LITERALS) ||
+                    (!myIgnoreComparisonToZero && operandsEqualTo(node, Collections.singleton("0")))) {
+                    registerProblem(node);
+                }
+            }
+        }
+
+        private static boolean operandsEqualTo(@Nonnull PyBinaryExpression expr, @Nonnull Collection<String> literals) {
+            final String leftExpressionText = expr.getLeftExpression().getText();
+            final PyExpression rightExpression = expr.getRightExpression();
+            final String rightExpressionText = rightExpression != null ? rightExpression.getText() : null;
+            for (String literal : literals) {
+                if (literal.equals(leftExpressionText) || literal.equals(rightExpressionText)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void registerProblem(PyBinaryExpression binaryExpression) {
+            registerProblem(
+                binaryExpression,
+                PyLocalize.inspExpressionCanBeSimplified().get(),
+                new SimplifyBooleanCheckQuickFix(binaryExpression)
+            );
+        }
+    }
 }

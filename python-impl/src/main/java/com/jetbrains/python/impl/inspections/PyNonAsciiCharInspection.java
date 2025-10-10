@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.inspections.quickfix.AddEncodingQuickFix;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -29,100 +27,90 @@ import consulo.language.psi.PsiComment;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiFile;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
 /**
- * User : catherine
+ * @author catherine
  */
 @ExtensionImpl
-public class PyNonAsciiCharInspection extends PyInspection
-{
-	@Nonnull
-	@Override
-	public InspectionToolState<?> createStateProvider()
-	{
-		return new PyNonAsciiCharInspectionState();
-	}
+public class PyNonAsciiCharInspection extends PyInspection {
+    @Nonnull
+    @Override
+    public InspectionToolState<?> createStateProvider() {
+        return new PyNonAsciiCharInspectionState();
+    }
 
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return PyBundle.message("INSP.NAME.non.ascii");
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameNonAscii();
+    }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-										  boolean isOnTheFly,
-										  @Nonnull LocalInspectionToolSession session,
-										  Object state)
-	{
-		return new Visitor(holder, session, (PyNonAsciiCharInspectionState) state);
-	}
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session, (PyNonAsciiCharInspectionState) state);
+    }
 
-	private class Visitor extends PyInspectionVisitor
-	{
-		private final PyNonAsciiCharInspectionState myState;
+    private class Visitor extends PyInspectionVisitor {
+        private final PyNonAsciiCharInspectionState myState;
 
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyNonAsciiCharInspectionState state)
-		{
-			super(holder, session);
-			myState = state;
-		}
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyNonAsciiCharInspectionState state) {
+            super(holder, session);
+            myState = state;
+        }
 
-		@Override
-		public void visitComment(PsiComment node)
-		{
-			checkString(node, node.getText());
-		}
+        @Override
+        public void visitComment(PsiComment node) {
+            checkString(node, node.getText());
+        }
 
-		private void checkString(PsiElement node, String value)
-		{
-			if(LanguageLevel.forElement(node).isPy3K())
-			{
-				return;
-			}
-			PsiFile file = node.getContainingFile(); // can't cache this in the instance, alas
-			if(file == null)
-			{
-				return;
-			}
-			final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file.getText());
+        private void checkString(PsiElement node, String value) {
+            if (LanguageLevel.forElement(node).isPy3K()) {
+                return;
+            }
+            PsiFile file = node.getContainingFile(); // can't cache this in the instance, alas
+            if (file == null) {
+                return;
+            }
+            final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file.getText());
 
-			boolean hasNonAscii = false;
+            boolean hasNonAscii = false;
 
-			CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
-			int length = value.length();
-			char c = 0;
-			for(int i = 0; i < length; ++i)
-			{
-				c = value.charAt(i);
-				if(!asciiEncoder.canEncode(c))
-				{
-					hasNonAscii = true;
-					break;
-				}
-			}
+            CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
+            int length = value.length();
+            char c = 0;
+            for (int i = 0; i < length; ++i) {
+                c = value.charAt(i);
+                if (!asciiEncoder.canEncode(c)) {
+                    hasNonAscii = true;
+                    break;
+                }
+            }
 
-			if(hasNonAscii)
-			{
-				if(charsetString == null)
-				{
-					registerProblem(node, "Non-ASCII character " + c + " in file, but no encoding declared",
-							new AddEncodingQuickFix(myState.myDefaultEncoding, myState.myEncodingFormatIndex));
-				}
-			}
-		}
+            if (hasNonAscii) {
+                if (charsetString == null) {
+                    registerProblem(node, "Non-ASCII character " + c + " in file, but no encoding declared",
+                        new AddEncodingQuickFix(myState.myDefaultEncoding, myState.myEncodingFormatIndex)
+                    );
+                }
+            }
+        }
 
-		@Override
-		public void visitPyStringLiteralExpression(PyStringLiteralExpression node)
-		{
-			checkString(node, node.getText());
-		}
-	}
+        @Override
+        public void visitPyStringLiteralExpression(PyStringLiteralExpression node) {
+            checkString(node, node.getText());
+        }
+    }
 }

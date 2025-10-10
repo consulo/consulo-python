@@ -15,93 +15,98 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.quickfix.PyRemoveAssignmentQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.search.PyOverridingMethodsSearch;
 import com.jetbrains.python.impl.psi.types.PyNoneType;
-import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.impl.sdk.PySdkUtil;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.types.PyType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: ktisha
- * <p>
- * pylint E1111
- * <p>
- * Used when an assignment is done on a function call but the inferred function doesn't return anything.
+ * <p>pylint E1111</p>
+ *
+ * <p>Used when an assignment is done on a function call but the inferred function doesn't return anything.</p>
+ *
+ * @author ktisha
  */
 @ExtensionImpl
 public class PyNoneFunctionAssignmentInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.none.function.assignment");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-
-  private static class Visitor extends PyInspectionVisitor {
-    private final Map<PyFunction, Boolean> myHasInheritors = new HashMap<>();
-
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyAssignmentStatement(PyAssignmentStatement node) {
-      final PyExpression value = node.getAssignedValue();
-      if (value instanceof PyCallExpression) {
-        final PyType type = myTypeEvalContext.getType(value);
-        final PyCallExpression callExpr = (PyCallExpression)value;
-        final PyExpression callee = callExpr.getCallee();
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameNoneFunctionAssignment();
+    }
 
-        if (type instanceof PyNoneType && callee != null) {
-          final PyCallable callable = callExpr.resolveCalleeFunction(getResolveContext());
-          if (callable != null) {
-            if (PySdkUtil.isElementInSkeletons(callable)) {
-              return;
-            }
-            if (callable instanceof PyFunction) {
-              final PyFunction function = (PyFunction)callable;
-              // Currently we don't infer types returned by decorators
-              if (hasInheritors(function) || PyUtil.hasCustomDecorators(function)) {
-                return;
-              }
-            }
-            registerProblem(node, PyBundle.message("INSP.none.function.assignment", callee.getName()), new PyRemoveAssignmentQuickFix());
-          }
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+
+    private static class Visitor extends PyInspectionVisitor {
+        private final Map<PyFunction, Boolean> myHasInheritors = new HashMap<>();
+
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
         }
-      }
-    }
 
-    private boolean hasInheritors(@Nonnull PyFunction function) {
-      final Boolean cached = myHasInheritors.get(function);
-      if (cached != null) {
-        return cached;
-      }
-      final boolean result = PyOverridingMethodsSearch.search(function, true).findFirst() != null;
-      myHasInheritors.put(function, result);
-      return result;
+        @Override
+        public void visitPyAssignmentStatement(PyAssignmentStatement node) {
+            final PyExpression value = node.getAssignedValue();
+            if (value instanceof PyCallExpression) {
+                final PyType type = myTypeEvalContext.getType(value);
+                final PyCallExpression callExpr = (PyCallExpression) value;
+                final PyExpression callee = callExpr.getCallee();
+
+                if (type instanceof PyNoneType && callee != null) {
+                    final PyCallable callable = callExpr.resolveCalleeFunction(getResolveContext());
+                    if (callable != null) {
+                        if (PySdkUtil.isElementInSkeletons(callable)) {
+                            return;
+                        }
+                        if (callable instanceof PyFunction) {
+                            final PyFunction function = (PyFunction) callable;
+                            // Currently we don't infer types returned by decorators
+                            if (hasInheritors(function) || PyUtil.hasCustomDecorators(function)) {
+                                return;
+                            }
+                        }
+                        registerProblem(
+                            node,
+                            PyLocalize.inspNoneFunctionAssignment(callee.getName()).get(),
+                            new PyRemoveAssignmentQuickFix()
+                        );
+                    }
+                }
+            }
+        }
+
+        private boolean hasInheritors(@Nonnull PyFunction function) {
+            final Boolean cached = myHasInheritors.get(function);
+            if (cached != null) {
+                return cached;
+            }
+            final boolean result = PyOverridingMethodsSearch.search(function, true).findFirst() != null;
+            myHasInheritors.put(function, result);
+            return result;
+        }
     }
-  }
 }

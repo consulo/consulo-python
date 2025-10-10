@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
 import com.jetbrains.python.inspections.PyInspectionExtension;
 import com.jetbrains.python.psi.*;
@@ -25,8 +24,9 @@ import consulo.language.ast.ASTNode;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -34,63 +34,67 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspection {
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.missing.or.empty.docstring");
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameMissingOrEmptyDocstring();
+    }
 
-  @Nonnull
-  @Override
-  public Visitor buildVisitor(@Nonnull ProblemsHolder holder,
-                              boolean isOnTheFly,
-                              @Nonnull LocalInspectionToolSession session,
-                              Object state) {
-    return new Visitor(holder, session) {
-      @Override
-      protected void checkDocString(@Nonnull PyDocStringOwner node) {
-        final PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
-        if (docStringExpression == null) {
-          for (PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList()) {
-            if (extension.ignoreMissingDocstring(node)) {
-              return;
+    @Nonnull
+    @Override
+    public Visitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session) {
+            @Override
+            protected void checkDocString(@Nonnull PyDocStringOwner node) {
+                final PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
+                if (docStringExpression == null) {
+                    for (PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList()) {
+                        if (extension.ignoreMissingDocstring(node)) {
+                            return;
+                        }
+                    }
+                    PsiElement marker = null;
+                    if (node instanceof PyClass) {
+                        final ASTNode n = ((PyClass) node).getNameNode();
+                        if (n != null) {
+                            marker = n.getPsi();
+                        }
+                    }
+                    else if (node instanceof PyFunction) {
+                        final ASTNode n = ((PyFunction) node).getNameNode();
+                        if (n != null) {
+                            marker = n.getPsi();
+                        }
+                    }
+                    else if (node instanceof PyFile) {
+                        final TextRange tr = new TextRange(0, 0);
+                        final ProblemsHolder holder = getHolder();
+                        if (holder != null) {
+                            holder.newProblem(PyLocalize.inspNoDocstring())
+                                .range(node, tr)
+                                .create();
+                        }
+                        return;
+                    }
+                    if (marker == null) {
+                        marker = node;
+                    }
+                    if (node instanceof PyFunction || (node instanceof PyClass && ((PyClass) node).findInitOrNew(false, null) != null)) {
+                        registerProblem(marker, PyLocalize.inspNoDocstring().get(), new DocstringQuickFix(null, null));
+                    }
+                    else {
+                        registerProblem(marker, PyLocalize.inspNoDocstring().get());
+                    }
+                }
+                else if (StringUtil.isEmptyOrSpaces(docStringExpression.getStringValue())) {
+                    registerProblem(docStringExpression, PyLocalize.inspEmptyDocstring().get());
+                }
             }
-          }
-          PsiElement marker = null;
-          if (node instanceof PyClass) {
-            final ASTNode n = ((PyClass)node).getNameNode();
-            if (n != null) {
-              marker = n.getPsi();
-            }
-          }
-          else if (node instanceof PyFunction) {
-            final ASTNode n = ((PyFunction)node).getNameNode();
-            if (n != null) {
-              marker = n.getPsi();
-            }
-          }
-          else if (node instanceof PyFile) {
-            final TextRange tr = new TextRange(0, 0);
-            final ProblemsHolder holder = getHolder();
-            if (holder != null) {
-              holder.registerProblem(node, tr, PyBundle.message("INSP.no.docstring"));
-            }
-            return;
-          }
-          if (marker == null) {
-            marker = node;
-          }
-          if (node instanceof PyFunction || (node instanceof PyClass && ((PyClass)node).findInitOrNew(false, null) != null)) {
-            registerProblem(marker, PyBundle.message("INSP.no.docstring"), new DocstringQuickFix(null, null));
-          }
-          else {
-            registerProblem(marker, PyBundle.message("INSP.no.docstring"));
-          }
-        }
-        else if (StringUtil.isEmptyOrSpaces(docStringExpression.getStringValue())) {
-          registerProblem(docStringExpression, PyBundle.message("INSP.empty.docstring"));
-        }
-      }
-    };
-  }
+        };
+    }
 }

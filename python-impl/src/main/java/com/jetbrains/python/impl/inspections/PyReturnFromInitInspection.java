@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
@@ -26,58 +24,66 @@ import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * Checks that no value is returned from __init__().
- * User: dcheryasov
- * Date: Nov 12, 2009 10:20:49 PM
+ *
+ * @author dcheryasov
+ * @since 2009-11-12
  */
 @ExtensionImpl
 public class PyReturnFromInitInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.init.return");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  public static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameInitReturn();
     }
 
-    public void visitPyFunction(PyFunction function) {
-      if (function.getContainingClass() != null && PyNames.INIT.equals(function.getName())) {
-        Collection<PsiElement> offenders = new ArrayList<PsiElement>();
-        findReturnValueInside(function, offenders);
-        for (PsiElement offender : offenders) {
-          registerProblem(offender, PyBundle.message("INSP.cant.return.value.from.init"));
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    public static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
         }
-      }
-    }
 
-    private static void findReturnValueInside(@Nonnull PsiElement node, Collection<PsiElement> offenders) {
-      for (PsiElement child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-        if (child instanceof PyFunction || child instanceof PyClass) continue; // ignore possible inner functions and classes
-        if (child instanceof PyReturnStatement) {
-          if (((PyReturnStatement)child).getExpression() != null) offenders.add(child);
+        public void visitPyFunction(PyFunction function) {
+            if (function.getContainingClass() != null && PyNames.INIT.equals(function.getName())) {
+                Collection<PsiElement> offenders = new ArrayList<PsiElement>();
+                findReturnValueInside(function, offenders);
+                for (PsiElement offender : offenders) {
+                    registerProblem(offender, PyLocalize.inspCantReturnValueFromInit().get());
+                }
+            }
         }
-        findReturnValueInside(child, offenders);
-      }
+
+        private static void findReturnValueInside(@Nonnull PsiElement node, Collection<PsiElement> offenders) {
+            for (PsiElement child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+                if (child instanceof PyFunction || child instanceof PyClass) {
+                    continue; // ignore possible inner functions and classes
+                }
+                if (child instanceof PyReturnStatement) {
+                    if (((PyReturnStatement) child).getExpression() != null) {
+                        offenders.add(child);
+                    }
+                }
+                findReturnValueInside(child, offenders);
+            }
+        }
     }
-  }
 }

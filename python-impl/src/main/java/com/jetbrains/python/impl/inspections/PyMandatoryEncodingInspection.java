@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.inspections.quickfix.AddEncodingQuickFix;
 import com.jetbrains.python.psi.PyFile;
@@ -26,71 +24,71 @@ import consulo.language.editor.inspection.InspectionToolState;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * User : catherine
+ * @author catherine
  */
 @ExtensionImpl
-public class PyMandatoryEncodingInspection extends PyInspection
-{
-	@Nonnull
-	@Override
-	public InspectionToolState<?> createStateProvider()
-	{
-		return new PyMandatoryEncodingInspectionState();
-	}
+public class PyMandatoryEncodingInspection extends PyInspection {
+    @Nonnull
+    @Override
+    public InspectionToolState<?> createStateProvider() {
+        return new PyMandatoryEncodingInspectionState();
+    }
 
-	@Nls
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return PyBundle.message("INSP.NAME.mandatory.encoding");
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameMandatoryEncoding();
+    }
 
-	@Override
-	public boolean isEnabledByDefault()
-	{
-		return true;
-	}
+    @Override
+    public boolean isEnabledByDefault() {
+        return true;
+    }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-										  boolean isOnTheFly,
-										  @Nonnull LocalInspectionToolSession session,
-										  Object state)
-	{
-		return new Visitor(holder, session, (PyMandatoryEncodingInspectionState) state);
-	}
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session, (PyMandatoryEncodingInspectionState) state);
+    }
 
-	private class Visitor extends PyInspectionVisitor
-	{
-		private final PyMandatoryEncodingInspectionState myState;
+    private class Visitor extends PyInspectionVisitor {
+        private final PyMandatoryEncodingInspectionState myState;
 
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyMandatoryEncodingInspectionState state)
-		{
-			super(holder, session);
-			myState = state;
-		}
+        public Visitor(
+            @Nullable ProblemsHolder holder,
+            @Nonnull LocalInspectionToolSession session,
+            PyMandatoryEncodingInspectionState state
+        ) {
+            super(holder, session);
+            myState = state;
+        }
 
-		@Override
-		public void visitPyFile(PyFile node)
-		{
-			final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(node.getText());
-			if(charsetString == null)
-			{
-				TextRange tr = new TextRange(0, 0);
-				ProblemsHolder holder = getHolder();
-				if(holder != null)
-				{
-					holder.registerProblem(node, tr, "No encoding specified for file", new AddEncodingQuickFix(myState.myDefaultEncoding,myState.myEncodingFormatIndex));
-				}
-			}
-		}
-	}
+        @Override
+        public void visitPyFile(PyFile node) {
+            final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(node.getText());
+            if (charsetString == null) {
+                TextRange tr = new TextRange(0, 0);
+                ProblemsHolder holder = getHolder();
+                if (holder != null) {
+                    holder.registerProblem(
+                        node,
+                        tr,
+                        "No encoding specified for file",
+                        new AddEncodingQuickFix(myState.myDefaultEncoding, myState.myEncodingFormatIndex)
+                    );
+                }
+            }
+        }
+    }
 }

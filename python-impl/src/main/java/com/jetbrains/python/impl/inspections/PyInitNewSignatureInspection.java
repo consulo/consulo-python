@@ -15,19 +15,18 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.inspections.quickfix.PyChangeSignatureQuickFix;
+import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ObjectUtil;
-import org.jetbrains.annotations.Nls;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -38,52 +37,57 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class PyInitNewSignatureInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.new.init.signature");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  public static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyFunction(PyFunction node) {
-      final String functionName = node.getName();
-      if (!PyNames.NEW.equals(functionName) && !PyNames.INIT.equals(functionName)) {
-        return;
-      }
-      final PyClass cls = node.getContainingClass();
-      if (cls == null) {
-        return;
-      }
-      if (!cls.isNewStyleClass(null)) {
-        return;
-      }
-      final String complementaryName = PyNames.NEW.equals(functionName) ? PyNames.INIT : PyNames.NEW;
-      final PyFunction complementaryMethod = cls.findMethodByName(complementaryName, true, null);
-      if (complementaryMethod == null || PyUtil.isObjectClass(ObjectUtil.assertNotNull(complementaryMethod.getContainingClass()))) {
-        return;
-      }
-      if (!PyUtil.isSignatureCompatibleTo(complementaryMethod, node, myTypeEvalContext) &&
-        !PyUtil.isSignatureCompatibleTo(node, complementaryMethod, myTypeEvalContext) &&
-        node.getContainingFile() == cls.getContainingFile()) {
-        registerProblem(node.getParameterList(),
-                        PyNames.NEW.equals(node.getName()) ? PyBundle.message("INSP.new.incompatible.to.init") : PyBundle.message(
-                          "INSP.init.incompatible.to.new"),
-                        new PyChangeSignatureQuickFix(false));
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameNewInitSignature();
     }
-  }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    public static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyFunction(PyFunction node) {
+            final String functionName = node.getName();
+            if (!PyNames.NEW.equals(functionName) && !PyNames.INIT.equals(functionName)) {
+                return;
+            }
+            final PyClass cls = node.getContainingClass();
+            if (cls == null) {
+                return;
+            }
+            if (!cls.isNewStyleClass(null)) {
+                return;
+            }
+            final String complementaryName = PyNames.NEW.equals(functionName) ? PyNames.INIT : PyNames.NEW;
+            final PyFunction complementaryMethod = cls.findMethodByName(complementaryName, true, null);
+            if (complementaryMethod == null || PyUtil.isObjectClass(ObjectUtil.assertNotNull(complementaryMethod.getContainingClass()))) {
+                return;
+            }
+            if (!PyUtil.isSignatureCompatibleTo(complementaryMethod, node, myTypeEvalContext) &&
+                !PyUtil.isSignatureCompatibleTo(node, complementaryMethod, myTypeEvalContext) &&
+                node.getContainingFile() == cls.getContainingFile()) {
+                registerProblem(
+                    node.getParameterList(),
+                    PyNames.NEW.equals(node.getName())
+                        ? PyLocalize.inspNewIncompatibleToInit().get()
+                        : PyLocalize.inspInitIncompatibleToNew().get(),
+                    new PyChangeSignatureQuickFix(false)
+                );
+            }
+        }
+    }
 }
