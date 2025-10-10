@@ -13,145 +13,143 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.intention.BaseIntentionAction;
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
-import consulo.language.psi.PsiFile;
-import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
+import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.PyDocStringOwner;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.intention.BaseIntentionAction;
+import consulo.language.psi.PsiFile;
+import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * User: catherine
- * Intention to convert between single-quoted and double-quoted strings 
+ * Intention to convert between single-quoted and double-quoted strings.
+ *
+ * @author catherine
  */
 public class PyQuotedStringIntention extends BaseIntentionAction {
-
-  @Nonnull
-  public String getFamilyName() {
-    return PyBundle.message("INTN.quoted.string");
-  }
-
-  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
-    if (!(file instanceof PyFile)) {
-      return false;
-    }
-
-    PyStringLiteralExpression string = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
-    if (string != null) {
-      final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
-      if (docStringOwner != null) {
-        if (docStringOwner.getDocStringExpression() == string) return false;
-      }
-      String stringText = string.getText();
-      int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
-      stringText = stringText.substring(prefixLength);
-
-      if (stringText.length() >= 6) {
-        if (stringText.startsWith("'''") && stringText.endsWith("'''") ||
-              stringText.startsWith("\"\"\"") && stringText.endsWith("\"\"\"")) return false;
-      }
-      if (stringText.length() > 2) {
-        if (stringText.startsWith("'") && stringText.endsWith("'")) {
-          setText(PyBundle.message("INTN.quoted.string.single.to.double"));
-          return true;
+    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        if (!(file instanceof PyFile)) {
+            return false;
         }
-        if (stringText.startsWith("\"") && stringText.endsWith("\"")) {
-          setText(PyBundle.message("INTN.quoted.string.double.to.single"));
-          return true;
+
+        PyStringLiteralExpression string =
+            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
+        if (string != null) {
+            final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
+            if (docStringOwner != null) {
+                if (docStringOwner.getDocStringExpression() == string) {
+                    return false;
+                }
+            }
+            String stringText = string.getText();
+            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
+            stringText = stringText.substring(prefixLength);
+
+            if (stringText.length() >= 6) {
+                if (stringText.startsWith("'''") && stringText.endsWith("'''") ||
+                    stringText.startsWith("\"\"\"") && stringText.endsWith("\"\"\"")) {
+                    return false;
+                }
+            }
+            if (stringText.length() > 2) {
+                if (stringText.startsWith("'") && stringText.endsWith("'")) {
+                    setText(PyLocalize.intnQuotedStringSingleToDouble());
+                    return true;
+                }
+                if (stringText.startsWith("\"") && stringText.endsWith("\"")) {
+                    setText(PyLocalize.intnQuotedStringDoubleToSingle());
+                    return true;
+                }
+            }
         }
-      }
-    }
-    return false;
-  }
-
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-  {
-    PyStringLiteralExpression string = PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    if (string != null) {
-      final String stringText = string.getText();
-      int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
-      final String text = stringText.substring(prefixLength);
-
-      if (text.startsWith("'") && text.endsWith("'")) {
-        String result = convertSingleToDoubleQuoted(stringText);
-        PyStringLiteralExpression st = elementGenerator.createStringLiteralAlreadyEscaped(result);
-        string.replace(st);
-      }
-      if (text.startsWith("\"") && text.endsWith("\"")) {
-        String result = convertDoubleToSingleQuoted(stringText);
-        PyStringLiteralExpression st = elementGenerator.createStringLiteralAlreadyEscaped(result);
-        string.replace(st);
-      }
-    }
-  }
-
-  private static String convertDoubleToSingleQuoted(String stringText) {
-    StringBuilder stringBuilder = new StringBuilder();
-
-    boolean skipNext = false;
-    char[] charArr = stringText.toCharArray();
-    for (int i = 0; i != charArr.length; ++i) {
-      char ch = charArr[i];
-      if (skipNext) {
-        skipNext = false;
-        continue;
-      }
-      if (ch == '"') {
-        stringBuilder.append('\'');
-        continue;
-      }
-      else if (ch == '\'') {
-        stringBuilder.append("\\\'");
-      }
-      else if (ch == '\\' && charArr[i+1] == '\"' && !(i+2 == charArr.length)) {
-        skipNext = true;
-        stringBuilder.append(charArr[i+1]);
-      }
-      else {
-        stringBuilder.append(ch);
-      }
+        return false;
     }
 
-    return stringBuilder.toString();
-  }
+    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        PyStringLiteralExpression string =
+            PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        if (string != null) {
+            final String stringText = string.getText();
+            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
+            final String text = stringText.substring(prefixLength);
 
-  private static String convertSingleToDoubleQuoted(String stringText) {
-    StringBuilder stringBuilder = new StringBuilder();
-    boolean skipNext = false;
-    char[] charArr = stringText.toCharArray();
-    for (int i = 0; i != charArr.length; ++i) {
-      char ch = charArr[i];
-      if (skipNext) {
-        skipNext = false;
-        continue;
-      }
-      if (ch == '\'') {
-        stringBuilder.append('"');
-        continue;
-      }
-      else if (ch == '"') {
-        stringBuilder.append("\\\"");
-      }
-      else if (ch == '\\' && charArr[i+1] == '\'' && !(i+2 == charArr.length)) {
-        skipNext = true;
-        stringBuilder.append(charArr[i+1]);
-      }
-      else {
-        stringBuilder.append(ch);
-      }
+            if (text.startsWith("'") && text.endsWith("'")) {
+                String result = convertSingleToDoubleQuoted(stringText);
+                PyStringLiteralExpression st = elementGenerator.createStringLiteralAlreadyEscaped(result);
+                string.replace(st);
+            }
+            if (text.startsWith("\"") && text.endsWith("\"")) {
+                String result = convertDoubleToSingleQuoted(stringText);
+                PyStringLiteralExpression st = elementGenerator.createStringLiteralAlreadyEscaped(result);
+                string.replace(st);
+            }
+        }
     }
-    return stringBuilder.toString();
-  }
+
+    private static String convertDoubleToSingleQuoted(String stringText) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        boolean skipNext = false;
+        char[] charArr = stringText.toCharArray();
+        for (int i = 0; i != charArr.length; ++i) {
+            char ch = charArr[i];
+            if (skipNext) {
+                skipNext = false;
+                continue;
+            }
+            if (ch == '"') {
+                stringBuilder.append('\'');
+                continue;
+            }
+            else if (ch == '\'') {
+                stringBuilder.append("\\\'");
+            }
+            else if (ch == '\\' && charArr[i + 1] == '\"' && !(i + 2 == charArr.length)) {
+                skipNext = true;
+                stringBuilder.append(charArr[i + 1]);
+            }
+            else {
+                stringBuilder.append(ch);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private static String convertSingleToDoubleQuoted(String stringText) {
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean skipNext = false;
+        char[] charArr = stringText.toCharArray();
+        for (int i = 0; i != charArr.length; ++i) {
+            char ch = charArr[i];
+            if (skipNext) {
+                skipNext = false;
+                continue;
+            }
+            if (ch == '\'') {
+                stringBuilder.append('"');
+                continue;
+            }
+            else if (ch == '"') {
+                stringBuilder.append("\\\"");
+            }
+            else if (ch == '\\' && charArr[i + 1] == '\'' && !(i + 2 == charArr.length)) {
+                skipNext = true;
+                stringBuilder.append(charArr[i + 1]);
+            }
+            else {
+                stringBuilder.append(ch);
+            }
+        }
+        return stringBuilder.toString();
+    }
 }

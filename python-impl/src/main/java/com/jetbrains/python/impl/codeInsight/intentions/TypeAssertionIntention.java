@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
@@ -36,7 +35,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-
 import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 

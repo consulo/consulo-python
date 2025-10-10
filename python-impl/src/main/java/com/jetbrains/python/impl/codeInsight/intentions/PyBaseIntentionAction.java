@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.intentions;
-
 
 import jakarta.annotation.Nonnull;
 
@@ -26,15 +24,14 @@ import consulo.project.Project;
 import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
 
-public abstract class PyBaseIntentionAction extends BaseIntentionAction
-{
+public abstract class PyBaseIntentionAction extends BaseIntentionAction {
+    @Override
+    public final void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
+            return;
+        }
+        doInvoke(project, editor, file);
+    }
 
-	@Override
-	public final void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-	{
-		if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
-		doInvoke(project, editor, file);
-	}
-
-	public abstract void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException;
+    public abstract void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException;
 }

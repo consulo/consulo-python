@@ -15,128 +15,120 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import java.util.List;
-
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.impl.psi.impl.PyStatementListImpl;
+import com.jetbrains.python.psi.*;
 import consulo.codeEditor.Editor;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.impl.psi.impl.PyStatementListImpl;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
+
+import java.util.List;
 
 /**
- * User: catherine
+ * @author catherine
  */
-public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAction
-{
-	@Nonnull
-	public String getText()
-	{
-		return PyBundle.message("INTN.replace.list.comprehensions.with.for");
-	}
+public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAction {
+    @Nonnull
+    @Override
+    public LocalizeValue getText() {
+        return PyLocalize.intnReplaceListComprehensionsWithFor();
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("INTN.replace.list.comprehensions.with.for");
-	}
+    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        if (!(file instanceof PyFile)) {
+            return false;
+        }
 
-	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
-	{
-		if(!(file instanceof PyFile))
-		{
-			return false;
-		}
+        PyListCompExpression expression =
+            PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyListCompExpression.class);
+        if (expression == null) {
+            return false;
+        }
+        if (expression.getComponents().isEmpty()) {
+            return false;
+        }
+        PsiElement parent = expression.getParent();
+        if (parent instanceof PyAssignmentStatement || parent instanceof PyPrintStatement) {
+            return true;
+        }
+        return false;
+    }
 
-		PyListCompExpression expression = PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyListCompExpression.class);
-		if(expression == null)
-		{
-			return false;
-		}
-		if(expression.getComponents().isEmpty())
-		{
-			return false;
-		}
-		PsiElement parent = expression.getParent();
-		if(parent instanceof PyAssignmentStatement || parent instanceof PyPrintStatement)
-		{
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        PyListCompExpression expression =
+            PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyListCompExpression.class);
+        if (expression == null) {
+            return;
+        }
+        PsiElement parent = expression.getParent();
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
-	@Override
-	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-	{
-		PyListCompExpression expression = PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyListCompExpression.class);
-		if(expression == null)
-		{
-			return;
-		}
-		PsiElement parent = expression.getParent();
-		PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        if (parent instanceof PyAssignmentStatement) {
+            final PsiElement leftExpr = ((PyAssignmentStatement) parent).getLeftHandSideExpression();
+            if (leftExpr == null) {
+                return;
+            }
+            PyAssignmentStatement initAssignment = elementGenerator.createFromText(
+                LanguageLevel.forElement(expression),
+                PyAssignmentStatement.class,
+                leftExpr.getText() + " = []"
+            );
+            PyForStatement forStatement = createForLoop(
+                expression,
+                elementGenerator,
+                leftExpr.getText() + ".append(" + expression.getResultExpression().getText() + ")"
+            );
 
-		if(parent instanceof PyAssignmentStatement)
-		{
-			final PsiElement leftExpr = ((PyAssignmentStatement) parent).getLeftHandSideExpression();
-			if(leftExpr == null)
-			{
-				return;
-			}
-			PyAssignmentStatement initAssignment = elementGenerator.createFromText(LanguageLevel.forElement(expression), PyAssignmentStatement.class, leftExpr.getText() + " = []");
-			PyForStatement forStatement = createForLoop(expression, elementGenerator, leftExpr.getText() + ".append(" + expression.getResultExpression().getText() + ")");
+            PyStatementList stList = new PyStatementListImpl(initAssignment.getNode());
+            stList.add(initAssignment);
+            stList.add(forStatement);
+            stList.getStatements()[0].delete();
+            parent.replace(stList);
 
-			PyStatementList stList = new PyStatementListImpl(initAssignment.getNode());
-			stList.add(initAssignment);
-			stList.add(forStatement);
-			stList.getStatements()[0].delete();
-			parent.replace(stList);
+        }
+        else if (parent instanceof PyPrintStatement) {
+            PyForStatement forStatement =
+                createForLoop(expression, elementGenerator, "print " + "(" + expression.getResultExpression().getText() + ")");
+            parent.replace(forStatement);
+        }
+    }
 
-		}
-		else if(parent instanceof PyPrintStatement)
-		{
-			PyForStatement forStatement = createForLoop(expression, elementGenerator, "print " + "(" + expression.getResultExpression().getText() + ")");
-			parent.replace(forStatement);
-		}
-	}
-
-	private static PyForStatement createForLoop(final PyListCompExpression expression, final PyElementGenerator elementGenerator, final String result)
-	{
-		final List<PyComprehensionComponent> components = expression.getComponents();
-		final StringBuilder stringBuilder = new StringBuilder();
-		int slashNum = 1;
-		for(PyComprehensionComponent component : components)
-		{
-			if(component instanceof PyComprehensionForComponent)
-			{
-				stringBuilder.append("for ");
-				stringBuilder.append(((PyComprehensionForComponent) component).getIteratorVariable().getText());
-				stringBuilder.append(" in ");
-				stringBuilder.append(((PyComprehensionForComponent) component).getIteratedList().getText());
-				stringBuilder.append(":\n");
-			}
-			if(component instanceof PyComprehensionIfComponent)
-			{
-				final PyExpression test = ((PyComprehensionIfComponent) component).getTest();
-				if(test != null)
-				{
-					stringBuilder.append("if ");
-					stringBuilder.append(test.getText());
-					stringBuilder.append(":\n");
-				}
-			}
-			for(int i = 0; i != slashNum; ++i)
-			{
-				stringBuilder.append("\t");
-			}
-			++slashNum;
-		}
-		stringBuilder.append(result);
-		return elementGenerator.createFromText(LanguageLevel.forElement(expression), PyForStatement.class, stringBuilder.toString());
-	}
+    private static PyForStatement createForLoop(
+        final PyListCompExpression expression,
+        final PyElementGenerator elementGenerator,
+        final String result
+    ) {
+        final List<PyComprehensionComponent> components = expression.getComponents();
+        final StringBuilder stringBuilder = new StringBuilder();
+        int slashNum = 1;
+        for (PyComprehensionComponent component : components) {
+            if (component instanceof PyComprehensionForComponent) {
+                stringBuilder.append("for ");
+                stringBuilder.append(((PyComprehensionForComponent) component).getIteratorVariable().getText());
+                stringBuilder.append(" in ");
+                stringBuilder.append(((PyComprehensionForComponent) component).getIteratedList().getText());
+                stringBuilder.append(":\n");
+            }
+            if (component instanceof PyComprehensionIfComponent) {
+                final PyExpression test = ((PyComprehensionIfComponent) component).getTest();
+                if (test != null) {
+                    stringBuilder.append("if ");
+                    stringBuilder.append(test.getText());
+                    stringBuilder.append(":\n");
+                }
+            }
+            for (int i = 0; i != slashNum; ++i) {
+                stringBuilder.append("\t");
+            }
+            ++slashNum;
+        }
+        stringBuilder.append(result);
+        return elementGenerator.createFromText(LanguageLevel.forElement(expression), PyForStatement.class, stringBuilder.toString());
+    }
 }

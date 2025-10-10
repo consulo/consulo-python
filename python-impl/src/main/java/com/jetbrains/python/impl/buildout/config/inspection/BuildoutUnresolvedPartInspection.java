@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.buildout.config.inspection;
 
 import com.google.common.collect.Lists;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.buildout.config.BuildoutCfgFileType;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgValueLine;
 import com.jetbrains.python.impl.buildout.config.ref.BuildoutPartReference;
@@ -31,9 +29,10 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiRecursiveElementVisitor;
 import consulo.language.psi.PsiReference;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
+
 import java.util.List;
 
 /**
@@ -41,75 +40,75 @@ import java.util.List;
  */
 @ExtensionImpl
 public class BuildoutUnresolvedPartInspection extends LocalInspectionTool {
-  @Nls
-  @Nonnull
-  @Override
-  public String getGroupDisplayName() {
-    return PyBundle.message("buildout");
-  }
-
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("buildout.unresolved.part.inspection");
-  }
-
-  @Nonnull
-  @Override
-  public String getShortName() {
-    return "BuildoutUnresolvedPartInspection";
-  }
-
-  @Nonnull
-  @Override
-  public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.WARNING;
-  }
-
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
-
-  @Override
-  public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
-    List<ProblemDescriptor> problems = Lists.newArrayList();
-    if (file.getFileType().equals(BuildoutCfgFileType.INSTANCE)) {
-      Visitor visitor = new Visitor();
-      file.accept(visitor);
-
-      for (BuildoutPartReference ref : visitor.getUnresolvedParts()) {
-        ProblemDescriptor d = manager
-          .createProblemDescriptor(ref.getElement(), ref.getRangeInElement(), PyBundle.message("buildout.unresolved.part.inspection.msg"),
-                                   ProblemHighlightType.GENERIC_ERROR_OR_WARNING, false);
-        problems.add(d);
-      }
+    @Nonnull
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return PyLocalize.buildout();
     }
-    return problems.toArray(new ProblemDescriptor[problems.size()]);
-  }
 
-  private class Visitor extends PsiRecursiveElementVisitor {
-    private final List<BuildoutPartReference> unresolvedParts = Lists.newArrayList();
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.buildoutUnresolvedPartInspection();
+    }
+
+    @Nonnull
+    @Override
+    public String getShortName() {
+        return "BuildoutUnresolvedPartInspection";
+    }
+
+    @Nonnull
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WARNING;
+    }
 
     @Override
-    public void visitElement(PsiElement element) {
-      if (element instanceof BuildoutCfgValueLine) {
-        PsiReference[] refs = element.getReferences();
-        for (PsiReference ref : refs) {
-          if (ref instanceof BuildoutPartReference && ref.resolve() == null) {
-            unresolvedParts.add((BuildoutPartReference)ref);
-          }
+    public boolean isEnabledByDefault() {
+        return true;
+    }
+
+    @Override
+    public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
+        List<ProblemDescriptor> problems = Lists.newArrayList();
+        if (file.getFileType().equals(BuildoutCfgFileType.INSTANCE)) {
+            Visitor visitor = new Visitor();
+            file.accept(visitor);
+
+            for (BuildoutPartReference ref : visitor.getUnresolvedParts()) {
+                ProblemDescriptor d = manager.createProblemDescriptor(
+                    ref.getElement(),
+                    ref.getRangeInElement(),
+                    PyLocalize.buildoutUnresolvedPartInspectionMsg().get(),
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    false
+                );
+                problems.add(d);
+            }
+        }
+        return problems.toArray(new ProblemDescriptor[problems.size()]);
+    }
+
+    private class Visitor extends PsiRecursiveElementVisitor {
+        private final List<BuildoutPartReference> unresolvedParts = Lists.newArrayList();
+
+        @Override
+        public void visitElement(PsiElement element) {
+            if (element instanceof BuildoutCfgValueLine) {
+                PsiReference[] refs = element.getReferences();
+                for (PsiReference ref : refs) {
+                    if (ref instanceof BuildoutPartReference && ref.resolve() == null) {
+                        unresolvedParts.add((BuildoutPartReference) ref);
+                    }
+                }
+
+            }
+            super.visitElement(element);    //To change body of overridden methods use File | Settings | File Templates.
         }
 
-      }
-      super.visitElement(element);    //To change body of overridden methods use File | Settings | File Templates.
+        public List<BuildoutPartReference> getUnresolvedParts() {
+            return unresolvedParts;
+        }
     }
-
-    public List<BuildoutPartReference> getUnresolvedParts() {
-      return unresolvedParts;
-    }
-  }
-
-
 }
