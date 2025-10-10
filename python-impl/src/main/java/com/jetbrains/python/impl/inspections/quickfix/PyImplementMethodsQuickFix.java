@@ -13,69 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.document.Document;
-import consulo.codeEditor.Editor;
-import consulo.codeEditor.EditorFactory;
-import consulo.project.Project;
-import consulo.language.psi.PsiDocumentManager;
-import consulo.language.psi.PsiFile;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.codeInsight.override.PyOverrideImplementUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import org.jetbrains.annotations.NonNls;
+import consulo.codeEditor.Editor;
+import consulo.codeEditor.EditorFactory;
+import consulo.document.Document;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiDocumentManager;
+import consulo.language.psi.PsiFile;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 import java.util.Set;
 
 /**
- * User: ktisha
+ * @author ktisha
  */
 public class PyImplementMethodsQuickFix implements LocalQuickFix {
+    private final PyClass myClass;
+    private final Set<PyFunction> myToImplement;
 
-  private final PyClass myClass;
-  private final Set<PyFunction> myToImplement;
-
-  public PyImplementMethodsQuickFix(PyClass aClass, Set<PyFunction> toBeImplemented) {
-    myClass = aClass;
-    myToImplement = toBeImplemented;
-  }
-
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.NAME.implement.methods");
-  }
-
-  @NonNls
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-    final Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
-    if (editor != null)
-      PyOverrideImplementUtil.chooseAndOverrideOrImplementMethods(project, editor, myClass, myToImplement, "Select Methods to Implement", true);
-  }
-
-  @Nullable
-  private static Editor getEditor(Project project, PsiFile file) {
-    Document document = PsiDocumentManager.getInstance(project).getDocument(file);
-    if (document != null) {
-      final EditorFactory instance = EditorFactory.getInstance();
-      if (instance == null) return null;
-      Editor[] editors = instance.getEditors(document);
-      if (editors.length > 0) {
-        return editors[0];
-      }
+    public PyImplementMethodsQuickFix(PyClass aClass, Set<PyFunction> toBeImplemented) {
+        myClass = aClass;
+        myToImplement = toBeImplemented;
     }
-    return null;
-  }
 
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameImplementMethods();
+    }
+
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        final Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
+        if (editor != null) {
+            PyOverrideImplementUtil.chooseAndOverrideOrImplementMethods(
+                project,
+                editor,
+                myClass,
+                myToImplement,
+                "Select Methods to Implement",
+                true
+            );
+        }
+    }
+
+    @Nullable
+    private static Editor getEditor(Project project, PsiFile file) {
+        Document document = PsiDocumentManager.getInstance(project).getDocument(file);
+        if (document != null) {
+            final EditorFactory instance = EditorFactory.getInstance();
+            if (instance == null) {
+                return null;
+            }
+            Editor[] editors = instance.getEditors(document);
+            if (editors.length > 0) {
+                return editors[0];
+            }
+        }
+        return null;
+    }
 }

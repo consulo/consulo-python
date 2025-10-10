@@ -15,74 +15,65 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import java.util.Map;
-
-import jakarta.annotation.Nonnull;
-
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
+import jakarta.annotation.Nonnull;
 
-public class PyAddPropertyForFieldQuickFix implements LocalQuickFix
-{
-	private String myName = PyBundle.message("QFIX.add.property");
+import java.util.Map;
 
-	public PyAddPropertyForFieldQuickFix(String name)
-	{
-		myName = name;
-	}
+public class PyAddPropertyForFieldQuickFix implements LocalQuickFix {
+    private final LocalizeValue myName;
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return myName;
-	}
+    public PyAddPropertyForFieldQuickFix(LocalizeValue name) {
+        myName = name;
+    }
 
-	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
-	{
-		final PsiElement element = descriptor.getPsiElement();
-		if(element instanceof PyReferenceExpression)
-		{
-			final PsiReference reference = element.getReference();
-			if(reference == null)
-			{
-				return;
-			}
-			final PsiElement resolved = reference.resolve();
-			if(resolved instanceof PyTargetExpression)
-			{
-				PyTargetExpression target = (PyTargetExpression) resolved;
-				final PyClass containingClass = target.getContainingClass();
-				if(containingClass != null)
-				{
-					final String name = target.getName();
-					if(name == null)
-					{
-						return;
-					}
-					String propertyName = StringUtil.trimStart(name, "_");
-					final Map<String, Property> properties = containingClass.getProperties();
-					final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-					if(!properties.containsKey(propertyName))
-					{
-						final PyFunction property = generator.createProperty(LanguageLevel.forElement(containingClass), propertyName, name, AccessDirection.READ);
-						PyUtil.addElementToStatementList(property, containingClass.getStatementList(), false);
-					}
-					final PyExpression qualifier = ((PyReferenceExpression) element).getQualifier();
-					if(qualifier != null)
-					{
-						String newElementText = qualifier.getText() + "." + propertyName;
-						final PyExpression newElement = generator.createExpressionFromText(LanguageLevel.forElement(containingClass), newElementText);
-						element.replace(newElement);
-					}
-				}
-			}
-		}
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return myName;
+    }
+
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        if (element instanceof PyReferenceExpression) {
+            final PsiReference reference = element.getReference();
+            if (reference == null) {
+                return;
+            }
+            final PsiElement resolved = reference.resolve();
+            if (resolved instanceof PyTargetExpression) {
+                PyTargetExpression target = (PyTargetExpression) resolved;
+                final PyClass containingClass = target.getContainingClass();
+                if (containingClass != null) {
+                    final String name = target.getName();
+                    if (name == null) {
+                        return;
+                    }
+                    String propertyName = StringUtil.trimStart(name, "_");
+                    final Map<String, Property> properties = containingClass.getProperties();
+                    final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+                    if (!properties.containsKey(propertyName)) {
+                        final PyFunction property =
+                            generator.createProperty(LanguageLevel.forElement(containingClass), propertyName, name, AccessDirection.READ);
+                        PyUtil.addElementToStatementList(property, containingClass.getStatementList(), false);
+                    }
+                    final PyExpression qualifier = ((PyReferenceExpression) element).getQualifier();
+                    if (qualifier != null) {
+                        String newElementText = qualifier.getText() + "." + propertyName;
+                        final PyExpression newElement =
+                            generator.createExpressionFromText(LanguageLevel.forElement(containingClass), newElementText);
+                        element.replace(newElement);
+                    }
+                }
+            }
+        }
+    }
 }

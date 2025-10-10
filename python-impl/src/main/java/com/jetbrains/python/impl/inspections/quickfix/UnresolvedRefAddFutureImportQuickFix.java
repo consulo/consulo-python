@@ -13,45 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.FileModificationService;
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFromImportStatement;
+import consulo.language.editor.FileModificationService;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * User: catherine
- *
  * QuickFix to add 'from __future__ import with_statement'' if python version is less than 2.6
+ *
+ * @author catherine
  */
 public class UnresolvedRefAddFutureImportQuickFix implements LocalQuickFix {
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.unresolved.reference.add.future");
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixUnresolvedReferenceAddFuture();
+    }
 
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement element = descriptor.getPsiElement();
-    PyFile file = (PyFile)element.getContainingFile();
-    if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    PyFromImportStatement statement = elementGenerator.createFromText(LanguageLevel.forElement(element), PyFromImportStatement.class,
-                                                                  "from __future__ import with_statement");
-    file.addBefore(statement, file.getStatements().get(0));
-  }
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
+        PyFile file = (PyFile) element.getContainingFile();
+        if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
+            return;
+        }
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        PyFromImportStatement statement = elementGenerator.createFromText(LanguageLevel.forElement(element), PyFromImportStatement.class,
+            "from __future__ import with_statement"
+        );
+        file.addBefore(statement, file.getStatements().get(0));
+    }
 }

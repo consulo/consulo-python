@@ -15,51 +15,43 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.psi.*;
+import consulo.language.ast.ASTNode;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.ast.ASTNode;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyArgumentList;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyExpression;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
-public class PyConvertToNewStyleQuickFix implements LocalQuickFix
-{
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.convert.to.new.style");
-	}
+public class PyConvertToNewStyleQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixConvertToNewStyle();
+    }
 
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		PsiElement element = descriptor.getPsiElement();
-		final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
-		assert pyClass != null;
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
+        final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        assert pyClass != null;
 
-		final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-		final PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
-		if(expressionList != null)
-		{
-			final PyExpression object = generator.createExpressionFromText(LanguageLevel.forElement(element), "object");
-			expressionList.addArgumentFirst(object);
-		}
-		else
-		{
-			final PyArgumentList list = generator.createFromText(LanguageLevel.forElement(element), PyClass.class, "class A(object):pass").getSuperClassExpressionList();
-			assert list != null;
-			final ASTNode node = pyClass.getNameNode();
-			assert node != null;
-			pyClass.addAfter(list, node.getPsi());
-		}
-	}
+        final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+        final PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
+        if (expressionList != null) {
+            final PyExpression object = generator.createExpressionFromText(LanguageLevel.forElement(element), "object");
+            expressionList.addArgumentFirst(object);
+        }
+        else {
+            final PyArgumentList list = generator.createFromText(LanguageLevel.forElement(element), PyClass.class, "class A(object):pass")
+                .getSuperClassExpressionList();
+            assert list != null;
+            final ASTNode node = pyClass.getNameNode();
+            assert node != null;
+            pyClass.addAfter(list, node.getPsi());
+        }
+    }
 }

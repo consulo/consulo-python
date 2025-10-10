@@ -15,121 +15,99 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
+import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
+import jakarta.annotation.Nonnull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * User: ktisha
+ * @author ktisha
  */
-public class PyMakeMethodStaticQuickFix implements LocalQuickFix
-{
-	public PyMakeMethodStaticQuickFix()
-	{
-	}
+public class PyMakeMethodStaticQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameMakeStatic();
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.make.static");
-	}
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        final PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        if (problemFunction == null) {
+            return;
+        }
+        final List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
 
-	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
-	{
-		final PsiElement element = descriptor.getPsiElement();
-		final PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
-		if(problemFunction == null)
-		{
-			return;
-		}
-		final List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
+        final PyParameter[] parameters = problemFunction.getParameterList().getParameters();
+        if (parameters.length > 0) {
+            parameters[0].delete();
+        }
+        final PyDecoratorList problemDecoratorList = problemFunction.getDecoratorList();
+        List<String> decoTexts = new ArrayList<>();
+        decoTexts.add("@staticmethod");
+        if (problemDecoratorList != null) {
+            final PyDecorator[] decorators = problemDecoratorList.getDecorators();
+            for (PyDecorator deco : decorators) {
+                decoTexts.add(deco.getText());
+            }
+        }
 
-		final PyParameter[] parameters = problemFunction.getParameterList().getParameters();
-		if(parameters.length > 0)
-		{
-			parameters[0].delete();
-		}
-		final PyDecoratorList problemDecoratorList = problemFunction.getDecoratorList();
-		List<String> decoTexts = new ArrayList<>();
-		decoTexts.add("@staticmethod");
-		if(problemDecoratorList != null)
-		{
-			final PyDecorator[] decorators = problemDecoratorList.getDecorators();
-			for(PyDecorator deco : decorators)
-			{
-				decoTexts.add(deco.getText());
-			}
-		}
+        PyElementGenerator generator = PyElementGenerator.getInstance(project);
+        final PyDecoratorList decoratorList = generator.createDecoratorList(decoTexts.toArray(new String[decoTexts.size()]));
 
-		PyElementGenerator generator = PyElementGenerator.getInstance(project);
-		final PyDecoratorList decoratorList = generator.createDecoratorList(decoTexts.toArray(new String[decoTexts.size()]));
+        if (problemDecoratorList != null) {
+            problemDecoratorList.replace(decoratorList);
+        }
+        else {
+            problemFunction.addBefore(decoratorList, problemFunction.getFirstChild());
+        }
 
-		if(problemDecoratorList != null)
-		{
-			problemDecoratorList.replace(decoratorList);
-		}
-		else
-		{
-			problemFunction.addBefore(decoratorList, problemFunction.getFirstChild());
-		}
+        for (UsageInfo usage : usages) {
+            final PsiElement usageElement = usage.getElement();
+            if (usageElement instanceof PyReferenceExpression) {
+                updateUsage((PyReferenceExpression) usageElement);
+            }
+        }
+    }
 
-		for(UsageInfo usage : usages)
-		{
-			final PsiElement usageElement = usage.getElement();
-			if(usageElement instanceof PyReferenceExpression)
-			{
-				updateUsage((PyReferenceExpression) usageElement);
-			}
-		}
-	}
+    private static void updateUsage(@Nonnull final PyReferenceExpression element) {
+        final PyExpression qualifier = element.getQualifier();
+        if (qualifier == null) {
+            return;
+        }
+        final PsiReference reference = qualifier.getReference();
+        if (reference == null) {
+            return;
+        }
+        final PsiElement resolved = reference.resolve();
+        if (resolved instanceof PyClass) {     //call with first instance argument A.m(A())
+            updateArgumentList(element);
+        }
+    }
 
-	private static void updateUsage(@Nonnull final PyReferenceExpression element)
-	{
-		final PyExpression qualifier = element.getQualifier();
-		if(qualifier == null)
-		{
-			return;
-		}
-		final PsiReference reference = qualifier.getReference();
-		if(reference == null)
-		{
-			return;
-		}
-		final PsiElement resolved = reference.resolve();
-		if(resolved instanceof PyClass)
-		{     //call with first instance argument A.m(A())
-			updateArgumentList(element);
-		}
-	}
-
-	private static void updateArgumentList(@Nonnull final PyReferenceExpression element)
-	{
-		final PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
-		if(callExpression == null)
-		{
-			return;
-		}
-		final PyArgumentList argumentList = callExpression.getArgumentList();
-		if(argumentList == null)
-		{
-			return;
-		}
-		final PyExpression[] arguments = argumentList.getArguments();
-		if(arguments.length > 0)
-		{
-			arguments[0].delete();
-		}
-	}
+    private static void updateArgumentList(@Nonnull final PyReferenceExpression element) {
+        final PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
+        if (callExpression == null) {
+            return;
+        }
+        final PyArgumentList argumentList = callExpression.getArgumentList();
+        if (argumentList == null) {
+            return;
+        }
+        final PyExpression[] arguments = argumentList.getArguments();
+        if (arguments.length > 0) {
+            arguments[0].delete();
+        }
+    }
 }

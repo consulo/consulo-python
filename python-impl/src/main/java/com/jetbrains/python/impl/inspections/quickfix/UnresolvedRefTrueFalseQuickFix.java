@@ -13,48 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * User: catherine
- *
  * QuickFix to replace true with True, false with False
+ *
+ * @author catherine
  */
 public class UnresolvedRefTrueFalseQuickFix implements LocalQuickFix {
-  PsiElement myElement;
-  String newName;
-  public UnresolvedRefTrueFalseQuickFix(PsiElement element) {
-    myElement = element;
-    char[] charArray = element.getText().toCharArray();
-    charArray[0] = Character.toUpperCase(charArray[0]);
-    newName = new String(charArray);
-  }
+    PsiElement myElement;
+    String newName;
 
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.unresolved.reference.replace.$0", newName);
-  }
+    public UnresolvedRefTrueFalseQuickFix(PsiElement element) {
+        myElement = element;
+        char[] charArray = element.getText().toCharArray();
+        charArray[0] = Character.toUpperCase(charArray[0]);
+        newName = new String(charArray);
+    }
 
-  @Nonnull
-  public String getFamilyName() {
-    return "Replace with True or False";
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixUnresolvedReferenceReplace$0(newName);
+    }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
-    PyExpression expression = elementGenerator.createExpressionFromText(newName);
-    myElement.replace(expression);
-  }
+        PyExpression expression = elementGenerator.createExpressionFromText(newName);
+        myElement.replace(expression);
+    }
 }

@@ -15,62 +15,52 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.psi.PyReferenceExpression;
+import com.jetbrains.python.psi.PyTargetExpression;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.refactoring.rename.RenameProcessor;
-import consulo.project.Project;
-import consulo.util.lang.StringUtil;
-import consulo.virtualFileSystem.VirtualFile;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import jakarta.annotation.Nonnull;
 
-public class PyMakePublicQuickFix implements LocalQuickFix
-{
+public class PyMakePublicQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixMakePublic();
+    }
 
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.make.public");
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
+        if (element instanceof PyReferenceExpression) {
+            final PsiReference reference = element.getReference();
+            if (reference == null) {
+                return;
+            }
+            element = reference.resolve();
+        }
+        if (element instanceof PyTargetExpression) {
+            final String name = ((PyTargetExpression) element).getName();
+            if (name == null) {
+                return;
+            }
+            final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+            if (virtualFile != null) {
+                final String publicName = StringUtil.trimLeading(name, '_');
+                new RenameProcessor(project, element, publicName, false, false).run();
+            }
+        }
+    }
 
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		PsiElement element = descriptor.getPsiElement();
-		if(element instanceof PyReferenceExpression)
-		{
-			final PsiReference reference = element.getReference();
-			if(reference == null)
-			{
-				return;
-			}
-			element = reference.resolve();
-		}
-		if(element instanceof PyTargetExpression)
-		{
-			final String name = ((PyTargetExpression) element).getName();
-			if(name == null)
-			{
-				return;
-			}
-			final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-			if(virtualFile != null)
-			{
-				final String publicName = StringUtil.trimLeading(name, '_');
-				new RenameProcessor(project, element, publicName, false, false).run();
-			}
-		}
-	}
-
-	//@Override
-	public boolean startInWriteAction()
-	{
-		return false;
-	}
+    //@Override
+    public boolean startInWriteAction() {
+        return false;
+    }
 }

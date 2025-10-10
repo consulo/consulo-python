@@ -13,50 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: 16.02.2010
- * Time: 21:33:28
+ * @author Alexey.Ivanov
+ * @since 2010-02-16
  */
 public class ConvertSetLiteralQuickFix implements LocalQuickFix {
-  @Nonnull
-  @Override
-  public String getName() {
-    return PyBundle.message("INTN.convert.set.literal.to");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return PyBundle.message("INTN.Family.convert.set.literal");
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement setLiteral = descriptor.getPsiElement();
-    if (setLiteral instanceof PySetLiteralExpression) {
-      PyExpression[] expressions = ((PySetLiteralExpression)setLiteral).getElements();
-      PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-      assert expressions.length != 0;
-      StringBuilder stringBuilder = new StringBuilder(expressions[0].getText());
-      for (int i = 1; i < expressions.length; ++i) {
-        stringBuilder.append(", ");
-        stringBuilder.append(expressions[i].getText());
-      }
-      PyStatement newElement = elementGenerator.createFromText(LanguageLevel.getDefault(), PyExpressionStatement.class, "set([" + stringBuilder.toString() + "])");
-      setLiteral.replace(newElement);
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.intnConvertSetLiteralTo();
     }
-  }
+
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement setLiteral = descriptor.getPsiElement();
+        if (setLiteral instanceof PySetLiteralExpression) {
+            PyExpression[] expressions = ((PySetLiteralExpression) setLiteral).getElements();
+            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            assert expressions.length != 0;
+            StringBuilder stringBuilder = new StringBuilder(expressions[0].getText());
+            for (int i = 1; i < expressions.length; ++i) {
+                stringBuilder.append(", ");
+                stringBuilder.append(expressions[i].getText());
+            }
+            PyStatement newElement = elementGenerator.createFromText(
+                LanguageLevel.getDefault(),
+                PyExpressionStatement.class,
+                "set([" + stringBuilder.toString() + "])"
+            );
+            setLiteral.replace(newElement);
+        }
+    }
 }

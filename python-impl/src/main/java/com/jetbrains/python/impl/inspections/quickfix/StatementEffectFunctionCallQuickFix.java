@@ -13,77 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiWhiteSpace;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReferenceExpression;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiWhiteSpace;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * User: catherine
- *
  * QuickFix to replace statement that has no effect with function call
+ *
+ * @author catherine
  */
 public class StatementEffectFunctionCallQuickFix implements LocalQuickFix {
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.statement.effect");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement expression = descriptor.getPsiElement();
-    if (expression != null && expression.isWritable() && expression instanceof PyReferenceExpression) {
-      PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-      if ("print".equals(expression.getText()))
-        replacePrint(expression, elementGenerator);
-      else
-        expression.replace(elementGenerator.createCallExpression(LanguageLevel.forElement(expression), expression.getText()));
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixStatementEffect();
     }
-  }
 
-  private static void replacePrint(PsiElement expression, PyElementGenerator elementGenerator) {
-    StringBuilder stringBuilder = new StringBuilder("print (");
-
-    final PsiElement whiteSpace = expression.getContainingFile().findElementAt(expression.getTextOffset() + expression.getTextLength());
-    PsiElement next = null;
-    if (whiteSpace instanceof PsiWhiteSpace) {
-      final String whiteSpaceText = whiteSpace.getText();
-      if (!whiteSpaceText.contains("\n")) {
-        next = whiteSpace.getNextSibling();
-        while (next instanceof PsiWhiteSpace && whiteSpaceText.contains("\\")) {
-          next = next.getNextSibling();
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement expression = descriptor.getPsiElement();
+        if (expression != null && expression.isWritable() && expression instanceof PyReferenceExpression) {
+            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            if ("print".equals(expression.getText())) {
+                replacePrint(expression, elementGenerator);
+            }
+            else {
+                expression.replace(elementGenerator.createCallExpression(LanguageLevel.forElement(expression), expression.getText()));
+            }
         }
-      }
     }
-    else
-      next = whiteSpace;
 
-    RemoveUnnecessaryBackslashQuickFix.removeBackSlash(next);
-    if (whiteSpace != null) whiteSpace.delete();
-    if (next != null) {
-      final String text = next.getText();
-      stringBuilder.append(text);
-      if (text.endsWith(","))
-        stringBuilder.append(" end=' '");
-      next.delete();
+    private static void replacePrint(PsiElement expression, PyElementGenerator elementGenerator) {
+        StringBuilder stringBuilder = new StringBuilder("print (");
+
+        final PsiElement whiteSpace = expression.getContainingFile().findElementAt(expression.getTextOffset() + expression.getTextLength());
+        PsiElement next = null;
+        if (whiteSpace instanceof PsiWhiteSpace) {
+            final String whiteSpaceText = whiteSpace.getText();
+            if (!whiteSpaceText.contains("\n")) {
+                next = whiteSpace.getNextSibling();
+                while (next instanceof PsiWhiteSpace && whiteSpaceText.contains("\\")) {
+                    next = next.getNextSibling();
+                }
+            }
+        }
+        else {
+            next = whiteSpace;
+        }
+
+        RemoveUnnecessaryBackslashQuickFix.removeBackSlash(next);
+        if (whiteSpace != null) {
+            whiteSpace.delete();
+        }
+        if (next != null) {
+            final String text = next.getText();
+            stringBuilder.append(text);
+            if (text.endsWith(",")) {
+                stringBuilder.append(" end=' '");
+            }
+            next.delete();
+        }
+        stringBuilder.append(")");
+        expression.replace(elementGenerator.createFromText(LanguageLevel.forElement(expression), PyExpression.class,
+            stringBuilder.toString()
+        ));
     }
-    stringBuilder.append(")");
-    expression.replace(elementGenerator.createFromText(LanguageLevel.forElement(expression), PyExpression.class,
-                                                       stringBuilder.toString()));
-  }
 }

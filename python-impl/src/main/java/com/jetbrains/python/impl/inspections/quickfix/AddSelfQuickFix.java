@@ -13,54 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.FileModificationService;
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
-import org.jetbrains.annotations.NonNls;
+import consulo.language.editor.FileModificationService;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
  * Insert 'self' in a method that lacks any arguments
- * User: dcheryasov
- * Date: Nov 19, 2008
+ *
+ * @author dcheryasov
+ * @since 2008-11-19
  */
 public class AddSelfQuickFix implements LocalQuickFix {
-  private final String myParamName;
+    private final String myParamName;
 
-  public AddSelfQuickFix(String paramName) {
-    myParamName = paramName;
-  }
-
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.add.parameter.self", myParamName);
-  }
-
-  @NonNls
-  @Nonnull
-  public String getFamilyName() {
-    return "Add parameter";
-  }
-
-  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-    PsiElement problem_elt = descriptor.getPsiElement();
-    if (problem_elt instanceof PyParameterList) {
-      final PyParameterList param_list = (PyParameterList)problem_elt;
-      if (!FileModificationService.getInstance().preparePsiElementForWrite(problem_elt)) {
-        return;
-      }
-      PyNamedParameter new_param = PyElementGenerator.getInstance(project).createParameter(myParamName);
-      param_list.addParameter(new_param);
+    public AddSelfQuickFix(String paramName) {
+        myParamName = paramName;
     }
-  }
+
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixAddParameterSelf(myParamName);
+    }
+
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        PsiElement problem_elt = descriptor.getPsiElement();
+        if (problem_elt instanceof PyParameterList) {
+            final PyParameterList param_list = (PyParameterList) problem_elt;
+            if (!FileModificationService.getInstance().preparePsiElementForWrite(problem_elt)) {
+                return;
+            }
+            PyNamedParameter new_param = PyElementGenerator.getInstance(project).createParameter(myParamName);
+            param_list.addParameter(new_param);
+        }
+    }
 }

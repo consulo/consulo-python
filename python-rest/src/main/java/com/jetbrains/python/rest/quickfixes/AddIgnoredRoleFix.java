@@ -13,57 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.rest.quickfixes;
 
-import com.jetbrains.rest.RestBundle;
 import com.jetbrains.python.rest.inspections.RestRoleInspection;
 import com.jetbrains.python.rest.inspections.RestRoleInspectionState;
+import com.jetbrains.rest.RestBundle;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.inspection.scheme.InspectionProfile;
 import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager;
 import consulo.language.editor.intention.LowPriorityAction;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-
 import jakarta.annotation.Nonnull;
 
 /**
- * User : catherine
+ * @author catherine
  */
-public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction
-{
-	private final String myRole;
+public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction {
+    private final String myRole;
 
-	public AddIgnoredRoleFix(String role)
-	{
-		myRole = role;
-	}
+    public AddIgnoredRoleFix(String role) {
+        myRole = role;
+    }
 
-	@Nonnull
-	@Override
-	public String getName()
-	{
-		return RestBundle.message("QFIX.ignore.role", myRole);
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return LocalizeValue.localizeTODO(RestBundle.message("QFIX.ignore.role", myRole));
+    }
 
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return "Ignore undefined role";
-	}
-
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-		profile.<RestRoleInspection, RestRoleInspectionState>modifyToolSettings(RestRoleInspection.class.getSimpleName(), descriptor.getPsiElement(), (t, s) ->
-		{
-			if(!s.ignoredRoles.contains(myRole))
-			{
-				s.ignoredRoles.add(myRole);
-			}
-		});
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+        profile.<RestRoleInspection, RestRoleInspectionState>modifyToolSettings(
+            RestRoleInspection.class.getSimpleName(),
+            descriptor.getPsiElement(),
+            (t, s) -> {
+                if (!s.ignoredRoles.contains(myRole)) {
+                    s.ignoredRoles.add(myRole);
+                }
+            }
+        );
+    }
 }

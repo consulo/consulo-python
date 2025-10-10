@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyArgumentList;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;
@@ -27,38 +26,38 @@ import consulo.language.editor.template.TemplateBuilder;
 import consulo.language.editor.template.TemplateBuilderFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 
 public class PyChangeBaseClassQuickFix implements LocalQuickFix {
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return PyBundle.message("QFIX.change.base.class");
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement element = descriptor.getPsiElement();
-    final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
-    assert pyClass != null;
-
-    final PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
-    if (expressionList != null && expressionList.getArguments().length != 0) {
-      final PyExpression argument = expressionList.getArguments()[0];
-      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(argument);
-      builder.replaceElement(argument, argument.getText());
-      final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-      if (virtualFile != null) {
-        final Editor editor = FileEditorManager.getInstance(project)
-                                               .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
-                                                               true);
-        assert editor != null;
-        builder.run(editor, false);
-      }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixChangeBaseClass();
     }
-  }
+
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
+        final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        assert pyClass != null;
+
+        final PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
+        if (expressionList != null && expressionList.getArguments().length != 0) {
+            final PyExpression argument = expressionList.getArguments()[0];
+            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(argument);
+            builder.replaceElement(argument, argument.getText());
+            final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+            if (virtualFile != null) {
+                final Editor editor = FileEditorManager.getInstance(project)
+                    .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(), true);
+                assert editor != null;
+                builder.run(editor, false);
+            }
+        }
+    }
 }
