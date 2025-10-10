@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -23,14 +24,13 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.refactoring.rename.RenameProcessor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyNamedParameter;
 
 /**
  * Parameter renaming.
-* User: dcheryasov
-* Date: Nov 30, 2008 6:10:13 AM
-*/
+ * @author dcheryasov
+ * @since 2008-11-30
+ */
 public class RenameParameterQuickFix implements LocalQuickFix {
   private final String myNewName;
 
@@ -46,12 +46,8 @@ public class RenameParameterQuickFix implements LocalQuickFix {
   }
 
   @Nonnull
-  public String getFamilyName() {
-    return "Rename parameter";
-  }
-
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.rename.parameter.to.$0", myNewName);
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixRenameParameterTo$0(myNewName);
   }
 }

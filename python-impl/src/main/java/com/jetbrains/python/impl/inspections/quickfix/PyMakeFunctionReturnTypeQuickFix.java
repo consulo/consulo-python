@@ -15,85 +15,78 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import com.jetbrains.python.impl.PyBundle;
+import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.PsiComment;
 import consulo.language.psi.SmartPointerManager;
 import consulo.language.psi.SmartPsiElementPointer;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyAnnotation;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author lada
  */
-public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix
-{
-	private final SmartPsiElementPointer<PyFunction> myFunction;
-	private final SmartPsiElementPointer<PyAnnotation> myAnnotation;
-	private final SmartPsiElementPointer<PsiComment> myTypeCommentAnnotation;
-	private final String myReturnTypeName;
+public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
+    private final SmartPsiElementPointer<PyFunction> myFunction;
+    private final SmartPsiElementPointer<PyAnnotation> myAnnotation;
+    private final SmartPsiElementPointer<PsiComment> myTypeCommentAnnotation;
+    private final String myReturnTypeName;
 
-	public PyMakeFunctionReturnTypeQuickFix(@Nonnull PyFunction function, @Nullable String returnTypeName, @Nonnull TypeEvalContext context)
-	{
-		final SmartPointerManager manager = SmartPointerManager.getInstance(function.getProject());
-		myFunction = manager.createSmartPsiElementPointer(function);
-		PyAnnotation annotation = function.getAnnotation();
-		myAnnotation = annotation != null ? manager.createSmartPsiElementPointer(annotation) : null;
-		PsiComment typeCommentAnnotation = function.getTypeComment();
-		myTypeCommentAnnotation = typeCommentAnnotation != null ? manager.createSmartPsiElementPointer(typeCommentAnnotation) : null;
-		myReturnTypeName = (returnTypeName == null) ? PythonDocumentationProvider.getTypeName(function.getReturnStatementType(context), context) : returnTypeName;
-	}
+    public PyMakeFunctionReturnTypeQuickFix(
+        @Nonnull PyFunction function,
+        @Nullable String returnTypeName,
+        @Nonnull TypeEvalContext context
+    ) {
+        final SmartPointerManager manager = SmartPointerManager.getInstance(function.getProject());
+        myFunction = manager.createSmartPsiElementPointer(function);
+        PyAnnotation annotation = function.getAnnotation();
+        myAnnotation = annotation != null ? manager.createSmartPsiElementPointer(annotation) : null;
+        PsiComment typeCommentAnnotation = function.getTypeComment();
+        myTypeCommentAnnotation = typeCommentAnnotation != null ? manager.createSmartPsiElementPointer(typeCommentAnnotation) : null;
+        myReturnTypeName = (returnTypeName == null)
+            ? PythonDocumentationProvider.getTypeName(function.getReturnStatementType(context), context)
+            : returnTypeName;
+    }
 
-	@Nonnull
-	public String getName()
-	{
-		PyFunction function = myFunction.getElement();
-		String functionName = function != null ? function.getName() : "function";
-		return PyBundle.message("QFIX.NAME.make.$0.return.$1", functionName, myReturnTypeName);
-	}
+    @Nonnull
+    @Override
+    @RequiredReadAction
+    public LocalizeValue getName() {
+        PyFunction function = myFunction.getElement();
+        String functionName = function != null ? function.getName() : "function";
+        return PyLocalize.qfixNameMake$0Return$1(functionName, myReturnTypeName);
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.make.$0.return.$1", "function", "inferred type");
-	}
-
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-		if(myAnnotation != null)
-		{
-			final PyAnnotation annotation = myAnnotation.getElement();
-			if(annotation != null)
-			{
-				final PyExpression annotationExpr = annotation.getValue();
-				if(annotationExpr == null)
-				{
-					return;
-				}
-				annotationExpr.replace(elementGenerator.createExpressionFromText(LanguageLevel.PYTHON30, myReturnTypeName));
-			}
-		}
-		else if(myTypeCommentAnnotation != null)
-		{
-			final PsiComment typeComment = myTypeCommentAnnotation.getElement();
-			if(typeComment != null)
-			{
-				final StringBuilder typeCommentAnnotation = new StringBuilder(typeComment.getText());
-				typeCommentAnnotation.delete(typeCommentAnnotation.indexOf("->"), typeCommentAnnotation.length());
-				typeCommentAnnotation.append("-> ").append(myReturnTypeName);
-				final PsiComment newTypeComment = elementGenerator.createFromText(LanguageLevel.PYTHON27, PsiComment.class, typeCommentAnnotation.toString());
-				typeComment.replace(newTypeComment);
-			}
-		}
-	}
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        if (myAnnotation != null) {
+            final PyAnnotation annotation = myAnnotation.getElement();
+            if (annotation != null) {
+                final PyExpression annotationExpr = annotation.getValue();
+                if (annotationExpr == null) {
+                    return;
+                }
+                annotationExpr.replace(elementGenerator.createExpressionFromText(LanguageLevel.PYTHON30, myReturnTypeName));
+            }
+        }
+        else if (myTypeCommentAnnotation != null) {
+            final PsiComment typeComment = myTypeCommentAnnotation.getElement();
+            if (typeComment != null) {
+                final StringBuilder typeCommentAnnotation = new StringBuilder(typeComment.getText());
+                typeCommentAnnotation.delete(typeCommentAnnotation.indexOf("->"), typeCommentAnnotation.length());
+                typeCommentAnnotation.append("-> ").append(myReturnTypeName);
+                final PsiComment newTypeComment =
+                    elementGenerator.createFromText(LanguageLevel.PYTHON27, PsiComment.class, typeCommentAnnotation.toString());
+                typeComment.replace(newTypeComment);
+            }
+        }
+    }
 }

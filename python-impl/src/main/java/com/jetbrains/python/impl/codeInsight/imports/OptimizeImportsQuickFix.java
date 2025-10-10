@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.imports;
 
+import consulo.localize.LocalizeValue;
 import jakarta.annotation.Nonnull;
 import consulo.language.editor.intention.HighPriorityAction;
 import consulo.language.editor.intention.IntentionAction;
@@ -32,62 +33,51 @@ import consulo.language.util.IncorrectOperationException;
 /**
  * @author yole
  */
-public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction
-{
+public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
+    @Nonnull
+    @Override
+    public LocalizeValue getText() {
+        return LocalizeValue.localizeTODO("Optimize imports");
+    }
 
-	@Nonnull
-	@Override
-	public String getText()
-	{
-		return getName();
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return getText();
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return "Optimize imports";
-	}
+    @Override
+    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        return file instanceof PyFile;
+    }
 
-	@Override
-	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
-	{
-		return file instanceof PyFile;
-	}
+    @Override
+    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        optimizeImports(project, file);
+    }
 
-	@Override
-	public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-	{
-		optimizeImports(project, file);
-	}
+    @Override
+    public boolean startInWriteAction() {
+        return false;
+    }
 
-	@Override
-	public boolean startInWriteAction()
-	{
-		return false;
-	}
+    public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
+        if (element == null) {  // stale PSI
+            return;
+        }
+        final PsiFile file = element.getContainingFile();
+        optimizeImports(project, file);
+    }
 
-	public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		PsiElement element = descriptor.getPsiElement();
-		if(element == null)
-		{  // stale PSI
-			return;
-		}
-		final PsiFile file = element.getContainingFile();
-		optimizeImports(project, file);
-	}
-
-	private void optimizeImports(final Project project, final PsiFile file)
-	{
-		ImportOptimizer optimizer = new PyImportOptimizer();
-		final Runnable runnable = optimizer.processFile(file);
-		new WriteCommandAction.Simple(project, getFamilyName(), file)
-		{
-			@Override
-			protected void run() throws Throwable
-			{
-				runnable.run();
-			}
-		}.execute();
-	}
+    private void optimizeImports(final Project project, final PsiFile file) {
+        ImportOptimizer optimizer = new PyImportOptimizer();
+        final Runnable runnable = optimizer.processFile(file);
+        new WriteCommandAction.Simple(project, getName().get(), file) {
+            @Override
+            protected void run() throws Throwable {
+                runnable.run();
+            }
+        }.execute();
+    }
 }

@@ -15,83 +15,71 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.intention.HighPriorityAction;
-import consulo.language.editor.intention.IntentionAction;
+import consulo.codeEditor.Editor;
+import consulo.document.Document;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.document.Document;
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
+import consulo.language.editor.intention.HighPriorityAction;
+import consulo.language.editor.intention.IntentionAction;
 import consulo.language.psi.PsiDocumentManager;
 import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
-public class RemoveTrailingBlankLinesFix implements LocalQuickFix, IntentionAction, HighPriorityAction
-{
-	@Nonnull
-	@Override
-	public String getText()
-	{
-		return "Remove trailing blank lines";
-	}
+public class RemoveTrailingBlankLinesFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
+    @Nonnull
+    @Override
+    public LocalizeValue getText() {
+        return LocalizeValue.localizeTODO("Remove trailing blank lines");
+    }
 
-	@Override
-	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
-	{
-		return true;
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return getText();
+    }
 
-	@Override
-	public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-	{
-		removeTrailingBlankLines(file);
-	}
+    @Override
+    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        return true;
+    }
 
-	@Override
-	public boolean startInWriteAction()
-	{
-		return true;
-	}
+    @Override
+    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        removeTrailingBlankLines(file);
+    }
 
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return getText();
-	}
+    @Override
+    public boolean startInWriteAction() {
+        return true;
+    }
 
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		removeTrailingBlankLines(descriptor.getPsiElement().getContainingFile());
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        removeTrailingBlankLines(descriptor.getPsiElement().getContainingFile());
+    }
 
-	private static void removeTrailingBlankLines(PsiFile file)
-	{
-		Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
-		if(document == null)
-		{
-			return;
-		}
-		int lastBlankLineOffset = -1;
-		for(int i = document.getLineCount() - 1; i >= 0; i--)
-		{
-			int lineStart = document.getLineStartOffset(i);
-			String trimmed = document.getCharsSequence().subSequence(lineStart, document.getLineEndOffset(i)).toString().trim();
-			if(trimmed.length() > 0)
-			{
-				break;
-			}
-			lastBlankLineOffset = lineStart;
-		}
-		if(lastBlankLineOffset > 0)
-		{
-			document.deleteString(lastBlankLineOffset, document.getTextLength());
-		}
-	}
+    private static void removeTrailingBlankLines(PsiFile file) {
+        Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+        if (document == null) {
+            return;
+        }
+        int lastBlankLineOffset = -1;
+        for (int i = document.getLineCount() - 1; i >= 0; i--) {
+            int lineStart = document.getLineStartOffset(i);
+            String trimmed = document.getCharsSequence().subSequence(lineStart, document.getLineEndOffset(i)).toString().trim();
+            if (trimmed.length() > 0) {
+                break;
+            }
+            lastBlankLineOffset = lineStart;
+        }
+        if (lastBlankLineOffset > 0) {
+            document.deleteString(lastBlankLineOffset, document.getTextLength());
+        }
+    }
 }

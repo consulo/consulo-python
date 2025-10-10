@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.PyEncodingUtil;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
@@ -25,9 +23,9 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiComment;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import org.jetbrains.annotations.NonNls;
-
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -35,38 +33,35 @@ import jakarta.annotation.Nonnull;
  * # -*- coding: <encoding name> -*-
  * to the source file
  *
- * User: catherine
+ * @author catherine
  */
 public class AddEncodingQuickFix implements LocalQuickFix {
+    private String myDefaultEncoding;
+    private int myEncodingFormatIndex;
 
-  private String myDefaultEncoding;
-  private int myEncodingFormatIndex;
-
-  public AddEncodingQuickFix(String defaultEncoding, int encodingFormatIndex) {
-    myDefaultEncoding = defaultEncoding;
-    myEncodingFormatIndex = encodingFormatIndex;
-  }
-
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.add.encoding");
-  }
-
-  @NonNls
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-    PsiFile file = descriptor.getPsiElement().getContainingFile();
-    if (file == null) return;
-    PsiElement firstLine = file.getFirstChild();
-    if (firstLine instanceof PsiComment && firstLine.getText().startsWith("#!")) {
-      firstLine = firstLine.getNextSibling();
+    public AddEncodingQuickFix(String defaultEncoding, int encodingFormatIndex) {
+        myDefaultEncoding = defaultEncoding;
+        myEncodingFormatIndex = encodingFormatIndex;
     }
-    PsiComment encodingLine = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.forElement(file), PsiComment.class,
-                                                                                     String.format(PyEncodingUtil.ENCODING_FORMAT_PATTERN[myEncodingFormatIndex], myDefaultEncoding));
-    file.addBefore(encodingLine, firstLine);
-  }
+
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixAddEncoding();
+    }
+
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        PsiFile file = descriptor.getPsiElement().getContainingFile();
+        if (file == null) {
+            return;
+        }
+        PsiElement firstLine = file.getFirstChild();
+        if (firstLine instanceof PsiComment && firstLine.getText().startsWith("#!")) {
+            firstLine = firstLine.getNextSibling();
+        }
+        PsiComment encodingLine = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.forElement(file), PsiComment.class,
+            String.format(PyEncodingUtil.ENCODING_FORMAT_PATTERN[myEncodingFormatIndex], myDefaultEncoding)
+        );
+        file.addBefore(encodingLine, firstLine);
+    }
 }

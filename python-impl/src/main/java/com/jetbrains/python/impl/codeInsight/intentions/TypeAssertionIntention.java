@@ -34,137 +34,122 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 /**
- * User: ktisha
- * <p>
  * Helps to specify type by assertion
+ *
+ * @author ktisha
  */
-public class TypeAssertionIntention extends PyBaseIntentionAction
-{
+public class TypeAssertionIntention extends PyBaseIntentionAction {
+    @Nonnull
+    @Override
+    public LocalizeValue getText() {
+        return PyLocalize.intnInsertAssertion();
+    }
 
-	@Nonnull
-	public String getText()
-	{
-		return PyBundle.message("INTN.insert.assertion");
-	}
+    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        if (!(file instanceof PyFile)) {
+            return false;
+        }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("INTN.insert.assertion");
-	}
+        PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PyExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);
+        if (problemElement == null) {
+            return false;
+        }
+        if (problemElement.getParent() instanceof PyWithItem) {
+            return false;
+        }
+        final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
+        if (qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF)) {
+            problemElement = qualifier;
+        }
+        final PsiReference reference = problemElement.getReference();
+        if (problemElement.getParent() instanceof PyCallExpression ||
+            PsiTreeUtil.getParentOfType(problemElement, PyComprehensionElement.class) != null ||
+            PsiTreeUtil.getParentOfType(problemElement, PyLambdaExpression.class) != null ||
+            PsiTreeUtil.getParentOfType(problemElement, PyGeneratorExpression.class) != null ||
+            (reference != null && reference.resolve() == null)) {
+            return false;
+        }
+        final PyType type = TypeEvalContext.codeAnalysis(file.getProject(), file).getType(problemElement);
+        return type == null;
+    }
 
-	public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file)
-	{
-		if(!(file instanceof PyFile))
-		{
-			return false;
-		}
+    @Override
+    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PyExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);
+        if (problemElement != null) {
+            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
-		PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
-		PyExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);
-		if(problemElement == null)
-		{
-			return false;
-		}
-		if(problemElement.getParent() instanceof PyWithItem)
-		{
-			return false;
-		}
-		final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
-		if(qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF))
-		{
-			problemElement = qualifier;
-		}
-		final PsiReference reference = problemElement.getReference();
-		if(problemElement.getParent() instanceof PyCallExpression ||
-				PsiTreeUtil.getParentOfType(problemElement, PyComprehensionElement.class) != null ||
-				PsiTreeUtil.getParentOfType(problemElement, PyLambdaExpression.class) != null ||
-				PsiTreeUtil.getParentOfType(problemElement, PyGeneratorExpression.class) != null ||
-				(reference != null && reference.resolve() == null))
-		{
-			return false;
-		}
-		final PyType type = TypeEvalContext.codeAnalysis(file.getProject(), file).getType(problemElement);
-		return type == null;
-	}
+            String name = problemElement.getText();
+            final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
+            if (qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF)) {
+                final String referencedName = ((PyQualifiedExpression) problemElement).getReferencedName();
+                if (referencedName == null || PyNames.GETITEM.equals(referencedName)) {
+                    name = qualifier.getText();
+                }
+            }
 
-	@Override
-	public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-	{
-		PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
-		PyExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);
-		if(problemElement != null)
-		{
-			PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            final String text = "assert isinstance(" + name + ", )";
+            PyAssertStatement assertStatement =
+                elementGenerator.createFromText(LanguageLevel.forElement(problemElement), PyAssertStatement.class, text);
 
-			String name = problemElement.getText();
-			final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
-			if(qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF))
-			{
-				final String referencedName = ((PyQualifiedExpression) problemElement).getReferencedName();
-				if(referencedName == null || PyNames.GETITEM.equals(referencedName))
-				{
-					name = qualifier.getText();
-				}
-			}
+            final PsiElement parentStatement = PsiTreeUtil.getParentOfType(problemElement, PyStatement.class);
+            if (parentStatement == null) {
+                return;
+            }
+            final PsiElement parent = parentStatement.getParent();
+            PsiElement element;
+            if (parentStatement instanceof PyAssignmentStatement && ((PyAssignmentStatement) parentStatement).getTargets()[0] == problemElement) {
+                element = parent.addAfter(assertStatement, parentStatement);
+            }
+            else {
+                PyStatementList statementList = PsiTreeUtil.getParentOfType(parentStatement, PyStatementList.class);
+                final Document document = editor.getDocument();
 
-			final String text = "assert isinstance(" + name + ", )";
-			PyAssertStatement assertStatement = elementGenerator.createFromText(LanguageLevel.forElement(problemElement), PyAssertStatement.class, text);
+                if (statementList != null) {
+                    PsiElement statementListParent = PsiTreeUtil.getParentOfType(statementList, PyStatement.class);
+                    if (statementListParent != null && document.getLineNumber(statementList.getTextOffset()) == document.getLineNumber(
+                        statementListParent.getTextOffset())) {
+                        final String substring =
+                            TextRange.create(statementListParent.getTextRange().getStartOffset(), statementList.getTextOffset())
+                                .substring(document.getText());
+                        final PyStatement foo = elementGenerator.createFromText(
+                            LanguageLevel.forElement(problemElement),
+                            PyStatement.class,
+                            substring + "\n\t" +
+                                text + "\n\t" + statementList.getText()
+                        );
 
-			final PsiElement parentStatement = PsiTreeUtil.getParentOfType(problemElement, PyStatement.class);
-			if(parentStatement == null)
-			{
-				return;
-			}
-			final PsiElement parent = parentStatement.getParent();
-			PsiElement element;
-			if(parentStatement instanceof PyAssignmentStatement && ((PyAssignmentStatement) parentStatement).getTargets()[0] == problemElement)
-			{
-				element = parent.addAfter(assertStatement, parentStatement);
-			}
-			else
-			{
-				PyStatementList statementList = PsiTreeUtil.getParentOfType(parentStatement, PyStatementList.class);
-				final Document document = editor.getDocument();
+                        statementListParent = statementListParent.replace(foo);
+                        statementList = PsiTreeUtil.findChildOfType(statementListParent, PyStatementList.class);
+                        assert statementList != null;
+                        element = statementList.getStatements()[0];
+                    }
+                    else {
+                        element = parent.addBefore(assertStatement, parentStatement);
+                    }
+                }
+                else {
+                    element = parent.addBefore(assertStatement, parentStatement);
+                }
+            }
 
-				if(statementList != null)
-				{
-					PsiElement statementListParent = PsiTreeUtil.getParentOfType(statementList, PyStatement.class);
-					if(statementListParent != null && document.getLineNumber(statementList.getTextOffset()) == document.getLineNumber(statementListParent.getTextOffset()))
-					{
-						final String substring = TextRange.create(statementListParent.getTextRange().getStartOffset(), statementList.getTextOffset()).substring(document.getText());
-						final PyStatement foo = elementGenerator.createFromText(LanguageLevel.forElement(problemElement), PyStatement.class, substring + "\n\t" +
-								text + "\n\t" + statementList.getText());
+            int textOffSet = element.getTextOffset();
+            editor.getCaretModel().moveToOffset(textOffSet);
 
-						statementListParent = statementListParent.replace(foo);
-						statementList = PsiTreeUtil.findChildOfType(statementListParent, PyStatementList.class);
-						assert statementList != null;
-						element = statementList.getStatements()[0];
-					}
-					else
-					{
-						element = parent.addBefore(assertStatement, parentStatement);
-					}
-				}
-				else
-				{
-					element = parent.addBefore(assertStatement, parentStatement);
-				}
-			}
-
-			int textOffSet = element.getTextOffset();
-			editor.getCaretModel().moveToOffset(textOffSet);
-
-			element = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element);
-			final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
-			builder.replaceRange(TextRange.create(text.length() - 1, text.length() - 1), PyNames.OBJECT);
-			Template template = builder.buildInlineTemplate();
-			TemplateManager.getInstance(project).startTemplate(editor, template);
-		}
-	}
+            element = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element);
+            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
+            builder.replaceRange(TextRange.create(text.length() - 1, text.length() - 1), PyNames.OBJECT);
+            Template template = builder.buildInlineTemplate();
+            TemplateManager.getInstance(project).startTemplate(editor, template);
+        }
+    }
 }

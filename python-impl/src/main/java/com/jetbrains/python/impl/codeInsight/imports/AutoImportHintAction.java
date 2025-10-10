@@ -16,68 +16,61 @@
 
 package com.jetbrains.python.impl.codeInsight.imports;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.intention.HighPriorityAction;
-import consulo.language.editor.intention.HintAction;
+import consulo.codeEditor.Editor;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
+import consulo.language.editor.intention.HighPriorityAction;
+import consulo.language.editor.intention.HintAction;
 import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public class AutoImportHintAction implements LocalQuickFix, HintAction, HighPriorityAction {
-  private final AutoImportQuickFix myDelegate;
+    private final AutoImportQuickFix myDelegate;
 
-  public AutoImportHintAction(AutoImportQuickFix delegate) {
-    myDelegate = delegate;
-  }
+    public AutoImportHintAction(AutoImportQuickFix delegate) {
+        myDelegate = delegate;
+    }
 
-  @Override
-  public boolean showHint(@Nonnull Editor editor) {
-    return myDelegate.showHint(editor);
-  }
+    @Override
+    public boolean showHint(@Nonnull Editor editor) {
+        return myDelegate.showHint(editor);
+    }
 
-  @Nonnull
-  @Override
-  public String getText() {
-    return myDelegate.getText();
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getText() {
+        return myDelegate.getText();
+    }
 
-  @Override
-  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
-    return myDelegate.isAvailable();
-  }
+    @Override
+    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        return myDelegate.isAvailable();
+    }
 
-  @Override
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-  {
-    myDelegate.invoke(file);
-  }
+    @Override
+    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        myDelegate.invoke(file);
+    }
 
-  @Override
-  public boolean startInWriteAction() {
-    return false;
-  }
+    @Override
+    public boolean startInWriteAction() {
+        return false;
+    }
 
-  @Nonnull
-  @Override
-  public String getName() {
-    return myDelegate.getName();
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return myDelegate.getName();
+    }
 
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return myDelegate.getFamilyName();
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    myDelegate.applyFix(project, descriptor);
-  }
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        myDelegate.applyFix(project, descriptor);
+    }
 }

@@ -24,6 +24,7 @@ import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager
 import consulo.language.editor.intention.LowPriorityAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
 import jakarta.annotation.Nonnull;
@@ -31,57 +32,45 @@ import jakarta.annotation.Nonnull;
 /**
  * @author yole
  */
-public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityAction
-{
-	public static final String END_WILDCARD = ".*";
+public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityAction {
+    public static final String END_WILDCARD = ".*";
 
-	@Nonnull
-	private final QualifiedName myIdentifier;
-	private final boolean myIgnoreAllAttributes;
+    @Nonnull
+    private final QualifiedName myIdentifier;
+    private final boolean myIgnoreAllAttributes;
 
-	public AddIgnoredIdentifierQuickFix(@Nonnull QualifiedName identifier, boolean ignoreAllAttributes)
-	{
-		myIdentifier = identifier;
-		myIgnoreAllAttributes = ignoreAllAttributes;
-	}
+    public AddIgnoredIdentifierQuickFix(@Nonnull QualifiedName identifier, boolean ignoreAllAttributes) {
+        myIdentifier = identifier;
+        myIgnoreAllAttributes = ignoreAllAttributes;
+    }
 
-	@Nonnull
-	@Override
-	public String getName()
-	{
-		if(myIgnoreAllAttributes)
-		{
-			return "Mark all unresolved attributes of '" + myIdentifier + "' as ignored";
-		}
-		else
-		{
-			return "Ignore unresolved reference '" + myIdentifier + "'";
-		}
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        if (myIgnoreAllAttributes) {
+            return LocalizeValue.localizeTODO("Mark all unresolved attributes of '" + myIdentifier + "' as ignored");
+        }
+        else {
+            return LocalizeValue.localizeTODO("Ignore unresolved reference '" + myIdentifier + "'");
+        }
+    }
 
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return "Ignore unresolved reference";
-	}
-
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		final PsiElement context = descriptor.getPsiElement();
-		InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
-		profile.<PyUnresolvedReferencesInspection, PyUnresolvedReferencesInspectionState>modifyToolSettings(PyUnresolvedReferencesInspection.class.getSimpleName(), context, (i, s) ->
-		{
-			String name = myIdentifier.toString();
-			if(myIgnoreAllAttributes)
-			{
-				name += END_WILDCARD;
-			}
-			if(!s.ignoredIdentifiers.contains(name))
-			{
-				s.ignoredIdentifiers.add(name);
-			}
-		});
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final PsiElement context = descriptor.getPsiElement();
+        InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+        profile.<PyUnresolvedReferencesInspection, PyUnresolvedReferencesInspectionState>modifyToolSettings(
+            PyUnresolvedReferencesInspection.class.getSimpleName(),
+            context,
+            (i, s) -> {
+                String name = myIdentifier.toString();
+                if (myIgnoreAllAttributes) {
+                    name += END_WILDCARD;
+                }
+                if (!s.ignoredIdentifiers.contains(name)) {
+                    s.ignoredIdentifiers.add(name);
+                }
+            }
+        );
+    }
 }

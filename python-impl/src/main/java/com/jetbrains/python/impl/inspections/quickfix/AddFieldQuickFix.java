@@ -35,8 +35,10 @@ import consulo.language.editor.template.TemplateBuilderFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
 import consulo.virtualFileSystem.VirtualFile;
 
@@ -46,8 +48,9 @@ import java.util.function.Function;
 
 /**
  * Available on self.my_something when my_something is unresolved.
- * User: dcheryasov
- * Date: Apr 4, 2009 1:53:46 PM
+ *
+ * @author dcheryasov
+ * @since 2009-04-04
  */
 public class AddFieldQuickFix implements LocalQuickFix {
 
@@ -64,13 +67,9 @@ public class AddFieldQuickFix implements LocalQuickFix {
   }
 
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.NAME.add.field.$0.to.class.$1", myIdentifier, myClassName);
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return "Add field to class";
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixNameAddField$0ToClass$1(myIdentifier, myClassName);
   }
 
   @Nullable

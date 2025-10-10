@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.FileModificationService;
@@ -23,23 +24,15 @@ import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Jul 30, 2009
- * Time: 2:57:42 PM
+ * @since Alexey.Ivanov
+ * @since 2009-07-30
  */
 public class RemoveTrailingSemicolonQuickFix implements LocalQuickFix {
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.remove.trailing.semicolon");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
+  public LocalizeValue getName() {
+    return PyLocalize.qfixRemoveTrailingSemicolon();
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {

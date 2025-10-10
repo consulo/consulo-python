@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.util.lang.ref.Ref;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.*;
-import org.jetbrains.annotations.NonNls;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.util.lang.ref.Ref;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -33,14 +32,9 @@ import jakarta.annotation.Nonnull;
  */
 public class AddGlobalQuickFix implements LocalQuickFix {
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.add.global");
-  }
-
-  @NonNls
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixAddGlobal();
   }
 
   public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {

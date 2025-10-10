@@ -15,36 +15,32 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyAssignmentStatement;
 import com.jetbrains.python.psi.PyExpression;
 
-public class PyRemoveAssignmentQuickFix implements LocalQuickFix
-{
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.remove.assignment");
-	}
+public class PyRemoveAssignmentQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameRemoveAssignment();
+    }
 
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		final PsiElement assignment = descriptor.getPsiElement();
-		if(assignment instanceof PyAssignmentStatement)
-		{
-			final PyExpression value = ((PyAssignmentStatement) assignment).getAssignedValue();
-			if(value != null)
-			{
-				assignment.replace(value);
-			}
-		}
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final PsiElement assignment = descriptor.getPsiElement();
+        if (assignment instanceof PyAssignmentStatement) {
+            final PyExpression value = ((PyAssignmentStatement) assignment).getAssignedValue();
+            if (value != null) {
+                assignment.replace(value);
+            }
+        }
+    }
 }
