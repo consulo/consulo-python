@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.quickfix.PyMoveExceptQuickFix;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
@@ -23,9 +22,10 @@ import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,57 +34,59 @@ import java.util.Set;
  */
 @ExtensionImpl
 public class PyExceptClausesOrderInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.bad.except.clauses.order");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-
-    public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyTryExceptStatement(PyTryExceptStatement node) {
-      PyExceptPart[] exceptParts = node.getExceptParts();
-      if (exceptParts.length > 1) {
-        Set<PyClass> exceptClasses = new HashSet<>();
-        for (PyExceptPart exceptPart : exceptParts) {
-          PyExpression exceptClass = exceptPart.getExceptClass();
-          if (exceptClass instanceof PyReferenceExpression) {
-            PsiElement element = ((PyReferenceExpression)exceptClass).followAssignmentsChain(getResolveContext()).getElement();
-            if (element instanceof PyClass) {
-              PyClass pyClass = (PyClass)element;
-              if (exceptClasses.contains(pyClass)) {
-                registerProblem(exceptClass, PyBundle.message("INSP.class.$0.already.caught", pyClass.getName()));
-              }
-              else {
-                for (PyClass superClass : pyClass.getSuperClasses(null)) {
-                  if (exceptClasses.contains(superClass)) {
-                    registerProblem(exceptClass,
-                                    PyBundle.message("INSP.class.$0.superclass.$1.already.caught", superClass.getName(), pyClass.getName()),
-                                    new PyMoveExceptQuickFix
-                                      ());
-                  }
-                }
-              }
-              exceptClasses.add(pyClass);
-            }
-          }
-        }
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameBadExceptClausesOrder();
     }
-  }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    private static class Visitor extends PyInspectionVisitor {
+
+        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyTryExceptStatement(PyTryExceptStatement node) {
+            PyExceptPart[] exceptParts = node.getExceptParts();
+            if (exceptParts.length > 1) {
+                Set<PyClass> exceptClasses = new HashSet<>();
+                for (PyExceptPart exceptPart : exceptParts) {
+                    PyExpression exceptClass = exceptPart.getExceptClass();
+                    if (exceptClass instanceof PyReferenceExpression) {
+                        PsiElement element = ((PyReferenceExpression) exceptClass).followAssignmentsChain(getResolveContext()).getElement();
+                        if (element instanceof PyClass) {
+                            PyClass pyClass = (PyClass) element;
+                            if (exceptClasses.contains(pyClass)) {
+                                registerProblem(exceptClass, PyLocalize.inspClass$0AlreadyCaught(pyClass.getName()).get());
+                            }
+                            else {
+                                for (PyClass superClass : pyClass.getSuperClasses(null)) {
+                                    if (exceptClasses.contains(superClass)) {
+                                        registerProblem(
+                                            exceptClass,
+                                            PyLocalize.inspClass$0Superclass$1AlreadyCaught(superClass.getName(), pyClass.getName()).get(),
+                                            new PyMoveExceptQuickFix()
+                                        );
+                                    }
+                                }
+                            }
+                            exceptClasses.add(pyClass);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

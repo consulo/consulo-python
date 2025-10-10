@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import consulo.annotation.component.ExtensionImpl;
-import consulo.language.editor.inspection.scheme.InspectionManager;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.editor.inspection.ProblemHighlightType;
-import consulo.document.util.TextRange;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiFile;
-import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.inspections.quickfix.ConvertIndentsFix;
 import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
-import org.jetbrains.annotations.Nls;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.language.ast.IElementType;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.editor.inspection.ProblemHighlightType;
+import consulo.language.editor.inspection.scheme.InspectionManager;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiFile;
+import consulo.localize.LocalizeValue;
 import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
@@ -39,98 +38,102 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyInconsistentIndentationInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return "Inconsistent indentation";
-  }
-
-  @Override
-  public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
-    if (file.getLanguage() instanceof PythonLanguage) {
-      return new IndentValidator(file, manager, isOnTheFly).invoke();
-    }
-    return ProblemDescriptor.EMPTY_ARRAY;
-  }
-
-  private static class IndentValidator {
-    private PsiFile myFile;
-    private InspectionManager myManager;
-    private boolean myOnTheFly;
-    private List<ProblemDescriptor> myProblems;
-    private int myLastTabs = 0;
-    private int myLastSpaces = 0;
-
-    public IndentValidator(PsiFile file, InspectionManager manager, boolean isOnTheFly) {
-      myFile = file;
-      myManager = manager;
-      myOnTheFly = isOnTheFly;
-      myProblems = new ArrayList<ProblemDescriptor>();
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return LocalizeValue.localizeTODO("Inconsistent indentation");
     }
 
-    public ProblemDescriptor[] invoke() {
-      PythonIndentingLexer lexer = new PythonIndentingLexer();
-      final String text = myFile.getText();
-      lexer.start(text);
-      while (lexer.getTokenType() != null) {
-        final IElementType tokenType = lexer.getTokenType();
-        if (tokenType == PyTokenTypes.STATEMENT_BREAK) {
-          lexer.advance();
-          while(lexer.getTokenType() != null && lexer.getTokenType() != PyTokenTypes.LINE_BREAK) {
-            lexer.advance();
-          }
-          if (lexer.getTokenType() == PyTokenTypes.LINE_BREAK) {
-            String indent = text.substring(lexer.getTokenStart(), lexer.getTokenEnd());
-            validateIndent(lexer.getTokenStart(), indent);
-          }
+    @Override
+    public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
+        if (file.getLanguage() instanceof PythonLanguage) {
+            return new IndentValidator(file, manager, isOnTheFly).invoke();
         }
-        lexer.advance();
-      }
-      return myProblems.toArray(new ProblemDescriptor[myProblems.size()]);
+        return ProblemDescriptor.EMPTY_ARRAY;
     }
 
-    private void validateIndent(final int tokenStart, String indent) {
-      int lastLF = indent.lastIndexOf('\n');
-      String lastLineIndent = indent.substring(lastLF+1);
-      int spaces = 0;
-      int tabs = 0;
-      final int length = lastLineIndent.length();
-      for (int i = 0; i < length; i++) {
-        final char c = lastLineIndent.charAt(i);
-        if (c == ' ') spaces++;
-        else if (c == '\t') tabs++;
-      }
-      final int problemStart = tokenStart + lastLF + 1;
-      if (spaces > 0 && tabs > 0) {
-        reportProblem("Inconsistent indentation: mix of tabs and spaces", problemStart, length);
-        // don't know which one is correct => don't complain about inconsistent indentation on subsequent lines which use
-        // either tabs or spaces
-        myLastSpaces = 0;
-        myLastTabs = 0;
-      }
-      else {
-        if (spaces > 0 && myLastTabs > 0) {
-          reportProblem("Inconsistent indentation: previous line used tabs, this line uses spaces", problemStart, length);
-        }
-        else if (tabs > 0 && myLastSpaces > 0) {
-          reportProblem("Inconsistent indentation: previous line used spaces, this line uses tabs", problemStart, length);
-        }
-        if (spaces > 0 || tabs > 0) {
-          myLastTabs = tabs;
-          myLastSpaces = spaces;
-        }
-      }
-    }
+    private static class IndentValidator {
+        private PsiFile myFile;
+        private InspectionManager myManager;
+        private boolean myOnTheFly;
+        private List<ProblemDescriptor> myProblems;
+        private int myLastTabs = 0;
+        private int myLastSpaces = 0;
 
-    private void reportProblem(final String descriptionTemplate, final int problemStart, final int problemLength) {
-      PsiElement elt = myFile.findElementAt(problemStart);
-      int startOffset = problemStart - elt.getTextRange().getStartOffset();
-      int endOffset = startOffset + problemLength;
-      myProblems.add(myManager.createProblemDescriptor(elt, new TextRange(startOffset, endOffset),
-                                                       descriptionTemplate,
-                                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myOnTheFly,
-                                                       new ConvertIndentsFix(false), new ConvertIndentsFix(true)));
+        public IndentValidator(PsiFile file, InspectionManager manager, boolean isOnTheFly) {
+            myFile = file;
+            myManager = manager;
+            myOnTheFly = isOnTheFly;
+            myProblems = new ArrayList<ProblemDescriptor>();
+        }
+
+        public ProblemDescriptor[] invoke() {
+            PythonIndentingLexer lexer = new PythonIndentingLexer();
+            final String text = myFile.getText();
+            lexer.start(text);
+            while (lexer.getTokenType() != null) {
+                final IElementType tokenType = lexer.getTokenType();
+                if (tokenType == PyTokenTypes.STATEMENT_BREAK) {
+                    lexer.advance();
+                    while (lexer.getTokenType() != null && lexer.getTokenType() != PyTokenTypes.LINE_BREAK) {
+                        lexer.advance();
+                    }
+                    if (lexer.getTokenType() == PyTokenTypes.LINE_BREAK) {
+                        String indent = text.substring(lexer.getTokenStart(), lexer.getTokenEnd());
+                        validateIndent(lexer.getTokenStart(), indent);
+                    }
+                }
+                lexer.advance();
+            }
+            return myProblems.toArray(new ProblemDescriptor[myProblems.size()]);
+        }
+
+        private void validateIndent(final int tokenStart, String indent) {
+            int lastLF = indent.lastIndexOf('\n');
+            String lastLineIndent = indent.substring(lastLF + 1);
+            int spaces = 0;
+            int tabs = 0;
+            final int length = lastLineIndent.length();
+            for (int i = 0; i < length; i++) {
+                final char c = lastLineIndent.charAt(i);
+                if (c == ' ') {
+                    spaces++;
+                }
+                else if (c == '\t') {
+                    tabs++;
+                }
+            }
+            final int problemStart = tokenStart + lastLF + 1;
+            if (spaces > 0 && tabs > 0) {
+                reportProblem("Inconsistent indentation: mix of tabs and spaces", problemStart, length);
+                // don't know which one is correct => don't complain about inconsistent indentation on subsequent lines which use
+                // either tabs or spaces
+                myLastSpaces = 0;
+                myLastTabs = 0;
+            }
+            else {
+                if (spaces > 0 && myLastTabs > 0) {
+                    reportProblem("Inconsistent indentation: previous line used tabs, this line uses spaces", problemStart, length);
+                }
+                else if (tabs > 0 && myLastSpaces > 0) {
+                    reportProblem("Inconsistent indentation: previous line used spaces, this line uses tabs", problemStart, length);
+                }
+                if (spaces > 0 || tabs > 0) {
+                    myLastTabs = tabs;
+                    myLastSpaces = spaces;
+                }
+            }
+        }
+
+        private void reportProblem(final String descriptionTemplate, final int problemStart, final int problemLength) {
+            PsiElement elt = myFile.findElementAt(problemStart);
+            int startOffset = problemStart - elt.getTextRange().getStartOffset();
+            int endOffset = startOffset + problemLength;
+            myProblems.add(myManager.createProblemDescriptor(elt, new TextRange(startOffset, endOffset),
+                descriptionTemplate,
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myOnTheFly,
+                new ConvertIndentsFix(false), new ConvertIndentsFix(true)
+            ));
+        }
     }
-  }
 }

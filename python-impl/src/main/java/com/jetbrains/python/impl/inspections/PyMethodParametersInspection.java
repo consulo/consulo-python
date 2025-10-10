@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.inspections;
 
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.quickfix.AddSelfQuickFix;
 import com.jetbrains.python.impl.inspections.quickfix.RenameParameterQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;
@@ -33,12 +32,12 @@ import consulo.language.editor.rawHighlight.HighlightDisplayLevel;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.QualifiedName;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ref.Ref;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Looks for the 'self' or its equivalents.
@@ -46,233 +45,207 @@ import jakarta.annotation.Nullable;
  * @author dcheryasov
  */
 @ExtensionImpl
-public class PyMethodParametersInspection extends PyInspection
-{
-	@Nonnull
-	@Override
-	public InspectionToolState<?> createStateProvider()
-	{
-		return new PyMethodParametersInspectionState();
-	}
+public class PyMethodParametersInspection extends PyInspection {
+    @Nonnull
+    @Override
+    public InspectionToolState<?> createStateProvider() {
+        return new PyMethodParametersInspectionState();
+    }
 
-	@Nls
-	@Nonnull
-	public String getDisplayName()
-	{
-		return PyBundle.message("INSP.NAME.problematic.first.parameter");
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameProblematicFirstParameter();
+    }
 
-	@Nonnull
-	public HighlightDisplayLevel getDefaultLevel()
-	{
-		return HighlightDisplayLevel.WEAK_WARNING;
-	}
+    @Nonnull
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
+    }
 
-	@Nonnull
-	@Override
-	public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-										  boolean isOnTheFly,
-										  @Nonnull LocalInspectionToolSession session,
-										  Object state)
-	{
-		return new Visitor(holder, session, (PyMethodParametersInspectionState) state);
-	}
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session, (PyMethodParametersInspectionState) state);
+    }
 
-	public class Visitor extends PyInspectionVisitor
-	{
-		private Ref<PsiElement> myPossibleZopeRef = null;
-		private final PyMethodParametersInspectionState myState;
+    public class Visitor extends PyInspectionVisitor {
+        private Ref<PsiElement> myPossibleZopeRef = null;
+        private final PyMethodParametersInspectionState myState;
 
-		public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyMethodParametersInspectionState state)
-		{
-			super(holder, session);
-			myState = state;
-		}
+        public Visitor(
+            @Nullable ProblemsHolder holder,
+            @Nonnull LocalInspectionToolSession session,
+            PyMethodParametersInspectionState state
+        ) {
+            super(holder, session);
+            myState = state;
+        }
 
-		@Nullable
-		private PsiElement findZopeInterface(PsiElement foothold)
-		{
-			PsiElement ret;
-			synchronized(this)
-			{ // other threads would wait as long in resolveInRoots() anyway
-				if(myPossibleZopeRef == null)
-				{
-					myPossibleZopeRef = new Ref<>();
-					ret = ResolveImportUtil.resolveModuleInRoots(QualifiedName.fromComponents("zope.interface.Interface"), foothold);
-					myPossibleZopeRef.set(ret); // null is OK
-				}
-				else
-				{
-					ret = myPossibleZopeRef.get();
-				}
-			}
-			return ret;
-		}
+        @Nullable
+        private PsiElement findZopeInterface(PsiElement foothold) {
+            PsiElement ret;
+            synchronized (this) { // other threads would wait as long in resolveInRoots() anyway
+                if (myPossibleZopeRef == null) {
+                    myPossibleZopeRef = new Ref<>();
+                    ret = ResolveImportUtil.resolveModuleInRoots(QualifiedName.fromComponents("zope.interface.Interface"), foothold);
+                    myPossibleZopeRef.set(ret); // null is OK
+                }
+                else {
+                    ret = myPossibleZopeRef.get();
+                }
+            }
+            return ret;
+        }
 
-		@Override
-		public void visitPyFunction(final PyFunction node)
-		{
-			for(PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList())
-			{
-				if(extension.ignoreMethodParameters(node))
-				{
-					return;
-				}
-			}
-			// maybe it's a zope interface?
-			PsiElement zope_interface = findZopeInterface(node);
-			final PyClass cls = node.getContainingClass();
-			if(zope_interface instanceof PyClass)
-			{
-				if(cls != null && cls.isSubclass((PyClass) zope_interface, myTypeEvalContext))
-				{
-					return; // it can have any params
-				}
-			}
-			// analyze function itself
-			PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(node);
-			if(flags != null)
-			{
-				PyParameterList plist = node.getParameterList();
-				PyParameter[] params = plist.getParameters();
-				final String methodName = node.getName();
-				final String CLS = "cls"; // TODO: move to style settings
-				if(params.length == 0)
-				{ // fix: add
-					// check for "staticmetod"
-					if(flags.isStaticMethod())
-					{
-						return; // no params may be fine
-					}
-					// check actual param list
-					ASTNode name_node = node.getNameNode();
-					if(name_node != null)
-					{
-						PsiElement open_paren = plist.getFirstChild();
-						PsiElement close_paren = plist.getLastChild();
-						if(open_paren != null && close_paren != null &&
-								"(".equals(open_paren.getText()) && ")".equals(close_paren.getText()))
-						{
-							String paramName;
-							if(flags.isMetaclassMethod())
-							{
-								if(flags.isClassMethod())
-								{
-									paramName = myState.MCS;
-								}
-								else
-								{
-									paramName = CLS;
-								}
-							}
-							else if(flags.isClassMethod())
-							{
-								paramName = CLS;
-							}
-							else
-							{
-								paramName = PyNames.CANONICAL_SELF;
-							}
-							registerProblem(plist,
-									PyBundle.message("INSP.must.have.first.parameter", paramName),
-									ProblemHighlightType.GENERIC_ERROR,
-									null,
-									new AddSelfQuickFix(paramName));
-						}
-					}
-				}
-				else
-				{ // fix: rename
-					PyNamedParameter first_param = params[0].getAsNamed();
-					if(first_param != null)
-					{
-						String pname = first_param.getName();
-						if(pname == null)
-						{
-							return;
-						}
-						// every dup, swap, drop, or dup+drop of "self"
-						@NonNls String[] mangled = {
-								"eslf",
-								"sself",
-								"elf",
-								"felf",
-								"slef",
-								"seelf",
-								"slf",
-								"sslf",
-								"sefl",
-								"sellf",
-								"sef",
-								"seef"
-						};
-						if(PyUtil.among(pname, mangled))
-						{
-							registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
-									PyBundle.message("INSP.probably.mistyped.self"),
-									new RenameParameterQuickFix(PyNames.CANONICAL_SELF));
-							return;
-						}
-						if(flags.isMetaclassMethod())
-						{
-							if(flags.isStaticMethod() && !PyNames.NEW.equals(methodName))
-							{
-								return;
-							}
-							String expectedName;
-							String alternativeName = null;
-							if(PyNames.NEW.equals(methodName) || flags.isClassMethod())
-							{
-								expectedName = myState.MCS;
-							}
-							else if(flags.isSpecialMetaclassMethod())
-							{
-								expectedName = CLS;
-							}
-							else
-							{
-								expectedName = PyNames.CANONICAL_SELF;
-								alternativeName = CLS;
-							}
-							if(!expectedName.equals(pname) && (alternativeName == null || !alternativeName.equals(pname)))
-							{
-								registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
-										PyBundle.message("INSP.usually.named.$0", expectedName),
-										new RenameParameterQuickFix(expectedName));
-							}
-						}
-						else if(flags.isClassMethod() ||
-								PyNames.NEW.equals(methodName) ||
-								PyNames.INIT_SUBCLASS.equals(methodName) && LanguageLevel.forElement(node).isAtLeast(LanguageLevel.PYTHON36))
-						{
-							if(!CLS.equals(pname))
-							{
-								registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
-										PyBundle.message("INSP.usually.named.$0", CLS),
-										new RenameParameterQuickFix(CLS));
-							}
-						}
-						else if(!flags.isStaticMethod() && !first_param.isPositionalContainer() && !PyNames.CANONICAL_SELF.equals(pname))
-						{
-							if(flags.isMetaclassMethod() && CLS.equals(pname))
-							{
-								return;   // accept either 'self' or 'cls' for all methods in metaclass
-							}
-							registerProblem(PyUtil.sure(params[0].getNode()).getPsi(),
-									PyBundle.message("INSP.usually.named.self"),
-									new RenameParameterQuickFix(PyNames.CANONICAL_SELF));
-						}
-					}
-					else
-					{ // the unusual case of a method with first tuple param
-						if(!flags.isStaticMethod())
-						{
-							registerProblem(plist, PyBundle.message("INSP.first.param.must.not.be.tuple"));
-						}
-					}
-				}
-			}
-		}
-	}
+        @Override
+        public void visitPyFunction(final PyFunction node) {
+            for (PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList()) {
+                if (extension.ignoreMethodParameters(node)) {
+                    return;
+                }
+            }
+            // maybe it's a zope interface?
+            PsiElement zope_interface = findZopeInterface(node);
+            final PyClass cls = node.getContainingClass();
+            if (zope_interface instanceof PyClass) {
+                if (cls != null && cls.isSubclass((PyClass) zope_interface, myTypeEvalContext)) {
+                    return; // it can have any params
+                }
+            }
+            // analyze function itself
+            PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(node);
+            if (flags != null) {
+                PyParameterList plist = node.getParameterList();
+                PyParameter[] params = plist.getParameters();
+                final String methodName = node.getName();
+                final String CLS = "cls"; // TODO: move to style settings
+                if (params.length == 0) { // fix: add
+                    // check for "staticmetod"
+                    if (flags.isStaticMethod()) {
+                        return; // no params may be fine
+                    }
+                    // check actual param list
+                    ASTNode name_node = node.getNameNode();
+                    if (name_node != null) {
+                        PsiElement open_paren = plist.getFirstChild();
+                        PsiElement close_paren = plist.getLastChild();
+                        if (open_paren != null && close_paren != null &&
+                            "(".equals(open_paren.getText()) && ")".equals(close_paren.getText())) {
+                            String paramName;
+                            if (flags.isMetaclassMethod()) {
+                                if (flags.isClassMethod()) {
+                                    paramName = myState.MCS;
+                                }
+                                else {
+                                    paramName = CLS;
+                                }
+                            }
+                            else if (flags.isClassMethod()) {
+                                paramName = CLS;
+                            }
+                            else {
+                                paramName = PyNames.CANONICAL_SELF;
+                            }
+                            registerProblem(
+                                plist,
+                                PyLocalize.inspMustHaveFirstParameter(paramName).get(),
+                                ProblemHighlightType.GENERIC_ERROR,
+                                null,
+                                new AddSelfQuickFix(paramName)
+                            );
+                        }
+                    }
+                }
+                else { // fix: rename
+                    PyNamedParameter first_param = params[0].getAsNamed();
+                    if (first_param != null) {
+                        String pname = first_param.getName();
+                        if (pname == null) {
+                            return;
+                        }
+                        // every dup, swap, drop, or dup+drop of "self"
+                        @NonNls String[] mangled = {
+                            "eslf",
+                            "sself",
+                            "elf",
+                            "felf",
+                            "slef",
+                            "seelf",
+                            "slf",
+                            "sslf",
+                            "sefl",
+                            "sellf",
+                            "sef",
+                            "seef"
+                        };
+                        if (PyUtil.among(pname, mangled)) {
+                            registerProblem(
+                                PyUtil.sure(params[0].getNode()).getPsi(),
+                                PyLocalize.inspProbablyMistypedSelf().get(),
+                                new RenameParameterQuickFix(PyNames.CANONICAL_SELF)
+                            );
+                            return;
+                        }
+                        if (flags.isMetaclassMethod()) {
+                            if (flags.isStaticMethod() && !PyNames.NEW.equals(methodName)) {
+                                return;
+                            }
+                            String expectedName;
+                            String alternativeName = null;
+                            if (PyNames.NEW.equals(methodName) || flags.isClassMethod()) {
+                                expectedName = myState.MCS;
+                            }
+                            else if (flags.isSpecialMetaclassMethod()) {
+                                expectedName = CLS;
+                            }
+                            else {
+                                expectedName = PyNames.CANONICAL_SELF;
+                                alternativeName = CLS;
+                            }
+                            if (!expectedName.equals(pname) && (alternativeName == null || !alternativeName.equals(pname))) {
+                                registerProblem(
+                                    PyUtil.sure(params[0].getNode()).getPsi(),
+                                    PyLocalize.inspUsuallyNamed$0(expectedName).get(),
+                                    new RenameParameterQuickFix(expectedName)
+                                );
+                            }
+                        }
+                        else if (flags.isClassMethod() ||
+                            PyNames.NEW.equals(methodName) ||
+                            PyNames.INIT_SUBCLASS.equals(methodName) && LanguageLevel.forElement(node).isAtLeast(LanguageLevel.PYTHON36)) {
+                            if (!CLS.equals(pname)) {
+                                registerProblem(
+                                    PyUtil.sure(params[0].getNode()).getPsi(),
+                                    PyLocalize.inspUsuallyNamed$0(CLS).get(),
+                                    new RenameParameterQuickFix(CLS)
+                                );
+                            }
+                        }
+                        else if (!flags.isStaticMethod() && !first_param.isPositionalContainer() && !PyNames.CANONICAL_SELF.equals(pname)) {
+                            if (flags.isMetaclassMethod() && CLS.equals(pname)) {
+                                return;   // accept either 'self' or 'cls' for all methods in metaclass
+                            }
+                            registerProblem(
+                                PyUtil.sure(params[0].getNode()).getPsi(),
+                                PyLocalize.inspUsuallyNamedSelf().get(),
+                                new RenameParameterQuickFix(PyNames.CANONICAL_SELF)
+                            );
+                        }
+                    }
+                    else { // the unusual case of a method with first tuple param
+                        if (!flags.isStaticMethod()) {
+                            registerProblem(plist, PyLocalize.inspFirstParamMustNotBeTuple().get());
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

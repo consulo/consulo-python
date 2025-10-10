@@ -15,15 +15,14 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -32,48 +31,49 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class PyRaisingNewStyleClassInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.raising.new.style.class");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyRaiseStatement(PyRaiseStatement node) {
-      if (LanguageLevel.forElement(node).isAtLeast(LanguageLevel.PYTHON25)) {
-        return;
-      }
-      final PyExpression[] expressions = node.getExpressions();
-      if (expressions.length == 0) {
-        return;
-      }
-      final PyExpression expression = expressions[0];
-      if (expression instanceof PyCallExpression) {
-        final PyExpression callee = ((PyCallExpression)expression).getCallee();
-        if (callee instanceof PyReferenceExpression) {
-          final PsiElement psiElement = ((PyReferenceExpression)callee).getReference(getResolveContext()).resolve();
-          if (psiElement instanceof PyClass) {
-            if (((PyClass)psiElement).isNewStyleClass(null)) {
-              registerProblem(expression, "Raising a new style class");
-            }
-          }
-        }
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameRaisingNewStyleClass();
     }
-  }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    private static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyRaiseStatement(PyRaiseStatement node) {
+            if (LanguageLevel.forElement(node).isAtLeast(LanguageLevel.PYTHON25)) {
+                return;
+            }
+            final PyExpression[] expressions = node.getExpressions();
+            if (expressions.length == 0) {
+                return;
+            }
+            final PyExpression expression = expressions[0];
+            if (expression instanceof PyCallExpression) {
+                final PyExpression callee = ((PyCallExpression) expression).getCallee();
+                if (callee instanceof PyReferenceExpression) {
+                    final PsiElement psiElement = ((PyReferenceExpression) callee).getReference(getResolveContext()).resolve();
+                    if (psiElement instanceof PyClass) {
+                        if (((PyClass) psiElement).isNewStyleClass(null)) {
+                            registerProblem(expression, "Raising a new style class");
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

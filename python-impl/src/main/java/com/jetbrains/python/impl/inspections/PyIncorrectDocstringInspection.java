@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.impl.documentation.docstrings.PlainDocString;
 import com.jetbrains.python.impl.inspections.quickfix.DocstringQuickFix;
@@ -26,8 +25,10 @@ import com.jetbrains.python.toolbox.Substring;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,96 +42,100 @@ import static com.jetbrains.python.impl.psi.PyUtil.as;
  */
 @ExtensionImpl
 public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.incorrect.docstring");
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameIncorrectDocstring();
+    }
 
-  @Nonnull
-  @Override
-  public Visitor buildVisitor(@Nonnull ProblemsHolder holder,
-                              boolean isOnTheFly,
-                              @Nonnull LocalInspectionToolSession session,
-                              Object state) {
-    return new Visitor(holder, session) {
+    @Nonnull
+    @Override
+    public Visitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session) {
 
-      @Override
-      protected void checkDocString(@Nonnull PyDocStringOwner node) {
-        final PyStringLiteralExpression docstringExpr = node.getDocStringExpression();
-        if (docstringExpr != null) {
-          checkParameters(node, docstringExpr);
-        }
-      }
-
-      private void checkParameters(@Nonnull PyDocStringOwner pyDocStringOwner, @Nonnull PyStringLiteralExpression node) {
-        final StructuredDocString docString = DocStringUtil.parseDocString(node);
-        if (docString instanceof PlainDocString) {
-          return;
-        }
-
-        if (pyDocStringOwner instanceof PyFunction) {
-          final PyParameter[] realParams = ((PyFunction)pyDocStringOwner).getParameterList().getParameters();
-
-          final List<PyNamedParameter> missingParams = getMissingParams(docString, realParams);
-          if (!missingParams.isEmpty()) {
-            for (PyNamedParameter param : missingParams) {
-              registerProblem(param,
-                              PyBundle.message("INSP.missing.parameter.in.docstring", param.getName()),
-                              new DocstringQuickFix(param, null));
+            @Override
+            protected void checkDocString(@Nonnull PyDocStringOwner node) {
+                final PyStringLiteralExpression docstringExpr = node.getDocStringExpression();
+                if (docstringExpr != null) {
+                    checkParameters(node, docstringExpr);
+                }
             }
-          }
-          final List<Substring> unexpectedParams = getUnexpectedParams(docString, realParams);
-          if (!unexpectedParams.isEmpty()) {
-            for (Substring param : unexpectedParams) {
-              final ProblemsHolder holder = getHolder();
 
-              if (holder != null) {
-                holder.registerProblem(node,
-                                       param.getTextRange(),
-                                       PyBundle.message("INSP.unexpected.parameter.in.docstring", param),
-                                       new DocstringQuickFix(null, param.getValue()));
-              }
+            private void checkParameters(@Nonnull PyDocStringOwner pyDocStringOwner, @Nonnull PyStringLiteralExpression node) {
+                final StructuredDocString docString = DocStringUtil.parseDocString(node);
+                if (docString instanceof PlainDocString) {
+                    return;
+                }
+
+                if (pyDocStringOwner instanceof PyFunction) {
+                    final PyParameter[] realParams = ((PyFunction) pyDocStringOwner).getParameterList().getParameters();
+
+                    final List<PyNamedParameter> missingParams = getMissingParams(docString, realParams);
+                    if (!missingParams.isEmpty()) {
+                        for (PyNamedParameter param : missingParams) {
+                            registerProblem(
+                                param,
+                                PyLocalize.inspMissingParameterInDocstring(param.getName()).get(),
+                                new DocstringQuickFix(param, null)
+                            );
+                        }
+                    }
+                    final List<Substring> unexpectedParams = getUnexpectedParams(docString, realParams);
+                    if (!unexpectedParams.isEmpty()) {
+                        for (Substring param : unexpectedParams) {
+                            final ProblemsHolder holder = getHolder();
+
+                            if (holder != null) {
+                                holder.newProblem(PyLocalize.inspUnexpectedParameterInDocstring(param))
+                                    .range(node, param.getTextRange())
+                                    .withFix(new DocstringQuickFix(null, param.getValue()))
+                                    .create();
+                            }
+                        }
+                    }
+                }
             }
-          }
+        };
+    }
+
+    @Nonnull
+    private static List<PyNamedParameter> getMissingParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams) {
+        final List<PyNamedParameter> missing = new ArrayList<>();
+        final List<String> docStringParameters = docString.getParameters();
+        if (docStringParameters.isEmpty()) {
+            return Collections.emptyList();
         }
-      }
-    };
-  }
 
-  @Nonnull
-  private static List<PyNamedParameter> getMissingParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams) {
-    final List<PyNamedParameter> missing = new ArrayList<>();
-    final List<String> docStringParameters = docString.getParameters();
-    if (docStringParameters.isEmpty()) {
-      return Collections.emptyList();
+        for (PyParameter p : realParams) {
+            final PyNamedParameter named = as(p, PyNamedParameter.class);
+            if (p.isSelf() || named == null || named.isPositionalContainer() || named.isKeywordContainer()) {
+                continue;
+            }
+            if (!docStringParameters.contains(p.getName())) {
+                missing.add((PyNamedParameter) p);
+            }
+        }
+        return missing;
     }
 
-    for (PyParameter p : realParams) {
-      final PyNamedParameter named = as(p, PyNamedParameter.class);
-      if (p.isSelf() || named == null || named.isPositionalContainer() || named.isKeywordContainer()) {
-        continue;
-      }
-      if (!docStringParameters.contains(p.getName())) {
-        missing.add((PyNamedParameter)p);
-      }
-    }
-    return missing;
-  }
+    @Nonnull
+    private static List<Substring> getUnexpectedParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams) {
+        final Map<String, Substring> unexpected = Maps.newHashMap();
 
-  @Nonnull
-  private static List<Substring> getUnexpectedParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams) {
-    final Map<String, Substring> unexpected = Maps.newHashMap();
+        for (Substring s : docString.getParameterSubstrings()) {
+            unexpected.put(s.toString(), s);
+        }
 
-    for (Substring s : docString.getParameterSubstrings()) {
-      unexpected.put(s.toString(), s);
+        for (PyParameter p : realParams) {
+            if (unexpected.containsKey(p.getName())) {
+                unexpected.remove(p.getName());
+            }
+        }
+        return Lists.newArrayList(unexpected.values());
     }
-
-    for (PyParameter p : realParams) {
-      if (unexpected.containsKey(p.getName())) {
-        unexpected.remove(p.getName());
-      }
-    }
-    return Lists.newArrayList(unexpected.values());
-  }
 }

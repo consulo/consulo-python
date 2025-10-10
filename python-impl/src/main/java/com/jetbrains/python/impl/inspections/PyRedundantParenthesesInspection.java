@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.inspections.quickfix.RedundantParenthesesQuickFix;
 import com.jetbrains.python.psi.*;
@@ -27,99 +25,102 @@ import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 /**
- * User: catherine
- * <p>
  * Inspection to detect redundant parentheses in if/while statement.
+ *
+ * @author catherine
  */
 @ExtensionImpl
 public class PyRedundantParenthesesInspection extends PyInspection {
-  @Nonnull
-  @Override
-  public InspectionToolState<?> createStateProvider() {
-    return new PyRedundantParenthesesInspectionState();
-  }
-
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.redundant.parentheses");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    PyRedundantParenthesesInspectionState inspectionState = (PyRedundantParenthesesInspectionState)state;
-    return new Visitor(holder, session, inspectionState.myIgnorePercOperator, inspectionState.myIgnoreTupleInReturn);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    private final boolean myIgnorePercOperator;
-    private final boolean myIgnoreTupleInReturn;
-
-    public Visitor(@Nonnull ProblemsHolder holder,
-                   @Nonnull LocalInspectionToolSession session,
-                   boolean ignorePercOperator,
-                   boolean ignoreTupleInReturn) {
-      super(holder, session);
-      myIgnorePercOperator = ignorePercOperator;
-      myIgnoreTupleInReturn = ignoreTupleInReturn;
-    }
-
+    @Nonnull
     @Override
-    public void visitPyParenthesizedExpression(final PyParenthesizedExpression node) {
-      PyExpression expression = node.getContainedExpression();
-      if (node.getText().contains("\n")) {
-        return;
-      }
-      PyYieldExpression yieldExpression = PsiTreeUtil.getParentOfType(expression, PyYieldExpression.class, false);
-      if (yieldExpression != null) {
-        return;
-      }
-      if (expression instanceof PyReferenceExpression || expression instanceof PyLiteralExpression) {
-        if (myIgnorePercOperator) {
-          PsiElement parent = node.getParent();
-          if (parent instanceof PyBinaryExpression) {
-            if (((PyBinaryExpression)parent).getOperator() == PyTokenTypes.PERC) {
-              return;
-            }
-          }
-        }
-
-        if (node.getParent() instanceof PyPrintStatement) {
-          return;
-        }
-        registerProblem(node, "Remove redundant parentheses", new RedundantParenthesesQuickFix());
-      }
-      else if (node.getParent() instanceof PyReturnStatement && expression instanceof PyTupleExpression && myIgnoreTupleInReturn) {
-        return;
-      }
-      else if (node.getParent() instanceof PyIfPart || node.getParent() instanceof PyWhilePart
-        || node.getParent() instanceof PyReturnStatement) {
-        registerProblem(node, "Remove redundant parentheses", new RedundantParenthesesQuickFix());
-      }
-      else if (expression instanceof PyBinaryExpression) {
-        PyBinaryExpression binaryExpression = (PyBinaryExpression)expression;
-
-        if (node.getParent() instanceof PyPrefixExpression) {
-          return;
-        }
-        if (binaryExpression.getOperator() == PyTokenTypes.AND_KEYWORD ||
-          binaryExpression.getOperator() == PyTokenTypes.OR_KEYWORD) {
-          if (binaryExpression.getLeftExpression() instanceof PyParenthesizedExpression &&
-            binaryExpression.getRightExpression() instanceof PyParenthesizedExpression) {
-            registerProblem(node, "Remove redundant parentheses", new RedundantParenthesesQuickFix());
-          }
-        }
-      }
+    public InspectionToolState<?> createStateProvider() {
+        return new PyRedundantParenthesesInspectionState();
     }
-  }
+
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameRedundantParentheses();
+    }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        PyRedundantParenthesesInspectionState inspectionState = (PyRedundantParenthesesInspectionState) state;
+        return new Visitor(holder, session, inspectionState.myIgnorePercOperator, inspectionState.myIgnoreTupleInReturn);
+    }
+
+    private static class Visitor extends PyInspectionVisitor {
+        private final boolean myIgnorePercOperator;
+        private final boolean myIgnoreTupleInReturn;
+
+        public Visitor(
+            @Nonnull ProblemsHolder holder,
+            @Nonnull LocalInspectionToolSession session,
+            boolean ignorePercOperator,
+            boolean ignoreTupleInReturn
+        ) {
+            super(holder, session);
+            myIgnorePercOperator = ignorePercOperator;
+            myIgnoreTupleInReturn = ignoreTupleInReturn;
+        }
+
+        @Override
+        public void visitPyParenthesizedExpression(final PyParenthesizedExpression node) {
+            PyExpression expression = node.getContainedExpression();
+            if (node.getText().contains("\n")) {
+                return;
+            }
+            PyYieldExpression yieldExpression = PsiTreeUtil.getParentOfType(expression, PyYieldExpression.class, false);
+            if (yieldExpression != null) {
+                return;
+            }
+            if (expression instanceof PyReferenceExpression || expression instanceof PyLiteralExpression) {
+                if (myIgnorePercOperator) {
+                    PsiElement parent = node.getParent();
+                    if (parent instanceof PyBinaryExpression) {
+                        if (((PyBinaryExpression) parent).getOperator() == PyTokenTypes.PERC) {
+                            return;
+                        }
+                    }
+                }
+
+                if (node.getParent() instanceof PyPrintStatement) {
+                    return;
+                }
+                registerProblem(node, "Remove redundant parentheses", new RedundantParenthesesQuickFix());
+            }
+            else if (node.getParent() instanceof PyReturnStatement && expression instanceof PyTupleExpression && myIgnoreTupleInReturn) {
+                return;
+            }
+            else if (node.getParent() instanceof PyIfPart || node.getParent() instanceof PyWhilePart
+                || node.getParent() instanceof PyReturnStatement) {
+                registerProblem(node, "Remove redundant parentheses", new RedundantParenthesesQuickFix());
+            }
+            else if (expression instanceof PyBinaryExpression) {
+                PyBinaryExpression binaryExpression = (PyBinaryExpression) expression;
+
+                if (node.getParent() instanceof PyPrefixExpression) {
+                    return;
+                }
+                if (binaryExpression.getOperator() == PyTokenTypes.AND_KEYWORD ||
+                    binaryExpression.getOperator() == PyTokenTypes.OR_KEYWORD) {
+                    if (binaryExpression.getLeftExpression() instanceof PyParenthesizedExpression &&
+                        binaryExpression.getRightExpression() instanceof PyParenthesizedExpression) {
+                        registerProblem(node, "Remove redundant parentheses", new RedundantParenthesesQuickFix());
+                    }
+                }
+            }
+        }
+    }
 }

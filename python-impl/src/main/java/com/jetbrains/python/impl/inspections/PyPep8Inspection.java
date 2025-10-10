@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.InspectionToolState;
+import consulo.localize.LocalizeValue;
 import consulo.util.dataholder.Key;
 
 import jakarta.annotation.Nonnull;
@@ -29,22 +29,19 @@ import jakarta.annotation.Nonnull;
  * @author yole
  */
 @ExtensionImpl
-public class PyPep8Inspection extends PyInspection
-{
-	public static final String INSPECTION_SHORT_NAME = "PyPep8Inspection";
-	public static final Key<PyPep8Inspection> KEY = Key.create(INSPECTION_SHORT_NAME);
+public class PyPep8Inspection extends PyInspection {
+    public static final String INSPECTION_SHORT_NAME = "PyPep8Inspection";
+    public static final Key<PyPep8Inspection> KEY = Key.create(INSPECTION_SHORT_NAME);
 
-	@Nonnull
-	@Override
-	public InspectionToolState<?> createStateProvider()
-	{
-		return new PyPep8InspectionState();
-	}
+    @Nonnull
+    @Override
+    public InspectionToolState<?> createStateProvider() {
+        return new PyPep8InspectionState();
+    }
 
-	@Nonnull
-	@Override
-	public String getDisplayName()
-	{
-		return "PEP 8 coding style violation";
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return LocalizeValue.localizeTODO("PEP 8 coding style violation");
+    }
 }

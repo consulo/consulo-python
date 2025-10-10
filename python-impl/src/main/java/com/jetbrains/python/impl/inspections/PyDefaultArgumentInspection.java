@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.quickfix.PyDefaultArgumentQuickFix;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -33,40 +31,42 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class PyDefaultArgumentInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.default.argument");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyNamedParameter(PyNamedParameter node) {
-      PyExpression defaultValue = node.getDefaultValue();
-      if (defaultValue != null) {
-        if (defaultValue instanceof PyListLiteralExpression || defaultValue instanceof PyDictLiteralExpression) {
-          registerProblem(defaultValue, "Default argument value is mutable", new PyDefaultArgumentQuickFix());
-        }
-        if (defaultValue instanceof PyCallExpression) {
-          PyExpression callee = ((PyCallExpression)defaultValue).getCallee();
-          if (callee != null && "dict".equals(callee.getText()))
-            registerProblem(defaultValue, "Default argument value is mutable", new PyDefaultArgumentQuickFix());
-        }
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameDefaultArgument();
     }
-  }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    private static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyNamedParameter(PyNamedParameter node) {
+            PyExpression defaultValue = node.getDefaultValue();
+            if (defaultValue != null) {
+                if (defaultValue instanceof PyListLiteralExpression || defaultValue instanceof PyDictLiteralExpression) {
+                    registerProblem(defaultValue, "Default argument value is mutable", new PyDefaultArgumentQuickFix());
+                }
+                if (defaultValue instanceof PyCallExpression) {
+                    PyExpression callee = ((PyCallExpression) defaultValue).getCallee();
+                    if (callee != null && "dict".equals(callee.getText())) {
+                        registerProblem(defaultValue, "Default argument value is mutable", new PyDefaultArgumentQuickFix());
+                    }
+                }
+            }
+        }
+    }
 }

@@ -15,12 +15,14 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.codeInsight.override.PyOverrideImplementUtil;
 import com.jetbrains.python.impl.inspections.quickfix.PyImplementMethodsQuickFix;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyReferenceExpression;
 import com.jetbrains.python.psi.types.PyClassLikeType;
 import com.jetbrains.python.psi.types.PyType;
 import consulo.annotation.component.ExtensionImpl;
@@ -28,10 +30,11 @@ import consulo.language.ast.ASTNode;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,78 +42,81 @@ import java.util.Set;
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
 /**
- * User: ktisha
+ * @author ktisha
  */
 @ExtensionImpl
 public class PyAbstractClassInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.abstract.class");
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyClass(PyClass pyClass) {
-      if (isAbstract(pyClass)) {
-        return;
-      }
-      final Set<PyFunction> toBeImplemented = new HashSet<>();
-      final Collection<PyFunction> functions = PyOverrideImplementUtil.getAllSuperFunctions(pyClass, myTypeEvalContext);
-      for (PyFunction method : functions) {
-        if (isAbstractMethodForClass(method, pyClass)) {
-          toBeImplemented.add(method);
-        }
-      }
-      final ASTNode nameNode = pyClass.getNameNode();
-      if (!toBeImplemented.isEmpty() && nameNode != null) {
-        registerProblem(nameNode.getPsi(),
-                        PyBundle.message("INSP.NAME.abstract.class.$0.must.implement", pyClass.getName()),
-                        new PyImplementMethodsQuickFix(pyClass, toBeImplemented));
-      }
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameAbstractClass();
     }
 
-    private boolean isAbstract(@Nonnull PyClass pyClass) {
-      final PyType metaClass = pyClass.getMetaClassType(myTypeEvalContext);
-      if (metaClass instanceof PyClassLikeType && PyNames.ABC_META_CLASS.equals(metaClass.getName())) {
-        return true;
-      }
-      if (metaClass == null) {
-        final PyExpression metaClassExpr = as(pyClass.getMetaClassExpression(), PyReferenceExpression.class);
-        if (metaClassExpr != null && PyNames.ABC_META_CLASS.equals(metaClassExpr.getName())) {
-          return true;
-        }
-      }
-      for (PyFunction method : pyClass.getMethods()) {
-        if (PyUtil.isDecoratedAsAbstract(method)) {
-          return true;
-        }
-      }
-      return false;
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
     }
 
-    private static boolean isAbstractMethodForClass(@Nonnull PyFunction method, @Nonnull PyClass cls) {
-      final String methodName = method.getName();
-      if (methodName == null ||
-        cls.findMethodByName(methodName, false, null) != null ||
-        cls.findClassAttribute(methodName, false, null) != null) {
-        return false;
-      }
-      return PyUtil.isDecoratedAsAbstract(method) || PyOverrideImplementUtil.raisesNotImplementedError(method);
+    private static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyClass(PyClass pyClass) {
+            if (isAbstract(pyClass)) {
+                return;
+            }
+            final Set<PyFunction> toBeImplemented = new HashSet<>();
+            final Collection<PyFunction> functions = PyOverrideImplementUtil.getAllSuperFunctions(pyClass, myTypeEvalContext);
+            for (PyFunction method : functions) {
+                if (isAbstractMethodForClass(method, pyClass)) {
+                    toBeImplemented.add(method);
+                }
+            }
+            final ASTNode nameNode = pyClass.getNameNode();
+            if (!toBeImplemented.isEmpty() && nameNode != null) {
+                registerProblem(
+                    nameNode.getPsi(),
+                    PyLocalize.inspNameAbstractClass$0MustImplement(pyClass.getName()).get(),
+                    new PyImplementMethodsQuickFix(pyClass, toBeImplemented)
+                );
+            }
+        }
+
+        private boolean isAbstract(@Nonnull PyClass pyClass) {
+            final PyType metaClass = pyClass.getMetaClassType(myTypeEvalContext);
+            if (metaClass instanceof PyClassLikeType && PyNames.ABC_META_CLASS.equals(metaClass.getName())) {
+                return true;
+            }
+            if (metaClass == null) {
+                final PyExpression metaClassExpr = as(pyClass.getMetaClassExpression(), PyReferenceExpression.class);
+                if (metaClassExpr != null && PyNames.ABC_META_CLASS.equals(metaClassExpr.getName())) {
+                    return true;
+                }
+            }
+            for (PyFunction method : pyClass.getMethods()) {
+                if (PyUtil.isDecoratedAsAbstract(method)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static boolean isAbstractMethodForClass(@Nonnull PyFunction method, @Nonnull PyClass cls) {
+            final String methodName = method.getName();
+            if (methodName == null ||
+                cls.findMethodByName(methodName, false, null) != null ||
+                cls.findClassAttribute(methodName, false, null) != null) {
+                return false;
+            }
+            return PyUtil.isDecoratedAsAbstract(method) || PyOverrideImplementUtil.raisesNotImplementedError(method);
+        }
     }
-  }
 }

@@ -25,8 +25,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -35,59 +34,64 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class PyDeprecationInspection extends PyInspection {
-  @Nls
-  @Nonnull
-  @Override
-  public String getDisplayName() {
-    return "Deprecated function, class or module";
-  }
-
-  @Nonnull
-  @Override
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        final boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    return new Visitor(holder, session);
-  }
-
-  private static class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public void visitPyReferenceExpression(PyReferenceExpression node) {
-      final PyExceptPart exceptPart = PsiTreeUtil.getParentOfType(node, PyExceptPart.class);
-      if (exceptPart != null) {
-        final PyExpression exceptClass = exceptPart.getExceptClass();
-        if (exceptClass != null && "ImportError".equals(exceptClass.getText())) {
-          return;
-        }
-      }
-      final PsiPolyVariantReference reference = node.getReference(getResolveContext());
-      if (reference == null) {
-        return;
-      }
-      final PsiElement resolveResult = reference.resolve();
-      final PyFromImportStatement importStatement = PsiTreeUtil.getParentOfType(node, PyFromImportStatement.class);
-      if (importStatement != null) {
-        final PsiElement element = importStatement.resolveImportSource();
-        if (resolveResult != null && element != resolveResult.getContainingFile()) {
-          return;
-        }
-      }
-      String deprecationMessage = null;
-      if (resolveResult instanceof PyFunction) {
-        deprecationMessage = ((PyFunction)resolveResult).getDeprecationMessage();
-      }
-      else if (resolveResult instanceof PyFile) {
-        deprecationMessage = ((PyFile)resolveResult).getDeprecationMessage();
-      }
-      if (deprecationMessage != null) {
-        ASTNode nameElement = node.getNameElement();
-        registerProblem(nameElement == null ? node : nameElement.getPsi(), deprecationMessage, ProblemHighlightType.LIKE_DEPRECATED);
-      }
+    public LocalizeValue getDisplayName() {
+        return LocalizeValue.localizeTODO("Deprecated function, class or module");
     }
-  }
+
+    @Nonnull
+    @Override
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        final boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        return new Visitor(holder, session);
+    }
+
+    private static class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
+
+        @Override
+        public void visitPyReferenceExpression(PyReferenceExpression node) {
+            final PyExceptPart exceptPart = PsiTreeUtil.getParentOfType(node, PyExceptPart.class);
+            if (exceptPart != null) {
+                final PyExpression exceptClass = exceptPart.getExceptClass();
+                if (exceptClass != null && "ImportError".equals(exceptClass.getText())) {
+                    return;
+                }
+            }
+            final PsiPolyVariantReference reference = node.getReference(getResolveContext());
+            if (reference == null) {
+                return;
+            }
+            final PsiElement resolveResult = reference.resolve();
+            final PyFromImportStatement importStatement = PsiTreeUtil.getParentOfType(node, PyFromImportStatement.class);
+            if (importStatement != null) {
+                final PsiElement element = importStatement.resolveImportSource();
+                if (resolveResult != null && element != resolveResult.getContainingFile()) {
+                    return;
+                }
+            }
+            String deprecationMessage = null;
+            if (resolveResult instanceof PyFunction) {
+                deprecationMessage = ((PyFunction) resolveResult).getDeprecationMessage();
+            }
+            else if (resolveResult instanceof PyFile) {
+                deprecationMessage = ((PyFile) resolveResult).getDeprecationMessage();
+            }
+            if (deprecationMessage != null) {
+                ASTNode nameElement = node.getNameElement();
+                registerProblem(
+                    nameElement == null ? node : nameElement.getPsi(),
+                    deprecationMessage,
+                    ProblemHighlightType.LIKE_DEPRECATED
+                );
+            }
+        }
+    }
 }

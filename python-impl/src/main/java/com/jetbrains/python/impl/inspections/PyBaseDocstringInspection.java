@@ -15,11 +15,10 @@
  */
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.testing.PythonUnitTestUtil;
+import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -27,51 +26,56 @@ import jakarta.annotation.Nullable;
  * @author Mikhail Golubev
  */
 public abstract class PyBaseDocstringInspection extends PyInspection {
-  @Nonnull
-  @Override
-  public abstract Visitor buildVisitor(@Nonnull ProblemsHolder holder, boolean isOnTheFly, @Nonnull LocalInspectionToolSession session, Object state);
-
-  protected static abstract class Visitor extends PyInspectionVisitor {
-    public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
-      super(holder, session);
-    }
-
+    @Nonnull
     @Override
-    public final void visitPyFile(@Nonnull PyFile node) {
-      checkDocString(node);
-    }
+    public abstract Visitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    );
 
-    @Override
-    public final void visitPyFunction(@Nonnull PyFunction node) {
-      if (PythonUnitTestUtil.isUnitTestCaseFunction(node)) {
-        return;
-      }
-      final PyClass containingClass = node.getContainingClass();
-      if (containingClass != null && PythonUnitTestUtil.isUnitTestCaseClass(containingClass)) {
-        return;
-      }
-      final Property property = node.getProperty();
-      if (property != null && (node == property.getSetter().valueOrNull() || node == property.getDeleter().valueOrNull())) {
-        return;
-      }
-      final String name = node.getName();
-      if (name != null && !name.startsWith("_")) {
-        checkDocString(node);
-      }
-    }
+    protected static abstract class Visitor extends PyInspectionVisitor {
+        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+            super(holder, session);
+        }
 
-    @Override
-    public final void visitPyClass(@Nonnull PyClass node) {
-      if (PythonUnitTestUtil.isUnitTestCaseClass(node)) {
-        return;
-      }
-      final String name = node.getName();
-      if (name == null || name.startsWith("_")) {
-        return;
-      }
-      checkDocString(node);
-    }
+        @Override
+        public final void visitPyFile(@Nonnull PyFile node) {
+            checkDocString(node);
+        }
 
-    protected abstract void checkDocString(@Nonnull PyDocStringOwner node);
-  }
+        @Override
+        public final void visitPyFunction(@Nonnull PyFunction node) {
+            if (PythonUnitTestUtil.isUnitTestCaseFunction(node)) {
+                return;
+            }
+            final PyClass containingClass = node.getContainingClass();
+            if (containingClass != null && PythonUnitTestUtil.isUnitTestCaseClass(containingClass)) {
+                return;
+            }
+            final Property property = node.getProperty();
+            if (property != null && (node == property.getSetter().valueOrNull() || node == property.getDeleter().valueOrNull())) {
+                return;
+            }
+            final String name = node.getName();
+            if (name != null && !name.startsWith("_")) {
+                checkDocString(node);
+            }
+        }
+
+        @Override
+        public final void visitPyClass(@Nonnull PyClass node) {
+            if (PythonUnitTestUtil.isUnitTestCaseClass(node)) {
+                return;
+            }
+            final String name = node.getName();
+            if (name == null || name.startsWith("_")) {
+                return;
+            }
+            checkDocString(node);
+        }
+
+        protected abstract void checkDocString(@Nonnull PyDocStringOwner node);
+    }
 }
