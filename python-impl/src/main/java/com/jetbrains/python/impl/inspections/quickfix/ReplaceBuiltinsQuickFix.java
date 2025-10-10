@@ -13,52 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: 19.02.2010
- * Time: 18:50:24
+ * @author Alexey.Ivanov
+ * @since 2010-02-19
  */
 public class ReplaceBuiltinsQuickFix implements LocalQuickFix {
-  @Nonnull
-  @Override
-  public String getName() {
-    return PyBundle.message("INTN.convert.builtin.import");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return PyBundle.message("INTN.Family.convert.builtin");
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    PsiElement importStatement = descriptor.getPsiElement();
-    if (importStatement instanceof PyImportStatement) {
-      for (PyImportElement importElement : ((PyImportStatement)importStatement).getImportElements()) {
-        PyReferenceExpression importReference = importElement.getImportReferenceExpression();
-        if (importReference != null) {
-          if ("__builtin__".equals(importReference.getName())) {
-            importReference.replace(elementGenerator.createFromText(LanguageLevel.getDefault(), PyReferenceExpression.class, "builtins"));
-          }
-          if ("builtins".equals(importReference.getName())) {
-            importReference.replace(elementGenerator.createFromText(LanguageLevel.getDefault(), PyReferenceExpression.class, "__builtin__"));
-          }
-        }
-      }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.intnConvertBuiltinImport();
     }
-  }
+
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        PsiElement importStatement = descriptor.getPsiElement();
+        if (importStatement instanceof PyImportStatement) {
+            for (PyImportElement importElement : ((PyImportStatement) importStatement).getImportElements()) {
+                PyReferenceExpression importReference = importElement.getImportReferenceExpression();
+                if (importReference != null) {
+                    if ("__builtin__".equals(importReference.getName())) {
+                        importReference.replace(elementGenerator.createFromText(
+                            LanguageLevel.getDefault(),
+                            PyReferenceExpression.class,
+                            "builtins"
+                        ));
+                    }
+                    if ("builtins".equals(importReference.getName())) {
+                        importReference.replace(elementGenerator.createFromText(
+                            LanguageLevel.getDefault(),
+                            PyReferenceExpression.class,
+                            "__builtin__"
+                        ));
+                    }
+                }
+            }
+        }
+    }
 }

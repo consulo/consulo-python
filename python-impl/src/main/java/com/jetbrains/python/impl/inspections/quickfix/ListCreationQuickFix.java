@@ -13,59 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
+import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User : catherine
+ * @author catherine
  */
 public class ListCreationQuickFix implements LocalQuickFix {
-  private final PyAssignmentStatement myStatement;
-  private final List<PyExpressionStatement> myStatements = new ArrayList<PyExpressionStatement>();
+    private final PyAssignmentStatement myStatement;
+    private final List<PyExpressionStatement> myStatements = new ArrayList<PyExpressionStatement>();
 
-  public ListCreationQuickFix(PyAssignmentStatement statement) {
-    myStatement = statement;
-  }
-
-  public void addStatement(PyExpressionStatement statement) {
-    myStatements.add(statement);
-  }
-
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.list.creation");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-    StringBuilder stringBuilder = new StringBuilder();
-    final PyExpression assignedValue = myStatement.getAssignedValue();
-    if (assignedValue == null) return;
-
-    for (PyExpression expression : ((PyListLiteralExpression)assignedValue).getElements()) {
-      stringBuilder.append(expression.getText()).append(", ");
+    public ListCreationQuickFix(PyAssignmentStatement statement) {
+        myStatement = statement;
     }
-    for (PyExpressionStatement statement: myStatements) {
-      for (PyExpression expr : ((PyCallExpression)statement.getExpression()).getArguments())
-        stringBuilder.append(expr.getText()).append(", ");
-      statement.delete();
+
+    public void addStatement(PyExpressionStatement statement) {
+        myStatements.add(statement);
     }
-    assignedValue.replace(
-      elementGenerator.createExpressionFromText("[" + stringBuilder.substring(0, stringBuilder.length() - 2) + "]"));
-  }
+
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixListCreation();
+    }
+
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        StringBuilder stringBuilder = new StringBuilder();
+        final PyExpression assignedValue = myStatement.getAssignedValue();
+        if (assignedValue == null) {
+            return;
+        }
+
+        for (PyExpression expression : ((PyListLiteralExpression) assignedValue).getElements()) {
+            stringBuilder.append(expression.getText()).append(", ");
+        }
+        for (PyExpressionStatement statement : myStatements) {
+            for (PyExpression expr : ((PyCallExpression) statement.getExpression()).getArguments())
+                stringBuilder.append(expr.getText()).append(", ");
+            statement.delete();
+        }
+        assignedValue.replace(
+            elementGenerator.createExpressionFromText("[" + stringBuilder.substring(0, stringBuilder.length() - 2) + "]"));
+    }
 }

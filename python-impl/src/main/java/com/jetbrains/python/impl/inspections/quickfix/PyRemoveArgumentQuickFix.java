@@ -15,47 +15,41 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.psi.PyExpression;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.PyExpression;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 //TODO: Remove pydoc aswell
-public class PyRemoveArgumentQuickFix implements LocalQuickFix
-{
+public class PyRemoveArgumentQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameRemoveArgument();
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.remove.argument");
-	}
-
-	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
-	{
-		final PsiElement element = descriptor.getPsiElement();
-		if(!(element instanceof PyExpression))
-		{
-			return;
-		}
-		final PyExpression expression = (PyExpression) element;
-		final PsiElement nextSibling = PsiTreeUtil.skipSiblingsForward(expression, PsiWhiteSpace.class);
-		final PsiElement prevSibling = PsiTreeUtil.skipSiblingsBackward(expression, PsiWhiteSpace.class);
-		expression.delete();
-		if(nextSibling != null && nextSibling.getNode().getElementType().equals(PyTokenTypes.COMMA))
-		{
-			nextSibling.delete();
-			return;
-		}
-		if(prevSibling != null && prevSibling.getNode().getElementType().equals(PyTokenTypes.COMMA))
-		{
-			prevSibling.delete();
-		}
-	}
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        if (!(element instanceof PyExpression)) {
+            return;
+        }
+        final PyExpression expression = (PyExpression) element;
+        final PsiElement nextSibling = PsiTreeUtil.skipSiblingsForward(expression, PsiWhiteSpace.class);
+        final PsiElement prevSibling = PsiTreeUtil.skipSiblingsBackward(expression, PsiWhiteSpace.class);
+        expression.delete();
+        if (nextSibling != null && nextSibling.getNode().getElementType().equals(PyTokenTypes.COMMA)) {
+            nextSibling.delete();
+            return;
+        }
+        if (prevSibling != null && prevSibling.getNode().getElementType().equals(PyTokenTypes.COMMA)) {
+            prevSibling.delete();
+        }
+    }
 }

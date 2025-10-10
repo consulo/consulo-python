@@ -15,63 +15,51 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.AccessDirection;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.psi.PyQualifiedExpression;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
-public class PyCreatePropertyQuickFix implements LocalQuickFix
-{
-	private final AccessDirection myAccessDirection;
+public class PyCreatePropertyQuickFix implements LocalQuickFix {
+    private final AccessDirection myAccessDirection;
 
-	public PyCreatePropertyQuickFix(AccessDirection dir)
-	{
-		myAccessDirection = dir;
-	}
+    public PyCreatePropertyQuickFix(AccessDirection dir) {
+        myAccessDirection = dir;
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.create.property");
-	}
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixCreateProperty();
+    }
 
-	public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor)
-	{
-		final PsiElement element = descriptor.getPsiElement();
-		if(element instanceof PyQualifiedExpression)
-		{
-			final PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
-			if(qualifier != null)
-			{
-				final PyType type = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile()).getType(qualifier);
-				if(type instanceof PyClassType)
-				{
-					final PyClass cls = ((PyClassType) type).getPyClass();
-					final String propertyName = ((PyQualifiedExpression) element).getName();
-					if(propertyName == null)
-					{
-						return;
-					}
-					final String fieldName = "_" + propertyName;
-					final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-					final PyFunction property = generator.createProperty(LanguageLevel.forElement(cls), propertyName, fieldName, myAccessDirection);
-					PyUtil.addElementToStatementList(property, cls.getStatementList(), myAccessDirection == AccessDirection.READ);
-				}
-			}
-		}
-	}
+    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        if (element instanceof PyQualifiedExpression) {
+            final PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
+            if (qualifier != null) {
+                final PyType type = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile()).getType(qualifier);
+                if (type instanceof PyClassType) {
+                    final PyClass cls = ((PyClassType) type).getPyClass();
+                    final String propertyName = ((PyQualifiedExpression) element).getName();
+                    if (propertyName == null) {
+                        return;
+                    }
+                    final String fieldName = "_" + propertyName;
+                    final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+                    final PyFunction property =
+                        generator.createProperty(LanguageLevel.forElement(cls), propertyName, fieldName, myAccessDirection);
+                    PyUtil.addElementToStatementList(property, cls.getStatementList(), myAccessDirection == AccessDirection.READ);
+                }
+            }
+        }
+    }
 }

@@ -15,98 +15,74 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import java.util.List;
-
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyComprehensionComponent;
-import com.jetbrains.python.psi.PyComprehensionForComponent;
-import com.jetbrains.python.psi.PyComprehensionIfComponent;
-import com.jetbrains.python.psi.PyDictCompExpression;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyExpressionStatement;
-import com.jetbrains.python.psi.PyKeyValueExpression;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
+
+import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: 20.02.2010
- * Time: 15:49:35
+ * @author Alexey.Ivanov
+ * @since 2010-02-20
  */
-public class ConvertDictCompQuickFix implements LocalQuickFix
-{
-	@Nonnull
-	@Override
-	public String getName()
-	{
-		return PyBundle.message("INTN.convert.dict.comp.to");
-	}
+public class ConvertDictCompQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.intnConvertDictCompTo();
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("INTN.Family.convert.dict.comp.expression");
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
+        if (!LanguageLevel.forElement(element).isPy3K() && element instanceof PyDictCompExpression) {
+            replaceComprehension(project, (PyDictCompExpression) element);
+        }
+    }
 
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		PsiElement element = descriptor.getPsiElement();
-		if(!LanguageLevel.forElement(element).isPy3K() && element instanceof PyDictCompExpression)
-		{
-			replaceComprehension(project, (PyDictCompExpression) element);
-		}
-	}
+    private static void replaceComprehension(Project project, PyDictCompExpression expression) {
+        if (expression.getResultExpression() instanceof PyKeyValueExpression) {
+            final PyKeyValueExpression keyValueExpression = (PyKeyValueExpression) expression.getResultExpression();
+            final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            assert keyValueExpression.getValue() != null;
 
-	private static void replaceComprehension(Project project, PyDictCompExpression expression)
-	{
-		if(expression.getResultExpression() instanceof PyKeyValueExpression)
-		{
-			final PyKeyValueExpression keyValueExpression = (PyKeyValueExpression) expression.getResultExpression();
-			final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-			assert keyValueExpression.getValue() != null;
+            final List<PyComprehensionComponent> components = expression.getComponents();
+            final StringBuilder replacement = new StringBuilder("dict([(" + keyValueExpression.getKey().getText() + ", " +
+                keyValueExpression.getValue().getText() + ")");
+            int slashNum = 1;
+            for (PyComprehensionComponent component : components) {
+                if (component instanceof PyComprehensionForComponent) {
+                    replacement.append("for ");
+                    replacement.append(((PyComprehensionForComponent) component).getIteratorVariable().getText());
+                    replacement.append(" in ");
+                    replacement.append(((PyComprehensionForComponent) component).getIteratedList().getText());
+                    replacement.append(" ");
+                }
+                if (component instanceof PyComprehensionIfComponent) {
+                    final PyExpression test = ((PyComprehensionIfComponent) component).getTest();
+                    if (test != null) {
+                        replacement.append("if ");
+                        replacement.append(test.getText());
+                        replacement.append(" ");
+                    }
+                }
+                for (int i = 0; i != slashNum; ++i) {
+                    replacement.append("\t");
+                }
+                ++slashNum;
+            }
+            replacement.append("])");
 
-			final List<PyComprehensionComponent> components = expression.getComponents();
-			final StringBuilder replacement = new StringBuilder("dict([(" + keyValueExpression.getKey().getText() + ", " +
-					keyValueExpression.getValue().getText() + ")");
-			int slashNum = 1;
-			for(PyComprehensionComponent component : components)
-			{
-				if(component instanceof PyComprehensionForComponent)
-				{
-					replacement.append("for ");
-					replacement.append(((PyComprehensionForComponent) component).getIteratorVariable().getText());
-					replacement.append(" in ");
-					replacement.append(((PyComprehensionForComponent) component).getIteratedList().getText());
-					replacement.append(" ");
-				}
-				if(component instanceof PyComprehensionIfComponent)
-				{
-					final PyExpression test = ((PyComprehensionIfComponent) component).getTest();
-					if(test != null)
-					{
-						replacement.append("if ");
-						replacement.append(test.getText());
-						replacement.append(" ");
-					}
-				}
-				for(int i = 0; i != slashNum; ++i)
-				{
-					replacement.append("\t");
-				}
-				++slashNum;
-			}
-			replacement.append("])");
-
-			expression.replace(elementGenerator.createFromText(LanguageLevel.getDefault(), PyExpressionStatement.class, replacement.toString()));
-		}
-	}
-
+            expression.replace(elementGenerator.createFromText(
+                LanguageLevel.getDefault(),
+                PyExpressionStatement.class,
+                replacement.toString()
+            ));
+        }
+    }
 }

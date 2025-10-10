@@ -21,33 +21,28 @@ import consulo.ide.setting.ShowSettingsUtil;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.intention.LowPriorityAction;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
 import jakarta.annotation.Nonnull;
 
 /**
-* @author yole
-*/
+ * @author yole
+ */
 public class ConfigureTemplateDirectoriesAction implements LocalQuickFix, LowPriorityAction {
-  @Nonnull
-  @Override
-  public String getName() {
-    return "Configure template directories";
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return LocalizeValue.localizeTODO("Configure template directories");
+    }
 
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return getName();
-  }
-
-  @Override
-  public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        ShowSettingsUtil.getInstance().showSettingsDialog(project, "Template Languages");
-      }
-    }, Application.get().getNoneModalityState());
-  }
+    @Override
+    public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, "Template Languages");
+            }
+        }, Application.get().getNoneModalityState());
+    }
 }

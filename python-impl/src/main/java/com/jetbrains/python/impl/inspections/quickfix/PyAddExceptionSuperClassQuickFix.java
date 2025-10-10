@@ -15,62 +15,49 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.psi.*;
+import consulo.language.ast.ASTNode;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.ast.ASTNode;
-import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiPolyVariantReference;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyArgumentList;
-import com.jetbrains.python.psi.PyCallExpression;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyReferenceExpression;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
-public class PyAddExceptionSuperClassQuickFix implements LocalQuickFix
-{
+public class PyAddExceptionSuperClassQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameAddExceptionBase();
+    }
 
-	@Nonnull
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.add.exception.base");
-	}
-
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		final PsiElement element = descriptor.getPsiElement();
-		if(element instanceof PyCallExpression)
-		{
-			PyExpression callee = ((PyCallExpression) element).getCallee();
-			if(callee instanceof PyReferenceExpression)
-			{
-				final PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference();
-				PsiElement psiElement = reference.resolve();
-				if(psiElement instanceof PyClass)
-				{
-					final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-					final PyArgumentList list = ((PyClass) psiElement).getSuperClassExpressionList();
-					if(list != null)
-					{
-						final PyExpression exception = generator.createExpressionFromText(LanguageLevel.forElement(element), "Exception");
-						list.addArgument(exception);
-					}
-					else
-					{
-						final PyArgumentList expressionList = generator.createFromText(LanguageLevel.forElement(element), PyClass.class, "class A(Exception): pass").getSuperClassExpressionList();
-						assert expressionList != null;
-						final ASTNode nameNode = ((PyClass) psiElement).getNameNode();
-						assert nameNode != null;
-						psiElement.addAfter(expressionList, nameNode.getPsi());
-					}
-				}
-			}
-		}
-	}
-
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        if (element instanceof PyCallExpression) {
+            PyExpression callee = ((PyCallExpression) element).getCallee();
+            if (callee instanceof PyReferenceExpression) {
+                final PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference();
+                PsiElement psiElement = reference.resolve();
+                if (psiElement instanceof PyClass) {
+                    final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+                    final PyArgumentList list = ((PyClass) psiElement).getSuperClassExpressionList();
+                    if (list != null) {
+                        final PyExpression exception = generator.createExpressionFromText(LanguageLevel.forElement(element), "Exception");
+                        list.addArgument(exception);
+                    }
+                    else {
+                        final PyArgumentList expressionList =
+                            generator.createFromText(LanguageLevel.forElement(element), PyClass.class, "class A(Exception): pass")
+                                .getSuperClassExpressionList();
+                        assert expressionList != null;
+                        final ASTNode nameNode = ((PyClass) psiElement).getNameNode();
+                        assert nameNode != null;
+                        psiElement.addAfter(expressionList, nameNode.getPsi());
+                    }
+                }
+            }
+        }
+    }
 }

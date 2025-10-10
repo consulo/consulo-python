@@ -15,31 +15,27 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
+import com.jetbrains.python.psi.PyStatement;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.PyStatement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
-public class PyRemoveStatementQuickFix implements LocalQuickFix
-{
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.remove.statement");
-	}
+public class PyRemoveStatementQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameRemoveStatement();
+    }
 
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		final PyStatement statement = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyStatement.class, false);
-		if(statement != null)
-		{
-			statement.delete();
-		}
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final PyStatement statement = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyStatement.class, false);
+        if (statement != null) {
+            statement.delete();
+        }
+    }
 }

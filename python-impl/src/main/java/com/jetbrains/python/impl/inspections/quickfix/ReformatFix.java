@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.codeEditor.Editor;
@@ -25,6 +24,7 @@ import consulo.language.editor.intention.HighPriorityAction;
 import consulo.language.editor.intention.SyntheticIntentionAction;
 import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import jakarta.annotation.Nonnull;
 
@@ -32,45 +32,38 @@ import jakarta.annotation.Nonnull;
  * @author yole
  */
 public class ReformatFix implements SyntheticIntentionAction, LocalQuickFix, HighPriorityAction {
-  @Nonnull
-  @Override
-  public String getText() {
-    return "Reformat file";
-  }
-
-  @Nonnull
-  @Override
-  public String getName() {
-    return getText();
-  }
-
-  @Nonnull
-  @Override
-  public String getFamilyName() {
-    return getText();
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    CodeStyleManager.getInstance(project).reformat(descriptor.getPsiElement().getContainingFile());
-  }
-
-  @Override
-  public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
-    return true;
-  }
-
-  @Override
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException
-  {
-    if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
-      return;
+    @Nonnull
+    @Override
+    public LocalizeValue getText() {
+        return LocalizeValue.localizeTODO("Reformat file");
     }
-    CodeStyleManager.getInstance(project).reformat(file);
-  }
 
-  @Override
-  public boolean startInWriteAction() {
-    return true;
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return getText();
+    }
+
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        CodeStyleManager.getInstance(project).reformat(descriptor.getPsiElement().getContainingFile());
+    }
+
+    @Override
+    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        return true;
+    }
+
+    @Override
+    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
+            return;
+        }
+        CodeStyleManager.getInstance(project).reformat(file);
+    }
+
+    @Override
+    public boolean startInWriteAction() {
+        return true;
+    }
 }

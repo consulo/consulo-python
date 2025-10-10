@@ -15,38 +15,32 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import org.jetbrains.annotations.Nls;
-import jakarta.annotation.Nonnull;
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyNumericLiteralExpression;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
-public class PyRemoveUnderscoresInNumericLiteralsQuickFix implements LocalQuickFix
-{
+public class PyRemoveUnderscoresInNumericLiteralsQuickFix implements LocalQuickFix {
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixNameRemoveUnderscoresInNumeric();
+    }
 
-	@Nls
-	@Nonnull
-	@Override
-	public String getFamilyName()
-	{
-		return PyBundle.message("QFIX.NAME.remove.underscores.in.numeric");
-	}
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        final PsiElement element = descriptor.getPsiElement();
+        if (element instanceof PyNumericLiteralExpression) {
+            final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            final String text = element.getText();
 
-	@Override
-	public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor)
-	{
-		final PsiElement element = descriptor.getPsiElement();
-		if(element instanceof PyNumericLiteralExpression)
-		{
-			final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-			final String text = element.getText();
-
-			element.replace(elementGenerator.createExpressionFromText(LanguageLevel.forElement(element), text.replaceAll("_", "")));
-		}
-	}
+            element.replace(elementGenerator.createExpressionFromText(LanguageLevel.forElement(element), text.replaceAll("_", "")));
+        }
+    }
 }

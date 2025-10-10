@@ -15,14 +15,14 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.ParamHelper;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
-import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
+import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.codeEditor.Editor;
@@ -37,19 +37,21 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
 import consulo.virtualFileSystem.VirtualFile;
-
 import jakarta.annotation.Nonnull;
 
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
 /**
  * Adds a method foo to class X if X.foo() is unresolved.
- * User: dcheryasov
- * Date: Apr 5, 2009 6:51:26 PM
+ *
+ * @author dcheryasov
+ * @since 2009-04-05
  */
 public class AddMethodQuickFix implements LocalQuickFix {
 
@@ -64,13 +66,9 @@ public class AddMethodQuickFix implements LocalQuickFix {
   }
 
   @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.NAME.add.method.$0.to.class.$1", myIdentifier, myClassName);
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return "Add method to class";
+  @Override
+  public LocalizeValue getName() {
+    return PyLocalize.qfixNameAddMethod$0ToClass$1(myIdentifier, myClassName);
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {

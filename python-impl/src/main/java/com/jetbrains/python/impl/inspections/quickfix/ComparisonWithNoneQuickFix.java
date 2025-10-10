@@ -13,51 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * Created by IntelliJ IDEA.
- * Author: Alexey.Ivanov
- * Date:   24.03.2010
- * Time:   22:00:49
+ * @author Alexey.Ivanov
+ * @since 2010-03-24
  */
 public class ComparisonWithNoneQuickFix implements LocalQuickFix {
-  @Nonnull
-  public String getName() {
-    return PyBundle.message("QFIX.replace.equality");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement problemElement = descriptor.getPsiElement();
-    if (problemElement instanceof PyBinaryExpression) {
-      PyBinaryExpression binaryExpression = (PyBinaryExpression)problemElement;
-      PyElementType operator = binaryExpression.getOperator();
-      PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-      String temp;
-      temp = (operator == PyTokenTypes.EQEQ) ? "is" : "is not";
-      PyExpression expression = elementGenerator.createBinaryExpression(temp,
-                                                                        binaryExpression.getLeftExpression(),
-                                                                        binaryExpression.getRightExpression());
-      binaryExpression.replace(expression);
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.qfixReplaceEquality();
     }
-  }
+
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement problemElement = descriptor.getPsiElement();
+        if (problemElement instanceof PyBinaryExpression) {
+            PyBinaryExpression binaryExpression = (PyBinaryExpression) problemElement;
+            PyElementType operator = binaryExpression.getOperator();
+            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            String temp;
+            temp = (operator == PyTokenTypes.EQEQ) ? "is" : "is not";
+            PyExpression expression = elementGenerator.createBinaryExpression(
+                temp,
+                binaryExpression.getLeftExpression(),
+                binaryExpression.getRightExpression()
+            );
+            binaryExpression.replace(expression);
+        }
+    }
 }

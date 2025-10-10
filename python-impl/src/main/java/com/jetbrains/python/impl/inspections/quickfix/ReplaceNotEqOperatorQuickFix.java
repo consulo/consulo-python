@@ -13,49 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.inspection.LocalQuickFix;
-import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.impl.psi.LeafPsiElement;
-import consulo.project.Project;
-import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyElementGenerator;
+import consulo.language.editor.inspection.LocalQuickFix;
+import consulo.language.editor.inspection.ProblemDescriptor;
+import consulo.language.impl.psi.LeafPsiElement;
+import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * Created by IntelliJ IDEA.
- * Author: Alexey.Ivanov
- * Date:   06.03.2010
- * Time:   16:16:52
+ * @author Alexey.Ivanov
+ * @since 2010-03-06
  */
 public class ReplaceNotEqOperatorQuickFix implements LocalQuickFix {
-  @Nonnull
-  @Override
-  public String getName() {
-    return PyBundle.message("INTN.replace.noteq.operator");
-  }
-
-  @Nonnull
-  public String getFamilyName() {
-    return getName();
-  }
-
-  @Override
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    PsiElement binaryExpression = descriptor.getPsiElement();
-
-    if (binaryExpression instanceof PyBinaryExpression) {
-      PsiElement operator = ((PyBinaryExpression)binaryExpression).getPsiOperator();
-      if (operator != null) {
-        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-        operator.replace(elementGenerator.createFromText(LanguageLevel.forElement(binaryExpression), LeafPsiElement.class, "!="));
-      }
+    @Nonnull
+    @Override
+    public LocalizeValue getName() {
+        return PyLocalize.intnReplaceNoteqOperator();
     }
-  }
+
+    @Override
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement binaryExpression = descriptor.getPsiElement();
+
+        if (binaryExpression instanceof PyBinaryExpression) {
+            PsiElement operator = ((PyBinaryExpression) binaryExpression).getPsiOperator();
+            if (operator != null) {
+                PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+                operator.replace(elementGenerator.createFromText(LanguageLevel.forElement(binaryExpression), LeafPsiElement.class, "!="));
+            }
+        }
+    }
 }
