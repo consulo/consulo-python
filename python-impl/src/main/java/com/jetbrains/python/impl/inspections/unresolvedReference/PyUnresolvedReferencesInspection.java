@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableSet;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.PyCustomType;
 import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
@@ -78,10 +77,9 @@ import consulo.util.collection.SmartList;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.Pair;
-import org.jetbrains.annotations.NonNls;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.*;
 
@@ -89,6 +87,7 @@ import static com.jetbrains.python.impl.inspections.quickfix.AddIgnoredIdentifie
 
 /**
  * Marks references that fail to resolve. Also tracks unused imports and provides "optimize imports" support.
+ *
  * @author dcheryasov
  * @since 2008-11-15
  */
@@ -458,7 +457,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                         final PyElement toHighlight = asElement != null ? asElement : node;
                         registerProblem(
                             toHighlight,
-                            PyBundle.message("INSP.try.except.import.error", visibleName),
+                            PyLocalize.inspTryExceptImportError(visibleName).get(),
                             ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
                         );
                     }
@@ -474,7 +473,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
             if (reference instanceof DocStringTypeReference) {
                 return;
             }
-            String description = null;
+            LocalizeValue description = LocalizeValue.empty();
             PsiElement element = reference.getElement();
             final String text = element.getText();
             TextRange rangeInElement = reference.getRangeInElement();
@@ -555,14 +554,14 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                     PyIfStatement.class
                 ) != null)) {
                     severity = HighlightSeverity.WEAK_WARNING;
-                    description = PyBundle.message("INSP.module.$0.not.found", refText);
+                    description = PyLocalize.inspModule$0NotFound(refText);
                     // TODO: mark the node so that future references pointing to it won't result in a error, but in a warning
                 }
             }
-            if (reference instanceof PsiReferenceEx && description == null) {
-                description = ((PsiReferenceEx) reference).getUnresolvedDescription();
+            if (reference instanceof PsiReferenceEx referenceEx && description == LocalizeValue.empty()) {
+                description = LocalizeValue.localizeTODO(referenceEx.getUnresolvedDescription());
             }
-            if (description == null) {
+            if (description == LocalizeValue.empty()) {
                 boolean markedQualified = false;
                 if (element instanceof PyQualifiedExpression) {
                     // TODO: Add __qualname__ for Python 3.3 to the skeleton of <class 'object'>, introduce a pseudo-class skeleton for
@@ -584,7 +583,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                             addCreateMemberFromUsageFixes(type, reference, refText, actions);
                             if (type instanceof PyClassType) {
                                 final PyClassType classType = (PyClassType) type;
-                                if (reference instanceof PyOperatorReference) {
+                                if (reference instanceof PyOperatorReference operatorRef) {
                                     String className = type.getName();
                                     if (classType.isDefinition()) {
                                         final PyClassLikeType metaClassType = classType.getMetaClassType(myTypeEvalContext, true);
@@ -592,11 +591,10 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                                             className = metaClassType.getName();
                                         }
                                     }
-                                    description = PyBundle.message(
-                                        "INSP.unresolved.operator.ref",
+                                    description = PyLocalize.inspUnresolvedOperatorRef(
                                         className,
                                         refName,
-                                        ((PyOperatorReference) reference).getReadableOperatorName()
+                                        operatorRef.getReadableOperatorName()
                                     );
                                 }
                                 else {
@@ -606,7 +604,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                                         return;
                                     }
 
-                                    description = PyBundle.message("INSP.unresolved.ref.$0.for.class.$1", refText, type.getName());
+                                    description = PyLocalize.inspUnresolvedRef$0ForClass$1(refText, type.getName());
                                 }
                                 markedQualified = true;
                             }
@@ -615,14 +613,14 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                                 return;
                             }
                             else {
-                                description = PyBundle.message("INSP.cannot.find.$0.in.$1", refText, type.getName());
+                                description = PyLocalize.inspCannotFind$0In$1(refText, type.getName());
                                 markedQualified = true;
                             }
                         }
                     }
                 }
                 if (!markedQualified) {
-                    description = PyBundle.message("INSP.unresolved.ref.$0", refText);
+                    description = PyLocalize.inspUnresolvedRef$0(refText);
 
                     // look in other imported modules for this whole name
                     if (PythonImportUtils.isImportable(element)) {
@@ -676,7 +674,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                 }
             }
 
-            registerProblem(node, description, hl_type, null, rangeInElement, actions.toArray(new LocalQuickFix[actions.size()]));
+            registerProblem(node, description.get(), hl_type, null, rangeInElement, actions.toArray(new LocalQuickFix[actions.size()]));
         }
 
         private static void addInstallPackageAction(List<LocalQuickFix> actions, String packageName, Module module, Sdk sdk) {

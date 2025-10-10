@@ -16,11 +16,10 @@
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.google.common.collect.Sets;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.impl.psi.types.PyModuleType;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
-import com.jetbrains.python.impl.psi.types.PyModuleType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.codeEditor.Editor;
 import consulo.document.Document;
@@ -33,7 +32,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -325,7 +323,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
             //myFromImportStatement.replace(new_import);
         }
         catch (IncorrectOperationException ignored) {
-            PyUtil.showBalloon(project, PyBundle.message("QFIX.action.failed"), NotificationType.WARNING);
+            PyUtil.showBalloon(project, PyLocalize.qfixActionFailed().get(), NotificationType.WARNING);
         }
     }
 }

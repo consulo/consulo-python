@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.rest.inspections;
 
 import com.jetbrains.rest.RestBundle;
@@ -21,40 +20,38 @@ import consulo.language.editor.inspection.CustomSuppressableInspectionTool;
 import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.intention.SuppressIntentionAction;
 import consulo.language.psi.PsiElement;
-import org.jetbrains.annotations.Nls;
-
+import consulo.localize.LocalizeValue;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * User : catherine
+ * @author catherine
  */
 public abstract class RestInspection extends LocalInspectionTool implements CustomSuppressableInspectionTool {
-  @Nls
-  @Nonnull
-  @Override
-  public String getGroupDisplayName() {
-    return RestBundle.message("INSP.GROUP.rest");
-  }
+    @Nonnull
+    @Override
+    public LocalizeValue getGroupDisplayName() {
+        return LocalizeValue.localizeTODO(RestBundle.message("INSP.GROUP.rest"));
+    }
 
-  @Nonnull
-  @Override
-  public String getShortName() {
-    return getClass().getSimpleName();
-  }
+    @Nonnull
+    @Override
+    public String getShortName() {
+        return getClass().getSimpleName();
+    }
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
+    @Override
+    public boolean isEnabledByDefault() {
+        return true;
+    }
 
-  @Override
-  public SuppressIntentionAction[] getSuppressActions(@Nullable PsiElement element) {
-    return null;
-  }
+    @Override
+    public SuppressIntentionAction[] getSuppressActions(@Nullable PsiElement element) {
+        return null;
+    }
 
-  @Override
-  public boolean isSuppressedFor(@Nonnull PsiElement element) {
-    return false;
-  }
+    @Override
+    public boolean isSuppressedFor(@Nonnull PsiElement element) {
+        return false;
+    }
 }

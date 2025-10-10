@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.inspections;
 
-import com.jetbrains.python.impl.PyBundle;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.inspection.InspectionToolState;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.dataholder.Key;
-import org.jetbrains.annotations.Nls;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -32,48 +30,51 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyUnusedLocalInspection extends PyInspection {
-  private static Key<PyUnusedLocalInspectionVisitor> KEY = Key.create("PyUnusedLocal.Visitor");
+    private static Key<PyUnusedLocalInspectionVisitor> KEY = Key.create("PyUnusedLocal.Visitor");
 
-  @Nonnull
-  @Override
-  public InspectionToolState<?> createStateProvider() {
-    return new PyUnusedLocalInspectionState();
-  }
-
-  @Override
-  @Nonnull
-  @Nls
-  public String getDisplayName() {
-    return PyBundle.message("INSP.NAME.unused");
-  }
-
-  @Override
-  @Nonnull
-  public PsiElementVisitor buildVisitor(@Nonnull ProblemsHolder holder,
-                                        final boolean isOnTheFly,
-                                        @Nonnull LocalInspectionToolSession session,
-                                        Object state) {
-    PyUnusedLocalInspectionState inspectionState = (PyUnusedLocalInspectionState)state;
-
-    final PyUnusedLocalInspectionVisitor visitor = new PyUnusedLocalInspectionVisitor(holder,
-                                                                                      session,
-                                                                                      inspectionState.ignoreTupleUnpacking,
-                                                                                      inspectionState.ignoreLambdaParameters,
-                                                                                      inspectionState.ignoreLoopIterationVariables);
-    // buildVisitor() will be called on injected files in the same session - don't overwrite if we already have one
-    final PyUnusedLocalInspectionVisitor existingVisitor = session.getUserData(KEY);
-    if (existingVisitor == null) {
-      session.putUserData(KEY, visitor);
+    @Nonnull
+    @Override
+    public InspectionToolState<?> createStateProvider() {
+        return new PyUnusedLocalInspectionState();
     }
-    return visitor;
-  }
 
-  @Override
-  public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder, Object state) {
-    final PyUnusedLocalInspectionVisitor visitor = session.getUserData(KEY);
-    if (visitor != null) {
-      visitor.registerProblems();
-      session.putUserData(KEY, null);
+    @Nonnull
+    @Override
+    public LocalizeValue getDisplayName() {
+        return PyLocalize.inspNameUnused();
     }
-  }
+
+    @Override
+    @Nonnull
+    public PsiElementVisitor buildVisitor(
+        @Nonnull ProblemsHolder holder,
+        final boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
+        Object state
+    ) {
+        PyUnusedLocalInspectionState inspectionState = (PyUnusedLocalInspectionState) state;
+
+        final PyUnusedLocalInspectionVisitor visitor = new PyUnusedLocalInspectionVisitor(
+            holder,
+            session,
+            inspectionState.ignoreTupleUnpacking,
+            inspectionState.ignoreLambdaParameters,
+            inspectionState.ignoreLoopIterationVariables
+        );
+        // buildVisitor() will be called on injected files in the same session - don't overwrite if we already have one
+        final PyUnusedLocalInspectionVisitor existingVisitor = session.getUserData(KEY);
+        if (existingVisitor == null) {
+            session.putUserData(KEY, visitor);
+        }
+        return visitor;
+    }
+
+    @Override
+    public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder, Object state) {
+        final PyUnusedLocalInspectionVisitor visitor = session.getUserData(KEY);
+        if (visitor != null) {
+            visitor.registerProblems();
+            session.putUserData(KEY, null);
+        }
+    }
 }
