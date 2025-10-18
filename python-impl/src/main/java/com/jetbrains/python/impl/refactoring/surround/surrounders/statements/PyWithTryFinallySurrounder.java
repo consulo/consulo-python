@@ -16,9 +16,10 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
-import consulo.language.editor.CodeInsightBundle;
-import consulo.document.util.TextRange;
 import com.jetbrains.python.psi.PyTryExceptStatement;
+import consulo.document.util.TextRange;
+import consulo.language.editor.localize.CodeInsightLocalize;
+import consulo.localize.LocalizeValue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,8 +28,8 @@ import com.jetbrains.python.psi.PyTryExceptStatement;
  * Time: 6:52:06 PM
  */
 public class PyWithTryFinallySurrounder extends PyWithTryExceptSurrounder {
-  public String getTemplateDescription() {
-    return CodeInsightBundle.message("surround.with.try.finally.template");
+  public LocalizeValue getTemplateDescription() {
+    return CodeInsightLocalize.surroundWithTryFinallyTemplate();
   }
 
   @Override

@@ -16,20 +16,19 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.CodeInsightBundle;
-import consulo.language.editor.CodeInsightUtilCore;
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
-import consulo.document.util.TextRange;
-import consulo.language.psi.PsiElement;
-import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyIfStatement;
 import com.jetbrains.python.psi.PyStatementList;
-
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.localize.CodeInsightLocalize;
+import consulo.language.psi.PsiElement;
+import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
@@ -55,7 +54,7 @@ public class PyWithIfSurrounder extends PyStatementSurrounder {
     return ifStatement.getIfPart().getCondition().getTextRange();
   }
 
-  public String getTemplateDescription() {
-    return CodeInsightBundle.message("surround.with.if.template");
+  public LocalizeValue getTemplateDescription() {
+    return CodeInsightLocalize.surroundWithIfTemplate();
   }
 }

@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.document.Document;
@@ -77,7 +79,7 @@ public class PyWithTryExceptSurrounder extends PyStatementSurrounder {
     return part.getStatementList().getTextRange();
   }
 
-  public String getTemplateDescription() {
-    return PyBundle.message("surround.with.try.except.template");
+  public LocalizeValue getTemplateDescription() {
+    return PyLocalize.surroundWithTryExceptTemplate();
   }
 }

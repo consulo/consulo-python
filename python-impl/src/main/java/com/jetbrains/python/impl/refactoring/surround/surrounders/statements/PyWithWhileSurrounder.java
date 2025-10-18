@@ -16,14 +16,15 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
-import consulo.language.editor.CodeInsightBundle;
-import consulo.language.editor.CodeInsightUtilCore;
+import com.jetbrains.python.psi.*;
 import consulo.codeEditor.Editor;
-import consulo.project.Project;
 import consulo.document.util.TextRange;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.localize.CodeInsightLocalize;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.psi.*;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -56,7 +57,7 @@ public class PyWithWhileSurrounder extends PyStatementSurrounder{
     return condition.getTextRange();
   }
 
-  public String getTemplateDescription() {
-    return CodeInsightBundle.message("surround.with.while.template");
+  public LocalizeValue getTemplateDescription() {
+    return CodeInsightLocalize.surroundWithWhileTemplate();
   }
 }

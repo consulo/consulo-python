@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
@@ -59,7 +61,7 @@ public class PyWithReturnSurrounder extends PyStatementSurrounder {
     return element.getTextRange();
   }
 
-  public String getTemplateDescription() {
-    return PyBundle.message("surround.with.return.template");
+  public LocalizeValue getTemplateDescription() {
+    return PyLocalize.surroundWithReturnTemplate();
   }
 }

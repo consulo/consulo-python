@@ -19,6 +19,8 @@ package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 import consulo.language.editor.CodeInsightBundle;
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.codeEditor.Editor;
+import consulo.language.editor.localize.CodeInsightLocalize;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
@@ -59,7 +61,7 @@ public class PyWithIfElseSurrounder extends PyStatementSurrounder {
     return ifStatement.getTextRange();
   }
 
-  public String getTemplateDescription() {
-    return CodeInsightBundle.message("surround.with.ifelse.template");
+  public LocalizeValue getTemplateDescription() {
+    return CodeInsightLocalize.surroundWithIfelseTemplate();
   }
 }

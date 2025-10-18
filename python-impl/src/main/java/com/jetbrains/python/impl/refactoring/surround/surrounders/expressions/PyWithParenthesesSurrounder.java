@@ -16,15 +16,15 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.expressions;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.language.editor.CodeInsightBundle;
-import consulo.language.editor.CodeInsightUtilCore;
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
-import consulo.document.util.TextRange;
-import consulo.language.util.IncorrectOperationException;
 import com.jetbrains.python.psi.*;
+import consulo.codeEditor.Editor;
+import consulo.document.util.TextRange;
+import consulo.language.editor.CodeInsightUtilCore;
+import consulo.language.editor.localize.CodeInsightLocalize;
+import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import jakarta.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,8 +33,8 @@ import com.jetbrains.python.psi.*;
  * Time: 6:03:59 PM
  */
 public class PyWithParenthesesSurrounder extends PyExpressionSurrounder {
-  public String getTemplateDescription() {
-    return CodeInsightBundle.message("surround.with.parenthesis.template");
+  public LocalizeValue getTemplateDescription() {
+    return CodeInsightLocalize.surroundWithParenthesisTemplate();
   }
 
   @Override

@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
@@ -57,7 +59,7 @@ public class PyWithWhileElseSurrounder extends PyStatementSurrounder {
     return whileStatement.getTextRange();
   }
 
-  public String getTemplateDescription() {
-    return PyBundle.message("surround.with.whileelse.template");
+  public LocalizeValue getTemplateDescription() {
+    return PyLocalize.surroundWithWhileelseTemplate();
   }
 }
