@@ -50,6 +50,7 @@ import consulo.execution.debug.frame.XExecutionStack;
 import consulo.execution.debug.frame.XStackFrame;
 import consulo.execution.debug.frame.XSuspendContext;
 import consulo.execution.debug.frame.XValueChildrenList;
+import consulo.execution.debug.localize.XDebuggerLocalize;
 import consulo.execution.debug.step.XSmartStepIntoHandler;
 import consulo.execution.ui.ExecutionConsole;
 import consulo.execution.ui.console.ConsoleView;
@@ -61,6 +62,7 @@ import consulo.language.psi.resolve.PsiScopeProcessor;
 import consulo.language.psi.resolve.ResolveState;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ModuleUtilCore;
+import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.Module;
 import consulo.process.ProcessHandler;
@@ -292,11 +294,11 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     waitForConnection(getConnectionMessage(), getConnectionTitle());
   }
 
-  protected void waitForConnection(final String connectionMessage, String connectionTitle) {
+  protected void waitForConnection(final LocalizeValue connectionMessage, LocalizeValue connectionTitle) {
     ProgressManager.getInstance().run(new Task.Backgroundable(getSession().getProject(), connectionTitle, false) {
       @Override
       public void run(@Nonnull final ProgressIndicator indicator) {
-        indicator.setText(connectionMessage);
+        indicator.setTextValue(connectionMessage);
         try {
           beforeConnect();
           myWaitingForConnection = true;
@@ -315,7 +317,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
           }
           if (!myClosing) {
             invokeLater(() -> Messages.showErrorDialog("Unable to establish connection with debugger:\n" + e.getMessage(),
-                                                       getConnectionTitle()));
+                                                       getConnectionTitle().get()));
           }
         }
       }
@@ -375,12 +377,12 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   protected void beforeConnect() {
   }
 
-  protected String getConnectionMessage() {
-    return "Waiting for connection...";
+  protected LocalizeValue getConnectionMessage() {
+    return LocalizeValue.localizeTODO("Waiting for connection...");
   }
 
-  protected String getConnectionTitle() {
-    return "Connecting To Debugger";
+  protected LocalizeValue getConnectionTitle() {
+    return LocalizeValue.localizeTODO("Connecting To Debugger");
   }
 
   private void handshake() throws PyDebuggerException {
@@ -985,12 +987,12 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   }
 
   @Override
-  public String getCurrentStateMessage() {
+  public LocalizeValue getCurrentStateMessage() {
     if (getSession().isStopped()) {
-      return XDebuggerBundle.message("debugger.state.message.disconnected");
+      return XDebuggerLocalize.debuggerStateMessageDisconnected();
     }
     else if (isConnected()) {
-      return XDebuggerBundle.message("debugger.state.message.connected");
+      return XDebuggerLocalize.debuggerStateMessageConnected();
     }
     else {
       return getConnectionMessage();

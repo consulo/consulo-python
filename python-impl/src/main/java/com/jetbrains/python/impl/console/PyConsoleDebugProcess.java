@@ -22,6 +22,7 @@ import com.jetbrains.python.impl.debugger.PyDebuggerOptionsProvider;
 import consulo.execution.debug.XDebugSession;
 import consulo.execution.ui.ExecutionConsole;
 import consulo.execution.ui.console.ConsoleViewContentType;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.ui.ex.awt.UIUtil;
 
@@ -51,13 +52,13 @@ public class PyConsoleDebugProcess extends PyDebugProcess {
     }
 
     @Override
-    protected String getConnectionMessage() {
-        return "Connecting to console...";
+    protected LocalizeValue getConnectionMessage() {
+        return LocalizeValue.localizeTODO("Connecting to console...");
     }
 
     @Override
-    protected String getConnectionTitle() {
-        return "Debugger connection";
+    protected LocalizeValue getConnectionTitle() {
+        return LocalizeValue.localizeTODO("Debugger connection");
     }
 
     @Override
