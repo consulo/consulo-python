@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package consulo.python.spellchecker;
 
 import com.jetbrains.python.impl.sdk.PythonSdkType;
@@ -21,9 +20,10 @@ import consulo.annotation.component.ActionImpl;
 import consulo.annotation.component.ActionRef;
 import consulo.content.base.BinariesOrderRootType;
 import consulo.content.bundle.Sdk;
-import consulo.language.editor.LangDataKeys;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.content.ModuleRootManager;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.virtualFileSystem.VirtualFile;
@@ -32,54 +32,47 @@ import consulo.virtualFileSystem.VirtualFile;
  * @author yole
  */
 @ActionImpl(id = "PythonGenerateDictionaries", children = @ActionRef(id = "Internal"))
-public class PythonSpellcheckerGenerateDictionariesAction extends AnAction
-{
-	public PythonSpellcheckerGenerateDictionariesAction()
-	{
-		super("Generate Python Spellchecker Dictionaries");
-	}
+public class PythonSpellcheckerGenerateDictionariesAction extends AnAction {
+    public PythonSpellcheckerGenerateDictionariesAction() {
+        super(LocalizeValue.localizeTODO("Generate Python Spellchecker Dictionaries"));
+    }
 
-	@Override
-	public void actionPerformed(AnActionEvent e)
-	{
-		Module module = e.getData(LangDataKeys.MODULE);
-		if(module == null)
-		{
-			return;
-		}
-		VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
-		if(contentRoots.length == 0)
-		{
-			return;
-		}
-		Sdk sdk = PythonSdkType.findPythonSdk(module);
-		if(sdk == null)
-		{
-			return;
-		}
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(AnActionEvent e) {
+        Module module = e.getData(Module.KEY);
+        if (module == null) {
+            return;
+        }
+        VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
+        if (contentRoots.length == 0) {
+            return;
+        }
+        Sdk sdk = PythonSdkType.findPythonSdk(module);
+        if (sdk == null) {
+            return;
+        }
 
-		final PythonSpellcheckerDictionaryGenerator generator = new PythonSpellcheckerDictionaryGenerator(module.getProject(),
-				contentRoots[0].getPath() + "/dicts");
+        PythonSpellcheckerDictionaryGenerator generator = new PythonSpellcheckerDictionaryGenerator(
+            module.getProject(),
+            contentRoots[0].getPath() + "/dicts"
+        );
 
-		VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
-		for(VirtualFile root : roots)
-		{
-			if(root.getName().equals("Lib"))
-			{
-				generator.addFolder("python", root);
-				generator.excludeFolder(root.findChild("test"));
-				generator.excludeFolder(root.findChild("site-packages"));
-			}
-			else if(root.getName().equals("site-packages"))
-			{
-				VirtualFile djangoRoot = root.findChild("django");
-				if(djangoRoot != null)
-				{
-					generator.addFolder("django", djangoRoot);
-				}
-			}
-		}
+        VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+        for (VirtualFile root : roots) {
+            if (root.getName().equals("Lib")) {
+                generator.addFolder("python", root);
+                generator.excludeFolder(root.findChild("test"));
+                generator.excludeFolder(root.findChild("site-packages"));
+            }
+            else if (root.getName().equals("site-packages")) {
+                VirtualFile djangoRoot = root.findChild("django");
+                if (djangoRoot != null) {
+                    generator.addFolder("django", djangoRoot);
+                }
+            }
+        }
 
-		generator.generate();
-	}
+        generator.generate();
+    }
 }
