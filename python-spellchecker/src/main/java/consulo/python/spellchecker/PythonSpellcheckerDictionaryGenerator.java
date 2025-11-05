@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package consulo.python.spellchecker;
 
 import com.intellij.spellchecker.generator.SpellCheckerDictionaryGenerator;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.Language;
 import consulo.language.psi.PsiFile;
@@ -28,50 +28,57 @@ import consulo.language.spellcheker.tokenizer.splitter.IdentifierTokenSplitter;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yole
  */
 public class PythonSpellcheckerDictionaryGenerator extends SpellCheckerDictionaryGenerator {
-  public PythonSpellcheckerDictionaryGenerator(final Project project, final String dictOutputFolder) {
-    super(project, dictOutputFolder, "python");
-  }
-
-  @Override
-  protected void processFolder(final HashSet<String> seenNames, PsiManager manager, VirtualFile folder) {
-    if (!myExcludedFolders.contains(folder)) {
-      final String name = folder.getName();
-      IdentifierTokenSplitter.getInstance().split(name, TextRange.allOf(name), textRange -> {
-        final String word = textRange.substring(name);
-        addSeenWord(seenNames, word, Language.ANY);
-      });
+    public PythonSpellcheckerDictionaryGenerator(Project project, String dictOutputFolder) {
+        super(project, dictOutputFolder, "python");
     }
-    super.processFolder(seenNames, manager, folder);
-  }
 
-  @Override
-  protected void processFile(PsiFile file, final HashSet<String> seenNames) {
-    file.accept(new PyRecursiveElementVisitor() {
-      @Override
-      public void visitPyFunction(PyFunction node) {
-        super.visitPyFunction(node);
-        processLeafsNames(node, seenNames);
-      }
-
-      @Override
-      public void visitPyClass(PyClass node) {
-        super.visitPyClass(node);
-        processLeafsNames(node, seenNames);
-      }
-
-      @Override
-      public void visitPyTargetExpression(PyTargetExpression node) {
-        super.visitPyTargetExpression(node);
-        if (PsiTreeUtil.getParentOfType(node, ScopeOwner.class) instanceof PyFile) {
-          processLeafsNames(node, seenNames);
+    @Override
+    protected void processFolder(Set<String> seenNames, PsiManager manager, VirtualFile folder) {
+        if (!myExcludedFolders.contains(folder)) {
+            String name = folder.getName();
+            IdentifierTokenSplitter.getInstance().split(
+                name,
+                TextRange.allOf(name),
+                textRange -> {
+                    String word = textRange.substring(name);
+                    addSeenWord(seenNames, word, Language.ANY);
+                }
+            );
         }
-      }
-    });
-  }
+        super.processFolder(seenNames, manager, folder);
+    }
+
+    @Override
+    protected void processFile(PsiFile file, Set<String> seenNames) {
+        file.accept(new PyRecursiveElementVisitor() {
+            @Override
+            @RequiredReadAction
+            public void visitPyFunction(PyFunction node) {
+                super.visitPyFunction(node);
+                processLeafsNames(node, seenNames);
+            }
+
+            @Override
+            @RequiredReadAction
+            public void visitPyClass(PyClass node) {
+                super.visitPyClass(node);
+                processLeafsNames(node, seenNames);
+            }
+
+            @Override
+            @RequiredReadAction
+            public void visitPyTargetExpression(PyTargetExpression node) {
+                super.visitPyTargetExpression(node);
+                if (PsiTreeUtil.getParentOfType(node, ScopeOwner.class) instanceof PyFile) {
+                    processLeafsNames(node, seenNames);
+                }
+            }
+        });
+    }
 }
