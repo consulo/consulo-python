@@ -44,7 +44,7 @@ public class CompileQrcAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(Project.KEY);
         VirtualFile[] vFiles = e.getRequiredData(VirtualFile.KEY_OF_ARRAY);
-        Module module = e.getData(Module.KEY);
+        Module module = e.getRequiredData(Module.KEY);
         String path = QtFileType.findQtTool(module, "pyrcc4");
         if (path == null) {
             path = QtFileType.findQtTool(module, "pyside-rcc");

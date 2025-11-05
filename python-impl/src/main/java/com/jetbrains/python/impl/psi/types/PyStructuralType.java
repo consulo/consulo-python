@@ -20,14 +20,15 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyType;
-import consulo.application.AllIcons;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.ProcessingContext;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.util.lang.StringUtil;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,60 +38,62 @@ import java.util.Set;
  * @author vlan
  */
 public class PyStructuralType implements PyType {
-  @Nonnull
-  private final Set<String> myAttributes;
-  private final boolean myInferredFromUsages;
+    @Nonnull
+    private final Set<String> myAttributes;
+    private final boolean myInferredFromUsages;
 
-  public PyStructuralType(@Nonnull Set<String> attributes, boolean inferredFromUsages) {
-    myAttributes = attributes;
-    myInferredFromUsages = inferredFromUsages;
-  }
-
-  @Nullable
-  @Override
-  public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
-                                                          @Nullable PyExpression location,
-                                                          @Nonnull AccessDirection direction,
-                                                          @Nonnull PyResolveContext resolveContext) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
-    final List<Object> variants = new ArrayList<>();
-    for (String attribute : myAttributes) {
-      if (!attribute.equals(completionPrefix)) {
-        variants.add(LookupElementBuilder.create(attribute).withIcon(AllIcons.Nodes.Field));
-      }
+    public PyStructuralType(@Nonnull Set<String> attributes, boolean inferredFromUsages) {
+        myAttributes = attributes;
+        myInferredFromUsages = inferredFromUsages;
     }
-    return variants.toArray();
-  }
 
-  @Nullable
-  @Override
-  public String getName() {
-    return "{" + StringUtil.join(myAttributes, ", ") + "}";
-  }
+    @Nullable
+    @Override
+    public List<? extends RatedResolveResult> resolveMember(
+        @Nonnull String name,
+        @Nullable PyExpression location,
+        @Nonnull AccessDirection direction,
+        @Nonnull PyResolveContext resolveContext
+    ) {
+        return Collections.emptyList();
+    }
 
-  @Override
-  public boolean isBuiltin() {
-    return false;
-  }
+    @Override
+    public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
+        List<Object> variants = new ArrayList<>();
+        for (String attribute : myAttributes) {
+            if (!attribute.equals(completionPrefix)) {
+                variants.add(LookupElementBuilder.create(attribute).withIcon(PlatformIconGroup.nodesField()));
+            }
+        }
+        return variants.toArray();
+    }
 
-  @Override
-  public void assertValid(String message) {
-  }
+    @Nullable
+    @Override
+    public String getName() {
+        return "{" + StringUtil.join(myAttributes, ", ") + "}";
+    }
 
-  @Override
-  public String toString() {
-    return "PyStructuralType(" + StringUtil.join(myAttributes, ", ") + ")";
-  }
+    @Override
+    public boolean isBuiltin() {
+        return false;
+    }
 
-  public boolean isInferredFromUsages() {
-    return myInferredFromUsages;
-  }
+    @Override
+    public void assertValid(String message) {
+    }
 
-  public Set<String> getAttributeNames() {
-    return myAttributes;
-  }
+    @Override
+    public String toString() {
+        return "PyStructuralType(" + StringUtil.join(myAttributes, ", ") + ")";
+    }
+
+    public boolean isInferredFromUsages() {
+        return myInferredFromUsages;
+    }
+
+    public Set<String> getAttributeNames() {
+        return myAttributes;
+    }
 }

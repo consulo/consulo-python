@@ -18,11 +18,10 @@ package com.jetbrains.python.impl.refactoring.classes.ui;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyFunction;
-import consulo.application.AllIcons;
-import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.editor.refactoring.ui.AbstractMemberSelectionTable;
-import consulo.language.psi.PsiElement;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -32,40 +31,36 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyElement, PyMemberInfo<PyElement>>
-{
-	private static final String ABSTRACT_TITLE = RefactoringBundle.message("make.abstract");
-	private final boolean mySupportAbstract;
+public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyElement, PyMemberInfo<PyElement>> {
+    private final boolean mySupportAbstract;
 
-	public PyMemberSelectionTable(@Nonnull final List<PyMemberInfo<PyElement>> memberInfos, @Nullable final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> model, final boolean supportAbstract)
-	{
-		super(memberInfos, model, (supportAbstract ? ABSTRACT_TITLE : null));
-		mySupportAbstract = supportAbstract;
-	}
+    public PyMemberSelectionTable(
+        @Nonnull List<PyMemberInfo<PyElement>> memberInfos,
+        @Nullable MemberInfoModel<PyElement, PyMemberInfo<PyElement>> model,
+        boolean supportAbstract
+    ) {
+        super(memberInfos, model, (supportAbstract ? RefactoringLocalize.makeAbstract().get() : null));
+        mySupportAbstract = supportAbstract;
+    }
 
-	@Nullable
-	@Override
-	protected Object getAbstractColumnValue(final PyMemberInfo<PyElement> memberInfo)
-	{
-		//TODO: Too many logic, move to presenters
-		return (mySupportAbstract && memberInfo.isChecked() && myMemberInfoModel.isAbstractEnabled(memberInfo)) ? memberInfo.isToAbstract() : null;
-	}
+    @Nullable
+    @Override
+    protected Object getAbstractColumnValue(PyMemberInfo<PyElement> memberInfo) {
+        //TODO: Too many logic, move to presenters
+        return (mySupportAbstract && memberInfo.isChecked() && myMemberInfoModel.isAbstractEnabled(memberInfo)) ? memberInfo.isToAbstract() : null;
+    }
 
-	@Override
-	protected boolean isAbstractColumnEditable(final int rowIndex)
-	{
-		return mySupportAbstract && myMemberInfoModel.isAbstractEnabled(myMemberInfos.get(rowIndex));
-	}
+    @Override
+    protected boolean isAbstractColumnEditable(int rowIndex) {
+        return mySupportAbstract && myMemberInfoModel.isAbstractEnabled(myMemberInfos.get(rowIndex));
+    }
 
-	@Override
-	protected Image getOverrideIcon(PyMemberInfo<PyElement> memberInfo)
-	{
-		final PsiElement member = memberInfo.getMember();
-		Image overrideIcon = EMPTY_OVERRIDE_ICON;
-		if(member instanceof PyFunction && memberInfo.getOverrides() != null && memberInfo.getOverrides())
-		{
-			overrideIcon = AllIcons.General.OverridingMethod;
-		}
-		return overrideIcon;
-	}
+    @Override
+    protected Image getOverrideIcon(PyMemberInfo<PyElement> memberInfo) {
+        Image overrideIcon = EMPTY_OVERRIDE_ICON;
+        if (memberInfo.getMember() instanceof PyFunction && memberInfo.getOverrides() != null && memberInfo.getOverrides()) {
+            overrideIcon = PlatformIconGroup.gutterOverridingmethod();
+        }
+        return overrideIcon;
+    }
 }
