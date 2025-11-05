@@ -15,57 +15,49 @@
  */
 package com.jetbrains.python.impl.console;
 
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
-import consulo.language.editor.CommonDataKeys;
-import consulo.language.editor.LangDataKeys;
 import consulo.module.Module;
 import consulo.application.dumb.DumbAware;
 import consulo.project.Project;
 import consulo.content.bundle.Sdk;
 import consulo.util.lang.Pair;
 import consulo.ui.annotation.RequiredUIAccess;
-import com.jetbrains.python.impl.PythonIcons;
 
 import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg
  */
-public class RunPythonConsoleAction extends AnAction implements DumbAware
-{
+public class RunPythonConsoleAction extends AnAction implements DumbAware {
+    public RunPythonConsoleAction() {
+        super();
+        getTemplatePresentation().setIcon(PythonImplIconGroup.pythonPythonconsole());
+    }
 
-	public RunPythonConsoleAction()
-	{
-		super();
-		getTemplatePresentation().setIcon(PythonIcons.Python.PythonConsole);
-	}
+    @Override
+    @RequiredUIAccess
+    public void update(AnActionEvent e) {
+        e.getPresentation().setVisible(true);
+        e.getPresentation().setEnabled(false);
+        Project project = e.getData(Project.KEY);
+        if (project != null) {
+            Pair<Sdk, Module> sdkAndModule = PydevConsoleRunner.findPythonSdkAndModule(project, e.getData(Module.KEY));
+            if (sdkAndModule.first != null) {
+                e.getPresentation().setEnabled(true);
+            }
+        }
+    }
 
-	@RequiredUIAccess
-	@Override
-	public void update(final AnActionEvent e)
-	{
-		e.getPresentation().setVisible(true);
-		e.getPresentation().setEnabled(false);
-		final Project project = e.getData(CommonDataKeys.PROJECT);
-		if(project != null)
-		{
-			Pair<Sdk, Module> sdkAndModule = PydevConsoleRunner.findPythonSdkAndModule(project, e.getData(LangDataKeys.MODULE));
-			if(sdkAndModule.first != null)
-			{
-				e.getPresentation().setEnabled(true);
-			}
-		}
-	}
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(@Nonnull AnActionEvent e) {
+        Project project = e.getRequiredData(Project.KEY);
 
-	@RequiredUIAccess
-	public void actionPerformed(@Nonnull final AnActionEvent e)
-	{
-		Project project = e.getRequiredData(CommonDataKeys.PROJECT);
+        PythonConsoleRunnerFactory runnerFactory = PythonConsoleRunnerFactory.getInstance();
 
-		PythonConsoleRunnerFactory runnerFactory = PythonConsoleRunnerFactory.getInstance();
-
-		PydevConsoleRunner runner = runnerFactory.createConsoleRunner(project, e.getData(LangDataKeys.MODULE));
-		runner.open();
-	}
+        PydevConsoleRunner runner = runnerFactory.createConsoleRunner(project, e.getData(Module.KEY));
+        runner.open();
+    }
 }

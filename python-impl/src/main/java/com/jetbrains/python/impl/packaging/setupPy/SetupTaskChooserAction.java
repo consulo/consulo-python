@@ -20,20 +20,21 @@ import com.jetbrains.python.impl.run.PythonTask;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.psi.PyFile;
 import consulo.application.Application;
-import consulo.application.ApplicationManager;
 import consulo.ide.impl.idea.ide.actions.GotoActionBase;
 import consulo.ide.impl.idea.ide.util.gotoByName.ChooseByNamePopup;
 import consulo.ide.impl.idea.ide.util.gotoByName.ChooseByNamePopupComponent;
 import consulo.ide.impl.idea.ide.util.gotoByName.ListChooseByNameModel;
-import consulo.language.editor.LangDataKeys;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.awt.Messages;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,66 +43,73 @@ import java.util.List;
  * @author yole
  */
 public class SetupTaskChooserAction extends AnAction {
-  public SetupTaskChooserAction() {
-    super("Run setup.py Task...");
-  }
-
-  @Override
-  public void actionPerformed(AnActionEvent e) {
-    final Module module = e.getData(LangDataKeys.MODULE);
-    if (module == null) {
-      return;
+    public SetupTaskChooserAction() {
+        super(LocalizeValue.localizeTODO("Run setup.py Task..."));
     }
-    final Project project = module.getProject();
-    final ListChooseByNameModel<SetupTask> model =
-      new ListChooseByNameModel<>(project, "Enter setup.py task name", "No tasks found", SetupTaskIntrospector.getTaskList(module));
-    final ChooseByNamePopup popup = ChooseByNamePopup.createPopup(project, model, GotoActionBase.getPsiContext(e));
-    popup.setShowListForEmptyPattern(true);
 
-    popup.invoke(new ChooseByNamePopupComponent.Callback() {
-      public void onClose() {
-      }
-
-      public void elementChosen(Object element) {
-        if (element != null) {
-          final SetupTask task = (SetupTask)element;
-          Application application = ApplicationManager.getApplication();
-          application.invokeLater(() -> runSetupTask(task.getName(), module), application.getNoneModalityState());
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(AnActionEvent e) {
+        final Module module = e.getData(Module.KEY);
+        if (module == null) {
+            return;
         }
-      }
-    }, Application.get().getCurrentModalityState(), false);
+        Project project = module.getProject();
+        ListChooseByNameModel<SetupTask> model =
+            new ListChooseByNameModel<>(project, "Enter setup.py task name", "No tasks found", SetupTaskIntrospector.getTaskList(module));
+        ChooseByNamePopup popup = ChooseByNamePopup.createPopup(project, model, GotoActionBase.getPsiContext(e));
+        popup.setShowListForEmptyPattern(true);
 
-  }
+        Application application = project.getApplication();
+        popup.invoke(
+            new ChooseByNamePopupComponent.Callback() {
+                @Override
+                public void onClose() {
+                }
 
-  @Override
-  public void update(AnActionEvent e) {
-    final Module module = e.getData(LangDataKeys.MODULE);
-    e.getPresentation().setEnabled(module != null && PyPackageUtil.hasSetupPy(module) && PythonSdkType.findPythonSdk(module) != null);
-  }
+                @Override
+                public void elementChosen(Object element) {
+                    if (element != null) {
+                        SetupTask task = (SetupTask) element;
+                        application.invokeLater(() -> runSetupTask(task.getName(), module), application.getNoneModalityState());
+                    }
+                }
+            },
+            application.getCurrentModalityState(),
+            false
+        );
+    }
 
-  public static void runSetupTask(String taskName, Module module) {
-    final PyFile setupPy = PyPackageUtil.findSetupPy(module);
-    try {
-      final List<SetupTask.Option> options = SetupTaskIntrospector.getSetupTaskOptions(module, taskName);
-      List<String> parameters = new ArrayList<>();
-      parameters.add(taskName);
-      if (options != null) {
-        SetupTaskDialog dialog = new SetupTaskDialog(module.getProject(), taskName, options);
-        if (!dialog.showAndGet()) {
-          return;
+    @Override
+    public void update(AnActionEvent e) {
+        Module module = e.getData(Module.KEY);
+        e.getPresentation().setEnabled(module != null && PyPackageUtil.hasSetupPy(module) && PythonSdkType.findPythonSdk(module) != null);
+    }
+
+    @RequiredUIAccess
+    public static void runSetupTask(String taskName, @Nonnull Module module) {
+        PyFile setupPy = PyPackageUtil.findSetupPy(module);
+        try {
+            List<SetupTask.Option> options = SetupTaskIntrospector.getSetupTaskOptions(module, taskName);
+            List<String> parameters = new ArrayList<>();
+            parameters.add(taskName);
+            if (options != null) {
+                SetupTaskDialog dialog = new SetupTaskDialog(module.getProject(), taskName, options);
+                if (!dialog.showAndGet()) {
+                    return;
+                }
+                parameters.addAll(dialog.getCommandLine());
+            }
+            PythonTask task = new PythonTask(module, taskName);
+            VirtualFile virtualFile = setupPy.getVirtualFile();
+            task.setRunnerScript(virtualFile.getPath());
+            task.setWorkingDirectory(virtualFile.getParent().getPath());
+            task.setParameters(parameters);
+            task.setAfterCompletion(() -> LocalFileSystem.getInstance().refresh(true));
+            task.run(null, null);
         }
-        parameters.addAll(dialog.getCommandLine());
-      }
-      final PythonTask task = new PythonTask(module, taskName);
-      final VirtualFile virtualFile = setupPy.getVirtualFile();
-      task.setRunnerScript(virtualFile.getPath());
-      task.setWorkingDirectory(virtualFile.getParent().getPath());
-      task.setParameters(parameters);
-      task.setAfterCompletion(() -> LocalFileSystem.getInstance().refresh(true));
-      task.run(null, null);
+        catch (ExecutionException ee) {
+            Messages.showErrorDialog(module.getProject(), "Failed to run task: " + ee.getMessage(), taskName);
+        }
     }
-    catch (ExecutionException ee) {
-      Messages.showErrorDialog(module.getProject(), "Failed to run task: " + ee.getMessage(), taskName);
-    }
-  }
 }

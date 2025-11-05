@@ -21,9 +21,9 @@ import consulo.dataContext.DataContext;
 import consulo.execution.ExecutionHelper;
 import consulo.execution.icon.ExecutionIconGroup;
 import consulo.execution.ui.RunContentDescriptor;
-import consulo.language.editor.CommonDataKeys;
 import consulo.process.ProcessHandler;
 import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
 import jakarta.annotation.Nonnull;
@@ -35,53 +35,65 @@ import java.util.function.Consumer;
  * @author traff
  */
 public class PyOpenDebugConsoleAction extends AnAction implements DumbAware {
-
-  public PyOpenDebugConsoleAction() {
-    super();
-    getTemplatePresentation().setIcon(ExecutionIconGroup.console());
-  }
-
-  @Override
-  public void update(final AnActionEvent e) {
-    e.getPresentation().setVisible(false);
-    e.getPresentation().setEnabled(true);
-    final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (project != null) {
-      e.getPresentation().setVisible(getConsoles(project).size() > 0);
+    public PyOpenDebugConsoleAction() {
+        super();
+        getTemplatePresentation().setIcon(ExecutionIconGroup.console());
     }
-  }
 
-  @Override
-  public void actionPerformed(final AnActionEvent e) {
-    final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (project != null) {
-      selectRunningProcess(e.getDataContext(), project, view -> {
-        view.enableConsole(false);
-        ApplicationIdeFocusManager.getInstance().getInstanceForProject(project).requestFocus(view.getPydevConsoleView().getComponent(), true);
-      });
+    @Override
+    public void update(AnActionEvent e) {
+        e.getPresentation().setVisible(false);
+        e.getPresentation().setEnabled(true);
+        Project project = e.getData(Project.KEY);
+        if (project != null) {
+            e.getPresentation().setVisible(getConsoles(project).size() > 0);
+        }
     }
-  }
+
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(AnActionEvent e) {
+        Project project = e.getData(Project.KEY);
+        if (project != null) {
+            selectRunningProcess(e.getDataContext(), project, view -> {
+                view.enableConsole(false);
+                ApplicationIdeFocusManager.getInstance()
+                    .getInstanceForProject(project)
+                    .requestFocus(view.getPydevConsoleView().getComponent(), true);
+            });
+        }
+    }
 
 
-  private static void selectRunningProcess(@Nonnull DataContext dataContext,
-                                           @Nonnull Project project,
-                                           final Consumer<PythonDebugLanguageConsoleView> consumer) {
-    Collection<RunContentDescriptor> consoles = getConsoles(project);
+    private static void selectRunningProcess(
+        @Nonnull DataContext dataContext,
+        @Nonnull Project project,
+        Consumer<PythonDebugLanguageConsoleView> consumer
+    ) {
+        Collection<RunContentDescriptor> consoles = getConsoles(project);
 
-    ExecutionHelper.selectContentDescriptor(dataContext, project, consoles, "Select running python process", descriptor -> {
-      if (descriptor != null && descriptor.getExecutionConsole() instanceof PythonDebugLanguageConsoleView) {
-        consumer.accept((PythonDebugLanguageConsoleView)descriptor.getExecutionConsole());
-      }
-    });
-  }
+        ExecutionHelper.selectContentDescriptor(
+            dataContext,
+            project,
+            consoles,
+            "Select running python process",
+            descriptor -> {
+                if (descriptor != null && descriptor.getExecutionConsole() instanceof PythonDebugLanguageConsoleView consoleView) {
+                    consumer.accept(consoleView);
+                }
+            }
+        );
+    }
 
-  private static Collection<RunContentDescriptor> getConsoles(Project project) {
-    return ExecutionHelper.findRunningConsole(project,
-                                              dom -> dom.getExecutionConsole() instanceof PythonDebugLanguageConsoleView && isAlive(dom));
-  }
+    private static Collection<RunContentDescriptor> getConsoles(Project project) {
+        return ExecutionHelper.findRunningConsole(
+            project,
+            dom -> dom.getExecutionConsole() instanceof PythonDebugLanguageConsoleView && isAlive(dom)
+        );
+    }
 
-  private static boolean isAlive(RunContentDescriptor dom) {
-    ProcessHandler processHandler = dom.getProcessHandler();
-    return processHandler != null && !processHandler.isProcessTerminated();
-  }
+    private static boolean isAlive(RunContentDescriptor dom) {
+        ProcessHandler processHandler = dom.getProcessHandler();
+        return processHandler != null && !processHandler.isProcessTerminated();
+    }
 }

@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.actions;
 
 import com.jetbrains.python.PyNames;
 import consulo.fileTemplate.FileTemplate;
 import consulo.fileTemplate.FileTemplateManager;
 import consulo.fileTemplate.FileTemplateUtil;
-import consulo.ide.IdeBundle;
 import consulo.ide.IdeView;
 import consulo.ide.impl.idea.ide.actions.CreateDirectoryOrPackageHandler;
+import consulo.ide.localize.IdeLocalize;
 import consulo.ide.util.DirectoryChooserUtil;
-import consulo.language.editor.CommonDataKeys;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiFileFactory;
@@ -34,98 +32,112 @@ import consulo.module.Module;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.project.Project;
 import consulo.python.module.extension.PyModuleExtension;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.DumbAwareAction;
 import consulo.ui.ex.awt.Messages;
+import consulo.ui.ex.awt.UIUtil;
 import consulo.ui.image.Image;
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
  * @author yole
  */
 public class CreatePackageAction extends DumbAwareAction {
-  private static final Logger LOG = Logger.getInstance(CreatePackageAction.class);
+    private static final Logger LOG = Logger.getInstance(CreatePackageAction.class);
 
-  @Override
-  public void actionPerformed(AnActionEvent e) {
-    final IdeView view = e.getData(IdeView.KEY);
-    if (view == null) {
-      return;
-    }
-    final Project project = e.getData(CommonDataKeys.PROJECT);
-    final PsiDirectory directory = DirectoryChooserUtil.getOrChooseDirectory(view);
-
-    if (directory == null) return;
-    CreateDirectoryOrPackageHandler validator = new CreateDirectoryOrPackageHandler(project, directory, consulo.ide.impl.actions.CreateDirectoryOrPackageType.Package, ".") {
-      @Override
-      protected void createDirectories(String subDirName) {
-        super.createDirectories(subDirName);
-        PsiFileSystemItem element = getCreatedElement();
-        if (element instanceof PsiDirectory) {
-          createInitPyInHierarchy((PsiDirectory)element, directory);
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(AnActionEvent e) {
+        IdeView view = e.getData(IdeView.KEY);
+        if (view == null) {
+            return;
         }
-      }
-    };
-    Messages.showInputDialog(project, IdeBundle.message("prompt.enter.a.new.package.name"),
-                                      IdeBundle.message("title.new.package"),
-                                      Messages.getQuestionIcon(), "", validator);
-    final PsiFileSystemItem result = validator.getCreatedElement();
-    if (result != null) {
-      view.selectElement(result);
-    }
-  }
+        final Project project = e.getData(Project.KEY);
+        final PsiDirectory directory = DirectoryChooserUtil.getOrChooseDirectory(view);
 
-  public static void createInitPyInHierarchy(PsiDirectory created, PsiDirectory ancestor) {
-    do {
-      createInitPy(created);
-      created = created.getParent();
-    } while(created != null && created != ancestor);
-  }
+        if (directory == null) {
+            return;
+        }
+        CreateDirectoryOrPackageHandler validator =
+            new CreateDirectoryOrPackageHandler(project, directory, consulo.ide.impl.actions.CreateDirectoryOrPackageType.Package, ".") {
+                @RequiredUIAccess
+                @Override
+                protected void createDirectories(String subDirName) {
+                    super.createDirectories(subDirName);
+                    PsiFileSystemItem element = getCreatedElement();
+                    if (element instanceof PsiDirectory) {
+                        createInitPyInHierarchy((PsiDirectory) element, directory);
+                    }
+                }
+            };
+        Messages.showInputDialog(
+            project,
+            IdeLocalize.promptEnterANewPackageName().get(),
+            IdeLocalize.titleNewPackage().get(),
+            UIUtil.getQuestionIcon(),
+            "",
+            validator
+        );
+        PsiFileSystemItem result = validator.getCreatedElement();
+        if (result != null) {
+            view.selectElement(result);
+        }
+    }
 
-  private static void createInitPy(PsiDirectory directory) {
-    final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance(directory.getProject());
-    final FileTemplate template = fileTemplateManager.getInternalTemplate("Python Script");
-    if (directory.findFile(PyNames.INIT_DOT_PY) != null) {
-      return;
+    public static void createInitPyInHierarchy(PsiDirectory created, PsiDirectory ancestor) {
+        do {
+            createInitPy(created);
+            created = created.getParent();
+        }
+        while (created != null && created != ancestor);
     }
-    if (template != null) {
-      try {
-        FileTemplateUtil.createFromTemplate(template, PyNames.INIT_DOT_PY, fileTemplateManager.getDefaultVariables(), directory);
-      }
-      catch (Exception e) {
-        LOG.error(e);
-      }
-    }
-    else {
-      final PsiFile file = PsiFileFactory.getInstance(directory.getProject()).createFileFromText(PyNames.INIT_DOT_PY, "");
-      directory.add(file);
-    }
-  }
 
-  @Override
-  public void update(AnActionEvent e) {
-    boolean enabled = isEnabled(e) && e.getPresentation().isEnabled();
-    e.getPresentation().setVisible(enabled);
-    e.getPresentation().setEnabled(enabled);
-  }
-
-  @Nullable
-  @Override
-  protected Image getTemplateIcon() {
-    return PlatformIconGroup.nodesPackage();
-  }
-
-  private static boolean isEnabled(AnActionEvent e) {
-    Project project = e.getData(Project.KEY);
-    final IdeView ideView = e.getData(IdeView.KEY);
-    if (project == null || ideView == null) {
-      return false;
+    @RequiredUIAccess
+    private static void createInitPy(PsiDirectory directory) {
+        FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance(directory.getProject());
+        FileTemplate template = fileTemplateManager.getInternalTemplate("Python Script");
+        if (directory.findFile(PyNames.INIT_DOT_PY) != null) {
+            return;
+        }
+        if (template != null) {
+            try {
+                FileTemplateUtil.createFromTemplate(template, PyNames.INIT_DOT_PY, fileTemplateManager.getDefaultVariables(), directory);
+            }
+            catch (Exception e) {
+                LOG.error(e);
+            }
+        }
+        else {
+            PsiFile file = PsiFileFactory.getInstance(directory.getProject()).createFileFromText(PyNames.INIT_DOT_PY, "");
+            directory.add(file);
+        }
     }
-    final PsiDirectory[] directories = ideView.getDirectories();
-    if (directories.length == 0) {
-      return false;
+
+    @Override
+    public void update(@Nonnull AnActionEvent e) {
+        boolean enabled = isEnabled(e) && e.getPresentation().isEnabled();
+        e.getPresentation().setEnabledAndVisible(enabled);
     }
-    Module module = e.getData(Module.KEY);
-    return module != null && module.getExtension(PyModuleExtension.class) != null;
-  }
+
+    @Nullable
+    @Override
+    protected Image getTemplateIcon() {
+        return PlatformIconGroup.nodesPackage();
+    }
+
+    private static boolean isEnabled(AnActionEvent e) {
+        Project project = e.getData(Project.KEY);
+        IdeView ideView = e.getData(IdeView.KEY);
+        if (project == null || ideView == null) {
+            return false;
+        }
+        PsiDirectory[] directories = ideView.getDirectories();
+        if (directories.length == 0) {
+            return false;
+        }
+        Module module = e.getData(Module.KEY);
+        return module != null && module.getExtension(PyModuleExtension.class) != null;
+    }
 }
