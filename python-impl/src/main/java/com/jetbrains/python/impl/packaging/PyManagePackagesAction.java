@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.packaging;
 
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
-import consulo.language.editor.LangDataKeys;
 import consulo.module.Module;
 import consulo.content.bundle.Sdk;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
@@ -27,18 +26,19 @@ import com.jetbrains.python.impl.sdk.PythonSdkType;
  * @author yole
  */
 public class PyManagePackagesAction extends AnAction {
-  @Override
-  public void actionPerformed(AnActionEvent e) {
-    Module module = e.getData(LangDataKeys.MODULE);
-    final Sdk sdk = PythonSdkType.findPythonSdk(module);
-    if (module != null && sdk != null) {
-      new PyManagePackagesDialog(module.getProject(), sdk).show();
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(AnActionEvent e) {
+        Module module = e.getRequiredData(Module.KEY);
+        Sdk sdk = PythonSdkType.findPythonSdk(module);
+        if (sdk != null) {
+            new PyManagePackagesDialog(module.getProject(), sdk).show();
+        }
     }
-  }
 
-  @Override
-  public void update(AnActionEvent e) {
-    Module module = e.getData(LangDataKeys.MODULE);
-    e.getPresentation().setEnabled(module != null && PythonSdkType.findPythonSdk(module) != null);
-  }
+    @Override
+    public void update(AnActionEvent e) {
+        Module module = e.getData(Module.KEY);
+        e.getPresentation().setEnabled(module != null && PythonSdkType.findPythonSdk(module) != null);
+    }
 }

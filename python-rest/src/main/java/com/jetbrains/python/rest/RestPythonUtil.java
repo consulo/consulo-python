@@ -19,9 +19,8 @@ import com.jetbrains.python.impl.packaging.PyPackageUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.packaging.PyPackage;
 import com.jetbrains.python.packaging.PyPackageManager;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.content.bundle.Sdk;
-import consulo.language.editor.CommonDataKeys;
-import consulo.language.editor.LangDataKeys;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.project.Project;
@@ -31,38 +30,32 @@ import consulo.ui.ex.action.Presentation;
 import java.util.List;
 
 /**
- * User : catherine
+ * @author catherine
  */
-public class RestPythonUtil
-{
-	private RestPythonUtil()
-	{
-	}
+public class RestPythonUtil {
+    private RestPythonUtil() {
+    }
 
-	public static Presentation updateSphinxQuickStartRequiredAction(final AnActionEvent e)
-	{
-		final Presentation presentation = e.getPresentation();
+    @RequiredReadAction
+    public static Presentation updateSphinxQuickStartRequiredAction(AnActionEvent e) {
+        Presentation presentation = e.getPresentation();
 
-		final Project project = e.getData(CommonDataKeys.PROJECT);
-		if(project != null)
-		{
-			Module module = e.getData(LangDataKeys.MODULE);
-			if(module == null)
-			{
-				Module[] modules = ModuleManager.getInstance(project).getModules();
-				module = modules.length == 0 ? null : modules[0];
-			}
-			if(module != null)
-			{
-				final Sdk sdk = PythonSdkType.findPythonSdk(module);
-				if(sdk != null)
-				{
-					final List<PyPackage> packages = PyPackageManager.getInstance(sdk).getPackages();
-					final PyPackage sphinx = packages != null ? PyPackageUtil.findPackage(packages, "Sphinx") : null;
-					presentation.setEnabled(sphinx != null);
-				}
-			}
-		}
-		return presentation;
-	}
+        Project project = e.getData(Project.KEY);
+        if (project != null) {
+            Module module = e.getData(Module.KEY);
+            if (module == null) {
+                Module[] modules = ModuleManager.getInstance(project).getModules();
+                module = modules.length == 0 ? null : modules[0];
+            }
+            if (module != null) {
+                Sdk sdk = PythonSdkType.findPythonSdk(module);
+                if (sdk != null) {
+                    List<PyPackage> packages = PyPackageManager.getInstance(sdk).getPackages();
+                    PyPackage sphinx = packages != null ? PyPackageUtil.findPackage(packages, "Sphinx") : null;
+                    presentation.setEnabled(sphinx != null);
+                }
+            }
+        }
+        return presentation;
+    }
 }

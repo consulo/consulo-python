@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.hierarchy;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyClass;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.dataContext.DataContext;
 import consulo.ide.impl.idea.ide.hierarchy.TypeHierarchyBrowserBase;
 import consulo.language.Language;
-import consulo.language.editor.CommonDataKeys;
 import consulo.language.editor.hierarchy.HierarchyBrowser;
 import consulo.language.editor.hierarchy.TypeHierarchyProvider;
 import consulo.language.psi.PsiElement;
@@ -34,41 +33,44 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Jul 31, 2009
- * Time: 6:00:21 PM
+ * @author Alexey.Ivanov
+ * @since 2009-07-31
  */
 @ExtensionImpl
 public class PyTypeHierachyProvider implements TypeHierarchyProvider {
-  @Nullable
-  public PsiElement getTarget(@Nonnull DataContext dataContext) {
-    PsiElement element = dataContext.getData(CommonDataKeys.PSI_ELEMENT);
-    if (element == null) {
-      final Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
-      final PsiFile file = dataContext.getData(CommonDataKeys.PSI_FILE);
-      if (editor != null && file != null) {
-        element = file.findElementAt(editor.getCaretModel().getOffset());
-      }
+    @Nullable
+    @Override
+    @RequiredReadAction
+    public PsiElement getTarget(@Nonnull DataContext dataContext) {
+        PsiElement element = dataContext.getData(PsiElement.KEY);
+        if (element == null) {
+            Editor editor = dataContext.getData(Editor.KEY);
+            PsiFile file = dataContext.getData(PsiFile.KEY);
+            if (editor != null && file != null) {
+                element = file.findElementAt(editor.getCaretModel().getOffset());
+            }
+        }
+        if (!(element instanceof PyClass)) {
+            element = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        }
+        return element;
     }
-    if (!(element instanceof PyClass)) {
-      element = PsiTreeUtil.getParentOfType(element, PyClass.class);
+
+    @Nonnull
+    @Override
+    public HierarchyBrowser createHierarchyBrowser(PsiElement target) {
+        return new PyTypeHierarchyBrowser((PyClass) target);
     }
-    return element;
-  }
 
-  @Nonnull
-  public HierarchyBrowser createHierarchyBrowser(PsiElement target) {
-    return new PyTypeHierarchyBrowser((PyClass)target);
-  }
+    @Override
+    @RequiredReadAction
+    public void browserActivated(@Nonnull HierarchyBrowser hierarchyBrowser) {
+        ((PyTypeHierarchyBrowser) hierarchyBrowser).changeView(TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE);
+    }
 
-  public void browserActivated(@Nonnull HierarchyBrowser hierarchyBrowser) {
-    ((PyTypeHierarchyBrowser)hierarchyBrowser).changeView(TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE);
-  }
-
-  @Nonnull
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.INSTANCE;
-  }
+    @Nonnull
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
+    }
 }

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.packaging.setupPy;
 
 import com.jetbrains.python.impl.packaging.PyPackageUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.application.ApplicationPropertiesComponent;
 import consulo.dataContext.DataContext;
 import consulo.fileTemplate.AttributesDefaults;
@@ -26,19 +26,18 @@ import consulo.fileTemplate.FileTemplateManager;
 import consulo.ide.IdeView;
 import consulo.ide.action.ui.CreateFromTemplateDialog;
 import consulo.ide.impl.idea.ide.fileTemplates.actions.CreateFromTemplateAction;
-import consulo.language.editor.CommonDataKeys;
-import consulo.language.editor.LangDataKeys;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiManager;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.content.ModuleRootManager;
 import consulo.module.content.ProjectFileIndex;
+import consulo.platform.Platform;
 import consulo.project.Project;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
-import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
@@ -48,110 +47,92 @@ import java.util.Properties;
 /**
  * @author yole
  */
-public class CreateSetupPyAction extends CreateFromTemplateAction
-{
-	private static final String AUTHOR_PROPERTY = "python.packaging.author";
-	private static final String EMAIL_PROPERTY = "python.packaging.author.email";
+public class CreateSetupPyAction extends CreateFromTemplateAction {
+    private static final String AUTHOR_PROPERTY = "python.packaging.author";
+    private static final String EMAIL_PROPERTY = "python.packaging.author.email";
 
-	public CreateSetupPyAction()
-	{
-		super(FileTemplateManager.getDefaultInstance().getInternalTemplate("Setup Script"));
-		getTemplatePresentation().setText("Create setup.py");
-	}
+    public CreateSetupPyAction() {
+        super(FileTemplateManager.getDefaultInstance().getInternalTemplate("Setup Script"));
+        getTemplatePresentation().setTextValue(LocalizeValue.localizeTODO("Create setup.py"));
+    }
 
-	@Override
-	public FileTemplate getTemplate()
-	{
-		// to ensure changes are picked up, reload the template on every call (PY-6681)
-		return FileTemplateManager.getDefaultInstance().getInternalTemplate("Setup Script");
-	}
+    @Override
+    public FileTemplate getTemplate() {
+        // to ensure changes are picked up, reload the template on every call (PY-6681)
+        return FileTemplateManager.getDefaultInstance().getInternalTemplate("Setup Script");
+    }
 
-	@Override
-	public void update(AnActionEvent e)
-	{
-		final Module module = e.getData(LangDataKeys.MODULE);
-		e.getPresentation().setEnabled(module != null && PyPackageUtil.findSetupPy(module) == null);
-	}
+    @Override
+    public void update(AnActionEvent e) {
+        Module module = e.getData(Module.KEY);
+        e.getPresentation().setEnabled(module != null && PyPackageUtil.findSetupPy(module) == null);
+    }
 
-	@Override
-	public AttributesDefaults getAttributesDefaults(DataContext dataContext)
-	{
-		Project project = dataContext.getData(CommonDataKeys.PROJECT);
-		final AttributesDefaults defaults = new AttributesDefaults("setup.py").withFixedName(true);
-		if(project != null)
-		{
-			defaults.add("Package_name", project.getName());
-			final ApplicationPropertiesComponent properties = ApplicationPropertiesComponent.getInstance();
-			defaults.add("Author", properties.getValue(AUTHOR_PROPERTY, SystemProperties.getUserName()));
-			defaults.add("Author_Email", properties.getValue(EMAIL_PROPERTY, ""));
-			defaults.addPredefined("PackageList", getPackageList(dataContext));
-			defaults.addPredefined("PackageDirs", getPackageDirs(dataContext));
-		}
-		return defaults;
-	}
+    @Override
+    public AttributesDefaults getAttributesDefaults(DataContext dataContext) {
+        Project project = dataContext.getData(Project.KEY);
+        AttributesDefaults defaults = new AttributesDefaults("setup.py").withFixedName(true);
+        if (project != null) {
+            defaults.add("Package_name", project.getName());
+            ApplicationPropertiesComponent properties = ApplicationPropertiesComponent.getInstance();
+            defaults.add("Author", properties.getValue(AUTHOR_PROPERTY, Platform.current().user().name()));
+            defaults.add("Author_Email", properties.getValue(EMAIL_PROPERTY, ""));
+            defaults.addPredefined("PackageList", getPackageList(dataContext));
+            defaults.addPredefined("PackageDirs", getPackageDirs(dataContext));
+        }
+        return defaults;
+    }
 
-	private static String getPackageList(DataContext dataContext)
-	{
-		final Module module = dataContext.getData(LangDataKeys.MODULE);
-		if(module != null)
-		{
-			return "['" + StringUtil.join(PyPackageUtil.getPackageNames(module), "', '") + "']";
-		}
-		return "[]";
-	}
+    private static String getPackageList(DataContext dataContext) {
+        Module module = dataContext.getData(Module.KEY);
+        if (module != null) {
+            return "['" + StringUtil.join(PyPackageUtil.getPackageNames(module), "', '") + "']";
+        }
+        return "[]";
+    }
 
-	private static String getPackageDirs(DataContext dataContext)
-	{
-		final Module module = dataContext.getData(LangDataKeys.MODULE);
-		if(module != null)
-		{
-			final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
-			if(sourceRoots.length > 0)
-			{
-				for(VirtualFile sourceRoot : sourceRoots)
-				{
-					// TODO notify if we have multiple source roots and can't build mapping automatically
-					final VirtualFile contentRoot = ProjectFileIndex.getInstance(module.getProject()).getContentRootForFile(sourceRoot);
-					if(contentRoot != null && !Comparing.equal(contentRoot, sourceRoot))
-					{
-						final String relativePath = VirtualFileUtil.getRelativePath(sourceRoot, contentRoot, '/');
-						return "\n    package_dir={'': '" + relativePath + "'},";
-					}
-				}
-			}
-		}
-		return "";
-	}
+    private static String getPackageDirs(DataContext dataContext) {
+        Module module = dataContext.getData(Module.KEY);
+        if (module != null) {
+            VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
+            if (sourceRoots.length > 0) {
+                for (VirtualFile sourceRoot : sourceRoots) {
+                    // TODO notify if we have multiple source roots and can't build mapping automatically
+                    VirtualFile contentRoot = ProjectFileIndex.getInstance(module.getProject()).getContentRootForFile(sourceRoot);
+                    if (contentRoot != null && !Comparing.equal(contentRoot, sourceRoot)) {
+                        String relativePath = VirtualFileUtil.getRelativePath(sourceRoot, contentRoot, '/');
+                        return "\n    package_dir={'': '" + relativePath + "'},";
+                    }
+                }
+            }
+        }
+        return "";
+    }
 
-	@Override
-	protected PsiDirectory getTargetDirectory(DataContext dataContext, IdeView view)
-	{
-		final Module module = dataContext.getData(LangDataKeys.MODULE);
-		if(module != null)
-		{
-			final Collection<VirtualFile> sourceRoots = PyUtil.getSourceRoots(module);
-			if(sourceRoots.size() > 0)
-			{
-				return PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots.iterator().next());
-			}
-		}
-		return super.getTargetDirectory(dataContext, view);
-	}
+    @Override
+    @RequiredReadAction
+    protected PsiDirectory getTargetDirectory(DataContext dataContext, IdeView view) {
+        Module module = dataContext.getData(Module.KEY);
+        if (module != null) {
+            Collection<VirtualFile> sourceRoots = PyUtil.getSourceRoots(module);
+            if (sourceRoots.size() > 0) {
+                return PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots.iterator().next());
+            }
+        }
+        return super.getTargetDirectory(dataContext, view);
+    }
 
-	@Override
-	protected void elementCreated(CreateFromTemplateDialog dialog, PsiElement createdElement)
-	{
-		final ApplicationPropertiesComponent propertiesComponent = ApplicationPropertiesComponent.getInstance();
-		final Properties properties = dialog.getEnteredProperties();
-		final String author = properties.getProperty("Author");
-		if(author != null)
-		{
-			propertiesComponent.setValue(AUTHOR_PROPERTY, author);
-		}
-		final String authorEmail = properties.getProperty("Author_Email");
-		if(authorEmail != null)
-		{
-			propertiesComponent.setValue(EMAIL_PROPERTY, authorEmail);
-		}
-	}
+    @Override
+    protected void elementCreated(CreateFromTemplateDialog dialog, PsiElement createdElement) {
+        ApplicationPropertiesComponent propertiesComponent = ApplicationPropertiesComponent.getInstance();
+        Properties properties = dialog.getEnteredProperties();
+        String author = properties.getProperty("Author");
+        if (author != null) {
+            propertiesComponent.setValue(AUTHOR_PROPERTY, author);
+        }
+        String authorEmail = properties.getProperty("Author_Email");
+        if (authorEmail != null) {
+            propertiesComponent.setValue(EMAIL_PROPERTY, authorEmail);
+        }
+    }
 }

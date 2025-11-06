@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.rest.sphinx;
 
 import com.jetbrains.python.rest.RestPythonUtil;
@@ -21,59 +20,56 @@ import consulo.annotation.component.ActionImpl;
 import consulo.annotation.component.ActionParentRef;
 import consulo.annotation.component.ActionRef;
 import consulo.application.Application;
-import consulo.application.ApplicationManager;
 import consulo.application.dumb.DumbAware;
-import consulo.language.editor.LangDataKeys;
-import consulo.language.editor.PlatformDataKeys;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.Presentation;
+import jakarta.annotation.Nonnull;
 
 /**
- * user : catherine
+ * @author catherine
  */
 @ActionImpl(id = "RunSphinxQuickStartAction", parents = @ActionParentRef(@ActionRef(id = "ToolsMenu")))
 public class RunSphinxQuickStartAction extends AnAction implements DumbAware {
-  public RunSphinxQuickStartAction() {
-    super("Sphinx quickstart", "Allows to run sphinx quick-start action", null);
-  }
-
-  @Override
-  public void update(final AnActionEvent event) {
-    super.update(event);
-    RestPythonUtil.updateSphinxQuickStartRequiredAction(event);
-  }
-
-  @Override
-  public void actionPerformed(final AnActionEvent e) {
-    final Presentation presentation = RestPythonUtil.updateSphinxQuickStartRequiredAction(e);
-    assert presentation.isEnabled() && presentation.isVisible() : "Sphinx requirements for action are not satisfied";
-
-    final Project project = e.getData(PlatformDataKeys.PROJECT);
-
-    if (project == null) {
-      return;
+    public RunSphinxQuickStartAction() {
+        super(LocalizeValue.localizeTODO("Sphinx quickstart"), LocalizeValue.localizeTODO("Allows to run sphinx quick-start action"));
     }
 
-    Module module = e.getData(LangDataKeys.MODULE);
-    if (module == null) {
-      Module[] modules = ModuleManager.getInstance(project).getModules();
-      module = modules.length == 0 ? null : modules[0];
+    @Override
+    public void update(@Nonnull AnActionEvent event) {
+        super.update(event);
+        RestPythonUtil.updateSphinxQuickStartRequiredAction(event);
     }
 
-    if (module == null) {
-      return;
+    @Override
+    @RequiredUIAccess
+    public void actionPerformed(@Nonnull AnActionEvent e) {
+        Presentation presentation = RestPythonUtil.updateSphinxQuickStartRequiredAction(e);
+        assert presentation.isEnabled() && presentation.isVisible() : "Sphinx requirements for action are not satisfied";
+
+        Project project = e.getData(Project.KEY);
+
+        if (project == null) {
+            return;
+        }
+
+        Module module = e.getData(Module.KEY);
+        if (module == null) {
+            Module[] modules = ModuleManager.getInstance(project).getModules();
+            module = modules.length == 0 ? null : modules[0];
+        }
+
+        if (module == null) {
+            return;
+        }
+        SphinxBaseCommand action = new SphinxBaseCommand();
+        Module finalModule = module;
+        Application application = project.getApplication();
+        application.invokeLater(() -> action.execute(finalModule), application.getNoneModalityState());
     }
-    final SphinxBaseCommand action = new SphinxBaseCommand();
-    final Module finalModule = module;
-    Application application = ApplicationManager.getApplication();
-    application.invokeLater(new Runnable() {
-      public void run() {
-        action.execute(finalModule);
-      }
-    }, application.getNoneModalityState());
-  }
 }
