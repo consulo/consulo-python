@@ -182,7 +182,6 @@ public class PyCustomMember extends UserDataHolderBase {
 
     @Nullable
     public PsiElement resolve(@Nonnull PsiElement context) {
-
         if (myTarget != null) {
             return myTarget;
         }

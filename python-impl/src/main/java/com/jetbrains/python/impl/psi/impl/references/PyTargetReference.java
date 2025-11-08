@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl.references;
 
+import consulo.annotation.access.RequiredReadAction;
 import jakarta.annotation.Nonnull;
 
 import consulo.language.psi.PsiElement;
@@ -39,6 +39,7 @@ public class PyTargetReference extends PyReferenceImpl {
 
   @Nonnull
   @Override
+  @RequiredReadAction
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     final ResolveResult[] results = super.multiResolve(incompleteCode);
     boolean shadowed = false;
@@ -59,6 +60,7 @@ public class PyTargetReference extends PyReferenceImpl {
 
   @Nonnull
   @Override
+  @RequiredReadAction
   public Object[] getVariants() {
     final PyImportElement importElement = PsiTreeUtil.getParentOfType(myElement, PyImportElement.class);
     // reference completion is useless in 'as' part of import statement (PY-2384)

@@ -53,15 +53,17 @@ public class PyOpenDebugConsoleAction extends AnAction implements DumbAware {
     @Override
     @RequiredUIAccess
     public void actionPerformed(AnActionEvent e) {
-        Project project = e.getData(Project.KEY);
-        if (project != null) {
-            selectRunningProcess(e.getDataContext(), project, view -> {
+        Project project = e.getRequiredData(Project.KEY);
+        selectRunningProcess(
+            e.getDataContext(),
+            project,
+            view -> {
                 view.enableConsole(false);
                 ApplicationIdeFocusManager.getInstance()
                     .getInstanceForProject(project)
                     .requestFocus(view.getPydevConsoleView().getComponent(), true);
-            });
-        }
+            }
+        );
     }
 
 
