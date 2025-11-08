@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.completion;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyParameterList;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.AllIcons;
 import consulo.language.Language;
 import consulo.language.editor.completion.*;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.util.ProcessingContext;
-import consulo.ui.image.Image;
-
+import consulo.platform.base.icon.PlatformIconGroup;
 import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
@@ -35,33 +33,40 @@ import static consulo.language.pattern.PlatformPatterns.psiElement;
  */
 @ExtensionImpl
 public class PyParameterCompletionContributor extends CompletionContributor {
-  public PyParameterCompletionContributor() {
-    extend(CompletionType.BASIC,
-           psiElement().inside(PyParameterList.class).afterLeaf("*"),
-           new ParameterCompletionProvider("args"));
-    extend(CompletionType.BASIC,
-           psiElement().inside(PyParameterList.class).afterLeaf("**"),
-           new ParameterCompletionProvider("kwargs"));
-  }
-
-  @Nonnull
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.INSTANCE;
-  }
-
-  private static class ParameterCompletionProvider implements CompletionProvider {
-    private String myName;
-
-    private ParameterCompletionProvider(String name) {
-      myName = name;
+    public PyParameterCompletionContributor() {
+        extend(
+            CompletionType.BASIC,
+            psiElement().inside(PyParameterList.class).afterLeaf("*"),
+            new ParameterCompletionProvider("args")
+        );
+        extend(
+            CompletionType.BASIC,
+            psiElement().inside(PyParameterList.class).afterLeaf("**"),
+            new ParameterCompletionProvider("kwargs")
+        );
     }
 
+    @Nonnull
     @Override
-    public void addCompletions(@Nonnull CompletionParameters parameters,
-                               ProcessingContext context,
-                               @Nonnull CompletionResultSet result) {
-      result.addElement(LookupElementBuilder.create(myName).withIcon((Image)AllIcons.Nodes.Parameter));
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
     }
-  }
+
+    private static class ParameterCompletionProvider implements CompletionProvider {
+        private String myName;
+
+        private ParameterCompletionProvider(String name) {
+            myName = name;
+        }
+
+        @Override
+        @RequiredReadAction
+        public void addCompletions(
+            @Nonnull CompletionParameters parameters,
+            ProcessingContext context,
+            @Nonnull CompletionResultSet result
+        ) {
+            result.addElement(LookupElementBuilder.create(myName).withIcon(PlatformIconGroup.nodesParameter()));
+        }
+    }
 }
