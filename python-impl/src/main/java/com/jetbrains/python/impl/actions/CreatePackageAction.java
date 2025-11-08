@@ -50,11 +50,8 @@ public class CreatePackageAction extends DumbAwareAction {
     @Override
     @RequiredUIAccess
     public void actionPerformed(AnActionEvent e) {
-        IdeView view = e.getData(IdeView.KEY);
-        if (view == null) {
-            return;
-        }
-        final Project project = e.getData(Project.KEY);
+        IdeView view = e.getRequiredData(IdeView.KEY);
+        final Project project = e.getRequiredData(Project.KEY);
         final PsiDirectory directory = DirectoryChooserUtil.getOrChooseDirectory(view);
 
         if (directory == null) {
@@ -62,13 +59,12 @@ public class CreatePackageAction extends DumbAwareAction {
         }
         CreateDirectoryOrPackageHandler validator =
             new CreateDirectoryOrPackageHandler(project, directory, consulo.ide.impl.actions.CreateDirectoryOrPackageType.Package, ".") {
-                @RequiredUIAccess
                 @Override
+                @RequiredUIAccess
                 protected void createDirectories(String subDirName) {
                     super.createDirectories(subDirName);
-                    PsiFileSystemItem element = getCreatedElement();
-                    if (element instanceof PsiDirectory) {
-                        createInitPyInHierarchy((PsiDirectory) element, directory);
+                    if (getCreatedElement() instanceof PsiDirectory subDir) {
+                        createInitPyInHierarchy(subDir, directory);
                     }
                 }
             };
@@ -86,6 +82,7 @@ public class CreatePackageAction extends DumbAwareAction {
         }
     }
 
+    @RequiredUIAccess
     public static void createInitPyInHierarchy(PsiDirectory created, PsiDirectory ancestor) {
         do {
             createInitPy(created);

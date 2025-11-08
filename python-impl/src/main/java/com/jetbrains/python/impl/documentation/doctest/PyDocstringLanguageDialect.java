@@ -21,18 +21,18 @@ import consulo.language.InjectableLanguage;
 import consulo.language.Language;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyDocstringLanguageDialect extends Language implements InjectableLanguage {
-  public static final PyDocstringLanguageDialect INSTANCE = new PyDocstringLanguageDialect();
+    public static final PyDocstringLanguageDialect INSTANCE = new PyDocstringLanguageDialect();
 
-  @Deprecated
-  public static PyDocstringLanguageDialect getInstance() {
-    return INSTANCE;
-  }
+    @Deprecated
+    public static PyDocstringLanguageDialect getInstance() {
+        return INSTANCE;
+    }
 
-  protected PyDocstringLanguageDialect() {
-    super(PythonLanguage.INSTANCE, "PyDocstring");
-    putUserData(consulo.language.editor.impl.intention.QuickEditAction.EDIT_ACTION_AVAILABLE, false);
-  }
+    protected PyDocstringLanguageDialect() {
+        super(PythonLanguage.INSTANCE, "PyDocstring");
+        putUserData(consulo.language.editor.impl.intention.QuickEditAction.EDIT_ACTION_AVAILABLE, false);
+    }
 }

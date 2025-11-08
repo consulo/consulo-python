@@ -50,10 +50,7 @@ public class SetupTaskChooserAction extends AnAction {
     @Override
     @RequiredUIAccess
     public void actionPerformed(AnActionEvent e) {
-        final Module module = e.getData(Module.KEY);
-        if (module == null) {
-            return;
-        }
+        final Module module = e.getRequiredData(Module.KEY);
         Project project = module.getProject();
         ListChooseByNameModel<SetupTask> model =
             new ListChooseByNameModel<>(project, "Enter setup.py task name", "No tasks found", SetupTaskIntrospector.getTaskList(module));

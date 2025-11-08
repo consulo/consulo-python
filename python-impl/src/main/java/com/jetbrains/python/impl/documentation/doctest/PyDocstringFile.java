@@ -13,34 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.documentation.doctest;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.file.FileViewProvider;
 import consulo.language.psi.PsiLanguageInjectionHost;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.impl.PyFileImpl;
+import jakarta.annotation.Nonnull;
 
 /**
- * User: ktisha
+ * @author ktisha
  */
 public class PyDocstringFile extends PyFileImpl {
+    public PyDocstringFile(FileViewProvider viewProvider) {
+        super(viewProvider, PyDocstringLanguageDialect.INSTANCE);
+    }
 
-  public PyDocstringFile(FileViewProvider viewProvider) {
-    super(viewProvider, PyDocstringLanguageDialect.getInstance());
-  }
+    @Override
+    @RequiredReadAction
+    public String toString() {
+        return "DocstringFile:" + getName();
+    }
 
-  @Override
-  public String toString() {
-    return "DocstringFile:" + getName();
-  }
-
-  @Override
-  public LanguageLevel getLanguageLevel() {
-    final InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(getProject());
-    final PsiLanguageInjectionHost host = languageManager.getInjectionHost(this);
-    if (host != null) return LanguageLevel.forElement(host.getContainingFile());
-    return super.getLanguageLevel();
-  }
+    @Nonnull
+    @Override
+    @RequiredReadAction
+    public LanguageLevel getLanguageLevel() {
+        InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(getProject());
+        PsiLanguageInjectionHost host = languageManager.getInjectionHost(this);
+        if (host != null) {
+            return LanguageLevel.forElement(host.getContainingFile());
+        }
+        return super.getLanguageLevel();
+    }
 }

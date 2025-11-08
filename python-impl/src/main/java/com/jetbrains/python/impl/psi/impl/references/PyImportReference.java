@@ -27,6 +27,7 @@ import com.jetbrains.python.psi.resolve.*;
 import com.jetbrains.python.impl.psi.types.PyModuleType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.codeEditor.Editor;
 import consulo.document.Document;
 import consulo.language.ast.ASTNode;
@@ -99,6 +100,7 @@ public class PyImportReference extends PyReferenceImpl
 
 	@Nonnull
 	@Override
+	@RequiredReadAction
 	public Object[] getVariants()
 	{
 		// no completion in invalid import statements
@@ -148,13 +150,12 @@ public class PyImportReference extends PyReferenceImpl
 			{
 				continue;
 			}
-			if(item instanceof LookupElementBuilder)
+			if(item instanceof LookupElementBuilder lookupElemBuilder)
 			{
-				variants[i] = ((LookupElementBuilder) item).withInsertHandler(insertHandler);
+				variants[i] = lookupElemBuilder.withInsertHandler(insertHandler);
 			}
-			else if(item instanceof PsiNamedElement)
+			else if(item instanceof PsiNamedElement element)
 			{
-				final PsiNamedElement element = (PsiNamedElement) item;
 				final String name = element.getName();
 				assert name != null; // it can't really have null name
 				variants[i] = LookupElementBuilder.create(name).withIcon(IconDescriptorUpdaters.getIcon(element, 0)).withInsertHandler(insertHandler);
@@ -165,13 +166,12 @@ public class PyImportReference extends PyReferenceImpl
 	private static boolean hasChildPackages(Object item)
 	{
 		PsiElement itemElement = null;
-		if(item instanceof PsiElement)
+		if(item instanceof PsiElement element)
 		{
-			itemElement = (PsiElement) item;
+			itemElement = element;
 		}
-		else if(item instanceof LookupElement)
+		else if(item instanceof LookupElement lookupElement)
 		{
-			LookupElement lookupElement = (LookupElement) item;
 			final PsiElement element = lookupElement.getPsiElement();
 			if(element != null)
 			{
@@ -232,11 +232,10 @@ public class PyImportReference extends PyReferenceImpl
 				if(src != null)
 				{
 					PsiElement modCandidate = src.getReference().resolve();
-					if(modCandidate instanceof PyExpression)
+					if(modCandidate instanceof PyExpression module)
 					{
 						addImportedNames(fromImport.getImportElements()); // don't propose already imported items
-						// try to collect submodules
-						PyExpression module = (PyExpression) modCandidate;
+						// try to collect sub-modules
 						PyType qualifierType = myContext.getType(module);
 						if(qualifierType != null)
 						{
@@ -246,9 +245,9 @@ public class PyImportReference extends PyReferenceImpl
 						}
 						return myObjects.toArray();
 					}
-					else if(modCandidate instanceof PsiDirectory)
+					else if(modCandidate instanceof PsiDirectory directory)
 					{
-						fillFromDir((PsiDirectory) modCandidate, ImportKeywordHandler.INSTANCE);
+						fillFromDir(directory, ImportKeywordHandler.INSTANCE);
 						return myObjects.toArray();
 					}
 				}
@@ -350,10 +349,9 @@ public class PyImportReference extends PyReferenceImpl
 		{
 			if(targetDir != null)
 			{
-				PsiFile initPy = targetDir.findFile(PyNames.INIT_DOT_PY);
-				if(initPy instanceof PyFile)
+				if(targetDir.findFile(PyNames.INIT_DOT_PY) instanceof PyFile file)
 				{
-					PyModuleType moduleType = new PyModuleType((PyFile) initPy);
+					PyModuleType moduleType = new PyModuleType(file);
 					ProcessingContext context = new ProcessingContext();
 					context.put(PyType.CTX_NAMES, myNamesAlready);
 					Object[] completionVariants = moduleType.getCompletionVariants("", getElement(), context);

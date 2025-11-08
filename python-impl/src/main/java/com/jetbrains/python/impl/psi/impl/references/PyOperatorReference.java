@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.psi.impl.references;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -44,8 +45,7 @@ public class PyOperatorReference extends PyReferenceImpl {
   @Override
   protected List<RatedResolveResult> resolveInner() {
     List<RatedResolveResult> res = new ArrayList<RatedResolveResult>();
-    if (myElement instanceof PyBinaryExpression) {
-      final PyBinaryExpression expr = (PyBinaryExpression)myElement;
+    if (myElement instanceof PyBinaryExpression expr) {
       final String name = expr.getReferencedName();
       if (PyNames.CONTAINS.equals(name)) {
         res = resolveMember(expr.getRightExpression(), name);
@@ -57,18 +57,17 @@ public class PyOperatorReference extends PyReferenceImpl {
         resolveLeftAndRightOperators(res, expr, name);
       }
     }
-    else if (myElement instanceof PySubscriptionExpression) {
-      final PySubscriptionExpression expr = (PySubscriptionExpression)myElement;
+    else if (myElement instanceof PySubscriptionExpression expr) {
       res = resolveMember(expr.getOperand(), expr.getReferencedName());
     }
-    else if (myElement instanceof PyPrefixExpression) {
-      final PyPrefixExpression expr = (PyPrefixExpression)myElement;
+    else if (myElement instanceof PyPrefixExpression expr) {
       res = resolveMember(expr.getOperand(), expr.getReferencedName());
     }
     return res;
   }
 
   @Override
+  @RequiredReadAction
   public boolean isReferenceTo(PsiElement element) {
     if (element instanceof PyParameter || element instanceof PyTargetExpression) {
       return false;
@@ -93,14 +92,14 @@ public class PyOperatorReference extends PyReferenceImpl {
 
   @Nullable
   public PyExpression getReceiver() {
-    if (myElement instanceof PyBinaryExpression) {
-      return ((PyBinaryExpression)myElement).getLeftExpression();
+    if (myElement instanceof PyBinaryExpression expr) {
+      return expr.getLeftExpression();
     }
-    else if (myElement instanceof PySubscriptionExpression) {
-      return ((PySubscriptionExpression)myElement).getOperand();
+    else if (myElement instanceof PySubscriptionExpression expr) {
+      return expr.getOperand();
     }
-    else if (myElement instanceof PyPrefixExpression) {
-      return ((PyPrefixExpression)myElement).getOperand();
+    else if (myElement instanceof PyPrefixExpression expr) {
+      return expr.getOperand();
     }
     return null;
   }
@@ -111,8 +110,7 @@ public class PyOperatorReference extends PyReferenceImpl {
 
   private static boolean isTrueDivEnabled(@Nonnull PyElement anchor) {
     final PsiFile file = anchor.getContainingFile();
-    if (file instanceof PyFile) {
-      final PyFile pyFile = (PyFile)file;
+    if (file instanceof PyFile pyFile) {
       return FutureFeature.DIVISION.requiredAt(pyFile.getLanguageLevel()) || pyFile.hasImportFromFuture(FutureFeature.DIVISION);
     }
     return false;
@@ -152,8 +150,8 @@ public class PyOperatorReference extends PyReferenceImpl {
         }
         else if (typeEvalContext.tracing()) {
           VirtualFile vFile = null;
-          if (type instanceof PyClassType) {
-            final PyClass pyClass = ((PyClassType)type).getPyClass();
+          if (type instanceof PyClassType classType) {
+            final PyClass pyClass = classType.getPyClass();
             vFile = pyClass.getContainingFile().getVirtualFile();
           }
           type.resolveMember(name, object, AccessDirection.of(myElement), myContext);

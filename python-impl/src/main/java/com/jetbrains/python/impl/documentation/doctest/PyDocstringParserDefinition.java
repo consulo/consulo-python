@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.documentation.doctest;
 
 import com.jetbrains.python.impl.PythonParserDefinition;
@@ -30,43 +29,46 @@ import consulo.language.version.LanguageVersion;
 import jakarta.annotation.Nonnull;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 @ExtensionImpl
 public class PyDocstringParserDefinition extends PythonParserDefinition {
-  public static final IFileElementType PYTHON_DOCSTRING_FILE = new PyDocstringFileElementType(PyDocstringLanguageDialect.INSTANCE);
+    public static final IFileElementType PYTHON_DOCSTRING_FILE = new PyDocstringFileElementType(PyDocstringLanguageDialect.INSTANCE);
 
-  @Nonnull
-  @Override
-  public Language getLanguage() {
-    return PyDocstringLanguageDialect.getInstance();
-  }
+    @Nonnull
+    @Override
+    public Language getLanguage() {
+        return PyDocstringLanguageDialect.INSTANCE;
+    }
 
-  @Nonnull
-  public Lexer createLexer(LanguageVersion languageVersion) {
-    return new PyDocstringLexer();
-  }
+    @Nonnull
+    @Override
+    public Lexer createLexer(LanguageVersion languageVersion) {
+        return new PyDocstringLexer();
+    }
 
-  @Nonnull
-  @Override
-  public PsiParser createParser(LanguageVersion languageVersion) {
-    return new PyDocstringParser();
-  }
+    @Nonnull
+    @Override
+    public PsiParser createParser(LanguageVersion languageVersion) {
+        return new PyDocstringParser();
+    }
 
 
-  @Nonnull
-  @Override
-  public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
-    return TokenSet.orSet(super.getWhitespaceTokens(languageVersion), TokenSet.create(PyDocstringTokenTypes.DOTS));
-  }
+    @Nonnull
+    @Override
+    public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
+        return TokenSet.orSet(super.getWhitespaceTokens(languageVersion), TokenSet.create(PyDocstringTokenTypes.DOTS));
+    }
 
-  @Override
-  public IFileElementType getFileNodeType() {
-    return PYTHON_DOCSTRING_FILE;
-  }
+    @Nonnull
+    @Override
+    public IFileElementType getFileNodeType() {
+        return PYTHON_DOCSTRING_FILE;
+    }
 
-  @Override
-  public PsiFile createFile(FileViewProvider viewProvider) {
-    return new PyDocstringFile(viewProvider);
-  }
+    @Nonnull
+    @Override
+    public PsiFile createFile(FileViewProvider viewProvider) {
+        return new PyDocstringFile(viewProvider);
+    }
 }
