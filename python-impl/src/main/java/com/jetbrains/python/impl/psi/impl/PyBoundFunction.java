@@ -16,8 +16,6 @@
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.psi.PyFunction;
-import consulo.annotation.access.RequiredReadAction;
-import consulo.language.psi.PsiElement;
 
 /**
  * @author yole
@@ -26,10 +24,4 @@ public class PyBoundFunction extends PyFunctionImpl {
   public PyBoundFunction(PyFunction function) {
     super(function.getNode());
   }
-
-    @RequiredReadAction
-    @Override
-    public PsiElement getNameIdentifier() {
-        return super.getNameIdentifier();
-    }
 }
