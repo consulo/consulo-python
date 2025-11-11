@@ -25,6 +25,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.spellcheker.tokenizer.splitter.IdentifierTokenSplitter;
+import consulo.language.spellcheker.tokenizer.splitter.SplitContext;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 
@@ -43,12 +44,14 @@ public class PythonSpellcheckerDictionaryGenerator extends SpellCheckerDictionar
         if (!myExcludedFolders.contains(folder)) {
             String name = folder.getName();
             IdentifierTokenSplitter.getInstance().split(
-                name,
-                TextRange.allOf(name),
-                textRange -> {
-                    String word = textRange.substring(name);
-                    addSeenWord(seenNames, word, Language.ANY);
-                }
+                SplitContext.of(
+                    name,
+                    textRange -> {
+                        String word = textRange.substring(name);
+                        addSeenWord(seenNames, word, Language.ANY);
+                    }
+                ),
+                TextRange.allOf(name)
             );
         }
         super.processFolder(seenNames, manager, folder);
