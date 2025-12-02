@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.inspections;
 
+import consulo.annotation.access.RequiredReadAction;
+import consulo.localize.LocalizeValue;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import consulo.language.editor.intention.HintAction;
@@ -36,116 +38,129 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 /**
  * @author dcheryasov
  */
-public abstract class PyInspectionVisitor extends PyElementVisitor
-{
-	@Nullable
-	private final ProblemsHolder myHolder;
-	@Nonnull
-	private final LocalInspectionToolSession mySession;
-	protected final TypeEvalContext myTypeEvalContext;
+public abstract class PyInspectionVisitor extends PyElementVisitor {
+    @Nullable
+    private final ProblemsHolder myHolder;
+    @Nonnull
+    private final LocalInspectionToolSession mySession;
+    protected final TypeEvalContext myTypeEvalContext;
 
-	public static final Key<TypeEvalContext> INSPECTION_TYPE_EVAL_CONTEXT = Key.create("PyInspectionTypeEvalContext");
+    public static final Key<TypeEvalContext> INSPECTION_TYPE_EVAL_CONTEXT = Key.create("PyInspectionTypeEvalContext");
 
-	public PyInspectionVisitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session)
-	{
-		myHolder = holder;
-		mySession = session;
-		TypeEvalContext context;
-		synchronized(INSPECTION_TYPE_EVAL_CONTEXT)
-		{
-			context = session.getUserData(INSPECTION_TYPE_EVAL_CONTEXT);
-			if(context == null)
-			{
-				PsiFile file = session.getFile();
-				context = TypeEvalContext.codeAnalysis(file.getProject(), file);
-				session.putUserData(INSPECTION_TYPE_EVAL_CONTEXT, context);
-			}
-		}
-		myTypeEvalContext = context;
-	}
+    public PyInspectionVisitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        myHolder = holder;
+        mySession = session;
+        TypeEvalContext context;
+        synchronized (INSPECTION_TYPE_EVAL_CONTEXT) {
+            context = session.getUserData(INSPECTION_TYPE_EVAL_CONTEXT);
+            if (context == null) {
+                PsiFile file = session.getFile();
+                context = TypeEvalContext.codeAnalysis(file.getProject(), file);
+                session.putUserData(INSPECTION_TYPE_EVAL_CONTEXT, context);
+            }
+        }
+        myTypeEvalContext = context;
+    }
 
-	protected PyResolveContext getResolveContext()
-	{
-		return PyResolveContext.noImplicits().withTypeEvalContext(myTypeEvalContext);
-	}
+    protected PyResolveContext getResolveContext() {
+        return PyResolveContext.noImplicits().withTypeEvalContext(myTypeEvalContext);
+    }
 
-	@Nullable
-	protected ProblemsHolder getHolder()
-	{
-		return myHolder;
-	}
+    @Nullable
+    protected ProblemsHolder getHolder() {
+        return myHolder;
+    }
 
-	@Nonnull
-	public LocalInspectionToolSession getSession()
-	{
-		return mySession;
-	}
+    @Nonnull
+    public LocalInspectionToolSession getSession() {
+        return mySession;
+    }
 
-	protected final void registerProblem(final PsiElement element, final String message)
-	{
-		if(element == null || element.getTextLength() == 0)
-		{
-			return;
-		}
-		if(myHolder != null)
-		{
-			myHolder.registerProblem(element, message);
-		}
-	}
+    @RequiredReadAction
+    protected final void registerProblem(PsiElement element, String message) {
+        if (element == null || element.getTextLength() == 0) {
+            return;
+        }
+        if (myHolder != null) {
+            myHolder.newProblem(LocalizeValue.of(message))
+                .range(element)
+                .create();
+        }
+    }
 
-	protected final void registerProblem(@Nullable final PsiElement element, @Nonnull final String message, @Nonnull final LocalQuickFix... quickFixes)
-	{
-		if(element == null || element.getTextLength() == 0)
-		{
-			return;
-		}
-		if(myHolder != null)
-		{
-			myHolder.registerProblem(element, message, quickFixes);
-		}
-	}
+    @RequiredReadAction
+    protected final void registerProblem(
+        @Nullable PsiElement element,
+        @Nonnull String message,
+        @Nonnull LocalQuickFix... quickFixes
+    ) {
+        if (element == null || element.getTextLength() == 0) {
+            return;
+        }
+        if (myHolder != null) {
+            myHolder.newProblem(LocalizeValue.of(message))
+                .range(element)
+                .withFixes(quickFixes)
+                .create();
+        }
+    }
 
-	protected final void registerProblem(final PsiElement element, final String message, final ProblemHighlightType type)
-	{
-		if(element == null || element.getTextLength() == 0)
-		{
-			return;
-		}
-		if(myHolder != null)
-		{
-			myHolder.registerProblem(myHolder.getManager().createProblemDescriptor(element, message, (LocalQuickFix) null, type, myHolder.isOnTheFly()));
-		}
-	}
+    @RequiredReadAction
+    protected final void registerProblem(PsiElement element, String message, ProblemHighlightType type) {
+        if (element == null || element.getTextLength() == 0) {
+            return;
+        }
+        if (myHolder != null) {
+            myHolder.registerProblem(myHolder.getManager().newProblemDescriptor(LocalizeValue.of(message))
+                .range(element)
+                .highlightType(type)
+                .onTheFly(myHolder.isOnTheFly())
+                .create());
+        }
+    }
 
-	/**
-	 * The most full-blown version.
-	 *
-	 * @see com.intellij.codeInspection.ProblemDescriptor
-	 */
-	protected final void registerProblem(@Nonnull final PsiElement psiElement,
-			@Nonnull final String descriptionTemplate,
-			final ProblemHighlightType highlightType,
-			@Nullable final HintAction hintAction,
-			final LocalQuickFix... fixes)
-	{
-		registerProblem(psiElement, descriptionTemplate, highlightType, hintAction, null, fixes);
-	}
+    /**
+     * The most full-blown version.
+     *
+     * @see ProblemDescriptor
+     */
+    @RequiredReadAction
+    protected final void registerProblem(
+        @Nonnull PsiElement psiElement,
+        @Nonnull String descriptionTemplate,
+        ProblemHighlightType highlightType,
+        @Nullable HintAction hintAction,
+        LocalQuickFix... fixes
+    ) {
+        registerProblem(psiElement, descriptionTemplate, highlightType, hintAction, null, fixes);
+    }
 
-	/**
-	 * The most full-blown version.
-	 *
-	 * @see ProblemDescriptor
-	 */
-	protected final void registerProblem(@Nonnull final PsiElement psiElement,
-			@Nonnull final String descriptionTemplate,
-			final ProblemHighlightType highlightType,
-			@Nullable final HintAction hintAction,
-			@Nullable final TextRange rangeInElement,
-			final LocalQuickFix... fixes)
-	{
-		if(myHolder != null && !(psiElement instanceof PsiErrorElement))
-		{
-			myHolder.registerProblem(new ProblemDescriptorImpl(psiElement, psiElement, descriptionTemplate, fixes, highlightType, false, rangeInElement, hintAction, myHolder.isOnTheFly()));
-		}
-	}
+    /**
+     * The most full-blown version.
+     *
+     * @see ProblemDescriptor
+     */
+    @RequiredReadAction
+    protected final void registerProblem(
+        @Nonnull PsiElement psiElement,
+        @Nonnull String descriptionTemplate,
+        ProblemHighlightType highlightType,
+        @Nullable HintAction hintAction,
+        @Nullable TextRange rangeInElement,
+        LocalQuickFix... fixes
+    ) {
+        if (myHolder != null && !(psiElement instanceof PsiErrorElement)) {
+            myHolder.registerProblem(new ProblemDescriptorImpl(
+                psiElement,
+                psiElement,
+                LocalizeValue.of(descriptionTemplate),
+                fixes,
+                highlightType,
+                false,
+                rangeInElement,
+                hintAction,
+                myHolder.isOnTheFly()
+            ));
+        }
+    }
 }
