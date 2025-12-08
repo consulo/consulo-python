@@ -15,9 +15,11 @@
  */
 package com.jetbrains.python.impl.refactoring.rename;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.editor.refactoring.rename.RenamePsiElementProcessor;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.util.collection.MultiMap;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyClass;
@@ -29,55 +31,62 @@ import com.jetbrains.python.psi.PyTargetExpression;
 /**
  * @author yole
  */
-public abstract class RenamePyElementProcessor extends RenamePsiElementProcessor
-{
-	@Override
-	public void findExistingNameConflicts(PsiElement element, String newName, MultiMap<PsiElement, String> conflicts)
-	{
-		PyElement container = PsiTreeUtil.getParentOfType(element, ScopeOwner.class);
-		if(container instanceof PyFile)
-		{
-			PyFile pyFile = (PyFile) container;
-			PyClass conflictingClass = pyFile.findTopLevelClass(newName);
-			if(conflictingClass != null)
-			{
-				conflicts.putValue(conflictingClass, "A class named '" + newName + "' is already defined in " + pyFile.getName());
-			}
-			PyFunction conflictingFunction = pyFile.findTopLevelFunction(newName);
-			if(conflictingFunction != null)
-			{
-				conflicts.putValue(conflictingFunction, "A function named '" + newName + "' is already defined in " + pyFile.getName());
-			}
-			PyTargetExpression conflictingVariable = pyFile.findTopLevelAttribute(newName);
-			if(conflictingVariable != null)
-			{
-				conflicts.putValue(conflictingFunction, "A variable named '" + newName + "' is already defined in " + pyFile.getName());
-			}
-		}
-		else if(container instanceof PyClass)
-		{
-			PyClass pyClass = (PyClass) container;
-			PyClass conflictingClass = pyClass.findNestedClass(newName, true);
-			if(conflictingClass != null)
-			{
-				conflicts.putValue(conflictingClass, "A class named '" + newName + "' is already defined in class '" + pyClass.getName() + "'");
-			}
-			PyFunction conflictingFunction = pyClass.findMethodByName(newName, true, null);
-			if(conflictingFunction != null)
-			{
-				conflicts.putValue(conflictingFunction, "A function named '" + newName + "' is already defined in class '" + pyClass.getName() + "'");
-			}
-			PyTargetExpression conflictingAttribute = pyClass.findClassAttribute(newName, true, null);
-			if(conflictingAttribute != null)
-			{
-				conflicts.putValue(conflictingAttribute, "An attribute named '" + newName + "' is already defined in class '" + pyClass.getName() + "'");
-			}
-		}
-	}
+public abstract class RenamePyElementProcessor extends RenamePsiElementProcessor {
+    @Override
+    @RequiredReadAction
+    public void findExistingNameConflicts(PsiElement element, String newName, MultiMap<PsiElement, LocalizeValue> conflicts) {
+        PyElement container = PsiTreeUtil.getParentOfType(element, ScopeOwner.class);
+        if (container instanceof PyFile pyFile) {
+            PyClass conflictingClass = pyFile.findTopLevelClass(newName);
+            if (conflictingClass != null) {
+                conflicts.putValue(
+                    conflictingClass,
+                    LocalizeValue.localizeTODO("A class named '" + newName + "' is already defined in " + pyFile.getName())
+                );
+            }
+            PyFunction conflictingFunction = pyFile.findTopLevelFunction(newName);
+            if (conflictingFunction != null) {
+                conflicts.putValue(
+                    conflictingFunction,
+                    LocalizeValue.localizeTODO("A function named '" + newName + "' is already defined in " + pyFile.getName())
+                );
+            }
+            PyTargetExpression conflictingVariable = pyFile.findTopLevelAttribute(newName);
+            if (conflictingVariable != null) {
+                conflicts.putValue(
+                    conflictingFunction,
+                    LocalizeValue.localizeTODO("A variable named '" + newName + "' is already defined in " + pyFile.getName())
+                );
+            }
+        }
+        else if (container instanceof PyClass) {
+            PyClass pyClass = (PyClass) container;
+            PyClass conflictingClass = pyClass.findNestedClass(newName, true);
+            if (conflictingClass != null) {
+                conflicts.putValue(
+                    conflictingClass,
+                    LocalizeValue.localizeTODO("A class named '" + newName + "' is already defined in class '" + pyClass.getName() + "'")
+                );
+            }
+            PyFunction conflictingFunction = pyClass.findMethodByName(newName, true, null);
+            if (conflictingFunction != null) {
+                conflicts.putValue(
+                    conflictingFunction,
+                    LocalizeValue.localizeTODO("A function named '" + newName + "' is already defined in class '" + pyClass.getName() + "'")
+                );
+            }
+            PyTargetExpression conflictingAttribute = pyClass.findClassAttribute(newName, true, null);
+            if (conflictingAttribute != null) {
+                conflicts.putValue(
+                    conflictingAttribute,
+                    LocalizeValue.localizeTODO("An attribute named '" + newName + "' is already defined in class '" + pyClass.getName() + "'")
+                );
+            }
+        }
+    }
 
-	@Override
-	public String getHelpID(PsiElement element)
-	{
-		return "python.reference.rename";
-	}
+    @Override
+    public String getHelpID(PsiElement element) {
+        return "python.reference.rename";
+    }
 }
