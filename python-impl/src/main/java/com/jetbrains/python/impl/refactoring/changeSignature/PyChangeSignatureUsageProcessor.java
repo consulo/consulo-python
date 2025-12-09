@@ -32,6 +32,7 @@ import consulo.language.editor.refactoring.changeSignature.ParameterInfo;
 import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.editor.refactoring.rename.RenameUtil;
 import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.usage.UsageInfo;
 import consulo.util.collection.MultiMap;
@@ -42,7 +43,7 @@ import jakarta.annotation.Nonnull;
 import java.util.*;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 @ExtensionImpl(id = "Python")
 public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProcessor {
@@ -68,15 +69,15 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
 
     @Nonnull
     @Override
-    public MultiMap<PsiElement, String> findConflicts(@Nonnull ChangeInfo info, SimpleReference<UsageInfo[]> refUsages) {
-        MultiMap<PsiElement, String> conflicts = new MultiMap<>();
+    public MultiMap<PsiElement, LocalizeValue> findConflicts(@Nonnull ChangeInfo info, SimpleReference<UsageInfo[]> refUsages) {
+        MultiMap<PsiElement, LocalizeValue> conflicts = new MultiMap<>();
         if (info instanceof PyChangeInfo pyChangeInfo && info.isNameChanged()) {
             PyFunction function = pyChangeInfo.getMethod();
             PyClass clazz = function.getContainingClass();
             if (clazz != null && clazz.findMethodByName(info.getNewName(), true, null) != null) {
                 conflicts.putValue(
                     function,
-                    RefactoringLocalize.method0IsAlreadyDefinedInThe1(info.getNewName(), "class " + clazz.getQualifiedName()).get()
+                    RefactoringLocalize.method0IsAlreadyDefinedInThe1(info.getNewName(), "class " + clazz.getQualifiedName())
                 );
             }
         }
