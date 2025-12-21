@@ -15,65 +15,67 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.codeEditor.Editor;
-import consulo.project.Project;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringHandler;
 import com.jetbrains.python.impl.refactoring.classes.PyMemberInfoStorage;
 import com.jetbrains.python.impl.vp.Creator;
 import com.jetbrains.python.impl.vp.ViewPresenterUtils;
+import com.jetbrains.python.psi.PyClass;
+import consulo.codeEditor.Editor;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import jakarta.annotation.Nonnull;
 
 /**
- * @author: Dennis.Ushakov
+ * @author Dennis.Ushakov
  */
-public class PyPullUpHandler extends PyClassRefactoringHandler
-{
-	public static final String REFACTORING_NAME = PyBundle.message("refactoring.pull.up.dialog.title");
+public class PyPullUpHandler extends PyClassRefactoringHandler {
+    public static final LocalizeValue REFACTORING_NAME = PyLocalize.refactoringPullUpDialogTitle();
 
-	@Override
-	protected void doRefactorImpl(@Nonnull final Project project, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final Editor editor)
-	{
-		//TODO: Move to vp (presenter) as well
-		final PyPullUpNothingToRefactorMessage nothingToRefactor = new PyPullUpNothingToRefactorMessage(project, editor, classUnderRefactoring);
+    @Override
+    protected void doRefactorImpl(
+        @Nonnull final Project project,
+        @Nonnull final PyClass classUnderRefactoring,
+        @Nonnull final PyMemberInfoStorage infoStorage,
+        @Nonnull Editor editor
+    ) {
+        //TODO: Move to vp (presenter) as well
+        final PyPullUpNothingToRefactorMessage nothingToRefactor =
+            new PyPullUpNothingToRefactorMessage(project, editor, classUnderRefactoring);
 
-		if(PyAncestorsUtils.getAncestorsUnderUserControl(classUnderRefactoring).isEmpty())
-		{
-			nothingToRefactor.showNothingToRefactor();
-			return;
-		}
-
-
-		ViewPresenterUtils.linkViewWithPresenterAndLaunch(PyPullUpPresenter.class, PyPullUpView.class, new Creator<PyPullUpView, PyPullUpPresenter>()
-		{
-			@Nonnull
-			@Override
-			public PyPullUpPresenter createPresenter(@Nonnull final PyPullUpView view)
-			{
-				return new PyPullUpPresenterImpl(view, infoStorage, classUnderRefactoring);
-			}
-
-			@Nonnull
-			@Override
-			public PyPullUpView createView(@Nonnull final PyPullUpPresenter presenter)
-			{
-				return new PyPullUpViewSwingImpl(project, presenter, classUnderRefactoring, nothingToRefactor);
-			}
-		});
-	}
+        if (PyAncestorsUtils.getAncestorsUnderUserControl(classUnderRefactoring).isEmpty()) {
+            nothingToRefactor.showNothingToRefactor();
+            return;
+        }
 
 
-	@Override
-	protected String getTitle()
-	{
-		return REFACTORING_NAME;
-	}
+        ViewPresenterUtils.linkViewWithPresenterAndLaunch(
+            PyPullUpPresenter.class,
+            PyPullUpView.class,
+            new Creator<>() {
+                @Nonnull
+                @Override
+                public PyPullUpPresenter createPresenter(@Nonnull PyPullUpView view) {
+                    return new PyPullUpPresenterImpl(view, infoStorage, classUnderRefactoring);
+                }
 
-	@Override
-	protected String getHelpId()
-	{
-		return "refactoring.pullMembersUp";
-	}
+                @Nonnull
+                @Override
+                public PyPullUpView createView(@Nonnull PyPullUpPresenter presenter) {
+                    return new PyPullUpViewSwingImpl(project, presenter, classUnderRefactoring, nothingToRefactor);
+                }
+            }
+        );
+    }
+
+    @Nonnull
+    @Override
+    protected LocalizeValue getTitle() {
+        return REFACTORING_NAME;
+    }
+
+    @Override
+    protected String getHelpId() {
+        return "refactoring.pullMembersUp";
+    }
 }

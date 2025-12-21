@@ -15,58 +15,54 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
-import java.util.Collection;
-
+import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
+import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMembersRefactoringBaseProcessor;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import consulo.localize.LocalizeValue;
+import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
-import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMembersRefactoringBaseProcessor;
+import java.util.Collection;
 
 /**
  * @author Ilya.Kazakevich
  */
-class PyPullUpProcessor extends PyMembersRefactoringBaseProcessor
-{
+class PyPullUpProcessor extends PyMembersRefactoringBaseProcessor {
+    PyPullUpProcessor(
+        @Nonnull PyClass from,
+        @Nonnull PyClass to,
+        @Nonnull Collection<PyMemberInfo<PyElement>> membersToMove
+    ) {
+        super(from.getProject(), membersToMove, from, to);
+    }
 
-	PyPullUpProcessor(@Nonnull final PyClass from, @Nonnull final PyClass to, @Nonnull final Collection<PyMemberInfo<PyElement>> membersToMove)
-	{
-		super(from.getProject(), membersToMove, from, to);
-	}
+    @Nonnull
+    @Override
+    protected LocalizeValue getCommandName() {
+        return PyPullUpHandler.REFACTORING_NAME;
+    }
 
+    @Override
+    public String getProcessedElementsHeader() {
+        return PyLocalize.refactoringPullUpDialogMoveMembersToClass().get();
+    }
 
-	@Override
-	protected String getCommandName()
-	{
-		return PyPullUpHandler.REFACTORING_NAME;
-	}
+    @Override
+    public String getCodeReferencesText(int usagesCount, int filesCount) {
+        return PyLocalize.refactoringPullUpDialogMembersToBeMoved().get();
+    }
 
-	@Override
-	public String getProcessedElementsHeader()
-	{
-		return PyBundle.message("refactoring.pull.up.dialog.move.members.to.class");
-	}
+    @Nullable
+    @Override
+    public String getCommentReferencesText(int usagesCount, int filesCount) {
+        return getCodeReferencesText(usagesCount, filesCount);
+    }
 
-	@Override
-	public String getCodeReferencesText(final int usagesCount, final int filesCount)
-	{
-		return PyBundle.message("refactoring.pull.up.dialog.members.to.be.moved");
-	}
-
-	@Nullable
-	@Override
-	public String getCommentReferencesText(final int usagesCount, final int filesCount)
-	{
-		return getCodeReferencesText(usagesCount, filesCount);
-	}
-
-	@Nullable
-	@Override
-	protected String getRefactoringId()
-	{
-		return "refactoring.python.pull.up";
-	}
+    @Nullable
+    @Override
+    protected String getRefactoringId() {
+        return "refactoring.python.pull.up";
+    }
 }

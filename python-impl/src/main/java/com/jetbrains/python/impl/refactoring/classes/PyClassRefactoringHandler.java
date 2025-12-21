@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.PyClass;
 import consulo.codeEditor.CaretModel;
@@ -28,6 +27,7 @@ import consulo.language.editor.refactoring.action.RefactoringActionHandler;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
@@ -61,7 +61,7 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
             CommonRefactoringUtil.showErrorHint(
                 project,
                 editor,
-                PyLocalize.refactoringIntroduceSelectionError().get(),
+                PyLocalize.refactoringIntroduceSelectionError(),
                 getTitle(),
                 "members.pull.up"
             );
@@ -89,7 +89,7 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
         CommonRefactoringUtil.checkReadOnlyStatus(project, file);
 
         PyClass clazz = PyUtil.getContainingClassOrSelf(element1);
-        if (!inClass(clazz, project, editor, "refactoring.pull.up.error.cannot.perform.refactoring.not.inside.class")) {
+        if (!inClass(clazz, project, editor, PyLocalize.refactoringPullUpErrorCannotPerformRefactoringNotInsideClass())) {
             return;
         }
         assert clazz != null;
@@ -107,15 +107,16 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
     );
 
     @RequiredUIAccess
-    protected boolean inClass(@Nullable PyClass clazz, @Nonnull Project project, Editor editor, String errorMessageId) {
+    protected boolean inClass(@Nullable PyClass clazz, @Nonnull Project project, Editor editor, LocalizeValue errorMessage) {
         if (clazz == null) {
-            CommonRefactoringUtil.showErrorHint(project, editor, PyBundle.message(errorMessageId), getTitle(), getHelpId());
+            CommonRefactoringUtil.showErrorHint(project, editor, errorMessage, getTitle(), getHelpId());
             return false;
         }
         return true;
     }
 
-    protected abstract String getTitle();
+    @Nonnull
+    protected abstract LocalizeValue getTitle();
 
     protected abstract String getHelpId();
 

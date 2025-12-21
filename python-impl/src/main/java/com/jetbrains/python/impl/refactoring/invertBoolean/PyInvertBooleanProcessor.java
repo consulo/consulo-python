@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.invertBoolean;
 
 import com.jetbrains.python.PyNames;
@@ -29,6 +28,7 @@ import consulo.language.psi.*;
 import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.usage.MoveRenameUsageInfo;
 import consulo.usage.UsageInfo;
@@ -39,7 +39,7 @@ import jakarta.annotation.Nonnull;
 import java.util.*;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     private PsiElement myElement;
@@ -48,6 +48,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     private final Map<UsageInfo, SmartPsiElementPointer> myToInvert = new HashMap<>();
     private final SmartPointerManager mySmartPointerManager;
 
+    @RequiredReadAction
     public PyInvertBooleanProcessor(@Nonnull PsiElement namedElement, @Nonnull String newName) {
         super(namedElement.getProject());
         myElement = namedElement;
@@ -94,7 +95,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         }
 
         for (SmartPsiElementPointer pointer : toInvert) {
-            PyExpression expression = (PyExpression)pointer.getElement();
+            PyExpression expression = (PyExpression) pointer.getElement();
             if (!expressionsToUsages.containsKey(expression) && expression != null) {
                 UsageInfo usageInfo = new UsageInfo(expression);
                 expressionsToUsages.put(expression, usageInfo);
@@ -141,7 +142,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
 
     @Nonnull
     private static UsageInfo[] extractUsagesForElement(@Nonnull PsiElement element, @Nonnull UsageInfo[] usages) {
-        ArrayList<UsageInfo> extractedUsages = new ArrayList<>(usages.length);
+        List<UsageInfo> extractedUsages = new ArrayList<>(usages.length);
         for (UsageInfo usage : usages) {
             if (usage instanceof MoveRenameUsageInfo usageInfo && element.equals(usageInfo.getReferencedElement())) {
                 extractedUsages.add(usageInfo);
@@ -207,7 +208,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
 
     @Nonnull
     @Override
-    protected String getCommandName() {
-        return RefactoringLocalize.invertBooleanTitle().get();
+    protected LocalizeValue getCommandName() {
+        return RefactoringLocalize.invertBooleanTitle();
     }
 }

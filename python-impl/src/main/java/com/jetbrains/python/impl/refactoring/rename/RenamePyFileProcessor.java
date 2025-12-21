@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.rename;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyImportStatementBase;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.refactoring.rename.RenamePsiFileProcessorBase;
@@ -29,11 +29,13 @@ import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.ResolveResult;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.usage.UsageInfo;
 import consulo.util.io.FileUtil;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,69 +46,72 @@ import java.util.Map;
  */
 @ExtensionImpl(id = "pyFile")
 public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
-  @Override
-  public boolean canProcessElement(@Nonnull PsiElement element) {
-    return element instanceof PyFile;
-  }
-
-  @Override
-  public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
-    PyFile file = (PyFile) element;
-    if (file.getName().equals(PyNames.INIT_DOT_PY)) {
-      return file.getParent();
+    @Override
+    public boolean canProcessElement(@Nonnull PsiElement element) {
+        return element instanceof PyFile;
     }
-    return element;
-  }
 
-  @Nonnull
-  @Override
-  public Collection<PsiReference> findReferences(PsiElement element) {
-    final List<PsiReference> results = new ArrayList<PsiReference>();
-    for (PsiReference reference : super.findReferences(element)) {
-      if (isNotAliasedInImportElement(reference)) {
-        results.add(reference);
-      }
+    @Override
+    @RequiredReadAction
+    public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
+        PyFile file = (PyFile) element;
+        if (PyNames.INIT_DOT_PY.equals(file.getName())) {
+            return file.getParent();
+        }
+        return element;
     }
-    return results;
-  }
 
-  @Override
-  public void findCollisions(PsiElement element,
-                             final String newName,
-                             Map<? extends PsiElement, String> allRenames,
-                             List<UsageInfo> result) {
-    final String newFileName = FileUtil.getNameWithoutExtension(newName);
-    if (!PyNames.isIdentifier(newFileName)) {
-      List<UsageInfo> usages = new ArrayList<UsageInfo>(result);
-      for (UsageInfo usageInfo : usages) {
-        final PyImportStatementBase importStatement = PsiTreeUtil.getParentOfType(usageInfo.getElement(), PyImportStatementBase.class);
-        if (importStatement != null) {
-          result.add(new UnresolvableCollisionUsageInfo(importStatement, element) {
-            @Override
-            public String getDescription() {
-              return "The name '" + newFileName + "' is not a valid Python identifier. Cannot update import statement in '" +
-                     importStatement.getContainingFile().getName() + "'";
+    @Nonnull
+    @Override
+    @RequiredReadAction
+    public Collection<PsiReference> findReferences(PsiElement element) {
+        List<PsiReference> results = new ArrayList<>();
+        for (PsiReference reference : super.findReferences(element)) {
+            if (isNotAliasedInImportElement(reference)) {
+                results.add(reference);
             }
-          });
         }
-      }
+        return results;
     }
-  }
 
-  private static boolean isNotAliasedInImportElement(@Nonnull PsiReference reference) {
-    boolean include = true;
-    if (reference instanceof PsiPolyVariantReference) {
-      final ResolveResult[] results = ((PsiPolyVariantReference)reference).multiResolve(false);
-      for (ResolveResult result : results) {
-        final PsiElement resolved = result.getElement();
-        if (resolved instanceof PyImportElement) {
-          if (((PyImportElement)resolved).getAsName() != null) {
-            include = false;
-            break;
-          }
+    @Override
+    @RequiredReadAction
+    public void findCollisions(
+        PsiElement element,
+        String newName,
+        Map<? extends PsiElement, String> allRenames,
+        List<UsageInfo> result
+    ) {
+        final String newFileName = FileUtil.getNameWithoutExtension(newName);
+        if (!PyNames.isIdentifier(newFileName)) {
+            List<UsageInfo> usages = new ArrayList<>(result);
+            for (UsageInfo usageInfo : usages) {
+                final PyImportStatementBase importStatement =
+                    PsiTreeUtil.getParentOfType(usageInfo.getElement(), PyImportStatementBase.class);
+                if (importStatement != null) {
+                    result.add(new UnresolvableCollisionUsageInfo(importStatement, element) {
+                        @Override
+                        public LocalizeValue getDescription() {
+                            return LocalizeValue.localizeTODO(
+                                "The name '" + newFileName + "' is not a valid Python identifier. Cannot update import statement in '" +
+                                    importStatement.getContainingFile().getName() + "'"
+                            );
+                        }
+                    });
+                }
+            }
         }
-      }
     }
-    return include;
-  }
+
+    @RequiredReadAction
+    private static boolean isNotAliasedInImportElement(@Nonnull PsiReference reference) {
+        if (reference instanceof PsiPolyVariantReference polyRef) {
+            for (ResolveResult result : polyRef.multiResolve(false)) {
+                if (result.getElement() instanceof PyImportElement importElem && importElem.getAsName() != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

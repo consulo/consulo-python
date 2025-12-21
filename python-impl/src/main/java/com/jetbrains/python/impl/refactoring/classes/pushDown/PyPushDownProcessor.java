@@ -15,77 +15,76 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pushDown;
 
-import java.util.Collection;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
-import consulo.project.Project;
-import consulo.language.editor.refactoring.RefactoringBundle;
-import consulo.usage.UsageViewBundle;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.impl.psi.search.PyClassInheritorsSearch;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMembersRefactoringBaseProcessor;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.usage.localize.UsageLocalize;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
+import java.util.Collection;
 
 /**
  * @author Dennis.Ushakov
  */
-public class PyPushDownProcessor extends PyMembersRefactoringBaseProcessor
-{
+public class PyPushDownProcessor extends PyMembersRefactoringBaseProcessor {
+    private static final LocalizeValue HEADER = RefactoringLocalize.pushDownMembersElementsHeader();
 
-	private static final String HEADER = RefactoringBundle.message("push.down.members.elements.header", "");
+    public PyPushDownProcessor(
+        @Nonnull Project project,
+        @Nonnull Collection<PyMemberInfo<PyElement>> membersToMove,
+        @Nonnull PyClass from
+    ) {
+        super(project, membersToMove, from, getChildren(from));
+    }
 
-	public PyPushDownProcessor(@Nonnull final Project project, @Nonnull final Collection<PyMemberInfo<PyElement>> membersToMove, @Nonnull final PyClass from)
-	{
-		super(project, membersToMove, from, getChildren(from));
-	}
+    @Nonnull
+    private static PyClass[] getChildren(@Nonnull PyClass from) {
+        Collection<PyClass> all = getInheritors(from);
+        return all.toArray(new PyClass[all.size()]);
+    }
 
-	@Nonnull
-	private static PyClass[] getChildren(@Nonnull final PyClass from)
-	{
-		final Collection<PyClass> all = getInheritors(from);
-		return all.toArray(new PyClass[all.size()]);
-	}
+    /**
+     * @param from class to check for inheritors
+     * @return inheritors of class
+     */
+    @Nonnull
+    static Collection<PyClass> getInheritors(@Nonnull PyClass from) {
+        return PyClassInheritorsSearch.search(from, false).findAll();
+    }
 
-	/**
-	 * @param from class to check for inheritors
-	 * @return inheritors of class
-	 */
-	@Nonnull
-	static Collection<PyClass> getInheritors(@Nonnull final PyClass from)
-	{
-		return PyClassInheritorsSearch.search(from, false).findAll();
-	}
+    @Override
+    public String getProcessedElementsHeader() {
+        return HEADER.get();
+    }
 
+    @Override
+    public String getCodeReferencesText(int usagesCount, int filesCount) {
+        return RefactoringLocalize.classesToPushDownMembersTo(
+            " (" + UsageLocalize.occurenceInfoReference(usagesCount, filesCount) + ")"
+        ).get();
+    }
 
-	public String getProcessedElementsHeader()
-	{
-		return HEADER;
-	}
+    @Nullable
+    @Override
+    public String getCommentReferencesText(int usagesCount, int filesCount) {
+        return null;
+    }
 
-	public String getCodeReferencesText(int usagesCount, int filesCount)
-	{
-		return RefactoringBundle.message("classes.to.push.down.members.to", UsageViewBundle.getReferencesString(usagesCount, filesCount));
-	}
+    @Nonnull
+    @Override
+    protected LocalizeValue getCommandName() {
+        return PyPushDownHandler.REFACTORING_NAME;
+    }
 
-	@Nullable
-	public String getCommentReferencesText(int usagesCount, int filesCount)
-	{
-		return null;
-	}
-
-	@Override
-	protected String getCommandName()
-	{
-		return PyPushDownHandler.REFACTORING_NAME;
-	}
-
-	@Nullable
-	@Override
-	protected String getRefactoringId()
-	{
-		return "refactoring.python.push.down";
-	}
+    @Nullable
+    @Override
+    protected String getRefactoringId() {
+        return "refactoring.python.push.down";
+    }
 }
