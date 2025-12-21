@@ -15,67 +15,74 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
-import jakarta.annotation.Nonnull;
-
-import consulo.codeEditor.Editor;
-import consulo.language.editor.refactoring.RefactoringBundle;
-import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
-import consulo.project.Project;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringHandler;
 import com.jetbrains.python.impl.refactoring.classes.PyMemberInfoStorage;
 import com.jetbrains.python.impl.vp.Creator;
 import com.jetbrains.python.impl.vp.ViewPresenterUtils;
+import com.jetbrains.python.psi.PyClass;
+import consulo.codeEditor.Editor;
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
+import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.annotation.RequiredUIAccess;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Dennis.Ushakov
  */
-public class PyExtractSuperclassHandler extends PyClassRefactoringHandler
-{
-	public static final String REFACTORING_NAME = RefactoringBundle.message("extract.superclass.title");
+public class PyExtractSuperclassHandler extends PyClassRefactoringHandler {
+    public static final LocalizeValue REFACTORING_NAME = RefactoringLocalize.extractSuperclassTitle();
 
+    @Override
+    @RequiredUIAccess
+    protected void doRefactorImpl(
+        @Nonnull final Project project,
+        @Nonnull final PyClass classUnderRefactoring,
+        @Nonnull final PyMemberInfoStorage infoStorage,
+        @Nonnull Editor editor
+    ) {
+        //TODO: Move to presenter
+        if (PyUtil.filterOutObject(infoStorage.getClassMemberInfos(classUnderRefactoring)).isEmpty()) {
+            CommonRefactoringUtil.showErrorHint(
+                project,
+                editor,
+                PyLocalize.refactoringExtractSuperClassNoMembersAllowed(),
+                RefactoringLocalize.extractSuperclassElementsHeader(),
+                null
+            );
+            return;
+        }
 
-	@Override
-	protected void doRefactorImpl(@Nonnull final Project project, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final Editor editor)
-	{
-		//TODO: Move to presenter
-		if(PyUtil.filterOutObject(infoStorage.getClassMemberInfos(classUnderRefactoring)).isEmpty())
-		{
-			CommonRefactoringUtil.showErrorHint(project, editor, PyBundle.message("refactoring.extract.super.class.no.members.allowed"), RefactoringBundle.message("extract.superclass.elements" +
-					".header"), null);
-			return;
-		}
+        ViewPresenterUtils.linkViewWithPresenterAndLaunch(
+            PyExtractSuperclassPresenter.class,
+            PyExtractSuperclassView.class,
+            new Creator<>() {
+                @Nonnull
+                @Override
+                public PyExtractSuperclassPresenter createPresenter(@Nonnull PyExtractSuperclassView view) {
+                    return new PyExtractSuperclassPresenterImpl(view, classUnderRefactoring, infoStorage);
+                }
 
-		ViewPresenterUtils.linkViewWithPresenterAndLaunch(PyExtractSuperclassPresenter.class, PyExtractSuperclassView.class, new Creator<PyExtractSuperclassView, PyExtractSuperclassPresenter>()
-		{
-			@Nonnull
-			@Override
-			public PyExtractSuperclassPresenter createPresenter(@Nonnull final PyExtractSuperclassView view)
-			{
-				return new PyExtractSuperclassPresenterImpl(view, classUnderRefactoring, infoStorage);
-			}
+                @Nonnull
+                @Override
+                public PyExtractSuperclassView createView(@Nonnull PyExtractSuperclassPresenter presenter) {
+                    return new PyExtractSuperclassViewSwingImpl(classUnderRefactoring, project, presenter);
+                }
+            }
+        );
+    }
 
-			@Nonnull
-			@Override
-			public PyExtractSuperclassView createView(@Nonnull final PyExtractSuperclassPresenter presenter)
-			{
-				return new PyExtractSuperclassViewSwingImpl(classUnderRefactoring, project, presenter);
-			}
-		});
-	}
+    @Nonnull
+    @Override
+    protected LocalizeValue getTitle() {
+        return REFACTORING_NAME;
+    }
 
-
-	@Override
-	protected String getTitle()
-	{
-		return REFACTORING_NAME;
-	}
-
-	@Override
-	protected String getHelpId()
-	{
-		return "refactoring.extractSuperclass";
-	}
+    @Override
+    protected String getHelpId() {
+        return "refactoring.extractSuperclass";
+    }
 }

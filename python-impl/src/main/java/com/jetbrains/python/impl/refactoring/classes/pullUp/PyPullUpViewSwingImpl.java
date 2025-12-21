@@ -15,122 +15,108 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersBasedViewSwingImpl;
+import com.jetbrains.python.impl.refactoring.classes.ui.PyClassCellRenderer;
+import com.jetbrains.python.psi.PyClass;
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
+import consulo.project.Project;
+import consulo.ui.ex.awt.ComboBox;
+import consulo.ui.ex.awt.JBUI;
+import jakarta.annotation.Nonnull;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import jakarta.annotation.Nonnull;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JLabel;
-
-import consulo.language.editor.refactoring.RefactoringBundle;
-import consulo.project.Project;
-import consulo.ui.ex.awt.ComboBox;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersBasedViewSwingImpl;
-import com.jetbrains.python.impl.refactoring.classes.ui.PyClassCellRenderer;
-
-
 /**
  * @author Ilya.Kazakevich
- *         Pull up view implementation
+ * Pull up view implementation
  */
-class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter, PyPullUpViewInitializationInfo> implements PyPullUpView, ItemListener
-{
-	@Nonnull
-	private final ComboBox myParentsCombo;
-	@Nonnull
-	private final DefaultComboBoxModel myParentsComboBoxModel;
-	@Nonnull
-	private final PyPullUpNothingToRefactorMessage myNothingToRefactorMessage;
+class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter, PyPullUpViewInitializationInfo> implements PyPullUpView, ItemListener {
+    @Nonnull
+    private final ComboBox myParentsCombo;
+    @Nonnull
+    private final DefaultComboBoxModel<PyClass> myParentsComboBoxModel;
+    @Nonnull
+    private final PyPullUpNothingToRefactorMessage myNothingToRefactorMessage;
 
-	/**
-	 * @param project                  project where refactoring takes place
-	 * @param presenter                presenter for this view
-	 * @param clazz                    class to refactor
-	 * @param nothingToRefactorMessage class that displays message "nothing to refactor" when presenter calls {@link #showNothingToRefactor()}
-	 */
-	PyPullUpViewSwingImpl(@Nonnull final Project project,
-			@Nonnull final PyPullUpPresenter presenter,
-			@Nonnull final PyClass clazz,
-			@Nonnull final PyPullUpNothingToRefactorMessage nothingToRefactorMessage)
-	{
-		super(project, presenter, RefactoringBundle.message("members.to.be.pulled.up"), true);
-		setTitle(PyPullUpHandler.REFACTORING_NAME);
-		myNothingToRefactorMessage = nothingToRefactorMessage;
+    /**
+     * @param project                  project where refactoring takes place
+     * @param presenter                presenter for this view
+     * @param clazz                    class to refactor
+     * @param nothingToRefactorMessage class that displays message "nothing to refactor" when presenter calls {@link #showNothingToRefactor()}
+     */
+    PyPullUpViewSwingImpl(
+        @Nonnull Project project,
+        @Nonnull PyPullUpPresenter presenter,
+        @Nonnull PyClass clazz,
+        @Nonnull PyPullUpNothingToRefactorMessage nothingToRefactorMessage
+    ) {
+        super(project, presenter, RefactoringLocalize.membersToBePulledUp().get(), true);
+        setTitle(PyPullUpHandler.REFACTORING_NAME);
+        myNothingToRefactorMessage = nothingToRefactorMessage;
 
-		myParentsComboBoxModel = new DefaultComboBoxModel();
+        myParentsComboBoxModel = new DefaultComboBoxModel<>();
 
-		myParentsCombo = new ComboBox(myParentsComboBoxModel);
-		myParentsCombo.setRenderer(new PyClassCellRenderer());
+        myParentsCombo = new ComboBox(myParentsComboBoxModel);
+        myParentsCombo.setRenderer(new PyClassCellRenderer());
 
-		final JLabel mainLabel = new JLabel();
-		mainLabel.setText(RefactoringBundle.message("pull.up.members.to", PyClassCellRenderer.getClassText(clazz)));
-		mainLabel.setLabelFor(myParentsCombo);
+        JLabel mainLabel = new JLabel();
+        mainLabel.setText(RefactoringLocalize.pullUpMembersTo(PyClassCellRenderer.getClassText(clazz)).get());
+        mainLabel.setLabelFor(myParentsCombo);
 
+        myTopPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbConstraints = new GridBagConstraints();
 
-		myTopPanel.setLayout(new GridBagLayout());
-		final GridBagConstraints gbConstraints = new GridBagConstraints();
+        gbConstraints.insets = JBUI.insets(4, 8);
+        gbConstraints.weighty = 1;
+        gbConstraints.weightx = 1;
+        gbConstraints.gridy = 0;
+        gbConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gbConstraints.fill = GridBagConstraints.BOTH;
+        gbConstraints.anchor = GridBagConstraints.WEST;
+        myTopPanel.add(mainLabel, gbConstraints);
+        myTopPanel.add(mainLabel, gbConstraints);
+        gbConstraints.gridy++;
+        myTopPanel.add(myParentsCombo, gbConstraints);
 
-		gbConstraints.insets = new Insets(4, 8, 4, 8);
-		gbConstraints.weighty = 1;
-		gbConstraints.weightx = 1;
-		gbConstraints.gridy = 0;
-		gbConstraints.gridwidth = GridBagConstraints.REMAINDER;
-		gbConstraints.fill = GridBagConstraints.BOTH;
-		gbConstraints.anchor = GridBagConstraints.WEST;
-		myTopPanel.add(mainLabel, gbConstraints);
-		myTopPanel.add(mainLabel, gbConstraints);
-		gbConstraints.gridy++;
-		myTopPanel.add(myParentsCombo, gbConstraints);
+        gbConstraints.gridy++;
+        myCenterPanel.add(myPyMemberSelectionPanel, BorderLayout.CENTER);
+    }
 
-		gbConstraints.gridy++;
-		myCenterPanel.add(myPyMemberSelectionPanel, BorderLayout.CENTER);
-	}
+    @Nonnull
+    @Override
+    protected String getHelpId() {
+        return "python.reference.pullMembersUp";
+    }
 
-	@Override
-	@Nonnull
-	protected String getHelpId()
-	{
-		return "python.reference.pullMembersUp";
-	}
+    @Nonnull
+    @Override
+    public PyClass getSelectedParent() {
+        return (PyClass) myParentsComboBoxModel.getSelectedItem();
+    }
 
+    @Override
+    public void showNothingToRefactor() {
+        myNothingToRefactorMessage.showNothingToRefactor();
+    }
 
-	@Nonnull
-	@Override
-	public PyClass getSelectedParent()
-	{
-		return (PyClass) myParentsComboBoxModel.getSelectedItem();
-	}
+    @Override
+    public void configure(@Nonnull PyPullUpViewInitializationInfo configInfo) {
+        super.configure(configInfo);
+        for (PyClass parent : configInfo.getParents()) {
+            myParentsComboBoxModel.addElement(parent);
+        }
+        myPresenter.parentChanged();
+        myParentsCombo.addItemListener(this);
+    }
 
-	@Override
-	public void showNothingToRefactor()
-	{
-		myNothingToRefactorMessage.showNothingToRefactor();
-	}
-
-	@Override
-	public void configure(@Nonnull final PyPullUpViewInitializationInfo configInfo)
-	{
-		super.configure(configInfo);
-		for(final PyClass parent : configInfo.getParents())
-		{
-			myParentsComboBoxModel.addElement(parent);
-		}
-		myPresenter.parentChanged();
-		myParentsCombo.addItemListener(this);
-	}
-
-	@Override
-	public void itemStateChanged(final ItemEvent e)
-	{
-		if(e.getStateChange() == ItemEvent.SELECTED)
-		{
-			myPyMemberSelectionPanel.redraw();
-			myPresenter.parentChanged();
-		}
-	}
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+            myPyMemberSelectionPanel.redraw();
+            myPresenter.parentChanged();
+        }
+    }
 }
