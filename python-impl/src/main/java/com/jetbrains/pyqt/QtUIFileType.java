@@ -30,6 +30,7 @@ public class QtUIFileType extends QtFileType implements FileType {
     super("Qt UI file", LocalizeValue.localizeTODO("Qt UI Designer form files"), "ui", PythonIcons.Pyqt.UiForm);
   }
 
+  @Override
   protected String getToolName() {
     return "designer";
   }

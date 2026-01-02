@@ -27,6 +27,7 @@ import consulo.language.util.ModuleUtilCore;
 import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.Messages;
 import consulo.ui.image.Image;
 import consulo.virtualFileSystem.VirtualFile;
@@ -92,11 +93,13 @@ public abstract class QtFileType implements FileType, INativeFileType {
     return null;
   }
 
+  @RequiredUIAccess
   @Override
-  public boolean openFileInAssociatedApplication(ComponentManager project, @Nonnull VirtualFile file) {
+  public void openFileInAssociatedApplication(ComponentManager project, @Nonnull VirtualFile file) {
     String qtTool = findQtTool(ModuleUtilCore.findModuleForFile(file, (Project)project), getToolName());
     if (qtTool == null) {
-      return false;
+      Messages.showErrorDialog((Project) project, "Can't find Qt Designer", "Error");
+      return;
     }
     try {
       Runtime.getRuntime().exec(new String[]{qtTool, file.getPath()});
@@ -104,7 +107,6 @@ public abstract class QtFileType implements FileType, INativeFileType {
     catch (IOException e) {
       Messages.showErrorDialog((Project)project, "Failed to run Qt Designer: " + e.getMessage(), "Error");
     }
-    return true;
   }
 
   public static String findQtTool(Module module, String toolName) {
