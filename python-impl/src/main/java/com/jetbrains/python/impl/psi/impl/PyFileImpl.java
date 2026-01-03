@@ -139,7 +139,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         @Nonnull
         private List<RatedResolveResult> multiResolve(@Nonnull String name) {
             synchronized (myNameDefinerNegativeCache) {
-                long modCount = myModificationTracker.getOutOfCodeBlockModificationCount();
+                long modCount = myModificationTracker.getModificationCount();
                 if (modCount != myNameDefinerOOCBModCount) {
                     myNameDefinerNegativeCache.clear();
                     myNameDefinerOOCBModCount = modCount;
@@ -204,7 +204,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
     public PyFileImpl(FileViewProvider viewProvider, Language language) {
         super(viewProvider, language);
         myFutureFeatures = new HashMap<>();
-        myModificationTracker = PsiModificationTracker.SERVICE.getInstance(getProject());
+        myModificationTracker = PsiModificationTracker.getInstance(getProject());
     }
 
     @Override
