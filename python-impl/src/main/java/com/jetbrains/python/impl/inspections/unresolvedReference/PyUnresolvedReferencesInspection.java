@@ -558,10 +558,10 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                     // TODO: mark the node so that future references pointing to it won't result in a error, but in a warning
                 }
             }
-            if (reference instanceof PsiReferenceEx referenceEx && description == LocalizeValue.empty()) {
+            if (reference instanceof PsiReferenceEx referenceEx && description.isEmpty()) {
                 description = LocalizeValue.localizeTODO(referenceEx.getUnresolvedDescription());
             }
-            if (description == LocalizeValue.empty()) {
+            if (description.isEmpty()) {
                 boolean markedQualified = false;
                 if (element instanceof PyQualifiedExpression) {
                     // TODO: Add __qualname__ for Python 3.3 to the skeleton of <class 'object'>, introduce a pseudo-class skeleton for
