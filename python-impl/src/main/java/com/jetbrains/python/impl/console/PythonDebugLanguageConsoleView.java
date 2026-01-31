@@ -20,8 +20,8 @@ import consulo.codeEditor.Editor;
 import consulo.content.bundle.Sdk;
 import consulo.execution.icon.ExecutionIconGroup;
 import consulo.execution.ui.console.ConsoleView;
+import consulo.execution.ui.console.DuplexConsoleView;
 import consulo.execution.ui.console.TextConsoleBuilderFactory;
-import consulo.ide.impl.idea.execution.impl.ConsoleViewImpl;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import jakarta.annotation.Nonnull;
@@ -30,7 +30,7 @@ import jakarta.annotation.Nullable;
 /**
  * @author traff
  */
-public class PythonDebugLanguageConsoleView extends consulo.ide.impl.idea.execution.console.DuplexConsoleView<ConsoleView, PythonConsoleView> implements PyCodeExecutor {
+public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleView, PythonConsoleView> implements PyCodeExecutor {
 
   public static final String DEBUG_CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))";
 
@@ -58,12 +58,8 @@ public class PythonDebugLanguageConsoleView extends consulo.ide.impl.idea.execut
     return getSecondaryConsoleView();
   }
 
-  public consulo.ide.impl.idea.execution.impl.ConsoleViewImpl getTextConsole() {
-    ConsoleView consoleView = getPrimaryConsoleView();
-    if (consoleView instanceof ConsoleViewImpl) {
-      return (consulo.ide.impl.idea.execution.impl.ConsoleViewImpl)consoleView;
-    }
-    return null;
+  public ConsoleView getTextConsole() {
+    return getPrimaryConsoleView();
   }
 
   @Override

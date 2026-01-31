@@ -52,10 +52,11 @@ import consulo.execution.executor.Executor;
 import consulo.execution.process.ProcessTerminatedListener;
 import consulo.execution.ui.RunContentDescriptor;
 import consulo.execution.ui.console.ConsoleExecuteAction;
+import consulo.execution.ui.console.ConsoleHistoryController;
 import consulo.execution.ui.console.language.LanguageConsoleView;
 import consulo.execution.util.ConsoleTitleGen;
 import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
-import consulo.ide.impl.idea.execution.console.ConsoleHistoryController;
+import consulo.ide.impl.idea.execution.console.ConsoleHistoryControllerImpl;
 import consulo.ide.impl.idea.openapi.actionSystem.ex.ActionImplUtil;
 import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.editor.completion.lookup.LookupManager;
@@ -757,7 +758,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
     protected PydevConsoleExecuteActionHandler createExecuteActionHandler() {
         myConsoleExecuteActionHandler = new PydevConsoleExecuteActionHandler(myConsoleView, myProcessHandler, myPydevConsoleCommunication);
         myConsoleExecuteActionHandler.setEnabled(false);
-        new ConsoleHistoryController(myConsoleType.getTypeId(), "", myConsoleView).install();
+        new ConsoleHistoryControllerImpl(myConsoleType.getTypeId(), "", myConsoleView).install();
         return myConsoleExecuteActionHandler;
     }
 
