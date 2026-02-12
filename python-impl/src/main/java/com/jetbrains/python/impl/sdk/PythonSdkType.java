@@ -119,19 +119,7 @@ public final class PythonSdkType extends SdkType {
 
     @Inject
     PythonSdkType() {
-        super("Python SDK");
-    }
-
-    @Nonnull
-    @Override
-    public Image getIcon() {
-        return PythonPsiIconGroup.python();
-    }
-
-    @Nonnull
-    @Override
-    public String getHelpTopic() {
-        return "reference.project.structure.sdk.python";
+        super("Python SDK", PyLocalize.python(), PythonPsiIconGroup.python());
     }
 
     /**
@@ -474,12 +462,6 @@ public final class PythonSdkType extends SdkType {
 
     public static boolean isSkeletonsPath(String path) {
         return path.contains(SKELETON_DIR_NAME);
-    }
-
-    @Override
-    @Nonnull
-    public String getPresentableName() {
-        return "Python";
     }
 
     @Override

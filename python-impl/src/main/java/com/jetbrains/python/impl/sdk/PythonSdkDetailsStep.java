@@ -264,10 +264,10 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
                         }
                     }
                 }
-                String presentableName = sdkTypes[0].getPresentableName();
+                LocalizeValue displayName = sdkTypes[0].getDisplayName();
                 LocalizeValue message = files.length > 0 && files[0].isDirectory()
-                    ? ProjectLocalize.sdkConfigureHomeInvalidError(presentableName)
-                    : ProjectLocalize.sdkConfigureHomeFileInvalidError(presentableName);
+                    ? ProjectLocalize.sdkConfigureHomeInvalidError(displayName)
+                    : ProjectLocalize.sdkConfigureHomeFileInvalidError(displayName);
                 throw new Exception(message.get());
             }
         };
