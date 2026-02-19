@@ -23,14 +23,15 @@ import com.jetbrains.python.impl.psi.types.PyTypeChecker;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
-import consulo.ide.impl.idea.util.NotNullFunction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.lang.Couple;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;
@@ -38,6 +39,7 @@ import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author Alexey.Ivanov
@@ -126,6 +128,8 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
         return res;
     }
 
+    @Override
+    @RequiredWriteAction
     public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement element =
             PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyBinaryExpression.class);
@@ -136,10 +140,10 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
         final LanguageLevel languageLevel = LanguageLevel.forElement(element);
         final boolean useFormatMethod = languageLevel.isAtLeast(LanguageLevel.PYTHON27);
 
-        NotNullFunction<String, String> escaper = consulo.ide.impl.idea.openapi.util.text.StringUtil.escaper(false, "\"\'\\");
+        Function<String, String> escaper = StringUtil.escaper(false, "\"\'\\");
         StringBuilder stringLiteral = new StringBuilder();
         List<String> parameters = new ArrayList<>();
-        Pair<String, String> quotes = Pair.create("\"", "\"");
+        Pair<String, String> quotes = Couple.of("\"", "\"");
         boolean quotesDetected = false;
         final TypeEvalContext context = TypeEvalContext.userInitiated(file.getProject(), file);
         int paramCount = 0;
@@ -147,7 +151,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
         final PyClassTypeImpl unicodeType = PyBuiltinCache.getInstance(element).getObjectType("unicode");
 
         for (PyExpression expression : getSimpleExpressions((PyBinaryExpression) element)) {
-            if (expression instanceof PyStringLiteralExpression) {
+            if (expression instanceof PyStringLiteralExpression stringLiteral1) {
                 final PyType type = context.getType(expression);
                 if (type != null && type.equals(unicodeType)) {
                     isUnicode = true;
@@ -156,7 +160,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
                     quotes = PyStringLiteralUtil.getQuotes(expression.getText());
                     quotesDetected = true;
                 }
-                String value = ((PyStringLiteralExpression) expression).getStringValue();
+                String value = stringLiteral1.getStringValue();
                 if (!useFormatMethod) {
                     value = value.replace("%", "%%");
                 }
@@ -169,7 +173,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
             }
         }
         if (quotes == null) {
-            quotes = Pair.create("\"", "\"");
+            quotes = Couple.of("\"", "\"");
         }
         stringLiteral.insert(0, quotes.getFirst());
         if (isUnicode && !quotes.getFirst().toLowerCase().contains("u")) {

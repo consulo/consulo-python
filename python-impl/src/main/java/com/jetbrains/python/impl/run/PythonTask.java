@@ -28,7 +28,7 @@ import consulo.execution.RunContentExecutor;
 import consulo.execution.process.ProcessTerminatedListener;
 import consulo.execution.ui.console.ConsoleView;
 import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
-import consulo.ide.impl.idea.openapi.util.text.StringUtil;
+import consulo.util.lang.StringUtil;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 import consulo.process.ExecutionException;
@@ -44,6 +44,7 @@ import consulo.util.io.FileUtil;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -275,9 +276,11 @@ public class PythonTask {
         if (exitCode == 0) {
             return output.getStdout();
         }
-        throw new ExecutionException(String.format("Error on python side. " + "Exit code: %s, err: %s out: %s",
+        throw new ExecutionException(String.format(
+            "Error on python side. " + "Exit code: %s, err: %s out: %s",
             exitCode,
             output.getStderr(),
-            output.getStdout()));
+            output.getStdout()
+        ));
     }
 }

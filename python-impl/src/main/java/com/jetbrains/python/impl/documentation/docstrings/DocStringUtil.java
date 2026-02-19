@@ -198,7 +198,7 @@ public class DocStringUtil {
   }
 
   public static boolean isLikeGoogleDocString(@Nonnull String text) {
-    for (@NonNls String title : consulo.ide.impl.idea.openapi.util.text.StringUtil.findMatches(text, GoogleCodeStyleDocString.SECTION_HEADER, 1)) {
+    for (@NonNls String title : StringUtil.findMatches(text, GoogleCodeStyleDocString.SECTION_HEADER, 1)) {
       if (SectionBasedDocString.isValidSectionTitle(title)) {
         return true;
       }
