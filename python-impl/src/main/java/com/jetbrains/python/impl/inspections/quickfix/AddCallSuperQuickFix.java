@@ -20,6 +20,8 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiElement;
@@ -52,6 +54,8 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
         return PyLocalize.qfixAddSuper();
     }
 
+    @Override
+    @RequiredWriteAction
     public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
         final PyFunction problemFunction = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyFunction.class);
         if (problemFunction == null) {
@@ -97,10 +101,10 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
 
         final Couple<List<String>> couple = buildNewFunctionParamsAndSuperInitCallArgs(origInfo, superInfo, addSelfToCall);
         final StringBuilder newParameters = new StringBuilder("(");
-        consulo.ide.impl.idea.openapi.util.text.StringUtil.join(couple.getFirst(), ", ", newParameters);
+        StringUtil.join(couple.getFirst(), ", ", newParameters);
         newParameters.append(")");
 
-        consulo.ide.impl.idea.openapi.util.text.StringUtil.join(couple.getSecond(), ", ", superCall);
+        StringUtil.join(couple.getSecond(), ", ", superCall);
         superCall.append(")");
 
         final PyElementGenerator generator = PyElementGenerator.getInstance(project);
@@ -123,6 +127,7 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
     }
 
     @Nonnull
+    @RequiredReadAction
     private static Couple<List<String>> buildNewFunctionParamsAndSuperInitCallArgs(
         @Nonnull ParametersInfo origInfo,
         @Nonnull ParametersInfo superInfo,

@@ -151,7 +151,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
         ContainerUtil.mapNotNull(((PyClass)myImportable).getSuperClasses(null), cls -> PyUtil.isObjectClass(cls) ? null : cls.getName());
       if (!supers.isEmpty()) {
         sb.append("(");
-        consulo.ide.impl.idea.openapi.util.text.StringUtil.join(supers, ", ", sb);
+        StringUtil.join(supers, ", ", sb);
         sb.append(")");
       }
     }

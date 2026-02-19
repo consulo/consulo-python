@@ -16,42 +16,42 @@
 
 package com.jetbrains.python.impl.buildout.config.psi.impl;
 
-import com.google.common.collect.Lists;
 import com.jetbrains.python.impl.buildout.config.psi.BuildoutPsiUtil;
 import com.jetbrains.python.impl.buildout.config.ref.BuildoutPartReference;
-import consulo.ide.impl.idea.openapi.util.text.StringUtil;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiReference;
 import consulo.util.lang.Pair;
-
+import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author traff
  */
 public class BuildoutCfgValueLine extends BuildoutCfgPsiElement {
-  public BuildoutCfgValueLine(@Nonnull final ASTNode node) {
-    super(node);
-  }
-
-  @Override
-  public String toString() {
-    return "BuildoutCfgValue:" + getNode().getElementType().toString();
-  }
-
-  @Nonnull
-  @Override
-  public PsiReference[] getReferences() {
-    if (BuildoutPsiUtil.isInBuildoutSection(this) && BuildoutPsiUtil.isAssignedTo(this, "parts")) {
-      List<BuildoutPartReference> refs = Lists.newArrayList();
-      List<Pair<String, Integer>> names = StringUtil.getWordsWithOffset(getText());
-      for (Pair<String, Integer> name : names) {
-        refs.add(new BuildoutPartReference(this, name.getFirst(), name.getSecond()));
-      }
-      return refs.toArray(new BuildoutPartReference[refs.size()]);
+    public BuildoutCfgValueLine(@Nonnull final ASTNode node) {
+        super(node);
     }
 
-    return PsiReference.EMPTY_ARRAY;
-  }
+    @Override
+    public String toString() {
+        return "BuildoutCfgValue:" + getNode().getElementType().toString();
+    }
+
+    @Nonnull
+    @Override
+    public PsiReference[] getReferences() {
+        if (BuildoutPsiUtil.isInBuildoutSection(this) && BuildoutPsiUtil.isAssignedTo(this, "parts")) {
+            List<BuildoutPartReference> refs = new ArrayList<>();
+            List<Pair<String, Integer>> names = StringUtil.getWordsWithOffset(getText());
+            for (Pair<String, Integer> name : names) {
+                refs.add(new BuildoutPartReference(this, name.getFirst(), name.getSecond()));
+            }
+            return refs.toArray(new BuildoutPartReference[refs.size()]);
+        }
+
+        return PsiReference.EMPTY_ARRAY;
+    }
 }
