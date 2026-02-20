@@ -59,6 +59,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.IncorrectOperationException;
 import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.util.lang.Pair;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -469,9 +470,9 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
     @RequiredReadAction
     public Icon getIcon(int flags) {
         if (isQualified() || PsiTreeUtil.getStubOrPsiParentOfType(this, PyDocStringOwner.class) instanceof PyClass) {
-            return (Icon) PlatformIconGroup.nodesField();
+            return TargetAWT.to(PlatformIconGroup.nodesField());
         }
-        return (Icon) PlatformIconGroup.nodesVariable();
+        return TargetAWT.to(PlatformIconGroup.nodesVariable());
     }
 
     @Override
