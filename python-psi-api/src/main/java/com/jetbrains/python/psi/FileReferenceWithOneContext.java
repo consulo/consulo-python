@@ -54,7 +54,7 @@ public class FileReferenceWithOneContext extends FileReference
   }
 
   @Override
-  protected PsiElement rename(final String newName) throws IncorrectOperationException {
+  protected PsiElement rename(String newName) throws IncorrectOperationException {
     if (FileUtil.isAbsolutePlatformIndependent(newName)) {
       return super.rename(newName);
     }

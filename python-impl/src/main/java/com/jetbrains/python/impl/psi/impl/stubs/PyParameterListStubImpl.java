@@ -26,7 +26,7 @@ import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
 
 public class PyParameterListStubImpl extends StubBase<PyParameterList> implements PyParameterListStub {
-  public PyParameterListStubImpl(final StubElement parent, IStubElementType stubElementType) {
+  public PyParameterListStubImpl(StubElement parent, IStubElementType stubElementType) {
     super(parent, stubElementType);
   }
 }

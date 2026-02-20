@@ -46,12 +46,12 @@ public class PyStdlibUtil {
 
   @Nullable
   private static Set<String> loadStdlibPackagesList() {
-    final Logger log = Logger.getInstance(PyStdlibUtil.class.getName());
-    final String helperPath = PythonHelpersLocator.getHelperPath("/tools/stdlib_packages.txt");
+    Logger log = Logger.getInstance(PyStdlibUtil.class.getName());
+    String helperPath = PythonHelpersLocator.getHelperPath("/tools/stdlib_packages.txt");
     try {
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(helperPath)));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(helperPath)));
       try {
-        final Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<String>();
         String line;
         while ((line = reader.readLine()) != null) {
           result.add(line);

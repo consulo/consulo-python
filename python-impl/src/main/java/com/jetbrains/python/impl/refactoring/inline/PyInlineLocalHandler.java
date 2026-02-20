@@ -87,10 +87,10 @@ public class PyInlineLocalHandler extends InlineActionHandler {
     if (editor == null) {
       return;
     }
-    final PsiReference psiReference = TargetElementUtil.findReference(editor);
+    PsiReference psiReference = TargetElementUtil.findReference(editor);
     PyReferenceExpression refExpr = null;
     if (psiReference != null) {
-      final PsiElement refElement = psiReference.getElement();
+      PsiElement refElement = psiReference.getElement();
       if (refElement instanceof PyReferenceExpression) {
         refExpr = (PyReferenceExpression)refElement;
       }
@@ -99,77 +99,77 @@ public class PyInlineLocalHandler extends InlineActionHandler {
   }
 
   @RequiredUIAccess
-  private static void invoke(@Nonnull final Project project,
-                             @Nonnull final Editor editor,
-                             @Nonnull final PyTargetExpression local,
+  private static void invoke(@Nonnull Project project,
+                             @Nonnull Editor editor,
+                             @Nonnull PyTargetExpression local,
                              @Nullable PyReferenceExpression refExpr) {
     if (!CommonRefactoringUtil.checkReadOnlyStatus(project, local)) {
       return;
     }
 
-    final HighlightManager highlightManager = HighlightManager.getInstance(project);
-    final TextAttributesKey writeAttributes = EditorColors.WRITE_SEARCH_RESULT_ATTRIBUTES;
+    HighlightManager highlightManager = HighlightManager.getInstance(project);
+    TextAttributesKey writeAttributes = EditorColors.WRITE_SEARCH_RESULT_ATTRIBUTES;
 
-    final String localName = local.getName();
-    final ScopeOwner containerBlock = getContext(local);
+    String localName = local.getName();
+    ScopeOwner containerBlock = getContext(local);
     LOG.assertTrue(containerBlock != null);
 
 
-    final Pair<PyStatement, Boolean> defPair = getAssignmentToInline(containerBlock, refExpr, local, project);
-    final PyStatement def = defPair.first;
+    Pair<PyStatement, Boolean> defPair = getAssignmentToInline(containerBlock, refExpr, local, project);
+    PyStatement def = defPair.first;
     if (def == null || getValue(def) == null) {
-      final String key = defPair.second ? "variable.has.no.dominating.definition" : "variable.has.no.initializer";
-      final String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, localName));
+      String key = defPair.second ? "variable.has.no.dominating.definition" : "variable.has.no.initializer";
+      String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, localName));
       CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HELP_ID);
       return;
     }
 
     if (def instanceof PyAssignmentStatement && ((PyAssignmentStatement)def).getTargets().length > 1) {
       highlightManager.addOccurrenceHighlights(editor, new PsiElement[]{def}, writeAttributes, true, null);
-      final String message =
+      String message =
         RefactoringBundle.getCannotRefactorMessage(PyBundle.message("refactoring.inline.local.multiassignment", localName));
       CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HELP_ID);
       return;
     }
 
-    final PsiElement[] refsToInline = PyDefUseUtil.getPostRefs(containerBlock, local, getObject(def));
+    PsiElement[] refsToInline = PyDefUseUtil.getPostRefs(containerBlock, local, getObject(def));
     if (refsToInline.length == 0) {
-      final String message = RefactoringBundle.message("variable.is.never.used", localName);
+      String message = RefactoringBundle.message("variable.is.never.used", localName);
       CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HELP_ID);
       return;
     }
 
-    final TextAttributesKey attributes = EditorColors.SEARCH_RESULT_ATTRIBUTES;
+    TextAttributesKey attributes = EditorColors.SEARCH_RESULT_ATTRIBUTES;
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       highlightManager.addOccurrenceHighlights(editor, refsToInline, attributes, true, null);
-      final int occurrencesCount = refsToInline.length;
-      final String occurrencesString = RefactoringBundle.message("occurrences.string", occurrencesCount);
-      final String question = RefactoringBundle.message("inline.local.variable.prompt", localName) + " " + occurrencesString;
-      final RefactoringMessageDialog dialog =
+      int occurrencesCount = refsToInline.length;
+      String occurrencesString = RefactoringBundle.message("occurrences.string", occurrencesCount);
+      String question = RefactoringBundle.message("inline.local.variable.prompt", localName) + " " + occurrencesString;
+      RefactoringMessageDialog dialog =
         new RefactoringMessageDialog(REFACTORING_NAME, question, HELP_ID, "OptionPane.questionIcon", true, project);
       if (!dialog.showAndGet()) {
         return;
       }
     }
 
-    final PsiFile workingFile = local.getContainingFile();
+    PsiFile workingFile = local.getContainingFile();
     for (PsiElement ref : refsToInline) {
-      final PsiFile otherFile = ref.getContainingFile();
+      PsiFile otherFile = ref.getContainingFile();
       if (!otherFile.equals(workingFile)) {
-        final String message = RefactoringBundle.message("variable.is.referenced.in.multiple.files", localName);
+        String message = RefactoringBundle.message("variable.is.referenced.in.multiple.files", localName);
         CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HELP_ID);
         return;
       }
     }
 
-    for (final PsiElement ref : refsToInline) {
-      final List<PsiElement> elems = new ArrayList<>();
-      final List<Instruction> latestDefs =
+    for (PsiElement ref : refsToInline) {
+      List<PsiElement> elems = new ArrayList<>();
+      List<Instruction> latestDefs =
         PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), ref, false, false);
       for (Instruction i : latestDefs) {
         elems.add(i.getElement());
       }
-      final PsiElement[] defs = elems.toArray(new PsiElement[elems.size()]);
+      PsiElement[] defs = elems.toArray(new PsiElement[elems.size()]);
       boolean isSameDefinition = true;
       for (PsiElement otherDef : defs) {
         isSameDefinition &= isSameDefinition(def, otherDef);
@@ -177,7 +177,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
       if (!isSameDefinition) {
         highlightManager.addOccurrenceHighlights(editor, defs, writeAttributes, true, null);
         highlightManager.addOccurrenceHighlights(editor, new PsiElement[]{ref}, attributes, true, null);
-        final String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(
+        String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(
           "variable.is.accessed.for.writing.and.used.with.inlined",
           localName));
         CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HELP_ID);
@@ -188,25 +188,25 @@ public class PyInlineLocalHandler extends InlineActionHandler {
 
     CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        final RefactoringEventData afterData = new RefactoringEventData();
+        RefactoringEventData afterData = new RefactoringEventData();
         afterData.addElement(local);
         project.getMessageBus()
                .syncPublisher(RefactoringEventListener.class)
                .refactoringStarted(getRefactoringId(), afterData);
 
-        final PsiElement[] exprs = new PsiElement[refsToInline.length];
-        final PyExpression value = prepareValue(def, localName, project);
-        final PyExpression withParenthesis = PyElementGenerator.getInstance(project).createExpressionFromText("(" + value.getText() + ")");
-        final PsiElement lastChild = def.getLastChild();
+        PsiElement[] exprs = new PsiElement[refsToInline.length];
+        PyExpression value = prepareValue(def, localName, project);
+        PyExpression withParenthesis = PyElementGenerator.getInstance(project).createExpressionFromText("(" + value.getText() + ")");
+        PsiElement lastChild = def.getLastChild();
         if (lastChild != null && lastChild.getNode().getElementType() == PyTokenTypes.END_OF_LINE_COMMENT) {
-          final PsiElement parent = def.getParent();
+          PsiElement parent = def.getParent();
           if (parent != null) {
             parent.addBefore(lastChild, def);
           }
         }
 
         for (int i = 0, refsToInlineLength = refsToInline.length; i < refsToInlineLength; i++) {
-          final PsiElement element = refsToInline[i];
+          PsiElement element = refsToInline[i];
           if (PyReplaceExpressionUtil.isNeedParenthesis((PyExpression)element, value)) {
             exprs[i] = element.replace(withParenthesis);
           }
@@ -214,14 +214,14 @@ public class PyInlineLocalHandler extends InlineActionHandler {
             exprs[i] = element.replace(value);
           }
         }
-        final PsiElement next = def.getNextSibling();
+        PsiElement next = def.getNextSibling();
         if (next instanceof PsiWhiteSpace) {
           PyPsiUtils.removeElements(next);
         }
         PyPsiUtils.removeElements(def);
 
-        final List<TextRange> ranges = ContainerUtil.mapNotNull(exprs, element -> {
-          final PyStatement parentalStatement = PsiTreeUtil.getParentOfType(element, PyStatement.class, false);
+        List<TextRange> ranges = ContainerUtil.mapNotNull(exprs, element -> {
+          PyStatement parentalStatement = PsiTreeUtil.getParentOfType(element, PyStatement.class, false);
           return parentalStatement != null ? parentalStatement.getTextRange() : null;
         });
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
@@ -232,7 +232,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
         }
       }
       finally {
-        final RefactoringEventData afterData = new RefactoringEventData();
+        RefactoringEventData afterData = new RefactoringEventData();
         afterData.addElement(local);
         project.getMessageBus()
                .syncPublisher(RefactoringEventListener.class)
@@ -265,9 +265,9 @@ public class PyInlineLocalHandler extends InlineActionHandler {
                                                                   Project project) {
     if (expr != null) {
       try {
-        final List<Instruction> candidates = PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), expr, true, true);
+        List<Instruction> candidates = PyDefUseUtil.getLatestDefs(containerBlock, local.getName(), expr, true, true);
         if (candidates.size() == 1) {
-          final PyStatement expression = getAssignmentByLeftPart((PyElement)candidates.get(0).getElement());
+          PyStatement expression = getAssignmentByLeftPart((PyElement)candidates.get(0).getElement());
           return Pair.create(expression, false);
         }
         return Pair.create(null, candidates.size() > 0);
@@ -275,16 +275,16 @@ public class PyInlineLocalHandler extends InlineActionHandler {
       catch (PyDefUseUtil.InstructionNotFoundException ignored) {
       }
     }
-    final Query<PsiReference> query = ReferencesSearch.search(local, GlobalSearchScope.allScope(project), false);
-    final PsiReference first = query.findFirst();
+    Query<PsiReference> query = ReferencesSearch.search(local, GlobalSearchScope.allScope(project), false);
+    PsiReference first = query.findFirst();
 
-    final PyElement lValue = first != null ? (PyElement)first.resolve() : null;
+    PyElement lValue = first != null ? (PyElement)first.resolve() : null;
     return lValue != null ? Pair.create(getAssignmentByLeftPart(lValue), false) : EMPTY_DEF_RESULT;
   }
 
   @Nullable
   private static PyStatement getAssignmentByLeftPart(PyElement candidate) {
-    final PsiElement parent = candidate.getParent();
+    PsiElement parent = candidate.getParent();
     return parent instanceof PyAssignmentStatement || parent instanceof PyAugAssignmentStatement ? (PyStatement)parent : null;
   }
 
@@ -312,13 +312,13 @@ public class PyInlineLocalHandler extends InlineActionHandler {
 
   @Nonnull
   private static PyExpression prepareValue(@Nonnull PyStatement def, @Nonnull String localName, @Nonnull Project project) {
-    final PyExpression value = getValue(def);
+    PyExpression value = getValue(def);
     assert value != null;
     if (def instanceof PyAugAssignmentStatement) {
-      final PyAugAssignmentStatement expression = (PyAugAssignmentStatement)def;
-      final PsiElement operation = expression.getOperation();
+      PyAugAssignmentStatement expression = (PyAugAssignmentStatement)def;
+      PsiElement operation = expression.getOperation();
       assert operation != null;
-      final String op = operation.getText().replace('=', ' ');
+      String op = operation.getText().replace('=', ' ');
       return PyElementGenerator.getInstance(project).createExpressionFromText(localName + " " + op + value.getText() + ")");
     }
     return value;

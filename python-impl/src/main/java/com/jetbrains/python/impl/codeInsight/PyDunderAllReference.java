@@ -46,7 +46,7 @@ import com.jetbrains.python.impl.psi.impl.LightNamedElement;
 public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpression> {
   public PyDunderAllReference(@Nonnull PyStringLiteralExpression element) {
     super(element);
-    final List<TextRange> ranges = element.getStringValueTextRanges();
+    List<TextRange> ranges = element.getStringValueTextRanges();
     if (ranges.size() > 0) {
       setRangeInElement(ranges.get(0));
     }
@@ -54,8 +54,8 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
 
   @Override
   public PsiElement resolve() {
-    final PyStringLiteralExpression element = getElement();
-    final String name = element.getStringValue();
+    PyStringLiteralExpression element = getElement();
+    String name = element.getStringValue();
     PyFile containingFile = (PyFile) element.getContainingFile();
     return containingFile.getElementNamed(name);
   }
@@ -65,7 +65,7 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
   public Object[] getVariants() {
     final List<LookupElement> result = new ArrayList<LookupElement>();
     PyFile containingFile = (PyFile) getElement().getContainingFile().getOriginalFile();
-    final List<String> dunderAll = containingFile.getDunderAll();
+    List<String> dunderAll = containingFile.getDunderAll();
     final Set<String> seenNames = new HashSet<String>();
     if (dunderAll != null) {
       seenNames.addAll(dunderAll);
@@ -74,14 +74,14 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
       @Override
       public boolean execute(@Nonnull PsiElement element, ResolveState state) {
         if (element instanceof PsiNamedElement && !(element instanceof LightNamedElement)) {
-          final String name = ((PsiNamedElement)element).getName();
+          String name = ((PsiNamedElement)element).getName();
           if (name != null && PyUtil.getInitialUnderscores(name) == 0 && !seenNames.contains(name)) {
             seenNames.add(name);
             result.add(LookupElementBuilder.create((PsiNamedElement) element).withIcon(IconDescriptorUpdaters.getIcon(element, 0)));
           }
         }
         else if (element instanceof PyImportElement) {
-          final String visibleName = ((PyImportElement)element).getVisibleName();
+          String visibleName = ((PyImportElement)element).getVisibleName();
           if (visibleName != null && !seenNames.contains(visibleName)) {
             seenNames.add(visibleName);
             result.add(LookupElementBuilder.create(element, visibleName));

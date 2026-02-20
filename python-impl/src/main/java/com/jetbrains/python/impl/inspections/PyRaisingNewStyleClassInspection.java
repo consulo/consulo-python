@@ -58,15 +58,15 @@ public class PyRaisingNewStyleClassInspection extends PyInspection {
             if (LanguageLevel.forElement(node).isAtLeast(LanguageLevel.PYTHON25)) {
                 return;
             }
-            final PyExpression[] expressions = node.getExpressions();
+            PyExpression[] expressions = node.getExpressions();
             if (expressions.length == 0) {
                 return;
             }
-            final PyExpression expression = expressions[0];
+            PyExpression expression = expressions[0];
             if (expression instanceof PyCallExpression) {
-                final PyExpression callee = ((PyCallExpression) expression).getCallee();
+                PyExpression callee = ((PyCallExpression) expression).getCallee();
                 if (callee instanceof PyReferenceExpression) {
-                    final PsiElement psiElement = ((PyReferenceExpression) callee).getReference(getResolveContext()).resolve();
+                    PsiElement psiElement = ((PyReferenceExpression) callee).getReference(getResolveContext()).resolve();
                     if (psiElement instanceof PyClass) {
                         if (((PyClass) psiElement).isNewStyleClass(null)) {
                             registerProblem(expression, "Raising a new style class");

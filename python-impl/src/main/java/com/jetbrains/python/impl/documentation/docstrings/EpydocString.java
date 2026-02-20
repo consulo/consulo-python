@@ -114,7 +114,7 @@ public class EpydocString extends TagBasedDocString
 	@Override
 	public String getDescription()
 	{
-		final String html = inlineMarkupToHTML(myDescription);
+		String html = inlineMarkupToHTML(myDescription);
 		assert html != null;
 		return html;
 	}
@@ -204,7 +204,7 @@ public class EpydocString extends TagBasedDocString
 	@Override
 	public String getAttributeDescription()
 	{
-		final Substring value = getTagValue(VARIABLE_TAGS);
+		Substring value = getTagValue(VARIABLE_TAGS);
 		return convertInlineMarkup(value != null ? value.toString() : null, true);
 	}
 
@@ -256,7 +256,7 @@ public class EpydocString extends TagBasedDocString
 						pos = bracePos + 1;
 						break;
 					}
-					final String inlineMarkupContent = s.substring(bracePos + 1, rbracePos);
+					String inlineMarkupContent = s.substring(bracePos + 1, rbracePos);
 					appendMarkup(prevChar, inlineMarkupContent);
 					pos = rbracePos + 1;
 				}
@@ -318,7 +318,7 @@ public class EpydocString extends TagBasedDocString
 			}
 		}
 
-		private void appendTagPair(String markupContent, final String tagName)
+		private void appendTagPair(String markupContent, String tagName)
 		{
 			myResult.append("<").append(tagName).append(">");
 			appendWithMarkup(markupContent);
@@ -425,7 +425,7 @@ public class EpydocString extends TagBasedDocString
 		List<String> list = new ArrayList<>();
 		for(String tagName : ADDITIONAL)
 		{
-			final Map<Substring, Substring> map = myArgTagValues.get(tagName);
+			Map<Substring, Substring> map = myArgTagValues.get(tagName);
 			if(map != null)
 			{
 				list.add(tagName);

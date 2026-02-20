@@ -50,7 +50,7 @@ public class ListCreationQuickFix implements LocalQuickFix {
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         StringBuilder stringBuilder = new StringBuilder();
-        final PyExpression assignedValue = myStatement.getAssignedValue();
+        PyExpression assignedValue = myStatement.getAssignedValue();
         if (assignedValue == null) {
             return;
         }

@@ -38,8 +38,8 @@ import jakarta.annotation.Nonnull;
  */
 public class DocutilsRunConfiguration extends RestRunConfiguration {
 
-  public DocutilsRunConfiguration(final Project project,
-                                  final ConfigurationFactory factory) {
+  public DocutilsRunConfiguration(Project project,
+                                  ConfigurationFactory factory) {
     super(project, factory);
   }
 

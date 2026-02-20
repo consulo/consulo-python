@@ -6,7 +6,7 @@ import jakarta.annotation.Nonnull;
 public class SmartStepIntoCommand extends AbstractThreadCommand {
   private String myFuncName;
 
-  public SmartStepIntoCommand(@Nonnull final RemoteDebugger debugger, String threadId,
+  public SmartStepIntoCommand(@Nonnull RemoteDebugger debugger, String threadId,
                               String funcName) {
     super(debugger, SMART_STEP_INTO, threadId);
     myFuncName = funcName;

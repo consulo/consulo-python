@@ -28,10 +28,10 @@ public abstract class PyControlFlowBuilderTest extends LightMarkedTestCase {
   }
 
   private void doTest() {
-    final String testName = getTestName(false).toLowerCase();
+    String testName = getTestName(false).toLowerCase();
     configureByFile(testName + ".py");
-    final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow((PyFile)myFile);
-    final String fullPath = getTestDataPath() + testName + ".txt";
+    consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow((PyFile)myFile);
+    String fullPath = getTestDataPath() + testName + ".txt";
     check(fullPath, flow);
    }
 
@@ -186,28 +186,28 @@ public abstract class PyControlFlowBuilderTest extends LightMarkedTestCase {
   }
 
   public void testQualifiedSelfReference() {
-    final String testName = getTestName(false).toLowerCase();
+    String testName = getTestName(false).toLowerCase();
     configureByFile(testName + ".py");
-    final String fullPath = getTestDataPath() + testName + ".txt";
-    final PyClass pyClass = ((PyFile) myFile).getTopLevelClasses().get(0);
-    final ControlFlow flow = ControlFlowCache.getControlFlow(pyClass.getMethods()[0]);
+    String fullPath = getTestDataPath() + testName + ".txt";
+    PyClass pyClass = ((PyFile) myFile).getTopLevelClasses().get(0);
+    ControlFlow flow = ControlFlowCache.getControlFlow(pyClass.getMethods()[0]);
     check(fullPath, flow);
   }
 
   public void testSelf() {
-    final String testName = getTestName(false).toLowerCase();
+    String testName = getTestName(false).toLowerCase();
     configureByFile(testName + ".py");
-    final String fullPath = getTestDataPath() + testName + ".txt";
-    final PyClass pyClass = ((PyFile) myFile).getTopLevelClasses().get(0);
-    final consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow(pyClass.getMethods()[0]);
+    String fullPath = getTestDataPath() + testName + ".txt";
+    PyClass pyClass = ((PyFile) myFile).getTopLevelClasses().get(0);
+    consulo.ide.impl.idea.codeInsight.controlflow.ControlFlow flow = ControlFlowCache.getControlFlow(pyClass.getMethods()[0]);
     check(fullPath, flow);
   }
 
   public void testTryBreak() {
-    final String testName = getTestName(false).toLowerCase();
+    String testName = getTestName(false).toLowerCase();
     configureByFile(testName + ".py");
-    final ControlFlow flow = ControlFlowCache.getControlFlow((PyFunction)((PyFile)myFile).getStatements().get(0));
-    final String fullPath = getTestDataPath() + testName + ".txt";
+    ControlFlow flow = ControlFlowCache.getControlFlow((PyFunction)((PyFile)myFile).getStatements().get(0));
+    String fullPath = getTestDataPath() + testName + ".txt";
     check(fullPath, flow);
   }
 
@@ -225,22 +225,22 @@ public abstract class PyControlFlowBuilderTest extends LightMarkedTestCase {
   }
 
   private void doTestFirstStatement() {
-    final String testName = getTestName(false).toLowerCase();
+    String testName = getTestName(false).toLowerCase();
     configureByFile(testName + ".py");
-    final String fullPath = getTestDataPath() + testName + ".txt";
-    final ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner)((PyFile)myFile).getStatements().get(0));
+    String fullPath = getTestDataPath() + testName + ".txt";
+    ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner)((PyFile)myFile).getStatements().get(0));
     check(fullPath, flow);
   }
 
-  private static void check(final String fullPath, final ControlFlow flow) {
-    final StringBuffer buffer = new StringBuffer();
-    final Instruction[] instructions = flow.getInstructions();
+  private static void check(String fullPath, ControlFlow flow) {
+    StringBuffer buffer = new StringBuffer();
+    Instruction[] instructions = flow.getInstructions();
     for (Instruction instruction : instructions) {
       buffer.append(instruction).append("\n");
     }
-    final VirtualFile vFile = PyTestCase.getVirtualFileByName(fullPath);
+    VirtualFile vFile = PyTestCase.getVirtualFileByName(fullPath);
     try {
-      final String fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile), "\n");
+      String fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile), "\n");
       Assert.assertEquals(fileText.trim(), buffer.toString().trim());
     }
     catch (IOException e) {

@@ -38,7 +38,7 @@ import java.util.Set;
 public class PyNameSuggestionProvider implements NameSuggestionProvider {
   public SuggestedNameInfo getSuggestedNames(PsiElement element, PsiElement nameSuggestionContext, Set<String> result) {
     if (!(element instanceof PyElement)) return null;
-    final String name = ((PyElement)element).getName();
+    String name = ((PyElement)element).getName();
     if (name == null) return null;
 
     if (element instanceof PyClass) {
@@ -49,7 +49,7 @@ public class PyNameSuggestionProvider implements NameSuggestionProvider {
     }
     else {
       result.add(name.toLowerCase());
-      final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
+      PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
       if (assignmentStatement != null) return null;
       result.add(name.toUpperCase());
       result.add(toCamelCase(name, false));
@@ -58,10 +58,10 @@ public class PyNameSuggestionProvider implements NameSuggestionProvider {
   }
 
   @Nonnull
-  protected String toCamelCase(@Nonnull final String name, boolean uppercaseFirstLetter) {
-    final List<String> strings = StringUtil.split(name, "_");
+  protected String toCamelCase(@Nonnull String name, boolean uppercaseFirstLetter) {
+    List<String> strings = StringUtil.split(name, "_");
     if (strings.size() > 0) {
-      final StringBuilder buf = new StringBuilder();
+      StringBuilder buf = new StringBuilder();
       String str = strings.get(0).toLowerCase();
       if (uppercaseFirstLetter) str = StringUtil.capitalize(str);
       buf.append(str);

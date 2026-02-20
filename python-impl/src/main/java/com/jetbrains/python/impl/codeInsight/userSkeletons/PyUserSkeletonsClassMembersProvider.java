@@ -44,8 +44,8 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 	@Override
 	public Collection<PyCustomMember> getMembers(@Nonnull PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
 	{
-		final PyClass cls = classType.getPyClass();
-		final PyClass skeleton = PyUserSkeletonsUtil.getUserSkeleton(cls);
+		PyClass cls = classType.getPyClass();
+		PyClass skeleton = PyUserSkeletonsUtil.getUserSkeleton(cls);
 		if(skeleton != null)
 		{
 			return getClassMembers(skeleton, classType.isDefinition());
@@ -57,8 +57,8 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 	@Override
 	public PsiElement resolveMember(@Nonnull PyClassType classType, @Nonnull String name, PsiElement location, TypeEvalContext context)
 	{
-		final PyClass cls = classType.getPyClass();
-		final PyClass skeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(cls, context);
+		PyClass cls = classType.getPyClass();
+		PyClass skeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(cls, context);
 		if(skeleton != null)
 		{
 			return findClassMember(skeleton, name, classType.isDefinition());
@@ -68,11 +68,11 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 
 	public static PsiElement findClassMember(@Nonnull PyClass cls, @Nonnull String name, boolean isDefinition)
 	{
-		final PyFunction function = cls.findMethodByName(name, false, null);
+		PyFunction function = cls.findMethodByName(name, false, null);
 		if(function != null)
 		{
-			final PyUtil.MethodFlags methodFlags = PyUtil.MethodFlags.of(function);
-			final boolean instanceMethod = methodFlags == null || methodFlags.isInstanceMethod();
+			PyUtil.MethodFlags methodFlags = PyUtil.MethodFlags.of(function);
+			boolean instanceMethod = methodFlags == null || methodFlags.isInstanceMethod();
 			if(isDefinition ^ instanceMethod)
 			{
 				return function;
@@ -80,13 +80,13 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 		}
 		if(!isDefinition)
 		{
-			final PyTargetExpression instanceAttribute = cls.findInstanceAttribute(name, false);
+			PyTargetExpression instanceAttribute = cls.findInstanceAttribute(name, false);
 			if(instanceAttribute != null)
 			{
 				return instanceAttribute;
 			}
 		}
-		final PyTargetExpression classAttribute = cls.findClassAttribute(name, false, null);
+		PyTargetExpression classAttribute = cls.findClassAttribute(name, false, null);
 		if(classAttribute != null)
 		{
 			return classAttribute;
@@ -96,12 +96,12 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 
 	public static Collection<PyCustomMember> getClassMembers(@Nonnull PyClass cls, boolean isDefinition)
 	{
-		final List<PyCustomMember> result = new ArrayList<>();
+		List<PyCustomMember> result = new ArrayList<>();
 		for(PyFunction function : cls.getMethods())
 		{
-			final String name = function.getName();
-			final PyUtil.MethodFlags methodFlags = PyUtil.MethodFlags.of(function);
-			final boolean instanceMethod = methodFlags == null || methodFlags.isInstanceMethod();
+			String name = function.getName();
+			PyUtil.MethodFlags methodFlags = PyUtil.MethodFlags.of(function);
+			boolean instanceMethod = methodFlags == null || methodFlags.isInstanceMethod();
 			if(name != null && (isDefinition ^ instanceMethod))
 			{
 				result.add(new PyCustomMember(name, function));
@@ -111,7 +111,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 		{
 			for(PyTargetExpression attribute : cls.getInstanceAttributes())
 			{
-				final String name = attribute.getName();
+				String name = attribute.getName();
 				if(name != null)
 				{
 					result.add(new PyCustomMember(name, attribute));
@@ -120,7 +120,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 		}
 		for(PyTargetExpression attribute : cls.getClassAttributes())
 		{
-			final String name = attribute.getName();
+			String name = attribute.getName();
 			if(name != null)
 			{
 				result.add(new PyCustomMember(name, attribute));

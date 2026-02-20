@@ -51,7 +51,7 @@ public class PyConsoleSpecificOptionsPanel {
     myProject = project;
   }
 
-  public JPanel createPanel(final PyConsoleOptions.PyConsoleSettings optionsProvider) {
+  public JPanel createPanel(PyConsoleOptions.PyConsoleSettings optionsProvider) {
     myInterpreterPanel.setLayout(new BorderLayout());
     myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(createCommonOptionsFormData());
     myCommonOptionsForm.subscribe();
@@ -108,7 +108,7 @@ public class PyConsoleSpecificOptionsPanel {
       new EditorTextField(createDocument(myProject, optionsProvider.myCustomStartScript), myProject, PythonFileType.INSTANCE) {
         @Override
         protected EditorEx createEditor() {
-          final EditorEx editor = super.createEditor();
+          EditorEx editor = super.createEditor();
           editor.setVerticalScrollbarVisible(true);
           return editor;
         }
@@ -120,10 +120,10 @@ public class PyConsoleSpecificOptionsPanel {
   }
 
   @Nonnull
-  public static Document createDocument(@Nonnull final Project project,
+  public static Document createDocument(@Nonnull Project project,
                                         @Nonnull String text) {
     text = text.trim();
-    final PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(project, "start_script.py", text, true);
+    PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(project, "start_script.py", text, true);
 
     return PsiDocumentManager.getInstance(project).getDocument(fragment);
   }

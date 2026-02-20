@@ -55,24 +55,24 @@ public class TemplateFileReference extends WeakFileReference {
       throw new IncorrectOperationException("Cannot bind to element, should be instanceof PsiFileSystemItem: " + element);
     }
 
-    final PsiFileSystemItem fileSystemItem = (PsiFileSystemItem)element;
+    PsiFileSystemItem fileSystemItem = (PsiFileSystemItem)element;
     VirtualFile dstVFile = fileSystemItem.getVirtualFile();
     if (dstVFile == null) throw new IncorrectOperationException("Cannot bind to non-physical element:" + element);
 
     PsiFile file = getElement().getContainingFile();
     PsiElement contextPsiFile = InjectedLanguageManager.getInstance(file.getProject()).getInjectionHost(file);
     if (contextPsiFile != null) file = contextPsiFile.getContainingFile(); // use host file!
-    final VirtualFile curVFile = file.getVirtualFile();
+    VirtualFile curVFile = file.getVirtualFile();
     if (curVFile == null) throw new IncorrectOperationException("Cannot bind from non-physical element:" + file);
 
-    final Project project = element.getProject();
+    Project project = element.getProject();
 
     String newName;
 
     PsiFileSystemItem curItem = null;
     PsiFileSystemItem dstItem = null;
 
-    final FileReferenceHelper helper = FileReferenceHelperRegistrar.getNotNullHelper(file);
+    FileReferenceHelper helper = FileReferenceHelperRegistrar.getNotNullHelper(file);
 
     PsiFileSystemItem _dstItem = helper.getPsiFileSystemItem(project, dstVFile);
     PsiFileSystemItem _curItem = helper.getPsiFileSystemItem(project, curVFile);
@@ -81,16 +81,16 @@ public class TemplateFileReference extends WeakFileReference {
       dstItem = _dstItem;
     }
 
-    final Collection<PsiFileSystemItem> contexts = getContexts();
+    Collection<PsiFileSystemItem> contexts = getContexts();
     switch (contexts.size()) {
       case 0:
         break;
       default:
         for (PsiFileSystemItem context : contexts) {
-          final VirtualFile contextFile = context.getVirtualFile();
+          VirtualFile contextFile = context.getVirtualFile();
           assert contextFile != null;
           if (VirtualFileUtil.isAncestor(contextFile, dstVFile, true)) {
-            final String path = VirtualFileUtil.getRelativePath(dstVFile, contextFile, '/');
+            String path = VirtualFileUtil.getRelativePath(dstVFile, contextFile, '/');
             if (path != null) {
               return rename(path.replace("/", getFileReferenceSet().getSeparatorString()));
             }

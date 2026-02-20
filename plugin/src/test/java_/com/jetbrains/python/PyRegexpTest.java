@@ -140,13 +140,13 @@ public abstract class PyRegexpTest extends PyTestCase {
 
   private void doTestInjectedText(@Nonnull String text, @Nonnull String expected) {
     myFixture.configureByText(PythonFileType.INSTANCE, text);
-    final InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(myFixture.getProject());
-    final PsiLanguageInjectionHost host = languageManager.getInjectionHost(myFixture.getElementAtCaret());
+    InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(myFixture.getProject());
+    PsiLanguageInjectionHost host = languageManager.getInjectionHost(myFixture.getElementAtCaret());
     assertNotNull(host);
-    final List<Pair<PsiElement, TextRange>> files = languageManager.getInjectedPsiFiles(host);
+    List<Pair<PsiElement, TextRange>> files = languageManager.getInjectedPsiFiles(host);
     assertNotNull(files);
     assertFalse(files.isEmpty());
-    final PsiElement injected = files.get(0).getFirst();
+    PsiElement injected = files.get(0).getFirst();
     assertEquals(expected, injected.getText());
   }
 
@@ -154,7 +154,7 @@ public abstract class PyRegexpTest extends PyTestCase {
     myFixture.testHighlighting(true, false, true, "regexp/" + getTestName(true) + ".py");
   }
 
-  private void doTestLexer(final String text, String... expectedTokens) {
+  private void doTestLexer(String text, String... expectedTokens) {
     Lexer lexer = new PythonRegexpParserDefinition().createLexer(LanguageVersionUtil.findDefaultVersion(PythonRegexpLanguage.INSTANCE));
     PyLexerTestCase.doLexerTest(text, lexer, expectedTokens);
   }

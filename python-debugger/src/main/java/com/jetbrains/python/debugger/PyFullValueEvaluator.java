@@ -37,7 +37,7 @@ public class PyFullValueEvaluator extends XFullValueEvaluator {
         }
 
         try {
-            final PyDebugValue value = myDebugProcess.evaluate(expression, false, false);
+            PyDebugValue value = myDebugProcess.evaluate(expression, false, false);
             callback.evaluated(value.getValue());
             showCustomPopup(myDebugProcess, value);
         }

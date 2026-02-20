@@ -104,7 +104,7 @@ public class PyMethodParametersInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyFunction(final PyFunction node) {
+        public void visitPyFunction(PyFunction node) {
             for (PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList()) {
                 if (extension.ignoreMethodParameters(node)) {
                     return;
@@ -112,7 +112,7 @@ public class PyMethodParametersInspection extends PyInspection {
             }
             // maybe it's a zope interface?
             PsiElement zope_interface = findZopeInterface(node);
-            final PyClass cls = node.getContainingClass();
+            PyClass cls = node.getContainingClass();
             if (zope_interface instanceof PyClass) {
                 if (cls != null && cls.isSubclass((PyClass) zope_interface, myTypeEvalContext)) {
                     return; // it can have any params
@@ -123,8 +123,8 @@ public class PyMethodParametersInspection extends PyInspection {
             if (flags != null) {
                 PyParameterList plist = node.getParameterList();
                 PyParameter[] params = plist.getParameters();
-                final String methodName = node.getName();
-                final String CLS = "cls"; // TODO: move to style settings
+                String methodName = node.getName();
+                String CLS = "cls"; // TODO: move to style settings
                 if (params.length == 0) { // fix: add
                     // check for "staticmetod"
                     if (flags.isStaticMethod()) {

@@ -52,7 +52,7 @@ public class PyElementPresentation implements ColoredItemPresentation
 	@Override
 	public String getPresentableText()
 	{
-		final String name = myElement.getName();
+		String name = myElement.getName();
 		return name != null ? name : PyNames.UNNAMED_ELEMENT;
 	}
 
@@ -72,11 +72,11 @@ public class PyElementPresentation implements ColoredItemPresentation
 
 	public static String getPackageForFile(@Nonnull PsiFile containingFile)
 	{
-		final VirtualFile vFile = containingFile.getVirtualFile();
+		VirtualFile vFile = containingFile.getVirtualFile();
 
 		if(vFile != null)
 		{
-			final String importableName = QualifiedNameFinder.findShortestImportableName(containingFile, vFile);
+			String importableName = QualifiedNameFinder.findShortestImportableName(containingFile, vFile);
 			if(importableName != null)
 			{
 				return importableName;

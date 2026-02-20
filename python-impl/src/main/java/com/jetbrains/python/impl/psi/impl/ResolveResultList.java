@@ -33,14 +33,14 @@ public class ResolveResultList extends ArrayList<RatedResolveResult> {
     if (element== null) {
       return Collections.emptyList();
     }
-    final ResolveResultList list = new ResolveResultList();
+    ResolveResultList list = new ResolveResultList();
     list.poke(element, RatedResolveResult.RATE_NORMAL);
     return list;
   }
 
   // Allows to add non-null elements and discard nulls in a hassle-free way.
 
-  public boolean poke(final PsiElement what, final int rate) {
+  public boolean poke(PsiElement what, int rate) {
     if (what == null) return false;
     if (!(what instanceof LightElement) && !what.isValid()) {
       throw new PsiInvalidElementAccessException(what, "Trying to resolve a reference to an invalid element");

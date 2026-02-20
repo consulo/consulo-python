@@ -48,7 +48,7 @@ import jakarta.annotation.Nullable;
 public class PyExtractMethodHandler implements RefactoringActionHandler
 {
 	@Override
-	public void invoke(@Nonnull final Project project, final Editor editor, final PsiFile file, final DataContext dataContext)
+	public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext)
 	{
 		editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
 		// select editor text fragment
@@ -60,16 +60,16 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 	}
 
 	@Override
-	public void invoke(@Nonnull final Project project, @Nonnull final PsiElement[] elements, final DataContext dataContext)
+	public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext)
 	{
 	}
 
-	private static void invokeOnEditor(final Project project, final Editor editor, final PsiFile file)
+	private static void invokeOnEditor(Project project, Editor editor, PsiFile file)
 	{
 		CommonRefactoringUtil.checkReadOnlyStatus(project, file);
 		PsiElement element1 = null;
 		PsiElement element2 = null;
-		final SelectionModel selectionModel = editor.getSelectionModel();
+		SelectionModel selectionModel = editor.getSelectionModel();
 		if(selectionModel.hasSelection())
 		{
 			element1 = file.findElementAt(selectionModel.getSelectionStart());
@@ -77,8 +77,8 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 		}
 		else
 		{
-			final CaretModel caretModel = editor.getCaretModel();
-			final Document document = editor.getDocument();
+			CaretModel caretModel = editor.getCaretModel();
+			Document document = editor.getDocument();
 			int lineNumber = document.getLineNumber(caretModel.getOffset());
 			if((lineNumber >= 0) && (lineNumber < document.getLineCount()))
 			{
@@ -102,15 +102,15 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 			return;
 		}
 
-		final Couple<PsiElement> statements = getStatementsRange(element1, element2);
+		Couple<PsiElement> statements = getStatementsRange(element1, element2);
 		if(statements != null)
 		{
-			final ScopeOwner owner = PsiTreeUtil.getParentOfType(statements.getFirst(), ScopeOwner.class);
+			ScopeOwner owner = PsiTreeUtil.getParentOfType(statements.getFirst(), ScopeOwner.class);
 			if(owner == null)
 			{
 				return;
 			}
-			final PyCodeFragment fragment;
+			PyCodeFragment fragment;
 			try
 			{
 				fragment = PyCodeFragmentUtil.createCodeFragment(owner, element1, element2);
@@ -124,15 +124,15 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 			return;
 		}
 
-		final PsiElement expression = PyRefactoringUtil.getSelectedExpression(project, file, element1, element2);
+		PsiElement expression = PyRefactoringUtil.getSelectedExpression(project, file, element1, element2);
 		if(expression != null)
 		{
-			final ScopeOwner owner = PsiTreeUtil.getParentOfType(element1, ScopeOwner.class);
+			ScopeOwner owner = PsiTreeUtil.getParentOfType(element1, ScopeOwner.class);
 			if(owner == null)
 			{
 				return;
 			}
-			final PyCodeFragment fragment;
+			PyCodeFragment fragment;
 			try
 			{
 				fragment = PyCodeFragmentUtil.createCodeFragment(owner, element1, element2);
@@ -152,28 +152,28 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 
 	private static boolean rangeBelongsToSameClassBody(@Nonnull PsiElement element1, @Nonnull PsiElement element2)
 	{
-		final PyClass firstScopeOwner = PsiTreeUtil.getParentOfType(element1, PyClass.class, false, ScopeOwner.class);
-		final PyClass secondScopeOwner = PsiTreeUtil.getParentOfType(element2, PyClass.class, false, ScopeOwner.class);
+		PyClass firstScopeOwner = PsiTreeUtil.getParentOfType(element1, PyClass.class, false, ScopeOwner.class);
+		PyClass secondScopeOwner = PsiTreeUtil.getParentOfType(element2, PyClass.class, false, ScopeOwner.class);
 		return firstScopeOwner != null && firstScopeOwner == secondScopeOwner;
 	}
 
 	@Nullable
-	private static Couple<PsiElement> getStatementsRange(final PsiElement element1, final PsiElement element2)
+	private static Couple<PsiElement> getStatementsRange(PsiElement element1, PsiElement element2)
 	{
-		final PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
+		PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
 		if(parent == null)
 		{
 			return null;
 		}
 
-		final PyElement statementList = PyPsiUtils.getStatementList(parent);
+		PyElement statementList = PyPsiUtils.getStatementList(parent);
 		if(statementList == null)
 		{
 			return null;
 		}
 
-		final PsiElement statement1 = PyPsiUtils.getParentRightBefore(element1, statementList);
-		final PsiElement statement2 = PyPsiUtils.getParentRightBefore(element2, statementList);
+		PsiElement statement1 = PyPsiUtils.getParentRightBefore(element1, statementList);
+		PsiElement statement2 = PyPsiUtils.getParentRightBefore(element2, statementList);
 		if(statement1 == null || statement2 == null)
 		{
 			return null;

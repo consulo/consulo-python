@@ -40,11 +40,11 @@ public class StatementEffectIntroduceVariableQuickFix implements LocalQuickFix {
         return PyLocalize.qfixIntroduceVariable();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PsiElement expression = descriptor.getPsiElement();
         if (expression != null && expression.isValid()) {
-            final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-            final PyAssignmentStatement assignment =
+            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            PyAssignmentStatement assignment =
                 elementGenerator.createFromText(LanguageLevel.forElement(expression), PyAssignmentStatement.class,
                     "var = " + expression.getText()
                 );
@@ -54,8 +54,8 @@ public class StatementEffectIntroduceVariableQuickFix implements LocalQuickFix {
                 return;
             }
             expression = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(expression);
-            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(expression);
-            final PyExpression leftHandSideExpression = ((PyAssignmentStatement) expression).getLeftHandSideExpression();
+            TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(expression);
+            PyExpression leftHandSideExpression = ((PyAssignmentStatement) expression).getLeftHandSideExpression();
             assert leftHandSideExpression != null;
             builder.replaceElement(leftHandSideExpression, "var");
             builder.run();

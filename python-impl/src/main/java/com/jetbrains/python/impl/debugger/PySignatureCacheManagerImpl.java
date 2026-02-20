@@ -161,7 +161,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
 
   @Nullable
   public String findParameterType(@Nonnull PyFunction function, @Nonnull String name) {
-    final PySignature signature = findSignature(function);
+    PySignature signature = findSignature(function);
     if (signature != null) {
       return signature.getArgTypeQualifiedName(name);
     }

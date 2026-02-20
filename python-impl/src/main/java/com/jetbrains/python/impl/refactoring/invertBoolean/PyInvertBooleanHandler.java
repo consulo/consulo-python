@@ -42,7 +42,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
         if (element == null && editor != null && file != null) {
             element = file.findElementAt(editor.getCaretModel().getOffset());
         }
-        final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
+        PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
         if (assignmentStatement != null) {
             invoke(assignmentStatement.getTargets()[0]);
         }
@@ -64,7 +64,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
     @RequiredUIAccess
     public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext) {
         if (elements.length == 1) {
-            final PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(elements[0], PyAssignmentStatement.class);
+            PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(elements[0], PyAssignmentStatement.class);
             if (assignmentStatement != null) {
                 invoke(assignmentStatement.getTargets()[0]);
             }
@@ -72,7 +72,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
     }
 
     @RequiredUIAccess
-    private static void invoke(@Nonnull final PsiElement element) {
+    private static void invoke(@Nonnull PsiElement element) {
         new PyInvertBooleanDialog(element).show();
     }
 }

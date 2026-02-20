@@ -70,21 +70,21 @@ public abstract class PyUnwrapper extends AbstractUnwrapper<PyUnwrapper.Context>
     public void extractFromConditionalBlock(PyStatementWithElse from) {
       PyStatementList statementList = null;
       if (from instanceof PyIfStatement) {
-        final PyIfPart ifPart = ((PyIfStatement)from).getIfPart();
+        PyIfPart ifPart = ((PyIfStatement)from).getIfPart();
         if (ifPart instanceof PyIfPartIfImpl) {
           statementList = ifPart.getStatementList();
         }
       }
       else if (from instanceof PyWhileStatement) {
-        final PyWhilePart part = ((PyWhileStatement)from).getWhilePart();
+        PyWhilePart part = ((PyWhileStatement)from).getWhilePart();
         statementList = part.getStatementList();
       }
       else if (from instanceof PyTryExceptStatement) {
-        final PyTryPart part = ((PyTryExceptStatement)from).getTryPart();
+        PyTryPart part = ((PyTryExceptStatement)from).getTryPart();
         statementList = part.getStatementList();
       }
       else if (from instanceof PyForStatement) {
-        final PyForPart part = ((PyForStatement)from).getForPart();
+        PyForPart part = ((PyForStatement)from).getForPart();
         statementList = part.getStatementList();
       }
       if (statementList != null)
@@ -100,7 +100,7 @@ public abstract class PyUnwrapper extends AbstractUnwrapper<PyUnwrapper.Context>
     public void extractFromWithBlock(PyWithStatement from) {
       ASTNode n = from.getNode().findChildByType(PyElementTypes.STATEMENT_LISTS);
       if (n != null) {
-        final PyStatementList body = (PyStatementList)n.getPsi();
+        PyStatementList body = (PyStatementList)n.getPsi();
         if (body != null)
           extract(body.getFirstChild(), body.getLastChild(), from);
       }

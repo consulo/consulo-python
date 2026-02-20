@@ -67,10 +67,10 @@ public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStu
 	}
 
 	@Override
-	public void indexStub(@Nonnull final PyDecoratorStub stub, @Nonnull final IndexSink sink)
+	public void indexStub(@Nonnull PyDecoratorStub stub, @Nonnull IndexSink sink)
 	{
 		// Index decorators stub by name (todo: index by FQDN as well!)
-		final QualifiedName qualifiedName = stub.getQualifiedName();
+		QualifiedName qualifiedName = stub.getQualifiedName();
 		if(qualifiedName != null)
 		{
 			sink.occurrence(PyDecoratorStubIndex.KEY, qualifiedName.toString());

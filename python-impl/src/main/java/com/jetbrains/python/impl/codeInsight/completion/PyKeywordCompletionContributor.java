@@ -72,7 +72,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 		{
 			if(element instanceof PsiElement)
 			{
-				final ASTNode ctxNode = context.getNode();
+				ASTNode ctxNode = context.getNode();
 				if(ctxNode != null && PyTokenTypes.STRING_NODES.contains(ctxNode.getElementType()))
 				{
 					return false; // no sense inside string
@@ -201,7 +201,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 			}
 			int point = p.getTextOffset();
 			PsiDocumentManager docMgr = PsiDocumentManager.getInstance(p.getProject());
-			final PsiFile file = p.getContainingFile().getOriginalFile();
+			PsiFile file = p.getContainingFile().getOriginalFile();
 			Document doc = docMgr.getDocument(file);
 			String indentCharacters = file.getViewProvider() instanceof FreeThreadedFileViewProvider ? " \t>" : " \t";
 
@@ -241,7 +241,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 			{
 				return false;
 			}
-			final PsiFile containingFile = ((PsiElement) element).getContainingFile();
+			PsiFile containingFile = ((PsiElement) element).getContainingFile();
 			return containingFile instanceof PyFile && ((PyFile) containingFile).getLanguageLevel().isPy3K();
 		}
 
@@ -385,7 +385,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 			afterStatement(psiElement().withChild(psiElement(PyConditionalStatementPart.class))
 					.withLastChild(StandardPatterns.not(psiElement(PyElsePart.class))));
 
-	private static <T extends PsiElement> PsiElementPattern.Capture<PsiElement> afterStatement(final PsiElementPattern.Capture<T> statementPattern)
+	private static <T extends PsiElement> PsiElementPattern.Capture<PsiElement> afterStatement(PsiElementPattern.Capture<T> statementPattern)
 	{
 		return psiElement().atStartOf(psiElement(PyExpressionStatement.class)
 				.afterSiblingSkipping(psiElement().whitespaceCommentEmptyOrError(), statementPattern));
@@ -415,7 +415,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 
 	// ======
 
-	private static void putKeywords(final CompletionResultSet result, TailType tail, @NonNls @Nonnull String... words)
+	private static void putKeywords(CompletionResultSet result, TailType tail, @NonNls @Nonnull String... words)
 	{
 		for(String s : words)
 		{
@@ -429,7 +429,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 			TailType tail,
 			CompletionResultSet result)
 	{
-		final PythonLookupElement lookup_elt = new PythonLookupElement(keyword, true, null);
+		PythonLookupElement lookup_elt = new PythonLookupElement(keyword, true, null);
 		lookup_elt.setHandler(handler);
 		result.addElement(TailTypeDecorator.withTail(lookup_elt, tail));
 	}
@@ -451,7 +451,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 				new CompletionProvider()
 				{
 					public void addCompletions(
-							@Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result
+                        @Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result
 					)
 					{
 						putKeywords(result, TailType.NONE, "def", "class", "for", "if", "while", "with");
@@ -478,7 +478,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 				new CompletionProvider()
 				{
 					public void addCompletions(
-							@Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result
+                        @Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result
 					)
 					{
 						putKeywords(result, TailType.SPACE, "assert", "del", "exec", "from", "import", "raise");
@@ -571,7 +571,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 				new CompletionProvider()
 				{
 					public void addCompletions(
-							@Nonnull final CompletionParameters parameters, final ProcessingContext context, @Nonnull final CompletionResultSet result
+                        @Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result
 					)
 					{
 						putKeyword("except", UnindentingInsertHandler.INSTANCE, TailType.NONE, result);
@@ -767,12 +767,12 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 			myInsertHandler = insertHandler;
 		}
 
-		public void addCompletions(@Nonnull final CompletionParameters parameters, final ProcessingContext context,
-								   @Nonnull final CompletionResultSet result)
+		public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context,
+                                   @Nonnull CompletionResultSet result)
 		{
 			for(String s : myKeywords)
 			{
-				final PythonLookupElement element = new PythonLookupElement(s, true, null);
+				PythonLookupElement element = new PythonLookupElement(s, true, null);
 				if(myInsertHandler != null)
 				{
 					element.setHandler(myInsertHandler);

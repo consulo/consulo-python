@@ -28,7 +28,7 @@ import com.jetbrains.python.impl.psi.impl.LightNamedElement;
 public class PydevConsoleElement extends LightNamedElement {
   private final String myDescription;
 
-  public PydevConsoleElement(final PsiManager manager, final String name, final String description) {
+  public PydevConsoleElement(PsiManager manager, String name, String description) {
     super(manager, PythonLanguage.getInstance(), name);
     myDescription = description;
   }
@@ -38,13 +38,13 @@ public class PydevConsoleElement extends LightNamedElement {
     return "PydevConsoleElement " + myDescription;
   }
 
-  public static String generateDoc(final PydevConsoleElement pydevConsoleElement) {
-    final String description = pydevConsoleElement.myDescription;
+  public static String generateDoc(PydevConsoleElement pydevConsoleElement) {
+    String description = pydevConsoleElement.myDescription;
     // Description contract:
     // (Signatures\n\n) ? Description
-    final int index = description.indexOf("\n\n");
+    int index = description.indexOf("\n\n");
     if (index != -1){
-      final StringBuilder builder = new StringBuilder();
+      StringBuilder builder = new StringBuilder();
       builder.append("<b>").append(description.subSequence(0, index)).append("</b>").append("<hr/>").append(description.substring(index+2));
       return StringUtil.replace(builder.toString(), "\n", "<br/>");
     }

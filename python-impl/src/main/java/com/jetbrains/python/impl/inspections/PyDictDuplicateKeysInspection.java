@@ -62,9 +62,9 @@ public class PyDictDuplicateKeysInspection extends PyInspection {
         @Override
         public void visitPyDictLiteralExpression(PyDictLiteralExpression node) {
             if (node.getElements().length != 0) {
-                final Map<String, PyElement> map = new HashMap<String, PyElement>();
+                Map<String, PyElement> map = new HashMap<String, PyElement>();
                 for (PyExpression exp : node.getElements()) {
-                    final PyExpression key = ((PyKeyValueExpression) exp).getKey();
+                    PyExpression key = ((PyKeyValueExpression) exp).getKey();
                     if (key instanceof PyNumericLiteralExpression
                         || key instanceof PyStringLiteralExpression || key instanceof PyReferenceExpression) {
                         if (map.keySet().contains(key.getText())) {
@@ -78,33 +78,33 @@ public class PyDictDuplicateKeysInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyCallExpression(final PyCallExpression node) {
+        public void visitPyCallExpression(PyCallExpression node) {
             if (isDict(node)) {
-                final Map<String, PsiElement> map = new HashMap<String, PsiElement>();
-                final PyArgumentList pyArgumentList = node.getArgumentList();
+                Map<String, PsiElement> map = new HashMap<String, PsiElement>();
+                PyArgumentList pyArgumentList = node.getArgumentList();
                 if (pyArgumentList == null) {
                     return;
                 }
-                final PyExpression[] arguments = pyArgumentList.getArguments();
+                PyExpression[] arguments = pyArgumentList.getArguments();
                 for (PyExpression argument : arguments) {
                     if (argument instanceof PyParenthesizedExpression) {
                         argument = ((PyParenthesizedExpression) argument).getContainedExpression();
                     }
                     if (argument instanceof PySequenceExpression) {
                         for (PyElement el : ((PySequenceExpression) argument).getElements()) {
-                            final PsiElement key = getKey(el);
+                            PsiElement key = getKey(el);
                             checkKey(map, key);
                         }
                     }
                     else {
-                        final PsiElement key = getKey(argument);
+                        PsiElement key = getKey(argument);
                         checkKey(map, key);
                     }
                 }
             }
         }
 
-        private void checkKey(final Map<String, PsiElement> map, final PsiElement node) {
+        private void checkKey(Map<String, PsiElement> map, PsiElement node) {
             if (node == null) {
                 return;
             }
@@ -120,9 +120,9 @@ public class PyDictDuplicateKeysInspection extends PyInspection {
         }
 
         @Nullable
-        private static PsiElement getKey(final PyElement argument) {
+        private static PsiElement getKey(PyElement argument) {
             if (argument instanceof PyParenthesizedExpression) {
-                final PyExpression expr = ((PyParenthesizedExpression) argument).getContainedExpression();
+                PyExpression expr = ((PyParenthesizedExpression) argument).getContainedExpression();
                 if (expr instanceof PyTupleExpression) {
                     return ((PyTupleExpression) expr).getElements()[0];
                 }
@@ -136,12 +136,12 @@ public class PyDictDuplicateKeysInspection extends PyInspection {
             return null;
         }
 
-        private static boolean isDict(final PyCallExpression expression) {
-            final PyExpression callee = expression.getCallee();
+        private static boolean isDict(PyCallExpression expression) {
+            PyExpression callee = expression.getCallee();
             if (callee == null) {
                 return false;
             }
-            final String name = callee.getText();
+            String name = callee.getText();
             if ("dict".equals(name)) {
                 return true;
             }

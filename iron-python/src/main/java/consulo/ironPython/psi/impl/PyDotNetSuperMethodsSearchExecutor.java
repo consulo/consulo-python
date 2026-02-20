@@ -31,8 +31,8 @@ import java.util.function.Predicate;
 public class PyDotNetSuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters> {
     @Override
     public boolean execute(
-        @Nonnull final PySuperMethodsSearch.SearchParameters queryParameters,
-        @Nonnull final Predicate<? super PsiElement> consumer
+        @Nonnull PySuperMethodsSearch.SearchParameters queryParameters,
+        @Nonnull Predicate<? super PsiElement> consumer
     ) {
         PyFunction func = queryParameters.getDerivedMethod();
         PyClass containingClass = func.getContainingClass();

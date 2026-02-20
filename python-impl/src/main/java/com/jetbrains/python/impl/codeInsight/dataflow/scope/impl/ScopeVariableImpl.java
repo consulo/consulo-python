@@ -31,13 +31,13 @@ public class ScopeVariableImpl implements ScopeVariable {
   private final Collection<PsiElement> myDeclarations;
   private boolean isParameter;
 
-  public ScopeVariableImpl(final String name, final boolean parameter, final Collection<PsiElement> declarations) {
+  public ScopeVariableImpl(String name, boolean parameter, Collection<PsiElement> declarations) {
     myName = name;
     myDeclarations = declarations;
     isParameter = parameter;
   }
 
-  public ScopeVariableImpl(final String name, final boolean parameter, PsiElement declaration) {
+  public ScopeVariableImpl(String name, boolean parameter, PsiElement declaration) {
     this(name, parameter, Collections.singletonList(declaration));
   }
 

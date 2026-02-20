@@ -76,7 +76,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	{
 		super(docStringText);
 		myTagPrefix = tagPrefix;
-		final StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder();
 		int lineno = 0;
 		while(lineno < getLineCount())
 		{
@@ -106,7 +106,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	@Override
 	public String getSummary()
 	{
-		final List<String> strings = StringUtil.split(StringUtil.trimLeading(myDescription), "\n", true, false);
+		List<String> strings = StringUtil.split(StringUtil.trimLeading(myDescription), "\n", true, false);
 		if(strings.size() > 1)
 		{
 			if(strings.get(1).isEmpty())
@@ -131,12 +131,12 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 
 	protected int parseTag(int lineno, String tagPrefix)
 	{
-		final Substring lineWithPrefix = getLine(lineno).trimLeft();
+		Substring lineWithPrefix = getLine(lineno).trimLeft();
 		if(lineWithPrefix.startsWith(tagPrefix))
 		{
-			final Substring line = lineWithPrefix.substring(tagPrefix.length());
-			final Matcher strictTagMatcher = RE_STRICT_TAG_LINE.matcher(line);
-			final Matcher looseTagMatcher = RE_LOOSE_TAG_LINE.matcher(line);
+			Substring line = lineWithPrefix.substring(tagPrefix.length());
+			Matcher strictTagMatcher = RE_STRICT_TAG_LINE.matcher(line);
+			Matcher looseTagMatcher = RE_LOOSE_TAG_LINE.matcher(line);
 			Matcher tagMatcher = null;
 			if(strictTagMatcher.matches())
 			{
@@ -148,15 +148,15 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 			}
 			if(tagMatcher != null)
 			{
-				final Substring tagName = line.getMatcherGroup(tagMatcher, 1);
-				final Substring argName = line.getMatcherGroup(tagMatcher, 2).trim();
-				final TextRange firstArgLineRange = line.getMatcherGroup(tagMatcher, 3).trim().getTextRange();
-				final int linesCount = getLineCount();
-				final int argStart = firstArgLineRange.getStartOffset();
+				Substring tagName = line.getMatcherGroup(tagMatcher, 1);
+				Substring argName = line.getMatcherGroup(tagMatcher, 2).trim();
+				TextRange firstArgLineRange = line.getMatcherGroup(tagMatcher, 3).trim().getTextRange();
+				int linesCount = getLineCount();
+				int argStart = firstArgLineRange.getStartOffset();
 				int argEnd = firstArgLineRange.getEndOffset();
 				while(lineno + 1 < linesCount)
 				{
-					final Substring nextLine = getLine(lineno + 1).trim();
+					Substring nextLine = getLine(lineno + 1).trim();
 					if(nextLine.isEmpty() || nextLine.startsWith(tagPrefix))
 					{
 						break;
@@ -164,8 +164,8 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 					argEnd = nextLine.getTextRange().getEndOffset();
 					lineno++;
 				}
-				final Substring argValue = new Substring(argName.getSuperString(), argStart, argEnd);
-				final String tagNameString = tagName.toString();
+				Substring argValue = new Substring(argName.getSuperString(), argStart, argEnd);
+				String tagNameString = tagName.toString();
 				if(argName.isEmpty())
 				{
 					mySimpleTagValues.put(tagNameString, argValue);
@@ -175,11 +175,11 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 					if("param".equals(tagNameString) || "parameter".equals(tagNameString) ||
 							"arg".equals(tagNameString) || "argument".equals(tagNameString))
 					{
-						final Matcher argTypeMatcher = RE_ARG_TYPE.matcher(argName);
+						Matcher argTypeMatcher = RE_ARG_TYPE.matcher(argName);
 						if(argTypeMatcher.matches())
 						{
-							final Substring type = argName.getMatcherGroup(argTypeMatcher, 1).trim();
-							final Substring arg = argName.getMatcherGroup(argTypeMatcher, 2);
+							Substring type = argName.getMatcherGroup(argTypeMatcher, 1).trim();
+							Substring arg = argName.getMatcherGroup(argTypeMatcher, 2);
 							getTagValuesMap(TYPE).put(arg, type);
 						}
 						else
@@ -199,10 +199,10 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 
 	protected static List<String> toUniqueStrings(List<?> objects)
 	{
-		final List<String> result = new ArrayList<>(objects.size());
+		List<String> result = new ArrayList<>(objects.size());
 		for(Object o : objects)
 		{
-			final String s = o.toString();
+			String s = o.toString();
 			if(!result.contains(s))
 			{
 				result.add(s);
@@ -216,7 +216,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	{
 		for(String tagName : tagNames)
 		{
-			final Substring value = mySimpleTagValues.get(tagName);
+			Substring value = mySimpleTagValues.get(tagName);
 			if(value != null)
 			{
 				return value;
@@ -228,7 +228,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	@Nullable
 	public Substring getTagValue(String tagName, @Nonnull String argName)
 	{
-		final Map<Substring, Substring> argValues = myArgTagValues.get(tagName);
+		Map<Substring, Substring> argValues = myArgTagValues.get(tagName);
 		return argValues != null ? argValues.get(new Substring(argName)) : null;
 	}
 
@@ -250,7 +250,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	{
 		for(String tagName : tagNames)
 		{
-			final Map<Substring, Substring> map = myArgTagValues.get(tagName);
+			Map<Substring, Substring> map = myArgTagValues.get(tagName);
 			if(map != null)
 			{
 				return new ArrayList<>(map.keySet());
@@ -263,7 +263,7 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	@Override
 	public List<Substring> getParameterSubstrings()
 	{
-		final List<Substring> results = new ArrayList<>();
+		List<Substring> results = new ArrayList<>();
 		results.addAll(getTagArguments(PARAM_TAGS));
 		results.addAll(getTagArguments(PARAM_TYPE_TAGS));
 		return results;

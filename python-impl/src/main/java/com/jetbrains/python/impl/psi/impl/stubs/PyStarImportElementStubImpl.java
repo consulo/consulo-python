@@ -26,7 +26,7 @@ import com.jetbrains.python.psi.stubs.PyStarImportElementStub;
  */
 public class PyStarImportElementStubImpl extends StubBase<PyStarImportElement> implements PyStarImportElementStub
 {
-	protected PyStarImportElementStubImpl(final StubElement parent)
+	protected PyStarImportElementStubImpl(StubElement parent)
 	{
 		super(parent, PyElementTypes.STAR_IMPORT_ELEMENT);
 	}

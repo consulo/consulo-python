@@ -36,14 +36,14 @@ public class PyDebugConsoleBuilder extends TextConsoleBuilder {
   private final ArrayList<Filter> myFilters = new ArrayList<>();
   private final Sdk mySdk;
 
-  public PyDebugConsoleBuilder(final Project project, @Nullable Sdk sdk) {
+  public PyDebugConsoleBuilder(Project project, @Nullable Sdk sdk) {
     myProject = project;
     this.mySdk = sdk;
   }
 
   public ConsoleView getConsole() {
-    final ConsoleView consoleView = createConsole();
-    for (final Filter filter : myFilters) {
+    ConsoleView consoleView = createConsole();
+    for (Filter filter : myFilters) {
       consoleView.addMessageFilter(filter);
     }
     return consoleView;
@@ -55,7 +55,7 @@ public class PyDebugConsoleBuilder extends TextConsoleBuilder {
     return consoleView;
   }
 
-  public void addFilter(final Filter filter) {
+  public void addFilter(Filter filter) {
     myFilters.add(filter);
   }
 

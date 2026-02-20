@@ -45,24 +45,24 @@ import java.util.List;
 public class PyFillParagraphHandler extends ParagraphFillHandler {
 
   @Nonnull
-  protected String getPrefix(@Nonnull final PsiElement element) {
-    final PyStringLiteralExpression stringLiteralExpression =
+  protected String getPrefix(@Nonnull PsiElement element) {
+    PyStringLiteralExpression stringLiteralExpression =
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {
-      final String text = stringLiteralExpression.getText();
-      final Pair<String, String> quotes =
+      String text = stringLiteralExpression.getText();
+      Pair<String, String> quotes =
         PythonStringUtil.getQuotes(text);
-      final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyDocStringOwner.class);
+      PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyDocStringOwner.class);
       if (docStringOwner != null && stringLiteralExpression.equals(docStringOwner.getDocStringExpression())) {
         String indent = getIndent(stringLiteralExpression);
         if (quotes != null) {
-          final List<String> strings = StringUtil.split(text, "\n");
+          List<String> strings = StringUtil.split(text, "\n");
           if (strings.get(0).trim().equals(quotes.getFirst())) {
             return quotes.getFirst() + indent;
           }
           else {
-            final String value = stringLiteralExpression.getStringValue();
-            final int firstNotSpace = StringUtil.findFirst(value, CharFilter.NOT_WHITESPACE_FILTER);
+            String value = stringLiteralExpression.getStringValue();
+            int firstNotSpace = StringUtil.findFirst(value, CharFilter.NOT_WHITESPACE_FILTER);
             return quotes.getFirst() + value.substring(0, firstNotSpace);
           }
         }
@@ -75,10 +75,10 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
   }
 
   private static String getIndent(PyStringLiteralExpression stringLiteralExpression) {
-    final PyStatementList statementList = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyStatementList.class);
+    PyStatementList statementList = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyStatementList.class);
     String indent = "";
     if (statementList != null) {
-      final PsiElement whiteSpace = statementList.getPrevSibling();
+      PsiElement whiteSpace = statementList.getPrevSibling();
       if (whiteSpace instanceof PsiWhiteSpace)
         indent = whiteSpace.getText();
       else
@@ -90,17 +90,17 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
   @Nonnull
   @Override
   protected String getPostfix(@Nonnull PsiElement element) {
-    final PyStringLiteralExpression stringLiteralExpression =
+    PyStringLiteralExpression stringLiteralExpression =
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {
-      final String text = stringLiteralExpression.getText();
-      final Pair<String, String> quotes =
+      String text = stringLiteralExpression.getText();
+      Pair<String, String> quotes =
         PythonStringUtil.getQuotes(text);
-      final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyDocStringOwner.class);
+      PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(stringLiteralExpression, PyDocStringOwner.class);
       if (docStringOwner != null && stringLiteralExpression.equals(docStringOwner.getDocStringExpression())) {
         String indent = getIndent(stringLiteralExpression);
         if (quotes != null) {
-          final List<String> strings = StringUtil.split(text, "\n");
+          List<String> strings = StringUtil.split(text, "\n");
           if (strings.get(strings.size() - 1).trim().equals(quotes.getSecond())) {
             return indent + quotes.getSecond();
           }
@@ -119,7 +119,7 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
   @Override
   public boolean isAvailableForElement(@Nullable PsiElement element) {
     if (element != null) {
-      final PyStringLiteralExpression stringLiteral = PsiTreeUtil
+      PyStringLiteralExpression stringLiteral = PsiTreeUtil
         .getParentOfType(element, PyStringLiteralExpression.class);
       return stringLiteral != null || element instanceof PsiComment;
     }

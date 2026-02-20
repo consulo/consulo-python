@@ -64,7 +64,7 @@ public class SimplifyBooleanCheckQuickFix implements LocalQuickFix {
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    final PsiElement element = descriptor.getPsiElement();
+    PsiElement element = descriptor.getPsiElement();
     if (!element.isValid() || !(element instanceof PyBinaryExpression)) {
       return;
     }
@@ -74,8 +74,8 @@ public class SimplifyBooleanCheckQuickFix implements LocalQuickFix {
 
   private static String createReplacementText(PyBinaryExpression expression) {
     PyExpression resultExpression;
-    final PyExpression leftExpression = expression.getLeftExpression();
-    final PyExpression rightExpression = expression.getRightExpression();
+    PyExpression leftExpression = expression.getLeftExpression();
+    PyExpression rightExpression = expression.getRightExpression();
     boolean positiveCondition = !TokenSet.create(PyTokenTypes.NE, PyTokenTypes.NE_OLD).contains(expression.getOperator());
     positiveCondition ^= isFalse(leftExpression) || isFalse(rightExpression) || isNull(rightExpression) || isNull(leftExpression)
                          || isEmpty(rightExpression) || isEmpty(leftExpression);

@@ -78,7 +78,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
         @Override
         public void visitPyConditionalStatementPart(PyConditionalStatementPart node) {
             super.visitPyConditionalStatementPart(node);
-            final PyExpression condition = node.getCondition();
+            PyExpression condition = node.getCondition();
             if (condition != null) {
                 condition.accept(new PyBinaryExpressionVisitor(getHolder(), getSession(), myIgnoreComparisonToZero));
             }
@@ -100,8 +100,8 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
         @Override
         public void visitPyBinaryExpression(PyBinaryExpression node) {
             super.visitPyBinaryExpression(node);
-            final PyElementType operator = node.getOperator();
-            final PyExpression rightExpression = node.getRightExpression();
+            PyElementType operator = node.getOperator();
+            PyExpression rightExpression = node.getRightExpression();
             if (rightExpression == null || rightExpression instanceof PyBinaryExpression ||
                 node.getLeftExpression() instanceof PyBinaryExpression) {
                 return;
@@ -115,9 +115,9 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
         }
 
         private static boolean operandsEqualTo(@Nonnull PyBinaryExpression expr, @Nonnull Collection<String> literals) {
-            final String leftExpressionText = expr.getLeftExpression().getText();
-            final PyExpression rightExpression = expr.getRightExpression();
-            final String rightExpressionText = rightExpression != null ? rightExpression.getText() : null;
+            String leftExpressionText = expr.getLeftExpression().getText();
+            PyExpression rightExpression = expr.getRightExpression();
+            String rightExpressionText = rightExpression != null ? rightExpression.getText() : null;
             for (String literal : literals) {
                 if (literal.equals(leftExpressionText) || literal.equals(rightExpressionText)) {
                     return true;

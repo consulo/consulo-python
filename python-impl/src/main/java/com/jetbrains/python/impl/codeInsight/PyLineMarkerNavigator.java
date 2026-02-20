@@ -42,10 +42,10 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
 	private static final Key<NavigatablePsiElement[]> MARKERS = new Key<>("PyLineMarkerNavigatorMarkers");
 
 	@Override
-	public void navigate(final MouseEvent e, final T elt)
+	public void navigate(MouseEvent e, T elt)
 	{
-		final List<NavigatablePsiElement> navElements = new ArrayList<>();
-		final Query<T> elementQuery = search(elt, TypeEvalContext.userInitiated(elt.getProject(), elt.getContainingFile()));
+		List<NavigatablePsiElement> navElements = new ArrayList<>();
+		Query<T> elementQuery = search(elt, TypeEvalContext.userInitiated(elt.getProject(), elt.getContainingFile()));
 		if(elementQuery == null)
 		{
 			return;
@@ -62,7 +62,7 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
 		 * {@link PsiElementListNavigator} simply opens then (hence it is swing-based) and can't be used in tests.
 		 * So, in unit tests we save data in element and data could be obtained with {@link #getNavigationTargets(UserDataHolder)}
 		 */
-		final NavigatablePsiElement[] methods = navElements.toArray(new NavigatablePsiElement[navElements.size()]);
+		NavigatablePsiElement[] methods = navElements.toArray(new NavigatablePsiElement[navElements.size()]);
 		if(ApplicationManager.getApplication().isUnitTestMode())
 		{
 			elt.putUserData(MARKERS, methods);
@@ -78,7 +78,7 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
 	 */
 	@TestOnly
 	@Nullable
-	static NavigatablePsiElement[] getNavigationTargets(@Nonnull final UserDataHolder holder)
+	static NavigatablePsiElement[] getNavigationTargets(@Nonnull UserDataHolder holder)
 	{
 		return holder.getUserData(MARKERS);
 	}

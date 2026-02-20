@@ -60,22 +60,22 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
 
             @Override
             protected void checkDocString(@Nonnull PyDocStringOwner node) {
-                final PyStringLiteralExpression docstringExpr = node.getDocStringExpression();
+                PyStringLiteralExpression docstringExpr = node.getDocStringExpression();
                 if (docstringExpr != null) {
                     checkParameters(node, docstringExpr);
                 }
             }
 
             private void checkParameters(@Nonnull PyDocStringOwner pyDocStringOwner, @Nonnull PyStringLiteralExpression node) {
-                final StructuredDocString docString = DocStringUtil.parseDocString(node);
+                StructuredDocString docString = DocStringUtil.parseDocString(node);
                 if (docString instanceof PlainDocString) {
                     return;
                 }
 
                 if (pyDocStringOwner instanceof PyFunction) {
-                    final PyParameter[] realParams = ((PyFunction) pyDocStringOwner).getParameterList().getParameters();
+                    PyParameter[] realParams = ((PyFunction) pyDocStringOwner).getParameterList().getParameters();
 
-                    final List<PyNamedParameter> missingParams = getMissingParams(docString, realParams);
+                    List<PyNamedParameter> missingParams = getMissingParams(docString, realParams);
                     if (!missingParams.isEmpty()) {
                         for (PyNamedParameter param : missingParams) {
                             registerProblem(
@@ -85,10 +85,10 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
                             );
                         }
                     }
-                    final List<Substring> unexpectedParams = getUnexpectedParams(docString, realParams);
+                    List<Substring> unexpectedParams = getUnexpectedParams(docString, realParams);
                     if (!unexpectedParams.isEmpty()) {
                         for (Substring param : unexpectedParams) {
-                            final ProblemsHolder holder = getHolder();
+                            ProblemsHolder holder = getHolder();
 
                             if (holder != null) {
                                 holder.newProblem(PyLocalize.inspUnexpectedParameterInDocstring(param))
@@ -105,14 +105,14 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
 
     @Nonnull
     private static List<PyNamedParameter> getMissingParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams) {
-        final List<PyNamedParameter> missing = new ArrayList<>();
-        final List<String> docStringParameters = docString.getParameters();
+        List<PyNamedParameter> missing = new ArrayList<>();
+        List<String> docStringParameters = docString.getParameters();
         if (docStringParameters.isEmpty()) {
             return Collections.emptyList();
         }
 
         for (PyParameter p : realParams) {
-            final PyNamedParameter named = as(p, PyNamedParameter.class);
+            PyNamedParameter named = as(p, PyNamedParameter.class);
             if (p.isSelf() || named == null || named.isPositionalContainer() || named.isKeywordContainer()) {
                 continue;
             }
@@ -125,7 +125,7 @@ public class PyIncorrectDocstringInspection extends PyBaseDocstringInspection {
 
     @Nonnull
     private static List<Substring> getUnexpectedParams(@Nonnull StructuredDocString docString, @Nonnull PyParameter[] realParams) {
-        final Map<String, Substring> unexpected = Maps.newHashMap();
+        Map<String, Substring> unexpected = Maps.newHashMap();
 
         for (Substring s : docString.getParameterSubstrings()) {
             unexpected.put(s.toString(), s);

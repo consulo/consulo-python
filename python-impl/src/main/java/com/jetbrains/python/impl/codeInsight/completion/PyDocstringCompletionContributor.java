@@ -65,20 +65,20 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
                                ProcessingContext context,
                                @Nonnull CompletionResultSet result) {
       if (parameters.isAutoPopup()) return;
-      final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyDocStringOwner.class);
+      PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyDocStringOwner.class);
       if (docStringOwner != null) {
-        final PsiFile file = docStringOwner.getContainingFile();
-        final Module module = ModuleUtilCore.findModuleForPsiElement(docStringOwner);
+        PsiFile file = docStringOwner.getContainingFile();
+        Module module = ModuleUtilCore.findModuleForPsiElement(docStringOwner);
         if (module != null) {
-          final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(module);
+          PyDocumentationSettings settings = PyDocumentationSettings.getInstance(module);
           if (!settings.isPlain(file)) return;
           result = result.withPrefixMatcher(getPrefix(parameters.getOffset(), file));
-          final Collection<String> identifiers = PyRefactoringUtil.collectUsedNames(docStringOwner);
+          Collection<String> identifiers = PyRefactoringUtil.collectUsedNames(docStringOwner);
           for (String identifier : identifiers)
             result.addElement(LookupElementBuilder.create(identifier));
 
 
-          final Collection<String> fileIdentifiers = PyRefactoringUtil.collectUsedNames(parameters.getOriginalFile());
+          Collection<String> fileIdentifiers = PyRefactoringUtil.collectUsedNames(parameters.getOriginalFile());
           for (String identifier : fileIdentifiers)
             result.addElement(LookupElementBuilder.create(identifier));
         }
@@ -90,7 +90,7 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
     if (offset > 0) {
       offset--;
     }
-    final String text = file.getText();
+    String text = file.getText();
     StringBuilder prefixBuilder = new StringBuilder();
     while (offset > 0 && Character.isLetterOrDigit(text.charAt(offset))) {
       prefixBuilder.insert(0, text.charAt(offset));

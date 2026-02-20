@@ -39,14 +39,14 @@ public abstract class PyClassMembersProviderBase implements PyClassMembersProvid
 	@Override
 	public PsiElement resolveMember(PyClassType clazz, String name, PsiElement location, TypeEvalContext context)
 	{
-		final Collection<PyCustomMember> members = getMembers(clazz, location, context);
+		Collection<PyCustomMember> members = getMembers(clazz, location, context);
 		return resolveMemberByName(members, clazz, name);
 	}
 
 	@Nullable
 	public static PsiElement resolveMemberByName(Collection<PyCustomMember> members, PyClassType clazz, String name)
 	{
-		final PyClass pyClass = clazz.getPyClass();
+		PyClass pyClass = clazz.getPyClass();
 		for(PyCustomMember member : members)
 		{
 			if(member.getName().equals(name))

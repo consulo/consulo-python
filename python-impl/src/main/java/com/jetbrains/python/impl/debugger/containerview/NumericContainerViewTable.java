@@ -84,7 +84,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 	}
 
 
-	private void initUi(@Nonnull final ArrayChunk chunk, final boolean inPlace)
+	private void initUi(@Nonnull ArrayChunk chunk, boolean inPlace)
 	{
 		myPagingModel = createTableModel(Math.min(chunk.getRows(), ROWS_IN_DEFAULT_VIEW), Math.min(chunk.getColumns(), COLUMNS_IN_DEFAULT_VIEW));
 		myPagingModel.addToCache(chunk);
@@ -138,7 +138,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 
 	protected abstract ColoredCellRenderer createCellRenderer(double minValue, double maxValue, ArrayChunk chunk);
 
-	private void initTableModel(final boolean inPlace)
+	private void initTableModel(boolean inPlace)
 	{
 		myPagingModel = createTableModel(myPagingModel.getRowCount(), myPagingModel.getColumnCount());
 
@@ -231,18 +231,18 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 		init(getDebugValue().getEvaluationExpression(), false);
 	}
 
-	public void init(final String slice, final boolean inPlace)
+	public void init(String slice, boolean inPlace)
 	{
 		initComponent();
 		myComponent.getSliceTextField().setText(slice);
 
 		ApplicationManager.getApplication().executeOnPooledThread(() -> {
-			final PyDebugValue value = getDebugValue();
+			PyDebugValue value = getDebugValue();
 			PyDebugValue parent = value.getParent();
-			final PyDebugValue slicedValue = new PyDebugValue(slice, value.getType(), null, value.getValue(), value.isContainer(), value.isReturnedVal(), value.isErrorOnEval(), value.isIPythonHidden
+			PyDebugValue slicedValue = new PyDebugValue(slice, value.getType(), null, value.getValue(), value.isContainer(), value.isReturnedVal(), value.isErrorOnEval(), value.isIPythonHidden
 					(), parent, value.getFrameAccessor());
 
-			final String format = getFormat().isEmpty() ? "%" : getFormat();
+			String format = getFormat().isEmpty() ? "%" : getFormat();
 
 			try
 			{
@@ -264,10 +264,10 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 	@Override
 	public ArrayChunk getChunk(int rowOffset, int colOffset, int rows, int cols) throws PyDebuggerException
 	{
-		final PyDebugValue slicedValue = new PyDebugValue(getSliceText(), myValue.getType(), myValue.getTypeQualifier(), myValue.getValue(), myValue.isContainer(), myValue.isErrorOnEval(), myValue
+		PyDebugValue slicedValue = new PyDebugValue(getSliceText(), myValue.getType(), myValue.getTypeQualifier(), myValue.getValue(), myValue.isContainer(), myValue.isErrorOnEval(), myValue
 				.isReturnedVal(), myValue.isIPythonHidden(), myValue.getParent(), myValue.getFrameAccessor());
 
-		final String format = getFormat().isEmpty() ? "%" : getFormat();
+		String format = getFormat().isEmpty() ? "%" : getFormat();
 		return myValue.getFrameAccessor().getArrayItems(slicedValue, rowOffset, colOffset, rows, cols, format);
 	}
 

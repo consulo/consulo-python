@@ -33,7 +33,7 @@ public class NameSuggesterUtil {
   private NameSuggesterUtil() {
   }
 
-  private static String deleteNonLetterFromString(@Nonnull final String string) {
+  private static String deleteNonLetterFromString(@Nonnull String string) {
     Pattern pattern = Pattern.compile("[^a-zA-Z_]+");
     Matcher matcher = pattern.matcher(string);
     return matcher.replaceAll("_");
@@ -51,12 +51,12 @@ public class NameSuggesterUtil {
     while (name.startsWith("_")) {
       name = name.substring(1);
     }
-    final int length = name.length();
-    final Collection<String> possibleNames = new LinkedHashSet<String>();
+    int length = name.length();
+    Collection<String> possibleNames = new LinkedHashSet<String>();
     for (int i = 0; i < length; i++) {
       if (Character.isLetter(name.charAt(i)) &&
           (i == 0 || name.charAt(i - 1) == '_' || (Character.isLowerCase(name.charAt(i - 1)) && Character.isUpperCase(name.charAt(i))))) {
-        final String candidate = StringUtil.decapitalize(toUnderscoreCase(name.substring(i)));
+        String candidate = StringUtil.decapitalize(toUnderscoreCase(name.substring(i)));
         if (candidate.length() < 25) {
           possibleNames.add(candidate);
         }
@@ -69,7 +69,7 @@ public class NameSuggesterUtil {
   }
 
   public static Collection<String> generateNamesByType(@Nonnull String name) {
-    final Collection<String> possibleNames = new LinkedHashSet<String>();
+    Collection<String> possibleNames = new LinkedHashSet<String>();
     name = StringUtil.decapitalize(deleteNonLetterFromString(name.replace('.', '_')));
     name = toUnderscoreCase(name);
     possibleNames.add(name);
@@ -78,12 +78,12 @@ public class NameSuggesterUtil {
   }
 
   @Nonnull
-  public static String toUnderscoreCase(@Nonnull final String name) {
+  public static String toUnderscoreCase(@Nonnull String name) {
     StringBuilder buffer = new StringBuilder();
-    final int length = name.length();
+    int length = name.length();
 
     for (int i = 0; i < length; i++) {
-      final char ch = name.charAt(i);
+      char ch = name.charAt(i);
       if (ch != '-') {
         buffer.append(Character.toLowerCase(ch));
       }
@@ -94,8 +94,8 @@ public class NameSuggesterUtil {
       if (Character.isLetterOrDigit(ch)) {
         if (Character.isUpperCase(ch)) {
           if (i + 2 < length) {
-            final char chNext = name.charAt(i + 1);
-            final char chNextNext = name.charAt(i + 2);
+            char chNext = name.charAt(i + 1);
+            char chNextNext = name.charAt(i + 2);
 
             if (Character.isUpperCase(chNext) && Character.isLowerCase(chNextNext)) {
 
@@ -105,7 +105,7 @@ public class NameSuggesterUtil {
         }
         else if (Character.isLowerCase(ch) || Character.isDigit(ch)) {
           if (i + 1 < length) {
-            final char chNext = name.charAt(i + 1);
+            char chNext = name.charAt(i + 1);
             if (Character.isUpperCase(chNext)) {
               buffer.append('_');
             }

@@ -84,7 +84,7 @@ public class PyNonAsciiCharInspection extends PyInspection {
             if (file == null) {
                 return;
             }
-            final String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file.getText());
+            String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file.getText());
 
             boolean hasNonAscii = false;
 

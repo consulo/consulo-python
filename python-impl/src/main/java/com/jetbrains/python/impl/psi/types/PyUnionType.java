@@ -138,7 +138,7 @@ public class PyUnionType implements PyType
 	@Nullable
 	public static PyType union(Collection<PyType> members)
 	{
-		final int n = members.size();
+		int n = members.size();
 		if(n == 0)
 		{
 			return null;
@@ -149,7 +149,7 @@ public class PyUnionType implements PyType
 		}
 		else
 		{
-			final Iterator<PyType> it = members.iterator();
+			Iterator<PyType> it = members.iterator();
 			PyType res = unit(it.next());
 			while(it.hasNext())
 			{
@@ -168,7 +168,7 @@ public class PyUnionType implements PyType
 		}
 		else if(type instanceof PyUnionType)
 		{
-			final PyUnionType unionType = (PyUnionType) type;
+			PyUnionType unionType = (PyUnionType) type;
 			if(unionType.isWeak())
 			{
 				return unionType;
@@ -205,7 +205,7 @@ public class PyUnionType implements PyType
 	@Nullable
 	public PyType exclude(@Nullable PyType type, @Nonnull TypeEvalContext context)
 	{
-		final List<PyType> members = new ArrayList<>();
+		List<PyType> members = new ArrayList<>();
 		for(PyType m : getMembers())
 		{
 			if(type == null)
@@ -251,7 +251,7 @@ public class PyUnionType implements PyType
 	{
 		if(other instanceof PyUnionType)
 		{
-			final PyUnionType otherType = (PyUnionType) other;
+			PyUnionType otherType = (PyUnionType) other;
 			return myMembers.equals(otherType.myMembers);
 		}
 		return false;

@@ -31,7 +31,7 @@ import com.jetbrains.python.psi.PyDecorator;
 public class PyDecoratorStubImpl extends StubBase<PyDecorator> implements PyDecoratorStub {
   private final QualifiedName myQualifiedName;
 
-  protected PyDecoratorStubImpl(final QualifiedName qualname, final StubElement parent) {
+  protected PyDecoratorStubImpl(QualifiedName qualname, StubElement parent) {
     super(parent, PyElementTypes.DECORATOR_CALL);
     myQualifiedName = qualname;
   }

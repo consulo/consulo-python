@@ -74,7 +74,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
             }
         }
 
-        public static InfoHolder collect(final PsiElement position) {
+        public static InfoHolder collect(PsiElement position) {
             InfoHolder ret = new InfoHolder();
             ret.myModuleReference = null;
             ret.myFromImportStatement = PsiTreeUtil.getParentOfType(position, PyFromImportStatement.class);
@@ -154,7 +154,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
 
         InfoHolder info = InfoHolder.collect(getElementFromEditor(editor, file));
         info.myModuleReference = null;
-        final PsiElement position = file.findElementAt(editor.getCaretModel().getOffset());
+        PsiElement position = file.findElementAt(editor.getCaretModel().getOffset());
         info.myFromImportStatement = PsiTreeUtil.getParentOfType(position, PyFromImportStatement.class);
         PyPsiUtils.assertValid(info.myFromImportStatement);
         if (info.myFromImportStatement != null && !info.myFromImportStatement.isFromFuture()) {
@@ -167,7 +167,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
                     PyPsiUtils.assertValid(ref);
                     if (ref != null) {
                         PsiElement target = ref.getReference().resolve();
-                        final TypeEvalContext context = TypeEvalContext.codeAnalysis(file.getProject(), file);
+                        TypeEvalContext context = TypeEvalContext.codeAnalysis(file.getProject(), file);
                         if (target instanceof PyExpression && context.getType((PyExpression) target) instanceof PyModuleType) {
                             return false;
                         }
@@ -193,7 +193,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
      * @param qualifier
      */
     private static void qualifyTarget(ASTNode target_node, Project project, String qualifier) {
-        final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+        PyElementGenerator generator = PyElementGenerator.getInstance(project);
         target_node.addChild(generator.createDot(), target_node.getFirstChildNode());
         target_node.addChild(sure(generator.createFromText(LanguageLevel.getDefault(), PyReferenceExpression.class, qualifier, new int[]{
             0,
@@ -265,7 +265,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
                 possible_targets.addAll(references.keySet());
                 possible_targets.addAll(star_references);
             }
-            final Set<PsiElement> ignored = Sets.<PsiElement>newHashSet(Arrays.asList(info.myFromImportStatement.getImportElements()));
+            Set<PsiElement> ignored = Sets.<PsiElement>newHashSet(Arrays.asList(info.myFromImportStatement.getImportElements()));
             if (top_name != null && showConflicts(
                 project,
                 findDefinitions(top_name, possible_targets, ignored),

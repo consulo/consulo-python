@@ -27,7 +27,7 @@ import com.jetbrains.python.psi.PyTryExceptStatement;
  */
 public class TryExceptAnnotator extends PyAnnotator {
   @Override
-  public void visitPyTryExceptStatement(final PyTryExceptStatement node) {
+  public void visitPyTryExceptStatement(PyTryExceptStatement node) {
     PyExceptPart[] exceptParts = node.getExceptParts();
     boolean haveDefaultExcept = false;
     for (PyExceptPart part : exceptParts) {

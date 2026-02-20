@@ -72,7 +72,7 @@ public abstract class PyElementGenerator {
    */
   public abstract PyExpression createExpressionFromText(String text);
 
-  public abstract PyExpression createExpressionFromText(final LanguageLevel languageLevel, String text);
+  public abstract PyExpression createExpressionFromText(LanguageLevel languageLevel, String text);
 
   /**
    * Adds elements to list inserting required commas.
@@ -93,20 +93,20 @@ public abstract class PyElementGenerator {
                                                 PyExpression toInsert) throws IncorrectOperationException;
 
   @Nonnull
-  public abstract PyCallExpression createCallExpression(final LanguageLevel langLevel, String functionName);
+  public abstract PyCallExpression createCallExpression(LanguageLevel langLevel, String functionName);
 
-  public abstract PyImportElement createImportElement(final LanguageLevel languageLevel, String name);
+  public abstract PyImportElement createImportElement(LanguageLevel languageLevel, String name);
 
-  public abstract PyFunction createProperty(final LanguageLevel languageLevel,
+  public abstract PyFunction createProperty(LanguageLevel languageLevel,
                                             String propertyName,
                                             String fieldName,
                                             AccessDirection accessDirection);
 
   @Nonnull
-  public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, final String text);
+  public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, String text);
 
   @Nonnull
-  public abstract <T> T createPhysicalFromText(LanguageLevel langLevel, Class<T> aClass, final String text);
+  public abstract <T> T createPhysicalFromText(LanguageLevel langLevel, Class<T> aClass, String text);
 
   /**
    * Creates an arbitrary PSI element from text, by creating a bigger construction and then cutting the proper subelement.
@@ -119,7 +119,7 @@ public abstract class PyElementGenerator {
    * @return the newly created PSI element
    */
   @Nonnull
-  public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, final String text, final int[] path);
+  public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, String text, int[] path);
 
   public abstract PyNamedParameter createParameter(@Nonnull String name,
                                                    @Nullable String defaultValue,
@@ -149,7 +149,7 @@ public abstract class PyElementGenerator {
   public abstract PyPassStatement createPassStatement();
 
   @Nonnull
-  public abstract PyDecoratorList createDecoratorList(@Nonnull final String... decoratorTexts);
+  public abstract PyDecoratorList createDecoratorList(@Nonnull String... decoratorTexts);
 
   /**
    * Creates new line whitespace

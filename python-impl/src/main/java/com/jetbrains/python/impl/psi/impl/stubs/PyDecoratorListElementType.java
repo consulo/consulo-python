@@ -40,24 +40,24 @@ public class PyDecoratorListElementType extends PyStubElementType<PyDecoratorLis
     super("DECORATOR_LIST");
   }
 
-  public PsiElement createElement(@Nonnull final ASTNode node) {
+  public PsiElement createElement(@Nonnull ASTNode node) {
     return new PyDecoratorListImpl(node);
   }
 
-  public PyDecoratorList createPsi(@Nonnull final PyDecoratorListStub stub) {
+  public PyDecoratorList createPsi(@Nonnull PyDecoratorListStub stub) {
     return new PyDecoratorListImpl(stub);
   }
 
-  public PyDecoratorListStub createStub(@Nonnull final PyDecoratorList psi, final StubElement parentStub) {
+  public PyDecoratorListStub createStub(@Nonnull PyDecoratorList psi, StubElement parentStub) {
     return new PyDecoratorListStubImpl(parentStub);
   }
 
-  public void serialize(@Nonnull final PyDecoratorListStub stub, @Nonnull final StubOutputStream dataStream) throws IOException {
+  public void serialize(@Nonnull PyDecoratorListStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
     // nothing
   }
 
   @Nonnull
-  public PyDecoratorListStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub) throws IOException {
+  public PyDecoratorListStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new PyDecoratorListStubImpl(parentStub);
   }
 }

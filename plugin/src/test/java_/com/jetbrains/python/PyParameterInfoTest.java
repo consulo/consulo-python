@@ -479,7 +479,7 @@ public abstract class PyParameterInfoTest extends LightMarkedTestCase
 	{
 		Collector collector = new Collector(myFixture.getProject(), myFixture.getFile(), offset);
 		PyParameterInfoHandler handler = new PyParameterInfoHandler();
-		final PyArgumentList parameterOwner = handler.findElementForParameterInfo(collector);
+		PyArgumentList parameterOwner = handler.findElementForParameterInfo(collector);
 		collector.setParameterOwner(parameterOwner); // finds arglist, sets items to show
 		if(collector.getParameterOwner() != null)
 		{

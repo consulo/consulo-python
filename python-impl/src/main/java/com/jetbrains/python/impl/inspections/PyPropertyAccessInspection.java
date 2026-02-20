@@ -65,7 +65,7 @@ public class PyPropertyAccessInspection extends PyInspection {
     public static class Visitor extends PyInspectionVisitor {
         private final HashMap<Pair<PyClass, String>, Property> myPropertyCache = new HashMap<>();
 
-        public Visitor(@Nonnull final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(@Nonnull ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -82,15 +82,15 @@ public class PyPropertyAccessInspection extends PyInspection {
         }
 
         private void checkPropertyExpression(PyQualifiedExpression node) {
-            final PyExpression qualifier = node.getQualifier();
+            PyExpression qualifier = node.getQualifier();
             if (qualifier != null) {
-                final PyType type = myTypeEvalContext.getType(qualifier);
+                PyType type = myTypeEvalContext.getType(qualifier);
                 if (type instanceof PyClassType) {
-                    final PyClass cls = ((PyClassType) type).getPyClass();
-                    final String name = node.getName();
+                    PyClass cls = ((PyClassType) type).getPyClass();
+                    String name = node.getName();
                     if (name != null) {
-                        final Pair<PyClass, String> key = Pair.create(cls, name);
-                        final Property property;
+                        Pair<PyClass, String> key = Pair.create(cls, name);
+                        Property property;
                         if (myPropertyCache.containsKey(key)) {
                             property = myPropertyCache.get(key);
                         }
@@ -99,10 +99,10 @@ public class PyPropertyAccessInspection extends PyInspection {
                         }
                         myPropertyCache.put(key, property); // we store nulls, too, to know that a property does not exist
                         if (property != null) {
-                            final AccessDirection dir = AccessDirection.of(node);
+                            AccessDirection dir = AccessDirection.of(node);
                             checkAccessor(node, name, dir, property);
                             if (dir == AccessDirection.READ) {
-                                final PsiElement parent = node.getParent();
+                                PsiElement parent = node.getParent();
                                 if (parent instanceof PyAugAssignmentStatement && ((PyAugAssignmentStatement) parent).getTarget() == node) {
                                     checkAccessor(node, name, AccessDirection.WRITE, property);
                                 }
@@ -114,7 +114,7 @@ public class PyPropertyAccessInspection extends PyInspection {
         }
 
         private void checkAccessor(PyExpression node, String name, AccessDirection dir, Property property) {
-            final Maybe<PyCallable> accessor = property.getByDirection(dir);
+            Maybe<PyCallable> accessor = property.getByDirection(dir);
             if (accessor.isDefined() && accessor.value() == null) {
                 LocalizeValue message;
                 if (dir == AccessDirection.WRITE) {

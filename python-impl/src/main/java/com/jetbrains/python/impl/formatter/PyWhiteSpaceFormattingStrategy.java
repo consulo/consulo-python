@@ -83,7 +83,7 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
       return whiteSpaceText;
     }
 
-    final IntSet newBackSlashes = countBackSlashes(whiteSpaceText, 0, whiteSpaceText.length());
+    IntSet newBackSlashes = countBackSlashes(whiteSpaceText, 0, whiteSpaceText.length());
     PrimitiveIterator.OfInt iterator = initialBackSlashes.iterator();
     while (iterator.hasNext()) {
       int key = iterator.nextInt();

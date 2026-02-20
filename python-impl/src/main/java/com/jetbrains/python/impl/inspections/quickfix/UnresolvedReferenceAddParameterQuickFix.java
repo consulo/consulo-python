@@ -51,15 +51,15 @@ public class UnresolvedReferenceAddParameterQuickFix implements LocalQuickFix {
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-    final PsiElement element = descriptor.getPsiElement();
+    PsiElement element = descriptor.getPsiElement();
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
     PyNamedParameter parameter = elementGenerator.createParameter(element.getText() + "=None");
-    final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+    PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
     if (function != null) {
-      final PyParameterList parameterList = function.getParameterList();
+      PyParameterList parameterList = function.getParameterList();
       parameterList.addParameter(parameter);
       CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(parameterList);
-      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(parameter);
+      TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(parameter);
       builder.replaceRange(TextRange.create(parameter.getTextLength() - 4, parameter.getTextLength()), "None");
       builder.run();
     }

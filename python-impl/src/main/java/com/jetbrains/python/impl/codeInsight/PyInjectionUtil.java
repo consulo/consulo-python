@@ -39,7 +39,7 @@ public class PyInjectionUtil {
    * or formatting.
    */
   public static boolean isLargestStringLiteral(@Nonnull PsiElement element) {
-    final PsiElement parent = element.getParent();
+    PsiElement parent = element.getParent();
     return isStringLiteralPart(element) && (parent == null || !isStringLiteralPart(parent));
   }
 
@@ -56,18 +56,18 @@ public class PyInjectionUtil {
       return true;
     }
     else if (element instanceof PyParenthesizedExpression) {
-      final PyExpression contained = ((PyParenthesizedExpression)element).getContainedExpression();
+      PyExpression contained = ((PyParenthesizedExpression)element).getContainedExpression();
       return contained != null && isStringLiteralPart(contained);
     }
     else if (element instanceof PyBinaryExpression) {
-      final PyBinaryExpression expr = (PyBinaryExpression)element;
-      final PyExpression left = expr.getLeftExpression();
-      final PyExpression right = expr.getRightExpression();
+      PyBinaryExpression expr = (PyBinaryExpression)element;
+      PyExpression left = expr.getLeftExpression();
+      PyExpression right = expr.getRightExpression();
       return (expr.isOperator("+") && (isStringLiteralPart(left) || right != null && isStringLiteralPart(right))) ||
               expr.isOperator("%") && isStringLiteralPart(left);
     }
     else if (element instanceof PyCallExpression) {
-      final PyExpression qualifier = getFormatCallQualifier((PyCallExpression)element);
+      PyExpression qualifier = getFormatCallQualifier((PyCallExpression)element);
       return qualifier != null && isStringLiteralPart(qualifier);
     }
     return false;
@@ -75,10 +75,10 @@ public class PyInjectionUtil {
 
   @Nullable
   private static PyExpression getFormatCallQualifier(@Nonnull PyCallExpression element) {
-    final PyExpression callee = element.getCallee();
+    PyExpression callee = element.getCallee();
     if (callee instanceof PyQualifiedExpression) {
-      final PyQualifiedExpression qualifiedExpr = (PyQualifiedExpression)callee;
-      final PyExpression qualifier = qualifiedExpr.getQualifier();
+      PyQualifiedExpression qualifiedExpr = (PyQualifiedExpression)callee;
+      PyExpression qualifier = qualifiedExpr.getQualifier();
       if (qualifier != null && PyNames.FORMAT.equals(qualifiedExpr.getReferencedName())) {
         return qualifier;
       }
@@ -88,23 +88,23 @@ public class PyInjectionUtil {
 
   private static void processStringLiteral(@Nonnull PsiElement element, @Nonnull MultiHostRegistrar registrar, @Nonnull String prefix,
                                            @Nonnull String suffix, @Nonnull Formatting formatting) {
-    final String missingValue = "missing";
+    String missingValue = "missing";
     if (element instanceof PyStringLiteralExpression) {
-      final PyStringLiteralExpression expr = (PyStringLiteralExpression)element;
-      final List<TextRange> ranges = expr.getStringValueTextRanges();
-      final String text = expr.getText();
+      PyStringLiteralExpression expr = (PyStringLiteralExpression)element;
+      List<TextRange> ranges = expr.getStringValueTextRanges();
+      String text = expr.getText();
       for (TextRange range : ranges) {
         if (formatting != Formatting.NONE) {
-          final String part = range.substring(text);
-          final List<FormatStringChunk> chunks = formatting == Formatting.NEW_STYLE ? parseNewStyleFormat(part) : parsePercentFormat(part);
+          String part = range.substring(text);
+          List<FormatStringChunk> chunks = formatting == Formatting.NEW_STYLE ? parseNewStyleFormat(part) : parsePercentFormat(part);
           for (int i = 0; i < chunks.size(); i++) {
-            final FormatStringChunk chunk = chunks.get(i);
+            FormatStringChunk chunk = chunks.get(i);
             if (chunk instanceof ConstantChunk) {
-              final int nextIndex = i + 1;
-              final String chunkPrefix = i == 1 && chunks.get(0) instanceof SubstitutionChunk ? missingValue : "";
-              final String chunkSuffix = nextIndex < chunks.size() &&
+              int nextIndex = i + 1;
+              String chunkPrefix = i == 1 && chunks.get(0) instanceof SubstitutionChunk ? missingValue : "";
+              String chunkSuffix = nextIndex < chunks.size() &&
                                          chunks.get(nextIndex) instanceof SubstitutionChunk ? missingValue : "";
-              final TextRange chunkRange = chunk.getTextRange().shiftRight(range.getStartOffset());
+              TextRange chunkRange = chunk.getTextRange().shiftRight(range.getStartOffset());
               registrar.addPlace(chunkPrefix, chunkSuffix, expr, chunkRange);
             }
           }
@@ -115,18 +115,18 @@ public class PyInjectionUtil {
       }
     }
     else if (element instanceof PyParenthesizedExpression) {
-      final PyExpression contained = ((PyParenthesizedExpression)element).getContainedExpression();
+      PyExpression contained = ((PyParenthesizedExpression)element).getContainedExpression();
       if (contained != null) {
         processStringLiteral(contained, registrar, prefix, suffix, formatting);
       }
     }
     else if (element instanceof PyBinaryExpression) {
-      final PyBinaryExpression expr = (PyBinaryExpression)element;
-      final PyExpression left = expr.getLeftExpression();
-      final PyExpression right = expr.getRightExpression();
-      final boolean isLeftString = isStringLiteralPart(left);
+      PyBinaryExpression expr = (PyBinaryExpression)element;
+      PyExpression left = expr.getLeftExpression();
+      PyExpression right = expr.getRightExpression();
+      boolean isLeftString = isStringLiteralPart(left);
       if (expr.isOperator("+")) {
-        final boolean isRightString = right != null && isStringLiteralPart(right);
+        boolean isRightString = right != null && isStringLiteralPart(right);
         if (isLeftString) {
           processStringLiteral(left, registrar, prefix, isRightString ? "" : missingValue, formatting);
         }
@@ -139,7 +139,7 @@ public class PyInjectionUtil {
       }
     }
     else if (element instanceof PyCallExpression) {
-      final PyExpression qualifier = getFormatCallQualifier((PyCallExpression)element);
+      PyExpression qualifier = getFormatCallQualifier((PyCallExpression)element);
       if (qualifier != null) {
         processStringLiteral(qualifier, registrar, prefix, suffix, Formatting.NEW_STYLE);
       }

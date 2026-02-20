@@ -72,7 +72,7 @@ public class PyTypeProviderBase implements PyTypeProvider {
   @Nullable
   @Override
   public Ref<PyType> getCallType(@Nonnull PyFunction function, @Nullable PyCallSiteExpression callSite, @Nonnull TypeEvalContext context) {
-    final ReturnTypeDescriptor descriptor;
+    ReturnTypeDescriptor descriptor;
     synchronized (myMethodToReturnTypeMap) {
       descriptor = myMethodToReturnTypeMap.get(function.getName());
     }
@@ -134,8 +134,8 @@ public class PyTypeProviderBase implements PyTypeProvider {
 
     @Nullable
     private static PyType getQualifierType(@Nullable PyCallSiteExpression callSite, @Nonnull TypeEvalContext context) {
-      final PyExpression callee = callSite instanceof PyCallExpression ? ((PyCallExpression)callSite).getCallee() : null;
-      final PyExpression qualifier = callee instanceof PyQualifiedExpression ? ((PyQualifiedExpression)callee).getQualifier() : null;
+      PyExpression callee = callSite instanceof PyCallExpression ? ((PyCallExpression)callSite).getCallee() : null;
+      PyExpression qualifier = callee instanceof PyQualifiedExpression ? ((PyQualifiedExpression)callee).getQualifier() : null;
 
       return qualifier != null ? context.getType(qualifier) : null;
     }

@@ -45,12 +45,12 @@ import java.util.List;
  */
 public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElementBase<T> implements PyElement
 {
-	public PyBaseElementImpl(final T stub, IStubElementType nodeType)
+	public PyBaseElementImpl(T stub, IStubElementType nodeType)
 	{
 		super(stub, nodeType);
 	}
 
-	public PyBaseElementImpl(final ASTNode node)
+	public PyBaseElementImpl(ASTNode node)
 	{
 		super(node);
 	}
@@ -96,14 +96,14 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 	@Nonnull
 	protected <T extends PyElement> T[] childrenToPsi(TokenSet filterSet, T[] array)
 	{
-		final ASTNode[] nodes = getNode().getChildren(filterSet);
+		ASTNode[] nodes = getNode().getChildren(filterSet);
 		return PyPsiUtils.nodesToPsi(nodes, array);
 	}
 
 	@Nullable
 	protected <T extends PyElement> T childToPsi(TokenSet filterSet, int index)
 	{
-		final ASTNode[] nodes = getNode().getChildren(filterSet);
+		ASTNode[] nodes = getNode().getChildren(filterSet);
 		if(nodes.length <= index)
 		{
 			return null;
@@ -115,7 +115,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 	@Nullable
 	protected <T extends PyElement> T childToPsi(IElementType elType)
 	{
-		final ASTNode node = getNode().findChildByType(elType);
+		ASTNode node = getNode().findChildByType(elType);
 		if(node == null)
 		{
 			return null;
@@ -128,7 +128,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 	@Nullable
 	protected <T extends PyElement> T childToPsi(@Nonnull TokenSet elTypes)
 	{
-		final ASTNode node = getNode().findChildByType(elTypes);
+		ASTNode node = getNode().findChildByType(elTypes);
 		//noinspection unchecked
 		return node != null ? (T) node.getPsi() : null;
 	}
@@ -136,7 +136,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 	@Nonnull
 	protected <T extends PyElement> T childToPsiNotNull(TokenSet filterSet, int index)
 	{
-		final PyElement child = childToPsi(filterSet, index);
+		PyElement child = childToPsi(filterSet, index);
 		if(child == null)
 		{
 			throw new RuntimeException("child must not be null: expression text " + getText());
@@ -148,7 +148,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 	@Nonnull
 	protected <T extends PyElement> T childToPsiNotNull(IElementType elType)
 	{
-		final PyElement child = childToPsi(elType);
+		PyElement child = childToPsi(elType);
 		if(child == null)
 		{
 			throw new RuntimeException("child must not be null; expression text " + getText());
@@ -177,8 +177,8 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		offset = getTextRange().getStartOffset() + offset - element.getTextRange().getStartOffset();
 
 		List<PsiReference> referencesList = new ArrayList<>();
-		final PsiFile file = element.getContainingFile();
-		final PyResolveContext resolveContext = file != null ? PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(file.getProject(), file)) : PyResolveContext
+		PsiFile file = element.getContainingFile();
+		PyResolveContext resolveContext = file != null ? PyResolveContext.defaultContext().withTypeEvalContext(TypeEvalContext.codeAnalysis(file.getProject(), file)) : PyResolveContext
 				.defaultContext();
 		while(element != null)
 		{
@@ -202,19 +202,19 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		return new PsiMultiReference(referencesList.toArray(new PsiReference[referencesList.size()]), referencesList.get(referencesList.size() - 1).getElement());
 	}
 
-	private static void addReferences(int offset, PsiElement element, final Collection<PsiReference> outReferences, PyResolveContext resolveContext)
+	private static void addReferences(int offset, PsiElement element, Collection<PsiReference> outReferences, PyResolveContext resolveContext)
 	{
-		final PsiReference[] references;
+		PsiReference[] references;
 		if(element instanceof PyReferenceOwner)
 		{
-			final PsiPolyVariantReference reference = ((PyReferenceOwner) element).getReference(resolveContext);
+			PsiPolyVariantReference reference = ((PyReferenceOwner) element).getReference(resolveContext);
 			references = reference == null ? PsiReference.EMPTY_ARRAY : new PsiReference[]{reference};
 		}
 		else
 		{
 			references = element.getReferences();
 		}
-		for(final PsiReference reference : references)
+		for(PsiReference reference : references)
 		{
 			for(TextRange range : ReferenceRange.getRanges(reference))
 			{

@@ -53,25 +53,25 @@ public class PyNamedParameterElementType extends PyStubElementType<PyNamedParame
 		super(debugName);
 	}
 
-	public PyNamedParameter createPsi(@Nonnull final PyNamedParameterStub stub)
+	public PyNamedParameter createPsi(@Nonnull PyNamedParameterStub stub)
 	{
 		return new PyNamedParameterImpl(stub);
 	}
 
 	@Nonnull
-	public PyNamedParameterStub createStub(@Nonnull final PyNamedParameter psi, final StubElement parentStub)
+	public PyNamedParameterStub createStub(@Nonnull PyNamedParameter psi, StubElement parentStub)
 	{
 		return new PyNamedParameterStubImpl(psi.getName(), psi.isPositionalContainer(), psi.isKeywordContainer(), psi.hasDefaultValue(), psi.getTypeCommentAnnotation(), parentStub,
 				getStubElementType());
 	}
 
 	@Nonnull
-	public PsiElement createElement(@Nonnull final ASTNode node)
+	public PsiElement createElement(@Nonnull ASTNode node)
 	{
 		return new PyNamedParameterImpl(node);
 	}
 
-	public void serialize(@Nonnull final PyNamedParameterStub stub, @Nonnull final StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull PyNamedParameterStub stub, @Nonnull StubOutputStream dataStream) throws IOException
 	{
 		dataStream.writeName(stub.getName());
 
@@ -93,11 +93,11 @@ public class PyNamedParameterElementType extends PyStubElementType<PyNamedParame
 	}
 
 	@Nonnull
-	public PyNamedParameterStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub) throws IOException
+	public PyNamedParameterStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(dataStream.readName());
 		byte flags = dataStream.readByte();
-		final StringRef typeComment = dataStream.readName();
+		StringRef typeComment = dataStream.readName();
 		return new PyNamedParameterStubImpl(name, (flags & POSITIONAL_CONTAINER) != 0, (flags & KEYWORD_CONTAINER) != 0, (flags & HAS_DEFAULT_VALUE) != 0, typeComment == null ? null : typeComment
 				.getString(), parentStub, getStubElementType());
 	}
@@ -105,10 +105,10 @@ public class PyNamedParameterElementType extends PyStubElementType<PyNamedParame
 	@Override
 	public boolean shouldCreateStub(ASTNode node)
 	{
-		final ASTNode paramList = node.getTreeParent();
+		ASTNode paramList = node.getTreeParent();
 		if(paramList != null)
 		{
-			final ASTNode container = paramList.getTreeParent();
+			ASTNode container = paramList.getTreeParent();
 			if(container != null && container.getElementType() == PyElementTypes.LAMBDA_EXPRESSION)
 			{
 				return false;

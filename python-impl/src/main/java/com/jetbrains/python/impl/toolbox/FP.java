@@ -67,7 +67,7 @@ public class FP {
    * Convenience form of {@link #map(Lambda1, Iterable)}.
    */
   @Nonnull
-  public static <S, R> Iterable<R> map(@Nonnull final Lambda1<S, R> lambda, @Nonnull final S[] source) {
+  public static <S, R> Iterable<R> map(@Nonnull Lambda1<S, R> lambda, @Nonnull S[] source) {
     return map(lambda, Arrays.asList(source));
   }
 
@@ -75,7 +75,7 @@ public class FP {
   /**
    * Same as {@link #map}, but non-lazy an returns a modifiable List.
    */
-  public static <S, R> List<R> mapList(@Nonnull final Lambda1<S, R> lambda, @Nonnull final Iterable<S> source) {
+  public static <S, R> List<R> mapList(@Nonnull Lambda1<S, R> lambda, @Nonnull Iterable<S> source) {
     List<R> ret = new ArrayList<R>(source instanceof Collection? ((Collection)source).size() : 10);
     for (R what : map(lambda, source)) ret.add(what);
     return ret;
@@ -91,7 +91,7 @@ public class FP {
    * @param <AccT> 'accumulator' type; can be same as ItemT, or reasonably different (consider ItemT=String and AccT=StringBuilder)
    * @return value of the accumulator after all the list is processed.
    */
-  public static <AccT, ItemT> AccT fold(@Nonnull Lambda2<AccT, ItemT, AccT> lambda, @Nonnull Iterable<ItemT> source, @Nonnull final AccT unit) {
+  public static <AccT, ItemT> AccT fold(@Nonnull Lambda2<AccT, ItemT, AccT> lambda, @Nonnull Iterable<ItemT> source, @Nonnull AccT unit) {
     AccT ret = unit;
     for (ItemT item : source) ret = lambda.apply(ret, item);
     return ret;
@@ -106,7 +106,7 @@ public class FP {
    * @param <AccT> 'accumulator' type
    * @return value of the accumulator after all the list is processed.
    */
-  public static <AccT, ItemT> AccT foldr(@Nonnull Lambda2<ItemT, AccT, AccT> lambda, @Nonnull Iterable<ItemT> source, @Nonnull final AccT unit) {
+  public static <AccT, ItemT> AccT foldr(@Nonnull Lambda2<ItemT, AccT, AccT> lambda, @Nonnull Iterable<ItemT> source, @Nonnull AccT unit) {
     AccT ret = unit;
     for (ItemT item : source) ret = lambda.apply(item, ret);
     return ret;
@@ -229,8 +229,8 @@ public class FP {
           }
 
           public boolean hasNext() {
-            final boolean one_has = one_iter.hasNext();
-            final boolean two_has = two_iter.hasNext();
+            boolean one_has = one_iter.hasNext();
+            boolean two_has = two_iter.hasNext();
             return (
               one_has && two_has ||
               fill1 && two_has ||

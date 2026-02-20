@@ -49,7 +49,7 @@ public final class PyMagicLiteralTools {
    * @param element element to check
    * @return true if magic
    */
-  public static boolean isMagicLiteral(@Nonnull final PsiElement element) {
+  public static boolean isMagicLiteral(@Nonnull PsiElement element) {
     return (element instanceof StringLiteralExpression) && (getPoint((StringLiteralExpression)element) != null);
   }
 
@@ -60,7 +60,7 @@ public final class PyMagicLiteralTools {
    * @return extension point (if any) or null if literal is unknown to all installed magic literal extesnion points
    */
   @Nullable
-  public static PyMagicLiteralExtensionPoint getPoint(@Nonnull final StringLiteralExpression element) {
+  public static PyMagicLiteralExtensionPoint getPoint(@Nonnull StringLiteralExpression element) {
     return MAGIC_LITERAL_POINT.getValue(element).get();
   }
 
@@ -70,7 +70,7 @@ public final class PyMagicLiteralTools {
   private static class MagicLiteralChecker implements Function<StringLiteralExpression, Ref<PyMagicLiteralExtensionPoint>> {
     @Override
     public Ref<PyMagicLiteralExtensionPoint> apply(StringLiteralExpression element) {
-      for (final PyMagicLiteralExtensionPoint magicLiteralExtensionPoint : Application.get().getExtensionList(PyMagicLiteralExtensionPoint.class)) {
+      for (PyMagicLiteralExtensionPoint magicLiteralExtensionPoint : Application.get().getExtensionList(PyMagicLiteralExtensionPoint.class)) {
         if (magicLiteralExtensionPoint.isMagicLiteral(element)) {
           return Ref.create(magicLiteralExtensionPoint);
         }

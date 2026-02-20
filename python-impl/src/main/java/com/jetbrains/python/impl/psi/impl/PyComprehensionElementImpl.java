@@ -191,8 +191,8 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 			for_targets[i] = for_comp.getIteratorVariable();
 			i += 1;
 		}
-		final List<PyExpression> expressions = PyUtil.flattenedParensAndLists(for_targets);
-		final List<PsiNamedElement> results = Lists.newArrayList();
+		List<PyExpression> expressions = PyUtil.flattenedParensAndLists(for_targets);
+		List<PsiNamedElement> results = Lists.newArrayList();
 		for(PyExpression expression : expressions)
 		{
 			if(expression instanceof PsiNamedElement)
@@ -204,7 +204,7 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}

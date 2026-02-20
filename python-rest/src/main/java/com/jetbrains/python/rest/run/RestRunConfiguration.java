@@ -41,7 +41,7 @@ public abstract class RestRunConfiguration extends AbstractPythonRunConfiguratio
   private static final String OPEN_IN_BROWSER = "docutils_open_in_browser";
 
   public RestRunConfiguration(Project project,
-                              final ConfigurationFactory factory) {
+                              ConfigurationFactory factory) {
     super(project, factory);
   }
 

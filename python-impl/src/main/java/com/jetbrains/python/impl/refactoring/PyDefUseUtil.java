@@ -45,9 +45,9 @@ public class PyDefUseUtil
 	@Nonnull
 	public static List<Instruction> getLatestDefs(ScopeOwner block, String varName, PsiElement anchor, boolean acceptTypeAssertions, boolean acceptImplicitImports)
 	{
-		final ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
-		final Instruction[] instructions = controlFlow.getInstructions();
-		final PyAugAssignmentStatement augAssignment = PyAugAssignmentStatementNavigator.getStatementByTarget(anchor);
+		ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
+		Instruction[] instructions = controlFlow.getInstructions();
+		PyAugAssignmentStatement augAssignment = PyAugAssignmentStatementNavigator.getStatementByTarget(anchor);
 		if(augAssignment != null)
 		{
 			anchor = augAssignment;
@@ -65,27 +65,27 @@ public class PyDefUseUtil
 				instr = pred.iterator().next().num();
 			}
 		}
-		final Collection<Instruction> result = getLatestDefs(varName, instructions, instr, acceptTypeAssertions, acceptImplicitImports);
+		Collection<Instruction> result = getLatestDefs(varName, instructions, instr, acceptTypeAssertions, acceptImplicitImports);
 		return new ArrayList<>(result);
 	}
 
-	private static Collection<Instruction> getLatestDefs(final String varName,
-																									   final Instruction[] instructions,
-																									   final int instr,
-																									   final boolean acceptTypeAssertions,
-																									   final boolean acceptImplicitImports)
+	private static Collection<Instruction> getLatestDefs(String varName,
+                                                         Instruction[] instructions,
+                                                         int instr,
+                                                         boolean acceptTypeAssertions,
+                                                         boolean acceptImplicitImports)
 	{
-		final Collection<Instruction> result = new LinkedHashSet<>();
+		Collection<Instruction> result = new LinkedHashSet<>();
 		ControlFlowUtil.iteratePrev(instr, instructions, instruction -> {
-			final PsiElement element = instruction.getElement();
-			final PyImplicitImportNameDefiner implicit = PyUtil.as(element, PyImplicitImportNameDefiner.class);
+			PsiElement element = instruction.getElement();
+			PyImplicitImportNameDefiner implicit = PyUtil.as(element, PyImplicitImportNameDefiner.class);
 			if(instruction instanceof ReadWriteInstruction)
 			{
-				final ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
-				final ReadWriteInstruction.ACCESS access = rwInstruction.getAccess();
+				ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
+				ReadWriteInstruction.ACCESS access = rwInstruction.getAccess();
 				if(access.isWriteAccess() || acceptTypeAssertions && access.isAssertTypeAccess())
 				{
-					final String name = elementName(element);
+					String name = elementName(element);
 					if(Comparing.strEqual(name, varName))
 					{
 						result.add(rwInstruction);
@@ -115,7 +115,7 @@ public class PyDefUseUtil
 		}
 		if(element instanceof PyReferenceExpression)
 		{
-			final QualifiedName qname = ((PyReferenceExpression) element).asQualifiedName();
+			QualifiedName qname = ((PyReferenceExpression) element).asQualifiedName();
 			if(qname != null)
 			{
 				return qname.toString();
@@ -127,15 +127,15 @@ public class PyDefUseUtil
 	@Nonnull
 	public static PsiElement[] getPostRefs(ScopeOwner block, PyTargetExpression var, PyExpression anchor)
 	{
-		final ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
-		final Instruction[] instructions = controlFlow.getInstructions();
-		final int instr = ControlFlowUtil.findInstructionNumberByElement(instructions, anchor);
+		ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
+		Instruction[] instructions = controlFlow.getInstructions();
+		int instr = ControlFlowUtil.findInstructionNumberByElement(instructions, anchor);
 		if(instr < 0)
 		{
 			return PyElement.EMPTY_ARRAY;
 		}
-		final boolean[] visited = new boolean[instructions.length];
-		final Collection<PyElement> result = Sets.newHashSet();
+		boolean[] visited = new boolean[instructions.length];
+		Collection<PyElement> result = Sets.newHashSet();
 		for(Instruction instruction : instructions[instr].allSucc())
 		{
 			getPostRefs(var, instructions, instruction.num(), visited, result);
@@ -153,12 +153,12 @@ public class PyDefUseUtil
 		visited[instr] = true;
 		if(instructions[instr] instanceof ReadWriteInstruction)
 		{
-			final ReadWriteInstruction instruction = (ReadWriteInstruction) instructions[instr];
-			final PsiElement element = instruction.getElement();
+			ReadWriteInstruction instruction = (ReadWriteInstruction) instructions[instr];
+			PsiElement element = instruction.getElement();
 			String name = elementName(element);
 			if(Comparing.strEqual(name, var.getName()))
 			{
-				final ReadWriteInstruction.ACCESS access = instruction.getAccess();
+				ReadWriteInstruction.ACCESS access = instruction.getAccess();
 				if(access.isWriteAccess())
 				{
 					return;

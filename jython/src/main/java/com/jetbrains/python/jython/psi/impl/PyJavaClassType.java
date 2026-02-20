@@ -45,13 +45,13 @@ public class PyJavaClassType implements PyClassLikeType {
   private final PsiClass myClass;
   private final boolean myDefinition;
 
-  public PyJavaClassType(final PsiClass aClass, boolean definition) {
+  public PyJavaClassType(PsiClass aClass, boolean definition) {
     myClass = aClass;
     myDefinition = definition;
   }
 
   @Nullable
-  public List<? extends RatedResolveResult> resolveMember(@Nonnull final String name,
+  public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
                                                           @Nullable PyExpression location,
                                                           @Nonnull AccessDirection direction,
                                                           @Nonnull PyResolveContext resolveContext) {
@@ -65,7 +65,7 @@ public class PyJavaClassType implements PyClassLikeType {
                                                           @Nonnull AccessDirection direction,
                                                           @Nonnull PyResolveContext resolveContext,
                                                           boolean inherited) {
-    final PsiMethod[] methods = myClass.findMethodsByName(name, inherited);
+    PsiMethod[] methods = myClass.findMethodsByName(name, inherited);
     if (methods.length > 0) {
       ResolveResultList resultList = new ResolveResultList();
       for (PsiMethod method : methods) {
@@ -73,7 +73,7 @@ public class PyJavaClassType implements PyClassLikeType {
       }
       return resultList;
     }
-    final PsiField field = myClass.findFieldByName(name, inherited);
+    PsiField field = myClass.findFieldByName(name, inherited);
     if (field != null) {
       return ResolveResultList.to(field);
     }
@@ -81,7 +81,7 @@ public class PyJavaClassType implements PyClassLikeType {
   }
 
   public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
-    final CompletionVariantsProcessor processor = new CompletionVariantsProcessor(location);
+    CompletionVariantsProcessor processor = new CompletionVariantsProcessor(location);
     myClass.processDeclarations(processor, ResolveState.initial(), null, location);
     return processor.getResult();
   }
@@ -149,7 +149,7 @@ public class PyJavaClassType implements PyClassLikeType {
   @Nonnull
   @Override
   public List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context) {
-    final List<PyClassLikeType> result = new ArrayList<>();
+    List<PyClassLikeType> result = new ArrayList<>();
     for (PsiClass cls : myClass.getSupers()) {
       result.add(new PyJavaClassType(cls, myDefinition));
     }
@@ -157,7 +157,7 @@ public class PyJavaClassType implements PyClassLikeType {
   }
 
   @Override
-  public void visitMembers(@Nonnull final Processor<PsiElement> processor, final boolean inherited, @Nonnull TypeEvalContext context) {
+  public void visitMembers(@Nonnull Processor<PsiElement> processor, boolean inherited, @Nonnull TypeEvalContext context) {
     for (PsiMethod method : myClass.getAllMethods()) {
       processor.process(method);
     }
@@ -180,7 +180,7 @@ public class PyJavaClassType implements PyClassLikeType {
   @Nonnull
   @Override
   public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context) {
-    final Set<String> result = new LinkedHashSet<>();
+    Set<String> result = new LinkedHashSet<>();
 
     for (PsiMethod method : myClass.getAllMethods()) {
       result.add(method.getName());
@@ -203,16 +203,16 @@ public class PyJavaClassType implements PyClassLikeType {
 
   @Nonnull
   @Override
-  public List<PyClassLikeType> getAncestorTypes(@Nonnull final TypeEvalContext context) {
-    final List<PyClassLikeType> result = new ArrayList<>();
+  public List<PyClassLikeType> getAncestorTypes(@Nonnull TypeEvalContext context) {
+    List<PyClassLikeType> result = new ArrayList<>();
 
-    final Deque<PsiClass> deque = new LinkedList<>();
-    final Set<PsiClass> visited = new HashSet<>();
+    Deque<PsiClass> deque = new LinkedList<>();
+    Set<PsiClass> visited = new HashSet<>();
 
     deque.addAll(Arrays.asList(myClass.getSupers()));
 
     while (!deque.isEmpty()) {
-      final PsiClass current = deque.pollFirst();
+      PsiClass current = deque.pollFirst();
 
       if (current == null || !visited.add(current)) {
         continue;

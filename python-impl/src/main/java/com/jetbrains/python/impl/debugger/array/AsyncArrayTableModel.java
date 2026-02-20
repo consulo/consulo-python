@@ -57,7 +57,7 @@ public class AsyncArrayTableModel extends AbstractTableModel
 	private LoadingCache<Pair<Integer, Integer>, ListenableFuture<ArrayChunk>> myChunkCache = CacheBuilder.newBuilder().build(new CacheLoader<Pair<Integer, Integer>, ListenableFuture<ArrayChunk>>()
 	{
 		@Override
-		public ListenableFuture<ArrayChunk> load(@Nonnull final Pair<Integer, Integer> key) throws Exception
+		public ListenableFuture<ArrayChunk> load(@Nonnull Pair<Integer, Integer> key) throws Exception
 		{
 
 			ListenableFutureTask<ArrayChunk> task = ListenableFutureTask.create(() -> {
@@ -85,7 +85,7 @@ public class AsyncArrayTableModel extends AbstractTableModel
 		return false;
 	}
 
-	public Object getValueAt(final int row, final int col)
+	public Object getValueAt(int row, int col)
 	{
 		Pair<Integer, Integer> key = itemToChunkKey(row, col);
 

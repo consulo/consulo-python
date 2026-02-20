@@ -30,45 +30,45 @@ public abstract class PyCodeFragmentTest extends LightMarkedTestCase {
   final private String RESULT_MARKER = "<result>";
 
   private void doTest(Pair<String, String>... files2Create) throws Exception {
-    final String testName = getTestName(false).toLowerCase();
-    final String fullPath = getTestDataPath() + testName + ".test";
+    String testName = getTestName(false).toLowerCase();
+    String fullPath = getTestDataPath() + testName + ".test";
 
-    final VirtualFile vFile = getVirtualFileByName(fullPath);
+    VirtualFile vFile = getVirtualFileByName(fullPath);
     String fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile), "\n");
 
-    final int beginMarker = fileText.indexOf(BEGIN_MARKER);
-    final int endMarker = fileText.indexOf(END_MARKER);
-    final int resultMarker = fileText.indexOf(RESULT_MARKER);
+    int beginMarker = fileText.indexOf(BEGIN_MARKER);
+    int endMarker = fileText.indexOf(END_MARKER);
+    int resultMarker = fileText.indexOf(RESULT_MARKER);
     assertTrue(beginMarker != -1);
     assertTrue(endMarker != -1);
     assertTrue(resultMarker != -1);
 
-    final StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder();
     builder.append(fileText.substring(0, beginMarker));
     builder.append(fileText.substring(beginMarker + BEGIN_MARKER.length(), endMarker));
     builder.append((fileText.substring(endMarker + END_MARKER.length(), resultMarker)));
 
-    final String result = fileText.substring(resultMarker + RESULT_MARKER.length());
+    String result = fileText.substring(resultMarker + RESULT_MARKER.length());
 
     // Create additional files
     for (Pair<String, String> pair : files2Create) {
       myFixture.addFileToProject(pair.first, pair.second);
     }
 
-    final PyFile file = (PyFile)myFixture.addFileToProject(testName + ".py", builder.toString());
+    PyFile file = (PyFile)myFixture.addFileToProject(testName + ".py", builder.toString());
     check(file, beginMarker, endMarker, result);
   }
 
-  private void check(final PyFile myFile, final int beginMarker, final int endMarker, final String result) {
-    final PsiElement startElement = myFile.findElementAt(beginMarker);
-    final PsiElement endElement = myFile.findElementAt(endMarker - BEGIN_MARKER.length());
+  private void check(PyFile myFile, int beginMarker, int endMarker, String result) {
+    PsiElement startElement = myFile.findElementAt(beginMarker);
+    PsiElement endElement = myFile.findElementAt(endMarker - BEGIN_MARKER.length());
     PsiElement context = PsiTreeUtil.findCommonParent(startElement, endElement);
     if (!(context instanceof ScopeOwner)) {
       context = PsiTreeUtil.getParentOfType(context, ScopeOwner.class);
     }
-    final StringBuffer buffer = new StringBuffer();
+    StringBuffer buffer = new StringBuffer();
     try {
-      final CodeFragment fragment = PyCodeFragmentUtil.createCodeFragment((ScopeOwner)context, startElement, endElement);
+      CodeFragment fragment = PyCodeFragmentUtil.createCodeFragment((ScopeOwner)context, startElement, endElement);
       if (fragment.isReturnInstructionInside()) {
         buffer.append("Return instruction inside found").append("\n");
       }

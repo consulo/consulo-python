@@ -78,11 +78,11 @@ public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCf
   }
 
   @Nonnull
-  public PsiElement createElement(final ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return astFactory.create(node);
   }
 
-  public PsiFile createFile(final FileViewProvider viewProvider) {
+  public PsiFile createFile(FileViewProvider viewProvider) {
     return new BuildoutCfgFile(viewProvider);
   }
 }

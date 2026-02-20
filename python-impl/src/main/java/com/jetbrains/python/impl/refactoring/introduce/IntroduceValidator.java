@@ -42,13 +42,13 @@ import jakarta.annotation.Nullable;
 public abstract class IntroduceValidator {
   private final NamesValidator myNamesValidator = NamesValidator.forLanguage(PythonLanguage.getInstance());
 
-  public boolean isNameValid(final String name, final Project project) {
+  public boolean isNameValid(String name, Project project) {
     return (name != null) &&
            (myNamesValidator.isIdentifier(name, project)) &&
            !(myNamesValidator.isKeyword(name, project));
   }
 
-  public boolean checkPossibleName(@Nonnull final String name, @Nonnull final PyExpression expression) {
+  public boolean checkPossibleName(@Nonnull String name, @Nonnull PyExpression expression) {
     return check(name, expression) == null;
   }
 
@@ -57,7 +57,7 @@ public abstract class IntroduceValidator {
 
   public static boolean isDefinedInScope(String name, PsiElement psiElement) {
     if (psiElement.getUserData(PyReplaceExpressionUtil.SELECTION_BREAKS_AST_NODE) != null) {
-      final Pair<PsiElement,TextRange> data = psiElement.getUserData(PyReplaceExpressionUtil.SELECTION_BREAKS_AST_NODE);
+      Pair<PsiElement,TextRange> data = psiElement.getUserData(PyReplaceExpressionUtil.SELECTION_BREAKS_AST_NODE);
       psiElement = data.first;
     }
     PsiElement context = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class);

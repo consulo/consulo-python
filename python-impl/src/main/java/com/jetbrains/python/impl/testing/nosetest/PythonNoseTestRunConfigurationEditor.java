@@ -29,15 +29,15 @@ import javax.swing.*;
 public class PythonNoseTestRunConfigurationEditor extends SettingsEditor<PythonNoseTestRunConfiguration> {
   private PythonNoseTestRunConfigurationForm myForm;
 
-  public PythonNoseTestRunConfigurationEditor(final Project project, final PythonNoseTestRunConfiguration configuration) {
+  public PythonNoseTestRunConfigurationEditor(Project project, PythonNoseTestRunConfiguration configuration) {
     myForm = new PythonNoseTestRunConfigurationForm(project, configuration);
   }
 
-  protected void resetEditorFrom(final PythonNoseTestRunConfiguration config) {
+  protected void resetEditorFrom(PythonNoseTestRunConfiguration config) {
     PythonNoseTestRunConfiguration.copyParams(config, myForm);
   }
 
-  protected void applyEditorTo(final PythonNoseTestRunConfiguration config) throws ConfigurationException {
+  protected void applyEditorTo(PythonNoseTestRunConfiguration config) throws ConfigurationException {
     PythonNoseTestRunConfiguration.copyParams(myForm, config);
   }
 

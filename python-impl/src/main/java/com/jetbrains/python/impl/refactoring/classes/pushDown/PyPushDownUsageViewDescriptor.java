@@ -32,7 +32,7 @@ public class PyPushDownUsageViewDescriptor implements UsageViewDescriptor {
   private final PyClass myClass;
   private static final String HEADER = RefactoringBundle.message("push.down.members.elements.header");
 
-  public PyPushDownUsageViewDescriptor(final PyClass clazz) {
+  public PyPushDownUsageViewDescriptor(PyClass clazz) {
     myClass = clazz;
   }
 

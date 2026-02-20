@@ -48,7 +48,7 @@ public class PyUnreachableCodeInspection extends PyInspection {
     @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull final ProblemsHolder holder,
+        @Nonnull ProblemsHolder holder,
         boolean isOnTheFly,
         @Nonnull LocalInspectionToolSession session,
         Object state
@@ -62,11 +62,11 @@ public class PyUnreachableCodeInspection extends PyInspection {
         }
 
         @Override
-        public void visitElement(final PsiElement element) {
+        public void visitElement(PsiElement element) {
             if (element instanceof ScopeOwner) {
-                final ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner) element);
-                final Instruction[] instructions = flow.getInstructions();
-                final List<PsiElement> unreachable = new ArrayList<PsiElement>();
+                ControlFlow flow = ControlFlowCache.getControlFlow((ScopeOwner) element);
+                Instruction[] instructions = flow.getInstructions();
+                List<PsiElement> unreachable = new ArrayList<PsiElement>();
                 if (instructions.length > 0) {
                     ControlFlowUtil.iteratePrev(instructions.length - 1, instructions, instruction -> {
                         if (instruction.allPred().isEmpty() && !isFirstInstruction(instruction)) {
@@ -83,13 +83,13 @@ public class PyUnreachableCodeInspection extends PyInspection {
     }
 
     public static boolean hasAnyInterruptedControlFlowPaths(@Nonnull PsiElement element) {
-        final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+        ScopeOwner owner = ScopeUtil.getScopeOwner(element);
         if (owner != null) {
-            final ControlFlow flow = ControlFlowCache.getControlFlow(owner);
-            final Instruction[] instructions = flow.getInstructions();
-            final int start = ControlFlowUtil.findInstructionNumberByElement(instructions, element);
+            ControlFlow flow = ControlFlowCache.getControlFlow(owner);
+            Instruction[] instructions = flow.getInstructions();
+            int start = ControlFlowUtil.findInstructionNumberByElement(instructions, element);
             if (start >= 0) {
-                final Ref<Boolean> resultRef = Ref.create(false);
+                Ref<Boolean> resultRef = Ref.create(false);
                 ControlFlowUtil.iteratePrev(start, instructions, instruction -> {
                     if (instruction.allPred().isEmpty() && !isFirstInstruction(instruction)) {
                         resultRef.set(true);

@@ -117,9 +117,9 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
    */
   @Nonnull
   public static String getQualifiedName(@Nonnull String name, @Nullable QualifiedName importPath, @Nullable PyImportElement source) {
-    final StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     if (source != null) {
-      final PsiElement parent = source.getParent();
+      PsiElement parent = source.getParent();
       if (parent instanceof PyFromImportStatement) {
         sb.append(name);
       }
@@ -138,7 +138,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
 
   @Nonnull
   public String getPresentableText(@Nonnull String myName) {
-    final StringBuilder sb = new StringBuilder(getQualifiedName(myName, myPath, myImportElement));
+    StringBuilder sb = new StringBuilder(getQualifiedName(myName, myPath, myImportElement));
     PsiElement parent = null;
     if (myImportElement != null) {
       parent = myImportElement.getParent();
@@ -147,7 +147,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
       sb.append(((PyFunction)myImportable).getParameterList().getPresentableText(false));
     }
     else if (myImportable instanceof PyClass) {
-      final List<String> supers =
+      List<String> supers =
         ContainerUtil.mapNotNull(((PyClass)myImportable).getSuperClasses(null), cls -> PyUtil.isObjectClass(cls) ? null : cls.getName());
       if (!supers.isEmpty()) {
         sb.append("(");
@@ -157,9 +157,9 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
     }
     if (parent instanceof PyFromImportStatement) {
       sb.append(" from ");
-      final PyFromImportStatement fromImportStatement = (PyFromImportStatement)parent;
+      PyFromImportStatement fromImportStatement = (PyFromImportStatement)parent;
       sb.append(StringUtil.repeat(".", fromImportStatement.getRelativeLevel()));
-      final PyReferenceExpression source = fromImportStatement.getImportSource();
+      PyReferenceExpression source = fromImportStatement.getImportSource();
       if (source != null) {
         sb.append(source.getReferencedName());
       }
@@ -168,14 +168,14 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
   }
 
   public int compareTo(@Nonnull ImportCandidateHolder other) {
-    final int lRelevance = getRelevance();
-    final int rRelevance = other.getRelevance();
+    int lRelevance = getRelevance();
+    int rRelevance = other.getRelevance();
     if (rRelevance != lRelevance) {
       return rRelevance - lRelevance;
     }
     if (myPath != null && other.myPath != null) {
       // prefer shorter paths
-      final int lengthDiff = myPath.getComponentCount() - other.myPath.getComponentCount();
+      int lengthDiff = myPath.getComponentCount() - other.myPath.getComponentCount();
       if (lengthDiff != 0) {
         return lengthDiff;
       }
@@ -184,15 +184,15 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
   }
 
   int getRelevance() {
-    final Project project = myImportable.getProject();
-    final PsiFile psiFile = myImportable.getContainingFile();
-    final VirtualFile vFile = psiFile == null ? null : psiFile.getVirtualFile();
+    Project project = myImportable.getProject();
+    PsiFile psiFile = myImportable.getContainingFile();
+    VirtualFile vFile = psiFile == null ? null : psiFile.getVirtualFile();
     if (vFile == null) {
       return 0;
     }
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     // files under project source are most relevant
-    final Module module = fileIndex.getModuleForFile(vFile);
+    Module module = fileIndex.getModuleForFile(vFile);
     if (module != null) {
       return 3;
     }

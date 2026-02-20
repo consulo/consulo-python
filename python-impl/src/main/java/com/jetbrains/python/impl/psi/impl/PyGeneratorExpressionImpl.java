@@ -55,12 +55,12 @@ public class PyGeneratorExpressionImpl extends PyComprehensionElementImpl implem
 	@Override
 	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
-		final PyExpression resultExpr = getResultExpression();
-		final PyBuiltinCache cache = PyBuiltinCache.getInstance(this);
-		final PyClass generator = cache.getClass(PyNames.FAKE_GENERATOR);
+		PyExpression resultExpr = getResultExpression();
+		PyBuiltinCache cache = PyBuiltinCache.getInstance(this);
+		PyClass generator = cache.getClass(PyNames.FAKE_GENERATOR);
 		if(resultExpr != null && generator != null)
 		{
-			final List<PyType> parameters = Arrays.asList(context.getType(resultExpr), null, PyNoneType.INSTANCE);
+			List<PyType> parameters = Arrays.asList(context.getType(resultExpr), null, PyNoneType.INSTANCE);
 			return new PyCollectionTypeImpl(generator, false, parameters);
 		}
 		return null;
@@ -78,8 +78,8 @@ public class PyGeneratorExpressionImpl extends PyComprehensionElementImpl implem
 			for_targets[i] = for_comp.getIteratorVariable();
 			i += 1;
 		}
-		final List<PyExpression> expressions = PyUtil.flattenedParensAndStars(for_targets);
-		final List<PsiNamedElement> results = Lists.newArrayList();
+		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(for_targets);
+		List<PsiNamedElement> results = Lists.newArrayList();
 		for(PyExpression expression : expressions)
 		{
 			if(expression instanceof PsiNamedElement)
@@ -91,7 +91,7 @@ public class PyGeneratorExpressionImpl extends PyComprehensionElementImpl implem
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}

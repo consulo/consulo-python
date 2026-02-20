@@ -40,22 +40,22 @@ public class PyDecoratorListImpl extends PyBaseElementImpl<PyDecoratorListStub> 
     pyVisitor.visitPyDecoratorList(this);
   }
 
-  public PyDecoratorListImpl(final PyDecoratorListStub stub) {
+  public PyDecoratorListImpl(PyDecoratorListStub stub) {
     super(stub, PyElementTypes.DECORATOR_LIST);
   }
 
   @Nonnull
   public PyDecorator[] getDecorators() {
-    final PyDecorator[] decoarray = new PyDecorator[0];
+    PyDecorator[] decoarray = new PyDecorator[0];
     return getStubOrPsiChildren(PyElementTypes.DECORATOR_CALL, decoarray);
     //return decoarray;
   }
 
   @Override
   public PyDecorator findDecorator(String name) {
-    final PyDecorator[] decorators = getDecorators();
+    PyDecorator[] decorators = getDecorators();
     for (PyDecorator decorator : decorators) {
-      final QualifiedName qName = decorator.getQualifiedName();
+      QualifiedName qName = decorator.getQualifiedName();
       if (qName != null && name.equals(qName.toString())) {
         return decorator;
       }

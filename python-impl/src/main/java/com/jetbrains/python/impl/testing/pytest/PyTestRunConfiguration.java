@@ -59,7 +59,7 @@ public class PyTestRunConfiguration extends AbstractPythonTestRunConfiguration i
   private static final String KEYWORDS_FIELD = "keywords";
   private static final String PARAMS_FIELD = "params";
 
-  public PyTestRunConfiguration(final Project project, final ConfigurationFactory factory) {
+  public PyTestRunConfiguration(Project project, ConfigurationFactory factory) {
     super(project, factory);
   }
 

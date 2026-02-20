@@ -9,9 +9,9 @@ import com.jetbrains.python.fixtures.PyTestCase;
 public abstract class PythonDoctestCompletionTest extends PyTestCase {
 
   private void doDoctestTest(String expected) {
-    final String testName = "completion/doctest/" + getTestName(true);
+    String testName = "completion/doctest/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
-    final LookupElement[] elements = myFixture.completeBasic();
+    LookupElement[] elements = myFixture.completeBasic();
     if (elements != null) {
       for (LookupElement lookup : elements) {
         System.out.println(lookup.getLookupString());

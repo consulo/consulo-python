@@ -34,9 +34,9 @@ public class PyCommentBreakerEnterProcessor implements EnterProcessor {
     if (isModified) {
       return false;
     }
-    final CaretModel caretModel = editor.getCaretModel();
-    final PsiElement atCaret = psiElement.getContainingFile().findElementAt(caretModel.getOffset());
-    final PsiElement comment = PsiTreeUtil.getParentOfType(atCaret, PsiComment.class, false);
+    CaretModel caretModel = editor.getCaretModel();
+    PsiElement atCaret = psiElement.getContainingFile().findElementAt(caretModel.getOffset());
+    PsiElement comment = PsiTreeUtil.getParentOfType(atCaret, PsiComment.class, false);
     if (comment != null) {
       SmartEnterUtil.plainEnter(editor);
       editor.getDocument().insertString(caretModel.getOffset(), "#");

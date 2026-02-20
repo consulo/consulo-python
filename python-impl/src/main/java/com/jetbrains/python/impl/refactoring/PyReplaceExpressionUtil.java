@@ -68,9 +68,9 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	 * @param newExpr new expression to substitute with
 	 * @return whether new expression should be wrapped in parenthesis to preserve original semantics
 	 */
-	public static boolean isNeedParenthesis(@Nonnull final PyElement oldExpr, @Nonnull final PyElement newExpr)
+	public static boolean isNeedParenthesis(@Nonnull PyElement oldExpr, @Nonnull PyElement newExpr)
 	{
-		final PyElement parentExpr = (PyElement) oldExpr.getParent();
+		PyElement parentExpr = (PyElement) oldExpr.getParent();
 		if(parentExpr instanceof PyArgumentList)
 		{
 			return newExpr instanceof PyTupleExpression;
@@ -79,15 +79,15 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		{
 			return false;
 		}
-		final int newPriority = getExpressionPriority(newExpr);
-		final int parentPriority = getExpressionPriority(parentExpr);
+		int newPriority = getExpressionPriority(newExpr);
+		int parentPriority = getExpressionPriority(parentExpr);
 		if(parentPriority > newPriority)
 		{
 			return true;
 		}
 		else if(parentPriority == newPriority && parentPriority != 0 && parentExpr instanceof PyBinaryExpression)
 		{
-			final PyBinaryExpression binaryExpression = (PyBinaryExpression) parentExpr;
+			PyBinaryExpression binaryExpression = (PyBinaryExpression) parentExpr;
 			if(isNotAssociative(binaryExpression) && oldExpr == getLeastPrioritySide(binaryExpression))
 			{
 				return true;
@@ -113,23 +113,23 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		}
 	}
 
-	public static PsiElement replaceExpression(@Nonnull final PsiElement oldExpression, @Nonnull final PsiElement newExpression)
+	public static PsiElement replaceExpression(@Nonnull PsiElement oldExpression, @Nonnull PsiElement newExpression)
 	{
-		final Pair<PsiElement, TextRange> data = oldExpression.getUserData(SELECTION_BREAKS_AST_NODE);
+		Pair<PsiElement, TextRange> data = oldExpression.getUserData(SELECTION_BREAKS_AST_NODE);
 		if(data != null)
 		{
-			final PsiElement element = data.first;
-			final TextRange textRange = data.second;
-			final String parentText = element.getText();
-			final String prefix = parentText.substring(0, textRange.getStartOffset());
-			final String suffix = parentText.substring(textRange.getEndOffset(), element.getTextLength());
-			final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
-			final LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
+			PsiElement element = data.first;
+			TextRange textRange = data.second;
+			String parentText = element.getText();
+			String prefix = parentText.substring(0, textRange.getStartOffset());
+			String suffix = parentText.substring(textRange.getEndOffset(), element.getTextLength());
+			PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
+			LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
 			if(element instanceof PyStringLiteralExpression)
 			{
 				return replaceSubstringInStringLiteral((PyStringLiteralExpression) element, newExpression, textRange);
 			}
-			final PsiElement expression = generator.createFromText(languageLevel, element.getClass(), prefix + newExpression.getText() + suffix);
+			PsiElement expression = generator.createFromText(languageLevel, element.getClass(), prefix + newExpression.getText() + suffix);
 			return element.replace(expression);
 		}
 		else
@@ -141,16 +141,16 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	@Nullable
 	private static PsiElement replaceSubstringInStringLiteral(@Nonnull PyStringLiteralExpression oldExpression, @Nonnull PsiElement newExpression, @Nonnull TextRange textRange)
 	{
-		final String fullText = oldExpression.getText();
-		final Pair<String, String> detectedQuotes = PyStringLiteralUtil.getQuotes(fullText);
-		final Pair<String, String> quotes = detectedQuotes != null ? detectedQuotes : Pair.create("'", "'");
-		final String prefix = fullText.substring(0, textRange.getStartOffset());
-		final String suffix = fullText.substring(textRange.getEndOffset(), oldExpression.getTextLength());
-		final PyExpression formatValue = PyStringFormatParser.getFormatValueExpression(oldExpression);
-		final PyArgumentList newStyleFormatValue = PyStringFormatParser.getNewStyleFormatValueExpression(oldExpression);
-		final String newText = newExpression.getText();
+		String fullText = oldExpression.getText();
+		Pair<String, String> detectedQuotes = PyStringLiteralUtil.getQuotes(fullText);
+		Pair<String, String> quotes = detectedQuotes != null ? detectedQuotes : Pair.create("'", "'");
+		String prefix = fullText.substring(0, textRange.getStartOffset());
+		String suffix = fullText.substring(textRange.getEndOffset(), oldExpression.getTextLength());
+		PyExpression formatValue = PyStringFormatParser.getFormatValueExpression(oldExpression);
+		PyArgumentList newStyleFormatValue = PyStringFormatParser.getNewStyleFormatValueExpression(oldExpression);
+		String newText = newExpression.getText();
 
-		final List<PyStringFormatParser.SubstitutionChunk> substitutions;
+		List<PyStringFormatParser.SubstitutionChunk> substitutions;
 		if(newStyleFormatValue != null)
 		{
 			substitutions = filterSubstitutions(parseNewStyleFormat(fullText));
@@ -159,7 +159,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		{
 			substitutions = filterSubstitutions(parsePercentFormat(fullText));
 		}
-		final boolean hasSubstitutions = substitutions.size() > 0;
+		boolean hasSubstitutions = substitutions.size() > 0;
 
 		if(formatValue != null && !containsStringFormatting(substitutions, textRange))
 		{
@@ -173,11 +173,11 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 			}
 			else
 			{
-				final TypeEvalContext context = TypeEvalContext.userInitiated(oldExpression.getProject(), oldExpression.getContainingFile());
-				final PyType valueType = context.getType(formatValue);
-				final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(oldExpression);
-				final PyType tupleType = builtinCache.getTupleType();
-				final PyType mappingType = PyTypeParser.getTypeByName(null, "collections.Mapping");
+				TypeEvalContext context = TypeEvalContext.userInitiated(oldExpression.getProject(), oldExpression.getContainingFile());
+				PyType valueType = context.getType(formatValue);
+				PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(oldExpression);
+				PyType tupleType = builtinCache.getTupleType();
+				PyType mappingType = PyTypeParser.getTypeByName(null, "collections.Mapping");
 				if(!PyTypeChecker.match(tupleType, valueType, context) || (mappingType != null && !PyTypeChecker.match(mappingType, valueType, context)))
 				{
 					return replaceSubstringWithSingleValueFormatting(oldExpression, textRange, prefix, suffix, formatValue, newText, substitutions);
@@ -187,7 +187,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 
 		if(newStyleFormatValue != null && hasSubstitutions && !containsStringFormatting(substitutions, textRange))
 		{
-			final PyExpression[] arguments = newStyleFormatValue.getArguments();
+			PyExpression[] arguments = newStyleFormatValue.getArguments();
 			boolean hasStarArguments = false;
 			for(PyExpression argument : arguments)
 			{
@@ -219,15 +219,15 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 			List<PyStringFormatParser.SubstitutionChunk> substitutions)
 	{
 		// 'foo%s' % value if value is not tuple or mapping -> '%s%s' % (s, value)
-		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
-		final LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
-		final String newLiteralText = prefix + "%s" + suffix;
-		final PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
+		PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
+		LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
+		String newLiteralText = prefix + "%s" + suffix;
+		PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
 		oldExpression.replace(newLiteralExpression);
-		final StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder();
 		builder.append("(");
-		final int i = getPositionInRanges(PyStringFormatParser.substitutionsToRanges(substitutions), textRange);
-		final int pos;
+		int i = getPositionInRanges(PyStringFormatParser.substitutionsToRanges(substitutions), textRange);
+		int pos;
 		if(i == 0)
 		{
 			pos = builder.toString().length();
@@ -243,7 +243,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 			builder.append(newText);
 		}
 		builder.append(")");
-		final PsiElement newElement = formatValue.replace(generator.createExpressionFromText(languageLevel, builder.toString()));
+		PsiElement newElement = formatValue.replace(generator.createExpressionFromText(languageLevel, builder.toString()));
 		return newElement.findElementAt(pos);
 	}
 
@@ -256,16 +256,16 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	{
 		// 'foo%(x)s' % {'x': x} -> '%(s)s%(x)s' % {'x': x, 's': s}
 		// TODO: Support the dict() function
-		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
-		final LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
-		final String newLiteralText = prefix + "%(" + newText + ")s" + suffix;
-		final PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
+		PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
+		LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
+		String newLiteralText = prefix + "%(" + newText + ")s" + suffix;
+		PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
 		oldExpression.replace(newLiteralExpression);
 
-		final PyDictLiteralExpression dict = (PyDictLiteralExpression) formatValue;
-		final StringBuilder builder = new StringBuilder();
+		PyDictLiteralExpression dict = (PyDictLiteralExpression) formatValue;
+		StringBuilder builder = new StringBuilder();
 		builder.append("{");
-		final PyKeyValueExpression[] elements = dict.getElements();
+		PyKeyValueExpression[] elements = dict.getElements();
 		builder.append(StringUtil.join(elements, expression -> expression.getText(), ","));
 		if(elements.length > 0)
 		{
@@ -275,11 +275,11 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		builder.append(newText);
 		builder.append(quotes.getSecond());
 		builder.append(":");
-		final int pos = builder.toString().length();
+		int pos = builder.toString().length();
 		builder.append(newText);
 		builder.append("}");
-		final PyExpression newDictLiteral = generator.createExpressionFromText(languageLevel, builder.toString());
-		final PsiElement newElement = formatValue.replace(newDictLiteral);
+		PyExpression newDictLiteral = generator.createExpressionFromText(languageLevel, builder.toString());
+		PsiElement newElement = formatValue.replace(newDictLiteral);
 		return newElement.findElementAt(pos);
 	}
 
@@ -292,21 +292,21 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 			List<PyStringFormatParser.SubstitutionChunk> substitutions)
 	{
 		// 'foo%s' % (x,) -> '%s%s' % (s, x)
-		final String newLiteralText = prefix + "%s" + suffix;
-		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
-		final PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
+		String newLiteralText = prefix + "%s" + suffix;
+		PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
+		PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
 		oldExpression.replace(newLiteralExpression);
 
-		final PyExpression[] members = tupleFormatValue.getElements();
-		final int n = members.length;
-		final int i = Math.min(n, Math.max(0, getPositionInRanges(PyStringFormatParser.substitutionsToRanges(substitutions), textRange)));
-		final boolean last = i == n;
-		final PsiElement trailingComma = PyPsiUtils.getNextComma(members[n - 1]);
+		PyExpression[] members = tupleFormatValue.getElements();
+		int n = members.length;
+		int i = Math.min(n, Math.max(0, getPositionInRanges(PyStringFormatParser.substitutionsToRanges(substitutions), textRange)));
+		boolean last = i == n;
+		PsiElement trailingComma = PyPsiUtils.getNextComma(members[n - 1]);
 		if(trailingComma != null)
 		{
 			trailingComma.delete();
 		}
-		final PyExpression before = last ? null : members[i];
+		PyExpression before = last ? null : members[i];
 		PyUtil.addListNode(tupleFormatValue, newExpression, before != null ? before.getNode() : null, i == 0 || !last, last, !last);
 		return newExpression;
 	}
@@ -314,11 +314,11 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	private static PsiElement replaceSubstringWithoutFormatting(@Nonnull PyStringLiteralExpression oldExpression, @Nonnull String prefix, @Nonnull String suffix, @Nonnull String newText)
 	{
 		// 'foobar' -> '%sbar' % s
-		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
-		final LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
-		final PsiElement parent = oldExpression.getParent();
-		final boolean parensNeeded = parent instanceof PyExpression && !(parent instanceof PyParenthesizedExpression);
-		final StringBuilder builder = new StringBuilder();
+		PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
+		LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
+		PsiElement parent = oldExpression.getParent();
+		boolean parensNeeded = parent instanceof PyExpression && !(parent instanceof PyParenthesizedExpression);
+		StringBuilder builder = new StringBuilder();
 		if(parensNeeded)
 		{
 			builder.append("(");
@@ -327,14 +327,14 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		builder.append("%s");
 		builder.append(suffix);
 		builder.append(" % ");
-		final int pos = builder.toString().length();
+		int pos = builder.toString().length();
 		builder.append(newText);
 		if(parensNeeded)
 		{
 			builder.append(")");
 		}
-		final PyExpression expression = generator.createExpressionFromText(languageLevel, builder.toString());
-		final PsiElement newElement = oldExpression.replace(expression);
+		PyExpression expression = generator.createExpressionFromText(languageLevel, builder.toString());
+		PsiElement newElement = oldExpression.replace(expression);
 		return newElement.findElementAt(pos);
 	}
 
@@ -348,11 +348,11 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		// 'foobar' + 'baz' -> s + 'bar' + 'baz'
 		// 'foobar%s' -> s + 'bar%s'
 		// 'f%soobar' % x -> (s + 'bar') % x
-		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
-		final LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
-		final String leftQuote = quotes.getFirst();
-		final String rightQuote = quotes.getSecond();
-		final StringBuilder builder = new StringBuilder();
+		PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
+		LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
+		String leftQuote = quotes.getFirst();
+		String rightQuote = quotes.getSecond();
+		StringBuilder builder = new StringBuilder();
 		if(hasSubstitutions)
 		{
 			builder.append("(");
@@ -361,7 +361,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		{
 			builder.append(prefix + rightQuote + " + ");
 		}
-		final int pos = builder.toString().length();
+		int pos = builder.toString().length();
 		builder.append(newText);
 		if(!rightQuote.startsWith(suffix))
 		{
@@ -371,8 +371,8 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		{
 			builder.append(")");
 		}
-		final PsiElement expression = generator.createExpressionFromText(languageLevel, builder.toString());
-		final PsiElement newElement = oldExpression.replace(expression);
+		PsiElement expression = generator.createExpressionFromText(languageLevel, builder.toString());
+		PsiElement newElement = oldExpression.replace(expression);
 		return newElement.findElementAt(pos);
 	}
 
@@ -384,9 +384,9 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 			@Nonnull String newText,
 			@Nonnull List<PyStringFormatParser.SubstitutionChunk> substitutions)
 	{
-		final PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
-		final LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
-		final PyExpression[] arguments = newStyleFormatValue.getArguments();
+		PyElementGenerator generator = PyElementGenerator.getInstance(oldExpression.getProject());
+		LanguageLevel languageLevel = LanguageLevel.forElement(oldExpression);
+		PyExpression[] arguments = newStyleFormatValue.getArguments();
 		boolean hasKeywords = false;
 		int maxPosition = -1;
 		for(PyStringFormatParser.SubstitutionChunk substitution : substitutions)
@@ -395,7 +395,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 			{
 				hasKeywords = true;
 			}
-			final Integer position = substitution.getPosition();
+			Integer position = substitution.getPosition();
 			if(position != null && position > maxPosition)
 			{
 				maxPosition = position;
@@ -404,33 +404,33 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		if(hasKeywords)
 		{
 			// 'foo{x}'.format(x='bar') -> '{s}oo{x}'.format(x='bar', s=s)
-			final String newLiteralText = prefix + "{" + newText + "}" + suffix;
-			final PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
+			String newLiteralText = prefix + "{" + newText + "}" + suffix;
+			PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
 			oldExpression.replace(newLiteralExpression);
 
-			final PyKeywordArgument kwarg = generator.createKeywordArgument(languageLevel, newText, newText);
+			PyKeywordArgument kwarg = generator.createKeywordArgument(languageLevel, newText, newText);
 			newStyleFormatValue.addArgument(kwarg);
 			return kwarg.getValueExpression();
 		}
 		else if(maxPosition >= 0)
 		{
 			// 'foo{0}'.format('bar') -> '{1}oo{0}'.format('bar', s)
-			final String newLiteralText = prefix + "{" + (maxPosition + 1) + "}" + suffix;
-			final PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
+			String newLiteralText = prefix + "{" + (maxPosition + 1) + "}" + suffix;
+			PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
 			oldExpression.replace(newLiteralExpression);
 
-			final PyExpression arg = generator.createExpressionFromText(languageLevel, newText);
+			PyExpression arg = generator.createExpressionFromText(languageLevel, newText);
 			newStyleFormatValue.addArgument(arg);
 			return arg;
 		}
 		else
 		{
 			// 'foo{}'.format('bar') -> '{}oo{}'.format(s, 'bar')
-			final String newLiteralText = prefix + "{}" + suffix;
-			final PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
+			String newLiteralText = prefix + "{}" + suffix;
+			PyStringLiteralExpression newLiteralExpression = generator.createStringLiteralAlreadyEscaped(newLiteralText);
 			oldExpression.replace(newLiteralExpression);
-			final int i = getPositionInRanges(PyStringFormatParser.substitutionsToRanges(substitutions), textRange);
-			final PyExpression arg = generator.createExpressionFromText(languageLevel, newText);
+			int i = getPositionInRanges(PyStringFormatParser.substitutionsToRanges(substitutions), textRange);
+			PyExpression arg = generator.createExpressionFromText(languageLevel, newText);
 			if(i == 0)
 			{
 				newStyleFormatValue.addArgumentFirst(arg);
@@ -449,11 +449,11 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 
 	private static int getPositionInRanges(@Nonnull List<TextRange> ranges, @Nonnull TextRange range)
 	{
-		final int end = range.getEndOffset();
-		final int size = ranges.size();
+		int end = range.getEndOffset();
+		int size = ranges.size();
 		for(int i = 0; i < size; i++)
 		{
-			final TextRange r = ranges.get(i);
+			TextRange r = ranges.get(i);
 			if(end < r.getStartOffset())
 			{
 				return i;
@@ -464,7 +464,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 
 	private static boolean containsStringFormatting(@Nonnull List<PyStringFormatParser.SubstitutionChunk> substitutions, @Nonnull TextRange range)
 	{
-		final List<TextRange> ranges = PyStringFormatParser.substitutionsToRanges(substitutions);
+		List<TextRange> ranges = PyStringFormatParser.substitutionsToRanges(substitutions);
 		for(TextRange r : ranges)
 		{
 			if(range.contains(r))
@@ -477,13 +477,13 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 
 	private static boolean isConcatFormatting(PyStringLiteralExpression element)
 	{
-		final PsiElement parent = element.getParent();
+		PsiElement parent = element.getParent();
 		return parent instanceof PyBinaryExpression && ((PyBinaryExpression) parent).isOperator("+");
 	}
 
-	private static boolean isNotAssociative(@Nonnull final PyBinaryExpression binaryExpression)
+	private static boolean isNotAssociative(@Nonnull PyBinaryExpression binaryExpression)
 	{
-		final IElementType opType = getOperationType(binaryExpression);
+		IElementType opType = getOperationType(binaryExpression);
 		return COMPARISON_OPERATIONS.contains(opType) || binaryExpression instanceof PySliceExpression ||
 				opType == DIV || opType == FLOORDIV || opType == PERC || opType == EXP || opType == MINUS;
 	}
@@ -500,7 +500,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		}
 		else if(expr instanceof PyPrefixExpression)
 		{
-			final IElementType opType = getOperationType(expr);
+			IElementType opType = getOperationType(expr);
 			if(opType == PLUS || opType == MINUS || opType == TILDE)
 			{
 				priority = 2;
@@ -512,7 +512,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 		}
 		else if(expr instanceof PyBinaryExpression)
 		{
-			final IElementType opType = getOperationType(expr);
+			IElementType opType = getOperationType(expr);
 			if(opType == EXP)
 			{
 				priority = 3;
@@ -567,7 +567,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	}
 
 	@Nullable
-	private static IElementType getOperationType(@Nonnull final PyElement expr)
+	private static IElementType getOperationType(@Nonnull PyElement expr)
 	{
 		if(expr instanceof PyBinaryExpression)
 		{

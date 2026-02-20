@@ -40,5 +40,5 @@ public abstract class PyPackageManagers {
 
   public abstract PackageManagementService getManagementService(Project project, Sdk sdk);
 
-  public abstract void clearCache(@Nonnull final Sdk sdk);
+  public abstract void clearCache(@Nonnull Sdk sdk);
 }

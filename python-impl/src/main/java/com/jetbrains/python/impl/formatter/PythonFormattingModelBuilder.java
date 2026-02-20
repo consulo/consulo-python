@@ -44,16 +44,16 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilder, Cus
 	{
 		PsiElement element = formattingContext.getPsiElement();
 		CodeStyleSettings settings = formattingContext.getCodeStyleSettings();
-		final PyBlockContext context = new PyBlockContext(settings, createSpacingBuilder(settings), formattingContext.getFormattingMode());
-		final PyBlock block = new PyBlock(null, element.getNode(), null, Indent.getNoneIndent(), null, context);
+		PyBlockContext context = new PyBlockContext(settings, createSpacingBuilder(settings), formattingContext.getFormattingMode());
+		PyBlock block = new PyBlock(null, element.getNode(), null, Indent.getNoneIndent(), null, context);
 		return FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), block, settings);
 	}
 
 	protected SpacingBuilder createSpacingBuilder(CodeStyleSettings settings)
 	{
-		final PyCodeStyleSettings pySettings = settings.getCustomSettings(PyCodeStyleSettings.class);
+		PyCodeStyleSettings pySettings = settings.getCustomSettings(PyCodeStyleSettings.class);
 
-		final CommonCodeStyleSettings commonSettings = settings.getCommonSettings(PythonLanguage.getInstance());
+		CommonCodeStyleSettings commonSettings = settings.getCommonSettings(PythonLanguage.getInstance());
 		return new SpacingBuilder(commonSettings).between(CLASS_DECLARATION, STATEMENT_OR_DECLARATION).blankLines(commonSettings.BLANK_LINES_AROUND_CLASS).between(STATEMENT_OR_DECLARATION,
 				CLASS_DECLARATION).blankLines(commonSettings.BLANK_LINES_AROUND_CLASS).between(FUNCTION_DECLARATION, STATEMENT_OR_DECLARATION).blankLines(commonSettings.BLANK_LINES_AROUND_METHOD)
 				.between(STATEMENT_OR_DECLARATION, FUNCTION_DECLARATION).blankLines(commonSettings.BLANK_LINES_AROUND_METHOD).after(FUNCTION_DECLARATION).blankLines(commonSettings
@@ -107,7 +107,7 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilder, Cus
 
 	private static TokenSet allButLambda()
 	{
-		final PythonLanguage pythonLanguage = PythonLanguage.getInstance();
+		PythonLanguage pythonLanguage = PythonLanguage.getInstance();
 		return TokenSet.create(IElementType.enumerate(type -> type != LAMBDA_KEYWORD && type.getLanguage().isKindOf(pythonLanguage)));
 	}
 

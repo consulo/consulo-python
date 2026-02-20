@@ -38,9 +38,9 @@ public class PyConsoleDebugProcess extends PyDebugProcess {
     private final PyConsoleDebugProcessHandler myConsoleDebugProcessHandler;
 
     public PyConsoleDebugProcess(@Nonnull XDebugSession session,
-                                 @Nonnull final ServerSocket serverSocket,
-                                 @Nonnull final ExecutionConsole executionConsole,
-                                 @Nonnull final PyConsoleDebugProcessHandler consoleDebugProcessHandler) {
+                                 @Nonnull ServerSocket serverSocket,
+                                 @Nonnull ExecutionConsole executionConsole,
+                                 @Nonnull PyConsoleDebugProcessHandler consoleDebugProcessHandler) {
         super(session, serverSocket, executionConsole, consoleDebugProcessHandler, false);
         myLocalPort = serverSocket.getLocalPort();
         myConsoleDebugProcessHandler = consoleDebugProcessHandler;

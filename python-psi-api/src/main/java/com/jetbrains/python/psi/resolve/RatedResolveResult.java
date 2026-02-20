@@ -86,7 +86,7 @@ public class RatedResolveResult implements ResolveResult {
       return targets;
     }
     List<RatedResolveResult> ret = Lists.newSortedList(new Comparator<RatedResolveResult>() {
-      public int compare(final RatedResolveResult one, final RatedResolveResult another) {
+      public int compare(RatedResolveResult one, RatedResolveResult another) {
         return another.getRate() - one.getRate();
       }
     });

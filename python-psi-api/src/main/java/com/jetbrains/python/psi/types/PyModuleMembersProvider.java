@@ -39,10 +39,10 @@ public abstract class PyModuleMembersProvider
 
 	public Collection<PyCustomMember> getMembers(PyFile module, PointInImport point)
 	{
-		final VirtualFile vFile = module.getVirtualFile();
+		VirtualFile vFile = module.getVirtualFile();
 		if(vFile != null)
 		{
-			final String qName = PyPsiFacade.getInstance(module.getProject()).findShortestImportableName(vFile, module);
+			String qName = PyPsiFacade.getInstance(module.getProject()).findShortestImportableName(vFile, module);
 			if(qName != null)
 			{
 				return getMembersByQName(module, qName);

@@ -64,8 +64,8 @@ public class PyGenericType implements PyType
 	{
 		if(myBound instanceof PyUnionType)
 		{
-			final PyUnionType bounds = (PyUnionType) myBound;
-			final String boundsString = StringUtil.join(bounds.getMembers(), type -> type != null ? type.getName() : PyNames.UNKNOWN_TYPE, ", ");
+			PyUnionType bounds = (PyUnionType) myBound;
+			String boundsString = StringUtil.join(bounds.getMembers(), type -> type != null ? type.getName() : PyNames.UNKNOWN_TYPE, ", ");
 			return "TypeVar('" + myName + "', " + boundsString + ")";
 		}
 		else
@@ -96,7 +96,7 @@ public class PyGenericType implements PyType
 		{
 			return false;
 		}
-		final PyGenericType type = (PyGenericType) o;
+		PyGenericType type = (PyGenericType) o;
 		return myName.equals(type.myName);
 	}
 

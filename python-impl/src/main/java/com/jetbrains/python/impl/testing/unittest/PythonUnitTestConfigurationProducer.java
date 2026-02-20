@@ -46,9 +46,9 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 
     @Override
     @RequiredReadAction
-    protected boolean isAvailable(@Nonnull final Location location) {
+    protected boolean isAvailable(@Nonnull Location location) {
         PsiElement element = location.getPsiElement();
-        final Module module = element.getModule();
+        Module module = element.getModule();
         return module != null && TestRunnerService.getInstance(module)
             .getProjectConfiguration()
             .equals(PythonTestConfigurationsModel.PYTHONS_UNITTEST_NAME);
@@ -56,10 +56,10 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 
     @Override
     protected boolean isTestFunction(
-        @Nonnull final PyFunction pyFunction,
-        @Nullable final AbstractPythonTestRunConfiguration configuration
+        @Nonnull PyFunction pyFunction,
+        @Nullable AbstractPythonTestRunConfiguration configuration
     ) {
-        final boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
+        boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
         return isTestFunction
             || (configuration instanceof PythonUnitTestRunConfiguration unitTestRunConfig && !unitTestRunConfig.isPureUnittest());
     }
@@ -67,21 +67,21 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
     @Override
     protected boolean isTestClass(
         @Nonnull PyClass pyClass,
-        @Nullable final AbstractPythonTestRunConfiguration configuration,
+        @Nullable AbstractPythonTestRunConfiguration configuration,
         TypeEvalContext context
     ) {
-        final boolean isTestClass = super.isTestClass(pyClass, configuration, context);
+        boolean isTestClass = super.isTestClass(pyClass, configuration, context);
         return isTestClass
             || (configuration instanceof PythonUnitTestRunConfiguration unitTestRunConfig && !unitTestRunConfig.isPureUnittest());
     }
 
     @Override
     @RequiredReadAction
-    protected boolean isTestFile(@Nonnull final PyFile file) {
+    protected boolean isTestFile(@Nonnull PyFile file) {
         if (PyNames.SETUP_DOT_PY.equals(file.getName())) {
             return true;
         }
-        final List<PyStatement> testCases = getTestCaseClassesFromFile(file);
+        List<PyStatement> testCases = getTestCaseClassesFromFile(file);
         return !testCases.isEmpty();
     }
 }

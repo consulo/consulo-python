@@ -94,7 +94,7 @@ public class PyImportedModule extends LightElement
 	{
 		if(myImportElement != null)
 		{
-			final PsiElement element = resolve(myImportElement, myImportedPrefix);
+			PsiElement element = resolve(myImportElement, myImportedPrefix);
 			if(element != null)
 			{
 				return element;
@@ -112,7 +112,7 @@ public class PyImportedModule extends LightElement
 	@Nullable
 	public PsiElement resolve()
 	{
-		final PsiElement element;
+		PsiElement element;
 		if(myImportElement != null)
 		{
 			element = ResolveImportUtil.resolveImportElement(myImportElement, myImportedPrefix);
@@ -129,10 +129,10 @@ public class PyImportedModule extends LightElement
 	}
 
 	@Nullable
-	private static PsiElement resolve(PyImportElement importElement, @Nonnull final QualifiedName prefix)
+	private static PsiElement resolve(PyImportElement importElement, @Nonnull QualifiedName prefix)
 	{
-		final PsiElement resolved = ResolveImportUtil.resolveImportElement(importElement, prefix);
-		final PsiElement packageInit = PyUtil.turnDirIntoInit(resolved);
+		PsiElement resolved = ResolveImportUtil.resolveImportElement(importElement, prefix);
+		PsiElement packageInit = PyUtil.turnDirIntoInit(resolved);
 		return packageInit != null ? packageInit : resolved;
 	}
 }

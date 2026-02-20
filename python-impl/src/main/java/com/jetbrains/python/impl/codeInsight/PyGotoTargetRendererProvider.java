@@ -28,7 +28,7 @@ import consulo.language.psi.PsiNamedElement;
  */
 @ExtensionImpl
 public class PyGotoTargetRendererProvider implements GotoTargetRendererProvider {
-  public PsiElementListCellRenderer getRenderer(final PsiElement element) {
+  public PsiElementListCellRenderer getRenderer(PsiElement element) {
     if (element instanceof PyElement && element instanceof PsiNamedElement) return new PyElementListCellRenderer();
     return null;
   }

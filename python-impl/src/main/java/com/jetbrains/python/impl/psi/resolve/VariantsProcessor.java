@@ -52,7 +52,7 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 		myContext = context;
 	}
 
-	public VariantsProcessor(PsiElement context, @Nullable final Condition<PsiElement> nodeFilter, @Nullable final Condition<String> nameFilter)
+	public VariantsProcessor(PsiElement context, @Nullable Condition<PsiElement> nodeFilter, @Nullable Condition<String> nameFilter)
 	{
 		myContext = context;
 		myNodeFilter = nodeFilter;
@@ -80,8 +80,8 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 		// TODO: refactor to look saner; much code duplication
 		if(element instanceof PsiNamedElement)
 		{
-			final PsiNamedElement psiNamedElement = (PsiNamedElement) element;
-			final String name = PyUtil.getElementNameWithoutExtension(psiNamedElement);
+			PsiNamedElement psiNamedElement = (PsiNamedElement) element;
+			String name = PyUtil.getElementNameWithoutExtension(psiNamedElement);
 			if(name != null && nameIsAcceptable(name))
 			{
 				addElement(name, psiNamedElement);
@@ -101,12 +101,12 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 			boolean handledAsImported = false;
 			if(element instanceof PyImportElement)
 			{
-				final PyImportElement importElement = (PyImportElement) element;
+				PyImportElement importElement = (PyImportElement) element;
 				handledAsImported = handleImportElement(importElement);
 			}
 			if(!handledAsImported)
 			{
-				final PyImportedNameDefiner definer = (PyImportedNameDefiner) element;
+				PyImportedNameDefiner definer = (PyImportedNameDefiner) element;
 				for(PyElement expr : definer.iterateNames())
 				{
 					if(expr != null && expr != myContext)
@@ -130,13 +130,13 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 
 	protected boolean handleImportElement(PyImportElement importElement)
 	{
-		final QualifiedName qName = importElement.getImportedQName();
+		QualifiedName qName = importElement.getImportedQName();
 		if(qName != null && qName.getComponentCount() == 1)
 		{
 			String name = importElement.getAsName() != null ? importElement.getAsName() : qName.getLastComponent();
 			if(name != null && nameIsAcceptable(name))
 			{
-				final PsiElement resolved = importElement.resolve();
+				PsiElement resolved = importElement.resolve();
 				if(resolved instanceof PsiNamedElement)
 				{
 					addElement(name, resolved);

@@ -28,15 +28,15 @@ import javax.swing.*;
 public class PythonRunConfigurationEditor  extends SettingsEditor<PythonRunConfiguration> {
   private PythonRunConfigurationForm myForm;
 
-  public PythonRunConfigurationEditor(final PythonRunConfiguration configuration) {
+  public PythonRunConfigurationEditor(PythonRunConfiguration configuration) {
     myForm = new PythonRunConfigurationForm(configuration);
   }
 
-  protected void resetEditorFrom(final PythonRunConfiguration config) {
+  protected void resetEditorFrom(PythonRunConfiguration config) {
     PythonRunConfiguration.copyParams(config, myForm);
   }
 
-  protected void applyEditorTo(final PythonRunConfiguration config) throws ConfigurationException {
+  protected void applyEditorTo(PythonRunConfiguration config) throws ConfigurationException {
     PythonRunConfiguration.copyParams(myForm, config);
   }
 

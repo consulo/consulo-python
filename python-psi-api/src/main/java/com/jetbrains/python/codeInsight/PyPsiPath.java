@@ -280,13 +280,13 @@ public abstract class PyPsiPath
 			}
 			super.visitPyCallExpression(node);
 
-			final PyExpression callee = node.getCallee();
+			PyExpression callee = node.getCallee();
 			if(callee instanceof PyReferenceExpression)
 			{
 				String calleeName = ((PyReferenceExpression) callee).getReferencedName();
 				if(myCallName.equals(calleeName))
 				{
-					final PyExpression[] args = node.getArguments();
+					PyExpression[] args = node.getArguments();
 					if(myArgs.length <= args.length)
 					{
 						boolean argsMatch = true;

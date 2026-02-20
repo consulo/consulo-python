@@ -51,8 +51,8 @@ public class PyImplementMethodsQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameImplementMethods();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
         if (editor != null) {
             PyOverrideImplementUtil.chooseAndOverrideOrImplementMethods(
                 project,
@@ -69,7 +69,7 @@ public class PyImplementMethodsQuickFix implements LocalQuickFix {
     private static Editor getEditor(Project project, PsiFile file) {
         Document document = PsiDocumentManager.getInstance(project).getDocument(file);
         if (document != null) {
-            final EditorFactory instance = EditorFactory.getInstance();
+            EditorFactory instance = EditorFactory.getInstance();
             if (instance == null) {
                 return null;
             }

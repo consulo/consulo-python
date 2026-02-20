@@ -57,14 +57,14 @@ public abstract class RestCommandLineState extends PythonCommandLineState
 		ParamsGroup scriptParameters = parametersList.getParamsGroup(GROUP_SCRIPT);
 		assert scriptParameters != null;
 		getRunner().addToGroup(scriptParameters, commandLine);
-		final String key = getKey();
+		String key = getKey();
 		if(key != null)
 		{
 			scriptParameters.addParameter(key);
 		}
 		scriptParameters.addParameter(getTask());
 
-		final String params = myConfiguration.getParams();
+		String params = myConfiguration.getParams();
 		if(params != null)
 		{
 			scriptParameters.addParametersString(params);

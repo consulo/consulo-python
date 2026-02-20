@@ -16,10 +16,10 @@ public class GetCompletionsCommand extends AbstractFrameCommand {
   private String myActionToken;
   private List<PydevCompletionVariant> myCompletions = null;
 
-  public GetCompletionsCommand(final RemoteDebugger debugger,
+  public GetCompletionsCommand(RemoteDebugger debugger,
                                String threadId,
                                String frameId,
-                               final String myActionToken) {
+                               String myActionToken) {
     super(debugger, GET_COMPLETIONS, threadId, frameId);
     this.myActionToken = myActionToken;
   }

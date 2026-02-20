@@ -35,9 +35,9 @@ public class PyRemoveAssignmentQuickFix implements LocalQuickFix {
 
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final PsiElement assignment = descriptor.getPsiElement();
+        PsiElement assignment = descriptor.getPsiElement();
         if (assignment instanceof PyAssignmentStatement) {
-            final PyExpression value = ((PyAssignmentStatement) assignment).getAssignedValue();
+            PyExpression value = ((PyAssignmentStatement) assignment).getAssignedValue();
             if (value != null) {
                 assignment.replace(value);
             }

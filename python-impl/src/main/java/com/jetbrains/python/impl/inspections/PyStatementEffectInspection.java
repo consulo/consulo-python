@@ -59,13 +59,13 @@ public class PyStatementEffectInspection extends PyInspection {
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
         @Override
-        public void visitPyExpressionStatement(final PyExpressionStatement node) {
-            final PyExpression expression = node.getExpression();
+        public void visitPyExpressionStatement(PyExpressionStatement node) {
+            PyExpression expression = node.getExpression();
             if (PsiTreeUtil.hasErrorElements(expression)) {
                 return;
             }
@@ -78,9 +78,9 @@ public class PyStatementEffectInspection extends PyInspection {
                 return;
             }
 
-            final PyTryPart tryPart = PsiTreeUtil.getParentOfType(node, PyTryPart.class);
+            PyTryPart tryPart = PsiTreeUtil.getParentOfType(node, PyTryPart.class);
             if (tryPart != null) {
-                final PyStatementList statementList = tryPart.getStatementList();
+                PyStatementList statementList = tryPart.getStatementList();
                 if (statementList.getStatements().length == 1 && statementList.getStatements()[0] == node) {
                     return;
                 }
@@ -111,13 +111,13 @@ public class PyStatementEffectInspection extends PyInspection {
             }
             else if (expression instanceof PyBinaryExpression) {
                 PyBinaryExpression binary = (PyBinaryExpression) expression;
-                final PyExpression leftExpression = binary.getLeftExpression();
-                final PyExpression rightExpression = binary.getRightExpression();
+                PyExpression leftExpression = binary.getLeftExpression();
+                PyExpression rightExpression = binary.getRightExpression();
                 if (hasEffect(leftExpression) || hasEffect(rightExpression)) {
                     return true;
                 }
 
-                final PyElementType operator = binary.getOperator();
+                PyElementType operator = binary.getOperator();
                 String method = operator == null ? null : operator.getSpecialMethodName();
                 if (method != null) {
                     // maybe the op is overridden and may produce side effects, like cout << "hello"
@@ -169,7 +169,7 @@ public class PyStatementEffectInspection extends PyInspection {
                 }
             }
             else if (expression instanceof PyPrefixExpression) {
-                final PyPrefixExpression prefixExpr = (PyPrefixExpression) expression;
+                PyPrefixExpression prefixExpr = (PyPrefixExpression) expression;
                 return prefixExpr.getOperator() == PyTokenTypes.AWAIT_KEYWORD;
             }
             return false;

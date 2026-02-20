@@ -33,39 +33,39 @@ class PyPullUpInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement,
 	private final PyPullUpView myView;
 
 
-	PyPullUpInfoModel(@Nonnull final PyClass classUnderRefactoring, @Nonnull final PyPullUpView view)
+	PyPullUpInfoModel(@Nonnull PyClass classUnderRefactoring, @Nonnull PyPullUpView view)
 	{
 		super(classUnderRefactoring, null, false);
 		myView = view;
 	}
 
 	@Override
-	public boolean isAbstractEnabled(final PyMemberInfo<PyElement> member)
+	public boolean isAbstractEnabled(PyMemberInfo<PyElement> member)
 	{
 		return member.isCouldBeAbstract() && isMemberEnabled(member); // TODO: copy paste with other models, get rid of
 	}
 
 	@Override
-	public int checkForProblems(@Nonnull final PyMemberInfo<PyElement> member)
+	public int checkForProblems(@Nonnull PyMemberInfo<PyElement> member)
 	{
 		return member.isChecked() ? OK : super.checkForProblems(member);
 	}
 
 
 	@Override
-	protected int doCheck(@Nonnull final PyMemberInfo<PyElement> memberInfo, final int problem)
+	protected int doCheck(@Nonnull PyMemberInfo<PyElement> memberInfo, int problem)
 	{
 		return problem;
 	}
 
 	@Override
-	public boolean isMemberEnabled(final PyMemberInfo<PyElement> member)
+	public boolean isMemberEnabled(PyMemberInfo<PyElement> member)
 	{
-		final PyClass currentSuperClass = myView.getSelectedParent();
+		PyClass currentSuperClass = myView.getSelectedParent();
 		if(member.getMember() instanceof PyClass)
 		{
 			//TODO: Delegate to Memebers Managers
-			final PyClass memberClass = (PyClass) member.getMember();
+			PyClass memberClass = (PyClass) member.getMember();
 			if(memberClass.isSubclass(currentSuperClass, null) || currentSuperClass.isSubclass(memberClass, null))
 			{
 				return false; //Class is already parent of superclass

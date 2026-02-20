@@ -64,8 +64,8 @@ public class PyStackFrame extends XStackFrame {
   private final XSourcePosition myPosition;
 
   public PyStackFrame(@Nonnull Project project,
-                      @Nonnull final PyFrameAccessor debugProcess,
-                      @Nonnull final PyStackFrameInfo frameInfo,
+                      @Nonnull PyFrameAccessor debugProcess,
+                      @Nonnull PyStackFrameInfo frameInfo,
                       XSourcePosition position) {
     myProject = project;
     myDebugProcess = debugProcess;
@@ -95,9 +95,9 @@ public class PyStackFrame extends XStackFrame {
       return;
     }
 
-    final VirtualFile file = myPosition.getFile();
+    VirtualFile file = myPosition.getFile();
     boolean isExternal = ReadAction.compute(() -> {
-      final Document document = FileDocumentManager.getInstance().getDocument(file);
+      Document document = FileDocumentManager.getInstance().getDocument(file);
       if (document != null) {
         return !ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file);
       }
@@ -126,7 +126,7 @@ public class PyStackFrame extends XStackFrame {
   }
 
   @Override
-  public void computeChildren(@Nonnull final XCompositeNode node) {
+  public void computeChildren(@Nonnull XCompositeNode node) {
     if (node.isObsolete()) {
       return;
     }
@@ -146,15 +146,15 @@ public class PyStackFrame extends XStackFrame {
     });
   }
 
-  protected void addChildren(@Nonnull final XCompositeNode node, @Nullable final XValueChildrenList children) {
+  protected void addChildren(@Nonnull XCompositeNode node, @Nullable XValueChildrenList children) {
     if (children == null) {
       node.addChildren(XValueChildrenList.EMPTY, true);
       return;
     }
-    final PyDebuggerSettings debuggerSettings = PyDebuggerSettings.getInstance();
-    final XValueChildrenList filteredChildren = new XValueChildrenList();
-    final HashMap<String, XValue> returnedValues = new HashMap<>();
-    final ArrayList<Map<String, XValue>> specialValuesGroups = new ArrayList<>();
+    PyDebuggerSettings debuggerSettings = PyDebuggerSettings.getInstance();
+    XValueChildrenList filteredChildren = new XValueChildrenList();
+    HashMap<String, XValue> returnedValues = new HashMap<>();
+    ArrayList<Map<String, XValue>> specialValuesGroups = new ArrayList<>();
     IntStream.range(0, NUMBER_OF_GROUPS).mapToObj(i -> new HashMap()).forEach(specialValuesGroups::add);
     boolean isSpecialEmpty = true;
 
@@ -199,8 +199,8 @@ public class PyStackFrame extends XStackFrame {
     }
   }
 
-  private static void addReturnedValuesGroup(@Nonnull final XCompositeNode node, Map<String, XValue> returnedValues) {
-    final ArrayList<XValueGroup> group = Lists.newArrayList();
+  private static void addReturnedValuesGroup(@Nonnull XCompositeNode node, Map<String, XValue> returnedValues) {
+    ArrayList<XValueGroup> group = Lists.newArrayList();
     group.add(new XValueGroup(RETURN_VALUES_GROUP_NAME) {
       @Override
       public void computeChildren(@Nonnull XCompositeNode node) {
@@ -220,8 +220,8 @@ public class PyStackFrame extends XStackFrame {
     node.addChildren(XValueChildrenList.topGroups(group), true);
   }
 
-  private static void addSpecialValuesGroup(@Nonnull final XCompositeNode node, List<Map<String, XValue>> specialValuesGroups) {
-    final ArrayList<XValueGroup> group = Lists.newArrayList();
+  private static void addSpecialValuesGroup(@Nonnull XCompositeNode node, List<Map<String, XValue>> specialValuesGroups) {
+    ArrayList<XValueGroup> group = Lists.newArrayList();
     group.add(new XValueGroup(SPECIAL_VARIABLES_GROUP_NAME) {
       @Override
       public void computeChildren(@Nonnull XCompositeNode node) {

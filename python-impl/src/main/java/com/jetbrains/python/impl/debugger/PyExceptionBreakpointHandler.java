@@ -23,7 +23,7 @@ import jakarta.annotation.Nonnull;
  * @author traff
  */
 public class PyExceptionBreakpointHandler extends ExceptionBreakpointHandler<PyExceptionBreakpointProperties> {
-   public PyExceptionBreakpointHandler(@Nonnull final PyDebugProcess debugProcess) {
+   public PyExceptionBreakpointHandler(@Nonnull PyDebugProcess debugProcess) {
     super(debugProcess, PyExceptionBreakpointType.class);
   }
 }

@@ -35,16 +35,16 @@ import java.util.Collections;
 public class PyMethodNavigationOffsetProvider implements MethodNavigationOffsetProvider {
 
   @Override
-  public int[] getMethodNavigationOffsets(final PsiFile file, final int caretOffset) {
+  public int[] getMethodNavigationOffsets(PsiFile file, int caretOffset) {
     if (file instanceof PyFile) {
-      final ArrayList<PsiElement> array = new ArrayList<PsiElement>();
+      ArrayList<PsiElement> array = new ArrayList<PsiElement>();
       addNavigationElements(array, file);
       return MethodUpDownUtil.offsetsFromElements(array);
     }
     return null;
   }
 
-  private static void addNavigationElements(final ArrayList<PsiElement> array, final PsiElement psiElement) {
+  private static void addNavigationElements(ArrayList<PsiElement> array, PsiElement psiElement) {
     if (psiElement instanceof PyFile) {
       for (PyClass pyClass : ((PyFile)psiElement).getTopLevelClasses()) {
         addNavigationElements(array, pyClass);

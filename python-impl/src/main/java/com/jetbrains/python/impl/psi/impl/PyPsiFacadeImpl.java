@@ -96,8 +96,8 @@ public class PyPsiFacadeImpl extends PyPsiFacade {
 
   @Nullable
   @Override
-  public final PyClass createClassByQName(@Nonnull final String qName, @Nonnull final PsiElement anchor) {
-    final PyClassType classType = PyUtil.as(parseTypeAnnotation(qName, anchor), PyClassType.class);
+  public final PyClass createClassByQName(@Nonnull String qName, @Nonnull PsiElement anchor) {
+    PyClassType classType = PyUtil.as(parseTypeAnnotation(qName, anchor), PyClassType.class);
     return (classType != null ? classType.getPyClass() : null);
   }
 

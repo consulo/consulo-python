@@ -56,10 +56,10 @@ public class StatementEffectFunctionCallQuickFix implements LocalQuickFix {
     private static void replacePrint(PsiElement expression, PyElementGenerator elementGenerator) {
         StringBuilder stringBuilder = new StringBuilder("print (");
 
-        final PsiElement whiteSpace = expression.getContainingFile().findElementAt(expression.getTextOffset() + expression.getTextLength());
+        PsiElement whiteSpace = expression.getContainingFile().findElementAt(expression.getTextOffset() + expression.getTextLength());
         PsiElement next = null;
         if (whiteSpace instanceof PsiWhiteSpace) {
-            final String whiteSpaceText = whiteSpace.getText();
+            String whiteSpaceText = whiteSpace.getText();
             if (!whiteSpaceText.contains("\n")) {
                 next = whiteSpace.getNextSibling();
                 while (next instanceof PsiWhiteSpace && whiteSpaceText.contains("\\")) {
@@ -76,7 +76,7 @@ public class StatementEffectFunctionCallQuickFix implements LocalQuickFix {
             whiteSpace.delete();
         }
         if (next != null) {
-            final String text = next.getText();
+            String text = next.getText();
             stringBuilder.append(text);
             if (text.endsWith(",")) {
                 stringBuilder.append(" end=' '");

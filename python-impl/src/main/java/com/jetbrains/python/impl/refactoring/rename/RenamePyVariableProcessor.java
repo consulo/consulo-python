@@ -62,13 +62,13 @@ public class RenamePyVariableProcessor extends RenamePyElementProcessor {
   @Override
   public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
     if (element instanceof PyLambdaExpression) {
-      final PyLambdaExpression lambdaExpression = (PyLambdaExpression)element;
-      final ScopeOwner owner = ScopeUtil.getScopeOwner(lambdaExpression);
+      PyLambdaExpression lambdaExpression = (PyLambdaExpression)element;
+      ScopeOwner owner = ScopeUtil.getScopeOwner(lambdaExpression);
       if (owner instanceof PyClass) {
-        final PyClass cls = (PyClass)owner;
-        final Property property = cls.findPropertyByCallable(lambdaExpression);
+        PyClass cls = (PyClass)owner;
+        Property property = cls.findPropertyByCallable(lambdaExpression);
         if (property != null) {
-          final PyTargetExpression site = property.getDefinitionSite();
+          PyTargetExpression site = property.getDefinitionSite();
           if (site != null) {
             return site;
           }

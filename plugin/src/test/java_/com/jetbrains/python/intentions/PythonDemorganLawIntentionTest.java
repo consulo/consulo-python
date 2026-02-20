@@ -27,7 +27,7 @@ public abstract class PythonDemorganLawIntentionTest extends PyTestCase {
 
   private void doTest() throws Exception {
     myFixture.configureByFile("before" + getTestName(false) + ".py");
-    final IntentionAction action = myFixture.findSingleIntention("DeMorgan Law");
+    IntentionAction action = myFixture.findSingleIntention("DeMorgan Law");
     myFixture.launchAction(action);
     myFixture.checkResultByFile("after" + getTestName(false) + ".py");
 

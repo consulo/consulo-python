@@ -41,11 +41,11 @@ public class PyDocReferenceExpression extends PyReferenceExpressionImpl {
 
   @Nonnull
   public PsiPolyVariantReference getReference(PyResolveContext context) {
-    final PyExpression qualifier = getQualifier();
+    PyExpression qualifier = getQualifier();
     if (qualifier != null) {
       return new PyQualifiedReference(this, context);
     }
-    final PsiElement importParent = PsiTreeUtil.getParentOfType(this, PyImportElement.class, PyFromImportStatement.class);
+    PsiElement importParent = PsiTreeUtil.getParentOfType(this, PyImportElement.class, PyFromImportStatement.class);
     if (importParent != null) {
       return PyImportReference.forElement(this, importParent, context);
     }

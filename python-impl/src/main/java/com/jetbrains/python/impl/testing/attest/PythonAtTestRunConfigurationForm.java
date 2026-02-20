@@ -34,7 +34,7 @@ public class PythonAtTestRunConfigurationForm implements PythonAtTestRunConfigur
   private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
 
 
-  public PythonAtTestRunConfigurationForm(final Project project, final PythonAtTestRunConfiguration configuration) {
+  public PythonAtTestRunConfigurationForm(Project project, PythonAtTestRunConfiguration configuration) {
     myRootPanel = new JPanel(new BorderLayout());
     myTestRunConfigurationForm = new PythonTestRunConfigurationForm(project, configuration);
     TitledBorder border = (TitledBorder)myTestRunConfigurationForm.getTestsPanel().getBorder();

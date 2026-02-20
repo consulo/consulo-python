@@ -73,7 +73,7 @@ public class PyIndentUtil
 		int stop;
 		for(stop = 0; stop < line.length(); stop++)
 		{
-			final char c = line.charAt(stop);
+			char c = line.charAt(stop);
 			if(!(c == ' ' || c == '\t'))
 			{
 				break;
@@ -104,14 +104,14 @@ public class PyIndentUtil
 		{
 			return "";
 		}
-		final PyStatementList statementList = getAnchorStatementList(anchor);
+		PyStatementList statementList = getAnchorStatementList(anchor);
 		if(statementList == null)
 		{
 			return "";
 		}
-		final PsiElement prevSibling = statementList.getPrevSibling();
-		final String whitespace = prevSibling instanceof PsiWhiteSpace ? prevSibling.getText() : "";
-		final int i = whitespace.lastIndexOf("\n");
+		PsiElement prevSibling = statementList.getPrevSibling();
+		String whitespace = prevSibling instanceof PsiWhiteSpace ? prevSibling.getText() : "";
+		int i = whitespace.lastIndexOf("\n");
 		if(i >= 0 && statementList.getStatements().length != 0)
 		{
 			return whitespace.substring(i + 1);
@@ -125,8 +125,8 @@ public class PyIndentUtil
 	@Nonnull
 	private static String getExpectedBlockIndent(@Nonnull PyStatementList anchor)
 	{
-		final String indentStep = getIndentFromSettings(anchor.getProject());
-		final PyStatementList parentBlock = PsiTreeUtil.getParentOfType(anchor, PyStatementList.class, true);
+		String indentStep = getIndentFromSettings(anchor.getProject());
+		PyStatementList parentBlock = PsiTreeUtil.getParentOfType(anchor, PyStatementList.class, true);
 		if(parentBlock != null)
 		{
 			return getElementIndent(parentBlock) + indentStep;
@@ -164,7 +164,7 @@ public class PyIndentUtil
 
 	public static boolean areTabsUsedForIndentation(@Nonnull Project project)
 	{
-		final CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getInstance(project).getCurrentSettings();
+		CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getInstance(project).getCurrentSettings();
 		return codeStyleSettings.useTabCharacter(PythonFileType.INSTANCE);
 	}
 
@@ -180,8 +180,8 @@ public class PyIndentUtil
 	 */
 	public static int getIndentSizeFromSettings(@Nonnull Project project)
 	{
-		final CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getInstance(project).getCurrentSettings();
-		final CodeStyleSettings.IndentOptions indentOptions = codeStyleSettings.getIndentOptions(PythonFileType.INSTANCE);
+		CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getInstance(project).getCurrentSettings();
+		CodeStyleSettings.IndentOptions indentOptions = codeStyleSettings.getIndentOptions(PythonFileType.INSTANCE);
 		return indentOptions.INDENT_SIZE;
 	}
 
@@ -195,7 +195,7 @@ public class PyIndentUtil
 	@Nonnull
 	public static String getIndentFromSettings(@Nonnull Project project)
 	{
-		final boolean useTabs = areTabsUsedForIndentation(project);
+		boolean useTabs = areTabsUsedForIndentation(project);
 		return useTabs ? "\t" : StringUtil.repeatSymbol(' ', getIndentSizeFromSettings(project));
 	}
 
@@ -208,14 +208,14 @@ public class PyIndentUtil
 	@Nonnull
 	public static String removeCommonIndent(@Nonnull String s, boolean ignoreFirstLine)
 	{
-		final List<String> trimmed = removeCommonIndent(LineTokenizer.tokenizeIntoList(s, false, false), ignoreFirstLine);
+		List<String> trimmed = removeCommonIndent(LineTokenizer.tokenizeIntoList(s, false, false), ignoreFirstLine);
 		return StringUtil.join(trimmed, "\n");
 	}
 
 	@Nonnull
 	public static String changeIndent(@Nonnull String s, boolean ignoreFirstLine, String newIndent)
 	{
-		final List<String> trimmed = changeIndent(LineTokenizer.tokenizeIntoList(s, false, false), ignoreFirstLine, newIndent);
+		List<String> trimmed = changeIndent(LineTokenizer.tokenizeIntoList(s, false, false), ignoreFirstLine, newIndent);
 		return StringUtil.join(trimmed, "\n");
 	}
 
@@ -223,15 +223,15 @@ public class PyIndentUtil
 	 * Note that all empty lines will be trimmed regardless of their actual indentation.
 	 */
 	@Nonnull
-	public static List<String> changeIndent(@Nonnull Iterable<String> lines, boolean ignoreFirstLine, final String newIndent)
+	public static List<String> changeIndent(@Nonnull Iterable<String> lines, boolean ignoreFirstLine, String newIndent)
 	{
-		final String oldIndent = findCommonIndent(lines, ignoreFirstLine);
+		String oldIndent = findCommonIndent(lines, ignoreFirstLine);
 		if(Iterables.isEmpty(lines))
 		{
 			return Collections.emptyList();
 		}
 
-		final List<String> result = ContainerUtil.map(Iterables.skip(lines, ignoreFirstLine ? 1 : 0), line -> {
+		List<String> result = ContainerUtil.map(Iterables.skip(lines, ignoreFirstLine ? 1 : 0), line -> {
 			if(StringUtil.isEmptyOrSpaces(line))
 			{
 				return "";
@@ -268,12 +268,12 @@ public class PyIndentUtil
 		boolean hasBadEmptyLineIndent = false;
 		for(String line : Iterables.skip(lines, ignoreFirstLine ? 1 : 0))
 		{
-			final boolean lineEmpty = StringUtil.isEmptyOrSpaces(line);
+			boolean lineEmpty = StringUtil.isEmptyOrSpaces(line);
 			if(lineEmpty && !allLinesEmpty)
 			{
 				continue;
 			}
-			final String indent = getLineIndent(line);
+			String indent = getLineIndent(line);
 			if(minIndent == null || (!lineEmpty && allLinesEmpty) || minIndent.startsWith(indent))
 			{
 				minIndent = indent;
@@ -301,8 +301,8 @@ public class PyIndentUtil
 	@Nonnull
 	public static String getLineIndent(@Nonnull Document document, int lineNumber)
 	{
-		final TextRange lineRange = TextRange.create(document.getLineStartOffset(lineNumber), document.getLineEndOffset(lineNumber));
-		final String line = document.getText(lineRange);
+		TextRange lineRange = TextRange.create(document.getLineStartOffset(lineNumber), document.getLineEndOffset(lineNumber));
+		String line = document.getText(lineRange);
 		return getLineIndent(line);
 	}
 }

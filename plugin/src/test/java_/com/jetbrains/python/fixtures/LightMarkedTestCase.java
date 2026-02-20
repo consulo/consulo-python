@@ -46,11 +46,11 @@ public abstract class LightMarkedTestCase extends PyTestCase {
    * @throws Exception
    */
   protected Map<String, PsiElement> configureByFile(@TestDataFile @NonNls String filePath, @NonNls String markerRegexp) {
-    final String fullPath = getTestDataPath() + filePath;
-    final VirtualFile vFile = getVirtualFileByName(fullPath);
+    String fullPath = getTestDataPath() + filePath;
+    VirtualFile vFile = getVirtualFileByName(fullPath);
     assertNotNull("file " + fullPath + " not found", vFile);
 
-    final String text;
+    String text;
     try {
       text = VfsUtil.loadText(vFile);
     }
@@ -59,7 +59,7 @@ public abstract class LightMarkedTestCase extends PyTestCase {
     }
     String fileText = StringUtil.convertLineSeparators(text, "\n");
 
-    final String fileName = vFile.getName();
+    String fileName = vFile.getName();
 
     return configureByFileText(fileText, fileName, markerRegexp);
   }
@@ -73,13 +73,13 @@ public abstract class LightMarkedTestCase extends PyTestCase {
    * @return mapping of markers to the PSI elements
    * @throws Exception
    */
-  protected Map<String, PsiElement> configureByFileText(String fileText, final String fileName, @NonNls String markerRegexp) {
+  protected Map<String, PsiElement> configureByFileText(String fileText, String fileName, @NonNls String markerRegexp) {
     // build a map of marks to positions, and the text with marks stripped
     Pattern pat = Pattern.compile(markerRegexp);
     Matcher mat = pat.matcher(fileText);
     int rest_index = 0; // from here on fileText is not yet looked at
     Map<String, Integer> offsets = new HashMap<String, Integer>();
-    final StringBuffer text = new StringBuffer();
+    StringBuffer text = new StringBuffer();
     while (mat.find(rest_index)) {
       String mark = mat.group();
       CharSequence prev_part = fileText.subSequence(rest_index, mat.start());

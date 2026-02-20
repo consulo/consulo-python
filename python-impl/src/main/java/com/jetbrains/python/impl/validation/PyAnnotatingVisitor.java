@@ -68,7 +68,7 @@ public class PyAnnotatingVisitor implements Annotator {
   }
 
   public void annotate(@Nonnull PsiElement psiElement, @Nonnull AnnotationHolder holder) {
-    final PsiFile file = psiElement.getContainingFile();
+    PsiFile file = psiElement.getContainingFile();
     for (PyAnnotator annotator : myAnnotators) {
       if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(annotator.getClass())) continue;
       annotator.annotateElement(psiElement, holder);

@@ -70,7 +70,7 @@ public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAct
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
         if (parent instanceof PyAssignmentStatement) {
-            final PsiElement leftExpr = ((PyAssignmentStatement) parent).getLeftHandSideExpression();
+            PsiElement leftExpr = ((PyAssignmentStatement) parent).getLeftHandSideExpression();
             if (leftExpr == null) {
                 return;
             }
@@ -100,12 +100,12 @@ public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAct
     }
 
     private static PyForStatement createForLoop(
-        final PyListCompExpression expression,
-        final PyElementGenerator elementGenerator,
-        final String result
+        PyListCompExpression expression,
+        PyElementGenerator elementGenerator,
+        String result
     ) {
-        final List<PyComprehensionComponent> components = expression.getComponents();
-        final StringBuilder stringBuilder = new StringBuilder();
+        List<PyComprehensionComponent> components = expression.getComponents();
+        StringBuilder stringBuilder = new StringBuilder();
         int slashNum = 1;
         for (PyComprehensionComponent component : components) {
             if (component instanceof PyComprehensionForComponent) {
@@ -116,7 +116,7 @@ public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAct
                 stringBuilder.append(":\n");
             }
             if (component instanceof PyComprehensionIfComponent) {
-                final PyExpression test = ((PyComprehensionIfComponent) component).getTest();
+                PyExpression test = ((PyComprehensionIfComponent) component).getTest();
                 if (test != null) {
                     stringBuilder.append("if ");
                     stringBuilder.append(test.getText());

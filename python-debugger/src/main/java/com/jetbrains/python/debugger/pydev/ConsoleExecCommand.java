@@ -8,7 +8,7 @@ public class ConsoleExecCommand extends AbstractFrameCommand<String>
 {
 	private final String myExpression;
 
-	public ConsoleExecCommand(final RemoteDebugger debugger, final String threadId, final String frameId, final String expression)
+	public ConsoleExecCommand(RemoteDebugger debugger, String threadId, String frameId, String expression)
 	{
 		super(debugger, CONSOLE_EXEC, threadId, frameId);
 		myExpression = expression;
@@ -35,7 +35,7 @@ public class ConsoleExecCommand extends AbstractFrameCommand<String>
 			@Override
 			protected String parseResponse(ProtocolFrame response) throws PyDebuggerException
 			{
-				final PyDebugValue value = ProtocolParser.parseValue(response.getPayload(), getDebugger().getDebugProcess());
+				PyDebugValue value = ProtocolParser.parseValue(response.getPayload(), getDebugger().getDebugProcess());
 				return value.getValue();
 			}
 		};

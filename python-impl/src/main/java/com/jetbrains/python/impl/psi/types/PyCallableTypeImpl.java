@@ -93,13 +93,13 @@ public class PyCallableTypeImpl implements PyCallableType
 	@Override
 	public String getName()
 	{
-		final TypeEvalContext context = TypeEvalContext.codeInsightFallback(null);
+		TypeEvalContext context = TypeEvalContext.codeInsightFallback(null);
 		return String.format("(%s) -> %s", myParameters != null ? StringUtil.join(myParameters, param -> {
 			if(param != null)
 			{
-				final StringBuilder builder = new StringBuilder();
-				final String name = param.getName();
-				final PyType type = param.getType(context);
+				StringBuilder builder = new StringBuilder();
+				String name = param.getName();
+				PyType type = param.getType(context);
 				if(name != null)
 				{
 					builder.append(name);

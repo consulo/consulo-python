@@ -32,7 +32,7 @@ public class NotNullPredicate<T> implements Predicate<T>
 	public static final Predicate<Object> INSTANCE = new NotNullPredicate<>();
 
 	@Override
-	public final boolean apply(@Nullable final T input)
+	public final boolean apply(@Nullable T input)
 	{
 		if(input == null)
 		{
@@ -41,7 +41,7 @@ public class NotNullPredicate<T> implements Predicate<T>
 		return applyNotNull(input);
 	}
 
-	protected boolean applyNotNull(@Nonnull final T input)
+	protected boolean applyNotNull(@Nonnull T input)
 	{
 		return true;
 	}

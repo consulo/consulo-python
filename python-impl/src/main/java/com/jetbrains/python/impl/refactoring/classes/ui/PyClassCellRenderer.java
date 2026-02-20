@@ -54,7 +54,7 @@ public class PyClassCellRenderer extends DefaultListCellRenderer
 		return customizeRenderer(value, myShowReadOnly);
 	}
 
-	public JLabel customizeRenderer(final Object value, final boolean showReadOnly)
+	public JLabel customizeRenderer(Object value, boolean showReadOnly)
 	{
 		PyClass aClass = (PyClass) value;
 		setText(getClassText(aClass));

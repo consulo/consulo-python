@@ -90,24 +90,24 @@ public class PyModuleType implements PyType // Modules don't descend from object
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull final String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
-		final PsiElement overridingMember = resolveByOverridingMembersProviders(myModule, name);
+		PsiElement overridingMember = resolveByOverridingMembersProviders(myModule, name);
 		if(overridingMember != null)
 		{
 			return ResolveResultList.to(overridingMember);
 		}
-		final List<RatedResolveResult> attributes = myModule.multiResolveName(name);
+		List<RatedResolveResult> attributes = myModule.multiResolveName(name);
 		if(!attributes.isEmpty())
 		{
 			return attributes;
 		}
 		if(PyUtil.isPackage(myModule))
 		{
-			final List<PyImportElement> importElements = new ArrayList<>();
+			List<PyImportElement> importElements = new ArrayList<>();
 			if(myImportedModule != null && (location == null || !inSameFile(location, myImportedModule)))
 			{
-				final PyImportElement importElement = myImportedModule.getImportElement();
+				PyImportElement importElement = myImportedModule.getImportElement();
 				if(importElement != null)
 				{
 					importElements.add(importElement);
@@ -115,7 +115,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 			}
 			else if(location != null)
 			{
-				final ScopeOwner owner = ScopeUtil.getScopeOwner(location);
+				ScopeOwner owner = ScopeUtil.getScopeOwner(location);
 				if(owner != null)
 				{
 					importElements.addAll(getVisibleImports(owner));
@@ -124,19 +124,19 @@ public class PyModuleType implements PyType // Modules don't descend from object
 				{
 					importElements.addAll(myModule.getImportTargets());
 				}
-				final List<PyFromImportStatement> imports = myModule.getFromImports();
+				List<PyFromImportStatement> imports = myModule.getFromImports();
 				for(PyFromImportStatement anImport : imports)
 				{
 					Collections.addAll(importElements, anImport.getImportElements());
 				}
 			}
-			final List<? extends RatedResolveResult> implicitMembers = resolveImplicitPackageMember(name, importElements);
+			List<? extends RatedResolveResult> implicitMembers = resolveImplicitPackageMember(name, importElements);
 			if(implicitMembers != null)
 			{
 				return implicitMembers;
 			}
 		}
-		final PsiElement member = resolveByMembersProviders(myModule, name);
+		PsiElement member = resolveByMembersProviders(myModule, name);
 		if(member != null)
 		{
 			return ResolveResultList.to(member);
@@ -151,7 +151,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 		{
 			if(!(provider instanceof PyOverridingModuleMembersProvider))
 			{
-				final PsiElement element = provider.resolveMember(module, name);
+				PsiElement element = provider.resolveMember(module, name);
 				if(element != null)
 				{
 					return element;
@@ -168,7 +168,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 		{
 			if(provider instanceof PyOverridingModuleMembersProvider)
 			{
-				final PsiElement element = provider.resolveMember(module, name);
+				PsiElement element = provider.resolveMember(module, name);
 				if(element != null)
 				{
 					return element;
@@ -181,22 +181,22 @@ public class PyModuleType implements PyType // Modules don't descend from object
 	@Nullable
 	private List<? extends RatedResolveResult> resolveImplicitPackageMember(@Nonnull String name, @Nonnull List<PyImportElement> importElements)
 	{
-		final VirtualFile moduleFile = myModule.getVirtualFile();
+		VirtualFile moduleFile = myModule.getVirtualFile();
 		if(moduleFile != null)
 		{
 			for(QualifiedName packageQName : QualifiedNameFinder.findImportableQNames(myModule, myModule.getVirtualFile()))
 			{
-				final QualifiedName resolvingQName = packageQName.append(name);
+				QualifiedName resolvingQName = packageQName.append(name);
 				for(PyImportElement importElement : importElements)
 				{
 					for(QualifiedName qName : getImportedQNames(importElement))
 					{
 						if(qName.matchesPrefix(resolvingQName))
 						{
-							final PsiElement subModule = ResolveImportUtil.resolveChild(myModule, name, myModule, false, true);
+							PsiElement subModule = ResolveImportUtil.resolveChild(myModule, name, myModule, false, true);
 							if(subModule != null)
 							{
-								final ResolveResultList results = new ResolveResultList();
+								ResolveResultList results = new ResolveResultList();
 								results.add(new ImportedResolveResult(subModule, RatedResolveResult.RATE_NORMAL, importElement));
 								return results;
 							}
@@ -211,17 +211,17 @@ public class PyModuleType implements PyType // Modules don't descend from object
 	@Nonnull
 	private static List<QualifiedName> getImportedQNames(@Nonnull PyImportElement element)
 	{
-		final List<QualifiedName> importedQNames = new ArrayList<>();
-		final PyStatement stmt = element.getContainingImportStatement();
+		List<QualifiedName> importedQNames = new ArrayList<>();
+		PyStatement stmt = element.getContainingImportStatement();
 		if(stmt instanceof PyFromImportStatement)
 		{
-			final PyFromImportStatement fromImportStatement = (PyFromImportStatement) stmt;
-			final QualifiedName importedQName = fromImportStatement.getImportSourceQName();
-			final String visibleName = element.getVisibleName();
+			PyFromImportStatement fromImportStatement = (PyFromImportStatement) stmt;
+			QualifiedName importedQName = fromImportStatement.getImportSourceQName();
+			String visibleName = element.getVisibleName();
 			if(importedQName != null)
 			{
 				importedQNames.add(importedQName);
-				final QualifiedName implicitSubModuleQName = importedQName.append(visibleName);
+				QualifiedName implicitSubModuleQName = importedQName.append(visibleName);
 				if(implicitSubModuleQName != null)
 				{
 					importedQNames.add(implicitSubModuleQName);
@@ -229,13 +229,13 @@ public class PyModuleType implements PyType // Modules don't descend from object
 			}
 			else
 			{
-				final List<PsiElement> elements = ResolveImportUtil.resolveFromImportStatementSource(fromImportStatement, element.getImportedQName());
+				List<PsiElement> elements = ResolveImportUtil.resolveFromImportStatementSource(fromImportStatement, element.getImportedQName());
 				for(PsiElement psiElement : elements)
 				{
 					if(psiElement instanceof PsiFile)
 					{
-						final VirtualFile virtualFile = ((PsiFile) psiElement).getVirtualFile();
-						final QualifiedName qName = QualifiedNameFinder.findShortestImportableQName(element, virtualFile);
+						VirtualFile virtualFile = ((PsiFile) psiElement).getVirtualFile();
+						QualifiedName qName = QualifiedNameFinder.findShortestImportableQName(element, virtualFile);
 						if(qName != null)
 						{
 							importedQNames.add(qName);
@@ -246,7 +246,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 		}
 		else if(stmt instanceof PyImportStatement)
 		{
-			final QualifiedName importedQName = element.getImportedQName();
+			QualifiedName importedQName = element.getImportedQName();
 			if(importedQName != null)
 			{
 				importedQNames.add(importedQName);
@@ -259,17 +259,17 @@ public class PyModuleType implements PyType // Modules don't descend from object
 			{
 				file = file.getOriginalFile();
 			}
-			final QualifiedName absoluteQName = QualifiedNameFinder.findShortestImportableQName(file);
+			QualifiedName absoluteQName = QualifiedNameFinder.findShortestImportableQName(file);
 			if(file != null && absoluteQName != null)
 			{
-				final QualifiedName prefixQName = PyUtil.isPackage(file) ? absoluteQName : absoluteQName.removeLastComponent();
+				QualifiedName prefixQName = PyUtil.isPackage(file) ? absoluteQName : absoluteQName.removeLastComponent();
 				if(prefixQName.getComponentCount() > 0)
 				{
-					final List<QualifiedName> results = new ArrayList<>();
+					List<QualifiedName> results = new ArrayList<>();
 					results.addAll(importedQNames);
 					for(QualifiedName qName : importedQNames)
 					{
-						final List<String> components = new ArrayList<>();
+						List<String> components = new ArrayList<>();
 						components.addAll(prefixQName.getComponents());
 						components.addAll(qName.getComponents());
 						results.add(QualifiedName.fromComponents(components));
@@ -318,7 +318,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 	 * not suitable for import.
 	 */
 	@Nonnull
-	private static List<PsiFileSystemItem> getSubmodulesList(final PsiDirectory directory, @Nullable PsiElement anchor)
+	private static List<PsiFileSystemItem> getSubmodulesList(PsiDirectory directory, @Nullable PsiElement anchor)
 	{
 		List<PsiFileSystemItem> result = new ArrayList<>();
 
@@ -327,7 +327,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 			// file modules
 			for(PsiFile f : directory.getFiles())
 			{
-				final String filename = f.getName();
+				String filename = f.getName();
 				// if we have a binary module, we'll most likely also have a stub for it in site-packages
 				if(!isExcluded(f) && (f instanceof PyFile && !filename.equals(PyNames.INIT_DOT_PY)) || isBinaryModule(filename))
 				{
@@ -353,7 +353,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 
 	private static boolean isBinaryModule(String filename)
 	{
-		final String ext = FileUtil.getExtension(filename);
+		String ext = FileUtil.getExtension(filename);
 		if(SystemInfo.isWindows)
 		{
 			return "pyd".equalsIgnoreCase(ext);
@@ -381,7 +381,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 		{
 			for(PyCustomMember member : provider.getMembers(myModule, point))
 			{
-				final String name = member.getName();
+				String name = member.getName();
 				if(namesAlready != null)
 				{
 					namesAlready.add(name);
@@ -390,15 +390,15 @@ public class PyModuleType implements PyType // Modules don't descend from object
 				{
 					continue;
 				}
-				final CompletionVariantsProcessor processor = createCompletionVariantsProcessor(location, suppressParentheses, point);
-				final PsiElement resolved = member.resolve(location);
+				CompletionVariantsProcessor processor = createCompletionVariantsProcessor(location, suppressParentheses, point);
+				PsiElement resolved = member.resolve(location);
 				if(resolved != null)
 				{
 					processor.execute(resolved, ResolveState.initial());
-					final List<LookupElement> lookupList = processor.getResultList();
+					List<LookupElement> lookupList = processor.getResultList();
 					if(!lookupList.isEmpty())
 					{
-						final LookupElement element = lookupList.get(0);
+						LookupElement element = lookupList.get(0);
 						if(name.equals(element.getLookupString()))
 						{
 							result.add(element);
@@ -411,7 +411,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 		}
 		if(point == PointInImport.NONE || point == PointInImport.AS_NAME)
 		{ // when not imported from, add regular attributes
-			final CompletionVariantsProcessor processor = createCompletionVariantsProcessor(location, suppressParentheses, point);
+			CompletionVariantsProcessor processor = createCompletionVariantsProcessor(location, suppressParentheses, point);
 			myModule.processDeclarations(processor, ResolveState.initial(), null, location);
 			if(namesAlready != null)
 			{
@@ -447,7 +447,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 	@Nonnull
 	private static CompletionVariantsProcessor createCompletionVariantsProcessor(PsiElement location, boolean suppressParentheses, PointInImport point)
 	{
-		final CompletionVariantsProcessor processor = new CompletionVariantsProcessor(location, psiElement -> !(psiElement instanceof PyImportElement) || PsiTreeUtil.getParentOfType(psiElement,
+		CompletionVariantsProcessor processor = new CompletionVariantsProcessor(location, psiElement -> !(psiElement instanceof PyImportElement) || PsiTreeUtil.getParentOfType(psiElement,
 				PyImportStatementBase.class) instanceof PyFromImportStatement, null);
 		if(suppressParentheses)
 		{
@@ -458,10 +458,10 @@ public class PyModuleType implements PyType // Modules don't descend from object
 	}
 
 	@Nonnull
-	public static List<LookupElement> collectImportedSubmodulesAsLookupElements(@Nonnull PsiFileSystemItem pyPackage, @Nonnull PsiElement location, @Nullable final Set<String> existingNames)
+	public static List<LookupElement> collectImportedSubmodulesAsLookupElements(@Nonnull PsiFileSystemItem pyPackage, @Nonnull PsiElement location, @Nullable Set<String> existingNames)
 	{
 
-		final List<PsiElement> elements = collectImportedSubmodules(pyPackage, location);
+		List<PsiElement> elements = collectImportedSubmodules(pyPackage, location);
 		return elements != null ? ContainerUtil.mapNotNull(elements, (Function<PsiElement, LookupElement>) element -> {
 			if(element instanceof PsiFileSystemItem)
 			{
@@ -478,7 +478,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 	@Nullable
 	public static List<PsiElement> collectImportedSubmodules(@Nonnull PsiFileSystemItem pyPackage, @Nonnull PsiElement location)
 	{
-		final PsiElement parentAnchor;
+		PsiElement parentAnchor;
 		if(pyPackage instanceof PyFile && PyUtil.isPackage(((PyFile) pyPackage)))
 		{
 			parentAnchor = ((PyFile) pyPackage).getContainingDirectory();
@@ -492,12 +492,12 @@ public class PyModuleType implements PyType // Modules don't descend from object
 			return null;
 		}
 
-		final ScopeOwner scopeOwner = ScopeUtil.getScopeOwner(location);
+		ScopeOwner scopeOwner = ScopeUtil.getScopeOwner(location);
 		if(scopeOwner == null)
 		{
 			return Collections.emptyList();
 		}
-		final List<PsiElement> result = new ArrayList<>();
+		List<PsiElement> result = new ArrayList<>();
 		nextImportElement:
 		for(PyImportElement importElement : getVisibleImports(scopeOwner))
 		{
@@ -522,7 +522,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 		return result;
 	}
 
-	public static List<LookupElement> getSubModuleVariants(final PsiDirectory directory, PsiElement location, Set<String> namesAlready)
+	public static List<LookupElement> getSubModuleVariants(PsiDirectory directory, PsiElement location, Set<String> namesAlready)
 	{
 		List<LookupElement> result = new ArrayList<>();
 		for(PsiFileSystemItem item : getSubmodulesList(directory, location))
@@ -567,7 +567,7 @@ public class PyModuleType implements PyType // Modules don't descend from object
 		{
 			return "";
 		}
-		final String path = directory.getVirtualFile().getPath();
+		String path = directory.getVirtualFile().getPath();
 		if(path.contains(PythonSdkType.SKELETON_DIR_NAME))
 		{
 			return "<built-in>";

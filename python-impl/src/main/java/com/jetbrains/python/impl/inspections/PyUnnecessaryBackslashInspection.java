@@ -60,12 +60,12 @@ public class PyUnnecessaryBackslashInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyParameterList(final PyParameterList list) {
+        public void visitPyParameterList(PyParameterList list) {
             findProblem(list);
         }
 
         @Override
-        public void visitPyArgumentList(final PyArgumentList list) {
+        public void visitPyArgumentList(PyArgumentList list) {
             findProblem(list);
         }
 
@@ -77,8 +77,8 @@ public class PyUnnecessaryBackslashInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyParenthesizedExpression(final PyParenthesizedExpression expression) {
-            final Stack<PsiElement> stack = new Stack<PsiElement>();
+        public void visitPyParenthesizedExpression(PyParenthesizedExpression expression) {
+            Stack<PsiElement> stack = new Stack<PsiElement>();
             stack.push(expression);
             while (!stack.isEmpty()) {
                 PsiElement element = stack.pop();
@@ -94,22 +94,22 @@ public class PyUnnecessaryBackslashInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyDictLiteralExpression(final PyDictLiteralExpression expression) {
+        public void visitPyDictLiteralExpression(PyDictLiteralExpression expression) {
             findProblem(expression);
         }
 
         @Override
-        public void visitPyListLiteralExpression(final PyListLiteralExpression expression) {
+        public void visitPyListLiteralExpression(PyListLiteralExpression expression) {
             findProblem(expression);
         }
 
         @Override
-        public void visitPySetLiteralExpression(final PySetLiteralExpression expression) {
+        public void visitPySetLiteralExpression(PySetLiteralExpression expression) {
             findProblem(expression);
         }
 
         @Override
-        public void visitPyStringLiteralExpression(final PyStringLiteralExpression stringLiteralExpression) {
+        public void visitPyStringLiteralExpression(PyStringLiteralExpression stringLiteralExpression) {
             PsiElement parent = stringLiteralExpression.getParent();
             if (parent instanceof PyListLiteralExpression || parent instanceof PyParenthesizedExpression ||
                 parent instanceof PySetLiteralExpression || parent instanceof PyKeyValueExpression ||
@@ -118,8 +118,8 @@ public class PyUnnecessaryBackslashInspection extends PyInspection {
             }
         }
 
-        private void findProblem(@Nullable final PsiElement expression) {
-            final PsiWhiteSpace[] children = PsiTreeUtil.getChildrenOfType(expression, PsiWhiteSpace.class);
+        private void findProblem(@Nullable PsiElement expression) {
+            PsiWhiteSpace[] children = PsiTreeUtil.getChildrenOfType(expression, PsiWhiteSpace.class);
             if (children != null) {
                 for (PsiWhiteSpace ws : children) {
                     if (ws.getText().contains("\\")) {

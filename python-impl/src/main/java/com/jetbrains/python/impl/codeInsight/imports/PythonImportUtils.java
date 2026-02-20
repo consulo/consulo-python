@@ -70,13 +70,13 @@ public final class PythonImportUtils
 	}
 
 	@Nullable
-	public static AutoImportQuickFix proposeImportFix(final PyElement node, PsiReference reference)
+	public static AutoImportQuickFix proposeImportFix(PyElement node, PsiReference reference)
 	{
-		final String text = reference.getElement().getText();
-		final String refText = reference.getRangeInElement().substring(text); // text of the part we're working with
+		String text = reference.getElement().getText();
+		String refText = reference.getRangeInElement().substring(text); // text of the part we're working with
 
 		// don't propose meaningless auto imports if no interpreter is configured
-		final Module module = ModuleUtilCore.findModuleForPsiElement(node);
+		Module module = ModuleUtilCore.findModuleForPsiElement(node);
 		if(module != null && PythonSdkType.findPythonSdk(module) == null)
 		{
 			return null;
@@ -94,7 +94,7 @@ public final class PythonImportUtils
 		{
 			return fix;
 		}
-		final String packageName = PyPackageAliasesProvider.commonImportAliases.get(refText);
+		String packageName = PyPackageAliasesProvider.commonImportAliases.get(refText);
 		if(packageName != null)
 		{
 			fix = addCandidates(node, reference, packageName, refText);
@@ -109,7 +109,7 @@ public final class PythonImportUtils
 	@Nullable
 	private static AutoImportQuickFix addCandidates(PyElement node, PsiReference reference, String refText, @Nullable String asName)
 	{
-		final boolean qualify = !PyCodeInsightSettings.getInstance().PREFER_FROM_IMPORT;
+		boolean qualify = !PyCodeInsightSettings.getInstance().PREFER_FROM_IMPORT;
 		AutoImportQuickFix fix = new AutoImportQuickFix(node, reference.getClass(), refText, qualify);
 		Set<String> seenCandidateNames = new HashSet<>(); // true import names
 
@@ -170,7 +170,7 @@ public final class PythonImportUtils
 		{
 
 			PsiElement res = sourceFile.findExportedName(refText);
-			final String name = res instanceof PyQualifiedNameOwner ? ((PyQualifiedNameOwner) res).getQualifiedName() : null;
+			String name = res instanceof PyQualifiedNameOwner ? ((PyQualifiedNameOwner) res).getQualifiedName() : null;
 			if(name != null && seenCandidateNames.contains(name))
 			{
 				return existingImportFile;
@@ -223,7 +223,7 @@ public final class PythonImportUtils
 						{
 							importPath = importPath.removeTail(1);
 						}
-						final String symbolImportQName = importPath.append(refText).toString();
+						String symbolImportQName = importPath.append(refText).toString();
 						if(!seenCandidateNames.contains(symbolImportQName))
 						{
 							// a new, valid hit
@@ -250,7 +250,7 @@ public final class PythonImportUtils
 			return false;
 		}
 		String name = FileUtil.getNameWithoutExtension(file.getName());
-		final PsiDirectory directory = ((PsiFile) file).getContainingDirectory();
+		PsiDirectory directory = ((PsiFile) file).getContainingDirectory();
 		if(directory == null)
 		{
 			return false;
@@ -272,10 +272,10 @@ public final class PythonImportUtils
 		}
 		if(node.getParent() instanceof PyArgumentList)
 		{
-			final PyArgumentList argumentList = (PyArgumentList) node.getParent();
+			PyArgumentList argumentList = (PyArgumentList) node.getParent();
 			if(argumentList.getParent() instanceof PyClass)
 			{
-				final PyClass pyClass = (PyClass) argumentList.getParent();
+				PyClass pyClass = (PyClass) argumentList.getParent();
 				if(pyClass.getSuperClassExpressionList() == argumentList)
 				{
 					return false;

@@ -37,7 +37,7 @@ public class PyPushDownPresenterImpl extends MembersBasedPresenterWithPreviewImp
 	@Nonnull
 	private final Project myProject;
 
-	public PyPushDownPresenterImpl(@Nonnull final Project project, @Nonnull final PyPushDownView view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage)
+	public PyPushDownPresenterImpl(@Nonnull Project project, @Nonnull PyPushDownView view, @Nonnull PyClass classUnderRefactoring, @Nonnull PyMemberInfoStorage infoStorage)
 	{
 		super(view, classUnderRefactoring, infoStorage, new UsedByDependencyMemberInfoModel<>(classUnderRefactoring));
 		myProject = project;

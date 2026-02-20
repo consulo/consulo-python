@@ -33,7 +33,7 @@ public class PythonNoseTestRunConfigurationForm implements PythonNoseTestRunConf
 
   private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
 
-  public PythonNoseTestRunConfigurationForm(final Project project, final PythonNoseTestRunConfiguration configuration) {
+  public PythonNoseTestRunConfigurationForm(Project project, PythonNoseTestRunConfiguration configuration) {
     myRootPanel = new JPanel(new BorderLayout());
     myTestRunConfigurationForm = new PythonTestRunConfigurationForm(project, configuration);
     myRootPanel.add(myTestRunConfigurationForm.getPanel(), BorderLayout.CENTER);

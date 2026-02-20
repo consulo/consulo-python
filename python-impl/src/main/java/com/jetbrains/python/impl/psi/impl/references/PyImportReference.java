@@ -68,7 +68,7 @@ public class PyImportReference extends PyReferenceImpl
 	{
 		if(importParent instanceof PyImportElement)
 		{
-			final PyImportStatementBase importStatement = PsiTreeUtil.getParentOfType(importParent, PyImportStatementBase.class);
+			PyImportStatementBase importStatement = PsiTreeUtil.getParentOfType(importParent, PyImportStatementBase.class);
 			if(importStatement instanceof PyFromImportStatement)
 			{
 				return new PyFromImportNameReference(expression, context);
@@ -81,7 +81,7 @@ public class PyImportReference extends PyReferenceImpl
 	@Override
 	public String getUnresolvedDescription()
 	{
-		final PyImportStatement importStatement = PsiTreeUtil.getParentOfType(myElement, PyImportStatement.class);
+		PyImportStatement importStatement = PsiTreeUtil.getParentOfType(myElement, PyImportStatement.class);
 		if(importStatement != null)
 		{
 			return "No module named " + myElement.getReferencedName();
@@ -93,8 +93,8 @@ public class PyImportReference extends PyReferenceImpl
 	@Override
 	protected List<RatedResolveResult> resolveInner()
 	{
-		final PyImportElement parent = PsiTreeUtil.getParentOfType(myElement, PyImportElement.class); //importRef.getParent();
-		final QualifiedName qname = myElement.asQualifiedName();
+		PyImportElement parent = PsiTreeUtil.getParentOfType(myElement, PyImportElement.class); //importRef.getParent();
+		QualifiedName qname = myElement.asQualifiedName();
 		return qname == null ? Collections.<RatedResolveResult>emptyList() : ResolveImportUtil.resolveNameInImportStatement(parent, qname);
 	}
 
@@ -115,7 +115,7 @@ public class PyImportReference extends PyReferenceImpl
 		}
 
 		PyExpression qualifier = myElement.getQualifier();
-		final TypeEvalContext context = TypeEvalContext.codeCompletion(myElement.getProject(), CompletionUtilCore.getOriginalOrSelf(myElement).getContainingFile());
+		TypeEvalContext context = TypeEvalContext.codeCompletion(myElement.getProject(), CompletionUtilCore.getOriginalOrSelf(myElement).getContainingFile());
 		if(qualifier != null)
 		{
 			// qualifier's type must be module, it should know how to complete
@@ -141,7 +141,7 @@ public class PyImportReference extends PyReferenceImpl
 		}
 	}
 
-	private static void replaceInsertHandler(Object[] variants, final InsertHandler<LookupElement> insertHandler)
+	private static void replaceInsertHandler(Object[] variants, InsertHandler<LookupElement> insertHandler)
 	{
 		for(int i = 0; i < variants.length; i += 1)
 		{
@@ -156,7 +156,7 @@ public class PyImportReference extends PyReferenceImpl
 			}
 			else if(item instanceof PsiNamedElement element)
 			{
-				final String name = element.getName();
+				String name = element.getName();
 				assert name != null; // it can't really have null name
 				variants[i] = LookupElementBuilder.create(name).withIcon(IconDescriptorUpdaters.getIcon(element, 0)).withInsertHandler(insertHandler);
 			}
@@ -172,7 +172,7 @@ public class PyImportReference extends PyReferenceImpl
 		}
 		else if(item instanceof LookupElement lookupElement)
 		{
-			final PsiElement element = lookupElement.getPsiElement();
+			PsiElement element = lookupElement.getPsiElement();
 			if(element != null)
 			{
 				itemElement = element;
@@ -190,7 +190,7 @@ public class PyImportReference extends PyReferenceImpl
 		ASTNode node = myElement.getNode();
 		while(node != null)
 		{
-			final IElementType nodeType = node.getElementType();
+			IElementType nodeType = node.getElementType();
 			if(nodeType == PyTokenTypes.IMPORT_KEYWORD)
 			{
 				return true;
@@ -293,7 +293,7 @@ public class PyImportReference extends PyReferenceImpl
 				// look at dir by level
 				if((relativeLevel >= 0 || !ResolveImportUtil.isAbsoluteImportEnabledFor(myCurrentFile)))
 				{
-					final PsiDirectory containingDirectory = myCurrentFile.getContainingDirectory();
+					PsiDirectory containingDirectory = myCurrentFile.getContainingDirectory();
 					if(containingDirectory != null)
 					{
 						QualifiedName thisQName = QualifiedNameFinder.findShortestImportableQName(containingDirectory);
@@ -380,8 +380,8 @@ public class PyImportReference extends PyReferenceImpl
 
 		public void handleInsert(InsertionContext context, LookupElement item)
 		{
-			final Editor editor = context.getEditor();
-			final Document document = editor.getDocument();
+			Editor editor = context.getEditor();
+			Document document = editor.getDocument();
 			int tailOffset = context.getTailOffset();
 			document.insertString(tailOffset, IMPORT_KWD);
 			editor.getCaretModel().moveToOffset(tailOffset + IMPORT_KWD.length());

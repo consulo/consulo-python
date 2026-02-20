@@ -59,7 +59,7 @@ public class AddFieldQuickFix implements LocalQuickFix {
   private String myIdentifier;
   private boolean replaceInitializer = false;
 
-  public AddFieldQuickFix(@Nonnull final String identifier, @Nonnull final String initializer, final String className, boolean replace) {
+  public AddFieldQuickFix(@Nonnull String identifier, @Nonnull String initializer, String className, boolean replace) {
     myIdentifier = identifier;
     myInitializer = initializer;
     myClassName = className;
@@ -75,30 +75,30 @@ public class AddFieldQuickFix implements LocalQuickFix {
   @Nullable
   public static PsiElement appendToMethod(PyFunction init, Function<String, PyStatement> callback) {
     // add this field as the last stmt of the constructor
-    final PyStatementList statementList = init.getStatementList();
+    PyStatementList statementList = init.getStatementList();
     // name of 'self' may be different for fancier styles
     String selfName = PyNames.CANONICAL_SELF;
-    final PyParameter[] params = init.getParameterList().getParameters();
+    PyParameter[] params = init.getParameterList().getParameters();
     if (params.length > 0) {
       selfName = params[0].getName();
     }
-    final PyStatement newStmt = callback.apply(selfName);
+    PyStatement newStmt = callback.apply(selfName);
     if (!FileModificationService.getInstance().preparePsiElementForWrite(statementList)) {
       return null;
     }
-    final PsiElement result = PyUtil.addElementToStatementList(newStmt, statementList, true);
+    PsiElement result = PyUtil.addElementToStatementList(newStmt, statementList, true);
     PyPsiUtils.removeRedundantPass(statementList);
     return result;
   }
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     // expect the descriptor to point to the unresolved identifier.
-    final PsiElement element = descriptor.getPsiElement();
-    final PyClassType type = getClassType(element);
+    PsiElement element = descriptor.getPsiElement();
+    PyClassType type = getClassType(element);
     if (type == null) {
       return;
     }
-    final PyClass cls = type.getPyClass();
+    PyClass cls = type.getPyClass();
     PsiElement initStatement;
     if (!type.isDefinition()) {
       initStatement = addFieldToInit(project, cls, myIdentifier, new CreateFieldCallback(project, myIdentifier, myInitializer));
@@ -118,25 +118,25 @@ public class AddFieldQuickFix implements LocalQuickFix {
     PyUtil.showBalloon(project, PyBundle.message("QFIX.failed.to.add.field"), NotificationType.ERROR);
   }
 
-  private static PyClassType getClassType(@Nonnull final PsiElement element) {
+  private static PyClassType getClassType(@Nonnull PsiElement element) {
     if (element instanceof PyQualifiedExpression) {
-      final PyExpression qualifier = ((PyQualifiedExpression)element).getQualifier();
+      PyExpression qualifier = ((PyQualifiedExpression)element).getQualifier();
       if (qualifier == null) {
         return null;
       }
-      final PyType type = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile()).getType(qualifier);
+      PyType type = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile()).getType(qualifier);
       return type instanceof PyClassType ? (PyClassType)type : null;
     }
-    final PyClass aClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+    PyClass aClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
     return aClass != null ? new PyClassTypeImpl(aClass, false) : null;
   }
 
-  private void showTemplateBuilder(PsiElement initStatement, @Nonnull final PsiFile file) {
+  private void showTemplateBuilder(PsiElement initStatement, @Nonnull PsiFile file) {
     initStatement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(initStatement);
     if (initStatement instanceof PyAssignmentStatement) {
-      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(initStatement);
-      final PyExpression assignedValue = ((PyAssignmentStatement)initStatement).getAssignedValue();
-      final PyExpression leftExpression = ((PyAssignmentStatement)initStatement).getLeftHandSideExpression();
+      TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(initStatement);
+      PyExpression assignedValue = ((PyAssignmentStatement)initStatement).getAssignedValue();
+      PyExpression leftExpression = ((PyAssignmentStatement)initStatement).getLeftHandSideExpression();
       if (assignedValue != null && leftExpression != null) {
         if (replaceInitializer) {
           builder.replaceElement(assignedValue, myInitializer);
@@ -144,11 +144,11 @@ public class AddFieldQuickFix implements LocalQuickFix {
         else {
           builder.replaceElement(leftExpression.getLastChild(), myIdentifier);
         }
-        final VirtualFile virtualFile = file.getVirtualFile();
+        VirtualFile virtualFile = file.getVirtualFile();
         if (virtualFile == null) {
           return;
         }
-        final Editor editor =
+        Editor editor =
           FileEditorManager.getInstance(file.getProject())
                            .openTextEditor(OpenFileDescriptorFactory.getInstance(file.getProject()).builder(virtualFile).build(), true);
         if (editor == null) {
@@ -191,8 +191,8 @@ public class AddFieldQuickFix implements LocalQuickFix {
         PyUtil.showBalloon(project,
                            PyBundle.message("QFIX.added.constructor.$0.for.field.$1", cls.getName(), itemName),
                            NotificationType.INFO);
-        final PyStatementList statementList = newInit.getStatementList();
-        final PyStatement[] statements = statementList.getStatements();
+        PyStatementList statementList = newInit.getStatementList();
+        PyStatement[] statements = statementList.getStatements();
         return statements.length != 0 ? statements[0] : null;
       }
     }
@@ -212,7 +212,7 @@ public class AddFieldQuickFix implements LocalQuickFix {
       functionText += "    pass";
     }
     else {
-      final PyClass ancestorClass = ancestorInit.getContainingClass();
+      PyClass ancestorClass = ancestorInit.getContainingClass();
       if (ancestorClass != null && !PyUtil.isObjectClass(ancestorClass)) {
         StringBuilder sb = new StringBuilder();
         PyParameter[] params = ancestorInit.getParameterList().getParameters();

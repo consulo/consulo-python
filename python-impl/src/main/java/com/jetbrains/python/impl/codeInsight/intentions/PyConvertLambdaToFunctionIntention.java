@@ -61,9 +61,9 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
         if (lambdaExpression != null) {
             if (lambdaExpression.getBody() != null) {
-                final ControlFlow flow = ControlFlowCache.getControlFlow(lambdaExpression);
-                final List<Instruction> graph = Arrays.asList(flow.getInstructions());
-                final List<PsiElement> elements = PyCodeFragmentUtil.getInputElements(graph, graph);
+                ControlFlow flow = ControlFlowCache.getControlFlow(lambdaExpression);
+                List<Instruction> graph = Arrays.asList(flow.getInstructions());
+                List<PsiElement> elements = PyCodeFragmentUtil.getInputElements(graph, graph);
                 if (elements.size() > 0) {
                     return false;
                 }
@@ -98,12 +98,12 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
             functionBuilder.statement("return " + body.getText());
             PyFunction function = functionBuilder.buildFunction(project, LanguageLevel.getDefault());
 
-            final PyStatement statement = PsiTreeUtil.getParentOfType(
+            PyStatement statement = PsiTreeUtil.getParentOfType(
                 lambdaExpression,
                 PyStatement.class
             );
             if (statement != null) {
-                final PsiElement statementParent = statement.getParent();
+                PsiElement statementParent = statement.getParent();
                 if (statementParent != null) {
                     function = (PyFunction) statementParent.addBefore(function, statement);
                 }
@@ -117,7 +117,7 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
             }
             else {
                 PsiFile parentScope = lambdaExpression.getContainingFile();
-                final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(parentScope);
+                TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(parentScope);
                 PsiElement functionName = function.getNameIdentifier();
                 functionName = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(functionName);
                 lambdaExpression = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(lambdaExpression);

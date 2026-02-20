@@ -31,16 +31,16 @@ public final class PyTestTracebackParser implements TraceBackParser
 
 	@Nullable
 	@Override
-	public LinkInTrace findLinkInTrace(@Nonnull final String line)
+	public LinkInTrace findLinkInTrace(@Nonnull String line)
 	{
-		final PyFilesStateMachine quoteMachine = new PyFilesStateMachine(true);
-		final PyFilesStateMachine spaceMachine = new PyFilesStateMachine(false);
+		PyFilesStateMachine quoteMachine = new PyFilesStateMachine(true);
+		PyFilesStateMachine spaceMachine = new PyFilesStateMachine(false);
 
 
-		final char[] chars = line.toCharArray();
+		char[] chars = line.toCharArray();
 		for(int i = 0; i < chars.length; i++)
 		{
-			final char nextChar = chars[i];
+			char nextChar = chars[i];
 			if(quoteMachine.addChar(nextChar, i))
 			{
 				return createLinkInTrace(quoteMachine);
@@ -65,13 +65,13 @@ public final class PyTestTracebackParser implements TraceBackParser
 	}
 
 	@Nonnull
-	private static LinkInTrace createLinkInTrace(@Nonnull final PyFilesStateMachine machine)
+	private static LinkInTrace createLinkInTrace(@Nonnull PyFilesStateMachine machine)
 	{
-		final Pair<String, String> fileAndLine = machine.getFileAndLine();
-		final int start = machine.getStart();
-		final String lineNumber = fileAndLine.second;
+		Pair<String, String> fileAndLine = machine.getFileAndLine();
+		int start = machine.getStart();
+		String lineNumber = fileAndLine.second;
 		// Cut too long lines that can't be presented as integer anyway
-		final int number = Integer.parseInt((lineNumber.length() > 5 ? lineNumber.substring(0, 5) : lineNumber));
+		int number = Integer.parseInt((lineNumber.length() > 5 ? lineNumber.substring(0, 5) : lineNumber));
 		return new LinkInTrace(fileAndLine.first, number, start, start + fileAndLine.first.length() + lineNumber.length() + 1);
 	}
 }

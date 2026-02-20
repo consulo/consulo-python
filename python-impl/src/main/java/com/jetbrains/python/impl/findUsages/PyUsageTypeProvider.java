@@ -57,11 +57,11 @@ public class PyUsageTypeProvider implements UsageTypeProviderEx
 			}
 			if(element instanceof PyQualifiedExpression)
 			{
-				final PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
+				PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
 				if(qualifier != null)
 				{
-					final TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
-					final PyType type = context.getType(qualifier);
+					TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
+					PyType type = context.getType(qualifier);
 					if(type == null || type instanceof PyStructuralType)
 					{
 						return UNTYPED;
@@ -70,10 +70,10 @@ public class PyUsageTypeProvider implements UsageTypeProviderEx
 			}
 			if(element instanceof PyReferenceExpression)
 			{
-				final PyCallExpression call = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
+				PyCallExpression call = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
 				if(call != null && call.isCalleeText(PyNames.ISINSTANCE))
 				{
-					final PyExpression[] args = call.getArguments();
+					PyExpression[] args = call.getArguments();
 					if(args.length == 2)
 					{
 						PyExpression typeExpression = args[1];
@@ -88,7 +88,7 @@ public class PyUsageTypeProvider implements UsageTypeProviderEx
 						}
 					}
 				}
-				final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+				PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
 				if(pyClass != null && PsiTreeUtil.isAncestor(pyClass.getSuperClassExpressionList(), element, true))
 				{
 					return USAGE_IN_SUPERCLASS;

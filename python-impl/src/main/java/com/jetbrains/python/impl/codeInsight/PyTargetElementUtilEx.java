@@ -51,7 +51,7 @@ public class PyTargetElementUtilEx implements TargetElementUtilExtender {
       return null;
     }
 
-    final PsiElement element = ref.getElement();
+    PsiElement element = ref.getElement();
     PsiElement result = ref.resolve();
     Set<PsiElement> visited = new HashSet<>();
     visited.add(result);

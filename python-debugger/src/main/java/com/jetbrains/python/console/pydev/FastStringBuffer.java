@@ -159,7 +159,7 @@ public final class FastStringBuffer {
      * Reverses the contents on this buffer
      */
     public FastStringBuffer reverse() {
-        final int limit = count / 2;
+        int limit = count / 2;
         for (int i = 0; i < limit; ++i) {
             char c = value[i];
             value[i] = value[count - i - 1];

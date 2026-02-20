@@ -49,7 +49,7 @@ public class PyLineSeparatorUtil {
           return;
         }
         boolean hasSeparableBefore = false;
-        final PsiElement parent = element.getParent();
+        PsiElement parent = element.getParent();
         if (parent == null) {
           return;
         }
@@ -71,8 +71,8 @@ public class PyLineSeparatorUtil {
     return info.get();
   }
 
-  private static LineMarkerInfo<PsiElement> createLineSeparatorByElement(final PsiElement element) {
-    final LineMarkerInfo<PsiElement> info = new LineMarkerInfo<PsiElement>(element, element.getTextRange().getStartOffset(), null, Pass.UPDATE_ALL, null, null);
+  private static LineMarkerInfo<PsiElement> createLineSeparatorByElement(PsiElement element) {
+    LineMarkerInfo<PsiElement> info = new LineMarkerInfo<PsiElement>(element, element.getTextRange().getStartOffset(), null, Pass.UPDATE_ALL, null, null);
     info.separatorColor = EditorColorsManager.getInstance().getGlobalScheme().getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR);
     info.separatorPlacement = SeparatorPlacement.TOP;
     return info;

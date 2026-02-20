@@ -66,7 +66,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	@Override
 	public String getName()
 	{
-		final QualifiedName qname = getQualifiedName();
+		QualifiedName qname = getQualifiedName();
 		return qname != null ? qname.getLastComponent() : null;
 	}
 
@@ -90,20 +90,20 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 
 	public boolean hasArgumentList()
 	{
-		final ASTNode arglistNode = getNode().findChildByType(PyElementTypes.ARGUMENT_LIST);
+		ASTNode arglistNode = getNode().findChildByType(PyElementTypes.ARGUMENT_LIST);
 		return (arglistNode != null) && (arglistNode.findChildByType(PyTokenTypes.LPAR) != null);
 	}
 
 	public QualifiedName getQualifiedName()
 	{
-		final PyDecoratorStub stub = getStub();
+		PyDecoratorStub stub = getStub();
 		if(stub != null)
 		{
 			return stub.getQualifiedName();
 		}
 		else
 		{
-			final PyReferenceExpression node = PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
+			PyReferenceExpression node = PsiTreeUtil.getChildOfType(this, PyReferenceExpression.class);
 			if(node != null)
 			{
 				return node.asQualifiedName();
@@ -137,7 +137,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	@Nonnull
 	public PyExpression[] getArguments()
 	{
-		final PyArgumentList argList = getArgumentList();
+		PyArgumentList argList = getArgumentList();
 		return argList != null ? argList.getArguments() : PyExpression.EMPTY_ARRAY;
 	}
 
@@ -151,7 +151,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	@Override
 	public <T extends PsiElement> T getArgument(int index, String keyword, Class<T> argClass)
 	{
-		final PyExpression argument = getKeywordArgument(keyword);
+		PyExpression argument = getKeywordArgument(keyword);
 		if(argument != null)
 		{
 			return argClass.isInstance(argument) ? argClass.cast(argument) : null;
@@ -161,7 +161,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 
 	@Nullable
 	@Override
-	public <T extends PsiElement> T getArgument(@Nonnull final FunctionParameter parameter, @Nonnull final Class<T> argClass)
+	public <T extends PsiElement> T getArgument(@Nonnull FunctionParameter parameter, @Nonnull Class<T> argClass)
 	{
 		return PyCallExpressionHelper.getArgument(parameter, argClass, this);
 	}
@@ -223,7 +223,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 	}
 
 	@Override
-	public boolean isCallee(@Nonnull final FQNamesProvider... name)
+	public boolean isCallee(@Nonnull FQNamesProvider... name)
 	{
 		return PyCallExpressionHelper.isCallee(this, name);
 	}
@@ -237,11 +237,11 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 
 	public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
 	{
-		final ASTNode node = getNode();
-		final ASTNode nameNode = node.findChildByType(PyTokenTypes.IDENTIFIER);
+		ASTNode node = getNode();
+		ASTNode nameNode = node.findChildByType(PyTokenTypes.IDENTIFIER);
 		if(nameNode != null)
 		{
-			final ASTNode nameElement = PyUtil.createNewName(this, name);
+			ASTNode nameElement = PyUtil.createNewName(this, name);
 			node.replaceChild(nameNode, nameElement);
 			return this;
 		}

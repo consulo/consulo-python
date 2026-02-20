@@ -27,8 +27,8 @@ import consulo.language.psi.PsiElement;
  */
 @ExtensionImpl
 public class PyWordSelectionHandler extends AbstractWordSelectioner {
-  public boolean canSelect(final PsiElement e) {
-    final ASTNode astNode = e.getNode();
+  public boolean canSelect(PsiElement e) {
+    ASTNode astNode = e.getNode();
     return astNode != null && astNode.getElementType() == PyTokenTypes.IDENTIFIER;
   }
 }

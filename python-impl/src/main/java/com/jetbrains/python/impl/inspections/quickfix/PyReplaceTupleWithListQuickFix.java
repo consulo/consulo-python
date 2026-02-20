@@ -42,11 +42,11 @@ public class PyReplaceTupleWithListQuickFix implements LocalQuickFix {
             PySubscriptionExpression subscriptionExpression = (PySubscriptionExpression) targets[0];
             if (subscriptionExpression.getOperand() instanceof PyReferenceExpression) {
                 PyReferenceExpression referenceExpression = (PyReferenceExpression) subscriptionExpression.getOperand();
-                final TypeEvalContext context = TypeEvalContext.userInitiated(project, element.getContainingFile());
-                final PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
+                TypeEvalContext context = TypeEvalContext.userInitiated(project, element.getContainingFile());
+                PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
                 element = referenceExpression.followAssignmentsChain(resolveContext).getElement();
                 if (element instanceof PyParenthesizedExpression) {
-                    final PyExpression expression = ((PyParenthesizedExpression) element).getContainedExpression();
+                    PyExpression expression = ((PyParenthesizedExpression) element).getContainedExpression();
                     replaceWithListLiteral(element, (PyTupleExpression) expression);
                 }
                 else if (element instanceof PyTupleExpression) {
@@ -57,8 +57,8 @@ public class PyReplaceTupleWithListQuickFix implements LocalQuickFix {
     }
 
     private static void replaceWithListLiteral(PsiElement element, PyTupleExpression expression) {
-        final String expressionText = expression.isEmpty() ? "" : expression.getText();
-        final PyExpression literal = PyElementGenerator.getInstance(element.getProject()).
+        String expressionText = expression.isEmpty() ? "" : expression.getText();
+        PyExpression literal = PyElementGenerator.getInstance(element.getProject()).
             createExpressionFromText(LanguageLevel.forElement(element), "[" + expressionText + "]");
         element.replace(literal);
     }

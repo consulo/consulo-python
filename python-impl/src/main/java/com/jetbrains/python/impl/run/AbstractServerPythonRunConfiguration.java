@@ -32,7 +32,7 @@ abstract public class AbstractServerPythonRunConfiguration<T extends AbstractSer
 	private static final String LAUNCH_JAVASCRIPT_DEBUGGER = "launchJavascriptDebuger";
 	private boolean myLaunchJavascriptDebugger;
 
-	public AbstractServerPythonRunConfiguration(final Project project, final ConfigurationFactory factory)
+	public AbstractServerPythonRunConfiguration(Project project, ConfigurationFactory factory)
 	{
 		super(project, factory);
 	}

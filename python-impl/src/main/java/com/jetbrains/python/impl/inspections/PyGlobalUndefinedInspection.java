@@ -58,7 +58,7 @@ public class PyGlobalUndefinedInspection extends PyInspection {
 
         @Override
         public void visitPyGlobalStatement(PyGlobalStatement node) {
-            final PyTargetExpression[] globals = node.getGlobals();
+            PyTargetExpression[] globals = node.getGlobals();
 
             for (PyTargetExpression global : globals) {
                 if (global.getReference().resolve() == global) {

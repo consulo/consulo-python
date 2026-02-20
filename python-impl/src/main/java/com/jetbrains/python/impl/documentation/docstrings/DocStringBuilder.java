@@ -76,7 +76,7 @@ public abstract class DocStringBuilder<This extends DocStringBuilder>
 	@Nonnull
 	public String buildContent(@Nonnull String indentation, boolean indentFirst)
 	{
-		final StringBuilder result = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		boolean first = true;
 		for(String line : myLines)
 		{

@@ -562,11 +562,11 @@ public class PyStdlibDocumentationLinkProvider implements PythonDocumentationLin
 
   @Override
   public String getExternalDocumentationRoot(Sdk sdk) {
-    final String versionString = sdk.getVersionString();
+    String versionString = sdk.getVersionString();
     if (versionString != null && StringUtil.startsWithIgnoreCase(versionString, "jython")) {
       return "http://jython.org/docs/library/";
     }
-    final String pyVersion = PythonDocumentationProvider.pyVersion(versionString);
+    String pyVersion = PythonDocumentationProvider.pyVersion(versionString);
     StringBuilder urlBuilder = new StringBuilder("http://docs.python.org/");
     if (pyVersion != null) {
       urlBuilder.append(pyVersion).append("/");
@@ -596,7 +596,7 @@ public class PyStdlibDocumentationLinkProvider implements PythonDocumentationLin
       qnameString = "xml.parsers.expat";
     }
 
-    final String pyVersion = PythonDocumentationProvider.pyVersion(sdk.getVersionString());
+    String pyVersion = PythonDocumentationProvider.pyVersion(sdk.getVersionString());
     List<String> modules = pyVersion != null && pyVersion.startsWith("3") ? py3LibraryModules : py2LibraryModules;
     boolean foundModule = false;
     for (String module : modules) {
@@ -610,7 +610,7 @@ public class PyStdlibDocumentationLinkProvider implements PythonDocumentationLin
     if (foundModule && element instanceof PsiNamedElement && !(element instanceof PyFile)) {
       urlBuilder.append('#').append(moduleName).append(".");
       if (element instanceof PyFunction) {
-        final PyClass containingClass = ((PyFunction)element).getContainingClass();
+        PyClass containingClass = ((PyFunction)element).getContainingClass();
         if (containingClass != null) {
           urlBuilder.append(containingClass.getName()).append('.');
         }

@@ -33,7 +33,7 @@ import jakarta.annotation.Nonnull;
 public class LightNamedElement extends LightElement implements PyElement, PsiNamedElement {
   protected final String myName;
 
-  public LightNamedElement(PsiManager manager, Language language, final String name) {
+  public LightNamedElement(PsiManager manager, Language language, String name) {
     super(manager, language);
     myName = name;
   }

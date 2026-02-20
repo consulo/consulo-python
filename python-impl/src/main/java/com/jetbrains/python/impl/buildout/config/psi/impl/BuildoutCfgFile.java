@@ -57,7 +57,7 @@ public class BuildoutCfgFile extends PsiFileBase
 
   @Nullable
   public BuildoutCfgSection findSectionByName(String name) {
-    final Collection<BuildoutCfgSection> sections = getSections();
+    Collection<BuildoutCfgSection> sections = getSections();
     for (BuildoutCfgSection section : sections) {
       if (name.equals(section.getHeaderName())) {
         return section;
@@ -71,7 +71,7 @@ public class BuildoutCfgFile extends PsiFileBase
     if (buildoutSection == null) {
       return Collections.emptyList();
     }
-    final BuildoutCfgOption option = buildoutSection.findOptionByName("parts");
+    BuildoutCfgOption option = buildoutSection.findOptionByName("parts");
     if (option == null) {
       return Collections.emptyList();
     }

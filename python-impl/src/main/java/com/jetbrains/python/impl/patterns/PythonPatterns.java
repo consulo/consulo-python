@@ -42,14 +42,14 @@ public class PythonPatterns extends PlatformPatterns
 	{
 		return new PyElementPattern.Capture<>(new InitialPatternCondition<PyLiteralExpression>(PyLiteralExpression.class)
 		{
-			public boolean accepts(@Nullable final Object o, final ProcessingContext context)
+			public boolean accepts(@Nullable Object o, ProcessingContext context)
 			{
 				return o instanceof PyLiteralExpression;
 			}
 		});
 	}
 
-	public static PyElementPattern.Capture<PyStringLiteralExpression> pyStringLiteralMatches(final String regexp)
+	public static PyElementPattern.Capture<PyStringLiteralExpression> pyStringLiteralMatches(String regexp)
 	{
 		final Pattern pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 		return new PyElementPattern.Capture<>(new InitialPatternCondition<PyStringLiteralExpression>(PyStringLiteralExpression.class)
@@ -59,10 +59,10 @@ public class PythonPatterns extends PlatformPatterns
 			{
 				if(o instanceof PyStringLiteralExpression)
 				{
-					final PyStringLiteralExpression expr = (PyStringLiteralExpression) o;
+					PyStringLiteralExpression expr = (PyStringLiteralExpression) o;
 					if(!DocStringUtil.isDocStringExpression(expr) && expr.getTextLength() < STRING_LITERAL_LIMIT)
 					{
-						final String value = expr.getStringValue();
+						String value = expr.getStringValue();
 						return pattern.matcher(value).find();
 					}
 				}
@@ -75,7 +75,7 @@ public class PythonPatterns extends PlatformPatterns
 	{
 		return new PyElementPattern.Capture<>(new InitialPatternCondition<PyExpression>(PyExpression.class)
 		{
-			public boolean accepts(@Nullable final Object o, final ProcessingContext context)
+			public boolean accepts(@Nullable Object o, ProcessingContext context)
 			{
 				return isCallArgument(o, functionName, index);
 			}
@@ -86,7 +86,7 @@ public class PythonPatterns extends PlatformPatterns
 	{
 		return new PyElementPattern.Capture<>(new InitialPatternCondition<PyExpression>(PyExpression.class)
 		{
-			public boolean accepts(@Nullable final Object o, final ProcessingContext context)
+			public boolean accepts(@Nullable Object o, ProcessingContext context)
 			{
 				PyCallable function = resolveCalledFunction(o, functionName, index);
 				if(!(function instanceof PyFunction))
@@ -107,7 +107,7 @@ public class PythonPatterns extends PlatformPatterns
 	{
 		return new PyElementPattern.Capture<>(new InitialPatternCondition<PyExpression>(PyExpression.class)
 		{
-			public boolean accepts(@Nullable final Object o, final ProcessingContext context)
+			public boolean accepts(@Nullable Object o, ProcessingContext context)
 			{
 				PyCallable function = resolveCalledFunction(o, functionName, index);
 				if(!(function instanceof PyFunction))

@@ -21,8 +21,8 @@ public abstract class PyMultiFileResolveTestCase extends PyResolveTestCase {
   }
 
   protected PsiElement doResolve(PsiFile psiFile) {
-    final PsiPolyVariantReference ref = PyResolveTestCase.findReferenceByMarker(psiFile);
-    final PsiManagerImpl psiManager = (PsiManagerImpl)myFixture.getPsiManager();
+    PsiPolyVariantReference ref = PyResolveTestCase.findReferenceByMarker(psiFile);
+    PsiManagerImpl psiManager = (PsiManagerImpl)myFixture.getPsiManager();
     psiManager.setAssertOnFileLoadingFilter(new VirtualFileFilter() {
       @Override
       public boolean accept(VirtualFile file) {
@@ -31,7 +31,7 @@ public abstract class PyMultiFileResolveTestCase extends PyResolveTestCase {
       }
     }, null);
     try {
-      final ResolveResult[] resolveResults = ref.multiResolve(false);
+      ResolveResult[] resolveResults = ref.multiResolve(false);
       if (resolveResults.length == 0) {
         return null;
       }
@@ -44,7 +44,7 @@ public abstract class PyMultiFileResolveTestCase extends PyResolveTestCase {
 
 
   protected void prepareTestDirectory() {
-    final String testName = getTestName(true);
+    String testName = getTestName(true);
     myFixture.copyDirectoryToProject(testName, "");
     PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments();
   }
@@ -53,7 +53,7 @@ public abstract class PyMultiFileResolveTestCase extends PyResolveTestCase {
     prepareTestDirectory();
     VirtualFile sourceFile = null;
     for (String ext : new String[]{".py", ".pyx"}) {
-      final String fileName = myTestFileName != null ? myTestFileName : getTestName(false) + ext;
+      String fileName = myTestFileName != null ? myTestFileName : getTestName(false) + ext;
       sourceFile = myFixture.findFileInTempDir(fileName);
       if (sourceFile != null) {
         break;
@@ -70,7 +70,7 @@ public abstract class PyMultiFileResolveTestCase extends PyResolveTestCase {
 
   protected ResolveResult[] doMultiResolve() {
     PsiFile psiFile = prepareFile();
-    final PsiPolyVariantReference ref = PyResolveTestCase.findReferenceByMarker(psiFile);
+    PsiPolyVariantReference ref = PyResolveTestCase.findReferenceByMarker(psiFile);
     return ref.multiResolve(false);
   }
 }

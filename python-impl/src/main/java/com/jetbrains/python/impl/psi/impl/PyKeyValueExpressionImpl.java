@@ -39,8 +39,8 @@ public class PyKeyValueExpressionImpl extends PyElementImpl implements PyKeyValu
 
 	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
-		final PyType keyType = context.getType(getKey());
-		final PyExpression value = getValue();
+		PyType keyType = context.getType(getKey());
+		PyExpression value = getValue();
 		PyType valueType = null;
 		if(value != null)
 		{

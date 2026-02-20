@@ -78,7 +78,7 @@ public class PyFunctionTypeImpl implements PyFunctionType
 	@Override
 	public List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
 	{
-		final List<PyCallableParameter> result = new ArrayList<>();
+		List<PyCallableParameter> result = new ArrayList<>();
 		for(PyParameter parameter : myCallable.getParameterList().getParameters())
 		{
 			result.add(new PyCallableParameterImpl(parameter));
@@ -89,7 +89,7 @@ public class PyFunctionTypeImpl implements PyFunctionType
 	@Override
 	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
 	{
-		final PyClassType delegate = selectFakeType(location, resolveContext.getTypeEvalContext());
+		PyClassType delegate = selectFakeType(location, resolveContext.getTypeEvalContext());
 		if(delegate == null)
 		{
 			return Collections.emptyList();
@@ -100,8 +100,8 @@ public class PyFunctionTypeImpl implements PyFunctionType
 	@Override
 	public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context)
 	{
-		final TypeEvalContext typeEvalContext = TypeEvalContext.codeCompletion(location.getProject(), location.getContainingFile());
-		final PyClassType delegate;
+		TypeEvalContext typeEvalContext = TypeEvalContext.codeCompletion(location.getProject(), location.getContainingFile());
+		PyClassType delegate;
 		if(location instanceof PyReferenceExpression)
 		{
 			delegate = selectFakeType(((PyReferenceExpression) location).getQualifier(), typeEvalContext);
@@ -124,7 +124,7 @@ public class PyFunctionTypeImpl implements PyFunctionType
 	@Nullable
 	private PyClassTypeImpl selectFakeType(@Nullable PyExpression location, @Nonnull TypeEvalContext context)
 	{
-		final String fakeClassName;
+		String fakeClassName;
 		if(location instanceof PyReferenceExpression && isBoundMethodReference((PyReferenceExpression) location, context))
 		{
 			fakeClassName = PyNames.FAKE_METHOD;
@@ -138,8 +138,8 @@ public class PyFunctionTypeImpl implements PyFunctionType
 
 	private boolean isBoundMethodReference(@Nonnull PyReferenceExpression location, @Nonnull TypeEvalContext context)
 	{
-		final PyFunction function = as(getCallable(), PyFunction.class);
-		final boolean isNonStaticMethod = function != null && function.getContainingClass() != null && function.getModifier() != STATICMETHOD;
+		PyFunction function = as(getCallable(), PyFunction.class);
+		boolean isNonStaticMethod = function != null && function.getContainingClass() != null && function.getModifier() != STATICMETHOD;
 		if(isNonStaticMethod)
 		{
 			// In Python 2 unbound methods have __method fake type
@@ -147,22 +147,22 @@ public class PyFunctionTypeImpl implements PyFunctionType
 			{
 				return true;
 			}
-			final PyExpression qualifier;
+			PyExpression qualifier;
 			if(location.isQualified())
 			{
 				qualifier = location.getQualifier();
 			}
 			else
 			{
-				final PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
-				final QualifiedResolveResult resolveResult = location.followAssignmentsChain(resolveContext);
-				final List<PyExpression> qualifiers = resolveResult.getQualifiers();
+				PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
+				QualifiedResolveResult resolveResult = location.followAssignmentsChain(resolveContext);
+				List<PyExpression> qualifiers = resolveResult.getQualifiers();
 				qualifier = ContainerUtil.isEmpty(qualifiers) ? null : qualifiers.get(qualifiers.size() - 1);
 			}
 			if(qualifier != null)
 			{
 				//noinspection ConstantConditions
-				final PyType qualifierType = PyTypeChecker.toNonWeakType(context.getType(qualifier), context);
+				PyType qualifierType = PyTypeChecker.toNonWeakType(context.getType(qualifier), context);
 				if(isInstanceType(qualifierType))
 				{
 					return true;

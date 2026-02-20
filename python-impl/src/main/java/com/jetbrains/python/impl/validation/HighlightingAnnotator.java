@@ -37,11 +37,11 @@ public class HighlightingAnnotator extends PyAnnotator {
 
   @Override
   public void visitPyReferenceExpression(PyReferenceExpression node) {
-    final String referencedName = node.getReferencedName();
+    String referencedName = node.getReferencedName();
     if (node.getQualifier() == null && referencedName != null) {
       PyFunction function = PsiTreeUtil.getParentOfType(node, PyFunction.class);
       if (function != null) {
-        final PyNamedParameter element = function.getParameterList().findParameterByName(referencedName);
+        PyNamedParameter element = function.getParameterList().findParameterByName(referencedName);
         if (element != null) {
           Annotation annotation = getHolder().createInfoAnnotation(node, null);
           annotation.setTextAttributes(element.isSelf() ? PyHighlighter.PY_SELF_PARAMETER : PyHighlighter.PY_PARAMETER);

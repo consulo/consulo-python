@@ -72,14 +72,14 @@ public class PyDocstringTypesInspection extends PyInspection {
 
         @Override
         public void visitPyFunction(PyFunction function) {
-            final String name = function.getName();
+            String name = function.getName();
             if (name != null && !name.startsWith("_")) {
                 checkDocString(function);
             }
         }
 
         private void checkDocString(@Nonnull PyFunction function) {
-            final PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
+            PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
             if (docStringExpression != null) {
                 PySignatureCacheManager manager = PySignatureCacheManager.getInstance(function.getProject());
                 PySignature signature = manager.findSignature(function);
@@ -90,7 +90,7 @@ public class PyDocstringTypesInspection extends PyInspection {
         }
 
         private void checkParameters(PyFunction function, PyStringLiteralExpression node, PySignature signature) {
-            final StructuredDocString docString = DocStringUtil.parseDocString(node);
+            StructuredDocString docString = DocStringUtil.parseDocString(node);
             if (docString instanceof PlainDocString) {
                 return;
             }
@@ -120,8 +120,8 @@ public class PyDocstringTypesInspection extends PyInspection {
         }
 
         private boolean match(PsiElement anchor, String dynamicTypeName, String specifiedTypeName) {
-            final PyType dynamicType = PyTypeParser.getTypeByName(anchor, dynamicTypeName);
-            final PyType specifiedType = PyTypeParser.getTypeByName(anchor, specifiedTypeName);
+            PyType dynamicType = PyTypeParser.getTypeByName(anchor, dynamicTypeName);
+            PyType specifiedType = PyTypeParser.getTypeByName(anchor, specifiedTypeName);
             return PyTypeChecker.match(specifiedType, dynamicType, myTypeEvalContext);
         }
     }

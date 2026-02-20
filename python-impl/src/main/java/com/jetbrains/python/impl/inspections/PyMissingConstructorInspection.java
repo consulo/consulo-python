@@ -67,7 +67,7 @@ public class PyMissingConstructorInspection extends PyInspection {
 
         @Override
         public void visitPyClass(@Nonnull PyClass node) {
-            final PsiElement[] superClasses = node.getSuperClassExpressions();
+            PsiElement[] superClasses = node.getSuperClassExpressions();
 
             if (superClasses.length == 0 ||
                 superClasses.length == 1 && OBJECT.equals(superClasses[0].getText()) ||
@@ -75,7 +75,7 @@ public class PyMissingConstructorInspection extends PyInspection {
                 return;
             }
 
-            final PyFunction initMethod = node.findMethodByName(INIT, false, myTypeEvalContext);
+            PyFunction initMethod = node.findMethodByName(INIT, false, myTypeEvalContext);
 
             if (initMethod == null || isExceptionClass(node, myTypeEvalContext) || hasConstructorCall(
                 node,
@@ -98,7 +98,7 @@ public class PyMissingConstructorInspection extends PyInspection {
         }
 
         private static boolean superHasConstructor(@Nonnull PyClass cls, @Nonnull TypeEvalContext context) {
-            final String className = cls.getName();
+            String className = cls.getName();
 
             for (PyClass baseClass : cls.getAncestorClasses(context)) {
                 if (!PyUtil.isObjectClass(baseClass) &&
@@ -124,7 +124,7 @@ public class PyMissingConstructorInspection extends PyInspection {
         }
 
         private static boolean hasConstructorCall(@Nonnull PyClass cls, @Nonnull PyFunction initMethod, @Nonnull TypeEvalContext context) {
-            final CallVisitor visitor = new CallVisitor(cls, context);
+            CallVisitor visitor = new CallVisitor(cls, context);
             initMethod.getStatementList().accept(visitor);
             return visitor.myHasConstructorCall;
         }
@@ -156,13 +156,13 @@ public class PyMissingConstructorInspection extends PyInspection {
                 @Nonnull PyClass cls,
                 @Nonnull TypeEvalContext context
             ) {
-                final PyExpression callee = call.getCallee();
+                PyExpression callee = call.getCallee();
 
                 if (callee == null || !INIT.equals(callee.getName())) {
                     return false;
                 }
 
-                final PyExpression calleeQualifier =
+                PyExpression calleeQualifier =
                     Optional.of(callee).filter(PyQualifiedExpression.class::isInstance).map(PyQualifiedExpression.class::cast).map
                         (PyQualifiedExpression::getQualifier).orElse(null);
 
@@ -178,7 +178,7 @@ public class PyMissingConstructorInspection extends PyInspection {
                 @Nonnull PyClass cls,
                 @Nonnull TypeEvalContext context
             ) {
-                final String prevCalleeName = Optional.of(calleeQualifier)
+                String prevCalleeName = Optional.of(calleeQualifier)
                     .filter(PyCallExpression.class::isInstance)
                     .map(PyCallExpression.class::cast)
                     .map(PyCallExpression::getCallee)
@@ -190,14 +190,14 @@ public class PyMissingConstructorInspection extends PyInspection {
                     return false;
                 }
 
-                final PyExpression[] args = ((PyCallExpression) calleeQualifier).getArguments();
+                PyExpression[] args = ((PyCallExpression) calleeQualifier).getArguments();
 
                 if (args.length == 0) {
                     return true;
                 }
 
-                final String firstArg = args[0].getText();
-                final String classQName = cls.getQualifiedName();
+                String firstArg = args[0].getText();
+                String classQName = cls.getQualifiedName();
 
                 if (firstArg.equals(cls.getName()) ||
                     firstArg.equals(CANONICAL_SELF + "." + __CLASS__) ||
@@ -214,7 +214,7 @@ public class PyMissingConstructorInspection extends PyInspection {
                 @Nonnull PyClass cls,
                 @Nonnull TypeEvalContext context
             ) {
-                final PsiElement callingClass = resolveCallingClass(calleeQualifier);
+                PsiElement callingClass = resolveCallingClass(calleeQualifier);
 
                 return callingClass != null && cls.getAncestorClasses(context).stream().filter(callingClass::equals).findAny().isPresent();
             }

@@ -61,7 +61,7 @@ public class PyFromImportStatementElementType extends PyStubElementType<PyFromIm
   }
 
   public void serialize(@Nonnull PyFromImportStatementStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
-    final QualifiedName qName = stub.getImportSourceQName();
+    QualifiedName qName = stub.getImportSourceQName();
     QualifiedName.serialize(qName, dataStream);
     dataStream.writeBoolean(stub.isStarImport());
     dataStream.writeVarInt(stub.getRelativeLevel());

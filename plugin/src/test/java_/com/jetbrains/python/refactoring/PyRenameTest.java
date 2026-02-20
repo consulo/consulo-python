@@ -29,7 +29,7 @@ public abstract class PyRenameTest extends PyTestCase
 	public void testSearchInStrings()
 	{  // PY-670
 		myFixture.configureByFile(RENAME_DATA_PATH + getTestName(true) + ".py");
-		final PsiElement element = TargetElementUtil.findTargetElement(myFixture.getEditor(), ContainerUtil.newHashSet(TargetElementUtilEx.REFERENCED_ELEMENT_ACCEPTED, TargetElementUtilEx
+		PsiElement element = TargetElementUtil.findTargetElement(myFixture.getEditor(), ContainerUtil.newHashSet(TargetElementUtilEx.REFERENCED_ELEMENT_ACCEPTED, TargetElementUtilEx
 				.ELEMENT_NAME_ACCEPTED));
 		assertNotNull(element);
 		myFixture.renameElement(element, "bar", true, false);
@@ -236,7 +236,7 @@ public abstract class PyRenameTest extends PyTestCase
 		fail("Expected conflict not reported");
 	}
 
-	private void doTest(final String newName)
+	private void doTest(String newName)
 	{
 		myFixture.configureByFile(RENAME_DATA_PATH + getTestName(true) + ".py");
 		myFixture.renameElementAtCaret(newName);
@@ -245,8 +245,8 @@ public abstract class PyRenameTest extends PyTestCase
 
 	private void doMultiFileTest(String newName)
 	{
-		final String testName = getTestName(true);
-		final VirtualFile dir1 = myFixture.copyDirectoryToProject(RENAME_DATA_PATH + testName + "/before", "");
+		String testName = getTestName(true);
+		VirtualFile dir1 = myFixture.copyDirectoryToProject(RENAME_DATA_PATH + testName + "/before", "");
 		PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments();
 		myFixture.configureFromTempProjectFile("a.py");
 		myFixture.renameElementAtCaret(newName);

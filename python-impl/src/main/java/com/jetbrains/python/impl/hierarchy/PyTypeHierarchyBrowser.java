@@ -117,7 +117,7 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 	{
 		if(psiElement instanceof PyClass)
 		{
-			final String name = ((PyClass) psiElement).getName();
+			String name = ((PyClass) psiElement).getName();
 			if(name != null)
 			{
 				return name;

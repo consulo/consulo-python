@@ -89,9 +89,9 @@ public class PyNegateComparisonIntention extends BaseIntentionAction {
                     parent = parent.getParent();
                 }
 
-                final PyElementType invertedOperator = invertedComparasions.get(binaryExpression.getOperator());
+                PyElementType invertedOperator = invertedComparasions.get(binaryExpression.getOperator());
                 PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-                final PyBinaryExpression newElement = elementGenerator
+                PyBinaryExpression newElement = elementGenerator
                     .createBinaryExpression(comparisonStrings.get(invertedOperator), binaryExpression.getLeftExpression(),
                         binaryExpression.getRightExpression()
                     );

@@ -57,7 +57,7 @@ public class PythonUnitTestRunConfiguration extends
   }
 
   @Override
-  public RunProfileState getState(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException {
     return new PythonUnitTestCommandLineState(this, env);
   }
 

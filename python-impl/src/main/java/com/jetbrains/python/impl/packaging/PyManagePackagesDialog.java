@@ -60,7 +60,7 @@ public class PyManagePackagesDialog extends DialogWrapper
 		packagesPanel.updateNotifications(sdk);
 
 		myMainPanel = new JPanel(new BorderLayout());
-		final LabeledComponent<JComboBox> sdkLabeledComponent = LabeledComponent.create(sdkComboBox, "Interpreter:");
+		LabeledComponent<JComboBox> sdkLabeledComponent = LabeledComponent.create(sdkComboBox, "Interpreter:");
 		sdkLabeledComponent.setLabelLocation(BorderLayout.WEST);
 		myMainPanel.add(sdkLabeledComponent, BorderLayout.NORTH);
 		myMainPanel.add(packagesPanel, BorderLayout.CENTER);

@@ -21,7 +21,7 @@ public abstract class Py3ResolveTest extends PyResolveTestCase {
   @Override
   protected PsiElement doResolve() {
     myFixture.configureByFile("resolve/" + getTestName(false) + ".py");
-    final PsiReference ref = PyResolveTestCase.findReferenceByMarker(myFixture.getFile());
+    PsiReference ref = PyResolveTestCase.findReferenceByMarker(myFixture.getFile());
     return ref.resolve();
   }
 

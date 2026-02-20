@@ -67,7 +67,7 @@ public class BuildoutCfgColorsPage implements ColorSettingsPage {
 
   @Nonnull
   public SyntaxHighlighter getHighlighter() {
-    final SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(BuildoutCfgFileType.INSTANCE, null, null);
+    SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(BuildoutCfgFileType.INSTANCE, null, null);
     assert highlighter != null;
     return highlighter;
   }

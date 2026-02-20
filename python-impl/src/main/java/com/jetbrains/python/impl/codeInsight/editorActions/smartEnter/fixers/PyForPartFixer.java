@@ -43,9 +43,9 @@ public class PyForPartFixer extends PyFixer<PyForPart>
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyForPart forPart)
 	{
-		final PsiElement colon = PyPsiUtils.getFirstChildOfType(forPart, PyTokenTypes.COLON);
-		final Document document = editor.getDocument();
-		final PsiElement forToken = PyPsiUtils.getFirstChildOfType(forPart, PyTokenTypes.FOR_KEYWORD);
+		PsiElement colon = PyPsiUtils.getFirstChildOfType(forPart, PyTokenTypes.COLON);
+		Document document = editor.getDocument();
+		PsiElement forToken = PyPsiUtils.getFirstChildOfType(forPart, PyTokenTypes.FOR_KEYWORD);
 		if(colon == null)
 		{
 			String textToInsert = ":";
@@ -54,7 +54,7 @@ public class PyForPartFixer extends PyFixer<PyForPart>
 			if(sourceOrTarget == null)
 			{
 				sourceOrTarget = forPart.getTarget();
-				final PsiElement inToken = PyPsiUtils.getFirstChildOfType(forPart, PyTokenTypes.IN_KEYWORD);
+				PsiElement inToken = PyPsiUtils.getFirstChildOfType(forPart, PyTokenTypes.IN_KEYWORD);
 				if(inToken == null)
 				{
 					if(sourceOrTarget == null)

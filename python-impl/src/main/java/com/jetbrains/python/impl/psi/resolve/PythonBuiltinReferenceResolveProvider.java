@@ -39,19 +39,19 @@ public class PythonBuiltinReferenceResolveProvider implements PyReferenceResolve
   @Nonnull
   @Override
   public List<RatedResolveResult> resolveName(@Nonnull PyQualifiedExpression element) {
-    final List<RatedResolveResult> result = new ArrayList<>();
-    final PsiElement realContext = PyPsiUtils.getRealContext(element);
-    final String referencedName = element.getReferencedName();
-    final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(realContext);
+    List<RatedResolveResult> result = new ArrayList<>();
+    PsiElement realContext = PyPsiUtils.getRealContext(element);
+    String referencedName = element.getReferencedName();
+    PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(realContext);
     // ...as a builtin symbol
-    final PyFile bfile = builtinCache.getBuiltinsFile();
+    PyFile bfile = builtinCache.getBuiltinsFile();
     if (bfile != null && !PyUtil.isClassPrivateName(referencedName)) {
       PsiElement resultElement = bfile.getElementNamed(referencedName);
       if (resultElement == null && "__builtins__".equals(referencedName)) {
         resultElement = bfile; // resolve __builtins__ reference
       }
       if (resultElement != null) {
-        final TypeEvalContext typeEvalContext = TypeEvalContext.codeInsightFallback(element.getProject());
+        TypeEvalContext typeEvalContext = TypeEvalContext.codeInsightFallback(element.getProject());
         result.add(new ImportedResolveResult(resultElement, PyReferenceImpl.getRate(resultElement, typeEvalContext), null));
       }
     }

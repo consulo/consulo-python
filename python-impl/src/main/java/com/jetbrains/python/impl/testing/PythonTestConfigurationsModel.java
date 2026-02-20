@@ -35,7 +35,7 @@ public class PythonTestConfigurationsModel extends CollectionComboBoxModel {
   private String myTestRunner;
   private Module myModule;
 
-  public PythonTestConfigurationsModel(final List items, final Object selection, Module module) {
+  public PythonTestConfigurationsModel(List items, Object selection, Module module) {
     super(items, selection);
     myModule = module;
     myTestRunner = TestRunnerService.getInstance(myModule).getProjectConfiguration();

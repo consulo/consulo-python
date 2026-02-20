@@ -37,7 +37,7 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 	private Project myProject;
 	private final PyFrameAccessor myDebugProcess;
 
-	public PyDebuggerEvaluator(@Nonnull Project project, @Nonnull final PyFrameAccessor debugProcess)
+	public PyDebuggerEvaluator(@Nonnull Project project, @Nonnull PyFrameAccessor debugProcess)
 	{
 		myProject = project;
 		myDebugProcess = debugProcess;
@@ -49,7 +49,7 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 		doEvaluate(expression, callback, true);
 	}
 
-	private void doEvaluate(final String expr, final XEvaluationCallback callback, final boolean doTrunc)
+	private void doEvaluate(String expr, XEvaluationCallback callback, boolean doTrunc)
 	{
 		ApplicationManager.getApplication().executeOnPooledThread(() -> {
 			String expression = expr.trim();
@@ -59,11 +59,11 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 				return;
 			}
 
-			final boolean isExpression = PyDebugSupportUtils.isExpression(myProject, expression);
+			boolean isExpression = PyDebugSupportUtils.isExpression(myProject, expression);
 			try
 			{
 				// todo: think on getting results from EXEC
-				final PyDebugValue value = myDebugProcess.evaluate(expression, !isExpression, doTrunc);
+				PyDebugValue value = myDebugProcess.evaluate(expression, !isExpression, doTrunc);
 				if(value.isErrorOnEval())
 				{
 					callback.errorOccurred("{" + value.getType() + "}" + value.getValue());
@@ -82,7 +82,7 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 
 	@Nullable
 	@Override
-	public TextRange getExpressionRangeAtOffset(final Project project, final Document document, final int offset, boolean sideEffectsAllowed)
+	public TextRange getExpressionRangeAtOffset(Project project, Document document, int offset, boolean sideEffectsAllowed)
 	{
 		return PyDebugSupportUtils.getExpressionRangeAtOffset(project, document, offset);
 	}

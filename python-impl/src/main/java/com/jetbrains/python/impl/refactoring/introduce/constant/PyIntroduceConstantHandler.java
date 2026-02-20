@@ -54,15 +54,15 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected PsiElement addDeclaration(@Nonnull final PsiElement expression, @Nonnull final PsiElement declaration, @Nonnull final IntroduceOperation operation)
+	protected PsiElement addDeclaration(@Nonnull PsiElement expression, @Nonnull PsiElement declaration, @Nonnull IntroduceOperation operation)
 	{
-		final PsiElement anchor = expression.getContainingFile();
+		PsiElement anchor = expression.getContainingFile();
 		assert anchor instanceof PyFile;
 		return anchor.addBefore(declaration, AddImportHelper.getFileInsertPosition((PyFile) anchor));
 	}
 
 	@Override
-	protected Collection<String> generateSuggestedNames(@Nonnull final PyExpression expression)
+	protected Collection<String> generateSuggestedNames(@Nonnull PyExpression expression)
 	{
 		Collection<String> names = new HashSet<>();
 		for(String name : super.generateSuggestedNames(expression))

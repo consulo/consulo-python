@@ -38,7 +38,7 @@ public abstract class TraceBackParserAdapter implements TraceBackParser
 	/**
 	 * @param pattern pattern to be used to match line.
 	 */
-	protected TraceBackParserAdapter(@Nonnull final Pattern pattern)
+	protected TraceBackParserAdapter(@Nonnull Pattern pattern)
 	{
 		myPattern = pattern;
 	}
@@ -54,7 +54,7 @@ public abstract class TraceBackParserAdapter implements TraceBackParser
 			//noinspection AssignmentToMethodParameter
 			line = line.substring(0, MAX_LINE_TO_PARSE);
 		}
-		final Matcher matcher = myPattern.matcher(line);
+		Matcher matcher = myPattern.matcher(line);
 		if(!matcher.find())
 		{
 			return null;

@@ -54,7 +54,7 @@ public class PyTestTracebackFilter implements Filter {
       
       if (vFile != null) {
         OpenFileHyperlinkInfo hyperlink = new OpenFileHyperlinkInfo(myProject, vFile, lineNumber - 1);
-        final int textStartOffset = entireLength - line.length();
+        int textStartOffset = entireLength - line.length();
         int startPos = 0;
         int endPos = line.lastIndexOf(':');
         return new Result(startPos + textStartOffset, endPos + textStartOffset, hyperlink);

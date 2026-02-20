@@ -41,12 +41,12 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
   protected final String myTailText;
   protected InsertHandler<PythonLookupElement> myHandler;
 
-  public PythonLookupElement(@Nonnull final String lookupString,
-                             @Nullable final String tailText,
-                             @Nullable final String typeText, final boolean bold,
-                             @Nullable final Image icon,
-                             @Nullable final Image typeIcon,
-                             @Nonnull final InsertHandler<PythonLookupElement> handler) {
+  public PythonLookupElement(@Nonnull String lookupString,
+                             @Nullable String tailText,
+                             @Nullable String typeText, boolean bold,
+                             @Nullable Image icon,
+                             @Nullable Image typeIcon,
+                             @Nonnull InsertHandler<PythonLookupElement> handler) {
     myLookupString = lookupString;
     myTailText = tailText;
     myTypeText = typeText;
@@ -56,18 +56,18 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
     myHandler = handler;
   }
 
-  public PythonLookupElement(@Nonnull final String lookupString,
-                             @Nullable final String tailText,
-                             @Nullable final String typeText, final boolean bold,
-                             @Nullable final Image icon,
-                             @Nullable final Image typeIcon) {
+  public PythonLookupElement(@Nonnull String lookupString,
+                             @Nullable String tailText,
+                             @Nullable String typeText, boolean bold,
+                             @Nullable Image icon,
+                             @Nullable Image typeIcon) {
     this(lookupString, tailText, typeText, bold, icon, typeIcon, (context, item) -> {});
   }
 
   public PythonLookupElement(
-    @Nonnull final String lookupString,
-    final boolean bold,
-    @Nullable final Image icon
+    @Nonnull String lookupString,
+    boolean bold,
+    @Nullable Image icon
   ) {
     this(lookupString, null, null, bold, icon, null, (context, item) -> {});
   }
@@ -114,7 +114,7 @@ public class PythonLookupElement extends LookupElement implements Comparable<Loo
     presentation.setIcon(getIcon());
   }
 
-  public int compareTo(final LookupElement o) {
+  public int compareTo(LookupElement o) {
     return myLookupString.compareTo(o.getLookupString());
   }
 

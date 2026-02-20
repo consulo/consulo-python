@@ -80,17 +80,17 @@ public class GoogleCodeStyleDocString extends SectionBasedDocString
 	@Override
 	protected Pair<SectionField, Integer> parseSectionField(int lineNum, int sectionIndent, boolean mayHaveType, boolean preferType)
 	{
-		final Substring line = getLine(lineNum);
+		Substring line = getLine(lineNum);
 		Substring name, type = null;
 		// Napoleon requires that each parameter line contains a colon - we don't because
 		// we need to parse and complete parameter names before colon is typed
-		final List<Substring> colonSeparatedParts = splitByFirstColon(line);
+		List<Substring> colonSeparatedParts = splitByFirstColon(line);
 		assert colonSeparatedParts.size() <= 2;
-		final Substring textBeforeColon = colonSeparatedParts.get(0);
+		Substring textBeforeColon = colonSeparatedParts.get(0);
 		name = textBeforeColon.trim();
 		if(mayHaveType)
 		{
-			final Matcher matcher = FIELD_NAME_AND_TYPE.matcher(textBeforeColon);
+			Matcher matcher = FIELD_NAME_AND_TYPE.matcher(textBeforeColon);
 			if(matcher.matches())
 			{
 				name = textBeforeColon.getMatcherGroup(matcher, 1).trim();
@@ -111,13 +111,13 @@ public class GoogleCodeStyleDocString extends SectionBasedDocString
 		{
 			return Pair.create(null, lineNum);
 		}
-		final Pair<List<Substring>, Integer> pair;
+		Pair<List<Substring>, Integer> pair;
 		if(colonSeparatedParts.size() == 2)
 		{
 			Substring description = colonSeparatedParts.get(1);
 			// parse line with indentation at least one space greater than indentation of the field
 			pair = parseIndentedBlock(lineNum + 1, getLineIndentSize(lineNum));
-			final List<Substring> nestedBlock = pair.getFirst();
+			List<Substring> nestedBlock = pair.getFirst();
 			if(!nestedBlock.isEmpty())
 			{
 				//noinspection ConstantConditions
@@ -134,11 +134,11 @@ public class GoogleCodeStyleDocString extends SectionBasedDocString
 	@Override
 	protected Pair<Substring, Integer> parseSectionHeader(int lineNum)
 	{
-		final Substring line = getLine(lineNum);
-		final Matcher matcher = SECTION_HEADER.matcher(line);
+		Substring line = getLine(lineNum);
+		Matcher matcher = SECTION_HEADER.matcher(line);
 		if(matcher.matches())
 		{
-			final Substring title = line.getMatcherGroup(matcher, 1).trim();
+			Substring title = line.getMatcherGroup(matcher, 1).trim();
 			if(isValidSectionTitle(title.toString()))
 			{
 				return Pair.create(title, lineNum + 1);

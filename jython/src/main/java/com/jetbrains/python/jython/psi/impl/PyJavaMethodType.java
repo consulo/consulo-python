@@ -91,7 +91,7 @@ public class PyJavaMethodType implements PyCallableType
 	@Override
 	public String getName()
 	{
-		final PsiClass cls = myMethod.getContainingClass();
+		PsiClass cls = myMethod.getContainingClass();
 		return "Java method(" + (cls != null ? cls.getQualifiedName() : cls) + "." + myMethod.getName() + ")";
 	}
 

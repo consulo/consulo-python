@@ -73,26 +73,26 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
   @Nullable
   @Override
   public ASTNode parseContents(ASTNode node) {
-    final LanguageLevel languageLevel = getLanguageLevel(node.getPsi());
+    LanguageLevel languageLevel = getLanguageLevel(node.getPsi());
     if (PydevConsoleRunner.isPythonConsole(node)) {
       return parseConsoleCode(node, PydevConsoleRunner.getPythonConsoleData(node));
     }
     else {
-      final PsiElement psi = node.getPsi();
+      PsiElement psi = node.getPsi();
       if (psi != null) {
-        final Project project = psi.getProject();
-        final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-        final Language language = getLanguage();
-        final ParserDefinition parserDefinition = ParserDefinition.forLanguage(language);
+        Project project = psi.getProject();
+        PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
+        Language language = getLanguage();
+        ParserDefinition parserDefinition = ParserDefinition.forLanguage(language);
         if (parserDefinition == null) {
           return null;
         }
         LanguageVersion defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
-        final Lexer lexer = parserDefinition.createLexer(defaultVersion);
-        final PsiParser parser = parserDefinition.createParser(defaultVersion);
-        final PsiBuilder builder = factory.createBuilder(project, node, lexer, language, defaultVersion, node.getChars());
+        Lexer lexer = parserDefinition.createLexer(defaultVersion);
+        PsiParser parser = parserDefinition.createParser(defaultVersion);
+        PsiBuilder builder = factory.createBuilder(project, node, lexer, language, defaultVersion, node.getChars());
         if (parser instanceof PyParser) {
-          final PyParser pythonParser = (PyParser)parser;
+          PyParser pythonParser = (PyParser)parser;
           pythonParser.setLanguageLevel(languageLevel);
           if (languageLevel == LanguageLevel.PYTHON26 && psi.getContainingFile().getName().equals("__builtin__.py")) {
             pythonParser.setFutureFlag(StatementParsing.FUTURE.PRINT_FUNCTION);
@@ -106,14 +106,14 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
 
   @Nullable
   private ASTNode parseConsoleCode(@Nonnull ASTNode node, PythonConsoleData consoleData) {
-    final Lexer lexer = createConsoleLexer(node, consoleData);
-    final PsiElement psi = node.getPsi();
+    Lexer lexer = createConsoleLexer(node, consoleData);
+    PsiElement psi = node.getPsi();
     if (psi != null) {
-      final Project project = psi.getProject();
-      final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
+      Project project = psi.getProject();
+      PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
       LanguageVersion defaultVersion = LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance());
-      final PsiBuilder builder = factory.createBuilder(project, node, lexer, getLanguage(), defaultVersion, node.getChars());
-      final PyParser parser = new PyConsoleParser(consoleData, getLanguageLevel(psi));
+      PsiBuilder builder = factory.createBuilder(project, node, lexer, getLanguage(), defaultVersion, node.getChars());
+      PyParser parser = new PyConsoleParser(consoleData, getLanguageLevel(psi));
 
       return parser.parse(this, builder, defaultVersion).getFirstChildNode();
     }
@@ -126,23 +126,23 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
       return new PythonConsoleLexer();
     }
     else {
-      final ParserDefinition parserDefinition = ParserDefinition.forLanguage(getLanguage());
+      ParserDefinition parserDefinition = ParserDefinition.forLanguage(getLanguage());
       if (parserDefinition == null) {
         return null;
       }
-      final PsiElement psi = node.getPsi();
+      PsiElement psi = node.getPsi();
       if (psi == null) {
         return null;
       }
-      final Project project = psi.getProject();
+      Project project = psi.getProject();
       return parserDefinition.createLexer(LanguageVersionUtil.findDefaultVersion(PythonLanguage.getInstance()));
     }
   }
 
   private static LanguageLevel getLanguageLevel(PsiElement psi) {
-    final PsiFile file = psi.getContainingFile();
+    PsiFile file = psi.getContainingFile();
     if (!(file instanceof PyFile)) {
-      final PsiElement context = file.getContext();
+      PsiElement context = file.getContext();
       if (context != null) {
         return getLanguageLevel(context);
       }
@@ -194,7 +194,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
     dataStream.writeInt(result);
   }
 
-  public static void writeNullableList(StubOutputStream dataStream, final List<String> names) throws IOException {
+  public static void writeNullableList(StubOutputStream dataStream, List<String> names) throws IOException {
     if (names == null) {
       dataStream.writeBoolean(false);
     }

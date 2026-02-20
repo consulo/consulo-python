@@ -37,8 +37,8 @@ import jakarta.annotation.Nonnull;
  * User : catherine
  */
 public class SphinxRunConfiguration extends RestRunConfiguration {
-  public SphinxRunConfiguration(final Project project,
-                                final ConfigurationFactory factory) {
+  public SphinxRunConfiguration(Project project,
+                                ConfigurationFactory factory) {
     super(project, factory);
   }
 

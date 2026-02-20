@@ -62,7 +62,7 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     if (element instanceof PyClass) return "class";
     if (element instanceof PyReferenceExpression) return "variable";
     if (element instanceof PyTargetExpression) {
-      final PyImportElement importElement = PsiTreeUtil.getParentOfType(element, PyImportElement.class);
+      PyImportElement importElement = PsiTreeUtil.getParentOfType(element, PyImportElement.class);
       if (importElement != null && importElement.getAsNameElement() == element) {
         return "imported module alias";
       }
@@ -77,7 +77,7 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
   @Nonnull
   public String getDescriptiveName(@Nonnull PsiElement element) {
     if (element instanceof PsiNamedElement) {
-      final String name = ((PsiNamedElement)element).getName();
+      String name = ((PsiNamedElement)element).getName();
       return name == null ? "<unnamed>" : name;
     }
     if (element instanceof PyReferenceExpression) {
@@ -94,7 +94,7 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
   public String getNodeText(@Nonnull PsiElement element, boolean useFullName) {
     if (element instanceof PyNamedParameter) {
       StringBuilder result = new StringBuilder(((PyNamedParameter)element).getName());
-      final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+      PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
       if (function != null) {
         result.append(" of ");
         appendFunctionDescription(result, function);
@@ -111,7 +111,7 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
 
   private static void appendFunctionDescription(StringBuilder result, PyFunction function) {
     result.append(function.getName()).append("()");
-    final PyClass containingClass = function.getContainingClass();
+    PyClass containingClass = function.getContainingClass();
     if (containingClass != null) {
       result.append(" of class ").append(containingClass.getName());
     }

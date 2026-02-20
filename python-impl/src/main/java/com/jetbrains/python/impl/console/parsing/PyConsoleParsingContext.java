@@ -34,7 +34,7 @@ public class PyConsoleParsingContext extends ParsingContext
 	private final StatementParsing stmtParser;
 	private final ExpressionParsing expressionParser;
 
-	public PyConsoleParsingContext(final PsiBuilder builder, LanguageLevel languageLevel, StatementParsing.FUTURE futureFlag, PythonConsoleData pythonConsoleData, boolean startsWithIPythonSymbol)
+	public PyConsoleParsingContext(PsiBuilder builder, LanguageLevel languageLevel, StatementParsing.FUTURE futureFlag, PythonConsoleData pythonConsoleData, boolean startsWithIPythonSymbol)
 	{
 		super(builder, languageLevel, futureFlag);
 		stmtParser = new ConsoleStatementParsing(this, futureFlag, startsWithIPythonSymbol, pythonConsoleData);
@@ -125,7 +125,7 @@ public class PyConsoleParsingContext extends ParsingContext
 				}
 				else if(builder.getTokenType() == PyTokenTypes.SEMICOLON)
 				{
-					final ParsingScope scope = getParsingContext().getScope();
+					ParsingScope scope = getParsingContext().getScope();
 					if(!scope.isSuite())
 					{
 						builder.advanceLexer();

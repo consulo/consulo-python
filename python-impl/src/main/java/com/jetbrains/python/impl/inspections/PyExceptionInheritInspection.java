@@ -66,7 +66,7 @@ public class PyExceptionInheritInspection extends PyInspection {
             if (expression instanceof PyCallExpression) {
                 PyExpression callee = ((PyCallExpression) expression).getCallee();
                 if (callee instanceof PyReferenceExpression) {
-                    final PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference(getResolveContext());
+                    PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference(getResolveContext());
                     if (reference == null) {
                         return;
                     }
@@ -77,7 +77,7 @@ public class PyExceptionInheritInspection extends PyInspection {
                             if (type == null) {
                                 return;
                             }
-                            final String name = type.getName();
+                            String name = type.getName();
                             if (name == null || "BaseException".equals(name) || "Exception".equals(name)) {
                                 return;
                             }

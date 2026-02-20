@@ -104,7 +104,7 @@ public class TypeEvalContext
 	 * It is as detailed as {@link TypeEvalContext#userInitiated(Project, PsiFile)}, but allows inferring types based on the context in which
 	 * the analyzed code was called or may be called. Since this is basically guesswork, the results should be used only for code completion.
 	 */
-	public static TypeEvalContext codeCompletion(@Nonnull final Project project, @Nullable final PsiFile origin)
+	public static TypeEvalContext codeCompletion(@Nonnull Project project, @Nullable PsiFile origin)
 	{
 		return getContextFromCache(project, new TypeEvalContext(true, true, true, origin));
 	}
@@ -116,7 +116,7 @@ public class TypeEvalContext
 	 * <p>
 	 * For code completion see {@link TypeEvalContext#codeCompletion(Project, PsiFile)}.
 	 */
-	public static TypeEvalContext userInitiated(@Nonnull final Project project, @Nullable final PsiFile origin)
+	public static TypeEvalContext userInitiated(@Nonnull Project project, @Nullable PsiFile origin)
 	{
 		return getContextFromCache(project, new TypeEvalContext(true, true, false, origin));
 	}
@@ -127,7 +127,7 @@ public class TypeEvalContext
 	 * <p>
 	 * Inspections should not create a new type evaluation context. They should re-use the context of the inspection session.
 	 */
-	public static TypeEvalContext codeAnalysis(@Nonnull final Project project, @Nullable final PsiFile origin)
+	public static TypeEvalContext codeAnalysis(@Nonnull Project project, @Nullable PsiFile origin)
 	{
 		return getContextFromCache(project, new TypeEvalContext(false, false, false, origin));
 	}
@@ -139,9 +139,9 @@ public class TypeEvalContext
 	 * @param project pass project here to enable cache. Pass null if you do not have any project.
 	 *                <strong>Always</strong> do your best to pass project here: it increases performance!
 	 */
-	public static TypeEvalContext codeInsightFallback(@Nullable final Project project)
+	public static TypeEvalContext codeInsightFallback(@Nullable Project project)
 	{
-		final TypeEvalContext anchor = new TypeEvalContext(false, false, false, null);
+		TypeEvalContext anchor = new TypeEvalContext(false, false, false, null);
 		if(project != null)
 		{
 			return getContextFromCache(project, anchor);
@@ -154,7 +154,7 @@ public class TypeEvalContext
 	 * <p>
 	 * Should be used only when normal code insight context is not enough for getting good results.
 	 */
-	public static TypeEvalContext deepCodeInsight(@Nonnull final Project project)
+	public static TypeEvalContext deepCodeInsight(@Nonnull Project project)
 	{
 		return getContextFromCache(project, new TypeEvalContext(false, true, false, null));
 	}
@@ -168,7 +168,7 @@ public class TypeEvalContext
 	 * @see TypeEvalContextCache#getContext(TypeEvalContext)
 	 */
 	@Nonnull
-	private static TypeEvalContext getContextFromCache(@Nonnull final Project project, @Nonnull final TypeEvalContext context)
+	private static TypeEvalContext getContextFromCache(@Nonnull Project project, @Nonnull TypeEvalContext context)
 	{
 		return ServiceManager.getService(project, TypeEvalContextCache.class).getContext(context);
 	}
@@ -217,9 +217,9 @@ public class TypeEvalContext
 	}
 
 	@Nullable
-	public PyType getType(@Nonnull final PyTypedElement element)
+	public PyType getType(@Nonnull PyTypedElement element)
 	{
-		final Set<PyTypedElement> evaluating = myEvaluating.get();
+		Set<PyTypedElement> evaluating = myEvaluating.get();
 		if(evaluating.contains(element))
 		{
 			return null;
@@ -231,12 +231,12 @@ public class TypeEvalContext
 			{
 				if(myEvaluated.containsKey(element))
 				{
-					final PyType type = myEvaluated.get(element);
+					PyType type = myEvaluated.get(element);
 					assertValid(type, element);
 					return type;
 				}
 			}
-			final PyType type = element.getType(this, Key.INSTANCE);
+			PyType type = element.getType(this, Key.INSTANCE);
 			assertValid(type, element);
 			synchronized(myEvaluated)
 			{
@@ -251,9 +251,9 @@ public class TypeEvalContext
 	}
 
 	@Nullable
-	public PyType getReturnType(@Nonnull final PyCallable callable)
+	public PyType getReturnType(@Nonnull PyCallable callable)
 	{
-		final Set<PyCallable> evaluating = myEvaluatingReturn.get();
+		Set<PyCallable> evaluating = myEvaluatingReturn.get();
 		if(evaluating.contains(callable))
 		{
 			return null;
@@ -265,12 +265,12 @@ public class TypeEvalContext
 			{
 				if(myEvaluatedReturn.containsKey(callable))
 				{
-					final PyType type = myEvaluatedReturn.get(callable);
+					PyType type = myEvaluatedReturn.get(callable);
 					assertValid(type, callable);
 					return type;
 				}
 			}
-			final PyType type = callable.getReturnType(this, Key.INSTANCE);
+			PyType type = callable.getReturnType(this, Key.INSTANCE);
 			assertValid(type, callable);
 			synchronized(myEvaluatedReturn)
 			{

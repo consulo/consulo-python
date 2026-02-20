@@ -55,9 +55,9 @@ public class PyExternalProcessException extends Exception {
 
   @Override
   public String toString() {
-    final StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder();
     b.append("The following command was executed:\n\n");
-    final String command = getName() + " " + StringUtil.join(getArgs(), " ");
+    String command = getName() + " " + StringUtil.join(getArgs(), " ");
     b.append(command);
     b.append("\n\n");
     b.append("The error output of the command:\n\n");
@@ -86,8 +86,8 @@ public class PyExternalProcessException extends Exception {
 
   @Nonnull
   private static String stripLinesWithoutLineFeeds(@Nonnull String s) {
-    final String[] lines = WITH_CR_DELIMITER_PATTERN.split(s);
-    final List<String> result = new ArrayList<String>();
+    String[] lines = WITH_CR_DELIMITER_PATTERN.split(s);
+    List<String> result = new ArrayList<String>();
     for (String line : lines) {
       if (!line.endsWith("\r")) {
         result.add(line);

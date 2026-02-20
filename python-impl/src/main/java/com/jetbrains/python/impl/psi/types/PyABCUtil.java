@@ -36,7 +36,7 @@ public class PyABCUtil
 
 	public static boolean isSubclass(@Nonnull PyClass subClass, @Nonnull PyClass superClass, @Nullable TypeEvalContext context)
 	{
-		final String superName = superClass.getName();
+		String superName = superClass.getName();
 		if(superName != null)
 		{
 			return isSubclass(subClass, superName, true, context);
@@ -59,8 +59,8 @@ public class PyABCUtil
 		{
 			return hasMethod(subClass, PyNames.HASH, inherited, context);
 		}
-		final boolean hasIter = hasMethod(subClass, PyNames.ITER, inherited, context);
-		final boolean hasGetItem = hasMethod(subClass, PyNames.GETITEM, inherited, context);
+		boolean hasIter = hasMethod(subClass, PyNames.ITER, inherited, context);
+		boolean hasGetItem = hasMethod(subClass, PyNames.GETITEM, inherited, context);
 		if(PyNames.ITERABLE.equals(superClassName))
 		{
 			return hasIter || hasGetItem;
@@ -69,12 +69,12 @@ public class PyABCUtil
 		{
 			return (hasIter && (hasMethod(subClass, PyNames.NEXT, inherited, context) || hasMethod(subClass, PyNames.DUNDER_NEXT, inherited, context))) || hasGetItem;
 		}
-		final boolean isSized = hasMethod(subClass, PyNames.LEN, inherited, context);
+		boolean isSized = hasMethod(subClass, PyNames.LEN, inherited, context);
 		if(PyNames.SIZED.equals(superClassName))
 		{
 			return isSized;
 		}
-		final boolean isContainer = hasMethod(subClass, PyNames.CONTAINS, inherited, context);
+		boolean isContainer = hasMethod(subClass, PyNames.CONTAINS, inherited, context);
 		if(PyNames.CONTAINER.equals(superClassName))
 		{
 			return isContainer;
@@ -89,8 +89,8 @@ public class PyABCUtil
 		}
 		if(PyNames.MUTABLE_MAPPING.equals(superClassName))
 		{
-			final boolean hasSetItem = hasMethod(subClass, PyNames.SETITEM, inherited, context);
-			final boolean hasUpdate = hasMethod(subClass, PyNames.UPDATE, inherited, context);
+			boolean hasSetItem = hasMethod(subClass, PyNames.SETITEM, inherited, context);
+			boolean hasUpdate = hasMethod(subClass, PyNames.UPDATE, inherited, context);
 			return isSized && hasIter && isContainer && hasGetItem && hasSetItem && hasUpdate;
 		}
 		if(PyNames.ABC_SET.equals(superClassName))
@@ -135,14 +135,14 @@ public class PyABCUtil
 		}
 		if(type instanceof PyClassType)
 		{
-			final PyClassType classType = (PyClassType) type;
-			final PyClass pyClass = classType.getPyClass();
+			PyClassType classType = (PyClassType) type;
+			PyClass pyClass = classType.getPyClass();
 			if(classType.isDefinition())
 			{
-				final PyClassLikeType metaClassType = classType.getMetaClassType(context, true);
+				PyClassLikeType metaClassType = classType.getMetaClassType(context, true);
 				if(metaClassType instanceof PyClassType)
 				{
-					final PyClassType metaClass = (PyClassType) metaClassType;
+					PyClassType metaClass = (PyClassType) metaClassType;
 					return isSubclass(metaClass.getPyClass(), superClassName, true, context);
 				}
 			}
@@ -153,7 +153,7 @@ public class PyABCUtil
 		}
 		if(type instanceof PyUnionType)
 		{
-			final PyUnionType unionType = (PyUnionType) type;
+			PyUnionType unionType = (PyUnionType) type;
 			for(PyType m : unionType.getMembers())
 			{
 				if(m != null)

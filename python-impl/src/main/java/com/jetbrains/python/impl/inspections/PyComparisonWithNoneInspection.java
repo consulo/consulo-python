@@ -60,9 +60,9 @@ public class PyComparisonWithNoneInspection extends PyInspection {
 
         @Override
         public void visitPyBinaryExpression(PyBinaryExpression node) {
-            final PyExpression rightExpression = node.getRightExpression();
+            PyExpression rightExpression = node.getRightExpression();
             if ((rightExpression instanceof PyReferenceExpression && PyNames.NONE.equals(rightExpression.getText())) || rightExpression instanceof PyNoneLiteralExpression) {
-                final PyElementType operator = node.getOperator();
+                PyElementType operator = node.getOperator();
                 if (operator == PyTokenTypes.EQEQ || operator == PyTokenTypes.NE || operator == PyTokenTypes.NE_OLD) {
                     PsiReference reference = node.getReference();
                     assert reference != null;

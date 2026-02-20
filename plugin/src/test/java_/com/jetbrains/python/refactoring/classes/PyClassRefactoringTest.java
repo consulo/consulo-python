@@ -18,16 +18,16 @@ public abstract class PyClassRefactoringTest extends PyTestCase {
     return findMethod(className, memberName.substring(1));
   }
 
-  private PyFunction findMethod(final String className, final String name) {
-    final PyClass clazz = findClass(className);
-    final PyFunction method = clazz.findMethodByName(name, false, null);
+  private PyFunction findMethod(String className, String name) {
+    PyClass clazz = findClass(className);
+    PyFunction method = clazz.findMethodByName(name, false, null);
     assertNotNull(method);
     return method;
   }
 
-  protected PyClass findClass(final String name) {
-    final Project project = myFixture.getProject();
-    final Collection<PyClass> classes = PyClassNameIndex.find(name, project, false);
+  protected PyClass findClass(String name) {
+    Project project = myFixture.getProject();
+    Collection<PyClass> classes = PyClassNameIndex.find(name, project, false);
     assertEquals(1, classes.size());
     return classes.iterator().next();
   }

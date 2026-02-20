@@ -33,7 +33,7 @@ public abstract class RestRefereneceCompletionTest extends RestFixtureTestCase {
   }
 
   public void testAlreadyFilled() {
-    final String path = "/completion/reference/alreadyFilled.rst";
+    String path = "/completion/reference/alreadyFilled.rst";
     myFixture.configureByFile(path);
     LookupElement[] lookups = myFixture.completeBasic();
     assertNotNull(lookups);
@@ -41,7 +41,7 @@ public abstract class RestRefereneceCompletionTest extends RestFixtureTestCase {
   }
 
   private void doTest() {
-    final String path = "/completion/reference/" + getTestName(true);
+    String path = "/completion/reference/" + getTestName(true);
     myFixture.configureByFile(path + ".rst");
     myFixture.completeBasic();
     myFixture.checkResultByFile(path + ".after.rst");

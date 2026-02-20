@@ -68,8 +68,8 @@ public class PyOldStyleClassesInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyClass(final PyClass node) {
-            final List<PyClassLikeType> expressions = node.getSuperClassTypes(myTypeEvalContext);
+        public void visitPyClass(PyClass node) {
+            List<PyClassLikeType> expressions = node.getSuperClassTypes(myTypeEvalContext);
             List<LocalQuickFix> quickFixes = Lists.<LocalQuickFix>newArrayList(new PyConvertToNewStyleQuickFix());
             if (!expressions.isEmpty()) {
                 quickFixes.add(new PyChangeBaseClassQuickFix());
@@ -88,7 +88,7 @@ public class PyOldStyleClassesInspection extends PyInspection {
                 }
                 for (PyFunction attr : node.getMethods()) {
                     if (PyNames.GETATTRIBUTE.equals(attr.getName())) {
-                        final ASTNode nameNode = attr.getNameNode();
+                        ASTNode nameNode = attr.getNameNode();
                         assert nameNode != null;
                         registerProblem(
                             nameNode.getPsi(),
@@ -104,15 +104,15 @@ public class PyOldStyleClassesInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyCallExpression(final PyCallExpression node) {
+        public void visitPyCallExpression(PyCallExpression node) {
             PyClass klass = PsiTreeUtil.getParentOfType(node, PyClass.class);
             if (klass != null && !klass.isNewStyleClass(myTypeEvalContext)) {
-                final List<PyClassLikeType> types = klass.getSuperClassTypes(myTypeEvalContext);
+                List<PyClassLikeType> types = klass.getSuperClassTypes(myTypeEvalContext);
                 for (PyClassLikeType type : types) {
                     if (type == null) {
                         return;
                     }
-                    final String qName = type.getClassQName();
+                    String qName = type.getClassQName();
                     if (qName != null && qName.contains("PyQt")) {
                         return;
                     }
@@ -126,7 +126,7 @@ public class PyOldStyleClassesInspection extends PyInspection {
                 }
 
                 if (PyUtil.isSuperCall(node)) {
-                    final PyExpression callee = node.getCallee();
+                    PyExpression callee = node.getCallee();
                     if (callee != null) {
                         registerProblem(
                             callee,

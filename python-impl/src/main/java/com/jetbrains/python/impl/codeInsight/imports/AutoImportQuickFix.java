@@ -143,16 +143,16 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
             myImports.isEmpty()) {
             return false;
         }
-        final PsiElement element = getStartElement();
+        PsiElement element = getStartElement();
         PyPsiUtils.assertValid(element);
         if (element == null || !element.isValid()) {
             return false;
         }
-        final PyElement pyElement = as(element, PyElement.class);
+        PyElement pyElement = as(element, PyElement.class);
         if (pyElement == null || !myInitialName.equals(pyElement.getName())) {
             return false;
         }
-        final PsiReference reference = findOriginalReference(element);
+        PsiReference reference = findOriginalReference(element);
         if (reference == null || isResolved(reference)) {
             return false;
         }
@@ -160,7 +160,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
             return false; // we cannot be qualified
         }
 
-        final String message = AutoImportHelper.getInstance(element.getProject()).getImportMessage(
+        String message = AutoImportHelper.getInstance(element.getProject()).getImportMessage(
             myImports.size() > 1,
             ImportCandidateHolder.getQualifiedName(
                 myInitialName,
@@ -169,7 +169,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
                     ()
             )
         );
-        final ImportFromExistingAction action =
+        ImportFromExistingAction action =
             new ImportFromExistingAction(element, myImports, myInitialName, myUseQualifiedImport, false);
         action.onDone(() -> myExpended = true);
         HintManager.getInstance().showQuestionHint(editor, message, element.getTextOffset(), element.getTextRange().getEndOffset(), action);
@@ -177,7 +177,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
     }
 
     public boolean isAvailable() {
-        final PsiElement element = getStartElement();
+        PsiElement element = getStartElement();
         if (element == null) {
             return false;
         }
@@ -192,7 +192,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
 
     public void invoke(PsiFile file) throws IncorrectOperationException {
         // make sure file is committed, writable, etc
-        final PsiElement startElement = getStartElement();
+        PsiElement startElement = getStartElement();
         if (startElement == null) {
             return;
         }
@@ -200,7 +200,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
             return;
         }
-        final PsiReference reference = findOriginalReference(startElement);
+        PsiReference reference = findOriginalReference(startElement);
         if (reference == null || isResolved(reference)) {
             return;
         }

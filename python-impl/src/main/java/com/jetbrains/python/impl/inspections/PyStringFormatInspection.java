@@ -60,8 +60,8 @@ public class PyStringFormatInspection extends PyInspection {
     @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull final ProblemsHolder holder,
-        final boolean isOnTheFly,
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
         @Nonnull LocalInspectionToolSession session,
         Object state
     ) {
@@ -102,13 +102,13 @@ public class PyStringFormatInspection extends PyInspection {
             }
 
             // return number of arguments or -1 if it can not be computed
-            private int inspectArguments(@Nullable final PyExpression rightExpression, final PsiElement problemTarget) {
-                final Class[] SIMPLE_RHS_EXPRESSIONS = {
+            private int inspectArguments(@Nullable PyExpression rightExpression, PsiElement problemTarget) {
+                Class[] SIMPLE_RHS_EXPRESSIONS = {
                     PyLiteralExpression.class, PySubscriptionExpression.class, PyBinaryExpression.class, PyConditionalExpression.class
                 };
-                final Class[] LIST_LIKE_EXPRESSIONS = {PyListLiteralExpression.class, PyListCompExpression.class};
-                final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(problemTarget);
-                final PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(myTypeEvalContext);
+                Class[] LIST_LIKE_EXPRESSIONS = {PyListLiteralExpression.class, PyListCompExpression.class};
+                PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(problemTarget);
+                PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(myTypeEvalContext);
 
                 //in case tuple multiplies integer PY-4647
                 if (rightExpression instanceof PyBinaryExpression) {
@@ -125,7 +125,7 @@ public class PyStringFormatInspection extends PyInspection {
                         }
                     }
                 }
-                final String s = myFormatSpec.get("1");
+                String s = myFormatSpec.get("1");
                 if (PyUtil.instanceOf(rightExpression, SIMPLE_RHS_EXPRESSIONS)) {
                     if (s != null) {
                         assert rightExpression != null;
@@ -135,8 +135,8 @@ public class PyStringFormatInspection extends PyInspection {
                             for (int i = 0; i <= tuple_type.getElementCount(); i += 1) {
                                 PyType elementType = tuple_type.getElementType(i);
                                 if (elementType != null) {
-                                    final String typeName = myFormatSpec.get(String.valueOf(i + 1));
-                                    final PyType type = typeName != null ? PyTypeParser.getTypeByName(problemTarget, typeName) : null;
+                                    String typeName = myFormatSpec.get(String.valueOf(i + 1));
+                                    PyType type = typeName != null ? PyTypeParser.getTypeByName(problemTarget, typeName) : null;
                                     checkTypeCompatible(problemTarget, elementType, type);
                                 }
                             }
@@ -153,7 +153,7 @@ public class PyStringFormatInspection extends PyInspection {
                         return -1;
                     }
 
-                    final PsiElement pyElement =
+                    PsiElement pyElement =
                         ((PyReferenceExpression) rightExpression).followAssignmentsChain(resolveContext).getElement();
                     if (pyElement == rightExpression || !(pyElement instanceof PyExpression)) {
                         return -1;
@@ -164,7 +164,7 @@ public class PyStringFormatInspection extends PyInspection {
                     return inspectArguments((PyExpression) pyElement, problemTarget);
                 }
                 else if (rightExpression instanceof PyCallExpression) {
-                    final PyCallable callable = ((PyCallExpression) rightExpression).resolveCalleeFunction(resolveContext);
+                    PyCallable callable = ((PyCallExpression) rightExpression).resolveCalleeFunction(resolveContext);
                     // TODO: Switch to Callable.getReturnType()
                     if (callable instanceof PyFunction && myTypeEvalContext.maySwitchToAST((PyFunction) callable)) {
                         PyStatementList statementList = ((PyFunction) callable).getStatementList();
@@ -190,14 +190,14 @@ public class PyStringFormatInspection extends PyInspection {
                     return -1;
                 }
                 else if (rightExpression instanceof PyParenthesizedExpression) {
-                    final PyExpression rhs = ((PyParenthesizedExpression) rightExpression).getContainedExpression();
+                    PyExpression rhs = ((PyParenthesizedExpression) rightExpression).getContainedExpression();
                     return inspectArguments(rhs, rhs);
                 }
                 else if (rightExpression instanceof PyTupleExpression) {
-                    final PyExpression[] expressions = ((PyTupleExpression) rightExpression).getElements();
+                    PyExpression[] expressions = ((PyTupleExpression) rightExpression).getElements();
                     int i = 1;
                     for (PyExpression expression : expressions) {
-                        final String formatSpec = myFormatSpec.get(Integer.toString(i));
+                        String formatSpec = myFormatSpec.get(Integer.toString(i));
                         if (formatSpec != null) {
                             checkExpressionType(expression, formatSpec, expression);
                         }
@@ -217,10 +217,10 @@ public class PyStringFormatInspection extends PyInspection {
                     }
                 }
                 else if (rightExpression instanceof PySliceExpression && s != null) {
-                    final PyType type = myTypeEvalContext.getType(((PySliceExpression) rightExpression).getOperand());
-                    final PyType stringType =
+                    PyType type = myTypeEvalContext.getType(((PySliceExpression) rightExpression).getOperand());
+                    PyType stringType =
                         PyBuiltinCache.getInstance(rightExpression).getStringType(LanguageLevel.forElement(rightExpression));
-                    final PyType listType = PyBuiltinCache.getInstance(rightExpression).getListType();
+                    PyType listType = PyBuiltinCache.getInstance(rightExpression).getListType();
 
                     if (type == null || PyTypeChecker.match(listType, type, myTypeEvalContext)
                         || PyTypeChecker.match(stringType, type, myTypeEvalContext)) {
@@ -298,7 +298,7 @@ public class PyStringFormatInspection extends PyInspection {
                     pyElement = rightExpression;
                 }
 
-                final PyKeyValueExpression[] expressions = ((PyDictLiteralExpression) pyElement).getElements();
+                PyKeyValueExpression[] expressions = ((PyDictLiteralExpression) pyElement).getElements();
                 if (myUsedMappingKeys.isEmpty()) {
                     if (myExpectedArguments > 0) {
                         if (myExpectedArguments == (expressions.length + additionalExpressions.size())) {
@@ -316,12 +316,12 @@ public class PyStringFormatInspection extends PyInspection {
                     }
                 }
                 for (PyKeyValueExpression expression : expressions) {
-                    final PyExpression key = expression.getKey();
+                    PyExpression key = expression.getKey();
                     if (key instanceof PyStringLiteralExpression) {
-                        final String name = ((PyStringLiteralExpression) key).getStringValue();
+                        String name = ((PyStringLiteralExpression) key).getStringValue();
                         if (myUsedMappingKeys.get(name) != null) {
                             myUsedMappingKeys.put(name, true);
-                            final PyExpression value = expression.getValue();
+                            PyExpression value = expression.getValue();
                             if (value != null) {
                                 checkExpressionType(value, myFormatSpec.get(name), problemTarget);
                             }
@@ -329,12 +329,12 @@ public class PyStringFormatInspection extends PyInspection {
                     }
                 }
                 for (Map.Entry<PyExpression, PyExpression> expression : additionalExpressions.entrySet()) {
-                    final PyExpression key = expression.getKey();
+                    PyExpression key = expression.getKey();
                     if (key instanceof PyStringLiteralExpression) {
-                        final String name = ((PyStringLiteralExpression) key).getStringValue();
+                        String name = ((PyStringLiteralExpression) key).getStringValue();
                         if (myUsedMappingKeys.get(name) != null) {
                             myUsedMappingKeys.put(name, true);
-                            final PyExpression value = expression.getValue();
+                            PyExpression value = expression.getValue();
                             if (value != null) {
                                 checkExpressionType(value, myFormatSpec.get(name), problemTarget);
                             }
@@ -350,27 +350,27 @@ public class PyStringFormatInspection extends PyInspection {
                 return (expressions.length + additionalExpressions.size());
             }
 
-            private void registerProblem(@Nonnull PsiElement problemTarget, @Nonnull final String message) {
+            private void registerProblem(@Nonnull PsiElement problemTarget, @Nonnull String message) {
                 myProblemRegister = true;
                 myVisitor.registerProblem(problemTarget, message);
             }
 
             private void checkExpressionType(
-                @Nonnull final PyExpression expression,
-                @Nonnull final String expectedTypeName,
+                @Nonnull PyExpression expression,
+                @Nonnull String expectedTypeName,
                 PsiElement problemTarget
             ) {
-                final PyType actual = myTypeEvalContext.getType(expression);
-                final PyType expected = PyTypeParser.getTypeByName(problemTarget, expectedTypeName);
+                PyType actual = myTypeEvalContext.getType(expression);
+                PyType expected = PyTypeParser.getTypeByName(problemTarget, expectedTypeName);
                 if (actual != null) {
                     checkTypeCompatible(problemTarget, actual, expected);
                 }
             }
 
             private void checkTypeCompatible(
-                @Nonnull final PsiElement problemTarget,
-                @Nullable final PyType actual,
-                @Nullable final PyType expected
+                @Nonnull PsiElement problemTarget,
+                @Nullable PyType actual,
+                @Nullable PyType expected
             ) {
                 if (expected != null && "str".equals(expected.getName())) {
                     return;
@@ -380,9 +380,9 @@ public class PyStringFormatInspection extends PyInspection {
                 }
             }
 
-            private void inspectFormat(@Nonnull final PyStringLiteralExpression formatExpression) {
-                final String value = formatExpression.getStringValue();
-                final List<PyStringFormatParser.SubstitutionChunk> chunks = filterSubstitutions(parsePercentFormat(value));
+            private void inspectFormat(@Nonnull PyStringLiteralExpression formatExpression) {
+                String value = formatExpression.getStringValue();
+                List<PyStringFormatParser.SubstitutionChunk> chunks = filterSubstitutions(parsePercentFormat(value));
 
                 // 1. The '%' character
                 //  Skip the first item in the sections, it's always empty
@@ -390,7 +390,7 @@ public class PyStringFormatInspection extends PyInspection {
                 myUsedMappingKeys.clear();
 
                 // if use mapping keys
-                final boolean mapping = chunks.size() > 0 && chunks.get(0).getMappingKey() != null;
+                boolean mapping = chunks.size() > 0 && chunks.get(0).getMappingKey() != null;
                 for (int i = 0; i < chunks.size(); ++i) {
                     PyStringFormatParser.SubstitutionChunk chunk = chunks.get(i);
 
@@ -420,7 +420,7 @@ public class PyStringFormatInspection extends PyInspection {
                 }
             }
 
-            private void inspectWidth(@Nonnull final PyStringLiteralExpression formatExpression, String width) {
+            private void inspectWidth(@Nonnull PyStringLiteralExpression formatExpression, String width) {
                 if ("*".equals(width)) {
                     ++myExpectedArguments;
                     if (myUsedMappingKeys.size() > 0) {
@@ -433,7 +433,7 @@ public class PyStringFormatInspection extends PyInspection {
                 return myProblemRegister;
             }
 
-            private void inspectValues(@Nullable final PyExpression rightExpression) {
+            private void inspectValues(@Nullable PyExpression rightExpression) {
                 if (rightExpression == null) {
                     return;
                 }
@@ -441,7 +441,7 @@ public class PyStringFormatInspection extends PyInspection {
                     inspectValues(((PyParenthesizedExpression) rightExpression).getContainedExpression());
                 }
                 else {
-                    final PyType type = myTypeEvalContext.getType(rightExpression);
+                    PyType type = myTypeEvalContext.getType(rightExpression);
                     if (type != null) {
                         if (myUsedMappingKeys.size() > 0 && !("dict".equals(type.getName()))) {
                             registerProblem(rightExpression, PyLocalize.inspFormatRequiresMapping().get());
@@ -452,8 +452,8 @@ public class PyStringFormatInspection extends PyInspection {
                 }
             }
 
-            private void inspectArgumentsNumber(@Nonnull final PyExpression rightExpression) {
-                final int arguments = inspectArguments(rightExpression, rightExpression);
+            private void inspectArgumentsNumber(@Nonnull PyExpression rightExpression) {
+                int arguments = inspectArguments(rightExpression, rightExpression);
                 if (myUsedMappingKeys.isEmpty() && arguments >= 0) {
                     if (myExpectedArguments < arguments) {
                         registerProblem(rightExpression, PyLocalize.inspTooManyArgsForFmtString().get());
@@ -465,15 +465,15 @@ public class PyStringFormatInspection extends PyInspection {
             }
         }
 
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
         @Override
-        public void visitPyBinaryExpression(final PyBinaryExpression node) {
+        public void visitPyBinaryExpression(PyBinaryExpression node) {
             if (node.getLeftExpression() instanceof PyStringLiteralExpression && node.isOperator("%")) {
-                final Inspection inspection = new Inspection(this, myTypeEvalContext);
-                final PyStringLiteralExpression literalExpression = (PyStringLiteralExpression) node.getLeftExpression();
+                Inspection inspection = new Inspection(this, myTypeEvalContext);
+                PyStringLiteralExpression literalExpression = (PyStringLiteralExpression) node.getLeftExpression();
                 inspection.inspectFormat(literalExpression);
                 if (inspection.isProblem()) {
                     return;

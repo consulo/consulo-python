@@ -66,7 +66,7 @@ public class PyNestedDecoratorsInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyFunction(final PyFunction node) {
+        public void visitPyFunction(PyFunction node) {
             PyDecoratorList decolist = node.getDecoratorList();
             if (decolist != null) {
                 PyDecorator[] decos = decolist.getDecorators();

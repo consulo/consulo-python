@@ -19,7 +19,7 @@ public abstract class PythonRunConfigurationTest extends PyCommandLineTestCase {
     PythonUnitTestRunConfiguration configuration = createConfiguration(PythonTestConfigurationType.getInstance(),
                                                                        PythonUnitTestRunConfiguration.class);
     configuration.setScriptName(PY_SCRIPT);
-    final List<String> params = buildRunCommandLine(configuration);
+    List<String> params = buildRunCommandLine(configuration);
     Assert.assertTrue(params.get(0).endsWith("utrunner.py"));
     Assert.assertTrue(params.get(1).equals(PY_SCRIPT));
   }
@@ -28,8 +28,8 @@ public abstract class PythonRunConfigurationTest extends PyCommandLineTestCase {
     PythonRunConfiguration configuration = createConfiguration(PythonConfigurationType.getInstance(),
                                                                PythonRunConfiguration.class);
     configuration.setScriptName(PY_SCRIPT);
-    final List<String> params = buildDebugCommandLine(configuration);
-    final int index = PyCommandLineTestCase.verifyPyDevDParameters(params);
+    List<String> params = buildDebugCommandLine(configuration);
+    int index = PyCommandLineTestCase.verifyPyDevDParameters(params);
     Assert.assertEquals(PY_SCRIPT, params.get(index));
   }
 }

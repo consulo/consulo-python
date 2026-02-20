@@ -76,7 +76,7 @@ public class DocStringUtil {
    */
   @Nonnull
   public static StructuredDocString parse(@Nonnull String text, @Nullable PsiElement anchor) {
-    final DocStringFormat format = guessDocStringFormat(text, anchor);
+    DocStringFormat format = guessDocStringFormat(text, anchor);
     return parseDocStringContent(format, text);
   }
 
@@ -138,7 +138,7 @@ public class DocStringUtil {
 
   @Nonnull
   private static Substring stripPrefixAndQuotes(@Nonnull String text) {
-    final TextRange contentRange = PyStringLiteralExpressionImpl.getNodeTextRange(text);
+    TextRange contentRange = PyStringLiteralExpressionImpl.getNodeTextRange(text);
     return new Substring(text, contentRange.getStartOffset(), contentRange.getEndOffset());
   }
 
@@ -172,7 +172,7 @@ public class DocStringUtil {
    */
   @Nonnull
   public static DocStringFormat guessDocStringFormat(@Nonnull String text, @Nullable PsiElement anchor) {
-    final DocStringFormat guessed = guessDocStringFormat(text);
+    DocStringFormat guessed = guessDocStringFormat(text);
     return guessed == DocStringFormat.PLAIN && anchor != null ? getConfiguredDocStringFormat(anchor) : guessed;
   }
 
@@ -183,7 +183,7 @@ public class DocStringUtil {
    */
   @Nonnull
   public static DocStringFormat getConfiguredDocStringFormat(@Nonnull PsiElement anchor) {
-    final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(getModuleForElement(anchor));
+    PyDocumentationSettings settings = PyDocumentationSettings.getInstance(getModuleForElement(anchor));
     return settings.getFormatForFile(anchor.getContainingFile());
   }
 
@@ -207,11 +207,11 @@ public class DocStringUtil {
   }
 
   public static boolean isLikeNumpyDocstring(@Nonnull String text) {
-    final String[] lines = StringUtil.splitByLines(text, false);
+    String[] lines = StringUtil.splitByLines(text, false);
     for (int i = 0; i < lines.length; i++) {
-      final String line = lines[i];
+      String line = lines[i];
       if (NumpyDocString.SECTION_HEADER.matcher(line).matches() && i > 0) {
-        @NonNls final String lineBefore = lines[i - 1];
+        @NonNls String lineBefore = lines[i - 1];
         if (SectionBasedDocString.SECTION_NAMES.contains(lineBefore.trim().toLowerCase())) {
           return true;
         }
@@ -242,7 +242,7 @@ public class DocStringUtil {
 
   @Nullable
   public static StructuredDocString getStructuredDocString(@Nonnull PyDocStringOwner owner) {
-    final String value = owner.getDocStringValue();
+    String value = owner.getDocStringValue();
     return value == null ? null : parse(value, owner);
   }
 
@@ -252,9 +252,9 @@ public class DocStringUtil {
    */
   @Nullable
   public static PyStringLiteralExpression getParentDefinitionDocString(@Nonnull PsiElement element) {
-    final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
+    PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
     if (docStringOwner != null) {
-      final PyStringLiteralExpression docString = docStringOwner.getDocStringExpression();
+      PyStringLiteralExpression docString = docStringOwner.getDocStringExpression();
       if (PsiTreeUtil.isAncestor(docString, element, false)) {
         return docString;
       }
@@ -275,8 +275,8 @@ public class DocStringUtil {
   @Nullable
   public static String getAttributeDocComment(@Nonnull PyTargetExpression attr) {
     if (attr.getParent() instanceof PyAssignmentStatement) {
-      final PyAssignmentStatement assignment = (PyAssignmentStatement)attr.getParent();
-      final PsiElement prevSibling = PyPsiUtils.getPrevNonWhitespaceSibling(assignment);
+      PyAssignmentStatement assignment = (PyAssignmentStatement)attr.getParent();
+      PsiElement prevSibling = PyPsiUtils.getPrevNonWhitespaceSibling(assignment);
       if (prevSibling instanceof PsiComment && prevSibling.getText().startsWith("#:")) {
         return prevSibling.getText().substring(2);
       }
@@ -285,18 +285,18 @@ public class DocStringUtil {
   }
 
   public static boolean isVariableDocString(@Nonnull PyStringLiteralExpression expr) {
-    final PsiElement parent = expr.getParent();
+    PsiElement parent = expr.getParent();
     if (!(parent instanceof PyExpressionStatement)) {
       return false;
     }
-    final PsiElement prevElement = PyPsiUtils.getPrevNonCommentSibling(parent, true);
+    PsiElement prevElement = PyPsiUtils.getPrevNonCommentSibling(parent, true);
     if (prevElement instanceof PyAssignmentStatement) {
       if (expr.getText().contains("type:")) {
         return true;
       }
 
-      final PyAssignmentStatement assignmentStatement = (PyAssignmentStatement)prevElement;
-      final ScopeOwner scope = PsiTreeUtil.getParentOfType(prevElement, ScopeOwner.class);
+      PyAssignmentStatement assignmentStatement = (PyAssignmentStatement)prevElement;
+      ScopeOwner scope = PsiTreeUtil.getParentOfType(prevElement, ScopeOwner.class);
       if (scope instanceof PyClass || scope instanceof PyFile) {
         return true;
       }
@@ -333,10 +333,10 @@ public class DocStringUtil {
   }
 
   private static boolean ensureNotPlainDocstringFormatForFile(@Nonnull PsiFile file, @Nonnull Module module) {
-    final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(module);
+    PyDocumentationSettings settings = PyDocumentationSettings.getInstance(module);
     if (settings.isPlain(file)) {
-      final List<String> values = DocStringFormat.ALL_NAMES_BUT_PLAIN;
-      final int i =
+      List<String> values = DocStringFormat.ALL_NAMES_BUT_PLAIN;
+      int i =
         Messages.showChooseDialog("Docstring format:", "Select Docstring Type", ArrayUtil.toStringArray(values), values.get(0), null);
       if (i < 0) {
         return false;

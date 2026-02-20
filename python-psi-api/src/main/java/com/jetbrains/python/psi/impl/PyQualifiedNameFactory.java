@@ -33,7 +33,7 @@ public class PyQualifiedNameFactory {
   public static QualifiedName fromReferenceChain(List<PyExpression> components) {
     List<String> componentNames = new ArrayList<String>(components.size());
     for (PyExpression component : components) {
-      final String refName = (component instanceof PyQualifiedExpression) ? ((PyQualifiedExpression)component).getReferencedName() : null;
+      String refName = (component instanceof PyQualifiedExpression) ? ((PyQualifiedExpression)component).getReferencedName() : null;
       if (refName == null) {
         return null;
       }

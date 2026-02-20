@@ -32,16 +32,16 @@ import consulo.language.psi.PsiFile;
 public class PythonBackspaceHandler extends BackspaceHandlerDelegate {
   private LogicalPosition myTargetPosition;
 
-  public void beforeCharDeleted(final char c, final PsiFile file, final Editor editor) {
+  public void beforeCharDeleted(char c, PsiFile file, Editor editor) {
     if (PythonFileType.INSTANCE != file.getFileType()) return;
     myTargetPosition = EditorBackspaceUtil.getBackspaceUnindentPosition(file, editor);
   }
 
-  public boolean charDeleted(final char c, final PsiFile file, final Editor editor) {
+  public boolean charDeleted(char c, PsiFile file, Editor editor) {
     if (myTargetPosition != null) {
       // Remove all the following spaces before moving to targetPosition
-      final int offset = editor.getCaretModel().getOffset();
-      final int targetOffset = editor.logicalPositionToOffset(myTargetPosition);
+      int offset = editor.getCaretModel().getOffset();
+      int targetOffset = editor.logicalPositionToOffset(myTargetPosition);
       editor.getSelectionModel().setSelection(targetOffset, offset);
       EditorModificationUtil.deleteSelectedText(editor);
       editor.getCaretModel().moveToLogicalPosition(myTargetPosition);

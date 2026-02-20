@@ -41,7 +41,7 @@ public class PyYieldExpressionImpl extends PyElementImpl implements PyYieldExpre
 
   @Override
   public PyExpression getExpression() {
-    final PyExpression[] expressions = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
+    PyExpression[] expressions = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
     return (expressions != null && expressions.length > 0) ? expressions[0] : null;
   }
 
@@ -52,7 +52,7 @@ public class PyYieldExpressionImpl extends PyElementImpl implements PyYieldExpre
 
   @Override
   public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
-    final PyExpression e = getExpression();
+    PyExpression e = getExpression();
     return e != null ? context.getType(e) : null;
   }
 }

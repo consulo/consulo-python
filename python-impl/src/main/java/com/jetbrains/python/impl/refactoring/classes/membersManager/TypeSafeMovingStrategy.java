@@ -53,16 +53,16 @@ class TypeSafeMovingStrategy<T extends PyElement>
 			"unchecked",
 			"rawtypes"
 	}) //We check types at runtime
-	static void moveCheckingTypesAtRunTime(@Nonnull final PyClass from,
-			@Nonnull final MembersManager<?> manager,
-			@Nonnull final Collection<PyMemberInfo<PyElement>> memberInfoCollection,
-			@Nonnull final PyClass... to)
+	static void moveCheckingTypesAtRunTime(@Nonnull PyClass from,
+			@Nonnull MembersManager<?> manager,
+			@Nonnull Collection<PyMemberInfo<PyElement>> memberInfoCollection,
+			@Nonnull PyClass... to)
 	{
 		manager.checkElementTypes((Collection) MembersManager.fetchElements(memberInfoCollection));
 		new TypeSafeMovingStrategy(from, manager, memberInfoCollection, to).moveTyped();
 	}
 
-	private TypeSafeMovingStrategy(@Nonnull final PyClass from, @Nonnull final MembersManager<T> manager, @Nonnull final Collection<PyMemberInfo<T>> memberInfoCollection, @Nonnull final PyClass[] to)
+	private TypeSafeMovingStrategy(@Nonnull PyClass from, @Nonnull MembersManager<T> manager, @Nonnull Collection<PyMemberInfo<T>> memberInfoCollection, @Nonnull PyClass[] to)
 	{
 		myFrom = from;
 		myManager = manager;
@@ -76,20 +76,20 @@ class TypeSafeMovingStrategy<T extends PyElement>
 	 */
 	private void moveTyped()
 	{
-		final Collection<T> elementsCollection = MembersManager.fetchElements(myMemberInfoCollection);
-		final Collection<? extends PyElement> references = myManager.getElementsToStoreReferences(elementsCollection);
+		Collection<T> elementsCollection = MembersManager.fetchElements(myMemberInfoCollection);
+		Collection<? extends PyElement> references = myManager.getElementsToStoreReferences(elementsCollection);
 
 		// Store references to add required imports
-		for(final PyElement element : references)
+		for(PyElement element : references)
 		{
 			PyClassRefactoringUtil.rememberNamedReferences(element, PyNames.CANONICAL_SELF); //"self" is not reference we need to move
 		}
 
 		// Move
-		final Collection<PyElement> newElements = myManager.moveMembers(myFrom, myMemberInfoCollection, myTo);
+		Collection<PyElement> newElements = myManager.moveMembers(myFrom, myMemberInfoCollection, myTo);
 
 		// Restore references to add appropriate imports
-		for(final PyElement element : newElements)
+		for(PyElement element : newElements)
 		{
 			PyClassRefactoringUtil.restoreNamedReferences(element);
 		}

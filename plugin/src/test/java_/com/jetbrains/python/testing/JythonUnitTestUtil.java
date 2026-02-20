@@ -24,8 +24,8 @@ public abstract class JythonUnitTestUtil
 
 	public static ProcessOutput runJython(String workDir, String pythonPath, String... args) throws ExecutionException
 	{
-		final SimpleJavaSdkType sdkType = new SimpleJavaSdkType();
-		final Sdk ideaJdk = sdkType.createJdk("tmp", SystemProperties.getJavaHome());
+		SimpleJavaSdkType sdkType = new SimpleJavaSdkType();
+		Sdk ideaJdk = sdkType.createJdk("tmp", SystemProperties.getJavaHome());
 		SimpleJavaParameters parameters = new SimpleJavaParameters();
 		parameters.setJdk(ideaJdk);
 		parameters.setMainClass("org.python.util.jython");
@@ -38,8 +38,8 @@ public abstract class JythonUnitTestUtil
 		parameters.setWorkingDirectory(workDir);
 
 
-		final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(ideaJdk, parameters, false);
-		final CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
+		GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(ideaJdk, parameters, false);
+		CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
 		return processHandler.runProcess();
 	}
 }

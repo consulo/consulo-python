@@ -50,7 +50,7 @@ public class PyQualifiedNameProvider implements QualifiedNameProvider {
       return ((PyClass)element).getQualifiedName();
     }
     if (element instanceof PyFunction) {
-      final PyClass containingClass = ((PyFunction)element).getContainingClass();
+      PyClass containingClass = ((PyFunction)element).getContainingClass();
       if (containingClass != null) {
         return containingClass.getQualifiedName() + "#" + ((PyFunction)element).getName();
       }
@@ -68,21 +68,21 @@ public class PyQualifiedNameProvider implements QualifiedNameProvider {
     if (aClass != null) {
       return aClass;
     }
-    final Collection<PyFunction> functions = PyFunctionNameIndex.find(fqn, project);
+    Collection<PyFunction> functions = PyFunctionNameIndex.find(fqn, project);
     if (!functions.isEmpty()) {
       return ContainerUtil.getFirstItem(functions);
     }
-    final int sharpIdx = fqn.indexOf("#");
+    int sharpIdx = fqn.indexOf("#");
     if (sharpIdx > -1) {
-      final String className = StringUtil.getPackageName(fqn, '#');
+      String className = StringUtil.getPackageName(fqn, '#');
       aClass = PyClassNameIndex.findClass(className, project);
       if (aClass != null) {
-        final String memberName = StringUtil.getShortName(fqn, '#');
-        final PyClass nestedClass = aClass.findNestedClass(memberName, false);
+        String memberName = StringUtil.getShortName(fqn, '#');
+        PyClass nestedClass = aClass.findNestedClass(memberName, false);
         if (nestedClass != null) {
           return nestedClass;
         }
-        final PyFunction methodByName = aClass.findMethodByName(memberName, false, null);
+        PyFunction methodByName = aClass.findMethodByName(memberName, false, null);
         if (methodByName != null) {
           return methodByName;
         }

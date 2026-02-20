@@ -50,7 +50,7 @@ public class RemovePrefixQuickFix implements LocalQuickFix {
         PsiElement stringLiteralExpression = descriptor.getPsiElement();
         if (stringLiteralExpression instanceof PyStringLiteralExpression) {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-            final int length = PyStringLiteralExpressionImpl.getPrefixLength(stringLiteralExpression.getText());
+            int length = PyStringLiteralExpressionImpl.getPrefixLength(stringLiteralExpression.getText());
             stringLiteralExpression.replace(elementGenerator.createExpressionFromText(stringLiteralExpression.getText().substring(length)));
         }
     }

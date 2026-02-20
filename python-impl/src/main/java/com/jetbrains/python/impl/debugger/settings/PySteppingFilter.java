@@ -58,7 +58,7 @@ public class PySteppingFilter
 	public String getAbsolutePlatformIndependentFilter(@Nonnull Project project)
 	{
 		StringBuilder resultFilter = new StringBuilder();
-		final String[] filters = myFilter.split(PyDebuggerSettings.FILTERS_DIVIDER);
+		String[] filters = myFilter.split(PyDebuggerSettings.FILTERS_DIVIDER);
 		for(String filter : filters)
 		{
 			if(!(FileUtil.isAbsolutePlatformIndependent(filter) || filter.startsWith("*")))

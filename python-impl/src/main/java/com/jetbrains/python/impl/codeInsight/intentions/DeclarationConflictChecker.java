@@ -56,10 +56,10 @@ public class DeclarationConflictChecker {
   public static List<Pair<PsiElement, PsiElement>> findDefinitions(@Nonnull String name,
                                                                    @Nonnull Collection<PsiReference> references,
                                                                    @Nonnull Set<PsiElement> ignored) {
-    final List<Pair<PsiElement, PsiElement>> conflicts = new ArrayList<>();
+    List<Pair<PsiElement, PsiElement>> conflicts = new ArrayList<>();
     for (PsiReference ref : references) {
-      final PsiElement refElement = ref.getElement();
-      final ScopeOwner owner = ScopeUtil.getScopeOwner(refElement);
+      PsiElement refElement = ref.getElement();
+      ScopeOwner owner = ScopeUtil.getScopeOwner(refElement);
       if (owner != null) {
         for (PsiElement element : PyResolveUtil.resolveLocally(owner, name)) {
           if (!ignored.contains(element)) {

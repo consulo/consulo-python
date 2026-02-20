@@ -42,29 +42,29 @@ public abstract class PyStubsTest extends PyTestCase {
   }
 
   public void testStubStructure() {
-    final PyFile file = getTestFile();
+    PyFile file = getTestFile();
     // vfile is problematic, but we need an SDK to check builtins
-    final Project project = file.getProject();
+    Project project = file.getProject();
 
     try {
       PythonLanguageLevelPusher.setForcedLanguageLevel(project, LanguageLevel.PYTHON26); // we need 2.6+ for @foo.setter
-      final List<PyClass> classes = file.getTopLevelClasses();
+      List<PyClass> classes = file.getTopLevelClasses();
       assertEquals(3, classes.size());
       PyClass pyClass = classes.get(0);
       assertEquals("FooClass", pyClass.getName());
       assertEquals("StubStructure.FooClass", pyClass.getQualifiedName());
 
-      final List<PyTargetExpression> attrs = pyClass.getClassAttributes();
+      List<PyTargetExpression> attrs = pyClass.getClassAttributes();
       assertEquals(2, attrs.size());
       assertEquals("staticField", attrs.get(0).getName());
       assertTrue(attrs.get(0).getAssignedQName().matches("deco"));
 
-      final PyFunction[] methods = pyClass.getMethods();
+      PyFunction[] methods = pyClass.getMethods();
       assertEquals(2, methods.length);
       assertEquals("__init__", methods [0].getName());
       assertEquals("fooFunction", methods [1].getName());
 
-      final PyParameter[] parameters = methods[1].getParameterList().getParameters();
+      PyParameter[] parameters = methods[1].getParameterList().getParameters();
       assertFalse(parameters [0].hasDefaultValue());
       assertTrue(parameters [1].hasDefaultValue());
 
@@ -82,11 +82,11 @@ public abstract class PyStubsTest extends PyTestCase {
       assertEquals("deco", deco.getName());
       assertNotParsed(file);
 
-      final List<PyTargetExpression> instanceAttrs = pyClass.getInstanceAttributes();
+      List<PyTargetExpression> instanceAttrs = pyClass.getInstanceAttributes();
       assertEquals(1, instanceAttrs.size());
       assertEquals("instanceField", instanceAttrs.get(0).getName());
 
-      final List<PyFunction> functions = file.getTopLevelFunctions();
+      List<PyFunction> functions = file.getTopLevelFunctions();
       assertEquals(2, functions.size()); // "deco" and "topLevelFunction"
       PyFunction func = functions.get(0);
       assertEquals("deco", func.getName());
@@ -94,7 +94,7 @@ public abstract class PyStubsTest extends PyTestCase {
       func = functions.get(1);
       assertEquals("topLevelFunction", func.getName());
 
-      final List<PyTargetExpression> exprs = file.getTopLevelAttributes();
+      List<PyTargetExpression> exprs = file.getTopLevelAttributes();
       assertEquals(2, exprs.size());
       assertEquals("top1", exprs.get(0).getName());
       assertEquals("top2", exprs.get(1).getName());
@@ -133,8 +133,8 @@ public abstract class PyStubsTest extends PyTestCase {
   }
 
   public void testLoadingDeeperTreeRemainsKnownPsiElement() {
-    final PyFile file = getTestFile();
-    final List<PyClass> classes = file.getTopLevelClasses();
+    PyFile file = getTestFile();
+    List<PyClass> classes = file.getTopLevelClasses();
     assertEquals(1, classes.size());
     PyClass pyClass = classes.get(0);
 
@@ -143,18 +143,18 @@ public abstract class PyStubsTest extends PyTestCase {
     assertNotParsed(file);
 
     // load the tree now
-    final PyStatementList statements = pyClass.getStatementList();
+    PyStatementList statements = pyClass.getStatementList();
     assertNotNull(((PyFileImpl)file).getTreeElement());
 
-    final PsiElement[] children = file.getChildren();
+    PsiElement[] children = file.getChildren();
 
     assertEquals(1, children.length);
     assertSame(pyClass, children[0]);
   }
 
   public void testLoadingTreeRetainsKnownPsiElement() {
-    final PyFile file = getTestFile();
-    final List<PyClass> classes = file.getTopLevelClasses();
+    PyFile file = getTestFile();
+    List<PyClass> classes = file.getTopLevelClasses();
     assertEquals(1, classes.size());
     PyClass pyClass = classes.get(0);
 
@@ -162,7 +162,7 @@ public abstract class PyStubsTest extends PyTestCase {
 
     assertNotParsed(file);
 
-    final PsiElement[] children = file.getChildren(); // Load the tree
+    PsiElement[] children = file.getChildren(); // Load the tree
 
     assertNotNull(((PyFileImpl)file).getTreeElement());
     assertEquals(1, children.length);
@@ -170,8 +170,8 @@ public abstract class PyStubsTest extends PyTestCase {
   }
 
   public void testRenamingUpdatesTheStub() {
-    final PyFile file = getTestFile("LoadingTreeRetainsKnownPsiElement.py");
-    final List<PyClass> classes = file.getTopLevelClasses();
+    PyFile file = getTestFile("LoadingTreeRetainsKnownPsiElement.py");
+    List<PyClass> classes = file.getTopLevelClasses();
     assertEquals(1, classes.size());
     final PyClass pyClass = classes.get(0);
 
@@ -181,7 +181,7 @@ public abstract class PyStubsTest extends PyTestCase {
     final PyFileImpl fileImpl = (PyFileImpl)file;
     assertNull(fileImpl.getTreeElement());
 
-    final PsiElement[] children = file.getChildren(); // Load the tree
+    PsiElement[] children = file.getChildren(); // Load the tree
 
     assertNotNull(fileImpl.getTreeElement());
     assertEquals(1, children.length);
@@ -189,7 +189,7 @@ public abstract class PyStubsTest extends PyTestCase {
 
     new WriteCommandAction(myFixture.getProject(), fileImpl) {
       @Override
-      protected void run(final Result result) throws Throwable {
+      protected void run(Result result) throws Throwable {
         pyClass.setName("RenamedClass");
         assertEquals("RenamedClass", pyClass.getName());
       }
@@ -210,78 +210,78 @@ public abstract class PyStubsTest extends PyTestCase {
     fileStub = fileImpl.getStub();
     assertNotNull("After tree element have been unloaded we must be able to create updated stub", fileStub);
 
-    final PyClassStub newclassstub = (PyClassStub)fileStub.getChildrenStubs().get(0);
+    PyClassStub newclassstub = (PyClassStub)fileStub.getChildrenStubs().get(0);
     assertEquals("RenamedClass", newclassstub.getName());
   }
 
   public void testImportStatement() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
+    PyFileImpl file = (PyFileImpl) getTestFile();
 
-    final List<PyFromImportStatement> fromImports = file.getFromImports();
+    List<PyFromImportStatement> fromImports = file.getFromImports();
     assertEquals(1, fromImports.size());
-    final PyFromImportStatement fromImport = fromImports.get(0);
-    final PyImportElement[] importElements = fromImport.getImportElements();
+    PyFromImportStatement fromImport = fromImports.get(0);
+    PyImportElement[] importElements = fromImport.getImportElements();
     assertEquals(1, importElements.length);
     assertEquals("argv", importElements [0].getVisibleName());
     assertFalse(fromImport.isStarImport());
     assertEquals(0, fromImport.getRelativeLevel());
-    final QualifiedName qName = fromImport.getImportSourceQName();
+    QualifiedName qName = fromImport.getImportSourceQName();
     assertSameElements(qName.getComponents(), "sys");
 
-    final List<PyImportElement> importTargets = file.getImportTargets();
+    List<PyImportElement> importTargets = file.getImportTargets();
     assertEquals(1, importTargets.size());
-    final PyImportElement importElement = importTargets.get(0);
-    final QualifiedName importQName = importElement.getImportedQName();
+    PyImportElement importElement = importTargets.get(0);
+    QualifiedName importQName = importElement.getImportedQName();
     assertSameElements(importQName.getComponents(), "os", "path");
 
     assertNotParsed(file);
   }
 
   public void testDunderAll() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final List<String> all = file.getDunderAll();
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    List<String> all = file.getDunderAll();
     assertSameElements(all, "foo", "bar");
     assertNotParsed(file);
   }
 
   public void testDynamicDunderAll() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final List<String> all = file.getDunderAll();
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    List<String> all = file.getDunderAll();
     assertNull(all);
     assertNotParsed(file);
   }
 
   public void testAugAssignDunderAll() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final List<String> all = file.getDunderAll();
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    List<String> all = file.getDunderAll();
     assertNull(all);
     assertNotParsed(file);
   }
 
   public void testDunderAllAsSum() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final List<String> all = file.getDunderAll();
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    List<String> all = file.getDunderAll();
     assertSameElements(all, "md5", "sha1", "algorithms_guaranteed", "algorithms_available");
     assertNotParsed(file);
   }
 
   public void testSlots() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final PyClass pyClass = file.getTopLevelClasses().get(0);
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    PyClass pyClass = file.getTopLevelClasses().get(0);
     assertSameElements(pyClass.getSlots(null), "foo", "bar");
     assertNotParsed(file);
   }
 
   public void testImportInTryExcept() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final PsiElement element = file.findExportedName("sys");
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    PsiElement element = file.findExportedName("sys");
     assertTrue(element != null ? element.toString() : "null", element instanceof PyImportElement);
     assertNotParsed(file);
   }
 
   public void testNameInExcept() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final PsiElement element = file.findExportedName("md5");
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    PsiElement element = file.findExportedName("md5");
     assertTrue(element != null ? element.toString() : "null", element instanceof PyTargetExpression);
     assertNotParsed(file);
   }
@@ -297,22 +297,22 @@ public abstract class PyStubsTest extends PyTestCase {
   }
 
   public void testImportInExcept() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final PsiElement element = file.getElementNamed("tzinfo");
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    PsiElement element = file.getElementNamed("tzinfo");
     assertTrue(element != null ? element.toString() : "null", element instanceof PyClass);
     assertNotParsed(file);
   }
 
 
   public void testImportFeatures() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
+    PyFileImpl file = (PyFileImpl) getTestFile();
     assertTrue(file.hasImportFromFuture(FutureFeature.DIVISION));
     assertTrue(file.hasImportFromFuture(FutureFeature.UNICODE_LITERALS));
     assertNotParsed(file);
   }
 
   public void testIfNameMain() {  // PY-4008
-    final PyFileImpl file = (PyFileImpl) getTestFile();
+    PyFileImpl file = (PyFileImpl) getTestFile();
     ensureVariableNotInIndex("xyzzy");
     assertNotParsed(file);
     file.acceptChildren(new PyRecursiveElementVisitor());  // assert no error on switching from stub to AST
@@ -324,19 +324,19 @@ public abstract class PyStubsTest extends PyTestCase {
   }
 
   public void testWrappedStaticMethod() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final PyClass pyClass = file.getTopLevelClasses().get(0);
-    final PyFunction[] methods = pyClass.getMethods();
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    PyClass pyClass = file.getTopLevelClasses().get(0);
+    PyFunction[] methods = pyClass.getMethods();
     assertEquals(1, methods.length);
-    final PyFunction.Modifier modifier = methods[0].getModifier();
+    PyFunction.Modifier modifier = methods[0].getModifier();
     assertEquals(PyFunction.Modifier.STATICMETHOD, modifier);
     assertNotParsed(file);
   }
 
   public void testBuiltinAncestor() {
-    final PyFileImpl file = (PyFileImpl) getTestFile();
-    final PyClass pyClass = file.getTopLevelClasses().get(0);
-    final PyClass cls = pyClass.getAncestorClasses(null).iterator().next();
+    PyFileImpl file = (PyFileImpl) getTestFile();
+    PyClass pyClass = file.getTopLevelClasses().get(0);
+    PyClass cls = pyClass.getAncestorClasses(null).iterator().next();
     assertNotNull(cls);
     assertNotParsed(file);
   }
@@ -354,7 +354,7 @@ public abstract class PyStubsTest extends PyTestCase {
     return getTestFile(getTestName(false) + ".py");
   }
 
-  private PyFile getTestFile(final String fileName) {
+  private PyFile getTestFile(String fileName) {
     VirtualFile sourceFile = myFixture.copyFileToProject(fileName);
     assert sourceFile != null;
     PsiFile psiFile = myFixture.getPsiManager().findFile(sourceFile);
@@ -389,11 +389,11 @@ public abstract class PyStubsTest extends PyTestCase {
   }
 
   public void testTargetExpressionDocString() {
-    final PyFile file = getTestFile();
-    final PyClass c = file.findTopLevelClass("C");
+    PyFile file = getTestFile();
+    PyClass c = file.findTopLevelClass("C");
     assertNotNull(c);
-    final PyTargetExpression foo = c.findClassAttribute("foo", false, null);
-    final String docString = foo.getDocStringValue();
+    PyTargetExpression foo = c.findClassAttribute("foo", false, null);
+    String docString = foo.getDocStringValue();
     assertEquals("Foo docstring.", docString);
   }
 }

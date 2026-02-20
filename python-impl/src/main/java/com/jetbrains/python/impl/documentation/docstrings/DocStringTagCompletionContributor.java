@@ -47,12 +47,12 @@ public class DocStringTagCompletionContributor extends CompletionContributor
 			@Override
 			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
 			{
-				final PsiFile file = parameters.getOriginalFile();
+				PsiFile file = parameters.getOriginalFile();
 				DocStringFormat format = DocStringUtil.getConfiguredDocStringFormat(file);
 				if(format == DocStringFormat.EPYTEXT || format == DocStringFormat.REST)
 				{
 					int offset = parameters.getOffset();
-					final String text = file.getText();
+					String text = file.getText();
 					char prefix = format == DocStringFormat.EPYTEXT ? '@' : ':';
 					if(offset > 0)
 					{

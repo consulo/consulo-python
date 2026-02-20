@@ -92,8 +92,8 @@ public abstract class PyMultiFileResolveTest extends PyMultiFileResolveTestCase 
 
   public void testFromPackageImportIntoInit() {  // PY-6305
     myFixture.copyDirectoryToProject("fromPackageImportIntoInit/pack", "pack");
-    final PsiFile psiFile = myFixture.configureByFile("pack/__init__.py");
-    final PsiElement result = doResolve(psiFile);
+    PsiFile psiFile = myFixture.configureByFile("pack/__init__.py");
+    PsiElement result = doResolve(psiFile);
     assertInstanceOf(result, PyFile.class);
     assertEquals("mod.py", ((PyFile)result).getName());
   }
@@ -339,7 +339,7 @@ public abstract class PyMultiFileResolveTest extends PyMultiFileResolveTestCase 
   // PY-10819
   public void testFromPackageModuleImportElementNamedAsModule() {
     assertResolvesTo(PyFunction.class, "foo");
-    final PsiManager psiManager = myFixture.getPsiManager();
+    PsiManager psiManager = myFixture.getPsiManager();
     PyTestCase.assertNotParsed((PyFile)psiManager.findFile(myFixture.findFileInTempDir("p1/__init__.py")));
     PyTestCase.assertNotParsed((PyFile)psiManager.findFile(myFixture.findFileInTempDir("p1/foo.py")));
   }

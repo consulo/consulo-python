@@ -60,18 +60,18 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
             element = element.getParent();
         }
 
-        final Collection<PyElementType> operators = getOperators((PyBinaryExpression) element);
+        Collection<PyElementType> operators = getOperators((PyBinaryExpression) element);
         for (PyElementType operator : operators) {
             if (operator != PyTokenTypes.PLUS) {
                 return false;
             }
         }
 
-        final Collection<PyExpression> expressions = getSimpleExpressions((PyBinaryExpression) element);
+        Collection<PyExpression> expressions = getSimpleExpressions((PyBinaryExpression) element);
         if (expressions.size() == 0) {
             return false;
         }
-        final PyBuiltinCache cache = PyBuiltinCache.getInstance(element);
+        PyBuiltinCache cache = PyBuiltinCache.getInstance(element);
         for (PyExpression expression : expressions) {
             if (expression == null) {
                 return false;
@@ -79,8 +79,8 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
             if (expression instanceof PyStringLiteralExpression) {
                 continue;
             }
-            final PyType type = TypeEvalContext.codeAnalysis(file.getProject(), file).getType(expression);
-            final boolean isStringReference = PyTypeChecker.match(
+            PyType type = TypeEvalContext.codeAnalysis(file.getProject(), file).getType(expression);
+            boolean isStringReference = PyTypeChecker.match(
                 cache.getStringType(LanguageLevel.forElement(expression)),
                 type,
                 TypeEvalContext.codeAnalysis(file.getProject(), file)
@@ -137,22 +137,22 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
         if (element == null) {
             return;
         }
-        final LanguageLevel languageLevel = LanguageLevel.forElement(element);
-        final boolean useFormatMethod = languageLevel.isAtLeast(LanguageLevel.PYTHON27);
+        LanguageLevel languageLevel = LanguageLevel.forElement(element);
+        boolean useFormatMethod = languageLevel.isAtLeast(LanguageLevel.PYTHON27);
 
         Function<String, String> escaper = StringUtil.escaper(false, "\"\'\\");
         StringBuilder stringLiteral = new StringBuilder();
         List<String> parameters = new ArrayList<>();
         Pair<String, String> quotes = Couple.of("\"", "\"");
         boolean quotesDetected = false;
-        final TypeEvalContext context = TypeEvalContext.userInitiated(file.getProject(), file);
+        TypeEvalContext context = TypeEvalContext.userInitiated(file.getProject(), file);
         int paramCount = 0;
         boolean isUnicode = false;
-        final PyClassTypeImpl unicodeType = PyBuiltinCache.getInstance(element).getObjectType("unicode");
+        PyClassTypeImpl unicodeType = PyBuiltinCache.getInstance(element).getObjectType("unicode");
 
         for (PyExpression expression : getSimpleExpressions((PyBinaryExpression) element)) {
             if (expression instanceof PyStringLiteralExpression stringLiteral1) {
-                final PyType type = context.getType(expression);
+                PyType type = context.getType(expression);
                 if (type != null && type.equals(unicodeType)) {
                     isUnicode = true;
                 }
@@ -189,11 +189,11 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
 
             }
             else {
-                final String paramString =
+                String paramString =
                     parameters.size() > 1 ? "(" + StringUtil.join(parameters, ",") + ")" : StringUtil.join(parameters, ",");
                 stringLiteral.append(" % ").append(paramString);
             }
-            final PyExpression expression =
+            PyExpression expression =
                 elementGenerator.createFromText(LanguageLevel.getDefault(), PyExpressionStatement.class, stringLiteral.toString())
                     .getExpression();
             element.replace(expression);

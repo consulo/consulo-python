@@ -33,7 +33,7 @@ public class PyRemoveStatementQuickFix implements LocalQuickFix {
 
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final PyStatement statement = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyStatement.class, false);
+        PyStatement statement = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyStatement.class, false);
         if (statement != null) {
             statement.delete();
         }

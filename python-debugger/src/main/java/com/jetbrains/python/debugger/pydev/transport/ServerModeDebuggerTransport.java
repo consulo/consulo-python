@@ -135,7 +135,7 @@ public class ServerModeDebuggerTransport extends BaseDebuggerTransport
 			{
 				return false;
 			}
-			final OutputStream os = mySocket.getOutputStream();
+			OutputStream os = mySocket.getOutputStream();
 			os.write(packed);
 			os.flush();
 			return true;

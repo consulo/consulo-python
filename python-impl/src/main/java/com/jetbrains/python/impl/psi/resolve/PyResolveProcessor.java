@@ -66,21 +66,21 @@ public class PyResolveProcessor implements PsiScopeProcessor
 	@Override
 	public boolean execute(@Nonnull PsiElement element, @Nonnull ResolveState state)
 	{
-		final PsiNamedElement namedElement = PyUtil.as(element, PsiNamedElement.class);
+		PsiNamedElement namedElement = PyUtil.as(element, PsiNamedElement.class);
 		if(namedElement != null && myName.equals(namedElement.getName()))
 		{
 			return tryAddResult(element, null);
 		}
-		final PyImportedNameDefiner importedNameDefiner = PyUtil.as(element, PyImportedNameDefiner.class);
+		PyImportedNameDefiner importedNameDefiner = PyUtil.as(element, PyImportedNameDefiner.class);
 		if(importedNameDefiner != null)
 		{
-			final List<RatedResolveResult> results = resolveInImportedNameDefiner(importedNameDefiner);
+			List<RatedResolveResult> results = resolveInImportedNameDefiner(importedNameDefiner);
 			if(!results.isEmpty())
 			{
 				boolean cont = true;
 				for(RatedResolveResult result : results)
 				{
-					final PsiElement resolved = result.getElement();
+					PsiElement resolved = result.getElement();
 					if(resolved != null)
 					{
 						cont = tryAddResult(resolved, importedNameDefiner) && cont;
@@ -88,10 +88,10 @@ public class PyResolveProcessor implements PsiScopeProcessor
 				}
 				return cont;
 			}
-			final PyImportElement importElement = PyUtil.as(element, PyImportElement.class);
+			PyImportElement importElement = PyUtil.as(element, PyImportElement.class);
 			if(importElement != null)
 			{
-				final String importName = importElement.getVisibleName();
+				String importName = importElement.getVisibleName();
 				if(myName.equals(importName))
 				{
 					return tryAddResult(null, importElement);
@@ -136,7 +136,7 @@ public class PyResolveProcessor implements PsiScopeProcessor
 	{
 		if(myLocalResolve)
 		{
-			final PyImportElement importElement = PyUtil.as(definer, PyImportElement.class);
+			PyImportElement importElement = PyUtil.as(definer, PyImportElement.class);
 			if(importElement != null)
 			{
 				return ResolveResultList.to(importElement.getElementNamed(myName, false));
@@ -151,12 +151,12 @@ public class PyResolveProcessor implements PsiScopeProcessor
 
 	private boolean tryAddResult(@Nullable PsiElement element, @Nullable PyImportedNameDefiner definer)
 	{
-		final ScopeOwner owner = ScopeUtil.getScopeOwner(definer != null ? definer : element);
+		ScopeOwner owner = ScopeUtil.getScopeOwner(definer != null ? definer : element);
 		if(myOwner == null)
 		{
 			myOwner = owner;
 		}
-		final boolean sameScope = owner == myOwner;
+		boolean sameScope = owner == myOwner;
 		if(sameScope)
 		{
 			// XXX: In 'from foo import foo' inside __init__.py the preferred result is explicitly imported 'foo'

@@ -29,15 +29,15 @@ import javax.swing.*;
 public class PythonDocTestRunConfigurationEditor extends SettingsEditor<PythonDocTestRunConfiguration> {
   private PythonDocTestRunConfigurationForm myForm;
 
-  public PythonDocTestRunConfigurationEditor(final Project project, final PythonDocTestRunConfiguration configuration) {
+  public PythonDocTestRunConfigurationEditor(Project project, PythonDocTestRunConfiguration configuration) {
     myForm = new PythonDocTestRunConfigurationForm(project, configuration);
   }
 
-  protected void resetEditorFrom(final PythonDocTestRunConfiguration config) {
+  protected void resetEditorFrom(PythonDocTestRunConfiguration config) {
     PythonDocTestRunConfiguration.copyParams(config, myForm);
   }
 
-  protected void applyEditorTo(final PythonDocTestRunConfiguration config) throws ConfigurationException {
+  protected void applyEditorTo(PythonDocTestRunConfiguration config) throws ConfigurationException {
     PythonDocTestRunConfiguration.copyParams(myForm, config);
   }
 

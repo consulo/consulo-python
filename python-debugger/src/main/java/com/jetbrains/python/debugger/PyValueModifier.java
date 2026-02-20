@@ -11,7 +11,7 @@ public class PyValueModifier extends XValueModifier {
   private final PyFrameAccessor myDebugProcess;
   private final PyDebugValue myVariable;
 
-  public PyValueModifier(final PyFrameAccessor debugProcess, final PyDebugValue variable) {
+  public PyValueModifier(PyFrameAccessor debugProcess, PyDebugValue variable) {
     myDebugProcess = debugProcess;
     myVariable = variable;
   }

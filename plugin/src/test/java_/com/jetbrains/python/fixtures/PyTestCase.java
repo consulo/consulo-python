@@ -60,7 +60,7 @@ public abstract class PyTestCase extends UsefulTestCase
 		initPlatformPrefix();
 		IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
 		TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(getProjectDescriptor());
-		final IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
+		IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
 		myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(fixture, new LightTempDirTestFixtureImpl(true));
 		myFixture.setUp();
 
@@ -87,7 +87,7 @@ public abstract class PyTestCase extends UsefulTestCase
 		return ourPyDescriptor;
 	}
 
-	protected PsiReference findReferenceBySignature(final String signature)
+	protected PsiReference findReferenceBySignature(String signature)
 	{
 		int pos = findPosBySignature(signature);
 		return findReferenceAt(pos);
@@ -146,10 +146,10 @@ public abstract class PyTestCase extends UsefulTestCase
 		{
 		}
 
-		protected void createLibrary(ModifiableRootModel model, final String name, final String path)
+		protected void createLibrary(ModifiableRootModel model, String name, String path)
 		{
-			final Library.ModifiableModel modifiableModel = model.getModuleLibraryTable().createLibrary(name).getModifiableModel();
-			final VirtualFile home = LocalFileSystem.getInstance().refreshAndFindFileByPath(ContainerPathManager.get().getHomePath() + path);
+			Library.ModifiableModel modifiableModel = model.getModuleLibraryTable().createLibrary(name).getModifiableModel();
+			VirtualFile home = LocalFileSystem.getInstance().refreshAndFindFileByPath(ContainerPathManager.get().getHomePath() + path);
 
 			modifiableModel.addRoot(home, OrderRootType.CLASSES);
 			modifiableModel.commit();

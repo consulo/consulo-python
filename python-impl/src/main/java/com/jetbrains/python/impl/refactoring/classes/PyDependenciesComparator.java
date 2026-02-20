@@ -42,7 +42,7 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 	}
 
 	@Override
-	public int compare(@Nonnull final PyElement o1, @Nonnull final PyElement o2)
+	public int compare(@Nonnull PyElement o1, @Nonnull PyElement o2)
 	{
 		if(depends(o1, o2))
 		{
@@ -56,7 +56,7 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 	}
 
 	@Nonnull
-	private static BlockType getBlockType(@Nonnull final PyElement statement)
+	private static BlockType getBlockType(@Nonnull PyElement statement)
 	{
 		for(BlockType type : BlockType.values())
 		{
@@ -72,9 +72,9 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 	/**
 	 * @return true if first param depends on second.
 	 */
-	public static boolean depends(@Nonnull final PyElement o1, @Nonnull final PyElement o2)
+	public static boolean depends(@Nonnull PyElement o1, @Nonnull PyElement o2)
 	{
-		final DependencyVisitor visitor = new DependencyVisitor(o2);
+		DependencyVisitor visitor = new DependencyVisitor(o2);
 		o1.accept(visitor);
 		return visitor.isDependencyFound();
 	}
@@ -92,7 +92,7 @@ public class PyDependenciesComparator implements Comparator<PyElement>, Serializ
 		@Nonnull
 		private final Class<? extends PyElement> myClass;
 
-		BlockType(@Nonnull final Class<? extends PyElement> aClass)
+		BlockType(@Nonnull Class<? extends PyElement> aClass)
 		{
 			myClass = aClass;
 		}

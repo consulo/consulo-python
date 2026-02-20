@@ -49,9 +49,9 @@ public interface PyType
 	 */
 	@Nullable
 	List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
-			@Nullable final PyExpression location,
-			@Nonnull final AccessDirection direction,
-			@Nonnull final PyResolveContext resolveContext);
+			@Nullable PyExpression location,
+			@Nonnull AccessDirection direction,
+			@Nonnull PyResolveContext resolveContext);
 
 	/**
 	 * Proposes completion variants from type's attributes.

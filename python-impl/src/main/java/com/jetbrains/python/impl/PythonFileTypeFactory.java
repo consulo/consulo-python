@@ -32,7 +32,7 @@ import jakarta.annotation.Nonnull;
 public class PythonFileTypeFactory extends FileTypeFactory
 {
 	@Override
-	public void createFileTypes(@NonNls @Nonnull final FileTypeConsumer consumer)
+	public void createFileTypes(@NonNls @Nonnull FileTypeConsumer consumer)
 	{
 		consumer.consume(PythonFileType.INSTANCE, "py;pyw;");
 		consumer.consume(QtUIFileType.INSTANCE, "ui");

@@ -33,7 +33,7 @@ public abstract class Py3UnresolvedReferencesInspectionTest extends PyTestCase {
     runWithLanguageLevel(LanguageLevel.PYTHON33, new Runnable() {
       @Override
       public void run() {
-        final String testName = getTestName(false);
+        String testName = getTestName(false);
         myFixture.copyDirectoryToProject(TEST_DIRECTORY + testName, "");
         myFixture.configureFromTempProjectFile(filename);
         myFixture.enableInspections(PyUnresolvedReferencesInspection.class);

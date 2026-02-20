@@ -18,7 +18,7 @@ public abstract class PyInlineLocalTest extends PyTestCase
 
 	private void doTest(String expectedError)
 	{
-		final String name = getTestName(true);
+		String name = getTestName(true);
 		myFixture.configureByFile("/refactoring/inlinelocal/" + name + ".before.py");
 		try
 		{

@@ -97,7 +97,7 @@ public class PyDebugRunner extends GenericProgramRunner
 	}
 
 	@Override
-	public boolean canRun(@Nonnull final String executorId, @Nonnull final RunProfile profile)
+	public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile)
 	{
 		if(!DefaultDebugExecutor.EXECUTOR_ID.equals(executorId))
 		{
@@ -117,7 +117,7 @@ public class PyDebugRunner extends GenericProgramRunner
 		return isDebuggable(profile);
 	}
 
-	private static boolean isDebuggable(@Nonnull final RunProfile profile)
+	private static boolean isDebuggable(@Nonnull RunProfile profile)
 	{
 		if(profile instanceof DebugAwareConfiguration)
 		{
@@ -135,11 +135,11 @@ public class PyDebugRunner extends GenericProgramRunner
 
 
 	protected XDebugSession createSession(@Nonnull RunProfileState state,
-										  @Nonnull final ExecutionEnvironment environment) throws ExecutionException
+										  @Nonnull ExecutionEnvironment environment) throws ExecutionException
 	{
 		FileDocumentManager.getInstance().saveAllDocuments();
 
-		final PythonCommandLineState pyState = (PythonCommandLineState) state;
+		PythonCommandLineState pyState = (PythonCommandLineState) state;
 
 		Sdk sdk = pyState.getSdk();
 		PyDebugSessionFactory sessionCreator = PyDebugSessionFactory.findExtension(sdk);
@@ -148,10 +148,10 @@ public class PyDebugRunner extends GenericProgramRunner
 			return sessionCreator.createSession(this, pyState, environment);
 		}
 
-		final ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
-		final int serverLocalPort = serverSocket.getLocalPort();
+		ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
+		int serverLocalPort = serverSocket.getLocalPort();
 		RunProfile profile = environment.getRunProfile();
-		final ExecutionResult result =
+		ExecutionResult result =
 				pyState.execute(environment.getExecutor(), createCommandLinePatchers(environment.getProject(), pyState, profile, serverLocalPort));
 
 		return XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
@@ -178,7 +178,7 @@ public class PyDebugRunner extends GenericProgramRunner
 
 	@Override
 	protected RunContentDescriptor doExecute(@Nonnull RunProfileState state,
-											 @Nonnull final ExecutionEnvironment environment) throws ExecutionException
+											 @Nonnull ExecutionEnvironment environment) throws ExecutionException
 	{
 		XDebugSession session = createSession(state, environment);
 		initSession(session, state, environment.getExecutor());
@@ -201,8 +201,8 @@ public class PyDebugRunner extends GenericProgramRunner
 		return -1;
 	}
 
-	public static void createConsoleCommunicationAndSetupActions(@Nonnull final Project project,
-																 @Nonnull final ExecutionResult result,
+	public static void createConsoleCommunicationAndSetupActions(@Nonnull Project project,
+																 @Nonnull ExecutionResult result,
 																 @Nonnull PyDebugProcess debugProcess,
 																 @Nonnull XDebugSession session)
 	{
@@ -263,10 +263,10 @@ public class PyDebugRunner extends GenericProgramRunner
 		return runConfigPatcher;
 	}
 
-	public CommandLinePatcher[] createCommandLinePatchers(final Project project,
-														  final PythonCommandLineState state,
-														  RunProfile profile,
-														  final int serverLocalPort)
+	public CommandLinePatcher[] createCommandLinePatchers(Project project,
+                                                          PythonCommandLineState state,
+                                                          RunProfile profile,
+                                                          int serverLocalPort)
 	{
 		return new CommandLinePatcher[]{
 				createDebugServerPatcher(project, state, serverLocalPort),
@@ -320,7 +320,7 @@ public class PyDebugRunner extends GenericProgramRunner
 				@SuppressWarnings("ConstantConditions") @Nonnull ParamsGroup exeParams =
 						parametersList.getParamsGroup(PythonCommandLineState.GROUP_EXE_OPTIONS);
 
-				final PythonSdkFlavor flavor = pyState.getSdkFlavor();
+				PythonSdkFlavor flavor = pyState.getSdkFlavor();
 				if(flavor != null)
 				{
 					assert exeParams != null;
@@ -414,7 +414,7 @@ public class PyDebugRunner extends GenericProgramRunner
 
 	private static void configureDebugConnectionParameters(@Nonnull ParamsGroup debugParams, int serverLocalPort)
 	{
-		final String[] debuggerArgs = new String[]{
+		String[] debuggerArgs = new String[]{
 				CLIENT_PARAM,
 				"127.0.0.1",
 				PORT_PARAM,
@@ -441,15 +441,15 @@ public class PyDebugRunner extends GenericProgramRunner
 
 	private static void addSdkRootsToEnv(@Nonnull Project project, @Nonnull Map<String, String> environment)
 	{
-		final RunManager runManager = RunManager.getInstance(project);
-		final RunnerAndConfigurationSettings selectedConfiguration = runManager.getSelectedConfiguration();
+		RunManager runManager = RunManager.getInstance(project);
+		RunnerAndConfigurationSettings selectedConfiguration = runManager.getSelectedConfiguration();
 		if(selectedConfiguration != null)
 		{
-			final RunConfiguration configuration = selectedConfiguration.getConfiguration();
+			RunConfiguration configuration = selectedConfiguration.getConfiguration();
 			if(configuration instanceof AbstractPythonRunConfiguration)
 			{
 				AbstractPythonRunConfiguration runConfiguration = (AbstractPythonRunConfiguration) configuration;
-				final Sdk sdk = runConfiguration.getSdk();
+				Sdk sdk = runConfiguration.getSdk();
 				if(sdk != null)
 				{
 					List<String> roots = Lists.newArrayList();

@@ -64,7 +64,7 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 	private final String myPrefix;
 	private final boolean myAllowRemoteResolve;
 
-	public PydevConsoleReference(final PyReferenceExpression expression, final ConsoleCommunication communication, final String prefix, boolean allowRemoteResolve)
+	public PydevConsoleReference(PyReferenceExpression expression, ConsoleCommunication communication, String prefix, boolean allowRemoteResolve)
 	{
 		super(expression, true);
 		myCommunication = communication;
@@ -87,7 +87,7 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 
 		if(pyExpression instanceof PyReferenceExpression)
 		{
-			final PsiReference redirectedRef = pyExpression.getReference();
+			PsiReference redirectedRef = pyExpression.getReference();
 			if(redirectedRef != null)
 			{
 				PsiElement resolved = redirectedRef.resolve();
@@ -149,12 +149,12 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 		Map<String, LookupElement> variants = Maps.newHashMap();
 		try
 		{
-			final List<PydevCompletionVariant> completions = myCommunication.getCompletions(getText(), myPrefix);
+			List<PydevCompletionVariant> completions = myCommunication.getCompletions(getText(), myPrefix);
 			for(PydevCompletionVariant completion : completions)
 			{
-				final PsiManager manager = myElement.getManager();
-				final String name = completion.getName();
-				final int type = completion.getType();
+				PsiManager manager = myElement.getManager();
+				String name = completion.getName();
+				int type = completion.getType();
 				LookupElementBuilder builder = LookupElementBuilder.create(new PydevConsoleElement(manager, name, completion.getDescription())).withIcon(PyCodeCompletionImages.getImageForType(type));
 
 
@@ -167,8 +167,8 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 						@Override
 						public void handleInsert(InsertionContext context, LookupElement item)
 						{
-							final Editor editor = context.getEditor();
-							final Document document = editor.getDocument();
+							Editor editor = context.getEditor();
+							Document document = editor.getDocument();
 							int offset = context.getStartOffset();
 							if(offset == 0 || !"%".equals(document.getText(TextRange.from(offset - 1, 1))))
 							{

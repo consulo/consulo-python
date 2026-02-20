@@ -50,7 +50,7 @@ public class AddEncodingQuickFix implements LocalQuickFix {
         return PyLocalize.qfixAddEncoding();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PsiFile file = descriptor.getPsiElement().getContainingFile();
         if (file == null) {
             return;

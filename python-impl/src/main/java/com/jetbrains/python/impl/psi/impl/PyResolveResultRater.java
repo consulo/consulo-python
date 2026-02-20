@@ -28,7 +28,7 @@ import jakarta.annotation.Nonnull;
 public interface PyResolveResultRater {
   ExtensionPointName<PyResolveResultRater> EP_NAME = ExtensionPointName.create(PyResolveResultRater.class);
 
-  int getImportElementRate(@Nonnull final PsiElement target);
+  int getImportElementRate(@Nonnull PsiElement target);
 
   int getMemberRate(PsiElement member, PyType type, TypeEvalContext context);
 }

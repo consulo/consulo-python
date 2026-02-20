@@ -64,8 +64,8 @@ public class PyStdReferenceContributor extends PsiReferenceContributor
 	}
 
 	private static void registerClassAttributeReference(PsiReferenceRegistrar registrar,
-														final String name,
-														final PsiReferenceProvider provider)
+														String name,
+														PsiReferenceProvider provider)
 	{
 		registrar.registerReferenceProvider(psiElement(PyStringLiteralExpression.class).withParent(
 				psiElement(PySequenceExpression.class).withParent(

@@ -33,13 +33,13 @@ import consulo.language.psi.util.PsiTreeUtil;
 @ExtensionImpl
 public class PyHighlightExitPointsHandlerFactory implements HighlightUsagesHandlerFactory {
   @Override
-  public HighlightUsagesHandlerBase createHighlightUsagesHandler(final Editor editor, final PsiFile file) {
+  public HighlightUsagesHandlerBase createHighlightUsagesHandler(Editor editor, PsiFile file) {
     int offset = TargetElementUtil.adjustOffset(file, editor.getDocument(), editor.getCaretModel().getOffset());
     PsiElement target = file.findElementAt(offset);
     if (target != null) {
-      final PyReturnStatement returnStatement = PsiTreeUtil.getParentOfType(target, PyReturnStatement.class);
+      PyReturnStatement returnStatement = PsiTreeUtil.getParentOfType(target, PyReturnStatement.class);
       if (returnStatement != null) {
-        final PyExpression returnExpr = returnStatement.getExpression();
+        PyExpression returnExpr = returnStatement.getExpression();
         if (returnExpr == null || !PsiTreeUtil.isAncestor(returnExpr, target, false)) {
           return new PyHighlightExitPointsHandler(editor, file, target);
         }

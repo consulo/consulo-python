@@ -40,20 +40,20 @@ public class PyMakePublicQuickFix implements LocalQuickFix {
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyReferenceExpression) {
-            final PsiReference reference = element.getReference();
+            PsiReference reference = element.getReference();
             if (reference == null) {
                 return;
             }
             element = reference.resolve();
         }
         if (element instanceof PyTargetExpression) {
-            final String name = ((PyTargetExpression) element).getName();
+            String name = ((PyTargetExpression) element).getName();
             if (name == null) {
                 return;
             }
-            final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+            VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
             if (virtualFile != null) {
-                final String publicName = StringUtil.trimLeading(name, '_');
+                String publicName = StringUtil.trimLeading(name, '_');
                 new RenameProcessor(project, element, publicName, false, false).run();
             }
         }

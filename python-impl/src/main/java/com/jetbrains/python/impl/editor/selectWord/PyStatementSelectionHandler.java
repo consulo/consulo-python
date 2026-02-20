@@ -35,19 +35,19 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyStatementSelectionHandler extends ExtendWordSelectionHandlerBase {
-  public boolean canSelect(final PsiElement e) {
+  public boolean canSelect(PsiElement e) {
     return e instanceof PyStringLiteralExpression || e instanceof PyCallExpression || e instanceof PyStatement ||
       e instanceof PyStatementList;
   }
 
-  public List<TextRange> select(final PsiElement e, final CharSequence editorText, final int cursorOffset, final Editor editor) {
+  public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
     List<TextRange> result = new ArrayList<TextRange>();
     PsiElement endElement = e;
     while (endElement.getLastChild() != null) {
       endElement = endElement.getLastChild();
     }
     if (endElement instanceof PsiWhiteSpace) {
-      final PsiElement prevSibling = endElement.getPrevSibling();
+      PsiElement prevSibling = endElement.getPrevSibling();
       if (prevSibling != null) {
         endElement = prevSibling;
       }

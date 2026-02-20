@@ -44,7 +44,7 @@ public enum FutureFeature {
    * @param proposed version in which the feature has become importable
    * @param included version in which the feature is included by default
    */
-  FutureFeature(final @Nonnull String name, final int proposed, final int included) {
+  FutureFeature(@Nonnull String name, int proposed, int included) {
     myName = name;
     myOptionalVersion = proposed;
     myRequiredVersion = included;

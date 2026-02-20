@@ -46,38 +46,38 @@ class DependencyVisitor extends PyRecursiveElementVisitor
 	/**
 	 * @param elementToFind what to find
 	 */
-	DependencyVisitor(@Nonnull final PyElement elementToFind)
+	DependencyVisitor(@Nonnull PyElement elementToFind)
 	{
 		myElementToFind = elementToFind;
 	}
 
 	@Override
-	public void visitPyCallExpression(@Nonnull final PyCallExpression node)
+	public void visitPyCallExpression(@Nonnull PyCallExpression node)
 	{
-		final PyExpression callee = node.getCallee();
+		PyExpression callee = node.getCallee();
 		if(callee != null)
 		{
-			final PsiReference calleeReference = callee.getReference();
+			PsiReference calleeReference = callee.getReference();
 			if((calleeReference != null) && calleeReference.isReferenceTo(myElementToFind))
 			{
 				myDependencyFound = true;
 				return;
 			}
-			final String calleeName = callee.getName();
+			String calleeName = callee.getName();
 
-			final String name = myElementToFind.getName();
+			String name = myElementToFind.getName();
 			if((calleeName != null) && calleeName.equals(name))
 			{  // Check by name also
 				myDependencyFound = true;
 			}
 
 			// Member could be used as method param
-			final PyArgumentList list = node.getArgumentList();
+			PyArgumentList list = node.getArgumentList();
 			if(list != null)
 			{
-				for(final PyExpression expression : node.getArgumentList().getArgumentExpressions())
+				for(PyExpression expression : node.getArgumentList().getArgumentExpressions())
 				{
-					final PsiReference reference = expression.getReference();
+					PsiReference reference = expression.getReference();
 					if((reference != null) && reference.isReferenceTo(myElementToFind))
 					{
 						myDependencyFound = true;
@@ -92,10 +92,10 @@ class DependencyVisitor extends PyRecursiveElementVisitor
 	}
 
 	@Override
-	public void visitPyReferenceExpression(final PyReferenceExpression node)
+	public void visitPyReferenceExpression(PyReferenceExpression node)
 	{
 
-		final PsiPolyVariantReference reference = node.getReference();
+		PsiPolyVariantReference reference = node.getReference();
 		if(reference.isReferenceTo(myElementToFind))
 		{
 			myDependencyFound = true;
@@ -104,13 +104,13 @@ class DependencyVisitor extends PyRecursiveElementVisitor
 		// TODO: This step is member-type specific. Move to MemberManagers?
 		if(myElementToFind instanceof PyAssignmentStatement)
 		{
-			final PyExpression[] targets = ((PyAssignmentStatement) myElementToFind).getTargets();
+			PyExpression[] targets = ((PyAssignmentStatement) myElementToFind).getTargets();
 
 			if(targets.length != 1)
 			{
 				return;
 			}
-			final PyExpression expression = targets[0];
+			PyExpression expression = targets[0];
 
 			if(reference.isReferenceTo(expression))
 			{
@@ -123,7 +123,7 @@ class DependencyVisitor extends PyRecursiveElementVisitor
 			}
 			return;
 		}
-		final PsiElement declaration = reference.resolve();
+		PsiElement declaration = reference.resolve();
 		myDependencyFound = PsiTreeUtil.findFirstParent(declaration, new PsiElementCondition()) != null;
 	}
 
@@ -135,7 +135,7 @@ class DependencyVisitor extends PyRecursiveElementVisitor
 	private class PsiElementCondition implements Condition<PsiElement>
 	{
 		@Override
-		public boolean value(final PsiElement psiElement)
+		public boolean value(PsiElement psiElement)
 		{
 			return psiElement.equals(myElementToFind);
 		}

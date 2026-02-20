@@ -40,7 +40,7 @@ public class PyBreakContinueGotoProvider extends GotoDeclarationHandlerBase {
 
   public PsiElement getGotoDeclarationTarget(PsiElement source, Editor editor) {
     if (source.getLanguage() instanceof PythonLanguage) {
-      final PyLoopStatement loop = PsiTreeUtil.getParentOfType(source, PyLoopStatement.class, false, PyFunction.class, PyClass.class);
+      PyLoopStatement loop = PsiTreeUtil.getParentOfType(source, PyLoopStatement.class, false, PyFunction.class, PyClass.class);
       if (loop != null) {
         ASTNode node = source.getNode();
         if (node != null) {

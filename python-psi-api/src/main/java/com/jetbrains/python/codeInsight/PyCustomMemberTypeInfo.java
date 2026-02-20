@@ -34,27 +34,27 @@ public class PyCustomMemberTypeInfo<K>
 	@Nonnull
 	private final Map<Key<K>, K> myCustomInfo = new HashMap<>();
 
-	public PyCustomMemberTypeInfo(@Nonnull final Key<K> key, @Nonnull final K value)
+	public PyCustomMemberTypeInfo(@Nonnull Key<K> key, @Nonnull K value)
 	{
 		this(Collections.singleton(Pair.create(key, value)));
 	}
 
-	public PyCustomMemberTypeInfo(@Nonnull final Iterable<Pair<Key<K>, K>> customInfo)
+	public PyCustomMemberTypeInfo(@Nonnull Iterable<Pair<Key<K>, K>> customInfo)
 	{
-		for(final Pair<Key<K>, K> pair : customInfo)
+		for(Pair<Key<K>, K> pair : customInfo)
 		{
 			myCustomInfo.put(pair.first, pair.second);
 		}
 	}
 
-	public PyCustomMemberTypeInfo(@Nonnull final Map<Key<K>, K> customInfo)
+	public PyCustomMemberTypeInfo(@Nonnull Map<Key<K>, K> customInfo)
 	{
 		myCustomInfo.putAll(customInfo);
 	}
 
-	void fill(@Nonnull final UserDataHolder typeToFill)
+	void fill(@Nonnull UserDataHolder typeToFill)
 	{
-		for(final Map.Entry<Key<K>, K> entry : myCustomInfo.entrySet())
+		for(Map.Entry<Key<K>, K> entry : myCustomInfo.entrySet())
 		{
 			typeToFill.putUserData(entry.getKey(), entry.getValue());
 		}

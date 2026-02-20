@@ -52,13 +52,13 @@ public class PyTargetExpressionStubImpl extends StubBase<PyTargetExpression> imp
 		myDocString = docString;
 	}
 
-	public PyTargetExpressionStubImpl(final String name,
-			@Nullable String docString,
-			final InitializerType initializerType,
-			final QualifiedName initializer,
-			final boolean qualified,
-			@Nullable String typeComment,
-			final StubElement parentStub)
+	public PyTargetExpressionStubImpl(String name,
+                                      @Nullable String docString,
+                                      InitializerType initializerType,
+                                      QualifiedName initializer,
+                                      boolean qualified,
+                                      @Nullable String typeComment,
+                                      StubElement parentStub)
 	{
 		super(parentStub, PyElementTypes.TARGET_EXPRESSION);
 		myName = name;

@@ -62,11 +62,11 @@ public class PyJavaPackageType implements PyType {
     String childName = myPackage.getQualifiedName() + "." + name;
     GlobalSearchScope scope = getScope(project);
     ResolveResultList result = new ResolveResultList();
-    final PsiClass[] classes = facade.findClasses(childName, scope);
+    PsiClass[] classes = facade.findClasses(childName, scope);
     for (PsiClass aClass : classes) {
       result.poke(aClass, RatedResolveResult.RATE_NORMAL);
     }
-    final PsiJavaPackage psiPackage = facade.findPackage(childName);
+    PsiJavaPackage psiPackage = facade.findPackage(childName);
     if (psiPackage != null) {
       result.poke(psiPackage, RatedResolveResult.RATE_NORMAL);
     }
@@ -82,12 +82,12 @@ public class PyJavaPackageType implements PyType {
   @Override
   public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
     List<Object> variants = new ArrayList<>();
-    final GlobalSearchScope scope = getScope(location.getProject());
-    final PsiClass[] classes = myPackage.getClasses(scope);
+    GlobalSearchScope scope = getScope(location.getProject());
+    PsiClass[] classes = myPackage.getClasses(scope);
     for (PsiClass psiClass : classes) {
       variants.add(LookupElementBuilder.create(psiClass).withIcon(IconDescriptorUpdaters.getIcon(psiClass, 0)));
     }
-    final PsiJavaPackage[] subPackages = myPackage.getSubPackages(scope);
+    PsiJavaPackage[] subPackages = myPackage.getSubPackages(scope);
     for (PsiJavaPackage subPackage : subPackages) {
       variants.add(LookupElementBuilder.create(subPackage).withIcon(IconDescriptorUpdaters.getIcon(subPackage, 0)));
     }

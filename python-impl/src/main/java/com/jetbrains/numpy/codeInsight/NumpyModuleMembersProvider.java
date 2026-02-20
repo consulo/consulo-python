@@ -99,7 +99,7 @@ public class NumpyModuleMembersProvider extends PyModuleMembersProvider {
   @Override
   protected Collection<PyCustomMember> getMembersByQName(PyFile module, String qName) {
     if ("numpy".equals(qName)) {
-      final List<PyCustomMember> members = new ArrayList<>();
+      List<PyCustomMember> members = new ArrayList<>();
       for (String type : NUMERIC_TYPES) {
         members.add(new PyCustomMember(type, DTYPE, false));
       }
@@ -114,7 +114,7 @@ public class NumpyModuleMembersProvider extends PyModuleMembersProvider {
 
   private static void addTestingModule(PyFile module, List<PyCustomMember> members) {
     PyPsiFacade psiFacade = PyPsiFacade.getInstance(module.getProject());
-    final QualifiedNameResolver resolver =
+    QualifiedNameResolver resolver =
       psiFacade.qualifiedNameResolver(QualifiedName.fromDottedString("numpy.testing")).withPlainDirectories().fromElement(module);
     PsiElement testingModule = PyUtil.turnDirIntoInit(resolver.firstResult());
     members.add(new PyCustomMember("testing", testingModule));

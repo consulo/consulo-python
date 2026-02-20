@@ -68,7 +68,7 @@ public class PythonTestRunConfigurationForm implements AbstractPythonTestRunConf
 
 	private boolean myPatternIsVisible = true;
 
-	public PythonTestRunConfigurationForm(final Project project, final AbstractPythonTestRunConfiguration configuration)
+	public PythonTestRunConfigurationForm(Project project, AbstractPythonTestRunConfiguration configuration)
 	{
 		myProject = project;
 		myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());
@@ -94,9 +94,9 @@ public class PythonTestRunConfigurationForm implements AbstractPythonTestRunConf
 	private void initComponents()
 	{
 
-		final ActionListener testTypeListener = new ActionListener()
+		ActionListener testTypeListener = new ActionListener()
 		{
-			public void actionPerformed(final ActionEvent e)
+			public void actionPerformed(ActionEvent e)
 			{
 				setTestType(getTestType());
 			}
@@ -105,7 +105,7 @@ public class PythonTestRunConfigurationForm implements AbstractPythonTestRunConf
 
 		myPatternCheckBox.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(final ActionEvent e)
+			public void actionPerformed(ActionEvent e)
 			{
 				myPatternTextField.setEnabled(myPatternCheckBox.isSelected());
 			}
@@ -113,7 +113,7 @@ public class PythonTestRunConfigurationForm implements AbstractPythonTestRunConf
 
 		myParamCheckBox.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(final ActionEvent e)
+			public void actionPerformed(ActionEvent e)
 			{
 				myParamTextField.setEnabled(myParamCheckBox.isSelected());
 			}

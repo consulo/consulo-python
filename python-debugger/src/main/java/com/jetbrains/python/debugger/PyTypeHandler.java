@@ -14,20 +14,20 @@ public class PyTypeHandler {
   }
 
   private static final Formatter DEFAULT_FORMATTER = new Formatter() {
-    public String format(final String value) {
+    public String format(String value) {
       return value;
     }
   };
 
   private static final Formatter STR_FORMATTER = new Formatter() {
-    public String format(final String value) {
+    public String format(String value) {
       return new StringBuilder(value.length() + 2).append('\'').append(StringUtil.replace(value, "'", "\\'").replace("\\", "\\\\")).append(
         '\'').toString();
     }
   };
 
   private static final Formatter UNI_FORMATTER = new Formatter() {
-    public String format(final String value) {
+    public String format(String value) {
       return new StringBuilder(value.length() + 3).append("u'").append(StringUtil.replace(value, "'", "\\'").replace("\\", "\\\\")).append('\'').toString();
     }
   };
@@ -41,7 +41,7 @@ public class PyTypeHandler {
 
   private PyTypeHandler() { }
 
-  public static String format(final PyDebugValue var) {
+  public static String format(PyDebugValue var) {
     return format(var.getType(), var.getValue());
   }
 

@@ -10,7 +10,7 @@ import com.jetbrains.python.psi.LanguageLevel;
  */
 public abstract class PyStatementMoverTest extends PyTestCase {
   private void doTest() {
-    final String testName = getTestName(true);
+    String testName = getTestName(true);
     myFixture.configureByFile("mover/" + testName + ".py");
     myFixture.performEditorAction(IdeActions.ACTION_MOVE_STATEMENT_UP_ACTION);
     myFixture.checkResultByFile("mover/" + testName + "_afterUp.py", true);

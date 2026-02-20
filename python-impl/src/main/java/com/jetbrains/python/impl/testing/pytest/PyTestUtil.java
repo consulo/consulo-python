@@ -40,7 +40,7 @@ public class PyTestUtil
 {
 	private static final Set<String> PYTHON_TEST_QUALIFIED_CLASSES = ImmutableSet.of("unittest.TestCase", "unittest.case.TestCase");
 
-	static List<PyStatement> getPyTestCasesFromFile(PsiFileSystemItem file, @Nonnull final TypeEvalContext context)
+	static List<PyStatement> getPyTestCasesFromFile(PsiFileSystemItem file, @Nonnull TypeEvalContext context)
 	{
 		List<PyStatement> result = Lists.newArrayList();
 		if(file instanceof PyFile)
@@ -60,7 +60,7 @@ public class PyTestUtil
 		return result;
 	}
 
-	private static List<PyStatement> getResult(PyFile file, @Nonnull final TypeEvalContext context)
+	private static List<PyStatement> getResult(PyFile file, @Nonnull TypeEvalContext context)
 	{
 		List<PyStatement> result = Lists.newArrayList();
 		for(PyClass cls : file.getTopLevelClasses())
@@ -90,9 +90,9 @@ public class PyTestUtil
 		return false;
 	}
 
-	public static boolean isPyTestClass(final PyClass pyClass, @Nullable final TypeEvalContext context)
+	public static boolean isPyTestClass(PyClass pyClass, @Nullable TypeEvalContext context)
 	{
-		final TypeEvalContext contextToUse = (context != null ? context : TypeEvalContext.codeInsightFallback(pyClass.getProject()));
+		TypeEvalContext contextToUse = (context != null ? context : TypeEvalContext.codeInsightFallback(pyClass.getProject()));
 		for(PyClassLikeType type : pyClass.getAncestorTypes(contextToUse))
 		{
 			if(type != null && PYTHON_TEST_QUALIFIED_CLASSES.contains(type.getClassQName()))
@@ -100,12 +100,12 @@ public class PyTestUtil
 				return true;
 			}
 		}
-		final String className = pyClass.getName();
+		String className = pyClass.getName();
 		if(className == null)
 		{
 			return false;
 		}
-		final String name = className.toLowerCase();
+		String name = className.toLowerCase();
 		if(name.startsWith("test"))
 		{
 			for(PyFunction cls : pyClass.getMethods())

@@ -85,19 +85,19 @@ public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy 
     int wrapPosition =
       super.calculateWrapPosition(document, project, startOffset, endOffset, maxPreferredOffset, allowToBeyondMaxPreferredOffset, virtual);
     if (wrapPosition < 0) return wrapPosition;
-    final CharSequence text = document.getCharsSequence();
+    CharSequence text = document.getCharsSequence();
 
     char c = text.charAt(wrapPosition);
     if (!StringUtil.isWhiteSpace(c) || project == null) {
       return wrapPosition;
     }
 
-    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
     if (documentManager != null) {
-      final PsiFile psiFile = documentManager.getPsiFile(document);
+      PsiFile psiFile = documentManager.getPsiFile(document);
       if (psiFile != null) {
-        final PsiElement element = psiFile.findElementAt(wrapPosition);
-        final StringLiteralExpression string = PsiTreeUtil.getParentOfType(element, StringLiteralExpression.class);
+        PsiElement element = psiFile.findElementAt(wrapPosition);
+        StringLiteralExpression string = PsiTreeUtil.getParentOfType(element, StringLiteralExpression.class);
 
         if (string != null) {
           return wrapPosition + 1;

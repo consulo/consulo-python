@@ -39,7 +39,7 @@ public class PyUserSkeletonsModuleMembersProvider extends PyModuleMembersProvide
 	@Override
 	public PsiElement resolveMember(PyFile module, String name)
 	{
-		final PyFile moduleSkeleton = PyUserSkeletonsUtil.getUserSkeleton(module);
+		PyFile moduleSkeleton = PyUserSkeletonsUtil.getUserSkeleton(module);
 		if(moduleSkeleton != null)
 		{
 			return moduleSkeleton.getElementNamed(name);
@@ -50,17 +50,17 @@ public class PyUserSkeletonsModuleMembersProvider extends PyModuleMembersProvide
 	@Override
 	protected Collection<PyCustomMember> getMembersByQName(PyFile module, String qName)
 	{
-		final PyFile moduleSkeleton = PyUserSkeletonsUtil.getUserSkeletonForModuleQName(qName, module);
+		PyFile moduleSkeleton = PyUserSkeletonsUtil.getUserSkeletonForModuleQName(qName, module);
 		if(moduleSkeleton != null)
 		{
-			final List<PyCustomMember> results = new ArrayList<>();
+			List<PyCustomMember> results = new ArrayList<>();
 			for(PyElement element : moduleSkeleton.iterateNames())
 			{
 				if(element instanceof PsiFileSystemItem)
 				{
 					continue;
 				}
-				final String name = element.getName();
+				String name = element.getName();
 				if(name != null)
 				{
 					results.add(new PyCustomMember(name, element));

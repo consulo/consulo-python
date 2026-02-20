@@ -40,15 +40,15 @@ public class PyEncodingUtil {
   public static String[] ENCODING_FORMAT_PATTERN = new String[]{"# coding=%s", "# -*- coding: %s -*-", "# vim: set fileencoding=%s :"};
 
   public static JComponent createEncodingOptionsPanel(JComboBox defaultEncoding, JComboBox encodingFormat) {
-    final JPanel optionsPanel = new JPanel(new GridBagLayout());
+    JPanel optionsPanel = new JPanel(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
 
     c.fill = GridBagConstraints.HORIZONTAL;
     c.anchor = GridBagConstraints.NORTH;
     c.gridx = 0;
     c.gridy = 0;
-    final JLabel encodingLabel = new JLabel("Select default encoding: ");
-    final JPanel encodingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JLabel encodingLabel = new JLabel("Select default encoding: ");
+    JPanel encodingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     encodingPanel.add(encodingLabel);
     optionsPanel.add(encodingPanel, c);
 
@@ -59,8 +59,8 @@ public class PyEncodingUtil {
     c.gridx = 0;
     c.gridy = 1;
     c.weighty = 1;
-    final JLabel formatLabel = new JLabel("Encoding comment format:");
-    final JPanel formatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JLabel formatLabel = new JLabel("Encoding comment format:");
+    JPanel formatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     formatPanel.add(formatLabel);
     optionsPanel.add(formatPanel, c);
 

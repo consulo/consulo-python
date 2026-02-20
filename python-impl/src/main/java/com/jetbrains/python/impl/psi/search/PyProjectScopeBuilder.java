@@ -48,14 +48,14 @@ public class PyProjectScopeBuilder {
    * @return the resulting scope
    */
   public static GlobalSearchScope excludeSdkTestsScope(Project project) {
-    final Sdk sdk = null;
+    Sdk sdk = null;
     // TODO cache the scope in project userdata (update when SDK paths change or different project SDK is selected)
     GlobalSearchScope scope = excludeSdkTestsScope(project, sdk);
     return scope != null ? (GlobalSearchScope) ProjectScopes.getAllScope(project).intersectWith(scope) : (GlobalSearchScope) ProjectScopes.getAllScope(project);
   }
 
   public static GlobalSearchScope excludeSdkTestsScope(PsiElement anchor) {
-    final Project project = anchor.getProject();
+    Project project = anchor.getProject();
     Module module = ModuleUtilCore.findModuleForPsiElement(anchor);
     if (module != null) {
       Sdk sdk = PythonSdkType.findPythonSdk(module);

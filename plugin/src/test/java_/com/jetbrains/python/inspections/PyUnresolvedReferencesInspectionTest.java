@@ -312,7 +312,7 @@ public abstract class PyUnresolvedReferencesInspectionTest extends PyTestCase {
   }
 
   private void doMultiFileTest(@Nonnull String filename) {
-    final String testName = getTestName(false);
+    String testName = getTestName(false);
     myFixture.copyDirectoryToProject(TEST_DIRECTORY + testName, "");
     myFixture.configureFromTempProjectFile(filename);
     myFixture.enableInspections(PyUnresolvedReferencesInspection.class);

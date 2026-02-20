@@ -31,7 +31,7 @@ public class PyDependentClassMembersCollector extends DependentMembersCollectorB
 	}
 
 	@Override
-	public void collect(final PyElement member)
+	public void collect(PyElement member)
 	{
 		myCollection.addAll(MembersManager.getAllDependencies(getClazz(), member, getSuperClass()));
 	}

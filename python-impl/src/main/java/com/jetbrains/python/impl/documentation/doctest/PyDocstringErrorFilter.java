@@ -30,8 +30,8 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyDocstringErrorFilter extends HighlightErrorFilter {
 
-  public boolean shouldHighlightErrorElement(@Nonnull final PsiErrorElement element) {
-    final PsiFile file = element.getContainingFile();
+  public boolean shouldHighlightErrorElement(@Nonnull PsiErrorElement element) {
+    PsiFile file = element.getContainingFile();
     return !(file instanceof PyDocstringFile);
   }
 }

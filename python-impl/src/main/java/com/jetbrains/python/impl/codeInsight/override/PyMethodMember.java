@@ -37,12 +37,12 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 {
 	private final String myFullName;
 
-	private static String buildNameFor(final PyElement element)
+	private static String buildNameFor(PyElement element)
 	{
 		if(element instanceof PyFunction)
 		{
-			final TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
-			final List<PyParameter> parameters = PyUtil.getParameters((PyFunction) element, context);
+			TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
+			List<PyParameter> parameters = PyUtil.getParameters((PyFunction) element, context);
 			return element.getName() + "(" + StringUtil.join(parameters, parameter -> PyUtil.getReadableRepr(parameter, false), ", ") + ")";
 		}
 		if(element instanceof PyClass && PyNames.FAKE_OLD_BASE.equals(element.getName()))
@@ -52,7 +52,7 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 		return element.getName();
 	}
 
-	public PyMethodMember(final PyElement element)
+	public PyMethodMember(PyElement element)
 	{
 		super(element, trimUnderscores(buildNameFor(element)), IconDescriptorUpdaters.getIcon(element, 0));
 		myFullName = buildNameFor(element);
@@ -65,8 +65,8 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 
 	public MemberChooserObject getParentNodeDelegate()
 	{
-		final PyElement element = (PyElement) getPsiElement();
-		final PyClass parent = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
+		PyElement element = (PyElement) getPsiElement();
+		PyClass parent = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
 		assert (parent != null);
 		return new PyMethodMember(parent);
 	}

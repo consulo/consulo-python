@@ -50,7 +50,7 @@ public class PyDotNetClassType implements PyClassLikeType
 	private final DotNetTypeDeclaration myClass;
 	private final boolean myDefinition;
 
-	public PyDotNetClassType(final DotNetTypeDeclaration aClass, boolean definition)
+	public PyDotNetClassType(DotNetTypeDeclaration aClass, boolean definition)
 	{
 		myClass = aClass;
 		myDefinition = definition;
@@ -58,8 +58,8 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Override
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull final String name, PyExpression location, @Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, PyExpression location, @Nonnull AccessDirection direction,
+                                                            @Nonnull PyResolveContext resolveContext)
 	{
 		return resolveMember(name, location, direction, resolveContext, true);
 	}
@@ -196,7 +196,7 @@ public class PyDotNetClassType implements PyClassLikeType
 	@RequiredReadAction
 	public List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context)
 	{
-		final List<PyClassLikeType> result = new ArrayList<PyClassLikeType>();
+		List<PyClassLikeType> result = new ArrayList<PyClassLikeType>();
 		for(DotNetTypeRef typeRef : myClass.getExtendTypeRefs())
 		{
 			PsiElement resolve = typeRef.resolve().getElement();

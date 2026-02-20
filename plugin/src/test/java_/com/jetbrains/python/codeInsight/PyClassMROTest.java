@@ -24,9 +24,9 @@ public abstract class PyClassMROTest extends PyTestCase {
   }
 
   public void testCircularInheritance() {
-    final String testName = getTestName(false);
+    String testName = getTestName(false);
     myFixture.configureByFiles(getPath(testName), getPath(testName + "2"));
-    final PyClass cls = myFixture.findElementByText("Foo", PyClass.class);
+    PyClass cls = myFixture.findElementByText("Foo", PyClass.class);
     assertNotNull(cls);
     assertMRO(cls);
   }
@@ -57,11 +57,11 @@ public abstract class PyClassMROTest extends PyTestCase {
   }
 
   public void assertMRO(@Nonnull PyClass cls, @Nonnull String... mro) {
-    final List<PyClassLikeType> types = cls.getAncestorTypes(TypeEvalContext.codeInsightFallback(myFixture.getProject()));
-    final List<String> classNames = new ArrayList<String>();
+    List<PyClassLikeType> types = cls.getAncestorTypes(TypeEvalContext.codeInsightFallback(myFixture.getProject()));
+    List<String> classNames = new ArrayList<String>();
     for (PyClassLikeType type : types) {
       if (type != null) {
-        final String name = type.getName();
+        String name = type.getName();
         if (name != null) {
           classNames.add(name);
           continue;
@@ -75,7 +75,7 @@ public abstract class PyClassMROTest extends PyTestCase {
   @Nonnull
   public PyClass getClass(@Nonnull String name) {
     myFixture.configureByFile(getPath(getTestName(false)));
-    final PyClass cls = myFixture.findElementByText(name, PyClass.class);
+    PyClass cls = myFixture.findElementByText(name, PyClass.class);
     assertNotNull(cls);
     return cls;
   }

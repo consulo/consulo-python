@@ -41,7 +41,7 @@ public final class PyCustomMemberUtils
 	 * @return lookup element
 	 */
 	@Nonnull
-	public static LookupElementBuilder toLookUpElement(@Nonnull final PyCustomMember member, @Nullable final String typeText)
+	public static LookupElementBuilder toLookUpElement(@Nonnull PyCustomMember member, @Nullable String typeText)
 	{
 
 		LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(member.getName()).withIcon(member.getIcon()).withTypeText(typeText);

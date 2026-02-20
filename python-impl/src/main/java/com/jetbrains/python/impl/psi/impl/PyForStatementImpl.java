@@ -58,8 +58,8 @@ public class PyForStatementImpl extends PyPartitionedElementImpl implements PyFo
 	public List<PsiNamedElement> getNamedElements()
 	{
 		PyExpression tgt = getForPart().getTarget();
-		final List<PyExpression> expressions = PyUtil.flattenedParensAndStars(tgt);
-		final List<PsiNamedElement> results = Lists.newArrayList();
+		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(tgt);
+		List<PsiNamedElement> results = Lists.newArrayList();
 		for(PyExpression expression : expressions)
 		{
 			if(expression instanceof PsiNamedElement)

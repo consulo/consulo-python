@@ -102,7 +102,7 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 
 		if(scopeOwner != null)
 		{
-			final String name = element instanceof PsiNamedElement ? ((PsiNamedElement) element).getName() : element.getText();
+			String name = element instanceof PsiNamedElement ? ((PsiNamedElement) element).getName() : element.getText();
 			if(name != null && ControlFlowCache.getScope(scopeOwner).containsDeclaration(name))
 			{
 				return false;
@@ -114,7 +114,7 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 				{
 					super.visitPyReferenceExpression(node);
 
-					final String name = node.getName();
+					String name = node.getName();
 					if(name != null && ControlFlowCache.getScope(scopeOwner).containsDeclaration(name))
 					{
 						isValid[0] = false;
@@ -127,18 +127,18 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 
 	private static boolean isValidPlace(PsiElement element)
 	{
-		final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
-		final PyForPart forPart = PsiTreeUtil.getParentOfType(element, PyForPart.class);
+		PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+		PyForPart forPart = PsiTreeUtil.getParentOfType(element, PyForPart.class);
 		if(forPart != null)
 		{
-			final PyExpression target = forPart.getTarget();
+			PyExpression target = forPart.getTarget();
 			if(target instanceof PyTargetExpression && element.getText().equals(target.getName()))
 			{
 				return false;
 			}
 		}
-		final PyStatement nonlocalStatement = PsiTreeUtil.getParentOfType(element, PyNonlocalStatement.class, PyGlobalStatement.class);
-		final PyStatementList statementList = PsiTreeUtil.getParentOfType(element, PyStatementList.class);
+		PyStatement nonlocalStatement = PsiTreeUtil.getParentOfType(element, PyNonlocalStatement.class, PyGlobalStatement.class);
+		PyStatementList statementList = PsiTreeUtil.getParentOfType(element, PyStatementList.class);
 		PyImportStatement importStatement = PsiTreeUtil.getParentOfType(element, PyImportStatement.class);
 		return nonlocalStatement == null && importStatement == null &&
 				statementList != null && function != null;
@@ -148,7 +148,7 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 	{
 		while(element instanceof PyReferenceExpression)
 		{
-			final PsiReference reference = element.getReference();
+			PsiReference reference = element.getReference();
 			if(reference != null && reference.resolve() instanceof PyNamedParameter)
 			{
 				return true;
@@ -161,14 +161,14 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 	@Override
 	protected void performInplaceIntroduce(IntroduceOperation operation)
 	{
-		final PsiElement statement = performRefactoring(operation);
+		PsiElement statement = performRefactoring(operation);
 		if(statement instanceof PyNamedParameter)
 		{
-			final List<PsiElement> occurrences = operation.getOccurrences();
-			final PsiElement occurrence = findOccurrenceUnderCaret(occurrences, operation.getEditor());
+			List<PsiElement> occurrences = operation.getOccurrences();
+			PsiElement occurrence = findOccurrenceUnderCaret(occurrences, operation.getEditor());
 			PsiElement elementForCaret = occurrence != null ? occurrence : statement;
 			operation.getEditor().getCaretModel().moveToOffset(elementForCaret.getTextRange().getStartOffset());
-			final InplaceVariableIntroducer<PsiElement> introducer = new PyInplaceParameterIntroducer((PyNamedParameter) statement, operation, occurrences);
+			InplaceVariableIntroducer<PsiElement> introducer = new PyInplaceParameterIntroducer((PyNamedParameter) statement, operation, occurrences);
 			introducer.performInplaceRefactoring(new LinkedHashSet<>(operation.getSuggestedNames()));
 		}
 	}

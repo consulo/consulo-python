@@ -63,24 +63,24 @@ public class PyFunctionBuilder
 	 * @return builder configured by this function
 	 */
 	@Nonnull
-	public static PyFunctionBuilder copySignature(@Nonnull final PyFunction source, @Nonnull final String... decoratorsToCopyIfExist)
+	public static PyFunctionBuilder copySignature(@Nonnull PyFunction source, @Nonnull String... decoratorsToCopyIfExist)
 	{
-		final String name = source.getName();
-		final PyFunctionBuilder functionBuilder = new PyFunctionBuilder((name != null) ? name : "", source);
-		for(final PyParameter parameter : source.getParameterList().getParameters())
+		String name = source.getName();
+		PyFunctionBuilder functionBuilder = new PyFunctionBuilder((name != null) ? name : "", source);
+		for(PyParameter parameter : source.getParameterList().getParameters())
 		{
-			final String parameterName = parameter.getName();
+			String parameterName = parameter.getName();
 			if(parameterName != null)
 			{
 				functionBuilder.parameter(parameterName);
 			}
 		}
-		final PyDecoratorList decoratorList = source.getDecoratorList();
+		PyDecoratorList decoratorList = source.getDecoratorList();
 		if(decoratorList != null)
 		{
-			for(final PyDecorator decorator : decoratorList.getDecorators())
+			for(PyDecorator decorator : decoratorList.getDecorators())
 			{
-				final String decoratorName = decorator.getName();
+				String decoratorName = decorator.getName();
 				if(decoratorName != null)
 				{
 					if(ArrayUtil.contains(decoratorName, decoratorsToCopyIfExist))
@@ -130,7 +130,7 @@ public class PyFunctionBuilder
 
 	@Nonnull
 	@Deprecated
-	public PyFunctionBuilder parameterWithType(@Nonnull final String name, @Nonnull final String type, @Nonnull final DocStringFormat format)
+	public PyFunctionBuilder parameterWithType(@Nonnull String name, @Nonnull String type, @Nonnull DocStringFormat format)
 	{
 		parameter(name);
 		myDocStringGenerator.withParamTypedByName(name, type);
@@ -168,17 +168,17 @@ public class PyFunctionBuilder
 		return this;
 	}
 
-	public PyFunction addFunction(PsiElement target, final LanguageLevel languageLevel)
+	public PyFunction addFunction(PsiElement target, LanguageLevel languageLevel)
 	{
 		return (PyFunction) target.add(buildFunction(target.getProject(), languageLevel));
 	}
 
-	public PyFunction addFunctionAfter(PsiElement target, PsiElement anchor, final LanguageLevel languageLevel)
+	public PyFunction addFunctionAfter(PsiElement target, PsiElement anchor, LanguageLevel languageLevel)
 	{
 		return (PyFunction) target.addAfter(buildFunction(target.getProject(), languageLevel), anchor);
 	}
 
-	public PyFunction buildFunction(Project project, final LanguageLevel languageLevel)
+	public PyFunction buildFunction(Project project, LanguageLevel languageLevel)
 	{
 		PyElementGenerator generator = PyElementGenerator.getInstance(project);
 		String text = buildText(project, generator, languageLevel);
@@ -190,10 +190,10 @@ public class PyFunctionBuilder
 		StringBuilder builder = new StringBuilder();
 		for(String decorator : myDecorators)
 		{
-			final StringBuilder decoratorAppender = builder.append('@' + decorator);
+			StringBuilder decoratorAppender = builder.append('@' + decorator);
 			if(myDecoratorValues.containsKey(decorator))
 			{
-				final PyCallExpression fakeCall = generator.createCallExpression(languageLevel, "fakeFunction");
+				PyCallExpression fakeCall = generator.createCallExpression(languageLevel, "fakeFunction");
 				fakeCall.getArgumentList().addArgument(generator.createStringLiteralFromString(myDecoratorValues.get(decorator)));
 				decoratorAppender.append(fakeCall.getArgumentList().getText());
 			}
@@ -214,11 +214,11 @@ public class PyFunctionBuilder
 		builder.append(":");
 		List<String> statements = myStatements.isEmpty() ? Collections.singletonList(PyNames.PASS) : myStatements;
 
-		final String indent = PyIndentUtil.getIndentFromSettings(project);
+		String indent = PyIndentUtil.getIndentFromSettings(project);
 		// There was original docstring or some parameters were added via parameterWithType()
 		if(!myDocStringGenerator.isNewMode() || myDocStringGenerator.hasParametersToAdd())
 		{
-			final String docstring = PyIndentUtil.changeIndent(myDocStringGenerator.buildDocString(), true, indent);
+			String docstring = PyIndentUtil.changeIndent(myDocStringGenerator.buildDocString(), true, indent);
 			builder.append('\n').append(indent).append(docstring);
 		}
 		for(String statement : statements)
@@ -234,7 +234,7 @@ public class PyFunctionBuilder
 	 * @param decoratorName decorator name
 	 * @param value         its argument
 	 */
-	public void decorate(@Nonnull final String decoratorName, @Nonnull final String value)
+	public void decorate(@Nonnull String decoratorName, @Nonnull String value)
 	{
 		decorate(decoratorName);
 		myDecoratorValues.put(decoratorName, value);

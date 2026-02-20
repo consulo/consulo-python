@@ -20,20 +20,20 @@ public class SetBreakpointCommand extends LineBreakpointCommand
 	@Nonnull
 	final SuspendPolicy mySuspendPolicy;
 
-	public SetBreakpointCommand(@Nonnull final RemoteDebugger debugger, @Nonnull final String type, @Nonnull final String file, final int line)
+	public SetBreakpointCommand(@Nonnull RemoteDebugger debugger, @Nonnull String type, @Nonnull String file, int line)
 	{
 		this(debugger, type, file, line, null, null, null, SuspendPolicy.NONE);
 	}
 
 
-	public SetBreakpointCommand(@Nonnull final RemoteDebugger debugger,
-			@Nonnull final String type,
-			@Nonnull final String file,
-			final int line,
-			@Nullable final String condition,
-			@Nullable final String logExpression,
-			@Nullable final String funcName,
-			@Nonnull final SuspendPolicy policy)
+	public SetBreakpointCommand(@Nonnull RemoteDebugger debugger,
+			@Nonnull String type,
+			@Nonnull String file,
+			int line,
+			@Nullable String condition,
+			@Nullable String logExpression,
+			@Nullable String funcName,
+			@Nonnull SuspendPolicy policy)
 	{
 		super(debugger, type, SET_BREAKPOINT, file, line);
 		myCondition = condition;

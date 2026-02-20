@@ -26,14 +26,14 @@ public class ProtocolParser
 
 	public static PySignature parseCallSignature(String payload) throws PyDebuggerException
 	{
-		final XppReader reader = openReader(payload, true);
+		XppReader reader = openReader(payload, true);
 		reader.moveDown();
 		if(!"call_signature".equals(reader.getNodeName()))
 		{
 			throw new PyDebuggerException("Expected <call_signature>, found " + reader.getNodeName());
 		}
-		final String file = readString(reader, "file", "");
-		final String name = readString(reader, "name", "");
+		String file = readString(reader, "file", "");
+		String name = readString(reader, "name", "");
 		PySignature signature = new PySignature(file, name);
 
 		while(reader.hasMoreChildren())
@@ -58,9 +58,9 @@ public class ProtocolParser
 		return signature;
 	}
 
-	public static PyConcurrencyEvent parseConcurrencyEvent(String payload, final PyPositionConverter positionConverter) throws PyDebuggerException
+	public static PyConcurrencyEvent parseConcurrencyEvent(String payload, PyPositionConverter positionConverter) throws PyDebuggerException
 	{
-		final XppReader reader = openReader(payload, true);
+		XppReader reader = openReader(payload, true);
 		reader.moveDown();
 		String eventName = reader.getNodeName();
 		boolean isAsyncio;
@@ -77,10 +77,10 @@ public class ProtocolParser
 			throw new PyDebuggerException("Expected <threading_event> or <asyncio_event>, found " + reader.getNodeName());
 		}
 
-		final Long time = Long.parseLong(readString(reader, "time", ""));
-		final String name = readString(reader, "name", "");
-		final String thread_id = readString(reader, "thread_id", "");
-		final String type = readString(reader, "type", "");
+		Long time = Long.parseLong(readString(reader, "time", ""));
+		String name = readString(reader, "name", "");
+		String thread_id = readString(reader, "thread_id", "");
+		String type = readString(reader, "type", "");
 		PyConcurrencyEvent threadingEvent;
 		if(type.equals("lock"))
 		{
@@ -104,7 +104,7 @@ public class ProtocolParser
 			throw new PyDebuggerException("Unknown type " + type);
 		}
 
-		final String eventType = readString(reader, "event", "");
+		String eventType = readString(reader, "event", "");
 		if(eventType.equals("__init__"))
 		{
 			threadingEvent.setType(PyConcurrencyEvent.EventType.CREATE);
@@ -144,7 +144,7 @@ public class ProtocolParser
 		threadingEvent.setLine(Integer.parseInt(readString(reader, "line", "")) - 1);
 		reader.moveUp();
 
-		final List<PyStackFrameInfo> frames = new LinkedList<>();
+		List<PyStackFrameInfo> frames = new LinkedList<>();
 		while(reader.hasMoreChildren())
 		{
 			reader.moveDown();
@@ -165,7 +165,7 @@ public class ProtocolParser
 		return payload;
 	}
 
-	public static String decode(final String value) throws PyDebuggerException
+	public static String decode(String value) throws PyDebuggerException
 	{
 		try
 		{
@@ -177,44 +177,44 @@ public class ProtocolParser
 		}
 	}
 
-	public static String encodeExpression(final String expression)
+	public static String encodeExpression(String expression)
 	{
 		return StringUtil.replace(expression, "\n", "@LINE@");
 	}
 
-	public static PyIo parseIo(final String text) throws PyDebuggerException
+	public static PyIo parseIo(String text) throws PyDebuggerException
 	{
-		final XppReader reader = openReader(text, true);
+		XppReader reader = openReader(text, true);
 		reader.moveDown();
 		if(!"io".equals(reader.getNodeName()))
 		{
 			throw new PyDebuggerException("Expected <io>, found " + reader.getNodeName());
 		}
-		final String s = readString(reader, "s", "");
-		final int ctx = readInt(reader, "ctx", 1);
+		String s = readString(reader, "s", "");
+		int ctx = readInt(reader, "ctx", 1);
 		return new PyIo(s, ctx);
 	}
 
 	@Nonnull
-	public static PyThreadInfo parseThread(final String text, final PyPositionConverter positionConverter) throws PyDebuggerException
+	public static PyThreadInfo parseThread(String text, PyPositionConverter positionConverter) throws PyDebuggerException
 	{
-		final XppReader reader = openReader(text, true);
+		XppReader reader = openReader(text, true);
 		reader.moveDown();
 		if(!"thread".equals(reader.getNodeName()))
 		{
 			throw new PyDebuggerException("Expected <thread>, found " + reader.getNodeName());
 		}
 
-		final String id = readString(reader, "id", null);
-		final String name = readString(reader, "name", "");
-		final int stopReason = readInt(reader, "stop_reason", 0);
+		String id = readString(reader, "id", null);
+		String name = readString(reader, "name", "");
+		int stopReason = readInt(reader, "stop_reason", 0);
 		String message = readString(reader, "message", "None");
 		if("None".equals(message) || message.isEmpty())
 		{
 			message = null;
 		}
 
-		final List<PyStackFrameInfo> frames = new LinkedList<>();
+		List<PyStackFrameInfo> frames = new LinkedList<>();
 		while(reader.hasMoreChildren())
 		{
 			reader.moveDown();
@@ -231,35 +231,35 @@ public class ProtocolParser
 		return payload.split("\t")[0];
 	}
 
-	private static PyStackFrameInfo parseFrame(final XppReader reader, final String threadId, final PyPositionConverter positionConverter) throws PyDebuggerException
+	private static PyStackFrameInfo parseFrame(XppReader reader, String threadId, PyPositionConverter positionConverter) throws PyDebuggerException
 	{
 		if(!"frame".equals(reader.getNodeName()))
 		{
 			throw new PyDebuggerException("Expected <frame>, found " + reader.getNodeName());
 		}
 
-		final String id = readString(reader, "id", null);
-		final String name = readString(reader, "name", null);
-		final String file = readString(reader, "file", null);
-		final int line = readInt(reader, "line", 0);
+		String id = readString(reader, "id", null);
+		String name = readString(reader, "name", null);
+		String file = readString(reader, "file", null);
+		int line = readInt(reader, "line", 0);
 
 		return new PyStackFrameInfo(threadId, id, name, positionConverter.create(file, line));
 	}
 
 	@Nonnull
-	public static PyDebugValue parseValue(final String text, final PyFrameAccessor frameAccessor) throws PyDebuggerException
+	public static PyDebugValue parseValue(String text, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
-		final XppReader reader = openReader(text, true);
+		XppReader reader = openReader(text, true);
 		reader.moveDown();
 		return parseValue(reader, frameAccessor);
 	}
 
 	@Nonnull
-	public static List<PyDebugValue> parseReferrers(final String text, final PyFrameAccessor frameAccessor) throws PyDebuggerException
+	public static List<PyDebugValue> parseReferrers(String text, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
-		final List<PyDebugValue> values = new LinkedList<>();
+		List<PyDebugValue> values = new LinkedList<>();
 
-		final XppReader reader = openReader(text, false);
+		XppReader reader = openReader(text, false);
 
 		while(reader.hasMoreChildren())
 		{
@@ -286,11 +286,11 @@ public class ProtocolParser
 
 
 	@Nonnull
-	public static List<PyDebugValue> parseValues(final String text, final PyFrameAccessor frameAccessor) throws PyDebuggerException
+	public static List<PyDebugValue> parseValues(String text, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
-		final List<PyDebugValue> values = new LinkedList<>();
+		List<PyDebugValue> values = new LinkedList<>();
 
-		final XppReader reader = openReader(text, false);
+		XppReader reader = openReader(text, false);
 		while(reader.hasMoreChildren())
 		{
 			reader.moveDown();
@@ -301,22 +301,22 @@ public class ProtocolParser
 		return values;
 	}
 
-	private static PyDebugValue parseValue(final XppReader reader, PyFrameAccessor frameAccessor) throws PyDebuggerException
+	private static PyDebugValue parseValue(XppReader reader, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
 		if(!"var".equals(reader.getNodeName()))
 		{
 			throw new PyDebuggerException("Expected <var>, found " + reader.getNodeName());
 		}
 
-		final String name = readString(reader, "name", null);
-		final String type = readString(reader, "type", null);
-		final String qualifier = readString(reader, "qualifier", ""); //to be able to get the fully qualified type if necessary
+		String name = readString(reader, "name", null);
+		String type = readString(reader, "type", null);
+		String qualifier = readString(reader, "qualifier", ""); //to be able to get the fully qualified type if necessary
 
 		String value = readString(reader, "value", null);
-		final String isContainer = readString(reader, "isContainer", "");
-		final String isReturnedValue = readString(reader, "isRetVal", "");
-		final String isIPythonHidden = readString(reader, "isIPythonHidden", "");
-		final String isErrorOnEval = readString(reader, "isErrorOnEval", "");
+		String isContainer = readString(reader, "isContainer", "");
+		String isReturnedValue = readString(reader, "isRetVal", "");
+		String isIPythonHidden = readString(reader, "isIPythonHidden", "");
+		String isErrorOnEval = readString(reader, "isErrorOnEval", "");
 
 		if(value.startsWith(type + ": "))
 		{  // drop unneeded prefix
@@ -326,9 +326,9 @@ public class ProtocolParser
 		return new PyDebugValue(name, type, qualifier, value, "True".equals(isContainer), "True".equals(isReturnedValue), "True".equals(isIPythonHidden), "True".equals(isErrorOnEval), frameAccessor);
 	}
 
-	public static ArrayChunk parseArrayValues(final String text, final PyFrameAccessor frameAccessor) throws PyDebuggerException
+	public static ArrayChunk parseArrayValues(String text, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
-		final XppReader reader = openReader(text, false);
+		XppReader reader = openReader(text, false);
 		ArrayChunkBuilder result = new ArrayChunkBuilder();
 		if(reader.hasMoreChildren())
 		{
@@ -386,7 +386,7 @@ public class ProtocolParser
 		reader.moveUp();
 	}
 
-	public static Object[][] parseArrayValues(final XppReader reader, final PyFrameAccessor frameAccessor) throws PyDebuggerException
+	public static Object[][] parseArrayValues(XppReader reader, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
 		int rows = -1;
 		int cols = -1;
@@ -443,9 +443,9 @@ public class ProtocolParser
 		return values;
 	}
 
-	private static XppReader openReader(final String text, final boolean checkForContent) throws PyDebuggerException
+	private static XppReader openReader(String text, boolean checkForContent) throws PyDebuggerException
 	{
-		final XppReader reader = new XppReader(new StringReader(text), new MXParser(), new NoNameCoder());
+		XppReader reader = new XppReader(new StringReader(text), new MXParser(), new NoNameCoder());
 		if(checkForContent && !reader.hasMoreChildren())
 		{
 			throw new PyDebuggerException("Empty frame: " + text);
@@ -453,15 +453,15 @@ public class ProtocolParser
 		return reader;
 	}
 
-	private static String readString(final XppReader reader, final String name, final String fallback) throws PyDebuggerException
+	private static String readString(XppReader reader, String name, String fallback) throws PyDebuggerException
 	{
-		final String value = read(reader, name, fallback == null);
+		String value = read(reader, name, fallback == null);
 		return value == null ? fallback : value;
 	}
 
-	private static int readInt(final XppReader reader, final String name, final Integer fallback) throws PyDebuggerException
+	private static int readInt(XppReader reader, String name, Integer fallback) throws PyDebuggerException
 	{
-		final String value = read(reader, name, fallback == null);
+		String value = read(reader, name, fallback == null);
 		if(value == null)
 		{
 			return fallback;
@@ -477,9 +477,9 @@ public class ProtocolParser
 	}
 
 	@Contract("_, _, true -> !null")
-	private static String read(final XppReader reader, final String name, boolean isRequired) throws PyDebuggerException
+	private static String read(XppReader reader, String name, boolean isRequired) throws PyDebuggerException
 	{
-		final String value = reader.getAttribute(name);
+		String value = reader.getAttribute(name);
 		if(value == null && isRequired)
 		{
 			throw new PyDebuggerException("Attribute not found: " + name);

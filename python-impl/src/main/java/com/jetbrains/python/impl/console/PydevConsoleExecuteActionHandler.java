@@ -67,7 +67,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	}
 
 	@Override
-	public void processLine(@Nonnull final String text)
+	public void processLine(@Nonnull String text)
 	{
 		executeMultiLine(text);
 	}
@@ -85,7 +85,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 		return PsiTreeUtil.findChildOfAnyType(pyFile, PyStatementList.class) == null && pyFile.getStatements().size() < 2;
 	}
 
-	private void sendLineToConsole(@Nonnull final ConsoleCommunication.ConsoleCodeFragment code)
+	private void sendLineToConsole(@Nonnull ConsoleCommunication.ConsoleCodeFragment code)
 	{
 		ConsoleCommunication consoleComm = this.consoleCommunication;
 		if(!consoleCommunication.isWaitingForInput())

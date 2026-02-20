@@ -72,7 +72,7 @@ public class PyJoinIfIntention extends BaseIntentionAction {
                 return false;
             }
             if (firstStatement instanceof PyIfStatement) {
-                final PyIfStatement inner = (PyIfStatement) firstStatement;
+                PyIfStatement inner = (PyIfStatement) firstStatement;
                 if (inner.getElsePart() != null || inner.getElifParts().length > 0) {
                     return false;
                 }

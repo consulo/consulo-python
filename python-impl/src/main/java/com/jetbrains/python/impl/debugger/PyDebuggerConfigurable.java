@@ -44,7 +44,7 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
   private final Project myProject;
 
   @Inject
-  public PyDebuggerConfigurable(Project project, final PyDebuggerOptionsProvider settings) {
+  public PyDebuggerConfigurable(Project project, PyDebuggerOptionsProvider settings) {
     myProject = project;
     mySettings = settings;
   }

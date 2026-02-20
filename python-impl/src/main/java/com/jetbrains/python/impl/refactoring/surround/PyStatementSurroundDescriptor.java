@@ -48,7 +48,7 @@ public class PyStatementSurroundDescriptor implements SurroundDescriptor {
 
   @Nonnull
   public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-    final PsiElement[] statements = PyRefactoringUtil.findStatementsInRange(file, startOffset, endOffset);
+    PsiElement[] statements = PyRefactoringUtil.findStatementsInRange(file, startOffset, endOffset);
     if (statements.length == 0) {
       return PsiElement.EMPTY_ARRAY;
     }

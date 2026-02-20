@@ -29,7 +29,7 @@ import consulo.language.ast.IElementType;
 public class BuildoutCfgParser implements PsiParser, BuildoutCfgElementTypes, BuildoutCfgTokenTypes {
   @Nonnull
   public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion) {
-    final PsiBuilder.Marker rootMarker = builder.mark();
+    PsiBuilder.Marker rootMarker = builder.mark();
     Parsing parsing = new Parsing(builder);
     while (!builder.eof()) {
       if (!parsing.parseSection()) {

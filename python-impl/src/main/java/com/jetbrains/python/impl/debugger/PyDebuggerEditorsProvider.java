@@ -42,29 +42,29 @@ public class PyDebuggerEditorsProvider extends XDebuggerEditorsProvider
 
   @Nonnull
   @Override
-  public Document createDocument(@Nonnull final Project project,
+  public Document createDocument(@Nonnull Project project,
                                  @Nonnull String text,
-                                 @Nullable final XSourcePosition sourcePosition,
+                                 @Nullable XSourcePosition sourcePosition,
                                  @Nonnull EvaluationMode mode) {
     text = text.trim();
-    final PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(project, "fragment.py", text, true);
+    PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(project, "fragment.py", text, true);
 
     // Bind to context
-    final PsiElement element = getContextElement(project, sourcePosition);
+    PsiElement element = getContextElement(project, sourcePosition);
     fragment.setContext(element);
 
     return PsiDocumentManager.getInstance(project).getDocument(fragment);
   }
 
   @Nullable
-  private static PsiElement getContextElement(final Project project, XSourcePosition sourcePosition) {
+  private static PsiElement getContextElement(Project project, XSourcePosition sourcePosition) {
     if (sourcePosition != null) {
-      final Document document = FileDocumentManager.getInstance().getDocument(sourcePosition.getFile());
-      final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
+      Document document = FileDocumentManager.getInstance().getDocument(sourcePosition.getFile());
+      PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
       if (psiFile != null) {
         int offset = sourcePosition.getOffset();
         if (offset >= 0 && offset < document.getTextLength()) {
-          final int lineEndOffset = document.getLineEndOffset(document.getLineNumber(offset));
+          int lineEndOffset = document.getLineEndOffset(document.getLineNumber(offset));
           do {
             PsiElement element = psiFile.findElementAt(offset);
             if (element != null && !(element instanceof PsiWhiteSpace || element instanceof PsiComment)) {

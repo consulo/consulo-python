@@ -25,7 +25,7 @@ import jakarta.annotation.Nullable;
  * @author yole
  */
 public class ImplicitResolveResult extends RatedResolveResult {
-  public ImplicitResolveResult(@Nullable final PsiElement element, final int rate) {
+  public ImplicitResolveResult(@Nullable PsiElement element, int rate) {
     super(rate, element);
   }
 }

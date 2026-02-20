@@ -60,7 +60,7 @@ public class Parsing
 		return getParsingContext().getFunctionParser();
 	}
 
-	protected boolean checkMatches(final IElementType token, final String message)
+	protected boolean checkMatches(IElementType token, String message)
 	{
 		if(myBuilder.getTokenType() == token)
 		{
@@ -80,7 +80,7 @@ public class Parsing
 		}
 		else
 		{
-			final PsiBuilder.Marker nameExpected = myBuilder.mark();
+			PsiBuilder.Marker nameExpected = myBuilder.mark();
 			if(myBuilder.getTokenType() != PyTokenTypes.STATEMENT_BREAK && !atAnyOfTokens(validSuccessiveTokens))
 			{
 				myBuilder.advanceLexer();
@@ -90,22 +90,22 @@ public class Parsing
 		}
 	}
 
-	protected void assertCurrentToken(final PyElementType tokenType)
+	protected void assertCurrentToken(PyElementType tokenType)
 	{
 		LOG.assertTrue(myBuilder.getTokenType() == tokenType);
 	}
 
-	protected boolean atToken(@Nullable final IElementType tokenType)
+	protected boolean atToken(@Nullable IElementType tokenType)
 	{
 		return myBuilder.getTokenType() == tokenType;
 	}
 
-	protected boolean atToken(@Nonnull final IElementType tokenType, @Nonnull String tokenText)
+	protected boolean atToken(@Nonnull IElementType tokenType, @Nonnull String tokenText)
 	{
 		return myBuilder.getTokenType() == tokenType && tokenText.equals(myBuilder.getTokenText());
 	}
 
-	protected boolean atAnyOfTokens(final IElementType... tokenTypes)
+	protected boolean atAnyOfTokens(IElementType... tokenTypes)
 	{
 		IElementType currentTokenType = myBuilder.getTokenType();
 		for(IElementType tokenType : tokenTypes)
@@ -118,7 +118,7 @@ public class Parsing
 		return false;
 	}
 
-	protected boolean matchToken(final IElementType tokenType)
+	protected boolean matchToken(IElementType tokenType)
 	{
 		if(myBuilder.getTokenType() == tokenType)
 		{
@@ -135,7 +135,7 @@ public class Parsing
 
 	protected static void buildTokenElement(IElementType type, PsiBuilder builder)
 	{
-		final PsiBuilder.Marker marker = builder.mark();
+		PsiBuilder.Marker marker = builder.mark();
 		builder.advanceLexer();
 		marker.done(type);
 	}

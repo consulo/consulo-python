@@ -15,7 +15,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
 
   private void doTest() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
-    final String testName = "completion/" + getTestName(true);
+    String testName = "completion/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     myFixture.completeBasic();
     myFixture.checkResultByFile(testName + ".after.py");
@@ -89,7 +89,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testOneUnderscore() {
-    final String testName = "completion/" + getTestName(true);
+    String testName = "completion/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     myFixture.completeBasic();
     myFixture.type('\n');
@@ -141,24 +141,24 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testSeenMembers() {  // PY-1181
-    final String testName = "completion/" + getTestName(true);
+    String testName = "completion/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
-    final LookupElement[] elements = myFixture.completeBasic();
+    LookupElement[] elements = myFixture.completeBasic();
     assertNotNull(elements);
     assertEquals(1, elements.length);
     assertEquals("children", elements [0].getLookupString());
   }
 
   public void testImportModule() {
-    final String testName = "completion/" + getTestName(true);
+    String testName = "completion/" + getTestName(true);
     myFixture.configureByFiles(testName + ".py", "completion/someModule.py");
     myFixture.completeBasic();
     myFixture.checkResultByFile(testName + ".after.py");
   }
 
   public void testPy255() {
-    final String dirname = "completion/";
-    final String testName = dirname + "moduleClass";
+    String dirname = "completion/";
+    String testName = dirname + "moduleClass";
     myFixture.configureByFiles(testName + ".py", dirname + "__init__.py");
     myFixture.copyDirectoryToProject(dirname + "mymodule", dirname + "mymodule");
     myFixture.completeBasic();
@@ -166,8 +166,8 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testPy874() {
-    final String dirname = "completion/";
-    final String testName = dirname + "py874";
+    String dirname = "completion/";
+    String testName = dirname + "py874";
     myFixture.configureByFile(testName + ".py");
     myFixture.copyDirectoryToProject(dirname + "root", dirname + "root");
     myFixture.completeBasic();
@@ -216,7 +216,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   public void testEmptyFile() {  // PY-1845
     myFixture.configureByText(PythonFileType.INSTANCE, "");
     myFixture.completeBasic();
-    final List<String> elements = myFixture.getLookupElementStrings();
+    List<String> elements = myFixture.getLookupElementStrings();
     assertNotNull(elements);
     assertTrue(elements.contains("import"));
   }
@@ -229,7 +229,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testImportedFile() { // PY-1955
-    final String dirname = "completion/";
+    String dirname = "completion/";
     myFixture.copyDirectoryToProject(dirname + "root", dirname + "root");
     myFixture.configureByFile(dirname + "importedFile.py");
     myFixture.completeBasic();
@@ -237,7 +237,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testImportedModule() {  // PY-1956
-    final String dirname = "completion/";
+    String dirname = "completion/";
     myFixture.copyDirectoryToProject(dirname + "root", dirname + "root");
     myFixture.configureByFile(dirname + "importedModule.py");
     myFixture.completeBasic();
@@ -319,10 +319,10 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testNoContinueInFinally() {
-    final String testName = "completion/" + getTestName(true);
+    String testName = "completion/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     myFixture.completeBasic();
-    final List<String> lookupElementStrings = myFixture.getLookupElementStrings();
+    List<String> lookupElementStrings = myFixture.getLookupElementStrings();
     assertNotNull(lookupElementStrings);
     assertFalse(lookupElementStrings.contains("continue"));
   }
@@ -406,7 +406,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testEpydocParamTag() {
-    final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
+    PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
     settings.setFormat(DocStringFormat.EPYTEXT);
     try {
       doTest();
@@ -417,12 +417,12 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testEpydocTags() {
-    final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
+    PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
     settings.setFormat(DocStringFormat.EPYTEXT);
     try {
       myFixture.configureByFile("completion/epydocTags.py");
       myFixture.completeBasic();
-      final List<String> lookupElementStrings = myFixture.getLookupElementStrings();
+      List<String> lookupElementStrings = myFixture.getLookupElementStrings();
       assertNotNull(lookupElementStrings);
       assertTrue(lookupElementStrings.contains("@param"));
     }
@@ -432,7 +432,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testEpydocTagsMiddle() {
-    final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
+    PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
     settings.setFormat(DocStringFormat.EPYTEXT);
     try {
       myFixture.configureByFile("completion/epydocTagsMiddle.py");
@@ -445,7 +445,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testIdentifiersInPlainDocstring() {
-    final PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
+    PyDocumentationSettings settings = PyDocumentationSettings.getInstance(myFixture.getModule());
     settings.setFormat(DocStringFormat.PLAIN);
     myFixture.configureByFile("completion/identifiersInPlainDocstring.py");
     myFixture.completeBasic();
@@ -577,7 +577,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
       myFixture.copyDirectoryToProject("completion/relativeImportExcludeToplevel", "");
       myFixture.configureByFile("pack/subpack/modX.py");
       myFixture.completeBasic();
-      final List<String> lookupElementStrings = myFixture.getLookupElementStrings();
+      List<String> lookupElementStrings = myFixture.getLookupElementStrings();
       assertNotNull(lookupElementStrings);
       assertFalse(lookupElementStrings.contains("sys"));
     }
@@ -666,7 +666,7 @@ public abstract class PythonCompletionTest extends PyTestCase {
   }
 
   public void testReturnTypeOfCallFromUsages() {
-    final List<String> results = doTestByText("def f(x):\n" +
+    List<String> results = doTestByText("def f(x):\n" +
                                               "    return x\n" +
                                               "\n" +
                                               "f('foo').<caret>\n");

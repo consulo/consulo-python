@@ -199,7 +199,7 @@ public abstract class PythonHighlightingTest extends PyTestCase {
   }
 
   // ---
-  private void doTest(final LanguageLevel languageLevel, final boolean checkWarnings, final boolean checkInfos) {
+  private void doTest(LanguageLevel languageLevel, boolean checkWarnings, boolean checkInfos) {
     PythonLanguageLevelPusher.setForcedLanguageLevel(myFixture.getProject(), languageLevel);
     try {
       doTest(checkWarnings, checkInfos);
@@ -210,7 +210,7 @@ public abstract class PythonHighlightingTest extends PyTestCase {
   }
 
   private void doTest() {
-    final String TEST_PATH = "/highlighting/";
+    String TEST_PATH = "/highlighting/";
     myFixture.testHighlighting(true, true, false, TEST_PATH + getTestName(true) + PyNames.DOT_PY);
   }
 

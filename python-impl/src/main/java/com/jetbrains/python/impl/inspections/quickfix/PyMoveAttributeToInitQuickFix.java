@@ -38,32 +38,32 @@ public class PyMoveAttributeToInitQuickFix implements LocalQuickFix {
         return PyLocalize.qfixMoveAttribute();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
         if (!(element instanceof PyTargetExpression)) {
             return;
         }
-        final PyTargetExpression targetExpression = (PyTargetExpression) element;
+        PyTargetExpression targetExpression = (PyTargetExpression) element;
 
-        final PyClass containingClass = targetExpression.getContainingClass();
-        final PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
+        PyClass containingClass = targetExpression.getContainingClass();
+        PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class);
         if (containingClass == null || assignment == null) {
             return;
         }
 
-        final Function<String, PyStatement> callback = FunctionUtil.<String, PyStatement>constant(assignment);
+        Function<String, PyStatement> callback = FunctionUtil.<String, PyStatement>constant(assignment);
         AddFieldQuickFix.addFieldToInit(project, containingClass, ((PyTargetExpression) element).getName(), callback);
         removeDefinition(assignment);
     }
 
     private static boolean removeDefinition(PyAssignmentStatement assignment) {
-        final PyStatementList statementList = PsiTreeUtil.getParentOfType(assignment, PyStatementList.class);
+        PyStatementList statementList = PsiTreeUtil.getParentOfType(assignment, PyStatementList.class);
         if (statementList == null) {
             return false;
         }
 
         if (statementList.getStatements().length == 1) {
-            final PyPassStatement passStatement = PyElementGenerator.getInstance(assignment.getProject()).createPassStatement();
+            PyPassStatement passStatement = PyElementGenerator.getInstance(assignment.getProject()).createPassStatement();
             statementList.addBefore(passStatement, assignment);
         }
         assignment.delete();

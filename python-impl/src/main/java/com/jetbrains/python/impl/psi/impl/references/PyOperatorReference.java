@@ -46,7 +46,7 @@ public class PyOperatorReference extends PyReferenceImpl {
   protected List<RatedResolveResult> resolveInner() {
     List<RatedResolveResult> res = new ArrayList<RatedResolveResult>();
     if (myElement instanceof PyBinaryExpression expr) {
-      final String name = expr.getReferencedName();
+      String name = expr.getReferencedName();
       if (PyNames.CONTAINS.equals(name)) {
         res = resolveMember(expr.getRightExpression(), name);
       }
@@ -81,7 +81,7 @@ public class PyOperatorReference extends PyReferenceImpl {
   }
 
   public String getReadableOperatorName() {
-    final String name = myElement.getReferencedName();
+    String name = myElement.getReferencedName();
     if (PyNames.SUBSCRIPTION_OPERATORS.contains(name)) {
       return "[]";
     }
@@ -109,7 +109,7 @@ public class PyOperatorReference extends PyReferenceImpl {
   }
 
   private static boolean isTrueDivEnabled(@Nonnull PyElement anchor) {
-    final PsiFile file = anchor.getContainingFile();
+    PsiFile file = anchor.getContainingFile();
     if (file instanceof PyFile pyFile) {
       return FutureFeature.DIVISION.requiredAt(pyFile.getLanguageLevel()) || pyFile.hasImportFromFuture(FutureFeature.DIVISION);
     }
@@ -117,7 +117,7 @@ public class PyOperatorReference extends PyReferenceImpl {
   }
 
   private void resolveLeftAndRightOperators(List<RatedResolveResult> res, PyBinaryExpression expr, String name) {
-    final TypeEvalContext typeEvalContext = myContext.getTypeEvalContext();
+    TypeEvalContext typeEvalContext = myContext.getTypeEvalContext();
     typeEvalContext.trace("Trying to resolve left operator");
     typeEvalContext.traceIndent();
     try {
@@ -138,10 +138,10 @@ public class PyOperatorReference extends PyReferenceImpl {
 
   @Nonnull
   private List<RatedResolveResult> resolveMember(@Nullable PyExpression object, @Nullable String name) {
-    final ArrayList<RatedResolveResult> results = new ArrayList<RatedResolveResult>();
+    ArrayList<RatedResolveResult> results = new ArrayList<RatedResolveResult>();
     if (object != null && name != null) {
-      final TypeEvalContext typeEvalContext = myContext.getTypeEvalContext();
-      final PyType type = typeEvalContext.getType(object);
+      TypeEvalContext typeEvalContext = myContext.getTypeEvalContext();
+      PyType type = typeEvalContext.getType(object);
       typeEvalContext.trace("Side text is %s, type is %s", object.getText(), type);
       if (type != null) {
         List<? extends RatedResolveResult> res = type.resolveMember(name, object, AccessDirection.of(myElement), myContext);
@@ -151,7 +151,7 @@ public class PyOperatorReference extends PyReferenceImpl {
         else if (typeEvalContext.tracing()) {
           VirtualFile vFile = null;
           if (type instanceof PyClassType classType) {
-            final PyClass pyClass = classType.getPyClass();
+            PyClass pyClass = classType.getPyClass();
             vFile = pyClass.getContainingFile().getVirtualFile();
           }
           type.resolveMember(name, object, AccessDirection.of(myElement), myContext);

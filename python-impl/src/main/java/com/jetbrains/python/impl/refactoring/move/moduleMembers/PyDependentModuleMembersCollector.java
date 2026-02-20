@@ -47,7 +47,7 @@ public class PyDependentModuleMembersCollector extends DependentMembersCollector
 		if(member.getContainingFile() == myModule)
 		{
 			final PyResolveContext resolveContext = PyResolveContext.defaultContext();
-			final PsiElement memberBody = PyMoveModuleMembersHelper.expandNamedElementBody(member);
+			PsiElement memberBody = PyMoveModuleMembersHelper.expandNamedElementBody(member);
 			assert memberBody != null;
 			memberBody.accept(new PyRecursiveElementVisitor()
 			{

@@ -44,26 +44,26 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 {
 	@Nonnull
 	@Override
-	public PsiReference[] getReferencesByElement(@Nonnull final PsiElement element, @Nonnull ProcessingContext context)
+	public PsiReference[] getReferencesByElement(@Nonnull PsiElement element, @Nonnull ProcessingContext context)
 	{
 		if(element == DocStringUtil.getParentDefinitionDocString(element))
 		{
-			final PyStringLiteralExpression expr = (PyStringLiteralExpression) element;
-			final List<TextRange> ranges = expr.getStringValueTextRanges();
+			PyStringLiteralExpression expr = (PyStringLiteralExpression) element;
+			List<TextRange> ranges = expr.getStringValueTextRanges();
 
-			final String exprText = expr.getText();
-			final TextRange textRange = PyStringLiteralExpressionImpl.getNodeTextRange(exprText);
-			final String text = textRange.substring(exprText);
+			String exprText = expr.getText();
+			TextRange textRange = PyStringLiteralExpressionImpl.getNodeTextRange(exprText);
+			String text = textRange.substring(exprText);
 
 			if(!ranges.isEmpty())
 			{
-				final List<PsiReference> result = new ArrayList<>();
-				final int offset = ranges.get(0).getStartOffset();
+				List<PsiReference> result = new ArrayList<>();
+				int offset = ranges.get(0).getStartOffset();
 				// XXX: It does not work with multielement docstrings
 				StructuredDocString docString = DocStringUtil.parse(text, element);
 				if(docString instanceof TagBasedDocString)
 				{
-					final TagBasedDocString taggedDocString = (TagBasedDocString) docString;
+					TagBasedDocString taggedDocString = (TagBasedDocString) docString;
 					result.addAll(referencesFromNames(expr, offset, docString, taggedDocString.getTagArguments(TagBasedDocString.PARAM_TAGS), ReferenceType.PARAMETER));
 					result.addAll(referencesFromNames(expr, offset, docString, taggedDocString.getTagArguments(TagBasedDocString.PARAM_TYPE_TAGS), ReferenceType.PARAMETER_TYPE));
 					result.addAll(referencesFromNames(expr, offset, docString, docString.getKeywordArgumentSubstrings(), ReferenceType.KEYWORD));
@@ -75,7 +75,7 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 				}
 				else if(docString instanceof SectionBasedDocString)
 				{
-					final SectionBasedDocString sectioned = (SectionBasedDocString) docString;
+					SectionBasedDocString sectioned = (SectionBasedDocString) docString;
 					result.addAll(referencesFromFields(expr, offset, sectioned.getParameterFields(), ReferenceType.PARAMETER));
 					result.addAll(referencesFromFields(expr, offset, sectioned.getKeywordArgumentFields(), ReferenceType.KEYWORD));
 					result.addAll(referencesFromFields(expr, offset, sectioned.getAttributeFields(), PyUtil.isTopLevel(element) ? ReferenceType.GLOBAL_VARIABLE : ReferenceType.INSTANCE_VARIABLE));
@@ -91,7 +91,7 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 	{
 		List<PsiReference> result = new ArrayList<>();
 
-		final Substring rtype = docString.getReturnTypeSubstring();
+		Substring rtype = docString.getReturnTypeSubstring();
 		if(rtype != null)
 		{
 			result.addAll(parseTypeReferences(element, rtype, offset));
@@ -108,15 +108,15 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 		List<PsiReference> result = new ArrayList<>();
 		for(Substring name : paramNames)
 		{
-			final String s = name.toString();
+			String s = name.toString();
 			if(PyNames.isIdentifier(s))
 			{
-				final TextRange range = name.getTextRange().shiftRight(offset);
+				TextRange range = name.getTextRange().shiftRight(offset);
 				result.add(new DocStringParameterReference(element, range, refType));
 			}
 			if(refType.equals(ReferenceType.PARAMETER_TYPE))
 			{
-				final Substring type = docString.getParamTypeSubstring(s);
+				Substring type = docString.getParamTypeSubstring(s);
 				if(type != null)
 				{
 					result.addAll(parseTypeReferences(element, type, offset));
@@ -132,18 +132,18 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 			@Nonnull List<SectionBasedDocString.SectionField> fields,
 			@Nullable ReferenceType nameRefType)
 	{
-		final List<PsiReference> result = new ArrayList<>();
+		List<PsiReference> result = new ArrayList<>();
 		for(SectionBasedDocString.SectionField field : fields)
 		{
 			for(Substring nameSub : field.getNamesAsSubstrings())
 			{
 				if(nameRefType != null && nameSub != null && !nameSub.isEmpty())
 				{
-					final TextRange range = nameSub.getTextRange().shiftRight(offset);
+					TextRange range = nameSub.getTextRange().shiftRight(offset);
 					result.add(new DocStringParameterReference(element, range, nameRefType));
 				}
 			}
-			final Substring typeSub = field.getTypeAsSubstring();
+			Substring typeSub = field.getTypeAsSubstring();
 			if(typeSub != null && !typeSub.isEmpty())
 			{
 				result.addAll(parseTypeReferences(element, typeSub, offset));
@@ -155,21 +155,21 @@ public class DocStringReferenceProvider extends PsiReferenceProvider
 	@Nonnull
 	private static List<PsiReference> parseTypeReferences(@Nonnull PsiElement anchor, @Nonnull Substring s, int offset)
 	{
-		final List<PsiReference> result = new ArrayList<>();
-		final PyTypeParser.ParseResult parseResult = PyTypeParser.parse(anchor, s.toString());
-		final Map<TextRange, ? extends PyType> types = parseResult.getTypes();
+		List<PsiReference> result = new ArrayList<>();
+		PyTypeParser.ParseResult parseResult = PyTypeParser.parse(anchor, s.toString());
+		Map<TextRange, ? extends PyType> types = parseResult.getTypes();
 		if(types.isEmpty())
 		{
 			result.add(new DocStringTypeReference(anchor, s.getTextRange().shiftRight(offset), s.getTextRange().shiftRight(offset), null, null));
 		}
 		offset = s.getTextRange().getStartOffset() + offset;
-		final Map<? extends PyType, TextRange> fullRanges = parseResult.getFullRanges();
+		Map<? extends PyType, TextRange> fullRanges = parseResult.getFullRanges();
 		for(Map.Entry<TextRange, ? extends PyType> pair : types.entrySet())
 		{
-			final PyType t = pair.getValue();
-			final TextRange range = pair.getKey().shiftRight(offset);
-			final TextRange fullRange = fullRanges.containsKey(t) ? fullRanges.get(t).shiftRight(offset) : range;
-			final PyImportElement importElement = parseResult.getImports().get(t);
+			PyType t = pair.getValue();
+			TextRange range = pair.getKey().shiftRight(offset);
+			TextRange fullRange = fullRanges.containsKey(t) ? fullRanges.get(t).shiftRight(offset) : range;
+			PyImportElement importElement = parseResult.getImports().get(t);
 			result.add(new DocStringTypeReference(anchor, range, fullRange, t, importElement));
 		}
 		return result;

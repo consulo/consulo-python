@@ -5,7 +5,7 @@ import jakarta.annotation.Nonnull;
 
 public class RemoveBreakpointCommand extends LineBreakpointCommand {
 
-  public RemoveBreakpointCommand(final RemoteDebugger debugger, @Nonnull final String type, final String file, final int line) {
+  public RemoveBreakpointCommand(RemoteDebugger debugger, @Nonnull String type, String file, int line) {
     super(debugger, type, REMOVE_BREAKPOINT, file, line);
   }
 }

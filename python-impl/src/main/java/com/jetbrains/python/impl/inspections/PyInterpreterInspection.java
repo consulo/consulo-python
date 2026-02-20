@@ -45,8 +45,8 @@ public class PyInterpreterInspection extends PyInspection {
     @Override
     public PsiElementVisitor buildVisitor(
         @Nonnull ProblemsHolder holder,
-        final boolean isOnTheFly,
-        @Nonnull final LocalInspectionToolSession session,
+        boolean isOnTheFly,
+        @Nonnull LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);

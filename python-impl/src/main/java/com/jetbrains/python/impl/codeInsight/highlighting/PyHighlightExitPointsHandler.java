@@ -44,7 +44,7 @@ import java.util.function.Consumer;
 public class PyHighlightExitPointsHandler extends HighlightUsagesHandlerBase<PsiElement> {
   private final PsiElement myTarget;
 
-  public PyHighlightExitPointsHandler(final Editor editor, final PsiFile file, final PsiElement target) {
+  public PyHighlightExitPointsHandler(Editor editor, PsiFile file, PsiElement target) {
     super(editor, file);
     myTarget = target;
   }
@@ -53,19 +53,19 @@ public class PyHighlightExitPointsHandler extends HighlightUsagesHandlerBase<Psi
     return Collections.singletonList(myTarget);
   }
 
-  protected void selectTargets(final List<PsiElement> targets, final Consumer<List<PsiElement>> selectionConsumer) {
+  protected void selectTargets(List<PsiElement> targets, Consumer<List<PsiElement>> selectionConsumer) {
     selectionConsumer.accept(targets);
   }
 
-  public void computeUsages(final List<PsiElement> targets) {
+  public void computeUsages(List<PsiElement> targets) {
     FeatureUsageTracker.getInstance().triggerFeatureUsed(ProductivityFeatureNames.CODEASSISTS_HIGHLIGHT_RETURN);
 
-    final PsiElement parent = myTarget.getParent();
+    PsiElement parent = myTarget.getParent();
     if (!(parent instanceof PyReturnStatement)) {
       return;
     }
 
-    final PyFunction function = PsiTreeUtil.getParentOfType(myTarget, PyFunction.class);
+    PyFunction function = PsiTreeUtil.getParentOfType(myTarget, PyFunction.class);
     if (function == null) {
       return;
     }
@@ -91,15 +91,15 @@ public class PyHighlightExitPointsHandler extends HighlightUsagesHandlerBase<Psi
     return null;
   }
 
-  private void highlightExitPoints(final PyReturnStatement statement,
-                                   final PyFunction function) {
-    final ControlFlow flow = ControlFlowCache.getControlFlow(function);
-    final Collection<PsiElement> exitStatements = findExitPointsAndStatements(flow);
+  private void highlightExitPoints(PyReturnStatement statement,
+                                   PyFunction function) {
+    ControlFlow flow = ControlFlowCache.getControlFlow(function);
+    Collection<PsiElement> exitStatements = findExitPointsAndStatements(flow);
     if (!exitStatements.contains(statement)) {
       return;
     }
 
-    final PsiElement originalTarget = getExitTarget(statement);
+    PsiElement originalTarget = getExitTarget(statement);
     for (PsiElement exitStatement : exitStatements) {
       if (getExitTarget(exitStatement) == originalTarget) {
         addOccurrence(exitStatement);
@@ -110,15 +110,15 @@ public class PyHighlightExitPointsHandler extends HighlightUsagesHandlerBase<Psi
                                              HighlightUsagesHandler.getShortcutText());
   }
 
-  private static Collection<PsiElement> findExitPointsAndStatements(final ControlFlow flow) {
-    final List<PsiElement> statements = new ArrayList<PsiElement>();
-    final Instruction[] instructions = flow.getInstructions();
+  private static Collection<PsiElement> findExitPointsAndStatements(ControlFlow flow) {
+    List<PsiElement> statements = new ArrayList<PsiElement>();
+    Instruction[] instructions = flow.getInstructions();
     for (Instruction instruction : instructions[instructions.length - 1].allPred()){
-      final PsiElement element = instruction.getElement();
+      PsiElement element = instruction.getElement();
       if (element == null){
         continue;
       }
-      final PsiElement statement = PyPsiUtils.getStatement(element);
+      PsiElement statement = PyPsiUtils.getStatement(element);
       if (statement != null){
         statements.add(statement);
       }

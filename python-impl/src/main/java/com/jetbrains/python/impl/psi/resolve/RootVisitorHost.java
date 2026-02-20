@@ -46,21 +46,21 @@ import java.util.Set;
  * @author yole
  */
 public class RootVisitorHost {
-  public static void visitRoots(@Nonnull final PsiElement elt, @Nonnull final RootVisitor visitor) {
+  public static void visitRoots(@Nonnull PsiElement elt, @Nonnull RootVisitor visitor) {
     // real search
-    final Module module = elt.getModule();
+    Module module = elt.getModule();
     if (module != null) {
       visitRoots(module, false, visitor);
     }
     else {
-      final PsiFile containingFile = elt.getContainingFile();
+      PsiFile containingFile = elt.getContainingFile();
       if (containingFile != null) {
         visitSdkRoots(containingFile, visitor);
       }
     }
   }
 
-  public static void visitRoots(@Nonnull Module module, final boolean skipSdk, final RootVisitor visitor) {
+  public static void visitRoots(@Nonnull Module module, boolean skipSdk, final RootVisitor visitor) {
     OrderEnumerator enumerator = OrderEnumerator.orderEntries(module).recursively();
     if (skipSdk) {
       enumerator = enumerator.withoutSdk();
@@ -78,10 +78,10 @@ public class RootVisitorHost {
 
   static void visitSdkRoots(PsiFile file, RootVisitor visitor) {
     // formality
-    final VirtualFile elt_vfile = file.getOriginalFile().getVirtualFile();
+    VirtualFile elt_vfile = file.getOriginalFile().getVirtualFile();
     List<OrderEntry> orderEntries = null;
     if (elt_vfile != null) { // reality
-      final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(file.getProject()).getFileIndex();
+      ProjectFileIndex fileIndex = ProjectRootManager.getInstance(file.getProject()).getFileIndex();
       orderEntries = fileIndex.getOrderEntriesForFile(elt_vfile);
       if (orderEntries.size() > 0) {
         for (OrderEntry entry : orderEntries) {
@@ -95,7 +95,7 @@ public class RootVisitorHost {
 
     // out-of-project file or non-file(e.g. console) - use roots of SDK assigned to project
     if (orderEntries == null) {
-      final Sdk sdk = null;
+      Sdk sdk = null;
       if (sdk != null) {
         visitSdkRoots(sdk, visitor);
       }
@@ -103,7 +103,7 @@ public class RootVisitorHost {
   }
 
   public static boolean visitSdkRoots(@Nonnull Sdk sdk, @Nonnull RootVisitor visitor) {
-    final VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+    VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
     for (VirtualFile root : roots) {
       if (!visitor.visitRoot(root, null, sdk, false)) {
         return true;

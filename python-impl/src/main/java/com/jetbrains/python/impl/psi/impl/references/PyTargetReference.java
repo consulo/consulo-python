@@ -41,10 +41,10 @@ public class PyTargetReference extends PyReferenceImpl {
   @Override
   @RequiredReadAction
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    final ResolveResult[] results = super.multiResolve(incompleteCode);
+    ResolveResult[] results = super.multiResolve(incompleteCode);
     boolean shadowed = false;
     for (ResolveResult result : results) {
-      final PsiElement element = result.getElement();
+      PsiElement element = result.getElement();
       if (element != null && (element.getContainingFile() != myElement.getContainingFile() ||
                               element instanceof PyFunction || element instanceof PyClass)) {
         shadowed = true;
@@ -62,7 +62,7 @@ public class PyTargetReference extends PyReferenceImpl {
   @Override
   @RequiredReadAction
   public Object[] getVariants() {
-    final PyImportElement importElement = PsiTreeUtil.getParentOfType(myElement, PyImportElement.class);
+    PyImportElement importElement = PsiTreeUtil.getParentOfType(myElement, PyImportElement.class);
     // reference completion is useless in 'as' part of import statement (PY-2384)
     if (importElement != null && myElement == importElement.getAsNameElement()) {
       return ArrayUtil.EMPTY_OBJECT_ARRAY;

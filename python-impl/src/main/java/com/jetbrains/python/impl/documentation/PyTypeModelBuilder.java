@@ -229,7 +229,7 @@ public class PyTypeModelBuilder
 	 */
 	public TypeModel build(@Nullable PyType type, boolean allowUnions)
 	{
-		final TypeModel evaluated = myVisited.get(type);
+		TypeModel evaluated = myVisited.get(type);
 		if(evaluated != null)
 		{
 			return evaluated;
@@ -243,17 +243,17 @@ public class PyTypeModelBuilder
 		TypeModel result = null;
 		if(type instanceof PyTupleType)
 		{
-			final PyTupleType tupleType = (PyTupleType) type;
+			PyTupleType tupleType = (PyTupleType) type;
 
-			final List<PyType> elementTypes = tupleType.isHomogeneous() ? Collections.singletonList(tupleType.getIteratedItemType()) : tupleType.getElementTypes(myContext);
+			List<PyType> elementTypes = tupleType.isHomogeneous() ? Collections.singletonList(tupleType.getIteratedItemType()) : tupleType.getElementTypes(myContext);
 
-			final List<TypeModel> elementModels = ContainerUtil.map(elementTypes, elementType -> build(elementType, true));
+			List<TypeModel> elementModels = ContainerUtil.map(elementTypes, elementType -> build(elementType, true));
 			result = new TupleType(elementModels, tupleType.isHomogeneous());
 		}
 		else if(type instanceof PyCollectionType)
 		{
-			final String name = type.getName();
-			final List<PyType> elementTypes = ((PyCollectionType) type).getElementTypes(myContext);
+			String name = type.getName();
+			List<PyType> elementTypes = ((PyCollectionType) type).getElementTypes(myContext);
 			boolean nullOnlyTypes = true;
 			for(PyType elementType : elementTypes)
 			{
@@ -263,7 +263,7 @@ public class PyTypeModelBuilder
 					break;
 				}
 			}
-			final List<TypeModel> elementModels = new ArrayList<>();
+			List<TypeModel> elementModels = new ArrayList<>();
 			if(!nullOnlyTypes)
 			{
 				for(PyType elementType : elementTypes)
@@ -278,7 +278,7 @@ public class PyTypeModelBuilder
 		}
 		else if(type instanceof PyUnionType && allowUnions)
 		{
-			final PyUnionType unionType = (PyUnionType) type;
+			PyUnionType unionType = (PyUnionType) type;
 			if(type instanceof PyDynamicallyEvaluatedType || PyTypeChecker.isUnknown(type))
 			{
 				result = new UnknownType(build(unionType.excludeNull(myContext), true));
@@ -304,7 +304,7 @@ public class PyTypeModelBuilder
 	@Nullable
 	private static PyType getOptionalType(@Nonnull PyUnionType type)
 	{
-		final Collection<PyType> members = type.getMembers();
+		Collection<PyType> members = type.getMembers();
 		if(members.size() == 2)
 		{
 			boolean foundNone = false;
@@ -331,7 +331,7 @@ public class PyTypeModelBuilder
 	private TypeModel build(@Nonnull PyCallableType type)
 	{
 		List<TypeModel> parameterModels = null;
-		final List<PyCallableParameter> parameters = type.getParameters(myContext);
+		List<PyCallableParameter> parameters = type.getParameters(myContext);
 		if(parameters != null)
 		{
 			parameterModels = new ArrayList<>();
@@ -340,8 +340,8 @@ public class PyTypeModelBuilder
 				parameterModels.add(new ParamType(parameter.getName(), build(parameter.getType(myContext), true)));
 			}
 		}
-		final PyType ret = type.getReturnType(myContext);
-		final TypeModel returnType = build(ret, true);
+		PyType ret = type.getReturnType(myContext);
+		TypeModel returnType = build(ret, true);
 		return new FunctionType(returnType, parameterModels);
 	}
 
@@ -388,7 +388,7 @@ public class PyTypeModelBuilder
 		@Override
 		public void unknown(UnknownType type)
 		{
-			final TypeModel nested = type.type;
+			TypeModel nested = type.type;
 			if(nested != null)
 			{
 				add("Union[");
@@ -480,8 +480,8 @@ public class PyTypeModelBuilder
 				add("...");
 				return;
 			}
-			final String name = collectionOf.collectionName;
-			final String typingName = PyTypingTypeProvider.TYPING_COLLECTION_CLASSES.get(name);
+			String name = collectionOf.collectionName;
+			String typingName = PyTypingTypeProvider.TYPING_COLLECTION_CLASSES.get(name);
 			addType(typingName != null ? typingName : name);
 			add("[");
 			processList(collectionOf.elementTypes, ", ");
@@ -507,7 +507,7 @@ public class PyTypeModelBuilder
 				return;
 			}
 			add("(");
-			final Collection<TypeModel> parameters = function.parameters;
+			Collection<TypeModel> parameters = function.parameters;
 			if(parameters != null)
 			{
 				processList(parameters, ", ");

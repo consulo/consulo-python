@@ -58,19 +58,19 @@ import java.util.*;
 public class PyOverrideImplementUtil {
     @Nullable
     @RequiredReadAction
-    public static PyClass getContextClass(@Nonnull final Editor editor, @Nonnull final PsiFile file) {
+    public static PyClass getContextClass(@Nonnull Editor editor, @Nonnull PsiFile file) {
         int offset = editor.getCaretModel().getOffset();
         PsiElement element = file.findElementAt(offset);
         if (element == null) {
             // are we in whitespace after last class? PY-440
-            final PsiElement lastChild = file.getLastChild();
+            PsiElement lastChild = file.getLastChild();
             if (lastChild != null
                 && offset >= lastChild.getTextRange().getStartOffset()
                 && offset <= lastChild.getTextRange().getEndOffset()) {
                 element = lastChild;
             }
         }
-        final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
+        PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
         if (pyClass == null && element instanceof PsiWhiteSpace whiteSpace && whiteSpace.getPrevSibling() instanceof PyClass prevClass) {
             return prevClass;
         }
@@ -78,23 +78,23 @@ public class PyOverrideImplementUtil {
     }
 
     @RequiredUIAccess
-    public static void chooseAndOverrideMethods(final Project project, @Nonnull final Editor editor, @Nonnull final PyClass pyClass) {
+    public static void chooseAndOverrideMethods(Project project, @Nonnull Editor editor, @Nonnull PyClass pyClass) {
         FeatureUsageTracker.getInstance().triggerFeatureUsed(ProductivityFeatureNames.CODEASSISTS_OVERRIDE_IMPLEMENT);
         chooseAndOverrideOrImplementMethods(project, editor, pyClass);
     }
 
     @RequiredUIAccess
     private static void chooseAndOverrideOrImplementMethods(
-        final Project project,
-        @Nonnull final Editor editor,
-        @Nonnull final PyClass pyClass
+        Project project,
+        @Nonnull Editor editor,
+        @Nonnull PyClass pyClass
     ) {
         PyPsiUtils.assertValid(pyClass);
         Application.get().assertReadAccessAllowed();
 
-        final Set<PyFunction> result = new HashSet<>();
+        Set<PyFunction> result = new HashSet<>();
         TypeEvalContext context = TypeEvalContext.codeCompletion(project, null);
-        final Collection<PyFunction> superFunctions = getAllSuperFunctions(pyClass, context);
+        Collection<PyFunction> superFunctions = getAllSuperFunctions(pyClass, context);
 
         result.addAll(superFunctions);
         chooseAndOverrideOrImplementMethods(project, editor, pyClass, result, "Select Methods to Override", false);
@@ -103,20 +103,20 @@ public class PyOverrideImplementUtil {
     @RequiredUIAccess
     public static void chooseAndOverrideOrImplementMethods(
         @Nonnull final Project project,
-        @Nonnull final Editor editor,
-        @Nonnull final PyClass pyClass,
-        @Nonnull final Collection<PyFunction> superFunctions,
-        @Nonnull final String title,
-        final boolean implement
+        @Nonnull Editor editor,
+        @Nonnull PyClass pyClass,
+        @Nonnull Collection<PyFunction> superFunctions,
+        @Nonnull String title,
+        boolean implement
     ) {
         List<PyMethodMember> elements = new ArrayList<>();
         for (PyFunction function : superFunctions) {
-            final String name = function.getName();
+            String name = function.getName();
             if (name == null || PyUtil.isClassPrivateName(name)) {
                 continue;
             }
             if (pyClass.findMethodByName(name, false, null) == null) {
-                final PyMethodMember member = new PyMethodMember(function);
+                PyMethodMember member = new PyMethodMember(function);
                 elements.add(member);
             }
         }
@@ -124,7 +124,7 @@ public class PyOverrideImplementUtil {
             return;
         }
 
-        final MemberChooser<PyMethodMember> chooser =
+        MemberChooser<PyMethodMember> chooser =
             new MemberChooser<PyMethodMember>(elements.toArray(new PyMethodMember[elements.size()]), false, true, project) {
                 @Override
                 protected SpeedSearchComparator getSpeedSearchComparator() {
@@ -160,7 +160,7 @@ public class PyOverrideImplementUtil {
         new WriteCommandAction(pyClass.getProject(), pyClass.getContainingFile()) {
             @Override
             @RequiredWriteAction
-            protected void run(@Nonnull final Result result) throws Throwable {
+            protected void run(@Nonnull Result result) throws Throwable {
                 write(pyClass, membersToOverride, editor, implement);
             }
         }.execute();
@@ -168,13 +168,13 @@ public class PyOverrideImplementUtil {
 
     @RequiredWriteAction
     private static void write(
-        @Nonnull final PyClass pyClass,
-        @Nonnull final List<PyMethodMember> newMembers,
-        @Nonnull final Editor editor,
+        @Nonnull PyClass pyClass,
+        @Nonnull List<PyMethodMember> newMembers,
+        @Nonnull Editor editor,
         boolean implement
     ) {
-        final PyStatementList statementList = pyClass.getStatementList();
-        final int offset = editor.getCaretModel().getOffset();
+        PyStatementList statementList = pyClass.getStatementList();
+        int offset = editor.getCaretModel().getOffset();
         PsiElement anchor = null;
         for (PyStatement statement : statementList.getStatements()) {
             if (statement.getTextRange().getStartOffset() < offset
@@ -186,15 +186,15 @@ public class PyOverrideImplementUtil {
         PyFunction element = null;
         for (PyMethodMember newMember : newMembers) {
             PyFunction baseFunction = (PyFunction) newMember.getPsiElement();
-            final PyFunctionBuilder builder = buildOverriddenFunction(pyClass, baseFunction, implement);
+            PyFunctionBuilder builder = buildOverriddenFunction(pyClass, baseFunction, implement);
             PyFunction function = builder.addFunctionAfter(statementList, anchor, LanguageLevel.forElement(statementList));
             element = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(function);
         }
 
         PyPsiUtils.removeRedundantPass(statementList);
         if (element != null) {
-            final PyStatementList targetStatementList = element.getStatementList();
-            final int start = targetStatementList.getTextRange().getStartOffset();
+            PyStatementList targetStatementList = element.getStatementList();
+            int start = targetStatementList.getTextRange().getStartOffset();
             editor.getCaretModel().moveToOffset(start);
             editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
             editor.getSelectionModel().setSelection(start, element.getTextRange().getEndOffset());
@@ -203,10 +203,10 @@ public class PyOverrideImplementUtil {
 
     @RequiredReadAction
     private static PyFunctionBuilder buildOverriddenFunction(PyClass pyClass, PyFunction baseFunction, boolean implement) {
-        final boolean overridingNew = PyNames.NEW.equals(baseFunction.getName());
+        boolean overridingNew = PyNames.NEW.equals(baseFunction.getName());
         assert baseFunction.getName() != null;
         PyFunctionBuilder pyFunctionBuilder = new PyFunctionBuilder(baseFunction.getName(), baseFunction);
-        final PyDecoratorList decorators = baseFunction.getDecoratorList();
+        PyDecoratorList decorators = baseFunction.getDecoratorList();
         boolean baseMethodIsStatic = false;
         if (decorators != null) {
             if (decorators.findDecorator(PyNames.CLASSMETHOD) != null) {
@@ -224,8 +224,8 @@ public class PyOverrideImplementUtil {
         if (anno != null) {
             pyFunctionBuilder.annotation(anno.getText());
         }
-        final TypeEvalContext context = TypeEvalContext.userInitiated(baseFunction.getProject(), baseFunction.getContainingFile());
-        final List<PyParameter> baseParams = PyUtil.getParameters(baseFunction, context);
+        TypeEvalContext context = TypeEvalContext.userInitiated(baseFunction.getProject(), baseFunction.getContainingFile());
+        List<PyParameter> baseParams = PyUtil.getParameters(baseFunction, context);
         for (PyParameter parameter : baseParams) {
             pyFunctionBuilder.parameter(parameter.getText());
         }
@@ -237,7 +237,7 @@ public class PyOverrideImplementUtil {
         boolean hadStar = false;
         List<String> parameters = new ArrayList<>();
         for (PyParameter parameter : baseParams) {
-            final PyNamedParameter pyNamedParameter = parameter.getAsNamed();
+            PyNamedParameter pyNamedParameter = parameter.getAsNamed();
             if (pyNamedParameter != null) {
                 String repr = pyNamedParameter.getRepr(false);
                 parameters.add(hadStar && !pyNamedParameter.isKeywordContainer() ? pyNamedParameter.getName() + "=" + repr : repr);
@@ -263,13 +263,13 @@ public class PyOverrideImplementUtil {
             if (baseClass.isNewStyleClass(context)) {
                 statementBody.append(PyNames.SUPER);
                 statementBody.append("(");
-                final LanguageLevel langLevel = ((PyFile) pyClass.getContainingFile()).getLanguageLevel();
+                LanguageLevel langLevel = ((PyFile) pyClass.getContainingFile()).getLanguageLevel();
                 if (!langLevel.isPy3K()) {
-                    final String baseFirstName = !baseParams.isEmpty() ? baseParams.get(0).getName() : null;
-                    final String firstName = baseFirstName != null ? baseFirstName : PyNames.CANONICAL_SELF;
+                    String baseFirstName = !baseParams.isEmpty() ? baseParams.get(0).getName() : null;
+                    String firstName = baseFirstName != null ? baseFirstName : PyNames.CANONICAL_SELF;
                     PsiElement outerClass = PsiTreeUtil.getParentOfType(pyClass, PyClass.class, true, PyFunction.class);
                     String className = pyClass.getName();
-                    final List<String> nameResult = Lists.newArrayList(className);
+                    List<String> nameResult = Lists.newArrayList(className);
                     while (outerClass != null) {
                         nameResult.add(0, ((PyClass) outerClass).getName());
                         outerClass = PsiTreeUtil.getParentOfType(outerClass, PyClass.class, true, PyFunction.class);
@@ -305,7 +305,7 @@ public class PyOverrideImplementUtil {
     // TODO find a better place for this logic
     @RequiredReadAction
     private static String getReferenceText(PyClass fromClass, PyClass toClass) {
-        final PyExpression[] superClassExpressions = fromClass.getSuperClassExpressions();
+        PyExpression[] superClassExpressions = fromClass.getSuperClassExpressions();
         for (PyExpression expression : superClassExpressions) {
             if (expression instanceof PyReferenceExpression refExpr) {
                 PsiElement target = refExpr.getReference().resolve();
@@ -323,11 +323,11 @@ public class PyOverrideImplementUtil {
     @Nonnull
     @RequiredReadAction
     public static List<PyFunction> getAllSuperFunctions(@Nonnull PyClass pyClass, @Nonnull TypeEvalContext context) {
-        final Map<String, PyFunction> functions = Maps.newLinkedHashMap();
-        for (final PyClassLikeType type : pyClass.getAncestorTypes(context)) {
+        Map<String, PyFunction> functions = Maps.newLinkedHashMap();
+        for (PyClassLikeType type : pyClass.getAncestorTypes(context)) {
             if (type != null) {
                 for (PyFunction function : PyTypeUtil.getMembersOfType(type, PyFunction.class, false, context)) {
-                    final String name = function.getName();
+                    String name = function.getName();
                     if (name != null && !functions.containsKey(name)) {
                         functions.put(name, function);
                     }
@@ -349,10 +349,10 @@ public class PyOverrideImplementUtil {
         @Override
         @RequiredReadAction
         public void visitPyRaiseStatement(PyRaiseStatement node) {
-            final PyExpression[] expressions = node.getExpressions();
+            PyExpression[] expressions = node.getExpressions();
             if (expressions.length > 0) {
                 if (expressions[0] instanceof PyCallExpression call) {
-                    final PyExpression callee = call.getCallee();
+                    PyExpression callee = call.getCallee();
                     if (callee != null && callee.getText().equals(PyNames.NOT_IMPLEMENTED_ERROR)) {
                         raiseNotImplemented = true;
                     }

@@ -107,15 +107,15 @@ public class PyTestFinder implements TestFinder
 	@Override
 	public Collection<PsiElement> findClassesForTest(@Nonnull PsiElement element)
 	{
-		final PyFunction sourceFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
-		final PyClass source = PsiTreeUtil.getParentOfType(element, PyClass.class);
+		PyFunction sourceFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+		PyClass source = PsiTreeUtil.getParentOfType(element, PyClass.class);
 		if(sourceFunction == null && source == null)
 		{
 			return Collections.emptySet();
 		}
 
 		List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<>();
-		final List<Pair<String, Integer>> possibleNames = new ArrayList<>();
+		List<Pair<String, Integer>> possibleNames = new ArrayList<>();
 		if(source != null)
 		{
 			possibleNames.addAll(TestFinderHelper.collectPossibleClassNamesWithWeights(source.getName()));

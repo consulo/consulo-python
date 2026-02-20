@@ -38,7 +38,7 @@ public class UnresolvedReferenceAddSelfQuickFix implements LocalQuickFix, HighPr
     private PyReferenceExpression myElement;
     private String myQualifier;
 
-    public UnresolvedReferenceAddSelfQuickFix(@Nonnull final PyReferenceExpression element, @Nonnull final String qualifier) {
+    public UnresolvedReferenceAddSelfQuickFix(@Nonnull PyReferenceExpression element, @Nonnull String qualifier) {
         myElement = element;
         myQualifier = qualifier;
     }

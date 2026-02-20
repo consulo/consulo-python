@@ -58,7 +58,7 @@ public class PyImportElementElementType extends PyStubElementType<PyImportElemen
 
   @Override
   public PyImportElementStub createStub(@Nonnull PyImportElement psi, StubElement parentStub) {
-    final PyTargetExpression asName = psi.getAsNameElement();
+    PyTargetExpression asName = psi.getAsNameElement();
     return new PyImportElementStubImpl(psi.getImportedQName(), asName != null ? asName.getName() : "", parentStub, getStubElementType());
   }
 

@@ -30,7 +30,7 @@ public class PyClassInheritorsSearch extends ExtensibleQueryFactory<PyClass, PyC
     private final PyClass mySuperClass;
     private final boolean myCheckDeepInheritance;
 
-    public SearchParameters(final PyClass superClass, final boolean checkDeepInheritance) {
+    public SearchParameters(PyClass superClass, boolean checkDeepInheritance) {
       mySuperClass = superClass;
       myCheckDeepInheritance = checkDeepInheritance;
     }
@@ -48,8 +48,8 @@ public class PyClassInheritorsSearch extends ExtensibleQueryFactory<PyClass, PyC
     super(PyClassInheritorsSearchExecutor.class);
   }
 
-  public static Query<PyClass> search(final PyClass superClass, final boolean checkDeepInheritance) {
-    final SearchParameters parameters = new SearchParameters(superClass, checkDeepInheritance);
+  public static Query<PyClass> search(PyClass superClass, boolean checkDeepInheritance) {
+    SearchParameters parameters = new SearchParameters(superClass, checkDeepInheritance);
     return INSTANCE.createUniqueResultsQuery(parameters);
   }
 }

@@ -26,20 +26,20 @@ import com.jetbrains.python.psi.PyElement;
  * @author yole
  */
 public class PyElementPattern<T extends PyElement, Self extends PyElementPattern<T, Self>> extends PsiElementPattern<T, Self> {
-  public PyElementPattern(final Class<T> aClass) {
+  public PyElementPattern(Class<T> aClass) {
     super(aClass);
   }
 
-  public PyElementPattern(@Nonnull final InitialPatternCondition<T> condition) {
+  public PyElementPattern(@Nonnull InitialPatternCondition<T> condition) {
     super(condition);
   }
 
   public static class Capture<T extends PyElement> extends PyElementPattern<T, Capture<T>> {
-    public Capture(final Class<T> aClass) {
+    public Capture(Class<T> aClass) {
       super(aClass);
     }
 
-    public Capture(@Nonnull final InitialPatternCondition<T> condition) {
+    public Capture(@Nonnull InitialPatternCondition<T> condition) {
       super(condition);
     }
   }

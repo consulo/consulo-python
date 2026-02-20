@@ -42,7 +42,7 @@ public class PropertyStubStorage extends PropertyBunch<String> implements Custom
   @Override
   protected Maybe<String> translate(@Nullable PyExpression ref) {
     if (ref != null) {
-      final String name = ref.getName();
+      String name = ref.getName();
       return name != null ? new Maybe<String>(name) : unknown;
     }
     return none;
@@ -100,8 +100,8 @@ public class PropertyStubStorage extends PropertyBunch<String> implements Custom
 
   @Nullable
   public static PropertyStubStorage fromCall(@Nullable PyExpression expr) {
-    final PropertyStubStorage prop = new PropertyStubStorage();
-    final boolean success = fillFromCall(expr, prop);
+    PropertyStubStorage prop = new PropertyStubStorage();
+    boolean success = fillFromCall(expr, prop);
     return success? prop : null;
   }
 

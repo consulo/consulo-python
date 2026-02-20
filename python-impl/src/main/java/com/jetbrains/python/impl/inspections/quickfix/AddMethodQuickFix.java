@@ -74,12 +74,12 @@ public class AddMethodQuickFix implements LocalQuickFix {
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     try {
       // there can be no name clash, else the name would have resolved, and it hasn't.
-      final PsiElement problemElement = descriptor.getPsiElement();
-      final PyClassType type = getClassType(problemElement);
+      PsiElement problemElement = descriptor.getPsiElement();
+      PyClassType type = getClassType(problemElement);
       if (type == null) {
         return;
       }
-      final PyClass cls = type.getPyClass();
+      PyClass cls = type.getPyClass();
       boolean callByClass = type.isDefinition();
       PyStatementList clsStmtList = cls.getStatementList();
       sure(FileModificationService.getInstance().preparePsiElementForWrite(clsStmtList));
@@ -99,8 +99,8 @@ public class AddMethodQuickFix implements LocalQuickFix {
       boolean madeInstance = false;
       if (callByClass) {
         if (args.length > 0) {
-          final TypeEvalContext context = TypeEvalContext.userInitiated(cls.getProject(), cls.getContainingFile());
-          final PyType firstArgType = context.getType(args[0]);
+          TypeEvalContext context = TypeEvalContext.userInitiated(cls.getProject(), cls.getContainingFile());
+          PyType firstArgType = context.getType(args[0]);
           if (firstArgType instanceof PyClassType && ((PyClassType)firstArgType).getPyClass().isSubclass(cls, context)) {
             // class, first arg ok: instance method
             builder.parameter("self"); // NOTE: might use a name other than 'self', according to code style.
@@ -154,22 +154,22 @@ public class AddMethodQuickFix implements LocalQuickFix {
     }
   }
 
-  private static PyClassType getClassType(@Nonnull final PsiElement problemElement) {
+  private static PyClassType getClassType(@Nonnull PsiElement problemElement) {
     if ((problemElement instanceof PyQualifiedExpression)) {
-      final PyExpression qualifier = ((PyQualifiedExpression)problemElement).getQualifier();
+      PyExpression qualifier = ((PyQualifiedExpression)problemElement).getQualifier();
       if (qualifier == null) {
         return null;
       }
-      final PyType type = TypeEvalContext.userInitiated(problemElement.getProject(), problemElement.getContainingFile()).getType(qualifier);
+      PyType type = TypeEvalContext.userInitiated(problemElement.getProject(), problemElement.getContainingFile()).getType(qualifier);
       return type instanceof PyClassType ? (PyClassType)type : null;
     }
-    final PyClass pyClass = PsiTreeUtil.getParentOfType(problemElement, PyClass.class);
+    PyClass pyClass = PsiTreeUtil.getParentOfType(problemElement, PyClass.class);
     return pyClass != null ? new PyClassTypeImpl(pyClass, false) : null;
   }
 
   private static void showTemplateBuilder(@Nonnull PyFunction method) {
     method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
-    final PsiFile file = method.getContainingFile();
+    PsiFile file = method.getContainingFile();
     if (file == null) {
       return;
     }
@@ -180,14 +180,14 @@ public class AddMethodQuickFix implements LocalQuickFix {
       }
     });
 
-    final PyStatementList statementList = method.getStatementList();
+    PyStatementList statementList = method.getStatementList();
     builder.replaceElement(statementList, PyNames.PASS);
 
-    final VirtualFile virtualFile = file.getVirtualFile();
+    VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile == null) {
       return;
     }
-    final Editor editor =
+    Editor editor =
       FileEditorManager.getInstance(file.getProject())
                        .openTextEditor(OpenFileDescriptorFactory.getInstance(file.getProject()).builder(virtualFile).build(), true);
     if (editor == null) {

@@ -24,7 +24,7 @@ public abstract class PyPushDownTest extends PyClassRefactoringTest {
     doProcessorTest("Foo", "method <b><code>foo</code></b> is already overridden in class <b><code>Boo</code></b>. Method will not be pushed down to that class.", ".foo");
   }
 
-  private void doProcessorTest(final String className, final String expectedError, final String... membersName) throws Exception {
+  private void doProcessorTest(String className, String expectedError, String... membersName) throws Exception {
     /*try {
     String baseName = "/refactoring/pushdown/" + getTestName(true);
     myFixture.configureByFile(baseName + ".before.py");

@@ -39,12 +39,12 @@ public class PyTracebackParser extends TraceBackParserAdapter
 
 	@Nonnull
 	@Override
-	protected LinkInTrace findLinkInTrace(@Nonnull final String line, @Nonnull final Matcher matchedMatcher)
+	protected LinkInTrace findLinkInTrace(@Nonnull String line, @Nonnull Matcher matchedMatcher)
 	{
-		final String fileName = matchedMatcher.group(1).replace('\\', '/');
-		final int lineNumber = Integer.parseInt(matchedMatcher.group(2));
-		final int startPos = line.indexOf('\"') + 1;
-		final int endPos = line.indexOf('\"', startPos);
+		String fileName = matchedMatcher.group(1).replace('\\', '/');
+		int lineNumber = Integer.parseInt(matchedMatcher.group(2));
+		int startPos = line.indexOf('\"') + 1;
+		int endPos = line.indexOf('\"', startPos);
 		return new LinkInTrace(fileName, lineNumber, startPos, endPos);
 	}
 }

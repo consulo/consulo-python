@@ -57,8 +57,8 @@ public class PyTupleExpressionImpl extends PySequenceExpressionImpl implements P
 	public void deleteChildInternal(@Nonnull ASTNode child)
 	{
 		super.deleteChildInternal(child);
-		final PyExpression[] children = getElements();
-		final PyElementGenerator generator = PyElementGenerator.getInstance(getProject());
+		PyExpression[] children = getElements();
+		PyElementGenerator generator = PyElementGenerator.getInstance(getProject());
 		if(children.length == 1 && PyPsiUtils.getNextComma(children[0]) == null)
 		{
 			addAfter(generator.createComma().getPsi(), children[0]);

@@ -44,7 +44,7 @@ class SuperClassesManager extends MembersManager<PyClass> {
 
   @Nonnull
   @Override
-  protected Collection<PyElement> getDependencies(@Nonnull final MultiMap<PyClass, PyElement> usedElements) {
+  protected Collection<PyElement> getDependencies(@Nonnull MultiMap<PyClass, PyElement> usedElements) {
     return Lists.<PyElement>newArrayList(usedElements.keySet());
   }
 
@@ -54,28 +54,28 @@ class SuperClassesManager extends MembersManager<PyClass> {
   }
 
   @Override
-  public boolean hasConflict(@Nonnull final PyClass member, @Nonnull final PyClass aClass) {
-    final List<PyExpression> expressionList = getExpressionsBySuperClass(aClass, Collections.singleton(member));
+  public boolean hasConflict(@Nonnull PyClass member, @Nonnull PyClass aClass) {
+    List<PyExpression> expressionList = getExpressionsBySuperClass(aClass, Collections.singleton(member));
     return !expressionList.isEmpty();
   }
 
   @Nonnull
   @Override
-  protected List<PyElement> getMembersCouldBeMoved(@Nonnull final PyClass pyClass) {
+  protected List<PyElement> getMembersCouldBeMoved(@Nonnull PyClass pyClass) {
     return Lists.<PyElement>newArrayList(Collections2.filter(Arrays.asList(pyClass.getSuperClasses(null)), NO_FAKE_SUPER_CLASSES));
   }
 
   @Override
-  protected Collection<PyElement> moveMembers(@Nonnull final PyClass from,
-                                              @Nonnull final Collection<PyMemberInfo<PyClass>> members,
-                                              @Nonnull final PyClass... to) {
-    final Collection<PyClass> elements = fetchElements(members);
-    for (final PyClass destClass : to) {
+  protected Collection<PyElement> moveMembers(@Nonnull PyClass from,
+                                              @Nonnull Collection<PyMemberInfo<PyClass>> members,
+                                              @Nonnull PyClass... to) {
+    Collection<PyClass> elements = fetchElements(members);
+    for (PyClass destClass : to) {
       PyClassRefactoringUtil.addSuperclasses(from.getProject(), destClass, elements.toArray(new PyClass[members.size()]));
     }
 
-    final List<PyExpression> expressionsToDelete = getExpressionsBySuperClass(from, elements);
-    for (final PyExpression expressionToDelete : expressionsToDelete) {
+    List<PyExpression> expressionsToDelete = getExpressionsBySuperClass(from, elements);
+    for (PyExpression expressionToDelete : expressionsToDelete) {
       expressionToDelete.delete();
     }
 
@@ -90,16 +90,16 @@ class SuperClassesManager extends MembersManager<PyClass> {
    * @return collection of expressions that are resolved to one or more class from classes param
    */
   @Nonnull
-  private static List<PyExpression> getExpressionsBySuperClass(@Nonnull final PyClass from, @Nonnull final Collection<PyClass> classes) {
-    final List<PyExpression> expressionsToDelete = new ArrayList<>(classes.size());
+  private static List<PyExpression> getExpressionsBySuperClass(@Nonnull PyClass from, @Nonnull Collection<PyClass> classes) {
+    List<PyExpression> expressionsToDelete = new ArrayList<>(classes.size());
 
-    for (final PyExpression expression : from.getSuperClassExpressions()) {
+    for (PyExpression expression : from.getSuperClassExpressions()) {
       // Remove all superclass expressions that point to class from memberinfo
       if (!(expression instanceof PyQualifiedExpression)) {
         continue;
       }
-      final PyReferenceExpression reference = (PyReferenceExpression)expression;
-      for (final PyClass element : classes) {
+      PyReferenceExpression reference = (PyReferenceExpression)expression;
+      for (PyClass element : classes) {
         if (reference.getReference().isReferenceTo(element)) {
           expressionsToDelete.add(expression);
         }
@@ -110,15 +110,15 @@ class SuperClassesManager extends MembersManager<PyClass> {
 
   @Nonnull
   @Override
-  public PyMemberInfo<PyClass> apply(@Nonnull final PyClass input) {
-    final String name = RefactoringBundle.message("member.info.extends.0", PyClassCellRenderer.getClassText(input));
+  public PyMemberInfo<PyClass> apply(@Nonnull PyClass input) {
+    String name = RefactoringBundle.message("member.info.extends.0", PyClassCellRenderer.getClassText(input));
     //TODO: Check for "overrides"
     return new PyMemberInfo<>(input, false, name, false, this, false);
   }
 
   private static class NoFakeSuperClasses extends NotNullPredicate<PyClass> {
     @Override
-    protected boolean applyNotNull(@Nonnull final PyClass input) {
+    protected boolean applyNotNull(@Nonnull PyClass input) {
       return !PyNames.FAKE_OLD_BASE.equals(input.getName());
     }
   }

@@ -26,7 +26,7 @@ import consulo.language.psi.NavigatablePsiElement;
  * @author traff
  */
 public class BuildoutCfgPsiElement extends ASTWrapperPsiElement implements NavigatablePsiElement {
-  public BuildoutCfgPsiElement(@Nonnull final ASTNode node) {
+  public BuildoutCfgPsiElement(@Nonnull ASTNode node) {
     super(node);
   }
 

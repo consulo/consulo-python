@@ -31,7 +31,7 @@ public class PyImportElementStubImpl extends StubBase<PyImportElement> implement
   private final QualifiedName myImportedQName;
   private final String myAsName;
 
-  public PyImportElementStubImpl(@Nullable QualifiedName importedQName, String asName, final StubElement parent,
+  public PyImportElementStubImpl(@Nullable QualifiedName importedQName, String asName, StubElement parent,
                                  IStubElementType elementType) {
     super(parent, elementType);
     myImportedQName = importedQName;

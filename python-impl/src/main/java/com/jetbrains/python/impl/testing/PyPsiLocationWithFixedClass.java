@@ -33,7 +33,7 @@ public final class PyPsiLocationWithFixedClass extends PsiLocation<PyFunction>
 	@Nonnull
 	private final PyClass myFixedClass;
 
-	PyPsiLocationWithFixedClass(@Nonnull final Project project, @Nonnull final PyFunction psiElement, @Nonnull final PyClass fixedClass)
+	PyPsiLocationWithFixedClass(@Nonnull Project project, @Nonnull PyFunction psiElement, @Nonnull PyClass fixedClass)
 	{
 		super(project, psiElement);
 		myFixedClass = fixedClass;

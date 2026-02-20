@@ -118,8 +118,8 @@ public abstract class PyOverrideTest extends PyTestCase {
   // PY-10229
   public void testInstanceCheck() {
     myFixture.configureByFile("override/" + getTestName(true) + ".py");
-    final PyClass cls = getTopLevelClass(0);
-    final PyFunction method = cls.findMethodByName("__instancecheck__", true, null);
+    PyClass cls = getTopLevelClass(0);
+    PyFunction method = cls.findMethodByName("__instancecheck__", true, null);
     PyOverrideImplementUtil.overrideMethods(myFixture.getEditor(), cls, Collections.singletonList(new PyMethodMember(method)), false);
     myFixture.checkResultByFile("override/" + getTestName(true) + "_after.py", true);
   }

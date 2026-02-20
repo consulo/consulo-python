@@ -38,8 +38,8 @@ public class RenameParameterQuickFix implements LocalQuickFix {
     myNewName = newName;
   }
 
-  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-    final PsiElement elt = descriptor.getPsiElement();
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    PsiElement elt = descriptor.getPsiElement();
     if (elt != null && elt instanceof PyNamedParameter && elt.isWritable()) {
       new RenameProcessor(project, elt, myNewName, false, true).run();
     }

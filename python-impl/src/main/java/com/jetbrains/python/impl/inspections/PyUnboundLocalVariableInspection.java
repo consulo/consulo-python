@@ -64,7 +64,7 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
     public PsiElementVisitor buildVisitor(
         @Nonnull ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull final LocalInspectionToolSession session
+        @Nonnull LocalInspectionToolSession session
     ) {
         session.putUserData(LARGE_FUNCTIONS_KEY, new HashSet<>());
         return new Visitor(holder, session);
@@ -72,12 +72,12 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
 
     public static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
         @Override
-        public void visitPyReferenceExpression(final PyReferenceExpression node) {
+        public void visitPyReferenceExpression(PyReferenceExpression node) {
             if (node.getContainingFile() instanceof PyExpressionCodeFragment) {
                 return;
             }
@@ -93,12 +93,12 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
             if (PsiTreeUtil.getParentOfType(node, PyImportStatementBase.class) != null) {
                 return;
             }
-            final String name = node.getReferencedName();
+            String name = node.getReferencedName();
             if (name == null) {
                 return;
             }
-            final ScopeOwner owner = ScopeUtil.getDeclarationScopeOwner(node, name);
-            final Set<ScopeOwner> largeFunctions = getSession().getUserData(LARGE_FUNCTIONS_KEY);
+            ScopeOwner owner = ScopeUtil.getDeclarationScopeOwner(node, name);
+            Set<ScopeOwner> largeFunctions = getSession().getUserData(LARGE_FUNCTIONS_KEY);
             assert largeFunctions != null;
             if (owner == null || largeFunctions.contains(owner)) {
                 return;
@@ -107,21 +107,21 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
             if (owner != ScopeUtil.getScopeOwner(node)) {
                 return;
             }
-            final Scope scope = ControlFlowCache.getScope(owner);
+            Scope scope = ControlFlowCache.getScope(owner);
             // Ignore globals and if scope even doesn't contain such a declaration
             if (scope.isGlobal(name) || (!scope.containsDeclaration(name))) {
                 return;
             }
             // Start DFA from the assignment statement in case of augmented assignments
-            final PsiElement anchor;
-            final PyAugAssignmentStatement augAssignment = PsiTreeUtil.getParentOfType(node, PyAugAssignmentStatement.class);
+            PsiElement anchor;
+            PyAugAssignmentStatement augAssignment = PsiTreeUtil.getParentOfType(node, PyAugAssignmentStatement.class);
             if (augAssignment != null && name.equals(augAssignment.getTarget().getName())) {
                 anchor = augAssignment;
             }
             else {
                 anchor = node;
             }
-            final ScopeVariable variable;
+            ScopeVariable variable;
             try {
                 variable = scope.getDeclaredVariable(anchor, name);
             }
@@ -134,12 +134,12 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
                 if (!isFirstUnboundRead(node, owner)) {
                     return;
                 }
-                final PsiPolyVariantReference ref = node.getReference(getResolveContext());
+                PsiPolyVariantReference ref = node.getReference(getResolveContext());
                 if (ref == null) {
                     return;
                 }
-                final PsiElement resolved = ref.resolve();
-                final boolean isBuiltin = PyBuiltinCache.getInstance(node).isBuiltin(resolved);
+                PsiElement resolved = ref.resolve();
+                boolean isBuiltin = PyBuiltinCache.getInstance(node).isBuiltin(resolved);
                 if (owner instanceof PyClass) {
                     if (isBuiltin || ScopeUtil.getDeclarationScopeOwner(owner, name) != null) {
                         return;
@@ -170,24 +170,24 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
         }
 
         private static boolean isFirstUnboundRead(@Nonnull PyReferenceExpression node, @Nonnull ScopeOwner owner) {
-            final String nodeName = node.getReferencedName();
-            final Scope scope = ControlFlowCache.getScope(owner);
-            final ControlFlow flow = ControlFlowCache.getControlFlow(owner);
-            final Instruction[] instructions = flow.getInstructions();
-            final int num = ControlFlowUtil.findInstructionNumberByElement(instructions, node);
+            String nodeName = node.getReferencedName();
+            Scope scope = ControlFlowCache.getScope(owner);
+            ControlFlow flow = ControlFlowCache.getControlFlow(owner);
+            Instruction[] instructions = flow.getInstructions();
+            int num = ControlFlowUtil.findInstructionNumberByElement(instructions, node);
             if (num < 0) {
                 return true;
             }
-            final Ref<Boolean> first = Ref.create(true);
+            Ref<Boolean> first = Ref.create(true);
             ControlFlowUtil.iteratePrev(num, instructions, instruction -> {
                 if (instruction instanceof ReadWriteInstruction) {
-                    final ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
-                    final String name = rwInstruction.getName();
-                    final PsiElement element = rwInstruction.getElement();
+                    ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
+                    String name = rwInstruction.getName();
+                    PsiElement element = rwInstruction.getElement();
                     if (element != null && name != null && name.equals(nodeName) && instruction.num() != num) {
                         try {
                             if (scope.getDeclaredVariable(element, name) == null) {
-                                final ReadWriteInstruction.ACCESS access = rwInstruction.getAccess();
+                                ReadWriteInstruction.ACCESS access = rwInstruction.getAccess();
                                 if (access.isReadAccess()) {
                                     first.set(false);
                                     return ControlFlowUtil.Operation.BREAK;
@@ -206,10 +206,10 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyNonlocalStatement(final PyNonlocalStatement node) {
+        public void visitPyNonlocalStatement(PyNonlocalStatement node) {
             for (PyTargetExpression var : node.getVariables()) {
-                final String name = var.getName();
-                final ScopeOwner owner = ScopeUtil.getDeclarationScopeOwner(var, name);
+                String name = var.getName();
+                ScopeOwner owner = ScopeUtil.getDeclarationScopeOwner(var, name);
                 if (owner == null || owner instanceof PyFile) {
                     registerProblem(
                         var,

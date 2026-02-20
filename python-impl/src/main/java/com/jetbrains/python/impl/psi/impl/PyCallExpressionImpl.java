@@ -70,7 +70,7 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 	@Nonnull
 	public PyExpression[] getArguments()
 	{
-		final PyArgumentList argList = getArgumentList();
+		PyArgumentList argList = getArgumentList();
 		return argList != null ? argList.getArguments() : PyExpression.EMPTY_ARRAY;
 	}
 
@@ -84,7 +84,7 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 	@Override
 	public <T extends PsiElement> T getArgument(int index, String keyword, Class<T> argClass)
 	{
-		final PyExpression argument = getKeywordArgument(keyword);
+		PyExpression argument = getKeywordArgument(keyword);
 		if(argument != null)
 		{
 			return argClass.isInstance(argument) ? argClass.cast(argument) : null;
@@ -94,7 +94,7 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 
 	@Nullable
 	@Override
-	public <T extends PsiElement> T getArgument(@Nonnull final FunctionParameter parameter, @Nonnull final Class<T> argClass)
+	public <T extends PsiElement> T getArgument(@Nonnull FunctionParameter parameter, @Nonnull Class<T> argClass)
 	{
 		return PyCallExpressionHelper.getArgument(parameter, argClass, this);
 	}
@@ -147,7 +147,7 @@ public class PyCallExpressionImpl extends PyElementImpl implements PyCallExpress
 	}
 
 	@Override
-	public boolean isCallee(@Nonnull final FQNamesProvider... name)
+	public boolean isCallee(@Nonnull FQNamesProvider... name)
 	{
 		return PyCallExpressionHelper.isCallee(this, name);
 	}

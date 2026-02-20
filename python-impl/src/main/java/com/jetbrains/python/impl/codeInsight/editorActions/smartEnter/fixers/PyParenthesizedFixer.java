@@ -38,7 +38,7 @@ public class PyParenthesizedFixer extends PyFixer<PyParenthesizedExpression>
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyParenthesizedExpression expression) throws IncorrectOperationException
 	{
-		final PsiElement lastChild = expression.getLastChild();
+		PsiElement lastChild = expression.getLastChild();
 		if(lastChild != null && !")".equals(lastChild.getText()))
 		{
 			editor.getDocument().insertString(expression.getTextRange().getEndOffset(), ")");

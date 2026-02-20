@@ -14,12 +14,12 @@ public class GetFrameCommand extends AbstractFrameCommand
 	protected final IPyDebugProcess myDebugProcess;
 	private XValueChildrenList myFrameVariables = null;
 
-	public GetFrameCommand(final RemoteDebugger debugger, final String threadId, final String frameId)
+	public GetFrameCommand(RemoteDebugger debugger, String threadId, String frameId)
 	{
 		this(debugger, GET_FRAME, threadId, frameId);
 	}
 
-	protected GetFrameCommand(final RemoteDebugger debugger, final int command, final String threadId, final String frameId)
+	protected GetFrameCommand(RemoteDebugger debugger, int command, String threadId, String frameId)
 	{
 		super(debugger, command, threadId, frameId);
 		myDebugProcess = debugger.getDebugProcess();
@@ -39,22 +39,22 @@ public class GetFrameCommand extends AbstractFrameCommand
 	}
 
 	@Override
-	protected void processResponse(final ProtocolFrame response) throws PyDebuggerException
+	protected void processResponse(ProtocolFrame response) throws PyDebuggerException
 	{
 		super.processResponse(response);
-		final List<PyDebugValue> values = ProtocolParser.parseValues(response.getPayload(), myDebugProcess);
+		List<PyDebugValue> values = ProtocolParser.parseValues(response.getPayload(), myDebugProcess);
 		myFrameVariables = new XValueChildrenList(values.size());
 		for(PyDebugValue value : values)
 		{
 			if(!value.getName().startsWith(RemoteDebugger.TEMP_VAR_PREFIX))
 			{
-				final PyDebugValue debugValue = extend(value);
+				PyDebugValue debugValue = extend(value);
 				myFrameVariables.add(debugValue.getName(), debugValue);
 			}
 		}
 	}
 
-	protected PyDebugValue extend(final PyDebugValue value)
+	protected PyDebugValue extend(PyDebugValue value)
 	{
 		return new PyDebugValue(value.getName(), value.getType(), value.getTypeQualifier(), value.getValue(), value.isContainer(), value.isReturnedVal(), value.isIPythonHidden(), value.isErrorOnEval
 				(), null, myDebugProcess);

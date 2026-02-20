@@ -45,7 +45,7 @@ class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullU
 	 * @param infoStorage member storage
 	 * @param clazz       class to refactor
 	 */
-	PyPullUpPresenterImpl(@Nonnull final PyPullUpView view, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final PyClass clazz)
+	PyPullUpPresenterImpl(@Nonnull PyPullUpView view, @Nonnull PyMemberInfoStorage infoStorage, @Nonnull PyClass clazz)
 	{
 		super(view, clazz, infoStorage, new PyPullUpInfoModel(clazz, view));
 		myParents = PyAncestorsUtils.getAncestorsUnderUserControl(clazz);
@@ -61,7 +61,7 @@ class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullU
 		// If there is no enabled member then only error should be displayed
 
 		boolean atLeastOneEnabled = false;
-		for(final PyMemberInfo<PyElement> info : myStorage.getClassMemberInfos(myClassUnderRefactoring))
+		for(PyMemberInfo<PyElement> info : myStorage.getClassMemberInfos(myClassUnderRefactoring))
 		{
 			if(myModel.isMemberEnabled(info))
 			{
@@ -99,25 +99,25 @@ class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullU
 
 	private boolean isWritable()
 	{
-		final Collection<PyMemberInfo<PyElement>> infos = myView.getSelectedMemberInfos();
+		Collection<PyMemberInfo<PyElement>> infos = myView.getSelectedMemberInfos();
 		if(infos.isEmpty())
 		{
 			return true;
 		}
-		final PyElement element = infos.iterator().next().getMember();
-		final Project project = element.getProject();
+		PyElement element = infos.iterator().next().getMember();
+		Project project = element.getProject();
 		if(!CommonRefactoringUtil.checkReadOnlyStatus(project, myView.getSelectedParent()))
 		{
 			return false;
 		}
-		final PyClass container = PyUtil.getContainingClassOrSelf(element);
+		PyClass container = PyUtil.getContainingClassOrSelf(element);
 		if(container == null || !CommonRefactoringUtil.checkReadOnlyStatus(project, container))
 		{
 			return false;
 		}
-		for(final PyMemberInfo<PyElement> info : infos)
+		for(PyMemberInfo<PyElement> info : infos)
 		{
-			final PyElement member = info.getMember();
+			PyElement member = info.getMember();
 			if(!CommonRefactoringUtil.checkReadOnlyStatus(project, member))
 			{
 				return false;

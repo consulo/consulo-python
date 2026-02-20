@@ -41,13 +41,13 @@ public class PyArgumentListFixer extends PyFixer<PyArgumentList>
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyArgumentList arguments) throws IncorrectOperationException
 	{
-		final PsiElement rBrace = PyPsiUtils.getChildByFilter(arguments, PyTokenTypes.CLOSE_BRACES, 0);
+		PsiElement rBrace = PyPsiUtils.getChildByFilter(arguments, PyTokenTypes.CLOSE_BRACES, 0);
 		if(arguments.getParent() instanceof PyClass || arguments.getParent() instanceof PyDecorator)
 		{
-			final PsiElement lBrace = PyPsiUtils.getChildByFilter(arguments, PyTokenTypes.OPEN_BRACES, 0);
+			PsiElement lBrace = PyPsiUtils.getChildByFilter(arguments, PyTokenTypes.OPEN_BRACES, 0);
 			if(lBrace != null && rBrace == null)
 			{
-				final Document document = editor.getDocument();
+				Document document = editor.getDocument();
 				document.insertString(arguments.getTextRange().getEndOffset(), ")");
 			}
 		}
@@ -55,7 +55,7 @@ public class PyArgumentListFixer extends PyFixer<PyArgumentList>
 		{
 			if(rBrace == null)
 			{
-				final Document document = editor.getDocument();
+				Document document = editor.getDocument();
 				document.insertString(arguments.getTextRange().getEndOffset(), ")");
 			}
 		}

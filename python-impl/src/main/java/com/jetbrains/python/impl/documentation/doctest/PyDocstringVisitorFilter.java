@@ -38,7 +38,7 @@ import jakarta.annotation.Nonnull;
 public class PyDocstringVisitorFilter implements PythonVisitorFilter
 {
   @Override
-  public boolean isSupported(@Nonnull final Class visitorClass, @Nonnull final PsiFile file) {
+  public boolean isSupported(@Nonnull Class visitorClass, @Nonnull PsiFile file) {
     //inspections
     if (visitorClass == PyArgumentListInspection.class) {
       return false;
@@ -57,7 +57,7 @@ public class PyDocstringVisitorFilter implements PythonVisitorFilter
       return false;
     }
     // doctest in separate file
-    final PsiFile topLevelFile = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(file);
+    PsiFile topLevelFile = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(file);
     if (visitorClass == PyUnresolvedReferencesInspection.class && !(topLevelFile instanceof PyFile)) {
       return false;
     }

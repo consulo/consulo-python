@@ -188,13 +188,13 @@ public abstract class PythonInspectionsTest extends PyTestCase {
     doHighlightingTest(PyCallByClassInspection.class); // ok, we can handle insanely long lines :)
   }
 
-  private void doHighlightingTest(final Class<? extends PyInspection> inspectionClass) {
+  private void doHighlightingTest(Class<? extends PyInspection> inspectionClass) {
     myFixture.configureByFile("inspections/" + getTestName(false) + "/test.py");
     myFixture.enableInspections(inspectionClass);
     myFixture.checkHighlighting(true, false, true);
   }
 
-  private void doHighlightingTest(final Class<? extends PyInspection> inspectionClass, final LanguageLevel languageLevel) {
+  private void doHighlightingTest(Class<? extends PyInspection> inspectionClass, LanguageLevel languageLevel) {
     setLanguageLevel(languageLevel);
     try {
       doHighlightingTest(inspectionClass);
@@ -204,7 +204,7 @@ public abstract class PythonInspectionsTest extends PyTestCase {
     }
   }
 
-  private void doHighlightingTest(InspectionProfileEntry entry, final LanguageLevel languageLevel) {
+  private void doHighlightingTest(InspectionProfileEntry entry, LanguageLevel languageLevel) {
     setLanguageLevel(languageLevel);
     try {
       doHighlightingTest(entry);

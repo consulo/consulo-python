@@ -68,12 +68,12 @@ public class PyDotNetNamespaceType implements PyType
 		String childName = myNamespaceAsElement.getPresentableQName() + "." + name;
 		GlobalSearchScope scope = getScope(project);
 		ResolveResultList result = new ResolveResultList();
-		final DotNetTypeDeclaration[] classes = facade.findTypes(childName, scope);
+		DotNetTypeDeclaration[] classes = facade.findTypes(childName, scope);
 		for(DotNetTypeDeclaration aClass : classes)
 		{
 			result.poke(aClass, RatedResolveResult.RATE_NORMAL);
 		}
-		final DotNetNamespaceAsElement psiPackage = facade.findNamespace(childName, scope);
+		DotNetNamespaceAsElement psiPackage = facade.findNamespace(childName, scope);
 		if(psiPackage != null)
 		{
 			result.poke(psiPackage, RatedResolveResult.RATE_NORMAL);
@@ -90,7 +90,7 @@ public class PyDotNetNamespaceType implements PyType
 	public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context)
 	{
 		List<Object> variants = new ArrayList<Object>();
-		final GlobalSearchScope scope = getScope(location.getProject());
+		GlobalSearchScope scope = getScope(location.getProject());
 		Collection<PsiElement> children = myNamespaceAsElement.getChildren(scope, DotNetNamespaceAsElement.ChildrenFilter.NONE);
 		for(PsiElement child : children)
 		{

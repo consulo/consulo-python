@@ -40,7 +40,7 @@ public class PyElIfUnwrapper extends PyUnwrapper {
   protected void doUnwrap(PsiElement element, Context context)
     throws IncorrectOperationException
   {
-    final PsiElement parent = PsiTreeUtil.getParentOfType(element, PyStatementWithElse.class);
+    PsiElement parent = PsiTreeUtil.getParentOfType(element, PyStatementWithElse.class);
     context.extractPart(element);
     context.delete(parent);
   }
@@ -54,9 +54,9 @@ public class PyElIfUnwrapper extends PyUnwrapper {
   @Override
   public boolean isApplicableTo(PsiElement e) {
     if (e instanceof PyIfPartElifImpl) {
-      final PyStatementList statementList = ((PyIfPartElifImpl)e).getStatementList();
+      PyStatementList statementList = ((PyIfPartElifImpl)e).getStatementList();
       if (statementList != null) {
-        final PyStatement[] statements = statementList.getStatements();
+        PyStatement[] statements = statementList.getStatements();
         return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
       }
     }

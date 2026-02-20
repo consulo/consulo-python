@@ -42,24 +42,24 @@ public class PyAnnotationElementType extends PyStubElementType<PyAnnotationStub,
     super(debugName);
   }
 
-  public PyAnnotation createPsi(@Nonnull final PyAnnotationStub stub) {
+  public PyAnnotation createPsi(@Nonnull PyAnnotationStub stub) {
     return new PyAnnotationImpl(stub);
   }
 
-  public PyAnnotationStub createStub(@Nonnull final PyAnnotation psi, final StubElement parentStub) {
+  public PyAnnotationStub createStub(@Nonnull PyAnnotation psi, StubElement parentStub) {
     return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
   }
 
-  public PsiElement createElement(@Nonnull final ASTNode node) {
+  public PsiElement createElement(@Nonnull ASTNode node) {
     return new PyAnnotationImpl(node);
   }
 
-  public void serialize(@Nonnull final PyAnnotationStub stub, @Nonnull final StubOutputStream dataStream)
+  public void serialize(@Nonnull PyAnnotationStub stub, @Nonnull StubOutputStream dataStream)
       throws IOException {
   }
 
   @Nonnull
-  public PyAnnotationStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub)
+  public PyAnnotationStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
   }

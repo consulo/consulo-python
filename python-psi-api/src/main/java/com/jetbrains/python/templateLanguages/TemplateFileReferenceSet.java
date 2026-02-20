@@ -102,7 +102,7 @@ public class TemplateFileReferenceSet extends FileReferenceSet
     if (module != null) {
       List<VirtualFile> templatesFolders = getRoots(module);
       for (VirtualFile folder : templatesFolders) {
-        final PsiFileSystemItem directory = getPsiDirectory(module, folder);
+        PsiFileSystemItem directory = getPsiDirectory(module, folder);
         if (directory != null) {
           contexts.add(directory);
         }

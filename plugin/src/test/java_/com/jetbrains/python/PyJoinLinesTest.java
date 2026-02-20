@@ -15,21 +15,21 @@ import com.jetbrains.python.fixtures.PyTestCase;
  */
 public abstract class PyJoinLinesTest extends PyTestCase {
   private void doTest() {
-    final String path = "joinLines/";
+    String path = "joinLines/";
     myFixture.configureByFile(path + getTestName(false) + ".py");
     // detect whitespace around EOL, the way JoinLinesHandler does.
-    final Editor editor = myFixture.getEditor();
-    final Document doc = editor.getDocument();
-    final int caret_line = doc.getLineNumber(editor.getCaretModel().getOffset());
-    final int eol_pos = doc.getLineEndOffset(caret_line);
+    Editor editor = myFixture.getEditor();
+    Document doc = editor.getDocument();
+    int caret_line = doc.getLineNumber(editor.getCaretModel().getOffset());
+    int eol_pos = doc.getLineEndOffset(caret_line);
     CharSequence text = doc.getCharsSequence();
     int i = eol_pos;
     while (" \n\t".indexOf(text.charAt(i)) >= 0) i -= 1;
-    final int start = i+1;
+    int start = i+1;
     i = eol_pos;
     while (" \n\t".indexOf(text.charAt(i)) >= 0) i += 1;
-    final int end = i;
-    final JoinRawLinesHandlerDelegate handler = new PyJoinLinesHandler();
+    int end = i;
+    JoinRawLinesHandlerDelegate handler = new PyJoinLinesHandler();
     WriteAction.run(() -> handler.tryJoinRawLines(doc, myFixture.getFile(), start, end));
     myFixture.checkResultByFile(path + getTestName(false) + "-after.py");
   }

@@ -29,27 +29,27 @@ import com.jetbrains.python.impl.psi.PyUtil;
  */
 public class PyTypeHierarchyTreeStructure extends PySubTypesHierarchyTreeStructure
 {
-	public PyTypeHierarchyTreeStructure(@Nonnull final PyClass cl)
+	public PyTypeHierarchyTreeStructure(@Nonnull PyClass cl)
 	{
 		super(cl.getProject(), buildHierarchyElement(cl));
 		setBaseElement(myBaseDescriptor);
 	}
 
-	private static PyHierarchyNodeDescriptor buildHierarchyElement(@Nonnull final PyClass cl)
+	private static PyHierarchyNodeDescriptor buildHierarchyElement(@Nonnull PyClass cl)
 	{
 		PyHierarchyNodeDescriptor descriptor = null;
 		List<PyClass> superClasses = PyUtil.getAllSuperClasses(cl);
 		for(int i = superClasses.size() - 1; i >= 0; --i)
 		{
-			final PyClass superClass = superClasses.get(i);
-			final PyHierarchyNodeDescriptor newDescriptor = new PyHierarchyNodeDescriptor(descriptor, superClass, false);
+			PyClass superClass = superClasses.get(i);
+			PyHierarchyNodeDescriptor newDescriptor = new PyHierarchyNodeDescriptor(descriptor, superClass, false);
 			if(descriptor != null)
 			{
 				descriptor.setCachedChildren(new PyHierarchyNodeDescriptor[]{newDescriptor});
 			}
 			descriptor = newDescriptor;
 		}
-		final PyHierarchyNodeDescriptor newDescriptor = new PyHierarchyNodeDescriptor(descriptor, cl, true);
+		PyHierarchyNodeDescriptor newDescriptor = new PyHierarchyNodeDescriptor(descriptor, cl, true);
 		if(descriptor != null)
 		{
 			descriptor.setCachedChildren(new HierarchyNodeDescriptor[]{newDescriptor});

@@ -48,7 +48,7 @@ abstract class FieldsManager extends MembersManager<PyTargetExpression>
 	/**
 	 * @param isStatic is field static or not?
 	 */
-	protected FieldsManager(final boolean isStatic)
+	protected FieldsManager(boolean isStatic)
 	{
 		super(PyTargetExpression.class);
 		myStatic = isStatic;
@@ -57,22 +57,22 @@ abstract class FieldsManager extends MembersManager<PyTargetExpression>
 
 	@Nonnull
 	@Override
-	protected Collection<PyElement> getDependencies(@Nonnull final MultiMap<PyClass, PyElement> usedElements)
+	protected Collection<PyElement> getDependencies(@Nonnull MultiMap<PyClass, PyElement> usedElements)
 	{
 		return Collections.emptyList();
 	}
 
 	@Nonnull
 	@Override
-	protected MultiMap<PyClass, PyElement> getDependencies(@Nonnull final PyElement member)
+	protected MultiMap<PyClass, PyElement> getDependencies(@Nonnull PyElement member)
 	{
-		final PyRecursiveElementVisitorWithResult visitor = new MyPyRecursiveElementVisitor();
+		PyRecursiveElementVisitorWithResult visitor = new MyPyRecursiveElementVisitor();
 		member.accept(visitor);
 		return visitor.myResult;
 	}
 
 	@Override
-	protected Collection<? extends PyElement> getElementsToStoreReferences(@Nonnull final Collection<PyTargetExpression> elements)
+	protected Collection<? extends PyElement> getElementsToStoreReferences(@Nonnull Collection<PyTargetExpression> elements)
 	{
 		// We need to save references from assignments
 		return Collections2.transform(elements, ASSIGNMENT_TRANSFORM);
@@ -80,13 +80,13 @@ abstract class FieldsManager extends MembersManager<PyTargetExpression>
 
 	@Nonnull
 	@Override
-	protected List<PyElement> getMembersCouldBeMoved(@Nonnull final PyClass pyClass)
+	protected List<PyElement> getMembersCouldBeMoved(@Nonnull PyClass pyClass)
 	{
 		return Lists.<PyElement>newArrayList(Collections2.filter(getFieldsByClass(pyClass), SIMPLE_ASSIGNMENTS_ONLY));
 	}
 
 	@Override
-	protected Collection<PyElement> moveMembers(@Nonnull final PyClass from, @Nonnull final Collection<PyMemberInfo<PyTargetExpression>> members, @Nonnull final PyClass... to)
+	protected Collection<PyElement> moveMembers(@Nonnull PyClass from, @Nonnull Collection<PyMemberInfo<PyTargetExpression>> members, @Nonnull PyClass... to)
 	{
 		return moveAssignments(from, Collections2.filter(Collections2.transform(fetchElements(members), ASSIGNMENT_TRANSFORM), NotNullPredicate.INSTANCE), to);
 	}
@@ -114,16 +114,16 @@ abstract class FieldsManager extends MembersManager<PyTargetExpression>
 
 	@Nonnull
 	@Override
-	public PyMemberInfo<PyTargetExpression> apply(@Nonnull final PyTargetExpression input)
+	public PyMemberInfo<PyTargetExpression> apply(@Nonnull PyTargetExpression input)
 	{
 		return new PyMemberInfo<>(input, myStatic, input.getText(), isOverrides(input), this, false);
 	}
 
 	@Nullable
-	private Boolean isOverrides(@Nonnull final PyTargetExpression input)
+	private Boolean isOverrides(@Nonnull PyTargetExpression input)
 	{
-		final PyClass aClass = input.getContainingClass();
-		final String name = input.getName();
+		PyClass aClass = input.getContainingClass();
+		String name = input.getName();
 		if(name == null)
 		{
 			return null; //Field with out of name can't override something
@@ -140,9 +140,9 @@ abstract class FieldsManager extends MembersManager<PyTargetExpression>
 		//Support only simplest cases like CLASS_VAR = 42.
 		//Tuples (CLASS_VAR_1, CLASS_VAR_2) = "spam", "eggs" are not supported by now
 		@Override
-		public boolean applyNotNull(@Nonnull final PyTargetExpression input)
+		public boolean applyNotNull(@Nonnull PyTargetExpression input)
 		{
-			final PsiElement parent = input.getParent();
+			PsiElement parent = input.getParent();
 			return (parent != null) && PyAssignmentStatement.class.isAssignableFrom(parent.getClass());
 		}
 	}
@@ -153,7 +153,7 @@ abstract class FieldsManager extends MembersManager<PyTargetExpression>
 	{
 		@Nullable
 		@Override
-		public PyAssignmentStatement apply(@Nonnull final PyTargetExpression input)
+		public PyAssignmentStatement apply(@Nonnull PyTargetExpression input)
 		{
 			return PsiTreeUtil.getParentOfType(input, PyAssignmentStatement.class);
 		}
@@ -166,12 +166,12 @@ abstract class FieldsManager extends MembersManager<PyTargetExpression>
 	{
 
 		@Override
-		public void visitPyReferenceExpression(final PyReferenceExpression node)
+		public void visitPyReferenceExpression(PyReferenceExpression node)
 		{
-			final PsiElement declaration = node.getReference().resolve();
+			PsiElement declaration = node.getReference().resolve();
 			if(declaration instanceof PyElement)
 			{
-				final PyClass parent = PsiTreeUtil.getParentOfType(declaration, PyClass.class);
+				PyClass parent = PsiTreeUtil.getParentOfType(declaration, PyClass.class);
 				if(parent != null)
 				{
 					myResult.putValue(parent, (PyElement) declaration);

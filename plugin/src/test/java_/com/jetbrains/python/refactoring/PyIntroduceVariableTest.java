@@ -52,19 +52,19 @@ public abstract class PyIntroduceVariableTest extends PyIntroduceTestCase {
   }
   
   public void testDontSuggestBuiltinTypeNames() {  // PY-4474
-    final Collection<String> strings = buildSuggestions(PyExpression.class);
+    Collection<String> strings = buildSuggestions(PyExpression.class);
     assertTrue(strings.contains("s"));
     assertFalse(strings.contains("str"));
   }
   
   public void testDontSuggestBuiltinTypeNames2() {  // PY-5626
-    final Collection<String> strings = buildSuggestions(PyCallExpression.class);
+    Collection<String> strings = buildSuggestions(PyCallExpression.class);
     assertTrue(strings.contains("d"));
     assertFalse(strings.contains("dict"));
   }
 
   public void testSuggestNamesNotInScope() {  // PY-4605
-    final Collection<String> strings = buildSuggestions(PyExpression.class);
+    Collection<String> strings = buildSuggestions(PyExpression.class);
     assertTrue(strings.contains("myfunc1"));
     assertFalse(strings.contains("myfunc"));
   }
@@ -216,7 +216,7 @@ public abstract class PyIntroduceVariableTest extends PyIntroduceTestCase {
     try {
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(true);
       IntroduceHandler handler = createHandler();
-      final IntroduceOperation operation = new IntroduceOperation(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile(), "a_");
+      IntroduceOperation operation = new IntroduceOperation(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile(), "a_");
       operation.setReplaceAll(true);
       handler.performAction(operation);
       myFixture.checkResultByFile(getTestName(true) + ".after.py");

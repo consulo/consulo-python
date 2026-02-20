@@ -52,7 +52,7 @@ public class PydevXmlUtils {
   }
 
   public static List<PydevCompletionVariant> decodeCompletions(Object fromServer, String actTok) {
-    final List<PydevCompletionVariant> ret = new ArrayList<PydevCompletionVariant>();
+    List<PydevCompletionVariant> ret = new ArrayList<PydevCompletionVariant>();
 
     List completionList = objectToList(fromServer);
 
@@ -60,8 +60,8 @@ public class PydevXmlUtils {
       List comp = objectToList(o);
 
       //name, doc, args, type
-      final int type = extractInt(comp.get(3));
-      final String args = AbstractPyCodeCompletion.getArgs((String)comp.get(2), type,
+      int type = extractInt(comp.get(3));
+      String args = AbstractPyCodeCompletion.getArgs((String)comp.get(2), type,
                                                            AbstractPyCodeCompletion.LOOKING_FOR_INSTANCED_VARIABLE);
 
       String name = (String)comp.get(0);

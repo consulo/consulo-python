@@ -45,19 +45,19 @@ class PyAncestorsUtils extends NotNullPredicate<PyClass>
 	 * @return list of parents
 	 */
 	@Nonnull
-	static Collection<PyClass> getAncestorsUnderUserControl(@Nonnull final PyClass pyClass)
+	static Collection<PyClass> getAncestorsUnderUserControl(@Nonnull PyClass pyClass)
 	{
-		final List<PyClass> allAncestors = pyClass.getAncestorClasses(TypeEvalContext.userInitiated(pyClass.getProject(), pyClass.getContainingFile()));
+		List<PyClass> allAncestors = pyClass.getAncestorClasses(TypeEvalContext.userInitiated(pyClass.getProject(), pyClass.getContainingFile()));
 		return Collections2.filter(allAncestors, new PyAncestorsUtils(PyUtil.getSourceRoots(pyClass)));
 	}
 
-	private PyAncestorsUtils(@Nonnull final Collection<VirtualFile> sourceRoots)
+	private PyAncestorsUtils(@Nonnull Collection<VirtualFile> sourceRoots)
 	{
 		mySourceRoots = Sets.newHashSet(sourceRoots);
 	}
 
 	@Override
-	public boolean applyNotNull(@Nonnull final PyClass input)
+	public boolean applyNotNull(@Nonnull PyClass input)
 	{
 		return VirtualFileUtil.isUnder(input.getContainingFile().getVirtualFile(), mySourceRoots);
 	}

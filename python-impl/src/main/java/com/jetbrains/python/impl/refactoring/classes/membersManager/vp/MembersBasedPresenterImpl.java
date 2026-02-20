@@ -58,7 +58,7 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	 * @param infoStorage           info storage
 	 * @param model                 Member model (to be used for dependencies checking)
 	 */
-	MembersBasedPresenterImpl(@Nonnull final T view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final M model)
+	MembersBasedPresenterImpl(@Nonnull T view, @Nonnull PyClass classUnderRefactoring, @Nonnull PyMemberInfoStorage infoStorage, @Nonnull M model)
 	{
 		myView = view;
 		myClassUnderRefactoring = classUnderRefactoring;
@@ -70,9 +70,9 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	@Override
 	public void okClicked()
 	{
-		final MultiMap<PyClass, PyMemberInfo<?>> conflicts = getConflicts();
-		final Collection<PyMemberInfo<?>> dependencyConflicts = new ArrayList<>();
-		for(final PyMemberInfo<PyElement> memberInfo : myStorage.getClassMemberInfos(myClassUnderRefactoring))
+		MultiMap<PyClass, PyMemberInfo<?>> conflicts = getConflicts();
+		Collection<PyMemberInfo<?>> dependencyConflicts = new ArrayList<>();
+		for(PyMemberInfo<PyElement> memberInfo : myStorage.getClassMemberInfos(myClassUnderRefactoring))
 		{
 			if(myModel.checkForProblems(memberInfo) != MemberInfoModel.OK)
 			{
@@ -87,7 +87,7 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 				validateView();
 				doRefactor();
 			}
-			catch(final BadDataException e)
+			catch(BadDataException e)
 			{
 				myView.showError(e.getMessage()); //Show error message if presenter says view in invalid
 			}
@@ -126,11 +126,11 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	@Nonnull
 	protected final MultiMap<PyClass, PyMemberInfo<?>> getConflicts()
 	{
-		final MultiMap<PyClass, PyMemberInfo<?>> result = new MultiMap<>();
-		final Collection<PyMemberInfo<PyElement>> memberInfos = myView.getSelectedMemberInfos();
-		for(final PyClass destinationClass : getDestClassesToCheckConflicts())
+		MultiMap<PyClass, PyMemberInfo<?>> result = new MultiMap<>();
+		Collection<PyMemberInfo<PyElement>> memberInfos = myView.getSelectedMemberInfos();
+		for(PyClass destinationClass : getDestClassesToCheckConflicts())
 		{
-			for(final PyMemberInfo<PyElement> pyMemberInfo : memberInfos)
+			for(PyMemberInfo<PyElement> pyMemberInfo : memberInfos)
 			{
 				if(pyMemberInfo.hasConflict(destinationClass))
 				{

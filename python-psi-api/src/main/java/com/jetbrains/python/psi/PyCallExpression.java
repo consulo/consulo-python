@@ -79,7 +79,7 @@ public interface PyCallExpression extends PyCallSiteExpression
 	 * @return the argument or null
 	 */
 	@Nullable
-	<T extends PsiElement> T getArgument(@Nonnull final FunctionParameter parameter, @Nonnull Class<T> argClass);
+	<T extends PsiElement> T getArgument(@Nonnull FunctionParameter parameter, @Nonnull Class<T> argClass);
 
 	@Nullable
 	PyExpression getKeywordArgument(String keyword);

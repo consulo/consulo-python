@@ -74,7 +74,7 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 	}
 
 	@Override
-	protected void acceptPyVisitor(final PyElementVisitor pyVisitor)
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
 	{
 		pyVisitor.visitPySubscriptionExpression(this);
 	}
@@ -83,8 +83,8 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 	@Override
 	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
-		final PsiPolyVariantReference reference = getReference(PyResolveContext.noImplicits().withTypeEvalContext(context));
-		final List<PyType> members = new ArrayList<>();
+		PsiPolyVariantReference reference = getReference(PyResolveContext.noImplicits().withTypeEvalContext(context));
+		List<PyType> members = new ArrayList<>();
 		for(PsiElement resolved : PyUtil.multiResolveTopPriority(reference))
 		{
 			PyType res = null;
@@ -94,18 +94,18 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 			}
 			if(PyTypeChecker.isUnknown(res) || res instanceof PyNoneType)
 			{
-				final PyExpression indexExpression = getIndexExpression();
+				PyExpression indexExpression = getIndexExpression();
 				if(indexExpression != null)
 				{
-					final PyType type = context.getType(getOperand());
-					final PyClass cls = (type instanceof PyClassType) ? ((PyClassType) type).getPyClass() : null;
+					PyType type = context.getType(getOperand());
+					PyClass cls = (type instanceof PyClassType) ? ((PyClassType) type).getPyClass() : null;
 					if(cls != null && PyABCUtil.isSubclass(cls, PyNames.MAPPING, context))
 					{
 						return res;
 					}
 					if(type instanceof PyTupleType)
 					{
-						final PyTupleType tupleType = (PyTupleType) type;
+						PyTupleType tupleType = (PyTupleType) type;
 
 						res = Optional.ofNullable(PyConstantExpressionEvaluator.evaluate(indexExpression)).map(value -> PyUtil.as(value, Integer.class)).map(tupleType::getElementType).orElse(null);
 					}

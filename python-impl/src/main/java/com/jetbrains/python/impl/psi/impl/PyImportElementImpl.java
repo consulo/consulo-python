@@ -63,18 +63,18 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	@Nullable
 	public PyReferenceExpression getImportReferenceExpression()
 	{
-		final ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens());
+		ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens());
 		return node == null ? null : (PyReferenceExpression) node.getPsi();
 	}
 
 	public QualifiedName getImportedQName()
 	{
-		final PyImportElementStub stub = getStub();
+		PyImportElementStub stub = getStub();
 		if(stub != null)
 		{
 			return stub.getImportedQName();
 		}
-		final PyReferenceExpression importReference = getImportReferenceExpression();
+		PyReferenceExpression importReference = getImportReferenceExpression();
 		return importReference != null ? importReference.asQualifiedName() : null;
 	}
 
@@ -85,13 +85,13 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 
 	public String getAsName()
 	{
-		final PyImportElementStub stub = getStub();
+		PyImportElementStub stub = getStub();
 		if(stub != null)
 		{
-			final String asName = stub.getAsName();
+			String asName = stub.getAsName();
 			return StringUtil.isEmpty(asName) ? null : asName;
 		}
-		final PyTargetExpression element = getAsNameElement();
+		PyTargetExpression element = getAsNameElement();
 		return element != null ? element.getName() : null;
 	}
 
@@ -99,15 +99,15 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	@Nullable
 	public String getVisibleName()
 	{
-		final PyImportElementStub stub = getStub();
+		PyImportElementStub stub = getStub();
 		if(stub != null)
 		{
-			final String asName = stub.getAsName();
+			String asName = stub.getAsName();
 			if(!StringUtil.isEmpty(asName))
 			{
 				return asName;
 			}
-			final QualifiedName importedName = stub.getImportedQName();
+			QualifiedName importedName = stub.getImportedQName();
 			if(importedName != null && importedName.getComponentCount() > 0)
 			{
 				return importedName.getComponents().get(0);
@@ -120,7 +120,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 			{
 				return asNameElement.getName();
 			}
-			final QualifiedName importedName = getImportedQName();
+			QualifiedName importedName = getImportedQName();
 			if(importedName != null && importedName.getComponentCount() > 0)
 			{
 				return importedName.getComponents().get(0);
@@ -132,7 +132,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	@Nullable
 	public PyStatement getContainingImportStatement()
 	{
-		final PyImportElementStub stub = getStub();
+		PyImportElementStub stub = getStub();
 		PsiElement parent;
 		if(stub != null)
 		{
@@ -174,7 +174,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 			public String getLocationString()
 			{
 				PyElement elt = PsiTreeUtil.getParentOfType(PyImportElementImpl.this, PyImportStatement.class, PyFromImportStatement.class);
-				final StringBuilder buf = new StringBuilder("| ");
+				StringBuilder buf = new StringBuilder("| ");
 				if(elt != null)
 				{ // always? who knows :)
 					if(elt instanceof PyFromImportStatement)
@@ -223,7 +223,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		PyElement ret = getAsNameElement();
 		if(ret == null)
 		{
-			final PyReferenceExpression importReference = getImportReferenceExpression();
+			PyReferenceExpression importReference = getImportReferenceExpression();
 			if(importReference != null)
 			{
 				ret = PyPsiUtils.getFirstQualifier(importReference);
@@ -237,7 +237,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	}
 
 	@Nonnull
-	public List<RatedResolveResult> multiResolveName(@Nonnull final String name)
+	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
 	{
 		return getElementsNamed(name, true);
 	}
@@ -246,7 +246,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	@Override
 	public PsiElement getElementNamed(String name, boolean resolveImportElement)
 	{
-		final List<RatedResolveResult> results = getElementsNamed(name, resolveImportElement);
+		List<RatedResolveResult> results = getElementsNamed(name, resolveImportElement);
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
 	}
 
@@ -268,7 +268,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		}
 		else
 		{
-			final QualifiedName qName = getImportedQName();
+			QualifiedName qName = getImportedQName();
 			if(qName == null || qName.getComponentCount() == 0 || !qName.getComponents().get(0).equals(name))
 			{
 				return Collections.emptyList();
@@ -289,7 +289,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	@Override
 	public PsiElement resolve()
 	{
-		final List<RatedResolveResult> results = multiResolve();
+		List<RatedResolveResult> results = multiResolve();
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
 	}
 
@@ -297,7 +297,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	@Override
 	public List<RatedResolveResult> multiResolve()
 	{
-		final QualifiedName qName = getImportedQName();
+		QualifiedName qName = getImportedQName();
 		return qName == null ? Collections.<RatedResolveResult>emptyList() : ResolveImportUtil.multiResolveImportElement(this, qName);
 	}
 
@@ -310,14 +310,14 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	@Override
 	public String toString()
 	{
-		final QualifiedName qName = getImportedQName();
+		QualifiedName qName = getImportedQName();
 		return String.format("%s:%s", super.toString(), qName != null ? qName : "null");
 	}
 
 	@Nullable
 	private PsiElement createImportedModule(String name)
 	{
-		final PsiFile file = getContainingFile();
+		PsiFile file = getContainingFile();
 		if(file instanceof PyFile)
 		{
 			return new PyImportedModule(this, (PyFile) file, QualifiedName.fromComponents(name));

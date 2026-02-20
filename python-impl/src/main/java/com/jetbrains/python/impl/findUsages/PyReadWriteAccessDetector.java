@@ -52,7 +52,7 @@ public class PyReadWriteAccessDetector extends ReadWriteAccessDetector {
       return Access.Write;
     }
     if (expression instanceof PyReferenceExpression) {
-      final PyAugAssignmentStatement statement = PyAugAssignmentStatementNavigator.getStatementByTarget(expression);
+      PyAugAssignmentStatement statement = PyAugAssignmentStatementNavigator.getStatementByTarget(expression);
       if (statement != null) {
         return Access.ReadWrite;
       }

@@ -220,7 +220,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
     String path = (String)params.get(0);
     int line = Integer.parseInt((String)params.get(1));
 
-    final VirtualFile file = StringUtil.isEmpty(path) ? null : LocalFileSystem.getInstance().findFileByPath(path);
+    VirtualFile file = StringUtil.isEmpty(path) ? null : LocalFileSystem.getInstance().findFileByPath(path);
     if (file != null) {
       ApplicationManager.getApplication().invokeLater(() -> {
         FileEditorManager.getInstance(myProject).openFile(file, true);
@@ -275,7 +275,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
    * @return a Pair with (null, more) or (error, false)
    * @throws XmlRpcException
    */
-  protected Pair<String, Boolean> exec(final ConsoleCodeFragment command) throws XmlRpcException {
+  protected Pair<String, Boolean> exec(ConsoleCodeFragment command) throws XmlRpcException {
     setExecuting(true);
     Object execute = myClient.execute(command.isSingleLine() ? EXEC_LINE : EXEC_MULTILINE, new Object[]{command.getText()});
 
@@ -318,7 +318,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
     if (waitingForInput) {
       return Collections.emptyList();
     }
-    final Object fromServer = myClient.execute(GET_COMPLETIONS, new Object[]{
+    Object fromServer = myClient.execute(GET_COMPLETIONS, new Object[]{
       text,
       actTok
     });
@@ -344,7 +344,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
    *
    * @param command the command to be executed in the client
    */
-  public void execInterpreter(final ConsoleCodeFragment command, final Function<InterpreterResponse, Object> onResponseReceived) {
+  public void execInterpreter(final ConsoleCodeFragment command, Function<InterpreterResponse, Object> onResponseReceived) {
     if (myDebugCommunication != null && myDebugCommunication.isSuspended()) {
       myDebugCommunication.execInterpreter(command, onResponseReceived);
       return; //TODO: handle text input and other cases
@@ -424,16 +424,16 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 
       //busy loop waiting for the answer (or having the console die).
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
         progressIndicator.setText("Waiting for REPL response with " + (int)(TIMEOUT / 10e8) + "s timeout");
-        final long startTime = System.nanoTime();
+        long startTime = System.nanoTime();
         while (nextResponse == null) {
           if (progressIndicator.isCanceled()) {
             LOG.debug("Canceled");
             nextResponse = new InterpreterResponse(false, false);
           }
 
-          final long time = System.nanoTime() - startTime;
+          long time = System.nanoTime() - startTime;
           progressIndicator.setFraction(((double)time) / TIMEOUT);
           if (time > TIMEOUT) {
             LOG.debug("Timeout exceeded");
@@ -516,7 +516,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
   }
 
   private XValueChildrenList parseVars(String ret, PyDebugValue parent) throws PyDebuggerException {
-    final List<PyDebugValue> values = ProtocolParser.parseValues(ret, this);
+    List<PyDebugValue> values = ProtocolParser.parseValues(ret, this);
     XValueChildrenList list = new XValueChildrenList(values.size());
     for (PyDebugValue v : values) {
       list.add(v.getName(), parent != null ? v.setParent(parent) : v);

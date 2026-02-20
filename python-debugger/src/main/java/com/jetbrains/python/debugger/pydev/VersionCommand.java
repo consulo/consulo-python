@@ -8,7 +8,7 @@ public class VersionCommand extends AbstractCommand {
   private String myPycharmOS;
   private String myRemoteVersion = null;
 
-  public VersionCommand(final RemoteDebugger debugger, final String version, String pycharmOS) {
+  public VersionCommand(RemoteDebugger debugger, String version, String pycharmOS) {
     super(debugger, VERSION);
     myVersion = version;
     myPycharmOS = pycharmOS;
@@ -25,7 +25,7 @@ public class VersionCommand extends AbstractCommand {
   }
 
   @Override
-  protected void processResponse(final ProtocolFrame response) throws PyDebuggerException {
+  protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
     super.processResponse(response);
     myRemoteVersion = response.getPayload();
   }

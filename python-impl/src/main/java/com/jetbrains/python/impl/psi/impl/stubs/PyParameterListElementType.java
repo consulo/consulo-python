@@ -43,24 +43,24 @@ public class PyParameterListElementType extends PyStubElementType<PyParameterLis
     super(debugName);
   }
 
-  public PyParameterList createPsi(@Nonnull final PyParameterListStub stub) {
+  public PyParameterList createPsi(@Nonnull PyParameterListStub stub) {
     return new PyParameterListImpl(stub);
   }
 
-  public PyParameterListStub createStub(@Nonnull final PyParameterList psi, final StubElement parentStub) {
+  public PyParameterListStub createStub(@Nonnull PyParameterList psi, StubElement parentStub) {
     return new PyParameterListStubImpl(parentStub, getStubElementType());
   }
 
-  public PsiElement createElement(@Nonnull final ASTNode node) {
+  public PsiElement createElement(@Nonnull ASTNode node) {
     return new PyParameterListImpl(node);
   }
 
-  public void serialize(@Nonnull final PyParameterListStub stub, @Nonnull final StubOutputStream dataStream)
+  public void serialize(@Nonnull PyParameterListStub stub, @Nonnull StubOutputStream dataStream)
       throws IOException {
   }
 
   @Nonnull
-  public PyParameterListStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub)
+  public PyParameterListStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     return new PyParameterListStubImpl(parentStub, getStubElementType());
   }

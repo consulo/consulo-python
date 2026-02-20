@@ -33,16 +33,16 @@ public class PyListCompExpressionNavigator
 	}
 
 	@Nullable
-	public static PyListCompExpression getPyListCompExpressionByVariable(final PsiElement element)
+	public static PyListCompExpression getPyListCompExpressionByVariable(PsiElement element)
 	{
-		final PyListCompExpression listCompExpression = PsiTreeUtil.getParentOfType(element, PyListCompExpression.class, false);
+		PyListCompExpression listCompExpression = PsiTreeUtil.getParentOfType(element, PyListCompExpression.class, false);
 		if(listCompExpression == null)
 		{
 			return null;
 		}
 		for(PyComprehensionForComponent component : listCompExpression.getForComponents())
 		{
-			final PyExpression variable = component.getIteratorVariable();
+			PyExpression variable = component.getIteratorVariable();
 			if(variable != null && PsiTreeUtil.isAncestor(variable, element, false))
 			{
 				return listCompExpression;

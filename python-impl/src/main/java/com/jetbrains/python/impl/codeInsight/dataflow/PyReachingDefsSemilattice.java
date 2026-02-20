@@ -47,12 +47,12 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
       return ins.get(0);
     }
 
-    final Set<String> resultNames = getResultNames(ins);
+    Set<String> resultNames = getResultNames(ins);
     if (resultNames == null || resultNames.isEmpty()) {
       return new DFAMap<ScopeVariable>();
     }
 
-    final DFAMap<ScopeVariable> result = new DFAMap<ScopeVariable>();
+    DFAMap<ScopeVariable> result = new DFAMap<ScopeVariable>();
     for (String name : resultNames) {
 
       boolean isParameter = true;
@@ -60,21 +60,21 @@ public class PyReachingDefsSemilattice implements MapSemilattice<ScopeVariable> 
 
       // iterating over all maps
       for (DFAMap<ScopeVariable> map : ins) {
-        final ScopeVariable variable = map.get(name);
+        ScopeVariable variable = map.get(name);
         if (variable == null) {
           continue;
         }
         isParameter = isParameter && variable.isParameter();
         declarations.addAll(variable.getDeclarations());
       }
-      final ScopeVariable scopeVariable = new ScopeVariableImpl(name, isParameter, declarations);
+      ScopeVariable scopeVariable = new ScopeVariableImpl(name, isParameter, declarations);
       result.put(name, scopeVariable);
     }
     return result;
   }
 
   @Nullable
-  private static Set<String> getResultNames(final ArrayList<DFAMap<ScopeVariable>> ins) {
+  private static Set<String> getResultNames(ArrayList<DFAMap<ScopeVariable>> ins) {
     // Compute intersection of all the names
     Set<String> names2Include = null;
     for (DFAMap<ScopeVariable> map : ins) {

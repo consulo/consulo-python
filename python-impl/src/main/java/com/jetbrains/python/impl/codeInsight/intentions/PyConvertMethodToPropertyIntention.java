@@ -51,12 +51,12 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         if (!LanguageLevel.forElement(file).isAtLeast(LanguageLevel.PYTHON26)) {
             return false;
         }
-        final PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
-        final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (function == null) {
             return false;
         }
-        final PyClass containingClass = function.getContainingClass();
+        PyClass containingClass = function.getContainingClass();
         if (containingClass == null) {
             return false;
         }
@@ -64,7 +64,7 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
             return false;
         }
 
-        final PyDecoratorList decoratorList = function.getDecoratorList();
+        PyDecoratorList decoratorList = function.getDecoratorList();
         if (decoratorList != null) {
             return false;
         }
@@ -88,29 +88,29 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
     }
 
     public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (problemFunction == null) {
             return;
         }
-        final PyClass containingClass = problemFunction.getContainingClass();
+        PyClass containingClass = problemFunction.getContainingClass();
         if (containingClass == null) {
             return;
         }
-        final List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
+        List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
 
-        final PyDecoratorList problemDecoratorList = problemFunction.getDecoratorList();
+        PyDecoratorList problemDecoratorList = problemFunction.getDecoratorList();
         List<String> decoTexts = new ArrayList<String>();
         decoTexts.add("@property");
         if (problemDecoratorList != null) {
-            final PyDecorator[] decorators = problemDecoratorList.getDecorators();
+            PyDecorator[] decorators = problemDecoratorList.getDecorators();
             for (PyDecorator deco : decorators) {
                 decoTexts.add(deco.getText());
             }
         }
 
         PyElementGenerator generator = PyElementGenerator.getInstance(project);
-        final PyDecoratorList decoratorList = generator.createDecoratorList(decoTexts.toArray(new String[decoTexts.size()]));
+        PyDecoratorList decoratorList = generator.createDecoratorList(decoTexts.toArray(new String[decoTexts.size()]));
 
         if (problemDecoratorList != null) {
             problemDecoratorList.replace(decoratorList);
@@ -120,11 +120,11 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         }
 
         for (UsageInfo usage : usages) {
-            final PsiElement usageElement = usage.getElement();
+            PsiElement usageElement = usage.getElement();
             if (usageElement instanceof PyReferenceExpression) {
-                final PsiElement parent = usageElement.getParent();
+                PsiElement parent = usageElement.getParent();
                 if (parent instanceof PyCallExpression) {
-                    final PyArgumentList argumentList = ((PyCallExpression) parent).getArgumentList();
+                    PyArgumentList argumentList = ((PyCallExpression) parent).getArgumentList();
                     if (argumentList != null) {
                         argumentList.delete();
                     }

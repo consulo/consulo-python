@@ -36,18 +36,18 @@ public abstract class PyCommandLineTestCase extends PyTestCase {
     return 7 + debugParam;
   }
 
-  protected <T extends AbstractPythonRunConfiguration> T createConfiguration(final ConfigurationType configurationType, Class<T> cls) {
-    final ConfigurationFactory factory = configurationType.getConfigurationFactories()[0];
-    final Project project = myFixture.getProject();
+  protected <T extends AbstractPythonRunConfiguration> T createConfiguration(ConfigurationType configurationType, Class<T> cls) {
+    ConfigurationFactory factory = configurationType.getConfigurationFactories()[0];
+    Project project = myFixture.getProject();
     return cls.cast(factory.createTemplateConfiguration(project));
   }
 
   protected List<String> buildRunCommandLine(AbstractPythonRunConfiguration configuration) {
     try {
-      final Executor executor = DefaultRunExecutor.getRunExecutorInstance();
+      Executor executor = DefaultRunExecutor.getRunExecutorInstance();
       ExecutionEnvironment env = new ExecutionEnvironmentBuilder(myFixture.getProject(), executor).runProfile(configuration).build();
-      final PythonCommandLineState state = (PythonCommandLineState)configuration.getState(executor, env);
-      final GeneralCommandLine generalCommandLine = state.generateCommandLine();
+      PythonCommandLineState state = (PythonCommandLineState)configuration.getState(executor, env);
+      GeneralCommandLine generalCommandLine = state.generateCommandLine();
       return generalCommandLine.getParametersList().getList();
     }
     catch (ExecutionException e) {
@@ -57,10 +57,10 @@ public abstract class PyCommandLineTestCase extends PyTestCase {
 
   protected List<String> buildDebugCommandLine(AbstractPythonRunConfiguration configuration) {
     try {
-      final Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
+      Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
       ExecutionEnvironment env = new ExecutionEnvironmentBuilder(myFixture.getProject(), executor).runProfile(configuration).build();
-      final PythonCommandLineState state = (PythonCommandLineState)configuration.getState(executor, env);
-      final GeneralCommandLine generalCommandLine =
+      PythonCommandLineState state = (PythonCommandLineState)configuration.getState(executor, env);
+      GeneralCommandLine generalCommandLine =
         state.generateCommandLine(new PyDebugRunner().createCommandLinePatchers(configuration.getProject(), state, configuration, PORT));
       return generalCommandLine.getParametersList().getList();
     }

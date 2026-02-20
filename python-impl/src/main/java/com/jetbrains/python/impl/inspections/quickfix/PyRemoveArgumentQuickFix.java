@@ -35,14 +35,14 @@ public class PyRemoveArgumentQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameRemoveArgument();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
         if (!(element instanceof PyExpression)) {
             return;
         }
-        final PyExpression expression = (PyExpression) element;
-        final PsiElement nextSibling = PsiTreeUtil.skipSiblingsForward(expression, PsiWhiteSpace.class);
-        final PsiElement prevSibling = PsiTreeUtil.skipSiblingsBackward(expression, PsiWhiteSpace.class);
+        PyExpression expression = (PyExpression) element;
+        PsiElement nextSibling = PsiTreeUtil.skipSiblingsForward(expression, PsiWhiteSpace.class);
+        PsiElement prevSibling = PsiTreeUtil.skipSiblingsBackward(expression, PsiWhiteSpace.class);
         expression.delete();
         if (nextSibling != null && nextSibling.getNode().getElementType().equals(PyTokenTypes.COMMA)) {
             nextSibling.delete();

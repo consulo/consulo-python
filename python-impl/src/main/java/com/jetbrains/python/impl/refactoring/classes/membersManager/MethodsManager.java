@@ -76,39 +76,39 @@ class MethodsManager extends MembersManager<PyFunction>
 	}
 
 	@Override
-	public boolean hasConflict(@Nonnull final PyFunction member, @Nonnull final PyClass aClass)
+	public boolean hasConflict(@Nonnull PyFunction member, @Nonnull PyClass aClass)
 	{
 		return NamePredicate.hasElementWithSameName(member, Arrays.asList(aClass.getMethods()));
 	}
 
 	@Nonnull
 	@Override
-	protected Collection<PyElement> getDependencies(@Nonnull final MultiMap<PyClass, PyElement> usedElements)
+	protected Collection<PyElement> getDependencies(@Nonnull MultiMap<PyClass, PyElement> usedElements)
 	{
 		return Collections.emptyList();
 	}
 
 	@Nonnull
 	@Override
-	protected MultiMap<PyClass, PyElement> getDependencies(@Nonnull final PyElement member)
+	protected MultiMap<PyClass, PyElement> getDependencies(@Nonnull PyElement member)
 	{
-		final MyPyRecursiveElementVisitor visitor = new MyPyRecursiveElementVisitor();
+		MyPyRecursiveElementVisitor visitor = new MyPyRecursiveElementVisitor();
 		member.accept(visitor);
 		return visitor.myResult;
 	}
 
 	@Nonnull
 	@Override
-	protected List<? extends PyElement> getMembersCouldBeMoved(@Nonnull final PyClass pyClass)
+	protected List<? extends PyElement> getMembersCouldBeMoved(@Nonnull PyClass pyClass)
 	{
 		return FluentIterable.from(Arrays.asList(pyClass.getMethods())).filter(new NamelessFilter<>()).filter(NO_PROPERTIES).toList();
 	}
 
 	@Override
-	protected Collection<PyElement> moveMembers(@Nonnull final PyClass from, @Nonnull final Collection<PyMemberInfo<PyFunction>> members, @Nonnull final PyClass... to)
+	protected Collection<PyElement> moveMembers(@Nonnull PyClass from, @Nonnull Collection<PyMemberInfo<PyFunction>> members, @Nonnull PyClass... to)
 	{
-		final Collection<PyFunction> methodsToMove = fetchElements(Collections2.filter(members, new AbstractFilter(false)));
-		final Collection<PyFunction> methodsToAbstract = fetchElements(Collections2.filter(members, new AbstractFilter(true)));
+		Collection<PyFunction> methodsToMove = fetchElements(Collections2.filter(members, new AbstractFilter(false)));
+		Collection<PyFunction> methodsToAbstract = fetchElements(Collections2.filter(members, new AbstractFilter(true)));
 
 		makeMethodsAbstract(methodsToAbstract, to);
 		return moveMethods(from, methodsToMove, true, to);
@@ -121,25 +121,25 @@ class MethodsManager extends MembersManager<PyFunction>
 	 * @param currentFunctions functions to make them abstract
 	 * @param to               classes where abstract method should be created
 	 */
-	private static void makeMethodsAbstract(final Collection<PyFunction> currentFunctions, final PyClass... to)
+	private static void makeMethodsAbstract(Collection<PyFunction> currentFunctions, PyClass... to)
 	{
-		final Set<PsiFile> filesToCheckImport = new HashSet<>();
-		final Set<PyClass> classesToAddMetaAbc = new HashSet<>();
+		Set<PsiFile> filesToCheckImport = new HashSet<>();
+		Set<PyClass> classesToAddMetaAbc = new HashSet<>();
 
-		for(final PyFunction function : currentFunctions)
+		for(PyFunction function : currentFunctions)
 		{
-			for(final PyClass destClass : to)
+			for(PyClass destClass : to)
 			{
-				final PyFunctionBuilder functionBuilder = PyFunctionBuilder.copySignature(function, DECORATORS_MAY_BE_COPIED_TO_ABSTRACT);
+				PyFunctionBuilder functionBuilder = PyFunctionBuilder.copySignature(function, DECORATORS_MAY_BE_COPIED_TO_ABSTRACT);
 				functionBuilder.decorate(PyNames.ABSTRACTMETHOD);
-				final LanguageLevel level = LanguageLevel.forElement(destClass);
+				LanguageLevel level = LanguageLevel.forElement(destClass);
 				PyClassRefactoringUtil.addMethods(destClass, false, functionBuilder.buildFunction(destClass.getProject(), level));
 				classesToAddMetaAbc.add(destClass);
 			}
 		}
 
 		// Add ABCMeta to new classes if needed
-		for(final PyClass aClass : classesToAddMetaAbc)
+		for(PyClass aClass : classesToAddMetaAbc)
 		{
 			if(addMetaAbcIfNeeded(aClass))
 			{
@@ -148,7 +148,7 @@ class MethodsManager extends MembersManager<PyFunction>
 		}
 
 		// Add imports for ABC if needed
-		for(final PsiFile file : filesToCheckImport)
+		for(PsiFile file : filesToCheckImport)
 		{
 			addImportFromAbc(file, PyNames.ABSTRACTMETHOD);
 			addImportFromAbc(file, PyNames.ABC_META_CLASS);
@@ -163,15 +163,15 @@ class MethodsManager extends MembersManager<PyFunction>
 	 * @return true if added. False if class already has metaclass so we did not touch it.
 	 */
 	// TODO: Copy/Paste with PyClass.getMeta..
-	private static boolean addMetaAbcIfNeeded(@Nonnull final PyClass aClass)
+	private static boolean addMetaAbcIfNeeded(@Nonnull PyClass aClass)
 	{
-		final PsiFile file = aClass.getContainingFile();
-		final PyType type = aClass.getMetaClassType(TypeEvalContext.userInitiated(aClass.getProject(), file));
+		PsiFile file = aClass.getContainingFile();
+		PyType type = aClass.getMetaClassType(TypeEvalContext.userInitiated(aClass.getProject(), file));
 		if(type != null)
 		{
 			return false; //User already has metaclass. He probably knows about metaclasses, so we should not add ABCMeta
 		}
-		final LanguageLevel languageLevel = LanguageLevel.forElement(aClass);
+		LanguageLevel languageLevel = LanguageLevel.forElement(aClass);
 		if(languageLevel.isPy3K())
 		{ //TODO: Copy/paste, use strategy because we already has the same check in #couldBeAbstract
 			// Add (metaclass= for Py3K
@@ -191,7 +191,7 @@ class MethodsManager extends MembersManager<PyFunction>
 	 * @param file         where to add import
 	 * @param nameToImport what to import
 	 */
-	private static void addImportFromAbc(@Nonnull final PsiFile file, @Nonnull final String nameToImport)
+	private static void addImportFromAbc(@Nonnull PsiFile file, @Nonnull String nameToImport)
 	{
 		AddImportHelper.addOrUpdateFromImportStatement(file, ABC_META_PACKAGE, nameToImport, null, ImportPriority.BUILTIN, null);
 	}
@@ -205,16 +205,16 @@ class MethodsManager extends MembersManager<PyFunction>
 	 * @param skipIfExist   skip (do not add) if method already exists
 	 * @return newly added methods
 	 */
-	static List<PyElement> moveMethods(final PyClass from, final Collection<PyFunction> methodsToMove, final boolean skipIfExist, final PyClass... to)
+	static List<PyElement> moveMethods(PyClass from, Collection<PyFunction> methodsToMove, boolean skipIfExist, PyClass... to)
 	{
-		final List<PyElement> result = new ArrayList<>();
-		for(final PyClass destClass : to)
+		List<PyElement> result = new ArrayList<>();
+		for(PyClass destClass : to)
 		{
 			//We move copies here because there may be several destinations
-			final List<PyFunction> copies = new ArrayList<>(methodsToMove.size());
-			for(final PyFunction element : methodsToMove)
+			List<PyFunction> copies = new ArrayList<>(methodsToMove.size());
+			for(PyFunction element : methodsToMove)
 			{
-				final PyFunction newMethod = (PyFunction) element.copy();
+				PyFunction newMethod = (PyFunction) element.copy();
 				copies.add(newMethod);
 			}
 
@@ -227,27 +227,27 @@ class MethodsManager extends MembersManager<PyFunction>
 
 	@Nonnull
 	@Override
-	public PyMemberInfo<PyFunction> apply(@Nonnull final PyFunction pyFunction)
+	public PyMemberInfo<PyFunction> apply(@Nonnull PyFunction pyFunction)
 	{
-		final PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(pyFunction);
+		PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(pyFunction);
 		assert flags != null : "No flags return while element is function " + pyFunction;
-		final boolean isStatic = flags.isStaticMethod() || flags.isClassMethod();
+		boolean isStatic = flags.isStaticMethod() || flags.isClassMethod();
 		return new PyMemberInfo<>(pyFunction, isStatic, buildDisplayMethodName(pyFunction), isOverrides(pyFunction), this, couldBeAbstract(pyFunction));
 	}
 
 	/**
 	 * @return if method could be made abstract? (that means "create abstract version if method in parent class")
 	 */
-	private static boolean couldBeAbstract(@Nonnull final PyFunction function)
+	private static boolean couldBeAbstract(@Nonnull PyFunction function)
 	{
 		if(PyUtil.isInit(function))
 		{
 			return false; // Who wants to make __init__ abstract?!
 		}
-		final PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(function);
+		PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(function);
 		assert flags != null : "Function should be called on method!";
 
-		final boolean py3K = LanguageLevel.forElement(function).isPy3K();
+		boolean py3K = LanguageLevel.forElement(function).isPy3K();
 
 		//TODO: use strategy because we already has the same check in #addMetaAbcIfNeeded
 		return flags.isInstanceMethod() || py3K; //Any method could be made abstract in py3
@@ -255,13 +255,13 @@ class MethodsManager extends MembersManager<PyFunction>
 
 
 	@Nullable
-	private static Boolean isOverrides(final PyFunction pyFunction)
+	private static Boolean isOverrides(PyFunction pyFunction)
 	{
-		final PyClass clazz = PyUtil.getContainingClassOrSelf(pyFunction);
+		PyClass clazz = PyUtil.getContainingClassOrSelf(pyFunction);
 		assert clazz != null : "Refactoring called on function, not method: " + pyFunction;
-		for(final PyClass parentClass : clazz.getSuperClasses(null))
+		for(PyClass parentClass : clazz.getSuperClasses(null))
 		{
-			final PyFunction parentMethod = parentClass.findMethodByName(pyFunction.getName(), true, null);
+			PyFunction parentMethod = parentClass.findMethodByName(pyFunction.getName(), true, null);
 			if(parentMethod != null)
 			{
 				return true;
@@ -271,12 +271,12 @@ class MethodsManager extends MembersManager<PyFunction>
 	}
 
 	@Nonnull
-	private static String buildDisplayMethodName(@Nonnull final PyFunction pyFunction)
+	private static String buildDisplayMethodName(@Nonnull PyFunction pyFunction)
 	{
-		final StringBuilder builder = new StringBuilder(pyFunction.getName());
+		StringBuilder builder = new StringBuilder(pyFunction.getName());
 		builder.append('(');
-		final PyParameter[] arguments = pyFunction.getParameterList().getParameters();
-		for(final PyParameter parameter : arguments)
+		PyParameter[] arguments = pyFunction.getParameterList().getParameters();
+		for(PyParameter parameter : arguments)
 		{
 			builder.append(parameter.getName());
 			if(arguments.length > 1 && parameter != arguments[arguments.length - 1])
@@ -299,13 +299,13 @@ class MethodsManager extends MembersManager<PyFunction>
 		/**
 		 * @param allowAbstractOnly returns only methods to be abstracted. Returns only methods to be moved otherwise.
 		 */
-		private AbstractFilter(final boolean allowAbstractOnly)
+		private AbstractFilter(boolean allowAbstractOnly)
 		{
 			myAllowAbstractOnly = allowAbstractOnly;
 		}
 
 		@Override
-		protected boolean applyNotNull(@Nonnull final PyMemberInfo<PyFunction> input)
+		protected boolean applyNotNull(@Nonnull PyMemberInfo<PyFunction> input)
 		{
 			return input.isToAbstract() == myAllowAbstractOnly;
 		}
@@ -314,20 +314,20 @@ class MethodsManager extends MembersManager<PyFunction>
 	private static class MyPyRecursiveElementVisitor extends PyRecursiveElementVisitorWithResult
 	{
 		@Override
-		public void visitPyCallExpression(final PyCallExpression node)
+		public void visitPyCallExpression(PyCallExpression node)
 		{
 			// TODO: refactor, messy code
-			final PyExpression callee = node.getCallee();
+			PyExpression callee = node.getCallee();
 			if(callee != null)
 			{
-				final PsiReference calleeRef = callee.getReference();
+				PsiReference calleeRef = callee.getReference();
 				if(calleeRef != null)
 				{
-					final PsiElement calleeDeclaration = calleeRef.resolve();
+					PsiElement calleeDeclaration = calleeRef.resolve();
 					if(calleeDeclaration instanceof PyFunction)
 					{
-						final PyFunction calleeFunction = (PyFunction) calleeDeclaration;
-						final PyClass clazz = calleeFunction.getContainingClass();
+						PyFunction calleeFunction = (PyFunction) calleeDeclaration;
+						PyClass clazz = calleeFunction.getContainingClass();
 						if(clazz != null)
 						{
 							if(PyUtil.isInit(calleeFunction))

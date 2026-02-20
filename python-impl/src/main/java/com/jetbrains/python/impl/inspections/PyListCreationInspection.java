@@ -59,12 +59,12 @@ public class PyListCreationInspection extends PyInspection {
             if (!(node.getAssignedValue() instanceof PyListLiteralExpression)) {
                 return;
             }
-            final PyExpression[] targets = node.getTargets();
+            PyExpression[] targets = node.getTargets();
             if (targets.length != 1) {
                 return;
             }
-            final PyExpression target = targets[0];
-            final String name = target.getName();
+            PyExpression target = targets[0];
+            String name = target.getName();
             if (name == null) {
                 return;
             }
@@ -76,20 +76,20 @@ public class PyListCreationInspection extends PyInspection {
 
             ListCreationQuickFix quickFix = null;
 
-            final String message = "This list creation could be rewritten as a list literal";
+            String message = "This list creation could be rewritten as a list literal";
             while (expressionStatement instanceof PyExpressionStatement) {
-                final PyExpression statement = ((PyExpressionStatement) expressionStatement).getExpression();
+                PyExpression statement = ((PyExpressionStatement) expressionStatement).getExpression();
                 if (!(statement instanceof PyCallExpression)) {
                     break;
                 }
 
-                final PyCallExpression callExpression = (PyCallExpression) statement;
-                final PyExpression callee = callExpression.getCallee();
+                PyCallExpression callExpression = (PyCallExpression) statement;
+                PyExpression callee = callExpression.getCallee();
                 if (callee instanceof PyQualifiedExpression) {
-                    final PyExpression qualifier = ((PyQualifiedExpression) callee).getQualifier();
-                    final String funcName = ((PyQualifiedExpression) callee).getReferencedName();
+                    PyExpression qualifier = ((PyQualifiedExpression) callee).getQualifier();
+                    String funcName = ((PyQualifiedExpression) callee).getReferencedName();
                     if (qualifier != null && name.equals(qualifier.getText()) && "append".equals(funcName)) {
-                        final PyArgumentList argList = callExpression.getArgumentList();
+                        PyArgumentList argList = callExpression.getArgumentList();
                         if (argList != null) {
                             for (PyExpression argument : argList.getArguments()) {
                                 if (argument.getText().equals(name)) {

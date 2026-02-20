@@ -34,9 +34,9 @@ public class InstructionBuilder {
   public static List<Instruction> buildInstructions(ControlFlowBuilder builder, List<PyTypeAssertionEvaluator.Assertion> assertions) {
     List<Instruction> result = Lists.newArrayList();
     for (PyTypeAssertionEvaluator.Assertion def: assertions) {
-      final PyReferenceExpression e = def.getElement();
-      final QualifiedName qname = e.asQualifiedName();
-      final String name = qname != null ? qname.toString() : e.getName();
+      PyReferenceExpression e = def.getElement();
+      QualifiedName qname = e.asQualifiedName();
+      String name = qname != null ? qname.toString() : e.getName();
       result.add(ReadWriteInstruction.assertType(builder, e, name, def.getTypeEvalFunction()));
     }
     return result;

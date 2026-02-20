@@ -35,11 +35,11 @@ public class SetupKeywordArgumentProvider implements PyKeywordArgumentProvider {
   @Override
   public List<String> getKeywordArguments(PyFunction function, PyCallExpression callExpr) {
     if ("setup".equals(function.getName())) {
-      final ScopeOwner scopeOwner = PsiTreeUtil.getParentOfType(function, ScopeOwner.class, true);
+      ScopeOwner scopeOwner = PsiTreeUtil.getParentOfType(function, ScopeOwner.class, true);
       if (scopeOwner instanceof PyFile) {
-        final PyFile file = (PyFile)scopeOwner;
+        PyFile file = (PyFile)scopeOwner;
         if (file.getName().equals("core.py") && file.getParent().getName().equals("distutils")) {
-          final List<String> arguments = getSetupPyKeywordArguments(file);
+          List<String> arguments = getSetupPyKeywordArguments(file);
           if (arguments != null) {
             return arguments;
           }
@@ -51,7 +51,7 @@ public class SetupKeywordArgumentProvider implements PyKeywordArgumentProvider {
 
   @Nullable
   private static List<String> getSetupPyKeywordArguments(PyFile file) {
-    final PyTargetExpression keywords = file.findTopLevelAttribute("setup_keywords");
+    PyTargetExpression keywords = file.findTopLevelAttribute("setup_keywords");
     if (keywords != null) {
       return PyUtil.strListValue(keywords.findAssignedValue());
     }

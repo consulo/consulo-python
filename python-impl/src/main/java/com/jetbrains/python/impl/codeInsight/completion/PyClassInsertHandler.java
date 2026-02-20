@@ -38,12 +38,12 @@ public class PyClassInsertHandler implements InsertHandler<LookupElement>
 
 	public void handleInsert(InsertionContext context, LookupElement item)
 	{
-		final Editor editor = context.getEditor();
-		final Document document = editor.getDocument();
+		Editor editor = context.getEditor();
+		Document document = editor.getDocument();
 		if(context.getCompletionChar() == '(')
 		{
 			context.setAddCompletionChar(false);
-			final int offset = context.getTailOffset();
+			int offset = context.getTailOffset();
 			document.insertString(offset, "()");
 
 			PyClass pyClass = PyUtil.as(item.getPsiElement(), PyClass.class);

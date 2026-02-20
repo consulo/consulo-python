@@ -65,7 +65,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyBinaryExpression(final PyBinaryExpression node) {
+        public void visitPyBinaryExpression(PyBinaryExpression node) {
             myIsLeft = false;
             myIsRight = false;
             myOperator = null;
@@ -88,10 +88,10 @@ public class PyChainedComparisonsInspection extends PyInspection {
         }
 
         private boolean isRightSimplified(
-            @Nonnull final PyBinaryExpression leftExpression,
-            @Nonnull final PyBinaryExpression rightExpression
+            @Nonnull PyBinaryExpression leftExpression,
+            @Nonnull PyBinaryExpression rightExpression
         ) {
-            final PyExpression leftRight = leftExpression.getRightExpression();
+            PyExpression leftRight = leftExpression.getRightExpression();
             if (leftRight instanceof PyBinaryExpression && PyTokenTypes.AND_KEYWORD == leftExpression.getOperator()) {
                 if (isRightSimplified((PyBinaryExpression) leftRight, rightExpression)) {
                     getInnerRight = true;
@@ -115,7 +115,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
                         return true;
                     }
 
-                    final PyExpression right = getSmallestRight(rightExpression, true);
+                    PyExpression right = getSmallestRight(rightExpression, true);
                     if (right != null && leftRight.getText().equals(right.getText())) {
                         myIsLeft = false;
                         myIsRight = false;
@@ -126,7 +126,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
             return false;
         }
 
-        private static boolean isOpposite(final PyElementType op1, final PyElementType op2) {
+        private static boolean isOpposite(PyElementType op1, PyElementType op2) {
             if ((op1 == PyTokenTypes.GT || op1 == PyTokenTypes.GE) && (op2 == PyTokenTypes.LT || op2 == PyTokenTypes.LE)) {
                 return true;
             }
@@ -139,8 +139,8 @@ public class PyChainedComparisonsInspection extends PyInspection {
 
 
         private boolean isLeftSimplified(PyBinaryExpression leftExpression, PyBinaryExpression rightExpression) {
-            final PyExpression leftLeft = leftExpression.getLeftExpression();
-            final PyExpression leftRight = leftExpression.getRightExpression();
+            PyExpression leftLeft = leftExpression.getLeftExpression();
+            PyExpression leftRight = leftExpression.getRightExpression();
             if (leftRight instanceof PyBinaryExpression
                 && PyTokenTypes.AND_KEYWORD == leftExpression.getOperator()) {
                 if (isLeftSimplified((PyBinaryExpression) leftRight, rightExpression)) {
@@ -164,7 +164,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
                         myIsRight = true;
                         return true;
                     }
-                    final PyExpression right = getSmallestRight(rightExpression, false);
+                    PyExpression right = getSmallestRight(rightExpression, false);
                     if (right != null && leftLeft.getText().equals(right.getText())) {
                         myIsLeft = true;
                         myIsRight = false;
@@ -181,7 +181,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
                 PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression) result).getOperator())
                     || PyTokenTypes.EQUALITY_OPERATIONS.contains(((PyBinaryExpression) result).getOperator()))) {
 
-                final boolean opposite = isOpposite(((PyBinaryExpression) result).getOperator(), myOperator);
+                boolean opposite = isOpposite(((PyBinaryExpression) result).getOperator(), myOperator);
                 if ((isRight && opposite) || (!isRight && !opposite)) {
                     break;
                 }
@@ -197,7 +197,7 @@ public class PyChainedComparisonsInspection extends PyInspection {
                 PyTokenTypes.RELATIONAL_OPERATIONS.contains(((PyBinaryExpression) result).getOperator())
                     || PyTokenTypes.EQUALITY_OPERATIONS.contains(((PyBinaryExpression) result).getOperator()))) {
 
-                final boolean opposite = isOpposite(((PyBinaryExpression) result).getOperator(), myOperator);
+                boolean opposite = isOpposite(((PyBinaryExpression) result).getOperator(), myOperator);
                 if ((isRight && !opposite) || (!isRight && opposite)) {
                     break;
                 }

@@ -51,7 +51,7 @@ public class SphinxDocString extends TagBasedDocString
 			":exception"
 	};
 
-	public SphinxDocString(@Nonnull final Substring docstringText)
+	public SphinxDocString(@Nonnull Substring docstringText)
 	{
 		super(docstringText, ":");
 	}

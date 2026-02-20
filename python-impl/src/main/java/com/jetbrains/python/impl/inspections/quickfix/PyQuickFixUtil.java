@@ -34,7 +34,7 @@ public class PyQuickFixUtil
 		Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
 		if(document != null)
 		{
-			final EditorFactory instance = EditorFactory.getInstance();
+			EditorFactory instance = EditorFactory.getInstance();
 			if(instance == null)
 			{
 				return null;

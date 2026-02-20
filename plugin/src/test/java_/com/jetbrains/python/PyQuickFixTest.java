@@ -41,14 +41,14 @@ public abstract class PyQuickFixTest extends PyTestCase {
     myFixture.copyDirectoryToProject("importFromModuleStar", "");
     myFixture.configureFromTempProjectFile("source.py");
     myFixture.checkHighlighting(true, false, false);
-    final IntentionAction intentionAction = myFixture.findSingleIntention(PyBundle.message("ACT.NAME.use.import"));
+    IntentionAction intentionAction = myFixture.findSingleIntention(PyBundle.message("ACT.NAME.use.import"));
     assertNotNull(intentionAction);
     myFixture.launchAction(intentionAction);
     myFixture.checkResultByFile("importFromModuleStar/source_after.py");
   }
 
   public void testQualifyByImport() {
-    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
     boolean oldPreferFrom = settings.PREFER_FROM_IMPORT;
     boolean oldHighlightUnused = settings.HIGHLIGHT_UNUSED_IMPORTS;
     settings.PREFER_FROM_IMPORT = false;
@@ -63,7 +63,7 @@ public abstract class PyQuickFixTest extends PyTestCase {
   }
 
   public void testAddToImportFromList() {
-    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
     boolean oldHighlightUnused = settings.HIGHLIGHT_UNUSED_IMPORTS;
     settings.HIGHLIGHT_UNUSED_IMPORTS = false;
     try {
@@ -177,7 +177,7 @@ public abstract class PyQuickFixTest extends PyTestCase {
     myFixture.enableInspections(PyRedundantParenthesesInspection.class);
     myFixture.configureByFiles(testFiles);
     myFixture.checkHighlighting(true, false, true);
-    final IntentionAction intentionAction = myFixture.findSingleIntention(PyBundle.message("QFIX.redundant.parentheses"));
+    IntentionAction intentionAction = myFixture.findSingleIntention(PyBundle.message("QFIX.redundant.parentheses"));
     assertNotNull(intentionAction);
     myFixture.launchAction(intentionAction);
     myFixture.checkResultByFile(graftBeforeExt(testFiles[0], "_after"));
@@ -396,11 +396,11 @@ public abstract class PyQuickFixTest extends PyTestCase {
 
   // PY-8788
   public void testRenameShadowingBuiltins() {
-    final String fileName = "RenameShadowingBuiltins.py";
+    String fileName = "RenameShadowingBuiltins.py";
     myFixture.configureByFile(fileName);
     myFixture.enableInspections(PyShadowingBuiltinsInspection.class);
     myFixture.checkHighlighting(true, false, true);
-    final IntentionAction intentionAction = myFixture.getAvailableIntention("Rename element");
+    IntentionAction intentionAction = myFixture.getAvailableIntention("Rename element");
     assertNotNull(intentionAction);
     myFixture.launchAction(intentionAction);
     myFixture.checkResultByFile(graftBeforeExt(fileName, "_after"));
@@ -408,11 +408,11 @@ public abstract class PyQuickFixTest extends PyTestCase {
 
   // PY-8788
   public void testRenameFunctionShadowingBuiltins() {
-    final String fileName = "RenameFunctionShadowingBuiltins.py";
+    String fileName = "RenameFunctionShadowingBuiltins.py";
     myFixture.configureByFile(fileName);
     myFixture.enableInspections(PyShadowingBuiltinsInspection.class);
     myFixture.checkHighlighting(true, false, true);
-    final IntentionAction intentionAction = myFixture.getAvailableIntention("Rename element");
+    IntentionAction intentionAction = myFixture.getAvailableIntention("Rename element");
     assertNotNull(intentionAction);
     myFixture.launchAction(intentionAction);
     myFixture.checkResultByFile(graftBeforeExt(fileName, "_after"));
@@ -425,7 +425,7 @@ public abstract class PyQuickFixTest extends PyTestCase {
   }
 
   protected void doInspectionTest(@TestDataFile @NonNls String testFileName,
-                                  final Class inspectionClass,
+                                  Class inspectionClass,
                                   @NonNls String quickFixName,
                                   boolean applyFix,
                                   boolean available) {
@@ -443,14 +443,14 @@ public abstract class PyQuickFixTest extends PyTestCase {
    * @throws Exception
    */
   protected void doInspectionTest(@NonNls String[] testFiles,
-                                  final Class inspectionClass,
+                                  Class inspectionClass,
                                   @NonNls String quickFixName,
                                   boolean applyFix,
                                   boolean available) {
     myFixture.enableInspections(inspectionClass);
     myFixture.configureByFiles(testFiles);
     myFixture.checkHighlighting(true, false, false);
-    final IntentionAction intentionAction = myFixture.findSingleIntention(quickFixName);
+    IntentionAction intentionAction = myFixture.findSingleIntention(quickFixName);
     if (available) {
       assertNotNull(intentionAction);
       if (applyFix) {

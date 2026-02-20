@@ -68,8 +68,8 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
   }
 
   public void testUpdateDocstring() {
-    final PyParameterInfo a = new PyParameterInfo(0, "a", null, false);
-    final PyParameterInfo d1 = new PyParameterInfo(1, "d", "1", true);
+    PyParameterInfo a = new PyParameterInfo(0, "a", null, false);
+    PyParameterInfo d1 = new PyParameterInfo(1, "d", "1", true);
     d1.setName("d1");
     doChangeSignatureTest(null, Arrays.asList(a, d1));
   }
@@ -136,8 +136,8 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
   }
 
   public void testMoveRenameParam() {
-    final PyParameterInfo b = new PyParameterInfo(-1, "b", "1", false);
-    final PyParameterInfo a = new PyParameterInfo(0, "a", "2", true);
+    PyParameterInfo b = new PyParameterInfo(-1, "b", "1", false);
+    PyParameterInfo a = new PyParameterInfo(0, "a", "2", true);
     a.setName("a2");
     doChangeSignatureTest("foo", Arrays.asList(b,
                                                a));
@@ -150,8 +150,8 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
   }
 
   public void testRenameAndMoveParam() {
-    final PyParameterInfo p2 = new PyParameterInfo(1, "p2", null, false);
-    final PyParameterInfo p1 = new PyParameterInfo(0, "p1", null, false);
+    PyParameterInfo p2 = new PyParameterInfo(1, "p2", null, false);
+    PyParameterInfo p1 = new PyParameterInfo(0, "p1", null, false);
     p1.setName("p");
     doChangeSignatureTest("f", Arrays.asList(p2,
                                              p1));
@@ -189,12 +189,12 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
 
   public void doValidationTest(@Nullable String newName, @Nullable List<PyParameterInfo> parameters, @Nullable String expected) {
     myFixture.configureByFile("refactoring/changeSignature/" + getTestName(true) + ".py");
-    final PyChangeSignatureHandler changeSignatureHandler = new PyChangeSignatureHandler();
-    final PyFunction function = (PyFunction)changeSignatureHandler.findTargetMember(myFixture.getFile(), myFixture.getEditor());
+    PyChangeSignatureHandler changeSignatureHandler = new PyChangeSignatureHandler();
+    PyFunction function = (PyFunction)changeSignatureHandler.findTargetMember(myFixture.getFile(), myFixture.getEditor());
     assertNotNull(function);
 
-    final PyMethodDescriptor method = new PyMethodDescriptor(function);
-    final TestPyChangeSignatureDialog dialog = new TestPyChangeSignatureDialog(function.getProject(), method);
+    PyMethodDescriptor method = new PyMethodDescriptor(function);
+    TestPyChangeSignatureDialog dialog = new TestPyChangeSignatureDialog(function.getProject(), method);
     try {
       if (newName != null) {
         dialog.setNewName(newName);
@@ -203,7 +203,7 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
         dialog.setParameterInfos(parameters);
       }
 
-      final String validationError = dialog.validateAndCommitData();
+      String validationError = dialog.validateAndCommitData();
       assertEquals(expected, validationError);
     }
     finally {
@@ -212,14 +212,14 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
   }
 
   private void changeSignature(@Nullable String newName, @Nullable List<PyParameterInfo> parameters) {
-    final PyChangeSignatureHandler changeSignatureHandler = new PyChangeSignatureHandler();
-    final PyFunction function = (PyFunction)changeSignatureHandler.findTargetMember(
+    PyChangeSignatureHandler changeSignatureHandler = new PyChangeSignatureHandler();
+    PyFunction function = (PyFunction)changeSignatureHandler.findTargetMember(
       myFixture.getFile(), myFixture.getEditor());
     assertNotNull(function);
-    final PyFunction newFunction = PyChangeSignatureHandler.getSuperMethod(function);
+    PyFunction newFunction = PyChangeSignatureHandler.getSuperMethod(function);
     assertNotNull(newFunction);
-    final PyMethodDescriptor method = new PyMethodDescriptor(newFunction);
-    final TestPyChangeSignatureDialog dialog = new TestPyChangeSignatureDialog(newFunction.getProject(), method);
+    PyMethodDescriptor method = new PyMethodDescriptor(newFunction);
+    TestPyChangeSignatureDialog dialog = new TestPyChangeSignatureDialog(newFunction.getProject(), method);
     try {
       if (newName != null) {
         dialog.setNewName(newName);
@@ -228,13 +228,13 @@ public abstract class PyChangeSignatureTest extends PyTestCase {
         dialog.setParameterInfos(parameters);
       }
 
-      final String validationError = dialog.validateAndCommitData();
+      String validationError = dialog.validateAndCommitData();
       assertTrue(validationError, validationError == null);
 
-      final BaseRefactoringProcessor baseRefactoringProcessor = dialog.createRefactoringProcessor();
+      BaseRefactoringProcessor baseRefactoringProcessor = dialog.createRefactoringProcessor();
       assert baseRefactoringProcessor instanceof PyChangeSignatureProcessor;
 
-      final PyChangeSignatureProcessor processor = (PyChangeSignatureProcessor)baseRefactoringProcessor;
+      PyChangeSignatureProcessor processor = (PyChangeSignatureProcessor)baseRefactoringProcessor;
       processor.run();
     }
     finally {

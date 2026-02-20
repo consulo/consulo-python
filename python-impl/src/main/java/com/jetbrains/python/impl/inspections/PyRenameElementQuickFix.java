@@ -52,14 +52,14 @@ public class PyRenameElementQuickFix implements LocalQuickFix {
 
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
-        final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
+        PsiElement element = descriptor.getPsiElement();
+        PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
             (PsiNameIdentifierOwner) element :
             PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
         if (nameOwner != null) {
-            final VirtualFile virtualFile = nameOwner.getContainingFile().getVirtualFile();
+            VirtualFile virtualFile = nameOwner.getContainingFile().getVirtualFile();
             if (virtualFile != null) {
-                final Editor editor = FileEditorManager.getInstance(project)
+                Editor editor = FileEditorManager.getInstance(project)
                     .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(), true);
                 if (ApplicationManager.getApplication().isUnitTestMode()) {
                     renameInUnitTestMode(project, nameOwner, editor);
@@ -78,9 +78,9 @@ public class PyRenameElementQuickFix implements LocalQuickFix {
 
     @Nullable
     protected PsiElement checkLocalScope(PsiElement element) {
-        final SearchScope searchScope = PsiSearchHelper.SERVICE.getInstance(element.getProject()).getUseScope(element);
+        SearchScope searchScope = PsiSearchHelper.SERVICE.getInstance(element.getProject()).getUseScope(element);
         if (searchScope instanceof LocalSearchScope) {
-            final PsiElement[] elements = ((LocalSearchScope) searchScope).getScope();
+            PsiElement[] elements = ((LocalSearchScope) searchScope).getScope();
             return PsiTreeUtil.findCommonParent(elements);
         }
 
@@ -91,7 +91,7 @@ public class PyRenameElementQuickFix implements LocalQuickFix {
         @Nonnull Project project, @Nonnull PsiNameIdentifierOwner nameOwner,
         @Nullable Editor editor
     ) {
-        final PsiElement substitution = RenamePsiElementProcessor.forElement(nameOwner).substituteElementToRename(nameOwner, editor);
+        PsiElement substitution = RenamePsiElementProcessor.forElement(nameOwner).substituteElementToRename(nameOwner, editor);
         if (substitution != null) {
             new RenameProcessor(project, substitution, "a", false, false).run();
         }

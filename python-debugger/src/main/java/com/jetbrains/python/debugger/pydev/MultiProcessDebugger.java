@@ -40,7 +40,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 
 	private ThreadRegistry myThreadRegistry = new ThreadRegistry();
 
-	public MultiProcessDebugger(@Nonnull final IPyDebugProcess debugProcess, @Nonnull final ServerSocket serverSocket, final int timeoutInMillis)
+	public MultiProcessDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull ServerSocket serverSocket, int timeoutInMillis)
 	{
 		myDebugProcess = debugProcess;
 
@@ -69,7 +69,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 		try
 		{
 			//noinspection SocketOpenedButNotSafelyClosed
-			final Socket socket = myServerSocket.accept();
+			Socket socket = myServerSocket.accept();
 
 			ApplicationManager.getApplication().executeOnPooledThread(() -> {
 				try
@@ -108,7 +108,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 
 	private static ServerSocket createServerSocket() throws ExecutionException
 	{
-		final ServerSocket serverSocket;
+		ServerSocket serverSocket;
 		try
 		{
 			//noinspection SocketOpenedButNotSafelyClosed
@@ -493,7 +493,7 @@ public class MultiProcessDebugger implements ProcessDebugger
 			{
 				try
 				{
-					final ServerSocket serverSocketCopy = myServerSocket;
+					ServerSocket serverSocketCopy = myServerSocket;
 					if(serverSocketCopy == null)
 					{
 						break;
@@ -502,8 +502,8 @@ public class MultiProcessDebugger implements ProcessDebugger
 
 					try
 					{
-						final ServerSocket serverSocket = createServerSocket();
-						final RemoteDebugger debugger = new RemoteDebugger(myMultiProcessDebugger.myDebugProcess, serverSocket, myMultiProcessDebugger.myTimeoutInMillis);
+						ServerSocket serverSocket = createServerSocket();
+						RemoteDebugger debugger = new RemoteDebugger(myMultiProcessDebugger.myDebugProcess, serverSocket, myMultiProcessDebugger.myTimeoutInMillis);
 						addCloseListener(debugger);
 						sendDebuggerPort(socket, serverSocket, myMultiProcessDebugger.myDebugProcess);
 						socket.close();

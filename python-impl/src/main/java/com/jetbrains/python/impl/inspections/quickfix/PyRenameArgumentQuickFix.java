@@ -40,19 +40,19 @@ public class PyRenameArgumentQuickFix implements LocalQuickFix {
 
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+        PsiElement element = descriptor.getPsiElement();
         if (!(element instanceof PsiNamedElement)) {
             return;
         }
-        final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+        VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
         if (virtualFile != null) {
-            final Editor editor = FileEditorManager.getInstance(project)
+            Editor editor = FileEditorManager.getInstance(project)
                 .openTextEditor(
                     OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(),
                     true
                 );
-            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
-            final String name = ((PsiNamedElement) element).getName();
+            TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
+            String name = ((PsiNamedElement) element).getName();
             assert name != null;
             assert editor != null;
             builder.replaceElement(element, TextRange.create(0, name.length()), name);

@@ -91,9 +91,9 @@ public class PyPackageUtil {
     @Nullable
     public static PyFile findSetupPy(@Nonnull Module module) {
         for (VirtualFile root : PyUtil.getSourceRoots(module)) {
-            final VirtualFile child = root.findChild("setup.py");
+            VirtualFile child = root.findChild("setup.py");
             if (child != null) {
-                final PsiFile file = PsiManager.getInstance(module.getProject()).findFile(child);
+                PsiFile file = PsiManager.getInstance(module.getProject()).findFile(child);
                 if (file instanceof PyFile) {
                     return (PyFile) file;
                 }
@@ -108,15 +108,15 @@ public class PyPackageUtil {
 
     @Nullable
     public static VirtualFile findRequirementsTxt(@Nonnull Module module) {
-        final String requirementsPath = PyPackageRequirementsSettings.getInstance(module).getRequirementsPath();
+        String requirementsPath = PyPackageRequirementsSettings.getInstance(module).getRequirementsPath();
         if (!requirementsPath.isEmpty()) {
-            final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(requirementsPath);
+            VirtualFile file = LocalFileSystem.getInstance().findFileByPath(requirementsPath);
             if (file != null) {
                 return file;
             }
-            final ModuleRootManager manager = ModuleRootManager.getInstance(module);
+            ModuleRootManager manager = ModuleRootManager.getInstance(module);
             for (VirtualFile root : manager.getContentRoots()) {
-                final VirtualFile fileInRoot = root.findFileByRelativePath(requirementsPath);
+                VirtualFile fileInRoot = root.findFileByRelativePath(requirementsPath);
                 if (fileInRoot != null) {
                     return fileInRoot;
                 }
@@ -137,14 +137,14 @@ public class PyPackageUtil {
 
     @Nullable
     public static List<PyRequirement> findSetupPyRequires(@Nonnull Module module) {
-        final PyCallExpression setupCall = findSetupCall(module);
+        PyCallExpression setupCall = findSetupCall(module);
 
         if (setupCall == null) {
             return null;
         }
 
-        final List<PyRequirement> requirementsFromRequires = getSetupPyRequiresFromArguments(module, setupCall, SETUP_PY_REQUIRES_KWARGS_NAMES);
-        final List<PyRequirement> requirementsFromLinks = getSetupPyRequiresFromArguments(module, setupCall, DEPENDENCY_LINKS);
+        List<PyRequirement> requirementsFromRequires = getSetupPyRequiresFromArguments(module, setupCall, SETUP_PY_REQUIRES_KWARGS_NAMES);
+        List<PyRequirement> requirementsFromLinks = getSetupPyRequiresFromArguments(module, setupCall, DEPENDENCY_LINKS);
 
         return mergeSetupPyRequirements(requirementsFromRequires, requirementsFromLinks);
     }
@@ -159,7 +159,7 @@ public class PyPackageUtil {
     @Nonnull
     private static List<PyRequirement> mergeSetupPyRequirements(@Nonnull List<PyRequirement> requirementsFromRequires, @Nonnull List<PyRequirement> requirementsFromLinks) {
         if (!requirementsFromLinks.isEmpty()) {
-            final Map<String, List<PyRequirement>> nameToRequirements = requirementsFromRequires.stream().collect(Collectors.groupingBy(PyRequirement::getName, LinkedHashMap::new,
+            Map<String, List<PyRequirement>> nameToRequirements = requirementsFromRequires.stream().collect(Collectors.groupingBy(PyRequirement::getName, LinkedHashMap::new,
                 Collectors.toList()));
 
             for (PyRequirement requirementFromLinks : requirementsFromLinks) {
@@ -178,10 +178,10 @@ public class PyPackageUtil {
             return (PyListLiteralExpression) requires;
         }
         if (requires instanceof PyReferenceExpression) {
-            final TypeEvalContext context = TypeEvalContext.deepCodeInsight(module.getProject());
-            final PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
-            final QualifiedResolveResult result = ((PyReferenceExpression) requires).followAssignmentsChain(resolveContext);
-            final PsiElement element = result.getElement();
+            TypeEvalContext context = TypeEvalContext.deepCodeInsight(module.getProject());
+            PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
+            QualifiedResolveResult result = ((PyReferenceExpression) requires).followAssignmentsChain(resolveContext);
+            PsiElement element = result.getElement();
             if (element instanceof PyListLiteralExpression) {
                 return (PyListLiteralExpression) element;
             }
@@ -192,8 +192,8 @@ public class PyPackageUtil {
     @Nonnull
     public static List<String> getPackageNames(@Nonnull Module module) {
         // TODO: Cache found module packages, clear cache on module updates
-        final List<String> packageNames = new ArrayList<>();
-        final Project project = module.getProject();
+        List<String> packageNames = new ArrayList<>();
+        Project project = module.getProject();
         VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
         if (roots.length == 0) {
             roots = ModuleRootManager.getInstance(module).getContentRoots();
@@ -215,8 +215,8 @@ public class PyPackageUtil {
         file.acceptChildren(new PyRecursiveElementVisitor() {
             @Override
             public void visitPyCallExpression(PyCallExpression node) {
-                final PyExpression callee = node.getCallee();
-                final String name = PyUtil.getReadableRepr(callee, true);
+                PyExpression callee = node.getCallee();
+                String name = PyUtil.getReadableRepr(callee, true);
                 if ("setup".equals(name)) {
                     result.set(node);
                 }
@@ -237,7 +237,7 @@ public class PyPackageUtil {
         return Optional.ofNullable(findSetupPy(module)).map(PyPackageUtil::findSetupCall).orElse(null);
     }
 
-    private static void collectPackageNames(@Nonnull final Project project, @Nonnull final VirtualFile root, @Nonnull final List<String> results) {
+    private static void collectPackageNames(@Nonnull Project project, @Nonnull final VirtualFile root, @Nonnull final List<String> results) {
         final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
         VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor() {
             @Override
@@ -257,8 +257,8 @@ public class PyPackageUtil {
 
     @Nullable
     public static List<PyPackage> refreshAndGetPackagesModally(@Nonnull Sdk sdk) {
-        final Ref<List<PyPackage>> packagesRef = Ref.create();
-        @SuppressWarnings("ThrowableInstanceNeverThrown") final Throwable callStacktrace = new Throwable();
+        Ref<List<PyPackage>> packagesRef = Ref.create();
+        @SuppressWarnings("ThrowableInstanceNeverThrown") Throwable callStacktrace = new Throwable();
         LOG.debug("Showing modal progress for collecting installed packages", new Throwable());
         PyUtil.runWithProgress(null, PyBundle.message("sdk.scanning.installed.packages"), true, false, indicator -> {
             indicator.setIndeterminate(true);
@@ -322,7 +322,7 @@ public class PyPackageUtil {
 
     @Nullable
     public static List<PyRequirement> getRequirementsFromTxt(@Nonnull Module module) {
-        final VirtualFile requirementsTxt = findRequirementsTxt(module);
+        VirtualFile requirementsTxt = findRequirementsTxt(module);
         if (requirementsTxt != null) {
             return PyRequirement.fromFile(requirementsTxt);
         }
@@ -330,35 +330,35 @@ public class PyPackageUtil {
     }
 
     public static void addRequirementToTxtOrSetupPy(@Nonnull Module module, @Nonnull String requirementName, @Nonnull LanguageLevel languageLevel) {
-        final VirtualFile requirementsTxt = findRequirementsTxt(module);
+        VirtualFile requirementsTxt = findRequirementsTxt(module);
         if (requirementsTxt != null && requirementsTxt.isWritable()) {
-            final Document document = FileDocumentManager.getInstance().getDocument(requirementsTxt);
+            Document document = FileDocumentManager.getInstance().getDocument(requirementsTxt);
             if (document != null) {
                 document.insertString(0, requirementName + "\n");
             }
             return;
         }
 
-        final PyFile setupPy = findSetupPy(module);
+        PyFile setupPy = findSetupPy(module);
         if (setupPy == null) {
             return;
         }
 
-        final PyCallExpression setupCall = findSetupCall(setupPy);
-        final PyListLiteralExpression installRequires = findSetupPyInstallRequires(module, setupCall);
-        final PyElementGenerator generator = PyElementGenerator.getInstance(module.getProject());
+        PyCallExpression setupCall = findSetupCall(setupPy);
+        PyListLiteralExpression installRequires = findSetupPyInstallRequires(module, setupCall);
+        PyElementGenerator generator = PyElementGenerator.getInstance(module.getProject());
 
         if (installRequires != null && installRequires.isWritable()) {
-            final String text = String.format("'%s'", requirementName);
-            final PyExpression generated = generator.createExpressionFromText(languageLevel, text);
+            String text = String.format("'%s'", requirementName);
+            PyExpression generated = generator.createExpressionFromText(languageLevel, text);
             installRequires.add(generated);
 
             return;
         }
 
         if (setupCall != null) {
-            final PyArgumentList argumentList = setupCall.getArgumentList();
-            final PyKeywordArgument requiresArg = generateRequiresKwarg(setupPy, requirementName, languageLevel, generator);
+            PyArgumentList argumentList = setupCall.getArgumentList();
+            PyKeywordArgument requiresArg = generateRequiresKwarg(setupPy, requirementName, languageLevel, generator);
 
             if (argumentList != null && requiresArg != null) {
                 argumentList.addArgument(requiresArg);
@@ -368,12 +368,12 @@ public class PyPackageUtil {
 
     @Nullable
     private static PyKeywordArgument generateRequiresKwarg(@Nonnull PyFile setupPy, @Nonnull String requirementName, @Nonnull LanguageLevel languageLevel, @Nonnull PyElementGenerator generator) {
-        final String keyword = SetupTaskIntrospector.usesSetuptools(setupPy) ? INSTALL_REQUIRES : REQUIRES;
-        final String text = String.format("foo(%s=['%s'])", keyword, requirementName);
-        final PyExpression generated = generator.createExpressionFromText(languageLevel, text);
+        String keyword = SetupTaskIntrospector.usesSetuptools(setupPy) ? INSTALL_REQUIRES : REQUIRES;
+        String text = String.format("foo(%s=['%s'])", keyword, requirementName);
+        PyExpression generated = generator.createExpressionFromText(languageLevel, text);
 
         if (generated instanceof PyCallExpression) {
-            final PyCallExpression callExpression = (PyCallExpression) generated;
+            PyCallExpression callExpression = (PyCallExpression) generated;
 
             return Stream.of(callExpression.getArguments()).filter(PyKeywordArgument.class::isInstance).map(PyKeywordArgument.class::cast).filter(kwarg -> keyword.equals(kwarg.getKeyword()))
                 .findFirst().orElse(null);

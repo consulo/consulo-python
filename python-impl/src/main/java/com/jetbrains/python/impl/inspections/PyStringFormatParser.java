@@ -179,9 +179,9 @@ public class PyStringFormatParser {
 
   @Nonnull
   public static List<FormatStringChunk> parseNewStyleFormat(@Nonnull String s) {
-    final List<FormatStringChunk> results = new ArrayList<FormatStringChunk>();
+    List<FormatStringChunk> results = new ArrayList<FormatStringChunk>();
     int pos = 0;
-    final int n = s.length();
+    int n = s.length();
     while (pos < n) {
       int next = s.indexOf('{', pos);
       while (next > 0 && next < n - 1 && s.charAt(next + 1) == '{') {
@@ -199,15 +199,15 @@ public class PyStringFormatParser {
         next = s.indexOf('}', next + 2);
       }
       if (next > pos) {
-        final SubstitutionChunk chunk = new SubstitutionChunk(pos);
-        final int nameStart = pos + 1;
-        final int chunkEnd = next + 1;
+        SubstitutionChunk chunk = new SubstitutionChunk(pos);
+        int nameStart = pos + 1;
+        int chunkEnd = next + 1;
         chunk.setEndIndex(chunkEnd);
-        final int nameEnd = StringUtil.indexOfAny(s, "!:.[}", nameStart, chunkEnd);
+        int nameEnd = StringUtil.indexOfAny(s, "!:.[}", nameStart, chunkEnd);
         if (nameEnd > 0 && nameStart < nameEnd) {
-          final String name = s.substring(nameStart, nameEnd);
+          String name = s.substring(nameStart, nameEnd);
           try {
-            final int number = Integer.parseInt(name);
+            int number = Integer.parseInt(name);
             chunk.setPosition(number);
           } catch (NumberFormatException e) {
             chunk.setMappingKey(name);
@@ -279,11 +279,11 @@ public class PyStringFormatParser {
     chunk.setEndIndex(myPos);
   }
 
-  private boolean isAtSet(@Nonnull final String characterSet) {
+  private boolean isAtSet(@Nonnull String characterSet) {
     return myPos < myLiteral.length() && characterSet.indexOf(myLiteral.charAt(myPos)) >= 0;
   }
 
-  private boolean isAt(final char c) {
+  private boolean isAt(char c) {
     return myPos < myLiteral.length() && myLiteral.charAt(myPos) == c;
   }
 
@@ -297,7 +297,7 @@ public class PyStringFormatParser {
   }
 
   @Nonnull
-  private String parseWhileCharacterInSet(@Nonnull final String characterSet) {
+  private String parseWhileCharacterInSet(@Nonnull String characterSet) {
     int flagStart = myPos;
     while(isAtSet(characterSet)) {
       myPos++;
@@ -307,7 +307,7 @@ public class PyStringFormatParser {
 
   @Nonnull
   public static List<SubstitutionChunk> filterSubstitutions(@Nonnull List<FormatStringChunk> chunks) {
-    final List<SubstitutionChunk> results = new ArrayList<SubstitutionChunk>();
+    List<SubstitutionChunk> results = new ArrayList<SubstitutionChunk>();
     for (FormatStringChunk chunk : chunks) {
       if (chunk instanceof SubstitutionChunk) {
         results.add((SubstitutionChunk)chunk);
@@ -318,7 +318,7 @@ public class PyStringFormatParser {
 
   @Nonnull
   public static List<SubstitutionChunk> getPositionalSubstitutions(@Nonnull List<SubstitutionChunk> substitutions) {
-    final ArrayList<SubstitutionChunk> result = new ArrayList<SubstitutionChunk>();
+    ArrayList<SubstitutionChunk> result = new ArrayList<SubstitutionChunk>();
     for (SubstitutionChunk s : substitutions) {
       if (s.getMappingKey() == null) {
         result.add(s);
@@ -329,9 +329,9 @@ public class PyStringFormatParser {
 
   @Nonnull
   public static Map<String, SubstitutionChunk> getKeywordSubstitutions(@Nonnull List<SubstitutionChunk> substitutions) {
-    final Map<String, SubstitutionChunk> result = new HashMap<String, SubstitutionChunk>();
+    Map<String, SubstitutionChunk> result = new HashMap<String, SubstitutionChunk>();
     for (SubstitutionChunk s : substitutions) {
-      final String key = s.getMappingKey();
+      String key = s.getMappingKey();
       if (key != null) {
         result.put(key, s);
       }
@@ -341,7 +341,7 @@ public class PyStringFormatParser {
 
   @Nonnull
   public static List<TextRange> substitutionsToRanges(@Nonnull List<SubstitutionChunk> substitutions) {
-    final List<TextRange> ranges = new ArrayList<TextRange>();
+    List<TextRange> ranges = new ArrayList<TextRange>();
     for (SubstitutionChunk substitution : substitutions) {
       ranges.add(TextRange.create(substitution.getStartIndex(), substitution.getEndIndex()));
     }
@@ -353,9 +353,9 @@ public class PyStringFormatParser {
    */
   @Nullable
   public static PyExpression getFormatValueExpression(@Nonnull PyStringLiteralExpression element) {
-    final PsiElement parent = element.getParent();
+    PsiElement parent = element.getParent();
     if (parent instanceof PyBinaryExpression) {
-      final PyBinaryExpression binaryExpr = (PyBinaryExpression)parent;
+      PyBinaryExpression binaryExpr = (PyBinaryExpression)parent;
       if (binaryExpr.isOperator("%")) {
         PyExpression expr = binaryExpr.getRightExpression();
         while (expr instanceof PyParenthesizedExpression) {
@@ -372,14 +372,14 @@ public class PyStringFormatParser {
    */
   @Nullable
   public static PyArgumentList getNewStyleFormatValueExpression(@Nonnull PyStringLiteralExpression element) {
-    final PsiElement parent = element.getParent();
+    PsiElement parent = element.getParent();
     if (parent instanceof PyQualifiedExpression) {
-      final PyQualifiedExpression qualifiedExpr = (PyQualifiedExpression)parent;
-      final String name = qualifiedExpr.getReferencedName();
+      PyQualifiedExpression qualifiedExpr = (PyQualifiedExpression)parent;
+      String name = qualifiedExpr.getReferencedName();
       if (PyNames.FORMAT.equals(name)) {
-        final PsiElement parent2 = qualifiedExpr.getParent();
+        PsiElement parent2 = qualifiedExpr.getParent();
         if (parent2 instanceof PyCallExpression) {
-          final PyCallExpression callExpr = (PyCallExpression)parent2;
+          PyCallExpression callExpr = (PyCallExpression)parent2;
           return callExpr.getArgumentList();
         }
       }
@@ -389,7 +389,7 @@ public class PyStringFormatParser {
 
   @Nonnull
   public static List<TextRange> getEscapeRanges(@Nonnull String s) {
-    final List<TextRange> ranges = new ArrayList<TextRange>();
+    List<TextRange> ranges = new ArrayList<TextRange>();
     Matcher matcher = PyStringLiteralExpressionImpl.PATTERN_ESCAPE.matcher(s);
     while (matcher.find()) {
       ranges.add(TextRange.create(matcher.start(), matcher.end()));

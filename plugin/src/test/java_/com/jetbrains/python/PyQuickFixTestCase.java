@@ -17,32 +17,32 @@ public abstract class PyQuickFixTestCase extends PyTestCase {
     return PythonTestUtil.getTestDataPath() + "/quickFixes/" + getClass().getSimpleName();
   }
 
-  protected void doQuickFixTest(final Class inspectionClass, final String hint) {
-    final String testFileName = getTestName(true);
+  protected void doQuickFixTest(Class inspectionClass, String hint) {
+    String testFileName = getTestName(true);
     myFixture.enableInspections(inspectionClass);
     myFixture.configureByFile(testFileName + ".py");
     myFixture.checkHighlighting(true, false, false);
-    final IntentionAction intentionAction = myFixture.findSingleIntention(hint);
+    IntentionAction intentionAction = myFixture.findSingleIntention(hint);
     assertNotNull(intentionAction);
     myFixture.launchAction(intentionAction);
     myFixture.checkResultByFile(testFileName + "_after.py", true);
   }
 
-  protected void doInspectionTest(final Class inspectionClass) {
-    final String testFileName = getTestName(true);
+  protected void doInspectionTest(Class inspectionClass) {
+    String testFileName = getTestName(true);
     myFixture.enableInspections(inspectionClass);
     myFixture.configureByFile(testFileName + ".py");
     myFixture.checkHighlighting(true, false, false);
   }
 
-  protected void doMultifilesTest(@Nonnull final Class inspectionClass, @Nonnull final String hint, @Nonnull final String[] files) {
-    final String testFileName = getTestName(true);
+  protected void doMultifilesTest(@Nonnull Class inspectionClass, @Nonnull String hint, @Nonnull String[] files) {
+    String testFileName = getTestName(true);
     myFixture.enableInspections(inspectionClass);
     String [] filenames = Arrays.copyOf(files, files.length + 1);
 
     filenames[files.length] = testFileName + ".py";
     myFixture.configureByFiles(filenames);
-    final IntentionAction intentionAction = myFixture.findSingleIntention(hint);
+    IntentionAction intentionAction = myFixture.findSingleIntention(hint);
     assertNotNull(intentionAction);
     myFixture.launchAction(intentionAction);
     myFixture.checkResultByFile(testFileName + ".py", testFileName + "_after.py", true);

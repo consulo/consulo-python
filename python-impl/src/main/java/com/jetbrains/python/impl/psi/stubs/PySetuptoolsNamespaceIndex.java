@@ -50,11 +50,11 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
     @Nonnull
     @Override
     public Map<String, Void> map(@Nonnull FileContent inputData) {
-      final CharSequence content = inputData.getContentAsText();
-      final Matcher matcher = RE_NAMESPACE.matcher(content);
-      final Map<String, Void> results = new HashMap<>();
+      CharSequence content = inputData.getContentAsText();
+      Matcher matcher = RE_NAMESPACE.matcher(content);
+      Map<String, Void> results = new HashMap<>();
       while (matcher.find()) {
-        final String packageName = matcher.group(1);
+        String packageName = matcher.group(1);
         results.put(packageName, null);
       }
       return results;
@@ -104,7 +104,7 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
 
   @Nonnull
   public static Collection<VirtualFile> find(@Nonnull String name, @Nonnull Project project) {
-    final GlobalSearchScope scope = PyProjectScopeBuilder.excludeSdkTestsScope(project);
+    GlobalSearchScope scope = PyProjectScopeBuilder.excludeSdkTestsScope(project);
     return FileBasedIndex.getInstance().getContainingFiles(NAME, name, scope);
   }
 }

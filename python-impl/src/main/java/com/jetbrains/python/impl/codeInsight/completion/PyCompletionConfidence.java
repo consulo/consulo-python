@@ -50,10 +50,10 @@ public class PyCompletionConfidence extends CompletionConfidence
 			}
 			if(PyTokenTypes.STRING_NODES.contains(node.getElementType()))
 			{
-				final PsiElement parent = contextElement.getParent();
+				PsiElement parent = contextElement.getParent();
 				if(parent instanceof PyStringLiteralExpression)
 				{
-					final List<TextRange> ranges = ((PyStringLiteralExpression) parent).getStringValueTextRanges();
+					List<TextRange> ranges = ((PyStringLiteralExpression) parent).getStringValueTextRanges();
 					int relativeOffset = offset - parent.getTextRange().getStartOffset();
 					if(ranges.size() > 0 && relativeOffset < ranges.get(0).getStartOffset())
 					{

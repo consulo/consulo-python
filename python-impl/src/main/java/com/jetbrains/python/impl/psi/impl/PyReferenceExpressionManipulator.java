@@ -31,17 +31,17 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyReferenceExpressionManipulator extends AbstractElementManipulator<PyReferenceExpression>
 {
-	public PyReferenceExpression handleContentChange(final PyReferenceExpression element, final TextRange range, final String newContent)
+	public PyReferenceExpression handleContentChange(PyReferenceExpression element, TextRange range, String newContent)
 			throws IncorrectOperationException
 	{
 		return null;
 	}
 
 	@Override
-	public TextRange getRangeInElement(final PyReferenceExpression element)
+	public TextRange getRangeInElement(PyReferenceExpression element)
 	{
-		final ASTNode nameElement = element.getNameElement();
-		final int startOffset = nameElement != null ? nameElement.getStartOffset() : element.getTextRange().getEndOffset();
+		ASTNode nameElement = element.getNameElement();
+		int startOffset = nameElement != null ? nameElement.getStartOffset() : element.getTextRange().getEndOffset();
 		return new TextRange(startOffset - element.getTextOffset(), element.getTextLength());
 	}
 

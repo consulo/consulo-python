@@ -40,8 +40,8 @@ public class PyJavaImportCandidateProvider implements PyImportCandidateProvider 
   @RequiredReadAction
   @Override
   public void addImportCandidates(PsiReference reference, String name, AutoImportQuickFix quickFix) {
-    final PsiElement element = reference.getElement();
-    final Project project = element.getProject();
+    PsiElement element = reference.getElement();
+    Project project = element.getProject();
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
 
     if (module != null && ModuleUtilCore.getExtension(module, JythonModuleExtension.class) == null) {
@@ -53,9 +53,9 @@ public class PyJavaImportCandidateProvider implements PyImportCandidateProvider 
         module,
         false);
     PsiShortNamesCache cache = PsiShortNamesCache.getInstance(project);
-    final PsiClass[] classesByName = cache.getClassesByName(name, scope);
+    PsiClass[] classesByName = cache.getClassesByName(name, scope);
     for (PsiClass psiClass : classesByName) {
-      final QualifiedName packageQName = QualifiedName.fromDottedString(psiClass.getQualifiedName()).removeLastComponent();
+      QualifiedName packageQName = QualifiedName.fromDottedString(psiClass.getQualifiedName()).removeLastComponent();
       quickFix.addImport(psiClass, psiClass.getContainingFile(), packageQName);
     }
   }

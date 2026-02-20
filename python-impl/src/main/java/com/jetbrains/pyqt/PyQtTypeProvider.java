@@ -42,16 +42,16 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
   @Override
   public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context) {
     if (PyNames.INIT.equals(callable.getName()) && callable instanceof PyFunction) {
-      final PyFunction function = (PyFunction)callable;
-      final PyClass containingClass = function.getContainingClass();
+      PyFunction function = (PyFunction)callable;
+      PyClass containingClass = function.getContainingClass();
       if (containingClass != null && ourQt4Signal.equals(containingClass.getName())) {
-        final String classQName = containingClass.getQualifiedName();
+        String classQName = containingClass.getQualifiedName();
         if (classQName != null) {
-          final QualifiedName name = QualifiedName.fromDottedString(classQName);
-          final String qtVersion = name.getComponents().get(0);
-          final PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, function.getProject());
+          QualifiedName name = QualifiedName.fromDottedString(classQName);
+          String qtVersion = name.getComponents().get(0);
+          PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, function.getProject());
           if (aClass != null) {
-            final PyType type = new PyClassTypeImpl(aClass, false);
+            PyType type = new PyClassTypeImpl(aClass, false);
             return Ref.create(type);
           }
         }
@@ -64,13 +64,13 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
   @Override
   public PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context) {
     if (callable instanceof PyFunction) {
-      final String qualifiedName = callable.getQualifiedName();
+      String qualifiedName = callable.getQualifiedName();
       if (qualifiedName != null && qualifiedName.startsWith("PyQt")) {
-        final QualifiedName name = QualifiedName.fromDottedString(qualifiedName);
-        final String qtVersion = name.getComponents().get(0);
-        final String docstring = ((PyFunction)callable).getDocStringValue();
+        QualifiedName name = QualifiedName.fromDottedString(qualifiedName);
+        String qtVersion = name.getComponents().get(0);
+        String docstring = ((PyFunction)callable).getDocStringValue();
         if (docstring != null && docstring.contains("[signal]")) {
-          final PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, callable.getProject());
+          PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, callable.getProject());
           if (aClass != null) {
             return new PyClassTypeImpl(aClass, false);
           }

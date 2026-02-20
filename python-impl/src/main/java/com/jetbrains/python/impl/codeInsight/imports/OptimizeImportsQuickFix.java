@@ -61,12 +61,12 @@ public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, 
         return false;
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (element == null) {  // stale PSI
             return;
         }
-        final PsiFile file = element.getContainingFile();
+        PsiFile file = element.getContainingFile();
         optimizeImports(project, file);
     }
 

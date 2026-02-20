@@ -28,7 +28,7 @@ import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
  * Date: Sep 28, 2008
  */
 public class PyDecoratorListStubImpl extends StubBase<PyDecoratorList> implements PyDecoratorListStub {
-  public PyDecoratorListStubImpl(final StubElement parent) {
+  public PyDecoratorListStubImpl(StubElement parent) {
     super(parent, PyElementTypes.DECORATOR_LIST);
   }
 }

@@ -72,10 +72,10 @@ public abstract class PyDocstringTest extends PyTestCase {
   private void doTestIndentation(boolean hasErrors) {
     String inputDataFileName = getTestName(true) + ".py";
     myFixture.configureByFile(inputDataFileName);
-    final InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(myFixture.getProject());
-    final PsiLanguageInjectionHost host = languageManager.getInjectionHost(myFixture.getElementAtCaret());
+    InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(myFixture.getProject());
+    PsiLanguageInjectionHost host = languageManager.getInjectionHost(myFixture.getElementAtCaret());
     assertNotNull(host);
-    final List<Pair<PsiElement,TextRange>> files = languageManager.getInjectedPsiFiles(host);
+    List<Pair<PsiElement,TextRange>> files = languageManager.getInjectedPsiFiles(host);
     assertNotNull(files);
     for (Pair<PsiElement,TextRange> pair : files) {
       assertEquals(hasErrors, PsiTreeUtil.hasErrorElements(pair.getFirst()));
@@ -83,7 +83,7 @@ public abstract class PyDocstringTest extends PyTestCase {
   }
 
 
-  private void doTestLexer(final String text, String... expectedTokens) {
+  private void doTestLexer(String text, String... expectedTokens) {
     Lexer lexer = new PyDocstringParserDefinition().createLexer(LanguageVersionUtil.findDefaultVersion(PyDocstringFileType.INSTANCE.getLanguage()));
     lexer.start(text);
     int idx = 0;

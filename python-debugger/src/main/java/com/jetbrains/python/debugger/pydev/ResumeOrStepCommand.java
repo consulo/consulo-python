@@ -20,7 +20,7 @@ public class ResumeOrStepCommand extends AbstractThreadCommand
 		}
 	}
 
-	public ResumeOrStepCommand(final RemoteDebugger debugger, final String threadId, final Mode mode)
+	public ResumeOrStepCommand(RemoteDebugger debugger, String threadId, Mode mode)
 	{
 		super(debugger, mode.code, threadId);
 	}

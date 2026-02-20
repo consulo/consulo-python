@@ -94,7 +94,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   private XStandaloneVariablesView mySplitView;
   private ActionCallback myInitialized = new ActionCallback();
 
-  public PythonConsoleView(final Project project, final String title, final Sdk sdk) {
+  public PythonConsoleView(Project project, String title, Sdk sdk) {
     super(project, title, PythonLanguage.getInstance());
 
     getVirtualFile().putUserData(LanguageLevel.KEY, PythonSdkType.getLanguageLevelForSdk(sdk));
@@ -112,7 +112,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     myPromptView = new ConsolePromptDecorator(this.getConsoleEditor(), data);
   }
 
-  public void setConsoleCommunication(final ConsoleCommunication communication) {
+  public void setConsoleCommunication(ConsoleCommunication communication) {
     getFile().putCopyableUserData(PydevConsoleRunner.CONSOLE_KEY, communication);
   }
 
@@ -162,7 +162,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
 
   public void inputRequested() {
     if (myExecuteActionHandler != null) {
-      final ConsoleCommunication consoleCommunication = myExecuteActionHandler.getConsoleCommunication();
+      ConsoleCommunication consoleCommunication = myExecuteActionHandler.getConsoleCommunication();
       if (consoleCommunication instanceof PythonDebugConsoleCommunication) {
         consoleCommunication.notifyInputRequested();
       }
@@ -185,7 +185,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   public void executeCode(final @Nonnull String code, @Nullable final Editor editor) {
     myInitialized.doWhenDone(() -> ProgressManager.getInstance().run(new Task.Backgroundable(null, "Executing Code in Console...", false) {
       @Override
-      public void run(@Nonnull final ProgressIndicator indicator) {
+      public void run(@Nonnull ProgressIndicator indicator) {
         long time = System.currentTimeMillis();
         while (!myExecuteActionHandler.isEnabled() || !myExecuteActionHandler.canExecuteNow()) {
           if (indicator.isCanceled()) {
@@ -208,8 +208,8 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   }
 
 
-  public void executeInConsole(final String code) {
-    final String codeToExecute = code.endsWith("\n") ? code : code + "\n";
+  public void executeInConsole(String code) {
+    String codeToExecute = code.endsWith("\n") ? code : code + "\n";
 
     String text = getConsoleEditor().getDocument().getText();
     ApplicationManager.getApplication().runWriteAction(() -> setInputText(codeToExecute));
@@ -223,21 +223,21 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     }
   }
 
-  public void executeStatement(@Nonnull String statement, @Nonnull final Key attributes) {
+  public void executeStatement(@Nonnull String statement, @Nonnull Key attributes) {
     print(statement, outputTypeForAttributes(attributes));
     myExecuteActionHandler.processLine(statement);
   }
 
-  public void printText(String text, final ConsoleViewContentType outputType) {
+  public void printText(String text, ConsoleViewContentType outputType) {
     super.print(text, outputType);
   }
 
-  public void print(String text, @Nonnull final Key attributes) {
+  public void print(String text, @Nonnull Key attributes) {
     print(text, outputTypeForAttributes(attributes));
   }
 
   @Override
-  public void print(@Nonnull String text, @Nonnull final ConsoleViewContentType outputType) {
+  public void print(@Nonnull String text, @Nonnull ConsoleViewContentType outputType) {
     detectIPython(text, outputType);
     if (PyConsoleUtil.detectIPythonEnd(text)) {
       myIsIPythonOutput = false;
@@ -271,7 +271,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     }
   }
 
-  public void detectIPython(String text, final ConsoleViewContentType outputType) {
+  public void detectIPython(String text, ConsoleViewContentType outputType) {
     VirtualFile file = getVirtualFile();
     if (PyConsoleUtil.detectIPythonImported(text, outputType)) {
       PyConsoleUtil.markIPython(file);
@@ -304,7 +304,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   }
 
   public ConsoleViewContentType outputTypeForAttributes(Key attributes) {
-    final ConsoleViewContentType outputType;
+    ConsoleViewContentType outputType;
     if (attributes == ProcessOutputTypes.STDERR) {
       outputType = ConsoleViewContentType.ERROR_OUTPUT;
     }
@@ -351,7 +351,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
                                                                           0,
                                                                           null,
                                                                           HighlighterTargetArea.EXACT_RANGE);
-    final String prompt;
+    String prompt;
     if (isMainPrompt) {
       prompt = myPromptView.getMainPrompt();
       print(prompt + " ", myPromptView.getPromptAttributes());

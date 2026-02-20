@@ -65,7 +65,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	@Nonnull
 	public PyImportElement[] getImportElements()
 	{
-		final PyImportStatementStub stub = getStub();
+		PyImportStatementStub stub = getStub();
 		if(stub != null)
 		{
 			return stub.getChildrenByType(PyElementTypes.IMPORT_ELEMENT, count -> new PyImportElement[count]);
@@ -103,12 +103,12 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	 * @return list of qualified names
 	 */
 	@Nonnull
-	public static List<String> getImportElementNames(@Nonnull final PyImportElement... elements)
+	public static List<String> getImportElementNames(@Nonnull PyImportElement... elements)
 	{
-		final List<String> result = new ArrayList<>(elements.length);
-		for(final PyImportElement element : elements)
+		List<String> result = new ArrayList<>(elements.length);
+		for(PyImportElement element : elements)
 		{
-			final QualifiedName qName = element.getImportedQName();
+			QualifiedName qName = element.getImportedQName();
 			if(qName != null)
 			{
 				result.add(qName.toString());
@@ -121,7 +121,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	@Override
 	public Iterable<PyElement> iterateNames()
 	{
-		final PyElement resolved = as(resolveImplicitSubModule(), PyElement.class);
+		PyElement resolved = as(resolveImplicitSubModule(), PyElement.class);
 		return resolved != null ? ImmutableList.<PyElement>of(resolved) : Collections.<PyElement>emptyList();
 	}
 
@@ -129,11 +129,11 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	@Override
 	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
 	{
-		final PyImportElement[] elements = getImportElements();
+		PyImportElement[] elements = getImportElements();
 		if(elements.length == 1)
 		{
-			final PyImportElement element = elements[0];
-			final QualifiedName importedQName = element.getImportedQName();
+			PyImportElement element = elements[0];
+			QualifiedName importedQName = element.getImportedQName();
 			if(importedQName != null && importedQName.getComponentCount() > 1 && name.equals(importedQName.getLastComponent()))
 			{
 				return ResolveResultList.to(resolveImplicitSubModule());
@@ -150,18 +150,18 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	@Nullable
 	private PsiElement resolveImplicitSubModule()
 	{
-		final PyImportElement[] elements = getImportElements();
+		PyImportElement[] elements = getImportElements();
 		if(elements.length == 1)
 		{
-			final PyImportElement element = elements[0];
-			final QualifiedName importedQName = element.getImportedQName();
-			final PsiFile file = element.getContainingFile();
+			PyImportElement element = elements[0];
+			QualifiedName importedQName = element.getImportedQName();
+			PsiFile file = element.getContainingFile();
 			if(file != null)
 			{
 				if(importedQName != null && importedQName.getComponentCount() > 1 && PyUtil.isPackage(file))
 				{
-					final QualifiedName packageQName = importedQName.removeLastComponent();
-					final PsiElement resolvedImport = PyUtil.turnDirIntoInit(ResolveImportUtil.resolveImportElement(element, packageQName));
+					QualifiedName packageQName = importedQName.removeLastComponent();
+					PsiElement resolvedImport = PyUtil.turnDirIntoInit(ResolveImportUtil.resolveImportElement(element, packageQName));
 					if(resolvedImport == file)
 					{
 						return element.resolve();

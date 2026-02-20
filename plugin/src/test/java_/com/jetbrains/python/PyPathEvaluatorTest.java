@@ -35,14 +35,14 @@ public abstract class PyPathEvaluatorTest extends PyTestCase {
   public void testConstants() {
     myFixture.configureByText(PythonFileType.INSTANCE, "ROOT_PATH = '/foo'\nTEMPLATES_DIR = os.path.join(ROOT_PATH, 'templates')");
     PyFile file = (PyFile) myFixture.getFile();
-    final PyTargetExpression expression = file.findTopLevelAttribute("TEMPLATES_DIR");
-    final PyExpression value = expression.findAssignedValue();
-    final String result = FileUtil.toSystemIndependentName((String) new PyPathEvaluator("").evaluate(value));
+    PyTargetExpression expression = file.findTopLevelAttribute("TEMPLATES_DIR");
+    PyExpression value = expression.findAssignedValue();
+    String result = FileUtil.toSystemIndependentName((String) new PyPathEvaluator("").evaluate(value));
     assertEquals(result, "/foo/templates");
   }
 
   public void testList() {
-    final PyExpression expression = PyElementGenerator.getInstance(myFixture.getProject()).createExpressionFromText("['a' + 'b'] + ['c']");
+    PyExpression expression = PyElementGenerator.getInstance(myFixture.getProject()).createExpressionFromText("['a' + 'b'] + ['c']");
     List<Object> result = (List<Object>) new PyPathEvaluator("").evaluate(expression);
     assertEquals(2, result.size());
     assertEquals("ab", result.get(0));
@@ -53,8 +53,8 @@ public abstract class PyPathEvaluatorTest extends PyTestCase {
     assertEquals("/foo/subfolder/../bar.py", doEvaluate("os.path.abspath(os.path.join(os.path.join('/foo/subfolder',  os.path.pardir, 'bar.py')))", "/foo/bar.py"));
   }
 
-  private String doEvaluate(final String text, final String file) {
-    final PyExpression expression = PyElementGenerator.getInstance(myFixture.getProject()).createExpressionFromText(text);
+  private String doEvaluate(String text, String file) {
+    PyExpression expression = PyElementGenerator.getInstance(myFixture.getProject()).createExpressionFromText(text);
     return FileUtil.toSystemIndependentName((String) new PyPathEvaluator(file).evaluate(expression));
   }
 }

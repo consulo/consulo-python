@@ -46,13 +46,13 @@ class ClassFieldsManager extends FieldsManager
 	}
 
 	@Override
-	public boolean hasConflict(@Nonnull final PyTargetExpression member, @Nonnull final PyClass aClass)
+	public boolean hasConflict(@Nonnull PyTargetExpression member, @Nonnull PyClass aClass)
 	{
 		return NamePredicate.hasElementWithSameName(member, aClass.getClassAttributes());
 	}
 
 	@Override
-	protected Collection<PyElement> moveAssignments(@Nonnull final PyClass from, @Nonnull final Collection<PyAssignmentStatement> statements, @Nonnull final PyClass... to)
+	protected Collection<PyElement> moveAssignments(@Nonnull PyClass from, @Nonnull Collection<PyAssignmentStatement> statements, @Nonnull PyClass... to)
 	{
 		return moveAssignmentsImpl(from, statements, to);
 	}
@@ -65,11 +65,11 @@ class ClassFieldsManager extends FieldsManager
 	 * @param to         destination
 	 * @return newly created assignments
 	 */
-	static Collection<PyElement> moveAssignmentsImpl(@Nonnull final PyClass from, @Nonnull final Collection<PyAssignmentStatement> statements, @Nonnull final PyClass... to)
+	static Collection<PyElement> moveAssignmentsImpl(@Nonnull PyClass from, @Nonnull Collection<PyAssignmentStatement> statements, @Nonnull PyClass... to)
 	{
 		//TODO: Copy/paste with InstanceFieldsManager. Move to parent?
-		final Collection<PyElement> result = new ArrayList<>();
-		for(final PyClass destClass : to)
+		Collection<PyElement> result = new ArrayList<>();
+		for(PyClass destClass : to)
 		{
 			result.addAll(PyClassRefactoringUtil.copyFieldDeclarationToStatement(statements, destClass.getStatementList(), destClass));
 		}
@@ -78,14 +78,14 @@ class ClassFieldsManager extends FieldsManager
 	}
 
 	@Override
-	protected boolean classHasField(@Nonnull final PyClass pyClass, @Nonnull final String fieldName)
+	protected boolean classHasField(@Nonnull PyClass pyClass, @Nonnull String fieldName)
 	{
 		return pyClass.findClassAttribute(fieldName, true, null) != null;
 	}
 
 	@Nonnull
 	@Override
-	protected List<PyTargetExpression> getFieldsByClass(@Nonnull final PyClass pyClass)
+	protected List<PyTargetExpression> getFieldsByClass(@Nonnull PyClass pyClass)
 	{
 		return FluentIterable.from(pyClass.getClassAttributes()).filter(new NoMetaAndProperties(pyClass)).toList();
 	}
@@ -99,15 +99,15 @@ class ClassFieldsManager extends FieldsManager
 		@Nonnull
 		private final PyClass myClass;
 
-		private NoMetaAndProperties(@Nonnull final PyClass aClass)
+		private NoMetaAndProperties(@Nonnull PyClass aClass)
 		{
 			myClass = aClass;
 		}
 
 		@Override
-		public boolean applyNotNull(@Nonnull final PyTargetExpression input)
+		public boolean applyNotNull(@Nonnull PyTargetExpression input)
 		{
-			final String name = input.getName();
+			String name = input.getName();
 			if(name == null)
 			{
 				return false;
@@ -117,10 +117,10 @@ class ClassFieldsManager extends FieldsManager
 				return false;
 			}
 
-			final PyExpression assignedValue = input.findAssignedValue();
+			PyExpression assignedValue = input.findAssignedValue();
 			if(assignedValue instanceof PyCallExpression)
 			{
-				final PyExpression callee = ((PyCallExpression) assignedValue).getCallee();
+				PyExpression callee = ((PyCallExpression) assignedValue).getCallee();
 				if((callee != null) && PyNames.PROPERTY.equals(callee.getName()) && (myClass.findProperty(name, false, null) != null))
 				{
 					return false;

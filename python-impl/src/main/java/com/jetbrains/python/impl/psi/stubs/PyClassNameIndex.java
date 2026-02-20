@@ -47,7 +47,7 @@ public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
   }
 
   public static Collection<PyClass> find(String name, Project project, boolean includeNonProjectItems) {
-    final GlobalSearchScope scope = includeNonProjectItems
+    GlobalSearchScope scope = includeNonProjectItems
                                     ? PyProjectScopeBuilder.excludeSdkTestsScope(project)
                                     : GlobalSearchScope.projectScope(project);
     return find(name, project, scope);

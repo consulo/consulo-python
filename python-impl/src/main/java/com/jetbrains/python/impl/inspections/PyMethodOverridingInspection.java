@@ -59,7 +59,7 @@ public class PyMethodOverridingInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyFunction(final PyFunction function) {
+        public void visitPyFunction(PyFunction function) {
             // sanity checks
             PyClass cls = function.getContainingClass();
             if (cls == null) {
@@ -72,8 +72,8 @@ public class PyMethodOverridingInspection extends PyInspection {
             // real work
             for (PsiElement psiElement : PySuperMethodsSearch.search(function, myTypeEvalContext)) {
                 if (psiElement instanceof PyFunction) {
-                    final PyFunction baseMethod = (PyFunction) psiElement;
-                    final PyClass baseClass = baseMethod.getContainingClass();
+                    PyFunction baseMethod = (PyFunction) psiElement;
+                    PyClass baseClass = baseMethod.getContainingClass();
                     if (!PyUtil.isSignatureCompatibleTo(function, baseMethod, myTypeEvalContext)) {
                         LocalizeValue msg = PyLocalize.inspSignatureMismatch(
                             cls.getName() + "." + name + "()",

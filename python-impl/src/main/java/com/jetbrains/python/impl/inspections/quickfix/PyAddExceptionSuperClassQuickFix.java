@@ -34,25 +34,25 @@ public class PyAddExceptionSuperClassQuickFix implements LocalQuickFix {
     }
 
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+        PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyCallExpression) {
             PyExpression callee = ((PyCallExpression) element).getCallee();
             if (callee instanceof PyReferenceExpression) {
-                final PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference();
+                PsiPolyVariantReference reference = ((PyReferenceExpression) callee).getReference();
                 PsiElement psiElement = reference.resolve();
                 if (psiElement instanceof PyClass) {
-                    final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-                    final PyArgumentList list = ((PyClass) psiElement).getSuperClassExpressionList();
+                    PyElementGenerator generator = PyElementGenerator.getInstance(project);
+                    PyArgumentList list = ((PyClass) psiElement).getSuperClassExpressionList();
                     if (list != null) {
-                        final PyExpression exception = generator.createExpressionFromText(LanguageLevel.forElement(element), "Exception");
+                        PyExpression exception = generator.createExpressionFromText(LanguageLevel.forElement(element), "Exception");
                         list.addArgument(exception);
                     }
                     else {
-                        final PyArgumentList expressionList =
+                        PyArgumentList expressionList =
                             generator.createFromText(LanguageLevel.forElement(element), PyClass.class, "class A(Exception): pass")
                                 .getSuperClassExpressionList();
                         assert expressionList != null;
-                        final ASTNode nameNode = ((PyClass) psiElement).getNameNode();
+                        ASTNode nameNode = ((PyClass) psiElement).getNameNode();
                         assert nameNode != null;
                         psiElement.addAfter(expressionList, nameNode.getPsi());
                     }

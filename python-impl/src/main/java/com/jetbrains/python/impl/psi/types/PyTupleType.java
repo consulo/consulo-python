@@ -40,7 +40,7 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 	@Nullable
 	public static PyTupleType create(@Nonnull PsiElement anchor, @Nonnull List<PyType> elementTypes)
 	{
-		final PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
+		PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
 		if(tuple != null)
 		{
 			return new PyTupleType(tuple, elementTypes, false);
@@ -51,7 +51,7 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 	@Nullable
 	public static PyTupleType createHomogeneous(@Nonnull PsiElement anchor, @Nullable PyType elementType)
 	{
-		final PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
+		PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
 		if(tuple != null)
 		{
 			return new PyTupleType(tuple, Collections.singletonList(elementType), true);

@@ -41,8 +41,8 @@ public class PyPIPackagesUpdater implements PostStartupActivity {
   private static final Logger LOG = Logger.getInstance(PyPIPackagesUpdater.class);
 
   @Override
-  public void runActivity(@Nonnull final Project project, UIAccess uiAccess) {
-    final Application application = ApplicationManager.getApplication();
+  public void runActivity(@Nonnull Project project, UIAccess uiAccess) {
+    Application application = ApplicationManager.getApplication();
     final PyPackageService service = PyPackageService.getInstance();
     if (checkNeeded(project, service)) {
       application.executeOnPooledThread(new Runnable() {
@@ -64,14 +64,14 @@ public class PyPIPackagesUpdater implements PostStartupActivity {
   public static boolean checkNeeded(Project project, PyPackageService service) {
     boolean hasPython = false;
     for (Module module : ModuleManager.getInstance(project).getModules()) {
-      final Sdk sdk = PythonSdkType.findPythonSdk(module);
+      Sdk sdk = PythonSdkType.findPythonSdk(module);
       if (sdk != null && sdk.getSdkType() instanceof PythonSdkType) {
         hasPython = true;
         break;
       }
     }
     if (!hasPython) return false;
-    final long timeDelta = System.currentTimeMillis() - service.LAST_TIME_CHECKED;
+    long timeDelta = System.currentTimeMillis() - service.LAST_TIME_CHECKED;
     if (Math.abs(timeDelta) < DateFormatUtil.DAY) return false;
     return true;
   }

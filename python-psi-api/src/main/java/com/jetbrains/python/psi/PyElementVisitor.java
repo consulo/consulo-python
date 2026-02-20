@@ -22,252 +22,252 @@ import consulo.language.psi.PsiElementVisitor;
  */
 public class PyElementVisitor extends PsiElementVisitor
 {
-	public void visitPyElement(final PyElement node)
+	public void visitPyElement(PyElement node)
 	{
 		visitElement(node);
 	}
 
-	public void visitPyReferenceExpression(final PyReferenceExpression node)
+	public void visitPyReferenceExpression(PyReferenceExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyTargetExpression(final PyTargetExpression node)
+	public void visitPyTargetExpression(PyTargetExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyCallExpression(final PyCallExpression node)
+	public void visitPyCallExpression(PyCallExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyDecoratorList(final PyDecoratorList node)
+	public void visitPyDecoratorList(PyDecoratorList node)
 	{
 		visitElement(node);
 	}
 
-	public void visitPyComprehensionElement(final PyComprehensionElement node)
+	public void visitPyComprehensionElement(PyComprehensionElement node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyGeneratorExpression(final PyGeneratorExpression node)
+	public void visitPyGeneratorExpression(PyGeneratorExpression node)
 	{
 		visitPyComprehensionElement(node);
 	}
 
-	public void visitPyBinaryExpression(final PyBinaryExpression node)
+	public void visitPyBinaryExpression(PyBinaryExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyPrefixExpression(final PyPrefixExpression node)
+	public void visitPyPrefixExpression(PyPrefixExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPySequenceExpression(final PySequenceExpression node)
+	public void visitPySequenceExpression(PySequenceExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyTupleExpression(final PyTupleExpression node)
+	public void visitPyTupleExpression(PyTupleExpression node)
 	{
 		visitPySequenceExpression(node);
 	}
 
-	public void visitPyParenthesizedExpression(final PyParenthesizedExpression node)
+	public void visitPyParenthesizedExpression(PyParenthesizedExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyDictLiteralExpression(final PyDictLiteralExpression node)
+	public void visitPyDictLiteralExpression(PyDictLiteralExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyListLiteralExpression(final PyListLiteralExpression node)
+	public void visitPyListLiteralExpression(PyListLiteralExpression node)
 	{
 		visitPySequenceExpression(node);
 	}
 
-	public void visitPySetLiteralExpression(final PySetLiteralExpression node)
+	public void visitPySetLiteralExpression(PySetLiteralExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyListCompExpression(final PyListCompExpression node)
+	public void visitPyListCompExpression(PyListCompExpression node)
 	{
 		visitPyComprehensionElement(node);
 	}
 
-	public void visitPyDictCompExpression(final PyDictCompExpression node)
+	public void visitPyDictCompExpression(PyDictCompExpression node)
 	{
 		visitPyComprehensionElement(node);
 	}
 
-	public void visitPySetCompExpression(final PySetCompExpression node)
+	public void visitPySetCompExpression(PySetCompExpression node)
 	{
 		visitPyComprehensionElement(node);
 	}
 
-	public void visitPyLambdaExpression(final PyLambdaExpression node)
+	public void visitPyLambdaExpression(PyLambdaExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyAssignmentStatement(final PyAssignmentStatement node)
+	public void visitPyAssignmentStatement(PyAssignmentStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyAugAssignmentStatement(final PyAugAssignmentStatement node)
+	public void visitPyAugAssignmentStatement(PyAugAssignmentStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyDelStatement(final PyDelStatement node)
+	public void visitPyDelStatement(PyDelStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyReturnStatement(final PyReturnStatement node)
+	public void visitPyReturnStatement(PyReturnStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyYieldExpression(final PyYieldExpression node)
+	public void visitPyYieldExpression(PyYieldExpression node)
 	{
 		visitPyExpression(node);
 	}
 
-	public void visitPyTryExceptStatement(final PyTryExceptStatement node)
+	public void visitPyTryExceptStatement(PyTryExceptStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyRaiseStatement(final PyRaiseStatement node)
+	public void visitPyRaiseStatement(PyRaiseStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyBreakStatement(final PyBreakStatement node)
+	public void visitPyBreakStatement(PyBreakStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyContinueStatement(final PyContinueStatement node)
+	public void visitPyContinueStatement(PyContinueStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyGlobalStatement(final PyGlobalStatement node)
+	public void visitPyGlobalStatement(PyGlobalStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyFromImportStatement(final PyFromImportStatement node)
+	public void visitPyFromImportStatement(PyFromImportStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyIfStatement(final PyIfStatement node)
+	public void visitPyIfStatement(PyIfStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyForStatement(final PyForStatement node)
+	public void visitPyForStatement(PyForStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyWhileStatement(final PyWhileStatement node)
+	public void visitPyWhileStatement(PyWhileStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyWithStatement(final PyWithStatement node)
+	public void visitPyWithStatement(PyWithStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyExpressionStatement(final PyExpressionStatement node)
+	public void visitPyExpressionStatement(PyExpressionStatement node)
 	{
 		visitPyStatement(node);
 	}
 
-	public void visitPyStatement(final PyStatement node)
+	public void visitPyStatement(PyStatement node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyExpression(final PyExpression node)
+	public void visitPyExpression(PyExpression node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyParameterList(final PyParameterList node)
+	public void visitPyParameterList(PyParameterList node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyParameter(final PyParameter node)
+	public void visitPyParameter(PyParameter node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyNamedParameter(final PyNamedParameter node)
+	public void visitPyNamedParameter(PyNamedParameter node)
 	{
 		visitPyParameter(node);
 	}
 
-	public void visitPyTupleParameter(final PyTupleParameter node)
+	public void visitPyTupleParameter(PyTupleParameter node)
 	{
 		visitPyParameter(node);
 	}
 
-	public void visitPyArgumentList(final PyArgumentList node)
+	public void visitPyArgumentList(PyArgumentList node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyStatementList(final PyStatementList node)
+	public void visitPyStatementList(PyStatementList node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyExceptBlock(final PyExceptPart node)
+	public void visitPyExceptBlock(PyExceptPart node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyFunction(final PyFunction node)
+	public void visitPyFunction(PyFunction node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyClass(final PyClass node)
+	public void visitPyClass(PyClass node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyFile(final PyFile node)
+	public void visitPyFile(PyFile node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyStringLiteralExpression(final PyStringLiteralExpression node)
+	public void visitPyStringLiteralExpression(PyStringLiteralExpression node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyNumericLiteralExpression(final PyNumericLiteralExpression node)
+	public void visitPyNumericLiteralExpression(PyNumericLiteralExpression node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyPrintStatement(final PyPrintStatement node)
+	public void visitPyPrintStatement(PyPrintStatement node)
 	{
 		visitPyStatement(node);
 	}
@@ -317,17 +317,17 @@ public class PyElementVisitor extends PsiElementVisitor
 		visitPyElement(node);
 	}
 
-	public void visitPyAssertStatement(final PyAssertStatement node)
+	public void visitPyAssertStatement(PyAssertStatement node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyNoneLiteralExpression(final PyNoneLiteralExpression node)
+	public void visitPyNoneLiteralExpression(PyNoneLiteralExpression node)
 	{
 		visitPyElement(node);
 	}
 
-	public void visitPyBoolLiteralExpression(final PyBoolLiteralExpression node)
+	public void visitPyBoolLiteralExpression(PyBoolLiteralExpression node)
 	{
 		visitPyElement(node);
 	}

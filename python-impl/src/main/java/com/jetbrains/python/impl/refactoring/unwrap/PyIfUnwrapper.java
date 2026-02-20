@@ -35,9 +35,9 @@ public class PyIfUnwrapper extends PyUnwrapper {
 
   public boolean isApplicableTo(PsiElement e) {
     if (e instanceof PyIfPartIfImpl) {
-      final PyStatementList statementList = ((PyIfPartIfImpl)e).getStatementList();
+      PyStatementList statementList = ((PyIfPartIfImpl)e).getStatementList();
       if (statementList != null) {
-        final PyStatement[] statements = statementList.getStatements();
+        PyStatement[] statements = statementList.getStatements();
         return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
       }
     }
@@ -52,8 +52,8 @@ public class PyIfUnwrapper extends PyUnwrapper {
 
 
   @Override
-  protected void doUnwrap(final PsiElement element, final Context context) throws IncorrectOperationException {
-    final PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
+  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+    PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
     context.extractPart(ifStatement);
     context.delete(ifStatement);
   }

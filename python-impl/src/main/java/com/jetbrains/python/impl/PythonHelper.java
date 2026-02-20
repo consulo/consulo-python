@@ -147,12 +147,12 @@ public enum PythonHelper implements HelperPackage
 		@Override
 		public GeneralCommandLine newCommandLine(@Nonnull String sdkPath, @Nonnull List<String> parameters)
 		{
-			final List<String> args = Lists.newArrayList();
+			List<String> args = Lists.newArrayList();
 			args.add(sdkPath);
 			args.add(asParamString());
 			args.addAll(parameters);
-			final GeneralCommandLine cmd = new GeneralCommandLine(args);
-			final Map<String, String> env = cmd.getEnvironment();
+			GeneralCommandLine cmd = new GeneralCommandLine(args);
+			Map<String, String> env = cmd.getEnvironment();
 			addToPythonPath(env);
 			PythonEnvUtil.resetHomePathChanges(sdkPath, env);
 			return cmd;
@@ -162,11 +162,11 @@ public enum PythonHelper implements HelperPackage
 		@Override
 		public GeneralCommandLine newCommandLine(@Nonnull Sdk pythonSdk, @Nonnull List<String> parameters)
 		{
-			final String sdkHomePath = pythonSdk.getHomePath();
+			String sdkHomePath = pythonSdk.getHomePath();
 			assert sdkHomePath != null;
-			final GeneralCommandLine cmd = newCommandLine(sdkHomePath, parameters);
-			final LanguageLevel version = PythonSdkType.getLanguageLevelForSdk(pythonSdk);
-			final String perVersionDependenciesDir = version.isPy3K() ? PY3_HELPER_DEPENDENCIES_DIR : PY2_HELPER_DEPENDENCIES_DIR;
+			GeneralCommandLine cmd = newCommandLine(sdkHomePath, parameters);
+			LanguageLevel version = PythonSdkType.getLanguageLevelForSdk(pythonSdk);
+			String perVersionDependenciesDir = version.isPy3K() ? PY3_HELPER_DEPENDENCIES_DIR : PY2_HELPER_DEPENDENCIES_DIR;
 			PythonEnvUtil.addToPythonPath(cmd.getEnvironment(), FileUtil.join(getPythonPathEntry(), perVersionDependenciesDir));
 			return cmd;
 		}

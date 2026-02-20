@@ -40,7 +40,7 @@ public class PyWithItemImpl extends PyElementImpl implements PyWithItem {
   public PyExpression getExpression() {
     ASTNode[] children = getNode().getChildren(null);
     for (ASTNode child: children) {
-      final PsiElement e = child.getPsi();
+      PsiElement e = child.getPsi();
       if (e instanceof PyExpression) {
         return (PyExpression)e;
       }

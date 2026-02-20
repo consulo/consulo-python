@@ -45,25 +45,25 @@ public class ScopeUtil {
   }
 
   @Nullable
-  public static PsiElement getParameterScope(final PsiElement element){
+  public static PsiElement getParameterScope(PsiElement element){
     if (element instanceof PyNamedParameter){
-      final PyFunction function = getParentOfType(element, PyFunction.class, false);
+      PyFunction function = getParentOfType(element, PyFunction.class, false);
       if (function != null){
         return function;
       }
     }
 
-    final PyExceptPart exceptPart = PyExceptPartNavigator.getPyExceptPartByTarget(element);
+    PyExceptPart exceptPart = PyExceptPartNavigator.getPyExceptPartByTarget(element);
     if (exceptPart != null){
       return exceptPart;
     }
 
-    final PyForStatement forStatement = PyForStatementNavigator.getPyForStatementByIterable(element);
+    PyForStatement forStatement = PyForStatementNavigator.getPyForStatementByIterable(element);
     if (forStatement != null){
       return forStatement;
     }
 
-    final PyListCompExpression listCompExpression = PyListCompExpressionNavigator.getPyListCompExpressionByVariable(element);
+    PyListCompExpression listCompExpression = PyListCompExpressionNavigator.getPyListCompExpressionByVariable(element);
     if (listCompExpression != null){
       return listCompExpression;
     }
@@ -78,11 +78,11 @@ public class ScopeUtil {
   @Nullable
   public static ScopeOwner getScopeOwner(@Nullable PsiElement element) {
     if (element instanceof StubBasedPsiElement) {
-      final StubElement stub = ((StubBasedPsiElement)element).getStub();
+      StubElement stub = ((StubBasedPsiElement)element).getStub();
       if (stub != null) {
         StubElement parentStub = stub.getParentStub();
         while (parentStub != null) {
-          final PsiElement parent = parentStub.getPsi();
+          PsiElement parent = parentStub.getPsi();
           if (parent instanceof ScopeOwner) {
             return (ScopeOwner)parent;
           }
@@ -91,26 +91,26 @@ public class ScopeUtil {
         return null;
       }
     }
-    final ScopeOwner firstOwner = getParentOfType(element, ScopeOwner.class);
+    ScopeOwner firstOwner = getParentOfType(element, ScopeOwner.class);
     if (firstOwner == null) {
       return null;
     }
-    final ScopeOwner nextOwner = getParentOfType(firstOwner, ScopeOwner.class);
+    ScopeOwner nextOwner = getParentOfType(firstOwner, ScopeOwner.class);
     // References in decorator expressions are resolved outside of the function (if the lambda is not inside the decorator)
-    final PyElement decoratorAncestor = getParentOfType(element, PyDecorator.class);
+    PyElement decoratorAncestor = getParentOfType(element, PyDecorator.class);
     if (decoratorAncestor != null && !isAncestor(decoratorAncestor, firstOwner, true)) {
       return nextOwner;
     }
     // References in default values of parameters are resolved outside of the function (if the lambda is not inside the default value)
-    final PyParameter parameterAncestor = getParentOfType(element, PyParameter.class);
+    PyParameter parameterAncestor = getParentOfType(element, PyParameter.class);
     if (parameterAncestor != null && !isAncestor(parameterAncestor, firstOwner, true)) {
-      final PyExpression defaultValue = parameterAncestor.getDefaultValue();
+      PyExpression defaultValue = parameterAncestor.getDefaultValue();
       if (element != null && isAncestor(defaultValue, element, false)) {
         return nextOwner;
       }
     }
     // Superclasses are resolved outside of the class
-    final PyClass containingClass = getParentOfType(element, PyClass.class);
+    PyClass containingClass = getParentOfType(element, PyClass.class);
     if (containingClass != null && element != null &&
         isAncestor(containingClass.getSuperClassExpressionList(), element, false)) {
       return nextOwner;
@@ -122,7 +122,7 @@ public class ScopeUtil {
   public static ScopeOwner getDeclarationScopeOwner(PsiElement anchor, String name) {
     PsiElement element = anchor;
     if (name != null) {
-      final ScopeOwner originalScopeOwner = getScopeOwner(element);
+      ScopeOwner originalScopeOwner = getScopeOwner(element);
       ScopeOwner scopeOwner = originalScopeOwner;
       while (scopeOwner != null) {
         if (!(scopeOwner instanceof PyClass) || scopeOwner == originalScopeOwner) {

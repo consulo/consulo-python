@@ -89,7 +89,7 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 	public void initPythonPath(Collection<String> path, Map<String, String> env)
 	{
 		path = appendSystemEnvPaths(path, JYTHONPATH);
-		final String jythonPath = StringUtil.join(path, File.pathSeparator);
+		String jythonPath = StringUtil.join(path, File.pathSeparator);
 		addToEnv(JYTHONPATH, jythonPath, env);
 	}
 

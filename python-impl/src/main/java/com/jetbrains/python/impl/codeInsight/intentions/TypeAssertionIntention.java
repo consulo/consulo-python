@@ -63,11 +63,11 @@ public class TypeAssertionIntention extends PyBaseIntentionAction {
         if (problemElement.getParent() instanceof PyWithItem) {
             return false;
         }
-        final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
+        PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
         if (qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF)) {
             problemElement = qualifier;
         }
-        final PsiReference reference = problemElement.getReference();
+        PsiReference reference = problemElement.getReference();
         if (problemElement.getParent() instanceof PyCallExpression ||
             PsiTreeUtil.getParentOfType(problemElement, PyComprehensionElement.class) != null ||
             PsiTreeUtil.getParentOfType(problemElement, PyLambdaExpression.class) != null ||
@@ -75,7 +75,7 @@ public class TypeAssertionIntention extends PyBaseIntentionAction {
             (reference != null && reference.resolve() == null)) {
             return false;
         }
-        final PyType type = TypeEvalContext.codeAnalysis(file.getProject(), file).getType(problemElement);
+        PyType type = TypeEvalContext.codeAnalysis(file.getProject(), file).getType(problemElement);
         return type == null;
     }
 
@@ -87,39 +87,39 @@ public class TypeAssertionIntention extends PyBaseIntentionAction {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
             String name = problemElement.getText();
-            final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
+            PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
             if (qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF)) {
-                final String referencedName = ((PyQualifiedExpression) problemElement).getReferencedName();
+                String referencedName = ((PyQualifiedExpression) problemElement).getReferencedName();
                 if (referencedName == null || PyNames.GETITEM.equals(referencedName)) {
                     name = qualifier.getText();
                 }
             }
 
-            final String text = "assert isinstance(" + name + ", )";
+            String text = "assert isinstance(" + name + ", )";
             PyAssertStatement assertStatement =
                 elementGenerator.createFromText(LanguageLevel.forElement(problemElement), PyAssertStatement.class, text);
 
-            final PsiElement parentStatement = PsiTreeUtil.getParentOfType(problemElement, PyStatement.class);
+            PsiElement parentStatement = PsiTreeUtil.getParentOfType(problemElement, PyStatement.class);
             if (parentStatement == null) {
                 return;
             }
-            final PsiElement parent = parentStatement.getParent();
+            PsiElement parent = parentStatement.getParent();
             PsiElement element;
             if (parentStatement instanceof PyAssignmentStatement && ((PyAssignmentStatement) parentStatement).getTargets()[0] == problemElement) {
                 element = parent.addAfter(assertStatement, parentStatement);
             }
             else {
                 PyStatementList statementList = PsiTreeUtil.getParentOfType(parentStatement, PyStatementList.class);
-                final Document document = editor.getDocument();
+                Document document = editor.getDocument();
 
                 if (statementList != null) {
                     PsiElement statementListParent = PsiTreeUtil.getParentOfType(statementList, PyStatement.class);
                     if (statementListParent != null && document.getLineNumber(statementList.getTextOffset()) == document.getLineNumber(
                         statementListParent.getTextOffset())) {
-                        final String substring =
+                        String substring =
                             TextRange.create(statementListParent.getTextRange().getStartOffset(), statementList.getTextOffset())
                                 .substring(document.getText());
-                        final PyStatement foo = elementGenerator.createFromText(
+                        PyStatement foo = elementGenerator.createFromText(
                             LanguageLevel.forElement(problemElement),
                             PyStatement.class,
                             substring + "\n\t" +
@@ -144,7 +144,7 @@ public class TypeAssertionIntention extends PyBaseIntentionAction {
             editor.getCaretModel().moveToOffset(textOffSet);
 
             element = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element);
-            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
+            TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(element);
             builder.replaceRange(TextRange.create(text.length() - 1, text.length() - 1), PyNames.OBJECT);
             Template template = builder.buildInlineTemplate();
             TemplateManager.getInstance(project).startTemplate(editor, template);

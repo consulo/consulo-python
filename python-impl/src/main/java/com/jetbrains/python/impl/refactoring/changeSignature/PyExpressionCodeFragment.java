@@ -37,9 +37,9 @@ public class PyExpressionCodeFragment extends PyFileImpl implements PsiCodeFragm
 
   private GlobalSearchScope myResolveScope;
 
-  public PyExpressionCodeFragment(@Nonnull final Project project,
-                                  @NonNls final String name,
-                                  @Nonnull final CharSequence text) {
+  public PyExpressionCodeFragment(@Nonnull Project project,
+                                  @NonNls String name,
+                                  @Nonnull CharSequence text) {
     super(new SingleRootFileViewProvider(PsiManager.getInstance(project), new LightVirtualFile(name, PythonFileType.INSTANCE, text), true));
     ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
   }

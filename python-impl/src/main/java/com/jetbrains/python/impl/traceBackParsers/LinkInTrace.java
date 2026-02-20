@@ -36,7 +36,7 @@ public final class LinkInTrace
 	 * @param startPos   start position of link in line
 	 * @param endPos     end position of link in line
 	 */
-	public LinkInTrace(@Nonnull final String fileName, final int lineNumber, final int startPos, final int endPos)
+	public LinkInTrace(@Nonnull String fileName, int lineNumber, int startPos, int endPos)
 	{
 		myFileName = fileName;
 		myLineNumber = lineNumber;

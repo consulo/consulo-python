@@ -79,17 +79,17 @@ public class PythonTask {
     }
 
     @Nonnull
-    public static PythonTask create(@Nonnull final Module module, @Nonnull final String runTabTitle, @Nonnull final Sdk sdk) {
+    public static PythonTask create(@Nonnull Module module, @Nonnull String runTabTitle, @Nonnull Sdk sdk) {
         // Ctor throws checked exception which is not good, so this wrapper saves user from dumb code
         try {
             return new PythonTask(module, runTabTitle, sdk);
         }
-        catch (final ExecutionException ignored) {
+        catch (ExecutionException ignored) {
             throw new AssertionError("Exception thrown file should not be");
         }
     }
 
-    public PythonTask(final Module module, final String runTabTitle, @Nullable final Sdk sdk) throws ExecutionException {
+    public PythonTask(Module module, String runTabTitle, @Nullable Sdk sdk) throws ExecutionException {
         myModule = module;
         myRunTabTitle = runTabTitle;
         mySdk = sdk;
@@ -129,8 +129,8 @@ public class PythonTask {
     /**
      * @param env environment variables to be passed to process or null if nothing should be passed
      */
-    public ProcessHandler createProcess(@Nullable final Map<String, String> env) throws ExecutionException {
-        final GeneralCommandLine commandLine = createCommandLine();
+    public ProcessHandler createProcess(@Nullable Map<String, String> env) throws ExecutionException {
+        GeneralCommandLine commandLine = createCommandLine();
         if (env != null) {
             commandLine.getEnvironment().putAll(env);
         }
@@ -150,7 +150,7 @@ public class PythonTask {
      * @param consoleView console view to be used for command or null to create new
      * @throws ExecutionException failed to execute command
      */
-    public void run(@Nullable final ConsoleView consoleView) throws ExecutionException {
+    public void run(@Nullable ConsoleView consoleView) throws ExecutionException {
         run(createCommandLine().getEnvironment(), consoleView);
     }
 
@@ -221,8 +221,8 @@ public class PythonTask {
         return setupPythonPath(true, true);
     }
 
-    protected List<String> setupPythonPath(final boolean addContent, final boolean addSource) {
-        final List<String> pythonPath = Lists.newArrayList(PythonCommandLineState.getAddedPaths(mySdk));
+    protected List<String> setupPythonPath(boolean addContent, boolean addSource) {
+        List<String> pythonPath = Lists.newArrayList(PythonCommandLineState.getAddedPaths(mySdk));
         pythonPath.addAll(PythonCommandLineState.collectPythonPath(myModule, addContent, addSource));
         return pythonPath;
     }
@@ -231,9 +231,9 @@ public class PythonTask {
      * @param env         environment variables to be passed to process or null if nothing should be passed
      * @param consoleView console to run this task on. New console will be used if no console provided.
      */
-    public void run(@Nullable final Map<String, String> env, @Nullable final ConsoleView consoleView) throws ExecutionException {
-        final ProcessHandler process = createProcess(env);
-        final Project project = myModule.getProject();
+    public void run(@Nullable Map<String, String> env, @Nullable ConsoleView consoleView) throws ExecutionException {
+        ProcessHandler process = createProcess(env);
+        Project project = myModule.getProject();
         new RunContentExecutor(project, process).withFilter(new PythonTracebackFilter(project))
             .withConsole(consoleView)
             .withTitle(myRunTabTitle)
@@ -266,13 +266,13 @@ public class PythonTask {
      */
     @Nonnull
     public final String runNoConsole() throws ExecutionException {
-        final ProcessHandler process = createProcess(new HashMap<>());
-        final CapturingProcessAdapter listener = new CapturingProcessAdapter();
+        ProcessHandler process = createProcess(new HashMap<>());
+        CapturingProcessAdapter listener = new CapturingProcessAdapter();
         process.addProcessListener(listener);
         process.startNotify();
         process.waitFor(TIMEOUT_TO_WAIT_FOR_TASK);
-        final ProcessOutput output = listener.getOutput();
-        final int exitCode = output.getExitCode();
+        ProcessOutput output = listener.getOutput();
+        int exitCode = output.getExitCode();
         if (exitCode == 0) {
             return output.getStdout();
         }

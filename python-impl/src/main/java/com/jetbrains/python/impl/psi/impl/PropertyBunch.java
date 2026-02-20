@@ -85,11 +85,11 @@ public abstract class PropertyBunch<MType>
 	{
 		if(source instanceof PyCallExpression)
 		{
-			final PyCallExpression call = (PyCallExpression) source;
-			final PyExpression callee = call.getCallee();
+			PyCallExpression call = (PyCallExpression) source;
+			PyExpression callee = call.getCallee();
 			if(callee instanceof PyReferenceExpression)
 			{
-				final PyReferenceExpression ref = (PyReferenceExpression) callee;
+				PyReferenceExpression ref = (PyReferenceExpression) callee;
 
 				if(!ref.isQualified() &&
 						PyNames.PROPERTY.equals(callee.getName()) &&
@@ -107,7 +107,7 @@ public abstract class PropertyBunch<MType>
 
 	private static boolean isBuiltinFile(@Nonnull PsiFile file)
 	{
-		final String name = file.getName();
+		String name = file.getName();
 		return PyBuiltinCache.BUILTIN_FILE.equals(name) || PyBuiltinCache.BUILTIN_FILE_3K.equals(name);
 	}
 

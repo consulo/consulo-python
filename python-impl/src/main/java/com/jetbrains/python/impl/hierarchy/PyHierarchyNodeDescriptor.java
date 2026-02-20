@@ -37,7 +37,7 @@ import jakarta.annotation.Nonnull;
  */
 public class PyHierarchyNodeDescriptor extends consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor
 {
-	public PyHierarchyNodeDescriptor(final NodeDescriptor parentDescriptor, @Nonnull final PsiElement element, final boolean isBase)
+	public PyHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, @Nonnull PsiElement element, boolean isBase)
 	{
 		super(element.getProject(), parentDescriptor, element, isBase);
 	}
@@ -47,14 +47,14 @@ public class PyHierarchyNodeDescriptor extends consulo.ide.impl.idea.ide.hierarc
 	public boolean update()
 	{
 		boolean changes = super.update();
-		final CompositeAppearance oldText = myHighlightedText;
+		CompositeAppearance oldText = myHighlightedText;
 
 		myHighlightedText = new CompositeAppearance();
 
 		NavigatablePsiElement element = (NavigatablePsiElement) getPsiElement();
 		if(element == null)
 		{
-			final String invalidPrefix = IdeBundle.message("node.hierarchy.invalid");
+			String invalidPrefix = IdeBundle.message("node.hierarchy.invalid");
 			if(!myHighlightedText.getText().startsWith(invalidPrefix))
 			{
 				myHighlightedText.getBeginning().addText(invalidPrefix, consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor.getInvalidPrefixAttributes());
@@ -62,12 +62,12 @@ public class PyHierarchyNodeDescriptor extends consulo.ide.impl.idea.ide.hierarc
 			return true;
 		}
 
-		final ItemPresentation presentation = element.getPresentation();
+		ItemPresentation presentation = element.getPresentation();
 		if(presentation != null)
 		{
 			if(element instanceof PyFunction)
 			{
-				final PyClass cls = ((PyFunction) element).getContainingClass();
+				PyClass cls = ((PyFunction) element).getContainingClass();
 				if(cls != null)
 				{
 					myHighlightedText.getEnding().addText(cls.getName() + ".");

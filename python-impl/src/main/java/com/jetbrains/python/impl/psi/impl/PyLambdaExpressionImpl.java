@@ -48,7 +48,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 	{
 		for(PyTypeProvider provider : PyTypeProvider.EP_NAME.getExtensionList())
 		{
-			final PyType type = provider.getCallableType(this, context);
+			PyType type = provider.getCallableType(this, context);
 			if(type != null)
 			{
 				return type;
@@ -60,7 +60,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 	@Nonnull
 	public PyParameterList getParameterList()
 	{
-		final PyElement child = childToPsi(PyElementTypes.PARAMETER_LIST_SET, 0);
+		PyElement child = childToPsi(PyElementTypes.PARAMETER_LIST_SET, 0);
 		if(child == null)
 		{
 			throw new RuntimeException("parameter list must not be null; text=" + getText());
@@ -73,7 +73,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 	@Override
 	public PyType getReturnType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
 	{
-		final PyExpression body = getBody();
+		PyExpression body = getBody();
 		return body != null ? context.getType(body) : null;
 	}
 

@@ -61,7 +61,7 @@ public class SphinxBaseCommand
 
 	protected boolean setWorkDir(Module module)
 	{
-		final ReSTService service = ReSTService.getInstance(module);
+		ReSTService service = ReSTService.getInstance(module);
 		String workDir = service.getWorkdir();
 		if(workDir.isEmpty())
 		{
@@ -107,9 +107,9 @@ public class SphinxBaseCommand
 		}
 	}
 
-	public void execute(@Nonnull final Module module)
+	public void execute(@Nonnull Module module)
 	{
-		final Project project = module.getProject();
+		Project project = module.getProject();
 
 		try
 		{
@@ -117,7 +117,7 @@ public class SphinxBaseCommand
 			{
 				return;
 			}
-			final ProcessHandler process = createProcess(module);
+			ProcessHandler process = createProcess(module);
 			new RunContentExecutor(project, process).withFilter(new PythonTracebackFilter(project)).withTitle("reStructuredText").withRerun(() -> execute(module)).withAfterCompletion(getAfterTask
 					(module)).run();
 		}
@@ -128,10 +128,10 @@ public class SphinxBaseCommand
 	}
 
 	@Nullable
-	protected Runnable getAfterTask(final Module module)
+	protected Runnable getAfterTask(Module module)
 	{
 		return () -> {
-			final ReSTService service = ReSTService.getInstance(module);
+			ReSTService service = ReSTService.getInstance(module);
 			LocalFileSystem.getInstance().refreshAndFindFileByPath(service.getWorkdir());
 		};
 	}
@@ -159,7 +159,7 @@ public class SphinxBaseCommand
 		GeneralCommandLine cmd = new GeneralCommandLine();
 		if(sdkHomePath != null)
 		{
-			final String runnerName = "sphinx-quickstart" + (SystemInfo.isWindows ? ".exe" : "");
+			String runnerName = "sphinx-quickstart" + (SystemInfo.isWindows ? ".exe" : "");
 			String executablePath = PythonSdkType.getExecutablePath(sdkHomePath, runnerName);
 			if(executablePath != null)
 			{
@@ -184,7 +184,7 @@ public class SphinxBaseCommand
 			}
 		}
 
-		final Map<String, String> env = cmd.getEnvironment();
+		Map<String, String> env = cmd.getEnvironment();
 		setPythonIOEncoding(env, "utf-8");
 		setPythonUnbuffered(env);
 		if(sdkHomePath != null)

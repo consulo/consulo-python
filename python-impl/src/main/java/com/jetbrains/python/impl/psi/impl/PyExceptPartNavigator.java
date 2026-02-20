@@ -31,12 +31,12 @@ public class PyExceptPartNavigator {
   }
 
   @Nullable
-  public static PyExceptPart getPyExceptPartByTarget(final PsiElement element){
-    final PyExceptPart pyExceptPart = PsiTreeUtil.getParentOfType(element, PyExceptPart.class, false);
+  public static PyExceptPart getPyExceptPartByTarget(PsiElement element){
+    PyExceptPart pyExceptPart = PsiTreeUtil.getParentOfType(element, PyExceptPart.class, false);
     if (pyExceptPart == null){
       return null;
     }
-    final PyExpression expr = pyExceptPart.getTarget();
+    PyExpression expr = pyExceptPart.getTarget();
     if (expr != null && PsiTreeUtil.isAncestor(expr, element, false)){
       return pyExceptPart;
     }

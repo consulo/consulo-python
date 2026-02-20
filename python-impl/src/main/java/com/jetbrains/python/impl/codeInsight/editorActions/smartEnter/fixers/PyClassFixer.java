@@ -43,11 +43,11 @@ public class PyClassFixer extends PyFixer<PyClass>
 
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyClass pyClass) throws IncorrectOperationException
 	{
-		final PsiElement colon = PyPsiUtils.getFirstChildOfType(pyClass, PyTokenTypes.COLON);
+		PsiElement colon = PyPsiUtils.getFirstChildOfType(pyClass, PyTokenTypes.COLON);
 		if(colon == null)
 		{
-			final PyArgumentList argList = PsiTreeUtil.getChildOfType(pyClass, PyArgumentList.class);
-			final int colonOffset = sure(argList).getTextRange().getEndOffset();
+			PyArgumentList argList = PsiTreeUtil.getChildOfType(pyClass, PyArgumentList.class);
+			int colonOffset = sure(argList).getTextRange().getEndOffset();
 			String textToInsert = ":";
 			if(pyClass.getNameNode() == null)
 			{

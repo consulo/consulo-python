@@ -44,7 +44,7 @@ public class PyDeprecationInspection extends PyInspection {
     @Override
     public PsiElementVisitor buildVisitor(
         @Nonnull ProblemsHolder holder,
-        final boolean isOnTheFly,
+        boolean isOnTheFly,
         @Nonnull LocalInspectionToolSession session,
         Object state
     ) {
@@ -58,21 +58,21 @@ public class PyDeprecationInspection extends PyInspection {
 
         @Override
         public void visitPyReferenceExpression(PyReferenceExpression node) {
-            final PyExceptPart exceptPart = PsiTreeUtil.getParentOfType(node, PyExceptPart.class);
+            PyExceptPart exceptPart = PsiTreeUtil.getParentOfType(node, PyExceptPart.class);
             if (exceptPart != null) {
-                final PyExpression exceptClass = exceptPart.getExceptClass();
+                PyExpression exceptClass = exceptPart.getExceptClass();
                 if (exceptClass != null && "ImportError".equals(exceptClass.getText())) {
                     return;
                 }
             }
-            final PsiPolyVariantReference reference = node.getReference(getResolveContext());
+            PsiPolyVariantReference reference = node.getReference(getResolveContext());
             if (reference == null) {
                 return;
             }
-            final PsiElement resolveResult = reference.resolve();
-            final PyFromImportStatement importStatement = PsiTreeUtil.getParentOfType(node, PyFromImportStatement.class);
+            PsiElement resolveResult = reference.resolve();
+            PyFromImportStatement importStatement = PsiTreeUtil.getParentOfType(node, PyFromImportStatement.class);
             if (importStatement != null) {
-                final PsiElement element = importStatement.resolveImportSource();
+                PsiElement element = importStatement.resolveImportSource();
                 if (resolveResult != null && element != resolveResult.getContainingFile()) {
                     return;
                 }

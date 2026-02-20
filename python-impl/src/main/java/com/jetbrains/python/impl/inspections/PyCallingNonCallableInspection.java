@@ -66,7 +66,7 @@ public class PyCallingNonCallableInspection extends PyInspection {
         public void visitPyDecoratorList(PyDecoratorList node) {
             super.visitPyDecoratorList(node);
             for (PyDecorator decorator : node.getDecorators()) {
-                final PyExpression callee = decorator.getCallee();
+                PyExpression callee = decorator.getCallee();
                 checkCallable(decorator, callee, null);
                 if (decorator.hasArgumentList()) {
                     checkCallable(decorator, decorator, null);
@@ -75,12 +75,12 @@ public class PyCallingNonCallableInspection extends PyInspection {
         }
 
         private void checkCallable(@Nonnull PyElement node, @Nullable PyExpression callee, @Nullable PyType type) {
-            final Boolean callable = callee != null ? isCallable(callee, myTypeEvalContext) : PyTypeChecker.isCallable(type);
+            Boolean callable = callee != null ? isCallable(callee, myTypeEvalContext) : PyTypeChecker.isCallable(type);
             if (callable == null) {
                 return;
             }
             if (!callable) {
-                final PyType calleeType = callee != null ? myTypeEvalContext.getType(callee) : type;
+                PyType calleeType = callee != null ? myTypeEvalContext.getType(callee) : type;
                 if (calleeType instanceof PyClassType) {
                     registerProblem(node, String.format("'%s' object is not callable", calleeType.getName()));
                 }

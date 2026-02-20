@@ -37,21 +37,21 @@ public class PythonNoseTestConfigurationProducer extends
     super(PythonTestConfigurationType.getInstance().PY_NOSETEST_FACTORY);
   }
 
-  protected boolean isAvailable(@Nonnull final Location location) {
-    final PsiElement element = location.getPsiElement();
+  protected boolean isAvailable(@Nonnull Location location) {
+    PsiElement element = location.getPsiElement();
     Module module = location.getModule();
     if (module == null) {
-      final Module[] modules = ModuleManager.getInstance(element.getProject()).getModules();
+      Module[] modules = ModuleManager.getInstance(element.getProject()).getModules();
       if (modules.length == 0) return false;
       module = modules[0];
     }
-    final Sdk sdk = PythonSdkType.findPythonSdk(module);
+    Sdk sdk = PythonSdkType.findPythonSdk(module);
     return (TestRunnerService.getInstance(module).getProjectConfiguration().equals(
       PythonTestConfigurationsModel.PYTHONS_NOSETEST_NAME) && sdk != null);
   }
 
   @Override
-  protected boolean isTestFunction(@Nonnull final PyFunction pyFunction, @Nullable final AbstractPythonTestRunConfiguration configuration) {
+  protected boolean isTestFunction(@Nonnull PyFunction pyFunction, @Nullable AbstractPythonTestRunConfiguration configuration) {
     return PythonUnitTestUtil.isTestCaseFunction(pyFunction, false);
   }
 }

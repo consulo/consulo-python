@@ -35,13 +35,13 @@ class NamePredicate extends NotNullPredicate<PyElement>
 	private final String myName;
 
 
-	NamePredicate(@Nonnull final String name)
+	NamePredicate(@Nonnull String name)
 	{
 		myName = name;
 	}
 
 	@Override
-	protected boolean applyNotNull(@Nonnull final PyElement input)
+	protected boolean applyNotNull(@Nonnull PyElement input)
 	{
 		return myName.equals(input.getName());
 	}
@@ -54,12 +54,12 @@ class NamePredicate extends NotNullPredicate<PyElement>
 	 * @param stock  collection elements to search between
 	 * @return true if stock contains element with name equal to needle's name
 	 */
-	static boolean hasElementWithSameName(@Nonnull final NavigationItem needle, @Nonnull final Iterable<? extends PyElement> stock)
+	static boolean hasElementWithSameName(@Nonnull NavigationItem needle, @Nonnull Iterable<? extends PyElement> stock)
 	{
-		final String name = needle.getName();
+		String name = needle.getName();
 		if(name != null)
 		{
-			final Optional<? extends PyElement> optional = Iterables.tryFind(stock, new NamePredicate(name));
+			Optional<? extends PyElement> optional = Iterables.tryFind(stock, new NamePredicate(name));
 			return optional.isPresent();
 		}
 		return false;

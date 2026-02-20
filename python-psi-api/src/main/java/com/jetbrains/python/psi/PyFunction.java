@@ -133,7 +133,7 @@ public interface PyFunction extends PsiNamedElement, StubBasedPsiElement<PyFunct
 		PRIVATE(2);
 		private final int myUnderscoreLevel;
 
-		ProtectionLevel(final int underscoreLevel)
+		ProtectionLevel(int underscoreLevel)
 		{
 			myUnderscoreLevel = underscoreLevel;
 		}

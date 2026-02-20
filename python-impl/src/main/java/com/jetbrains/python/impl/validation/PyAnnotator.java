@@ -37,7 +37,7 @@ public abstract class PyAnnotator extends PyElementVisitor {
     _holder = holder;
   }
 
-  public synchronized void annotateElement(final PsiElement psiElement, final AnnotationHolder holder) {
+  public synchronized void annotateElement(PsiElement psiElement, AnnotationHolder holder) {
     setHolder(holder);
     try {
       psiElement.accept(this);

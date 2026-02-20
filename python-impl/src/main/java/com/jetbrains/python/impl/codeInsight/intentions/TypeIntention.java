@@ -50,7 +50,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         }
         updateText(false);
 
-        final PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         if (elementAt == null) {
             return false;
         }
@@ -65,28 +65,28 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
     }
 
     private boolean isAvailableForParameter(Project project, PsiElement elementAt) {
-        final PyExpression problemElement = getProblemElement(elementAt);
+        PyExpression problemElement = getProblemElement(elementAt);
         if (problemElement == null) {
             return false;
         }
         if (PsiTreeUtil.getParentOfType(problemElement, PyLambdaExpression.class) != null) {
             return false;
         }
-        final PsiReference reference = problemElement.getReference();
+        PsiReference reference = problemElement.getReference();
         if (reference instanceof PsiPolyVariantReference) {
-            final ResolveResult[] results = ((PsiPolyVariantReference) reference).multiResolve(false);
+            ResolveResult[] results = ((PsiPolyVariantReference) reference).multiResolve(false);
             if (results.length != 1) {
                 return false;
             }
         }
-        final VirtualFile virtualFile = problemElement.getContainingFile().getVirtualFile();
+        VirtualFile virtualFile = problemElement.getContainingFile().getVirtualFile();
         if (virtualFile != null) {
             if (ProjectRootManager.getInstance(project).getFileIndex().isInLibraryClasses(virtualFile)) {
                 return false;
             }
         }
-        final PsiElement resolved = reference != null ? reference.resolve() : null;
-        final PyParameter parameter = getParameter(problemElement, resolved);
+        PsiElement resolved = reference != null ? reference.resolve() : null;
+        PyParameter parameter = getParameter(problemElement, resolved);
 
         return parameter != null && !isParamTypeDefined(parameter);
     }
@@ -98,7 +98,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
             return null;
         }
         if (problemElement instanceof PyQualifiedExpression) {
-            final PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
+            PyExpression qualifier = ((PyQualifiedExpression) problemElement).getQualifier();
             if (qualifier != null && !qualifier.getText().equals(PyNames.CANONICAL_SELF)) {
                 problemElement = qualifier;
             }
@@ -121,7 +121,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         return parameter == null || parameter.isSelf() ? null : parameter;
     }
 
-    private boolean isAvailableForReturn(@Nonnull final PsiElement elementAt) {
+    private boolean isAvailableForReturn(@Nonnull PsiElement elementAt) {
         return resolvesToFunction(elementAt, new Function<PyFunction, Boolean>() {
             @Override
             public Boolean apply(PyFunction input) {
@@ -131,36 +131,36 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
     }
 
     static boolean resolvesToFunction(@Nonnull PsiElement elementAt, Function<PyFunction, Boolean> isAvailableForFunction) {
-        final PyFunction parentFunction = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
+        PyFunction parentFunction = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
         if (parentFunction != null) {
-            final ASTNode nameNode = parentFunction.getNameNode();
+            ASTNode nameNode = parentFunction.getNameNode();
             if (nameNode != null) {
-                final PsiElement prev = elementAt.getContainingFile().findElementAt(elementAt.getTextOffset() - 1);
+                PsiElement prev = elementAt.getContainingFile().findElementAt(elementAt.getTextOffset() - 1);
                 if (nameNode.getPsi() == elementAt || nameNode.getPsi() == prev) {
                     return isAvailableForFunction.apply(parentFunction);
                 }
             }
         }
 
-        final PyCallExpression callExpression = getCallExpression(elementAt);
+        PyCallExpression callExpression = getCallExpression(elementAt);
         if (callExpression == null) {
             return false;
         }
-        final PyExpression callee = callExpression.getCallee();
+        PyExpression callee = callExpression.getCallee();
         if (callee == null) {
             return false;
         }
-        final PsiReference reference = callee.getReference();
+        PsiReference reference = callee.getReference();
         if (reference instanceof PsiPolyVariantReference) {
-            final ResolveResult[] results = ((PsiPolyVariantReference) reference).multiResolve(false);
+            ResolveResult[] results = ((PsiPolyVariantReference) reference).multiResolve(false);
             for (int i = 0; i < results.length; i++) {
                 if (results[i].getElement() instanceof PyFunction) {
-                    final PsiElement result = results[i].getElement();
-                    final PsiFile psiFile = result.getContainingFile();
+                    PsiElement result = results[i].getElement();
+                    PsiFile psiFile = result.getContainingFile();
                     if (psiFile == null) {
                         return false;
                     }
-                    final VirtualFile virtualFile = psiFile.getVirtualFile();
+                    VirtualFile virtualFile = psiFile.getVirtualFile();
                     if (virtualFile != null) {
                         if (ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInLibraryClasses(virtualFile)) {
                             return false;
@@ -179,12 +179,12 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
 
     @Nullable
     static PyCallExpression getCallExpression(PsiElement elementAt) {
-        final PyExpression problemElement = getProblemElement(elementAt);
+        PyExpression problemElement = getProblemElement(elementAt);
         if (problemElement != null) {
             PsiReference reference = problemElement.getReference();
-            final PsiElement resolved = reference != null ? reference.resolve() : null;
+            PsiElement resolved = reference != null ? reference.resolve() : null;
             if (resolved instanceof PyTargetExpression) {
-                final PyExpression assignedValue = ((PyTargetExpression) resolved).findAssignedValue();
+                PyExpression assignedValue = ((PyTargetExpression) resolved).findAssignedValue();
                 if (assignedValue instanceof PyCallExpression) {
                     return (PyCallExpression) assignedValue;
                 }
@@ -193,7 +193,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
 
         PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(elementAt, PyAssignmentStatement.class);
         if (assignmentStatement != null) {
-            final PyExpression assignedValue = assignmentStatement.getAssignedValue();
+            PyExpression assignedValue = assignmentStatement.getAssignedValue();
             if (assignedValue instanceof PyCallExpression) {
                 return (PyCallExpression) assignedValue;
             }
@@ -206,7 +206,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         PyCallExpression callExpression = getCallExpression(elementAt);
 
         if (callExpression != null && elementAt != null) {
-            final PyCallable callable = callExpression.resolveCalleeFunction(getResolveContext(elementAt));
+            PyCallable callable = callExpression.resolveCalleeFunction(getResolveContext(elementAt));
             return callable == null ? PsiTreeUtil.getParentOfType(elementAt, PyFunction.class) : callable;
         }
         return PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);

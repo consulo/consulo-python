@@ -45,7 +45,7 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
         @Nullable String returnTypeName,
         @Nonnull TypeEvalContext context
     ) {
-        final SmartPointerManager manager = SmartPointerManager.getInstance(function.getProject());
+        SmartPointerManager manager = SmartPointerManager.getInstance(function.getProject());
         myFunction = manager.createSmartPsiElementPointer(function);
         PyAnnotation annotation = function.getAnnotation();
         myAnnotation = annotation != null ? manager.createSmartPsiElementPointer(annotation) : null;
@@ -68,9 +68,9 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         if (myAnnotation != null) {
-            final PyAnnotation annotation = myAnnotation.getElement();
+            PyAnnotation annotation = myAnnotation.getElement();
             if (annotation != null) {
-                final PyExpression annotationExpr = annotation.getValue();
+                PyExpression annotationExpr = annotation.getValue();
                 if (annotationExpr == null) {
                     return;
                 }
@@ -78,12 +78,12 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
             }
         }
         else if (myTypeCommentAnnotation != null) {
-            final PsiComment typeComment = myTypeCommentAnnotation.getElement();
+            PsiComment typeComment = myTypeCommentAnnotation.getElement();
             if (typeComment != null) {
-                final StringBuilder typeCommentAnnotation = new StringBuilder(typeComment.getText());
+                StringBuilder typeCommentAnnotation = new StringBuilder(typeComment.getText());
                 typeCommentAnnotation.delete(typeCommentAnnotation.indexOf("->"), typeCommentAnnotation.length());
                 typeCommentAnnotation.append("-> ").append(myReturnTypeName);
-                final PsiComment newTypeComment =
+                PsiComment newTypeComment =
                     elementGenerator.createFromText(LanguageLevel.PYTHON27, PsiComment.class, typeCommentAnnotation.toString());
                 typeComment.replace(newTypeComment);
             }

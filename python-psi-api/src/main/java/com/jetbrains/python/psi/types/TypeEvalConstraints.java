@@ -39,7 +39,7 @@ class TypeEvalConstraints
 	/**
 	 * @see com.jetbrains.python.psi.types.TypeEvalContext
 	 */
-	TypeEvalConstraints(final boolean allowDataFlow, final boolean allowStubToAST, final boolean allowCallContext, @Nullable final PsiFile origin)
+	TypeEvalConstraints(boolean allowDataFlow, boolean allowStubToAST, boolean allowCallContext, @Nullable PsiFile origin)
 	{
 		myAllowDataFlow = allowDataFlow;
 		myAllowStubToAST = allowStubToAST;

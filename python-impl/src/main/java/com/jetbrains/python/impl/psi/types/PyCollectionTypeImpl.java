@@ -45,7 +45,7 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@Nonnull final TypeEvalContext context)
+	public PyType getReturnType(@Nonnull TypeEvalContext context)
 	{
 		if(isDefinition())
 		{
@@ -56,7 +56,7 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nonnull final TypeEvalContext context, @Nullable final PyCallSiteExpression callSite)
+	public PyType getCallType(@Nonnull TypeEvalContext context, @Nullable PyCallSiteExpression callSite)
 	{
 		return getReturnType(context);
 	}
@@ -69,12 +69,12 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 	}
 
 	@Nullable
-	public static PyCollectionTypeImpl createTypeByQName(@Nonnull final PsiElement anchor,
-			@Nonnull final String classQualifiedName,
-			final boolean isDefinition,
-			@Nonnull final List<PyType> elementTypes)
+	public static PyCollectionTypeImpl createTypeByQName(@Nonnull PsiElement anchor,
+			@Nonnull String classQualifiedName,
+			boolean isDefinition,
+			@Nonnull List<PyType> elementTypes)
 	{
-		final PyClass pyClass = PyPsiFacade.getInstance(anchor.getProject()).createClassByQName(classQualifiedName, anchor);
+		PyClass pyClass = PyPsiFacade.getInstance(anchor.getProject()).createClassByQName(classQualifiedName, anchor);
 		if(pyClass == null)
 		{
 			return null;
@@ -104,7 +104,7 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 			return false;
 		}
 
-		final PyCollectionTypeImpl that = (PyCollectionTypeImpl) o;
+		PyCollectionTypeImpl that = (PyCollectionTypeImpl) o;
 
 		if(!myElementTypes.equals(that.myElementTypes))
 		{

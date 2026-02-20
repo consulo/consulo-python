@@ -45,7 +45,7 @@ public class PydevDocumentationProvider extends AbstractDocumentationProvider im
   }
 
   @Override
-  public PsiElement getDocumentationElementForLookupItem(final PsiManager psiManager, final Object object, final PsiElement element) {
+  public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
     if (object instanceof PydevConsoleElement){
       return (PydevConsoleElement) object;
     }
@@ -53,7 +53,7 @@ public class PydevDocumentationProvider extends AbstractDocumentationProvider im
   }
 
   @Override
-  public String generateDoc(final PsiElement element, @Nullable final PsiElement originalElement) {
+  public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
     // Process PydevConsoleElement case
     if (element instanceof PydevConsoleElement){
       return PydevConsoleElement.generateDoc((PydevConsoleElement)element);
@@ -62,18 +62,18 @@ public class PydevDocumentationProvider extends AbstractDocumentationProvider im
   }
 
   @Nullable
-  public static String createDoc(final PsiElement element, final PsiElement originalElement) {
-    final PyExpression expression = PsiTreeUtil.getParentOfType(originalElement, PyExpression.class);
+  public static String createDoc(PsiElement element, PsiElement originalElement) {
+    PyExpression expression = PsiTreeUtil.getParentOfType(originalElement, PyExpression.class);
     // Indicates that we are inside console, not a lookup element!
     if (expression == null){
       return null;
     }
-    final ConsoleCommunication communication = PydevConsoleRunner.getConsoleCommunication(originalElement);
+    ConsoleCommunication communication = PydevConsoleRunner.getConsoleCommunication(originalElement);
     if (communication == null){
       return null;
     }
     try {
-      final String description = communication.getDescription(expression.getText());
+      String description = communication.getDescription(expression.getText());
       return StringUtil.isEmptyOrSpaces(description) ? null : description;
     }
     catch (Exception e) {

@@ -169,7 +169,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             }
             return null;
         }
-        final String homePath = sdk.getHomePath();
+        String homePath = sdk.getHomePath();
         if (homePath == null) {
             if (!myReportedMissingInterpreter) {
                 myReportedMissingInterpreter = true;
@@ -177,8 +177,8 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             }
             return null;
         }
-        final InspectionProfile profile = InspectionProjectProfileManager.getInstance(file.getProject()).getInspectionProfile();
-        final HighlightDisplayKey key = HighlightDisplayKey.find(PyPep8Inspection.INSPECTION_SHORT_NAME);
+        InspectionProfile profile = InspectionProjectProfileManager.getInstance(file.getProject()).getInspectionProfile();
+        HighlightDisplayKey key = HighlightDisplayKey.find(PyPep8Inspection.INSPECTION_SHORT_NAME);
         if (!profile.isToolEnabled(key, file)) {
             return null;
         }
@@ -186,10 +186,10 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             return null;
         }
 
-        final PyPep8InspectionState toolState = profile.getToolState(PyPep8Inspection.KEY.toString(), file);
-        final CodeStyleSettings currentSettings = CodeStyleSettingsManager.getInstance(file.getProject()).getCurrentSettings();
+        PyPep8InspectionState toolState = profile.getToolState(PyPep8Inspection.KEY.toString(), file);
+        CodeStyleSettings currentSettings = CodeStyleSettingsManager.getInstance(file.getProject()).getCurrentSettings();
 
-        final List<String> ignoredErrors = new ArrayList<>(toolState.ignoredErrors);
+        List<String> ignoredErrors = new ArrayList<>(toolState.ignoredErrors);
         if (!currentSettings.getCustomSettings(PyCodeStyleSettings.class).SPACE_AFTER_NUMBER_SIGN) {
             ignoredErrors.add("E262"); // Block comment should start with a space
             ignoredErrors.add("E265"); // Inline comment should start with a space
@@ -199,7 +199,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             ignoredErrors.add("E261"); // At least two spaces before inline comment
         }
 
-        final int margin = currentSettings.getRightMargin(file.getLanguage());
+        int margin = currentSettings.getRightMargin(file.getLanguage());
         return new State(homePath, file.getText(), profile.getErrorLevel(key, file), ignoredErrors, margin);
     }
 
@@ -245,7 +245,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         }
         else if (output.getStderrLines().isEmpty()) {
             for (String line : output.getStdoutLines()) {
-                final Problem problem = parseProblem(line);
+                Problem problem = parseProblem(line);
                 if (problem != null) {
                     results.problems.add(problem);
                 }
@@ -262,13 +262,13 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         if (annotationResult == null || !file.isValid()) {
             return;
         }
-        final String text = file.getText();
+        String text = file.getText();
         Project project = file.getProject();
-        final Document document = PsiDocumentManager.getInstance(project).getDocument(file);
+        Document document = PsiDocumentManager.getInstance(project).getDocument(file);
 
         for (Problem problem : annotationResult.problems) {
-            final int line = problem.myLine - 1;
-            final int column = problem.myColumn - 1;
+            int line = problem.myLine - 1;
+            int column = problem.myColumn - 1;
             int offset;
             if (document != null) {
                 offset = line >= document.getLineCount() ? document.getTextLength() - 1 : document.getLineStartOffset(line) + column;
@@ -279,7 +279,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             PsiElement problemElement = file.findElementAt(offset);
             // E3xx - blank lines warnings
             if (!(problemElement instanceof PsiWhiteSpace) && problem.myCode.startsWith("E3")) {
-                final PsiElement elementBefore = file.findElementAt(Math.max(0, offset - 1));
+                PsiElement elementBefore = file.findElementAt(Math.max(0, offset - 1));
                 if (elementBefore instanceof PsiWhiteSpace) {
                     problemElement = elementBefore;
                 }
@@ -310,7 +310,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
                 // Multi-line warnings are shown only in the gutter and it's not the desired behavior from the usability point of view.
                 // So we register it only on that line where pycodestyle.py found the problem originally.
                 if (crossesLineBoundary(document, text, problemRange)) {
-                    final int lineEndOffset;
+                    int lineEndOffset;
                     if (document != null) {
                         lineEndOffset = line >= document.getLineCount() ? document.getTextLength() - 1 : document.getLineEndOffset(line);
                     }
@@ -323,9 +323,9 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
                     }
                     problemRange = new TextRange(offset, lineEndOffset);
                 }
-                final Annotation annotation;
-                final boolean inInternalMode = ApplicationProperties.isInSandbox();
-                final String message = "PEP 8: " + (inInternalMode ? problem.myCode + " " : "") + problem.myDescription;
+                Annotation annotation;
+                boolean inInternalMode = ApplicationProperties.isInSandbox();
+                String message = "PEP 8: " + (inInternalMode ? problem.myCode + " " : "") + problem.myDescription;
                 if (annotationResult.level == HighlightDisplayLevel.ERROR) {
                     annotation = holder.createErrorAnnotation(problemRange, message);
                 }
@@ -363,7 +363,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         @Nonnull PsiFile file,
         @Nullable PsiElement element
     ) {
-        final Pep8ProblemSuppressor[] suppressors = Pep8ProblemSuppressor.EP_NAME.getExtensions();
+        Pep8ProblemSuppressor[] suppressors = Pep8ProblemSuppressor.EP_NAME.getExtensions();
         return Arrays.stream(suppressors).anyMatch(p -> p.isProblemSuppressed(problem, file, element));
     }
 
@@ -377,7 +377,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
     }
 
     private static boolean ignoreDueToSettings(Project project, Problem problem, @Nullable PsiElement element) {
-        final PersistentEditorSettings editorSettings = PersistentEditorSettings.getInstance();
+        PersistentEditorSettings editorSettings = PersistentEditorSettings.getInstance();
         if (!editorSettings.getStripTrailingSpaces().equals("None")) {
             // ignore trailing spaces errors if they're going to disappear after save
             if (problem.myCode.equals("W291") || problem.myCode.equals("W293")) {
@@ -385,20 +385,20 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             }
         }
 
-        final CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
-        final CommonCodeStyleSettings commonSettings = codeStyleSettings.getCommonSettings(PythonLanguage.getInstance());
-        final PyCodeStyleSettings pySettings = codeStyleSettings.getCustomSettings(PyCodeStyleSettings.class);
+        CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
+        CommonCodeStyleSettings commonSettings = codeStyleSettings.getCommonSettings(PythonLanguage.getInstance());
+        PyCodeStyleSettings pySettings = codeStyleSettings.getCustomSettings(PyCodeStyleSettings.class);
 
         if (element instanceof PsiWhiteSpace) {
             // E303 too many blank lines (num)
             if (problem.myCode.equals("E303")) {
-                final Matcher matcher = E303_LINE_COUNT_PATTERN.matcher(problem.myDescription);
+                Matcher matcher = E303_LINE_COUNT_PATTERN.matcher(problem.myDescription);
                 if (matcher.matches()) {
-                    final int reportedBlanks = Integer.parseInt(matcher.group(1));
-                    final PsiElement nonWhitespaceAfter = PyPsiUtils.getNextNonWhitespaceSibling(element);
-                    final PsiElement nonWhitespaceBefore = PyPsiUtils.getPrevNonWhitespaceSibling(element);
-                    final boolean classNearby = nonWhitespaceBefore instanceof PyClass || nonWhitespaceAfter instanceof PyClass;
-                    final boolean functionNearby = nonWhitespaceBefore instanceof PyFunction || nonWhitespaceAfter instanceof PyFunction;
+                    int reportedBlanks = Integer.parseInt(matcher.group(1));
+                    PsiElement nonWhitespaceAfter = PyPsiUtils.getNextNonWhitespaceSibling(element);
+                    PsiElement nonWhitespaceBefore = PyPsiUtils.getPrevNonWhitespaceSibling(element);
+                    boolean classNearby = nonWhitespaceBefore instanceof PyClass || nonWhitespaceAfter instanceof PyClass;
+                    boolean functionNearby = nonWhitespaceBefore instanceof PyFunction || nonWhitespaceAfter instanceof PyFunction;
                     if (functionNearby || classNearby) {
                         if (PyUtil.isTopLevel(element)) {
                             if (reportedBlanks <= pySettings.BLANK_LINES_AROUND_TOP_LEVEL_CLASSES_FUNCTIONS) {
@@ -465,7 +465,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         }
 
         @Override
-        public void invoke(@Nonnull Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
+        public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
             InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
             profile.<PyPep8Inspection, PyPep8InspectionState>modifyToolSettings(PyPep8Inspection.INSPECTION_SHORT_NAME, file, (i, s) -> {
                 if (!s.ignoredErrors.contains(myCode)) {

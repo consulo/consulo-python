@@ -51,13 +51,13 @@ public class PyTestConfigurationEditor extends SettingsEditor<PyTestRunConfigura
   private final Project myProject;
   private JComponent anchor;
 
-  public PyTestConfigurationEditor(final Project project, PyTestRunConfiguration configuration) {
+  public PyTestConfigurationEditor(Project project, PyTestRunConfiguration configuration) {
     myProject = project;
     myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());
     myCommonOptionsPlaceholder.add(myCommonOptionsForm.getMainPanel());
 
     String title = PyBundle.message("runcfg.unittest.dlg.select.script.path");
-    final FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory
+    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory
       .createSingleFileOrFolderDescriptor();
     fileChooserDescriptor.setTitle(title);
     myTestScriptTextField.addBrowseFolderListener(title, null, myProject, fileChooserDescriptor);
@@ -65,13 +65,13 @@ public class PyTestConfigurationEditor extends SettingsEditor<PyTestRunConfigura
     myTargetLabel.setLabelFor(myTestScriptTextField);
 
     myParametersCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
+      public void actionPerformed(ActionEvent e) {
         myParamsTextField.setEnabled(myParametersCheckBox.isSelected());
       }
     });
 
     myKeywordsCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
+      public void actionPerformed(ActionEvent e) {
         myKeywordsTextField.setEnabled(myKeywordsCheckBox.isSelected());
       }
     });

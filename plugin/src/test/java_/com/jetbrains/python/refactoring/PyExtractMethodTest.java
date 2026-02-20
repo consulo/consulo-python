@@ -25,17 +25,17 @@ public abstract class PyExtractMethodTest extends LightMarkedTestCase {
   }
 
   private void doTest(String newName) {
-    final String testName = getTestName(false);
-    final String beforeName = testName + ".before.py";
-    final String afterName = testName + ".after.py";
-    final String dir = "refactoring/extractmethod/";
+    String testName = getTestName(false);
+    String beforeName = testName + ".before.py";
+    String afterName = testName + ".after.py";
+    String dir = "refactoring/extractmethod/";
 
     myFixture.configureByFile(dir + beforeName);
-    final RefactoringSupportProvider provider = LanguageRefactoringSupport.INSTANCE.forLanguage(PythonLanguage.getInstance());
+    RefactoringSupportProvider provider = LanguageRefactoringSupport.INSTANCE.forLanguage(PythonLanguage.getInstance());
     assertNotNull(provider);
-    final RefactoringActionHandler handler = provider.getExtractMethodHandler();
+    RefactoringActionHandler handler = provider.getExtractMethodHandler();
     assertNotNull(handler);
-    final Editor editor = myFixture.getEditor();
+    Editor editor = myFixture.getEditor();
     assertInstanceOf(editor, EditorEx.class);
     System.setProperty(PyExtractMethodUtil.NAME, newName);
     try {

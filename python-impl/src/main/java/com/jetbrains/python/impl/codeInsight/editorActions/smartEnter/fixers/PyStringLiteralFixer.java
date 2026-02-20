@@ -39,10 +39,10 @@ public class PyStringLiteralFixer extends PyFixer<PyStringLiteralExpression>
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyStringLiteralExpression psiElement) throws IncorrectOperationException
 	{
-		final String text = psiElement.getText();
+		String text = psiElement.getText();
 		if(StringUtil.startsWith(text, "\"\"\""))
 		{
-			final int suffixLength = StringUtil.commonSuffixLength(text, "\"\"\"");
+			int suffixLength = StringUtil.commonSuffixLength(text, "\"\"\"");
 			if(suffixLength != 3)
 			{
 				editor.getDocument().insertString(psiElement.getTextRange().getEndOffset(), "\"\"\"".substring(suffixLength));
@@ -50,7 +50,7 @@ public class PyStringLiteralFixer extends PyFixer<PyStringLiteralExpression>
 		}
 		else if(StringUtil.startsWith(text, "\'\'\'"))
 		{
-			final int suffixLength = StringUtil.commonSuffixLength(text, "\'\'\'");
+			int suffixLength = StringUtil.commonSuffixLength(text, "\'\'\'");
 			if(suffixLength != 3)
 			{
 				editor.getDocument().insertString(psiElement.getTextRange().getEndOffset(), "\'\'\'".substring(suffixLength));

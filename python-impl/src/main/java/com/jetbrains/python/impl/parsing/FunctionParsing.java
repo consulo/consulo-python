@@ -54,7 +54,7 @@ public class FunctionParsing extends Parsing
 		parseParameterList();
 		parseReturnTypeAnnotation();
 		checkMatches(PyTokenTypes.COLON, PyBundle.message("PARSE.expected.colon"));
-		final ParsingContext context = getParsingContext();
+		ParsingContext context = getParsingContext();
 		context.pushScope(context.getScope().withFunction(async));
 		getStatementParser().parseSuite(functionMarker, getFunctionType());
 		context.popScope();
@@ -77,8 +77,8 @@ public class FunctionParsing extends Parsing
 	public void parseDecoratedDeclaration()
 	{
 		assertCurrentToken(PyTokenTypes.AT); // ??? need this?
-		final PsiBuilder.Marker decoratorStartMarker = myBuilder.mark();
-		final PsiBuilder.Marker decoListMarker = myBuilder.mark();
+		PsiBuilder.Marker decoratorStartMarker = myBuilder.mark();
+		PsiBuilder.Marker decoListMarker = myBuilder.mark();
 		boolean decorated = false;
 		while(myBuilder.getTokenType() == PyTokenTypes.AT)
 		{
@@ -150,7 +150,7 @@ public class FunctionParsing extends Parsing
 
 	public void parseParameterList()
 	{
-		final PsiBuilder.Marker parameterList;
+		PsiBuilder.Marker parameterList;
 		if(myBuilder.getTokenType() != PyTokenTypes.LPAR)
 		{
 			myBuilder.error(PyBundle.message("PARSE.expected.lpar"));
@@ -225,7 +225,7 @@ public class FunctionParsing extends Parsing
 
 	protected boolean parseParameter(IElementType endToken, boolean isLambda)
 	{
-		final PsiBuilder.Marker parameter = myBuilder.mark();
+		PsiBuilder.Marker parameter = myBuilder.mark();
 		boolean isStarParameter = false;
 		if(myBuilder.getTokenType() == PyTokenTypes.MULT)
 		{
@@ -297,13 +297,13 @@ public class FunctionParsing extends Parsing
 	private void parseParameterSubList()
 	{
 		assertCurrentToken(PyTokenTypes.LPAR);
-		final PsiBuilder.Marker tuple = myBuilder.mark();
+		PsiBuilder.Marker tuple = myBuilder.mark();
 		myBuilder.advanceLexer();
 		while(true)
 		{
 			if(myBuilder.getTokenType() == PyTokenTypes.IDENTIFIER)
 			{
-				final PsiBuilder.Marker parameter = myBuilder.mark();
+				PsiBuilder.Marker parameter = myBuilder.mark();
 				myBuilder.advanceLexer();
 				parameter.done(PyElementTypes.NAMED_PARAMETER);
 			}

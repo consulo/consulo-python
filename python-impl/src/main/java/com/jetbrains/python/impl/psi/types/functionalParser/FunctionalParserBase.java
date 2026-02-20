@@ -51,17 +51,17 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
   }
 
   @Nonnull
-  public static <T> FunctionalParser<Token<T>, T> token(@Nonnull final T type, @Nullable final String text) {
+  public static <T> FunctionalParser<Token<T>, T> token(@Nonnull T type, @Nullable String text) {
     return new TokenParser<T>(type, text);
   }
 
   @Nonnull
-  public static <R, T> FunctionalParser<List<R>, T> many(@Nonnull final FunctionalParser<R, T> parser) {
+  public static <R, T> FunctionalParser<List<R>, T> many(@Nonnull FunctionalParser<R, T> parser) {
     return new ManyParser<R, T>(parser);
   }
 
   @Nonnull
-  public static <R, T> FunctionalParser<R, T> maybe(@Nonnull final FunctionalParser<R, T> parser) {
+  public static <R, T> FunctionalParser<R, T> maybe(@Nonnull FunctionalParser<R, T> parser) {
     return parser.or(FunctionalParserBase.<R, T>pure(null));
   }
 
@@ -86,13 +86,13 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
 
   @Nonnull
   @Override
-  public <R2> FunctionalParser<Pair<R, R2>, T> then(@Nonnull final FunctionalParser<R2, T> parser) {
+  public <R2> FunctionalParser<Pair<R, R2>, T> then(@Nonnull FunctionalParser<R2, T> parser) {
     return new ThenParser<R, R2, T>(this, parser);
   }
 
   @Nonnull
   @Override
-  public <R2> FunctionalParser<R2, T> skipThen(@Nonnull final FunctionalParser<R2, T> parser) {
+  public <R2> FunctionalParser<R2, T> skipThen(@Nonnull FunctionalParser<R2, T> parser) {
     return second(this.then(parser));
   }
 
@@ -104,23 +104,23 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
 
   @Nonnull
   @Override
-  public FunctionalParser<R, T> or(@Nonnull final FunctionalParser<R, T> parser) {
+  public FunctionalParser<R, T> or(@Nonnull FunctionalParser<R, T> parser) {
     return new OrParser<R, T>(this, parser);
   }
 
   @Nonnull
   @Override
-  public <R2> FunctionalParser<R2, T> map(@Nonnull final Function<R, R2> f) {
+  public <R2> FunctionalParser<R2, T> map(@Nonnull Function<R, R2> f) {
     return new MapParser<R2, T, R>(this, f);
   }
 
   @Nonnull
-  private static <R, R2, T> FunctionalParser<R, T> first(@Nonnull final FunctionalParser<Pair<R, R2>, T> parser) {
+  private static <R, R2, T> FunctionalParser<R, T> first(@Nonnull FunctionalParser<Pair<R, R2>, T> parser) {
     return new FirstParser<R, T, R2>(parser);
   }
 
   @Nonnull
-  private static <R, R2, T> FunctionalParser<R2, T> second(@Nonnull final FunctionalParser<Pair<R, R2>, T> parser) {
+  private static <R, R2, T> FunctionalParser<R2, T> second(@Nonnull FunctionalParser<Pair<R, R2>, T> parser) {
     return new SecondParser<R2, T, R>(parser);
   }
 
@@ -130,7 +130,7 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
   }
 
   @Nonnull
-  private static <R, T> FunctionalParser<R, T> pure(@Nullable final R value) {
+  private static <R, T> FunctionalParser<R, T> pure(@Nullable R value) {
     return new PureParser<R, T>(value);
   }
 
@@ -148,17 +148,17 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
     @Nonnull
     @Override
     public Pair<Token<T>, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
-      final int pos = state.getPos();
+      int pos = state.getPos();
       if (pos >= tokens.size()) {
         throw new ParserException("No tokens left", state);
       }
-      final Token<T> token = tokens.get(pos);
+      Token<T> token = tokens.get(pos);
       if (token.getType().equals(myType) && (myText == null || token.getText().equals(myText))) {
-        final int newPos = pos + 1;
-        final State newState = new State(state, newPos, Math.max(newPos, state.getMax()));
+        int newPos = pos + 1;
+        State newState = new State(state, newPos, Math.max(newPos, state.getMax()));
         return Pair.create(token, newState);
       }
-      final String expected = myText != null ? String.format("Token(<%s>, \"%s\")", myType, myText) : String.format("Token(<%s>)", myType);
+      String expected = myText != null ? String.format("Token(<%s>, \"%s\")", myType, myText) : String.format("Token(<%s>)", myType);
       throw new ParserException(String.format("Expected %s, found %s", expected, token), state);
     }
   }
@@ -174,11 +174,11 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
     @Nonnull
     @Override
     public Pair<List<R>, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
-      final List<R> list = new ArrayList<R>();
+      List<R> list = new ArrayList<R>();
       try {
         //noinspection InfiniteLoopStatement
         while (true) {
-          final Pair<R, State> result = myParser.parse(tokens, state);
+          Pair<R, State> result = myParser.parse(tokens, state);
           state = result.getSecond();
           list.add(result.getFirst());
         }
@@ -210,14 +210,14 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
         myKey = state.getKey();
         myCache.clear();
       }
-      final SoftReference<Pair<R, State>> ref = myCache.get(state.getPos());
+      SoftReference<Pair<R, State>> ref = myCache.get(state.getPos());
       if (ref != null) {
-        final Pair<R, State> cached = ref.get();
+        Pair<R, State> cached = ref.get();
         if (cached != null) {
           return cached;
         }
       }
-      final Pair<R, State> result = myParser.parse(tokens, state);
+      Pair<R, State> result = myParser.parse(tokens, state);
       myCache.put(state.getPos(), new SoftReference<Pair<R, State>>(result));
       return result;
     }
@@ -257,7 +257,7 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
     @Nonnull
     @Override
     public Pair<R, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
-      final Pair<Pair<R, R2>, State> result = myParser.parse(tokens, state);
+      Pair<Pair<R, R2>, State> result = myParser.parse(tokens, state);
       return Pair.create(result.getFirst().getFirst(), result.getSecond());
     }
   }
@@ -273,7 +273,7 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
     @Nonnull
     @Override
     public Pair<R2, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
-      final Pair<Pair<R, R2>, State> result = myParser.parse(tokens, state);
+      Pair<Pair<R, R2>, State> result = myParser.parse(tokens, state);
       return Pair.create(result.getFirst().getSecond(), result.getSecond());
     }
   }
@@ -282,7 +282,7 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
     @Nonnull
     @Override
     public Pair<Object, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
-      final int pos = state.getPos();
+      int pos = state.getPos();
       if (pos >= tokens.size()) {
         return Pair.create(null, state);
       }
@@ -319,8 +319,8 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
     @Nonnull
     @Override
     public Pair<Pair<R, R2>, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
-      final Pair<R, State> result1 = myFirst.parse(tokens, state);
-      final Pair<R2, State> result2 = mySecond.parse(tokens, result1.getSecond());
+      Pair<R, State> result1 = myFirst.parse(tokens, state);
+      Pair<R2, State> result2 = mySecond.parse(tokens, result1.getSecond());
       return Pair.create(Pair.create(result1.getFirst(), result2.getFirst()), result2.getSecond());
     }
   }
@@ -339,7 +339,7 @@ public abstract class FunctionalParserBase<R, T> implements FunctionalParser<R, 
     @Nonnull
     @Override
     public Pair<R2, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
-      final Pair<R, State> result = myParser.parse(tokens, state);
+      Pair<R, State> result = myParser.parse(tokens, state);
       return Pair.create(myFunction.apply(result.getFirst()), result.getSecond());
     }
   }

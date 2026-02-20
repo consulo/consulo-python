@@ -39,10 +39,10 @@ public class PyMembersRefactoringSupport implements ClassMembersRefactoringSuppo
 {
 	public static PyMemberInfoStorage getSelectedMemberInfos(PyClass clazz, PsiElement element1, PsiElement element2)
 	{
-		final PyMemberInfoStorage infoStorage = new PyMemberInfoStorage(clazz);
+		PyMemberInfoStorage infoStorage = new PyMemberInfoStorage(clazz);
 		for(PyMemberInfo<PyElement> member : infoStorage.getClassMemberInfos(clazz))
 		{
-			final PyElement function = member.getMember();
+			PyElement function = member.getMember();
 			member.setChecked(PsiTreeUtil.isAncestor(function, element1, false) || PsiTreeUtil.isAncestor(function, element2, false));
 		}
 		return infoStorage;

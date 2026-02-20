@@ -61,13 +61,13 @@ public class PyKeywordArgumentImpl extends PyElementImpl implements PyKeywordArg
   }
 
   public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
-    final PyExpression e = getValueExpression();
+    PyExpression e = getValueExpression();
     return e != null ? context.getType(e) : null;
   }
 
   @Override
   public PsiReference getReference() {
-    final ASTNode keywordNode = getKeywordNode();
+    ASTNode keywordNode = getKeywordNode();
     if (keywordNode != null) {
       return new PyKeywordArgumentReference(this, keywordNode.getTextRange().shiftRight(-getTextRange().getStartOffset()));
     }

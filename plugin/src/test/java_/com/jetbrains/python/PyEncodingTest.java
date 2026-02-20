@@ -18,7 +18,7 @@ public abstract class PyEncodingTest extends TestCase {
     doTest("#!/usr/local/bin/python\n# coding: latin-1\nimport os, sys", "iso-8859-1");
   }
 
-  private static void doTest(final String text, final String expected) {
+  private static void doTest(String text, String expected) {
     assertEquals(expected, PythonFileType.getCharsetFromEncodingDeclaration(text));
   }
 }

@@ -52,7 +52,7 @@ public class ScopeImpl implements Scope
 	private volatile Set<String> myAugAssignments;
 	private List<PyTargetExpression> myTargetExpressions;
 
-	public ScopeImpl(final ScopeOwner flowOwner)
+	public ScopeImpl(ScopeOwner flowOwner)
 	{
 		myFlowOwner = flowOwner;
 	}
@@ -65,13 +65,13 @@ public class ScopeImpl implements Scope
 		}
 	}
 
-	public ScopeVariable getDeclaredVariable(@Nonnull final PsiElement anchorElement, @Nonnull final String name) throws DFALimitExceededException
+	public ScopeVariable getDeclaredVariable(@Nonnull PsiElement anchorElement, @Nonnull String name) throws DFALimitExceededException
 	{
 		computeScopeVariables();
 		for(int i = 0; i < myFlow.length; i++)
 		{
 			Instruction instruction = myFlow[i];
-			final PsiElement element = instruction.getElement();
+			PsiElement element = instruction.getElement();
 			if(element == anchorElement)
 			{
 				return myCachedScopeVariables.get(i).get(name);
@@ -85,14 +85,14 @@ public class ScopeImpl implements Scope
 		computeFlow();
 		if(myCachedScopeVariables == null)
 		{
-			final PyReachingDefsDfaInstance dfaInstance = new PyReachingDefsDfaInstance();
-			final PyReachingDefsSemilattice semilattice = new PyReachingDefsSemilattice();
-			final DFAMapEngine<ScopeVariable> engine = new DFAMapEngine<>(myFlow, dfaInstance, semilattice);
+			PyReachingDefsDfaInstance dfaInstance = new PyReachingDefsDfaInstance();
+			PyReachingDefsSemilattice semilattice = new PyReachingDefsSemilattice();
+			DFAMapEngine<ScopeVariable> engine = new DFAMapEngine<>(myFlow, dfaInstance, semilattice);
 			myCachedScopeVariables = engine.performDFA();
 		}
 	}
 
-	public boolean isGlobal(final String name)
+	public boolean isGlobal(String name)
 	{
 		if(myGlobals == null || myNestedScopes == null)
 		{
@@ -112,7 +112,7 @@ public class ScopeImpl implements Scope
 		return false;
 	}
 
-	public boolean isNonlocal(final String name)
+	public boolean isNonlocal(String name)
 	{
 		if(myNonlocals == null || myNestedScopes == null)
 		{
@@ -121,7 +121,7 @@ public class ScopeImpl implements Scope
 		return myNonlocals.contains(name);
 	}
 
-	private boolean isAugAssignment(final String name)
+	private boolean isAugAssignment(String name)
 	{
 		if(myAugAssignments == null || myNestedScopes == null)
 		{
@@ -130,7 +130,7 @@ public class ScopeImpl implements Scope
 		return myAugAssignments.contains(name);
 	}
 
-	public boolean containsDeclaration(final String name)
+	public boolean containsDeclaration(String name)
 	{
 		if(myNamedElements == null || myImportedNameDefiners == null)
 		{
@@ -179,7 +179,7 @@ public class ScopeImpl implements Scope
 		}
 		if(myNamedElements.containsKey(name))
 		{
-			final Collection<PsiNamedElement> elements = myNamedElements.get(name);
+			Collection<PsiNamedElement> elements = myNamedElements.get(name);
 			elements.forEach(PyPsiUtils::assertValid);
 			return elements;
 		}
@@ -187,7 +187,7 @@ public class ScopeImpl implements Scope
 		{
 			for(Scope scope : myNestedScopes)
 			{
-				final Collection<PsiNamedElement> globals = scope.getNamedElements(name, true);
+				Collection<PsiNamedElement> globals = scope.getNamedElements(name, true);
 				if(!globals.isEmpty())
 				{
 					globals.forEach(PyPsiUtils::assertValid);
@@ -206,7 +206,7 @@ public class ScopeImpl implements Scope
 		{
 			collectDeclarations();
 		}
-		final List<PsiNamedElement> results = Lists.newArrayList();
+		List<PsiNamedElement> results = Lists.newArrayList();
 		for(Collection<PsiNamedElement> elements : myNamedElements.values())
 		{
 			results.addAll(elements);
@@ -240,7 +240,7 @@ public class ScopeImpl implements Scope
 			public void visitPyTargetExpression(PyTargetExpression node)
 			{
 				targetExpressions.add(node);
-				final PsiElement parent = node.getParent();
+				PsiElement parent = node.getParent();
 				if(!node.isQualified() && !(parent instanceof PyImportElement))
 				{
 					super.visitPyTargetExpression(node);
@@ -262,7 +262,7 @@ public class ScopeImpl implements Scope
 			{
 				for(PyTargetExpression expression : node.getGlobals())
 				{
-					final String name = expression.getReferencedName();
+					String name = expression.getReferencedName();
 					globals.add(name);
 				}
 				super.visitPyGlobalStatement(node);
@@ -283,7 +283,7 @@ public class ScopeImpl implements Scope
 			{
 				for(PyParameter parameter : node.getParameterList().getParameters())
 				{
-					final PyExpression defaultValue = parameter.getDefaultValue();
+					PyExpression defaultValue = parameter.getDefaultValue();
 					if(defaultValue != null)
 					{
 						defaultValue.accept(this);
@@ -297,7 +297,7 @@ public class ScopeImpl implements Scope
 			{
 				if(node instanceof PsiNamedElement && !(node instanceof PyKeywordArgument))
 				{
-					final String name = node.getName();
+					String name = node.getName();
 					if(!namedElements.containsKey(name))
 					{
 						namedElements.put(name, Sets.<PsiNamedElement>newLinkedHashSet());
@@ -310,7 +310,7 @@ public class ScopeImpl implements Scope
 				}
 				if(node instanceof ScopeOwner)
 				{
-					final Scope scope = ControlFlowCache.getScope((ScopeOwner) node);
+					Scope scope = ControlFlowCache.getScope((ScopeOwner) node);
 					nestedScopes.add(scope);
 				}
 				else

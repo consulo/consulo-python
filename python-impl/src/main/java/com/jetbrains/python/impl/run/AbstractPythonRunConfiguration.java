@@ -87,7 +87,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 */
 	protected boolean mySkipModuleSerialization;
 
-	public AbstractPythonRunConfiguration(Project project, final ConfigurationFactory factory)
+	public AbstractPythonRunConfiguration(Project project, ConfigurationFactory factory)
 	{
 		super(project, factory);
 		getConfigurationModule().init();
@@ -110,7 +110,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 
 	public static List<Module> getValidModules(Project project)
 	{
-		final Module[] modules = ModuleManager.getInstance(project).getModules();
+		Module[] modules = ModuleManager.getInstance(project).getModules();
 		List<Module> result = Lists.newArrayList();
 		for(Module module : modules)
 		{
@@ -150,9 +150,9 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	@Override
 	public final SettingsEditor<T> getConfigurationEditor()
 	{
-		final SettingsEditor<T> runConfigurationEditor = PythonExtendedConfigurationEditor.create(createConfigurationEditor());
+		SettingsEditor<T> runConfigurationEditor = PythonExtendedConfigurationEditor.create(createConfigurationEditor());
 
-		final SettingsEditorGroup<T> group = new SettingsEditorGroup<>();
+		SettingsEditorGroup<T> group = new SettingsEditorGroup<>();
 
 		// run configuration settings tab:
 		group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), runConfigurationEditor);
@@ -221,7 +221,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 		String sdkHome = mySdkHome;
 		if(StringUtil.isEmptyOrSpaces(mySdkHome))
 		{
-			final Sdk projectJdk = PythonSdkType.findPythonSdk(getModule());
+			Sdk projectJdk = PythonSdkType.findPythonSdk(getModule());
 			if(projectJdk != null)
 			{
 				sdkHome = projectJdk.getHomePath();
@@ -270,9 +270,9 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 		mySdkHome = JDOMExternalizerUtil.readField(element, "SDK_HOME");
 		myWorkingDirectory = JDOMExternalizerUtil.readField(element, "WORKING_DIRECTORY");
 		myUseModuleSdk = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "IS_MODULE_SDK"));
-		final String addContentRoots = JDOMExternalizerUtil.readField(element, "ADD_CONTENT_ROOTS");
+		String addContentRoots = JDOMExternalizerUtil.readField(element, "ADD_CONTENT_ROOTS");
 		myAddContentRoots = addContentRoots == null || Boolean.parseBoolean(addContentRoots);
-		final String addSourceRoots = JDOMExternalizerUtil.readField(element, "ADD_SOURCE_ROOTS");
+		String addSourceRoots = JDOMExternalizerUtil.readField(element, "ADD_SOURCE_ROOTS");
 		myAddSourceRoots = addSourceRoots == null || Boolean.parseBoolean(addSourceRoots);
 		if(!mySkipModuleSerialization)
 		{
@@ -286,7 +286,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 
 	protected void readEnvs(Element element)
 	{
-		final String parentEnvs = JDOMExternalizerUtil.readField(element, "PARENT_ENVS");
+		String parentEnvs = JDOMExternalizerUtil.readField(element, "PARENT_ENVS");
 		if(parentEnvs != null)
 		{
 			setPassParentEnvs(Boolean.parseBoolean(parentEnvs));
@@ -408,7 +408,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 */
 	public void patchCommandLine(GeneralCommandLine commandLine)
 	{
-		final String interpreterPath = getInterpreterPath();
+		String interpreterPath = getInterpreterPath();
 		Sdk sdk = getSdk();
 		if(sdk != null && interpreterPath != null)
 		{
@@ -475,7 +475,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	@Override
 	public boolean excludeCompileBeforeLaunchOption()
 	{
-		final Module module = getModule();
+		Module module = getModule();
 		return module != null && ModuleUtilCore.getExtension(module, PyModuleExtension.class) != null;
 	}
 
@@ -492,7 +492,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 * @return string spec or null if spec calculation is impossible
 	 */
 	@Nullable
-	public String getTestSpec(@Nonnull final Location<?> location, @Nonnull final AbstractTestProxy failedTest)
+	public String getTestSpec(@Nonnull Location<?> location, @Nonnull AbstractTestProxy failedTest)
 	{
 		PsiElement element = location.getPsiElement();
 		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
@@ -501,7 +501,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 			pyClass = ((PyPsiLocationWithFixedClass) location).getFixedClass();
 		}
 		PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class, false);
-		final VirtualFile virtualFile = location.getVirtualFile();
+		VirtualFile virtualFile = location.getVirtualFile();
 		if(virtualFile != null)
 		{
 			String path = virtualFile.getCanonicalPath();
@@ -528,13 +528,13 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	@Nonnull
 	public String getWorkingDirectorySafe()
 	{
-		final String result = StringUtil.isEmpty(myWorkingDirectory) ? getProject().getBasePath() : myWorkingDirectory;
+		String result = StringUtil.isEmpty(myWorkingDirectory) ? getProject().getBasePath() : myWorkingDirectory;
 		if(result != null)
 		{
 			return result;
 		}
 
-		final String firstModuleRoot = getFirstModuleRoot();
+		String firstModuleRoot = getFirstModuleRoot();
 		if(firstModuleRoot != null)
 		{
 			return firstModuleRoot;
@@ -545,12 +545,12 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	@Nullable
 	private String getFirstModuleRoot()
 	{
-		final Module module = getModule();
+		Module module = getModule();
 		if(module == null)
 		{
 			return null;
 		}
-		final VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
+		VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
 		return roots.length > 0 ? roots[0].getPath() : null;
 	}
 
@@ -570,7 +570,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	/**
 	 * Adds test specs (like method, class, script, etc) to list of runner parameters.
 	 */
-	public void addTestSpecsAsParameters(@Nonnull final ParamsGroup paramsGroup, @Nonnull final List<String> testSpecs)
+	public void addTestSpecsAsParameters(@Nonnull ParamsGroup paramsGroup, @Nonnull List<String> testSpecs)
 	{
 		// By default we simply add them as arguments
 		paramsGroup.addParameters(testSpecs);

@@ -47,7 +47,7 @@ public class PyModuleFindUsagesHandler extends FindUsagesHandler
 
   protected PyModuleFindUsagesHandler(@Nonnull PsiFileSystemItem file) {
     super(file);
-    final PsiElement e = PyUtil.turnInitIntoDir(file);
+    PsiElement e = PyUtil.turnInitIntoDir(file);
     myElement = e instanceof PsiFileSystemItem ? (PsiFileSystemItem)e : file;
   }
 
@@ -68,7 +68,7 @@ public class PyModuleFindUsagesHandler extends FindUsagesHandler
                                       isSingleFile,
                                       this) {
       @Override
-      public void configureLabelComponent(@Nonnull final SimpleColoredComponent coloredComponent) {
+      public void configureLabelComponent(@Nonnull SimpleColoredComponent coloredComponent) {
         coloredComponent.append(myElement instanceof PsiDirectory ? "Package " : "Module ");
         coloredComponent.append(myElement.getName(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
       }

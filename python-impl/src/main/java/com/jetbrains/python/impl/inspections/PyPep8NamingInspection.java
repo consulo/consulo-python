@@ -108,28 +108,28 @@ public class PyPep8NamingInspection extends PyInspection {
 
         @Override
         public void visitPyAssignmentStatement(PyAssignmentStatement node) {
-            final PyFunction function = PsiTreeUtil.getParentOfType(node, PyFunction.class, true, PyClass.class);
+            PyFunction function = PsiTreeUtil.getParentOfType(node, PyFunction.class, true, PyClass.class);
             if (function == null) {
                 return;
             }
-            final Scope scope = ControlFlowCache.getScope(function);
+            Scope scope = ControlFlowCache.getScope(function);
             for (Pair<PyExpression, PyExpression> pair : node.getTargetsToValuesMapping()) {
-                final String name = pair.getFirst().getName();
+                String name = pair.getFirst().getName();
                 if (name == null || scope.isGlobal(name)) {
                     continue;
                 }
                 if (pair.getFirst() instanceof PyTargetExpression) {
-                    final PyExpression qualifier = ((PyTargetExpression) pair.getFirst()).getQualifier();
+                    PyExpression qualifier = ((PyTargetExpression) pair.getFirst()).getQualifier();
                     if (qualifier != null) {
                         return;
                     }
                 }
 
-                final PyCallExpression assignedValue = PyUtil.as(pair.getSecond(), PyCallExpression.class);
+                PyCallExpression assignedValue = PyUtil.as(pair.getSecond(), PyCallExpression.class);
                 if (assignedValue != null && assignedValue.getCallee() != null && PyNames.NAMEDTUPLE.equals(assignedValue.getCallee().getName())) {
                     return;
                 }
-                final String errorCode = "N806";
+                String errorCode = "N806";
                 if (!LOWERCASE_REGEX.matcher(name).matches() && !name.startsWith("_") && !myState.ignoredErrors.contains(errorCode)) {
                     registerAndAddRenameAndIgnoreErrorQuickFixes(pair.getFirst(), errorCode);
                 }
@@ -138,18 +138,18 @@ public class PyPep8NamingInspection extends PyInspection {
 
         @Override
         public void visitPyParameter(PyParameter node) {
-            final String name = node.getName();
+            String name = node.getName();
             if (name == null) {
                 return;
             }
 
-            final String errorCode = "N803";
+            String errorCode = "N803";
             if (!LOWERCASE_REGEX.matcher(name).matches() && !myState.ignoredErrors.contains(errorCode)) {
                 registerAndAddRenameAndIgnoreErrorQuickFixes(node, errorCode);
             }
         }
 
-        private void registerAndAddRenameAndIgnoreErrorQuickFixes(@Nullable final PsiElement node, @Nonnull final String errorCode) {
+        private void registerAndAddRenameAndIgnoreErrorQuickFixes(@Nullable PsiElement node, @Nonnull String errorCode) {
             if (getHolder() != null && getHolder().isOnTheFly()) {
                 registerProblem(node, ERROR_CODES_DESCRIPTION.get(errorCode), new PyRenameElementQuickFix(), new IgnoreErrorFix(errorCode));
             }
@@ -160,11 +160,11 @@ public class PyPep8NamingInspection extends PyInspection {
 
         @Override
         public void visitPyFunction(PyFunction function) {
-            final PyClass containingClass = function.getContainingClass();
+            PyClass containingClass = function.getContainingClass();
             if (myState.ignoreOverriddenFunctions && isOverriddenMethod(function)) {
                 return;
             }
-            final String name = function.getName();
+            String name = function.getName();
             if (name == null) {
                 return;
             }
@@ -172,9 +172,9 @@ public class PyPep8NamingInspection extends PyInspection {
                 return;
             }
             if (!LOWERCASE_REGEX.matcher(name).matches()) {
-                final ASTNode nameNode = function.getNameNode();
+                ASTNode nameNode = function.getNameNode();
                 if (nameNode != null) {
-                    final List<LocalQuickFix> quickFixes = Lists.newArrayList();
+                    List<LocalQuickFix> quickFixes = Lists.newArrayList();
                     if (getHolder() != null && getHolder().isOnTheFly()) {
                         quickFixes.add(new PyRenameElementQuickFix());
                     }
@@ -182,7 +182,7 @@ public class PyPep8NamingInspection extends PyInspection {
                     if (containingClass != null) {
                         quickFixes.add(new IgnoreBaseClassQuickFix(containingClass, myTypeEvalContext));
                     }
-                    final String errorCode = "N802";
+                    String errorCode = "N802";
                     if (!myState.ignoredErrors.contains(errorCode)) {
                         quickFixes.add(new IgnoreErrorFix(errorCode));
                         registerProblem(
@@ -200,7 +200,7 @@ public class PyPep8NamingInspection extends PyInspection {
         }
 
         private boolean isIgnoredOrHasIgnoredAncestor(@Nonnull PyClass pyClass) {
-            final Set<String> blackList = Sets.newHashSet(myState.ignoredBaseClasses);
+            Set<String> blackList = Sets.newHashSet(myState.ignoredBaseClasses);
             if (blackList.contains(pyClass.getQualifiedName())) {
                 return true;
             }
@@ -214,15 +214,15 @@ public class PyPep8NamingInspection extends PyInspection {
 
         @Override
         public void visitPyClass(PyClass node) {
-            final String name = node.getName();
+            String name = node.getName();
             if (name == null) {
                 return;
             }
-            final String errorCode = "N801";
+            String errorCode = "N801";
             if (!myState.ignoredErrors.contains(errorCode)) {
-                final boolean isLowercaseContextManagerClass = isContextManager(node) && LOWERCASE_REGEX.matcher(name).matches();
+                boolean isLowercaseContextManagerClass = isContextManager(node) && LOWERCASE_REGEX.matcher(name).matches();
                 if (!isLowercaseContextManagerClass && !MIXEDCASE_REGEX.matcher(name).matches()) {
-                    final ASTNode nameNode = node.getNameNode();
+                    ASTNode nameNode = node.getNameNode();
                     if (nameNode != null) {
                         registerAndAddRenameAndIgnoreErrorQuickFixes(nameNode.getPsi(), errorCode);
                     }
@@ -231,7 +231,7 @@ public class PyPep8NamingInspection extends PyInspection {
         }
 
         private boolean isContextManager(PyClass node) {
-            final String[] contextManagerFunctionNames = {
+            String[] contextManagerFunctionNames = {
                 PyNames.ENTER,
                 PyNames.EXIT
             };
@@ -245,36 +245,36 @@ public class PyPep8NamingInspection extends PyInspection {
 
         @Override
         public void visitPyImportElement(PyImportElement node) {
-            final String asName = node.getAsName();
-            final QualifiedName importedQName = node.getImportedQName();
+            String asName = node.getAsName();
+            QualifiedName importedQName = node.getImportedQName();
             if (importedQName == null) {
                 return;
             }
-            final String name = importedQName.getLastComponent();
+            String name = importedQName.getLastComponent();
 
             if (asName == null || name == null) {
                 return;
             }
             if (UPPERCASE_REGEX.matcher(name).matches()) {
-                final String errorCode = "N811";
+                String errorCode = "N811";
                 if (!UPPERCASE_REGEX.matcher(asName).matches() && !myState.ignoredErrors.contains(errorCode)) {
                     registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
                 }
             }
             else if (LOWERCASE_REGEX.matcher(name).matches()) {
-                final String errorCode = "N812";
+                String errorCode = "N812";
                 if (!LOWERCASE_REGEX.matcher(asName).matches() && !myState.ignoredErrors.contains(errorCode)) {
                     registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
                 }
             }
             else if (LOWERCASE_REGEX.matcher(asName).matches()) {
-                final String errorCode = "N813";
+                String errorCode = "N813";
                 if (!myState.ignoredErrors.contains(errorCode)) {
                     registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
                 }
             }
             else if (UPPERCASE_REGEX.matcher(asName).matches()) {
-                final String errorCode = "N814";
+                String errorCode = "N814";
                 if (!myState.ignoredErrors.contains(errorCode)) {
                     registerAndAddRenameAndIgnoreErrorQuickFixes(node.getAsNameElement(), errorCode);
                 }
@@ -300,11 +300,11 @@ public class PyPep8NamingInspection extends PyInspection {
         }
 
         @Override
-        public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-            final JBList list = new JBList(getBaseClassNames());
-            final Runnable updateBlackList = () ->
+        public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+            JBList list = new JBList(getBaseClassNames());
+            Runnable updateBlackList = () ->
             {
-                final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+                InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
                 profile.<PyPep8NamingInspection, PyPep8NamingInspectionState>modifyToolSettings(
                     PyPep8NamingInspection.class.getSimpleName(),
                     descriptor.getPsiElement(),
@@ -345,7 +345,7 @@ public class PyPep8NamingInspection extends PyInspection {
 
         @Override
         public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-            final PsiFile file = descriptor.getStartElement().getContainingFile();
+            PsiFile file = descriptor.getStartElement().getContainingFile();
             InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
             profile.<PyPep8NamingInspection, PyPep8NamingInspectionState>modifyToolSettings(INSPECTION_SHORT_NAME, file, (i, s) ->
             {

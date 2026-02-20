@@ -41,7 +41,7 @@ public class PythonRunner extends DefaultProgramRunner {
     return "PythonRunner";
   }
 
-  public boolean canRun(@Nonnull final String executorId, @Nonnull final RunProfile profile) {
+  public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile) {
     return executorId.equals(DefaultRunExecutor.EXECUTOR_ID) && profile instanceof AbstractPythonRunConfiguration;
   }
 
@@ -62,7 +62,7 @@ public class PythonRunner extends DefaultProgramRunner {
     }
     if (executionResult == null) return null;
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
     return contentBuilder.showRunContent(env.getContentToReuse());
   }
 }

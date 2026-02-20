@@ -37,7 +37,7 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
-  public boolean canSelect(final PsiElement e) {
+  public boolean canSelect(PsiElement e) {
     return e instanceof PyReferenceExpression || e instanceof PyKeyValueExpression || e instanceof PyKeywordArgument
       || e instanceof PyNumericLiteralExpression || e instanceof PyStringLiteralExpression || e instanceof PyNamedParameter
       || e instanceof PyStarArgument;

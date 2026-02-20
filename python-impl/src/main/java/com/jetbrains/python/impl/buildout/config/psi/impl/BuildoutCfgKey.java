@@ -24,7 +24,7 @@ import consulo.language.ast.ASTNode;
  * @author traff
  */
 public class BuildoutCfgKey extends BuildoutCfgPsiElement {
-  public BuildoutCfgKey(@Nonnull final ASTNode node) {
+  public BuildoutCfgKey(@Nonnull ASTNode node) {
     super(node);
   }
 

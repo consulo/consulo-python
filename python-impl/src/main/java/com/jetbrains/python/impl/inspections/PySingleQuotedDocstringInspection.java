@@ -60,11 +60,11 @@ public class PySingleQuotedDocstringInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyStringLiteralExpression(final PyStringLiteralExpression string) {
+        public void visitPyStringLiteralExpression(PyStringLiteralExpression string) {
             String stringText = string.getText();
             int length = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
             stringText = stringText.substring(length);
-            final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
+            PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
             if (docStringOwner != null) {
                 if (docStringOwner.getDocStringExpression() == string) {
                     if (!stringText.startsWith("\"\"\"") && !stringText.endsWith("\"\"\"")) {

@@ -16,7 +16,7 @@ public abstract class PyClassicPropertyTest extends PyTestCase {
   }
 
   protected void prepareFile() {
-    final PyFile file = (PyFile)myFixture.configureByFile("property/Classic.py");
+    PyFile file = (PyFile)myFixture.configureByFile("property/Classic.py");
     myClass = file.getTopLevelClasses().get(0);
   }
 
@@ -80,7 +80,7 @@ public abstract class PyClassicPropertyTest extends PyTestCase {
     accessor = p.getGetter();
     assertFalse(accessor.isDefined());
 
-    final PyType codeInsightType = p.getType(TypeEvalContext.codeInsightFallback(myFixture.getProject()));
+    PyType codeInsightType = p.getType(TypeEvalContext.codeInsightFallback(myFixture.getProject()));
     assertNull(codeInsightType);
 
     accessor = p.getSetter();
@@ -117,10 +117,10 @@ public abstract class PyClassicPropertyTest extends PyTestCase {
   */
 
   public void testGetProperty() {
-    final PyFunction getter = myClass.findMethodByName("v5getter", false, null);
+    PyFunction getter = myClass.findMethodByName("v5getter", false, null);
     assertNotNull(getter.getProperty());
 
-    final PyFunction setter = myClass.findMethodByName("v5setter", false, null);
+    PyFunction setter = myClass.findMethodByName("v5setter", false, null);
     assertNotNull(setter.getProperty());
   }
 

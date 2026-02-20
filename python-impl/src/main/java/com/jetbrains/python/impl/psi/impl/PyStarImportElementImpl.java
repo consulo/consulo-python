@@ -49,7 +49,7 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		super(astNode);
 	}
 
-	public PyStarImportElementImpl(final PyStarImportElementStub stub)
+	public PyStarImportElementImpl(PyStarImportElementStub stub)
 	{
 		super(stub, PyElementTypes.STAR_IMPORT_ELEMENT);
 	}
@@ -60,14 +60,14 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		if(getParent() instanceof PyFromImportStatement)
 		{
 			PyFromImportStatement fromImportStatement = (PyFromImportStatement) getParent();
-			final List<PsiElement> importedFiles = fromImportStatement.resolveImportSourceCandidates();
+			List<PsiElement> importedFiles = fromImportStatement.resolveImportSourceCandidates();
 			ChainIterable<PyElement> chain = new ChainIterable<>();
 			for(PsiElement importedFile : new HashSet<>(importedFiles))
 			{ // resolver gives lots of duplicates
-				final PsiElement source = PyUtil.turnDirIntoInit(importedFile);
+				PsiElement source = PyUtil.turnDirIntoInit(importedFile);
 				if(source instanceof PyFile)
 				{
-					final PyFile sourceFile = (PyFile) source;
+					PyFile sourceFile = (PyFile) source;
 					chain.add(filterStarImportableNames(sourceFile.iterateNames(), sourceFile));
 				}
 			}
@@ -84,7 +84,7 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 			@Override
 			public boolean apply(@Nullable PyElement input)
 			{
-				final String name = input != null ? input.getName() : null;
+				String name = input != null ? input.getName() : null;
 				return name != null && PyUtil.isStarImportableFrom(name, file);
 			}
 		});
@@ -103,26 +103,26 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		{
 			return Collections.emptyList();
 		}
-		final PsiElement parent = getParentByStub();
+		PsiElement parent = getParentByStub();
 		if(parent instanceof PyFromImportStatement)
 		{
 			PyFromImportStatement fromImportStatement = (PyFromImportStatement) parent;
-			final List<PsiElement> importedFiles = fromImportStatement.resolveImportSourceCandidates();
+			List<PsiElement> importedFiles = fromImportStatement.resolveImportSourceCandidates();
 			for(PsiElement importedFile : new HashSet<>(importedFiles))
 			{ // resolver gives lots of duplicates
-				final PsiElement source = PyUtil.turnDirIntoInit(importedFile);
+				PsiElement source = PyUtil.turnDirIntoInit(importedFile);
 				if(source instanceof PyFile)
 				{
 					PyFile sourceFile = (PyFile) source;
-					final PyModuleType moduleType = new PyModuleType(sourceFile);
-					final List<? extends RatedResolveResult> results = moduleType.resolveMember(name, null, AccessDirection.READ, PyResolveContext.defaultContext());
+					PyModuleType moduleType = new PyModuleType(sourceFile);
+					List<? extends RatedResolveResult> results = moduleType.resolveMember(name, null, AccessDirection.READ, PyResolveContext.defaultContext());
 					if(results != null && !results.isEmpty() && PyUtil.isStarImportableFrom(name, sourceFile))
 					{
 						if(results.isEmpty())
 						{
 							return Collections.emptyList();
 						}
-						final List<RatedResolveResult> res = Lists.newArrayList();
+						List<RatedResolveResult> res = Lists.newArrayList();
 						for(RatedResolveResult result : results)
 						{
 							res.add(result);

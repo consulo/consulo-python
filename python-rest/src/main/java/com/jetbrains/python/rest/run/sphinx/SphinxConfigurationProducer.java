@@ -52,7 +52,7 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
     return mySourceFile;
   }
 
-  protected RunnerAndConfigurationSettings createConfigurationByElement(final Location location, final ConfigurationContext context) {
+  protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
     PsiElement element = location.getPsiElement();
     if (!(element instanceof PsiDirectory)) return null;
 
@@ -67,16 +67,16 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
       }
     }
     if (!hasRstFile || !hasConf) return null;
-    final Project project = mySourceFile.getProject();
+    Project project = mySourceFile.getProject();
     RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
     SphinxRunConfiguration configuration = (SphinxRunConfiguration) settings.getConfiguration();
-    final VirtualFile vFile = mySourceFile.getVirtualFile();
+    VirtualFile vFile = mySourceFile.getVirtualFile();
     configuration.setInputFile(vFile.getPath());
 
     configuration.setName(((PsiDirectory)element).getName());
     if (configuration.getTask().isEmpty())
       configuration.setTask("html");
-    final VirtualFile parent = vFile.getParent();
+    VirtualFile parent = vFile.getParent();
     if (parent != null) {
       configuration.setWorkingDirectory(parent.getPath());
     }
@@ -96,10 +96,10 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
                                                                  ConfigurationContext context) {
     PsiElement element = location.getPsiElement();
     if (!(element instanceof PsiDirectory)) return null;
-    final VirtualFile vFile = ((PsiDirectory)element).getVirtualFile();
+    VirtualFile vFile = ((PsiDirectory)element).getVirtualFile();
     String path = vFile.getPath();
     for (RunnerAndConfigurationSettings configuration : existingConfigurations) {
-      final String scriptName = ((RestRunConfiguration)configuration.getConfiguration()).getInputFile();
+      String scriptName = ((RestRunConfiguration)configuration.getConfiguration()).getInputFile();
       if (FileUtil.toSystemIndependentName(scriptName).equals(FileUtil.toSystemIndependentName(path))) {
         return configuration;
       }
@@ -107,7 +107,7 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
     return null;
   }
 
-  public int compareTo(final RuntimeConfigurationProducer o) {
+  public int compareTo(RuntimeConfigurationProducer o) {
     return PREFERED;
   }
 }

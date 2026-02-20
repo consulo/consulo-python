@@ -43,7 +43,7 @@ public abstract class PyPullUpTest extends PyClassRefactoringTest {
     myFixture.checkResultByFile("SuperClass.py", "/" + baseName + "/SuperClass.after.py", true);
   }
 
-  private void doHelperTest(final String className, final String memberName, final String superClassName) {
+  private void doHelperTest(String className, String memberName, String superClassName) {
     String baseName = "/refactoring/pullup/" + getTestName(true);
     myFixture.configureByFile(baseName + ".py");
     doPullUp(className, memberName, superClassName);
@@ -51,9 +51,9 @@ public abstract class PyPullUpTest extends PyClassRefactoringTest {
   }
 
   private void doPullUp(String className, String memberName, String superClassName) {
-    final PyClass clazz = findClass(className);
-    final PyElement member = findMember(className, memberName);
-    final PyClass superClass = findClass(superClassName);
+    PyClass clazz = findClass(className);
+    PyElement member = findMember(className, memberName);
+    PyClass superClass = findClass(superClassName);
   //  PyPullUpHelper.pullUp(clazz, Collections.singleton(new PyMemberInfo(member)), superClass);
   }
 }

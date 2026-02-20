@@ -45,7 +45,7 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 		}
 		if(root != null)
 		{
-			final File[] dirs = new File(root).listFiles();
+			File[] dirs = new File(root).listFiles();
 			if(dirs != null)
 			{
 				for(File dir : dirs)
@@ -69,7 +69,7 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 	@Override
 	public boolean isValidSdkPath(@Nonnull File file)
 	{
-		final String name = file.getName();
+		String name = file.getName();
 		return name.equals("ipy.exe") || name.equals("ipy64.exe");
 	}
 

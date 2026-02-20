@@ -42,7 +42,7 @@ public class MembersViewInitializationInfo
 	 * @param memberInfoModel model to be used in members panel
 	 * @param memberInfos     members to displau
 	 */
-	public MembersViewInitializationInfo(@Nonnull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel, @Nonnull final Collection<PyMemberInfo<PyElement>> memberInfos)
+	public MembersViewInitializationInfo(@Nonnull MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel, @Nonnull Collection<PyMemberInfo<PyElement>> memberInfos)
 	{
 		myMemberInfos = new ArrayList<>(memberInfos);
 		myMemberInfoModel = memberInfoModel;

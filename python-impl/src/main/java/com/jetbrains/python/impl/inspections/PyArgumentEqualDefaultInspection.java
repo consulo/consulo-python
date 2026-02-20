@@ -72,7 +72,7 @@ public class PyArgumentEqualDefaultInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyCallExpression(final PyCallExpression node) {
+        public void visitPyCallExpression(PyCallExpression node) {
             PyArgumentList list = node.getArgumentList();
             if (list == null) {
                 return;
@@ -85,7 +85,7 @@ public class PyArgumentEqualDefaultInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyDecoratorList(final PyDecoratorList node) {
+        public void visitPyDecoratorList(PyDecoratorList node) {
             PyDecorator[] decorators = node.getDecorators();
 
             for (PyDecorator decorator : decorators) {
@@ -97,14 +97,14 @@ public class PyArgumentEqualDefaultInspection extends PyInspection {
         }
 
         private static boolean hasSpecialCasedDefaults(PyCallable callable, PsiElement anchor) {
-            final String name = callable.getName();
-            final PyBuiltinCache cache = PyBuiltinCache.getInstance(anchor);
+            String name = callable.getName();
+            PyBuiltinCache cache = PyBuiltinCache.getInstance(anchor);
             if ("getattr".equals(name) && cache.isBuiltin(callable)) {
                 return true;
             }
             else if ("get".equals(name) || "pop".equals(name)) {
-                final PyFunction method = callable.asMethod();
-                final PyClassType dictType = cache.getDictType();
+                PyFunction method = callable.asMethod();
+                PyClassType dictType = cache.getDictType();
                 if (method != null && dictType != null && method.getContainingClass() == dictType.getPyClass()) {
                     return true;
                 }
@@ -113,7 +113,7 @@ public class PyArgumentEqualDefaultInspection extends PyInspection {
         }
 
         private void checkArguments(PyCallExpression callExpr, PyExpression[] arguments) {
-            final PyCallExpression.PyArgumentsMapping mapping = callExpr.mapArguments(getResolveContext());
+            PyCallExpression.PyArgumentsMapping mapping = callExpr.mapArguments(getResolveContext());
             Set<PyExpression> problemElements = new HashSet<>();
             for (Map.Entry<PyExpression, PyNamedParameter> e : mapping.getMappedParameters().entrySet()) {
                 PyExpression defaultValue = e.getValue().getDefaultValue();
@@ -182,9 +182,9 @@ public class PyArgumentEqualDefaultInspection extends PyInspection {
         }
 
         private static boolean isBothInstanceOf(
-            @Nonnull final PyExpression key,
-            @Nonnull final PyExpression defaultValue,
-            @Nonnull final Class clazz
+            @Nonnull PyExpression key,
+            @Nonnull PyExpression defaultValue,
+            @Nonnull Class clazz
         ) {
             return clazz.isInstance(key) && clazz.isInstance(defaultValue);
         }

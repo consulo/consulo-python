@@ -82,8 +82,8 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   @Nullable
   @Override
   public List<String> getAllRepositories() {
-    final PyPackageService packageService = PyPackageService.getInstance();
-    final List<String> result = new ArrayList<>();
+    PyPackageService packageService = PyPackageService.getInstance();
+    List<String> result = new ArrayList<>();
     if (!packageService.PYPI_REMOVED) {
       result.add(PyPIPackageUtil.PYPI_LIST_URL);
     }
@@ -104,17 +104,17 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   @Nonnull
   @Override
   public List<RepoPackage> getAllPackages() throws IOException {
-    final Map<String, String> packageToVersionMap = PyPIPackageUtil.INSTANCE.loadAndGetPackages();
-    final List<RepoPackage> packages = versionMapToPackageList(packageToVersionMap);
+    Map<String, String> packageToVersionMap = PyPIPackageUtil.INSTANCE.loadAndGetPackages();
+    List<RepoPackage> packages = versionMapToPackageList(packageToVersionMap);
     packages.addAll(PyPIPackageUtil.INSTANCE.getAdditionalPackages());
     return packages;
   }
 
   @Nonnull
   protected static List<RepoPackage> versionMapToPackageList(@Nonnull Map<String, String> packageToVersionMap) {
-    final boolean customRepoConfigured = !PyPackageService.getInstance().additionalRepositories.isEmpty();
-    final String url = customRepoConfigured ? PyPIPackageUtil.PYPI_LIST_URL : "";
-    final List<RepoPackage> packages = new ArrayList<>();
+    boolean customRepoConfigured = !PyPackageService.getInstance().additionalRepositories.isEmpty();
+    String url = customRepoConfigured ? PyPIPackageUtil.PYPI_LIST_URL : "";
+    List<RepoPackage> packages = new ArrayList<>();
     for (Map.Entry<String, String> entry : packageToVersionMap.entrySet()) {
       packages.add(new RepoPackage(entry.getKey(), url, entry.getValue()));
     }
@@ -163,8 +163,8 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   @Override
   public Collection<InstalledPackage> getInstalledPackages() throws IOException {
 
-    final PyPackageManager manager = PyPackageManager.getInstance(mySdk);
-    final List<PyPackage> packages;
+    PyPackageManager manager = PyPackageManager.getInstance(mySdk);
+    List<PyPackage> packages;
     try {
       packages = new ArrayList<>(manager.refreshAndGetPackages(true));
     }
@@ -183,8 +183,8 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
                              @Nonnull Listener listener,
                              boolean installToUser) {
     final String packageName = repoPackage.getName();
-    final String repository = PyPIPackageUtil.isPyPIRepository(repoPackage.getRepoUrl()) ? null : repoPackage.getRepoUrl();
-    final List<String> extraArgs = new ArrayList<>();
+    String repository = PyPIPackageUtil.isPyPIRepository(repoPackage.getRepoUrl()) ? null : repoPackage.getRepoUrl();
+    List<String> extraArgs = new ArrayList<>();
     if (installToUser) {
       extraArgs.add(PyPackageManager.USE_USER_SITE);
     }
@@ -199,7 +199,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
     if (forceUpgrade) {
       extraArgs.add("-U");
     }
-    final PyRequirement req;
+    PyRequirement req;
     if (version != null) {
       req = new PyRequirement(packageName, version);
     }
@@ -207,7 +207,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
       req = new PyRequirement(packageName);
     }
 
-    final PyPackageManagerUI ui = new PyPackageManagerUI(myProject, mySdk, new PyPackageManagerUI.Listener() {
+    PyPackageManagerUI ui = new PyPackageManagerUI(myProject, mySdk, new PyPackageManagerUI.Listener() {
       @Override
       public void started() {
         listener.operationStarted(packageName);
@@ -233,7 +233,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   public void uninstallPackages(@Nonnull List<InstalledPackage> installedPackages,
                                 @Nonnull Listener listener) {
     final String packageName = installedPackages.size() == 1 ? installedPackages.get(0).getName() : null;
-    final PyPackageManagerUI ui = new PyPackageManagerUI(myProject, mySdk, new PyPackageManagerUI.Listener() {
+    PyPackageManagerUI ui = new PyPackageManagerUI(myProject, mySdk, new PyPackageManagerUI.Listener() {
       @Override
       public void started() {
         listener.operationStarted(packageName);
@@ -245,7 +245,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
       }
     });
 
-    final List<PyPackage> pyPackages = new ArrayList<>();
+    List<PyPackage> pyPackages = new ArrayList<>();
     for (InstalledPackage aPackage : installedPackages) {
       if (aPackage instanceof PyPackage) {
         pyPackages.add((PyPackage)aPackage);
@@ -267,27 +267,27 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   }
 
   private static String formatPackageInfo(@Nonnull PackageDetails.Info info) {
-    final StringBuilder stringBuilder = new StringBuilder(TEXT_PREFIX);
-    final String description = info.getSummary();
+    StringBuilder stringBuilder = new StringBuilder(TEXT_PREFIX);
+    String description = info.getSummary();
     if (StringUtil.isNotEmpty(description)) {
       stringBuilder.append(description).append("<br/>");
     }
-    final String version = info.getVersion();
+    String version = info.getVersion();
     if (StringUtil.isNotEmpty(version)) {
       stringBuilder.append("<h4>Version</h4>");
       stringBuilder.append(version);
     }
-    final String author = info.getAuthor();
+    String author = info.getAuthor();
     if (StringUtil.isNotEmpty(author)) {
       stringBuilder.append("<h4>Author</h4>");
       stringBuilder.append(author).append("<br/><br/>");
     }
-    final String authorEmail = info.getAuthorEmail();
+    String authorEmail = info.getAuthorEmail();
     if (StringUtil.isNotEmpty(authorEmail)) {
       stringBuilder.append("<br/>");
       stringBuilder.append(composeHref("mailto:" + authorEmail));
     }
-    final String homePage = info.getHomePage();
+    String homePage = info.getHomePage();
     if (StringUtil.isNotEmpty(homePage)) {
       stringBuilder.append("<br/>");
       stringBuilder.append(composeHref(homePage));
@@ -318,12 +318,12 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   @Nonnull
   private static ErrorDescription createDescription(@Nonnull ExecutionException e, @Nullable Sdk sdk) {
     if (e instanceof PyExecutionException) {
-      final PyExecutionException ee = (PyExecutionException)e;
-      final String stdoutCause = findErrorCause(ee.getStdout());
-      final String stderrCause = findErrorCause(ee.getStderr());
-      final String cause = stdoutCause != null ? stdoutCause : stderrCause;
-      final String message = cause != null ? cause : ee.getMessage();
-      final String command = ee.getCommand() + " " + StringUtil.join(ee.getArgs(), " ");
+      PyExecutionException ee = (PyExecutionException)e;
+      String stdoutCause = findErrorCause(ee.getStdout());
+      String stderrCause = findErrorCause(ee.getStderr());
+      String cause = stdoutCause != null ? stdoutCause : stderrCause;
+      String message = cause != null ? cause : ee.getMessage();
+      String command = ee.getCommand() + " " + StringUtil.join(ee.getArgs(), " ");
       return new ErrorDescription(message, command, ee.getStdout() + "\n" + ee.getStderr(), findErrorSolution(ee, cause, sdk));
     }
     else {
@@ -335,7 +335,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   private static String findErrorSolution(@Nonnull PyExecutionException e, @Nullable String cause, @Nullable Sdk sdk) {
     if (cause != null) {
       if (StringUtil.containsIgnoreCase(cause, "SyntaxError")) {
-        final LanguageLevel languageLevel = PythonSdkType.getLanguageLevelForSdk(sdk);
+        LanguageLevel languageLevel = PythonSdkType.getLanguageLevelForSdk(sdk);
         return "Make sure that you use a version of Python supported by this package. Currently you are using Python " +
           languageLevel + ".";
       }
@@ -359,9 +359,9 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
 
   @Nullable
   private static String findErrorCause(@Nonnull String output) {
-    final Matcher m = PATTERN_ERROR_LINE.matcher(output);
+    Matcher m = PATTERN_ERROR_LINE.matcher(output);
     if (m.find()) {
-      final String result = m.group();
+      String result = m.group();
       return result != null ? result.trim() : null;
     }
     return null;
@@ -389,7 +389,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
     myExecutorService.submit(() -> {
       try {
         PyPIPackageUtil.INSTANCE.loadAndGetPackages();
-        final String version = PyPIPackageUtil.INSTANCE.fetchLatestPackageVersion(pkg.getName());
+        String version = PyPIPackageUtil.INSTANCE.fetchLatestPackageVersion(pkg.getName());
         result.setDone(StringUtil.notNullize(version));
       }
       catch (IOException e) {

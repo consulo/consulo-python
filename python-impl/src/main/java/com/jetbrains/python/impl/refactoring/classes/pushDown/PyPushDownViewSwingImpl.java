@@ -31,7 +31,7 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersVi
  */
 public class PyPushDownViewSwingImpl extends MembersBasedViewSwingImpl<PyPushDownPresenter, MembersViewInitializationInfo> implements PyPushDownView
 {
-	public PyPushDownViewSwingImpl(@Nonnull final PyClass classUnderRefactoring, @Nonnull final Project project, @Nonnull final PyPushDownPresenter presenter)
+	public PyPushDownViewSwingImpl(@Nonnull PyClass classUnderRefactoring, @Nonnull Project project, @Nonnull PyPushDownPresenter presenter)
 	{
 		super(project, presenter, RefactoringBundle.message("push.members.from.0.down.label", classUnderRefactoring.getName()), false);
 

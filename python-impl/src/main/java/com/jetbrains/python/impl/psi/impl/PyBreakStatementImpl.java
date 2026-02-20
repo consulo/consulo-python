@@ -45,10 +45,10 @@ public class PyBreakStatementImpl extends PyElementImpl implements PyBreakStatem
 
   @Nullable
   private static PyLoopStatement getLoopStatement(@Nonnull PsiElement element) {
-    final PyLoopStatement loop = PsiTreeUtil.getParentOfType(element, PyLoopStatement.class);
+    PyLoopStatement loop = PsiTreeUtil.getParentOfType(element, PyLoopStatement.class);
     if (loop instanceof PyStatementWithElse) {
-      final PyStatementWithElse stmt = (PyStatementWithElse)loop;
-      final PyElsePart elsePart = stmt.getElsePart();
+      PyStatementWithElse stmt = (PyStatementWithElse)loop;
+      PyElsePart elsePart = stmt.getElsePart();
       if (PsiTreeUtil.isAncestor(elsePart, element, true)) {
         return getLoopStatement(loop);
       }

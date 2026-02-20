@@ -41,12 +41,12 @@ public class PyYieldFromIntention extends BaseIntentionAction {
     @Override
     public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
         if (LanguageLevel.forElement(file).isAtLeast(LanguageLevel.PYTHON33)) {
-            final PyForStatement forLoop = findForStatementAtCaret(editor, file);
+            PyForStatement forLoop = findForStatementAtCaret(editor, file);
             if (forLoop != null) {
-                final PyTargetExpression forTarget = findSingleForLoopTarget(forLoop);
-                final PyReferenceExpression yieldValue = findSingleYieldValue(forLoop);
+                PyTargetExpression forTarget = findSingleForLoopTarget(forLoop);
+                PyReferenceExpression yieldValue = findSingleYieldValue(forLoop);
                 if (forTarget != null && yieldValue != null) {
-                    final String targetName = forTarget.getName();
+                    String targetName = forTarget.getName();
                     if (targetName != null && targetName.equals(yieldValue.getName())) {
                         return true;
                     }
@@ -58,17 +58,17 @@ public class PyYieldFromIntention extends BaseIntentionAction {
 
     @Override
     public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PyForStatement forLoop = findForStatementAtCaret(editor, file);
+        PyForStatement forLoop = findForStatementAtCaret(editor, file);
         if (forLoop != null) {
-            final PyExpression source = forLoop.getForPart().getSource();
+            PyExpression source = forLoop.getForPart().getSource();
             if (source != null) {
-                final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-                final String text = "yield from foo";
-                final PyExpressionStatement exprStmt =
+                PyElementGenerator generator = PyElementGenerator.getInstance(project);
+                String text = "yield from foo";
+                PyExpressionStatement exprStmt =
                     generator.createFromText(LanguageLevel.forElement(file), PyExpressionStatement.class, text);
-                final PyExpression expr = exprStmt.getExpression();
+                PyExpression expr = exprStmt.getExpression();
                 if (expr instanceof PyYieldExpression) {
-                    final PyExpression yieldValue = ((PyYieldExpression) expr).getExpression();
+                    PyExpression yieldValue = ((PyYieldExpression) expr).getExpression();
                     if (yieldValue != null) {
                         yieldValue.replace(source);
                         forLoop.replace(exprStmt);
@@ -80,14 +80,14 @@ public class PyYieldFromIntention extends BaseIntentionAction {
 
     @Nullable
     private static PyForStatement findForStatementAtCaret(@Nonnull Editor editor, @Nonnull PsiFile file) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         return PsiTreeUtil.getParentOfType(elementAtCaret, PyForStatement.class);
     }
 
     @Nullable
     private static PyTargetExpression findSingleForLoopTarget(@Nonnull PyForStatement forLoop) {
-        final PyForPart forPart = forLoop.getForPart();
-        final PyExpression forTarget = forPart.getTarget();
+        PyForPart forPart = forLoop.getForPart();
+        PyExpression forTarget = forPart.getTarget();
         if (forTarget instanceof PyTargetExpression) {
             return (PyTargetExpression) forTarget;
         }
@@ -96,17 +96,17 @@ public class PyYieldFromIntention extends BaseIntentionAction {
 
     @Nullable
     private static PyReferenceExpression findSingleYieldValue(@Nonnull PyForStatement forLoop) {
-        final PyForPart forPart = forLoop.getForPart();
-        final PyStatementList stmtList = forPart.getStatementList();
+        PyForPart forPart = forLoop.getForPart();
+        PyStatementList stmtList = forPart.getStatementList();
         if (stmtList != null && forLoop.getElsePart() == null) {
-            final PyStatement[] statements = stmtList.getStatements();
+            PyStatement[] statements = stmtList.getStatements();
             if (statements.length == 1) {
-                final PyStatement firstStmt = statements[0];
+                PyStatement firstStmt = statements[0];
                 if (firstStmt instanceof PyExpressionStatement) {
-                    final PyExpression firstExpr = ((PyExpressionStatement) firstStmt).getExpression();
+                    PyExpression firstExpr = ((PyExpressionStatement) firstStmt).getExpression();
                     if (firstExpr instanceof PyYieldExpression) {
-                        final PyYieldExpression yieldExpr = (PyYieldExpression) firstExpr;
-                        final PyExpression yieldValue = yieldExpr.getExpression();
+                        PyYieldExpression yieldExpr = (PyYieldExpression) firstExpr;
+                        PyExpression yieldValue = yieldExpr.getExpression();
                         if (yieldValue instanceof PyReferenceExpression) {
                             return (PyReferenceExpression) yieldValue;
                         }

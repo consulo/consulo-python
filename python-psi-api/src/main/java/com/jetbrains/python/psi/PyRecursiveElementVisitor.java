@@ -22,7 +22,7 @@ import consulo.language.psi.PsiElement;
  * @author yole
  */
 public class PyRecursiveElementVisitor extends PyElementVisitor {
-  public void visitElement(final PsiElement element) {
+  public void visitElement(PsiElement element) {
     element.acceptChildren(this);
   }
 }

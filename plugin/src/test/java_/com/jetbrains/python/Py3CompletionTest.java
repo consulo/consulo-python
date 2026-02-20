@@ -24,10 +24,10 @@ public abstract class Py3CompletionTest extends PyTestCase {
   }
 
   public void testNamedTuple() {
-    final String testName = "completion/" + getTestName(true);
+    String testName = "completion/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     myFixture.completeBasic();
-    final List<String> strings = myFixture.getLookupElementStrings();
+    List<String> strings = myFixture.getLookupElementStrings();
     assertNotNull(strings);
     assertTrue(strings.contains("lat"));
     assertTrue(strings.contains("long"));
@@ -39,7 +39,7 @@ public abstract class Py3CompletionTest extends PyTestCase {
 
   private void doTest() {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
-    final String testName = "completion/" + getTestName(true);
+    String testName = "completion/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     myFixture.completeBasic();
     myFixture.checkResultByFile(testName + ".after.py");

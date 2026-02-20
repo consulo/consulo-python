@@ -43,17 +43,17 @@ public class PyChangeBaseClassQuickFix implements LocalQuickFix {
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
-        final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
         assert pyClass != null;
 
-        final PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
+        PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
         if (expressionList != null && expressionList.getArguments().length != 0) {
-            final PyExpression argument = expressionList.getArguments()[0];
-            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(argument);
+            PyExpression argument = expressionList.getArguments()[0];
+            TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(argument);
             builder.replaceElement(argument, argument.getText());
-            final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+            VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
             if (virtualFile != null) {
-                final Editor editor = FileEditorManager.getInstance(project)
+                Editor editor = FileEditorManager.getInstance(project)
                     .openTextEditor(OpenFileDescriptorFactory.getInstance(project).builder(virtualFile).build(), true);
                 assert editor != null;
                 builder.run(editor, false);

@@ -70,8 +70,8 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 		}
 		if(myElement instanceof PyStringLiteralExpression && element instanceof PyClass)
 		{
-			final PyStringLiteralExpression e = (PyStringLiteralExpression) myElement;
-			final PyClass cls = (PyClass) element;
+			PyStringLiteralExpression e = (PyStringLiteralExpression) myElement;
+			PyClass cls = (PyClass) element;
 			QualifiedName qname = QualifiedNameFinder.findCanonicalImportPath(cls, element);
 			if(qname != null)
 			{
@@ -111,7 +111,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 	public ResolveResult[] multiResolve(boolean incompleteCode)
 	{
 		PsiElement result = null;
-		final ResolveResultList results = new ResolveResultList();
+		ResolveResultList results = new ResolveResultList();
 		if(myType instanceof PyClassType)
 		{
 			result = ((PyClassType) myType).getPyClass();
@@ -149,24 +149,24 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 	@Nonnull
 	public List<Object> collectTypeVariants()
 	{
-		final PsiFile file = myElement.getContainingFile();
-		final ArrayList<Object> variants = Lists.<Object>newArrayList("str", "int", "basestring", "bool", "buffer", "bytearray", "complex", "dict", "tuple", "enumerate", "file", "float",
+		PsiFile file = myElement.getContainingFile();
+		ArrayList<Object> variants = Lists.<Object>newArrayList("str", "int", "basestring", "bool", "buffer", "bytearray", "complex", "dict", "tuple", "enumerate", "file", "float",
 				"frozenset", "list", "long", "set", "object");
 		if(file instanceof PyFile)
 		{
 			variants.addAll(((PyFile) file).getTopLevelClasses());
-			final List<PyFromImportStatement> fromImports = ((PyFile) file).getFromImports();
+			List<PyFromImportStatement> fromImports = ((PyFile) file).getFromImports();
 			for(PyFromImportStatement fromImportStatement : fromImports)
 			{
-				final PyImportElement[] elements = fromImportStatement.getImportElements();
+				PyImportElement[] elements = fromImportStatement.getImportElements();
 				for(PyImportElement element : elements)
 				{
-					final PyReferenceExpression referenceExpression = element.getImportReferenceExpression();
+					PyReferenceExpression referenceExpression = element.getImportReferenceExpression();
 					if(referenceExpression == null)
 					{
 						continue;
 					}
-					final PyType type = TypeEvalContext.userInitiated(file.getProject(), CompletionUtilCore.getOriginalOrSelf(file)).getType(referenceExpression);
+					PyType type = TypeEvalContext.userInitiated(file.getProject(), CompletionUtilCore.getOriginalOrSelf(file)).getType(referenceExpression);
 					if(type instanceof PyClassType)
 					{
 						variants.add(((PyClassType) type).getPyClass());

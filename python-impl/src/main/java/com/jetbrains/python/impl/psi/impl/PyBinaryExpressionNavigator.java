@@ -29,8 +29,8 @@ public class PyBinaryExpressionNavigator {
   }
 
   @Nullable
-  public static PyBinaryExpression getBinaryExpressionByOperand(final PsiElement element) {
-    final PyBinaryExpression expression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);
+  public static PyBinaryExpression getBinaryExpressionByOperand(PsiElement element) {
+    PyBinaryExpression expression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);
     if (expression == null){
       return null;
     }

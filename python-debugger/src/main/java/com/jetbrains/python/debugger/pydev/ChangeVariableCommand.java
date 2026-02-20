@@ -12,8 +12,8 @@ public class ChangeVariableCommand extends AbstractFrameCommand {
   private PyDebugValue myNewValue = null;
   private final IPyDebugProcess myDebugProcess;
 
-  public ChangeVariableCommand(final RemoteDebugger debugger, final String threadId, final String frameId, final String variableName,
-                               final String value) {
+  public ChangeVariableCommand(RemoteDebugger debugger, String threadId, String frameId, String variableName,
+                               String value) {
     super(debugger, CHANGE_VARIABLE, threadId, frameId);
     myVariableName = variableName;
     myValue = value;
@@ -32,7 +32,7 @@ public class ChangeVariableCommand extends AbstractFrameCommand {
     return true;
   }
 
-  protected void processResponse(final ProtocolFrame response) throws PyDebuggerException {
+  protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
     super.processResponse(response);
     myNewValue = ProtocolParser.parseValue(response.getPayload(), myDebugProcess).setName(myVariableName);
   }

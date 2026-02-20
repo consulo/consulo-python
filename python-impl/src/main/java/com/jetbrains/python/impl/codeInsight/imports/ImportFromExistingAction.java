@@ -100,7 +100,7 @@ public class ImportFromExistingAction implements QuestionAction
 		{
 			PyPsiUtils.assertValid(item.getImportable());
 			PyPsiUtils.assertValid(item.getFile());
-			final PyImportElement element = item.getImportElement();
+			PyImportElement element = item.getImportElement();
 			if(element != null)
 			{
 				PyPsiUtils.assertValid(element);
@@ -126,14 +126,14 @@ public class ImportFromExistingAction implements QuestionAction
 	{
 		// GUI part
 		ImportCandidateHolder[] items = mySources.toArray(new ImportCandidateHolder[mySources.size()]); // silly JList can't handle modern collections
-		final JList list = new JBList(items);
+		JList list = new JBList(items);
 		list.setCellRenderer(new CellRenderer(myName));
 
-		final Runnable runnable = () -> {
-			final Object selected = list.getSelectedValue();
+		Runnable runnable = () -> {
+			Object selected = list.getSelectedValue();
 			if(selected instanceof ImportCandidateHolder)
 			{
-				final ImportCandidateHolder item = (ImportCandidateHolder) selected;
+				ImportCandidateHolder item = (ImportCandidateHolder) selected;
 				PsiDocumentManager.getInstance(myTarget.getProject()).commitAllDocuments();
 				doWriteAction(item);
 			}
@@ -142,7 +142,7 @@ public class ImportFromExistingAction implements QuestionAction
 		DataManager.getInstance().getDataContextFromFocus().doWhenDone(dataContext -> new PopupChooserBuilder(list).setTitle(myUseQualifiedImport ? PyBundle.message("ACT.qualify.with.module") : PyBundle.message("ACT.from.some.module.import")).setItemChoosenCallback(runnable).setFilteringEnabled(o -> ((ImportCandidateHolder) o).getPresentableText(myName)).createPopup().showInBestPositionFor(dataContext));
 	}
 
-	private void doIt(final ImportCandidateHolder item)
+	private void doIt(ImportCandidateHolder item)
 	{
 		PyImportElement src = item.getImportElement();
 		if(src != null)
@@ -157,8 +157,8 @@ public class ImportFromExistingAction implements QuestionAction
 
 	private void addImportStatement(ImportCandidateHolder item)
 	{
-		final Project project = myTarget.getProject();
-		final PyElementGenerator gen = PyElementGenerator.getInstance(project);
+		Project project = myTarget.getProject();
+		PyElementGenerator gen = PyElementGenerator.getInstance(project);
 		AddImportHelper.ImportPriority priority = AddImportHelper.getImportPriority(myTarget, item.getFile());
 		PsiFile file = myTarget.getContainingFile();
 		InjectedLanguageManager manager = InjectedLanguageManager.getInstance(project);
@@ -180,8 +180,8 @@ public class ImportFromExistingAction implements QuestionAction
 		}
 		else
 		{
-			final QualifiedName path = item.getPath();
-			final String qualifiedName = path != null ? path.toString() : "";
+			QualifiedName path = item.getPath();
+			String qualifiedName = path != null ? path.toString() : "";
 			if(myUseQualifiedImport)
 			{
 				String nameToImport = qualifiedName;
@@ -216,7 +216,7 @@ public class ImportFromExistingAction implements QuestionAction
 
 	private void addToExistingImport(PyImportElement src)
 	{
-		final PyElementGenerator gen = PyElementGenerator.getInstance(myTarget.getProject());
+		PyElementGenerator gen = PyElementGenerator.getInstance(myTarget.getProject());
 		// did user choose 'import' or 'from import'?
 		PsiElement parent = src.getParent();
 		if(parent instanceof PyFromImportStatement)

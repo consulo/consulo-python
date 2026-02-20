@@ -68,13 +68,13 @@ public class PythonUnitTestUtil
 
 	public static boolean isUnitTestCaseFunction(PyFunction function)
 	{
-		final String name = function.getName();
+		String name = function.getName();
 		if(name == null || !name.startsWith(TESTCASE_METHOD_PREFIX))
 		{
 			return false;
 		}
 
-		final PyClass containingClass = function.getContainingClass();
+		PyClass containingClass = function.getContainingClass();
 		if(containingClass == null || !isUnitTestCaseClass(containingClass, PYTHON_TEST_QUALIFIED_CLASSES))
 		{
 			return false;
@@ -119,7 +119,7 @@ public class PythonUnitTestUtil
 		return false;
 	}
 
-	public static List<PyStatement> getTestCaseClassesFromFile(PsiFile file, @Nullable final TypeEvalContext context)
+	public static List<PyStatement> getTestCaseClassesFromFile(PsiFile file, @Nullable TypeEvalContext context)
 	{
 		if(file instanceof PyFile)
 		{
@@ -128,7 +128,7 @@ public class PythonUnitTestUtil
 		return Collections.emptyList();
 	}
 
-	public static List<PyStatement> getTestCaseClassesFromFile(PyFile file, Set<String> testQualifiedNames, @Nullable final TypeEvalContext context)
+	public static List<PyStatement> getTestCaseClassesFromFile(PyFile file, Set<String> testQualifiedNames, @Nullable TypeEvalContext context)
 	{
 		List<PyStatement> result = Lists.newArrayList();
 		for(PyClass cls : file.getTopLevelClasses())
@@ -155,7 +155,7 @@ public class PythonUnitTestUtil
 
 	public static boolean isTestCaseFunction(PyFunction function, boolean checkAssert)
 	{
-		final String name = function.getName();
+		String name = function.getName();
 		if(name == null || !TEST_MATCH_PATTERN.matcher(name).find())
 		{
 			return false;
@@ -203,14 +203,14 @@ public class PythonUnitTestUtil
 		return false;
 	}
 
-	public static boolean isTestCaseClass(@Nonnull PyClass cls, @Nullable final TypeEvalContext context)
+	public static boolean isTestCaseClass(@Nonnull PyClass cls, @Nullable TypeEvalContext context)
 	{
 		return isTestCaseClassWithContext(cls, PYTHON_TEST_QUALIFIED_CLASSES, context);
 	}
 
 	public static boolean isTestCaseClassWithContext(@Nonnull PyClass cls, Set<String> testQualifiedNames, @Nullable TypeEvalContext context)
 	{
-		final TypeEvalContext contextToUse = (context != null ? context : TypeEvalContext.codeInsightFallback(cls.getProject()));
+		TypeEvalContext contextToUse = (context != null ? context : TypeEvalContext.codeInsightFallback(cls.getProject()));
 		for(PyClassLikeType type : cls.getAncestorTypes(contextToUse))
 		{
 			if(type != null)
@@ -240,21 +240,21 @@ public class PythonUnitTestUtil
 		return false;
 	}
 
-	public static List<Location> findLocations(@Nonnull final Project project, @Nonnull String fileName, @Nullable String className, @Nullable String methodName)
+	public static List<Location> findLocations(@Nonnull Project project, @Nonnull String fileName, @Nullable String className, @Nullable String methodName)
 	{
 		if(fileName.contains("%"))
 		{
 			fileName = fileName.substring(0, fileName.lastIndexOf("%"));
 		}
-		final List<Location> locations = new ArrayList<>();
+		List<Location> locations = new ArrayList<>();
 		if(methodName == null && className == null)
 		{
-			final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(fileName);
+			VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(fileName);
 			if(virtualFile == null)
 			{
 				return locations;
 			}
-			final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+			PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
 			if(psiFile != null)
 			{
 				locations.add(new PsiLocation<>(project, psiFile));
@@ -267,10 +267,10 @@ public class PythonUnitTestUtil
 			{
 				ProgressManager.checkCanceled();
 
-				final PsiFile containingFile = cls.getContainingFile();
-				final VirtualFile virtualFile = containingFile.getVirtualFile();
-				final String clsFileName = virtualFile == null ? containingFile.getName() : virtualFile.getPath();
-				final String clsFileNameWithoutExt = FileUtil.getNameWithoutExtension(clsFileName);
+				PsiFile containingFile = cls.getContainingFile();
+				VirtualFile virtualFile = containingFile.getVirtualFile();
+				String clsFileName = virtualFile == null ? containingFile.getName() : virtualFile.getPath();
+				String clsFileNameWithoutExt = FileUtil.getNameWithoutExtension(clsFileName);
 				if(!clsFileNameWithoutExt.endsWith(fileName) && !fileName.equals(clsFileName))
 				{
 					continue;
@@ -281,7 +281,7 @@ public class PythonUnitTestUtil
 				}
 				else
 				{
-					final PyFunction method = cls.findMethodByName(methodName, true, null);
+					PyFunction method = cls.findMethodByName(methodName, true, null);
 					if(method == null)
 					{
 						continue;
@@ -298,10 +298,10 @@ public class PythonUnitTestUtil
 				ProgressManager.checkCanceled();
 				if(function.getContainingClass() == null)
 				{
-					final PsiFile containingFile = function.getContainingFile();
-					final VirtualFile virtualFile = containingFile.getVirtualFile();
-					final String clsFileName = virtualFile == null ? containingFile.getName() : virtualFile.getPath();
-					final String clsFileNameWithoutExt = FileUtil.getNameWithoutExtension(clsFileName);
+					PsiFile containingFile = function.getContainingFile();
+					VirtualFile virtualFile = containingFile.getVirtualFile();
+					String clsFileName = virtualFile == null ? containingFile.getName() : virtualFile.getPath();
+					String clsFileNameWithoutExt = FileUtil.getNameWithoutExtension(clsFileName);
 					if(!clsFileNameWithoutExt.endsWith(fileName))
 					{
 						continue;

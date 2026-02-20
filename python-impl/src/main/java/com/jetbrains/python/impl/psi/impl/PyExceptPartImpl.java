@@ -73,8 +73,8 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
 	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
-		final List<PyExpression> expressions = PyUtil.flattenedParensAndStars(getTarget());
-		final List<PsiNamedElement> results = Lists.newArrayList();
+		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(getTarget());
+		List<PsiNamedElement> results = Lists.newArrayList();
 		for(PyExpression expression : expressions)
 		{
 			if(expression instanceof PsiNamedElement)
@@ -86,7 +86,7 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull String the_name)
 	{
 		// Requires switching from stubs to AST in getTarget()
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);

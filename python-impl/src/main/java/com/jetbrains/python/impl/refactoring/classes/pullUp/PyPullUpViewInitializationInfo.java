@@ -41,9 +41,9 @@ class PyPullUpViewInitializationInfo extends MembersViewInitializationInfo
 	/**
 	 * @param parents list of possible parents to display.
 	 */
-	PyPullUpViewInitializationInfo(@Nonnull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
-			@Nonnull final List<PyMemberInfo<PyElement>> memberInfos,
-			@Nonnull final Collection<PyClass> parents)
+	PyPullUpViewInitializationInfo(@Nonnull MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
+			@Nonnull List<PyMemberInfo<PyElement>> memberInfos,
+			@Nonnull Collection<PyClass> parents)
 	{
 		super(memberInfoModel, memberInfos);
 		myParents = new ArrayList<>(parents);

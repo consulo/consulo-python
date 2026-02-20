@@ -5,7 +5,7 @@ public abstract class AbstractThreadCommand<T> extends AbstractCommand<T>
 {
 	private final String myThreadId;
 
-	protected AbstractThreadCommand(final RemoteDebugger debugger, final int commandCode, final String threadId)
+	protected AbstractThreadCommand(RemoteDebugger debugger, int commandCode, String threadId)
 	{
 		super(debugger, commandCode);
 		myThreadId = threadId;

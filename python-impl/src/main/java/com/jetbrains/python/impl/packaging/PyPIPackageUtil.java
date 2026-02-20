@@ -87,10 +87,10 @@ public class PyPIPackageUtil
 				public List<String> load(@Nonnull String key) throws Exception
 				{
 					LOG.debug("Searching for versions of package '" + key + "' in additional repositories");
-					final List<String> repositories = PyPackageService.getInstance().additionalRepositories;
+					List<String> repositories = PyPackageService.getInstance().additionalRepositories;
 					for(String repository : repositories)
 					{
-						final List<String> versions = parsePackageVersionsFromArchives(composeSimpleUrl(key, repository));
+						List<String> versions = parsePackageVersionsFromArchives(composeSimpleUrl(key, repository));
 						if(!versions.isEmpty())
 						{
 							LOG.debug("Found versions " + versions + " in " + repository);
@@ -154,14 +154,14 @@ public class PyPIPackageUtil
 	@Nonnull
 	private static ImmutableMap<String, String> loadPackageAliases()
 	{
-		final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+		ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 		try (FileReader reader = new FileReader(PythonHelpersLocator.getHelperPath("/tools/packages")))
 		{
-			final String text = FileUtil.loadTextAndClose(reader);
-			final List<String> lines = StringUtil.split(text, "\n");
+			String text = FileUtil.loadTextAndClose(reader);
+			List<String> lines = StringUtil.split(text, "\n");
 			for(String line : lines)
 			{
-				final List<String> split = StringUtil.split(line, " ");
+				List<String> split = StringUtil.split(line, " ");
 				builder.put(split.get(0), split.get(1));
 			}
 		}
@@ -175,11 +175,11 @@ public class PyPIPackageUtil
 	@Nonnull
 	private static Pair<String, String> splitNameVersion(@Nonnull String pyPackage)
 	{
-		final int dashInd = pyPackage.lastIndexOf("-");
+		int dashInd = pyPackage.lastIndexOf("-");
 		if(dashInd >= 0 && dashInd + 1 < pyPackage.length())
 		{
-			final String name = pyPackage.substring(0, dashInd);
-			final String version = pyPackage.substring(dashInd + 1);
+			String name = pyPackage.substring(0, dashInd);
+			String version = pyPackage.substring(dashInd + 1);
 			if(StringUtil.containsAlphaCharacters(version))
 			{
 				return Pair.create(pyPackage, null);
@@ -199,7 +199,7 @@ public class PyPIPackageUtil
 	{
 		if(myAdditionalPackages == null)
 		{
-			final Set<RepoPackage> packages = new TreeSet<>();
+			Set<RepoPackage> packages = new TreeSet<>();
 			for(String url : PyPackageService.getInstance().additionalRepositories)
 			{
 				packages.addAll(getPackagesFromAdditionalRepository(url));
@@ -212,27 +212,27 @@ public class PyPIPackageUtil
 	@Nonnull
 	private static List<RepoPackage> getPackagesFromAdditionalRepository(@Nonnull String url) throws IOException
 	{
-		final List<RepoPackage> result = new ArrayList<>();
-		final boolean simpleIndex = url.endsWith("simple/");
-		final List<String> packagesList = parsePyPIListFromWeb(url, simpleIndex);
+		List<RepoPackage> result = new ArrayList<>();
+		boolean simpleIndex = url.endsWith("simple/");
+		List<String> packagesList = parsePyPIListFromWeb(url, simpleIndex);
 
 		for(String pyPackage : packagesList)
 		{
 			if(simpleIndex)
 			{
-				final Pair<String, String> nameVersion = splitNameVersion(StringUtil.trimTrailing(pyPackage, '/'));
+				Pair<String, String> nameVersion = splitNameVersion(StringUtil.trimTrailing(pyPackage, '/'));
 				result.add(new RepoPackage(nameVersion.getFirst(), url, nameVersion.getSecond()));
 			}
 			else
 			{
 				try
 				{
-					final Pattern repositoryPattern = Pattern.compile(url + "([^/]*)/([^/]*)$");
-					final Matcher matcher = repositoryPattern.matcher(URLDecoder.decode(pyPackage, "UTF-8"));
+					Pattern repositoryPattern = Pattern.compile(url + "([^/]*)/([^/]*)$");
+					Matcher matcher = repositoryPattern.matcher(URLDecoder.decode(pyPackage, "UTF-8"));
 					if(matcher.find())
 					{
-						final String packageName = matcher.group(1);
-						final String packageVersion = matcher.group(2);
+						String packageName = matcher.group(1);
+						String packageVersion = matcher.group(2);
 						if(!packageName.contains(" "))
 						{
 							result.add(new RepoPackage(packageName, url, packageVersion));
@@ -260,7 +260,7 @@ public class PyPIPackageUtil
 		ApplicationManager.getApplication().executeOnPooledThread(() -> {
 			try
 			{
-				final PackageDetails packageDetails = refreshAndGetPackageDetailsFromPyPI(packageName, false);
+				PackageDetails packageDetails = refreshAndGetPackageDetailsFromPyPI(packageName, false);
 				result.setDone(converter.apply(packageDetails.getInfo()));
 			}
 			catch(IOException e)
@@ -287,10 +287,10 @@ public class PyPIPackageUtil
 		ApplicationManager.getApplication().executeOnPooledThread(() -> {
 			try
 			{
-				final List<String> releasesFromSimpleIndex = getPackageVersionsFromAdditionalRepositories(packageName);
+				List<String> releasesFromSimpleIndex = getPackageVersionsFromAdditionalRepositories(packageName);
 				if(releasesFromSimpleIndex.isEmpty())
 				{
-					final List<String> releasesFromPyPI = getPackageVersionsFromPyPI(packageName, true);
+					List<String> releasesFromPyPI = getPackageVersionsFromPyPI(packageName, true);
 					result.setDone(releasesFromPyPI);
 				}
 				else
@@ -312,8 +312,8 @@ public class PyPIPackageUtil
 	@Nonnull
 	private List<String> getPackageVersionsFromPyPI(@Nonnull String packageName, boolean force) throws IOException
 	{
-		final PackageDetails details = refreshAndGetPackageDetailsFromPyPI(packageName, force);
-		final List<String> result = details.getReleases();
+		PackageDetails details = refreshAndGetPackageDetailsFromPyPI(packageName, force);
+		List<String> result = details.getReleases();
 		result.sort(PackageVersionComparator.VERSION_COMPARATOR.reversed());
 		return Collections.unmodifiableList(result);
 	}
@@ -322,8 +322,8 @@ public class PyPIPackageUtil
 	private String getLatestPackageVersionFromPyPI(@Nonnull String packageName) throws IOException
 	{
 		LOG.debug("Requesting the latest PyPI version for the package " + packageName);
-		final List<String> versions = getPackageVersionsFromPyPI(packageName, true);
-		final String latest = ContainerUtil.getFirstItem(versions);
+		List<String> versions = getPackageVersionsFromPyPI(packageName, true);
+		String latest = ContainerUtil.getFirstItem(versions);
 		getPyPIPackages().put(packageName, StringUtil.notNullize(latest));
 		return latest;
 	}
@@ -347,7 +347,7 @@ public class PyPIPackageUtil
 		}
 		catch(ExecutionException e)
 		{
-			final Throwable cause = e.getCause();
+			Throwable cause = e.getCause();
 			throw (cause instanceof IOException ? (IOException) cause : new IOException("Unexpected non-IO error", cause));
 		}
 	}
@@ -355,7 +355,7 @@ public class PyPIPackageUtil
 	@Nullable
 	private String getLatestPackageVersionFromAdditionalRepositories(@Nonnull String packageName) throws IOException
 	{
-		final List<String> versions = getPackageVersionsFromAdditionalRepositories(packageName);
+		List<String> versions = getPackageVersionsFromAdditionalRepositories(packageName);
 		return ContainerUtil.getFirstItem(versions);
 	}
 
@@ -370,7 +370,7 @@ public class PyPIPackageUtil
 		}
 		if(!PyPackageService.getInstance().additionalRepositories.isEmpty())
 		{
-			final String extraVersion = getLatestPackageVersionFromAdditionalRepositories(packageName);
+			String extraVersion = getLatestPackageVersionFromAdditionalRepositories(packageName);
 			if(extraVersion != null)
 			{
 				version = extraVersion;
@@ -384,7 +384,7 @@ public class PyPIPackageUtil
 	{
 		return HttpRequests.request(archivesUrl).userAgent(getUserAgent()).connect(request -> {
 			final List<String> versions = new ArrayList<>();
-			final Reader reader = request.getReader();
+			Reader reader = request.getReader();
 			new ParserDelegator().parse(reader, new HTMLEditorKit.ParserCallback()
 			{
 				HTML.Tag myTag;
@@ -401,7 +401,7 @@ public class PyPIPackageUtil
 					if(myTag != null && "a".equals(myTag.toString()))
 					{
 						String packageVersion = String.valueOf(data);
-						final String suffix = ".tar.gz";
+						String suffix = ".tar.gz";
 						if(!packageVersion.endsWith(suffix))
 						{
 							return;
@@ -420,7 +420,7 @@ public class PyPIPackageUtil
 	private static String composeSimpleUrl(@NonNls @Nonnull String packageName, @Nonnull String rep)
 	{
 		String suffix = "";
-		final String repository = StringUtil.trimEnd(rep, "/");
+		String repository = StringUtil.trimEnd(rep, "/");
 		if(!repository.endsWith("+simple") && !repository.endsWith("/simple"))
 		{
 			suffix = "/+simple";
@@ -452,7 +452,7 @@ public class PyPIPackageUtil
 		{
 			try
 			{
-				final String packageName = URLDecoder.decode(pyPackage, "UTF-8");
+				String packageName = URLDecoder.decode(pyPackage, "UTF-8");
 				if(!packageName.isBlank())
 				{
 					toWritePackages.add(packageName);
@@ -473,7 +473,7 @@ public class PyPIPackageUtil
 		LOG.debug("Fetching index of all packages available on " + url);
 		return HttpRequests.request(url).userAgent(getUserAgent()).connect(request -> {
 			final List<String> packages = new ArrayList<>();
-			final Reader reader = request.getReader();
+			Reader reader = request.getReader();
 			new ParserDelegator().parse(reader, new HTMLEditorKit.ParserCallback()
 			{
 				boolean inTable = false;
@@ -528,8 +528,8 @@ public class PyPIPackageUtil
 	@Nonnull
 	public Collection<String> getPackageNames()
 	{
-		final Map<String, String> pyPIPackages = getPyPIPackages();
-		final ArrayList<String> list = Lists.newArrayList(pyPIPackages.keySet());
+		Map<String, String> pyPIPackages = getPyPIPackages();
+		ArrayList<String> list = Lists.newArrayList(pyPIPackages.keySet());
 		Collections.sort(list);
 		return list;
 	}

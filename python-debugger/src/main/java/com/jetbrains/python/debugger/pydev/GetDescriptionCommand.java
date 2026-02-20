@@ -12,7 +12,7 @@ public class GetDescriptionCommand extends AbstractFrameCommand
 	private String myActionToken;
 	private String result = null;
 
-	public GetDescriptionCommand(final RemoteDebugger debugger, String threadId, String frameId, final String myActionToken)
+	public GetDescriptionCommand(RemoteDebugger debugger, String threadId, String frameId, String myActionToken)
 	{
 		super(debugger, GET_DESCRIPTION, threadId, frameId);
 		this.myActionToken = myActionToken;

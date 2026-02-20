@@ -46,22 +46,22 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 			@Override
 			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
 			{
-				final PyCallExpression call = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyCallExpression.class);
+				PyCallExpression call = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyCallExpression.class);
 				if(call == null)
 				{
 					return;
 				}
-				final PyExpression calleeExpression = call.getCallee();
+				PyExpression calleeExpression = call.getCallee();
 				if(calleeExpression instanceof PyReferenceExpression)
 				{
-					final PsiElement callee = ((PyReferenceExpression) calleeExpression).getReference().resolve();
+					PsiElement callee = ((PyReferenceExpression) calleeExpression).getReference().resolve();
 					if(callee instanceof PsiClass)
 					{
 						addSettersAndListeners(result, (PsiClass) callee);
 					}
 					else if(callee instanceof PsiMethod && ((PsiMethod) callee).isConstructor())
 					{
-						final PsiClass containingClass = ((PsiMethod) callee).getContainingClass();
+						PsiClass containingClass = ((PsiMethod) callee).getContainingClass();
 						assert containingClass != null;
 						addSettersAndListeners(result, containingClass);
 					}
@@ -77,18 +77,18 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 		{
 			if(PropertyUtil.isSimplePropertySetter(method))
 			{
-				final String propName = PropertyUtil.getPropertyName(method);
+				String propName = PropertyUtil.getPropertyName(method);
 				result.addElement(PyUtil.createNamedParameterLookup(propName, containingClass.getProject()));
 			}
 			else if(method.getName().startsWith("add") && method.getName().endsWith("Listener") && PsiType.VOID.equals(method.getReturnType()))
 			{
-				final PsiParameter[] parameters = method.getParameterList().getParameters();
+				PsiParameter[] parameters = method.getParameterList().getParameters();
 				if(parameters.length == 1)
 				{
-					final PsiType type = parameters[0].getType();
+					PsiType type = parameters[0].getType();
 					if(type instanceof PsiClassType)
 					{
-						final PsiClass parameterClass = ((PsiClassType) type).resolve();
+						PsiClass parameterClass = ((PsiClassType) type).resolve();
 						if(parameterClass != null)
 						{
 							result.addElement(PyUtil.createNamedParameterLookup(StringUtil.decapitalize(parameterClass.getName()), containingClass.getProject()));

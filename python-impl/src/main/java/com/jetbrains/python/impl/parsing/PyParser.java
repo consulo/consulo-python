@@ -49,7 +49,7 @@ public class PyParser implements PsiParser
 	public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion)
 	{
 		long start = System.currentTimeMillis();
-		final PsiBuilder.Marker rootMarker = builder.mark();
+		PsiBuilder.Marker rootMarker = builder.mark();
 		ParsingContext context = createParsingContext(builder, myLanguageLevel, myFutureFlag);
 		StatementParsing statementParser = context.getStatementParser();
 		builder.setTokenTypeRemapper(statementParser); // must be done before touching the caching lexer with eof() call.

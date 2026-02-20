@@ -57,7 +57,7 @@ public class PyBroadExceptionInspection extends PyInspection {
     }
 
     public static boolean equalsException(@Nonnull PyClass cls, @Nonnull TypeEvalContext context) {
-        final PyType type = context.getType(cls);
+        PyType type = context.getType(cls);
         return ("Exception".equals(cls.getName()) || "BaseException".equals(cls.getName())) && type != null && type.isBuiltin();
     }
 
@@ -67,7 +67,7 @@ public class PyBroadExceptionInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyExceptBlock(final PyExceptPart node) {
+        public void visitPyExceptBlock(PyExceptPart node) {
             PyExpression exceptClass = node.getExceptClass();
             if (reRaised(node)) {
                 return;
@@ -76,10 +76,10 @@ public class PyBroadExceptionInspection extends PyInspection {
                 registerProblem(node.getFirstChild(), "Too broad exception clause");
             }
             if (exceptClass != null) {
-                final PyType type = myTypeEvalContext.getType(exceptClass);
+                PyType type = myTypeEvalContext.getType(exceptClass);
                 if (type instanceof PyClassType) {
-                    final PyClass cls = ((PyClassType) type).getPyClass();
-                    final PyExpression target = node.getTarget();
+                    PyClass cls = ((PyClassType) type).getPyClass();
+                    PyExpression target = node.getTarget();
                     if (equalsException(cls, myTypeEvalContext) && (target == null || !isExceptionUsed(node, target.getText()))) {
                         registerProblem(exceptClass, "Too broad exception clause");
                     }
@@ -88,7 +88,7 @@ public class PyBroadExceptionInspection extends PyInspection {
         }
 
         private static boolean reRaised(PyExceptPart node) {
-            final PyStatementList statementList = node.getStatementList();
+            PyStatementList statementList = node.getStatementList();
             if (statementList != null) {
                 for (PyStatement st : statementList.getStatements()) {
                     if (st instanceof PyRaiseStatement) {

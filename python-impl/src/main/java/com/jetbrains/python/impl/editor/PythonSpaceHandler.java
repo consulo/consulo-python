@@ -50,12 +50,12 @@ public class PythonSpaceHandler extends TypedHandlerDelegate {
         return Result.CONTINUE;
       }
       int expectedStringStart = offset - 4;        // """ or ''' plus space char
-      final Document document = editor.getDocument();
+      Document document = editor.getDocument();
       if (PythonEnterHandler.canGenerateDocstring(element, expectedStringStart, document) == DocstringState.INCOMPLETE) {
-        final PyDocStringOwner docOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
+        PyDocStringOwner docOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
         if (docOwner != null) {
-          final String quotes = document.getText(TextRange.from(expectedStringStart, 3));
-          final String docString = PyDocstringGenerator.forDocStringOwner(docOwner)
+          String quotes = document.getText(TextRange.from(expectedStringStart, 3));
+          String docString = PyDocstringGenerator.forDocStringOwner(docOwner)
                                                        .forceNewMode()
                                                        .withInferredParameters(true)
                                                        .withQuotes(quotes)

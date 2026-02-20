@@ -70,9 +70,9 @@ public class PyExecutionException extends ExecutionException
 	@Override
 	public String toString()
 	{
-		final StringBuilder b = new StringBuilder();
+		StringBuilder b = new StringBuilder();
 		b.append("The following command was executed:\n\n");
-		final String command = getCommand() + " " + StringUtil.join(getArgs(), " ");
+		String command = getCommand() + " " + StringUtil.join(getArgs(), " ");
 		b.append(command);
 		b.append("\n\n");
 		b.append("The exit code: ").append(myExitCode).append("\n");

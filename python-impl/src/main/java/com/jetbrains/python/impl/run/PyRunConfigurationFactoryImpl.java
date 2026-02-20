@@ -46,16 +46,16 @@ public class PyRunConfigurationFactoryImpl extends PyRunConfigurationFactory {
 
   @Override
   public RunnerAndConfigurationSettings createRunConfiguration(Module module, ConfigurationFactory factory) {
-    final Project project = module.getProject();
-    final RunManager runManager = RunManager.getInstance(project);
-    final RunnerAndConfigurationSettings settings = createConfigurationSettings(factory, module);
+    Project project = module.getProject();
+    RunManager runManager = RunManager.getInstance(project);
+    RunnerAndConfigurationSettings settings = createConfigurationSettings(factory, module);
     runManager.addConfiguration(settings, false);
     runManager.setSelectedConfiguration(settings);
     return settings;
   }
 
-  private static RunnerAndConfigurationSettings createConfigurationSettings(ConfigurationFactory factory, @Nonnull final Module module) {
-    final RunnerAndConfigurationSettings settings =
+  private static RunnerAndConfigurationSettings createConfigurationSettings(ConfigurationFactory factory, @Nonnull Module module) {
+    RunnerAndConfigurationSettings settings =
       RunManager.getInstance(module.getProject()).createRunConfiguration(module.getName(), factory);
     ModuleBasedConfiguration configuration = (ModuleBasedConfiguration)settings.getConfiguration();
     configuration.setModule(module);

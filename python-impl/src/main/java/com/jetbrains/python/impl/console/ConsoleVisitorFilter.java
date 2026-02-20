@@ -33,7 +33,7 @@ import jakarta.annotation.Nonnull;
 public class ConsoleVisitorFilter implements PythonVisitorFilter
 {
   @Override
-  public boolean isSupported(@Nonnull final Class visitorClass, @Nonnull final PsiFile file) {
+  public boolean isSupported(@Nonnull Class visitorClass, @Nonnull PsiFile file) {
     //if we're in console
     if (PydevConsoleRunner.isInPydevConsole(file)) {
       //inspections

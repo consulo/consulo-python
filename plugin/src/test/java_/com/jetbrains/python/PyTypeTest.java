@@ -458,28 +458,28 @@ public abstract class PyTypeTest extends PyTestCase {
 
   // PY-7020
   public void testListComprehensionType() {
-    final PyExpression expr = parseExpr("expr = [str(x) for x in range(10)]\n");
-    final TypeEvalContext context = getTypeEvalContext(expr);
-    final PyType type = context.getType(expr);
+    PyExpression expr = parseExpr("expr = [str(x) for x in range(10)]\n");
+    TypeEvalContext context = getTypeEvalContext(expr);
+    PyType type = context.getType(expr);
     assertNotNull(type);
     assertInstanceOf(type, PyCollectionType.class);
     assertEquals(type.getName(), "list");
-    final PyCollectionType collectionType = (PyCollectionType)type;
-    final PyType elementType = collectionType.getElementTypes(context).get(0);
+    PyCollectionType collectionType = (PyCollectionType)type;
+    PyType elementType = collectionType.getElementTypes(context).get(0);
     assertNotNull(elementType);
     assertEquals(elementType.getName(), "str");
   }
 
   // PY-7021
   public void testGeneratorComprehensionType() {
-    final PyExpression expr = parseExpr("expr = (str(x) for x in range(10))\n");
-    final TypeEvalContext context = getTypeEvalContext(expr);
-    final PyType type = context.getType(expr);
+    PyExpression expr = parseExpr("expr = (str(x) for x in range(10))\n");
+    TypeEvalContext context = getTypeEvalContext(expr);
+    PyType type = context.getType(expr);
     assertNotNull(type);
     assertInstanceOf(type, PyCollectionType.class);
     assertEquals(type.getName(), "__generator");
-    final PyCollectionType collectionType = (PyCollectionType)type;
-    final PyType elementType = collectionType.getElementTypes(context).get(0);
+    PyCollectionType collectionType = (PyCollectionType)type;
+    PyType elementType = collectionType.getElementTypes(context).get(0);
     assertNotNull(elementType);
     assertEquals(elementType.getName(), "str");
   }
@@ -562,10 +562,10 @@ public abstract class PyTypeTest extends PyTestCase {
 
   // PY-7063
   public void testDefaultParameterIgnoreNone() {
-    final PyExpression expr = parseExpr("def f(x=None):\n" +
+    PyExpression expr = parseExpr("def f(x=None):\n" +
                                         "    expr = x\n");
-    final TypeEvalContext context = getTypeEvalContext(expr);
-    final PyType type = context.getType(expr);
+    TypeEvalContext context = getTypeEvalContext(expr);
+    PyType type = context.getType(expr);
     assertNull(type);
   }
 
@@ -628,7 +628,7 @@ public abstract class PyTypeTest extends PyTestCase {
   }
 
   public void testUnionIteration() {
-    final String text = "def f(c):\n" +
+    String text = "def f(c):\n" +
                         "    if c < 0:\n" +
                         "        return [1, 2, 3]\n" +
                         "    elif c == 0:\n" +
@@ -639,9 +639,9 @@ public abstract class PyTypeTest extends PyTestCase {
                         "def g(c):\n" +
                         "    for expr in f(c):\n" +
                         "        pass\n";
-    final PyExpression expr = parseExpr(text);
-    final TypeEvalContext context = getTypeEvalContext(expr);
-    final PyType type = context.getType(expr);
+    PyExpression expr = parseExpr(text);
+    TypeEvalContext context = getTypeEvalContext(expr);
+    PyType type = context.getType(expr);
     assertInstanceOf(type, PyUnionType.class);
     assertTrue(PyTypeChecker.match(PyTypeParser.getTypeByName(expr, "int"), type, context));
     assertTrue(PyTypeChecker.match(PyTypeParser.getTypeByName(expr, "str"), type, context));
@@ -799,11 +799,11 @@ public abstract class PyTypeTest extends PyTestCase {
     return myFixture.findElementByText("expr", PyExpression.class);
   }
 
-  private void doTest(final String expectedType, final String text) {
+  private void doTest(String expectedType, String text) {
     PyExpression expr = parseExpr(text);
     TypeEvalContext context = getTypeEvalContext(expr);
     PyType actual = context.getType(expr);
-    final String actualType = PythonDocumentationProvider.getTypeName(actual, context);
+    String actualType = PythonDocumentationProvider.getTypeName(actual, context);
     assertEquals(expectedType, actualType);
   }
 }

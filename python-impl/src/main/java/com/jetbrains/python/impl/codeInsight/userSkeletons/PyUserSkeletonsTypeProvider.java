@@ -38,16 +38,16 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 	@Override
 	public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context)
 	{
-		final String name = param.getName();
+		String name = param.getName();
 		if(name != null)
 		{
-			final PyFunction functionSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(func, context);
+			PyFunction functionSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(func, context);
 			if(functionSkeleton != null)
 			{
-				final PyNamedParameter paramSkeleton = functionSkeleton.getParameterList().findParameterByName(name);
+				PyNamedParameter paramSkeleton = functionSkeleton.getParameterList().findParameterByName(name);
 				if(paramSkeleton != null)
 				{
-					final PyType type = context.getType(paramSkeleton);
+					PyType type = context.getType(paramSkeleton);
 					if(type != null)
 					{
 						return Ref.create(type);
@@ -62,10 +62,10 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 	@Override
 	public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
 	{
-		final PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
+		PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
 		if(callableSkeleton != null)
 		{
-			final PyType type = context.getReturnType(callableSkeleton);
+			PyType type = context.getReturnType(callableSkeleton);
 			if(type != null)
 			{
 				return Ref.create(type);
@@ -79,7 +79,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 	{
 		if(target instanceof PyTargetExpression)
 		{
-			final PyTargetExpression targetSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext((PyTargetExpression) target, context);
+			PyTargetExpression targetSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext((PyTargetExpression) target, context);
 			if(targetSkeleton != null)
 			{
 				return context.getType(targetSkeleton);
@@ -92,7 +92,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 	@Override
 	public PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
 	{
-		final PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
+		PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
 		if(callableSkeleton != null)
 		{
 			return context.getType(callableSkeleton);

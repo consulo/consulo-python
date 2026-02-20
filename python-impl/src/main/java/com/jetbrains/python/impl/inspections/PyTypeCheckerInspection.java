@@ -99,18 +99,18 @@ public class PyTypeCheckerInspection extends PyInspection {
 
         @Override
         public void visitPyReturnStatement(PyReturnStatement node) {
-            final ScopeOwner owner = ScopeUtil.getScopeOwner(node);
+            ScopeOwner owner = ScopeUtil.getScopeOwner(node);
             if (owner instanceof PyFunction) {
-                final PyFunction function = (PyFunction) owner;
-                final PyAnnotation annotation = function.getAnnotation();
-                final String typeCommentAnnotation = function.getTypeCommentAnnotation();
+                PyFunction function = (PyFunction) owner;
+                PyAnnotation annotation = function.getAnnotation();
+                String typeCommentAnnotation = function.getTypeCommentAnnotation();
                 if (annotation != null || typeCommentAnnotation != null) {
-                    final PyExpression returnExpr = node.getExpression();
-                    final PyType actual = returnExpr != null ? myTypeEvalContext.getType(returnExpr) : PyNoneType.INSTANCE;
-                    final PyType expected = getExpectedReturnType(function);
+                    PyExpression returnExpr = node.getExpression();
+                    PyType actual = returnExpr != null ? myTypeEvalContext.getType(returnExpr) : PyNoneType.INSTANCE;
+                    PyType expected = getExpectedReturnType(function);
                     if (!PyTypeChecker.match(expected, actual, myTypeEvalContext)) {
-                        final String expectedName = PythonDocumentationProvider.getTypeName(expected, myTypeEvalContext);
-                        final String actualName = PythonDocumentationProvider.getTypeName(actual, myTypeEvalContext);
+                        String expectedName = PythonDocumentationProvider.getTypeName(expected, myTypeEvalContext);
+                        String actualName = PythonDocumentationProvider.getTypeName(actual, myTypeEvalContext);
                         PyMakeFunctionReturnTypeQuickFix localQuickFix =
                             new PyMakeFunctionReturnTypeQuickFix(function, actualName, myTypeEvalContext);
                         PyMakeFunctionReturnTypeQuickFix globalQuickFix =
@@ -128,7 +128,7 @@ public class PyTypeCheckerInspection extends PyInspection {
 
         @Nullable
         private PyType getExpectedReturnType(@Nonnull PyFunction function) {
-            final PyType returnType = myTypeEvalContext.getReturnType(function);
+            PyType returnType = myTypeEvalContext.getReturnType(function);
 
             if (returnType instanceof PyCollectionType && PyNames.FAKE_COROUTINE.equals(returnType.getName())) {
                 return ((PyCollectionType) returnType).getIteratedItemType();
@@ -139,16 +139,16 @@ public class PyTypeCheckerInspection extends PyInspection {
 
         @Override
         public void visitPyFunction(PyFunction node) {
-            final PyAnnotation annotation = node.getAnnotation();
-            final String typeCommentAnnotation = node.getTypeCommentAnnotation();
+            PyAnnotation annotation = node.getAnnotation();
+            String typeCommentAnnotation = node.getTypeCommentAnnotation();
             if (annotation != null || typeCommentAnnotation != null) {
                 if (!PyUtil.isEmptyFunction(node)) {
-                    final PyStatementList statements = node.getStatementList();
+                    PyStatementList statements = node.getStatementList();
                     ReturnVisitor visitor = new ReturnVisitor(node);
                     statements.accept(visitor);
                     if (!visitor.myHasReturns) {
-                        final PyType expected = myTypeEvalContext.getReturnType(node);
-                        final String expectedName = PythonDocumentationProvider.getTypeName(expected, myTypeEvalContext);
+                        PyType expected = myTypeEvalContext.getReturnType(node);
+                        String expectedName = PythonDocumentationProvider.getTypeName(expected, myTypeEvalContext);
                         if (expected != null && !(expected instanceof PyNoneType)) {
                             registerProblem(
                                 annotation != null ? annotation.getValue() : node.getTypeComment(),
@@ -186,8 +186,8 @@ public class PyTypeCheckerInspection extends PyInspection {
         }
 
         private void checkCallSite(@Nullable PyCallSiteExpression callSite) {
-            final List<PyTypeChecker.AnalyzeCallResults> resultsSet = PyTypeChecker.analyzeCallSite(callSite, myTypeEvalContext);
-            final List<Map<PyExpression, Pair<String, ProblemHighlightType>>> problemsSet = new ArrayList<>();
+            List<PyTypeChecker.AnalyzeCallResults> resultsSet = PyTypeChecker.analyzeCallSite(callSite, myTypeEvalContext);
+            List<Map<PyExpression, Pair<String, ProblemHighlightType>>> problemsSet = new ArrayList<>();
             for (PyTypeChecker.AnalyzeCallResults results : resultsSet) {
                 problemsSet.add(checkMapping(results.getReceiver(), results.getArguments()));
             }
@@ -202,11 +202,11 @@ public class PyTypeCheckerInspection extends PyInspection {
 
         private void checkIteratedValue(@Nullable PyExpression iteratedValue, boolean isAsync) {
             if (iteratedValue != null) {
-                final PyType type = myTypeEvalContext.getType(iteratedValue);
-                final String iterableClassName = isAsync ? PyNames.ASYNC_ITERABLE : PyNames.ITERABLE;
+                PyType type = myTypeEvalContext.getType(iteratedValue);
+                String iterableClassName = isAsync ? PyNames.ASYNC_ITERABLE : PyNames.ITERABLE;
 
                 if (type != null && !PyTypeChecker.isUnknown(type) && !PyABCUtil.isSubtype(type, iterableClassName, myTypeEvalContext)) {
-                    final String typeName = PythonDocumentationProvider.getTypeName(type, myTypeEvalContext);
+                    String typeName = PythonDocumentationProvider.getTypeName(type, myTypeEvalContext);
 
                     registerProblem(
                         iteratedValue,
@@ -221,25 +221,25 @@ public class PyTypeCheckerInspection extends PyInspection {
             @Nullable PyExpression receiver,
             @Nonnull Map<PyExpression, PyNamedParameter> mapping
         ) {
-            final Map<PyExpression, Pair<String, ProblemHighlightType>> problems = new HashMap<>();
-            final Map<PyGenericType, PyType> substitutions = new LinkedHashMap<>();
+            Map<PyExpression, Pair<String, ProblemHighlightType>> problems = new HashMap<>();
+            Map<PyGenericType, PyType> substitutions = new LinkedHashMap<>();
             boolean genericsCollected = false;
             for (Map.Entry<PyExpression, PyNamedParameter> entry : mapping.entrySet()) {
-                final PyNamedParameter param = entry.getValue();
-                final PyExpression arg = entry.getKey();
+                PyNamedParameter param = entry.getValue();
+                PyExpression arg = entry.getKey();
                 if (param.isPositionalContainer() || param.isKeywordContainer()) {
                     continue;
                 }
-                final PyType paramType = myTypeEvalContext.getType(param);
+                PyType paramType = myTypeEvalContext.getType(param);
                 if (paramType == null) {
                     continue;
                 }
-                final PyType argType = myTypeEvalContext.getType(arg);
+                PyType argType = myTypeEvalContext.getType(arg);
                 if (!genericsCollected) {
                     substitutions.putAll(PyTypeChecker.unifyReceiver(receiver, myTypeEvalContext));
                     genericsCollected = true;
                 }
-                final Pair<String, ProblemHighlightType> problem = checkTypes(paramType, argType, myTypeEvalContext, substitutions);
+                Pair<String, ProblemHighlightType> problem = checkTypes(paramType, argType, myTypeEvalContext, substitutions);
                 if (problem != null) {
                     problems.put(arg, problem);
                 }
@@ -256,12 +256,12 @@ public class PyTypeCheckerInspection extends PyInspection {
         ) {
             if (actual != null && expected != null) {
                 if (!PyTypeChecker.match(expected, actual, context, substitutions)) {
-                    final String expectedName = PythonDocumentationProvider.getTypeName(expected, context);
+                    String expectedName = PythonDocumentationProvider.getTypeName(expected, context);
                     String quotedExpectedName = String.format("'%s'", expectedName);
-                    final boolean hasGenerics = PyTypeChecker.hasGenerics(expected, context);
+                    boolean hasGenerics = PyTypeChecker.hasGenerics(expected, context);
                     ProblemHighlightType highlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
                     if (hasGenerics) {
-                        final PyType substitute = PyTypeChecker.substitute(expected, substitutions, context);
+                        PyType substitute = PyTypeChecker.substitute(expected, substitutions, context);
                         if (substitute != null) {
                             quotedExpectedName = String.format(
                                 "'%s' (matched generic type '%s')",
@@ -271,13 +271,13 @@ public class PyTypeCheckerInspection extends PyInspection {
                             highlightType = ProblemHighlightType.WEAK_WARNING;
                         }
                     }
-                    final String actualName = PythonDocumentationProvider.getTypeName(actual, context);
+                    String actualName = PythonDocumentationProvider.getTypeName(actual, context);
                     String msg = String.format("Expected type %s, got '%s' instead", quotedExpectedName, actualName);
                     if (expected instanceof PyStructuralType) {
-                        final Set<String> expectedAttributes = ((PyStructuralType) expected).getAttributeNames();
-                        final Set<String> actualAttributes = getAttributes(actual, context);
+                        Set<String> expectedAttributes = ((PyStructuralType) expected).getAttributeNames();
+                        Set<String> actualAttributes = getAttributes(actual, context);
                         if (actualAttributes != null) {
-                            final Sets.SetView<String> missingAttributes = Sets.difference(expectedAttributes, actualAttributes);
+                            Sets.SetView<String> missingAttributes = Sets.difference(expectedAttributes, actualAttributes);
                             if (missingAttributes.size() == 1) {
                                 msg = String.format(
                                     "Type '%s' doesn't have expected attribute '%s'",
@@ -315,7 +315,7 @@ public class PyTypeCheckerInspection extends PyInspection {
     @Override
     public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder problemsHolder) {
         if (LOG.isDebugEnabled()) {
-            final Long startTime = session.getUserData(TIME_KEY);
+            Long startTime = session.getUserData(TIME_KEY);
             if (startTime != null) {
                 LOG.debug(String.format(
                     "[%d] elapsed time: %d ms\n",

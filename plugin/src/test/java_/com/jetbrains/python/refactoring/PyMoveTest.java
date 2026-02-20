@@ -182,11 +182,11 @@ public abstract class PyMoveTest extends PyTestCase {
 
   @Nullable
   private PsiNamedElement findFirstNamedElement(String name) {
-    final Collection<PyClass> classes = PyClassNameIndex.find(name, myFixture.getProject(), false);
+    Collection<PyClass> classes = PyClassNameIndex.find(name, myFixture.getProject(), false);
     if (classes.size() > 0) {
       return classes.iterator().next();
     }
-    final Collection<PyFunction> functions = PyFunctionNameIndex.find(name, myFixture.getProject());
+    Collection<PyFunction> functions = PyFunctionNameIndex.find(name, myFixture.getProject());
     if (functions.size() > 0) {
       return functions.iterator().next();
     }

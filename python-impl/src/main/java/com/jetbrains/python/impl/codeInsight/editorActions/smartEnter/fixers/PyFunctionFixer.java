@@ -42,16 +42,16 @@ public class PyFunctionFixer extends PyFixer<PyFunction>
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyFunction function) throws IncorrectOperationException
 	{
-		final PsiElement colon = PyPsiUtils.getFirstChildOfType(function, PyTokenTypes.COLON);
+		PsiElement colon = PyPsiUtils.getFirstChildOfType(function, PyTokenTypes.COLON);
 		if(!isFakeFunction(function) && colon == null)
 		{
-			final PyParameterList parameterList = function.getParameterList();
+			PyParameterList parameterList = function.getParameterList();
 			if(function.getNameNode() == null)
 			{
 				processor.registerUnresolvedError(parameterList.getTextOffset());
 			}
-			final int colonOffset;
-			final PyAnnotation annotation = function.getAnnotation();
+			int colonOffset;
+			PyAnnotation annotation = function.getAnnotation();
 			if(annotation != null)
 			{
 				colonOffset = annotation.getTextRange().getEndOffset();

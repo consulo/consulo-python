@@ -54,9 +54,9 @@ public class FacetLibraryConfigurator {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         // add all paths to library
-        final ModifiableRootModel model =
+        ModifiableRootModel model =
           existingModel != null ? existingModel : ModuleRootManager.getInstance(module).getModifiableModel();
-        final LibraryOrderEntry orderEntry = OrderEntryUtil.findLibraryOrderEntry(model, libraryName);
+        LibraryOrderEntry orderEntry = OrderEntryUtil.findLibraryOrderEntry(model, libraryName);
         if (orderEntry != null) {
           // update existing
           Library lib = orderEntry.getLibrary();
@@ -69,7 +69,7 @@ public class FacetLibraryConfigurator {
           }
         }
         // create new
-        final LibraryTable.ModifiableModel projectLibrariesModel = ProjectLibraryTable.getInstance(model.getProject()).getModifiableModel();
+        LibraryTable.ModifiableModel projectLibrariesModel = ProjectLibraryTable.getInstance(model.getProject()).getModifiableModel();
         Library lib = projectLibrariesModel.createLibrary(libraryName);
         fillLibrary(module.getProject(), lib, paths);
         projectLibrariesModel.commit();
@@ -115,7 +115,7 @@ public class FacetLibraryConfigurator {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         // remove the library
-        final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+        ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
         OrderEntry entry = OrderEntryUtil.findLibraryOrderEntry(model, libraryName);
         if (entry == null) {
           model.dispose();

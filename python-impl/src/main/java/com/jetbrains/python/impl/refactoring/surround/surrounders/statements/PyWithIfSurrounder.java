@@ -40,8 +40,8 @@ public class PyWithIfSurrounder extends PyStatementSurrounder {
   protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
     throws IncorrectOperationException {
     PyIfStatement ifStatement = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyIfStatement.class, "if True:\n    ");
-    final PsiElement parent = elements[0].getParent();
-    final PyStatementList statementList = ifStatement.getIfPart().getStatementList();
+    PsiElement parent = elements[0].getParent();
+    PyStatementList statementList = ifStatement.getIfPart().getStatementList();
     assert statementList != null;
     statementList.addRange(elements[0], elements[elements.length - 1]);
     ifStatement = (PyIfStatement) parent.addBefore(ifStatement, elements[0]);

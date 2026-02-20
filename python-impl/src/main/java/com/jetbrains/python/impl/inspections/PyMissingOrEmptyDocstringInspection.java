@@ -51,7 +51,7 @@ public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspecti
         return new Visitor(holder, session) {
             @Override
             protected void checkDocString(@Nonnull PyDocStringOwner node) {
-                final PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
+                PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
                 if (docStringExpression == null) {
                     for (PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList()) {
                         if (extension.ignoreMissingDocstring(node)) {
@@ -60,20 +60,20 @@ public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspecti
                     }
                     PsiElement marker = null;
                     if (node instanceof PyClass) {
-                        final ASTNode n = ((PyClass) node).getNameNode();
+                        ASTNode n = ((PyClass) node).getNameNode();
                         if (n != null) {
                             marker = n.getPsi();
                         }
                     }
                     else if (node instanceof PyFunction) {
-                        final ASTNode n = ((PyFunction) node).getNameNode();
+                        ASTNode n = ((PyFunction) node).getNameNode();
                         if (n != null) {
                             marker = n.getPsi();
                         }
                     }
                     else if (node instanceof PyFile) {
-                        final TextRange tr = new TextRange(0, 0);
-                        final ProblemsHolder holder = getHolder();
+                        TextRange tr = new TextRange(0, 0);
+                        ProblemsHolder holder = getHolder();
                         if (holder != null) {
                             holder.newProblem(PyLocalize.inspNoDocstring())
                                 .range(node, tr)

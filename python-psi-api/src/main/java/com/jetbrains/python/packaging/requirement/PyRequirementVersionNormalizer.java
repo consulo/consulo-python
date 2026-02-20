@@ -102,15 +102,15 @@ public final class PyRequirementVersionNormalizer
 	@Nullable
 	public static String normalize(@Nonnull String version)
 	{
-		final Matcher matcher = VERSION.matcher(version);
+		Matcher matcher = VERSION.matcher(version);
 		if(matcher.matches())
 		{
-			final StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 
-			final String epoch = matcher.group(EPOCH_GROUP);
+			String epoch = matcher.group(EPOCH_GROUP);
 			if(epoch != null)
 			{
-				final String normalizedEpoch = normalizeNumber(epoch.substring(0, epoch.length() - 1));
+				String normalizedEpoch = normalizeNumber(epoch.substring(0, epoch.length() - 1));
 				sb.append(normalizedEpoch).append('!');
 			}
 
@@ -124,25 +124,25 @@ public final class PyRequirementVersionNormalizer
 				sb.setLength(sb.length() - 1);
 			}
 
-			final String preReleaseType = matcher.group(PRE_RELEASE_TYPE_GROUP);
+			String preReleaseType = matcher.group(PRE_RELEASE_TYPE_GROUP);
 			if(preReleaseType != null)
 			{
-				final String preReleaseNumber = matcher.group(PRE_RELEASE_NUMBER_GROUP);
-				final String normalizedPreReleaseNumber = preReleaseNumber == null ? "0" : normalizeNumber(preReleaseNumber);
+				String preReleaseNumber = matcher.group(PRE_RELEASE_NUMBER_GROUP);
+				String normalizedPreReleaseNumber = preReleaseNumber == null ? "0" : normalizeNumber(preReleaseNumber);
 
 				sb.append(normalizePreReleaseType(preReleaseType)).append(normalizedPreReleaseNumber);
 			}
 
-			final String postReleaseType = matcher.group(POST_RELEASE_TYPE_GROUP);
+			String postReleaseType = matcher.group(POST_RELEASE_TYPE_GROUP);
 			if(postReleaseType != null)
 			{
-				final String postReleaseNumber = matcher.group(POST_RELEASE_NUMBER_GROUP);
-				final String normalizedPostReleaseNumber = postReleaseNumber == null ? "0" : normalizeNumber(postReleaseNumber);
+				String postReleaseNumber = matcher.group(POST_RELEASE_NUMBER_GROUP);
+				String normalizedPostReleaseNumber = postReleaseNumber == null ? "0" : normalizeNumber(postReleaseNumber);
 
 				sb.append(".post").append(normalizeNumber(normalizedPostReleaseNumber));
 			}
 
-			final String implicitPostReleaseNumber = matcher.group(IMPLICIT_POST_RELEASE_NUMBER_GROUP);
+			String implicitPostReleaseNumber = matcher.group(IMPLICIT_POST_RELEASE_NUMBER_GROUP);
 			if(implicitPostReleaseNumber != null)
 			{
 				sb.append(".post").append(normalizeNumber(implicitPostReleaseNumber));
@@ -150,13 +150,13 @@ public final class PyRequirementVersionNormalizer
 
 			if(matcher.group(DEV_RELEASE_TYPE_GROUP) != null)
 			{
-				final String devReleaseNumber = matcher.group(DEV_RELEASE_NUMBER_GROUP);
-				final String normalizedDevReleaseNumber = devReleaseNumber == null ? "0" : normalizeNumber(devReleaseNumber);
+				String devReleaseNumber = matcher.group(DEV_RELEASE_NUMBER_GROUP);
+				String normalizedDevReleaseNumber = devReleaseNumber == null ? "0" : normalizeNumber(devReleaseNumber);
 
 				sb.append(".dev").append(normalizedDevReleaseNumber);
 			}
 
-			final String localVersion = matcher.group(LOCAL_VERSION_GROUP);
+			String localVersion = matcher.group(LOCAL_VERSION_GROUP);
 			if(localVersion != null)
 			{
 				sb.append(normalizeLocalVersion(localVersion));

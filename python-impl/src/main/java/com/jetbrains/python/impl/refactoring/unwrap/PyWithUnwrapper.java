@@ -35,9 +35,9 @@ public class PyWithUnwrapper extends PyUnwrapper {
     if (e instanceof PyWithStatement) {
       ASTNode n = e.getNode().findChildByType(PyElementTypes.STATEMENT_LISTS);
       if (n != null) {
-        final PyStatementList statementList = (PyStatementList)n.getPsi();
+        PyStatementList statementList = (PyStatementList)n.getPsi();
         if (statementList != null) {
-          final PyStatement[] statements = statementList.getStatements();
+          PyStatement[] statements = statementList.getStatements();
           return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
         }
       }
@@ -46,8 +46,8 @@ public class PyWithUnwrapper extends PyUnwrapper {
   }
 
   @Override
-  protected void doUnwrap(final PsiElement element, final Context context) throws IncorrectOperationException {
-    final PyWithStatement withStatement = (PyWithStatement)element;
+  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+    PyWithStatement withStatement = (PyWithStatement)element;
     context.extractPart(withStatement);
     context.delete(withStatement);
   }

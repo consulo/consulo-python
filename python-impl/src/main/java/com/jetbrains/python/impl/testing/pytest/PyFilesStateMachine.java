@@ -43,7 +43,7 @@ final class PyFilesStateMachine
 	/**
 	 * @param quoteMode start machine in "quote mode" if true
 	 */
-	PyFilesStateMachine(final boolean quoteMode)
+	PyFilesStateMachine(boolean quoteMode)
 	{
 		myQuoteMode = quoteMode;
 
@@ -58,7 +58,7 @@ final class PyFilesStateMachine
 	 * @param charNumber  current position of char (to be checked by {@link #getStart()})
 	 * @return see class doc
 	 */
-	boolean addChar(final char charToCheck, final int charNumber)
+	boolean addChar(char charToCheck, int charNumber)
 	{
 		if(!myInProgress)
 		{

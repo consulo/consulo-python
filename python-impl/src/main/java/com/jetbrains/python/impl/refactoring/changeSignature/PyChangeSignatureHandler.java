@@ -50,7 +50,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	@Override
 	public PsiElement findTargetMember(PsiFile file, Editor editor)
 	{
-		final PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+		PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
 		return findTargetMember(element);
 	}
 
@@ -58,7 +58,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	@Override
 	public PsiElement findTargetMember(@Nullable PsiElement element)
 	{
-		final PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
+		PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
 		if (callExpression != null)
 		{
 			return callExpression.resolveCalleeFunction(PyResolveContext.defaultContext());
@@ -86,7 +86,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		{
 			return;
 		}
-		final Editor editor = dataContext == null ? null : dataContext.getData(Editor.KEY);
+		Editor editor = dataContext == null ? null : dataContext.getData(Editor.KEY);
 		invokeOnElement(project, elements[0], editor);
 	}
 
@@ -117,7 +117,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 			return;
 		}
 
-		final PyFunction superMethod = getSuperMethod((PyFunction) element);
+		PyFunction superMethod = getSuperMethod((PyFunction) element);
 		if (superMethod == null)
 		{
 			return;
@@ -131,8 +131,8 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 			}
 		}
 
-		final PyFunction function = (PyFunction) element;
-		final PyParameter[] parameters = function.getParameterList().getParameters();
+		PyFunction function = (PyFunction) element;
+		PyParameter[] parameters = function.getParameterList().getParameters();
 		for (PyParameter p : parameters)
 		{
 			if (p instanceof PyTupleParameter)
@@ -142,28 +142,28 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 			}
 		}
 
-		final PyMethodDescriptor method = new PyMethodDescriptor((PyFunction) element);
-		final PyChangeSignatureDialog dialog = new PyChangeSignatureDialog(project, method);
+		PyMethodDescriptor method = new PyMethodDescriptor((PyFunction) element);
+		PyChangeSignatureDialog dialog = new PyChangeSignatureDialog(project, method);
 		dialog.show();
 	}
 
 	@RequiredUIAccess
 	private static void showCannotRefactorErrorHint(@Nonnull Project project, @Nullable Editor editor, @Nonnull String details)
 	{
-		final String message = RefactoringBundle.getCannotRefactorMessage(details);
+		String message = RefactoringBundle.getCannotRefactorMessage(details);
 		CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME.get(), REFACTORING_NAME.get());
 	}
 
-	private static boolean isNotUnderSourceRoot(@Nonnull final Project project, @Nullable final PsiFile psiFile)
+	private static boolean isNotUnderSourceRoot(@Nonnull Project project, @Nullable PsiFile psiFile)
 	{
 		if (psiFile == null)
 		{
 			return true;
 		}
-		final VirtualFile virtualFile = psiFile.getVirtualFile();
+		VirtualFile virtualFile = psiFile.getVirtualFile();
 		if (virtualFile != null)
 		{
-			final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+			ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 			if (fileIndex.isExcluded(virtualFile) || (fileIndex.isInLibraryClasses(virtualFile) && !fileIndex.isInContent(virtualFile)))
 			{
 				return true;
@@ -180,24 +180,24 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 		{
 			return null;
 		}
-		final PyClass containingClass = function.getContainingClass();
+		PyClass containingClass = function.getContainingClass();
 		if (containingClass == null)
 		{
 			return function;
 		}
-		final PyFunction deepestSuperMethod = PySuperMethodsSearch.findDeepestSuperMethod(function);
+		PyFunction deepestSuperMethod = PySuperMethodsSearch.findDeepestSuperMethod(function);
 		if (!deepestSuperMethod.equals(function))
 		{
-			final PyClass baseClass = deepestSuperMethod.getContainingClass();
-			final PyBuiltinCache cache = PyBuiltinCache.getInstance(baseClass);
-			final String baseClassName = baseClass == null ? "" : baseClass.getName();
+			PyClass baseClass = deepestSuperMethod.getContainingClass();
+			PyBuiltinCache cache = PyBuiltinCache.getInstance(baseClass);
+			String baseClassName = baseClass == null ? "" : baseClass.getName();
 			if (cache.isBuiltin(baseClass))
 			{
 				return function;
 			}
-			final LocalizeValue message =
+			LocalizeValue message =
 				PyLocalize.refactoringChangeSignatureFindUsagesOfBaseClass(function.getName(), containingClass.getName(), baseClassName);
-			final int choice;
+			int choice;
 			if (function.getApplication().isUnitTestMode())
 			{
 				choice = Messages.YES;

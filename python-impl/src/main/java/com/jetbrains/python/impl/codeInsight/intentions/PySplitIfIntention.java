@@ -44,7 +44,7 @@ public class PySplitIfIntention extends PyBaseIntentionAction {
         }
 
         // PY-745
-        final IElementType elementType = elementAtOffset.getNode().getElementType();
+        IElementType elementType = elementAtOffset.getNode().getElementType();
         if (elementType == PyTokenTypes.COLON) {
             elementAtOffset = elementAtOffset.getPrevSibling();
             elementAtOffset = PyPsiUtils.getPrevNonCommentSibling(elementAtOffset, false);
@@ -65,7 +65,7 @@ public class PySplitIfIntention extends PyBaseIntentionAction {
         if (((PyBinaryExpression) element).getOperator() != PyTokenTypes.AND_KEYWORD || ((PyBinaryExpression) element).getRightExpression() == null) {
             return false;
         }
-        final PsiElement parent = element.getParent();
+        PsiElement parent = element.getParent();
         if (!(parent instanceof PyIfPart)) {
             return false;
         }
@@ -76,7 +76,7 @@ public class PySplitIfIntention extends PyBaseIntentionAction {
     public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAtOffset = file.findElementAt(editor.getCaretModel().getOffset());
         // PY-745
-        final IElementType elementType = elementAtOffset.getNode().getElementType();
+        IElementType elementType = elementAtOffset.getNode().getElementType();
         if (elementType == PyTokenTypes.COLON) {
             elementAtOffset = elementAtOffset.getPrevSibling();
             elementAtOffset = PyPsiUtils.getPrevNonCommentSibling(elementAtOffset, false);

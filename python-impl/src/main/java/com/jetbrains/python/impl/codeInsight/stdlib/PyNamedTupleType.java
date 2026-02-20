@@ -70,7 +70,7 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 			@Nonnull PyResolveContext resolveContext,
 			boolean inherited)
 	{
-		final List<? extends RatedResolveResult> classMembers = super.resolveMember(name, location, direction, resolveContext, inherited);
+		List<? extends RatedResolveResult> classMembers = super.resolveMember(name, location, direction, resolveContext, inherited);
 		if(classMembers != null && !classMembers.isEmpty())
 		{
 			return classMembers;
@@ -134,7 +134,7 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 	@Override
 	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
 	{
-		final Set<String> result = super.getMemberNames(inherited, context);
+		Set<String> result = super.getMemberNames(inherited, context);
 		result.addAll(myFields);
 
 		return result;

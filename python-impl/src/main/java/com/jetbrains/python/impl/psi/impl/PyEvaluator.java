@@ -122,11 +122,11 @@ public class PyEvaluator {
   }
 
   protected Object evaluateCall(PyCallExpression call) {
-    final PyExpression[] args = call.getArguments();
+    PyExpression[] args = call.getArguments();
     if (call.isCalleeText(PyNames.REPLACE) && args.length == 2) {
-      final PyExpression callee = call.getCallee();
+      PyExpression callee = call.getCallee();
       if (!(callee instanceof PyQualifiedExpression)) return null;
-      final PyExpression qualifier = ((PyQualifiedExpression)callee).getQualifier();
+      PyExpression qualifier = ((PyQualifiedExpression)callee).getQualifier();
       Object result = evaluate(qualifier);
       if (result instanceof String) {
         Object arg1 = evaluate(args[0]);

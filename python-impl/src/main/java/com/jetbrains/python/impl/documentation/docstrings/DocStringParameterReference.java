@@ -67,7 +67,7 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 		}
 		if(owner instanceof PyClass)
 		{
-			final PyFunction init = ((PyClass) owner).findMethodByName(PyNames.INIT, false, null);
+			PyFunction init = ((PyClass) owner).findMethodByName(PyNames.INIT, false, null);
 			if(init != null)
 			{
 				PsiElement element = resolveParameter(init);
@@ -114,9 +114,9 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 	}
 
 	@Nullable
-	private PsiElement resolveInstanceVariable(final PyClass owner)
+	private PsiElement resolveInstanceVariable(PyClass owner)
 	{
-		final List<PyTargetExpression> attributes = owner.getInstanceAttributes();
+		List<PyTargetExpression> attributes = owner.getInstanceAttributes();
 		for(PyTargetExpression element : attributes)
 		{
 			if(getCanonicalText().equals(element.getName()))
@@ -128,9 +128,9 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 	}
 
 	@Nullable
-	private PsiElement resolveClassVariable(@Nonnull final PyClass owner)
+	private PsiElement resolveClassVariable(@Nonnull PyClass owner)
 	{
-		final List<PyTargetExpression> attributes = owner.getClassAttributes();
+		List<PyTargetExpression> attributes = owner.getClassAttributes();
 		for(PyTargetExpression element : attributes)
 		{
 			if(getCanonicalText().equals(element.getName()))
@@ -144,8 +144,8 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 	@Nullable
 	private PsiElement resolveParameter(PyFunction owner)
 	{
-		final PyParameterList parameterList = owner.getParameterList();
-		final PyNamedParameter resolved = parameterList.findParameterByName(getCanonicalText());
+		PyParameterList parameterList = owner.getParameterList();
+		PyNamedParameter resolved = parameterList.findParameterByName(getCanonicalText());
 		if(resolved != null)
 		{
 			return resolved;
@@ -154,7 +154,7 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 		{
 			if(parameter instanceof PyNamedParameter)
 			{
-				final PyNamedParameter namedParameter = (PyNamedParameter) parameter;
+				PyNamedParameter namedParameter = (PyNamedParameter) parameter;
 				if(namedParameter.isKeywordContainer() || namedParameter.isPositionalContainer())
 				{
 					return namedParameter;
@@ -179,7 +179,7 @@ public class DocStringParameterReference extends PsiReferenceBase<PyStringLitera
 		if(owner instanceof PyFunction)
 		{
 			List<PyNamedParameter> result = Lists.newArrayList();
-			final List<PyNamedParameter> namedParameters = ParamHelper.collectNamedParameters(((PyFunction) owner).getParameterList());
+			List<PyNamedParameter> namedParameters = ParamHelper.collectNamedParameters(((PyFunction) owner).getParameterList());
 			Set<String> usedParameters = new HashSet<>();
 			PyStringLiteralExpression expression = PsiTreeUtil.getParentOfType(getElement(), PyStringLiteralExpression.class, false);
 			if(expression != null)

@@ -42,8 +42,8 @@ public class PySyntaxHighlighterFactory extends SyntaxHighlighterFactory {
 
   @Override
   @Nonnull
-  public SyntaxHighlighter getSyntaxHighlighter(@Nullable final Project project, @Nullable final VirtualFile virtualFile) {
-    final LanguageLevel level =
+  public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
+    LanguageLevel level =
       project != null && virtualFile != null ? PyUtil.getLanguageLevelForVirtualFile(project, virtualFile) : LanguageLevel.getDefault();
     return myMap.computeIfAbsent(level, PyHighlighter::new);
   }

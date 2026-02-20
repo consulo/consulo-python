@@ -63,7 +63,7 @@ public class PyFromFutureImportInspection extends PyInspection {
             if (importSource != null && PyNames.FUTURE_MODULE.equals(importSource.getName())) {
                 PsiFile file = importSource.getContainingFile();
                 if (file instanceof PyFile) {
-                    final List<PyStatement> statementList = ((PyFile) file).getStatements();
+                    List<PyStatement> statementList = ((PyFile) file).getStatements();
                     boolean skippedDocString = false;
                     for (PyStatement statement : statementList) {
                         if (statement instanceof PyExpressionStatement &&

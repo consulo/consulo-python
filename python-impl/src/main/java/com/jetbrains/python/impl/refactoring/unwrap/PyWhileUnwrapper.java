@@ -31,9 +31,9 @@ public class PyWhileUnwrapper extends PyUnwrapper {
 
   public boolean isApplicableTo(PsiElement e) {
     if (e instanceof PyWhileStatement) {
-      final PyStatementList statementList = ((PyWhileStatement)e).getWhilePart().getStatementList();
+      PyStatementList statementList = ((PyWhileStatement)e).getWhilePart().getStatementList();
       if (statementList != null) {
-        final PyStatement[] statements = statementList.getStatements();
+        PyStatement[] statements = statementList.getStatements();
         return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
       }
     }
@@ -41,8 +41,8 @@ public class PyWhileUnwrapper extends PyUnwrapper {
   }
 
   @Override
-  protected void doUnwrap(final PsiElement element, final Context context) throws IncorrectOperationException {
-    final PyWhileStatement whileStatement = (PyWhileStatement)element;
+  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+    PyWhileStatement whileStatement = (PyWhileStatement)element;
     context.extractPart(whileStatement);
     context.extractPart(whileStatement.getElsePart());
     context.delete(whileStatement);

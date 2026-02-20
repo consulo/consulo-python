@@ -90,7 +90,7 @@ public class PythonColorsPage implements ColorSettingsPage {
 
   @Nonnull
   public SyntaxHighlighter getHighlighter() {
-    final SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(PythonFileType.INSTANCE, null, null);
+    SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(PythonFileType.INSTANCE, null, null);
     assert highlighter != null;
     return highlighter;
   }

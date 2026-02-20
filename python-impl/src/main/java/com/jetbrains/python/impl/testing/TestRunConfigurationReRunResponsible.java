@@ -43,5 +43,5 @@ public interface TestRunConfigurationReRunResponsible
 	 * @throws ExecutionException failed to run
 	 */
 	@Nullable
-	RunProfileState rerunTests(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment environment, @Nonnull Collection<PsiElement> failedTests) throws ExecutionException;
+	RunProfileState rerunTests(@Nonnull Executor executor, @Nonnull ExecutionEnvironment environment, @Nonnull Collection<PsiElement> failedTests) throws ExecutionException;
 }

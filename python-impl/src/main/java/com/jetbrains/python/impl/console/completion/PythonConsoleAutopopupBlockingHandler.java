@@ -32,7 +32,7 @@ public class PythonConsoleAutopopupBlockingHandler extends TypedHandlerDelegate 
   public static final Key<Object> REPL_KEY = new Key<Object>("python.repl.console.editor");
 
   @Override
-  public Result checkAutoPopup(final char charTyped, final Project project, final Editor editor, final PsiFile file) {
+  public Result checkAutoPopup(char charTyped, Project project, Editor editor, PsiFile file) {
     if (editor.getUserData(REPL_KEY) != null) {
       return Result.DEFAULT;
     }

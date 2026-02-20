@@ -32,7 +32,7 @@ import java.util.Comparator;
  */
 public class PyHierarchyUtils {
   private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = new Comparator<NodeDescriptor>() {
-    public int compare(final NodeDescriptor first, final NodeDescriptor second) {
+    public int compare(NodeDescriptor first, NodeDescriptor second) {
       return first.getIndex() - second.getIndex();
     }
   };
@@ -41,7 +41,7 @@ public class PyHierarchyUtils {
   }
 
   @Nonnull
-  public static Comparator<NodeDescriptor> getComparator(final Project project) {
+  public static Comparator<NodeDescriptor> getComparator(Project project) {
     if (HierarchyBrowserManager.getInstance(project).getState().SORT_ALPHABETICALLY) {
       return AlphaComparator.INSTANCE;
     }

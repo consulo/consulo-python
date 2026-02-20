@@ -32,7 +32,7 @@ public class ParsingScope
 
 	public ParsingScope withFunction(boolean async)
 	{
-		final ParsingScope result = copy();
+		ParsingScope result = copy();
 		result.myFunction = true;
 		result.myAsync = async;
 		return result;
@@ -40,14 +40,14 @@ public class ParsingScope
 
 	public ParsingScope withClass()
 	{
-		final ParsingScope result = copy();
+		ParsingScope result = copy();
 		result.myClass = true;
 		return result;
 	}
 
 	public ParsingScope withSuite()
 	{
-		final ParsingScope result = copy();
+		ParsingScope result = copy();
 		result.mySuite = true;
 		return result;
 	}
@@ -89,7 +89,7 @@ public class ParsingScope
 
 	protected ParsingScope copy()
 	{
-		final ParsingScope result = createInstance();
+		ParsingScope result = createInstance();
 		result.myFunction = myFunction;
 		result.myClass = myClass;
 		result.mySuite = mySuite;

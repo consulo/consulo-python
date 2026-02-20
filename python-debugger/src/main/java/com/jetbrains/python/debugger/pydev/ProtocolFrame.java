@@ -13,14 +13,14 @@ public class ProtocolFrame {
   private @Nonnull
   final String myPayload;
 
-  public ProtocolFrame(final int command, final int sequence, @Nonnull final String payload) throws PyDebuggerException {
+  public ProtocolFrame(int command, int sequence, @Nonnull String payload) throws PyDebuggerException {
     myCommand = command;
     mySequence = sequence;
     myPayload = payload;
   }
 
-  public ProtocolFrame(final String frame) throws PyDebuggerException {
-    final String[] parts = frame.split("\t", 3);
+  public ProtocolFrame(String frame) throws PyDebuggerException {
+    String[] parts = frame.split("\t", 3);
     if (parts == null || parts.length < 2) {
       throw new PyDebuggerException("Bad frame: " + frame);
     }
@@ -45,7 +45,7 @@ public class ProtocolFrame {
 
   @Nonnull
   public byte[] pack() throws UnsupportedEncodingException {
-    final StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     sb.append(Integer.toString(myCommand));
     sb.append('\t');
     sb.append(Integer.toString(mySequence));
@@ -57,7 +57,7 @@ public class ProtocolFrame {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     sb.append('[');
     sb.append(Integer.toString(myCommand));
     sb.append(':');

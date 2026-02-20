@@ -42,12 +42,12 @@ public class PyJavaImportResolver implements PyImportResolver
 	public PsiElement resolveImportReference(QualifiedName name, QualifiedNameResolveContext context)
 	{
 		String fqn = name.toString();
-		final JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(context.getProject());
+		JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(context.getProject());
 		if(psiFacade == null)
 		{
 			return null;
 		}
-		final PsiJavaPackage aPackage = psiFacade.findPackage(fqn);
+		PsiJavaPackage aPackage = psiFacade.findPackage(fqn);
 		if(aPackage != null)
 		{
 			return aPackage;
@@ -56,7 +56,7 @@ public class PyJavaImportResolver implements PyImportResolver
 		Module module = context.getModule();
 		if(module != null && ModuleUtilCore.getExtension(module, JythonModuleExtension.class) != null)
 		{
-			final PsiClass aClass = psiFacade.findClass(fqn, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false));
+			PsiClass aClass = psiFacade.findClass(fqn, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false));
 			if(aClass != null)
 			{
 				return aClass;

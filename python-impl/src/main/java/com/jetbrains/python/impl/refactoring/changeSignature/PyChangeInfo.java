@@ -50,7 +50,7 @@ public class PyChangeInfo implements ChangeInfo {
 
     myIsNameChanged = !newName.equals(function.getName());
 
-    final PyParameter[] oldParameters = function.getParameterList().getParameters();
+    PyParameter[] oldParameters = function.getParameterList().getParameters();
 
     if (oldParameters.length != newParameterInfo.length) {
       myIsParameterSetOrOrderChanged = true;
@@ -68,8 +68,8 @@ public class PyChangeInfo implements ChangeInfo {
           myIsParameterSetOrOrderChanged = true;
           myIsParametersNameChanged = true;
         }
-        final String defaultValue = parameterInfo.getDefaultValue();
-        final PyExpression oldDefaultValue = oldParameters[i].getDefaultValue();
+        String defaultValue = parameterInfo.getDefaultValue();
+        PyExpression oldDefaultValue = oldParameters[i].getDefaultValue();
         if ((oldDefaultValue == null && defaultValue != null) || (defaultValue == null && oldDefaultValue != null)) {
           myIsParameterSetOrOrderChanged = true;
         }

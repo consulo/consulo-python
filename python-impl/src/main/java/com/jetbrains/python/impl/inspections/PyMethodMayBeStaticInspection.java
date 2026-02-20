@@ -68,30 +68,30 @@ public class PyMethodMayBeStaticInspection extends PyInspection {
             if (PyNames.getBuiltinMethods(LanguageLevel.forElement(node)).containsKey(node.getName())) {
                 return;
             }
-            final PyClass containingClass = node.getContainingClass();
+            PyClass containingClass = node.getContainingClass();
             if (containingClass == null) {
                 return;
             }
-            final PsiElement firstSuper = PySuperMethodsSearch.search(node, myTypeEvalContext).findFirst();
+            PsiElement firstSuper = PySuperMethodsSearch.search(node, myTypeEvalContext).findFirst();
             if (firstSuper != null) {
                 return;
             }
-            final PyFunction firstOverride = PyOverridingMethodsSearch.search(node, true).findFirst();
+            PyFunction firstOverride = PyOverridingMethodsSearch.search(node, true).findFirst();
             if (firstOverride != null) {
                 return;
             }
-            final PyDecoratorList decoratorList = node.getDecoratorList();
+            PyDecoratorList decoratorList = node.getDecoratorList();
             if (decoratorList != null) {
                 return;
             }
             if (node.getModifier() != null) {
                 return;
             }
-            final Property property = containingClass.findPropertyByCallable(node);
+            Property property = containingClass.findPropertyByCallable(node);
             if (property != null) {
                 return;
             }
-            final List<PyAssignmentStatement> attributes = node.findAttributes();
+            List<PyAssignmentStatement> attributes = node.findAttributes();
             if (!attributes.isEmpty()) {
                 return;
             }
@@ -99,18 +99,18 @@ public class PyMethodMayBeStaticInspection extends PyInspection {
                 return;
             }
 
-            final PyStatementList statementList = node.getStatementList();
-            final PyStatement[] statements = statementList.getStatements();
+            PyStatementList statementList = node.getStatementList();
+            PyStatement[] statements = statementList.getStatements();
 
             if (statements.length == 1 && statements[0] instanceof PyPassStatement) {
                 return;
             }
 
-            final PyParameter[] parameters = node.getParameterList().getParameters();
+            PyParameter[] parameters = node.getParameterList().getParameters();
 
             final String selfName;
             if (parameters.length > 0) {
-                final String name = parameters[0].getName();
+                String name = parameters[0].getName();
                 selfName = name != null ? name : parameters[0].getText();
             }
             else {
@@ -122,11 +122,11 @@ public class PyMethodMayBeStaticInspection extends PyInspection {
                 @Override
                 public void visitPyRaiseStatement(PyRaiseStatement node) {
                     super.visitPyRaiseStatement(node);
-                    final PyExpression[] expressions = node.getExpressions();
+                    PyExpression[] expressions = node.getExpressions();
                     if (expressions.length == 1) {
-                        final PyExpression expression = expressions[0];
+                        PyExpression expression = expressions[0];
                         if (expression instanceof PyCallExpression) {
-                            final PyExpression callee = ((PyCallExpression) expression).getCallee();
+                            PyExpression callee = ((PyCallExpression) expression).getCallee();
                             if (callee != null && PyNames.NOT_IMPLEMENTED_ERROR.equals(callee.getText())) {
                                 mayBeStatic[0] = false;
                             }
@@ -154,7 +154,7 @@ public class PyMethodMayBeStaticInspection extends PyInspection {
                 }
             };
             node.accept(visitor);
-            final PsiElement identifier = node.getNameIdentifier();
+            PsiElement identifier = node.getNameIdentifier();
             if (mayBeStatic[0] && identifier != null) {
                 registerProblem(
                     identifier,
@@ -169,9 +169,9 @@ public class PyMethodMayBeStaticInspection extends PyInspection {
     }
 
     private static boolean isTestElement(@Nonnull PyFunction node) {
-        final String methodName = node.getName();
-        final PyClass pyClass = node.getContainingClass();
-        final String className = pyClass == null ? null : pyClass.getName();
+        String methodName = node.getName();
+        PyClass pyClass = node.getContainingClass();
+        String className = pyClass == null ? null : pyClass.getName();
 
         return methodName != null && className != null && methodName.toLowerCase(Locale.getDefault())
             .startsWith("test") && className.toLowerCase(Locale.getDefault())

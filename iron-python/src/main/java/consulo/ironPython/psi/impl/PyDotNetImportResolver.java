@@ -43,19 +43,19 @@ public class PyDotNetImportResolver implements PyImportResolver
 	public PsiElement resolveImportReference(QualifiedName name, QualifiedNameResolveContext context)
 	{
 		String fqn = name.toString();
-		final DotNetPsiSearcher psiFacade = DotNetPsiSearcher.getInstance(context.getProject());
+		DotNetPsiSearcher psiFacade = DotNetPsiSearcher.getInstance(context.getProject());
 
 		Module module = context.getModule();
 		if(module != null && ModuleUtilCore.getExtension(module, BaseIronPythonModuleExtension.class) != null)
 		{
 			GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
-			final DotNetNamespaceAsElement aPackage = psiFacade.findNamespace(fqn, scope);
+			DotNetNamespaceAsElement aPackage = psiFacade.findNamespace(fqn, scope);
 			if(aPackage != null)
 			{
 				return aPackage;
 			}
 
-			final DotNetTypeDeclaration aClass = psiFacade.findType(fqn, scope);
+			DotNetTypeDeclaration aClass = psiFacade.findType(fqn, scope);
 			if(aClass != null)
 			{
 				return aClass;

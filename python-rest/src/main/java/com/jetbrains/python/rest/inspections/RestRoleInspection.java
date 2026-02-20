@@ -94,11 +94,11 @@ public class RestRoleInspection extends RestInspection {
         private final Set<String> myIgnoredRoles;
         Set<String> mySphinxRoles = new HashSet<>();
 
-        public Visitor(final ProblemsHolder holder, List<String> ignoredRoles) {
+        public Visitor(ProblemsHolder holder, List<String> ignoredRoles) {
             super(holder);
             myIgnoredRoles = Set.copyOf(ignoredRoles);
             Project project = holder.getProject();
-            final Module module = ModuleUtilCore.findModuleForPsiElement(holder.getFile());
+            Module module = ModuleUtilCore.findModuleForPsiElement(holder.getFile());
             if (module == null) {
                 return;
             }
@@ -142,13 +142,13 @@ public class RestRoleInspection extends RestInspection {
         }
 
         @Override
-        public void visitRole(final RestRole node) {
+        public void visitRole(RestRole node) {
             RestFile file = (RestFile) node.getContainingFile();
 
             if (PsiTreeUtil.getParentOfType(node, RestDirectiveBlock.class) != null) {
                 return;
             }
-            final PsiElement sibling = node.getNextSibling();
+            PsiElement sibling = node.getNextSibling();
             if (sibling == null || sibling.getNode().getElementType() != RestTokenTypes.INTERPRETED) {
                 return;
             }

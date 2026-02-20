@@ -92,7 +92,7 @@ public class PyTestCreator implements TestCreator
 			{
 				try
 				{
-					final PyElement testClass =
+					PyElement testClass =
 							generateTest(project, dialog);
 					testClass.navigate(false);
 					return testClass.getContainingFile();
@@ -112,7 +112,7 @@ public class PyTestCreator implements TestCreator
 	 * @return newly created test class
 	 */
 	@Nonnull
-	static PyElement generateTest(@Nonnull final Project project, @Nonnull final CreateTestDialog dialog)
+	static PyElement generateTest(@Nonnull Project project, @Nonnull CreateTestDialog dialog)
 	{
 		IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
 

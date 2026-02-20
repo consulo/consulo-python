@@ -16,7 +16,7 @@ public abstract class PyExtractSuperclassTest extends PyClassRefactoringTest {
     doSimpleTest("A", "Suppa", null, false, ".foo");
   }
 
-  private void doSimpleTest(final String className, final String superclassName, final String expectedError, final boolean sameFile, final String... membersName) throws Exception {
+  private void doSimpleTest(String className, String superclassName, String expectedError, boolean sameFile, String... membersName) throws Exception {
   /*  try {
     String baseName = "/refactoring/extractsuperclass/" + getTestName(true);
     myFixture.configureByFile(baseName + ".before.py");

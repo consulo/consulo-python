@@ -52,7 +52,7 @@ public class RestConfigurationEditor extends SettingsEditor<RestRunConfiguration
   private Project myProject;
   private JComponent anchor;
 
-  public RestConfigurationEditor(final Project project,
+  public RestConfigurationEditor(Project project,
                                  AbstractPythonRunConfiguration configuration,
                                  CollectionComboBoxModel model) {
     myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());

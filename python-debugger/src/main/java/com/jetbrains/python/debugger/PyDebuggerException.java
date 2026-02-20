@@ -14,7 +14,7 @@ public class PyDebuggerException extends Exception {
   public String getTracebackError() {
     String text = getMessage();
     if (text != null && text.contains("Traceback (most recent call last):")) {
-      final String[] lines = text.split("\n");
+      String[] lines = text.split("\n");
       if (lines.length > 0) {
         text = lines[lines.length - 1];
       }

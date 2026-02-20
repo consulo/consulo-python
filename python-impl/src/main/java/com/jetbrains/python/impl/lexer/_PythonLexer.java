@@ -700,7 +700,7 @@ private int getSpaceLength(CharSequence string) {
 String string1 = string.toString();
 string1 = StringUtil.trimEnd(string1, "\\");
 string1 = StringUtil.trimEnd(string1, ";");
-final String s = StringUtil.trimTrailing(string1);
+String s = StringUtil.trimTrailing(string1);
 return yylength()-s.length();
 
 }

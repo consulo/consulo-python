@@ -76,12 +76,12 @@ public class ReadWriteInstruction extends InstructionImpl
 	private final ACCESS myAccess;
 	private final InstructionTypeCallback myGetType;
 
-	private ReadWriteInstruction(final ControlFlowBuilder builder, final PsiElement element, final String name, final ACCESS access)
+	private ReadWriteInstruction(ControlFlowBuilder builder, PsiElement element, String name, ACCESS access)
 	{
 		this(builder, element, name, access, null);
 	}
 
-	private ReadWriteInstruction(final ControlFlowBuilder builder, final PsiElement element, final String name, final ACCESS access, @Nullable final InstructionTypeCallback getType)
+	private ReadWriteInstruction(ControlFlowBuilder builder, PsiElement element, String name, ACCESS access, @Nullable InstructionTypeCallback getType)
 	{
 		super(builder, element);
 		myName = name;
@@ -99,22 +99,22 @@ public class ReadWriteInstruction extends InstructionImpl
 		return myAccess;
 	}
 
-	public static ReadWriteInstruction read(final ControlFlowBuilder builder, final PyElement element, final String name)
+	public static ReadWriteInstruction read(ControlFlowBuilder builder, PyElement element, String name)
 	{
 		return new ReadWriteInstruction(builder, element, name, ACCESS.READ);
 	}
 
-	public static ReadWriteInstruction write(final ControlFlowBuilder builder, final PyElement element, final String name)
+	public static ReadWriteInstruction write(ControlFlowBuilder builder, PyElement element, String name)
 	{
 		return new ReadWriteInstruction(builder, element, name, ACCESS.WRITE);
 	}
 
-	public static ReadWriteInstruction newInstruction(final ControlFlowBuilder builder, final PsiElement element, final String name, final ACCESS access)
+	public static ReadWriteInstruction newInstruction(ControlFlowBuilder builder, PsiElement element, String name, ACCESS access)
 	{
 		return new ReadWriteInstruction(builder, element, name, access);
 	}
 
-	public static ReadWriteInstruction assertType(final ControlFlowBuilder builder, final PsiElement element, final String name, final InstructionTypeCallback getType)
+	public static ReadWriteInstruction assertType(ControlFlowBuilder builder, PsiElement element, String name, InstructionTypeCallback getType)
 	{
 		return new ReadWriteInstruction(builder, element, name, ACCESS.ASSERTTYPE, getType);
 	}

@@ -14,8 +14,8 @@ public class EvaluateCommand extends AbstractFrameCommand {
   private PyDebugValue myValue = null;
 
 
-  public EvaluateCommand(final RemoteDebugger debugger, final String threadId, final String frameId, final String expression,
-                         final boolean execute, final boolean trimResult) {
+  public EvaluateCommand(RemoteDebugger debugger, String threadId, String frameId, String expression,
+                         boolean execute, boolean trimResult) {
     super(debugger, (execute ? EXECUTE : EVALUATE), threadId, frameId);
     myExpression = expression;
     myExecute = execute;
@@ -35,9 +35,9 @@ public class EvaluateCommand extends AbstractFrameCommand {
   }
 
   @Override
-  protected void processResponse(final ProtocolFrame response) throws PyDebuggerException {
+  protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
     super.processResponse(response);
-    final PyDebugValue value = ProtocolParser.parseValue(response.getPayload(), myDebugProcess);
+    PyDebugValue value = ProtocolParser.parseValue(response.getPayload(), myDebugProcess);
     myValue = value.setName((myExecute ? "" : myExpression));
   }
 

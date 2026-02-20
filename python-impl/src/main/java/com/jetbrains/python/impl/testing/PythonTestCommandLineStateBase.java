@@ -67,17 +67,17 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 	protected ConsoleView createAndAttachConsole(Project project, ProcessHandler processHandler, Executor executor) throws ExecutionException
 	{
 
-		final PythonTRunnerConsoleProperties consoleProperties = createConsoleProperties(executor);
+		PythonTRunnerConsoleProperties consoleProperties = createConsoleProperties(executor);
 
 		if(isDebug())
 		{
-			final ConsoleView testsOutputConsoleView = SMTestRunnerConnectionUtil.createConsole(PythonTRunnerConsoleProperties.FRAMEWORK_NAME, consoleProperties);
-			final ConsoleView consoleView = new PythonDebugLanguageConsoleView(project, PythonSdkType.findSdkByPath(myConfiguration.getInterpreterPath()), testsOutputConsoleView);
+			ConsoleView testsOutputConsoleView = SMTestRunnerConnectionUtil.createConsole(PythonTRunnerConsoleProperties.FRAMEWORK_NAME, consoleProperties);
+			ConsoleView consoleView = new PythonDebugLanguageConsoleView(project, PythonSdkType.findSdkByPath(myConfiguration.getInterpreterPath()), testsOutputConsoleView);
 			consoleView.attachToProcess(processHandler);
 			addTracebackFilter(project, consoleView, processHandler);
 			return consoleView;
 		}
-		final ConsoleView consoleView = SMTestRunnerConnectionUtil.createAndAttachConsole(PythonTRunnerConsoleProperties.FRAMEWORK_NAME, processHandler, consoleProperties);
+		ConsoleView consoleView = SMTestRunnerConnectionUtil.createAndAttachConsole(PythonTRunnerConsoleProperties.FRAMEWORK_NAME, processHandler, consoleProperties);
 		addTracebackFilter(project, consoleView, processHandler);
 		return consoleView;
 	}
@@ -102,16 +102,16 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 		return cmd;
 	}
 
-	protected void setWorkingDirectory(@Nonnull final GeneralCommandLine cmd)
+	protected void setWorkingDirectory(@Nonnull GeneralCommandLine cmd)
 	{
-		final String workingDirectory = myConfiguration.getWorkingDirectory();
+		String workingDirectory = myConfiguration.getWorkingDirectory();
 		if(!StringUtil.isEmptyOrSpaces(workingDirectory))
 		{
 			cmd.withWorkDirectory(workingDirectory);
 		}
 		else if(myConfiguration instanceof AbstractPythonTestRunConfiguration)
 		{
-			final AbstractPythonTestRunConfiguration configuration = (AbstractPythonTestRunConfiguration) myConfiguration;
+			AbstractPythonTestRunConfiguration configuration = (AbstractPythonTestRunConfiguration) myConfiguration;
 			cmd.withWorkDirectory(configuration.getWorkingDirectorySafe());
 		}
 	}
@@ -119,8 +119,8 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 	@Override
 	public ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException
 	{
-		final ProcessHandler processHandler = startProcess(patchers);
-		final ConsoleView console = createAndAttachConsole(myConfiguration.getProject(), processHandler, executor);
+		ProcessHandler processHandler = startProcess(patchers);
+		ConsoleView console = createAndAttachConsole(myConfiguration.getProject(), processHandler, executor);
 
 		List<AnAction> actions = Lists.newArrayList(createActions(console, processHandler));
 

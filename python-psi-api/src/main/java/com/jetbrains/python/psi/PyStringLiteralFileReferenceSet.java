@@ -67,7 +67,7 @@ public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet
 		//noinspection ConstantConditions
 		if(myStringLiteralExpression != null)
 		{
-			final List<FileReference> references = getFileReferences(myStringLiteralExpression);
+			List<FileReference> references = getFileReferences(myStringLiteralExpression);
 			myReferences = references.toArray(new FileReference[references.size()]);
 		}
 	}
@@ -75,25 +75,25 @@ public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet
 	@Nonnull
 	private List<FileReference> getFileReferences(@Nonnull PyStringLiteralExpression expression)
 	{
-		final String value = expression.getStringValue();
-		final Matcher matcher = DELIMITERS.matcher(value);
+		String value = expression.getStringValue();
+		Matcher matcher = DELIMITERS.matcher(value);
 		int start = 0;
 		int index = 0;
-		final List<FileReference> results = new ArrayList<>();
+		List<FileReference> results = new ArrayList<>();
 		while(matcher.find())
 		{
-			final String s = value.substring(start, matcher.start());
+			String s = value.substring(start, matcher.start());
 			if(!s.isEmpty())
 			{
-				final TextRange range = TextRange.create(expression.valueOffsetToTextOffset(start), expression.valueOffsetToTextOffset(matcher.start()));
+				TextRange range = TextRange.create(expression.valueOffsetToTextOffset(start), expression.valueOffsetToTextOffset(matcher.start()));
 				results.add(createFileReference(range, index++, s));
 			}
 			start = matcher.end();
 		}
-		final String s = value.substring(start);
+		String s = value.substring(start);
 		if(!s.isEmpty())
 		{
-			final TextRange range = TextRange.create(expression.valueOffsetToTextOffset(start), expression.valueOffsetToTextOffset(value.length()));
+			TextRange range = TextRange.create(expression.valueOffsetToTextOffset(start), expression.valueOffsetToTextOffset(value.length()));
 			results.add(createFileReference(range, index, s));
 		}
 		return results;

@@ -56,13 +56,13 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	@Nonnull
 	public Collection<PyExpression> getArgumentExpressions()
 	{
-		final PyExpression[] arguments = getArguments();
-		final Collection<PyExpression> result = new ArrayList<>(arguments.length);
-		for(final PyExpression expression : arguments)
+		PyExpression[] arguments = getArguments();
+		Collection<PyExpression> result = new ArrayList<>(arguments.length);
+		for(PyExpression expression : arguments)
 		{
 			if(expression instanceof PyKeywordArgument)
 			{
-				final PyExpression valueExpression = ((PyKeywordArgument) expression).getValueExpression();
+				PyExpression valueExpression = ((PyKeywordArgument) expression).getValueExpression();
 				result.add(valueExpression);
 			}
 			if(expression instanceof PyReferenceExpression)
@@ -100,13 +100,13 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	}
 
 	@Override
-	public void addArgument(@Nonnull final PyExpression arg)
+	public void addArgument(@Nonnull PyExpression arg)
 	{
-		final PyElementGenerator generator = new PyElementGeneratorImpl(getProject());
+		PyElementGenerator generator = new PyElementGeneratorImpl(getProject());
 
 		// Adds param to appropriate place
-		final Deque<PyKeywordArgument> keywordArguments = getKeyWordArguments();
-		final Deque<PyExpression> parameters = getParameters();
+		Deque<PyKeywordArgument> keywordArguments = getKeyWordArguments();
+		Deque<PyExpression> parameters = getParameters();
 
 		if(keywordArguments.isEmpty() && parameters.isEmpty())
 		{
@@ -153,7 +153,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	@Nonnull
 	private Deque<PyExpression> getParameters()
 	{
-		final PyExpression[] childrenOfType = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
+		PyExpression[] childrenOfType = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
 		if(childrenOfType == null)
 		{
 			return new ArrayDeque<>(0);
@@ -261,7 +261,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	public ASTNode getClosingParen()
 	{
 		ASTNode node = getNode();
-		final ASTNode[] children = node.getChildren(TokenSet.create(PyTokenTypes.RPAR));
+		ASTNode[] children = node.getChildren(TokenSet.create(PyTokenTypes.RPAR));
 		return children.length == 0 ? null : children[children.length - 1];
 	}
 
@@ -362,7 +362,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	private static class NoKeyArguments extends NotNullPredicate<PyExpression>
 	{
 		@Override
-		protected boolean applyNotNull(@Nonnull final PyExpression input)
+		protected boolean applyNotNull(@Nonnull PyExpression input)
 		{
 			return (PsiTreeUtil.getParentOfType(input, PyKeywordArgument.class) == null) && !(input instanceof PyKeywordArgument);
 		}
@@ -370,23 +370,23 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 
 	@Nullable
 	@Override
-	public PyExpression getValueExpressionForParam(@Nonnull final FunctionParameter parameter)
+	public PyExpression getValueExpressionForParam(@Nonnull FunctionParameter parameter)
 	{
-		final String parameterName = parameter.getName();
+		String parameterName = parameter.getName();
 		if(parameterName != null)
 		{
-			final PyKeywordArgument kwarg = getKeywordArgument(parameterName);
+			PyKeywordArgument kwarg = getKeywordArgument(parameterName);
 			if(kwarg != null)
 			{
 				return kwarg.getValueExpression();
 			}
 		}
 
-		final PyExpression[] arguments = getArguments();
-		final int position = parameter.getPosition();
+		PyExpression[] arguments = getArguments();
+		int position = parameter.getPosition();
 		if((position != FunctionParameter.POSITION_NOT_SUPPORTED) && (arguments.length > position))
 		{
-			final PyExpression result = arguments[position];
+			PyExpression result = arguments[position];
 			if(result instanceof PyKeywordArgument)
 			{
 				((PyKeywordArgument) result).getValueExpression();

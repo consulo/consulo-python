@@ -69,7 +69,7 @@ public abstract class PyInspectionExtension {
    * @param context    type eval to be used
    * @return true if ignore
    */
-  public boolean ignoreProtectedSymbol(@Nonnull final PyReferenceExpression expression, @Nonnull final TypeEvalContext context) {
+  public boolean ignoreProtectedSymbol(@Nonnull PyReferenceExpression expression, @Nonnull TypeEvalContext context) {
     return false;
   }
 }

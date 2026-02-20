@@ -47,7 +47,7 @@ public class PyMissingBracesFixer extends PyFixer<PyElement>
 	{
 		if(psiElement instanceof PySetLiteralExpression || psiElement instanceof PyDictLiteralExpression)
 		{
-			final PsiElement lastChild = PyPsiUtils.getPrevNonCommentSibling(psiElement.getLastChild(), false);
+			PsiElement lastChild = PyPsiUtils.getPrevNonCommentSibling(psiElement.getLastChild(), false);
 			if(lastChild != null && !"}".equals(lastChild.getText()))
 			{
 				editor.getDocument().insertString(lastChild.getTextRange().getEndOffset(), "}");
@@ -57,7 +57,7 @@ public class PyMissingBracesFixer extends PyFixer<PyElement>
 				psiElement instanceof PySliceExpression ||
 				psiElement instanceof PySubscriptionExpression)
 		{
-			final PsiElement lastChild = PyPsiUtils.getPrevNonCommentSibling(psiElement.getLastChild(), false);
+			PsiElement lastChild = PyPsiUtils.getPrevNonCommentSibling(psiElement.getLastChild(), false);
 			if(lastChild != null && !"]".equals(lastChild.getText()))
 			{
 				editor.getDocument().insertString(lastChild.getTextRange().getEndOffset(), "]");

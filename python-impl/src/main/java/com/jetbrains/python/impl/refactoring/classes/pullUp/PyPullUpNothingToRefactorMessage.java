@@ -44,7 +44,7 @@ class PyPullUpNothingToRefactorMessage
 	 * @param editor                editor to be used
 	 * @param classUnderRefactoring class user refactors
 	 */
-	PyPullUpNothingToRefactorMessage(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PyClass classUnderRefactoring)
+	PyPullUpNothingToRefactorMessage(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PyClass classUnderRefactoring)
 	{
 		myProject = project;
 		myEditor = editor;

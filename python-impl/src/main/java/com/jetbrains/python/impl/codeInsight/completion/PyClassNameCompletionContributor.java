@@ -67,8 +67,8 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 	{
 		if(parameters.isExtendedCompletion())
 		{
-			final PsiElement element = parameters.getPosition();
-			final PsiElement parent = element.getParent();
+			PsiElement element = parameters.getPosition();
+			PsiElement parent = element.getParent();
 			if(parent instanceof PyReferenceExpression && ((PyReferenceExpression) parent).isQualified())
 			{
 				return;
@@ -81,7 +81,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 					return;
 				}
 			}
-			final FileViewProvider provider = element.getContainingFile().getViewProvider();
+			FileViewProvider provider = element.getContainingFile().getViewProvider();
 			if(provider instanceof MultiplePsiFilesPerDocumentFileViewProvider)
 			{
 				return;
@@ -90,7 +90,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 			{
 				return;
 			}
-			final PsiFile originalFile = parameters.getOriginalFile();
+			PsiFile originalFile = parameters.getOriginalFile();
 			addVariantsFromIndex(result, originalFile, PyClassNameIndex.KEY, parent instanceof PyStringLiteralExpression ? STRING_LITERAL_INSERT_HANDLER : IMPORTING_INSERT_HANDLER, Conditions
 					.<PyClass>alwaysTrue(), PyClass.class);
 			addVariantsFromIndex(result, originalFile, PyFunctionNameIndex.KEY, getFunctionInsertHandler(parent), IS_TOPLEVEL, PyFunction.class);
@@ -137,24 +137,24 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 
 	private static Condition<PsiElement> IS_TOPLEVEL = element -> PyUtil.isTopLevel(element);
 
-	private static <T extends PsiNamedElement> void addVariantsFromIndex(final CompletionResultSet resultSet,
-																		 final PsiFile targetFile,
-																		 final StubIndexKey<String, T> key,
-																		 final InsertHandler<LookupElement> insertHandler,
-																		 final Condition<? super T> condition,
-																		 Class<T> elementClass)
+	private static <T extends PsiNamedElement> void addVariantsFromIndex(CompletionResultSet resultSet,
+                                                                         PsiFile targetFile,
+                                                                         StubIndexKey<String, T> key,
+                                                                         InsertHandler<LookupElement> insertHandler,
+                                                                         Condition<? super T> condition,
+                                                                         Class<T> elementClass)
 	{
-		final Project project = targetFile.getProject();
+		Project project = targetFile.getProject();
 		GlobalSearchScope scope = PyProjectScopeBuilder.excludeSdkTestsScope(targetFile);
 
 		Collection<String> keys = StubIndex.getInstance().getAllKeys(key, project);
-		for(final String elementName : resultSet.getPrefixMatcher().sortMatching(keys))
+		for(String elementName : resultSet.getPrefixMatcher().sortMatching(keys))
 		{
 			for(T element : StubIndex.getElements(key, elementName, project, scope, elementClass))
 			{
 				if(condition.value(element))
 				{
-					final String name = element.getName();
+					String name = element.getName();
 					if(name != null)
 					{
 						resultSet.addElement(LookupElementBuilder.createWithSmartPointer(name, element).withIcon(IconDescriptorUpdaters.getIcon(element, 0)).withTailText(" " + ((NavigationItem)
@@ -167,7 +167,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 
 	private static final InsertHandler<LookupElement> IMPORTING_INSERT_HANDLER = new InsertHandler<LookupElement>()
 	{
-		public void handleInsert(final InsertionContext context, final LookupElement item)
+		public void handleInsert(InsertionContext context, LookupElement item)
 		{
 			addImportForLookupElement(context, item, context.getTailOffset() - 1);
 		}
@@ -176,7 +176,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 
 	private static final InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new PyFunctionInsertHandler()
 	{
-		public void handleInsert(@Nonnull final InsertionContext context, @Nonnull final LookupElement item)
+		public void handleInsert(@Nonnull InsertionContext context, @Nonnull LookupElement item)
 		{
 			int tailOffset = context.getTailOffset() - 1;
 			super.handleInsert(context, item);  // adds parentheses, modifies tail offset
@@ -204,7 +204,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		}
 	};
 
-	private static void addImportForLookupElement(final InsertionContext context, final LookupElement item, final int tailOffset)
+	private static void addImportForLookupElement(final InsertionContext context, final LookupElement item, int tailOffset)
 	{
 		PsiDocumentManager manager = PsiDocumentManager.getInstance(context.getProject());
 		Document document = manager.getDocument(context.getFile());

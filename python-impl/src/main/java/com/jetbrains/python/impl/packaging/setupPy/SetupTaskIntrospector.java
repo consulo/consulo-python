@@ -47,20 +47,20 @@ public class SetupTaskIntrospector
 
 	public static boolean usesSetuptools(@Nonnull PyFile file)
 	{
-		final List<PyFromImportStatement> imports = file.getFromImports();
+		List<PyFromImportStatement> imports = file.getFromImports();
 		for(PyFromImportStatement anImport : imports)
 		{
-			final QualifiedName qName = anImport.getImportSourceQName();
+			QualifiedName qName = anImport.getImportSourceQName();
 			if(qName != null && qName.matches("setuptools"))
 			{
 				return true;
 			}
 		}
 
-		final List<PyImportElement> importElements = file.getImportTargets();
+		List<PyImportElement> importElements = file.getImportTargets();
 		for(PyImportElement element : importElements)
 		{
-			final QualifiedName qName = element.getImportedQName();
+			QualifiedName qName = element.getImportedQName();
 			if(qName != null && qName.matches("setuptools"))
 			{
 				return true;
@@ -84,21 +84,21 @@ public class SetupTaskIntrospector
 
 	public static List<SetupTask> getTaskList(Module module)
 	{
-		final PyFile setupPy = PyPackageUtil.findSetupPy(module);
+		PyFile setupPy = PyPackageUtil.findSetupPy(module);
 		return getTaskList(module, setupPy != null && usesSetuptools(setupPy));
 	}
 
 	private static List<SetupTask> getTaskList(Module module, boolean setuptools)
 	{
-		final String name = (setuptools ? "setuptools" : "distutils") + ".command.install.install";
-		final Map<String, List<SetupTask>> cache = setuptools ? ourSetuptoolsTaskCache : ourDistutilsTaskCache;
-		final PyClass installClass = PyClassNameIndex.findClass(name, module.getProject());
+		String name = (setuptools ? "setuptools" : "distutils") + ".command.install.install";
+		Map<String, List<SetupTask>> cache = setuptools ? ourSetuptoolsTaskCache : ourDistutilsTaskCache;
+		PyClass installClass = PyClassNameIndex.findClass(name, module.getProject());
 		if(installClass != null)
 		{
-			final PsiDirectory distutilsCommandDir = installClass.getContainingFile().getParent();
+			PsiDirectory distutilsCommandDir = installClass.getContainingFile().getParent();
 			if(distutilsCommandDir != null)
 			{
-				final String path = distutilsCommandDir.getVirtualFile().getPath();
+				String path = distutilsCommandDir.getVirtualFile().getPath();
 				List<SetupTask> tasks = cache.get(path);
 				if(tasks == null)
 				{
@@ -120,7 +120,7 @@ public class SetupTaskIntrospector
 		{
 			if(commandFile instanceof PyFile && !SKIP_NAMES.contains(commandFile.getName()))
 			{
-				final String taskName = FileUtil.getNameWithoutExtension(commandFile.getName());
+				String taskName = FileUtil.getNameWithoutExtension(commandFile.getName());
 				result.add(createTaskFromFile((PyFile) commandFile, taskName, setuptools));
 			}
 		}
@@ -131,38 +131,38 @@ public class SetupTaskIntrospector
 	{
 		SetupTask task = new SetupTask(name);
 		// setuptools wraps the build_ext command class in a way that we cannot understand; use the distutils class which it delegates to
-		final PyClass taskClass = (name.equals("build_ext") && setuptools) ? PyClassNameIndex.findClass("distutils.command.build_ext.build_ext", file.getProject()) : file.findTopLevelClass(name);
+		PyClass taskClass = (name.equals("build_ext") && setuptools) ? PyClassNameIndex.findClass("distutils.command.build_ext.build_ext", file.getProject()) : file.findTopLevelClass(name);
 		if(taskClass != null)
 		{
-			final PyTargetExpression description = taskClass.findClassAttribute("description", true, null);
+			PyTargetExpression description = taskClass.findClassAttribute("description", true, null);
 			if(description != null)
 			{
-				final String descriptionText = PyPsiUtils.strValue(PyPsiUtils.flattenParens(description.findAssignedValue()));
+				String descriptionText = PyPsiUtils.strValue(PyPsiUtils.flattenParens(description.findAssignedValue()));
 				if(descriptionText != null)
 				{
 					task.setDescription(descriptionText);
 				}
 			}
 
-			final List<PyExpression> booleanOptions = resolveSequenceValue(taskClass, "boolean_options");
-			final List<String> booleanOptionsList = new ArrayList<>();
+			List<PyExpression> booleanOptions = resolveSequenceValue(taskClass, "boolean_options");
+			List<String> booleanOptionsList = new ArrayList<>();
 			for(PyExpression option : booleanOptions)
 			{
-				final String s = PyPsiUtils.strValue(option);
+				String s = PyPsiUtils.strValue(option);
 				if(s != null)
 				{
 					booleanOptionsList.add(s);
 				}
 			}
 
-			final PyTargetExpression negativeOpt = taskClass.findClassAttribute("negative_opt", true, null);
-			final Map<String, String> negativeOptMap = negativeOpt == null ? Collections.<String, String>emptyMap() : parseNegativeOpt(negativeOpt.findAssignedValue());
+			PyTargetExpression negativeOpt = taskClass.findClassAttribute("negative_opt", true, null);
+			Map<String, String> negativeOptMap = negativeOpt == null ? Collections.<String, String>emptyMap() : parseNegativeOpt(negativeOpt.findAssignedValue());
 
 
-			final List<PyExpression> userOptions = resolveSequenceValue(taskClass, "user_options");
+			List<PyExpression> userOptions = resolveSequenceValue(taskClass, "user_options");
 			for(PyExpression element : userOptions)
 			{
-				final SetupTask.Option option = createOptionFromTuple(element, booleanOptionsList, negativeOptMap);
+				SetupTask.Option option = createOptionFromTuple(element, booleanOptionsList, negativeOptMap);
 				if(option != null)
 				{
 					task.addOption(option);
@@ -187,7 +187,7 @@ public class SetupTaskIntrospector
 		}
 		else if(value instanceof PyBinaryExpression)
 		{
-			final PyBinaryExpression binaryExpression = (PyBinaryExpression) value;
+			PyBinaryExpression binaryExpression = (PyBinaryExpression) value;
 			if(binaryExpression.isOperator("+"))
 			{
 				collectSequenceElements(binaryExpression.getLeftExpression(), result);
@@ -196,7 +196,7 @@ public class SetupTaskIntrospector
 		}
 		else if(value instanceof PyReferenceExpression)
 		{
-			final PsiElement resolveResult = ((PyReferenceExpression) value).getReference(PyResolveContext.noImplicits()).resolve();
+			PsiElement resolveResult = ((PyReferenceExpression) value).getReference(PyResolveContext.noImplicits()).resolve();
 			collectSequenceElements(resolveResult, result);
 		}
 		else if(value instanceof PyTargetExpression)
@@ -211,7 +211,7 @@ public class SetupTaskIntrospector
 		dict = PyPsiUtils.flattenParens(dict);
 		if(dict instanceof PyDictLiteralExpression)
 		{
-			final PyKeyValueExpression[] elements = ((PyDictLiteralExpression) dict).getElements();
+			PyKeyValueExpression[] elements = ((PyDictLiteralExpression) dict).getElements();
 			for(PyKeyValueExpression element : elements)
 			{
 				String key = PyPsiUtils.strValue(PyPsiUtils.flattenParens(element.getKey()));
@@ -231,11 +231,11 @@ public class SetupTaskIntrospector
 		tuple = PyPsiUtils.flattenParens(tuple);
 		if(tuple instanceof PyTupleExpression)
 		{
-			final PyExpression[] elements = ((PyTupleExpression) tuple).getElements();
+			PyExpression[] elements = ((PyTupleExpression) tuple).getElements();
 			if(elements.length == 3)
 			{
 				String name = PyPsiUtils.strValue(elements[0]);
-				final String description = PyPsiUtils.strValue(elements[2]);
+				String description = PyPsiUtils.strValue(elements[2]);
 				if(name != null && description != null)
 				{
 					if(negativeOptMap.containsKey(name))
@@ -246,7 +246,7 @@ public class SetupTaskIntrospector
 					{
 						return null;
 					}
-					final boolean checkbox = booleanOptions.contains(name);
+					boolean checkbox = booleanOptions.contains(name);
 					boolean negative = false;
 					if(negativeOptMap.containsValue(name))
 					{

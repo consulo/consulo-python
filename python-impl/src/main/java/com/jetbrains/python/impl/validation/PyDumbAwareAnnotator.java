@@ -36,7 +36,7 @@ public class PyDumbAwareAnnotator implements Annotator, DumbAware {
   }
 
   public void annotate(@Nonnull PsiElement element, @Nonnull AnnotationHolder holder) {
-    final PsiFile file = element.getContainingFile();
+    PsiFile file = element.getContainingFile();
 
     for(PyAnnotator annotator: EP_NAME.getExtensionList()) {
       if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(annotator.getClass())) continue;

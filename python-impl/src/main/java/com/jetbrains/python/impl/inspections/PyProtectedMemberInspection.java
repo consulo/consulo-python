@@ -94,12 +94,12 @@ public class PyProtectedMemberInspection extends PyInspection {
 
         @Override
         public void visitPyImportElement(PyImportElement node) {
-            final PyStatement statement = node.getContainingImportStatement();
+            PyStatement statement = node.getContainingImportStatement();
             if (!(statement instanceof PyFromImportStatement)) {
                 return;
             }
-            final PyReferenceExpression importReferenceExpression = node.getImportReferenceExpression();
-            final PyReferenceExpression importSource = ((PyFromImportStatement) statement).getImportSource();
+            PyReferenceExpression importReferenceExpression = node.getImportReferenceExpression();
+            PyReferenceExpression importSource = ((PyFromImportStatement) statement).getImportSource();
             if (importReferenceExpression != null && importSource != null && !isImportFromTheSamePackage(importSource)) {
                 checkReference(importReferenceExpression, importSource);
             }
@@ -116,7 +116,7 @@ public class PyProtectedMemberInspection extends PyInspection {
 
         @Override
         public void visitPyReferenceExpression(PyReferenceExpression node) {
-            final PyExpression qualifier = node.getQualifier();
+            PyExpression qualifier = node.getQualifier();
             if (myState.ignoreAnnotations && PsiTreeUtil.getParentOfType(node, PyAnnotation.class) != null) {
                 return;
             }
@@ -126,39 +126,39 @@ public class PyProtectedMemberInspection extends PyInspection {
             checkReference(node, qualifier);
         }
 
-        private void checkReference(@Nonnull final PyReferenceExpression node, @Nonnull final PyExpression qualifier) {
+        private void checkReference(@Nonnull PyReferenceExpression node, @Nonnull PyExpression qualifier) {
             if (myTypeEvalContext.getType(qualifier) instanceof PyNamedTupleType) {
                 return;
             }
-            final String name = node.getName();
-            final List<LocalQuickFix> quickFixes = new ArrayList<>();
+            String name = node.getName();
+            List<LocalQuickFix> quickFixes = new ArrayList<>();
             quickFixes.add(new PyRenameElementQuickFix());
 
             if (name != null && name.startsWith("_") && !name.startsWith("__") && !name.endsWith("__")) {
-                final PsiReference reference = node.getReference(getResolveContext());
-                for (final PyInspectionExtension inspectionExtension : PyInspectionExtension.EP_NAME.getExtensions()) {
+                PsiReference reference = node.getReference(getResolveContext());
+                for (PyInspectionExtension inspectionExtension : PyInspectionExtension.EP_NAME.getExtensions()) {
                     if (inspectionExtension.ignoreProtectedSymbol(node, myTypeEvalContext)) {
                         return;
                     }
                 }
-                final PsiElement resolvedExpression = reference.resolve();
-                final PyClass resolvedClass = getClassOwner(resolvedExpression);
+                PsiElement resolvedExpression = reference.resolve();
+                PyClass resolvedClass = getClassOwner(resolvedExpression);
                 if (resolvedExpression instanceof PyTargetExpression) {
-                    final String newName = StringUtil.trimLeading(name, '_');
+                    String newName = StringUtil.trimLeading(name, '_');
                     if (resolvedClass != null) {
                         LocalizeValue qFixName = resolvedClass.getProperties().containsKey(newName)
                             ? PyLocalize.qfixUseProperty()
                             : PyLocalize.qfixAddProperty();
                         quickFixes.add(new PyAddPropertyForFieldQuickFix(qFixName));
 
-                        final Collection<String> usedNames = PyRefactoringUtil.collectUsedNames(resolvedClass);
+                        Collection<String> usedNames = PyRefactoringUtil.collectUsedNames(resolvedClass);
                         if (!usedNames.contains(newName)) {
                             quickFixes.add(new PyMakePublicQuickFix());
                         }
                     }
                 }
 
-                final PyClass parentClass = getClassOwner(node);
+                PyClass parentClass = getClassOwner(node);
                 if (parentClass != null) {
                     if (PyTestUtil.isPyTestClass(parentClass, null) && myState.ignoreTestFunctions) {
                         return;
@@ -177,8 +177,8 @@ public class PyProtectedMemberInspection extends PyInspection {
                         outerClass = getClassOwner(outerClass);
                     }
                 }
-                final PyType type = myTypeEvalContext.getType(qualifier);
-                final String bundleKey =
+                PyType type = myTypeEvalContext.getType(qualifier);
+                String bundleKey =
                     type instanceof PyModuleType ? "INSP.protected.member.$0.access.module" : "INSP.protected.member.$0.access";
                 registerProblem(
                     node,

@@ -55,7 +55,7 @@ public abstract class PyAutoUnindentTest extends PyTestCase {
 
 
   private void doTypingTest() throws Exception {
-    final String testName = "editing/" + getTestName(true);
+    String testName = "editing/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     doTyping(':');
     myFixture.checkResultByFile(testName + ".after.py");
@@ -63,7 +63,7 @@ public abstract class PyAutoUnindentTest extends PyTestCase {
 
   private void doTyping(final char character) {
     final int offset = myFixture.getEditor().getCaretModel().getOffset();
-    final PsiFile file = ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>() {
+    PsiFile file = ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>() {
       @Override
       public PsiFile compute() {
         myFixture.getEditor().getCaretModel().moveToOffset(offset);
@@ -74,7 +74,7 @@ public abstract class PyAutoUnindentTest extends PyTestCase {
   }
 
   private void doCompletionTest() throws Exception {
-    final String testName = "editing/" + getTestName(true);
+    String testName = "editing/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     LookupElement[] variants = myFixture.complete(CompletionType.SMART);
     myFixture.checkResultByFile(testName + ".after.py");

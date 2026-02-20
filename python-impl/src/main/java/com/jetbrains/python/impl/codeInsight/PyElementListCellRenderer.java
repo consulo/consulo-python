@@ -27,17 +27,17 @@ import consulo.language.psi.PsiNamedElement;
  */
 public class PyElementListCellRenderer extends PsiElementListCellRenderer
 {
-  public String getElementText(final PsiElement element) {
+  public String getElementText(PsiElement element) {
     if (element instanceof PsiNamedElement) {
-      final String name = ((PsiNamedElement)element).getName();
+      String name = ((PsiNamedElement)element).getName();
       return name == null ? "" : name;
     }
     return element.getText();
   }
 
-  protected String getContainerText(final PsiElement element, final String name) {
+  protected String getContainerText(PsiElement element, String name) {
     if (element instanceof NavigationItem) {
-      final ItemPresentation presentation = ((NavigationItem)element).getPresentation();
+      ItemPresentation presentation = ((NavigationItem)element).getPresentation();
       if (presentation != null) {
         return presentation.getLocationString();
       }

@@ -42,7 +42,7 @@ public class PyStructureViewModel extends StructureViewModelBase implements Stru
 
   @Override
   public boolean isAlwaysShowsPlus(StructureViewTreeElement element) {
-    final Object value = element.getValue();
+    Object value = element.getValue();
     return value instanceof PyFile || value instanceof PyClass;
   }
 

@@ -68,18 +68,18 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
   @Nonnull
   @Override
   public String getWorkingDirectorySafe() {
-    final String workingDirectoryFromConfig = getWorkingDirectory();
+    String workingDirectoryFromConfig = getWorkingDirectory();
     if (StringUtil.isNotEmpty(workingDirectoryFromConfig)) {
       return workingDirectoryFromConfig;
     }
 
-    final String folderName = myFolderName;
+    String folderName = myFolderName;
     if (!StringUtil.isEmptyOrSpaces(folderName)) {
       return folderName;
     }
-    final String scriptName = myScriptName;
+    String scriptName = myScriptName;
     if (!StringUtil.isEmptyOrSpaces(scriptName)) {
-      final VirtualFile script = LocalFileSystem.getInstance().findFileByPath(scriptName);
+      VirtualFile script = LocalFileSystem.getInstance().findFileByPath(scriptName);
       if (script != null) {
         return script.getParent().getPath();
       }
@@ -99,7 +99,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
     usePattern = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "USE_PATTERN"));
 
     try {
-      final String testType = JDOMExternalizerUtil.readField(element, "TEST_TYPE");
+      String testType = JDOMExternalizerUtil.readField(element, "TEST_TYPE");
       myTestType = testType != null ? TestType.valueOf(testType) : TestType.TEST_SCRIPT;
     }
     catch (IllegalArgumentException e) {
@@ -309,7 +309,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 
           @Override
           public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName) {
-            final String systemDependant = FileUtil.toSystemDependentName(oldQualifiedName);
+            String systemDependant = FileUtil.toSystemDependentName(oldQualifiedName);
             setWorkingDirectory(systemDependant);
             if (myTestType == TestType.TEST_FOLDER) {
               myFolderName = systemDependant;
@@ -372,7 +372,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 
             @Override
             public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName) {
-              final int methodIdx = oldQualifiedName.indexOf("#") + 1;
+              int methodIdx = oldQualifiedName.indexOf("#") + 1;
               if (methodIdx > 0 && methodIdx < oldQualifiedName.length()) {
                 myMethodName = oldQualifiedName.substring(methodIdx);
               }
@@ -384,7 +384,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
     return null;
   }
 
-  private static boolean pathsEqual(VirtualFile vFile, final String folderName) {
+  private static boolean pathsEqual(VirtualFile vFile, String folderName) {
     return Comparing.equal(new File(vFile.getPath()).getAbsolutePath(), new File(folderName).getAbsolutePath());
   }
 }

@@ -31,11 +31,11 @@ public abstract class PyInvertBooleanTest extends PyTestCase {
   private void doTest(List<String> files) {
     files.add(0, "refactoring/invertBoolean/" + getTestName(true) + ".before.py");
     myFixture.configureByFiles(files.toArray(new String[files.size()]));
-    final PsiElement element = myFixture.getElementAtCaret();
+    PsiElement element = myFixture.getElementAtCaret();
     assertTrue(element instanceof PsiNamedElement);
 
-    final PsiNamedElement target = (PsiNamedElement)element;
-    final String name = target.getName();
+    PsiNamedElement target = (PsiNamedElement)element;
+    String name = target.getName();
     assertNotNull(name);
     new PyInvertBooleanProcessor(target, "not"+ StringUtil.toTitleCase(name)).run();
     myFixture.checkResultByFile("refactoring/invertBoolean/" + getTestName(true) + ".after.py");

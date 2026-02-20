@@ -28,7 +28,7 @@ public class PythonConsoleToolWindowFactory implements DumbAware {
   public static final String ID = "Python Console";
 
   //@Override
-  public void createToolWindowContent(final @Nonnull Project project, final @Nonnull ToolWindow toolWindow) {
+  public void createToolWindowContent(@Nonnull Project project, @Nonnull ToolWindow toolWindow) {
     PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(project, null);
     runner.runSync();
   }

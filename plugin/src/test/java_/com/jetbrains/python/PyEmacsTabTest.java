@@ -302,7 +302,7 @@ public abstract class PyEmacsTabTest extends PyTestCase {
   }
   
   private void doTest(String before, String after) {
-    final String fileName = getTestName(false);
+    String fileName = getTestName(false);
     myFixture.configureByText(fileName + ".py", before);
     CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new Runnable() {
         @Override

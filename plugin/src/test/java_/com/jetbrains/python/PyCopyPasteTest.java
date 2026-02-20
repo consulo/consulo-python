@@ -314,7 +314,7 @@ public abstract class PyCopyPasteTest extends PyTestCase {
   }
 
   private void doTestTabs() {
-    final CommonCodeStyleSettings.IndentOptions indentOptions =
+    CommonCodeStyleSettings.IndentOptions indentOptions =
       CodeStyleSettingsManager.getSettings(myFixture.getProject()).getIndentOptions(PythonFileType.INSTANCE);
     indentOptions.USE_TAB_CHARACTER = true;
     try {

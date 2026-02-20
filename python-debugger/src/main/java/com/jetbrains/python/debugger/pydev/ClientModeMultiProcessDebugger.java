@@ -34,7 +34,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 
 	private ThreadRegistry myThreadRegistry = new ThreadRegistry();
 
-	public ClientModeMultiProcessDebugger(@Nonnull final IPyDebugProcess debugProcess, @Nonnull String host, int port)
+	public ClientModeMultiProcessDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull String host, int port)
 	{
 		myDebugProcess = debugProcess;
 		myHost = host;

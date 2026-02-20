@@ -46,7 +46,7 @@ public class PySpecialMethodNamesCompletionContributor extends CompletionContrib
   @Override
   public AutoCompletionDecision handleAutoCompletionPossibility(AutoCompletionContext context) {
     // auto-insert the obvious only case; else show other cases.
-    final LookupElement[] items = context.getItems();
+    LookupElement[] items = context.getItems();
     if (items.length == 1) {
       return AutoCompletionDecision.insertItem(items[0]);
     }
@@ -60,9 +60,9 @@ public class PySpecialMethodNamesCompletionContributor extends CompletionContrib
                        .and(psiElement()
                               .afterLeaf("def")),
            new CompletionProvider() {
-             public void addCompletions(@Nonnull final CompletionParameters parameters,
-                                        final ProcessingContext context,
-                                        @Nonnull final CompletionResultSet result) {
+             public void addCompletions(@Nonnull CompletionParameters parameters,
+                                        ProcessingContext context,
+                                        @Nonnull CompletionResultSet result) {
                LanguageLevel languageLevel = LanguageLevel.forElement(parameters.getOriginalFile());
                for (Map.Entry<String, PyNames.BuiltinDescription> entry : PyNames.getBuiltinMethods(languageLevel).entrySet()) {
                  LookupElementBuilder item = LookupElementBuilder.create(entry.getKey() + entry.getValue().getSignature())

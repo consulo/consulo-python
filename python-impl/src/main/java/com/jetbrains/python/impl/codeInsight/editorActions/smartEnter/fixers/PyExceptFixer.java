@@ -43,17 +43,17 @@ public class PyExceptFixer extends PyFixer<PyExceptPart>
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyExceptPart exceptPart) throws IncorrectOperationException
 	{
-		final PsiElement colon = PyPsiUtils.getFirstChildOfType(exceptPart, PyTokenTypes.COLON);
+		PsiElement colon = PyPsiUtils.getFirstChildOfType(exceptPart, PyTokenTypes.COLON);
 		if(colon == null)
 		{
-			final PsiElement exceptToken = PyPsiUtils.getFirstChildOfType(exceptPart, PyTokenTypes.EXCEPT_KEYWORD);
+			PsiElement exceptToken = PyPsiUtils.getFirstChildOfType(exceptPart, PyTokenTypes.EXCEPT_KEYWORD);
 			int offset = sure(exceptToken).getTextRange().getEndOffset();
-			final PyExpression exceptClass = exceptPart.getExceptClass();
+			PyExpression exceptClass = exceptPart.getExceptClass();
 			if(exceptClass != null)
 			{
 				offset = exceptClass.getTextRange().getEndOffset();
 			}
-			final PyExpression target = exceptPart.getTarget();
+			PyExpression target = exceptPart.getTarget();
 			if(target != null)
 			{
 				offset = target.getTextRange().getEndOffset();

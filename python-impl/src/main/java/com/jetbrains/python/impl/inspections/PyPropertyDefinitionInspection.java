@@ -85,14 +85,14 @@ public class PyPropertyDefinitionInspection extends PyInspection {
         private PyFunction myOneParamFunction;
         private PyFunction myTwoParamFunction; // arglist with two args, 'self' and 'value'
 
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
             PsiFile psiFile = session.getFile();
             // save us continuous checks for level, module, stc
             myLevel = LanguageLevel.forElement(psiFile);
             // string classes
-            final List<PyClass> stringClasses = new ArrayList<>(2);
-            final PyBuiltinCache builtins = PyBuiltinCache.getInstance(psiFile);
+            List<PyClass> stringClasses = new ArrayList<>(2);
+            PyBuiltinCache builtins = PyBuiltinCache.getInstance(psiFile);
             PyClass cls = builtins.getClass("str");
             if (cls != null) {
                 stringClasses.add(cls);
@@ -105,11 +105,11 @@ public class PyPropertyDefinitionInspection extends PyInspection {
             // reference signatures
             PyClass objectClass = builtins.getClass("object");
             if (objectClass != null) {
-                final PyFunction methodRepr = objectClass.findMethodByName("__repr__", false, null);
+                PyFunction methodRepr = objectClass.findMethodByName("__repr__", false, null);
                 if (methodRepr != null) {
                     myOneParamFunction = methodRepr;
                 }
-                final PyFunction methodDelattr = objectClass.findMethodByName("__delattr__", false, null);
+                PyFunction methodDelattr = objectClass.findMethodByName("__delattr__", false, null);
                 if (methodDelattr != null) {
                     myTwoParamFunction = methodDelattr;
                 }
@@ -123,7 +123,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyClass(final PyClass node) {
+        public void visitPyClass(PyClass node) {
             super.visitPyClass(node);
             // check property() and @property
             node.scanProperties(property -> {
@@ -132,12 +132,12 @@ public class PyPropertyDefinitionInspection extends PyInspection {
                     // target = property(); args may be all funny
                     PyCallExpression call = (PyCallExpression) target.findAssignedValue();
                     assert call != null : "Property has a null call assigned to it";
-                    final PyArgumentList arglist = call.getArgumentList();
+                    PyArgumentList arglist = call.getArgumentList();
                     assert arglist != null : "Property call has null arglist";
                     // we assume fget, fset, fdel, doc names
-                    final PyCallExpression.PyArgumentsMapping mapping = call.mapArguments(getResolveContext());
+                    PyCallExpression.PyArgumentsMapping mapping = call.mapArguments(getResolveContext());
                     for (Map.Entry<PyExpression, PyNamedParameter> entry : mapping.getMappedParameters().entrySet()) {
-                        final String paramName = entry.getValue().getName();
+                        String paramName = entry.getValue().getName();
                         PyExpression argument = PyUtil.peelArgument(entry.getKey());
                         checkPropertyCallArgument(paramName, argument, node.getContainingFile());
                     }
@@ -145,7 +145,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
                 else {
                     // @property; we only check getter, others are checked by visitPyFunction
                     // getter is always present with this form
-                    final PyCallable callable = property.getGetter().valueOrNull();
+                    PyCallable callable = property.getGetter().valueOrNull();
                     if (callable instanceof PyFunction) {
                         checkGetter(callable, getFunctionMarkingElement((PyFunction) callable));
                     }
@@ -158,7 +158,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
             assert argument != null : "Parameter mapped to null argument";
             PyCallable callable = null;
             if (argument instanceof PyReferenceExpression) {
-                final PsiPolyVariantReference reference = ((PyReferenceExpression) argument).getReference(getResolveContext());
+                PsiPolyVariantReference reference = ((PyReferenceExpression) argument).getReference(getResolveContext());
                 PsiElement resolved = reference.resolve();
                 if (resolved instanceof PyCallable) {
                     callable = (PyCallable) resolved;
@@ -203,8 +203,8 @@ public class PyPropertyDefinitionInspection extends PyInspection {
                 return;
             }
             if (resolved instanceof PyTypedElement) {
-                final PyType type = myTypeEvalContext.getType((PyTypedElement) resolved);
-                final Boolean isCallable = PyTypeChecker.isCallable(type);
+                PyType type = myTypeEvalContext.getType((PyTypedElement) resolved);
+                Boolean isCallable = PyTypeChecker.isCallable(type);
                 if (isCallable != null && !isCallable) {
                     registerProblem(element, PyLocalize.inspStrangeArgWantCallable().get());
                 }
@@ -218,15 +218,15 @@ public class PyPropertyDefinitionInspection extends PyInspection {
                 // check @foo.setter and @foo.deleter
                 PyClass cls = node.getContainingClass();
                 if (cls != null) {
-                    final PyDecoratorList decos = node.getDecoratorList();
+                    PyDecoratorList decos = node.getDecoratorList();
                     if (decos != null) {
                         String name = node.getName();
                         for (PyDecorator deco : decos.getDecorators()) {
-                            final QualifiedName qName = deco.getQualifiedName();
+                            QualifiedName qName = deco.getQualifiedName();
                             if (qName != null) {
                                 List<String> nameParts = qName.getComponents();
                                 if (nameParts.size() == 2) {
-                                    final int suffixIndex = SUFFIXES.indexOf(nameParts.get(1));
+                                    int suffixIndex = SUFFIXES.indexOf(nameParts.get(1));
                                     if (suffixIndex >= 0) {
                                         if (Comparing.equal(name, nameParts.get(0))) {
                                             // names are ok, what about signatures?
@@ -255,7 +255,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
             if (node == null) {
                 return null;
             }
-            final ASTNode nameNode = node.getNameNode();
+            ASTNode nameNode = node.getNameNode();
             PsiElement markable = node;
             if (nameNode != null) {
                 markable = nameNode.getPsi();
@@ -274,7 +274,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
         private void checkSetter(PyCallable callable, PsiElement beingChecked) {
             if (callable != null) {
                 // signature: at least two params, more optionals ok; first arg 'self'
-                final PyParameterList paramList = callable.getParameterList();
+                PyParameterList paramList = callable.getParameterList();
                 if (myTwoParamFunction != null && !PyUtil.isSignatureCompatibleTo(callable, myTwoParamFunction, myTypeEvalContext)) {
                     registerProblem(
                         beingChecked,
@@ -296,7 +296,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
         }
 
         private void checkOneParameter(PyCallable callable, PsiElement beingChecked, boolean isGetter) {
-            final PyParameterList parameterList = callable.getParameterList();
+            PyParameterList parameterList = callable.getParameterList();
             if (myOneParamFunction != null && !PyUtil.isSignatureCompatibleTo(callable, myOneParamFunction, myTypeEvalContext)) {
                 if (isGetter) {
                     registerProblem(
@@ -318,7 +318,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
 
         private void checkForSelf(PyParameterList paramList) {
             PyParameter[] parameters = paramList.getParameters();
-            final PyClass cls = PsiTreeUtil.getParentOfType(paramList, PyClass.class);
+            PyClass cls = PsiTreeUtil.getParentOfType(paramList, PyClass.class);
             if (cls != null && cls.isSubclass("type", myTypeEvalContext)) {
                 return;
             }
@@ -340,7 +340,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
             @Nonnull String message
         ) {
             if (callable instanceof PyFunction) {
-                final PyFunction function = (PyFunction) callable;
+                PyFunction function = (PyFunction) callable;
 
                 if (PyUtil.isDecoratedAsAbstract(function)) {
                     return;
@@ -354,8 +354,8 @@ public class PyPropertyDefinitionInspection extends PyInspection {
                 }
             }
             else {
-                final PyType type = myTypeEvalContext.getReturnType(callable);
-                final boolean hasReturns = !(type instanceof PyNoneType);
+                PyType type = myTypeEvalContext.getReturnType(callable);
+                boolean hasReturns = !(type instanceof PyNoneType);
 
                 if (allowed ^ hasReturns) {
                     registerProblem(beingChecked, message);
@@ -364,7 +364,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
         }
 
         private static boolean someFlowHasExitPoint(@Nonnull PyFunction function, @Nonnull Predicate<PsiElement> exitPointPredicate) {
-            final Ref<Boolean> result = new Ref<>(false);
+            Ref<Boolean> result = new Ref<>(false);
 
             ControlFlowUtil.process(
                 ControlFlowCache.getControlFlow(function).getInstructions(),

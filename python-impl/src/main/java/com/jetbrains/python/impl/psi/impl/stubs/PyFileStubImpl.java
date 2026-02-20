@@ -39,9 +39,9 @@ public class PyFileStubImpl extends PsiFileStubImpl<PyFile> implements PyFileStu
 
   private static final int FUTURE_FEATURE_SET_SIZE = 32; // 32 features is ought to be enough for everybody! all bits fit into an int.
 
-  public PyFileStubImpl(final PyFile file) {
+  public PyFileStubImpl(PyFile file) {
     super(file);
-    final PyFileImpl fileImpl = (PyFileImpl)file;
+    PyFileImpl fileImpl = (PyFileImpl)file;
     myFutureFeatures = new BitSet(FUTURE_FEATURE_SET_SIZE);
     myDunderAll = fileImpl.calculateDunderAll();
     for (FutureFeature fuf : FutureFeature.ALL) {
@@ -51,7 +51,7 @@ public class PyFileStubImpl extends PsiFileStubImpl<PyFile> implements PyFileStu
     myDeprecationMessage = message == null ? null : StringRef.fromString(message);
   }
 
-  public PyFileStubImpl(List<String> dunderAll, final BitSet future_features, final StringRef deprecationMessage) {
+  public PyFileStubImpl(List<String> dunderAll, BitSet future_features, StringRef deprecationMessage) {
     super(null);
     myDunderAll = dunderAll;
     myFutureFeatures = future_features;

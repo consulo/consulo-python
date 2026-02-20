@@ -57,16 +57,16 @@ public class CreateTestAction extends PsiElementBaseIntentionAction {
     }
 
     @Override
-    public void invoke(final @Nonnull Project project, Editor editor, @Nonnull PsiElement element) throws IncorrectOperationException {
-        final PyFunction srcFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
-        final PyClass srcClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+    public void invoke(@Nonnull Project project, Editor editor, @Nonnull PsiElement element) throws IncorrectOperationException {
+        PyFunction srcFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        PyClass srcClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
 
         if (srcClass == null && srcFunction == null) {
             return;
         }
 
-        final PsiDirectory dir = element.getContainingFile().getContainingDirectory();
-        final CreateTestDialog d = new CreateTestDialog(project);
+        PsiDirectory dir = element.getContainingFile().getContainingDirectory();
+        CreateTestDialog d = new CreateTestDialog(project);
         if (srcClass != null) {
             d.setClassName("Test" + StringUtil.capitalize(srcClass.getName()));
             d.setFileName("test_" + StringUtil.decapitalize(srcClass.getName()) + ".py");
@@ -80,7 +80,7 @@ public class CreateTestAction extends PsiElementBaseIntentionAction {
                 d.addMethod("test_" + srcFunction.getName(), 0);
             }
             else {
-                final List<PyFunction> methods = Lists.newArrayList();
+                List<PyFunction> methods = Lists.newArrayList();
                 srcClass.visitMethods(pyFunction -> {
                     if (pyFunction.getName() != null && !pyFunction.getName().startsWith("__")) {
                         methods.add(pyFunction);
@@ -112,7 +112,7 @@ public class CreateTestAction extends PsiElementBaseIntentionAction {
         }
         CommandProcessor.getInstance().executeCommand(project, () -> {
             PsiFile e = PyTestCreator.generateTestAndNavigate(project, d);
-            final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+            PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
             documentManager.commitAllDocuments();
         }, CodeInsightBundle.message("intention.create.test"), this);
     }

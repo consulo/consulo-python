@@ -33,7 +33,7 @@ public class StringLiteralQuotesAnnotator extends PyAnnotator {
   private static final String TRIPLE_QUOTES = "\"\"\"";
   private static final String TRIPLE_APOS = "'''";
 
-  public void visitPyStringLiteralExpression(final PyStringLiteralExpression node) {
+  public void visitPyStringLiteralExpression(PyStringLiteralExpression node) {
     List<ASTNode> stringNodes = node.getStringNodes();
     for (ASTNode stringNode : stringNodes) {
       boolean foundError;
@@ -64,7 +64,7 @@ public class StringLiteralQuotesAnnotator extends PyAnnotator {
     return false;
   }
 
-  private boolean checkTripleQuotedString(ASTNode stringNode, String text, final String quotes) {
+  private boolean checkTripleQuotedString(ASTNode stringNode, String text, String quotes) {
     if (text.length() < 6  || !text.endsWith(quotes)) {
       getHolder().createErrorAnnotation(stringNode, "Missing closing triple quotes");
       return true;

@@ -14,7 +14,7 @@ public abstract class PyWrapTest extends PyTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
+    CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
     myOldWrap = settings.WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN;
     myOldMargin = settings.RIGHT_MARGIN;
     settings.WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN = true;
@@ -23,7 +23,7 @@ public abstract class PyWrapTest extends PyTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
+    CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
     settings.WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN = myOldWrap;
     settings.RIGHT_MARGIN = myOldMargin;
     super.tearDown();
@@ -51,13 +51,13 @@ public abstract class PyWrapTest extends PyTestCase {
 
 
   public void testWrapRightMargin() {
-    final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
+    CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
     int oldValue = settings.RIGHT_MARGIN;
     boolean oldMarginValue = settings.WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN;
     settings.RIGHT_MARGIN = 100;
     settings.WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN = true;
     try {
-      final String testName = "wrap/" + getTestName(true);
+      String testName = "wrap/" + getTestName(true);
       myFixture.configureByFile(testName + ".py");
       for (int i = 0; i != 45; ++i) {
         myFixture.type(' ');
@@ -71,7 +71,7 @@ public abstract class PyWrapTest extends PyTestCase {
 
   }
 
-  private void doTest(final String textToType) {
+  private void doTest(String textToType) {
     myFixture.configureByFile("wrap/" + getTestName(false) + ".py");
     myFixture.type(textToType);
     myFixture.checkResultByFile("wrap/" + getTestName(false) + ".after.py", true);

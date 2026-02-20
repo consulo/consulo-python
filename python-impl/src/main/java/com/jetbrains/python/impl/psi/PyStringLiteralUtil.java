@@ -57,7 +57,7 @@ public class PyStringLiteralUtil {
   }
 
   public static TextRange getStringValueTextRange(@Nonnull String s) {
-    final Pair<String, String> quotes = getQuotes(s);
+    Pair<String, String> quotes = getQuotes(s);
     if (quotes != null) {
       return TextRange.create(quotes.getFirst().length(), s.length() - quotes.getSecond().length());
     }
@@ -87,11 +87,11 @@ public class PyStringLiteralUtil {
    * UR"unicode raw string" -> (UR", ")
    */
   @Nullable
-  public static Pair<String, String> getQuotes(@Nonnull final String text) {
-    final String prefix = getPrefix(text);
-    final String mainText = text.substring(prefix.length());
+  public static Pair<String, String> getQuotes(@Nonnull String text) {
+    String prefix = getPrefix(text);
+    String mainText = text.substring(prefix.length());
     for (String quote : QUOTES) {
-      final Pair<String, String> quotes = getQuotes(mainText, prefix, quote);
+      Pair<String, String> quotes = getQuotes(mainText, prefix, quote);
       if (quotes != null) {
         return quotes;
       }
@@ -162,8 +162,8 @@ public class PyStringLiteralUtil {
 
   @Nullable
   private static Pair<String, String> getQuotes(@Nonnull String text, @Nonnull String prefix, @Nonnull String quote) {
-    final int length = text.length();
-    final int n = quote.length();
+    int length = text.length();
+    int n = quote.length();
     if (length >= 2 * n && text.startsWith(quote) && text.endsWith(quote)) {
       return Pair.create(prefix + text.substring(0, n), text.substring(length - n));
     }
@@ -172,7 +172,7 @@ public class PyStringLiteralUtil {
 
   public static TextRange getTextRange(PsiElement element) {
     if (element instanceof PyStringLiteralExpression) {
-      final List<TextRange> ranges = ((PyStringLiteralExpression)element).getStringValueTextRanges();
+      List<TextRange> ranges = ((PyStringLiteralExpression)element).getStringValueTextRanges();
       return ranges.get(0);
     }
     else {

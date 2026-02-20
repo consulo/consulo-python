@@ -77,7 +77,7 @@ public class PyBuiltinCache
 	{
 	}
 
-	public PyBuiltinCache(@Nullable final PyFile builtins, @Nullable PyFile exceptions)
+	public PyBuiltinCache(@Nullable PyFile builtins, @Nullable PyFile exceptions)
 	{
 		myBuiltinsFile = builtins;
 		myExceptionsFile = exceptions;
@@ -129,11 +129,11 @@ public class PyBuiltinCache
 	{
 		Project project = psiFile.getProject();
 		Sdk sdk = null;
-		final VirtualFile vfile = psiFile instanceof PsiFile ? ((PsiFile) psiFile).getOriginalFile().getVirtualFile() : psiFile.getVirtualFile();
+		VirtualFile vfile = psiFile instanceof PsiFile ? ((PsiFile) psiFile).getOriginalFile().getVirtualFile() : psiFile.getVirtualFile();
 		if(vfile != null)
 		{ // reality
-			final ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
-			final List<OrderEntry> orderEntries = projectRootManager.getFileIndex().getOrderEntriesForFile(vfile);
+			ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
+			List<OrderEntry> orderEntries = projectRootManager.getFileIndex().getOrderEntriesForFile(vfile);
 			for(OrderEntry orderEntry : orderEntries)
 			{
 				if(orderEntry instanceof ModuleExtensionWithSdkOrderEntry)
@@ -156,25 +156,25 @@ public class PyBuiltinCache
 	}
 
 	@Nullable
-	public static PyFile getSkeletonFile(final @Nonnull Project project, @Nonnull Sdk sdk, @Nonnull String name)
+	public static PyFile getSkeletonFile(@Nonnull Project project, @Nonnull Sdk sdk, @Nonnull String name)
 	{
 		SdkTypeId sdkType = sdk.getSdkType();
 		if(sdkType instanceof PythonSdkType)
 		{
 			// dig out the builtins file, create an instance based on it
-			final String[] urls = sdk.getRootProvider().getUrls(BinariesOrderRootType.getInstance());
+			String[] urls = sdk.getRootProvider().getUrls(BinariesOrderRootType.getInstance());
 			for(String url : urls)
 			{
 				if(url.contains(PythonSdkType.SKELETON_DIR_NAME))
 				{
-					final String builtins_url = url + "/" + name;
+					String builtins_url = url + "/" + name;
 					File builtins = new File(VirtualFileUtil.urlToPath(builtins_url));
 					if(builtins.isFile() && builtins.canRead())
 					{
-						final VirtualFile builtins_vfile = LocalFileSystem.getInstance().findFileByIoFile(builtins);
+						VirtualFile builtins_vfile = LocalFileSystem.getInstance().findFileByIoFile(builtins);
 						if(builtins_vfile != null)
 						{
-							final Ref<PyFile> result = Ref.create();
+							Ref<PyFile> result = Ref.create();
 							ApplicationManager.getApplication().runReadAction(() -> {
 								PsiFile file = PsiManager.getInstance(project).findFile(builtins_vfile);
 								if(file instanceof PyFile)
@@ -193,9 +193,9 @@ public class PyBuiltinCache
 	}
 
 	@Nullable
-	public PyType createLiteralCollectionType(final PySequenceExpression sequence, final String name, @Nonnull TypeEvalContext context)
+	public PyType createLiteralCollectionType(PySequenceExpression sequence, String name, @Nonnull TypeEvalContext context)
 	{
-		final PyClass cls = getClass(name);
+		PyClass cls = getClass(name);
 		if(cls != null)
 		{
 			return new PyCollectionTypeImpl(cls, false, getSequenceElementTypes(sequence, context));
@@ -206,19 +206,19 @@ public class PyBuiltinCache
 	@Nonnull
 	private static List<PyType> getSequenceElementTypes(@Nonnull PySequenceExpression sequence, @Nonnull TypeEvalContext context)
 	{
-		final PyExpression[] elements = sequence.getElements();
+		PyExpression[] elements = sequence.getElements();
 		if(elements.length == 0 || elements.length > 10 /* performance */)
 		{
 			return Collections.singletonList(null);
 		}
-		final PyType firstElementType = context.getType(elements[0]);
+		PyType firstElementType = context.getType(elements[0]);
 		if(firstElementType == null)
 		{
 			return Collections.singletonList(null);
 		}
 		for(int i = 1; i < elements.length; i++)
 		{
-			final PyType elementType = context.getType(elements[i]);
+			PyType elementType = context.getType(elements[i]);
 			if(elementType == null || !elementType.equals(firstElementType))
 			{
 				return Collections.singletonList(null);
@@ -228,7 +228,7 @@ public class PyBuiltinCache
 		{
 			if(firstElementType instanceof PyTupleType)
 			{
-				final PyTupleType tupleType = (PyTupleType) firstElementType;
+				PyTupleType tupleType = (PyTupleType) firstElementType;
 				if(tupleType.getElementCount() == 2)
 				{
 					return Arrays.asList(tupleType.getElementType(0), tupleType.getElementType(1));
@@ -264,7 +264,7 @@ public class PyBuiltinCache
 	{
 		if(myBuiltinsFile != null)
 		{
-			final PsiElement element = myBuiltinsFile.getElementNamed(name);
+			PsiElement element = myBuiltinsFile.getElementNamed(name);
 			if(element != null)
 			{
 				return element;
@@ -479,7 +479,7 @@ public class PyBuiltinCache
 		{
 			return false;
 		}
-		final PsiFile the_file = target.getContainingFile();
+		PsiFile the_file = target.getContainingFile();
 		if(!(the_file instanceof PyFile))
 		{
 			return false;
@@ -494,14 +494,14 @@ public class PyBuiltinCache
 		{
 			return false;
 		}
-		final String name = expression.getName();
+		String name = expression.getName();
 		PsiReference reference = expression.getReference();
 		if(reference != null && name != null)
 		{
-			final PyBuiltinCache cache = getInstance(expression);
+			PyBuiltinCache cache = getInstance(expression);
 			if(cache.getByName(name) != null)
 			{
-				final PsiElement resolved = reference.resolve();
+				PsiElement resolved = reference.resolve();
 				if(resolved != null && cache.isBuiltin(resolved))
 				{
 					return true;

@@ -70,14 +70,14 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
   @Override
   public PsiElement substituteElementToRename(PsiElement element, Editor editor) {
     PyFunction function = (PyFunction) element;
-    final PyClass containingClass = function.getContainingClass();
+    PyClass containingClass = function.getContainingClass();
     if (containingClass == null) {
       return function;
     }
     if (PyNames.INIT.equals(function.getName())) {
       return containingClass; 
     }
-    final PyFunction deepestSuperMethod = PySuperMethodsSearch.findDeepestSuperMethod(function);
+    PyFunction deepestSuperMethod = PySuperMethodsSearch.findDeepestSuperMethod(function);
     if (!deepestSuperMethod.equals(function)) {
       String message = "Method " + function.getName() + " of class " + containingClass.getQualifiedName() + "\noverrides method of class "
                        + deepestSuperMethod.getContainingClass().getQualifiedName() + ".\nDo you want to rename the base method?";
@@ -90,16 +90,16 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
       }
       return null;
     }
-    final Property property = containingClass.findPropertyByCallable(function);
+    Property property = containingClass.findPropertyByCallable(function);
     if (property != null) {
-      final PyTargetExpression site = property.getDefinitionSite();
+      PyTargetExpression site = property.getDefinitionSite();
       if (site != null) {
         if (ApplicationManager.getApplication().isUnitTestMode()) {
           return site;
         }
-        final String message = String.format("Do you want to rename the property '%s' instead of its accessor function '%s'?",
+        String message = String.format("Do you want to rename the property '%s' instead of its accessor function '%s'?",
                                              property.getName(), function.getName());
-        final int rc = Messages.showYesNoCancelDialog(element.getProject(), message, "Rename", Messages.getQuestionIcon());
+        int rc = Messages.showYesNoCancelDialog(element.getProject(), message, "Rename", Messages.getQuestionIcon());
         switch (rc) {
           case 0: return site;
           case 1: return function;
@@ -120,9 +120,9 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
         return true;
       }
     });
-    final PyClass containingClass = function.getContainingClass();
+    PyClass containingClass = function.getContainingClass();
     if (containingClass != null) {
-      final Property property = containingClass.findPropertyByCallable(function);
+      Property property = containingClass.findPropertyByCallable(function);
       if (property != null) {
         addRename(allRenames, newName, property.getGetter());
         addRename(allRenames, newName, property.getSetter());
@@ -132,7 +132,7 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
   }
 
   private static void addRename(Map<PsiElement, String> renames, String newName, Maybe<PyCallable> accessor) {
-    final PyCallable callable = accessor.valueOrNull();
+    PyCallable callable = accessor.valueOrNull();
     if (callable instanceof PyFunction) {
       renames.put(callable, newName);
     }

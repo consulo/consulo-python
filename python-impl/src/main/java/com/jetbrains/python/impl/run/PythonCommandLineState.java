@@ -98,7 +98,7 @@ public abstract class PythonCommandLineState extends CommandLineState {
   }
 
   public static ServerSocket createServerSocket() throws ExecutionException {
-    final ServerSocket serverSocket;
+    ServerSocket serverSocket;
     try {
       //noinspection SocketOpenedButNotSafelyClosed
       serverSocket = new ServerSocket(0);
@@ -130,8 +130,8 @@ public abstract class PythonCommandLineState extends CommandLineState {
   }
 
   public ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException {
-    final ProcessHandler processHandler = startProcess(patchers);
-    final ConsoleView console = createAndAttachConsole(myConfig.getProject(), processHandler, executor);
+    ProcessHandler processHandler = startProcess(patchers);
+    ConsoleView console = createAndAttachConsole(myConfig.getProject(), processHandler, executor);
 
     List<AnAction> actions = Lists.newArrayList(createActions(console, processHandler));
 
@@ -142,7 +142,7 @@ public abstract class PythonCommandLineState extends CommandLineState {
   protected ConsoleView createAndAttachConsole(Project project,
                                                ProcessHandler processHandler,
                                                Executor executor) throws ExecutionException {
-    final ConsoleView consoleView = createConsoleBuilder(project).getConsole();
+    ConsoleView consoleView = createConsoleBuilder(project).getConsole();
     consoleView.addMessageFilter(createUrlFilter(processHandler));
 
     addTracebackFilter(project, consoleView, processHandler);
@@ -187,7 +187,7 @@ public abstract class PythonCommandLineState extends CommandLineState {
                                                              getRunnerSettings(),
                                                              commandLine,
                                                              getEnvironment().getRunner().getRunnerId());
-    final ProcessHandler processHandler;
+    ProcessHandler processHandler;
     EncodingEnvironmentUtil.setLocaleEnvironmentIfMac(commandLine);
     processHandler = doCreateProcess(commandLine);
     ProcessTerminatedListener.attach(processHandler);
@@ -317,8 +317,8 @@ public abstract class PythonCommandLineState extends CommandLineState {
   public static void initPythonPath(GeneralCommandLine commandLine,
                                     boolean passParentEnvs,
                                     List<String> pathList,
-                                    final String interpreterPath) {
-    final PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(interpreterPath);
+                                    String interpreterPath) {
+    PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(interpreterPath);
     if (flavor != null) {
       flavor.initPythonPath(commandLine, pathList);
     }
@@ -329,9 +329,9 @@ public abstract class PythonCommandLineState extends CommandLineState {
 
   public static List<String> getAddedPaths(Sdk pythonSdk) {
     List<String> pathList = new ArrayList<>();
-    final SdkAdditionalData sdkAdditionalData = pythonSdk.getSdkAdditionalData();
+    SdkAdditionalData sdkAdditionalData = pythonSdk.getSdkAdditionalData();
     if (sdkAdditionalData instanceof PythonSdkAdditionalData) {
-      final Set<VirtualFile> addedPaths = ((PythonSdkAdditionalData)sdkAdditionalData).getAddedPathFiles();
+      Set<VirtualFile> addedPaths = ((PythonSdkAdditionalData)sdkAdditionalData).getAddedPathFiles();
       for (VirtualFile file : addedPaths) {
         addToPythonPath(file, pathList);
       }
@@ -341,7 +341,7 @@ public abstract class PythonCommandLineState extends CommandLineState {
 
   private static void addToPythonPath(VirtualFile file, Collection<String> pathList) {
     if (file.getFileSystem() instanceof ArchiveFileSystem) {
-      final VirtualFile realFile = ArchiveVfsUtil.getVirtualFileForJar(file);
+      VirtualFile realFile = ArchiveVfsUtil.getVirtualFileForJar(file);
       if (realFile != null) {
         addIfNeeded(realFile, pathList);
       }
@@ -351,21 +351,21 @@ public abstract class PythonCommandLineState extends CommandLineState {
     }
   }
 
-  private static void addIfNeeded(@Nonnull final VirtualFile file, @Nonnull final Collection<String> pathList) {
+  private static void addIfNeeded(@Nonnull VirtualFile file, @Nonnull Collection<String> pathList) {
     addIfNeeded(pathList, file.getPath());
   }
 
   protected static void addIfNeeded(Collection<String> pathList, String path) {
-    final Set<String> vals = Sets.newHashSet(pathList);
-    final String filePath = FileUtil.toSystemDependentName(path);
+    Set<String> vals = Sets.newHashSet(pathList);
+    String filePath = FileUtil.toSystemDependentName(path);
     if (!vals.contains(filePath)) {
       pathList.add(filePath);
     }
   }
 
   protected static Collection<String> collectPythonPath(Project project, PythonRunParams config, boolean isDebug) {
-    final Module module = getModule(project, config);
-    final HashSet<String> pythonPath =
+    Module module = getModule(project, config);
+    HashSet<String> pythonPath =
       Sets.newHashSet(collectPythonPath(module, config.shouldAddContentRoots(), config.shouldAddSourceRoots()));
 
 		/*if(isDebug && PythonSdkFlavor.getFlavor(config.getSdkHome()) instanceof JythonSdkFlavor)
@@ -420,16 +420,16 @@ public abstract class PythonCommandLineState extends CommandLineState {
   }
 
   private static void addLibrariesFromModule(Module module, Collection<String> list) {
-    final OrderEntry[] entries = ModuleRootManager.getInstance(module).getOrderEntries();
+    OrderEntry[] entries = ModuleRootManager.getInstance(module).getOrderEntries();
     for (OrderEntry entry : entries) {
       if (entry instanceof LibraryOrderEntry) {
-        final String name = ((LibraryOrderEntry)entry).getLibraryName();
+        String name = ((LibraryOrderEntry)entry).getLibraryName();
         if (name != null && name.endsWith(LibraryContributingFacet.PYTHON_FACET_LIBRARY_NAME_SUFFIX)) {
           // skip libraries from Python facet
           continue;
         }
         for (VirtualFile root : entry.getFiles(BinariesOrderRootType.getInstance())) {
-          final Library library = ((LibraryOrderEntry)entry).getLibrary();
+          Library library = ((LibraryOrderEntry)entry).getLibrary();
           addToPythonPath(root, list);
 
         }
@@ -440,12 +440,12 @@ public abstract class PythonCommandLineState extends CommandLineState {
   private static void addRootsFromModule(Module module, Collection<String> pythonPathList) {
 
     // for Jython
-    final ModuleCompilerPathsManager extension = ModuleCompilerPathsManager.getInstance(module);
-    final VirtualFile path = extension.getCompilerOutput(ProductionContentFolderTypeProvider.getInstance());
+    ModuleCompilerPathsManager extension = ModuleCompilerPathsManager.getInstance(module);
+    VirtualFile path = extension.getCompilerOutput(ProductionContentFolderTypeProvider.getInstance());
     if (path != null) {
       pythonPathList.add(path.getPath());
     }
-    final VirtualFile pathForTests = extension.getCompilerOutput(TestContentFolderTypeProvider.getInstance());
+    VirtualFile pathForTests = extension.getCompilerOutput(TestContentFolderTypeProvider.getInstance());
     if (pathForTests != null) {
       pythonPathList.add(pathForTests.getPath());
     }

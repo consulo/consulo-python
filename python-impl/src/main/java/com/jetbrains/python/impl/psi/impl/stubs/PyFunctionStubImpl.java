@@ -37,7 +37,7 @@ public class PyFunctionStubImpl extends StubBase<PyFunction> implements PyFuncti
 			@Nullable String deprecationMessage,
 			boolean isAsync,
 			@Nullable String typeComment,
-			final StubElement parent,
+			StubElement parent,
 			@Nonnull IStubElementType stubElementType)
 	{
 		super(parent, stubElementType);

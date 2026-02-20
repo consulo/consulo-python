@@ -35,7 +35,7 @@ public abstract class PyIntentionTest extends PyTestCase {
 
   private void doTest(String hint) {
     myFixture.configureByFile("intentions/before" + getTestName(false) + ".py");
-    final IntentionAction action = myFixture.findSingleIntention(hint);
+    IntentionAction action = myFixture.findSingleIntention(hint);
     myFixture.launchAction(action);
     myFixture.checkResultByFile("intentions/after" + getTestName(false) + ".py");
   }
@@ -52,7 +52,7 @@ public abstract class PyIntentionTest extends PyTestCase {
 
   private void doTest(String hint, boolean ignoreWhiteSpaces) {
     myFixture.configureByFile("intentions/before" + getTestName(false) + ".py");
-    final IntentionAction action = myFixture.findSingleIntention(hint);
+    IntentionAction action = myFixture.findSingleIntention(hint);
     myFixture.launchAction(action);
     myFixture.checkResultByFile("intentions/after" + getTestName(false) + ".py", ignoreWhiteSpaces);
   }
@@ -166,19 +166,19 @@ public abstract class PyIntentionTest extends PyTestCase {
 
   public void testDictLiteralFormToConstructor1() {      //PY-2873
     myFixture.configureByFile("intentions/beforeDictLiteralFormToConstructor1" + ".py");
-    final IntentionAction action = myFixture.getAvailableIntention(PyBundle.message("INTN.convert.dict.literal.to.dict.constructor"));
+    IntentionAction action = myFixture.getAvailableIntention(PyBundle.message("INTN.convert.dict.literal.to.dict.constructor"));
     assertNull(action);
   }
 
   public void testDictLiteralFormToConstructor2() {      //PY-5157
     myFixture.configureByFile("intentions/beforeDictLiteralFormToConstructor2" + ".py");
-    final IntentionAction action = myFixture.getAvailableIntention(PyBundle.message("INTN.convert.dict.literal.to.dict.constructor"));
+    IntentionAction action = myFixture.getAvailableIntention(PyBundle.message("INTN.convert.dict.literal.to.dict.constructor"));
     assertNull(action);
   }
 
   public void testDictLiteralFormToConstructor3() {
     myFixture.configureByFile("intentions/beforeDictLiteralFormToConstructor3" + ".py");
-    final IntentionAction action = myFixture.getAvailableIntention(PyBundle.message("INTN.convert.dict.literal.to.dict.constructor"));
+    IntentionAction action = myFixture.getAvailableIntention(PyBundle.message("INTN.convert.dict.literal.to.dict.constructor"));
     assertNull(action);
   }
 

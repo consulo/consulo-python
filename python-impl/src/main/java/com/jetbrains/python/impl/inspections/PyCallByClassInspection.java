@@ -79,7 +79,7 @@ public class PyCallByClassInspection extends PyInspection {
 
     public static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -92,15 +92,15 @@ public class PyCallByClassInspection extends PyInspection {
                 if (qualifier != null) {
                     PyType qual_type = myTypeEvalContext.getType(qualifier);
                     if (qual_type instanceof PyClassType) {
-                        final PyClassType qual_class_type = (PyClassType) qual_type;
+                        PyClassType qual_class_type = (PyClassType) qual_type;
                         if (qual_class_type.isDefinition()) {
                             PyClass qual_class = qual_class_type.getPyClass();
-                            final PyArgumentList arglist = call.getArgumentList();
+                            PyArgumentList arglist = call.getArgumentList();
                             if (arglist != null) {
-                                final PyCallExpression.PyArgumentsMapping mapping = call.mapArguments(getResolveContext());
-                                final PyCallExpression.PyMarkedCallee markedCallee = mapping.getMarkedCallee();
+                                PyCallExpression.PyArgumentsMapping mapping = call.mapArguments(getResolveContext());
+                                PyCallExpression.PyMarkedCallee markedCallee = mapping.getMarkedCallee();
                                 if (markedCallee != null && markedCallee.getModifier() != STATICMETHOD) {
-                                    final List<PyParameter> params = PyUtil.getParameters(markedCallee.getCallable(), myTypeEvalContext);
+                                    List<PyParameter> params = PyUtil.getParameters(markedCallee.getCallable(), myTypeEvalContext);
                                     if (params.size() > 0 && params.get(0) instanceof PyNamedParameter) {
                                         PyNamedParameter first_param = (PyNamedParameter) params.get(0);
                                         for (Map.Entry<PyExpression, PyNamedParameter> entry : mapping.getMappedParameters().entrySet()) {
@@ -110,7 +110,7 @@ public class PyCallByClassInspection extends PyInspection {
                                                 assert first_arg != null;
                                                 PyType first_arg_type = myTypeEvalContext.getType(first_arg);
                                                 if (first_arg_type instanceof PyClassType) {
-                                                    final PyClassType first_arg_class_type = (PyClassType) first_arg_type;
+                                                    PyClassType first_arg_class_type = (PyClassType) first_arg_type;
                                                     if (first_arg_class_type.isDefinition() && markedCallee.getModifier() != CLASSMETHOD) {
                                                         registerProblem(
                                                             first_arg,

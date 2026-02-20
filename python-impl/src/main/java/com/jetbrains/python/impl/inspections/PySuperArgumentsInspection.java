@@ -56,13 +56,13 @@ public class PySuperArgumentsInspection extends PyInspection {
 
     private static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
         @Override
         public void visitPyCallExpression(PyCallExpression node) {
-            final PyExpression callee = node.getCallee();
+            PyExpression callee = node.getCallee();
             if (callee != null) {
                 if (PyNames.SUPER.equals(callee.getName())) {
                     PyExpression[] arguments = node.getArguments();

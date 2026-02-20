@@ -46,7 +46,7 @@ public abstract class PyClassNameCompletionTest extends PyTestCase {
     doTest();
   }
   private void doTestWithoutFromImport() {
-    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
     boolean oldValue = settings.PREFER_FROM_IMPORT;
     settings.PREFER_FROM_IMPORT = false;
     try {
@@ -58,7 +58,7 @@ public abstract class PyClassNameCompletionTest extends PyTestCase {
   }
 
   private void doTest() {
-    final String path = "/completion/className/" + getTestName(true);
+    String path = "/completion/className/" + getTestName(true);
     myFixture.copyDirectoryToProject(path, "");
     myFixture.configureFromTempProjectFile(getTestName(true) + ".py");
     myFixture.complete(CompletionType.BASIC, 2);

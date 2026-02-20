@@ -31,7 +31,7 @@ public class PyOverridingMethodsSearch extends ExtensibleQueryFactory<PyFunction
     private final PyFunction myFunction;
     private final boolean myCheckDeep;
 
-    public SearchParameters(final PyFunction function, final boolean checkDeep) {
+    public SearchParameters(PyFunction function, boolean checkDeep) {
       myFunction = function;
       myCheckDeep = checkDeep;
     }

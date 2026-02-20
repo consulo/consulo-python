@@ -66,7 +66,7 @@ public abstract class PyEditingTest extends PyTestCase {
   }
 
   public void testGreedyBackspace() {  // PY-254
-    final EditorSettingsExternalizable settings = EditorSettingsExternalizable.getInstance();
+    EditorSettingsExternalizable settings = EditorSettingsExternalizable.getInstance();
     boolean oldVSpaceValue = settings.isVirtualSpace();
     try {
       settings.setVirtualSpace(true);
@@ -85,7 +85,7 @@ public abstract class PyEditingTest extends PyTestCase {
     doTestBackspace("unindentTab", new LogicalPosition(4, 4));
   }
 
-  private void doTestBackspace(final String fileName, final LogicalPosition pos) {
+  private void doTestBackspace(String fileName, LogicalPosition pos) {
     myFixture.configureByFile("/editing/" + fileName + ".before.py");
     myFixture.getEditor().getCaretModel().moveToLogicalPosition(pos);
     CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new Runnable() {
@@ -300,17 +300,17 @@ public abstract class PyEditingTest extends PyTestCase {
                 "    ')'");
   }
 
-  private void doTestEnter(String before, final String after) {
+  private void doTestEnter(String before, String after) {
     int pos = before.indexOf("<caret>");
     before = before.replace("<caret>", "");
     assertEquals(after, doTestTyping(before, pos, '\n'));
   }
 
   private String doTestTyping(final String text, final int offset, final char character) {
-    final PsiFile file = ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>() {
+    PsiFile file = ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>() {
       @Override
       public PsiFile compute() {
-        final PsiFile file = myFixture.configureByText(PythonFileType.INSTANCE, text);
+        PsiFile file = myFixture.configureByText(PythonFileType.INSTANCE, text);
         myFixture.getEditor().getCaretModel().moveToOffset(offset);
         myFixture.type(character);
         return file;
@@ -319,8 +319,8 @@ public abstract class PyEditingTest extends PyTestCase {
     return myFixture.getDocument(file).getText();
   }
 
-  private void doTypingTest(final char character) {
-    final String testName = "editing/" + getTestName(true);
+  private void doTypingTest(char character) {
+    String testName = "editing/" + getTestName(true);
     myFixture.configureByFile(testName + ".py");
     doTyping(character);
     myFixture.checkResultByFile(testName + ".after.py");
@@ -328,7 +328,7 @@ public abstract class PyEditingTest extends PyTestCase {
 
   private void doTyping(final char character) {
     final int offset = myFixture.getEditor().getCaretModel().getOffset();
-    final PsiFile file = ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>() {
+    PsiFile file = ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>() {
       @Override
       public PsiFile compute() {
         myFixture.getEditor().getCaretModel().moveToOffset(offset);

@@ -69,10 +69,10 @@ public class PyInconsistentIndentationInspection extends PyInspection {
 
         public ProblemDescriptor[] invoke() {
             PythonIndentingLexer lexer = new PythonIndentingLexer();
-            final String text = myFile.getText();
+            String text = myFile.getText();
             lexer.start(text);
             while (lexer.getTokenType() != null) {
-                final IElementType tokenType = lexer.getTokenType();
+                IElementType tokenType = lexer.getTokenType();
                 if (tokenType == PyTokenTypes.STATEMENT_BREAK) {
                     lexer.advance();
                     while (lexer.getTokenType() != null && lexer.getTokenType() != PyTokenTypes.LINE_BREAK) {
@@ -88,14 +88,14 @@ public class PyInconsistentIndentationInspection extends PyInspection {
             return myProblems.toArray(new ProblemDescriptor[myProblems.size()]);
         }
 
-        private void validateIndent(final int tokenStart, String indent) {
+        private void validateIndent(int tokenStart, String indent) {
             int lastLF = indent.lastIndexOf('\n');
             String lastLineIndent = indent.substring(lastLF + 1);
             int spaces = 0;
             int tabs = 0;
-            final int length = lastLineIndent.length();
+            int length = lastLineIndent.length();
             for (int i = 0; i < length; i++) {
-                final char c = lastLineIndent.charAt(i);
+                char c = lastLineIndent.charAt(i);
                 if (c == ' ') {
                     spaces++;
                 }
@@ -103,7 +103,7 @@ public class PyInconsistentIndentationInspection extends PyInspection {
                     tabs++;
                 }
             }
-            final int problemStart = tokenStart + lastLF + 1;
+            int problemStart = tokenStart + lastLF + 1;
             if (spaces > 0 && tabs > 0) {
                 reportProblem("Inconsistent indentation: mix of tabs and spaces", problemStart, length);
                 // don't know which one is correct => don't complain about inconsistent indentation on subsequent lines which use
@@ -125,7 +125,7 @@ public class PyInconsistentIndentationInspection extends PyInspection {
             }
         }
 
-        private void reportProblem(final String descriptionTemplate, final int problemStart, final int problemLength) {
+        private void reportProblem(String descriptionTemplate, int problemStart, int problemLength) {
             PsiElement elt = myFile.findElementAt(problemStart);
             int startOffset = problemStart - elt.getTextRange().getStartOffset();
             int endOffset = startOffset + problemLength;

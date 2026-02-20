@@ -65,7 +65,7 @@ public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub
 
 	public boolean hasDefaultValue()
 	{
-		final PyTupleParameterStub stub = getStub();
+		PyTupleParameterStub stub = getStub();
 		if(stub != null)
 		{
 			return stub.hasDefaultValue();

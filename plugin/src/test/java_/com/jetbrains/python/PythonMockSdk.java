@@ -23,7 +23,7 @@ public abstract class PythonMockSdk {
   }
 
   public static Sdk findOrCreate(String version) {
-    final List<Sdk> sdkList = SdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance());
+    List<Sdk> sdkList = SdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance());
     for (Sdk sdk : sdkList) {
       if (sdk.getName().equals(MOCK_SDK_NAME + " " + version)) {
         return sdk;
@@ -33,19 +33,19 @@ public abstract class PythonMockSdk {
   }
 
   public static Sdk create(final String version) {
-    final String mock_path = PythonTestUtil.getTestDataPath() + "/MockSdk" + version + "/";
+    String mock_path = PythonTestUtil.getTestDataPath() + "/MockSdk" + version + "/";
 
     String sdkHome = new File(mock_path, "bin/python"+version).getPath();
     SdkType sdkType = PythonSdkType.getInstance();
 
 
-    final Sdk sdk = new consulo.content.impl.internal.bundle.SdkImpl(SdkTable.getInstance(), MOCK_SDK_NAME + " " + version, sdkType) {
+    Sdk sdk = new consulo.content.impl.internal.bundle.SdkImpl(SdkTable.getInstance(), MOCK_SDK_NAME + " " + version, sdkType) {
       @Override
       public String getVersionString() {
         return "Python " + version + " Mock SDK";
       }
     };
-    final SdkModificator sdkModificator = sdk.getSdkModificator();
+    SdkModificator sdkModificator = sdk.getSdkModificator();
     sdkModificator.setHomePath(sdkHome);
 
     File libPath = new File(mock_path, "Lib");

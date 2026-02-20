@@ -37,12 +37,12 @@ public class AddGlobalQuickFix implements LocalQuickFix {
     return PyLocalize.qfixAddGlobal();
   }
 
-  public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     PsiElement problemElt = descriptor.getPsiElement();
     if (problemElt instanceof PyReferenceExpression) {
-      final PyReferenceExpression expression = (PyReferenceExpression)problemElt;
+      PyReferenceExpression expression = (PyReferenceExpression)problemElt;
       final String name = expression.getReferencedName();
-      final ScopeOwner owner = PsiTreeUtil.getParentOfType(problemElt, ScopeOwner.class);
+      ScopeOwner owner = PsiTreeUtil.getParentOfType(problemElt, ScopeOwner.class);
       assert owner instanceof PyClass || owner instanceof PyFunction : "Add global quickfix is available only inside class or function, but applied for " + owner;
       final Ref<Boolean> added = new Ref<Boolean>(false);
       owner.accept(new PyRecursiveElementVisitor(){
@@ -53,7 +53,7 @@ public class AddGlobalQuickFix implements LocalQuickFix {
           }
         }
         @Override
-        public void visitPyGlobalStatement(final PyGlobalStatement node) {
+        public void visitPyGlobalStatement(PyGlobalStatement node) {
           if (!added.get()){
             node.addGlobal(name);
             added.set(true);
@@ -63,9 +63,9 @@ public class AddGlobalQuickFix implements LocalQuickFix {
       if (added.get()){
         return;
       }
-      final PyGlobalStatement globalStatement =
+      PyGlobalStatement globalStatement =
         PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyGlobalStatement.class, "global " + name);
-      final PyStatementList statementList;
+      PyStatementList statementList;
       boolean hasDocString = false;
       if (owner instanceof PyClass){
         statementList = ((PyClass)owner).getStatementList();

@@ -44,7 +44,7 @@ import java.util.List;
 @ExtensionImpl
 public class PyGotoSuperHandler implements GotoSuperActionHander
 {
-	public void invoke(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PsiFile file)
+	public void invoke(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile file)
 	{
 		PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
 		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
@@ -57,7 +57,7 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 			}
 			else
 			{
-				final PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class, false, PyClass.class);
+				PyAssignmentStatement assignment = PsiTreeUtil.getParentOfType(element, PyAssignmentStatement.class, false, PyClass.class);
 				if(assignment != null && assignment.getTargets()[0] instanceof PyTargetExpression)
 				{
 					gotoSuperClassAttributes(editor, (PyTargetExpression) assignment.getTargets()[0], pyClass);
@@ -72,17 +72,17 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 
 	private static void gotoSuperFunctions(Editor editor, PyFunction function, PyClass pyClass)
 	{
-		final Collection<PyFunction> superFunctions = getAllSuperMethodsByName(function, pyClass);
+		Collection<PyFunction> superFunctions = getAllSuperMethodsByName(function, pyClass);
 		navigateOrChoose(editor, superFunctions, CodeInsightBundle.message("goto.super.method.chooser.title"));
 	}
 
 	private static void gotoSuperClassAttributes(Editor editor, PyTargetExpression attr, PyClass pyClass)
 	{
-		final Collection<PyTargetExpression> attrs = getAllSuperAttributesByName(attr, pyClass);
+		Collection<PyTargetExpression> attrs = getAllSuperAttributesByName(attr, pyClass);
 		navigateOrChoose(editor, attrs, "Choose superclass attribute");
 	}
 
-	private static void navigateOrChoose(Editor editor, Collection<? extends NavigatablePsiElement> superElements, final String title)
+	private static void navigateOrChoose(Editor editor, Collection<? extends NavigatablePsiElement> superElements, String title)
 	{
 		if(!superElements.isEmpty())
 		{
@@ -99,17 +99,17 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 		}
 	}
 
-	private static Collection<PyTargetExpression> getAllSuperAttributesByName(@Nonnull final PyTargetExpression classAttr, PyClass pyClass)
+	private static Collection<PyTargetExpression> getAllSuperAttributesByName(@Nonnull PyTargetExpression classAttr, PyClass pyClass)
 	{
-		final String name = classAttr.getName();
+		String name = classAttr.getName();
 		if(name == null)
 		{
 			return Collections.emptyList();
 		}
-		final List<PyTargetExpression> result = new ArrayList<>();
+		List<PyTargetExpression> result = new ArrayList<>();
 		for(PyClass aClass : pyClass.getAncestorClasses(null))
 		{
-			final PyTargetExpression superAttr = aClass.findClassAttribute(name, false, null);
+			PyTargetExpression superAttr = aClass.findClassAttribute(name, false, null);
 			if(superAttr != null)
 			{
 				result.add(superAttr);
@@ -118,17 +118,17 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 		return result;
 	}
 
-	private static Collection<PyFunction> getAllSuperMethodsByName(@Nonnull final PyFunction method, PyClass pyClass)
+	private static Collection<PyFunction> getAllSuperMethodsByName(@Nonnull PyFunction method, PyClass pyClass)
 	{
-		final String name = method.getName();
+		String name = method.getName();
 		if(name == null)
 		{
 			return Collections.emptyList();
 		}
-		final List<PyFunction> result = new ArrayList<>();
+		List<PyFunction> result = new ArrayList<>();
 		for(PyClass aClass : pyClass.getAncestorClasses(null))
 		{
-			final PyFunction byName = aClass.findMethodByName(name, false, null);
+			PyFunction byName = aClass.findMethodByName(name, false, null);
 			if(byName != null)
 			{
 				result.add(byName);

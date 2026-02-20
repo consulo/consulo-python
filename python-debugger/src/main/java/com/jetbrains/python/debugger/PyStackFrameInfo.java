@@ -8,7 +8,7 @@ public class PyStackFrameInfo {
   private final String myName;
   private final PySourcePosition myPosition;
 
-  public PyStackFrameInfo(final String threadId, final String id, final String name, final PySourcePosition position) {
+  public PyStackFrameInfo(String threadId, String id, String name, PySourcePosition position) {
     myThreadId = threadId;
     myId = id;
     myName = name;

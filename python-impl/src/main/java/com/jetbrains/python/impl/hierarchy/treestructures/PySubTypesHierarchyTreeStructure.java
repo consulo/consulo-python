@@ -37,12 +37,12 @@ import com.jetbrains.python.impl.psi.search.PyClassInheritorsSearch;
  */
 public class PySubTypesHierarchyTreeStructure extends HierarchyTreeStructure
 {
-	protected PySubTypesHierarchyTreeStructure(final Project project, final HierarchyNodeDescriptor baseDescriptor)
+	protected PySubTypesHierarchyTreeStructure(Project project, HierarchyNodeDescriptor baseDescriptor)
 	{
 		super(project, baseDescriptor);
 	}
 
-	public PySubTypesHierarchyTreeStructure(@Nonnull final PyClass cl)
+	public PySubTypesHierarchyTreeStructure(@Nonnull PyClass cl)
 	{
 		super(cl.getProject(), new PyHierarchyNodeDescriptor(null, cl, true));
 	}
@@ -50,11 +50,11 @@ public class PySubTypesHierarchyTreeStructure extends HierarchyTreeStructure
 	@Nonnull
 	protected Object[] buildChildren(@Nonnull HierarchyNodeDescriptor descriptor)
 	{
-		final List<PyHierarchyNodeDescriptor> res = new ArrayList<PyHierarchyNodeDescriptor>();
-		final PsiElement element = ((PyHierarchyNodeDescriptor) descriptor).getPsiElement();
+		List<PyHierarchyNodeDescriptor> res = new ArrayList<PyHierarchyNodeDescriptor>();
+		PsiElement element = ((PyHierarchyNodeDescriptor) descriptor).getPsiElement();
 		if(element instanceof PyClass)
 		{
-			final PyClass cls = (PyClass) element;
+			PyClass cls = (PyClass) element;
 			Query<PyClass> subClasses = PyClassInheritorsSearch.search(cls, false);
 			for(PyClass subClass : subClasses)
 			{

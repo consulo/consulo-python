@@ -31,7 +31,7 @@ import jakarta.annotation.Nullable;
 public abstract class RestInspectionVisitor extends RestElementVisitor {
   @Nullable
   private final ProblemsHolder myHolder;
-  public RestInspectionVisitor(@Nullable final ProblemsHolder holder) {
+  public RestInspectionVisitor(@Nullable ProblemsHolder holder) {
     myHolder = holder;
   }
 
@@ -45,8 +45,8 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
     return myHolder;
   }
 
-  protected final void registerProblem(final PsiElement element,
-                                       final String message){
+  protected final void registerProblem(PsiElement element,
+                                       String message){
     if (element == null || element.getTextLength() == 0){
       return;
     }
@@ -55,9 +55,9 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
     }
   }
 
-  protected final void registerProblem(@Nullable final PsiElement element,
-                                       @Nonnull final String message,
-                                       @Nonnull final LocalQuickFix quickFix){
+  protected final void registerProblem(@Nullable PsiElement element,
+                                       @Nonnull String message,
+                                       @Nonnull LocalQuickFix quickFix){
       if (element == null || element.getTextLength() == 0){
           return;
       }

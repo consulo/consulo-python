@@ -22,7 +22,7 @@ public abstract class EpydocStringTest extends UsefulTestCase
 	public void testTagWithParamValue()
 	{
 		EpydocString docString = new EpydocString(new Substring("@type m: number"));
-		final Substring s = docString.getTagValue("type", "m");
+		Substring s = docString.getTagValue("type", "m");
 		assertNotNull(s);
 		assertEquals("number", s.toString());
 	}
@@ -31,7 +31,7 @@ public abstract class EpydocStringTest extends UsefulTestCase
 	{
 		EpydocString docString = new EpydocString(new Substring("    @param b: The y intercept of the line.  The X{y intercept} of a\n" + "              line is the point at which it crosses the y "
 				+ "axis (M{x=0})."));
-		final Substring s = docString.getTagValue("param", "b");
+		Substring s = docString.getTagValue("param", "b");
 		assertNotNull(s);
 		assertEquals("The y intercept of the line.  The X{y intercept} of a line is the point at which it crosses the y axis (M{x=0}).", s.concatTrimmedLines(" "));
 
@@ -52,7 +52,7 @@ public abstract class EpydocStringTest extends UsefulTestCase
 				"permission.\n" + "    @type  function: any callable\n" + "\n" + "    @param *args: arguments passed to function\n" + "    @param **kwargs: keyword arguments passed to C{function}\n"
 				+ "    \"\"\""));
 
-		final List<String> params = docString.getParameters();
+		List<String> params = docString.getParameters();
 		assertOrderedEquals(params, "euid", "egid", "function", "*args", "**kwargs");
 		assertEquals("effective UID used to call the function.", docString.getParamDescription("euid"));
 		assertEquals("effective GID used to call the function.", docString.getParamDescription("egid"));

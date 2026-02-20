@@ -31,7 +31,7 @@ public class ParsingContext
 	private final LanguageLevel myLanguageLevel;
 	private final Deque<ParsingScope> myScopes;
 
-	public ParsingContext(final PsiBuilder builder, LanguageLevel languageLevel, StatementParsing.FUTURE futureFlag)
+	public ParsingContext(PsiBuilder builder, LanguageLevel languageLevel, StatementParsing.FUTURE futureFlag)
 	{
 		myBuilder = builder;
 		myLanguageLevel = languageLevel;

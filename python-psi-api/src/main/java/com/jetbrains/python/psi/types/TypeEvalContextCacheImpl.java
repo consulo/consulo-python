@@ -39,20 +39,20 @@ final class TypeEvalContextCacheImpl implements TypeEvalContextCache {
   private final TypeEvalContextBasedCache<TypeEvalContext> myCache;
 
   @Inject
-  TypeEvalContextCacheImpl(@Nonnull final CachedValuesManager manager) {
+  TypeEvalContextCacheImpl(@Nonnull CachedValuesManager manager) {
     myCache = new TypeEvalContextBasedCache<>(manager, VALUE_PROVIDER);
   }
 
 
   @Nonnull
   @Override
-  public TypeEvalContext getContext(@Nonnull final TypeEvalContext standard) {
+  public TypeEvalContext getContext(@Nonnull TypeEvalContext standard) {
     return myCache.getValue(standard);
   }
 
   private static class MyValueProvider implements Function<TypeEvalContext, TypeEvalContext> {
     @Override
-    public TypeEvalContext apply(final TypeEvalContext param) {
+    public TypeEvalContext apply(TypeEvalContext param) {
       // key and value are both context here. If no context stored, then key is stored. Old one is returned otherwise to cache.
       return param;
     }

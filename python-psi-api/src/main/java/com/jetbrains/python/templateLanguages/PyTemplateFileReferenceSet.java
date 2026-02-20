@@ -50,7 +50,7 @@ public class PyTemplateFileReferenceSet extends PyStringLiteralFileReferenceSet 
     if (module != null) {
       List<VirtualFile> templatesFolders = getRoots(module);
       for (VirtualFile folder : templatesFolders) {
-        final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(folder);
+        PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(folder);
         if (directory != null) {
           contexts.add(directory);
         }

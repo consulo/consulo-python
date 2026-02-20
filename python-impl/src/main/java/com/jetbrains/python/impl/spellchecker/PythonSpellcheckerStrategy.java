@@ -51,16 +51,16 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 		@Override
 		public void tokenize(@Nonnull PyStringLiteralExpression element, TokenConsumer consumer)
 		{
-			final TokenSplitter splitter = PlainTextTokenSplitter.getInstance();
-			final List<ASTNode> strNodes = element.getStringNodes();
-			final List<String> prefixes = ContainerUtil.mapNotNull(strNodes, n -> StringUtil.nullize(new StringNodeInfo(n).getPrefix()));
+			TokenSplitter splitter = PlainTextTokenSplitter.getInstance();
+			List<ASTNode> strNodes = element.getStringNodes();
+			List<String> prefixes = ContainerUtil.mapNotNull(strNodes, n -> StringUtil.nullize(new StringNodeInfo(n).getPrefix()));
 
 			if(element.textContains('\\') && !prefixes.stream().anyMatch(PyStringLiteralUtil::isRawPrefix))
 			{
 				for(Pair<TextRange, String> fragment : element.getDecodedFragments())
 				{
-					final String value = fragment.getSecond();
-					final int startOffset = fragment.getFirst().getStartOffset();
+					String value = fragment.getSecond();
+					int startOffset = fragment.getFirst().getStartOffset();
 					consumer.consumeToken(element, value, false, startOffset, TextRange.allOf(value), splitter);
 				}
 			}
@@ -68,8 +68,8 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 			{
 				for(TextRange valueTextRange : element.getStringValueTextRanges())
 				{
-					final String value = valueTextRange.substring(element.getText());
-					final int startOffset = valueTextRange.getStartOffset();
+					String value = valueTextRange.substring(element.getText());
+					int startOffset = valueTextRange.getStartOffset();
 					consumer.consumeToken(element, value, false, startOffset, TextRange.allOf(value), splitter);
 				}
 			}

@@ -35,7 +35,7 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class PythonUnitTestRunnableScriptFilter implements RunnableScriptFilter {
-  public boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable final TypeEvalContext context) {
+  public boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable TypeEvalContext context) {
     return script instanceof PyFile && PythonUnitTestUtil.getTestCaseClassesFromFile(script, context)
                                                          .size() > 0 && !isIfNameMain(location) && TestRunnerService.getInstance(module)
                                                                                                                     .getProjectConfiguration()
@@ -47,7 +47,7 @@ public class PythonUnitTestRunnableScriptFilter implements RunnableScriptFilter 
   public static boolean isIfNameMain(Location location) {
     PsiElement element = location.getPsiElement();
     while (true) {
-      final PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
+      PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
       if (ifStatement == null) {
         break;
       }

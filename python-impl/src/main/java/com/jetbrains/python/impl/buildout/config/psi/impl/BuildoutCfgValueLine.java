@@ -31,7 +31,7 @@ import java.util.List;
  * @author traff
  */
 public class BuildoutCfgValueLine extends BuildoutCfgPsiElement {
-    public BuildoutCfgValueLine(@Nonnull final ASTNode node) {
+    public BuildoutCfgValueLine(@Nonnull ASTNode node) {
         super(node);
     }
 

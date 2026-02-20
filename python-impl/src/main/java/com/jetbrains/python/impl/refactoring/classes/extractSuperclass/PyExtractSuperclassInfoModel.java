@@ -27,25 +27,25 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo
  */
 class PyExtractSuperclassInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement, PyClass, PyMemberInfo<PyElement>>
 {
-	PyExtractSuperclassInfoModel(@Nonnull final PyClass clazz)
+	PyExtractSuperclassInfoModel(@Nonnull PyClass clazz)
 	{
 		super(clazz, null, false);
 	}
 
 	@Override
-	public boolean isAbstractEnabled(final PyMemberInfo<PyElement> member)
+	public boolean isAbstractEnabled(PyMemberInfo<PyElement> member)
 	{
 		return member.isCouldBeAbstract() && isMemberEnabled(member);
 	}
 
 	@Override
-	public int checkForProblems(@Nonnull final PyMemberInfo<PyElement> member)
+	public int checkForProblems(@Nonnull PyMemberInfo<PyElement> member)
 	{
 		return member.isChecked() ? OK : super.checkForProblems(member);
 	}
 
 	@Override
-	protected int doCheck(@Nonnull final PyMemberInfo<PyElement> memberInfo, final int problem)
+	protected int doCheck(@Nonnull PyMemberInfo<PyElement> memberInfo, int problem)
 	{
 		return problem;
 	}

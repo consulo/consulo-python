@@ -86,7 +86,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
       }
     });
 
-    final FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     myWorkDir.addBrowseFolderListener("Please choose working directory:", null, myProject, fileChooserDescriptor);
     ReSTService service = ReSTService.getInstance(myModule);
     myWorkDir.setText(service.getWorkdir());
@@ -104,7 +104,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
 
   @Nonnull
   private String getRequirementsPath() {
-    final String path = PyPackageRequirementsSettings.getInstance(myModule).getRequirementsPath();
+    String path = PyPackageRequirementsSettings.getInstance(myModule).getRequirementsPath();
     if (path.equals(PyPackageRequirementsSettings.DEFAULT_REQUIREMENTS_PATH) && !PyPackageUtil.hasRequirementsTxt(myModule)) {
       return "";
     }
@@ -255,7 +255,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
     }
     myModel.apply();
     myDocumentationSettings.setFormat((DocStringFormat)myDocstringFormatComboBox.getSelectedItem());
-    final ReSTService reSTService = ReSTService.getInstance(myModule);
+    ReSTService reSTService = ReSTService.getInstance(myModule);
     reSTService.setWorkdir(myWorkDir.getText());
     if (txtIsRst.isSelected() != reSTService.txtIsRst()) {
       reSTService.setTxtIsRst(txtIsRst.isSelected());

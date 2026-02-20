@@ -81,7 +81,7 @@ public class PythonConsoleToolWindow {
     }
 
 
-    public void init(final @Nonnull ToolWindow toolWindow, final @Nonnull RunContentDescriptor contentDescriptor) {
+    public void init(@Nonnull ToolWindow toolWindow, @Nonnull RunContentDescriptor contentDescriptor) {
         setContent(toolWindow, contentDescriptor);
 
         if (!myInitialized) {
@@ -139,7 +139,7 @@ public class PythonConsoleToolWindow {
         setContent(getToolWindow(myProject), contentDescriptor);
     }
 
-    private static Content createContent(final @Nonnull RunContentDescriptor contentDescriptor) {
+    private static Content createContent(@Nonnull RunContentDescriptor contentDescriptor) {
         SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
 
         Content content = ContentFactory.getInstance().createContent(panel, contentDescriptor.getDisplayName(), false);

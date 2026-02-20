@@ -33,7 +33,7 @@ import com.jetbrains.python.psi.PyStatement;
  */
 public class BreakContinueAnnotator extends PyAnnotator {
   @Override
-  public void visitPyBreakStatement(final PyBreakStatement node) {
+  public void visitPyBreakStatement(PyBreakStatement node) {
     if (getContainingLoop(node) == null) {
       getHolder().createErrorAnnotation(node, PyBundle.message("ANN.break.outside.loop"));
     }
@@ -45,7 +45,7 @@ public class BreakContinueAnnotator extends PyAnnotator {
   }
 
   @Override
-  public void visitPyContinueStatement(final PyContinueStatement node) {
+  public void visitPyContinueStatement(PyContinueStatement node) {
     if (getContainingLoop(node) == null) {
       getHolder().createErrorAnnotation(node, PyBundle.message("ANN.continue.outside.loop"));
     }

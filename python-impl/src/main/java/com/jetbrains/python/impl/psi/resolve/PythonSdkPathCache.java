@@ -67,7 +67,7 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
       public void rootSetChanged(RootProvider wrapper) {
         clearCache();
         if (!project.isDisposed()) {
-          final Module[] modules = ModuleManager.getInstance(project).getModules();
+          Module[] modules = ModuleManager.getInstance(project).getModules();
           for (Module module : modules) {
             PythonModulePathCache.getInstance(module).clearCache();
           }
@@ -93,7 +93,7 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
   public void dispose() {
     if (mySdk != null) {
       synchronized (KEY) {
-        final Map<Project, PythonSdkPathCache> cacheMap = mySdk.getUserData(KEY);
+        Map<Project, PythonSdkPathCache> cacheMap = mySdk.getUserData(KEY);
         if (cacheMap != null) {
           cacheMap.remove(myProject);
         }

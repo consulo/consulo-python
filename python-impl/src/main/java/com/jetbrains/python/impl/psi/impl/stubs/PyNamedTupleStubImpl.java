@@ -55,7 +55,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
   @Nullable
   public static PyNamedTupleStub create(@Nonnull PyTargetExpression expression) {
-    final PyExpression assignedValue = expression.findAssignedValue();
+    PyExpression assignedValue = expression.findAssignedValue();
 
     if (assignedValue instanceof PyCallExpression) {
       return create((PyCallExpression)assignedValue);
@@ -66,22 +66,22 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
   @Nullable
   public static PyNamedTupleStub create(@Nonnull PyCallExpression expression) {
-    final PyReferenceExpression calleeReference = PyUtil.as(expression.getCallee(), PyReferenceExpression.class);
+    PyReferenceExpression calleeReference = PyUtil.as(expression.getCallee(), PyReferenceExpression.class);
 
     if (calleeReference == null) {
       return null;
     }
 
-    final QualifiedName namedTupleQName = getNamedTupleQName(calleeReference);
+    QualifiedName namedTupleQName = getNamedTupleQName(calleeReference);
 
     if (namedTupleQName != null) {
-      final String name = resolveTupleName(expression);
+      String name = resolveTupleName(expression);
 
       if (name == null) {
         return null;
       }
 
-      final List<String> fields = resolveTupleFields(expression);
+      List<String> fields = resolveTupleFields(expression);
 
       if (fields == null) {
         return null;
@@ -95,9 +95,9 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
   @Nullable
   public static PyNamedTupleStub deserialize(@Nonnull StubInputStream stream) throws IOException {
-    final StringRef calleeName = stream.readName();
-    final StringRef name = stream.readName();
-    final List<String> fields = deserializeFields(stream, stream.readVarInt());
+    StringRef calleeName = stream.readName();
+    StringRef name = stream.readName();
+    List<String> fields = deserializeFields(stream, stream.readVarInt());
 
     if (calleeName == null || name == null) {
       return null;
@@ -143,7 +143,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
   @Nullable
   private static QualifiedName getNamedTupleQName(@Nonnull PyReferenceExpression referenceExpression) {
-    final QualifiedName name = getFullyQualifiedNamedTupleQName(referenceExpression);
+    QualifiedName name = getFullyQualifiedNamedTupleQName(referenceExpression);
 
     if (name != null) {
       return name;
@@ -163,7 +163,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
     // Point = namedtuple(("Point"), ...)
 
-    final PyExpression nameExpression = PyPsiUtils.flattenParens(callExpression.getArgument(0, PyExpression.class));
+    PyExpression nameExpression = PyPsiUtils.flattenParens(callExpression.getArgument(0, PyExpression.class));
 
     if (nameExpression instanceof PyReferenceExpression) {
       return PyPsiUtils.strValue(fullResolveLocally((PyReferenceExpression)nameExpression));
@@ -187,7 +187,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
     // Point = namedtuple(..., ["x", "y"])
 
-    final PyExpression fieldsExpression = PyPsiUtils.flattenParens(callExpression.getArgument(1, PyExpression.class));
+    PyExpression fieldsExpression = PyPsiUtils.flattenParens(callExpression.getArgument(1, PyExpression.class));
 
     if (fieldsExpression instanceof PyReferenceExpression) {
       return extractFields(fullResolveLocally((PyReferenceExpression)fieldsExpression));
@@ -198,10 +198,10 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
   @Nonnull
   private static List<String> deserializeFields(@Nonnull StubInputStream stream, int fieldsSize) throws IOException {
-    final List<String> fields = new ArrayList<>(fieldsSize);
+    List<String> fields = new ArrayList<>(fieldsSize);
 
     for (int i = 0; i < fieldsSize; i++) {
-      final StringRef field = stream.readName();
+      StringRef field = stream.readName();
 
       if (field != null) {
         fields.add(field.getString());
@@ -222,10 +222,10 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
     // Point = c.namedtuple(...)
 
     if (PyNames.NAMEDTUPLE.equals(referenceExpression.getName())) {
-      final PyExpression qualifier = referenceExpression.getQualifier();
+      PyExpression qualifier = referenceExpression.getQualifier();
 
       if (qualifier instanceof PyReferenceExpression) {
-        final PyReferenceExpression qualifierReference = (PyReferenceExpression)qualifier;
+        PyReferenceExpression qualifierReference = (PyReferenceExpression)qualifier;
 
         if (!qualifierReference.isQualified() && resolvesToCollections(qualifierReference)) {
           return QualifiedName.fromComponents(qualifierReference.getName(), referenceExpression.getName());
@@ -248,13 +248,13 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
 
     for (PsiElement element : PyResolveUtil.resolveLocally(referenceExpression)) {
       if (element instanceof PyImportElement) {
-        final PyImportElement importElement = (PyImportElement)element;
+        PyImportElement importElement = (PyImportElement)element;
 
         if (equals(importElement.getImportedQName(), PyNames.NAMEDTUPLE)) {
-          final PyStatement importStatement = importElement.getContainingImportStatement();
+          PyStatement importStatement = importElement.getContainingImportStatement();
 
           if (importStatement instanceof PyFromImportStatement) {
-            final PyFromImportStatement fromImportStatement = (PyFromImportStatement)importStatement;
+            PyFromImportStatement fromImportStatement = (PyFromImportStatement)importStatement;
 
             if (equals(fromImportStatement.getImportSourceQName(), PyNames.COLLECTIONS)) {
               return QualifiedName.fromComponents(referenceExpression.getName());
@@ -270,7 +270,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   private static boolean resolvesToCollections(@Nonnull PyReferenceExpression referenceExpression) {
     for (PsiElement element : PyResolveUtil.resolveLocally(referenceExpression)) {
       if (element instanceof PyImportElement) {
-        final PyImportElement importElement = (PyImportElement)element;
+        PyImportElement importElement = (PyImportElement)element;
 
         if (equals(importElement.getImportedQName(), PyNames.COLLECTIONS)) {
           return true;
@@ -289,7 +289,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   private static PyExpression fullResolveLocally(@Nonnull PyReferenceExpression referenceExpression) {
     for (PsiElement element : PyResolveUtil.resolveLocally(referenceExpression)) {
       if (element instanceof PyTargetExpression) {
-        final PyExpression assignedValue = ((PyTargetExpression)element).findAssignedValue();
+        PyExpression assignedValue = ((PyTargetExpression)element).findAssignedValue();
 
         if (assignedValue instanceof PyReferenceExpression) {
           return fullResolveLocally((PyReferenceExpression)assignedValue);
@@ -308,7 +308,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
       return null;
     }
 
-    final List<String> listValue = PyUtil.strListValue(expression);
+    List<String> listValue = PyUtil.strListValue(expression);
 
     if (listValue != null) {
       return listValue;
@@ -323,7 +323,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
       return null;
     }
 
-    final List<String> result = new ArrayList<>();
+    List<String> result = new ArrayList<>();
 
     for (String name : StringUtil.tokenize(fieldsString, ", ")) {
       result.add(name);

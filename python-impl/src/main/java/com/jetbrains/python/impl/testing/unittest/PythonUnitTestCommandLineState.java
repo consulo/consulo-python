@@ -59,7 +59,7 @@ public class PythonUnitTestCommandLineState extends PythonTestCommandLineStateBa
 	{
 		List<String> specs = new ArrayList<>();
 
-		final String scriptName = FileUtil.toSystemDependentName(myConfig.getScriptName());
+		String scriptName = FileUtil.toSystemDependentName(myConfig.getScriptName());
 		switch(myConfig.getTestType())
 		{
 			case TEST_SCRIPT:
@@ -72,7 +72,7 @@ public class PythonUnitTestCommandLineState extends PythonTestCommandLineStateBa
 				specs.add(scriptName + "::" + myConfig.getClassName() + "::" + myConfig.getMethodName());
 				break;
 			case TEST_FOLDER:
-				final String folderName = FileUtil.toSystemDependentName(myConfig.getFolderName() + "/");
+				String folderName = FileUtil.toSystemDependentName(myConfig.getFolderName() + "/");
 				if(!StringUtil.isEmpty(myConfig.getPattern()) && myConfig.usePattern())
 				{
 					// ";" can't be used with bash, so we use "_args_separator_"

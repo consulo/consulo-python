@@ -86,15 +86,15 @@ public class PyExceptionBreakpointType
     }
 
     @Override
-    public XBreakpoint<PyExceptionBreakpointProperties> addBreakpoint(final Project project, JComponent parentComponent) {
+    public XBreakpoint<PyExceptionBreakpointProperties> addBreakpoint(Project project, JComponent parentComponent) {
         TreeClassChooserFactory.Builder<PyClass> builder = TreeClassChooserFactory.getInstance(project).newChooser(PyClass.class);
         builder.withTitle(LocalizeValue.localizeTODO("Select Exception Class"));
         builder.withSearchScope(GlobalSearchScope.allScope(project));
         builder.withClassProvider((proj, name, searchInLibraries, pattern, searchScope) ->
         {
             PyExceptionCachingFilter filter = new PyExceptionCachingFilter();
-            final Collection<PyClass> classes = PyClassNameIndex.find(name, proj, searchScope.isSearchInLibraries());
-            final List<PyClass> result = new ArrayList<>();
+            Collection<PyClass> classes = PyClassNameIndex.find(name, proj, searchScope.isSearchInLibraries());
+            List<PyClass> result = new ArrayList<>();
             for (PyClass c : classes) {
                 if (filter.test(c)) {
                     result.add(c);
@@ -110,9 +110,9 @@ public class PyExceptionBreakpointType
         treeChooser.showDialog();
 
         // on ok
-        final PyClass pyClass = treeChooser.getSelected();
+        PyClass pyClass = treeChooser.getSelected();
         if (pyClass != null) {
-            final String qualifiedName = pyClass.getQualifiedName();
+            String qualifiedName = pyClass.getQualifiedName();
             assert qualifiedName != null : "Qualified name of the class shouldn't be null";
             return WriteAction.compute(() -> XDebuggerManager.getInstance(project).getBreakpointManager().addBreakpoint(PyExceptionBreakpointType.this, new PyExceptionBreakpointProperties
                 (qualifiedName)));
@@ -125,13 +125,13 @@ public class PyExceptionBreakpointType
 
         @Override
         public boolean test(@Nonnull final PyClass pyClass) {
-            final VirtualFile virtualFile = pyClass.getContainingFile().getVirtualFile();
+            VirtualFile virtualFile = pyClass.getContainingFile().getVirtualFile();
             if (virtualFile == null) {
                 return false;
             }
 
-            final int key = pyClass.hashCode();
-            final Pair<WeakReference<PyClass>, Boolean> pair = processedElements.get(key);
+            int key = pyClass.hashCode();
+            Pair<WeakReference<PyClass>, Boolean> pair = processedElements.get(key);
             boolean isException;
             if (pair == null || pair.first.get() != pyClass) {
                 isException = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
@@ -169,7 +169,7 @@ public class PyExceptionBreakpointType
 
     @Override
     public XBreakpoint<PyExceptionBreakpointProperties> createDefaultBreakpoint(@Nonnull XBreakpointCreator<PyExceptionBreakpointProperties> creator) {
-        final XBreakpoint<PyExceptionBreakpointProperties> breakpoint = creator.createBreakpoint(createDefaultBreakpointProperties());
+        XBreakpoint<PyExceptionBreakpointProperties> breakpoint = creator.createBreakpoint(createDefaultBreakpointProperties());
         breakpoint.setEnabled(true);
         return breakpoint;
     }

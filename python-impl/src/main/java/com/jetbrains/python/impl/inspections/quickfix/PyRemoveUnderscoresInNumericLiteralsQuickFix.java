@@ -35,10 +35,10 @@ public class PyRemoveUnderscoresInNumericLiteralsQuickFix implements LocalQuickF
 
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+        PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyNumericLiteralExpression) {
-            final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-            final String text = element.getText();
+            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            String text = element.getText();
 
             element.replace(elementGenerator.createExpressionFromText(LanguageLevel.forElement(element), text.replaceAll("_", "")));
         }

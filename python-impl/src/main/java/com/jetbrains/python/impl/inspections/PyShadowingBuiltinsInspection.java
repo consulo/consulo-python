@@ -104,17 +104,17 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
         }
 
         private void processElement(@Nonnull PsiNameIdentifierOwner element) {
-            final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+            ScopeOwner owner = ScopeUtil.getScopeOwner(element);
             if (owner instanceof PyClass) {
                 return;
             }
-            final String name = element.getName();
+            String name = element.getName();
             if (name != null && !myIgnoredNames.contains(name)) {
-                final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
-                final PsiElement builtin = builtinCache.getByName(name);
+                PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
+                PsiElement builtin = builtinCache.getByName(name);
                 if (builtin != null && !PyUtil.inSameFile(builtin, element)) {
-                    final PsiElement identifier = element.getNameIdentifier();
-                    final PsiElement problemElement = identifier != null ? identifier : element;
+                    PsiElement identifier = element.getNameIdentifier();
+                    PsiElement problemElement = identifier != null ? identifier : element;
                     registerProblem(problemElement, String.format("Shadows built-in name '%s'", name),
                         ProblemHighlightType.WEAK_WARNING, null, new PyRenameElementQuickFix(), new PyIgnoreBuiltinQuickFix(name)
                     );
@@ -138,9 +138,9 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
 
             @Override
             public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-                final PsiElement element = descriptor.getPsiElement();
+                PsiElement element = descriptor.getPsiElement();
                 if (element != null) {
-                    final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+                    InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
                     profile.<PyShadowingBuiltinsInspection, PyShadowingBuiltinsInspectionState>modifyToolSettings(
                         PyShadowingBuiltinsInspection.class.getSimpleName(),
                         element,

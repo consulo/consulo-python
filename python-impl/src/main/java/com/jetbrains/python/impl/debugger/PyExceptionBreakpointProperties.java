@@ -39,7 +39,7 @@ public class PyExceptionBreakpointProperties extends ExceptionBreakpointProperti
   public PyExceptionBreakpointProperties() {
   }
 
-  public PyExceptionBreakpointProperties(@Nonnull final String exception) {
+  public PyExceptionBreakpointProperties(@Nonnull String exception) {
     myException = exception;
   }
 
@@ -49,7 +49,7 @@ public class PyExceptionBreakpointProperties extends ExceptionBreakpointProperti
   }
 
   @Override
-  public void loadState(final PyExceptionBreakpointProperties state) {
+  public void loadState(PyExceptionBreakpointProperties state) {
     myException = state.myException;
     myNotifyAlways = state.myNotifyAlways;
     myNotifyOnlyOnFirst = state.myNotifyOnlyOnFirst;

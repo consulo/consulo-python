@@ -62,56 +62,56 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		{
 			return;
 		}
-		final Substring typeSub = myOriginalDocString.getReturnTypeSubstring();
+		Substring typeSub = myOriginalDocString.getReturnTypeSubstring();
 		if(typeSub != null)
 		{
 			replace(typeSub.getTextRange(), type);
 			return;
 		}
-		final Section returnSection = findFirstReturnSection();
+		Section returnSection = findFirstReturnSection();
 		if(returnSection != null)
 		{
-			final List<SectionField> fields = returnSection.getFields();
+			List<SectionField> fields = returnSection.getFields();
 			if(!fields.isEmpty())
 			{
-				final SectionField firstField = fields.get(0);
-				final String newLine = createReturnLine(type, getSectionIndent(returnSection), getFieldIndent(returnSection, firstField));
+				SectionField firstField = fields.get(0);
+				String newLine = createReturnLine(type, getSectionIndent(returnSection), getFieldIndent(returnSection, firstField));
 				insertBeforeLine(getFieldStartLine(firstField), newLine);
 			}
 			else
 			{
-				final String newLine = createReturnLine(type, getSectionIndent(returnSection), getExpectedFieldIndent());
+				String newLine = createReturnLine(type, getSectionIndent(returnSection), getExpectedFieldIndent());
 				insertAfterLine(getSectionTitleLastLine(returnSection), newLine);
 			}
 		}
 		else
 		{
-			final SectionBasedDocStringBuilder builder = createBuilder().withSectionIndent(getExpectedFieldIndent()).startReturnsSection().addReturnValue(null, type, "");
+			SectionBasedDocStringBuilder builder = createBuilder().withSectionIndent(getExpectedFieldIndent()).startReturnsSection().addReturnValue(null, type, "");
 			insertNewSection(builder, SectionBasedDocString.RETURNS_SECTION);
 		}
 	}
 
 	@Override
-	public void removeParameter(@Nonnull final String name)
+	public void removeParameter(@Nonnull String name)
 	{
 		for(Section section : myOriginalDocString.getParameterSections())
 		{
-			final List<SectionField> sectionFields = section.getFields();
+			List<SectionField> sectionFields = section.getFields();
 			for(SectionField field : sectionFields)
 			{
-				final Substring nameSub = ContainerUtil.find(field.getNamesAsSubstrings(), substring -> substring.toString().equals(name));
+				Substring nameSub = ContainerUtil.find(field.getNamesAsSubstrings(), substring -> substring.toString().equals(name));
 				if(nameSub != null)
 				{
 					if(field.getNamesAsSubstrings().size() == 1)
 					{
-						final int endLine = getFieldEndLine(field);
+						int endLine = getFieldEndLine(field);
 						if(sectionFields.size() == 1)
 						{
 							removeLinesAndSpacesAfter(getSectionStartLine(section), endLine + 1);
 						}
 						else
 						{
-							final int startLine = getFieldStartLine(field);
+							int startLine = getFieldStartLine(field);
 							if(ContainerUtil.getLastItem(sectionFields) == field)
 							{
 								removeLines(startLine, endLine + 1);
@@ -124,7 +124,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 					}
 					else
 					{
-						final Substring wholeParamName = expandParamNameSubstring(nameSub);
+						Substring wholeParamName = expandParamNameSubstring(nameSub);
 						remove(wholeParamName.getStartOffset(), wholeParamName.getEndOffset());
 					}
 					break;
@@ -136,7 +136,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	@Nonnull
 	private static Substring expandParamNameSubstring(@Nonnull Substring name)
 	{
-		final String superString = name.getSuperString();
+		String superString = name.getSuperString();
 		int startWithStars = name.getStartOffset();
 		int prevNonWhitespace = skipSpacesBackward(superString, name.getStartOffset() - 1);
 		if(prevNonWhitespace >= 0 && superString.charAt(prevNonWhitespace) == '*')
@@ -149,7 +149,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 			return new Substring(superString, prevNonWhitespace, name.getEndOffset());
 		}
 		// end offset is always exclusive
-		final int nextNonWhitespace = skipSpacesForward(superString, name.getEndOffset());
+		int nextNonWhitespace = skipSpacesForward(superString, name.getEndOffset());
 		if(nextNonWhitespace < superString.length() && superString.charAt(nextNonWhitespace) == ',')
 		{
 			// if we remove parameter with trailing comma (i.e. first parameter) remove whitespaces after it as well
@@ -171,18 +171,18 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	@Override
 	protected void beforeApplyingModifications()
 	{
-		final List<AddParameter> newParams = new ArrayList<>();
+		List<AddParameter> newParams = new ArrayList<>();
 		for(AddParameter param : myAddParameterRequests)
 		{
 			if(param.type != null)
 			{
-				final Substring typeSub = myOriginalDocString.getParamTypeSubstring(param.name);
+				Substring typeSub = myOriginalDocString.getParamTypeSubstring(param.name);
 				if(typeSub != null)
 				{
 					replace(typeSub.getTextRange(), param.type);
 					continue;
 				}
-				final Substring nameSub = findParamNameSubstring(param.name);
+				Substring nameSub = findParamNameSubstring(param.name);
 				if(nameSub != null)
 				{
 					updateParamDeclarationWithType(nameSub, param.type);
@@ -193,29 +193,29 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		}
 		if(!newParams.isEmpty())
 		{
-			final SectionBasedDocStringBuilder paramBlockBuilder = createBuilder();
-			final Section firstParamSection = findFirstParametersSection();
+			SectionBasedDocStringBuilder paramBlockBuilder = createBuilder();
+			Section firstParamSection = findFirstParametersSection();
 			// Insert whole new parameter block
 			if(firstParamSection == null)
 			{
 				paramBlockBuilder.startParametersSection();
-				final SectionBasedDocStringBuilder builder = addParametersInBlock(paramBlockBuilder, newParams, getExpectedFieldIndent());
+				SectionBasedDocStringBuilder builder = addParametersInBlock(paramBlockBuilder, newParams, getExpectedFieldIndent());
 				insertNewSection(builder, SectionBasedDocString.PARAMETERS_SECTION);
 			}
 			// Update existing parameter block
 			else
 			{
-				final SectionField firstParamField = ContainerUtil.getFirstItem(firstParamSection.getFields());
+				SectionField firstParamField = ContainerUtil.getFirstItem(firstParamSection.getFields());
 				// Section exist, but empty
 				if(firstParamField == null)
 				{
-					final String blockText = buildBlock(paramBlockBuilder, newParams, getExpectedFieldIndent(), getSectionIndent(firstParamSection));
+					String blockText = buildBlock(paramBlockBuilder, newParams, getExpectedFieldIndent(), getSectionIndent(firstParamSection));
 					insertAfterLine(getSectionTitleLastLine(firstParamSection), blockText);
 				}
 				else
 				{
 					// Section contain other parameter declarations
-					final String blockText = buildBlock(paramBlockBuilder, newParams, getFieldIndent(firstParamSection, firstParamField), getSectionIndent(firstParamSection));
+					String blockText = buildBlock(paramBlockBuilder, newParams, getFieldIndent(firstParamSection, firstParamField), getSectionIndent(firstParamSection));
 					insertBeforeLine(getFieldStartLine(firstParamField), blockText);
 				}
 			}
@@ -240,7 +240,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 
 	private void insertNewSection(@Nonnull SectionBasedDocStringBuilder builder, @Nonnull String sectionTitle)
 	{
-		final Pair<Integer, Boolean> pos = findPreferredSectionLine(sectionTitle);
+		Pair<Integer, Boolean> pos = findPreferredSectionLine(sectionTitle);
 		if(pos.getSecond())
 		{
 			// don't add extra first empty line in empty docstring
@@ -266,16 +266,16 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	 */
 	private Pair<Integer, Boolean> findPreferredSectionLine(@Nonnull String sectionTitle)
 	{
-		final String normalized = SectionBasedDocString.getNormalizedSectionTitle(sectionTitle);
-		final int index = CANONICAL_SECTION_ORDER.indexOf(normalized);
+		String normalized = SectionBasedDocString.getNormalizedSectionTitle(sectionTitle);
+		int index = CANONICAL_SECTION_ORDER.indexOf(normalized);
 		if(index < 0)
 		{
 			return Pair.create(findLastNonEmptyLine(), true);
 		}
-		final Map<String, Section> namedSections = new HashMap<>();
+		Map<String, Section> namedSections = new HashMap<>();
 		for(Section section : myOriginalDocString.getSections())
 		{
-			final String normalizedTitle = section.getNormalizedTitle();
+			String normalizedTitle = section.getNormalizedTitle();
 			// leave only first occurrences
 			if(!namedSections.containsKey(normalizedTitle))
 			{
@@ -284,7 +284,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		}
 		for(int i = index - 1; i >= 0; i--)
 		{
-			final Section previous = namedSections.get(CANONICAL_SECTION_ORDER.get(i));
+			Section previous = namedSections.get(CANONICAL_SECTION_ORDER.get(i));
 			if(previous != null)
 			{
 				return Pair.create(getSectionEndLine(previous), true);
@@ -292,7 +292,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		}
 		for(int i = index + 1; i < CANONICAL_SECTION_ORDER.size(); i++)
 		{
-			final Section next = namedSections.get(CANONICAL_SECTION_ORDER.get(i));
+			Section next = namedSections.get(CANONICAL_SECTION_ORDER.get(i));
 			if(next != null)
 			{
 				return Pair.create(getSectionStartLine(next), false);
@@ -308,7 +308,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	protected abstract SectionBasedDocStringBuilder createBuilder();
 
 	@Nullable
-	private Substring findParamNameSubstring(@Nonnull final String name)
+	private Substring findParamNameSubstring(@Nonnull String name)
 	{
 		return ContainerUtil.find(myOriginalDocString.getParameterSubstrings(), substring -> substring.toString().equals(name));
 	}
@@ -338,7 +338,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	@Nonnull
 	protected String getExpectedSectionIndent()
 	{
-		final Section first = ContainerUtil.getFirstItem(myOriginalDocString.getSections());
+		Section first = ContainerUtil.getFirstItem(myOriginalDocString.getSections());
 		return first != null ? getSectionIndent(first) : myMinContentIndent;
 	}
 
@@ -347,7 +347,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	{
 		for(Section section : myOriginalDocString.getSections())
 		{
-			final List<SectionField> fields = section.getFields();
+			List<SectionField> fields = section.getFields();
 			if(fields.isEmpty())
 			{
 				continue;
@@ -360,9 +360,9 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	@Nonnull
 	protected String getFieldIndent(@Nonnull Section section, @Nonnull SectionField field)
 	{
-		final String titleIndent = getSectionIndent(section);
-		final String fieldIndent = getLineIndent(getFieldStartLine(field));
-		final int diffSize = Math.max(0, PyIndentUtil.getLineIndentSize(fieldIndent) - PyIndentUtil.getLineIndentSize(titleIndent));
+		String titleIndent = getSectionIndent(section);
+		String fieldIndent = getLineIndent(getFieldStartLine(field));
+		int diffSize = Math.max(0, PyIndentUtil.getLineIndentSize(fieldIndent) - PyIndentUtil.getLineIndentSize(titleIndent));
 		return StringUtil.repeatSymbol(' ', diffSize);
 	}
 
@@ -379,7 +379,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 
 	protected int getSectionEndLine(@Nonnull Section section)
 	{
-		final List<SectionField> fields = section.getFields();
+		List<SectionField> fields = section.getFields();
 		//noinspection ConstantConditions
 		return fields.isEmpty() ? getSectionTitleLastLine(section) : getFieldEndLine(ContainerUtil.getLastItem(fields));
 	}

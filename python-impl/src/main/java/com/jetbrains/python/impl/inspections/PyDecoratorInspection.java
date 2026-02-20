@@ -59,7 +59,7 @@ public class PyDecoratorInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyFunction(final PyFunction node) {
+        public void visitPyFunction(PyFunction node) {
             PyClass containingClass = node.getContainingClass();
             if (containingClass != null) {
                 return;

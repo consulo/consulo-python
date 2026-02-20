@@ -30,7 +30,7 @@ class PyUsageInfo extends UsageInfo
 	@Nonnull
 	private final PyClass myTo;
 
-	PyUsageInfo(@Nonnull final PyClass to)
+	PyUsageInfo(@Nonnull PyClass to)
 	{
 		super(to, true); //TODO: Make super generic and get rid of field?
 		myTo = to;

@@ -66,7 +66,7 @@ public class PyPsiUtils {
     @Nullable
 	@RequiredReadAction
     public static PsiElement getPrevComma(@Nonnull PsiElement element) {
-        final PsiElement prevNode = getPrevNonWhitespaceSibling(element);
+        PsiElement prevNode = getPrevNonWhitespaceSibling(element);
         return prevNode != null && prevNode.getNode().getElementType() == PyTokenTypes.COMMA ? prevNode : null;
     }
 
@@ -107,7 +107,7 @@ public class PyPsiUtils {
     @Nullable
 	@RequiredReadAction
     public static PsiElement getNextComma(@Nonnull PsiElement element) {
-        final PsiElement nextNode = getNextNonWhitespaceSibling(element);
+        PsiElement nextNode = getNextNonWhitespaceSibling(element);
         return nextNode != null && nextNode.getNode().getElementType() == PyTokenTypes.COMMA ? nextNode : null;
     }
 
@@ -195,7 +195,7 @@ public class PyPsiUtils {
     @Nullable
 	@RequiredReadAction
     public static PsiElement getAdjacentComma(@Nonnull PsiElement element) {
-        final PsiElement nextComma = getNextComma(element);
+        PsiElement nextComma = getNextComma(element);
         return nextComma != null ? nextComma : getPrevComma(element);
     }
 
@@ -240,8 +240,8 @@ public class PyPsiUtils {
      * @return child element described
      */
     @Nullable
-    public static PsiElement getFirstChildOfType(@Nonnull final PsiElement element, @Nonnull PyElementType type) {
-        final ASTNode child = element.getNode().findChildByType(type);
+    public static PsiElement getFirstChildOfType(@Nonnull PsiElement element, @Nonnull PyElementType type) {
+        ASTNode child = element.getNode().findChildByType(type);
         return child != null ? child.getPsi() : null;
     }
 
@@ -255,24 +255,24 @@ public class PyPsiUtils {
      */
     @Nullable
     public static PsiElement getChildByFilter(@Nonnull PsiElement element, @Nonnull TokenSet filter, int number) {
-        final ASTNode node = element.getNode();
+        ASTNode node = element.getNode();
         if (node != null) {
-            final ASTNode[] children = node.getChildren(filter);
+            ASTNode[] children = node.getChildren(filter);
             return (0 <= number && number < children.length) ? children[number].getPsi() : null;
         }
         return null;
     }
 
-    public static void addBeforeInParent(@Nonnull final PsiElement anchor, @Nonnull final PsiElement... newElements) {
-        final ASTNode anchorNode = anchor.getNode();
+    public static void addBeforeInParent(@Nonnull PsiElement anchor, @Nonnull PsiElement... newElements) {
+        ASTNode anchorNode = anchor.getNode();
         LOG.assertTrue(anchorNode != null);
         for (PsiElement newElement : newElements) {
             anchorNode.getTreeParent().addChild(newElement.getNode(), anchorNode);
         }
     }
 
-    public static void removeElements(@Nonnull final PsiElement... elements) {
-        final ASTNode parentNode = elements[0].getParent().getNode();
+    public static void removeElements(@Nonnull PsiElement... elements) {
+        ASTNode parentNode = elements[0].getParent().getNode();
         LOG.assertTrue(parentNode != null);
         for (PsiElement element : elements) {
             //noinspection ConstantConditions
@@ -281,15 +281,15 @@ public class PyPsiUtils {
     }
 
     @Nullable
-    public static PsiElement getStatement(@Nonnull final PsiElement element) {
-        final PyElement compStatement = getStatementList(element);
+    public static PsiElement getStatement(@Nonnull PsiElement element) {
+        PyElement compStatement = getStatementList(element);
         if (compStatement == null) {
             return null;
         }
         return getParentRightBefore(element, compStatement);
     }
 
-    public static PyElement getStatementList(final PsiElement element) {
+    public static PyElement getStatementList(PsiElement element) {
         //noinspection ConstantConditions
         return element instanceof PyFile || element instanceof PyStatementList ? (PyElement) element : PsiTreeUtil.getParentOfType(
             element,
@@ -306,18 +306,18 @@ public class PyPsiUtils {
      * @return described element or {@code null} if it doesn't exist
      */
     @Nullable
-    public static PsiElement getParentRightBefore(@Nonnull PsiElement element, @Nonnull final PsiElement superParent) {
+    public static PsiElement getParentRightBefore(@Nonnull PsiElement element, @Nonnull PsiElement superParent) {
         return PsiTreeUtil.findFirstParent(element, false, element1 -> element1.getParent() == superParent);
     }
 
-    public static List<PsiElement> collectElements(final PsiElement statement1, final PsiElement statement2) {
+    public static List<PsiElement> collectElements(PsiElement statement1, PsiElement statement2) {
         // Process ASTNodes here to handle all the nodes
-        final ASTNode node1 = statement1.getNode();
-        final ASTNode node2 = statement2.getNode();
-        final ASTNode parentNode = node1.getTreeParent();
+        ASTNode node1 = statement1.getNode();
+        ASTNode node2 = statement2.getNode();
+        ASTNode parentNode = node1.getTreeParent();
 
         boolean insideRange = false;
-        final List<PsiElement> result = new ArrayList<>();
+        List<PsiElement> result = new ArrayList<>();
         for (ASTNode node : parentNode.getChildren(null)) {
             // start
             if (node1 == node) {
@@ -335,9 +335,9 @@ public class PyPsiUtils {
     }
 
     @RequiredReadAction
-	public static int getElementIndentation(final PsiElement element) {
-        final PsiElement compStatement = getStatementList(element);
-        final PsiElement statement = getParentRightBefore(element, compStatement);
+	public static int getElementIndentation(PsiElement element) {
+        PsiElement compStatement = getStatementList(element);
+        PsiElement statement = getParentRightBefore(element, compStatement);
         if (statement == null) {
             return 0;
         }
@@ -345,14 +345,14 @@ public class PyPsiUtils {
         if (sibling == null) {
             sibling = compStatement.getPrevSibling();
         }
-        final String whitespace = sibling instanceof PsiWhiteSpace ? sibling.getText() : "";
-        final int i = whitespace.lastIndexOf("\n");
+        String whitespace = sibling instanceof PsiWhiteSpace ? sibling.getText() : "";
+        int i = whitespace.lastIndexOf("\n");
         return i != -1 ? whitespace.length() - i - 1 : 0;
     }
 
     @RequiredWriteAction
-	public static void removeRedundantPass(final PyStatementList statementList) {
-        final PyStatement[] statements = statementList.getStatements();
+	public static void removeRedundantPass(PyStatementList statementList) {
+        PyStatement[] statements = statementList.getStatements();
         if (statements.length > 1) {
             for (PyStatement statement : statements) {
                 if (statement instanceof PyPassStatement) {
@@ -362,8 +362,8 @@ public class PyPsiUtils {
         }
     }
 
-    public static boolean isMethodContext(final PsiElement element) {
-        final PsiNamedElement parent = PsiTreeUtil.getParentOfType(element, PyFile.class, PyFunction.class, PyClass.class);
+    public static boolean isMethodContext(PsiElement element) {
+        PsiNamedElement parent = PsiTreeUtil.getParentOfType(element, PyFile.class, PyFunction.class, PyClass.class);
         // In case if element is inside method which is inside class
         if (parent instanceof PyFunction && PsiTreeUtil.getParentOfType(parent, PyFile.class, PyClass.class) instanceof PyClass) {
             return true;
@@ -374,11 +374,11 @@ public class PyPsiUtils {
 
     @Nonnull
 	@RequiredReadAction
-	public static PsiElement getRealContext(@Nonnull final PsiElement element) {
+	public static PsiElement getRealContext(@Nonnull PsiElement element) {
         assertValid(element);
-        final PsiFile file = element.getContainingFile();
+        PsiFile file = element.getContainingFile();
         if (file instanceof PyExpressionCodeFragment) {
-            final PsiElement context = file.getContext();
+            PsiElement context = file.getContext();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("PyPsiUtil.getRealContext(" + element + ") is called. Returned " + context + ". Element inside code fragment");
             }
@@ -402,12 +402,12 @@ public class PyPsiUtils {
      */
     @RequiredWriteAction
 	public static void deleteAdjacentCommaWithWhitespaces(@Nonnull PsiElement element, @Nonnull PsiElement child) {
-        final PsiElement commaNode = getAdjacentComma(child);
+        PsiElement commaNode = getAdjacentComma(child);
         if (commaNode != null) {
-            final PsiElement nextNonWhitespace = getNextNonWhitespaceSibling(commaNode);
-            final PsiElement last = nextNonWhitespace == null ? element.getLastChild() : nextNonWhitespace.getPrevSibling();
-            final PsiElement prevNonWhitespace = getPrevNonWhitespaceSibling(commaNode);
-            final PsiElement first = prevNonWhitespace == null ? element.getFirstChild() : prevNonWhitespace.getNextSibling();
+            PsiElement nextNonWhitespace = getNextNonWhitespaceSibling(commaNode);
+            PsiElement last = nextNonWhitespace == null ? element.getLastChild() : nextNonWhitespace.getPrevSibling();
+            PsiElement prevNonWhitespace = getPrevNonWhitespaceSibling(commaNode);
+            PsiElement first = prevNonWhitespace == null ? element.getFirstChild() : prevNonWhitespace.getNextSibling();
             element.deleteChildRange(first, last);
         }
     }
@@ -448,13 +448,13 @@ public class PyPsiUtils {
     @Nonnull
     public static <T, U extends PsiElement> List<T> collectStubChildren(
         U e,
-        final StubElement<U> stub,
+        StubElement<U> stub,
         final IElementType elementType,
-        final Class<T> itemClass
+        Class<T> itemClass
     ) {
         final List<T> result = new ArrayList<>();
         if (stub != null) {
-            final List<StubElement> children = stub.getChildrenStubs();
+            List<StubElement> children = stub.getChildrenStubs();
             for (StubElement child : children) {
                 if (child.getStubType() == elementType) {
                     //noinspection unchecked
@@ -479,7 +479,7 @@ public class PyPsiUtils {
     public static List<PsiElement> collectAllStubChildren(PsiElement e, StubElement stub) {
         final List<PsiElement> result = new ArrayList<>();
         if (stub != null) {
-            final List<StubElement> children = stub.getChildrenStubs();
+            List<StubElement> children = stub.getChildrenStubs();
             for (StubElement child : children) {
                 //noinspection unchecked
                 result.add(child.getPsi());
@@ -497,7 +497,7 @@ public class PyPsiUtils {
     }
 
     public static int findArgumentIndex(PyCallExpression call, PsiElement argument) {
-        final PyExpression[] args = call.getArguments();
+        PyExpression[] args = call.getArguments();
         for (int i = 0; i < args.length; i++) {
             PyExpression expression = args[i];
             if (expression instanceof PyKeywordArgument) {
@@ -513,7 +513,7 @@ public class PyPsiUtils {
 
     @Nullable
 	@RequiredReadAction
-    public static PyTargetExpression getAttribute(@Nonnull final PyFile file, @Nonnull final String name) {
+    public static PyTargetExpression getAttribute(@Nonnull PyFile file, @Nonnull String name) {
         PyTargetExpression attr = file.findTopLevelAttribute(name);
         if (attr == null) {
             for (PyFromImportStatement element : file.getFromImports()) {
@@ -521,7 +521,7 @@ public class PyPsiUtils {
                 if (expression == null) {
                     continue;
                 }
-                final PsiElement resolved = expression.getReference().resolve();
+                PsiElement resolved = expression.getReference().resolve();
                 if (resolved instanceof PyFile resolvedFile && resolved != file) {
                     return resolvedFile.findTopLevelAttribute(name);
                 }
@@ -533,7 +533,7 @@ public class PyPsiUtils {
     @RequiredReadAction
 	public static List<PyExpression> getAttributeValuesFromFile(@Nonnull PyFile file, @Nonnull String name) {
         List<PyExpression> result = new ArrayList<>();
-        final PyTargetExpression attr = file.findTopLevelAttribute(name);
+        PyTargetExpression attr = file.findTopLevelAttribute(name);
         if (attr != null) {
             sequenceToList(result, attr.findAssignedValue());
         }
@@ -573,7 +573,7 @@ public class PyPsiUtils {
         return expression instanceof PyStringLiteralExpression stringLiteral ? stringLiteral.getStringValue() : null;
     }
 
-    public static boolean isBefore(@Nonnull final PsiElement element, @Nonnull final PsiElement element2) {
+    public static boolean isBefore(@Nonnull PsiElement element, @Nonnull PsiElement element2) {
         // TODO: From RubyPsiUtil, should be moved to PsiTreeUtil
         return element.getTextOffset() <= element2.getTextOffset();
     }
@@ -585,7 +585,7 @@ public class PyPsiUtils {
 
     @Nullable
     public static PyExpression getFirstQualifier(@Nonnull PyQualifiedExpression expr) {
-        final List<PyExpression> expressions = unwindQualifiers(expr);
+        List<PyExpression> expressions = unwindQualifiers(expr);
         if (!expressions.isEmpty()) {
             return expressions.get(0);
         }
@@ -595,11 +595,11 @@ public class PyPsiUtils {
     @Nonnull
     public static String toPath(@Nullable PyQualifiedExpression expr) {
         if (expr != null) {
-            final QualifiedName qName = expr.asQualifiedName();
+            QualifiedName qName = expr.asQualifiedName();
             if (qName != null) {
                 return qName.toString();
             }
-            final String name = expr.getName();
+            String name = expr.getName();
             if (name != null) {
                 return name;
             }
@@ -613,8 +613,8 @@ public class PyPsiUtils {
     }
 
     @Nonnull
-    private static List<PyExpression> unwindQualifiers(@Nonnull final PyQualifiedExpression expr) {
-        final List<PyExpression> path = new LinkedList<>();
+    private static List<PyExpression> unwindQualifiers(@Nonnull PyQualifiedExpression expr) {
+        List<PyExpression> path = new LinkedList<>();
         PyQualifiedExpression e = expr;
         while (e != null) {
             path.add(0, e);
@@ -625,9 +625,9 @@ public class PyPsiUtils {
 
     @Nullable
     private static QualifiedName fromReferenceChain(@Nonnull List<PyExpression> components) {
-        final List<String> componentNames = new ArrayList<>(components.size());
+        List<String> componentNames = new ArrayList<>(components.size());
         for (PyExpression component : components) {
-            final String refName = component instanceof PyQualifiedExpression qualifiedExpr ? qualifiedExpr.getReferencedName() : null;
+            String refName = component instanceof PyQualifiedExpression qualifiedExpr ? qualifiedExpr.getReferencedName() : null;
             if (refName == null) {
                 return null;
             }
@@ -640,14 +640,14 @@ public class PyPsiUtils {
      * Wrapper for {@link PsiUtilCore#ensureValid(PsiElement)} that skips nulls
      */
     @RequiredReadAction
-	public static void assertValid(@Nullable final PsiElement element) {
+	public static void assertValid(@Nullable PsiElement element) {
         if (element == null) {
             return;
         }
         PsiUtilCore.ensureValid(element);
     }
 
-    public static void assertValid(@Nonnull final Module module) {
+    public static void assertValid(@Nonnull Module module) {
         if (module.isDisposed()) {
             throw new IllegalArgumentException(String.format("Module %s is disposed", module));
         }
@@ -663,18 +663,18 @@ public class PyPsiUtils {
 
     private static abstract class TopLevelVisitor extends PyRecursiveElementVisitor {
         @Override
-		public void visitPyElement(final PyElement node) {
+		public void visitPyElement(PyElement node) {
             super.visitPyElement(node);
             checkAddElement(node);
         }
 
         @Override
-		public void visitPyClass(final PyClass node) {
+		public void visitPyClass(PyClass node) {
             checkAddElement(node);  // do not recurse into functions
         }
 
         @Override
-		public void visitPyFunction(final PyFunction node) {
+		public void visitPyFunction(PyFunction node) {
             checkAddElement(node);  // do not recurse into classes
         }
 

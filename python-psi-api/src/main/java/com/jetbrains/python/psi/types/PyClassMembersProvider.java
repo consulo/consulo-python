@@ -34,7 +34,7 @@ public interface PyClassMembersProvider
 	ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create(PyClassMembersProvider.class);
 
 	@Nonnull
-	Collection<PyCustomMember> getMembers(final PyClassType clazz, PsiElement location, @Nullable TypeEvalContext typeEvalContext);
+	Collection<PyCustomMember> getMembers(PyClassType clazz, PsiElement location, @Nullable TypeEvalContext typeEvalContext);
 
 	@Nullable
 	PsiElement resolveMember(PyClassType clazz, String name, @Nullable PsiElement location, @Nullable TypeEvalContext context);

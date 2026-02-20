@@ -42,9 +42,9 @@ public abstract class PyStubElementType<StubT extends StubElement, PsiT extends 
 	}
 
 	@Nonnull
-	public abstract PsiElement createElement(@Nonnull final ASTNode node);
+	public abstract PsiElement createElement(@Nonnull ASTNode node);
 
-	public void indexStub(@Nonnull final StubT stub, @Nonnull final IndexSink sink)
+	public void indexStub(@Nonnull StubT stub, @Nonnull IndexSink sink)
 	{
 	}
 

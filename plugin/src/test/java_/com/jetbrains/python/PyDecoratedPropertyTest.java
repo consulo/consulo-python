@@ -12,14 +12,14 @@ public abstract class PyDecoratedPropertyTest extends PyTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     PythonLanguageLevelPusher.setForcedLanguageLevel(myFixture.getProject(), LanguageLevel.PYTHON26);
-    final PyFile file = (PyFile)myFixture.configureByFile("property/Decorated.py");
+    PyFile file = (PyFile)myFixture.configureByFile("property/Decorated.py");
     myClass = file.getTopLevelClasses().get(0);
   }
 
   public void testW1() throws Exception {
     Property p;
     Maybe<PyCallable> accessor;
-    final String name = "w1";
+    String name = "w1";
     p = myClass.findProperty(name, true, null);
     assertNotNull(p);
     assertNull(p.getDoc());
@@ -44,7 +44,7 @@ public abstract class PyDecoratedPropertyTest extends PyTestCase {
   public void testW2() throws Exception {
     Property p;
     Maybe<PyCallable> accessor;
-    final String name = "w2";
+    String name = "w2";
     p = myClass.findProperty(name, true, null);
     assertNotNull(p);
     assertNull(p.getDoc());
@@ -52,7 +52,7 @@ public abstract class PyDecoratedPropertyTest extends PyTestCase {
 
     accessor = p.getGetter();
     assertTrue(accessor.isDefined());
-    final PyCallable callable = accessor.value();
+    PyCallable callable = accessor.value();
     assertNotNull(callable);
     assertEquals("w2", callable.getName());
     assertInstanceOf(callable, PyFunction.class);

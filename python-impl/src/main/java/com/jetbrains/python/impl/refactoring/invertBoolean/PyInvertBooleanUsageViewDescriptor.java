@@ -29,7 +29,7 @@ import jakarta.annotation.Nonnull;
 public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor {
     private final PsiElement myElement;
 
-    public PyInvertBooleanUsageViewDescriptor(final PsiElement element) {
+    public PyInvertBooleanUsageViewDescriptor(PsiElement element) {
         myElement = element;
     }
 

@@ -38,7 +38,7 @@ public class PyFillParagraphFix extends BaseIntentionAction implements HighPrior
 
     @Override
     public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final FillParagraphAction action = new consulo.ide.impl.idea.codeInsight.editorActions.fillParagraph.FillParagraphAction();
+        FillParagraphAction action = new consulo.ide.impl.idea.codeInsight.editorActions.fillParagraph.FillParagraphAction();
         action.actionPerformedImpl(project, editor);
     }
 }

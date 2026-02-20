@@ -44,7 +44,7 @@ public interface PyClassLikeType extends PyCallableType, PyWithAncestors
 	List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context);
 
 	@Nullable
-	List<? extends RatedResolveResult> resolveMember(@Nonnull final String name,
+	List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
 			@Nullable PyExpression location,
 			@Nonnull AccessDirection direction,
 			@Nonnull PyResolveContext resolveContext,

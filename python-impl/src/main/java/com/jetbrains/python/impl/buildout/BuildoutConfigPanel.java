@@ -81,8 +81,8 @@ public class BuildoutConfigPanel extends JPanel
 
 	public void reset()
 	{
-		final List<File> scriptFiles = BuildoutModuleExtension.getScripts(myBuildoutMutableModuleExtension, myModule.getProject().getBaseDir());
-		final List<String> scripts = ContainerUtil.map(scriptFiles, file -> file.getPath());
+		List<File> scriptFiles = BuildoutModuleExtension.getScripts(myBuildoutMutableModuleExtension, myModule.getProject().getBaseDir());
+		List<String> scripts = ContainerUtil.map(scriptFiles, file -> file.getPath());
 		myScript.getComboBox().setModel(new CollectionComboBoxModel(scripts, myBuildoutMutableModuleExtension.getScriptName()));
 		myScript.getComboBox().getEditor().setItem(myBuildoutMutableModuleExtension.getScriptName());
 	}

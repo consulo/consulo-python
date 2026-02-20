@@ -39,9 +39,9 @@ import consulo.util.lang.StringUtil;
 public class PyDotNetImportCandidateProvider implements PyImportCandidateProvider {
   @RequiredReadAction
 	@Override
-  public void addImportCandidates(PsiReference reference, String name, final AutoImportQuickFix quickFix) {
-    final PsiElement element = reference.getElement();
-    final Project project = element.getProject();
+  public void addImportCandidates(PsiReference reference, String name, AutoImportQuickFix quickFix) {
+    PsiElement element = reference.getElement();
+    Project project = element.getProject();
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
 
     if (module == null) {
@@ -57,7 +57,7 @@ public class PyDotNetImportCandidateProvider implements PyImportCandidateProvide
                              if (StringUtil.isEmpty(presentableParentQName)) {
                                return true;
                              }
-                             final QualifiedName packageQName =
+                             QualifiedName packageQName =
                                QualifiedName.fromDottedString(typeDeclaration.getPresentableQName()).removeLastComponent();
                              quickFix.addImport(typeDeclaration, typeDeclaration.getContainingFile(), packageQName);
                              return true;

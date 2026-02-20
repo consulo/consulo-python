@@ -76,7 +76,7 @@ public class PyRedundantParenthesesInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyParenthesizedExpression(final PyParenthesizedExpression node) {
+        public void visitPyParenthesizedExpression(PyParenthesizedExpression node) {
             PyExpression expression = node.getContainedExpression();
             if (node.getText().contains("\n")) {
                 return;

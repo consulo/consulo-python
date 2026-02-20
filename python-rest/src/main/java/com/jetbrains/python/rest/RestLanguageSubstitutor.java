@@ -35,8 +35,8 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class RestLanguageSubstitutor extends LanguageSubstitutor {
   @Override
-  public Language getLanguage(@Nonnull final VirtualFile vFile, @Nonnull final Project project) {
-    final Module module = ModuleUtilCore.findModuleForFile(vFile, project);
+  public Language getLanguage(@Nonnull VirtualFile vFile, @Nonnull Project project) {
+    Module module = ModuleUtilCore.findModuleForFile(vFile, project);
     if (module == null) {
       return null;
     }

@@ -52,7 +52,7 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
     return mySourceFile;
   }
 
-  protected RunnerAndConfigurationSettings createConfigurationByElement(final Location location, final ConfigurationContext context) {
+  protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
     PsiFile script = location.getPsiElement().getContainingFile();
     if (script == null || script.getFileType() != RestFileType.INSTANCE) {
       return null;
@@ -60,10 +60,10 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
     Module module = ModuleUtilCore.findModuleForPsiElement(script);
     mySourceFile = script;
 
-    final Project project = mySourceFile.getProject();
+    Project project = mySourceFile.getProject();
     RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
     DocutilsRunConfiguration configuration = (DocutilsRunConfiguration) settings.getConfiguration();
-    final VirtualFile vFile = mySourceFile.getVirtualFile();
+    VirtualFile vFile = mySourceFile.getVirtualFile();
     if (vFile == null) return null;
     configuration.setInputFile(vFile.getPath());
     configuration.setName(script.getName());
@@ -80,7 +80,7 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
 
     if (configuration.getTask().isEmpty())
       configuration.setTask("rst2html");
-    final VirtualFile parent = vFile.getParent();
+    VirtualFile parent = vFile.getParent();
     if (parent != null) {
       configuration.setWorkingDirectory(parent.getPath());
     }
@@ -101,13 +101,13 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
     if (script == null) {
       return null;
     }
-    final VirtualFile vFile = script.getVirtualFile();
+    VirtualFile vFile = script.getVirtualFile();
     if (vFile == null) {
       return null;
     }
     String path = vFile.getPath();
     for (RunnerAndConfigurationSettings configuration : existingConfigurations) {
-      final String scriptName = ((RestRunConfiguration)configuration.getConfiguration()).getInputFile();
+      String scriptName = ((RestRunConfiguration)configuration.getConfiguration()).getInputFile();
       if (FileUtil.toSystemIndependentName(scriptName).equals(FileUtil.toSystemIndependentName(path))) {
         return configuration;
       }
@@ -115,7 +115,7 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
     return null;
   }
 
-  public int compareTo(final RuntimeConfigurationProducer o) {
+  public int compareTo(RuntimeConfigurationProducer o) {
     return PREFERED;
   }
 }

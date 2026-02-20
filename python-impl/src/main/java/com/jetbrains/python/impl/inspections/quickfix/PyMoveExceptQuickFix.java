@@ -36,33 +36,33 @@ public class PyMoveExceptQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameMoveExceptUp();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
-        final PyExceptPart part = PsiTreeUtil.getParentOfType(element, PyExceptPart.class);
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
+        PyExceptPart part = PsiTreeUtil.getParentOfType(element, PyExceptPart.class);
         if (part == null) {
             return;
         }
-        final PyExpression exceptClassExpression = part.getExceptClass();
+        PyExpression exceptClassExpression = part.getExceptClass();
         if (exceptClassExpression == null) {
             return;
         }
 
-        final PsiElement exceptClass =
+        PsiElement exceptClass =
             ((PyReferenceExpression) exceptClassExpression).followAssignmentsChain(PyResolveContext.noImplicits()).getElement();
         if (exceptClass instanceof PyClass) {
-            final PyTryExceptStatement statement = PsiTreeUtil.getParentOfType(part, PyTryExceptStatement.class);
+            PyTryExceptStatement statement = PsiTreeUtil.getParentOfType(part, PyTryExceptStatement.class);
             if (statement == null) {
                 return;
             }
 
             PyExceptPart prevExceptPart = PsiTreeUtil.getPrevSiblingOfType(part, PyExceptPart.class);
-            final ArrayList<PyClass> superClasses = Lists.newArrayList(((PyClass) exceptClass).getSuperClasses(null));
+            ArrayList<PyClass> superClasses = Lists.newArrayList(((PyClass) exceptClass).getSuperClasses(null));
             while (prevExceptPart != null) {
-                final PyExpression classExpression = prevExceptPart.getExceptClass();
+                PyExpression classExpression = prevExceptPart.getExceptClass();
                 if (classExpression == null) {
                     return;
                 }
-                final PsiElement aClass =
+                PsiElement aClass =
                     ((PyReferenceExpression) classExpression).followAssignmentsChain(PyResolveContext.noImplicits()).getElement();
                 if (aClass instanceof PyClass) {
                     if (superClasses.contains(aClass)) {

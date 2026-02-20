@@ -45,15 +45,15 @@ public class PyParameterListFixer extends PyFixer<PyParameterList>
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyParameterList parameters) throws IncorrectOperationException
 	{
-		final PsiElement lBrace = PyPsiUtils.getChildByFilter(parameters, PyTokenTypes.OPEN_BRACES, 0);
-		final PsiElement rBrace = PyPsiUtils.getChildByFilter(parameters, PyTokenTypes.CLOSE_BRACES, 0);
-		final PyFunction pyFunction = as(parameters.getParent(), PyFunction.class);
+		PsiElement lBrace = PyPsiUtils.getChildByFilter(parameters, PyTokenTypes.OPEN_BRACES, 0);
+		PsiElement rBrace = PyPsiUtils.getChildByFilter(parameters, PyTokenTypes.CLOSE_BRACES, 0);
+		PyFunction pyFunction = as(parameters.getParent(), PyFunction.class);
 		if(pyFunction != null && !PyFunctionFixer.isFakeFunction(pyFunction) && (lBrace == null || rBrace == null))
 		{
-			final Document document = editor.getDocument();
+			Document document = editor.getDocument();
 			if(lBrace == null)
 			{
-				final String textToInsert = pyFunction.getNameNode() == null ? " (" : "(";
+				String textToInsert = pyFunction.getNameNode() == null ? " (" : "(";
 				document.insertString(parameters.getTextOffset(), textToInsert);
 			}
 			else if(parameters.getParameters().length == 0)

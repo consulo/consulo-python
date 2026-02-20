@@ -41,7 +41,7 @@ public class PySignatureUtil {
 
   @Nullable
   public static String getShortestImportableName(@Nullable PsiElement anchor, @Nonnull String type) {
-    final PyType pyType = PyTypeParser.getTypeByName(anchor, type);
+    PyType pyType = PyTypeParser.getTypeByName(anchor, type);
     if (pyType instanceof PyClassType) {
       PyClass c = ((PyClassType)pyType).getPyClass();
       return c.getQualifiedName();

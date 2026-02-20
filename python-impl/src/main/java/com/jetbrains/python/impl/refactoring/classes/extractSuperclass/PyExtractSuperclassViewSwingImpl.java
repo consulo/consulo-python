@@ -43,17 +43,17 @@ class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtra
 	@Nonnull
 	private final TextFieldWithBrowseButton myTargetDirField;
 
-	PyExtractSuperclassViewSwingImpl(@Nonnull final PyClass classUnderRefactoring, @Nonnull final Project project, @Nonnull final PyExtractSuperclassPresenter presenter)
+	PyExtractSuperclassViewSwingImpl(@Nonnull PyClass classUnderRefactoring, @Nonnull Project project, @Nonnull PyExtractSuperclassPresenter presenter)
 	{
 		super(project, presenter, RefactoringBundle.message("extract.superclass.from"), true);
 		setTitle(PyExtractSuperclassHandler.REFACTORING_NAME);
 
 
-		final Box box = Box.createVerticalBox();
+		Box box = Box.createVerticalBox();
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JLabel(RefactoringBundle.message("extract.superclass.from")), BorderLayout.NORTH);
-		final JTextField sourceClassField = new JTextField();
+		JTextField sourceClassField = new JTextField();
 		sourceClassField.setEditable(false);
 		sourceClassField.setText(classUnderRefactoring.getName());
 		panel.add(sourceClassField, BorderLayout.CENTER);
@@ -61,7 +61,7 @@ class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtra
 
 		box.add(Box.createVerticalStrut(10));
 
-		final JLabel superNameLabel = new JLabel();
+		JLabel superNameLabel = new JLabel();
 		superNameLabel.setText(RefactoringBundle.message("superclass.name"));
 
 		panel = new JPanel(new BorderLayout());
@@ -79,7 +79,7 @@ class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtra
 		myTargetDirField.addBrowseFolderListener(FILE_OR_DIRECTORY, null, project, myFileChooserDescriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
 		panel = new JPanel(new BorderLayout());
-		final JLabel dirLabel = new JLabel();
+		JLabel dirLabel = new JLabel();
 		dirLabel.setText(FILE_OR_DIRECTORY); //u18n
 
 		panel.add(dirLabel, BorderLayout.NORTH);
@@ -101,7 +101,7 @@ class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtra
 	}
 
 	@Override
-	public void configure(@Nonnull final PyExtractSuperclassInitializationInfo configInfo)
+	public void configure(@Nonnull PyExtractSuperclassInitializationInfo configInfo)
 	{
 		super.configure(configInfo);
 		myFileChooserDescriptor.setRoots(configInfo.getRoots());

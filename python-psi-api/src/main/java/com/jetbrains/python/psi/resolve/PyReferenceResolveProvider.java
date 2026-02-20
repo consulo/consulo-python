@@ -35,5 +35,5 @@ public interface PyReferenceResolveProvider
 	 * Allows to provide a custom resolve result for qualified expression
 	 */
 	@Nonnull
-	List<RatedResolveResult> resolveName(@Nonnull final PyQualifiedExpression element);
+	List<RatedResolveResult> resolveName(@Nonnull PyQualifiedExpression element);
 }

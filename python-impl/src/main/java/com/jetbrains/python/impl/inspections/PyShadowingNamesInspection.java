@@ -90,30 +90,30 @@ public class PyShadowingNamesInspection extends PyInspection {
         }
 
         private void processElement(@Nonnull PsiNameIdentifierOwner element) {
-            final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+            ScopeOwner owner = ScopeUtil.getScopeOwner(element);
             if (owner instanceof PyClass) {
                 return;
             }
-            final String name = element.getName();
+            String name = element.getName();
             if (name != null) {
-                final PsiElement identifier = element.getNameIdentifier();
-                final PsiElement problemElement = identifier != null ? identifier : element;
+                PsiElement identifier = element.getNameIdentifier();
+                PsiElement problemElement = identifier != null ? identifier : element;
                 if ("_".equals(name)) {
                     return;
                 }
                 if (owner != null) {
-                    final ScopeOwner nextOwner = ScopeUtil.getScopeOwner(owner);
+                    ScopeOwner nextOwner = ScopeUtil.getScopeOwner(owner);
                     if (nextOwner != null) {
-                        final PyResolveProcessor processor = new PyResolveProcessor(name);
+                        PyResolveProcessor processor = new PyResolveProcessor(name);
                         PyResolveUtil.scopeCrawlUp(processor, nextOwner, null, name, null);
                         for (PsiElement resolved : processor.getElements()) {
                             if (resolved != null) {
-                                final PyComprehensionElement comprehension =
+                                PyComprehensionElement comprehension =
                                     PsiTreeUtil.getParentOfType(resolved, PyComprehensionElement.class);
                                 if (comprehension != null && PyUtil.isOwnScopeComprehension(comprehension)) {
                                     return;
                                 }
-                                final Scope scope = ControlFlowCache.getScope(owner);
+                                Scope scope = ControlFlowCache.getScope(owner);
                                 if (scope.isGlobal(name) || scope.isNonlocal(name)) {
                                     return;
                                 }

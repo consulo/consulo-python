@@ -37,7 +37,7 @@ public class PyIntroduceVariableHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected PsiElement addDeclaration(@Nonnull final PsiElement expression, @Nonnull final PsiElement declaration, @Nonnull IntroduceOperation operation)
+	protected PsiElement addDeclaration(@Nonnull PsiElement expression, @Nonnull PsiElement declaration, @Nonnull IntroduceOperation operation)
 	{
 		return doIntroduceVariable(expression, declaration, operation.getOccurrences(), operation.isReplaceAll());
 	}
@@ -46,7 +46,7 @@ public class PyIntroduceVariableHandler extends IntroduceHandler
 	{
 		PsiElement anchor = replaceAll ? findAnchor(occurrences) : PsiTreeUtil.getParentOfType(expression, PyStatement.class);
 		assert anchor != null;
-		final PsiElement parent = anchor.getParent();
+		PsiElement parent = anchor.getParent();
 		return parent.addBefore(declaration, anchor);
 	}
 

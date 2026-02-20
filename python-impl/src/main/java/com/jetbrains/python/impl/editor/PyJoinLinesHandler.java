@@ -86,7 +86,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
       for (Joiner joiner : joiners) {
         Result res = joiner.join(request);
         if (res != null) {
-          final int cut_start = i + 1 - res.getCutFromLeft();
+          int cut_start = i + 1 - res.getCutFromLeft();
           document.deleteString(cut_start, end + res.getCutIntoRight());
           document.insertString(cut_start, res.getInsert());
           return cut_start + res.getCursorOffset();
@@ -94,8 +94,8 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
       }
 
       // single string case PY-4375
-      final PyExpression leftExpression = request.leftExpr();
-      final PyExpression rightExpression = request.rightExpr();
+      PyExpression leftExpression = request.leftExpr();
+      PyExpression rightExpression = request.rightExpr();
       if (request.leftElem() == request.rightElem()) {
         IElementType type = request.leftElem().getNode().getElementType();
         if (PyTokenTypes.SINGLE_QUOTED_STRING == type || PyTokenTypes.SINGLE_QUOTED_UNICODE == type) {
@@ -288,7 +288,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
   private static class ListLikeExprJoiner extends Joiner {
     @Override
     public Result join(Request req) {
-      final boolean left_is_list_like = PyUtil.instanceOf(req.leftExpr(), PyListLiteralExpression.class, PyTupleExpression.class);
+      boolean left_is_list_like = PyUtil.instanceOf(req.leftExpr(), PyListLiteralExpression.class, PyTupleExpression.class);
       if (left_is_list_like || PyUtil.instanceOf(req.rightExpr(), PyListLiteralExpression.class, PyTupleExpression.class)
       ) {
         String insert = "";
@@ -320,7 +320,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
     @Override
     public Result join(Request req) {
       if (req.leftElem() != req.rightElem()) {
-        final PsiElement parent = req.rightElem().getParent();
+        PsiElement parent = req.rightElem().getParent();
         if ((req.leftElem().getParent() == parent && parent instanceof PyStringLiteralExpression) ||
           (req.leftExpr() instanceof PyStringLiteralExpression && req.rightExpr() instanceof PyStringLiteralExpression)
         ) {
@@ -329,7 +329,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
           StrMod left_mod = new StrMod(text, req.leftElem().getTextRange());
           StrMod right_mod = new StrMod(text, req.rightElem().getTextRange());
           if (left_mod.isOk() && right_mod.isOk()) {
-            final String lquo = left_mod.quote();
+            String lquo = left_mod.quote();
             if (left_mod.equals(right_mod)) {
               return new Result("", 0, lquo.length(), right_mod.getStartPadding());
             }
@@ -428,7 +428,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
       @Override
       public boolean equals(Object o) {
         if (o instanceof StrMod) {
-          final StrMod other = (StrMod)o;
+          StrMod other = (StrMod)o;
           return (
             myOk && other.isOk() &&
               myRaw == other.isRaw() &&
@@ -470,7 +470,7 @@ public class PyJoinLinesHandler implements JoinRawLinesHandlerDelegate {
     public Result join(Request req) {
       if (req.leftElem() instanceof PsiComment && req.rightElem() instanceof PsiComment) {
         CharSequence text = req.document().getCharsSequence();
-        final TextRange right_range = req.rightElem().getTextRange();
+        TextRange right_range = req.rightElem().getTextRange();
         int initial_pos = right_range.getStartOffset() + 1;
         int pos = initial_pos; // cut '#'
         int last = right_range.getEndOffset();

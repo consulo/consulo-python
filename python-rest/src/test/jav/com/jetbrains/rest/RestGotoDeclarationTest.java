@@ -42,7 +42,7 @@ public abstract class RestGotoDeclarationTest extends RestFixtureTestCase {
 
   public void testEmpty() {
     RestGotoProvider provider = new RestGotoProvider();
-    final String path = "/goto/empty.rst";
+    String path = "/goto/empty.rst";
     myFixture.configureByFile(path);
     int e = myFixture.getCaretOffset();
     PsiElement result = provider.getGotoDeclarationTarget(myFixture.getFile().findElementAt(e), myFixture.getEditor());
@@ -51,7 +51,7 @@ public abstract class RestGotoDeclarationTest extends RestFixtureTestCase {
 
   private void doTest(String expected) {
     RestGotoProvider provider = new RestGotoProvider();
-    final String path = "/goto/" + getTestName(true);
+    String path = "/goto/" + getTestName(true);
     myFixture.configureByFile(path + ".rst");
 
     int e = myFixture.getCaretOffset();

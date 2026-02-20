@@ -9,7 +9,7 @@ public abstract class PySourcePosition {
   private final String file;
   private final int line;
 
-  protected PySourcePosition(final String file, final int line) {
+  protected PySourcePosition(String file, int line) {
     this.file = normalize(file);
     this.line = line;
   }

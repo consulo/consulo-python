@@ -47,8 +47,8 @@ public class PyAnnotationImpl extends PyBaseElementImpl<PyAnnotationStub> implem
   public PyClass resolveToClass() {
     PyExpression expr = getValue();
     if (expr instanceof PyReferenceExpression) {
-      final PsiPolyVariantReference reference = ((PyReferenceExpression)expr).getReference();
-      final PsiElement result = reference.resolve();
+      PsiPolyVariantReference reference = ((PyReferenceExpression)expr).getReference();
+      PsiElement result = reference.resolve();
       if (result instanceof PyClass) {
         return (PyClass) result;
       }

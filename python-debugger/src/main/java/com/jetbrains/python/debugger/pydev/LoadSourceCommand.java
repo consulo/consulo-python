@@ -12,7 +12,7 @@ public class LoadSourceCommand extends AbstractCommand {
 
   private String myContent = null;
 
-  protected LoadSourceCommand(@Nonnull final RemoteDebugger debugger, String path) {
+  protected LoadSourceCommand(@Nonnull RemoteDebugger debugger, String path) {
     super(debugger, LOAD_SOURCE);
     myPath = path;
   }
@@ -22,7 +22,7 @@ public class LoadSourceCommand extends AbstractCommand {
   }
 
   @Override
-  protected void processResponse(final ProtocolFrame response) throws PyDebuggerException {
+  protected void processResponse(ProtocolFrame response) throws PyDebuggerException {
     super.processResponse(response);
     myContent = ProtocolParser.parseSourceContent(response.getPayload());
   }

@@ -38,7 +38,7 @@ public class PyTupleParameterElementType extends PyStubElementType<PyTupleParame
     super("TUPLE_PARAMETER");
   }
 
-  public PsiElement createElement(@Nonnull final ASTNode node) {
+  public PsiElement createElement(@Nonnull ASTNode node) {
     return new PyTupleParameterImpl(node);
   }
 

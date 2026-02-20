@@ -139,7 +139,7 @@ public class PythonIndentingProcessor extends MergingLexerAdapter {
   @Override
   public void advance() {
     if (getTokenType() == PyTokenTypes.LINE_BREAK) {
-      final String text = getTokenText();
+      String text = getTokenText();
       int spaces = 0;
       for (int i = text.length() - 1; i >= 0; i--) {
         if (text.charAt(i) == ' ') {
@@ -214,7 +214,7 @@ public class PythonIndentingProcessor extends MergingLexerAdapter {
   }
 
   private void adjustBraceLevel() {
-    final IElementType tokenType = getTokenType();
+    IElementType tokenType = getTokenType();
     if (PyTokenTypes.OPEN_BRACES.contains(tokenType)) {
       myBraceLevel++;
     }
@@ -223,11 +223,11 @@ public class PythonIndentingProcessor extends MergingLexerAdapter {
     }
     else if (myBraceLevel != 0 && RECOVERY_TOKENS.contains(tokenType)) {
       myBraceLevel = 0;
-      final int pos = getTokenStart();
+      int pos = getTokenStart();
       pushToken(PyTokenTypes.STATEMENT_BREAK, pos, pos);
-      final int indents = myIndentStack.size();
+      int indents = myIndentStack.size();
       for (int i = 0; i < indents - 1; i++) {
-        final int indent = myIndentStack.peek();
+        int indent = myIndentStack.peek();
         if (myCurrentNewLineIndent >= indent) {
           break;
         }
@@ -375,7 +375,7 @@ public class PythonIndentingProcessor extends MergingLexerAdapter {
     // insert the DEDENT before previous comments that have the same indent as the current token indent
     boolean foundComment = false;
     while(index > 0 && myTokenQueue.get(index-1) instanceof PendingCommentToken) {
-      final PendingCommentToken commentToken = (PendingCommentToken)myTokenQueue.get(index - 1);
+      PendingCommentToken commentToken = (PendingCommentToken)myTokenQueue.get(index - 1);
       if (commentToken.getIndent() != indent) {
         break;
       }

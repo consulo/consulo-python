@@ -40,7 +40,7 @@ public class BuildoutCfgFileTypeFactory extends FileTypeFactory
 	}
 
 	@Override
-	public void createFileTypes(final @Nonnull FileTypeConsumer consumer)
+	public void createFileTypes(@Nonnull FileTypeConsumer consumer)
 	{
 		consumer.consume(BuildoutCfgFileType.INSTANCE, myFileNameMatcherFactory.createExactFileNameMatcher(BuildoutModuleExtension.BUILDOUT_CFG, true));
 	}

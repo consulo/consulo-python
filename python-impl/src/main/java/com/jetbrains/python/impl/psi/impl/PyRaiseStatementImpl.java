@@ -38,7 +38,7 @@ public class PyRaiseStatementImpl extends PyElementImpl implements PyRaiseStatem
 
   @Nonnull
   public PyExpression[] getExpressions() {
-    final PyExpression[] expressions = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
+    PyExpression[] expressions = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
     return expressions != null ? expressions : PyExpression.EMPTY_ARRAY;
   }
 }

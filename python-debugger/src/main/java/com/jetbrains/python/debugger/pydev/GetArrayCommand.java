@@ -19,7 +19,7 @@ public class GetArrayCommand extends GetFrameCommand
 	private final String myFormat;
 	private ArrayChunk myChunk;
 
-	public GetArrayCommand(final RemoteDebugger debugger, final String threadId, final String frameId, PyDebugValue var, int rowOffset, int colOffset, int rows, int cols, String format)
+	public GetArrayCommand(RemoteDebugger debugger, String threadId, String frameId, PyDebugValue var, int rowOffset, int colOffset, int rows, int cols, String format)
 	{
 		super(debugger, GET_ARRAY, threadId, frameId);
 		myVariableName = GetVariableCommand.composeName(var);
@@ -57,7 +57,7 @@ public class GetArrayCommand extends GetFrameCommand
 	}
 
 	@Override
-	protected void processResponse(final ProtocolFrame response) throws PyDebuggerException
+	protected void processResponse(ProtocolFrame response) throws PyDebuggerException
 	{
 		if(response.getCommand() >= 900 && response.getCommand() < 1000)
 		{

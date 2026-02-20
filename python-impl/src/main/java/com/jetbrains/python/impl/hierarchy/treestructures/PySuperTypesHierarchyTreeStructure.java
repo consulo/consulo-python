@@ -34,7 +34,7 @@ import com.jetbrains.python.psi.PyClass;
  */
 public class PySuperTypesHierarchyTreeStructure extends HierarchyTreeStructure
 {
-	public PySuperTypesHierarchyTreeStructure(@Nonnull final PyClass cl)
+	public PySuperTypesHierarchyTreeStructure(@Nonnull PyClass cl)
 	{
 		super(cl.getProject(), new PyHierarchyNodeDescriptor(null, cl, true));
 	}
@@ -42,15 +42,15 @@ public class PySuperTypesHierarchyTreeStructure extends HierarchyTreeStructure
 	@Nonnull
 	protected Object[] buildChildren(@Nonnull HierarchyNodeDescriptor descriptor)
 	{
-		final List<PyHierarchyNodeDescriptor> res = new ArrayList<>();
+		List<PyHierarchyNodeDescriptor> res = new ArrayList<>();
 		if(descriptor instanceof PyHierarchyNodeDescriptor)
 		{
-			final PyHierarchyNodeDescriptor pyDescriptor = (PyHierarchyNodeDescriptor) descriptor;
-			final PsiElement element = pyDescriptor.getPsiElement();
+			PyHierarchyNodeDescriptor pyDescriptor = (PyHierarchyNodeDescriptor) descriptor;
+			PsiElement element = pyDescriptor.getPsiElement();
 			if(element instanceof PyClass)
 			{
-				final PyClass cls = (PyClass) element;
-				final PyClass[] superClasses = cls.getSuperClasses(null);
+				PyClass cls = (PyClass) element;
+				PyClass[] superClasses = cls.getSuperClasses(null);
 				for(PyClass superClass : superClasses)
 				{
 					res.add(new PyHierarchyNodeDescriptor(descriptor, superClass, false));

@@ -70,13 +70,13 @@ public class TagBasedDocStringUpdater extends DocStringUpdater<TagBasedDocString
 	@Override
 	public void removeParameter(@Nonnull String name)
 	{
-		final List<Substring> nameSubs = myOriginalDocString.getParameterSubstrings();
+		List<Substring> nameSubs = myOriginalDocString.getParameterSubstrings();
 		for(Substring sub : nameSubs)
 		{
 			if(sub.toString().equals(name))
 			{
-				final int startLine = sub.getStartLine();
-				final int nextAfterBlock = myOriginalDocString.consumeIndentedBlock(startLine + 1, getLineIndentSize(startLine));
+				int startLine = sub.getStartLine();
+				int nextAfterBlock = myOriginalDocString.consumeIndentedBlock(startLine + 1, getLineIndentSize(startLine));
 				removeLinesAndSpacesAfter(startLine, nextAfterBlock);
 			}
 		}
@@ -84,15 +84,15 @@ public class TagBasedDocStringUpdater extends DocStringUpdater<TagBasedDocString
 
 	private void insertTagLine(@Nonnull DocStringBuilder lineBuilder)
 	{
-		final int firstLineWithTag = findFirstLineWithTag();
+		int firstLineWithTag = findFirstLineWithTag();
 		if(firstLineWithTag >= 0)
 		{
-			final String indent = getLineIndent(firstLineWithTag);
+			String indent = getLineIndent(firstLineWithTag);
 			insertBeforeLine(firstLineWithTag, lineBuilder.buildContent(indent, true));
 			return;
 		}
-		final int lastNonEmptyLine = findLastNonEmptyLine();
-		final String indent = getLineIndent(lastNonEmptyLine);
+		int lastNonEmptyLine = findLastNonEmptyLine();
+		String indent = getLineIndent(lastNonEmptyLine);
 		insertAfterLine(lastNonEmptyLine, lineBuilder.buildContent(indent, true));
 	}
 
@@ -100,7 +100,7 @@ public class TagBasedDocStringUpdater extends DocStringUpdater<TagBasedDocString
 	{
 		for(int i = 0; i < myOriginalDocString.getLineCount(); i++)
 		{
-			final Substring line = myOriginalDocString.getLine(i);
+			Substring line = myOriginalDocString.getLine(i);
 			if(line.trimLeft().startsWith(myTagPrefix))
 			{
 				return i;

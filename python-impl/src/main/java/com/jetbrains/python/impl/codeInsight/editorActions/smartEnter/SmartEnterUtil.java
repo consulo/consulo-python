@@ -35,7 +35,7 @@ public class SmartEnterUtil {
     return EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_START_NEW_LINE);
   }
 
-  public static void plainEnter(@Nonnull final Editor editor) {
+  public static void plainEnter(@Nonnull Editor editor) {
     getEnterHandler().execute(editor, ((EditorEx) editor).getDataContext());
   }
 

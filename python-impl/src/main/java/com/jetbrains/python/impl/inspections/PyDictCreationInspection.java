@@ -66,8 +66,8 @@ public class PyDictCreationInspection extends PyInspection {
                 if (node.getTargets().length != 1) {
                     return;
                 }
-                final PyExpression target = node.getTargets()[0];
-                final String name = target.getName();
+                PyExpression target = node.getTargets()[0];
+                String name = target.getName();
                 if (name == null) {
                     return;
                 }
@@ -75,8 +75,8 @@ public class PyDictCreationInspection extends PyInspection {
                 PyStatement statement = PsiTreeUtil.getNextSiblingOfType(node, PyStatement.class);
 
                 while (statement instanceof PyAssignmentStatement) {
-                    final PyAssignmentStatement assignmentStatement = (PyAssignmentStatement) statement;
-                    final List<Pair<PyExpression, PyExpression>> targets = getDictTargets(target, name, assignmentStatement);
+                    PyAssignmentStatement assignmentStatement = (PyAssignmentStatement) statement;
+                    List<Pair<PyExpression, PyExpression>> targets = getDictTargets(target, name, assignmentStatement);
                     if (targets == null) {
                         return;
                     }
@@ -96,14 +96,14 @@ public class PyDictCreationInspection extends PyInspection {
 
     @Nullable
     public static List<Pair<PyExpression, PyExpression>> getDictTargets(
-        @Nonnull final PyExpression target,
-        @Nonnull final String name,
-        @Nonnull final PyAssignmentStatement assignmentStatement
+        @Nonnull PyExpression target,
+        @Nonnull String name,
+        @Nonnull PyAssignmentStatement assignmentStatement
     ) {
-        final List<Pair<PyExpression, PyExpression>> targets = new ArrayList<Pair<PyExpression, PyExpression>>();
+        List<Pair<PyExpression, PyExpression>> targets = new ArrayList<Pair<PyExpression, PyExpression>>();
         for (Pair<PyExpression, PyExpression> targetToValue : assignmentStatement.getTargetsToValuesMapping()) {
             if (targetToValue.first instanceof PySubscriptionExpression) {
-                final PySubscriptionExpression subscriptionExpression = (PySubscriptionExpression) targetToValue.first;
+                PySubscriptionExpression subscriptionExpression = (PySubscriptionExpression) targetToValue.first;
                 if (name.equals(subscriptionExpression.getOperand().getName()) &&
                     subscriptionExpression.getIndexExpression() != null &&
                     !referencesTarget(targetToValue.second, target)) {
@@ -117,13 +117,13 @@ public class PyDictCreationInspection extends PyInspection {
         return targets;
     }
 
-    private static boolean referencesTarget(@Nonnull final PyExpression expression, @Nonnull final PsiElement target) {
+    private static boolean referencesTarget(@Nonnull PyExpression expression, @Nonnull final PsiElement target) {
         final List<PsiElement> refs = new ArrayList<PsiElement>();
         expression.accept(new PyRecursiveElementVisitor() {
             @Override
             public void visitPyReferenceExpression(PyReferenceExpression node) {
                 super.visitPyReferenceExpression(node);
-                final PsiPolyVariantReference ref = node.getReference();
+                PsiPolyVariantReference ref = node.getReference();
                 if (ref.isReferenceTo(target)) {
                     refs.add(node);
                 }

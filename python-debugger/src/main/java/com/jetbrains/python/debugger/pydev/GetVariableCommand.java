@@ -10,16 +10,16 @@ public class GetVariableCommand extends GetFrameCommand
 	private final String myVariableName;
 	private final PyDebugValue myParent;
 
-	public GetVariableCommand(final RemoteDebugger debugger, final String threadId, final String frameId, PyDebugValue var)
+	public GetVariableCommand(RemoteDebugger debugger, String threadId, String frameId, PyDebugValue var)
 	{
 		super(debugger, GET_VARIABLE, threadId, frameId);
 		myVariableName = composeName(var);
 		myParent = var;
 	}
 
-	public static String composeName(final PyDebugValue var)
+	public static String composeName(PyDebugValue var)
 	{
-		final StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		PyDebugValue p = var;
 		while(p != null)
 		{
@@ -61,7 +61,7 @@ public class GetVariableCommand extends GetFrameCommand
 	}
 
 	@Override
-	protected PyDebugValue extend(final PyDebugValue value)
+	protected PyDebugValue extend(PyDebugValue value)
 	{
 		return new PyDebugValue(value.getName(), value.getType(), value.getTypeQualifier(), value.getValue(), value.isContainer(), value.isReturnedVal(), value.isIPythonHidden(), value.isErrorOnEval
 				(), myParent, myDebugProcess);

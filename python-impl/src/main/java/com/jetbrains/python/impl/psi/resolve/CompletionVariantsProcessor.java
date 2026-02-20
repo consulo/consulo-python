@@ -74,7 +74,7 @@ public class CompletionVariantsProcessor extends VariantsProcessor
 
 	private LookupElementBuilder setupItem(LookupElementBuilder item)
 	{
-		final PsiElement element = item.getPsiElement();
+		PsiElement element = item.getPsiElement();
 		if(!myPlainNamesOnly)
 		{
 			if(!mySuppressParentheses &&
@@ -82,11 +82,11 @@ public class CompletionVariantsProcessor extends VariantsProcessor
 					!PyUtil.hasCustomDecorators((PyFunction) element) &&
 					!isSingleArgDecoratorCall(myContext, (PyFunction) element))
 			{
-				final Project project = element.getProject();
+				Project project = element.getProject();
 				item = item.withInsertHandler(PyFunctionInsertHandler.INSTANCE);
-				final TypeEvalContext context = TypeEvalContext.codeCompletion(project, myContext != null ? myContext.getContainingFile() : null);
-				final List<PyParameter> parameters = PyUtil.getParameters((PyFunction) element, context);
-				final String params = StringUtil.join(parameters, pyParameter -> pyParameter.getName(), ", ");
+				TypeEvalContext context = TypeEvalContext.codeCompletion(project, myContext != null ? myContext.getContainingFile() : null);
+				List<PyParameter> parameters = PyUtil.getParameters((PyFunction) element, context);
+				String params = StringUtil.join(parameters, pyParameter -> pyParameter.getName(), ", ");
 				item = item.withTailText("(" + params + ")");
 			}
 			else if(element instanceof PyClass)
@@ -105,7 +105,7 @@ public class CompletionVariantsProcessor extends VariantsProcessor
 			}
 			else if(element instanceof PyTargetExpression)
 			{
-				final PyTargetExpression expr = (PyTargetExpression) element;
+				PyTargetExpression expr = (PyTargetExpression) element;
 				if(expr.isQualified() || ScopeUtil.getScopeOwner(expr) instanceof PyClass)
 				{
 					cls = expr.getContainingClass();
@@ -113,7 +113,7 @@ public class CompletionVariantsProcessor extends VariantsProcessor
 			}
 			else if(element instanceof PyClass)
 			{
-				final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+				ScopeOwner owner = ScopeUtil.getScopeOwner(element);
 				if(owner instanceof PyClass)
 				{
 					cls = (PyClass) owner;
@@ -166,14 +166,14 @@ public class CompletionVariantsProcessor extends VariantsProcessor
 		return PsiTreeUtil.isAncestor(decorator.getCallee(), elementInCall, false);
 	}
 
-	protected static LookupElementBuilder setItemNotice(final LookupElementBuilder item, String notice)
+	protected static LookupElementBuilder setItemNotice(LookupElementBuilder item, String notice)
 	{
 		return item.withTypeText(notice);
 	}
 
 	public LookupElement[] getResult()
 	{
-		final Collection<LookupElement> variants = myVariants.values();
+		Collection<LookupElement> variants = myVariants.values();
 		return variants.toArray(new LookupElement[variants.size()]);
 	}
 

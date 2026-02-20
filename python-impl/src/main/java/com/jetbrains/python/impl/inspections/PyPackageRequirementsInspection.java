@@ -93,27 +93,27 @@ public class PyPackageRequirementsInspection extends PyInspection {
 
         @Override
         public void visitPyFile(PyFile node) {
-            final Module module = ModuleUtilCore.findModuleForPsiElement(node);
+            Module module = ModuleUtilCore.findModuleForPsiElement(node);
             if (module != null) {
                 if (isRunningPackagingTasks(module)) {
                     return;
                 }
-                final Sdk sdk = PythonSdkType.findPythonSdk(module);
+                Sdk sdk = PythonSdkType.findPythonSdk(module);
                 if (sdk != null) {
-                    final List<PyRequirement> unsatisfied = findUnsatisfiedRequirements(module, sdk, myIgnoredPackages);
+                    List<PyRequirement> unsatisfied = findUnsatisfiedRequirements(module, sdk, myIgnoredPackages);
                     if (unsatisfied != null && !unsatisfied.isEmpty()) {
-                        final boolean plural = unsatisfied.size() > 1;
+                        boolean plural = unsatisfied.size() > 1;
                         String msg = String.format(
                             "Package requirement%s %s %s not satisfied",
                             plural ? "s" : "",
                             PyPackageUtil.requirementsToString(unsatisfied),
                             plural ? "are" : "is"
                         );
-                        final Set<String> unsatisfiedNames = new HashSet<>();
+                        Set<String> unsatisfiedNames = new HashSet<>();
                         for (PyRequirement req : unsatisfied) {
                             unsatisfiedNames.add(req.getFullName());
                         }
-                        final List<LocalQuickFix> quickFixes = new ArrayList<>();
+                        List<LocalQuickFix> quickFixes = new ArrayList<>();
                         quickFixes.add(new PyInstallRequirementsFix(
                             LocalizeValue.localizeTODO(String.format("Install requirement%s", unsatisfied.size() > 1 ? "s" : "")),
                             module,
@@ -135,7 +135,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
 
         @Override
         public void visitPyFromImportStatement(PyFromImportStatement node) {
-            final PyReferenceExpression expr = node.getImportSource();
+            PyReferenceExpression expr = node.getImportSource();
             if (expr != null) {
                 checkPackageNameInRequirements(expr);
             }
@@ -144,7 +144,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
         @Override
         public void visitPyImportStatement(PyImportStatement node) {
             for (PyImportElement element : node.getImportElements()) {
-                final PyReferenceExpression expr = element.getImportReferenceExpression();
+                PyReferenceExpression expr = element.getImportReferenceExpression();
                 if (expr != null) {
                     checkPackageNameInRequirements(expr);
                 }
@@ -157,14 +157,14 @@ public class PyPackageRequirementsInspection extends PyInspection {
                     return;
                 }
             }
-            final PyExpression packageReferenceExpression = PyPsiUtils.getFirstQualifier(importedExpression);
+            PyExpression packageReferenceExpression = PyPsiUtils.getFirstQualifier(importedExpression);
             if (packageReferenceExpression != null) {
-                final String packageName = packageReferenceExpression.getName();
+                String packageName = packageReferenceExpression.getName();
                 if (packageName != null && !myIgnoredPackages.contains(packageName)) {
                     if (!ApplicationManager.getApplication().isUnitTestMode() && !PyPIPackageUtil.INSTANCE.isInPyPI(packageName)) {
                         return;
                     }
-                    final Collection<String> stdlibPackages = PyStdlibUtil.getPackages();
+                    Collection<String> stdlibPackages = PyStdlibUtil.getPackages();
                     if (stdlibPackages != null) {
                         if (stdlibPackages.contains(packageName)) {
                             return;
@@ -173,11 +173,11 @@ public class PyPackageRequirementsInspection extends PyInspection {
                     if (PyPackageUtil.SETUPTOOLS.equals(packageName)) {
                         return;
                     }
-                    final Module module = ModuleUtilCore.findModuleForPsiElement(packageReferenceExpression);
+                    Module module = ModuleUtilCore.findModuleForPsiElement(packageReferenceExpression);
                     if (module != null) {
-                        final Sdk sdk = PythonSdkType.findPythonSdk(module);
+                        Sdk sdk = PythonSdkType.findPythonSdk(module);
                         if (sdk != null) {
-                            final PyPackageManager manager = PyPackageManager.getInstance(sdk);
+                            PyPackageManager manager = PyPackageManager.getInstance(sdk);
                             Collection<PyRequirement> requirements = manager.getRequirements(module);
                             if (requirements != null) {
                                 requirements = getTransitiveRequirements(sdk, requirements, new HashSet<>());
@@ -191,13 +191,13 @@ public class PyPackageRequirementsInspection extends PyInspection {
                                 }
                             }
                             if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                                final PsiReference reference = packageReferenceExpression.getReference();
+                                PsiReference reference = packageReferenceExpression.getReference();
                                 if (reference != null) {
-                                    final PsiElement element = reference.resolve();
+                                    PsiElement element = reference.resolve();
                                     if (element != null) {
-                                        final PsiFile file = element.getContainingFile();
+                                        PsiFile file = element.getContainingFile();
                                         if (file != null) {
-                                            final VirtualFile virtualFile = file.getVirtualFile();
+                                            VirtualFile virtualFile = file.getVirtualFile();
                                             if (ModuleUtilCore.moduleContainsFile(module, virtualFile, false)) {
                                                 return;
                                             }
@@ -205,7 +205,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
                                     }
                                 }
                             }
-                            final List<LocalQuickFix> quickFixes = new ArrayList<>();
+                            List<LocalQuickFix> quickFixes = new ArrayList<>();
                             quickFixes.add(new AddToRequirementsFix(module, packageName, LanguageLevel.forElement(importedExpression)));
                             quickFixes.add(new IgnoreRequirementFix(Collections.singleton(packageName)));
                             registerProblem(
@@ -231,16 +231,16 @@ public class PyPackageRequirementsInspection extends PyInspection {
         if (requirements.isEmpty()) {
             return Collections.emptySet();
         }
-        final Set<PyRequirement> results = new HashSet<>(requirements);
-        final List<PyPackage> packages = PyPackageManager.getInstance(sdk).getPackages();
+        Set<PyRequirement> results = new HashSet<>(requirements);
+        List<PyPackage> packages = PyPackageManager.getInstance(sdk).getPackages();
         if (packages == null) {
             return null;
         }
         for (PyRequirement req : requirements) {
-            final PyPackage pkg = req.match(packages);
+            PyPackage pkg = req.match(packages);
             if (pkg != null && !visited.contains(pkg)) {
                 visited.add(pkg);
-                final Set<PyRequirement> transitive = getTransitiveRequirements(sdk, pkg.getRequirements(), visited);
+                Set<PyRequirement> transitive = getTransitiveRequirements(sdk, pkg.getRequirements(), visited);
                 if (transitive == null) {
                     return null;
                 }
@@ -256,14 +256,14 @@ public class PyPackageRequirementsInspection extends PyInspection {
         @Nonnull Sdk sdk,
         @Nonnull Set<String> ignoredPackages
     ) {
-        final PyPackageManager manager = PyPackageManager.getInstance(sdk);
+        PyPackageManager manager = PyPackageManager.getInstance(sdk);
         List<PyRequirement> requirements = manager.getRequirements(module);
         if (requirements != null) {
-            final List<PyPackage> packages = manager.getPackages();
+            List<PyPackage> packages = manager.getPackages();
             if (packages == null) {
                 return null;
             }
-            final List<PyRequirement> unsatisfied = new ArrayList<>();
+            List<PyRequirement> unsatisfied = new ArrayList<>();
             for (PyRequirement req : requirements) {
                 if (!ignoredPackages.contains(req.getName()) && req.match(packages) == null) {
                     unsatisfied.add(req);
@@ -279,7 +279,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
     }
 
     private static boolean isRunningPackagingTasks(@Nonnull Module module) {
-        final Boolean value = module.getUserData(PyPackageManager.RUNNING_PACKAGING_TASKS);
+        Boolean value = module.getUserData(PyPackageManager.RUNNING_PACKAGING_TASKS);
         return value != null && value;
     }
 
@@ -314,13 +314,13 @@ public class PyPackageRequirementsInspection extends PyInspection {
         @Override
         public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
             boolean installManagement = false;
-            final PyPackageManager manager = PyPackageManager.getInstance(mySdk);
-            final List<PyPackage> packages = manager.getPackages();
+            PyPackageManager manager = PyPackageManager.getInstance(mySdk);
+            List<PyPackage> packages = manager.getPackages();
             if (packages == null) {
                 return;
             }
             if (!PyPackageUtil.hasManagement(packages)) {
-                final int result = Messages.showYesNoDialog(
+                int result = Messages.showYesNoDialog(
                     project,
                     "Python packaging tools are required for installing packages. Do you want to " + "install 'pip' and 'setuptools' for your " +
                         "interpreter?",
@@ -336,7 +336,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
             }
             final List<PyRequirement> chosen;
             if (myUnsatisfied.size() > 1) {
-                final PyChooseRequirementsDialog dialog = new PyChooseRequirementsDialog(project, myUnsatisfied);
+                PyChooseRequirementsDialog dialog = new PyChooseRequirementsDialog(project, myUnsatisfied);
                 if (dialog.showAndGet()) {
                     chosen = dialog.getMarkedElements();
                 }
@@ -351,7 +351,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
                 return;
             }
             if (installManagement) {
-                final PyPackageManagerUI ui = new PyPackageManagerUI(project, mySdk, new UIListener(myModule) {
+                PyPackageManagerUI ui = new PyPackageManagerUI(project, mySdk, new UIListener(myModule) {
                     @Override
                     public void finished(List<ExecutionException> exceptions) {
                         super.finished(exceptions);
@@ -368,7 +368,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
         }
 
         private void installRequirements(Project project, List<PyRequirement> requirements) {
-            final PyPackageManagerUI ui = new PyPackageManagerUI(project, mySdk, new UIListener(myModule));
+            PyPackageManagerUI ui = new PyPackageManagerUI(project, mySdk, new UIListener(myModule));
             ui.install(requirements, Collections.<String>emptyList());
         }
     }
@@ -382,7 +382,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
         @Nonnull
         private final SmartPsiElementPointer<PyElement> myNode;
 
-        public InstallAndImportQuickFix(@Nonnull final String packageName, @Nullable final String asName, @Nonnull final PyElement node) {
+        public InstallAndImportQuickFix(@Nonnull String packageName, @Nullable String asName, @Nonnull PyElement node) {
             myPackageName = packageName;
             myAsName = asName;
             myNode = SmartPointerManager.getInstance(node.getProject()).createSmartPsiElementPointer(node, node.getContainingFile());
@@ -396,14 +396,14 @@ public class PyPackageRequirementsInspection extends PyInspection {
             return LocalizeValue.localizeTODO("Install and import package " + myPackageName);
         }
 
-        public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-            final PyPackageManagerUI ui = new PyPackageManagerUI(project, mySdk, new UIListener(myModule) {
+        public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
+            PyPackageManagerUI ui = new PyPackageManagerUI(project, mySdk, new UIListener(myModule) {
                 @Override
                 public void finished(List<ExecutionException> exceptions) {
                     super.finished(exceptions);
                     if (exceptions.isEmpty()) {
 
-                        final PyElement element = myNode.getElement();
+                        PyElement element = myNode.getElement();
                         if (element == null) {
                             return;
                         }
@@ -455,15 +455,15 @@ public class PyPackageRequirementsInspection extends PyInspection {
         @Nonnull
         @Override
         public LocalizeValue getName() {
-            final boolean plural = myPackageNames.size() > 1;
+            boolean plural = myPackageNames.size() > 1;
             return LocalizeValue.localizeTODO(String.format("Ignore requirement%s", plural ? "s" : ""));
         }
 
         @Override
         public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-            final PsiElement element = descriptor.getPsiElement();
+            PsiElement element = descriptor.getPsiElement();
             if (element != null) {
-                final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+                InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
 
                 profile.<PyPackageRequirementsInspection, PyPackageRequirementsInspectionState>modifyToolSettings(
                     PyPackageRequirementsInspection.class.getSimpleName(),
@@ -502,7 +502,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
 
         @Override
         @RequiredUIAccess
-        public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
+        public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
             CommandProcessor.getInstance().newCommand()
                 .project(project)
                 .name(getName())
@@ -512,7 +512,7 @@ public class PyPackageRequirementsInspection extends PyInspection {
 
         @Nonnull
         private String calculateTarget() {
-            final VirtualFile requirementsTxt = PyPackageUtil.findRequirementsTxt(myModule);
+            VirtualFile requirementsTxt = PyPackageUtil.findRequirementsTxt(myModule);
             if (requirementsTxt != null) {
                 return requirementsTxt.getName();
             }

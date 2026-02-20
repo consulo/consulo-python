@@ -28,13 +28,13 @@ public abstract class BaseDebuggerTransport implements DebuggerTransport
 	}
 
 	@Override
-	public boolean sendFrame(@Nonnull final ProtocolFrame frame)
+	public boolean sendFrame(@Nonnull ProtocolFrame frame)
 	{
 		logFrame(frame, true);
 
 		try
 		{
-			final byte[] packed = frame.pack();
+			byte[] packed = frame.pack();
 			return sendMessageImpl(packed);
 		}
 		catch(SocketException se)

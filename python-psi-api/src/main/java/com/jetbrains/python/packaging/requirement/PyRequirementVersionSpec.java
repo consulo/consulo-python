@@ -48,7 +48,7 @@ public class PyRequirementVersionSpec {
       return false;
     }
 
-    final PyRequirementVersionSpec spec = (PyRequirementVersionSpec)o;
+    PyRequirementVersionSpec spec = (PyRequirementVersionSpec)o;
     return myRelation == spec.myRelation && myVersion.equals(spec.myVersion);
   }
 
@@ -78,9 +78,9 @@ public class PyRequirementVersionSpec {
       case GTE:
         return VERSION_COMPARATOR.compare(version, myVersion) >= 0;
       case EQ:
-        final Pair<String, String> publicAndLocalVersions = splitIntoPublicAndLocalVersions(myVersion);
-        final Pair<String, String> otherPublicAndLocalVersions = splitIntoPublicAndLocalVersions(version);
-        final boolean publicVersionsAreSame =
+        Pair<String, String> publicAndLocalVersions = splitIntoPublicAndLocalVersions(myVersion);
+        Pair<String, String> otherPublicAndLocalVersions = splitIntoPublicAndLocalVersions(version);
+        boolean publicVersionsAreSame =
           VERSION_COMPARATOR.compare(otherPublicAndLocalVersions.first, publicAndLocalVersions.first) == 0;
 
         return publicVersionsAreSame && (publicAndLocalVersions.second.isEmpty() || otherPublicAndLocalVersions.second.equals(
@@ -97,10 +97,10 @@ public class PyRequirementVersionSpec {
   }
 
   private static Pair<String, String> splitIntoPublicAndLocalVersions(@Nonnull String version) {
-    final String[] publicAndLocalVersions = version.split("\\+", 2);
+    String[] publicAndLocalVersions = version.split("\\+", 2);
 
-    final String publicVersion = publicAndLocalVersions[0];
-    final String localVersion = publicAndLocalVersions.length == 1 ? "" : publicAndLocalVersions[1];
+    String publicVersion = publicAndLocalVersions[0];
+    String localVersion = publicAndLocalVersions.length == 1 ? "" : publicAndLocalVersions[1];
 
     return Pair.createNonNull(publicVersion, localVersion);
   }

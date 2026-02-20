@@ -45,7 +45,7 @@ public class PyMethodDescriptor implements MethodDescriptor<PyParameterInfo, Str
         PyParameter[] parameters = myFunction.getParameterList().getParameters();
         for (int i = 0; i < parameters.length; i++) {
             PyParameter parameter = parameters[i];
-            final PyExpression defaultValue = parameter.getDefaultValue();
+            PyExpression defaultValue = parameter.getDefaultValue();
             String name = parameter instanceof PySingleStarParameter || parameter instanceof PyTupleParameter ||
                 ((PyNamedParameterImpl) parameter).isPositionalContainer() ||
                 ((PyNamedParameterImpl) parameter).isKeywordContainer() ? parameter.getText() : parameter.getName();

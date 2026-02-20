@@ -66,19 +66,19 @@ public abstract class PythonRegexpInjector implements MultiHostInjector {
 
   @Override
   public void injectLanguages(@Nonnull MultiHostRegistrar registrar, @Nonnull PsiElement context) {
-    final PsiElement contextParent = context.getParent();
+    PsiElement contextParent = context.getParent();
     if (PyInjectionUtil.isLargestStringLiteral(context) && contextParent instanceof PyArgumentList) {
-      final PyExpression[] args = ((PyArgumentList)contextParent).getArguments();
+      PyExpression[] args = ((PyArgumentList)contextParent).getArguments();
       int index = ArrayUtil.indexOf(args, context);
       PyCallExpression call = PsiTreeUtil.getParentOfType(context, PyCallExpression.class);
       if (call != null) {
-        final PyExpression callee = call.getCallee();
+        PyExpression callee = call.getCallee();
         if (callee instanceof PyReferenceExpression && canBeRegexpCall(callee)) {
-          final PsiPolyVariantReference ref = ((PyReferenceExpression)callee).getReference(PyResolveContext.noImplicits());
+          PsiPolyVariantReference ref = ((PyReferenceExpression)callee).getReference(PyResolveContext.noImplicits());
           if (ref != null) {
-            final PsiElement element = ref.resolve();
+            PsiElement element = ref.resolve();
             if (element != null && element.getContainingFile().getName().equals("re.py") && isRegexpMethod(element, index)) {
-              final Language language = isVerbose(call) ? PythonVerboseRegexpLanguage.INSTANCE : PythonRegexpLanguage.INSTANCE;
+              Language language = isVerbose(call) ? PythonVerboseRegexpLanguage.INSTANCE : PythonRegexpLanguage.INSTANCE;
               registrar.startInjecting(language);
               PyInjectionUtil.registerStringLiteralInjection(context, registrar);
               registrar.doneInjecting();
@@ -118,7 +118,7 @@ public abstract class PythonRegexpInjector implements MultiHostInjector {
     if (!(element instanceof PyFunction)) {
       return false;
     }
-    final String name = ((PyFunction)element).getName();
+    String name = ((PyFunction)element).getName();
     for (RegexpMethodDescriptor descriptor : myDescriptors) {
       if (descriptor.methodName.equals(name) && descriptor.argIndex == index) {
         return true;

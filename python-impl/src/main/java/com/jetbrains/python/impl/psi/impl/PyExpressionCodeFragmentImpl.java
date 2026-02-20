@@ -46,7 +46,7 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
   }
 
   protected PyExpressionCodeFragmentImpl clone() {
-    final PyExpressionCodeFragmentImpl clone = (PyExpressionCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
+    PyExpressionCodeFragmentImpl clone = (PyExpressionCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
     clone.myPhysical = false;
     clone.myOriginalFile = this;
     SingleRootFileViewProvider cloneViewProvider =

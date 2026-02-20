@@ -23,7 +23,7 @@ import com.jetbrains.python.psi.*;
  * Highlights incorrect return statements: 'return' and 'yield' outside functions, returning values from generators;
  */
 public class ReturnAnnotator extends PyAnnotator {
-  public void visitPyReturnStatement(final PyReturnStatement node) {
+  public void visitPyReturnStatement(PyReturnStatement node) {
     PyFunction function = PsiTreeUtil.getParentOfType(node, PyFunction.class, false, PyClass.class);
     if (function == null) {
       getHolder().createErrorAnnotation(node, "'return' outside of function");
@@ -31,7 +31,7 @@ public class ReturnAnnotator extends PyAnnotator {
     }
   }
 
-  public void visitPyYieldExpression(final PyYieldExpression node) {
+  public void visitPyYieldExpression(PyYieldExpression node) {
     if (PsiTreeUtil.getParentOfType(node, PyFunction.class, false, PyClass.class) == null) {
       getHolder().createErrorAnnotation(node, "'yield' outside of function");
     }

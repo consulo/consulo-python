@@ -204,7 +204,7 @@ public enum LanguageLevel {
 
   @Nonnull
   public static LanguageLevel forElement(@Nonnull PsiElement element) {
-    final PsiFile containingFile = element.getContainingFile();
+    PsiFile containingFile = element.getContainingFile();
     if (containingFile instanceof PyFile) {
       LanguageVersion languageVersion = containingFile.getLanguageVersion();
       if (languageVersion instanceof PythonLanguageVersion pythonLanguageVersion) {

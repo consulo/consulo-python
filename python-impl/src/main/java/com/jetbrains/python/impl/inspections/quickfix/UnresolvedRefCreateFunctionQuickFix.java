@@ -61,7 +61,7 @@ public class UnresolvedRefCreateFunctionQuickFix implements LocalQuickFix {
         PyFunctionBuilder functionBuilder = new PyFunctionBuilder(myReference.getText());
 
         // if function is actually an argument of a call, don't use other arguments of the call to create parameter list of new function
-        final PyArgumentList argumentList = myElement.getArgumentList();
+        PyArgumentList argumentList = myElement.getArgumentList();
         if (argumentList != null && !PsiTreeUtil.isAncestor(argumentList, myReference, false)) {
             for (PyExpression param : argumentList.getArguments()) {
                 if (param instanceof PyKeywordArgument) {

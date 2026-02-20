@@ -59,12 +59,12 @@ public class UnsupportedFeaturesUtil
 
 	private static void fillTestCaseMethods() throws IOException
 	{
-		final Logger log = Logger.getInstance(UnsupportedFeaturesUtil.class.getName());
-		final FileReader reader = new FileReader(PythonHelpersLocator.getHelperPath("/tools/class_method_versions.xml"));
+		Logger log = Logger.getInstance(UnsupportedFeaturesUtil.class.getName());
+		FileReader reader = new FileReader(PythonHelpersLocator.getHelperPath("/tools/class_method_versions.xml"));
 		try
 		{
-			final XMLReader xr = XMLReaderFactory.createXMLReader();
-			final ClassMethodsParser parser = new ClassMethodsParser();
+			XMLReader xr = XMLReaderFactory.createXMLReader();
+			ClassMethodsParser parser = new ClassMethodsParser();
 			xr.setContentHandler(parser);
 			xr.parse(new InputSource(reader));
 		}
@@ -101,10 +101,10 @@ public class UnsupportedFeaturesUtil
 
 	public static boolean raiseHasNoArgs(PyRaiseStatement node, LanguageLevel versionToProcess)
 	{
-		final PyExpression[] expressions = node.getExpressions();
+		PyExpression[] expressions = node.getExpressions();
 		if(expressions.length == 0 && versionToProcess.isPy3K())
 		{
-			final PyExceptPart exceptPart = PsiTreeUtil.getParentOfType(node, PyExceptPart.class);
+			PyExceptPart exceptPart = PsiTreeUtil.getParentOfType(node, PyExceptPart.class);
 			if(exceptPart == null)
 			{
 				return true;
@@ -115,7 +115,7 @@ public class UnsupportedFeaturesUtil
 
 	public static boolean raiseHasMoreThenOneArg(PyRaiseStatement node, LanguageLevel versionToProcess)
 	{
-		final PyExpression[] expressions = node.getExpressions();
+		PyExpression[] expressions = node.getExpressions();
 		if(expressions.length > 0)
 		{
 			if(expressions.length < 2)
@@ -144,7 +144,7 @@ public class UnsupportedFeaturesUtil
 
 	public static boolean raiseHasFromKeyword(PyRaiseStatement node, LanguageLevel versionToProcess)
 	{
-		final PyExpression[] expressions = node.getExpressions();
+		PyExpression[] expressions = node.getExpressions();
 		if(expressions.length > 0)
 		{
 			if(expressions.length < 2)
@@ -167,14 +167,14 @@ public class UnsupportedFeaturesUtil
 		return false;
 	}
 
-	public static boolean visitPyListCompExpression(final PyListCompExpression node, LanguageLevel versionToProcess)
+	public static boolean visitPyListCompExpression(PyListCompExpression node, LanguageLevel versionToProcess)
 	{
-		final List<PyComprehensionForComponent> forComponents = node.getForComponents();
+		List<PyComprehensionForComponent> forComponents = node.getForComponents();
 		if(versionToProcess.isPy3K())
 		{
 			for(PyComprehensionForComponent forComponent : forComponents)
 			{
-				final PyExpression iteratedList = forComponent.getIteratedList();
+				PyExpression iteratedList = forComponent.getIteratedList();
 				if(iteratedList instanceof PyTupleExpression)
 				{
 					return true;
@@ -241,7 +241,7 @@ public class UnsupportedFeaturesUtil
 				myCurrentLevel = LanguageLevel.fromPythonVersion(attr.getValue("version"));
 				if(myClassName != null)
 				{
-					final Map<LanguageLevel, Set<String>> map = CLASS_METHODS.get(myClassName);
+					Map<LanguageLevel, Set<String>> map = CLASS_METHODS.get(myClassName);
 					if(map != null)
 					{
 						map.put(myCurrentLevel, new HashSet<>());
@@ -257,7 +257,7 @@ public class UnsupportedFeaturesUtil
 				Map<LanguageLevel, Set<String>> levelSetMap = CLASS_METHODS.get(myClassName);
 				if(levelSetMap != null)
 				{
-					final Set<String> set = levelSetMap.get(myCurrentLevel);
+					Set<String> set = levelSetMap.get(myCurrentLevel);
 					if(set != null)
 					{
 						set.add(myContent.toString());

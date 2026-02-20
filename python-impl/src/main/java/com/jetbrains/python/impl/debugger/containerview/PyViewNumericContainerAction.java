@@ -26,7 +26,7 @@ import consulo.project.Project;
 public class PyViewNumericContainerAction {
   public static void showNumericViewer(Project project, PyDebugValue debugValue) {
     String nodeType = debugValue.getType();
-    final ViewNumericContainerDialog dialog;
+    ViewNumericContainerDialog dialog;
     if ("ndarray".equals(nodeType)) {
       dialog = new ViewNumericContainerDialog(project, (dialogWrapper) -> {
         NumpyArrayTable arrayTable = new NumpyArrayTable(project, dialogWrapper, debugValue);

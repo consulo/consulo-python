@@ -49,7 +49,7 @@ public class PythonAtTestCommandLineState extends PythonTestCommandLineStateBase
 	{
 		List<String> specs = new ArrayList<>();
 
-		final String scriptName = FileUtil.toSystemDependentName(myConfig.getScriptName());
+		String scriptName = FileUtil.toSystemDependentName(myConfig.getScriptName());
 		switch(myConfig.getTestType())
 		{
 			case TEST_SCRIPT:
@@ -62,7 +62,7 @@ public class PythonAtTestCommandLineState extends PythonTestCommandLineStateBase
 				specs.add(scriptName + "::" + myConfig.getClassName() + "::" + myConfig.getMethodName());
 				break;
 			case TEST_FOLDER:
-				final String folderName = FileUtil.toSystemDependentName(myConfig.getFolderName() + "/");
+				String folderName = FileUtil.toSystemDependentName(myConfig.getFolderName() + "/");
 				if(!myConfig.getPattern().isEmpty())
 				{
 					specs.add(folderName + ";" + myConfig.getPattern());

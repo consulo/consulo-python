@@ -41,19 +41,19 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable>
   // Use this its own map, because check in PyReachingDefsDfaSemilattice is important
   public static final DFAMap<ScopeVariable> INITIAL_MAP = new DFAMap<ScopeVariable>();
 
-  public DFAMap<ScopeVariable> fun(final DFAMap<ScopeVariable> map, final Instruction instruction) {
-    final PsiElement element = instruction.getElement();
+  public DFAMap<ScopeVariable> fun(DFAMap<ScopeVariable> map, Instruction instruction) {
+    PsiElement element = instruction.getElement();
     if (element == null || !((PyFile) element.getContainingFile()).getLanguageLevel().isPy3K()){
       return processReducedMap(map, instruction, element);
     }
     // Scope reduction
-    final DFAMap<ScopeVariable> reducedMap = new DFAMap<ScopeVariable>();
+    DFAMap<ScopeVariable> reducedMap = new DFAMap<ScopeVariable>();
     for (Map.Entry<String, ScopeVariable> entry : map.entrySet()) {
-      final ScopeVariable value = entry.getValue();
+      ScopeVariable value = entry.getValue();
       // Support PEP-3110. (PY-1408)
       if (value.isParameter()){
-        final PsiElement declaration = value.getDeclarations().iterator().next();
-        final PyExceptPart exceptPart = PyExceptPartNavigator.getPyExceptPartByTarget(declaration);
+        PsiElement declaration = value.getDeclarations().iterator().next();
+        PyExceptPart exceptPart = PyExceptPartNavigator.getPyExceptPartByTarget(declaration);
         if (exceptPart != null){
           if (!PsiTreeUtil.isAncestor(exceptPart, element, false)){
             continue;
@@ -67,8 +67,8 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable>
   }
 
   private DFAMap<ScopeVariable> processReducedMap(DFAMap<ScopeVariable> map,
-																								 final Instruction instruction,
-																								 final PsiElement element) {
+																								 Instruction instruction,
+																								 PsiElement element) {
     String name = null;
     // Process readwrite instruction
     if (instruction instanceof ReadWriteInstruction && ((ReadWriteInstruction)instruction).getAccess().isWriteAccess()) {
@@ -81,19 +81,19 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable>
     if (name == null){
       return map;
     }
-    final ScopeVariable variable = map.get(name);
+    ScopeVariable variable = map.get(name);
 
     // Parameter case
-    final PsiElement parameterScope = ScopeUtil.getParameterScope(element);
+    PsiElement parameterScope = ScopeUtil.getParameterScope(element);
     if (parameterScope != null) {
-      final ScopeVariable scopeVariable = new ScopeVariableImpl(name, true, element);
+      ScopeVariable scopeVariable = new ScopeVariableImpl(name, true, element);
       map = map.asWritable();
       map.put(name, scopeVariable);
     }
     // Local variable case
     else {
-      final ScopeVariableImpl scopeVariable;
-      final boolean isParameter = variable != null && variable.isParameter();
+      ScopeVariableImpl scopeVariable;
+      boolean isParameter = variable != null && variable.isParameter();
       if (variable == null) {
         scopeVariable = new ScopeVariableImpl(name, isParameter, element);
       } else {

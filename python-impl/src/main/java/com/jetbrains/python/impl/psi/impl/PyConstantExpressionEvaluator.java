@@ -33,11 +33,11 @@ public class PyConstantExpressionEvaluator {
   }
 
   @Nullable
-  public static Object evaluate(final PyExpression expr) {
+  public static Object evaluate(PyExpression expr) {
     if (expr instanceof PyNumericLiteralExpression) {
-      final PyNumericLiteralExpression numericLiteral = (PyNumericLiteralExpression)expr;
+      PyNumericLiteralExpression numericLiteral = (PyNumericLiteralExpression)expr;
       if (numericLiteral.isIntegerLiteral()) {
-        final BigInteger value = numericLiteral.getBigIntegerValue();
+        BigInteger value = numericLiteral.getBigIntegerValue();
         if ((long)value.intValue() == value.longValue()) {
           return value.intValue();
         }
@@ -47,7 +47,7 @@ public class PyConstantExpressionEvaluator {
       return ((PyBoolLiteralExpression)expr).getValue();
     }
     if (expr instanceof PyReferenceExpression) {
-      final String text = expr.getText();
+      String text = expr.getText();
       if ("true".equals(text) || "True".equals(text)) {
         return true;
       }
@@ -58,7 +58,7 @@ public class PyConstantExpressionEvaluator {
     return null;
   }
 
-  public static boolean evaluateBoolean(final PyExpression expr, boolean defaultValue) {
+  public static boolean evaluateBoolean(PyExpression expr, boolean defaultValue) {
     Object result = evaluate(expr);
     if (result instanceof Boolean) {
       return (Boolean)result;
@@ -68,7 +68,7 @@ public class PyConstantExpressionEvaluator {
     }
   }
 
-  public static boolean evaluateBoolean(final PyExpression expr) {
+  public static boolean evaluateBoolean(PyExpression expr) {
     return evaluateBoolean(expr, true);
   }
 }

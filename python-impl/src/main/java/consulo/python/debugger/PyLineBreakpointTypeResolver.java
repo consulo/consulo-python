@@ -51,7 +51,7 @@ public class PyLineBreakpointTypeResolver implements XLineBreakpointTypeResolver
   @RequiredReadAction
   public XLineBreakpointType<?> resolveBreakpointType(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int line) {
     final Ref<PyLineBreakpointType> result = Ref.create();
-    final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     if (document != null) {
       if (virtualFile.getFileType() == PythonFileType.INSTANCE) {
         XDebuggerUtil.getInstance().iterateLine(project, document, line, new Processor<PsiElement>() {

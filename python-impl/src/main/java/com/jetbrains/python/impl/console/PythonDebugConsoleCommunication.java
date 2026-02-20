@@ -79,7 +79,7 @@ public class PythonDebugConsoleCommunication extends AbstractConsoleCommunicatio
 		return false;
 	}
 
-	protected void exec(final ConsoleCodeFragment command, final PyDebugCallback<Pair<String, Boolean>> callback)
+	protected void exec(ConsoleCodeFragment command, final PyDebugCallback<Pair<String, Boolean>> callback)
 	{
 		myDebugProcess.consoleExec(command.getText(), new PyDebugCallback<String>()
 		{
@@ -101,12 +101,12 @@ public class PythonDebugConsoleCommunication extends AbstractConsoleCommunicatio
 	{
 		if(waitingForInput)
 		{
-			final OutputStream processInput = myDebugProcess.getProcessHandler().getProcessInput();
+			OutputStream processInput = myDebugProcess.getProcessHandler().getProcessInput();
 			if(processInput != null)
 			{
 				try
 				{
-					final Charset defaultCharset = EncodingProjectManager.getInstance(myDebugProcess.getProject()).getDefaultCharset();
+					Charset defaultCharset = EncodingProjectManager.getInstance(myDebugProcess.getProject()).getDefaultCharset();
 					processInput.write((code.getText()).getBytes(defaultCharset));
 					processInput.flush();
 

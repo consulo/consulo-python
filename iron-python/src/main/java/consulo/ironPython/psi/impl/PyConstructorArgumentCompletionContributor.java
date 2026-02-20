@@ -49,22 +49,22 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 			@Override
 			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
 			{
-				final PyCallExpression call = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyCallExpression.class);
+				PyCallExpression call = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyCallExpression.class);
 				if(call == null)
 				{
 					return;
 				}
-				final PyExpression calleeExpression = call.getCallee();
+				PyExpression calleeExpression = call.getCallee();
 				if(calleeExpression instanceof PyReferenceExpression)
 				{
-					final PsiElement callee = ((PyReferenceExpression) calleeExpression).getReference().resolve();
+					PsiElement callee = ((PyReferenceExpression) calleeExpression).getReference().resolve();
 					if(callee instanceof DotNetTypeDeclaration)
 					{
 						addSettersAndListeners(result, (DotNetTypeDeclaration) callee);
 					}
 					else if(callee instanceof DotNetConstructorDeclaration)
 					{
-						final DotNetTypeDeclaration containingClass = (DotNetTypeDeclaration) callee.getParent();
+						DotNetTypeDeclaration containingClass = (DotNetTypeDeclaration) callee.getParent();
 						assert containingClass != null;
 						addSettersAndListeners(result, containingClass);
 					}

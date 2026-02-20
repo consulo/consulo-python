@@ -60,18 +60,18 @@ public class PyImportedModuleType implements PyType {
                                                           @Nullable PyExpression location,
                                                           @Nonnull AccessDirection direction,
                                                           @Nonnull PyResolveContext resolveContext) {
-    final PsiElement resolved = myImportedModule.resolve();
+    PsiElement resolved = myImportedModule.resolve();
     if (resolved != null) {
-      final PsiFile containingFile = location != null ? location.getContainingFile() : null;
+      PsiFile containingFile = location != null ? location.getContainingFile() : null;
       List<PsiElement> elements = Collections.singletonList(ResolveImportUtil.resolveChild(resolved, name, containingFile, false, true));
-      final PyImportElement importElement = myImportedModule.getImportElement();
-      final PyFile resolvedFile = PyUtil.as(resolved, PyFile.class);
+      PyImportElement importElement = myImportedModule.getImportElement();
+      PyFile resolvedFile = PyUtil.as(resolved, PyFile.class);
       if (location != null && importElement != null && PyUtil.inSameFile(location, importElement) &&
         ResolveImportUtil.getPointInImport(location) == PointInImport.NONE && resolved instanceof PsiFileSystemItem &&
         (resolvedFile == null || !PyUtil.isPackage(resolvedFile) || resolvedFile.getElementNamed(name) == null)) {
-        final List<PsiElement> importedSubmodules = PyModuleType.collectImportedSubmodules((PsiFileSystemItem)resolved, location);
+        List<PsiElement> importedSubmodules = PyModuleType.collectImportedSubmodules((PsiFileSystemItem)resolved, location);
         if (importedSubmodules != null) {
-          final Set<PsiElement> imported = Sets.newHashSet(importedSubmodules);
+          Set<PsiElement> imported = Sets.newHashSet(importedSubmodules);
           elements = ContainerUtil.filter(elements, element -> imported.contains(element));
         }
       }
@@ -81,14 +81,14 @@ public class PyImportedModuleType implements PyType {
   }
 
   public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
-    final List<LookupElement> result = new ArrayList<>();
-    final PsiElement resolved = myImportedModule.resolve();
+    List<LookupElement> result = new ArrayList<>();
+    PsiElement resolved = myImportedModule.resolve();
     if (resolved instanceof PyFile) {
-      final PyModuleType moduleType = new PyModuleType((PyFile)resolved, myImportedModule);
+      PyModuleType moduleType = new PyModuleType((PyFile)resolved, myImportedModule);
       result.addAll(moduleType.getCompletionVariantsAsLookupElements(location, context, false, false));
     }
     else if (resolved instanceof PsiDirectory) {
-      final PsiDirectory dir = (PsiDirectory)resolved;
+      PsiDirectory dir = (PsiDirectory)resolved;
       if (PyUtil.isPackage(dir, location)) {
         if (ResolveImportUtil.getPointInImport(location) != PointInImport.NONE) {
           result.addAll(PyModuleType.getSubModuleVariants(dir, location, null));

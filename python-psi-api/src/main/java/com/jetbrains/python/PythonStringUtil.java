@@ -62,7 +62,7 @@ public class PythonStringUtil {
 
 
   public static TextRange getStringValueTextRange(@Nonnull String s) {
-    final Pair<String, String> quotes = getQuotes(s);
+    Pair<String, String> quotes = getQuotes(s);
     if (quotes != null) {
       return TextRange.create(quotes.getFirst().length(), s.length() - quotes.getSecond().length());
     }
@@ -95,7 +95,7 @@ public class PythonStringUtil {
     if (!StringUtil.isEmpty(s)) {
       s = ObjectUtil.assertNotNull(s);
       s = FileUtil.toSystemIndependentName(s);
-      final List<String> components = StringUtil.split(s, "/");
+      List<String> components = StringUtil.split(s, "/");
       for (String name : components) {
         if (name == components.get(0) && SystemInfo.isWindows && name.endsWith(":")) {
           continue;
@@ -198,11 +198,11 @@ public class PythonStringUtil {
    *         UR"unicode raw string" -> (UR", ")
    */
   @Nullable
-  public static Pair<String, String> getQuotes(@Nonnull final String text) {
+  public static Pair<String, String> getQuotes(@Nonnull String text) {
     boolean start = true;
     int pos = 0;
     for (int i = 0; i < text.length(); i++) {
-      final char c = Character.toLowerCase(text.charAt(i));
+      char c = Character.toLowerCase(text.charAt(i));
       if (start) {
         if (c == 'u' || c == 'r' || c == 'b') {
           pos = i + 1;
@@ -215,10 +215,10 @@ public class PythonStringUtil {
         break;
       }
     }
-    final String prefix = text.substring(0, pos);
-    final String mainText = text.substring(pos);
+    String prefix = text.substring(0, pos);
+    String mainText = text.substring(pos);
     for (String quote : QUOTES) {
-      final Pair<String, String> quotes = getQuotes(mainText, prefix, quote);
+      Pair<String, String> quotes = getQuotes(mainText, prefix, quote);
       if (quotes != null) {
         return quotes;
       }
@@ -228,8 +228,8 @@ public class PythonStringUtil {
 
   @Nullable
   private static Pair<String, String> getQuotes(@Nonnull String text, @Nonnull String prefix, @Nonnull String quote) {
-    final int length = text.length();
-    final int n = quote.length();
+    int length = text.length();
+    int n = quote.length();
     if (length >= 2 * n && text.startsWith(quote) && text.endsWith(quote)) {
       return Pair.create(prefix + text.substring(0, n), text.substring(length - n));
     }
@@ -272,7 +272,7 @@ public class PythonStringUtil {
 
   public static TextRange getTextRange(PsiElement element) {
     if (element instanceof PyStringLiteralExpression) {
-      final List<TextRange> ranges = ((PyStringLiteralExpression)element).getStringValueTextRanges();
+      List<TextRange> ranges = ((PyStringLiteralExpression)element).getStringValueTextRanges();
       return ranges.get(0);
     }
     else {

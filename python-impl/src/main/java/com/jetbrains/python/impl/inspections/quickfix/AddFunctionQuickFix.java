@@ -73,19 +73,19 @@ public class AddFunctionQuickFix implements LocalQuickFix {
 
   public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
     try {
-      final PsiElement problemElement = descriptor.getPsiElement();
+      PsiElement problemElement = descriptor.getPsiElement();
       if (!(problemElement instanceof PyQualifiedExpression)) {
         return;
       }
-      final PyExpression qualifier = ((PyQualifiedExpression)problemElement).getQualifier();
+      PyExpression qualifier = ((PyQualifiedExpression)problemElement).getQualifier();
       if (qualifier == null) {
         return;
       }
-      final PyType type = TypeEvalContext.userInitiated(problemElement.getProject(), problemElement.getContainingFile()).getType(qualifier);
+      PyType type = TypeEvalContext.userInitiated(problemElement.getProject(), problemElement.getContainingFile()).getType(qualifier);
       if (!(type instanceof PyModuleType)) {
         return;
       }
-      final PyFile file = ((PyModuleType)type).getModule();
+      PyFile file = ((PyModuleType)type).getModule();
       sure(file);
       sure(FileModificationService.getInstance().preparePsiElementForWrite(file));
       // try to at least match parameter count
@@ -97,7 +97,7 @@ public class AddFunctionQuickFix implements LocalQuickFix {
         if (arglist == null) {
           return;
         }
-        final PyExpression[] args = arglist.getArguments();
+        PyExpression[] args = arglist.getArguments();
         for (PyExpression arg : args) {
           if (arg instanceof PyKeywordArgument) { // foo(bar) -> def foo(bar_1)
             builder.parameter(((PyKeywordArgument)arg).getKeyword());
@@ -135,7 +135,7 @@ public class AddFunctionQuickFix implements LocalQuickFix {
     }
   }
 
-  private static void showTemplateBuilder(PyFunction method, @Nonnull final PsiFile file) {
+  private static void showTemplateBuilder(PyFunction method, @Nonnull PsiFile file) {
     method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
 
     final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(method);
@@ -147,11 +147,11 @@ public class AddFunctionQuickFix implements LocalQuickFix {
 
     // TODO: detect expected return type from call site context: PY-1863
     builder.replaceElement(method.getStatementList(), "return None");
-    final VirtualFile virtualFile = file.getVirtualFile();
+    VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile == null) {
       return;
     }
-    final Editor editor =
+    Editor editor =
       FileEditorManager.getInstance(file.getProject())
                        .openTextEditor(OpenFileDescriptorFactory.getInstance(file.getProject()).builder(virtualFile).build(), true);
     if (editor == null) {

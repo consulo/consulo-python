@@ -72,10 +72,10 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
   private static void appendDescriptors(ASTNode node, List<FoldingDescriptor> descriptors) {
     IElementType elementType = node.getElementType();
     if (elementType instanceof PyFileElementType) {
-      final List<PyImportStatementBase> imports = ((PyFile)node.getPsi()).getImportBlock();
+      List<PyImportStatementBase> imports = ((PyFile)node.getPsi()).getImportBlock();
       if (imports.size() > 1) {
-        final PyImportStatementBase firstImport = imports.get(0);
-        final PyImportStatementBase lastImport = imports.get(imports.size() - 1);
+        PyImportStatementBase firstImport = imports.get(0);
+        PyImportStatementBase lastImport = imports.get(imports.size() - 1);
         descriptors.add(new FoldingDescriptor(firstImport,
                                               new TextRange(firstImport.getTextRange().getStartOffset(),
                                                             lastImport.getTextRange().getEndOffset())));
@@ -152,7 +152,7 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
     if (elType == PyElementTypes.FUNCTION_DECLARATION || elType == PyElementTypes.CLASS_DECLARATION || ifFoldBlocks(node, elType)) {
       ASTNode colon = node.getTreeParent().findChildByType(PyTokenTypes.COLON);
       if (colon != null && colon.getStartOffset() + 1 < node.getTextRange().getEndOffset() - 1) {
-        final CharSequence chars = node.getChars();
+        CharSequence chars = node.getChars();
         int nodeStart = node.getTextRange().getStartOffset();
         int endOffset = node.getTextRange().getEndOffset();
         while (endOffset > colon.getStartOffset() + 2 && endOffset > nodeStart && Character.isWhitespace(chars.charAt(endOffset - nodeStart - 1))) {
@@ -191,12 +191,12 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
   @Nullable
   private static IElementType getDocStringOwnerType(ASTNode node) {
-    final ASTNode treeParent = node.getTreeParent();
+    ASTNode treeParent = node.getTreeParent();
     IElementType parentType = treeParent.getElementType();
     if (parentType == PyElementTypes.EXPRESSION_STATEMENT && treeParent.getTreeParent() != null) {
-      final ASTNode parent2 = treeParent.getTreeParent();
+      ASTNode parent2 = treeParent.getTreeParent();
       if (parent2.getElementType() == PyElementTypes.STATEMENT_LIST && parent2.getTreeParent() != null && treeParent == parent2.getFirstChildNode()) {
-        final ASTNode parent3 = parent2.getTreeParent();
+        ASTNode parent3 = parent2.getTreeParent();
         if (parent3.getElementType() == PyElementTypes.FUNCTION_DECLARATION || parent3.getElementType() == PyElementTypes.CLASS_DECLARATION) {
           return parent3.getElementType();
         }
@@ -216,8 +216,8 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
     if (node.getElementType() == PyElementTypes.STRING_LITERAL_EXPRESSION) {
       PyStringLiteralExpression stringLiteralExpression = (PyStringLiteralExpression)node.getPsi();
       if (stringLiteralExpression.isDocString()) {
-        final String stringValue = stringLiteralExpression.getStringValue().trim();
-        final String[] lines = LineTokenizer.tokenize(stringValue, true);
+        String stringValue = stringLiteralExpression.getStringValue().trim();
+        String[] lines = LineTokenizer.tokenize(stringValue, true);
         if (lines.length > 2 && lines[1].trim().length() == 0) {
           return "\"\"\"" + lines[0].trim() + "...\"\"\"";
         }

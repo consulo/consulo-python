@@ -15,21 +15,21 @@ import java.util.Collection;
 public abstract class PyInheritorsSearchTest extends PyTestCase {
   public void testSimple() throws Exception {
     setupProject();
-    final PyClass pyClass = findClass("A");
+    PyClass pyClass = findClass("A");
     Collection<PyClass> inheritors = PyClassInheritorsSearch.search(pyClass, false).findAll();
     assertEquals(2, inheritors.size());
   }
 
   public void testDeep() throws Exception {
     setupProject();
-    final PyClass pyClass = findClass("A");
+    PyClass pyClass = findClass("A");
     Collection<PyClass> inheritors = PyClassInheritorsSearch.search(pyClass, true).findAll();
     assertEquals(2, inheritors.size());
   }
 
   public void testDotted() throws Exception {
     setupProject();
-    final PyClass pyClass = findClass("A");
+    PyClass pyClass = findClass("A");
     Collection<PyClass> inheritors = PyClassInheritorsSearch.search(pyClass, true).findAll();
     assertEquals(1, inheritors.size());
   }
@@ -40,9 +40,9 @@ public abstract class PyInheritorsSearchTest extends PyTestCase {
     PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments();
   }
 
-  private PyClass findClass(final String name) {
-    final Project project = myFixture.getProject();
-    final Collection<PyClass> classes = PyClassNameIndex.find(name, project, false);
+  private PyClass findClass(String name) {
+    Project project = myFixture.getProject();
+    Collection<PyClass> classes = PyClassNameIndex.find(name, project, false);
     assertEquals(1, classes.size());
     return classes.iterator().next();
   }

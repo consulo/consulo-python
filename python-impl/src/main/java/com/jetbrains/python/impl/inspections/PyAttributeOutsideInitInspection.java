@@ -69,11 +69,11 @@ public class PyAttributeOutsideInitInspection extends PyInspection {
 
         @Override
         public void visitPyFunction(PyFunction node) {
-            final PyClass containingClass = node.getContainingClass();
+            PyClass containingClass = node.getContainingClass();
             if (containingClass == null) {
                 return;
             }
-            final String name = node.getName();
+            String name = node.getName();
             if (name != null && name.startsWith("_")) {
                 return;
             }
@@ -81,23 +81,23 @@ public class PyAttributeOutsideInitInspection extends PyInspection {
                 return;
             }
 
-            final PyFunction.Modifier modifier = node.getModifier();
+            PyFunction.Modifier modifier = node.getModifier();
             if (modifier != null) {
                 return;
             }
-            final List<PyTargetExpression> classAttributes = containingClass.getClassAttributes();
+            List<PyTargetExpression> classAttributes = containingClass.getClassAttributes();
 
             Map<String, PyTargetExpression> attributesInInit = new HashMap<>();
             for (PyTargetExpression classAttr : classAttributes) {
                 attributesInInit.put(classAttr.getName(), classAttr);
             }
 
-            final PyFunction initMethod = containingClass.findMethodByName(PyNames.INIT, false, null);
+            PyFunction initMethod = containingClass.findMethodByName(PyNames.INIT, false, null);
             if (initMethod != null) {
                 PyClassImpl.collectInstanceAttributes(initMethod, attributesInInit);
             }
             for (PyClass superClass : containingClass.getAncestorClasses(myTypeEvalContext)) {
-                final PyFunction superInit = superClass.findMethodByName(PyNames.INIT, false, null);
+                PyFunction superInit = superClass.findMethodByName(PyNames.INIT, false, null);
                 if (superInit != null) {
                     PyClassImpl.collectInstanceAttributes(superInit, attributesInInit);
                 }
@@ -115,7 +115,7 @@ public class PyAttributeOutsideInitInspection extends PyInspection {
                 if (attributeName == null) {
                     continue;
                 }
-                final Property property = containingClass.findProperty(attributeName, true, null);
+                Property property = containingClass.findProperty(attributeName, true, null);
                 if (!attributesInInit.containsKey(attributeName) && property == null) {
                     registerProblem(
                         attribute.getValue(),

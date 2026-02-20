@@ -30,17 +30,17 @@ import consulo.language.editor.annotation.Annotation;
 public class DocStringAnnotator extends PyAnnotator {
 
   @Override
-  public void visitPyFile(final PyFile node) {
+  public void visitPyFile(PyFile node) {
     annotateDocStringStmt(DocStringUtil.findDocStringExpression(node));
   }
 
   @Override
-  public void visitPyFunction(final PyFunction node) {
+  public void visitPyFunction(PyFunction node) {
     annotateDocStringStmt(DocStringUtil.findDocStringExpression(node.getStatementList()));
   }
 
   @Override
-  public void visitPyClass(final PyClass node) {
+  public void visitPyClass(PyClass node) {
     annotateDocStringStmt(DocStringUtil.findDocStringExpression(node.getStatementList()));
   }
 
@@ -63,10 +63,10 @@ public class DocStringAnnotator extends PyAnnotator {
     }
   }
 
-  private void annotateDocStringStmt(final PyStringLiteralExpression stmt) {
+  private void annotateDocStringStmt(PyStringLiteralExpression stmt) {
     if (stmt != null) {
-      final DocStringFormat format = DocStringUtil.getConfiguredDocStringFormat(stmt);
-      final String[] tags;
+      DocStringFormat format = DocStringUtil.getConfiguredDocStringFormat(stmt);
+      String[] tags;
       if (format == DocStringFormat.EPYTEXT) {
         tags = EpydocString.ALL_TAGS;
       }

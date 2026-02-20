@@ -54,9 +54,9 @@ public class PyChooseRequirementsDialog extends DialogWrapper {
 
   @Override
   protected JComponent createCenterPanel() {
-    final JPanel panel = new JPanel(new BorderLayout());
+    JPanel panel = new JPanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(400, 300));
-    final JBLabel label = new JBLabel("Choose packages to install:");
+    JBLabel label = new JBLabel("Choose packages to install:");
     label.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
     panel.add(label, BorderLayout.NORTH);
     panel.add(myRequirementsChooser, BorderLayout.CENTER);

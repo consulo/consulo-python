@@ -32,7 +32,7 @@ public abstract class PySuppressInspectionsTest extends PyTestCase {
     doTestHighlighting(PyUnresolvedReferencesInspection.class);
   }
 
-  private void doTestHighlighting(final Class<? extends PyInspection> inspectionClass) {
+  private void doTestHighlighting(Class<? extends PyInspection> inspectionClass) {
     myFixture.configureByFile("inspections/suppress/" + getTestName(true) + ".py");
     myFixture.enableInspections(inspectionClass);
     myFixture.checkHighlighting(true, false, true);
@@ -41,9 +41,9 @@ public abstract class PySuppressInspectionsTest extends PyTestCase {
   public void testSuppressForStatement() {
     myFixture.configureByFile("inspections/suppress/suppressForStatement.py");
     myFixture.enableInspections(PyUnresolvedReferencesInspection.class);
-    final List<IntentionAction> intentions = myFixture.filterAvailableIntentions("Suppress for statement");
+    List<IntentionAction> intentions = myFixture.filterAvailableIntentions("Suppress for statement");
     assertEquals(3, intentions.size());  // Rename reference, Ignore unresolved reference, Mark all unresolved attributes
-    final IntentionAction suppressAction = intentions.get(0);
+    IntentionAction suppressAction = intentions.get(0);
     myFixture.launchAction(suppressAction);
     myFixture.checkResultByFile("inspections/suppress/suppressForStatement.after.py");
   }

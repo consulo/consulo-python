@@ -50,8 +50,8 @@ public class NumpyDocString extends SectionBasedDocString
 	@Override
 	protected int parseHeader(int startLine)
 	{
-		final int nextNonEmptyLineNum = consumeEmptyLines(startLine);
-		final Substring line = getLineOrNull(nextNonEmptyLineNum);
+		int nextNonEmptyLineNum = consumeEmptyLines(startLine);
+		Substring line = getLineOrNull(nextNonEmptyLineNum);
 		if(line != null && SIGNATURE.matcher(line).matches())
 		{
 			mySignature = line.trim();
@@ -64,10 +64,10 @@ public class NumpyDocString extends SectionBasedDocString
 	@Override
 	protected Pair<Substring, Integer> parseSectionHeader(int lineNum)
 	{
-		@NonNls final String title = getLine(lineNum).trim().toString();
+		@NonNls String title = getLine(lineNum).trim().toString();
 		if(SECTION_NAMES.contains(title.toLowerCase()))
 		{
-			final Substring nextLine = getLineOrNull(lineNum + 1);
+			Substring nextLine = getLineOrNull(lineNum + 1);
 			if(nextLine != null && SECTION_HEADER.matcher(nextLine).matches())
 			{
 				return Pair.create(getLine(lineNum).trim(), lineNum + 2);
@@ -86,11 +86,11 @@ public class NumpyDocString extends SectionBasedDocString
 	@Override
 	protected Pair<SectionField, Integer> parseSectionField(int lineNum, int sectionIndent, boolean mayHaveType, boolean preferType)
 	{
-		final Substring line = getLine(lineNum);
+		Substring line = getLine(lineNum);
 		Substring namesPart, type = null, description = null;
 		if(mayHaveType)
 		{
-			final List<Substring> colonSeparatedParts = splitByFirstColon(line);
+			List<Substring> colonSeparatedParts = splitByFirstColon(line);
 			namesPart = colonSeparatedParts.get(0).trim();
 			if(colonSeparatedParts.size() == 2)
 			{
@@ -106,7 +106,7 @@ public class NumpyDocString extends SectionBasedDocString
 			type = namesPart;
 			namesPart = null;
 		}
-		final List<Substring> names = new ArrayList<>();
+		List<Substring> names = new ArrayList<>();
 		if(namesPart != null)
 		{
 			// Unlike Google code style, Numpydoc allows to list several parameter with same file together, e.g.
@@ -114,7 +114,7 @@ public class NumpyDocString extends SectionBasedDocString
 			//     Input arrays, description of `x1`, `x2`.
 			for(Substring name : namesPart.split(NAME_SEPARATOR))
 			{
-				final Substring identifier = cleanUpName(name);
+				Substring identifier = cleanUpName(name);
 				if(!isValidName(identifier.toString()))
 				{
 					return Pair.create(null, lineNum);
@@ -126,8 +126,8 @@ public class NumpyDocString extends SectionBasedDocString
 		{
 			return Pair.create(null, lineNum);
 		}
-		final Pair<List<Substring>, Integer> parsedDescription = parseIndentedBlock(lineNum + 1, getLineIndentSize(lineNum));
-		final List<Substring> descriptionLines = parsedDescription.getFirst();
+		Pair<List<Substring>, Integer> parsedDescription = parseIndentedBlock(lineNum + 1, getLineIndentSize(lineNum));
+		List<Substring> descriptionLines = parsedDescription.getFirst();
 		if(!descriptionLines.isEmpty())
 		{
 			description = descriptionLines.get(0).union(descriptionLines.get(descriptionLines.size() - 1));

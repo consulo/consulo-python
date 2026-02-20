@@ -49,31 +49,31 @@ import java.util.Collections;
 class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImpl<PyExtractSuperclassView, MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements PyExtractSuperclassPresenter {
   private final NamesValidator myNamesValidator = NamesValidator.forLanguage(PythonLanguage.getInstance());
 
-  PyExtractSuperclassPresenterImpl(@Nonnull final PyExtractSuperclassView view,
-                                   @Nonnull final PyClass classUnderRefactoring,
-                                   @Nonnull final PyMemberInfoStorage infoStorage) {
+  PyExtractSuperclassPresenterImpl(@Nonnull PyExtractSuperclassView view,
+                                   @Nonnull PyClass classUnderRefactoring,
+                                   @Nonnull PyMemberInfoStorage infoStorage) {
     super(view, classUnderRefactoring, infoStorage, new PyExtractSuperclassInfoModel(classUnderRefactoring));
   }
 
   @Override
   protected void validateView() throws BadDataException {
     super.validateView();
-    final Project project = myClassUnderRefactoring.getProject();
+    Project project = myClassUnderRefactoring.getProject();
     if (!myNamesValidator.isIdentifier(myView.getSuperClassName(), project)) {
       throw new BadDataException(PyBundle.message("refactoring.extract.super.name.0.must.be.ident", myView.getSuperClassName()));
     }
     boolean rootFound = false;
-    final File moduleFile = new File(myView.getModuleFile());
+    File moduleFile = new File(myView.getModuleFile());
     try {
-      final String targetDir = FileUtil.toSystemIndependentName(moduleFile.getCanonicalPath());
-      for (final VirtualFile file : ProjectRootManager.getInstance(project).getContentRoots()) {
+      String targetDir = FileUtil.toSystemIndependentName(moduleFile.getCanonicalPath());
+      for (VirtualFile file : ProjectRootManager.getInstance(project).getContentRoots()) {
         if (StringUtil.startsWithIgnoreCase(targetDir, file.getPath())) {
           rootFound = true;
           break;
         }
       }
     }
-    catch (final IOException ignore) {
+    catch (IOException ignore) {
     }
     if (!rootFound) {
       throw new BadDataException(PyBundle.message("refactoring.extract.super.target.path.outside.roots"));
@@ -82,9 +82,9 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
     // TODO: Cover with test. It can't be done for now, because testFixture reports root path incorrectly
     // PY-12173
     myView.getModuleFile();
-    final VirtualFile moduleVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(moduleFile);
+    VirtualFile moduleVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(moduleFile);
     if (moduleVirtualFile != null) {
-      final PsiFile psiFile = PsiManager.getInstance(project).findFile(moduleVirtualFile);
+      PsiFile psiFile = PsiManager.getInstance(project).findFile(moduleVirtualFile);
       if (psiFile instanceof PyFile) {
         if (((PyFile)psiFile).findTopLevelClass(myView.getSuperClassName()) != null) {
           throw new BadDataException(PyBundle.message("refactoring.extract.super.target.class.already.exists", myView.getSuperClassName()));
@@ -95,9 +95,9 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
 
   @Override
   public void launch() {
-    final String defaultFilePath = FileUtil.toSystemDependentName(myClassUnderRefactoring.getContainingFile().getVirtualFile().getPath());
-    final VirtualFile[] roots = ProjectRootManager.getInstance(myClassUnderRefactoring.getProject()).getContentRoots();
-    final Collection<PyMemberInfo<PyElement>> pyMemberInfos =
+    String defaultFilePath = FileUtil.toSystemDependentName(myClassUnderRefactoring.getContainingFile().getVirtualFile().getPath());
+    VirtualFile[] roots = ProjectRootManager.getInstance(myClassUnderRefactoring.getProject()).getContentRoots();
+    Collection<PyMemberInfo<PyElement>> pyMemberInfos =
       PyUtil.filterOutObject(myStorage.getClassMemberInfos(myClassUnderRefactoring));
     myView.configure(new PyExtractSuperclassInitializationInfo(myModel, pyMemberInfos, defaultFilePath, roots));
     myView.initAndShow();

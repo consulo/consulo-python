@@ -63,14 +63,14 @@ public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
         PyStringLiteralExpression string =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
         if (string != null) {
-            final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
+            PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
             if (docStringOwner != null) {
                 if (docStringOwner.getDocStringExpression() == string) {
                     return false;
                 }
             }
             String stringText = string.getText();
-            final int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
+            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
             stringText = stringText.substring(prefixLength);
             if (stringText.length() >= 6) {
                 if (stringText.startsWith("'''") && stringText.endsWith("'''") ||
@@ -87,9 +87,9 @@ public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         if (string != null) {
-            final PsiElement parent = string.getParent();
+            PsiElement parent = string.getParent();
             String stringText = string.getText();
-            final int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
+            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
             String prefix = stringText.substring(0, prefixLength);
             Character firstQuote = stringText.substring(prefixLength).charAt(0);
 

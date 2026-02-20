@@ -72,23 +72,23 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 	}
 
 	@Nonnull
-	public PsiElement createElement(@Nonnull final ASTNode node)
+	public PsiElement createElement(@Nonnull ASTNode node)
 	{
 		return new PyTargetExpressionImpl(node);
 	}
 
-	public PyTargetExpression createPsi(@Nonnull final PyTargetExpressionStub stub)
+	public PyTargetExpression createPsi(@Nonnull PyTargetExpressionStub stub)
 	{
 		return new PyTargetExpressionImpl(stub);
 	}
 
 	@Nonnull
-	public PyTargetExpressionStub createStub(@Nonnull final PyTargetExpression psi, final StubElement parentStub)
+	public PyTargetExpressionStub createStub(@Nonnull PyTargetExpression psi, StubElement parentStub)
 	{
-		final String name = psi.getName();
-		final PyExpression assignedValue = psi.findAssignedValue();
-		final String docString = DocStringUtil.getDocStringValue(psi);
-		final String typeComment = psi.getTypeCommentAnnotation();
+		String name = psi.getName();
+		PyExpression assignedValue = psi.findAssignedValue();
+		String docString = DocStringUtil.getDocStringValue(psi);
+		String typeComment = psi.getTypeCommentAnnotation();
 		for(CustomTargetExpressionStubType customStubType : getCustomStubTypes())
 		{
 			CustomTargetExpressionStub customStub = customStubType.createStub(psi);
@@ -107,7 +107,7 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 		else if(assignedValue instanceof PyCallExpression)
 		{
 			initializerType = PyTargetExpressionStub.InitializerType.CallExpression;
-			final PyExpression callee = ((PyCallExpression) assignedValue).getCallee();
+			PyExpression callee = ((PyCallExpression) assignedValue).getCallee();
 			if(callee instanceof PyReferenceExpression)
 			{
 				initializer = ((PyReferenceExpression) callee).asQualifiedName();
@@ -116,14 +116,14 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 		return new PyTargetExpressionStubImpl(name, docString, initializerType, initializer, psi.isQualified(), typeComment, parentStub);
 	}
 
-	public void serialize(@Nonnull final PyTargetExpressionStub stub, @Nonnull final StubOutputStream stream) throws IOException
+	public void serialize(@Nonnull PyTargetExpressionStub stub, @Nonnull StubOutputStream stream) throws IOException
 	{
 		stream.writeName(stub.getName());
-		final String docString = stub.getDocString();
+		String docString = stub.getDocString();
 		stream.writeUTFFast(docString != null ? docString : "");
 		stream.writeVarInt(stub.getInitializerType().getIndex());
 		stream.writeName(stub.getTypeComment());
-		final CustomTargetExpressionStub customStub = stub.getCustomStub(CustomTargetExpressionStub.class);
+		CustomTargetExpressionStub customStub = stub.getCustomStub(CustomTargetExpressionStub.class);
 		if(customStub != null)
 		{
 			stream.writeName(customStub.getTypeClass().getCanonicalName());
@@ -137,7 +137,7 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 	}
 
 	@Nonnull
-	public PyTargetExpressionStub deserialize(@Nonnull final StubInputStream stream, final StubElement parentStub) throws IOException
+	public PyTargetExpressionStub deserialize(@Nonnull StubInputStream stream, StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(stream.readName());
 		String docString = stream.readUTFFast();
@@ -146,11 +146,11 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 			docString = null;
 		}
 		PyTargetExpressionStub.InitializerType initializerType = PyTargetExpressionStub.InitializerType.fromIndex(stream.readVarInt());
-		final StringRef typeCommentRef = stream.readName();
-		final String typeComment = typeCommentRef == null ? null : typeCommentRef.getString();
+		StringRef typeCommentRef = stream.readName();
+		String typeComment = typeCommentRef == null ? null : typeCommentRef.getString();
 		if(initializerType == PyTargetExpressionStub.InitializerType.Custom)
 		{
-			final String typeName = stream.readName().getString();
+			String typeName = stream.readName().getString();
 			for(CustomTargetExpressionStubType type : getCustomStubTypes())
 			{
 				if(type.getClass().getCanonicalName().equals(typeName))
@@ -166,24 +166,24 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 		return new PyTargetExpressionStubImpl(name, docString, initializerType, initializer, isQualified, typeComment, parentStub);
 	}
 
-	public boolean shouldCreateStub(final ASTNode node)
+	public boolean shouldCreateStub(ASTNode node)
 	{
 		if(PsiTreeUtil.getParentOfType(node.getPsi(), PyComprehensionElement.class, true, PyDocStringOwner.class) != null)
 		{
 			return false;
 		}
-		final ASTNode functionNode = TreeUtil.findParent(node, PyElementTypes.FUNCTION_DECLARATION);
-		final ASTNode qualifierNode = node.findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens());
+		ASTNode functionNode = TreeUtil.findParent(node, PyElementTypes.FUNCTION_DECLARATION);
+		ASTNode qualifierNode = node.findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens());
 		if(functionNode != null && qualifierNode != null)
 		{
-			final PsiElement function = functionNode.getPsi();
+			PsiElement function = functionNode.getPsi();
 			if(function instanceof PyFunction && PyNames.NEW.equals(((PyFunction) function).getName()))
 			{
 				return true;
 			}
-			final ASTNode parameterList = functionNode.findChildByType(PyElementTypes.PARAMETER_LIST);
+			ASTNode parameterList = functionNode.findChildByType(PyElementTypes.PARAMETER_LIST);
 			assert parameterList != null;
-			final ASTNode[] children = parameterList.getChildren(PyElementTypes.FORMAL_PARAMETER_SET);
+			ASTNode[] children = parameterList.getChildren(PyElementTypes.FORMAL_PARAMETER_SET);
 			if(children.length > 0 && children[0].getText().equals(qualifierNode.getText()))
 			{
 				return true;
@@ -215,7 +215,7 @@ public class PyTargetExpressionElementType extends PyStubElementType<PyTargetExp
 
 	private static boolean isInstanceAttributeStub(PyTargetExpressionStub stub)
 	{
-		final StubElement parent = stub.getParentStub();
+		StubElement parent = stub.getParentStub();
 		return parent instanceof PyFunctionStub;   // otherwise we wouldn't create the stub (see shouldCreateStub() implementation)
 	}
 }

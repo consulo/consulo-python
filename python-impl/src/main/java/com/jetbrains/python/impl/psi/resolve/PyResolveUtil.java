@@ -54,8 +54,8 @@ public class PyResolveUtil
 	public static void scopeCrawlUp(@Nonnull PsiScopeProcessor processor, @Nonnull PsiElement element, @Nullable String name, @Nullable PsiElement roof)
 	{
 		// Use real context here to enable correct completion and resolve in case of PyExpressionCodeFragment!!!
-		final PsiElement realContext = PyPsiUtils.getRealContext(element);
-		final ScopeOwner originalOwner;
+		PsiElement realContext = PyPsiUtils.getRealContext(element);
+		ScopeOwner originalOwner;
 		if(realContext != element && realContext instanceof PyFile)
 		{
 			originalOwner = (PyFile) realContext;
@@ -64,12 +64,12 @@ public class PyResolveUtil
 		{
 			originalOwner = ScopeUtil.getScopeOwner(realContext);
 		}
-		final PsiElement parent = element.getParent();
-		final boolean isGlobalOrNonlocal = parent instanceof PyGlobalStatement || parent instanceof PyNonlocalStatement;
+		PsiElement parent = element.getParent();
+		boolean isGlobalOrNonlocal = parent instanceof PyGlobalStatement || parent instanceof PyNonlocalStatement;
 		ScopeOwner owner = originalOwner;
 		if(isGlobalOrNonlocal)
 		{
-			final ScopeOwner outerScopeOwner = ScopeUtil.getScopeOwner(owner);
+			ScopeOwner outerScopeOwner = ScopeUtil.getScopeOwner(owner);
 			if(outerScopeOwner != null)
 			{
 				owner = outerScopeOwner;
@@ -89,10 +89,10 @@ public class PyResolveUtil
 		{
 			if(!(scopeOwner instanceof PyClass) || scopeOwner == originalScopeOwner)
 			{
-				final Scope scope = ControlFlowCache.getScope(scopeOwner);
+				Scope scope = ControlFlowCache.getScope(scopeOwner);
 				if(name != null)
 				{
-					final boolean includeNestedGlobals = scopeOwner instanceof PyFile;
+					boolean includeNestedGlobals = scopeOwner instanceof PyFile;
 					for(PsiNamedElement resolved : scope.getNamedElements(name, includeNestedGlobals))
 					{
 						if(!processor.execute(resolved, ResolveState.initial()))
@@ -130,14 +130,14 @@ public class PyResolveUtil
 	@Nonnull
 	public static Collection<PsiElement> resolveLocally(@Nonnull PyReferenceExpression referenceExpression)
 	{
-		final String referenceName = referenceExpression.getName();
+		String referenceName = referenceExpression.getName();
 
 		if(referenceName == null)
 		{
 			return Collections.emptyList();
 		}
 
-		final PyResolveProcessor processor = new PyResolveProcessor(referenceName, true);
+		PyResolveProcessor processor = new PyResolveProcessor(referenceName, true);
 		scopeCrawlUp(processor, referenceExpression, referenceName, null);
 
 		return processor.getElements();
@@ -146,7 +146,7 @@ public class PyResolveUtil
 	@Nonnull
 	public static Collection<PsiElement> resolveLocally(@Nonnull ScopeOwner scopeOwner, @Nonnull String name)
 	{
-		final PyResolveProcessor processor = new PyResolveProcessor(name, true);
+		PyResolveProcessor processor = new PyResolveProcessor(name, true);
 		scopeCrawlUp(processor, scopeOwner, name, null);
 
 		return processor.getElements();

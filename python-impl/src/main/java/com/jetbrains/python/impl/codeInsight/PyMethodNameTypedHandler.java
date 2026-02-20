@@ -51,16 +51,16 @@ public class PyMethodNameTypedHandler extends TypedHandlerDelegate {
       if (!PyCodeInsightSettings.getInstance().INSERT_SELF_FOR_METHODS) {
         return Result.CONTINUE;
       }
-      final Document document = editor.getDocument();
-      final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-      final int offset = editor.getCaretModel().getOffset();
+      Document document = editor.getDocument();
+      PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+      int offset = editor.getCaretModel().getOffset();
 
       PsiElement token = file.findElementAt(offset - 1);
       if (token == null) {
         return Result.CONTINUE; // sanity check: beyond EOL
       }
 
-      final ASTNode token_node = token.getNode();
+      ASTNode token_node = token.getNode();
       if (token_node != null && token_node.getElementType() == PyTokenTypes.IDENTIFIER) {
         PsiElement maybe_def = PyPsiUtils.getPrevNonCommentSibling(token.getPrevSibling(), false);
         if (maybe_def != null) {
@@ -74,7 +74,7 @@ public class PyMethodNameTypedHandler extends TypedHandlerDelegate {
                 // we're in a method
                 // TODO: all string constants go to Settings
                 String pname = flags.isClassMethod() || flags.isMetaclassMethod() ? "cls" : "self";
-                final boolean is_new = PyNames.NEW.equals(func.getName());
+                boolean is_new = PyNames.NEW.equals(func.getName());
                 if (flags.isMetaclassMethod() && is_new) {
                   pname = "typ";
                 }

@@ -37,7 +37,7 @@ public class PyConsoleDebugProcessHandler extends BaseProcessHandler implements 
 {
 	private final ProcessHandler myConsoleProcessHandler;
 
-	public PyConsoleDebugProcessHandler(final ProcessHandler processHandler)
+	public PyConsoleDebugProcessHandler(ProcessHandler processHandler)
 	{
 		myConsoleProcessHandler = processHandler;
 

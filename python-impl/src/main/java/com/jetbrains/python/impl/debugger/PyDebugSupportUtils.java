@@ -45,7 +45,7 @@ public class PyDebugSupportUtils
 			public Boolean compute()
 			{
 
-				final PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
+				PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
 				return file.getFirstChild() instanceof PyExpressionStatement && file.getFirstChild() == file.getLastChild();
 			}
 		});
@@ -60,7 +60,7 @@ public class PyDebugSupportUtils
 			public TextRange compute()
 			{
 
-				final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
+				PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
 				if(psiFile != null)
 				{
 					PsiElement element = psiFile.findElementAt(offset);
@@ -83,7 +83,7 @@ public class PyDebugSupportUtils
 	}
 
 	// is expression suitable to quick evaluate/display tooltip
-	private static boolean isSimpleEnough(final PsiElement element)
+	private static boolean isSimpleEnough(PsiElement element)
 	{
 		return element instanceof PyLiteralExpression ||
 				element instanceof PyQualifiedExpression ||
@@ -102,8 +102,8 @@ public class PyDebugSupportUtils
 			public Boolean compute()
 			{
 
-				final PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
-				final PsiElement root = file.getFirstChild();
+				PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
+				PsiElement root = file.getFirstChild();
 				return !isVariable(root) && (root instanceof PyExpressionStatement);
 			}
 		});

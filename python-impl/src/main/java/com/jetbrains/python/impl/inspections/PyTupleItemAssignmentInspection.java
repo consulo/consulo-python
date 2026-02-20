@@ -55,7 +55,7 @@ public class PyTupleItemAssignmentInspection extends PyInspection {
 
     private static class Visitor extends PyInspectionVisitor {
 
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 

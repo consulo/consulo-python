@@ -40,12 +40,12 @@ public class PyClassAttributesIndex extends StringStubIndexExtension<PyClass> {
    */
   @Nonnull
   public static List<String> getAllDeclaredAttributeNames(@Nonnull PyClass pyClass) {
-    final List<PsiNamedElement> members = ContainerUtil.<PsiNamedElement>concat(pyClass.getInstanceAttributes(),
+    List<PsiNamedElement> members = ContainerUtil.<PsiNamedElement>concat(pyClass.getInstanceAttributes(),
                                                                                 pyClass.getClassAttributes(),
                                                                                 Arrays.asList(pyClass.getMethods()));
 
     return ContainerUtil.mapNotNull(members, expression -> {
-      final String attrName = expression.getName();
+      String attrName = expression.getName();
       return attrName != null ? attrName : null;
     });
   }

@@ -54,7 +54,7 @@ public class UnindentingInsertHandler implements InsertHandler<PythonLookupEleme
    */
   public static boolean unindentAsNeeded(Project project, Editor editor, PsiFile file) {
     // TODO: handle things other than "else"
-    final Document document = editor.getDocument();
+    Document document = editor.getDocument();
     int offset = editor.getCaretModel().getOffset();
     CharSequence text = document.getCharsSequence();
     if (offset >= text.length()) offset = text.length() - 1;
@@ -70,19 +70,19 @@ public class UnindentingInsertHandler implements InsertHandler<PythonLookupEleme
     int local_length = last_offset - nonspace_offset + 1;
     if (local_length > 0) {
       String piece = text.subSequence(nonspace_offset, last_offset+1).toString();
-      final int else_len = "else".length();
+      int else_len = "else".length();
       if (local_length >= else_len) {
         if ((piece.startsWith("else") || piece.startsWith("elif")) && (else_len == piece.length() || piece.charAt(else_len) < 'a' || piece.charAt(else_len) > 'z')) {
           parentClass = PyStatementWithElse.class;
         }
       }
-      final int except_len = "except".length();
+      int except_len = "except".length();
       if (local_length >= except_len) {
         if (piece.startsWith("except") && (except_len == piece.length() || piece.charAt(except_len) < 'a' || piece.charAt(except_len) > 'z')) {
           parentClass = PyTryExceptStatement.class;
         }
       }
-      final int finally_len = "finally".length();
+      int finally_len = "finally".length();
       if (local_length >= finally_len) {
         if (piece.startsWith("finally") && (finally_len == piece.length() || piece.charAt(finally_len) < 'a' || piece.charAt(finally_len) > 'z')) {
           parentClass = PyTryExceptStatement.class;

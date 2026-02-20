@@ -34,7 +34,7 @@ public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleVie
 
   public static final String DEBUG_CONSOLE_START_COMMAND = "import sys; print('Python %s on %s' % (sys.version, sys.platform))";
 
-  public PythonDebugLanguageConsoleView(final Project project, Sdk sdk, ConsoleView consoleView) {
+  public PythonDebugLanguageConsoleView(Project project, Sdk sdk, ConsoleView consoleView) {
     super(consoleView, new PythonConsoleView(project, "Python Console", sdk));
 
     enableConsole(!PyConsoleOptions.getInstance(project).isShowDebugConsoleByDefault());
@@ -43,7 +43,7 @@ public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleVie
     getSwitchConsoleActionPresentation().setTextValue(PyLocalize.runConfigurationShowCommandLineActionName());
   }
 
-  public PythonDebugLanguageConsoleView(final Project project, Sdk sdk) {
+  public PythonDebugLanguageConsoleView(Project project, Sdk sdk) {
     this(project, sdk, TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole());
   }
 

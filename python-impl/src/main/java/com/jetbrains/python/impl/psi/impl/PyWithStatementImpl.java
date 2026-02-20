@@ -45,7 +45,7 @@ public class PyWithStatementImpl extends PyElementImpl implements PyWithStatemen
 		super(astNode);
 	}
 
-	protected void acceptPyVisitor(final PyElementVisitor pyVisitor)
+	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
 	{
 		pyVisitor.visitPyWithStatement(this);
 	}
@@ -60,7 +60,7 @@ public class PyWithStatementImpl extends PyElementImpl implements PyWithStatemen
 			for(PyWithItem item : items)
 			{
 				PyExpression targetExpression = item.getTarget();
-				final List<PyExpression> expressions = PyUtil.flattenedParensAndTuples(targetExpression);
+				List<PyExpression> expressions = PyUtil.flattenedParensAndTuples(targetExpression);
 				for(PyExpression expression : expressions)
 				{
 					if(expression instanceof PsiNamedElement)
@@ -74,7 +74,7 @@ public class PyWithStatementImpl extends PyElementImpl implements PyWithStatemen
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}
@@ -88,7 +88,7 @@ public class PyWithStatementImpl extends PyElementImpl implements PyWithStatemen
 	@Nonnull
 	public PyStatementList getStatementList()
 	{
-		final PyStatementList statementList = childToPsi(PyElementTypes.STATEMENT_LIST);
+		PyStatementList statementList = childToPsi(PyElementTypes.STATEMENT_LIST);
 		assert statementList != null : "Statement list missing for with statement " + getText();
 		return statementList;
 	}

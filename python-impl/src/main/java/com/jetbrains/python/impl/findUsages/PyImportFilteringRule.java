@@ -36,11 +36,11 @@ public class PyImportFilteringRule implements ImportFilteringRule {
   @Override
   public boolean isVisible(@Nonnull Usage usage) {
     if (usage instanceof PsiElementUsage) {
-      final PsiElement psiElement = ((PsiElementUsage)usage).getElement();
-      final PsiFile containingFile = psiElement.getContainingFile();
+      PsiElement psiElement = ((PsiElementUsage)usage).getElement();
+      PsiFile containingFile = psiElement.getContainingFile();
       if (containingFile instanceof PyFile) {
         // check whether the element is in the import list
-        final PyImportStatementBase importStatement = PsiTreeUtil.getParentOfType(psiElement, PyImportStatementBase.class, true);
+        PyImportStatementBase importStatement = PsiTreeUtil.getParentOfType(psiElement, PyImportStatementBase.class, true);
         return importStatement == null;
       }
     }

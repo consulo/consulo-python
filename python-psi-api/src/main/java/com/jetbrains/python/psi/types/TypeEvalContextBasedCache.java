@@ -49,7 +49,7 @@ public final class TypeEvalContextBasedCache<T>
 	 * @param manager       Cache manager to be used to store cache
 	 * @param valueProvider engine to create value based on context.
 	 */
-	public TypeEvalContextBasedCache(@Nonnull final CachedValuesManager manager, @Nonnull final Function<TypeEvalContext, T> valueProvider)
+	public TypeEvalContextBasedCache(@Nonnull CachedValuesManager manager, @Nonnull Function<TypeEvalContext, T> valueProvider)
 	{
 		myCachedMapStorage = manager.createCachedValue(new MapCreator<T>(), false);
 		myProvider = valueProvider;
@@ -62,13 +62,13 @@ public final class TypeEvalContextBasedCache<T>
 	 * @return value
 	 */
 	@Nonnull
-	public T getValue(@Nonnull final TypeEvalContext context)
+	public T getValue(@Nonnull TypeEvalContext context)
 	{
 
 		// Map is not thread safe, and "getValue" is not atomic. I do not want several maps to be created.
 		synchronized(myLock)
 		{
-			final Map<TypeEvalConstraints, T> map = myCachedMapStorage.getValue();
+			Map<TypeEvalConstraints, T> map = myCachedMapStorage.getValue();
 			T value = map.get(context.getConstraints());
 			if(value != null)
 			{
@@ -92,7 +92,7 @@ public final class TypeEvalContextBasedCache<T>
 		public Result<Map<TypeEvalConstraints, T>> compute()
 		{
 			// This method is called if cache is empty. Create new map for it.
-			final HashMap<TypeEvalConstraints, T> map = new HashMap<>();
+			HashMap<TypeEvalConstraints, T> map = new HashMap<>();
 			return new Result<>(map, PsiModificationTracker.MODIFICATION_COUNT);
 		}
 	}

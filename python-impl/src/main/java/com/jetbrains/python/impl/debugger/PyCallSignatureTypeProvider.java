@@ -35,14 +35,14 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
   @Override
-  public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param,
-                                      @Nonnull final PyFunction func,
+  public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param,
+                                      @Nonnull PyFunction func,
                                       @Nonnull TypeEvalContext context) {
-    final String name = param.getName();
+    String name = param.getName();
     if (name != null) {
-      final String typeName = PySignatureCacheManager.getInstance(param.getProject()).findParameterType(func, name);
+      String typeName = PySignatureCacheManager.getInstance(param.getProject()).findParameterType(func, name);
       if (typeName != null) {
-        final PyType type = PyTypeParser.getTypeByName(param, typeName);
+        PyType type = PyTypeParser.getTypeByName(param, typeName);
         if (type != null) {
           return Ref.create(PyDynamicallyEvaluatedType.create(type));
         }
@@ -52,14 +52,14 @@ public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
   }
 
   @Override
-  public Ref<PyType> getReturnType(@Nonnull final PyCallable callable, @Nonnull TypeEvalContext context) {
+  public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context) {
     if (callable instanceof PyFunction) {
       PyFunction function = (PyFunction)callable;
       PySignature signature = PySignatureCacheManager.getInstance(function.getProject()).findSignature(function);
       if (signature != null && signature.getReturnType() != null) {
-        final String typeName = signature.getReturnType().getTypeQualifiedName();
+        String typeName = signature.getReturnType().getTypeQualifiedName();
         if (typeName != null) {
-          final PyType type = PyTypeParser.getTypeByName(function, typeName);
+          PyType type = PyTypeParser.getTypeByName(function, typeName);
           if (type != null) {
             return Ref.create(PyDynamicallyEvaluatedType.create(type));
           }

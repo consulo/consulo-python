@@ -29,7 +29,7 @@ import java.util.List;
  * @author traff
  */
 public class BuildoutCfgOption extends BuildoutCfgPsiElement {
-  public BuildoutCfgOption(@Nonnull final ASTNode node) {
+  public BuildoutCfgOption(@Nonnull ASTNode node) {
     super(node);
   }
 

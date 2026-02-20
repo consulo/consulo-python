@@ -53,7 +53,7 @@ public class PythonEditorHighlighter extends LexerEditorHighlighter
   @Override
   public void documentChanged(DocumentEvent e) {
     synchronized (this) {
-      final Document document = e.getDocument();
+      Document document = e.getDocument();
       Lexer l = getLexer();
       // if the document been changed before "from __future__ import unicode_literals"
       // we should update the whole document
@@ -78,7 +78,7 @@ public class PythonEditorHighlighter extends LexerEditorHighlighter
 
   @Override
   public void beforeDocumentChange(DocumentEvent e) {
-    final Document document = e.getDocument();
+    Document document = e.getDocument();
     hadUnicodeImport = document.getUserData(KEY);
   }
 

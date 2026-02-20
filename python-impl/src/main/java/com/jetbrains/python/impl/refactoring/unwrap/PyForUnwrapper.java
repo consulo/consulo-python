@@ -31,9 +31,9 @@ public class PyForUnwrapper extends PyUnwrapper {
 
   public boolean isApplicableTo(PsiElement e) {
     if (e instanceof PyForStatement) {
-      final PyStatementList statementList = ((PyForStatement)e).getForPart().getStatementList();
+      PyStatementList statementList = ((PyForStatement)e).getForPart().getStatementList();
       if (statementList != null) {
-        final PyStatement[] statements = statementList.getStatements();
+        PyStatement[] statements = statementList.getStatements();
         return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
       }
     }
@@ -41,8 +41,8 @@ public class PyForUnwrapper extends PyUnwrapper {
   }
 
   @Override
-  protected void doUnwrap(final PsiElement element, final Context context) throws IncorrectOperationException {
-    final PyForStatement forStatement = (PyForStatement)element;
+  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+    PyForStatement forStatement = (PyForStatement)element;
     context.extractPart(forStatement);
     context.extractPart(forStatement.getElsePart());
     context.delete(forStatement);

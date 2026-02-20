@@ -91,7 +91,7 @@ public class PyMethodFirstArgAssignmentInspection extends PyInspection {
             if (first_parm.isKeywordContainer() || first_parm.isPositionalContainer()) {
                 return null; // legal but crazy cases; back off
             }
-            final String first_param_name = first_parm.getName();
+            String first_param_name = first_parm.getName();
             if (first_param_name == null || first_param_name.length() < 1) {
                 return null; // ignore cases of incorrect code
             }
@@ -104,7 +104,7 @@ public class PyMethodFirstArgAssignmentInspection extends PyInspection {
         }
 
         private void markNameDefiner(PyNamedElementContainer definer) {
-            final String first_param_name = extractFirstParamName((PyElement) definer);
+            String first_param_name = extractFirstParamName((PyElement) definer);
             if (first_param_name != null) {
                 // check the targets
                 for (PsiNamedElement elt : definer.getNamedElements()) {
@@ -122,7 +122,7 @@ public class PyMethodFirstArgAssignmentInspection extends PyInspection {
 
         @Override
         public void visitPyAugAssignmentStatement(PyAugAssignmentStatement node) {
-            final String first_param_name = extractFirstParamName(node);
+            String first_param_name = extractFirstParamName(node);
             if (first_param_name != null) {
                 PyExpression target = node.getTarget();
                 if (target instanceof PyQualifiedExpression) {
@@ -151,7 +151,7 @@ public class PyMethodFirstArgAssignmentInspection extends PyInspection {
     */
 
         private void markDefinition(PyElement definer) {
-            final String first_param_name = extractFirstParamName(definer);
+            String first_param_name = extractFirstParamName(definer);
             if (first_param_name != null && first_param_name.equals(definer.getName())) {
                 complain(
                     definer.getNode().findChildByType(PyTokenTypes.IDENTIFIER).getPsi(),

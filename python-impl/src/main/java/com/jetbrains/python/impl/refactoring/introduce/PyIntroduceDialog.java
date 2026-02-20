@@ -58,11 +58,11 @@ public class PyIntroduceDialog extends DialogWrapper {
   private final PyExpression myExpression;
   private final String myHelpId;
 
-  public PyIntroduceDialog(@Nonnull final Project project,
-                           @Nonnull final String caption,
-                           @Nonnull final IntroduceValidator validator,
-                           final String helpId,
-                           final IntroduceOperation operation) {
+  public PyIntroduceDialog(@Nonnull Project project,
+                           @Nonnull String caption,
+                           @Nonnull IntroduceValidator validator,
+                           String helpId,
+                           IntroduceOperation operation) {
     super(project, true);
     myOccurrencesCount = operation.getOccurrences().size();
     myValidator = validator;
@@ -83,7 +83,7 @@ public class PyIntroduceDialog extends DialogWrapper {
   }
 
   private void setUpNameComboBox(Collection<String> possibleNames) {
-    final EditorComboBoxEditor comboEditor = new StringComboboxEditor(myProject, PythonFileType.INSTANCE, myNameComboBox);
+    EditorComboBoxEditor comboEditor = new StringComboboxEditor(myProject, PythonFileType.INSTANCE, myNameComboBox);
 
     myNameComboBox.setEditor(comboEditor);
     myNameComboBox.setRenderer(new EditorComboBoxRenderer(comboEditor));
@@ -146,7 +146,7 @@ public class PyIntroduceDialog extends DialogWrapper {
 
   @Nullable
   public String getName() {
-    final Object item = myNameComboBox.getEditor().getItem();
+    Object item = myNameComboBox.getEditor().getItem();
     if ((item instanceof String) && ((String)item).length() > 0) {
       return ((String)item).trim();
     }
@@ -166,7 +166,7 @@ public class PyIntroduceDialog extends DialogWrapper {
   }
 
   private void updateControls() {
-    final boolean nameValid = myValidator.isNameValid(getName(), getProject());
+    boolean nameValid = myValidator.isNameValid(getName(), getProject());
     setOKActionEnabled(nameValid);
     setErrorText(!nameValid ? PyBundle.message("refactoring.introduce.name.error") : null);
   }

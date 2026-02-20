@@ -40,8 +40,8 @@ public class PyPackageManagersImpl extends PyPackageManagers {
   private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<>();
 
   @Nonnull
-  public synchronized PyPackageManager forSdk(@Nonnull final Sdk sdk) {
-    final String key = PythonSdkType.getSdkKey(sdk);
+  public synchronized PyPackageManager forSdk(@Nonnull Sdk sdk) {
+    String key = PythonSdkType.getSdkKey(sdk);
     PyPackageManagerImpl manager = myInstances.get(key);
     if (manager == null) {
       if (PyCondaPackageManagerImpl.isCondaVEnv(sdk) && PyCondaPackageService.getCondaExecutable(sdk.getHomeDirectory()) != null) {
@@ -57,8 +57,8 @@ public class PyPackageManagersImpl extends PyPackageManagers {
     return manager;
   }
 
-  private static boolean sdkIsSetUp(@Nonnull final Sdk sdk) {
-    final VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+  private static boolean sdkIsSetUp(@Nonnull Sdk sdk) {
+    VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
     return roots.length != 0;
   }
 
@@ -71,7 +71,7 @@ public class PyPackageManagersImpl extends PyPackageManagers {
 
   @Override
   public void clearCache(@Nonnull Sdk sdk) {
-    final String key = PythonSdkType.getSdkKey(sdk);
+    String key = PythonSdkType.getSdkKey(sdk);
     if (myInstances.containsKey(key)) {
       myInstances.remove(key);
     }

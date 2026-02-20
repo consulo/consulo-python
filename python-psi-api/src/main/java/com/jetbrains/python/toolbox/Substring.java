@@ -104,8 +104,8 @@ public class Substring implements CharSequence {
 
   @Nonnull
   public List<Substring> split(@Nonnull Pattern pattern, int maxSplits) {
-    final List<Substring> result = new ArrayList<>();
-    final Matcher m = pattern.matcher(myString);
+    List<Substring> result = new ArrayList<>();
+    Matcher m = pattern.matcher(myString);
     int start = myStartOffset;
     int end = myEndOffset;
     int splitCount = 0;
@@ -206,9 +206,9 @@ public class Substring implements CharSequence {
 
   @Nonnull
   public String concatTrimmedLines(@Nonnull String separator) {
-    final StringBuilder b = new StringBuilder();
+    StringBuilder b = new StringBuilder();
     List<Substring> lines = splitLines();
-    final int n = lines.size();
+    int n = lines.size();
     for (int i = 0; i < n; i++) {
       b.append(lines.get(i).trim().toString());
       if (i < n - 1) {
@@ -231,7 +231,7 @@ public class Substring implements CharSequence {
     if (!myString.equals(other.myString)) {
       throw new IllegalArgumentException(String.format("Substrings '%s' and '%s' must belong to the same origin", this, other));
     }
-    final TextRange unionRange = getTextRange().union(other.getTextRange());
+    TextRange unionRange = getTextRange().union(other.getTextRange());
     return new Substring(getSuperString(), unionRange.getStartOffset(), unionRange.getEndOffset());
   }
 

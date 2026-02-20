@@ -55,7 +55,7 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
             return false;
         }
         PyFunction function = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
-        final PyStatementList statementList = PsiTreeUtil.getParentOfType(elementAt, PyStatementList.class, false, PyFunction.class);
+        PyStatementList statementList = PsiTreeUtil.getParentOfType(elementAt, PyStatementList.class, false, PyFunction.class);
         if (function == null || statementList != null) {
             return false;
         }
@@ -96,11 +96,11 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
         if (!DocStringUtil.ensureNotPlainDocstringFormat(docStringOwner)) {
             return;
         }
-        final PyDocstringGenerator docstringGenerator =
+        PyDocstringGenerator docstringGenerator =
             PyDocstringGenerator.forDocStringOwner(docStringOwner).withInferredParameters(false).addFirstEmptyLine();
-        final PyStringLiteralExpression updated = docstringGenerator.buildAndInsert().getDocStringExpression();
+        PyStringLiteralExpression updated = docstringGenerator.buildAndInsert().getDocStringExpression();
         if (updated != null && editor != null) {
-            final int offset = updated.getTextOffset();
+            int offset = updated.getTextOffset();
             editor.getCaretModel().moveToOffset(offset);
             editor.getCaretModel().moveCaretRelatively(0, 1, false, false, false);
         }

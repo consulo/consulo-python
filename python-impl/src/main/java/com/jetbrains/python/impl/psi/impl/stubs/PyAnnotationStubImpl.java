@@ -26,7 +26,7 @@ import com.jetbrains.python.psi.stubs.PyAnnotationStub;
  * @author yole
  */
 public class PyAnnotationStubImpl extends StubBase<PyAnnotation> implements PyAnnotationStub {
-  protected PyAnnotationStubImpl(final StubElement parent, final IStubElementType elementType) {
+  protected PyAnnotationStubImpl(StubElement parent, IStubElementType elementType) {
     super(parent, elementType);
   }
 }

@@ -64,7 +64,7 @@ public class PySetFunctionToLiteralInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyCallExpression(final PyCallExpression node) {
+        public void visitPyCallExpression(PyCallExpression node) {
             if (!isAvailable(node)) {
                 return;
             }
@@ -85,12 +85,12 @@ public class PySetFunctionToLiteralInspection extends PyInspection {
         }
 
         private static boolean isAvailable(PyCallExpression node) {
-            final InspectionProfile profile = InspectionProjectProfileManager.getInstance(node.getProject()).getInspectionProfile();
-            final InspectionToolWrapper inspectionTool = profile.getInspectionTool("PyCompatibilityInspection", node.getProject());
+            InspectionProfile profile = InspectionProjectProfileManager.getInstance(node.getProject()).getInspectionProfile();
+            InspectionToolWrapper inspectionTool = profile.getInspectionTool("PyCompatibilityInspection", node.getProject());
             if (inspectionTool != null) {
-                final Object inspection = inspectionTool.getState();
+                Object inspection = inspectionTool.getState();
                 if (inspection instanceof PyCompatibilityInspectionState) {
-                    final List<String> versions = ((PyCompatibilityInspectionState) inspection).versions;
+                    List<String> versions = ((PyCompatibilityInspectionState) inspection).versions;
                     for (String s : versions) {
                         if (!LanguageLevel.fromPythonVersion(s).supportsSetLiterals()) {
                             return false;

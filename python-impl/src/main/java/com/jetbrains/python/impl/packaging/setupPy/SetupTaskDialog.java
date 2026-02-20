@@ -134,7 +134,7 @@ public class SetupTaskDialog extends DialogWrapper {
   public JComponent getPreferredFocusedComponent() {
     if (myCurrentCard.equals(CARD_OPTIONS)) {
       if (myOptionComponents.size() > 0) {
-        final JComponent component = myOptionComponents.values().iterator().next();
+        JComponent component = myOptionComponents.values().iterator().next();
         return component instanceof LabeledComponent ? ((LabeledComponent)component).getComponent() : component;
       }
       return super.getPreferredFocusedComponent();
@@ -148,7 +148,7 @@ public class SetupTaskDialog extends DialogWrapper {
     }
     List<String> result = new ArrayList<String>();
     for (Map.Entry<SetupTask.Option, JComponent> entry : myOptionComponents.entrySet()) {
-      final SetupTask.Option option = entry.getKey();
+      SetupTask.Option option = entry.getKey();
       if (option.checkbox) {
         JCheckBox checkBox = (JCheckBox)entry.getValue();
         if (checkBox.isSelected() != option.negative) {

@@ -109,7 +109,7 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public String handshake() throws PyDebuggerException
 	{
-		final VersionCommand command = new VersionCommand(this, LOCAL_VERSION, SystemInfo.isUnix ? "UNIX" : "WIN");
+		VersionCommand command = new VersionCommand(this, LOCAL_VERSION, SystemInfo.isUnix ? "UNIX" : "WIN");
 		command.execute();
 		String version = command.getRemoteVersion();
 		if(version != null)
@@ -120,16 +120,16 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public PyDebugValue evaluate(final String threadId, final String frameId, final String expression, final boolean execute) throws PyDebuggerException
+	public PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute) throws PyDebuggerException
 	{
 		return evaluate(threadId, frameId, expression, execute, true);
 	}
 
 
 	@Override
-	public PyDebugValue evaluate(final String threadId, final String frameId, final String expression, final boolean execute, boolean trimResult) throws PyDebuggerException
+	public PyDebugValue evaluate(String threadId, String frameId, String expression, boolean execute, boolean trimResult) throws PyDebuggerException
 	{
-		final EvaluateCommand command = new EvaluateCommand(this, threadId, frameId, expression, execute, trimResult);
+		EvaluateCommand command = new EvaluateCommand(this, threadId, frameId, expression, execute, trimResult);
 		command.execute();
 		return command.getValue();
 	}
@@ -137,24 +137,24 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public void consoleExec(String threadId, String frameId, String expression, PyDebugCallback<String> callback)
 	{
-		final ConsoleExecCommand command = new ConsoleExecCommand(this, threadId, frameId, expression);
+		ConsoleExecCommand command = new ConsoleExecCommand(this, threadId, frameId, expression);
 		command.execute(callback);
 	}
 
 	@Override
-	public XValueChildrenList loadFrame(final String threadId, final String frameId) throws PyDebuggerException
+	public XValueChildrenList loadFrame(String threadId, String frameId) throws PyDebuggerException
 	{
-		final GetFrameCommand command = new GetFrameCommand(this, threadId, frameId);
+		GetFrameCommand command = new GetFrameCommand(this, threadId, frameId);
 		command.execute();
 		return command.getVariables();
 	}
 
 	// todo: don't generate temp variables for qualified expressions - just split 'em
 	@Override
-	public XValueChildrenList loadVariable(final String threadId, final String frameId, final PyDebugValue var) throws PyDebuggerException
+	public XValueChildrenList loadVariable(String threadId, String frameId, PyDebugValue var) throws PyDebuggerException
 	{
 		setTempVariable(threadId, frameId, var);
-		final GetVariableCommand command = new GetVariableCommand(this, threadId, frameId, var);
+		GetVariableCommand command = new GetVariableCommand(this, threadId, frameId, var);
 		command.execute();
 		return command.getVariables();
 	}
@@ -162,14 +162,14 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public ArrayChunk loadArrayItems(String threadId, String frameId, PyDebugValue var, int rowOffset, int colOffset, int rows, int cols, String format) throws PyDebuggerException
 	{
-		final GetArrayCommand command = new GetArrayCommand(this, threadId, frameId, var, rowOffset, colOffset, rows, cols, format);
+		GetArrayCommand command = new GetArrayCommand(this, threadId, frameId, var, rowOffset, colOffset, rows, cols, format);
 		command.execute();
 		return command.getArray();
 	}
 
 
 	@Override
-	public void loadReferrers(final String threadId, final String frameId, final PyReferringObjectsValue var, final PyDebugCallback<XValueChildrenList> callback)
+	public void loadReferrers(String threadId, String frameId, PyReferringObjectsValue var, final PyDebugCallback<XValueChildrenList> callback)
 	{
 		RunCustomOperationCommand cmd = new GetReferrersCommand(this, threadId, frameId, var);
 
@@ -195,15 +195,15 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public PyDebugValue changeVariable(final String threadId, final String frameId, final PyDebugValue var, final String value) throws PyDebuggerException
+	public PyDebugValue changeVariable(String threadId, String frameId, PyDebugValue var, String value) throws PyDebuggerException
 	{
 		setTempVariable(threadId, frameId, var);
 		return doChangeVariable(threadId, frameId, var.getEvaluationExpression(), value);
 	}
 
-	private PyDebugValue doChangeVariable(final String threadId, final String frameId, final String varName, final String value) throws PyDebuggerException
+	private PyDebugValue doChangeVariable(String threadId, String frameId, String varName, String value) throws PyDebuggerException
 	{
-		final ChangeVariableCommand command = new ChangeVariableCommand(this, threadId, frameId, varName, value);
+		ChangeVariableCommand command = new ChangeVariableCommand(this, threadId, frameId, varName, value);
 		command.execute();
 		return command.getNewValue();
 	}
@@ -236,9 +236,9 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	// todo: change variable in lists doesn't work - either fix in pydevd or format var name appropriately
-	private void setTempVariable(final String threadId, final String frameId, final PyDebugValue var)
+	private void setTempVariable(String threadId, String frameId, PyDebugValue var)
 	{
-		final PyDebugValue topVar = var.getTopParent();
+		PyDebugValue topVar = var.getTopParent();
 		if(!myDebugProcess.canSaveToTemp(topVar.getName()))
 		{
 			return;
@@ -261,16 +261,16 @@ public class RemoteDebugger implements ProcessDebugger
 		}
 	}
 
-	public String generateSaveTempName(final String threadId, final String frameId)
+	public String generateSaveTempName(String threadId, String frameId)
 	{
-		final String tempName = generateTempName();
+		String tempName = generateTempName();
 		myTempVars.put(threadId, frameId, tempName);
 		return tempName;
 	}
 
-	private void clearTempVariables(final String threadId)
+	private void clearTempVariables(String threadId)
 	{
-		final Map<String, Set<String>> threadVars = myTempVars.get(threadId);
+		Map<String, Set<String>> threadVars = myTempVars.get(threadId);
 		if(threadVars == null || threadVars.size() == 0)
 		{
 			return;
@@ -278,13 +278,13 @@ public class RemoteDebugger implements ProcessDebugger
 
 		for(Map.Entry<String, Set<String>> entry : threadVars.entrySet())
 		{
-			final Set<String> frameVars = entry.getValue();
+			Set<String> frameVars = entry.getValue();
 			if(frameVars == null || frameVars.size() == 0)
 			{
 				continue;
 			}
 
-			final String expression = "del " + StringUtil.join(frameVars, ",");
+			String expression = "del " + StringUtil.join(frameVars, ",");
 			try
 			{
 				evaluate(threadId, entry.getKey(), expression, true);
@@ -318,7 +318,7 @@ public class RemoteDebugger implements ProcessDebugger
 		}
 	}
 
-	void placeResponse(final int sequence, final ProtocolFrame response)
+	void placeResponse(int sequence, ProtocolFrame response)
 	{
 		synchronized(myResponseQueue)
 		{
@@ -334,7 +334,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Nullable
-	ProtocolFrame waitForResponse(final int sequence)
+	ProtocolFrame waitForResponse(int sequence)
 	{
 		ProtocolFrame response;
 		long until = System.currentTimeMillis() + RESPONSE_TIMEOUT;
@@ -360,11 +360,11 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void execute(@Nonnull final AbstractCommand command)
+	public void execute(@Nonnull AbstractCommand command)
 	{
 		if(command instanceof ResumeOrStepCommand)
 		{
-			final String threadId = ((ResumeOrStepCommand) command).getThreadId();
+			String threadId = ((ResumeOrStepCommand) command).getThreadId();
 			clearTempVariables(threadId);
 		}
 
@@ -378,7 +378,7 @@ public class RemoteDebugger implements ProcessDebugger
 		}
 	}
 
-	boolean sendFrame(final ProtocolFrame frame)
+	boolean sendFrame(ProtocolFrame frame)
 	{
 		return myDebuggerTransport.sendFrame(frame);
 	}
@@ -396,7 +396,7 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public void suspendThread(String threadId)
 	{
-		final SuspendCommand command = new SuspendCommand(this, threadId);
+		SuspendCommand command = new SuspendCommand(this, threadId);
 		execute(command);
 	}
 
@@ -424,21 +424,21 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public void smartStepInto(String threadId, String functionName)
 	{
-		final SmartStepIntoCommand command = new SmartStepIntoCommand(this, threadId, functionName);
+		SmartStepIntoCommand command = new SmartStepIntoCommand(this, threadId, functionName);
 		execute(command);
 	}
 
 	@Override
 	public void resumeOrStep(String threadId, ResumeOrStepCommand.Mode mode)
 	{
-		final ResumeOrStepCommand command = new ResumeOrStepCommand(this, threadId, mode);
+		ResumeOrStepCommand command = new ResumeOrStepCommand(this, threadId, mode);
 		execute(command);
 	}
 
 	@Override
 	public void setTempBreakpoint(@Nonnull String type, @Nonnull String file, int line)
 	{
-		final SetBreakpointCommand command = new SetBreakpointCommand(this, type, file, line);
+		SetBreakpointCommand command = new SetBreakpointCommand(this, type, file, line);
 		execute(command);  // set temp. breakpoint
 		myTempBreakpoints.put(Pair.create(file, line), type);
 	}
@@ -449,7 +449,7 @@ public class RemoteDebugger implements ProcessDebugger
 		String type = myTempBreakpoints.get(Pair.create(file, line));
 		if(type != null)
 		{
-			final RemoveBreakpointCommand command = new RemoveBreakpointCommand(this, type, file, line);
+			RemoveBreakpointCommand command = new RemoveBreakpointCommand(this, type, file, line);
 			execute(command);  // remove temp. breakpoint
 		}
 		else
@@ -467,7 +467,7 @@ public class RemoteDebugger implements ProcessDebugger
 			@Nullable String funcName,
 			@Nonnull SuspendPolicy policy)
 	{
-		final SetBreakpointCommand command = new SetBreakpointCommand(this, typeId, file, line, condition, logExpression, funcName, policy);
+		SetBreakpointCommand command = new SetBreakpointCommand(this, typeId, file, line, condition, logExpression, funcName, policy);
 		execute(command);
 	}
 
@@ -475,23 +475,23 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public void removeBreakpoint(@Nonnull String typeId, @Nonnull String file, int line)
 	{
-		final RemoveBreakpointCommand command = new RemoveBreakpointCommand(this, typeId, file, line);
+		RemoveBreakpointCommand command = new RemoveBreakpointCommand(this, typeId, file, line);
 		execute(command);
 	}
 
 	@Override
 	public void setShowReturnValues(boolean isShowReturnValues)
 	{
-		final ShowReturnValuesCommand command = new ShowReturnValuesCommand(this, isShowReturnValues);
+		ShowReturnValuesCommand command = new ShowReturnValuesCommand(this, isShowReturnValues);
 		execute(command);
 	}
 
 	// for DebuggerReader only
-	public void processResponse(@Nonnull final String line)
+	public void processResponse(@Nonnull String line)
 	{
 		try
 		{
-			final ProtocolFrame frame = new ProtocolFrame(line);
+			ProtocolFrame frame = new ProtocolFrame(line);
 			logFrame(frame, false);
 
 			myDebuggerTransport.messageReceived(frame);
@@ -553,7 +553,7 @@ public class RemoteDebugger implements ProcessDebugger
 		{
 			case AbstractCommand.CREATE_THREAD:
 			{
-				final PyThreadInfo thread = parseThreadEvent(frame);
+				PyThreadInfo thread = parseThreadEvent(frame);
 				if(!thread.isPydevThread())
 				{  // ignore pydevd threads
 					myThreads.put(thread.getId(), thread);
@@ -568,7 +568,7 @@ public class RemoteDebugger implements ProcessDebugger
 			}
 			case AbstractCommand.SUSPEND_THREAD:
 			{
-				final PyThreadInfo event = parseThreadEvent(frame);
+				PyThreadInfo event = parseThreadEvent(frame);
 				PyThreadInfo thread = myThreads.get(event.getId());
 				if(thread == null)
 				{
@@ -591,8 +591,8 @@ public class RemoteDebugger implements ProcessDebugger
 			}
 			case AbstractCommand.RESUME_THREAD:
 			{
-				final String id = ProtocolParser.getThreadId(frame.getPayload());
-				final PyThreadInfo thread = myThreads.get(id);
+				String id = ProtocolParser.getThreadId(frame.getPayload());
+				PyThreadInfo thread = myThreads.get(id);
 				if(thread != null)
 				{
 					thread.updateState(PyThreadInfo.State.RUNNING, null);
@@ -602,8 +602,8 @@ public class RemoteDebugger implements ProcessDebugger
 			}
 			case AbstractCommand.KILL_THREAD:
 			{
-				final String id = frame.getPayload();
-				final PyThreadInfo thread = myThreads.get(id);
+				String id = frame.getPayload();
+				PyThreadInfo thread = myThreads.get(id);
 				if(thread != null)
 				{
 					thread.updateState(PyThreadInfo.State.KILLED, null);
@@ -625,7 +625,7 @@ public class RemoteDebugger implements ProcessDebugger
 			}
 			case AbstractCommand.SHOW_CONSOLE:
 			{
-				final PyThreadInfo event = parseThreadEvent(frame);
+				PyThreadInfo event = parseThreadEvent(frame);
 				PyThreadInfo thread = myThreads.get(event.getId());
 				if(thread == null)
 				{
@@ -650,15 +650,15 @@ public class RemoteDebugger implements ProcessDebugger
 	{
 		private final Map<String, Map<String, Set<String>>> myData = new HashMap<>();
 
-		public boolean contains(final String threadId, final String frameId, final String name)
+		public boolean contains(String threadId, String frameId, String name)
 		{
-			final Map<String, Set<String>> threadVars = myData.get(threadId);
+			Map<String, Set<String>> threadVars = myData.get(threadId);
 			if(threadVars == null)
 			{
 				return false;
 			}
 
-			final Set<String> frameVars = threadVars.get(frameId);
+			Set<String> frameVars = threadVars.get(frameId);
 			if(frameVars == null)
 			{
 				return false;
@@ -667,7 +667,7 @@ public class RemoteDebugger implements ProcessDebugger
 			return frameVars.contains(name);
 		}
 
-		protected void put(final String threadId, final String frameId, final String name)
+		protected void put(String threadId, String frameId, String name)
 		{
 			Map<String, Set<String>> threadVars = myData.get(threadId);
 			if(threadVars == null)
@@ -684,7 +684,7 @@ public class RemoteDebugger implements ProcessDebugger
 			frameVars.add(name);
 		}
 
-		protected Map<String, Set<String>> get(final String threadId)
+		protected Map<String, Set<String>> get(String threadId)
 		{
 			return myData.get(threadId);
 		}
@@ -694,9 +694,9 @@ public class RemoteDebugger implements ProcessDebugger
 			myData.clear();
 		}
 
-		protected void clear(final String threadId)
+		protected void clear(String threadId)
 		{
-			final Map<String, Set<String>> threadVars = myData.get(threadId);
+			Map<String, Set<String>> threadVars = myData.get(threadId);
 			if(threadVars != null)
 			{
 				threadVars.clear();
@@ -717,7 +717,7 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public List<PydevCompletionVariant> getCompletions(String threadId, String frameId, String prefix)
 	{
-		final GetCompletionsCommand command = new GetCompletionsCommand(this, threadId, frameId, prefix);
+		GetCompletionsCommand command = new GetCompletionsCommand(this, threadId, frameId, prefix);
 		execute(command);
 		return command.getCompletions();
 	}
@@ -725,7 +725,7 @@ public class RemoteDebugger implements ProcessDebugger
 	@Override
 	public String getDescription(String threadId, String frameId, String cmd)
 	{
-		final GetDescriptionCommand command = new GetDescriptionCommand(this, threadId, frameId, cmd);
+		GetDescriptionCommand command = new GetDescriptionCommand(this, threadId, frameId, cmd);
 		execute(command);
 		return command.getResult();
 	}

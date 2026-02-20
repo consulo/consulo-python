@@ -201,7 +201,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 		return this;
 	}
 
-	public boolean visitRoot(final VirtualFile root, @Nullable Module module, @Nullable Sdk sdk, boolean isModuleSource)
+	public boolean visitRoot(VirtualFile root, @Nullable Module module, @Nullable Sdk sdk, boolean isModuleSource)
 	{
 		if(!root.isValid())
 		{
@@ -267,11 +267,11 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 			}
 		}
 
-		final PythonPathCache cache = findMyCache();
-		final boolean mayCache = cache != null && !myWithoutRoots && !myWithoutForeign;
+		PythonPathCache cache = findMyCache();
+		boolean mayCache = cache != null && !myWithoutRoots && !myWithoutForeign;
 		if(mayCache)
 		{
-			final List<PsiElement> cachedResults = cache.get(myQualifiedName);
+			List<PsiElement> cachedResults = cache.get(myQualifiedName);
 			if(cachedResults != null)
 			{
 				mySourceResults.addAll(cachedResults);
@@ -301,7 +301,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 			myForeignResults.clear();
 		}
 
-		final ArrayList<PsiElement> results = Lists.newArrayList(mySourceResults);
+		ArrayList<PsiElement> results = Lists.newArrayList(mySourceResults);
 		if(mayCache)
 		{
 			cache.put(myQualifiedName, results);
@@ -329,7 +329,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 		}
 		else if(myContext.getModule() != null)
 		{
-			final boolean otherSdk = withOtherSdk();
+			boolean otherSdk = withOtherSdk();
 			RootVisitorHost.visitRoots(myContext.getModule(), otherSdk, this);
 			if(otherSdk)
 			{
@@ -354,7 +354,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	@Nullable
 	public PsiElement firstResult()
 	{
-		final List<PsiElement> results = resultsAsList();
+		List<PsiElement> results = resultsAsList();
 		return results.size() > 0 ? results.get(0) : null;
 	}
 
@@ -378,7 +378,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	@Nullable
 	public <T extends PsiElement> T firstResultOfType(Class<T> clazz)
 	{
-		final List<T> list = resultsOfType(clazz);
+		List<T> list = resultsOfType(clazz);
 		return list.size() > 0 ? list.get(0) : null;
 	}
 
@@ -400,7 +400,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 		}
 		if(myContext.getFootholdFile() != null)
 		{
-			final Sdk sdk = PyBuiltinCache.findSdkForNonModuleFile(myContext.getFootholdFile());
+			Sdk sdk = PyBuiltinCache.findSdkForNonModuleFile(myContext.getFootholdFile());
 			if(sdk != null)
 			{
 				return PythonSdkPathCache.getInstance(myContext.getProject(), sdk);

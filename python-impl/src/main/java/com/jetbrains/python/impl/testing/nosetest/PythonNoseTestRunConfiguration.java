@@ -85,7 +85,7 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
     return myPluralTitle;
   }
 
-  public RunProfileState getState(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException {
     return new PythonNoseTestCommandLineState(this, env);
   }
 

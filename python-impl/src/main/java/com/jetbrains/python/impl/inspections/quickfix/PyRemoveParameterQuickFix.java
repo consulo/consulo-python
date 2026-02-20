@@ -39,23 +39,23 @@ public class PyRemoveParameterQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameRemoveParameter();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
         assert element instanceof PyParameter;
 
-        final PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        PyFunction pyFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
 
         if (pyFunction != null) {
-            final List<UsageInfo> usages = PyRefactoringUtil.findUsages(pyFunction, false);
+            List<UsageInfo> usages = PyRefactoringUtil.findUsages(pyFunction, false);
             for (UsageInfo usage : usages) {
-                final PsiElement usageElement = usage.getElement();
+                PsiElement usageElement = usage.getElement();
                 if (usageElement != null) {
-                    final PsiElement callExpression = usageElement.getParent();
+                    PsiElement callExpression = usageElement.getParent();
                     if (callExpression instanceof PyCallExpression) {
-                        final PyArgumentList argumentList = ((PyCallExpression) callExpression).getArgumentList();
+                        PyArgumentList argumentList = ((PyCallExpression) callExpression).getArgumentList();
                         if (argumentList != null) {
-                            final PyResolveContext resolveContext = PyResolveContext.noImplicits();
-                            final PyCallExpression.PyArgumentsMapping mapping =
+                            PyResolveContext resolveContext = PyResolveContext.noImplicits();
+                            PyCallExpression.PyArgumentsMapping mapping =
                                 ((PyCallExpression) callExpression).mapArguments(resolveContext);
                             for (Map.Entry<PyExpression, PyNamedParameter> parameterEntry : mapping.getMappedParameters().entrySet()) {
                                 if (parameterEntry.getValue().equals(element)) {
@@ -66,8 +66,8 @@ public class PyRemoveParameterQuickFix implements LocalQuickFix {
                     }
                 }
             }
-            final PyStringLiteralExpression expression = pyFunction.getDocStringExpression();
-            final String paramName = ((PyParameter) element).getName();
+            PyStringLiteralExpression expression = pyFunction.getDocStringExpression();
+            String paramName = ((PyParameter) element).getName();
             if (expression != null && paramName != null) {
                 PyDocstringGenerator.forDocStringOwner(pyFunction).withoutParam(paramName).buildAndInsert();
             }

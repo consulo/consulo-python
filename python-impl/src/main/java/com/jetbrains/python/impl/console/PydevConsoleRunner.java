@@ -119,7 +119,7 @@ public interface PydevConsoleRunner {
   }
 
   static String constructPythonPathCommand(Collection<String> pythonPath, String command) {
-    final String path = Joiner.on(", ").join(Collections2.transform(pythonPath, new Function<String, String>() {
+    String path = Joiner.on(", ").join(Collections2.transform(pythonPath, new Function<String, String>() {
       @Override
       public String apply(String input) {
         return "'" + input.replace("\\", "\\\\").replace("'", "\\'") + "'";
@@ -143,8 +143,8 @@ public interface PydevConsoleRunner {
    * @param project current project
    */
   static void setCorrectStdOutEncoding(@Nonnull Map<String, String> envs, @Nonnull Project project) {
-    final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
-    final String encoding = defaultCharset.name();
+    Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
+    String encoding = defaultCharset.name();
     setPythonIOEncoding(setPythonUnbuffered(envs), encoding);
   }
 
@@ -156,7 +156,7 @@ public interface PydevConsoleRunner {
    * @param project     current project
    */
   static void setCorrectStdOutEncoding(@Nonnull GeneralCommandLine commandLine, @Nonnull Project project) {
-    final Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
+    Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
     commandLine.setCharset(defaultCharset);
     setPythonIOEncoding(commandLine.getEnvironment(), defaultCharset.name());
   }
@@ -185,13 +185,13 @@ public interface PydevConsoleRunner {
 
   @Nullable
   static ConsoleCommunication getConsoleCommunication(PsiElement element) {
-    final PsiFile containingFile = element.getContainingFile();
+    PsiFile containingFile = element.getContainingFile();
     return containingFile != null ? containingFile.getCopyableUserData(CONSOLE_KEY) : null;
   }
 
   @Nullable
   static Sdk getConsoleSdk(PsiElement element) {
-    final PsiFile containingFile = element.getContainingFile();
+    PsiFile containingFile = element.getContainingFile();
     return containingFile != null ? containingFile.getCopyableUserData(CONSOLE_SDK) : null;
   }
 

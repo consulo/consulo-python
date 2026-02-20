@@ -55,13 +55,13 @@ public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElem
 
 	private static boolean hasParams(@Nonnull InsertionContext context, @Nonnull LookupElement item)
 	{
-		final PyFunction function = getFunction(item);
+		PyFunction function = getFunction(item);
 		return function != null && hasParams(context, function);
 	}
 
 	public static boolean hasParams(@Nonnull InsertionContext context, @Nonnull PyFunction function)
 	{
-		final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
+		PsiElement element = context.getFile().findElementAt(context.getStartOffset());
 		PyReferenceExpression refExpr = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
 		int implicitArgsCount = refExpr != null ? PyCallExpressionHelper.getImplicitArgumentCount(refExpr, function, PyResolveContext.noImplicits()) : 0;
 		return function.getParameterList().getParameters().length > implicitArgsCount;

@@ -24,9 +24,9 @@ public abstract class PyResolveTestCase extends PyTestCase {
   @NonNls protected static final String MARKER = "<ref>";
 
 
-  protected PsiReference configureByFile(@TestDataFile final String filePath) {
+  protected PsiReference configureByFile(@TestDataFile String filePath) {
     VirtualFile testDataRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(getTestDataPath()));
-    final VirtualFile file = testDataRoot.findFileByRelativePath(filePath);
+    VirtualFile file = testDataRoot.findFileByRelativePath(filePath);
     assertNotNull(file);
 
     String fileText;
@@ -39,15 +39,15 @@ public abstract class PyResolveTestCase extends PyTestCase {
     int offset = fileText.indexOf(MARKER);
     assertTrue(offset >= 0);
     fileText = fileText.substring(0, offset) + fileText.substring(offset + MARKER.length());
-    final String finalFileText = fileText;
+    String finalFileText = fileText;
     myFixture.configureByText(new File(filePath).getName(), finalFileText);
-    final PsiReference reference = myFixture.getFile().findReferenceAt(offset);
+    PsiReference reference = myFixture.getFile().findReferenceAt(offset);
     return reference;
   }
 
   protected abstract PsiElement doResolve() throws Exception;
 
-  protected <T extends PsiElement> T assertResolvesTo(final LanguageLevel langLevel, final Class<T> aClass, final String name) {
+  protected <T extends PsiElement> T assertResolvesTo(LanguageLevel langLevel, Class<T> aClass, String name) {
     PythonLanguageLevelPusher.setForcedLanguageLevel(myFixture.getProject(), langLevel);
     try {
       return assertResolvesTo(aClass, name, null);
@@ -57,14 +57,14 @@ public abstract class PyResolveTestCase extends PyTestCase {
     }
   }
 
-  protected <T extends PsiElement> T assertResolvesTo(final Class<T> aClass, final String name) {
+  protected <T extends PsiElement> T assertResolvesTo(Class<T> aClass, String name) {
     return assertResolvesTo(aClass, name, null);
   }
 
-  protected <T extends PsiElement> T assertResolvesTo(final Class<T> aClass,
-                                                         final String name,
-                                                         String containingFilePath) {
-    final PsiElement element;
+  protected <T extends PsiElement> T assertResolvesTo(Class<T> aClass,
+                                                      String name,
+                                                      String containingFilePath) {
+    PsiElement element;
     try {
       element = doResolve();
     }
@@ -99,14 +99,14 @@ public abstract class PyResolveTestCase extends PyTestCase {
     return (T)element;
   }
 
-  public static int findMarkerOffset(final PsiFile psiFile) {
+  public static int findMarkerOffset(PsiFile psiFile) {
     Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
     assert document != null;
     int offset = -1;
     for (int i=1; i<document.getLineCount(); i++) {
       int lineStart = document.getLineStartOffset(i);
       int lineEnd = document.getLineEndOffset(i);
-      final int index=document.getCharsSequence().subSequence(lineStart, lineEnd).toString().indexOf("<ref>");
+      int index=document.getCharsSequence().subSequence(lineStart, lineEnd).toString().indexOf("<ref>");
       if (index>0) {
         offset = document.getLineStartOffset(i-1) + index;
       }
@@ -118,7 +118,7 @@ public abstract class PyResolveTestCase extends PyTestCase {
   @Nonnull
   public static PsiPolyVariantReference findReferenceByMarker(PsiFile psiFile) {
     int offset = findMarkerOffset(psiFile);
-    final PsiPolyVariantReference ref = (PsiPolyVariantReference)psiFile.findReferenceAt(offset);
+    PsiPolyVariantReference ref = (PsiPolyVariantReference)psiFile.findReferenceAt(offset);
     assertNotNull("<ref> in test file not found", ref);
     return ref;
   }

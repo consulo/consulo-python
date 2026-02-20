@@ -65,17 +65,17 @@ public class PyClassHasNoInitInspection extends PyInspection {
 
         @Override
         public void visitPyClass(PyClass node) {
-            final PyClass outerClass = PsiTreeUtil.getParentOfType(node, PyClass.class);
+            PyClass outerClass = PsiTreeUtil.getParentOfType(node, PyClass.class);
             assert node != null;
             if (outerClass != null && StringUtil.equalsIgnoreCase("meta", node.getName())) {
                 return;
             }
-            final List<PyClassLikeType> types = node.getAncestorTypes(myTypeEvalContext);
+            List<PyClassLikeType> types = node.getAncestorTypes(myTypeEvalContext);
             for (PyClassLikeType type : types) {
                 if (type == null) {
                     return;
                 }
-                final String qName = type.getClassQName();
+                String qName = type.getClassQName();
                 if (qName != null && qName.contains(PyNames.TEST_CASE)) {
                     return;
                 }
@@ -84,7 +84,7 @@ public class PyClassHasNoInitInspection extends PyInspection {
                 }
             }
 
-            final PyFunction init = node.findInitOrNew(true, null);
+            PyFunction init = node.findInitOrNew(true, null);
             if (init == null) {
                 registerProblem(
                     node.getNameIdentifier(),

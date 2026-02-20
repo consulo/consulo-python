@@ -42,7 +42,7 @@ public abstract class PyExpressionSurrounder implements Surrounder
     return isApplicable((PyExpression)elements[0]);
   }
 
-  public abstract boolean isApplicable(@Nonnull final PyExpression expr);
+  public abstract boolean isApplicable(@Nonnull PyExpression expr);
 
   public abstract TextRange surroundExpression(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PyExpression element)
     throws IncorrectOperationException;

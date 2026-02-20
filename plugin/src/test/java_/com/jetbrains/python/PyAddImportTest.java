@@ -28,7 +28,7 @@ public abstract class PyAddImportTest extends PyTestCase {
     doAddImportFrom("urllib", "unquote_plus");
   }
 
-  private void doAddImportFrom(final String path, final String name) {
+  private void doAddImportFrom(String path, String name) {
     myFixture.configureByFile("addImport/" + getTestName(true) + ".py");
     new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
       @Override

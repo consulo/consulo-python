@@ -35,7 +35,7 @@ public class PyNewProjectSettings {
     mySdk = sdk;
   }
 
-  public void setInstallFramework(final boolean installFramework) {
+  public void setInstallFramework(boolean installFramework) {
     myInstallFramework = installFramework;
   }
 

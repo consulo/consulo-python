@@ -80,13 +80,13 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
 
   @Override
   protected PyParameterTableModel createParametersInfoModel(PyMethodDescriptor method) {
-    final PyParameterList parameterList = PsiTreeUtil.getChildOfType(method.getMethod(), PyParameterList.class);
+    PyParameterList parameterList = PsiTreeUtil.getChildOfType(method.getMethod(), PyParameterList.class);
     return new PyParameterTableModel(parameterList, myDefaultValueContext, myProject);
   }
 
   @Override
   protected BaseRefactoringProcessor createRefactoringProcessor() {
-    final List<PyParameterInfo> parameters = getParameters();
+    List<PyParameterInfo> parameters = getParameters();
     return new PyChangeSignatureProcessor(myProject, myMethod.getMethod(), getMethodName(),
                                           parameters.toArray(new PyParameterInfo[parameters.size()]));
   }
@@ -103,8 +103,8 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
     return null;
   }
 
-  public boolean isNameValid(final String name, final Project project) {
-    final NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.getInstance());
+  public boolean isNameValid(String name, Project project) {
+    NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.getInstance());
     return (name != null) &&
       (validator.isIdentifier(name, project)) &&
       !(validator.isKeyword(name, project));
@@ -113,9 +113,9 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   @Nullable
   @Override
   protected String validateAndCommitData() {
-    final String functionName = myNameField.getText().trim();
+    String functionName = myNameField.getText().trim();
     if (!functionName.equals(myMethod.getName())) {
-      final boolean defined = IntroduceValidator.isDefinedInScope(functionName, myMethod.getMethod());
+      boolean defined = IntroduceValidator.isDefinedInScope(functionName, myMethod.getMethod());
       if (defined) {
         return PyBundle.message("refactoring.change.signature.dialog.validation.name.defined");
       }
@@ -123,7 +123,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
         return PyBundle.message("refactoring.change.signature.dialog.validation.function.name");
       }
     }
-    final List<PyParameterTableModelItem> parameters = myParametersTableModel.getItems();
+    List<PyParameterTableModelItem> parameters = myParametersTableModel.getItems();
     Set<String> parameterNames = new HashSet<String>();
     boolean hadPositionalContainer = false;
     boolean hadKeywordContainer = false;
@@ -136,8 +136,8 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
 
     for (int index = 0; index != parametersLength; ++index) {
       PyParameterTableModelItem info = parameters.get(index);
-      final PyParameterInfo parameter = info.parameter;
-      final String name = parameter.getName();
+      PyParameterInfo parameter = info.parameter;
+      String name = parameter.getName();
       if (parameterNames.contains(name)) {
         return PyBundle.message("ANN.duplicate.param.name");
       }
@@ -177,7 +177,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
         else if (hadKeywordContainer) {
           return PyBundle.message("ANN.regular.param.after.keyword");
         }
-        final String defaultValue = info.getDefaultValue();
+        String defaultValue = info.getDefaultValue();
         if (defaultValue != null && !StringUtil.isEmptyOrSpaces(defaultValue) && parameter.getDefaultInSignature()) {
           hadDefaultValue = true;
         }
@@ -222,11 +222,11 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
     @NonNls StringBuilder builder = new StringBuilder();
     builder.append(getMethodName());
     builder.append("(");
-    final List<PyParameterTableModelItem> parameters = myParametersTableModel.getItems();
+    List<PyParameterTableModelItem> parameters = myParametersTableModel.getItems();
     for (int i = 0; i != parameters.size(); ++i) {
       PyParameterTableModelItem parameterInfo = parameters.get(i);
       builder.append(parameterInfo.parameter.getName());
-      final String defaultValue = parameterInfo.defaultValueCodeFragment.getText();
+      String defaultValue = parameterInfo.defaultValueCodeFragment.getText();
       if (!defaultValue.isEmpty() && parameterInfo.isDefaultInSignature()) {
         builder.append(" = " + defaultValue);
       }
@@ -243,11 +243,11 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   @Override
-  protected JComponent getRowPresentation(ParameterTableModelItemBase<PyParameterInfo> item, boolean selected, final boolean focused) {
+  protected JComponent getRowPresentation(ParameterTableModelItemBase<PyParameterInfo> item, boolean selected, boolean focused) {
     String text = item.parameter.getName();
-    final String defaultCallValue = item.defaultValueCodeFragment.getText();
+    String defaultCallValue = item.defaultValueCodeFragment.getText();
     PyParameterTableModelItem pyItem = (PyParameterTableModelItem)item;
-    final String defaultValue = pyItem.isDefaultInSignature() ? pyItem.defaultValueCodeFragment.getText() : "";
+    String defaultValue = pyItem.isDefaultInSignature() ? pyItem.defaultValueCodeFragment.getText() : "";
 
     if (StringUtil.isNotEmpty(defaultValue)) {
       text += " = " + defaultValue;
@@ -279,14 +279,14 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
       @Override
       public void prepareEditor(JTable table, int row) {
         setLayout(new GridLayout(1, 3));
-        final JPanel parameterPanel = createParameterPanel();
+        JPanel parameterPanel = createParameterPanel();
         add(parameterPanel);
-        final JPanel defaultValuePanel = createDefaultValuePanel();
+        JPanel defaultValuePanel = createDefaultValuePanel();
         add(defaultValuePanel);
-        final JPanel defaultValueCheckBox = createDefaultValueCheckBox();
+        JPanel defaultValueCheckBox = createDefaultValueCheckBox();
         add(defaultValueCheckBox);
 
-        final String nameText = myNameEditor.getText();
+        String nameText = myNameEditor.getText();
         myDefaultValueEditor.setEnabled(!nameText.startsWith("*")
                                           && !PyNames.CANONICAL_SELF.equals(nameText));
         myDefaultInSignature.setEnabled(!nameText.startsWith("*")
@@ -294,9 +294,9 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
       }
 
       private JPanel createDefaultValueCheckBox() {
-        final JPanel defaultValuePanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false));
+        JPanel defaultValuePanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false));
 
-        final JBLabel inSignatureLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.default.value.checkbox"),
+        JBLabel inSignatureLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.default.value.checkbox"),
                                                      UIUtil.ComponentStyle.SMALL);
 
         defaultValuePanel.add(inSignatureLabel, BorderLayout.WEST);
@@ -317,10 +317,10 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
       }
 
       private JPanel createDefaultValuePanel() {
-        final JPanel defaultValuePanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false));
-        final Document doc = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment);
+        JPanel defaultValuePanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false));
+        Document doc = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment);
         myDefaultValueEditor = new EditorTextField(doc, getProject(), getFileType());
-        final JBLabel defaultValueLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.default.value.label"),
+        JBLabel defaultValueLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.default.value.label"),
                                                       UIUtil.ComponentStyle.SMALL);
         defaultValuePanel.add(defaultValueLabel);
         defaultValuePanel.add(myDefaultValueEditor);
@@ -330,9 +330,9 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
       }
 
       private JPanel createParameterPanel() {
-        final JPanel namePanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false));
+        JPanel namePanel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false));
         myNameEditor = new EditorTextField(item.parameter.getName(), getProject(), getFileType());
-        final JBLabel nameLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.name.label"),
+        JBLabel nameLabel = new JBLabel(PyBundle.message("refactoring.change.signature.dialog.name.label"),
                                               UIUtil.ComponentStyle.SMALL);
         namePanel.add(nameLabel);
         namePanel.add(myNameEditor);
@@ -374,7 +374,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
 
       @Override
       public JComponent[] getFocusableComponents() {
-        final List<JComponent> focusable = new ArrayList<JComponent>();
+        List<JComponent> focusable = new ArrayList<JComponent>();
         focusable.add(myNameEditor.getFocusTarget());
         if (myDefaultValueEditor != null) {
           focusable.add(myDefaultValueEditor.getFocusTarget());

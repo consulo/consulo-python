@@ -61,11 +61,11 @@ public class PyAugmentAssignmentInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyAssignmentStatement(final PyAssignmentStatement node) {
-            final PyExpression value = node.getAssignedValue();
+        public void visitPyAssignmentStatement(PyAssignmentStatement node) {
+            PyExpression value = node.getAssignedValue();
             if (value instanceof PyBinaryExpression) {
-                final PyExpression target = node.getLeftHandSideExpression();
-                final PyBinaryExpression expression = (PyBinaryExpression) value;
+                PyExpression target = node.getLeftHandSideExpression();
+                PyBinaryExpression expression = (PyBinaryExpression) value;
                 PyExpression leftExpression = expression.getLeftExpression();
                 PyExpression rightExpression = expression.getRightExpression();
 
@@ -76,30 +76,30 @@ public class PyAugmentAssignmentInspection extends PyInspection {
                     return;
                 }
                 boolean changedParts = false;
-                final String targetText = target.getText();
-                final String rightText = rightExpression.getText();
+                String targetText = target.getText();
+                String rightText = rightExpression.getText();
                 if (rightText.equals(targetText)) {
-                    final PyExpression tmp = rightExpression;
+                    PyExpression tmp = rightExpression;
                     rightExpression = leftExpression;
                     leftExpression = tmp;
                     changedParts = true;
                 }
 
-                final PyElementType op = expression.getOperator();
-                final TokenSet operations = TokenSet.create(PyTokenTypes.PLUS, PyTokenTypes.MINUS, PyTokenTypes.MULT,
+                PyElementType op = expression.getOperator();
+                TokenSet operations = TokenSet.create(PyTokenTypes.PLUS, PyTokenTypes.MINUS, PyTokenTypes.MULT,
                     PyTokenTypes.FLOORDIV, PyTokenTypes.DIV, PyTokenTypes.PERC, PyTokenTypes.AND,
                     PyTokenTypes.OR, PyTokenTypes.XOR, PyTokenTypes.LTLT, PyTokenTypes.GTGT,
                     PyTokenTypes.EXP
                 );
-                final TokenSet commutativeOperations =
+                TokenSet commutativeOperations =
                     TokenSet.create(PyTokenTypes.PLUS, PyTokenTypes.MULT, PyTokenTypes.OR, PyTokenTypes.AND);
                 if ((operations.contains(op) && !changedParts) || (changedParts && commutativeOperations.contains(op))) {
                     if (leftExpression.getText()
                         .equals(targetText) && (leftExpression instanceof PyReferenceExpression || leftExpression instanceof PySubscriptionExpression)) {
-                        final PyType type = myTypeEvalContext.getType(rightExpression);
+                        PyType type = myTypeEvalContext.getType(rightExpression);
                         if (type != null && !PyTypeChecker.isUnknown(type)) {
-                            final PyBuiltinCache cache = PyBuiltinCache.getInstance(rightExpression);
-                            final LanguageLevel languageLevel = LanguageLevel.forElement(rightExpression);
+                            PyBuiltinCache cache = PyBuiltinCache.getInstance(rightExpression);
+                            LanguageLevel languageLevel = LanguageLevel.forElement(rightExpression);
                             if (isNumeric(type, cache) || (isString(type, cache, languageLevel) && !changedParts)) {
                                 registerProblem(
                                     node,

@@ -31,7 +31,7 @@ class NamelessFilter<T extends PyElement & PsiNamedElement> extends NotNullPredi
 {
 
 	@Override
-	public boolean applyNotNull(@Nonnull final T input)
+	public boolean applyNotNull(@Nonnull T input)
 	{
 		return input.getName() != null;
 	}

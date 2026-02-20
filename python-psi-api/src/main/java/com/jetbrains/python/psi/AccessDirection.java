@@ -35,7 +35,7 @@ public enum AccessDirection {
    * @return the access direction of element, judging from surrounding statements.
    */
   public static AccessDirection of(PyElement element) {
-    final PsiElement parent = element.getParent();
+    PsiElement parent = element.getParent();
     if (element instanceof PyTargetExpression) {
       return WRITE;
     }

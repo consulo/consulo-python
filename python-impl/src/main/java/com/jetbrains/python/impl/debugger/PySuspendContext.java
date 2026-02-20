@@ -31,7 +31,7 @@ public class PySuspendContext extends XSuspendContext {
     private final PyExecutionStack myActiveStack;
     private PyDebugProcess myDebugProcess;
 
-    public PySuspendContext(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo) {
+    public PySuspendContext(@Nonnull PyDebugProcess debugProcess, @Nonnull PyThreadInfo threadInfo) {
         myDebugProcess = debugProcess;
         myActiveStack = new PyExecutionStack(debugProcess, threadInfo, getThreadIcon(threadInfo));
     }
@@ -55,7 +55,7 @@ public class PySuspendContext extends XSuspendContext {
     @Nonnull
     @Override
     public XExecutionStack[] getExecutionStacks() {
-        final Collection<PyThreadInfo> threads = myDebugProcess.getThreads();
+        Collection<PyThreadInfo> threads = myDebugProcess.getThreads();
         if (threads.size() < 1) {
             return XExecutionStack.EMPTY_ARRAY;
         }

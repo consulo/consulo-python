@@ -45,7 +45,7 @@ public class PyElementNode extends BasePsiNode<PyElement>
     PyElement value = getValue();
     // for performance reasons, we don't show nested functions here
     if (value instanceof PyClass) {
-      final PyClass pyClass = (PyClass)value;
+      PyClass pyClass = (PyClass)value;
       List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
       for (PyClass aClass : pyClass.getNestedClasses()) {
         result.add(new PyElementNode(myProject, aClass, getSettings()));
@@ -61,7 +61,7 @@ public class PyElementNode extends BasePsiNode<PyElement>
   @Override
   protected void updateImpl(PresentationData data) {
     PyElement value = getValue();
-    final String name = value.getName();
+    String name = value.getName();
     StringBuilder presentableText = new StringBuilder(name != null ? name : "<unnamed>");
     if (value instanceof PyFunction) {
       presentableText.append(((PyFunction) value).getParameterList().getPresentableText(false));

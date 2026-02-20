@@ -37,7 +37,7 @@ public class BuildoutPsiUtil {
   public static BuildoutCfgSection getDjangoSection(@Nonnull BuildoutCfgFile configFile) {
     List<String> parts = configFile.getParts();
     for (String part : parts) {
-      final BuildoutCfgSection section = configFile.findSectionByName(part);
+      BuildoutCfgSection section = configFile.findSectionByName(part);
       if (section != null && DJANGO_RECIPE.equals(section.getOptionValue(RECIPE))) {
         return section;
       }

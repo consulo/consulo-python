@@ -24,7 +24,7 @@ import jakarta.annotation.Nullable;
  * @author traff
  */
 public class BuildoutCfgSectionHeader extends BuildoutCfgPsiElement {
-  public BuildoutCfgSectionHeader(@Nonnull final ASTNode node) {
+  public BuildoutCfgSectionHeader(@Nonnull ASTNode node) {
     super(node);
   }
 

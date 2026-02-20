@@ -9,13 +9,13 @@ import consulo.execution.debug.XSourcePosition;
 public interface PyPositionConverter {
 
   @Nonnull
-  PySourcePosition create(@Nonnull final String file, final int line);
+  PySourcePosition create(@Nonnull String file, int line);
 
   @Nonnull
-  PySourcePosition convertToPython(@Nonnull final XSourcePosition position);
+  PySourcePosition convertToPython(@Nonnull XSourcePosition position);
 
   @Nullable
-  XSourcePosition convertFromPython(@Nonnull final PySourcePosition position);
+  XSourcePosition convertFromPython(@Nonnull PySourcePosition position);
 
   PySignature convertSignature(PySignature signature);
 }

@@ -67,7 +67,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 		@Override
 		public void run(@Nonnull final Sdk sdk)
 		{
-			final PyPackageManagerUI ui = new PyPackageManagerUI(myProject, sdk, new PyPackageManagerUI.Listener()
+			PyPackageManagerUI ui = new PyPackageManagerUI(myProject, sdk, new PyPackageManagerUI.Listener()
 			{
 				@Override
 				public void started()
@@ -80,7 +80,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 				{
 					myPackagesTable.setPaintBusy(false);
 					PyPackageManager packageManager = PyPackageManager.getInstance(sdk);
-					final PackageManagementService.ErrorDescription description = PyPackageManagementService.toErrorDescription(exceptions, sdk);
+					PackageManagementService.ErrorDescription description = PyPackageManagementService.toErrorDescription(exceptions, sdk);
 					if(description != null)
 					{
 						consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel.showError("Failed to install Python packaging tools", description);
@@ -94,14 +94,14 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 		}
 	}
 
-	public void updateNotifications(@Nullable final Sdk selectedSdk)
+	public void updateNotifications(@Nullable Sdk selectedSdk)
 	{
 		if(selectedSdk == null)
 		{
 			myNotificationArea.hide();
 			return;
 		}
-		final Application application = ApplicationManager.getApplication();
+		Application application = ApplicationManager.getApplication();
 		application.executeOnPooledThread(() -> {
 			PyExecutionException exception = null;
 			try
@@ -120,26 +120,26 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 			{
 				return;
 			}
-			final PyExecutionException problem = exception;
+			PyExecutionException problem = exception;
 			application.invokeLater(() -> {
 				if(selectedSdk == getSelectedSdk())
 				{
 					myNotificationArea.hide();
 					if(problem != null)
 					{
-						final boolean invalid = PythonSdkType.isInvalid(selectedSdk);
+						boolean invalid = PythonSdkType.isInvalid(selectedSdk);
 						if(!invalid)
 						{
-							final StringBuilder builder = new StringBuilder(problem.getMessage());
+							StringBuilder builder = new StringBuilder(problem.getMessage());
 							builder.append(". ");
-							for(final PyExecutionFix fix : problem.getFixes())
+							for(PyExecutionFix fix : problem.getFixes())
 							{
-								final String key = "id" + fix.hashCode();
-								final String link = "<a href=\"" + key + "\">" + fix.getName() + "</a>";
+								String key = "id" + fix.hashCode();
+								String link = "<a href=\"" + key + "\">" + fix.getName() + "</a>";
 								builder.append(link);
 								builder.append(" ");
 								myNotificationArea.addLinkHandler(key, () -> {
-									final Sdk sdk = getSelectedSdk();
+									Sdk sdk = getSelectedSdk();
 									if(sdk != null)
 									{
 										fix.run(sdk);
@@ -179,13 +179,13 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 
 		if(PythonSdkType.isVirtualEnv(getSelectedSdk()) && pkg instanceof PyPackage)
 		{
-			final String location = ((PyPackage) pkg).getLocation();
+			String location = ((PyPackage) pkg).getLocation();
 			if(location != null && location.startsWith(PySdkUtil.getUserSite()))
 			{
 				return false;
 			}
 		}
-		final String name = pkg.getName();
+		String name = pkg.getName();
 		if(PyPackageUtil.PIP.equals(name) ||
 				PyPackageUtil.SETUPTOOLS.equals(name) ||
 				PyPackageUtil.DISTRIBUTE.equals(name) ||
@@ -197,7 +197,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 	}
 
 	@Override
-	protected boolean canInstallPackage(@Nonnull final InstalledPackage pyPackage)
+	protected boolean canInstallPackage(@Nonnull InstalledPackage pyPackage)
 	{
 		return installEnabled();
 	}

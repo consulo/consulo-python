@@ -29,7 +29,7 @@ public class BadDataException extends Exception
 	/**
 	 * @param message what exactly is wrong with data
 	 */
-	public BadDataException(@Nonnull final String message)
+	public BadDataException(@Nonnull String message)
 	{
 		super(message);
 	}

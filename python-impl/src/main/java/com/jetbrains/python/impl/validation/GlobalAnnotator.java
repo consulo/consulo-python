@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public class GlobalAnnotator extends PyAnnotator {
   @Override
-  public void visitPyGlobalStatement(final PyGlobalStatement node) {
+  public void visitPyGlobalStatement(PyGlobalStatement node) {
     PyFunction function = PsiTreeUtil.getParentOfType(node, PyFunction.class);
     if (function != null) {
       PyParameterList paramList = function.getParameterList();
@@ -48,9 +48,9 @@ public class GlobalAnnotator extends PyAnnotator {
       );
 
       // check globals
-      final AnnotationHolder holder = getHolder();
+      AnnotationHolder holder = getHolder();
       for (PyTargetExpression expr : node.getGlobals()) {
-        final String expr_name = expr.getReferencedName();
+        String expr_name = expr.getReferencedName();
         if (paramNames.contains(expr_name)) {
           holder.createErrorAnnotation(expr.getTextRange(), PyBundle.message("ANN.$0.both.global.and.param", expr_name));
         }

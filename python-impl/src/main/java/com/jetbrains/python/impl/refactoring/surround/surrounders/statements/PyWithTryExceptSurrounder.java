@@ -49,20 +49,20 @@ public class PyWithTryExceptSurrounder extends PyStatementSurrounder {
   {
     PyTryExceptStatement tryStatement = PyElementGenerator.getInstance(project).
       createFromText(LanguageLevel.getDefault(), PyTryExceptStatement.class, getTemplate());
-    final PsiElement parent = elements[0].getParent();
-    final PyStatementList statementList = tryStatement.getTryPart().getStatementList();
+    PsiElement parent = elements[0].getParent();
+    PyStatementList statementList = tryStatement.getTryPart().getStatementList();
     assert statementList != null;
     statementList.addRange(elements[0], elements[elements.length - 1]);
     statementList.getFirstChild().delete();
     tryStatement = (PyTryExceptStatement)parent.addBefore(tryStatement, elements[0]);
     parent.deleteChildRange(elements [0], elements[elements.length-1]);
 
-    final PsiFile psiFile = parent.getContainingFile();
-    final Document document = psiFile.getViewProvider().getDocument();
-    final RangeMarker rangeMarker = document.createRangeMarker(tryStatement.getTextRange());
+    PsiFile psiFile = parent.getContainingFile();
+    Document document = psiFile.getViewProvider().getDocument();
+    RangeMarker rangeMarker = document.createRangeMarker(tryStatement.getTextRange());
 
     CodeStyleManager.getInstance(project).reformat(psiFile);
-    final PsiElement element = psiFile.findElementAt(rangeMarker.getStartOffset());
+    PsiElement element = psiFile.findElementAt(rangeMarker.getStartOffset());
     tryStatement = PsiTreeUtil.getParentOfType(element, PyTryExceptStatement.class);
     if (tryStatement != null) {
       return getResultRange(tryStatement);
@@ -75,7 +75,7 @@ public class PyWithTryExceptSurrounder extends PyStatementSurrounder {
   }
 
   protected TextRange getResultRange(PyTryExceptStatement tryStatement) {
-    final PyExceptPart part = tryStatement.getExceptParts()[0];
+    PyExceptPart part = tryStatement.getExceptParts()[0];
     return part.getStatementList().getTextRange();
   }
 

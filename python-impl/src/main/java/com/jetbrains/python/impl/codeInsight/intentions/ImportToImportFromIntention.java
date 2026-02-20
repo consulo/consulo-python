@@ -68,14 +68,14 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
             boolean available = false;
             myImportElement = findImportElement(editor, file);
             if (myImportElement != null) {
-                final PsiElement parent = myImportElement.getParent();
+                PsiElement parent = myImportElement.getParent();
                 if (parent instanceof PyImportStatement) {
                     myRelativeLevel = 0;
                     available = true;
                 }
                 else if (parent instanceof PyFromImportStatement) {
-                    final PyFromImportStatement fromImport = (PyFromImportStatement) parent;
-                    final int relativeLevel = fromImport.getRelativeLevel();
+                    PyFromImportStatement fromImport = (PyFromImportStatement) parent;
+                    int relativeLevel = fromImport.getRelativeLevel();
                     PyPsiUtils.assertValid(fromImport);
                     if (fromImport.isValid() && relativeLevel > 0 && fromImport.getImportSource() == null) {
                         myRelativeLevel = relativeLevel;
@@ -97,7 +97,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
             assert myImportElement != null : "isAvailable() must have returned true, but myImportElement is null";
 
             // usages of imported name are qualifiers; what they refer to?
-            final PyReferenceExpression importReference = myImportElement.getImportReferenceExpression();
+            PyReferenceExpression importReference = myImportElement.getImportReferenceExpression();
             if (importReference != null) {
                 myModuleName = PyPsiUtils.toPath(importReference);
                 myQualifierName = myImportElement.getVisibleName();
@@ -111,11 +111,11 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
                                 element,
                                 PyImportElement.class
                             ) == null) {
-                                final PyReferenceExpression ref = (PyReferenceExpression) element;
+                                PyReferenceExpression ref = (PyReferenceExpression) element;
                                 if (myQualifierName.equals(PyPsiUtils.toPath(ref))) {  // filter out other names that might resolve to our target
-                                    final PsiElement parentElt = ref.getParent();
+                                    PsiElement parentElt = ref.getParent();
                                     if (parentElt instanceof PyQualifiedExpression) { // really qualified by us, not just referencing?
-                                        final PsiElement resolved = ref.getReference().resolve();
+                                        PsiElement resolved = ref.getReference().resolve();
                                         if (resolved == myReferee) {
                                             references.add(ref.getReference());
                                         }
@@ -136,33 +136,33 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
         public void invoke() {
             assert myImportElement != null : "isAvailable() must have returned true, but myImportElement is null";
             sure(myImportElement.getImportReferenceExpression());
-            final Project project = myImportElement.getProject();
+            Project project = myImportElement.getProject();
 
-            final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-            final LanguageLevel languageLevel = LanguageLevel.forElement(myImportElement);
+            PyElementGenerator generator = PyElementGenerator.getInstance(project);
+            LanguageLevel languageLevel = LanguageLevel.forElement(myImportElement);
 
             // usages of imported name are qualifiers; what they refer to?
             try {
                 // remember names and make them drop qualifiers
-                final Set<String> usedNames = new HashSet<>();
+                Set<String> usedNames = new HashSet<>();
                 for (PsiReference ref : myReferences) {
-                    final PsiElement elt = ref.getElement();
-                    final PsiElement parentElt = elt.getParent();
+                    PsiElement elt = ref.getElement();
+                    PsiElement parentElt = elt.getParent();
                     // TODO: find ident node more properly
-                    final String nameUsed = sure(sure(parentElt).getLastChild()).getText();
+                    String nameUsed = sure(sure(parentElt).getLastChild()).getText();
                     usedNames.add(nameUsed);
                     if (!FileModificationService.getInstance().preparePsiElementForWrite(elt)) {
                         return;
                     }
                     assert parentElt instanceof PyReferenceExpression;
-                    final PyElement newReference = generator.createExpressionFromText(languageLevel, nameUsed);
+                    PyElement newReference = generator.createExpressionFromText(languageLevel, nameUsed);
                     parentElt.replace(newReference);
                 }
 
                 // create a separate import stmt for the module
-                final PsiElement importer = myImportElement.getParent();
-                final PyStatement importStatement;
-                final PyImportElement[] importElements;
+                PsiElement importer = myImportElement.getParent();
+                PyStatement importStatement;
+                PyImportElement[] importElements;
                 if (importer instanceof PyImportStatement) {
                     importStatement = (PyImportStatement) importer;
                     importElements = ((PyImportStatement) importStatement).getImportElements();
@@ -174,9 +174,9 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
                 else {
                     throw new IncorrectOperationException("Not an import at all");
                 }
-                final PyFromImportStatement newImportStatement =
+                PyFromImportStatement newImportStatement =
                     generator.createFromImportStatement(languageLevel, getDots() + myModuleName, StringUtil.join(usedNames, ", "), null);
-                final PsiElement parent = importStatement.getParent();
+                PsiElement parent = importStatement.getParent();
                 sure(parent);
                 sure(parent.isValid());
                 if (importElements.length == 1) {
@@ -210,7 +210,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
         public LocalizeValue getText() {
             String moduleName = "?";
             if (myImportElement != null) {
-                final PyReferenceExpression reference = myImportElement.getImportReferenceExpression();
+                PyReferenceExpression reference = myImportElement.getImportReferenceExpression();
                 if (reference != null) {
                     moduleName = PyPsiUtils.toPath(reference);
                 }
@@ -230,8 +230,8 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
 
     @Nullable
     private static PyImportElement findImportElement(@Nonnull Editor editor, @Nonnull PsiFile file) {
-        final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        final PyImportElement importElement = PsiTreeUtil.getParentOfType(elementAtCaret, PyImportElement.class);
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+        PyImportElement importElement = PsiTreeUtil.getParentOfType(elementAtCaret, PyImportElement.class);
         PyPsiUtils.assertValid(importElement);
         if (importElement != null && importElement.isValid()) {
             return importElement;
@@ -246,7 +246,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
             return false;
         }
 
-        final IntentionState state = new IntentionState(editor, file);
+        IntentionState state = new IntentionState(editor, file);
         if (state.isAvailable()) {
             setText(state.getText());
             return true;
@@ -256,7 +256,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
 
     @Override
     public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final IntentionState state = new IntentionState(editor, file);
+        IntentionState state = new IntentionState(editor, file);
         state.invoke();
     }
 }

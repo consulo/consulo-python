@@ -42,7 +42,7 @@ public abstract class MembersBasedPresenterNoPreviewImpl<T extends MembersBasedV
 	 * @param infoStorage           info storage
 	 * @param model                 Member model (to be used for dependencies checking)
 	 */
-	protected MembersBasedPresenterNoPreviewImpl(@Nonnull final T view, @Nonnull final PyClass classUnderRefactoring, @Nonnull final PyMemberInfoStorage infoStorage, @Nonnull final M model)
+	protected MembersBasedPresenterNoPreviewImpl(@Nonnull T view, @Nonnull PyClass classUnderRefactoring, @Nonnull PyMemberInfoStorage infoStorage, @Nonnull M model)
 	{
 		super(view, classUnderRefactoring, infoStorage, model);
 	}

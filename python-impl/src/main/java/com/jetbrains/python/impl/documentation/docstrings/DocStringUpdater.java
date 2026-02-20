@@ -60,7 +60,7 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 
 	protected final void insertAfterLine(int lineNumber, @Nonnull String text)
 	{
-		final Substring line = myOriginalDocString.getLines().get(lineNumber);
+		Substring line = myOriginalDocString.getLines().get(lineNumber);
 		insert(line.getEndOffset(), '\n' + text);
 	}
 
@@ -75,9 +75,9 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 	 */
 	protected final void removeLines(int startLine, int endLine)
 	{
-		final List<Substring> lines = myOriginalDocString.getLines();
-		final int startOffset = lines.get(startLine).getStartOffset();
-		final int endOffset = endLine < lines.size() ? lines.get(endLine).getStartOffset() : lines.get(endLine - 1).getEndOffset();
+		List<Substring> lines = myOriginalDocString.getLines();
+		int startOffset = lines.get(startLine).getStartOffset();
+		int endOffset = endLine < lines.size() ? lines.get(endLine).getStartOffset() : lines.get(endLine - 1).getEndOffset();
 		remove(startOffset, endOffset);
 	}
 
@@ -98,7 +98,7 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 
 	protected final void insertBeforeLine(int lineNumber, @Nonnull String text)
 	{
-		final Substring line = myOriginalDocString.getLines().get(lineNumber);
+		Substring line = myOriginalDocString.getLines().get(lineNumber);
 		insert(line.getStartOffset(), text + '\n');
 	}
 
@@ -115,9 +115,9 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 		// so the first added is placed above
 		Collections.reverse(myUpdates);
 		Collections.sort(myUpdates, Collections.reverseOrder());
-		for(final Modification update : myUpdates)
+		for(Modification update : myUpdates)
 		{
-			final TextRange updateRange = update.range;
+			TextRange updateRange = update.range;
 			if(updateRange.getStartOffset() == updateRange.getEndOffset())
 			{
 				myBuilder.insert(updateRange.getStartOffset(), update.text);
@@ -144,7 +144,7 @@ public abstract class DocStringUpdater<T extends DocStringLineParser>
 	@Nonnull
 	protected String getLineIndent(int lineNum)
 	{
-		final String lastLineIndent = myOriginalDocString.getLineIndent(lineNum);
+		String lastLineIndent = myOriginalDocString.getLineIndent(lineNum);
 		if(PyIndentUtil.getLineIndentSize(lastLineIndent) < PyIndentUtil.getLineIndentSize(myMinContentIndent))
 		{
 			return myMinContentIndent;

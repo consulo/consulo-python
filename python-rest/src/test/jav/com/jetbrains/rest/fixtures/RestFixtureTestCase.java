@@ -24,7 +24,7 @@ public abstract class RestFixtureTestCase extends UsefulTestCase {
     super.setUp();
     IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
     TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder(getProjectDescriptor());
-    final IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
+    IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
     myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(fixture,
                                                                                     new LightTempDirTestFixtureImpl(true));
     myFixture.setUp();

@@ -57,7 +57,7 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
   }
 
   @Override
-  public ExecutionResult execute(Executor executor, final CommandLinePatcher... patchers) throws ExecutionException {
+  public ExecutionResult execute(Executor executor, CommandLinePatcher... patchers) throws ExecutionException {
     if (myConfig.showCommandLineAfterwards()) {
       if (executor.getId().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
         return super.execute(executor, ArrayUtil.append(patchers,
@@ -103,7 +103,7 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
       script_parameters.addParameter(myConfig.getScriptName());
     }
 
-    final String script_options_string = myConfig.getScriptParameters();
+    String script_options_string = myConfig.getScriptParameters();
     if (script_options_string != null) {
       script_parameters.addParametersString(script_options_string);
     }
@@ -149,7 +149,7 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
                                                    int[] ports) {
       GeneralCommandLine consoleCmdLine = doCreateConsoleCmdLine(sdk, environmentVariables, workingDir, ports, PythonHelper.RUN_IN_CONSOLE);
 
-      final GeneralCommandLine cmd = generateCommandLine(myPatchers);
+      GeneralCommandLine cmd = generateCommandLine(myPatchers);
 
       ParamsGroup group = consoleCmdLine.getParametersList().getParamsGroup(PythonCommandLineState.GROUP_SCRIPT);
       assert group != null;

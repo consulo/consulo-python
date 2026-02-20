@@ -51,7 +51,7 @@ public class DocstringQuickFix implements LocalQuickFix {
     @Override
     public LocalizeValue getName() {
         if (myMissingParam != null) {
-            final PyNamedParameter param = myMissingParam.getElement();
+            PyNamedParameter param = myMissingParam.getElement();
             if (param == null) {
                 throw new IncorrectOperationException("Parameter was invalidates before quickfix is called");
             }
@@ -76,9 +76,9 @@ public class DocstringQuickFix implements LocalQuickFix {
             return;
         }
         if (docStringExpression != null) {
-            final PyDocstringGenerator generator = PyDocstringGenerator.forDocStringOwner(docStringOwner);
+            PyDocstringGenerator generator = PyDocstringGenerator.forDocStringOwner(docStringOwner);
             if (myMissingParam != null) {
-                final PyNamedParameter param = myMissingParam.getElement();
+                PyNamedParameter param = myMissingParam.getElement();
                 if (param != null) {
                     generator.withParam(param);
                 }

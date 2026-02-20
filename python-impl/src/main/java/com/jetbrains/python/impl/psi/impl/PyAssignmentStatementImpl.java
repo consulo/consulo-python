@@ -72,17 +72,17 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 
 	private PyExpression[] calcTargets(boolean raw)
 	{
-		final ASTNode[] eqSigns = getNode().getChildren(TokenSet.create(PyTokenTypes.EQ));
+		ASTNode[] eqSigns = getNode().getChildren(TokenSet.create(PyTokenTypes.EQ));
 		if(eqSigns.length == 0)
 		{
 			return PyExpression.EMPTY_ARRAY;
 		}
-		final ASTNode lastEq = eqSigns[eqSigns.length - 1];
+		ASTNode lastEq = eqSigns[eqSigns.length - 1];
 		List<PyExpression> candidates = new ArrayList<>();
 		ASTNode node = getNode().getFirstChildNode();
 		while(node != null && node != lastEq)
 		{
-			final PsiElement psi = node.getPsi();
+			PsiElement psi = node.getPsi();
 			if(psi instanceof PyExpression)
 			{
 				if(raw)
@@ -126,7 +126,7 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 		}
 		else if(psi instanceof PySequenceExpression)
 		{
-			final PyExpression[] pyExpressions = ((PySequenceExpression) psi).getElements();
+			PyExpression[] pyExpressions = ((PySequenceExpression) psi).getElements();
 			for(PyExpression pyExpression : pyExpressions)
 			{
 				addCandidate(candidates, pyExpression);
@@ -134,7 +134,7 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 		}
 		else if(psi instanceof PyStarExpression)
 		{
-			final PyExpression expression = ((PyStarExpression) psi).getExpression();
+			PyExpression expression = ((PyStarExpression) psi).getExpression();
 			if(expression != null)
 			{
 				addCandidate(candidates, expression);
@@ -255,13 +255,13 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 		{ // multiple LHS, single RHS: unpacking
 			// PY-2648, PY-2649
 			PyElementGenerator elementGenerator = PyElementGenerator.getInstance(rhs_one.getProject());
-			final LanguageLevel languageLevel = LanguageLevel.forElement(lhs);
+			LanguageLevel languageLevel = LanguageLevel.forElement(lhs);
 			int counter = 0;
 			for(PyExpression tuple_elt : lhs_tuple.getElements())
 			{
 				try
 				{
-					final PyExpression expression = elementGenerator.createExpressionFromText(languageLevel, rhs_one.getText() + "[" + counter + "]");
+					PyExpression expression = elementGenerator.createExpressionFromText(languageLevel, rhs_one.getText() + "[" + counter + "]");
 					map.add(Pair.create(tuple_elt, expression));
 				}
 				catch(IncorrectOperationException e)
@@ -281,7 +281,7 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
-		final List<PyExpression> expressions = PyUtil.flattenedParensAndStars(getTargets());
+		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(getTargets());
 		List<PsiNamedElement> result = new ArrayList<>();
 		for(PyExpression expression : expressions)
 		{
@@ -299,7 +299,7 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull String the_name)
 	{
 		// performance: check simple case first
 		PyExpression[] targets = getTargets();

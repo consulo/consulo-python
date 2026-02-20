@@ -21,7 +21,7 @@ import jakarta.annotation.Nonnull;
 
 public class PyLineBreakpointHandler extends AbstractLineBreakpointHandler {
 
-  public PyLineBreakpointHandler(@Nonnull final PyDebugProcess debugProcess) {
+  public PyLineBreakpointHandler(@Nonnull PyDebugProcess debugProcess) {
     super(PyLineBreakpointType.class, debugProcess);
   }
 }

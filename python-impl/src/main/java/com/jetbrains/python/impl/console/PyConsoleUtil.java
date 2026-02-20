@@ -57,18 +57,18 @@ public class PyConsoleUtil {
     return prompt != null && IPYTHON_PAGING_PROMPT.equals(prompt.trim());
   }
 
-  static String processPrompts(final LanguageConsoleView languageConsole, String string) {
+  static String processPrompts(LanguageConsoleView languageConsole, String string) {
     // Change prompt
     for (String prompt : PROMPTS) {
       if (string.startsWith(prompt)) {
         // Process multi prompts here
         if (prompt != HELP_PROMPT) {
-          final StringBuilder builder = new StringBuilder();
+          StringBuilder builder = new StringBuilder();
           builder.append(prompt).append(prompt);
           while (string.startsWith(builder.toString())) {
             builder.append(prompt);
           }
-          final String multiPrompt = builder.toString().substring(prompt.length());
+          String multiPrompt = builder.toString().substring(prompt.length());
           if (prompt == INDENT_PROMPT) {
             prompt = multiPrompt;
           }
@@ -79,8 +79,8 @@ public class PyConsoleUtil {
         }
 
         // Change console editor prompt if required
-        final String currentPrompt = languageConsole.getPrompt();
-        final String trimmedPrompt = prompt.trim();
+        String currentPrompt = languageConsole.getPrompt();
+        String trimmedPrompt = prompt.trim();
         if (currentPrompt != null && !currentPrompt.equals(trimmedPrompt)) {
           languageConsole.setPrompt(trimmedPrompt);
           scrollDown(languageConsole.getConsoleEditor());
@@ -92,13 +92,13 @@ public class PyConsoleUtil {
   }
 
 
-  public static void scrollDown(final Editor currentEditor) {
+  public static void scrollDown(Editor currentEditor) {
     ApplicationManager.getApplication()
                       .invokeLater(() -> currentEditor.getCaretModel().moveToOffset(currentEditor.getDocument().getTextLength()));
   }
 
 
-  public static boolean detectIPythonImported(@Nonnull String text, final ConsoleViewContentType outputType) {
+  public static boolean detectIPythonImported(@Nonnull String text, ConsoleViewContentType outputType) {
     return text.contains("PyDev console: using IPython ") && outputType == ConsoleViewContentType.ERROR_OUTPUT;
   }
 

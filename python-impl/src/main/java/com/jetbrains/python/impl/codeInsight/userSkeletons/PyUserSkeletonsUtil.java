@@ -71,7 +71,7 @@ public class PyUserSkeletonsUtil
 	@Nonnull
 	private static List<String> getPossibleUserSkeletonsPaths()
 	{
-		final List<String> result = new ArrayList<>();
+		List<String> result = new ArrayList<>();
 		result.add(ContainerPathManager.get().getConfigPath() + File.separator + USER_SKELETONS_DIR);
 		result.add(PythonHelpersLocator.getHelperPath(USER_SKELETONS_DIR));
 		return result;
@@ -101,7 +101,7 @@ public class PyUserSkeletonsUtil
 
 	public static boolean isUnderUserSkeletonsDirectory(@Nonnull PsiFile file)
 	{
-		final VirtualFile virtualFile = file.getVirtualFile();
+		VirtualFile virtualFile = file.getVirtualFile();
 		if(virtualFile == null)
 		{
 			return false;
@@ -109,9 +109,9 @@ public class PyUserSkeletonsUtil
 		return isUnderUserSkeletonsDirectory(virtualFile);
 	}
 
-	public static boolean isUnderUserSkeletonsDirectory(@Nonnull final VirtualFile virtualFile)
+	public static boolean isUnderUserSkeletonsDirectory(@Nonnull VirtualFile virtualFile)
 	{
-		final VirtualFile skeletonsDir = getUserSkeletonsDirectory();
+		VirtualFile skeletonsDir = getUserSkeletonsDirectory();
 		return skeletonsDir != null && VirtualFileUtil.isAncestor(skeletonsDir, virtualFile, false);
 	}
 
@@ -122,15 +122,15 @@ public class PyUserSkeletonsUtil
 	}
 
 	@Nullable
-	public static <T extends PyElement> T getUserSkeletonWithContext(@Nonnull T element, @Nullable final TypeEvalContext context)
+	public static <T extends PyElement> T getUserSkeletonWithContext(@Nonnull T element, @Nullable TypeEvalContext context)
 	{
-		final PsiFile file = element.getContainingFile();
+		PsiFile file = element.getContainingFile();
 		if(file instanceof PyFile)
 		{
-			final PyFile skeletonFile = getUserSkeletonForFile((PyFile) file);
+			PyFile skeletonFile = getUserSkeletonForFile((PyFile) file);
 			if(skeletonFile != null && skeletonFile != file)
 			{
-				final PsiElement skeletonElement = getUserSkeleton(element, skeletonFile, context);
+				PsiElement skeletonElement = getUserSkeleton(element, skeletonFile, context);
 				if(element.getClass().isInstance(skeletonElement) && skeletonElement != element)
 				{
 					//noinspection unchecked
@@ -144,25 +144,25 @@ public class PyUserSkeletonsUtil
 	@Nullable
 	public static PyFile getUserSkeletonForModuleQName(@Nonnull String qName, @Nonnull PsiElement foothold)
 	{
-		final Sdk sdk = PythonSdkType.getSdk(foothold);
+		Sdk sdk = PythonSdkType.getSdk(foothold);
 		if(sdk != null)
 		{
-			final Project project = foothold.getProject();
-			final PythonSdkPathCache cache = PythonSdkPathCache.getInstance(project, sdk);
-			final QualifiedName cacheQName = QualifiedName.fromDottedString(USER_SKELETONS_DIR + "." + qName);
-			final List<PsiElement> results = cache.get(cacheQName);
+			Project project = foothold.getProject();
+			PythonSdkPathCache cache = PythonSdkPathCache.getInstance(project, sdk);
+			QualifiedName cacheQName = QualifiedName.fromDottedString(USER_SKELETONS_DIR + "." + qName);
+			List<PsiElement> results = cache.get(cacheQName);
 			if(results != null)
 			{
-				final PsiElement element = results.isEmpty() ? null : results.get(0);
+				PsiElement element = results.isEmpty() ? null : results.get(0);
 				if(element instanceof PyFile)
 				{
 					return (PyFile) element;
 				}
 			}
-			final VirtualFile directory = getUserSkeletonsDirectory();
+			VirtualFile directory = getUserSkeletonsDirectory();
 			if(directory != null)
 			{
-				final PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(directory);
+				PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(directory);
 				PsiElement fileSkeleton = new QualifiedNameResolverImpl(qName).resolveModuleAt(psiDirectory);
 				if(fileSkeleton instanceof PsiDirectory)
 				{
@@ -186,26 +186,26 @@ public class PyUserSkeletonsUtil
 		{
 			return skeletonFile;
 		}
-		final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
-		final String name = element.getName();
+		ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+		String name = element.getName();
 		if(owner != null && name != null)
 		{
 			assert owner != element;
-			final PsiElement originalOwner = getUserSkeleton(owner, skeletonFile, context);
+			PsiElement originalOwner = getUserSkeleton(owner, skeletonFile, context);
 			if(originalOwner instanceof PyClass)
 			{
-				final PyClass classOwner = (PyClass) originalOwner;
-				final PyType type = TypeEvalContext.codeInsightFallback(classOwner.getProject()).getType(classOwner);
+				PyClass classOwner = (PyClass) originalOwner;
+				PyType type = TypeEvalContext.codeInsightFallback(classOwner.getProject()).getType(classOwner);
 				if(type instanceof PyClassLikeType)
 				{
-					final PyClassLikeType classType = (PyClassLikeType) type;
-					final PyClassLikeType instanceType = classType.toInstance();
+					PyClassLikeType classType = (PyClassLikeType) type;
+					PyClassLikeType instanceType = classType.toInstance();
 					PyResolveContext resolveContext = PyResolveContext.noImplicits();
 					if(context != null)
 					{
 						resolveContext = resolveContext.withTypeEvalContext(context);
 					}
-					final List<? extends RatedResolveResult> resolveResults = instanceType.resolveMember(name, null, AccessDirection.READ, resolveContext, false);
+					List<? extends RatedResolveResult> resolveResults = instanceType.resolveMember(name, null, AccessDirection.READ, resolveContext, false);
 					if(resolveResults != null && !resolveResults.isEmpty())
 					{
 						return resolveResults.get(0).getElement();
@@ -223,27 +223,27 @@ public class PyUserSkeletonsUtil
 	@Nullable
 	private static PyFile getUserSkeletonForFile(@Nonnull PyFile file)
 	{
-		final Boolean hasSkeleton = file.getUserData(HAS_SKELETON);
+		Boolean hasSkeleton = file.getUserData(HAS_SKELETON);
 		if(hasSkeleton != null && !hasSkeleton)
 		{
 			return null;
 		}
-		final VirtualFile moduleVirtualFile = file.getVirtualFile();
+		VirtualFile moduleVirtualFile = file.getVirtualFile();
 		if(moduleVirtualFile != null)
 		{
 			String moduleName = QualifiedNameFinder.findShortestImportableName(file, moduleVirtualFile);
 			if(moduleName != null)
 			{
-				final QualifiedName qName = QualifiedName.fromDottedString(moduleName);
+				QualifiedName qName = QualifiedName.fromDottedString(moduleName);
 				for(PyCanonicalPathProvider provider : Extensions.getExtensions(PyCanonicalPathProvider.EP_NAME))
 				{
-					final QualifiedName restored = provider.getCanonicalPath(qName, null);
+					QualifiedName restored = provider.getCanonicalPath(qName, null);
 					if(restored != null)
 					{
 						moduleName = restored.toString();
 					}
 				}
-				final PyFile skeletonFile = getUserSkeletonForModuleQName(moduleName, file);
+				PyFile skeletonFile = getUserSkeletonForModuleQName(moduleName, file);
 				file.putUserData(HAS_SKELETON, skeletonFile != null);
 				return skeletonFile;
 			}

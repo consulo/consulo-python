@@ -66,14 +66,14 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
 
   @Nullable
   public PyElementType getOperator() {
-    final PsiElement psiOperator = getPsiOperator();
+    PsiElement psiOperator = getPsiOperator();
     return psiOperator != null ? (PyElementType)psiOperator.getNode().getElementType() : null;
   }
 
   @Nullable
   public PsiElement getPsiOperator() {
     ASTNode node = getNode();
-    final ASTNode child = node.findChildByType(PyElementTypes.BINARY_OPS);
+    ASTNode child = node.findChildByType(PyElementTypes.BINARY_OPS);
     if (child != null) {
       return child.getPsi();
     }
@@ -135,35 +135,35 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
 
   public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
     if (isOperator("and") || isOperator("or")) {
-      final PyExpression left = getLeftExpression();
-      final PyType leftType = left != null ? context.getType(left) : null;
-      final PyExpression right = getRightExpression();
-      final PyType rightType = right != null ? context.getType(right) : null;
+      PyExpression left = getLeftExpression();
+      PyType leftType = left != null ? context.getType(left) : null;
+      PyExpression right = getRightExpression();
+      PyType rightType = right != null ? context.getType(right) : null;
       if (leftType == null && rightType == null) {
         return null;
       }
       return PyUnionType.union(leftType, rightType);
     }
-    final List<PyTypeChecker.AnalyzeCallResults> results = PyTypeChecker.analyzeCallSite(this, context);
+    List<PyTypeChecker.AnalyzeCallResults> results = PyTypeChecker.analyzeCallSite(this, context);
     if (!results.isEmpty()) {
-      final List<PyType> types = new ArrayList<>();
-      final List<PyType> matchedTypes = new ArrayList<>();
+      List<PyType> types = new ArrayList<>();
+      List<PyType> matchedTypes = new ArrayList<>();
       for (PyTypeChecker.AnalyzeCallResults result : results) {
         boolean matched = true;
         for (Map.Entry<PyExpression, PyNamedParameter> entry : result.getArguments().entrySet()) {
-          final PyExpression argument = entry.getKey();
-          final PyNamedParameter parameter = entry.getValue();
+          PyExpression argument = entry.getKey();
+          PyNamedParameter parameter = entry.getValue();
           if (parameter.isPositionalContainer() || parameter.isKeywordContainer()) {
             continue;
           }
-          final Map<PyGenericType, PyType> substitutions = new HashMap<>();
-          final PyType parameterType = context.getType(parameter);
-          final PyType argumentType = context.getType(argument);
+          Map<PyGenericType, PyType> substitutions = new HashMap<>();
+          PyType parameterType = context.getType(parameter);
+          PyType argumentType = context.getType(argument);
           if (!PyTypeChecker.match(parameterType, argumentType, context, substitutions)) {
             matched = false;
           }
         }
-        final PyType type = result.getCallable().getCallType(context, this);
+        PyType type = result.getCallable().getCallType(context, this);
         if (!PyTypeChecker.isUnknown(type) && !(type instanceof PyNoneType)) {
           types.add(type);
           if (matched) {
@@ -203,13 +203,13 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
 
   @Override
   public String getReferencedName() {
-    final PyElementType t = getOperator();
+    PyElementType t = getOperator();
     return t != null ? t.getSpecialMethodName() : null;
   }
 
   @Override
   public ASTNode getNameElement() {
-    final PsiElement op = getPsiOperator();
+    PsiElement op = getPsiOperator();
     return op != null ? op.getNode() : null;
   }
 }

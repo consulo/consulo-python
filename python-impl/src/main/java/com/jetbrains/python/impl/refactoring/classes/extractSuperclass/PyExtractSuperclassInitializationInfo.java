@@ -42,10 +42,10 @@ class PyExtractSuperclassInitializationInfo extends MembersViewInitializationInf
 	 * @param defaultFilePath module file path to display. User will be able to change it later.
 	 * @param roots           virtual files where user may add new module
 	 */
-	PyExtractSuperclassInitializationInfo(@Nonnull final MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
-			@Nonnull final Collection<PyMemberInfo<PyElement>> memberInfos,
-			@Nonnull final String defaultFilePath,
-			@Nonnull final VirtualFile... roots)
+	PyExtractSuperclassInitializationInfo(@Nonnull MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
+			@Nonnull Collection<PyMemberInfo<PyElement>> memberInfos,
+			@Nonnull String defaultFilePath,
+			@Nonnull VirtualFile... roots)
 	{
 		super(memberInfoModel, memberInfos);
 		myDefaultFilePath = defaultFilePath;

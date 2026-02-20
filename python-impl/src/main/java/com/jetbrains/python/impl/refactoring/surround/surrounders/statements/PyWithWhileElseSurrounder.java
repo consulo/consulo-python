@@ -47,7 +47,7 @@ public class PyWithWhileElseSurrounder extends PyStatementSurrounder {
   {
     PyWhileStatement whileStatement =
       PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyWhileStatement.class, "while True:\n    \nelse:\n");
-    final PsiElement parent = elements[0].getParent();
+    PsiElement parent = elements[0].getParent();
     whileStatement.addRange(elements[0], elements[elements.length - 1]);
     whileStatement = (PyWhileStatement) parent.addBefore(whileStatement, elements[0]);
     parent.deleteChildRange(elements[0], elements[elements.length - 1]);

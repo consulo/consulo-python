@@ -28,7 +28,7 @@ public class PythonTRunnerConsoleProperties extends SMTRunnerConsoleProperties {
 
   private final boolean myIsEditable;
 
-  public PythonTRunnerConsoleProperties(final ModuleRunConfiguration config, final Executor executor, boolean editable) {
+  public PythonTRunnerConsoleProperties(ModuleRunConfiguration config, Executor executor, boolean editable) {
     super(config, FRAMEWORK_NAME, executor);
 
     myIsEditable = editable;

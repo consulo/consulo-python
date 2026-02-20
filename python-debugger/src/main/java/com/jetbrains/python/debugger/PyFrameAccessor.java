@@ -12,7 +12,7 @@ import jakarta.annotation.Nullable;
  */
 public interface PyFrameAccessor
 {
-	PyDebugValue evaluate(final String expression, final boolean execute, boolean doTrunc) throws PyDebuggerException;
+	PyDebugValue evaluate(String expression, boolean execute, boolean doTrunc) throws PyDebuggerException;
 
 	@Nullable
 	XValueChildrenList loadFrame() throws PyDebuggerException;

@@ -163,7 +163,7 @@ public class DataFrameTableModel extends AsyncArrayTableModel
 					String oldValue = myRowLabels.put(i + rowOffset, label);
 					if(oldValue == null)
 					{
-						final int updatedRow = i + rowOffset;
+						int updatedRow = i + rowOffset;
 						UIUtil.invokeLaterIfNeeded(() -> super.fireTableCellUpdated(updatedRow, 0));
 					}
 				}

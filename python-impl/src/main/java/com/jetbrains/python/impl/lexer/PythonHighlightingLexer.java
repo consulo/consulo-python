@@ -61,14 +61,14 @@ public class PythonHighlightingLexer extends PythonLexer {
 
   @Override
   public IElementType getTokenType() {
-    final IElementType tokenType = super.getTokenType();
+    IElementType tokenType = super.getTokenType();
 
     if (PyTokenTypes.STRING_NODES.contains(tokenType)) {
       return convertStringType(tokenType, getTokenText());
     }
 
     if (tokenType == PyTokenTypes.IDENTIFIER) {
-      final String tokenText = getTokenText();
+      String tokenText = getTokenText();
 
       if (myLanguageLevel.hasWithStatement()) {
         if (tokenText.equals("with")) return PyTokenTypes.WITH_KEYWORD;

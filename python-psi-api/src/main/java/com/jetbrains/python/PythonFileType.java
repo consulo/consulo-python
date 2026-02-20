@@ -86,7 +86,7 @@ public class PythonFileType extends LanguageFileType {
 
   @Override
   public Charset extractCharsetFromFileContent(@Nullable Project project, @Nullable VirtualFile file, @Nonnull CharSequence content) {
-    final String charsetName = getCharsetFromEncodingDeclaration(content);
+    String charsetName = getCharsetFromEncodingDeclaration(content);
     if (charsetName == null) {
       return null;
     }
@@ -107,16 +107,16 @@ public class PythonFileType extends LanguageFileType {
       return null;
     }
     try {
-      final BufferedReader reader = new BufferedReader(new CharSequenceReader(content));
+      BufferedReader reader = new BufferedReader(new CharSequenceReader(content));
       try {
         for (int i = 0; i < 2; i++) {
-          final String line = reader.readLine();
+          String line = reader.readLine();
           if (line == null) {
             return null;
           }
-          final Matcher matcher = ENCODING_PATTERN.matcher(line);
+          Matcher matcher = ENCODING_PATTERN.matcher(line);
           if (matcher.find()) {
-            final String charset = matcher.group(1);
+            String charset = matcher.group(1);
             return normalizeCharset(charset);
           }
         }

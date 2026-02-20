@@ -214,7 +214,7 @@ public class PythonDocumentationMap implements PersistentStateComponent<PythonDo
     macros.put("function.name", element instanceof PyFunction ? element.getName() : "");
     macros.put("module.name", moduleQName.toString());
     macros.put("python.version", pyVersion);
-    final String pattern = transformPattern(urlPattern, macros);
+    String pattern = transformPattern(urlPattern, macros);
     if (pattern == null) {
       return rootForPattern(urlPattern);
     }

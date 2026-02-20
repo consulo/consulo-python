@@ -17,7 +17,7 @@ public abstract class PyStringFormatParserTest extends TestCase {
     assertConstant(chunks.get(0), 0, 3);
   }
 
-  private static void assertConstant(FormatStringChunk aChunk, final int start, final int end) {
+  private static void assertConstant(FormatStringChunk aChunk, int start, int end) {
     ConstantChunk chunk = (ConstantChunk) aChunk;
     assertEquals(start, chunk.getStartIndex());
     assertEquals(end, chunk.getEndIndex());
@@ -97,7 +97,7 @@ public abstract class PyStringFormatParserTest extends TestCase {
 
   // PY-8372
   public void testNewStyleAutomaticNumbering() {
-    final List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("{}, {}"));
+    List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("{}, {}"));
     assertEquals(2, chunks.size());
     assertEquals(TextRange.create(0, 2), chunks.get(0).getTextRange());
     assertEquals(TextRange.create(4, 6), chunks.get(1).getTextRange());
@@ -105,7 +105,7 @@ public abstract class PyStringFormatParserTest extends TestCase {
 
   // PY-8372
   public void testNewStylePositionalArgs() {
-    final List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("{1}, {0}"));
+    List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("{1}, {0}"));
     assertEquals(2, chunks.size());
     assertEquals(TextRange.create(0, 3), chunks.get(0).getTextRange());
     assertEquals(TextRange.create(5, 8), chunks.get(1).getTextRange());
@@ -113,7 +113,7 @@ public abstract class PyStringFormatParserTest extends TestCase {
 
   // PY-8372
   public void testNewStyleKeywordArgs() {
-    final List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("a{foo}{bar}bc"));
+    List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("a{foo}{bar}bc"));
     assertEquals(2, chunks.size());
     assertEquals(TextRange.create(1, 6), chunks.get(0).getTextRange());
     assertEquals(TextRange.create(6, 11), chunks.get(1).getTextRange());
@@ -121,7 +121,7 @@ public abstract class PyStringFormatParserTest extends TestCase {
 
   // PY-8372
   public void testBracesEscaping() {
-    final List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("\\{\\}, {{}}"));
+    List<SubstitutionChunk> chunks = filterSubstitutions(parseNewStyleFormat("\\{\\}, {{}}"));
     assertEquals(1, chunks.size());
     assertEquals(TextRange.create(1, 4), chunks.get(0).getTextRange());
   }

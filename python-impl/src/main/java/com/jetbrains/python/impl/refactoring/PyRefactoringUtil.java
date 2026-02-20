@@ -41,13 +41,13 @@ import java.util.*;
  */
 public class PyRefactoringUtil {
   @Nonnull
-  public static List<PsiElement> getOccurrences(@Nonnull final PsiElement pattern, @Nullable final PsiElement context) {
+  public static List<PsiElement> getOccurrences(@Nonnull final PsiElement pattern, @Nullable PsiElement context) {
     if (context == null) {
       return Collections.emptyList();
     }
     final List<PsiElement> occurrences = new ArrayList<PsiElement>();
-    final PyElementVisitor visitor = new PyElementVisitor() {
-      public void visitElement(@Nonnull final PsiElement element) {
+    PyElementVisitor visitor = new PyElementVisitor() {
+      public void visitElement(@Nonnull PsiElement element) {
         if (element instanceof PyParameter) {
           return;
         }
@@ -56,13 +56,13 @@ public class PyRefactoringUtil {
           return;
         }
         if (element instanceof PyStringLiteralExpression) {
-          final Pair<PsiElement, TextRange> selection = pattern.getUserData(PyReplaceExpressionUtil.SELECTION_BREAKS_AST_NODE);
+          Pair<PsiElement, TextRange> selection = pattern.getUserData(PyReplaceExpressionUtil.SELECTION_BREAKS_AST_NODE);
           if (selection != null) {
-            final String substring = selection.getSecond().substring(pattern.getText());
-            final PyStringLiteralExpression expr = (PyStringLiteralExpression)element;
-            final String text = element.getText();
+            String substring = selection.getSecond().substring(pattern.getText());
+            PyStringLiteralExpression expr = (PyStringLiteralExpression)element;
+            String text = element.getText();
             if (text != null && expr.getStringNodes().size() == 1) {
-              final int start = text.indexOf(substring);
+              int start = text.indexOf(substring);
               if (start >= 0) {
                 element.putUserData(PyReplaceExpressionUtil.SELECTION_BREAKS_AST_NODE, Pair.create(element, TextRange.from(start, substring.length())));
                 occurrences.add(element);
@@ -79,10 +79,10 @@ public class PyRefactoringUtil {
   }
 
   @Nullable
-  public static PyExpression getSelectedExpression(@Nonnull final Project project,
+  public static PyExpression getSelectedExpression(@Nonnull Project project,
                                                    @Nonnull PsiFile file,
-                                                   @Nonnull final PsiElement element1,
-                                                   @Nonnull final PsiElement element2) {
+                                                   @Nonnull PsiElement element1,
+                                                   @Nonnull PsiElement element2) {
     PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
     if (parent != null && !(parent instanceof PyElement)) {
       parent = PsiTreeUtil.getParentOfType(parent, PyElement.class);
@@ -104,24 +104,24 @@ public class PyRefactoringUtil {
 
     // Check if selection breaks AST node in binary expression
     if (parent instanceof PyBinaryExpression) {
-      final String selection = file.getText().substring(element1.getTextOffset(), element2.getTextOffset() + element2.getTextLength());
-      final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-      final LanguageLevel langLevel = LanguageLevel.forElement(element1);
-      final PyExpression expression = generator.createFromText(langLevel, PyAssignmentStatement.class, "z=" + selection).getAssignedValue();
+      String selection = file.getText().substring(element1.getTextOffset(), element2.getTextOffset() + element2.getTextLength());
+      PyElementGenerator generator = PyElementGenerator.getInstance(project);
+      LanguageLevel langLevel = LanguageLevel.forElement(element1);
+      PyExpression expression = generator.createFromText(langLevel, PyAssignmentStatement.class, "z=" + selection).getAssignedValue();
       if (PsiUtilCore.hasErrorElementChild(expression) || !(expression instanceof PyBinaryExpression)) {
         return null;
       }
-      final String parentText = parent.getText();
-      final int startOffset = element1.getTextOffset() - parent.getTextOffset() - 1;
+      String parentText = parent.getText();
+      int startOffset = element1.getTextOffset() - parent.getTextOffset() - 1;
       if (startOffset < 0) {
         return null;
       }
-      final int endOffset = element2.getTextOffset() + element2.getTextLength() - parent.getTextOffset();
+      int endOffset = element2.getTextOffset() + element2.getTextLength() - parent.getTextOffset();
 
-      final String prefix = parentText.substring(0, startOffset);
-      final String suffix = parentText.substring(endOffset, parentText.length());
-      final TextRange textRange = TextRange.from(startOffset, endOffset - startOffset);
-      final PsiElement fakeExpression = generator.createFromText(langLevel, parent.getClass(), prefix + "python" + suffix);
+      String prefix = parentText.substring(0, startOffset);
+      String suffix = parentText.substring(endOffset, parentText.length());
+      TextRange textRange = TextRange.from(startOffset, endOffset - startOffset);
+      PsiElement fakeExpression = generator.createFromText(langLevel, parent.getClass(), prefix + "python" + suffix);
       if (PsiUtilCore.hasErrorElementChild(fakeExpression)) {
         return null;
       }
@@ -133,7 +133,7 @@ public class PyRefactoringUtil {
   }
 
   @Nonnull
-  public static Collection<String> collectUsedNames(@Nullable final PsiElement scope) {
+  public static Collection<String> collectUsedNames(@Nullable PsiElement scope) {
     if (!(scope instanceof PyClass) && !(scope instanceof PyFile) && !(scope instanceof PyFunction)) {
       return Collections.emptyList();
     }
@@ -145,12 +145,12 @@ public class PyRefactoringUtil {
     };
     scope.acceptChildren(new PyRecursiveElementVisitor() {
       @Override
-      public void visitPyTargetExpression(@Nonnull final PyTargetExpression node) {
+      public void visitPyTargetExpression(@Nonnull PyTargetExpression node) {
         variables.add(node.getName());
       }
 
       @Override
-      public void visitPyNamedParameter(@Nonnull final PyNamedParameter node) {
+      public void visitPyNamedParameter(@Nonnull PyNamedParameter node) {
         variables.add(node.getName());
       }
 
@@ -160,12 +160,12 @@ public class PyRefactoringUtil {
       }
 
       @Override
-      public void visitPyFunction(@Nonnull final PyFunction node) {
+      public void visitPyFunction(@Nonnull PyFunction node) {
         variables.add(node.getName());
       }
 
       @Override
-      public void visitPyClass(@Nonnull final PyClass node) {
+      public void visitPyClass(@Nonnull PyClass node) {
         variables.add(node.getName());
       }
     });
@@ -173,7 +173,7 @@ public class PyRefactoringUtil {
   }
 
   @Nullable
-  public static PsiElement findExpressionInRange(@Nonnull final PsiFile file, int startOffset, int endOffset) {
+  public static PsiElement findExpressionInRange(@Nonnull PsiFile file, int startOffset, int endOffset) {
     PsiElement element1 = file.findElementAt(startOffset);
     PsiElement element2 = file.findElementAt(endOffset - 1);
     if (element1 instanceof PsiWhiteSpace) {
@@ -191,7 +191,7 @@ public class PyRefactoringUtil {
   }
 
   @Nonnull
-  public static PsiElement[] findStatementsInRange(@Nonnull final PsiFile file, int startOffset, int endOffset) {
+  public static PsiElement[] findStatementsInRange(@Nonnull PsiFile file, int startOffset, int endOffset) {
     PsiElement element1 = file.findElementAt(startOffset);
     PsiElement element2 = file.findElementAt(endOffset - 1);
     if (element1 instanceof PsiWhiteSpace) {
@@ -277,10 +277,10 @@ public class PyRefactoringUtil {
   }
 
   public static boolean areConflictingMethods(PyFunction pyFunction, PyFunction pyFunction1) {
-    final PyParameter[] firstParams = pyFunction.getParameterList().getParameters();
-    final PyParameter[] secondParams = pyFunction1.getParameterList().getParameters();
-    final String firstName = pyFunction.getName();
-    final String secondName = pyFunction1.getName();
+    PyParameter[] firstParams = pyFunction.getParameterList().getParameters();
+    PyParameter[] secondParams = pyFunction1.getParameterList().getParameters();
+    String firstName = pyFunction.getName();
+    String secondName = pyFunction1.getName();
 
     return Comparing.strEqual(firstName, secondName) && firstParams.length == secondParams.length;
   }
@@ -288,9 +288,9 @@ public class PyRefactoringUtil {
   @Nonnull
   public static List<UsageInfo> findUsages(@Nonnull PsiNamedElement element, boolean forHighlightUsages) {
     final List<UsageInfo> usages = new ArrayList<UsageInfo>();
-    final FindUsagesHandler handler = new PyFindUsagesHandlerFactory().createFindUsagesHandler(element, forHighlightUsages);
+    FindUsagesHandler handler = new PyFindUsagesHandlerFactory().createFindUsagesHandler(element, forHighlightUsages);
     assert handler != null;
-    final List<PsiElement> elementsToProcess = new ArrayList<PsiElement>();
+    List<PsiElement> elementsToProcess = new ArrayList<PsiElement>();
     elementsToProcess.addAll(Arrays.asList(handler.getPrimaryElements()));
     elementsToProcess.addAll(Arrays.asList(handler.getSecondaryElements()));
     for (PsiElement e : elementsToProcess) {

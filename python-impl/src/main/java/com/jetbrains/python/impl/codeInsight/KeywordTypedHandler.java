@@ -38,8 +38,8 @@ public class KeywordTypedHandler extends TypedHandlerDelegate {
   public Result beforeCharTyped(char character, Project project, Editor editor, PsiFile file, FileType fileType) {
     if (!(fileType instanceof PythonFileType)) return Result.CONTINUE; // else we'd mess up with other file types!
     if (character == ':') {
-      final Document document = editor.getDocument();
-      final int offset = editor.getCaretModel().getOffset();
+      Document document = editor.getDocument();
+      int offset = editor.getCaretModel().getOffset();
 
       PsiElement token = file.findElementAt(offset - 1);
       if (token == null || offset >= document.getTextLength()) return Result.CONTINUE; // sanity check: beyond EOL

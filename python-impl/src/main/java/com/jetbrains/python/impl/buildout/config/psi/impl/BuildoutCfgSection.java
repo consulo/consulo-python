@@ -28,7 +28,7 @@ import java.util.List;
  * @author traff
  */
 public class BuildoutCfgSection extends BuildoutCfgPsiElement {
-  public BuildoutCfgSection(@Nonnull final ASTNode node) {
+  public BuildoutCfgSection(@Nonnull ASTNode node) {
     super(node);
   }
 
@@ -55,7 +55,7 @@ public class BuildoutCfgSection extends BuildoutCfgPsiElement {
 
   @Nullable
   public String getOptionValue(String name) {
-    final BuildoutCfgOption option = findOptionByName(name);
+    BuildoutCfgOption option = findOptionByName(name);
     if (option != null) {
       return StringUtil.join(option.getValues(), " ");
     }

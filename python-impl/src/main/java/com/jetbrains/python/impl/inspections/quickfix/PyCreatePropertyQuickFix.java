@@ -41,21 +41,21 @@ public class PyCreatePropertyQuickFix implements LocalQuickFix {
         return PyLocalize.qfixCreateProperty();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyQualifiedExpression) {
-            final PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
+            PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
             if (qualifier != null) {
-                final PyType type = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile()).getType(qualifier);
+                PyType type = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile()).getType(qualifier);
                 if (type instanceof PyClassType) {
-                    final PyClass cls = ((PyClassType) type).getPyClass();
-                    final String propertyName = ((PyQualifiedExpression) element).getName();
+                    PyClass cls = ((PyClassType) type).getPyClass();
+                    String propertyName = ((PyQualifiedExpression) element).getName();
                     if (propertyName == null) {
                         return;
                     }
-                    final String fieldName = "_" + propertyName;
-                    final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-                    final PyFunction property =
+                    String fieldName = "_" + propertyName;
+                    PyElementGenerator generator = PyElementGenerator.getInstance(project);
+                    PyFunction property =
                         generator.createProperty(LanguageLevel.forElement(cls), propertyName, fieldName, myAccessDirection);
                     PyUtil.addElementToStatementList(property, cls.getStatementList(), myAccessDirection == AccessDirection.READ);
                 }

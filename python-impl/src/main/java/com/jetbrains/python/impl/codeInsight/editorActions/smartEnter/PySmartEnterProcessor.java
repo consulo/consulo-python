@@ -82,7 +82,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
   private static class TooManyAttemptsException extends Exception {
   }
 
-  private static void collectAllElements(final PsiElement element, @Nonnull final List<PsiElement> result, boolean recurse) {
+  private static void collectAllElements(PsiElement element, @Nonnull List<PsiElement> result, boolean recurse) {
     result.add(0, element);
     if (doNotStep(element)) {
       if (!recurse) {
@@ -91,7 +91,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
       recurse = false;
     }
 
-    final PsiElement[] children = element.getChildren();
+    PsiElement[] children = element.getChildren();
     for (PsiElement child : children) {
       if (element instanceof PyStatement && child instanceof PyStatement) {
         continue;
@@ -100,12 +100,12 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     }
   }
 
-  private static boolean doNotStep(final PsiElement element) {
+  private static boolean doNotStep(PsiElement element) {
     return (element instanceof PyStatementList) || (element instanceof PyStatement);
   }
 
-  private static boolean isModified(@Nonnull final Editor editor) {
-    final Long timestamp = editor.getUserData(SMART_ENTER_TIMESTAMP);
+  private static boolean isModified(@Nonnull Editor editor) {
+    Long timestamp = editor.getUserData(SMART_ENTER_TIMESTAMP);
     return editor.getDocument().getModificationStamp() != timestamp.longValue();
   }
 
@@ -114,10 +114,10 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
   private static final Key<Long> SMART_ENTER_TIMESTAMP = Key.create("smartEnterOriginalTimestamp");
 
   @Override
-  public boolean process(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PsiFile psiFile) {
-    final Document document = editor.getDocument();
-    final String textForRollBack = document.getText();
-    final int offset = editor.getCaretModel().getOffset();
+  public boolean process(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile psiFile) {
+    Document document = editor.getDocument();
+    String textForRollBack = document.getText();
+    int offset = editor.getCaretModel().getOffset();
     try {
       editor.putUserData(SMART_ENTER_TIMESTAMP, editor.getDocument().getModificationStamp());
       myFirstErrorOffset = Integer.MAX_VALUE;
@@ -134,7 +134,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     return true;
   }
 
-  private void process(@Nonnull final Project project, @Nonnull final Editor editor, @Nonnull final PsiFile psiFile, final int attempt)
+  private void process(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile psiFile, int attempt)
     throws TooManyAttemptsException {
     if (attempt > MAX_ATTEMPTS) {
       throw new TooManyAttemptsException();
@@ -180,7 +180,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     }
   }
 
-  private void doEnter(final PsiElement atCaret, final Editor editor) {
+  private void doEnter(PsiElement atCaret, Editor editor) {
     if (myFirstErrorOffset != Integer.MAX_VALUE) {
       editor.getCaretModel().moveToOffset(myFirstErrorOffset);
       return;
@@ -217,7 +217,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
       return null;
     }
 
-    final PyStatementList statementList = PsiTreeUtil.getParentOfType(statementAtCaret, PyStatementList.class, false);
+    PyStatementList statementList = PsiTreeUtil.getParentOfType(statementAtCaret, PyStatementList.class, false);
     if (statementList != null) {
       for (PyStatement statement : statementList.getStatements()) {
         if (PsiTreeUtil.isAncestor(statement, statementAtCaret, true)) {
@@ -226,7 +226,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
       }
     }
     else {
-      final PyFile file = PsiTreeUtil.getParentOfType(statementAtCaret, PyFile.class, false);
+      PyFile file = PsiTreeUtil.getParentOfType(statementAtCaret, PyFile.class, false);
       if (file != null) {
         for (PyStatement statement : file.getStatements()) {
           if (PsiTreeUtil.isAncestor(statement, statementAtCaret, true)) {

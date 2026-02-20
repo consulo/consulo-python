@@ -74,7 +74,7 @@ public class RestRunConfigurationType implements ConfigurationType {
     @Nonnull
     private final LocalizeValue myDisplayName;
 
-    public RestConfigurationFactory(@Nonnull final ConfigurationType type, @Nonnull String id, @Nonnull LocalizeValue displayName) {
+    public RestConfigurationFactory(@Nonnull ConfigurationType type, @Nonnull String id, @Nonnull LocalizeValue displayName) {
       super(type);
       myId = id;
       myDisplayName = displayName;

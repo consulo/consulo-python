@@ -62,8 +62,8 @@ public class PyArgumentListInspection extends PyInspection {
     @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull final ProblemsHolder holder,
-        final boolean isOnTheFly,
+        @Nonnull ProblemsHolder holder,
+        boolean isOnTheFly,
         @Nonnull LocalInspectionToolSession session,
         Object state
     ) {
@@ -71,29 +71,29 @@ public class PyArgumentListInspection extends PyInspection {
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
         @Override
-        public void visitPyArgumentList(final PyArgumentList node) {
+        public void visitPyArgumentList(PyArgumentList node) {
             // analyze
             inspectPyArgumentList(node, getHolder(), myTypeEvalContext);
         }
 
         @Override
-        public void visitPyDecoratorList(final PyDecoratorList node) {
+        public void visitPyDecoratorList(PyDecoratorList node) {
             PyDecorator[] decorators = node.getDecorators();
             for (PyDecorator deco : decorators) {
                 if (deco.hasArgumentList()) {
                     continue;
                 }
-                final PyCallExpression.PyMarkedCallee markedCallee = deco.resolveCallee(getResolveContext());
+                PyCallExpression.PyMarkedCallee markedCallee = deco.resolveCallee(getResolveContext());
                 if (markedCallee != null && !markedCallee.isImplicitlyResolved()) {
-                    final PyCallable callable = markedCallee.getCallable();
+                    PyCallable callable = markedCallee.getCallable();
                     int firstParamOffset = markedCallee.getImplicitOffset();
-                    final List<PyParameter> params = PyUtil.getParameters(callable, myTypeEvalContext);
-                    final PyNamedParameter allegedFirstParam =
+                    List<PyParameter> params = PyUtil.getParameters(callable, myTypeEvalContext);
+                    PyNamedParameter allegedFirstParam =
                         params.size() < firstParamOffset ? null : params.get(firstParamOffset - 1).getAsNamed();
                     if (allegedFirstParam == null || allegedFirstParam.isKeywordContainer()) {
                         // no parameters left to pass function implicitly, or wrong param type
@@ -104,11 +104,11 @@ public class PyArgumentListInspection extends PyInspection {
                     }
                     else { // possible unfilled params
                         for (int i = firstParamOffset; i < params.size(); i += 1) {
-                            final PyParameter parameter = params.get(i);
+                            PyParameter parameter = params.get(i);
                             if (parameter instanceof PySingleStarParameter) {
                                 continue;
                             }
-                            final PyNamedParameter par = parameter.getAsNamed();
+                            PyNamedParameter par = parameter.getAsNamed();
                             // param tuples, non-starred or non-default won't do
                             if (par == null || (!par.isKeywordContainer() && !par.isPositionalContainer() && !par.hasDefaultValue())) {
                                 String parameterName = par != null ? par.getName() : "(...)";
@@ -126,23 +126,23 @@ public class PyArgumentListInspection extends PyInspection {
     public static void inspectPyArgumentList(
         PyArgumentList node,
         ProblemsHolder holder,
-        final TypeEvalContext context,
+        TypeEvalContext context,
         int implicitOffset
     ) {
         if (node.getParent() instanceof PyClass) {
             return; // class Foo(object) is also an arg list
         }
-        final PyCallExpression callExpr = node.getCallExpression();
+        PyCallExpression callExpr = node.getCallExpression();
         if (callExpr == null) {
             return;
         }
-        final PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
-        final PyCallExpression.PyArgumentsMapping mapping = callExpr.mapArguments(resolveContext, implicitOffset);
-        final PyCallExpression.PyMarkedCallee callee = mapping.getMarkedCallee();
+        PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
+        PyCallExpression.PyArgumentsMapping mapping = callExpr.mapArguments(resolveContext, implicitOffset);
+        PyCallExpression.PyMarkedCallee callee = mapping.getMarkedCallee();
         if (callee != null) {
-            final PyCallable callable = callee.getCallable();
+            PyCallable callable = callee.getCallable();
             if (callable instanceof PyFunction) {
-                final PyFunction function = (PyFunction) callable;
+                PyFunction function = (PyFunction) callable;
 
                 // Decorate functions may have different parameter lists. We don't match arguments with parameters of decorators yet
                 if (PyUtil.hasCustomDecorators(function) || decoratedClassInitCall(callExpr.getCallee(), function)) {
@@ -154,13 +154,13 @@ public class PyArgumentListInspection extends PyInspection {
         highlightStarArgumentTypeMismatch(node, holder, context);
     }
 
-    public static void inspectPyArgumentList(PyArgumentList node, ProblemsHolder holder, final TypeEvalContext context) {
+    public static void inspectPyArgumentList(PyArgumentList node, ProblemsHolder holder, TypeEvalContext context) {
         inspectPyArgumentList(node, holder, context, 0);
     }
 
     private static boolean decoratedClassInitCall(@Nullable PyExpression callee, @Nonnull PyFunction function) {
         if (callee instanceof PyReferenceExpression && PyUtil.isInit(function)) {
-            final PsiPolyVariantReference classReference = ((PyReferenceExpression) callee).getReference();
+            PsiPolyVariantReference classReference = ((PyReferenceExpression) callee).getReference();
 
             return Arrays.stream(classReference.multiResolve(false))
                 .map(ResolveResult::getElement)
@@ -198,11 +198,11 @@ public class PyArgumentListInspection extends PyInspection {
     }
 
     private static Set<String> getDuplicateKeywordArguments(@Nonnull PyArgumentList node) {
-        final Set<String> keywordArgumentNames = new HashSet<>();
-        final Set<String> results = new HashSet<>();
+        Set<String> keywordArgumentNames = new HashSet<>();
+        Set<String> results = new HashSet<>();
         for (PyExpression argument : node.getArguments()) {
             if (argument instanceof PyKeywordArgument) {
-                final String keyword = ((PyKeywordArgument) argument).getKeyword();
+                String keyword = ((PyKeywordArgument) argument).getKeyword();
                 if (keywordArgumentNames.contains(keyword)) {
                     results.add(keyword);
                 }
@@ -217,9 +217,9 @@ public class PyArgumentListInspection extends PyInspection {
         @Nonnull ProblemsHolder holder,
         @Nonnull PyCallExpression.PyArgumentsMapping mapping
     ) {
-        final Set<String> duplicateKeywords = getDuplicateKeywordArguments(node);
+        Set<String> duplicateKeywords = getDuplicateKeywordArguments(node);
         for (PyExpression argument : mapping.getUnmappedArguments()) {
-            final List<LocalQuickFix> quickFixes = Lists.<LocalQuickFix>newArrayList(new PyRemoveArgumentQuickFix());
+            List<LocalQuickFix> quickFixes = Lists.<LocalQuickFix>newArrayList(new PyRemoveArgumentQuickFix());
             if (argument instanceof PyKeywordArgument) {
                 if (duplicateKeywords.contains(((PyKeywordArgument) argument).getKeyword())) {
                     continue;

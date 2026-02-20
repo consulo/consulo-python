@@ -93,25 +93,25 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   @Nullable
   public String getQuickNavigateInfo(PsiElement element, @Nonnull PsiElement originalElement) {
     for (PythonDocumentationQuickInfoProvider point : PythonDocumentationQuickInfoProvider.EP_NAME.getExtensionList()) {
-      final String info = point.getQuickInfo(originalElement);
+      String info = point.getQuickInfo(originalElement);
       if (info != null) {
         return info;
       }
     }
 
     if (element instanceof PyFunction) {
-      final PyFunction func = (PyFunction)element;
-      final StringBuilder cat = new StringBuilder();
-      final PyClass cls = func.getContainingClass();
+      PyFunction func = (PyFunction)element;
+      StringBuilder cat = new StringBuilder();
+      PyClass cls = func.getContainingClass();
       if (cls != null) {
-        final String clsName = cls.getName();
+        String clsName = cls.getName();
         cat.append("class ").append(clsName).append("\n");
         // It would be nice to have class import info here, but we don't know the ctrl+hovered reference and context
       }
       String summary = "";
-      final PyStringLiteralExpression docStringExpression = func.getDocStringExpression();
+      PyStringLiteralExpression docStringExpression = func.getDocStringExpression();
       if (docStringExpression != null) {
-        final StructuredDocString docString = DocStringUtil.parse(docStringExpression.getStringValue(), docStringExpression);
+        StructuredDocString docString = DocStringUtil.parse(docStringExpression.getStringValue(), docStringExpression);
         summary = docString.getSummary();
       }
       return $(cat.toString()).add(describeDecorators(func, LSame2, ", ", LSame1))
@@ -119,17 +119,17 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
                               .toString() + "\n" + summary;
     }
     else if (element instanceof PyClass) {
-      final PyClass cls = (PyClass)element;
+      PyClass cls = (PyClass)element;
       String summary = "";
       PyStringLiteralExpression docStringExpression = cls.getDocStringExpression();
       if (docStringExpression == null) {
-        final PyFunction initOrNew = cls.findInitOrNew(false, null);
+        PyFunction initOrNew = cls.findInitOrNew(false, null);
         if (initOrNew != null) {
           docStringExpression = initOrNew.getDocStringExpression();
         }
       }
       if (docStringExpression != null) {
-        final StructuredDocString docString = DocStringUtil.parse(docStringExpression.getStringValue(), docStringExpression);
+        StructuredDocString docString = DocStringUtil.parse(docStringExpression.getStringValue(), docStringExpression);
         summary = docString.getSummary();
       }
 
@@ -153,12 +153,12 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   static ChainIterable<String> describeFunction(@Nonnull PyFunction fun,
                                                 FP.Lambda1<Iterable<String>, Iterable<String>> funcNameWrapper,
                                                 @Nonnull FP.Lambda1<String, String> escaper) {
-    final ChainIterable<String> cat = new ChainIterable<>();
-    final String name = fun.getName();
+    ChainIterable<String> cat = new ChainIterable<>();
+    String name = fun.getName();
     cat.addItem("def ").addWith(funcNameWrapper, $(name));
-    final TypeEvalContext context = TypeEvalContext.userInitiated(fun.getProject(), fun.getContainingFile());
-    final List<PyParameter> parameters = PyUtil.getParameters(fun, context);
-    final String paramStr = "(" +
+    TypeEvalContext context = TypeEvalContext.userInitiated(fun.getProject(), fun.getContainingFile());
+    List<PyParameter> parameters = PyUtil.getParameters(fun, context);
+    String paramStr = "(" +
       StringUtil.join(parameters, parameter -> PyUtil.getReadableRepr(parameter, false), ", ") +
       ")";
     cat.addItem(escaper.apply(paramStr));
@@ -172,12 +172,12 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
 
   @Nullable
   private static String describeExpression(@Nonnull PyExpression expr, @Nonnull PsiElement originalElement) {
-    final String name = expr.getName();
+    String name = expr.getName();
     if (name != null) {
-      final StringBuilder result = new StringBuilder((expr instanceof PyNamedParameter) ? "parameter" : "variable");
+      StringBuilder result = new StringBuilder((expr instanceof PyNamedParameter) ? "parameter" : "variable");
       result.append(String.format(" \"%s\"", name));
       if (expr instanceof PyNamedParameter) {
-        final PyFunction function = PsiTreeUtil.getParentOfType(expr, PyFunction.class);
+        PyFunction function = PsiTreeUtil.getParentOfType(expr, PyFunction.class);
         if (function != null) {
           result.append(" of ").append(function.getContainingClass() == null ? "function" : "method");
           result.append(String.format(" \"%s\"", function.getName()));
@@ -192,18 +192,18 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
   private static String describeType(@Nonnull PyTypedElement element) {
-    final TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
+    TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
     return String.format("Inferred type: %s", getTypeName(context.getType(element), context));
   }
 
   private static void getTypeDescription(@Nonnull PyFunction fun, @Nonnull ChainIterable<String> body) {
-    final TypeEvalContext context = TypeEvalContext.userInitiated(fun.getProject(), fun.getContainingFile());
-    final PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
+    TypeEvalContext context = TypeEvalContext.userInitiated(fun.getProject(), fun.getContainingFile());
+    PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
     builder.build(context.getType(fun), true).toBodyWithLinks(body, fun);
   }
 
   public static String getTypeName(@Nullable PyType type, @Nonnull TypeEvalContext context) {
-    final PyTypeModelBuilder.TypeModel typeModel = buildTypeModel(type, context);
+    PyTypeModelBuilder.TypeModel typeModel = buildTypeModel(type, context);
     return typeModel.asString();
   }
 
@@ -215,7 +215,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   public static void describeExpressionTypeWithLinks(@Nonnull ChainIterable<String> body,
                                                      @Nonnull PyReferenceExpression expression,
                                                      @Nonnull TypeEvalContext context) {
-    final PyType type = context.getType(expression);
+    PyType type = context.getType(expression);
     describeTypeWithLinks(body, expression, type, context);
   }
 
@@ -223,7 +223,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
                                            @Nonnull PsiElement anchor,
                                            PyType type,
                                            TypeEvalContext context) {
-    final PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
+    PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
     builder.build(type, true).toBodyWithLinks(body, anchor);
   }
 
@@ -233,8 +233,8 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
                                                   FP.Lambda1<Iterable<String>, Iterable<String>> decoNameWrapper,
                                                   @Nonnull String decoSeparator,
                                                   FP.Lambda1<String, String> escaper) {
-    final ChainIterable<String> cat = new ChainIterable<>();
-    final PyDecoratorList decoList = what.getDecoratorList();
+    ChainIterable<String> cat = new ChainIterable<>();
+    PyDecoratorList decoList = what.getDecoratorList();
     if (decoList != null) {
       for (PyDecorator deco : decoList.getDecorators()) {
         cat.add(describeDeco(deco, decoNameWrapper, escaper)).addItem(decoSeparator); // can't easily pass describeDeco to map() %)
@@ -256,8 +256,8 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
                                              FP.Lambda1<Iterable<String>, Iterable<String>> nameWrapper,
                                              boolean allowHtml,
                                              boolean linkOwnName) {
-    final ChainIterable<String> cat = new ChainIterable<>();
-    final String name = cls.getName();
+    ChainIterable<String> cat = new ChainIterable<>();
+    String name = cls.getName();
     cat.addItem("class ");
     if (allowHtml && linkOwnName) {
       cat.addWith(LinkMyClass, $(name));
@@ -265,12 +265,12 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
     else {
       cat.addWith(nameWrapper, $(name));
     }
-    final PyExpression[] ancestors = cls.getSuperClassExpressions();
+    PyExpression[] ancestors = cls.getSuperClassExpressions();
     if (ancestors.length > 0) {
       cat.addItem("(");
       boolean isNotFirst = false;
       for (PyExpression parent : ancestors) {
-        final String parentName = parent.getName();
+        String parentName = parent.getName();
         if (parentName == null) {
           continue;
         }
@@ -299,10 +299,10 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
                                                FP.Lambda1<String, String> argWrapper
                                                // add escaping, if need be
   ) {
-    final ChainIterable<String> cat = new ChainIterable<>();
+    ChainIterable<String> cat = new ChainIterable<>();
     cat.addItem("@").addWith(nameWrapper, $(PyUtil.getReadableRepr(deco.getCallee(), true)));
     if (deco.hasArgumentList()) {
-      final PyArgumentList arglist = deco.getArgumentList();
+      PyArgumentList arglist = deco.getArgumentList();
       if (arglist != null) {
         cat.addItem("(").add(interleave(FP.map(FP.combine(LReadableRepr, argWrapper), arglist.getArguments()), ", ")).addItem(")");
       }
@@ -328,11 +328,11 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
       return inferClassOfParameter(context);
     }
     else if (link.startsWith(LINK_TYPE_PARENT)) {
-      final PyClass cls = inferContainingClassOf(context);
+      PyClass cls = inferContainingClassOf(context);
       if (cls != null) {
-        final String desiredName = link.substring(LINK_TYPE_PARENT.length());
+        String desiredName = link.substring(LINK_TYPE_PARENT.length());
         for (PyClass parent : cls.getAncestorClasses(null)) {
-          final String parentName = parent.getName();
+          String parentName = parent.getName();
           if (parentName != null && parentName.equals(desiredName)) {
             return parent;
           }
@@ -340,8 +340,8 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
       }
     }
     else if (link.startsWith(LINK_TYPE_TYPENAME)) {
-      final String typeName = link.substring(LINK_TYPE_TYPENAME.length());
-      final PyType type = PyTypeParser.getTypeByName(context, typeName);
+      String typeName = link.substring(LINK_TYPE_TYPENAME.length());
+      PyType type = PyTypeParser.getTypeByName(context, typeName);
       if (type instanceof PyClassType) {
         return ((PyClassType)type).getPyClass();
       }
@@ -351,7 +351,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
 
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    final String url = getUrlFor(element, originalElement, true);
+    String url = getUrlFor(element, originalElement, true);
     return url == null ? null : Collections.singletonList(url);
   }
 
@@ -365,25 +365,25 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
       file = file.getParent();
       assert file != null;
     }
-    final Sdk sdk = PyBuiltinCache.findSdkForFile(file);
+    Sdk sdk = PyBuiltinCache.findSdkForFile(file);
     if (sdk == null) {
       return null;
     }
-    final QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, originalElement);
+    QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, originalElement);
     if (qName == null) {
       return null;
     }
-    final PythonDocumentationMap map = PythonDocumentationMap.getInstance();
-    final String pyVersion = pyVersion(sdk.getVersionString());
+    PythonDocumentationMap map = PythonDocumentationMap.getInstance();
+    String pyVersion = pyVersion(sdk.getVersionString());
     PsiNamedElement namedElement =
       (element instanceof PsiNamedElement && !(element instanceof PsiFileSystemItem)) ? (PsiNamedElement)element : null;
     if (namedElement instanceof PyFunction && PyNames.INIT.equals(namedElement.getName())) {
-      final PyClass containingClass = ((PyFunction)namedElement).getContainingClass();
+      PyClass containingClass = ((PyFunction)namedElement).getContainingClass();
       if (containingClass != null) {
         namedElement = containingClass;
       }
     }
-    final String url = map.urlFor(qName, namedElement, pyVersion);
+    String url = map.urlFor(qName, namedElement, pyVersion);
     if (url != null) {
       if (checkExistence && !pageExists(url)) {
         return map.rootUrlFor(qName);
@@ -391,7 +391,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
       return url;
     }
     for (PythonDocumentationLinkProvider provider : Extensions.getExtensions(PythonDocumentationLinkProvider.EP_NAME)) {
-      final String providerUrl = provider.getExternalDocumentationUrl(element, originalElement);
+      String providerUrl = provider.getExternalDocumentationUrl(element, originalElement);
       if (providerUrl != null) {
         if (checkExistence && !pageExists(providerUrl)) {
           return provider.getExternalDocumentationRoot(sdk);
@@ -421,9 +421,9 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
 
   @Nullable
   public static String pyVersion(@Nullable String versionString) {
-    final String prefix = "Python ";
+    String prefix = "Python ";
     if (versionString != null && versionString.startsWith(prefix)) {
-      final String version = versionString.substring(prefix.length());
+      String version = versionString.substring(prefix.length());
       int dot = version.indexOf('.');
       if (dot > 0) {
         dot = version.indexOf('.', dot + 1);
@@ -448,12 +448,12 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
 
   @Override
   public boolean canPromptToConfigureDocumentation(@Nonnull PsiElement element) {
-    final PsiFile containingFile = element.getContainingFile();
+    PsiFile containingFile = element.getContainingFile();
     if (containingFile instanceof PyFile) {
-      final Project project = element.getProject();
-      final VirtualFile vFile = containingFile.getVirtualFile();
+      Project project = element.getProject();
+      VirtualFile vFile = containingFile.getVirtualFile();
       if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInLibraryClasses(vFile)) {
-        final QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, element);
+        QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, element);
         if (qName != null && qName.getComponentCount() > 0) {
           return true;
         }
@@ -464,12 +464,12 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
 
   @Override
   public void promptToConfigureDocumentation(@Nonnull PsiElement element) {
-    final Project project = element.getProject();
-    final QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, element);
+    Project project = element.getProject();
+    QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, element);
     if (qName != null && qName.getComponentCount() > 0) {
       Application application = ApplicationManager.getApplication();
       application.invokeLater(() -> {
-        final int rc =
+        int rc =
           Messages.showOkCancelDialog(project, "No external documentation URL configured for module " + qName.getComponents().get(0) +
             ".\nWould you like to configure it now?", "Python External Documentation", Messages.getQuestionIcon());
         if (rc == Messages.OK) {
@@ -505,7 +505,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   @Nullable
   private static PyClass inferClassOfParameter(@Nonnull PsiElement context) {
     if (context instanceof PyNamedParameter) {
-      final PyType type =
+      PyType type =
         TypeEvalContext.userInitiated(context.getProject(), context.getContainingFile()).getType((PyNamedParameter)context);
       if (type instanceof PyClassType) {
         return ((PyClassType)type).getPyClass();

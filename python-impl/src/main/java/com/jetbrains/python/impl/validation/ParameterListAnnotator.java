@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public class ParameterListAnnotator extends PyAnnotator {
   @Override
-  public void visitPyParameterList(final PyParameterList paramlist) {
+  public void visitPyParameterList(PyParameterList paramlist) {
     final LanguageLevel languageLevel = ((PyFile)paramlist.getContainingFile()).getLanguageLevel();
     ParamHelper.walkDownParamArray(
       paramlist.getParameters(),

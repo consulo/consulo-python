@@ -53,10 +53,10 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	 * @param from          source
 	 * @param to            where to move
 	 */
-	protected PyMembersRefactoringBaseProcessor(@Nonnull final Project project,
-			@Nonnull final Collection<PyMemberInfo<PyElement>> membersToMove,
-			@Nonnull final PyClass from,
-			@Nonnull final PyClass... to)
+	protected PyMembersRefactoringBaseProcessor(@Nonnull Project project,
+			@Nonnull Collection<PyMemberInfo<PyElement>> membersToMove,
+			@Nonnull PyClass from,
+			@Nonnull PyClass... to)
 	{
 		super(project);
 		myFrom = from;
@@ -66,7 +66,7 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 
 	@Nonnull
 	@Override
-	protected UsageViewDescriptor createUsageViewDescriptor(@Nonnull final UsageInfo[] usages)
+	protected UsageViewDescriptor createUsageViewDescriptor(@Nonnull UsageInfo[] usages)
 	{
 		return this;
 	}
@@ -85,8 +85,8 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	@Override
 	protected final PyUsageInfo[] findUsages()
 	{
-		final List<PyUsageInfo> result = new ArrayList<>(myTo.length);
-		for(final PyClass pyDestinationClass : myTo)
+		List<PyUsageInfo> result = new ArrayList<>(myTo.length);
+		for(PyClass pyDestinationClass : myTo)
 		{
 			result.add(new PyUsageInfo(pyDestinationClass));
 		}
@@ -94,10 +94,10 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	}
 
 	@Override
-	protected final void performRefactoring(@Nonnull final UsageInfo[] usages)
+	protected final void performRefactoring(@Nonnull UsageInfo[] usages)
 	{
-		final Collection<PyClass> destinations = new ArrayList<>(usages.length);
-		for(final UsageInfo usage : usages)
+		Collection<PyClass> destinations = new ArrayList<>(usages.length);
+		for(UsageInfo usage : usages)
 		{
 			if(!(usage instanceof PyUsageInfo))
 			{
@@ -125,7 +125,7 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	@Override
 	protected RefactoringEventData getAfterData(@Nonnull UsageInfo[] usages)
 	{
-		final RefactoringEventData data = new RefactoringEventData();
+		RefactoringEventData data = new RefactoringEventData();
 		data.addElements(myTo);
 		return data;
 	}

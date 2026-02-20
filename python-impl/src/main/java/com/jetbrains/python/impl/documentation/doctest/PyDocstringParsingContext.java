@@ -34,7 +34,7 @@ public class PyDocstringParsingContext extends ParsingContext {
   private final StatementParsing myStatementParser;
   private final ExpressionParsing myExpressionParser;
 
-  public PyDocstringParsingContext(final PsiBuilder builder,
+  public PyDocstringParsingContext(PsiBuilder builder,
                                    LanguageLevel languageLevel,
                                    StatementParsing.FUTURE futureFlag) {
     super(builder, languageLevel, futureFlag);

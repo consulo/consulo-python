@@ -37,7 +37,7 @@ import java.util.List;
 public class PyCondaManagementService extends PyPackageManagementService {
   private static final Logger LOG = Logger.getInstance(PyCondaManagementService.class);
 
-  public PyCondaManagementService(@Nonnull final Project project, @Nonnull final Sdk sdk) {
+  public PyCondaManagementService(@Nonnull Project project, @Nonnull Sdk sdk) {
     super(project, sdk);
   }
 
@@ -68,15 +68,15 @@ public class PyCondaManagementService extends PyPackageManagementService {
 
   @Override
   public void addRepository(String repositoryUrl) {
-    final String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
-    final ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--add", "channels", repositoryUrl, "--force");
-    final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
+    String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
+    ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--add", "channels", repositoryUrl, "--force");
+    GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
 
     try {
-      final ProcessOutput result = CapturingProcessUtil.execAndGetOutput(commandLine);
-      final int exitCode = result.getExitCode();
+      ProcessOutput result = CapturingProcessUtil.execAndGetOutput(commandLine);
+      int exitCode = result.getExitCode();
       if (exitCode != 0) {
-        final String message =
+        String message =
           StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
         LOG.warn("Failed to add repository " + message);
       }
@@ -90,15 +90,15 @@ public class PyCondaManagementService extends PyPackageManagementService {
 
   @Override
   public void removeRepository(String repositoryUrl) {
-    final String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
-    final ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--remove", "channels", repositoryUrl, "--force");
-    final GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
+    String conda = PyCondaPackageService.getCondaExecutable(mySdk.getHomeDirectory());
+    ArrayList<String> parameters = Lists.newArrayList(conda, "config", "--remove", "channels", repositoryUrl, "--force");
+    GeneralCommandLine commandLine = new GeneralCommandLine(parameters);
 
     try {
-      final ProcessOutput result = CapturingProcessUtil.execAndGetOutput(commandLine);
-      final int exitCode = result.getExitCode();
+      ProcessOutput result = CapturingProcessUtil.execAndGetOutput(commandLine);
+      int exitCode = result.getExitCode();
       if (exitCode != 0) {
-        final String message =
+        String message =
           StringUtil.isEmptyOrSpaces(result.getStdout()) && StringUtil.isEmptyOrSpaces(result.getStderr()) ? "Permission denied" : "Non-zero exit code";
         LOG.warn("Failed to remove repository " + message);
       }
@@ -117,7 +117,7 @@ public class PyCondaManagementService extends PyPackageManagementService {
   @Nonnull
   @Override
   public AsyncResult<List<String>> fetchPackageVersions(String packageName) {
-    final List<String> versions = PyCondaPackageService.getInstance().getPackageVersions(packageName);
+    List<String> versions = PyCondaPackageService.getInstance().getPackageVersions(packageName);
     Collections.sort(versions, Collections.reverseOrder(new PackageVersionComparator()));
     return AsyncResult.resolved(versions);
   }

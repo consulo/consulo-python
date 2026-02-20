@@ -22,73 +22,73 @@ public abstract class PyFindUsagesTest extends PyTestCase
 {
 	public void testInitUsages()
 	{   // PY-292
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/InitUsages.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/InitUsages.py");
 		assertEquals(1, usages.size());
 	}
 
 	public void testClassUsages()
 	{   // PY-774
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ClassUsages.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ClassUsages.py");
 		assertUsages(usages, "c = <caret>Cow()");
 	}
 
 	public void testReassignedLocalUsages()
 	{ // PY-527
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ReassignedLocalUsages.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ReassignedLocalUsages.py");
 		assertEquals(3, usages.size());
 	}
 
 	public void testImplicitlyResolvedUsages()
 	{
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ImplicitlyResolvedUsages.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ImplicitlyResolvedUsages.py");
 		assertEquals(1, usages.size());
 	}
 
 	public void testQualifiedVsUnqualifiedUsages()
 	{  // PY-939
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/QualifiedVsUnqualifiedUsages.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/QualifiedVsUnqualifiedUsages.py");
 		assertEquals(1, usages.size());
 	}
 
 	public void testGlobalUsages()
 	{ // PY-1167
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/GlobalUsages.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/GlobalUsages.py");
 		assertEquals(4, usages.size());
 	}
 
 	public void testGlobalUsages2()
 	{ // PY-1167
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/GlobalUsages2.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/GlobalUsages2.py");
 		assertEquals(3, usages.size());
 	}
 
 	public void testNonGlobalUsages()
 	{ // PY-1179
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/NonGlobalUsages.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/NonGlobalUsages.py");
 		assertUsages(usages, "<caret>a = 0");
 	}
 
 	public void testLambdaParameter()
 	{
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/LambdaParameter.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/LambdaParameter.py");
 		assertUsages(usages, "<caret>parm+1");
 	}
 
 	public void testUnresolvedClassInit()
 	{   // PY-1450
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/UnresolvedClassInit.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/UnresolvedClassInit.py");
 		assertUsages(usages);
 	}
 
 	public void testImports()
 	{  // PY-1514
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/Imports.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/Imports.py");
 		assertUsages(usages, "import <caret>re", "<caret>re.compile");
 	}
 
 	public void testNestedFunctions()
 	{  // PY-3118
-		final Collection<UsageInfo> usages = doTest();
+		Collection<UsageInfo> usages = doTest();
 		assertUsages(usages, "<caret>bar = {}", "<caret>bar = []", "enumerate(<caret>bar)");
 	}
 
@@ -120,25 +120,25 @@ public abstract class PyFindUsagesTest extends PyTestCase
 		int pos = usageText.indexOf("<caret>");
 		assert pos >= 0;
 		usageText = usageText.replace("<caret>", "");
-		final int startIndex = usageInfo.getElement().getTextOffset() + usageInfo.getRangeInElement().getStartOffset() - pos;
+		int startIndex = usageInfo.getElement().getTextOffset() + usageInfo.getRangeInElement().getStartOffset() - pos;
 		assertEquals(usageText, myFixture.getFile().getText().substring(startIndex, startIndex + usageText.length()));
 	}
 
 	public void testReassignedInstanceAttribute()
 	{  // PY-4338
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ReassignedInstanceAttribute.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ReassignedInstanceAttribute.py");
 		assertEquals(5, usages.size());
 	}
 
 	public void testReassignedClassAttribute()
 	{  // PY-4338
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ReassignedClassAttribute.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/ReassignedClassAttribute.py");
 		assertEquals(6, usages.size());
 	}
 
 	public void testWrappedMethod()
 	{ // PY-5458
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/WrappedMethod.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/WrappedMethod.py");
 		assertUsages(usages, "MyClass.<caret>testMethod", "<caret>testMethod = staticmethod(testMethod)", "testMethod = staticmethod(<caret>testMethod)");
 	}
 
@@ -148,7 +148,7 @@ public abstract class PyFindUsagesTest extends PyTestCase
 		setLanguageLevel(LanguageLevel.PYTHON33);
 		try
 		{
-			final Collection<UsageInfo> usages = findMultiFileUsages("a.py");
+			Collection<UsageInfo> usages = findMultiFileUsages("a.py");
 			assertEquals(3, usages.size());
 		}
 		finally
@@ -159,17 +159,17 @@ public abstract class PyFindUsagesTest extends PyTestCase
 
 	public void testNameShadowing()
 	{  // PY-6241
-		final Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/NameShadowing.py");
+		Collection<UsageInfo> usages = myFixture.testFindUsages("findUsages/NameShadowing.py");
 		assertEquals(2, usages.size());
 	}
 
 	private Collection<UsageInfo> findMultiFileUsages(String filename)
 	{
-		final String testName = getTestName(false);
+		String testName = getTestName(false);
 		myFixture.copyDirectoryToProject("findUsages/" + testName, "");
 		PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments();
 		myFixture.configureFromTempProjectFile(filename);
-		final PsiElement element = TargetElementUtil.findTargetElement(myFixture.getEditor(), ContainerUtil.newHashSet(TargetElementUtilEx.ELEMENT_NAME_ACCEPTED, TargetElementUtilEx
+		PsiElement element = TargetElementUtil.findTargetElement(myFixture.getEditor(), ContainerUtil.newHashSet(TargetElementUtilEx.ELEMENT_NAME_ACCEPTED, TargetElementUtilEx
 				.REFERENCED_ELEMENT_ACCEPTED));
 		assertNotNull(element);
 		return myFixture.findUsages(element);

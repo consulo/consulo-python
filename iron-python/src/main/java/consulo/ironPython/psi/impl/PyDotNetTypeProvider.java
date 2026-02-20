@@ -45,7 +45,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 {
 	@Override
 	@Nullable
-	public PyType getReferenceType(@Nonnull final PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
+	public PyType getReferenceType(@Nonnull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(referenceTarget instanceof DotNetTypeDeclaration)
 		{
@@ -80,25 +80,25 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param, @Nonnull final PyFunction func, @Nonnull TypeEvalContext context)
+	public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context)
 	{
 		if(!(param.getParent() instanceof PyParameterList))
 		{
 			return null;
 		}
 		List<PyNamedParameter> params = ParamHelper.collectNamedParameters((PyParameterList) param.getParent());
-		final int index = params.indexOf(param);
+		int index = params.indexOf(param);
 		if(index < 0)
 		{
 			return null;
 		}
-		final List<PyType> superMethodParameterTypes = new ArrayList<PyType>();
+		List<PyType> superMethodParameterTypes = new ArrayList<PyType>();
 		PySuperMethodsSearch.search(func, context).forEach(psiElement ->
 		{
 			if(psiElement instanceof DotNetLikeMethodDeclaration)
 			{
-				final DotNetLikeMethodDeclaration method = (DotNetLikeMethodDeclaration) psiElement;
-				final DotNetParameter[] psiParameters = method.getParameterList().getParameters();
+				DotNetLikeMethodDeclaration method = (DotNetLikeMethodDeclaration) psiElement;
+				DotNetParameter[] psiParameters = method.getParameterList().getParameters();
 				int javaIndex = method.hasModifier(DotNetModifier.STATIC) ? index : index - 1; // adjust for 'self' parameter
 				if(javaIndex < psiParameters.length)
 				{

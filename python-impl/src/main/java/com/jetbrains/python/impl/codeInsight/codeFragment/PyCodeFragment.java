@@ -29,13 +29,13 @@ public class PyCodeFragment extends CodeFragment
 	private final boolean myYieldInside;
 	private final boolean myAsync;
 
-	public PyCodeFragment(final Set<String> input,
-			final Set<String> output,
-			final Set<String> globalWrites,
-			final Set<String> nonlocalWrites,
-			final boolean returnInside,
-			final boolean yieldInside,
-			final boolean isAsync)
+	public PyCodeFragment(Set<String> input,
+                          Set<String> output,
+                          Set<String> globalWrites,
+                          Set<String> nonlocalWrites,
+                          boolean returnInside,
+                          boolean yieldInside,
+                          boolean isAsync)
 	{
 		super(input, output, returnInside);
 		myGlobalWrites = globalWrites;

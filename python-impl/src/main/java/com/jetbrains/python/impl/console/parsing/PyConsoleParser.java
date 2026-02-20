@@ -45,7 +45,7 @@ public class PyConsoleParser extends PyParser
 	@Override
 	public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion)
 	{
-		final PsiBuilder.Marker rootMarker = builder.mark();
+		PsiBuilder.Marker rootMarker = builder.mark();
 
 		myIPythonStartSymbol = myPythonConsoleData.isIPythonEnabled() && startsWithIPythonSpecialSymbol(builder);
 

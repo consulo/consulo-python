@@ -37,8 +37,8 @@ public class PyConditionalExpressionImpl extends PyElementImpl implements PyCond
   }
 
   public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
-    final PyExpression truePart = getTruePart();
-    final PyExpression falsePart = getFalsePart();
+    PyExpression truePart = getTruePart();
+    PyExpression falsePart = getFalsePart();
     if (truePart == null || falsePart == null) {
       return null;
     }
@@ -47,19 +47,19 @@ public class PyConditionalExpressionImpl extends PyElementImpl implements PyCond
 
   @Override
   public PyExpression getTruePart() {
-    final List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
+    List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
     return expressions.get(0);
   }
 
   @Override
   public PyExpression getCondition() {
-    final List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
+    List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
     return expressions.size() > 1 ? expressions.get(1) : null;
   }
 
   @Override
   public PyExpression getFalsePart() {
-    final List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
+    List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
     return expressions.size() == 3 ? expressions.get(2) : null;
   }
 

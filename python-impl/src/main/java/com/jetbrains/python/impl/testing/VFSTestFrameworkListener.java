@@ -70,7 +70,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
 
   @Inject
   public VFSTestFrameworkListener(Application application) {
-    final MessageBus messageBus = application.getMessageBus();
+    MessageBus messageBus = application.getMessageBus();
     messageBus.connect().subscribe(BulkFileListener.class, new BulkFileListener.Adapter() {
       @Override
       public void after(@Nonnull List<? extends VFileEvent> events) {
@@ -78,10 +78,10 @@ public class VFSTestFrameworkListener implements BulkFileListener {
           if (!(event.getFileSystem() instanceof LocalFileSystem) || event instanceof VFileContentChangeEvent) {
             continue;
           }
-          final String path = event.getPath();
-          final boolean containsNose = path.contains(PyNames.NOSE_TEST);
-          final boolean containsPy = path.contains("py-1") || path.contains(PyNames.PY_TEST);
-          final boolean containsAt = path.contains(PyNames.AT_TEST);
+          String path = event.getPath();
+          boolean containsNose = path.contains(PyNames.NOSE_TEST);
+          boolean containsPy = path.contains("py-1") || path.contains(PyNames.PY_TEST);
+          boolean containsAt = path.contains(PyNames.AT_TEST);
           if (!containsAt && !containsNose && !containsPy) {
             continue;
           }
@@ -90,7 +90,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
               continue;
             }
             for (VirtualFile virtualFile : sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance())) {
-              final String root = virtualFile.getCanonicalPath();
+              String root = virtualFile.getCanonicalPath();
               if (root != null && path.contains(root)) {
                 if (containsNose) {
                   scheduleTestFrameworkCheck(sdk, PyNames.NOSE_TEST);
@@ -114,10 +114,10 @@ public class VFSTestFrameworkListener implements BulkFileListener {
   }
 
   public void updateAllTestFrameworks(@Nonnull Sdk sdk) {
-    final Map<String, Boolean> whichInstalled = checkTestFrameworksInstalled(sdk, PyNames.PY_TEST, PyNames.NOSE_TEST, PyNames.AT_TEST);
+    Map<String, Boolean> whichInstalled = checkTestFrameworksInstalled(sdk, PyNames.PY_TEST, PyNames.NOSE_TEST, PyNames.AT_TEST);
     ApplicationManager.getApplication().invokeLater(() -> {
       for (Map.Entry<String, Boolean> entry : whichInstalled.entrySet()) {
-        final Boolean installed = entry.getValue();
+        Boolean installed = entry.getValue();
         if (installed != null) {
           //noinspection ConstantConditions
           setTestFrameworkInstalled(installed, sdk.getHomePath(), entry.getKey());
@@ -136,7 +136,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
   }
 
   private void checkFrameworkInstalledAndUpdateSettings(@Nullable Sdk sdk, @Nonnull String testPackageName) {
-    final Boolean installed = checkTestFrameworkInstalled(sdk, testPackageName);
+    Boolean installed = checkTestFrameworkInstalled(sdk, testPackageName);
     if (installed != null) {
       //noinspection ConstantConditions
       ApplicationManager.getApplication().invokeLater(() -> setTestFrameworkInstalled(installed, sdk.getHomePath(), testPackageName));
@@ -153,15 +153,15 @@ public class VFSTestFrameworkListener implements BulkFileListener {
 
   @Nonnull
   private Map<String, Boolean> checkTestFrameworksInstalled(@Nullable Sdk sdk, @Nonnull String... testPackageNames) {
-    final Map<String, Boolean> result = new HashMap<>();
+    Map<String, Boolean> result = new HashMap<>();
     if (sdk == null || StringUtil.isEmptyOrSpaces(sdk.getHomePath())) {
       LOG.info("Searching test runner in empty sdk");
       return result;
     }
-    final PyPackageManager manager = PyPackageManager.getInstance(sdk);
-    final boolean refreshed = PyPackageUtil.updatePackagesSynchronouslyWithGuard(manager, myIsUpdating);
+    PyPackageManager manager = PyPackageManager.getInstance(sdk);
+    boolean refreshed = PyPackageUtil.updatePackagesSynchronouslyWithGuard(manager, myIsUpdating);
     if (refreshed) {
-      final List<PyPackage> packages = manager.getPackages();
+      List<PyPackage> packages = manager.getPackages();
       if (packages != null) {
         for (String name : testPackageNames) {
           result.put(name, PyPackageUtil.findPackage(packages, name) != null);
@@ -176,7 +176,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
   }
 
   public boolean isPyTestInstalled(@Nonnull Sdk sdk) {
-    final Boolean isInstalled = myService.SDK_TO_PYTEST.get(sdk.getHomePath());
+    Boolean isInstalled = myService.SDK_TO_PYTEST.get(sdk.getHomePath());
     if (isInstalled == null) {
       scheduleTestFrameworkCheck(sdk, PyNames.PY_TEST);
       return true;
@@ -189,7 +189,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
   }
 
   public boolean isNoseTestInstalled(@Nonnull Sdk sdk) {
-    final Boolean isInstalled = myService.SDK_TO_NOSETEST.get(sdk.getHomePath());
+    Boolean isInstalled = myService.SDK_TO_NOSETEST.get(sdk.getHomePath());
     if (isInstalled == null) {
       scheduleTestFrameworkCheck(sdk, PyNames.NOSE_TEST);
       return true;
@@ -202,7 +202,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
   }
 
   public boolean isAtTestInstalled(@Nonnull Sdk sdk) {
-    final Boolean isInstalled = myService.SDK_TO_ATTEST.get(sdk.getHomePath());
+    Boolean isInstalled = myService.SDK_TO_ATTEST.get(sdk.getHomePath());
     if (isInstalled == null) {
       scheduleTestFrameworkCheck(sdk, PyNames.AT_TEST);
       return true;

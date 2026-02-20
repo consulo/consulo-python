@@ -45,7 +45,7 @@ public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction {
 
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
+        InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
         profile.<RestRoleInspection, RestRoleInspectionState>modifyToolSettings(
             RestRoleInspection.class.getSimpleName(),
             descriptor.getPsiElement(),

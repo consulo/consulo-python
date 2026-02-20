@@ -43,7 +43,7 @@ public class PyQuotedStringIntention extends BaseIntentionAction {
         PyStringLiteralExpression string =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
         if (string != null) {
-            final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
+            PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(string, PyDocStringOwner.class);
             if (docStringOwner != null) {
                 if (docStringOwner.getDocStringExpression() == string) {
                     return false;
@@ -78,9 +78,9 @@ public class PyQuotedStringIntention extends BaseIntentionAction {
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         if (string != null) {
-            final String stringText = string.getText();
+            String stringText = string.getText();
             int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(stringText);
-            final String text = stringText.substring(prefixLength);
+            String text = stringText.substring(prefixLength);
 
             if (text.startsWith("'") && text.endsWith("'")) {
                 String result = convertSingleToDoubleQuoted(stringText);

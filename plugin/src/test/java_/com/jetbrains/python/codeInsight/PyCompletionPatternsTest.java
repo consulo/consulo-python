@@ -25,7 +25,7 @@ public abstract class PyCompletionPatternsTest extends PyTestCase {
     assertFalse(doTest("with open(foo) as ", PyKeywordCompletionContributor.IN_WITH_AFTER_REF));
   }
 
-  private boolean doTest(final String text, final ElementPattern<PsiElement> ref) {
+  private boolean doTest(String text, ElementPattern<PsiElement> ref) {
     myFixture.configureByText(PythonFileType.INSTANCE, text);
     PsiElement element = myFixture.getFile().findElementAt(text.length() - 1);
     return ref.accepts(element);

@@ -34,7 +34,7 @@ import jakarta.annotation.Nonnull;
 public class PythonNamesValidator implements NamesValidator {
 
   @Override
-  public boolean isKeyword(@Nonnull final String name, final Project project) {
+  public boolean isKeyword(@Nonnull String name, Project project) {
     try {
       PythonLexer lexer = new PythonLexer();
       lexer.start(name);
@@ -50,7 +50,7 @@ public class PythonNamesValidator implements NamesValidator {
   }
 
   @Override
-  public boolean isIdentifier(@Nonnull final String name, final Project project) {
+  public boolean isIdentifier(@Nonnull String name, Project project) {
     try {
       PythonLexer lexer = new PythonLexer();
       lexer.start(name);

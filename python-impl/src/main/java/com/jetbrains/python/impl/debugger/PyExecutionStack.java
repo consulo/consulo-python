@@ -34,14 +34,14 @@ public class PyExecutionStack extends XExecutionStack
 	private final PyThreadInfo myThreadInfo;
 	private PyStackFrame myTopFrame;
 
-	public PyExecutionStack(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo)
+	public PyExecutionStack(@Nonnull PyDebugProcess debugProcess, @Nonnull PyThreadInfo threadInfo)
 	{
 		super(threadInfo.getName());
 		myDebugProcess = debugProcess;
 		myThreadInfo = threadInfo;
 	}
 
-	public PyExecutionStack(@Nonnull final PyDebugProcess debugProcess, @Nonnull final PyThreadInfo threadInfo, final @Nullable Image icon)
+	public PyExecutionStack(@Nonnull PyDebugProcess debugProcess, @Nonnull PyThreadInfo threadInfo, @Nullable Image icon)
 	{
 		super(threadInfo.getName(), icon);
 		myDebugProcess = debugProcess;
@@ -53,7 +53,7 @@ public class PyExecutionStack extends XExecutionStack
 	{
 		if(myTopFrame == null)
 		{
-			final List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
+			List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
 			if(frames != null)
 			{
 				myTopFrame = convert(myDebugProcess, frames.get(0));
@@ -71,14 +71,14 @@ public class PyExecutionStack extends XExecutionStack
 			return;
 		}
 
-		final List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
+		List<PyStackFrameInfo> frames = myThreadInfo.getFrames();
 		if(frames == null)
 		{
 			container.addStackFrames(Collections.emptyList(), true);
 			return;
 		}
 
-		final List<PyStackFrame> xFrames = new ArrayList<>(frames.size());
+		List<PyStackFrame> xFrames = new ArrayList<>(frames.size());
 		for(PyStackFrameInfo frame : frames)
 		{
 			xFrames.add(convert(myDebugProcess, frame));
@@ -86,7 +86,7 @@ public class PyExecutionStack extends XExecutionStack
 		container.addStackFrames(xFrames, true);
 	}
 
-	private static PyStackFrame convert(final PyDebugProcess debugProcess, final PyStackFrameInfo frameInfo)
+	private static PyStackFrame convert(PyDebugProcess debugProcess, PyStackFrameInfo frameInfo)
 	{
 		return debugProcess.createStackFrame(frameInfo);
 	}

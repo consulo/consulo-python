@@ -21,7 +21,7 @@ public class PyThreadInfo
 	private int myStopReason;
 	private String myMessage;
 
-	public PyThreadInfo(final String id, final String name, final List<PyStackFrameInfo> frames, final int stopReason, String message)
+	public PyThreadInfo(String id, String name, List<PyStackFrameInfo> frames, int stopReason, String message)
 	{
 		myId = id;
 		myName = name;
@@ -67,7 +67,7 @@ public class PyThreadInfo
 		return myState;
 	}
 
-	public synchronized void updateState(final State state, final List<PyStackFrameInfo> frames)
+	public synchronized void updateState(State state, List<PyStackFrameInfo> frames)
 	{
 		myState = state;
 		myFrames = (frames != null && frames.size() > 0 ? Collections.unmodifiableList(frames) : null);

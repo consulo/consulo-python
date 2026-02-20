@@ -105,8 +105,8 @@ public class PyStructureViewElement implements StructureViewTreeElement {
   @Override
   public boolean equals(Object o) {
     if (o instanceof StructureViewTreeElement) {
-      final Object value = ((StructureViewTreeElement)o).getValue();
-      final String name = myElement.getName();
+      Object value = ((StructureViewTreeElement)o).getValue();
+      String name = myElement.getName();
       if (value instanceof PyElement && name != null) {
         return name.equals(((PyElement)value).getName());
       }
@@ -116,13 +116,13 @@ public class PyStructureViewElement implements StructureViewTreeElement {
 
   @Override
   public int hashCode() {
-    final String name = myElement.getName();
+    String name = myElement.getName();
     return name != null ? name.hashCode() : 0;
   }
 
   @Nonnull
   public StructureViewTreeElement[] getChildren() {
-    final Collection<StructureViewTreeElement> children = new ArrayList<>();
+    Collection<StructureViewTreeElement> children = new ArrayList<>();
     for (PyElement e : getElementChildren(myElement)) {
       children.add(createChild(e, getElementVisibility(e), false, elementIsField(e)));
     }
@@ -130,7 +130,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     if (myElement instanceof PyClass) {
       for (PyClass c : ((PyClass)myElement).getAncestorClasses(null)) {
         for (PyElement e : getElementChildren(c)) {
-          final StructureViewTreeElement inherited = createChild(e, getElementVisibility(e), true, elementIsField(e));
+          StructureViewTreeElement inherited = createChild(e, getElementVisibility(e), true, elementIsField(e));
           if (!children.contains(inherited)) {
             children.add(inherited);
           }
@@ -168,20 +168,20 @@ public class PyStructureViewElement implements StructureViewTreeElement {
       }
     });
     if (element instanceof PyClass) {
-      final List<PyElement> attrs = getClassAttributes((PyClass)element);
-      final List<PyElement> filtered = new ArrayList<>();
-      final Set<String> names = new HashSet<>();
+      List<PyElement> attrs = getClassAttributes((PyClass)element);
+      List<PyElement> filtered = new ArrayList<>();
+      Set<String> names = new HashSet<>();
       for (PyElement attr : attrs) {
-        final String name = attr.getName();
+        String name = attr.getName();
         PyPsiUtils.assertValid(attr);
         if (!names.contains(name)) {
           filtered.add(attr);
         }
         names.add(name);
       }
-      final Comparator<PyElement> comparator = (e1, e2) -> {
-        final String n1 = e1.getName();
-        final String n2 = e2.getName();
+      Comparator<PyElement> comparator = (e1, e2) -> {
+        String n1 = e1.getName();
+        String n2 = e2.getName();
         return (n1 != null && n2 != null) ? n1.compareTo(n2) : 0;
       };
       Collections.sort(filtered, comparator);
@@ -191,7 +191,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
   }
 
   protected List<PyElement> getClassAttributes(PyClass cls) {
-    final List<PyElement> results = new ArrayList<>();
+    List<PyElement> results = new ArrayList<>();
     results.addAll(cls.getInstanceAttributes());
     results.addAll(cls.getClassAttributes());
     return results;

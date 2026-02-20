@@ -66,7 +66,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
 
   @Override
   public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
-    final IntroduceOperation operation = new IntroduceOperation(project, editor, file, null);
+    IntroduceOperation operation = new IntroduceOperation(project, editor, file, null);
     operation.addAvailableInitPlace(InitPlace.CONSTRUCTOR);
     if (isTestClass(file, editor)) {
       operation.addAvailableInitPlace(InitPlace.SET_UP);
@@ -76,20 +76,20 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
 
   private static boolean isTestClass(PsiFile file, Editor editor) {
     PsiElement element1 = null;
-    final SelectionModel selectionModel = editor.getSelectionModel();
+    SelectionModel selectionModel = editor.getSelectionModel();
     if (selectionModel.hasSelection()) {
       element1 = file.findElementAt(selectionModel.getSelectionStart());
     }
     else {
-      final CaretModel caretModel = editor.getCaretModel();
-      final Document document = editor.getDocument();
+      CaretModel caretModel = editor.getCaretModel();
+      Document document = editor.getDocument();
       int lineNumber = document.getLineNumber(caretModel.getOffset());
       if ((lineNumber >= 0) && (lineNumber < document.getLineCount())) {
         element1 = file.findElementAt(document.getLineStartOffset(lineNumber));
       }
     }
     if (element1 != null) {
-      final PyClass clazz = PyUtil.getContainingClassOrSelf(element1);
+      PyClass clazz = PyUtil.getContainingClassOrSelf(element1);
       if (clazz != null && PythonUnitTestUtil.isTestCaseClass(clazz, null)) {
         return true;
       }
@@ -141,13 +141,13 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
     @Override
     public void visitPyReferenceExpression(PyReferenceExpression node) {
       super.visitPyReferenceExpression(node);
-      final PsiElement result = node.getReference().resolve();
+      PsiElement result = node.getReference().resolve();
       if (result != null && PsiTreeUtil.getParentOfType(result, ScopeOwner.class) == myScope) {
         if (result instanceof PyParameter && myScope instanceof PyFunction) {
-          final PyFunction function = (PyFunction)myScope;
-          final PyParameter[] parameters = function.getParameterList().getParameters();
+          PyFunction function = (PyFunction)myScope;
+          PyParameter[] parameters = function.getParameterList().getParameters();
           if (parameters.length > 0 && result == parameters[0]) {
-            final PyFunction.Modifier modifier = function.getModifier();
+            PyFunction.Modifier modifier = function.getModifier();
             if (modifier != PyFunction.Modifier.STATICMETHOD) {
               // 'self' is not a local scope dependency
               return;
@@ -164,11 +164,11 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   protected PsiElement addDeclaration(@Nonnull PsiElement expression,
                                       @Nonnull PsiElement declaration,
                                       @Nonnull IntroduceOperation operation) {
-    final PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
+    PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
     PsiElement anchor = PyUtil.getContainingClassOrSelf(expr);
     assert anchor instanceof PyClass;
-    final PyClass clazz = (PyClass)anchor;
-    final Project project = anchor.getProject();
+    PyClass clazz = (PyClass)anchor;
+    Project project = anchor.getProject();
     if (operation.getInitPlace() == InitPlace.CONSTRUCTOR && !inConstructor(expression)) {
       return AddFieldQuickFix.addFieldToInit(project, clazz, "", new AddFieldDeclaration(declaration));
     }
@@ -179,9 +179,9 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   }
 
   private static boolean inConstructor(@Nonnull PsiElement expression) {
-    final PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
+    PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
     PyClass clazz = PyUtil.getContainingClassOrSelf(expr);
-    final ScopeOwner current = ScopeUtil.getScopeOwner(expression);
+    ScopeOwner current = ScopeUtil.getScopeOwner(expression);
     if (clazz != null && current != null && current instanceof PyFunction) {
       PyFunction init = clazz.findMethodByName(PyNames.INIT, false, null);
       if (current == init) {
@@ -192,16 +192,16 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   }
 
   @Nullable
-  private static PsiElement addFieldToSetUp(PyClass clazz, final Function<String, PyStatement> callback) {
-    final PyFunction init = clazz.findMethodByName(PythonUnitTestUtil.TESTCASE_SETUP_NAME, false, null);
+  private static PsiElement addFieldToSetUp(PyClass clazz, Function<String, PyStatement> callback) {
+    PyFunction init = clazz.findMethodByName(PythonUnitTestUtil.TESTCASE_SETUP_NAME, false, null);
     if (init != null) {
       return AddFieldQuickFix.appendToMethod(init, callback);
     }
-    final PyFunctionBuilder builder = new PyFunctionBuilder(PythonUnitTestUtil.TESTCASE_SETUP_NAME, clazz);
+    PyFunctionBuilder builder = new PyFunctionBuilder(PythonUnitTestUtil.TESTCASE_SETUP_NAME, clazz);
     builder.parameter(PyNames.CANONICAL_SELF);
     PyFunction setUp = builder.buildFunction(clazz.getProject(), LanguageLevel.getDefault());
-    final PyStatementList statements = clazz.getStatementList();
-    final PsiElement anchor = statements.getFirstChild();
+    PyStatementList statements = clazz.getStatementList();
+    PsiElement anchor = statements.getFirstChild();
     setUp = (PyFunction)statements.addBefore(setUp, anchor);
     return AddFieldQuickFix.appendToMethod(setUp, callback);
   }
@@ -225,16 +225,16 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
 
   @Override
   protected PyExpression createExpression(Project project, String name, PsiElement declaration) {
-    final String text = declaration.getText();
-    final String self_name = text.substring(0, text.indexOf('.'));
+    String text = declaration.getText();
+    String self_name = text.substring(0, text.indexOf('.'));
     return PyElementGenerator.getInstance(project).createExpressionFromText(self_name + "." + name);
   }
 
   @Override
   protected PyAssignmentStatement createDeclaration(Project project, String assignmentText, PsiElement anchor) {
-    final PyFunction container = PsiTreeUtil.getParentOfType(anchor, PyFunction.class);
+    PyFunction container = PsiTreeUtil.getParentOfType(anchor, PyFunction.class);
     String selfName = PyUtil.getFirstParameterName(container);
-    final LanguageLevel langLevel = LanguageLevel.forElement(anchor);
+    LanguageLevel langLevel = LanguageLevel.forElement(anchor);
     return PyElementGenerator.getInstance(project).createFromText(langLevel, PyAssignmentStatement.class, selfName + "." + assignmentText);
   }
 
@@ -277,7 +277,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   private static boolean isInStaticMethod(PsiElement element) {
     PyFunction containingMethod = PsiTreeUtil.getParentOfType(element, PyFunction.class, false, PyClass.class);
     if (containingMethod != null) {
-      final PyFunction.Modifier modifier = containingMethod.getModifier();
+      PyFunction.Modifier modifier = containingMethod.getModifier();
       return modifier == PyFunction.Modifier.STATICMETHOD;
     }
     return false;
@@ -303,8 +303,8 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
       if (PyNames.CANONICAL_SELF.equals(self_name)) {
         return (PyStatement)myDeclaration;
       }
-      final String text = myDeclaration.getText();
-      final Project project = myDeclaration.getProject();
+      String text = myDeclaration.getText();
+      Project project = myDeclaration.getProject();
       return PyElementGenerator.getInstance(project)
                                .createFromText(LanguageLevel.getDefault(),
                                                PyStatement.class,
@@ -314,14 +314,14 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
 
   @Override
   protected void performInplaceIntroduce(IntroduceOperation operation) {
-    final PsiElement statement = performRefactoring(operation);
+    PsiElement statement = performRefactoring(operation);
     // put caret on identifier after "self."
     if (statement instanceof PyAssignmentStatement) {
-      final List<PsiElement> occurrences = operation.getOccurrences();
-      final PsiElement occurrence = findOccurrenceUnderCaret(occurrences, operation.getEditor());
+      List<PsiElement> occurrences = operation.getOccurrences();
+      PsiElement occurrence = findOccurrenceUnderCaret(occurrences, operation.getEditor());
       PyTargetExpression target = (PyTargetExpression)((PyAssignmentStatement)statement).getTargets()[0];
       putCaretOnFieldName(operation.getEditor(), occurrence != null ? occurrence : target);
-      final InplaceVariableIntroducer<PsiElement> introducer = new PyInplaceFieldIntroducer(target, operation, occurrences);
+      InplaceVariableIntroducer<PsiElement> introducer = new PyInplaceFieldIntroducer(target, operation, occurrences);
       introducer.performInplaceRefactoring(new LinkedHashSet<>(operation.getSuggestedNames()));
     }
   }
@@ -332,9 +332,9 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
       qExpr = PsiTreeUtil.getParentOfType(qExpr, PyQualifiedExpression.class);
     }
     if (qExpr != null) {
-      final ASTNode nameElement = qExpr.getNameElement();
+      ASTNode nameElement = qExpr.getNameElement();
       if (nameElement != null) {
-        final int offset = nameElement.getTextRange().getStartOffset();
+        int offset = nameElement.getTextRange().getStartOffset();
         editor.getCaretModel().moveToOffset(offset);
       }
     }
@@ -376,10 +376,10 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
     protected void moveOffsetAfter(boolean success) {
       if (success && (myPanel != null && myPanel.getInitPlace() != InitPlace.SAME_METHOD) || myOperation.getInplaceInitPlace() != InitPlace.SAME_METHOD) {
         WriteAction.run(() -> {
-          final PyAssignmentStatement initializer = PsiTreeUtil.getParentOfType(myTarget, PyAssignmentStatement.class);
+          PyAssignmentStatement initializer = PsiTreeUtil.getParentOfType(myTarget, PyAssignmentStatement.class);
           assert initializer != null;
-          final Function<String, PyStatement> callback = FunctionUtil.<String, PyStatement>constant(initializer);
-          final PyClass pyClass = PyUtil.getContainingClassOrSelf(initializer);
+          Function<String, PyStatement> callback = FunctionUtil.<String, PyStatement>constant(initializer);
+          PyClass pyClass = PyUtil.getContainingClassOrSelf(initializer);
           InitPlace initPlace = myPanel != null ? myPanel.getInitPlace() : myOperation.getInplaceInitPlace();
           if (initPlace == InitPlace.CONSTRUCTOR) {
             AddFieldQuickFix.addFieldToInit(myProject, pyClass, "", callback);
@@ -391,7 +391,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
             initializer.delete();
           }
           else {
-            final PyExpression copy =
+            PyExpression copy =
               PyElementGenerator.getInstance(myProject).createExpressionFromText(LanguageLevel.forElement(myTarget), myTarget.getText());
             initializer.replace(copy);
           }

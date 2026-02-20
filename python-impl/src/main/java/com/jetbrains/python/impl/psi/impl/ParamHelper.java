@@ -48,7 +48,7 @@ public class ParamHelper {
         walker.leaveTupleParameter(tpar, (i==0), (i == last));
       }
       else {
-        final PyNamedParameter namedParameter = param.getAsNamed();
+        PyNamedParameter namedParameter = param.getAsNamed();
         if (namedParameter != null) {
           walker.visitNamedParameter(namedParameter, (i==0), (i == last));
         }

@@ -67,35 +67,35 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     if (!CodeInsightSettings.getInstance().INDENT_TO_CARET_ON_PASTE || file.getLanguage() != PythonLanguage.getInstance()) {
       return text;
     }
-    final CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
+    CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
     final boolean useTabs = codeStyleSettings.useTabCharacter(PythonFileType.INSTANCE);
-    final int indentSize = codeStyleSettings.getIndentSize(PythonFileType.INSTANCE);
+    int indentSize = codeStyleSettings.getIndentSize(PythonFileType.INSTANCE);
     CharFilter NOT_INDENT_FILTER = new CharFilter() {
       public boolean accept(char ch) {
         return useTabs? ch != '\t' : ch != ' ';
       }
     };
-    final String indentChar = useTabs ? "\t" : " ";
+    String indentChar = useTabs ? "\t" : " ";
 
-    final CaretModel caretModel = editor.getCaretModel();
-    final SelectionModel selectionModel = editor.getSelectionModel();
+    CaretModel caretModel = editor.getCaretModel();
+    SelectionModel selectionModel = editor.getSelectionModel();
     final Document document = editor.getDocument();
-    final int caretOffset = selectionModel.getSelectionStart() != selectionModel.getSelectionEnd() ?
+    int caretOffset = selectionModel.getSelectionStart() != selectionModel.getSelectionEnd() ?
                             selectionModel.getSelectionStart() : caretModel.getOffset();
-    final int lineNumber = document.getLineNumber(caretOffset);
+    int lineNumber = document.getLineNumber(caretOffset);
     final int lineStartOffset = getLineStartSafeOffset(document, lineNumber);
     final int lineEndOffset = document.getLineEndOffset(lineNumber);
 
-    final PsiElement element = file.findElementAt(caretOffset);
+    PsiElement element = file.findElementAt(caretOffset);
     if (PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class) != null) return text;
 
     text = addLeadingSpaces(text, NOT_INDENT_FILTER, indentSize, indentChar);
     int firstLineIndent = StringUtil.findFirst(text, NOT_INDENT_FILTER);
-    final String indentText = getIndentText(file, document, caretOffset, lineNumber, firstLineIndent);
+    String indentText = getIndentText(file, document, caretOffset, lineNumber, firstLineIndent);
 
     int toRemove = calculateIndentToRemove(text, NOT_INDENT_FILTER);
 
-    final String toString = document.getText(TextRange.create(lineStartOffset, lineEndOffset));
+    String toString = document.getText(TextRange.create(lineStartOffset, lineEndOffset));
     if (StringUtil.isEmptyOrSpaces(indentText) && isApplicable(file, text, caretOffset)) {
       caretModel.moveToOffset(lineStartOffset);
 
@@ -110,7 +110,7 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
       editor.getSelectionModel().setSelection(lineStartOffset, selectionModel.getSelectionEnd());
     }
 
-    final List<String> strings = StringUtil.split(text, "\n", false);
+    List<String> strings = StringUtil.split(text, "\n", false);
     String newText = "";
     if (StringUtil.isEmptyOrSpaces(indentText)) {
       for (String s : strings) {
@@ -126,12 +126,12 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return newText;
   }
 
-  private static String addLeadingSpaces(String text, final CharFilter filter, int indentSize, String indentChar) {
-    final List<String> strings = StringUtil.split(text, "\n", false);
+  private static String addLeadingSpaces(String text, CharFilter filter, int indentSize, String indentChar) {
+    List<String> strings = StringUtil.split(text, "\n", false);
     if (strings.size() > 1) {
       int firstLineIndent = StringUtil.findFirst(strings.get(0), filter);
       int secondLineIndent = StringUtil.findFirst(strings.get(1), filter);
-      final int diff = secondLineIndent - firstLineIndent;
+      int diff = secondLineIndent - firstLineIndent;
       if (diff > indentSize) {
         text = StringUtil.repeat(indentChar, diff - indentSize) + text;
       }
@@ -139,14 +139,14 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return text;
   }
 
-  private static String getIndentText(@Nonnull final PsiFile file,
-                                      @Nonnull final Document document,
+  private static String getIndentText(@Nonnull PsiFile file,
+                                      @Nonnull Document document,
                                       int caretOffset,
                                       int lineNumber, int firstLineIndent) {
 
     PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
     if (nonWS != null) {
-      final IElementType nonWSType = nonWS.getNode().getElementType();
+      IElementType nonWSType = nonWS.getNode().getElementType();
       if (nonWSType == PyTokenTypes.ELSE_KEYWORD || nonWSType == PyTokenTypes.ELIF_KEYWORD ||
           nonWSType == PyTokenTypes.EXCEPT_KEYWORD || nonWSType == PyTokenTypes.FINALLY_KEYWORD) {
         lineNumber -= 1;
@@ -161,10 +161,10 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
       indentText = document.getText(TextRange.create(lineStartOffset, nonWS.getTextOffset()));
     }
     else if (caretOffset == lineStartOffset) {
-      final PsiElement ws = file.findElementAt(lineStartOffset);
+      PsiElement ws = file.findElementAt(lineStartOffset);
       if (ws != null) {
-        final String wsText = ws.getText();
-        final List<String> strings = StringUtil.split(wsText, "\n");
+        String wsText = ws.getText();
+        List<String> strings = StringUtil.split(wsText, "\n");
         if (strings.size() >= 1) {
           indentText = strings.get(0);
         }
@@ -175,21 +175,21 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return indentText;
   }
 
-  private static int calculateIndentToRemove(@Nonnull String text, @Nonnull final CharFilter filter) {
-    final List<String> strings = StringUtil.split(text, "\n", false);
+  private static int calculateIndentToRemove(@Nonnull String text, @Nonnull CharFilter filter) {
+    List<String> strings = StringUtil.split(text, "\n", false);
     int minIndent = StringUtil.findFirst(text, filter);
     for (String  s : strings) {
-      final int indent = StringUtil.findFirst(s, filter);
+      int indent = StringUtil.findFirst(s, filter);
       if (indent < minIndent && !StringUtil.isEmptyOrSpaces(s))
         minIndent = indent;
     }
     return minIndent;
   }
 
-  private static boolean isApplicable(@Nonnull final PsiFile file, @Nonnull String text, int caretOffset) {
-    final boolean useTabs =
+  private static boolean isApplicable(@Nonnull PsiFile file, @Nonnull String text, int caretOffset) {
+    boolean useTabs =
       CodeStyleSettingsManager.getSettings(file.getProject()).useTabCharacter(PythonFileType.INSTANCE);
-    final PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
+    PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
     if (nonWS == null || text.endsWith("\n"))
       return true;
     if (inStatementList(file, caretOffset) && (text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1))
@@ -197,8 +197,8 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return false;
   }
 
-  private static boolean inStatementList(@Nonnull final PsiFile file, int caretOffset) {
-    final PsiElement element = file.findElementAt(caretOffset);
+  private static boolean inStatementList(@Nonnull PsiFile file, int caretOffset) {
+    PsiElement element = file.findElementAt(caretOffset);
     return PsiTreeUtil.getParentOfType(element, PyStatementList.class) != null ||
            PsiTreeUtil.getParentOfType(element, PyFunction.class) != null ||
            PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
@@ -211,7 +211,7 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return false;
   }
 
-  public static int getLineStartSafeOffset(final Document document, int line) {
+  public static int getLineStartSafeOffset(Document document, int line) {
     if (line == document.getLineCount()) return document.getTextLength();
     if (line < 0) return 0;
     return document.getLineStartOffset(line);

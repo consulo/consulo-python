@@ -36,7 +36,7 @@ public class PythonDocCommentUtil {
     if (string != null) {
       PyElement func = PsiTreeUtil.getParentOfType(element, PyFunction.class, PyClass.class, PyFile.class);
       if (func != null) {
-        final PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(element,
+        PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(element,
                                                                             PyDocStringOwner.class);
         if (docStringOwner == func) {
           PyStringLiteralExpression str = docStringOwner.getDocStringExpression();

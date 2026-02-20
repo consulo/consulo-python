@@ -45,7 +45,7 @@ public class PyDocstringLanguageInjector implements LanguageInjector {
         if (!(host instanceof PyStringLiteralExpression)) {
             return;
         }
-        final Module module = host.getModule();
+        Module module = host.getModule();
         if (module == null || !PyDocumentationSettings.getInstance(module).isAnalyzeDoctest()) {
             return;
         }
@@ -53,10 +53,10 @@ public class PyDocstringLanguageInjector implements LanguageInjector {
         if (DocStringUtil.getParentDefinitionDocString(host) == host) {
             int start = 0;
             int end = host.getTextLength() - 1;
-            final String text = host.getText();
+            String text = host.getText();
 
-            final Pair<String, String> quotes = PyStringLiteralUtil.getQuotes(text);
-            final List<String> strings = StringUtil.split(text, "\n", false);
+            Pair<String, String> quotes = PyStringLiteralUtil.getQuotes(text);
+            List<String> strings = StringUtil.split(text, "\n", false);
 
             boolean gotExample = false;
 
@@ -64,14 +64,14 @@ public class PyDocstringLanguageInjector implements LanguageInjector {
             int maxPosition = text.length();
             boolean endsWithSlash = false;
             for (String string : strings) {
-                final String trimmedString = string.trim();
+                String trimmedString = string.trim();
                 if (!trimmedString.startsWith(">>>") && !trimmedString.startsWith("...") && gotExample && start < end) {
                     gotExample = false;
                     if (!endsWithSlash) {
                         injectionPlacesRegistrar.addPlace(PyDocstringLanguageDialect.INSTANCE, TextRange.create(start, end), null, null);
                     }
                 }
-                final String closingQuote = quotes == null ? text.substring(0, 1) : quotes.second;
+                String closingQuote = quotes == null ? text.substring(0, 1) : quotes.second;
 
                 if (endsWithSlash && !trimmedString.endsWith("\\")) {
                     endsWithSlash = false;

@@ -40,28 +40,28 @@ public class PyStarImportElementElementType extends PyStubElementType<PyStarImpo
 	}
 
 	@Nonnull
-	public PsiElement createElement(@Nonnull final ASTNode node)
+	public PsiElement createElement(@Nonnull ASTNode node)
 	{
 		return new PyStarImportElementImpl(node);
 	}
 
-	public PyStarImportElement createPsi(@Nonnull final PyStarImportElementStub stub)
+	public PyStarImportElement createPsi(@Nonnull PyStarImportElementStub stub)
 	{
 		return new PyStarImportElementImpl(stub);
 	}
 
 	@Nonnull
-	public PyStarImportElementStub createStub(@Nonnull final PyStarImportElement psi, final StubElement parentStub)
+	public PyStarImportElementStub createStub(@Nonnull PyStarImportElement psi, StubElement parentStub)
 	{
 		return new PyStarImportElementStubImpl(parentStub);
 	}
 
-	public void serialize(@Nonnull final PyStarImportElementStub stub, @Nonnull final StubOutputStream dataStream) throws IOException
+	public void serialize(@Nonnull PyStarImportElementStub stub, @Nonnull StubOutputStream dataStream) throws IOException
 	{
 	}
 
 	@Nonnull
-	public PyStarImportElementStub deserialize(@Nonnull final StubInputStream dataStream, final StubElement parentStub) throws IOException
+	public PyStarImportElementStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		return new PyStarImportElementStubImpl(parentStub);
 	}

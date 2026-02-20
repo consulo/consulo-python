@@ -56,30 +56,30 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
 
     @Override
     @RequiredWriteAction
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final PyFunction problemFunction = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyFunction.class);
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PyFunction problemFunction = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyFunction.class);
         if (problemFunction == null) {
             return;
         }
-        final StringBuilder superCall = new StringBuilder();
-        final PyClass klass = problemFunction.getContainingClass();
+        StringBuilder superCall = new StringBuilder();
+        PyClass klass = problemFunction.getContainingClass();
         if (klass == null) {
             return;
         }
-        final PyClass[] superClasses = klass.getSuperClasses(null);
+        PyClass[] superClasses = klass.getSuperClasses(null);
         if (superClasses.length == 0) {
             return;
         }
 
-        final PyClass superClass = superClasses[0];
-        final PyFunction superInit = superClass.findMethodByName(PyNames.INIT, true, null);
+        PyClass superClass = superClasses[0];
+        PyFunction superInit = superClass.findMethodByName(PyNames.INIT, true, null);
         if (superInit == null) {
             return;
         }
 
-        final ParametersInfo origInfo = new ParametersInfo(problemFunction.getParameterList());
-        final ParametersInfo superInfo = new ParametersInfo(superInit.getParameterList());
-        final boolean addSelfToCall;
+        ParametersInfo origInfo = new ParametersInfo(problemFunction.getParameterList());
+        ParametersInfo superInfo = new ParametersInfo(superInit.getParameterList());
+        boolean addSelfToCall;
 
         if (klass.isNewStyleClass(null)) {
             addSelfToCall = false;
@@ -99,27 +99,27 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
             superCall.append(superClass.getName()).append(".__init__(");
         }
 
-        final Couple<List<String>> couple = buildNewFunctionParamsAndSuperInitCallArgs(origInfo, superInfo, addSelfToCall);
-        final StringBuilder newParameters = new StringBuilder("(");
+        Couple<List<String>> couple = buildNewFunctionParamsAndSuperInitCallArgs(origInfo, superInfo, addSelfToCall);
+        StringBuilder newParameters = new StringBuilder("(");
         StringUtil.join(couple.getFirst(), ", ", newParameters);
         newParameters.append(")");
 
         StringUtil.join(couple.getSecond(), ", ", superCall);
         superCall.append(")");
 
-        final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-        final LanguageLevel languageLevel = LanguageLevel.forElement(problemFunction);
-        final PyStatement callSuperStatement = generator.createFromText(languageLevel, PyStatement.class, superCall.toString());
-        final PyParameterList newParameterList = generator.createParameterList(languageLevel, newParameters.toString());
+        PyElementGenerator generator = PyElementGenerator.getInstance(project);
+        LanguageLevel languageLevel = LanguageLevel.forElement(problemFunction);
+        PyStatement callSuperStatement = generator.createFromText(languageLevel, PyStatement.class, superCall.toString());
+        PyParameterList newParameterList = generator.createParameterList(languageLevel, newParameters.toString());
         problemFunction.getParameterList().replace(newParameterList);
-        final PyStatementList statementList = problemFunction.getStatementList();
+        PyStatementList statementList = problemFunction.getStatementList();
         PyUtil.addElementToStatementList(callSuperStatement, statementList, true);
         PyPsiUtils.removeRedundantPass(statementList);
     }
 
     @Nonnull
     private static String getSelfParameterName(@Nonnull ParametersInfo info) {
-        final PyParameter selfParameter = info.getSelfParameter();
+        PyParameter selfParameter = info.getSelfParameter();
         if (selfParameter == null) {
             return PyNames.CANONICAL_SELF;
         }
@@ -133,10 +133,10 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
         @Nonnull ParametersInfo superInfo,
         boolean addSelfToCall
     ) {
-        final List<String> newFunctionParams = new ArrayList<>();
-        final List<String> superCallArgs = new ArrayList<>();
+        List<String> newFunctionParams = new ArrayList<>();
+        List<String> superCallArgs = new ArrayList<>();
 
-        final PyParameter selfParameter = origInfo.getSelfParameter();
+        PyParameter selfParameter = origInfo.getSelfParameter();
         if (selfParameter != null && StringUtil.isNotEmpty(selfParameter.getName())) {
             newFunctionParams.add(selfParameter.getText());
         }
@@ -155,10 +155,10 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
         for (PyParameter param : superInfo.getRequiredParameters()) {
             // Special case as if base class has constructor __init__((a, b), c) and
             // subclass has constructor __init__(a, (b, c))
-            final PyTupleParameter tupleParam = param.getAsTuple();
+            PyTupleParameter tupleParam = param.getAsTuple();
             if (tupleParam != null) {
-                final List<String> uniqueNames = collectParameterNames(tupleParam);
-                final boolean hasDuplicates = uniqueNames.removeAll(origInfo.getAllParameterNames());
+                List<String> uniqueNames = collectParameterNames(tupleParam);
+                boolean hasDuplicates = uniqueNames.removeAll(origInfo.getAllParameterNames());
                 if (hasDuplicates) {
                     newFunctionParams.addAll(uniqueNames);
                 }
@@ -184,11 +184,11 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
 
         // Pass parameters with default values to super class constructor, only if both functions contain them
         for (PyParameter param : superInfo.getOptionalParameters()) {
-            final PyTupleParameter tupleParam = param.getAsTuple();
+            PyTupleParameter tupleParam = param.getAsTuple();
             if (tupleParam != null) {
                 if (origInfo.getAllParameterNames().containsAll(collectParameterNames(tupleParam))) {
-                    final String paramText = tupleParam.getText();
-                    final PsiElement equalSign = PyPsiUtils.getFirstChildOfType(param, PyTokenTypes.EQ);
+                    String paramText = tupleParam.getText();
+                    PsiElement equalSign = PyPsiUtils.getFirstChildOfType(param, PyTokenTypes.EQ);
                     if (equalSign != null) {
                         superCallArgs.add(paramText.substring(0, equalSign.getStartOffsetInParent()).trim());
                     }
@@ -397,14 +397,14 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
 
     @Nonnull
     private static List<String> collectParameterNames(@Nonnull PyParameter param) {
-        final List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         collectParameterNames(param, result);
         return result;
     }
 
 
     private static void collectParameterNames(@Nonnull PyParameter param, @Nonnull Collection<String> acc) {
-        final PyTupleParameter tupleParam = param.getAsTuple();
+        PyTupleParameter tupleParam = param.getAsTuple();
         if (tupleParam != null) {
             for (PyParameter subParam : tupleParam.getContents()) {
                 collectParameterNames(subParam, acc);

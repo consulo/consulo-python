@@ -9,8 +9,8 @@ import com.jetbrains.python.fixtures.PyTestCase;
  * @author yole
  */
 public abstract class PyIndentTest extends PyTestCase {
-  private void doTest(final String before, String after) {
-    final String name = getTestName(false);
+  private void doTest(String before, String after) {
+    String name = getTestName(false);
 
     myFixture.configureByText(name + ".py", before);
     CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new Runnable() {

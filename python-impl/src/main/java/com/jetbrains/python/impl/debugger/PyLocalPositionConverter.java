@@ -43,7 +43,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   };
 
   protected static class PyLocalSourcePosition extends PySourcePosition {
-    public PyLocalSourcePosition(final String file, final int line) {
+    public PyLocalSourcePosition(String file, int line) {
       super(file, line);
     }
 
@@ -60,7 +60,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   protected static class PyRemoteSourcePosition extends PySourcePosition {
-    public PyRemoteSourcePosition(final String file, final int line) {
+    public PyRemoteSourcePosition(String file, int line) {
       super(file, line);
     }
 
@@ -77,7 +77,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   @Nonnull
-  final public PySourcePosition create(@Nonnull final String filePath, final int line) {
+  final public PySourcePosition create(@Nonnull String filePath, int line) {
     File file = new File(filePath);
 
     if (file.exists()) {
@@ -89,7 +89,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   @Nonnull
-  public final PySourcePosition convertToPython(@Nonnull final XSourcePosition position) {
+  public final PySourcePosition convertToPython(@Nonnull XSourcePosition position) {
     return convertToPython(convertFilePath(position.getFile().getPath()), convertLocalLineToRemote(position.getFile(), position.getLine()));
   }
 
@@ -101,7 +101,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   protected static int convertLocalLineToRemote(VirtualFile file, int line) {
     return ReadAction.compute(() -> {
       int result = line;
-      final Document document = FileDocumentManager.getInstance().getDocument(file);
+      Document document = FileDocumentManager.getInstance().getDocument(file);
       if (document != null) {
         while (PyDebugSupportUtils.isContinuationLine(document, result)) {
           result++;
@@ -112,7 +112,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   @Nullable
-  public XSourcePosition convertFromPython(@Nonnull final PySourcePosition position) {
+  public XSourcePosition convertFromPython(@Nonnull PySourcePosition position) {
     return createXSourcePosition(getVirtualFile(position.getFile()), position.getLine());
   }
 
@@ -147,7 +147,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
       VirtualFile jarFile = getLocalFileSystem().findFileByPath(jarPath);
       if (jarFile != null) {
         String innerPath = file.substring(ind + 4);
-        final VirtualFile jarRoot = ArchiveVfsUtil.getArchiveRootForLocalFile(jarFile);
+        VirtualFile jarRoot = ArchiveVfsUtil.getArchiveRootForLocalFile(jarFile);
         if (jarRoot != null) {
           return jarRoot.findFileByRelativePath(innerPath);
         }
@@ -183,7 +183,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   private static int convertRemoteLineToLocal(final VirtualFile vFile, int line) {
-    final Document document = ApplicationManager.getApplication().runReadAction(new Computable<Document>() {
+    Document document = ApplicationManager.getApplication().runReadAction(new Computable<Document>() {
       @Override
       public Document compute() {
         return FileDocumentManager.getInstance().getDocument(vFile);

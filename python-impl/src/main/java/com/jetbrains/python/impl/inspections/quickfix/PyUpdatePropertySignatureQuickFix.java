@@ -41,21 +41,21 @@ public class PyUpdatePropertySignatureQuickFix implements LocalQuickFix {
 
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
-        final PyCallable function = PsiTreeUtil.getParentOfType(element, PyCallable.class, false);
+        PsiElement element = descriptor.getPsiElement();
+        PyCallable function = PsiTreeUtil.getParentOfType(element, PyCallable.class, false);
         assert function != null;
-        final PyParameterList parameterList = function.getParameterList();
-        final PyParameter[] parameters = parameterList.getParameters();
-        final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+        PyParameterList parameterList = function.getParameterList();
+        PyParameter[] parameters = parameterList.getParameters();
+        PyElementGenerator generator = PyElementGenerator.getInstance(project);
         String selfText = parameters.length != 0 ? parameters[0].getText() : PyNames.CANONICAL_SELF;
-        final StringBuilder functionText = new StringBuilder("def foo(" + selfText);
+        StringBuilder functionText = new StringBuilder("def foo(" + selfText);
         if (myHasValue) {
             String valueText = parameters.length > 1 ? parameters[1].getText() : "value";
             functionText.append(", ").append(valueText);
         }
         functionText.append("): pass");
 
-        final PyParameterList list =
+        PyParameterList list =
             generator.createFromText(LanguageLevel.forElement(element), PyFunction.class, functionText.toString()).getParameterList();
         parameterList.replace(list);
     }

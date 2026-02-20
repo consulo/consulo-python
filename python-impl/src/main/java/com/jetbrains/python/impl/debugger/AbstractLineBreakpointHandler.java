@@ -37,7 +37,7 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
 
   public AbstractLineBreakpointHandler(
     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> breakpointTypeClass,
-    @Nonnull final PyDebugProcess debugProcess) {
+    @Nonnull PyDebugProcess debugProcess) {
     super(breakpointTypeClass);
     myDebugProcess = debugProcess;
   }
@@ -50,16 +50,16 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
     }
   }
 
-  public void registerBreakpoint(@Nonnull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
-    final XSourcePosition position = breakpoint.getSourcePosition();
+  public void registerBreakpoint(@Nonnull XLineBreakpoint<XBreakpointProperties> breakpoint) {
+    XSourcePosition position = breakpoint.getSourcePosition();
     if (position != null) {
       myDebugProcess.addBreakpoint(myDebugProcess.getPositionConverter().convertToPython(position), breakpoint);
       myBreakPointPositions.put(breakpoint, position);
     }
   }
 
-  public void unregisterBreakpoint(@Nonnull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
-    final XSourcePosition position = myBreakPointPositions.get(breakpoint);
+  public void unregisterBreakpoint(@Nonnull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary) {
+    XSourcePosition position = myBreakPointPositions.get(breakpoint);
     if (position != null) {
       myDebugProcess.removeBreakpoint(myDebugProcess.getPositionConverter().convertToPython(position));
       myBreakPointPositions.remove(breakpoint);

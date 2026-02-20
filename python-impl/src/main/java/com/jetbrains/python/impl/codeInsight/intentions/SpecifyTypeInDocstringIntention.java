@@ -54,14 +54,14 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
 
     @Override
     public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
-        final PyExpression problemElement = getProblemElement(elementAt);
-        final PsiReference reference = problemElement == null ? null : problemElement.getReference();
+        PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PyExpression problemElement = getProblemElement(elementAt);
+        PsiReference reference = problemElement == null ? null : problemElement.getReference();
 
-        final PsiElement resolved = reference != null ? reference.resolve() : null;
-        final PyNamedParameter parameter = getParameter(problemElement, resolved);
+        PsiElement resolved = reference != null ? reference.resolve() : null;
+        PyNamedParameter parameter = getParameter(problemElement, resolved);
 
-        final PyCallable callable;
+        PyCallable callable;
         if (parameter != null) {
             callable = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
         }
@@ -78,18 +78,18 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
             return;
         }
 
-        final PyDocstringGenerator docstringGenerator = PyDocstringGenerator.forDocStringOwner(pyFunction);
+        PyDocstringGenerator docstringGenerator = PyDocstringGenerator.forDocStringOwner(pyFunction);
         String type = PyNames.OBJECT;
         if (param != null) {
-            final String paramName = StringUtil.notNullize(param.getName());
-            final PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
+            String paramName = StringUtil.notNullize(param.getName());
+            PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
             if (signature != null) {
                 type = ObjectUtil.chooseNotNull(signature.getArgTypeQualifiedName(paramName), type);
             }
             docstringGenerator.withParamTypedByName(param, type);
         }
         else {
-            final PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
+            PySignature signature = PySignatureCacheManager.getInstance(pyFunction.getProject()).findSignature(pyFunction);
             if (signature != null) {
                 type = ObjectUtil.chooseNotNull(signature.getReturnTypeQualifiedName(), type);
             }
@@ -107,13 +107,13 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
 
     @Override
     protected boolean isParamTypeDefined(@Nonnull PyParameter parameter) {
-        final PyFunction pyFunction = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
+        PyFunction pyFunction = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
         if (pyFunction != null) {
-            final StructuredDocString structuredDocString = pyFunction.getStructuredDocString();
+            StructuredDocString structuredDocString = pyFunction.getStructuredDocString();
             if (structuredDocString == null) {
                 return false;
             }
-            final Substring typeSub = structuredDocString.getParamTypeSubstring(StringUtil.notNullize(parameter.getName()));
+            Substring typeSub = structuredDocString.getParamTypeSubstring(StringUtil.notNullize(parameter.getName()));
             return typeSub != null && !typeSub.isEmpty();
         }
         return false;
@@ -121,7 +121,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
 
     @Override
     protected boolean isReturnTypeDefined(@Nonnull PyFunction function) {
-        final StructuredDocString structuredDocString = function.getStructuredDocString();
+        StructuredDocString structuredDocString = function.getStructuredDocString();
         return structuredDocString != null && structuredDocString.getReturnType() != null;
     }
 }

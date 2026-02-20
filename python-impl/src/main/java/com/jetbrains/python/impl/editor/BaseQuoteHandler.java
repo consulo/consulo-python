@@ -40,7 +40,7 @@ public class BaseQuoteHandler extends SimpleTokenSetQuoteHandler {
   @Override
   public boolean isOpeningQuote(HighlighterIterator iterator, int offset) {
     // don't assume an opening quote unless we're in an explicitly "blank" context
-    final Document document = iterator.getDocument();
+    Document document = iterator.getDocument();
     if (document == null) {
       return false;
     }
@@ -91,7 +91,7 @@ public class BaseQuoteHandler extends SimpleTokenSetQuoteHandler {
 
   @Override
   public boolean isClosingQuote(HighlighterIterator iterator, int offset) {
-    final IElementType tokenType = (IElementType)iterator.getTokenType();
+    IElementType tokenType = (IElementType)iterator.getTokenType();
     if (myLiteralTokenSet.contains(tokenType)) {
       int start = iterator.getStart();
       int end = iterator.getEnd();

@@ -122,7 +122,7 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * @return
 	 */
 	@Nullable
-	PyFunction findMethodByName(@Nullable @NonNls final String name, boolean inherited, TypeEvalContext context);
+	PyFunction findMethodByName(@Nullable @NonNls String name, boolean inherited, TypeEvalContext context);
 
 	/**
 	 * Finds either __init__ or __new__, whichever is defined for given class.

@@ -57,7 +57,7 @@ public class PyTreeStructureProvider implements SelectableTreeStructureProvider,
 
   @Override
   public PsiElement getTopLevelElement(PsiElement element) {
-    final PsiFile containingFile = element.getContainingFile();
+    PsiFile containingFile = element.getContainingFile();
     if (!(containingFile instanceof PyFile)) {
       return null;
     }

@@ -38,28 +38,28 @@ public class PyDebugValue extends XNamedValue {
 
     private final boolean myErrorOnEval;
 
-    public PyDebugValue(@Nonnull final String name,
-                        final String type,
+    public PyDebugValue(@Nonnull String name,
+                        String type,
                         String typeQualifier,
-                        final String value,
-                        final boolean container,
+                        String value,
+                        boolean container,
                         boolean isReturnedVal,
                         boolean isIPythonHidden,
                         boolean errorOnEval,
-                        final PyFrameAccessor frameAccessor) {
+                        PyFrameAccessor frameAccessor) {
         this(name, type, typeQualifier, value, container, isReturnedVal, isIPythonHidden, errorOnEval, null, frameAccessor);
     }
 
-    public PyDebugValue(@Nonnull final String name,
-                        final String type,
+    public PyDebugValue(@Nonnull String name,
+                        String type,
                         String typeQualifier,
-                        final String value,
-                        final boolean container,
+                        String value,
+                        boolean container,
                         boolean isReturnedVal,
                         boolean isIPythonHidden,
                         boolean errorOnEval,
-                        final PyDebugValue parent,
-                        final PyFrameAccessor frameAccessor) {
+                        PyDebugValue parent,
+                        PyFrameAccessor frameAccessor) {
         super(name);
         myType = type;
         myTypeQualifier = Strings.isNullOrEmpty(typeQualifier) ? null : typeQualifier;
@@ -238,7 +238,7 @@ public class PyDebugValue extends XNamedValue {
     }
 
     @Override
-    public void computeChildren(@Nonnull final XCompositeNode node) {
+    public void computeChildren(@Nonnull XCompositeNode node) {
         if (node.isObsolete()) {
             return;
         }
@@ -248,7 +248,7 @@ public class PyDebugValue extends XNamedValue {
             }
 
             try {
-                final XValueChildrenList values = myFrameAccessor.loadVariable(this);
+                XValueChildrenList values = myFrameAccessor.loadVariable(this);
                 if (!node.isObsolete()) {
                     node.addChildren(values, true);
                 }

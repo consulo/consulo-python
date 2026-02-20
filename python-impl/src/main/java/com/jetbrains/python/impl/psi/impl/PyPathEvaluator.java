@@ -49,7 +49,7 @@ public class PyPathEvaluator extends PyEvaluator {
 
   @Override
   protected Object evaluateCall(PyCallExpression call) {
-    final PyExpression[] args = call.getArguments();
+    PyExpression[] args = call.getArguments();
     if (call.isCalleeText(PyNames.DIRNAME) && args.length == 1) {
       Object argValue = evaluate(args[0]);
       return argValue instanceof String ? new File((String) argValue).getParent() : null;

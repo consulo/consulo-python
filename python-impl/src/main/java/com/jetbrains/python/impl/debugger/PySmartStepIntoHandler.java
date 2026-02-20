@@ -45,7 +45,7 @@ public class PySmartStepIntoHandler extends XSmartStepIntoHandler<PySmartStepInt
   private final XDebugSession mySession;
   private PyDebugProcess myProcess;
 
-  public PySmartStepIntoHandler(final PyDebugProcess process) {
+  public PySmartStepIntoHandler(PyDebugProcess process) {
     mySession = process.getSession();
     myProcess = process;
   }
@@ -81,7 +81,7 @@ public class PySmartStepIntoHandler extends XSmartStepIntoHandler<PySmartStepInt
                                   Set<PyCallExpression> visited) {
     if (element == null) return;
 
-    final PyCallExpression expression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
+    PyCallExpression expression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
     if (expression != null &&
         expression.getTextRange().getEndOffset() <= document.getLineEndOffset(line) &&
         visited.add(expression)) {

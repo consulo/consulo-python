@@ -72,7 +72,7 @@ public class PyPackageService implements PersistentStateComponent<PyPackageServi
     }
   }
 
-  public void removeRepository(final String repository) {
+  public void removeRepository(String repository) {
     if (additionalRepositories.contains(repository)) {
       additionalRepositories.remove(repository);
     }

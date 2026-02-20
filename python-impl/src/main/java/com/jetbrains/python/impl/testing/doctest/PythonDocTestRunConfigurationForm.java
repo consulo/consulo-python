@@ -34,7 +34,7 @@ public class PythonDocTestRunConfigurationForm implements PythonDocTestRunConfig
   private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
 
 
-  public PythonDocTestRunConfigurationForm(final Project project, final PythonDocTestRunConfiguration configuration) {
+  public PythonDocTestRunConfigurationForm(Project project, PythonDocTestRunConfiguration configuration) {
     myRootPanel = new JPanel(new BorderLayout());
     myTestRunConfigurationForm = new PythonTestRunConfigurationForm(project, configuration);
     TitledBorder border = (TitledBorder)myTestRunConfigurationForm.getTestsPanel().getBorder();

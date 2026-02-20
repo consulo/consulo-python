@@ -70,20 +70,20 @@ public class PyNoneFunctionAssignmentInspection extends PyInspection {
 
         @Override
         public void visitPyAssignmentStatement(PyAssignmentStatement node) {
-            final PyExpression value = node.getAssignedValue();
+            PyExpression value = node.getAssignedValue();
             if (value instanceof PyCallExpression) {
-                final PyType type = myTypeEvalContext.getType(value);
-                final PyCallExpression callExpr = (PyCallExpression) value;
-                final PyExpression callee = callExpr.getCallee();
+                PyType type = myTypeEvalContext.getType(value);
+                PyCallExpression callExpr = (PyCallExpression) value;
+                PyExpression callee = callExpr.getCallee();
 
                 if (type instanceof PyNoneType && callee != null) {
-                    final PyCallable callable = callExpr.resolveCalleeFunction(getResolveContext());
+                    PyCallable callable = callExpr.resolveCalleeFunction(getResolveContext());
                     if (callable != null) {
                         if (PySdkUtil.isElementInSkeletons(callable)) {
                             return;
                         }
                         if (callable instanceof PyFunction) {
-                            final PyFunction function = (PyFunction) callable;
+                            PyFunction function = (PyFunction) callable;
                             // Currently we don't infer types returned by decorators
                             if (hasInheritors(function) || PyUtil.hasCustomDecorators(function)) {
                                 return;
@@ -100,11 +100,11 @@ public class PyNoneFunctionAssignmentInspection extends PyInspection {
         }
 
         private boolean hasInheritors(@Nonnull PyFunction function) {
-            final Boolean cached = myHasInheritors.get(function);
+            Boolean cached = myHasInheritors.get(function);
             if (cached != null) {
                 return cached;
             }
-            final boolean result = PyOverridingMethodsSearch.search(function, true).findFirst() != null;
+            boolean result = PyOverridingMethodsSearch.search(function, true).findFirst() != null;
             myHasInheritors.put(function, result);
             return result;
         }

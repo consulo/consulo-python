@@ -35,7 +35,7 @@ public class TypeEvalStack {
   private final Set<PsiElement> myBeingEvaluated = new HashSet<PsiElement>();
 
   public static boolean mayEvaluate(PsiElement element) {
-    final TypeEvalStack curStack = STACK.get();
+    TypeEvalStack curStack = STACK.get();
     if (curStack.myBeingEvaluated.contains(element)) {
       return false;
     }
@@ -44,7 +44,7 @@ public class TypeEvalStack {
   }
 
   public static void evaluated(PsiElement element) {
-    final TypeEvalStack curStack = STACK.get();
+    TypeEvalStack curStack = STACK.get();
     curStack.myBeingEvaluated.remove(element);
   }
 }

@@ -65,17 +65,17 @@ public final class PyExtractSuperclassHelper {
   private PyExtractSuperclassHelper() {
   }
 
-  static void extractSuperclass(final PyClass clazz,
+  static void extractSuperclass(PyClass clazz,
                                 @Nonnull Collection<PyMemberInfo<PyElement>> selectedMemberInfos,
-                                final String superBaseName,
-                                final String targetFile) {
-    final Project project = clazz.getProject();
+                                String superBaseName,
+                                String targetFile) {
+    Project project = clazz.getProject();
 
     //We will need to change it probably while param may be read-only
     //noinspection AssignmentToMethodParameter
     selectedMemberInfos = new ArrayList<>(selectedMemberInfos);
 
-    final RefactoringEventData beforeData = new RefactoringEventData();
+    RefactoringEventData beforeData = new RefactoringEventData();
     beforeData.addElements(JBIterable.from(selectedMemberInfos)
                                      .transform((Function<PyMemberInfo<PyElement>, PsiElement>)MemberInfoBase::getMember)
                                      .toList());
@@ -85,7 +85,7 @@ public final class PyExtractSuperclassHelper {
            .refactoringStarted(getRefactoringId(), beforeData);
 
     // PY-12171
-    final PyMemberInfo<PyElement> objectMember = MembersManager.findMember(selectedMemberInfos, ALLOW_OBJECT);
+    PyMemberInfo<PyElement> objectMember = MembersManager.findMember(selectedMemberInfos, ALLOW_OBJECT);
     if (LanguageLevel.forElement(clazz).isPy3K() && !isObjectParentDeclaredExplicitly(clazz)) {
       // Remove object from list if Py3
       if (objectMember != null) {
@@ -95,7 +95,7 @@ public final class PyExtractSuperclassHelper {
     else {
       // Always add object if < Py3
       if (objectMember == null) {
-        final PyMemberInfo<PyElement> object = MembersManager.findMember(clazz, ALLOW_OBJECT);
+        PyMemberInfo<PyElement> object = MembersManager.findMember(clazz, ALLOW_OBJECT);
         if (object != null) {
           selectedMemberInfos.add(object);
         }
@@ -103,7 +103,7 @@ public final class PyExtractSuperclassHelper {
     }
 
 
-    final String text = "class " + superBaseName + ":\n  pass" + "\n";
+    String text = "class " + superBaseName + ":\n  pass" + "\n";
     PyClass newClass = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyClass.class, text);
 
     newClass = placeNewClass(project, newClass, clazz, targetFile);
@@ -113,7 +113,7 @@ public final class PyExtractSuperclassHelper {
     }
     PyClassRefactoringUtil.addSuperclasses(project, clazz, null, newClass);
 
-    final RefactoringEventData afterData = new RefactoringEventData();
+    RefactoringEventData afterData = new RefactoringEventData();
     afterData.addElement(newClass);
     project.getMessageBus().syncPublisher(RefactoringEventListener.class).refactoringDone(getRefactoringId(), afterData);
   }
@@ -121,11 +121,11 @@ public final class PyExtractSuperclassHelper {
   /**
    * If class explicitly extends object we shall move it even in Py3K
    */
-  private static boolean isObjectParentDeclaredExplicitly(@Nonnull final PyClass clazz) {
+  private static boolean isObjectParentDeclaredExplicitly(@Nonnull PyClass clazz) {
     return Arrays.stream(clazz.getSuperClassExpressions()).filter(o -> PyNames.OBJECT.equals(o.getName())).findFirst().isPresent();
   }
 
-  private static PyClass placeNewClass(final Project project, PyClass newClass, @Nonnull final PyClass clazz, final String targetFile) {
+  private static PyClass placeNewClass(Project project, PyClass newClass, @Nonnull PyClass clazz, String targetFile) {
     VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(VirtualFileUtil.pathToUrl(targetFile));
     // file is the same as the source
     if (Comparing.equal(file, clazz.getContainingFile().getVirtualFile())) {
@@ -136,8 +136,8 @@ public final class PyExtractSuperclassHelper {
     try {
       if (file == null) {
         // file does not exist
-        final String filename;
-        final String path;
+        String filename;
+        String path;
         if (targetFile.endsWith(PythonFileType.INSTANCE.getDefaultExtension())) {
           path = PathUtil.getParentPath(targetFile);
           filename = PathUtil.getFileName(targetFile);
@@ -190,8 +190,8 @@ public final class PyExtractSuperclassHelper {
     if (psiFile == null) {
       psiFile = psiDir.createFile(filename);
       if (content != null) {
-        final PsiDocumentManager manager = PsiDocumentManager.getInstance(project);
-        final Document document = manager.getDocument(psiFile);
+        PsiDocumentManager manager = PsiDocumentManager.getInstance(project);
+        Document document = manager.getDocument(psiFile);
         if (document != null) {
           document.setText(content);
           manager.commitDocument(document);
@@ -217,7 +217,7 @@ public final class PyExtractSuperclassHelper {
     // NOTE: we don't canonicalize target; must be ok in reasonable cases, and is far easier in unit test mode
     target = FileUtil.toSystemIndependentName(target);
     for (VirtualFile file : ProjectRootManager.getInstance(project).getContentRoots()) {
-      final String root_path = file.getPath();
+      String root_path = file.getPath();
       if (target.startsWith(root_path)) {
         the_rest = target.substring(root_path.length());
         the_root = file;
@@ -228,8 +228,8 @@ public final class PyExtractSuperclassHelper {
       throw new IOException("Can't find '" + target + "' among roots");
     }
     if (the_rest != null) {
-      final LocalFileSystem lfs = LocalFileSystem.getInstance();
-      final PsiManager psi_mgr = PsiManager.getInstance(project);
+      LocalFileSystem lfs = LocalFileSystem.getInstance();
+      PsiManager psi_mgr = PsiManager.getInstance(project);
       String[] dirs = the_rest.split("/");
       int i = 0;
       if ("".equals(dirs[0])) {

@@ -28,7 +28,7 @@ import consulo.virtualFileSystem.fileType.FileType;
 public class BuildoutCfgProblemFileHighlightFilter implements WolfFileProblemFilter {
   @Override
   public boolean isToBeHighlighted(VirtualFile virtualFile) {
-    final FileType fileType = virtualFile.getFileType();
+    FileType fileType = virtualFile.getFileType();
     return fileType == BuildoutCfgFileType.INSTANCE;
   }
 }

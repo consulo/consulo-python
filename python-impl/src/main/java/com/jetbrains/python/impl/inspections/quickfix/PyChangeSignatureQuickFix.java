@@ -46,16 +46,16 @@ public class PyChangeSignatureQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameChangeSignature();
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         final PyFunction function = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyFunction.class);
         if (function == null) {
             return;
         }
-        final PyClass cls = function.getContainingClass();
+        PyClass cls = function.getContainingClass();
         assert cls != null;
-        final String functionName = function.getName();
-        final String complementaryName = PyNames.NEW.equals(functionName) ? PyNames.INIT : PyNames.NEW;
-        final TypeEvalContext context = TypeEvalContext.userInitiated(project, descriptor.getEndElement().getContainingFile());
+        String functionName = function.getName();
+        String complementaryName = PyNames.NEW.equals(functionName) ? PyNames.INIT : PyNames.NEW;
+        TypeEvalContext context = TypeEvalContext.userInitiated(project, descriptor.getEndElement().getContainingFile());
         final PyFunction complementaryMethod =
             myOverridenMethod ? (PyFunction) PySuperMethodsSearch.search(function, context).findFirst() : cls.findMethodByName(
                 complementaryName,
@@ -64,19 +64,19 @@ public class PyChangeSignatureQuickFix implements LocalQuickFix {
             );
 
         assert complementaryMethod != null;
-        final PyMethodDescriptor methodDescriptor = new PyMethodDescriptor(function) {
+        PyMethodDescriptor methodDescriptor = new PyMethodDescriptor(function) {
             @Override
             public List<PyParameterInfo> getParameters() {
-                final List<PyParameterInfo> parameterInfos = super.getParameters();
-                final int paramLength = function.getParameterList().getParameters().length;
-                final int complementaryParamLength = complementaryMethod.getParameterList().getParameters().length;
+                List<PyParameterInfo> parameterInfos = super.getParameters();
+                int paramLength = function.getParameterList().getParameters().length;
+                int complementaryParamLength = complementaryMethod.getParameterList().getParameters().length;
                 if (complementaryParamLength > paramLength) {
                     parameterInfos.add(new PyParameterInfo(-1, "**kwargs", "", false));
                 }
                 return parameterInfos;
             }
         };
-        final PyChangeSignatureDialog dialog = new PyChangeSignatureDialog(project, methodDescriptor);
+        PyChangeSignatureDialog dialog = new PyChangeSignatureDialog(project, methodDescriptor);
         dialog.show();
     }
 

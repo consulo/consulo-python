@@ -46,10 +46,10 @@ public class PyStdlibClassMembersProvider extends PyClassMembersProviderBase
 	public Collection<PyCustomMember> getMembers(PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
 	{
 		PyClass clazz = classType.getPyClass();
-		final String qualifiedName = clazz.getQualifiedName();
+		String qualifiedName = clazz.getQualifiedName();
 		if("socket._socketobject".equals(qualifiedName))
 		{
-			final PyFile socketFile = (PyFile) clazz.getContainingFile();
+			PyFile socketFile = (PyFile) clazz.getContainingFile();
 			List<PyCustomMember> socketMembers = socketFile.getUserData(mySocketMembersKey);
 			if(socketMembers == null)
 			{
@@ -69,12 +69,12 @@ public class PyStdlibClassMembersProvider extends PyClassMembersProviderBase
 		return result;
 	}
 
-	private static void addMethodsFromAttr(PyFile socketFile, List<PyCustomMember> result, final String attrName)
+	private static void addMethodsFromAttr(PyFile socketFile, List<PyCustomMember> result, String attrName)
 	{
-		final PyTargetExpression socketMethods = socketFile.findTopLevelAttribute(attrName);
+		PyTargetExpression socketMethods = socketFile.findTopLevelAttribute(attrName);
 		if(socketMethods != null)
 		{
-			final List<String> methods = PyUtil.getStringListFromTargetExpression(socketMethods);
+			List<String> methods = PyUtil.getStringListFromTargetExpression(socketMethods);
 			if(methods != null)
 			{
 				for(String name : methods)

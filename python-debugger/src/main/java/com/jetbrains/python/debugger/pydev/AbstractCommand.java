@@ -72,7 +72,7 @@ public abstract class AbstractCommand<T>
 	private final ResponseProcessor<T> myResponseProcessor;
 
 
-	protected AbstractCommand(@Nonnull final RemoteDebugger debugger, final int commandCode)
+	protected AbstractCommand(@Nonnull RemoteDebugger debugger, int commandCode)
 	{
 		myDebugger = debugger;
 		myCommandCode = commandCode;
@@ -106,9 +106,9 @@ public abstract class AbstractCommand<T>
 
 	public void execute() throws PyDebuggerException
 	{
-		final int sequence = myDebugger.getNextSequence();
+		int sequence = myDebugger.getNextSequence();
 
-		final ResponseProcessor<T> processor = getResponseProcessor();
+		ResponseProcessor<T> processor = getResponseProcessor();
 
 		if(processor != null || isResponseExpected())
 		{
@@ -147,11 +147,11 @@ public abstract class AbstractCommand<T>
 		}
 	}
 
-	public void execute(final PyDebugCallback<T> callback)
+	public void execute(PyDebugCallback<T> callback)
 	{
-		final int sequence = myDebugger.getNextSequence();
+		int sequence = myDebugger.getNextSequence();
 
-		final ResponseProcessor<T> processor = getResponseProcessor();
+		ResponseProcessor<T> processor = getResponseProcessor();
 
 		if(processor != null)
 		{
@@ -201,7 +201,7 @@ public abstract class AbstractCommand<T>
 	}
 
 
-	protected void processResponse(final ProtocolFrame response) throws PyDebuggerException
+	protected void processResponse(ProtocolFrame response) throws PyDebuggerException
 	{
 		if(response.getCommand() >= 900 && response.getCommand() < 1000)
 		{
@@ -211,7 +211,7 @@ public abstract class AbstractCommand<T>
 
 	protected abstract static class ResponseProcessor<T>
 	{
-		protected T processResponse(final ProtocolFrame response) throws PyDebuggerException
+		protected T processResponse(ProtocolFrame response) throws PyDebuggerException
 		{
 			if(response.getCommand() >= 900 && response.getCommand() < 1000)
 			{
@@ -234,17 +234,17 @@ public abstract class AbstractCommand<T>
 		return command == LOG_CONCURRENCY_EVENT;
 	}
 
-	public static boolean isWriteToConsole(final int command)
+	public static boolean isWriteToConsole(int command)
 	{
 		return command == WRITE_TO_CONSOLE;
 	}
 
-	public static boolean isInputRequested(final int command)
+	public static boolean isInputRequested(int command)
 	{
 		return command == INPUT_REQUESTED;
 	}
 
-	public static boolean isExitEvent(final int command)
+	public static boolean isExitEvent(int command)
 	{
 		return command == EXIT;
 	}

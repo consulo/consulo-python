@@ -46,14 +46,14 @@ public class PyConditionalStatementPartFixer extends PyFixer<PyConditionalStatem
 	@Override
 	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyConditionalStatementPart statementPart) throws IncorrectOperationException
 	{
-		final PyExpression condition = statementPart.getCondition();
-		final Document document = editor.getDocument();
-		final PsiElement colon = PyPsiUtils.getFirstChildOfType(statementPart, PyTokenTypes.COLON);
+		PyExpression condition = statementPart.getCondition();
+		Document document = editor.getDocument();
+		PsiElement colon = PyPsiUtils.getFirstChildOfType(statementPart, PyTokenTypes.COLON);
 		if(colon == null)
 		{
 			if(condition != null)
 			{
-				final PsiElement firstNonComment = PyPsiUtils.getNextNonCommentSibling(condition.getNextSibling(), false);
+				PsiElement firstNonComment = PyPsiUtils.getNextNonCommentSibling(condition.getNextSibling(), false);
 				if(firstNonComment != null && !":".equals(firstNonComment.getNode().getText()))
 				{
 					document.insertString(firstNonComment.getTextRange().getEndOffset(), ":");
@@ -61,9 +61,9 @@ public class PyConditionalStatementPartFixer extends PyFixer<PyConditionalStatem
 			}
 			else
 			{
-				final TokenSet keywords = TokenSet.create(PyTokenTypes.IF_KEYWORD, PyTokenTypes.ELIF_KEYWORD, PyTokenTypes.WHILE_KEYWORD);
-				final PsiElement keywordToken = PyPsiUtils.getChildByFilter(statementPart, keywords, 0);
-				final int offset = sure(keywordToken).getTextRange().getEndOffset();
+				TokenSet keywords = TokenSet.create(PyTokenTypes.IF_KEYWORD, PyTokenTypes.ELIF_KEYWORD, PyTokenTypes.WHILE_KEYWORD);
+				PsiElement keywordToken = PyPsiUtils.getChildByFilter(statementPart, keywords, 0);
+				int offset = sure(keywordToken).getTextRange().getEndOffset();
 				document.insertString(offset, " :");
 				processor.registerUnresolvedError(offset + 1);
 			}

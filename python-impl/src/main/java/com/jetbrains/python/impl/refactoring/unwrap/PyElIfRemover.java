@@ -35,9 +35,9 @@ public class PyElIfRemover extends PyUnwrapper {
   @Override
   public boolean isApplicableTo(PsiElement e) {
     if (e instanceof PyIfPartElifImpl) {
-      final PyStatementList statementList = ((PyIfPartElifImpl)e).getStatementList();
+      PyStatementList statementList = ((PyIfPartElifImpl)e).getStatementList();
       if (statementList != null) {
-        final PyStatement[] statements = statementList.getStatements();
+        PyStatement[] statements = statementList.getStatements();
         return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
       }
     }

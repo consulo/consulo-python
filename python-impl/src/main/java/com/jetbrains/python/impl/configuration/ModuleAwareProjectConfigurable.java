@@ -85,7 +85,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
         return configurable.createComponent();
       }
     }
-    final List<Module> modules = ContainerUtil.filter(ModuleManager.getInstance(myProject).getSortedModules(), new Condition<Module>() {
+    List<Module> modules = ContainerUtil.filter(ModuleManager.getInstance(myProject).getSortedModules(), new Condition<Module>() {
       @Override
       public boolean value(Module module) {
         return isSuitableForModule(module);
@@ -93,11 +93,11 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     });
     if (modules.size() == 1) {
       Module module = modules.get(0);
-      final T configurable = createModuleConfigurable(module);
+      T configurable = createModuleConfigurable(module);
       myModuleConfigurables.put(module, configurable);
       return configurable.createComponent();
     }
-    final Splitter splitter = new Splitter(false, 0.25f);
+    Splitter splitter = new Splitter(false, 0.25f);
     final JBList moduleList = new JBList(new CollectionListModel<Module>(modules));
     new ListSpeedSearch(moduleList, o -> {
       if (o instanceof Module) {
@@ -112,16 +112,16 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     final JPanel cardPanel = new JPanel(layout);
     splitter.setSecondComponent(cardPanel);
     for (Module module : modules) {
-      final T configurable = createModuleConfigurable(module);
+      T configurable = createModuleConfigurable(module);
       myModuleConfigurables.put(module, configurable);
-      final JComponent component = new JBScrollPane(configurable.createComponent());
+      JComponent component = new JBScrollPane(configurable.createComponent());
       component.setBorder(new EmptyBorder(0, 0, 0, 0));
       cardPanel.add(component, module.getName());
     }
     moduleList.addListSelectionListener(new ListSelectionListener() {
       @Override
       public void valueChanged(ListSelectionEvent e) {
-        final Module value = (Module)moduleList.getSelectedValue();
+        Module value = (Module)moduleList.getSelectedValue();
         layout.show(cardPanel, value.getName());
       }
     });

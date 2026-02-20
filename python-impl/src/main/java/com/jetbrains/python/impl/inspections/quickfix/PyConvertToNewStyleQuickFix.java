@@ -36,20 +36,20 @@ public class PyConvertToNewStyleQuickFix implements LocalQuickFix {
     @Override
     public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
-        final PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
         assert pyClass != null;
 
-        final PyElementGenerator generator = PyElementGenerator.getInstance(project);
-        final PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
+        PyElementGenerator generator = PyElementGenerator.getInstance(project);
+        PyArgumentList expressionList = pyClass.getSuperClassExpressionList();
         if (expressionList != null) {
-            final PyExpression object = generator.createExpressionFromText(LanguageLevel.forElement(element), "object");
+            PyExpression object = generator.createExpressionFromText(LanguageLevel.forElement(element), "object");
             expressionList.addArgumentFirst(object);
         }
         else {
-            final PyArgumentList list = generator.createFromText(LanguageLevel.forElement(element), PyClass.class, "class A(object):pass")
+            PyArgumentList list = generator.createFromText(LanguageLevel.forElement(element), PyClass.class, "class A(object):pass")
                 .getSuperClassExpressionList();
             assert list != null;
-            final ASTNode node = pyClass.getNameNode();
+            ASTNode node = pyClass.getNameNode();
             assert node != null;
             pyClass.addAfter(list, node.getPsi());
         }

@@ -19,7 +19,7 @@ import java.util.Collection;
  */
 public abstract class PyIntroduceTestCase extends PyTestCase {
   protected void doTestSuggestions(Class<? extends PyExpression> parentClass, String... expectedNames) {
-    final Collection<String> names = buildSuggestions(parentClass);
+    Collection<String> names = buildSuggestions(parentClass);
     for (String expectedName : expectedNames) {
       assertTrue(StringUtil.join(names, ", "), names.contains(expectedName));
     }
@@ -45,7 +45,7 @@ public abstract class PyIntroduceTestCase extends PyTestCase {
     try {
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(false);
       IntroduceHandler handler = createHandler();
-      final IntroduceOperation operation = new IntroduceOperation(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile(), "a");
+      IntroduceOperation operation = new IntroduceOperation(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile(), "a");
       operation.setReplaceAll(true);
       if (customization != null) {
         customization.consume(operation);
@@ -61,13 +61,13 @@ public abstract class PyIntroduceTestCase extends PyTestCase {
   protected void doTestInplace(@Nullable consulo.ide.impl.idea.util.Consumer<IntroduceOperation> customization) {
     String name = getTestName(true);
     myFixture.configureByFile(name + ".py");
-    final boolean enabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();
+    boolean enabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();
     try {
       consulo.ide.impl.idea.codeInsight.template.impl.TemplateManagerImpl.setTemplateTesting(myFixture.getProject(), getTestRootDisposable());
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(true);
 
       IntroduceHandler handler = createHandler();
-      final IntroduceOperation introduceOperation = new IntroduceOperation(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile(), "a");
+      IntroduceOperation introduceOperation = new IntroduceOperation(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile(), "a");
       introduceOperation.setReplaceAll(true);
       if (customization != null) {
         customization.consume(introduceOperation);

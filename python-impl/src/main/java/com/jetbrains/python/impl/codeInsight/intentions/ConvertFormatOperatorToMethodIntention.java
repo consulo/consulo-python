@@ -111,7 +111,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
         // python string may be made of several literals, all different
         List<StringBuilder> constants = new ArrayList<>();
         boolean usesNamedFormat = false;
-        final List<ASTNode> stringNodes = stringLiteralExpression.getStringNodes();
+        List<ASTNode> stringNodes = stringLiteralExpression.getStringNodes();
         sure(stringNodes);
         sure(stringNodes.size() > 0);
         for (ASTNode stringNode : stringNodes) {
@@ -119,7 +119,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
             CharSequence text = stringNode.getChars();
             int openPos = 0;
             boolean hasPrefix = false;
-            final int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(String.valueOf(text));
+            int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(String.valueOf(text));
             if (prefixLength != 0) {
                 hasPrefix = true;
             }
@@ -144,9 +144,9 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
                 appendDoublingBraces(text.subSequence(index, scanner.start()), out);
                 //out.append(text.subSequence(index, scanner.start()));
                 // unpack format
-                final String f_key = scanner.group(1);
-                final String f_modifier = scanner.group(2);
-                final String f_width = scanner.group(3);
+                String f_key = scanner.group(1);
+                String f_modifier = scanner.group(2);
+                String f_width = scanner.group(3);
                 String fConversion = scanner.group(4);
                 // convert to format()'s
                 if ("%%".equals(scanner.group(0))) {
@@ -179,7 +179,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
                         out.append(fConversion);
                     }
 
-                    final int lastIndexOf = out.lastIndexOf(":");
+                    int lastIndexOf = out.lastIndexOf(":");
                     if (lastIndexOf == out.length() - 1) {
                         out.deleteCharAt(lastIndexOf);
                     }
@@ -209,8 +209,8 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
             fragment_no += 1;
             prev_range = next_range;
         }
-        final int left = prev_range.getEndOffset() - full_start;
-        final int right = full_range.getEndOffset() - full_start;
+        int left = prev_range.getEndOffset() - full_start;
+        int right = full_range.getEndOffset() - full_start;
         if (left < right) {
             // the barely possible case of last dangling "\"
             constants.get(constants.size() - 1).append(full_text.subSequence(left, right));
@@ -226,7 +226,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
 
     @Nonnull
     public static String convertFormatSpec(@Nonnull String modifier, @Nullable String widthAndPrecision, @Nullable String conversionChar) {
-        final StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder();
         // in strict order
         if (has(modifier, '-')) {
             result.append("<"); // left align
@@ -265,17 +265,17 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
         if (binaryExpression == null) {
             return false;
         }
-        final LanguageLevel languageLevel = LanguageLevel.forElement(binaryExpression);
+        LanguageLevel languageLevel = LanguageLevel.forElement(binaryExpression);
         if (languageLevel.isOlderThan(LanguageLevel.PYTHON26)) {
             return false;
         }
         if (binaryExpression.getLeftExpression() instanceof PyStringLiteralExpression && binaryExpression.getOperator() == PyTokenTypes.PERC) {
-            final PyStringLiteralExpression str = (PyStringLiteralExpression) binaryExpression.getLeftExpression();
+            PyStringLiteralExpression str = (PyStringLiteralExpression) binaryExpression.getLeftExpression();
             if ((str.getText().length() > 0 && Character.toUpperCase(str.getText().charAt(0)) == 'B')) {
                 return false;
             }
 
-            final List<PyStringFormatParser.SubstitutionChunk> chunks =
+            List<PyStringFormatParser.SubstitutionChunk> chunks =
                 PyStringFormatParser.filterSubstitutions(PyStringFormatParser.parsePercentFormat(
                     binaryExpression.getLeftExpression().getText()
                 ));
@@ -294,41 +294,41 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
 
     @Override
     public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PsiElement elementAt = file.findElementAt(editor.getCaretModel().getOffset());
-        final PyBinaryExpression element = PsiTreeUtil.getParentOfType(elementAt, PyBinaryExpression.class, false);
+        PsiElement elementAt = file.findElementAt(editor.getCaretModel().getOffset());
+        PyBinaryExpression element = PsiTreeUtil.getParentOfType(elementAt, PyBinaryExpression.class, false);
         if (element == null) {
             return;
         }
-        final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
-        final PyExpression rightExpression = sure(element).getRightExpression();
+        PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+        PyExpression rightExpression = sure(element).getRightExpression();
         if (rightExpression == null) {
             return;
         }
-        final PyExpression rhs = PyPsiUtils.flattenParens(rightExpression);
+        PyExpression rhs = PyPsiUtils.flattenParens(rightExpression);
         if (rhs == null) {
             return;
         }
-        final String paramText = sure(rhs).getText();
-        final TypeEvalContext context = TypeEvalContext.userInitiated(file.getProject(), file);
-        final PyType rhsType = context.getType(rhs);
+        String paramText = sure(rhs).getText();
+        TypeEvalContext context = TypeEvalContext.userInitiated(file.getProject(), file);
+        PyType rhsType = context.getType(rhs);
         String prefix = "";
-        final LanguageLevel languageLevel = guessLanguageLevel(project);
+        LanguageLevel languageLevel = guessLanguageLevel(project);
         if (!languageLevel.isPy3K() && PyTypeChecker.match(PyBuiltinCache.getInstance(rhs).getObjectType("unicode"), rhsType, context)) {
             prefix = "u";
         }
-        final PyStringLiteralExpression leftExpression = (PyStringLiteralExpression) element.getLeftExpression();
-        final Pair<StringBuilder, Boolean> converted = convertFormat(leftExpression, prefix);
-        final StringBuilder target = converted.getFirst();
-        final String separator = getSeparator(leftExpression);
+        PyStringLiteralExpression leftExpression = (PyStringLiteralExpression) element.getLeftExpression();
+        Pair<StringBuilder, Boolean> converted = convertFormat(leftExpression, prefix);
+        StringBuilder target = converted.getFirst();
+        String separator = getSeparator(leftExpression);
         target.append(separator).append(".format");
 
         if (rhs instanceof PyReferenceExpression && rhsType instanceof PyTupleType) {
             target.append("(*").append(paramText).append(")");
         }
         else if (rhs instanceof PyCallExpression) { // potential dict(foo=1) -> format(foo=1)
-            final PyCallExpression callExpression = (PyCallExpression) rhs;
-            final PyExpression callee = callExpression.getCallee();
-            final PyClassType classType = PyUtil.as(rhsType, PyClassType.class);
+            PyCallExpression callExpression = (PyCallExpression) rhs;
+            PyExpression callee = callExpression.getCallee();
+            PyClassType classType = PyUtil.as(rhsType, PyClassType.class);
             if (classType != null && callee != null && isDictCall(callee, classType)) {
                 target.append(sure(sure(callExpression.getArgumentList()).getNode()).getChars());
             }
@@ -348,16 +348,16 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
         }
         // Correctly handle multiline implicitly concatenated string literals (PY-9176)
         target.insert(0, '(').append(')');
-        final PyExpression parenthesized = elementGenerator.createExpressionFromText(LanguageLevel.forElement(element), target.toString());
+        PyExpression parenthesized = elementGenerator.createExpressionFromText(LanguageLevel.forElement(element), target.toString());
         element.replace(sure(((PyParenthesizedExpression) parenthesized).getContainedExpression()));
     }
 
     private static boolean isDictCall(@Nonnull PyExpression callee, @Nonnull PyClassType classType) {
-        final PyClassType dictType = PyBuiltinCache.getInstance(callee.getContainingFile()).getDictType();
+        PyClassType dictType = PyBuiltinCache.getInstance(callee.getContainingFile()).getDictType();
         if (dictType != null && classType.getPyClass() == dictType.getPyClass()) {
             if (callee instanceof PyReferenceExpression) {
                 PsiElement maybeDict = ((PyReferenceExpression) callee).getReference().resolve();
-                final PyFunction dictInit = PyUtil.as(maybeDict, PyFunction.class);
+                PyFunction dictInit = PyUtil.as(maybeDict, PyFunction.class);
                 if (dictInit != null) {
                     if (PyNames.INIT.equals(dictInit.getName())) {
                         return true;

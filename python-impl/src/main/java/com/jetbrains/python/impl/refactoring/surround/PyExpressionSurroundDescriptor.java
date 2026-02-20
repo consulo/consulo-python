@@ -41,7 +41,7 @@ public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
 
   @Nonnull
   public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-    final PsiElement element = PyRefactoringUtil.findExpressionInRange(file, startOffset, endOffset);
+    PsiElement element = PyRefactoringUtil.findExpressionInRange(file, startOffset, endOffset);
     if (!(element instanceof PyExpression)) {
       return PsiElement.EMPTY_ARRAY;
     }

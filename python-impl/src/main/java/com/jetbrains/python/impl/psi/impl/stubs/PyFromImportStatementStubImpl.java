@@ -32,7 +32,7 @@ public class PyFromImportStatementStubImpl extends StubBase<PyFromImportStatemen
   private final int myRelativeLevel;
 
   public PyFromImportStatementStubImpl(QualifiedName importSourceQName, boolean isStarImport, int relativeLevel,
-                                       final StubElement parent, IStubElementType elementType) {
+                                       StubElement parent, IStubElementType elementType) {
     super(parent, elementType);
     myImportSourceQName = importSourceQName;
     myStarImport = isStarImport;

@@ -38,7 +38,7 @@ public class PyKeywordArgumentReference extends PsiReferenceBase.Poly<PyKeywordA
   @Nonnull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    final String keyword = myElement.getKeyword();
+    String keyword = myElement.getKeyword();
     if (keyword == null) {
       return ResolveResult.EMPTY_ARRAY;
     }
@@ -46,19 +46,19 @@ public class PyKeywordArgumentReference extends PsiReferenceBase.Poly<PyKeywordA
     if (!(call instanceof PyCallExpression)) {
       return ResolveResult.EMPTY_ARRAY;
     }
-    final PyExpression callee = ((PyCallExpression)call).getCallee();
+    PyExpression callee = ((PyCallExpression)call).getCallee();
     if (callee == null) return ResolveResult.EMPTY_ARRAY;
-    final PsiPolyVariantReference calleeReference = (PsiPolyVariantReference) callee.getReference();
+    PsiPolyVariantReference calleeReference = (PsiPolyVariantReference) callee.getReference();
     if (calleeReference == null) return ResolveResult.EMPTY_ARRAY;
-    final ResolveResult[] calleeCandidates = calleeReference.multiResolve(incompleteCode);
+    ResolveResult[] calleeCandidates = calleeReference.multiResolve(incompleteCode);
     List<ResolveResult> resultList = new ArrayList<ResolveResult>();
     for (ResolveResult calleeCandidate : calleeCandidates) {
       if (!calleeCandidate.isValidResult()) continue;
-      final PsiElement element = calleeCandidate.getElement();
+      PsiElement element = calleeCandidate.getElement();
       if (element == null) continue;
-      final PyFunction calleeFunction = resolveToFunction(element, new HashSet<PsiElement>());
+      PyFunction calleeFunction = resolveToFunction(element, new HashSet<PsiElement>());
       if (calleeFunction != null) {
-        final PsiElement result = calleeFunction.getParameterList().findParameterByName(keyword);
+        PsiElement result = calleeFunction.getParameterList().findParameterByName(keyword);
         if (result != null) {
           resultList.add(new PsiElementResolveResult(result));
         }
@@ -77,11 +77,11 @@ public class PyKeywordArgumentReference extends PsiReferenceBase.Poly<PyKeywordA
       return (PyFunction)element;
     }
     if (element instanceof PyTargetExpression) {
-      final PyExpression assignedValue = ((PyTargetExpression)element).findAssignedValue();
+      PyExpression assignedValue = ((PyTargetExpression)element).findAssignedValue();
       return resolveToFunction(assignedValue, visited);
     }
     if (element instanceof PyReferenceExpression) {
-      final PsiElement resolveResult = ((PyReferenceExpression)element).getReference().resolve();
+      PsiElement resolveResult = ((PyReferenceExpression)element).getReference().resolve();
       return resolveToFunction(resolveResult, visited);
     }
     return null;

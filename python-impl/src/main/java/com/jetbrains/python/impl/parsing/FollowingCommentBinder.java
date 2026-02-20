@@ -33,7 +33,7 @@ class FollowingCommentBinder implements WhitespacesAndCommentsBinder {
     int pos = 0;
     // TODO[yole] handle more cases?
     while (pos < tokens.size() && tokens.get(pos) == PyTokenTypes.LINE_BREAK) {
-      final CharSequence charSequence = getter.get(pos);
+      CharSequence charSequence = getter.get(pos);
       if (charSequence.length() == 0 || charSequence.charAt(charSequence.length()-1) != ' ') {
         break;
       }

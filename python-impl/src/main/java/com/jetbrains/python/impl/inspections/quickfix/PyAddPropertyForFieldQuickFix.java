@@ -41,34 +41,34 @@ public class PyAddPropertyForFieldQuickFix implements LocalQuickFix {
         return myName;
     }
 
-    public void applyFix(@Nonnull final Project project, @Nonnull final ProblemDescriptor descriptor) {
-        final PsiElement element = descriptor.getPsiElement();
+    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyReferenceExpression) {
-            final PsiReference reference = element.getReference();
+            PsiReference reference = element.getReference();
             if (reference == null) {
                 return;
             }
-            final PsiElement resolved = reference.resolve();
+            PsiElement resolved = reference.resolve();
             if (resolved instanceof PyTargetExpression) {
                 PyTargetExpression target = (PyTargetExpression) resolved;
-                final PyClass containingClass = target.getContainingClass();
+                PyClass containingClass = target.getContainingClass();
                 if (containingClass != null) {
-                    final String name = target.getName();
+                    String name = target.getName();
                     if (name == null) {
                         return;
                     }
                     String propertyName = StringUtil.trimStart(name, "_");
-                    final Map<String, Property> properties = containingClass.getProperties();
-                    final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+                    Map<String, Property> properties = containingClass.getProperties();
+                    PyElementGenerator generator = PyElementGenerator.getInstance(project);
                     if (!properties.containsKey(propertyName)) {
-                        final PyFunction property =
+                        PyFunction property =
                             generator.createProperty(LanguageLevel.forElement(containingClass), propertyName, name, AccessDirection.READ);
                         PyUtil.addElementToStatementList(property, containingClass.getStatementList(), false);
                     }
-                    final PyExpression qualifier = ((PyReferenceExpression) element).getQualifier();
+                    PyExpression qualifier = ((PyReferenceExpression) element).getQualifier();
                     if (qualifier != null) {
                         String newElementText = qualifier.getText() + "." + propertyName;
-                        final PyExpression newElement =
+                        PyExpression newElement =
                             generator.createExpressionFromText(LanguageLevel.forElement(containingClass), newElementText);
                         element.replace(newElement);
                     }

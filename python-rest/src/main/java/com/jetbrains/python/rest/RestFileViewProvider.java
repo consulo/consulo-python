@@ -76,7 +76,7 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   }
 
   @Override
-  protected PsiFile createFile(@Nonnull final Language lang) {
+  protected PsiFile createFile(@Nonnull Language lang) {
     ParserDefinition def = ParserDefinition.forLanguage(lang);
     if (def == null) return null;
     if (lang == getTemplateDataLanguage()) {

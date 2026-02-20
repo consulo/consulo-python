@@ -84,7 +84,7 @@ class NameUsage implements PsiElementUsage {
           TextChunk[] chunks = new TextChunk[3];
           PsiFile file = myElement.getContainingFile();
           String line_id = "...";
-          final Document document = file.getViewProvider().getDocument();
+          Document document = file.getViewProvider().getDocument();
           if (document != null) {
             line_id = String.valueOf(document.getLineNumber(myElement.getTextOffset()));
           }

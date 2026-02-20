@@ -41,12 +41,12 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 		super(astNode);
 	}
 
-	public PyParameterListImpl(final PyParameterListStub stub)
+	public PyParameterListImpl(PyParameterListStub stub)
 	{
 		this(stub, PyElementTypes.PARAMETER_LIST);
 	}
 
-	public PyParameterListImpl(final PyParameterListStub stub, IStubElementType nodeType)
+	public PyParameterListImpl(PyParameterListStub stub, IStubElementType nodeType)
 	{
 		super(stub, nodeType);
 	}
@@ -62,14 +62,14 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 		return getStubOrPsiChildren(PythonDialectsTokenSetProvider.INSTANCE.getParameterTokens(), new PyParameter[0]);
 	}
 
-	public void addParameter(final PyNamedParameter param)
+	public void addParameter(PyNamedParameter param)
 	{
 		PsiElement paren = getLastChild();
 		if(paren != null && ")".equals(paren.getText()))
 		{
 			ASTNode beforeWhat = paren.getNode(); // the closing paren will be this
 			PyParameter[] params = getParameters();
-			final boolean hasDefaultValue = param.hasDefaultValue();
+			boolean hasDefaultValue = param.hasDefaultValue();
 			boolean isLast = true;
 			for(PyParameter p : params)
 			{
@@ -90,7 +90,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 					}
 				}
 			}
-			final ASTNode previous = PyPsiUtils.getPrevNonWhitespaceSibling(beforeWhat);
+			ASTNode previous = PyPsiUtils.getPrevNonWhitespaceSibling(beforeWhat);
 			PyUtil.addListNode(this, param, beforeWhat, !isLast || params.length == 0 ||
 					previous.getElementType() == PyTokenTypes.COMMA, isLast, beforeWhat.getElementType() != PyTokenTypes.RPAR);
 		}
@@ -186,7 +186,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 	@Override
 	public PyFunction getContainingFunction()
 	{
-		final PsiElement parent = getParentByStub();
+		PsiElement parent = getParentByStub();
 		return parent instanceof PyFunction ? (PyFunction) parent : null;
 	}
 

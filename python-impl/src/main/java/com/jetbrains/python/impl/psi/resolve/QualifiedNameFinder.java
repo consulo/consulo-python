@@ -56,7 +56,7 @@ public class QualifiedNameFinder
 	@Nullable
 	public static String findShortestImportableName(@Nonnull PsiElement foothold, @Nonnull VirtualFile vfile)
 	{
-		final QualifiedName qName = findShortestImportableQName(foothold, vfile);
+		QualifiedName qName = findShortestImportableQName(foothold, vfile);
 		return qName == null ? null : qName.toString();
 	}
 
@@ -76,15 +76,15 @@ public class QualifiedNameFinder
 	@Nonnull
 	public static List<QualifiedName> findImportableQNames(@Nonnull PsiElement foothold, @Nonnull VirtualFile vfile)
 	{
-		final PythonPathCache cache = ResolveImportUtil.getPathCache(foothold);
-		final List<QualifiedName> names = cache != null ? cache.getNames(vfile) : null;
+		PythonPathCache cache = ResolveImportUtil.getPathCache(foothold);
+		List<QualifiedName> names = cache != null ? cache.getNames(vfile) : null;
 		if(names != null)
 		{
 			return names;
 		}
 		PathChoosingVisitor visitor = new PathChoosingVisitor(vfile);
 		RootVisitorHost.visitRoots(foothold, visitor);
-		final List<QualifiedName> results = visitor.getResults();
+		List<QualifiedName> results = visitor.getResults();
 		if(cache != null)
 		{
 			cache.putNames(vfile, results);
@@ -101,17 +101,17 @@ public class QualifiedNameFinder
 	@Nullable
 	public static String findShortestImportableName(Module module, @Nonnull VirtualFile vfile)
 	{
-		final PythonPathCache cache = PythonModulePathCache.getInstance(module);
-		final List<QualifiedName> names = cache.getNames(vfile);
+		PythonPathCache cache = PythonModulePathCache.getInstance(module);
+		List<QualifiedName> names = cache.getNames(vfile);
 		if(names != null)
 		{
 			return names.toString();
 		}
 		PathChoosingVisitor visitor = new PathChoosingVisitor(vfile);
 		RootVisitorHost.visitRoots(module, false, visitor);
-		final List<QualifiedName> results = visitor.getResults();
+		List<QualifiedName> results = visitor.getResults();
 		cache.putNames(vfile, results);
-		final QualifiedName qName = shortestQName(results);
+		QualifiedName qName = shortestQName(results);
 		return qName == null ? null : qName.toString();
 	}
 
@@ -142,7 +142,7 @@ public class QualifiedNameFinder
 			PsiElement toplevel = symbol;
 			if(symbol instanceof PyFunction)
 			{
-				final PyClass containingClass = ((PyFunction) symbol).getContainingClass();
+				PyClass containingClass = ((PyFunction) symbol).getContainingClass();
 				if(containingClass != null)
 				{
 					toplevel = containingClass;
@@ -159,8 +159,8 @@ public class QualifiedNameFinder
 				if(initPy instanceof PyFile)
 				{
 					//noinspection ConstantConditions
-					final List<RatedResolveResult> resolved = ((PyFile) initPy).multiResolveName(((PsiNamedElement) toplevel).getName());
-					final PsiElement finalTopLevel = toplevel;
+					List<RatedResolveResult> resolved = ((PyFile) initPy).multiResolveName(((PsiNamedElement) toplevel).getName());
+					PsiElement finalTopLevel = toplevel;
 					if(resolved.stream().anyMatch(r -> r.getElement() == finalTopLevel))
 					{
 						virtualFile = dir.getVirtualFile();
@@ -169,12 +169,12 @@ public class QualifiedNameFinder
 				dir = dir.getParentDirectory();
 			}
 		}
-		final QualifiedName qname = findShortestImportableQName(foothold != null ? foothold : symbol, virtualFile);
+		QualifiedName qname = findShortestImportableQName(foothold != null ? foothold : symbol, virtualFile);
 		if(qname != null)
 		{
 			for(PyCanonicalPathProvider provider : Extensions.getExtensions(PyCanonicalPathProvider.EP_NAME))
 			{
-				final QualifiedName restored = provider.getCanonicalPath(qname, foothold);
+				QualifiedName restored = provider.getCanonicalPath(qname, foothold);
 				if(restored != null)
 				{
 					return restored;
@@ -187,14 +187,14 @@ public class QualifiedNameFinder
 	@Nullable
 	public static String getQualifiedName(@Nonnull PyElement element)
 	{
-		final String name = element.getName();
+		String name = element.getName();
 		if(name != null)
 		{
-			final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
-			final PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
+			ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+			PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(element);
 			if(owner instanceof PyClass)
 			{
-				final String classQName = ((PyClass) owner).getQualifiedName();
+				String classQName = ((PyClass) owner).getQualifiedName();
 				if(classQName != null)
 				{
 					return classQName + "." + name;
@@ -208,10 +208,10 @@ public class QualifiedNameFinder
 				}
 				else
 				{
-					final VirtualFile virtualFile = ((PyFile) owner).getVirtualFile();
+					VirtualFile virtualFile = ((PyFile) owner).getVirtualFile();
 					if(virtualFile != null)
 					{
-						final String fileQName = findShortestImportableName(element, virtualFile);
+						String fileQName = findShortestImportableName(element, virtualFile);
 						if(fileQName != null)
 						{
 							return fileQName + "." + name;
@@ -250,7 +250,7 @@ public class QualifiedNameFinder
 		{
 			if(myVFile != null)
 			{
-				final String relativePath = VirtualFileUtil.getRelativePath(myVFile, root, '/');
+				String relativePath = VirtualFileUtil.getRelativePath(myVFile, root, '/');
 				if(relativePath != null && !relativePath.isEmpty())
 				{
 					List<String> result = StringUtil.split(relativePath, "/");

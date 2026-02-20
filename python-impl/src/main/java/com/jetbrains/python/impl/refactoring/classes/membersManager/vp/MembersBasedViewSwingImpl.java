@@ -77,7 +77,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	 * @param title           window title
 	 * @param supportAbstract supports "abstract" column?
 	 */
-	protected MembersBasedViewSwingImpl(@Nonnull final Project project, @Nonnull final P presenter, @Nonnull final String title, final boolean supportAbstract)
+	protected MembersBasedViewSwingImpl(@Nonnull Project project, @Nonnull P presenter, @Nonnull String title, boolean supportAbstract)
 	{
 		super(project, true);
 		myTopPanel = new JPanel(new BorderLayout());
@@ -89,15 +89,15 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 
 
 	@Override
-	public boolean showConflictsDialog(@Nonnull final MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @Nonnull final Collection<PyMemberInfo<?>> dependenciesConflicts)
+	public boolean showConflictsDialog(@Nonnull MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @Nonnull Collection<PyMemberInfo<?>> dependenciesConflicts)
 	{
 		Preconditions.checkArgument(!(duplicatesConflict.isEmpty() && dependenciesConflicts.isEmpty()), "Can't show dialog for empty conflicts");
-		final DialogWrapper conflictsDialog = new MembersConflictDialog(myProject, duplicatesConflict, dependenciesConflicts);
+		DialogWrapper conflictsDialog = new MembersConflictDialog(myProject, duplicatesConflict, dependenciesConflicts);
 		return conflictsDialog.showAndGet();
 	}
 
 	@Override
-	public void showError(@Nonnull final String message)
+	public void showError(@Nonnull String message)
 	{
 		Messages.showErrorDialog(getContentPane(), message);
 	}
@@ -141,13 +141,13 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	}
 
 	@Override
-	public void invokeRefactoring(@Nonnull final BaseRefactoringProcessor processor)
+	public void invokeRefactoring(@Nonnull BaseRefactoringProcessor processor)
 	{
 		super.invokeRefactoring(processor);
 	}
 
 	@Override
-	public void configure(@Nonnull final C configInfo)
+	public void configure(@Nonnull C configInfo)
 	{
 		Preconditions.checkArgument(!myConfigured, "Already configured");
 		myConfigured = true;

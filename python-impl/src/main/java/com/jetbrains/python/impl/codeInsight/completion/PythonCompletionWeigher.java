@@ -38,13 +38,13 @@ public class PythonCompletionWeigher extends CompletionWeigher {
   @NonNls private static final String DOUBLE_UNDER = "__";
 
   @Override
-  public Comparable weigh(@Nonnull final LookupElement element, @Nonnull final CompletionLocation location) {
+  public Comparable weigh(@Nonnull LookupElement element, @Nonnull CompletionLocation location) {
     if (!PsiUtilCore.findLanguageFromElement(location.getCompletionParameters().getPosition()).isKindOf(PythonLanguage.getInstance())) {
       return 0;
     }
 
-    final String name = element.getLookupString();
-    final LookupElementPresentation presentation = LookupElementPresentation.renderElement(element);
+    String name = element.getLookupString();
+    LookupElementPresentation presentation = LookupElementPresentation.renderElement(element);
     // move dict keys to the top
     if ("dict key".equals(presentation.getTypeText())) {
       return element.getLookupString().length();

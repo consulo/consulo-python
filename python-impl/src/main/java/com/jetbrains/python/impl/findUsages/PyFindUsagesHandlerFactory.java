@@ -51,7 +51,7 @@ public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   @Override
   public FindUsagesHandler createFindUsagesHandler(@Nonnull PsiElement element, boolean forHighlightUsages) {
     if (element instanceof PyImportedModule) {
-      final PsiElement resolved = ((PyImportedModule)element).resolve();
+      PsiElement resolved = ((PyImportedModule)element).resolve();
       if (resolved != null) {
         element = resolved;
       }
@@ -62,9 +62,9 @@ public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     if (element instanceof PyFunction) {
       if (!forHighlightUsages) {
         TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), null);
-        final Collection<PsiElement> superMethods = PySuperMethodsSearch.search((PyFunction)element, true, context).findAll();
+        Collection<PsiElement> superMethods = PySuperMethodsSearch.search((PyFunction)element, true, context).findAll();
         if (superMethods.size() > 0) {
-          final PsiElement next = superMethods.iterator().next();
+          PsiElement next = superMethods.iterator().next();
           // TODO should do this for Jython functions overriding Java methods too
           if (next instanceof PyFunction && !isInObject((PyFunction)next)) {
             int rc = Messages.showYesNoDialog(element.getProject(), "Method " +
@@ -97,7 +97,7 @@ public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   }
 
   private static boolean isInObject(PyFunction fun) {
-    final PyClass containingClass = fun.getContainingClass();
+    PyClass containingClass = fun.getContainingClass();
     if (containingClass == null) {
       return false;
     }

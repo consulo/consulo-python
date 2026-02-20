@@ -53,7 +53,7 @@ public class CollectionElementNameMacro extends Macro
     if (params.length != 1) {
       return null;
     }
-    final Result paramResult = params[0].calculateResult(context);
+    Result paramResult = params[0].calculateResult(context);
     if (paramResult == null) {
       return null;
     }
@@ -68,7 +68,7 @@ public class CollectionElementNameMacro extends Macro
         param = param.substring(0, lastParen);
       }
     }
-    final String result = smartUnpluralize(param);
+    String result = smartUnpluralize(param);
     return new TextResult(result);
   }
 
@@ -76,7 +76,7 @@ public class CollectionElementNameMacro extends Macro
     if (param.endsWith("_list")) {
       return param.substring(0, param.length()-5);
     }
-    final String result = StringUtil.unpluralize(param);
+    String result = StringUtil.unpluralize(param);
     return result == null ? param : result;
   }
 
@@ -85,7 +85,7 @@ public class CollectionElementNameMacro extends Macro
     if (result == null) {
       return null;
     }
-    final String[] words = result.toString().split("_");
+    String[] words = result.toString().split("_");
     if (words.length > 1) {
       List<LookupElement> lookup = new ArrayList<LookupElement>();
       for(int i=0; i<words.length; i++) {

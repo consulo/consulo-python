@@ -43,7 +43,7 @@ public class PyClassFindUsagesHandler extends FindUsagesHandler
 	@Override
 	public PsiElement[] getSecondaryElements()
 	{
-		final PyFunction initMethod = myClass.findMethodByName(PyNames.INIT, false, null);
+		PyFunction initMethod = myClass.findMethodByName(PyNames.INIT, false, null);
 		if(initMethod != null)
 		{
 			return new PsiElement[]{initMethod};

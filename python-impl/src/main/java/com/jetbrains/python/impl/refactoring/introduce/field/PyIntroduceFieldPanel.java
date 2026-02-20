@@ -42,7 +42,7 @@ public class PyIntroduceFieldPanel {
   }
 
   public IntroduceHandler.InitPlace getInitPlace() {
-    final int index = myInitializerPlaceCombo.getSelectedIndex();
+    int index = myInitializerPlaceCombo.getSelectedIndex();
     switch (index) {
       case 1:
         return IntroduceHandler.InitPlace.CONSTRUCTOR;

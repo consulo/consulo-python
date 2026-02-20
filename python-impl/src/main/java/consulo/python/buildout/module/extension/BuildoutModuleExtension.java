@@ -60,15 +60,15 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
 
   @Nonnull
   public static List<VirtualFile> getExtraPathForAllOpenModules() {
-    final List<VirtualFile> results = new ArrayList<>();
+    List<VirtualFile> results = new ArrayList<>();
     for (Project project : ProjectManager.getInstance().getOpenProjects()) {
       for (Module module : ModuleManager.getInstance(project).getModules()) {
-        final BuildoutModuleExtension buildoutFacet = ModuleUtilCore.getExtension(module, BuildoutModuleExtension.class);
+        BuildoutModuleExtension buildoutFacet = ModuleUtilCore.getExtension(module, BuildoutModuleExtension.class);
         if (buildoutFacet != null) {
-          final List<String> paths = buildoutFacet.getPaths();
+          List<String> paths = buildoutFacet.getPaths();
           if (paths != null) {
             for (String path : paths) {
-              final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
+              VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
               if (file != null) {
                 results.add(file);
               }
@@ -92,10 +92,10 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
     super(id, module);
   }
 
-  public static List<File> getScripts(@Nullable BuildoutModuleExtension buildoutFacet, final VirtualFile baseDir) {
+  public static List<File> getScripts(@Nullable BuildoutModuleExtension buildoutFacet, VirtualFile baseDir) {
     File rootPath = null;
     if (buildoutFacet != null) {
-      final File configIOFile = buildoutFacet.getConfigFile();
+      File configIOFile = buildoutFacet.getConfigFile();
       if (configIOFile != null) {
         rootPath = configIOFile.getParentFile();
       }
@@ -106,7 +106,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
       }
     }
     if (rootPath != null) {
-      final File[] scripts = new File(rootPath, "bin").listFiles(new FilenameFilter() {
+      File[] scripts = new File(rootPath, "bin").listFiles(new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
           if (SystemInfo.isWindows) {
@@ -156,7 +156,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
   public static List<String> extractFromScript(@Nonnull VirtualFile script) throws IOException {
     String text = VfsUtil.loadText(script);
     Pattern pat = Pattern.compile("(?:^\\s*(['\"])(.*)(\\1),\\s*$)|(\\])", Pattern.MULTILINE);
-    final String bait_string = "sys.path[0:0]";
+    String bait_string = "sys.path[0:0]";
     int pos = text.indexOf(bait_string);
     List<String> ret = null;
     if (pos >= 0) {
@@ -210,22 +210,22 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
     return result;
   }
 
-  public static void attachLibrary(final Module module) {
-    final BuildoutModuleExtension facet = ModuleUtilCore.getExtension(module, BuildoutModuleExtension.class);
+  public static void attachLibrary(Module module) {
+    BuildoutModuleExtension facet = ModuleUtilCore.getExtension(module, BuildoutModuleExtension.class);
     if (facet == null) {
       return;
     }
-    final List<String> paths = facet.getPaths();
+    List<String> paths = facet.getPaths();
     FacetLibraryConfigurator.attachLibrary(module, null, BUILDOUT_LIB_NAME, paths);
   }
 
-  public static void detachLibrary(final Module module) {
+  public static void detachLibrary(Module module) {
     FacetLibraryConfigurator.detachLibrary(module, BUILDOUT_LIB_NAME);
   }
 
   @Nullable
   public File getConfigFile() {
-    final String scriptName = getScriptName();
+    String scriptName = getScriptName();
     if (!StringUtil.isEmpty(scriptName)) {
       return new File(new File(scriptName).getParentFile().getParentFile(), BUILDOUT_CFG);
     }
@@ -332,7 +332,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
   }
 
   public void updatePaths() {
-    final VirtualFile script = getScript();
+    VirtualFile script = getScript();
     if (script != null) {
       setPaths(extractBuildoutPaths(script));
     }

@@ -51,7 +51,7 @@ public class PythonNoseTestCommandLineState extends PythonTestCommandLineStateBa
 	{
 		List<String> specs = new ArrayList<>();
 
-		final String scriptName = FileUtil.toSystemDependentName(myConfig.getScriptName());
+		String scriptName = FileUtil.toSystemDependentName(myConfig.getScriptName());
 		switch(myConfig.getTestType())
 		{
 			case TEST_SCRIPT:

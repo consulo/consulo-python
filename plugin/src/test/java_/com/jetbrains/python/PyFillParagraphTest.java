@@ -47,7 +47,7 @@ public abstract class PyFillParagraphTest extends PyTestCase {
   }
 
   public void testEnter() {
-    final CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
+    CodeStyleSettings settings = CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings();
     int oldValue = settings.RIGHT_MARGIN;
     settings.RIGHT_MARGIN = 80;
     try {

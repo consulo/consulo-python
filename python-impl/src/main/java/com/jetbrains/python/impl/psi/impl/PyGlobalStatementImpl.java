@@ -60,14 +60,14 @@ public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStat
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull final String the_name)
+	public PsiNamedElement getNamedElement(@Nonnull String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}
 
-	public void addGlobal(final String name)
+	public void addGlobal(String name)
 	{
-		final PyElementGenerator pyElementGenerator = PyElementGenerator.getInstance(getProject());
+		PyElementGenerator pyElementGenerator = PyElementGenerator.getInstance(getProject());
 		add(pyElementGenerator.createComma().getPsi());
 		add(pyElementGenerator.createFromText(LanguageLevel.getDefault(), PyGlobalStatement.class, "global " + name).getGlobals()[0]);
 	}

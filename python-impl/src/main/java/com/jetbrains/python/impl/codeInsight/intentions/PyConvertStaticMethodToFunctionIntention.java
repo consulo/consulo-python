@@ -47,18 +47,18 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
         if (!(file instanceof PyFile)) {
             return false;
         }
-        final PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
-        final PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
+        PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (function == null) {
             return false;
         }
-        final PyClass containingClass = function.getContainingClass();
+        PyClass containingClass = function.getContainingClass();
         if (containingClass == null) {
             return false;
         }
-        final PyDecoratorList decoratorList = function.getDecoratorList();
+        PyDecoratorList decoratorList = function.getDecoratorList();
         if (decoratorList != null) {
-            final PyDecorator staticMethod = decoratorList.findDecorator(PyNames.STATICMETHOD);
+            PyDecorator staticMethod = decoratorList.findDecorator(PyNames.STATICMETHOD);
             if (staticMethod != null) {
                 return true;
             }
@@ -67,27 +67,27 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
     }
 
     public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
+        PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (problemFunction == null) {
             return;
         }
-        final PyClass containingClass = problemFunction.getContainingClass();
+        PyClass containingClass = problemFunction.getContainingClass();
         if (containingClass == null) {
             return;
         }
-        final List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
-        final PyDecoratorList decoratorList = problemFunction.getDecoratorList();
+        List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
+        PyDecoratorList decoratorList = problemFunction.getDecoratorList();
         if (decoratorList != null) {
-            final PyDecorator decorator = decoratorList.findDecorator(PyNames.STATICMETHOD);
+            PyDecorator decorator = decoratorList.findDecorator(PyNames.STATICMETHOD);
             if (decorator != null) {
                 decorator.delete();
             }
         }
-        final PyElementGenerator generator = PyElementGenerator.getInstance(project);
+        PyElementGenerator generator = PyElementGenerator.getInstance(project);
 
-        final PsiElement copy = problemFunction.copy();
-        final PyStatementList classStatementList = containingClass.getStatementList();
+        PsiElement copy = problemFunction.copy();
+        PyStatementList classStatementList = containingClass.getStatementList();
         classStatementList.deleteChildRange(problemFunction, problemFunction);
         if (classStatementList.getStatements().length < 1) {
             classStatementList.add(generator.createPassStatement());
@@ -95,7 +95,7 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
         file.addAfter(copy, containingClass);
 
         for (UsageInfo usage : usages) {
-            final PsiElement usageElement = usage.getElement();
+            PsiElement usageElement = usage.getElement();
             if (usageElement instanceof PyReferenceExpression) {
                 PyUtil.removeQualifier((PyReferenceExpression) usageElement);
             }

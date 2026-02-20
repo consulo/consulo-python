@@ -64,7 +64,7 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
     }
 
     private static ColumnInfo[] getColumns(Project project) {
-        final Collection<ColumnInfo> result = new ArrayList<ColumnInfo>();
+        Collection<ColumnInfo> result = new ArrayList<ColumnInfo>();
         result.add(new PyParameterColumn(project));
         result.add(new PyDefaultValueColumn(project));
         return result.toArray(new ColumnInfo[result.size()]);
@@ -75,10 +75,10 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
         if (parameterInfo == null) {
             parameterInfo = new PyParameterInfo(-1);
         }
-        final String defaultValue = parameterInfo.getDefaultValue();
-        final PsiCodeFragment defaultValueFragment = new PyExpressionCodeFragment(myProject, StringUtil.notNullize(defaultValue),
+        String defaultValue = parameterInfo.getDefaultValue();
+        PsiCodeFragment defaultValueFragment = new PyExpressionCodeFragment(myProject, StringUtil.notNullize(defaultValue),
             StringUtil.notNullize(defaultValue));
-        final boolean defaultInSignature = parameterInfo.getDefaultInSignature();
+        boolean defaultInSignature = parameterInfo.getDefaultInSignature();
         return new PyParameterTableModelItem(parameterInfo, defaultValueFragment, defaultValueFragment, defaultInSignature);
     }
 
@@ -109,7 +109,7 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
 
         @Override
         public void setValue(TableItem item, Pair<PsiCodeFragment, Boolean> value) {
-            final PyParameterInfo parameter = (PyParameterInfo) item.parameter;
+            PyParameterInfo parameter = (PyParameterInfo) item.parameter;
             parameter.setDefaultValue(value.getFirst().getText().trim());
             parameter.setDefaultInSignature(value.getSecond());
         }
@@ -132,12 +132,12 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, final boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             JPanel panel = new JPanel();
-            final Component component = super.getTableCellRendererComponent(table, ((Pair) value).getFirst(), isSelected, hasFocus, row, column);
+            Component component = super.getTableCellRendererComponent(table, ((Pair) value).getFirst(), isSelected, hasFocus, row, column);
             panel.add(component);
 
-            final Component component1 =
+            Component component1 =
                 new BooleanTableCellRenderer().getTableCellRendererComponent(table, ((Pair) value).getSecond(), isSelected, hasFocus, row, column);
             panel.add(component1);
             return panel;

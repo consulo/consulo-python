@@ -29,10 +29,10 @@ public class PyCallExpressionNavigator {
   }
 
   @Nullable
-  public static PyCallExpression getPyCallExpressionByCallee(final PsiElement element){
-     final PsiElement parent = element.getParent();
+  public static PyCallExpression getPyCallExpressionByCallee(PsiElement element){
+     PsiElement parent = element.getParent();
     if (parent instanceof PyCallExpression){
-      final PyCallExpression expression = (PyCallExpression)parent;
+      PyCallExpression expression = (PyCallExpression)parent;
       return expression.getCallee() == element ? expression : null;
     }
     return null;

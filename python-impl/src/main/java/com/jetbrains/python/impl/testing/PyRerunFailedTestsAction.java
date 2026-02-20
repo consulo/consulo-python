@@ -59,7 +59,7 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 	@Nullable
 	protected MyRunProfile getRunProfile(@Nonnull ExecutionEnvironment environment)
 	{
-		final TestFrameworkRunningModel model = getModel();
+		TestFrameworkRunningModel model = getModel();
 		if(model == null)
 		{
 			return null;
@@ -86,16 +86,16 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 		@Override
 		public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
 		{
-			final AbstractPythonRunConfiguration configuration = ((AbstractPythonRunConfiguration) getPeer());
+			AbstractPythonRunConfiguration configuration = ((AbstractPythonRunConfiguration) getPeer());
 
 			// If configuration wants to take care about rerun itself
 			if(configuration instanceof TestRunConfigurationReRunResponsible)
 			{
 				// TODO: Extract method
-				final Set<PsiElement> failedTestElements = new HashSet<>();
-				for(final AbstractTestProxy proxy : getFailedTests(getProject()))
+				Set<PsiElement> failedTestElements = new HashSet<>();
+				for(AbstractTestProxy proxy : getFailedTests(getProject()))
 				{
-					final Location<?> location = proxy.getLocation(getProject(), GlobalSearchScope.allScope(getProject()));
+					Location<?> location = proxy.getLocation(getProject(), GlobalSearchScope.allScope(getProject()));
 					if(location != null)
 					{
 						failedTestElements.add(location.getPsiElement());
@@ -147,10 +147,10 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 			{
 				if(failedTest.isLeaf())
 				{
-					final Location<?> location = failedTest.getLocation(myProject, myConsoleProperties.getScope());
+					Location<?> location = failedTest.getLocation(myProject, myConsoleProperties.getScope());
 					if(location != null)
 					{
-						final String spec = getConfiguration().getTestSpec(location, failedTest);
+						String spec = getConfiguration().getTestSpec(location, failedTest);
 						if(spec != null && !specs.contains(spec))
 						{
 							specs.add(spec);
@@ -160,7 +160,7 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 			}
 			if(specs.isEmpty())
 			{
-				final List<String> locations = failedTests.stream().map(AbstractTestProxy::getLocationUrl).collect(Collectors.toList());
+				List<String> locations = failedTests.stream().map(AbstractTestProxy::getLocationUrl).collect(Collectors.toList());
 				Logger.getInstance(FailedPythonTestCommandLineStateBase.class).warn(String.format("Can't resolve specs for the following tests: %s", StringUtil.join(locations, ", ")));
 			}
 			return specs;

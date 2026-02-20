@@ -60,7 +60,7 @@ public class PyAutoImportConfigurable implements ApplicationConfigurable {
   @RequiredUIAccess
   @Override
   public void reset() {
-    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
     myRbFromImport.setSelected(settings.PREFER_FROM_IMPORT);
     myRbImport.setSelected(!settings.PREFER_FROM_IMPORT);
     myShowImportPopupCheckBox.setSelected(settings.SHOW_IMPORT_POPUP);
@@ -69,14 +69,14 @@ public class PyAutoImportConfigurable implements ApplicationConfigurable {
   @RequiredUIAccess
   @Override
   public boolean isModified() {
-    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
     return settings.PREFER_FROM_IMPORT != myRbFromImport.isSelected() || settings.SHOW_IMPORT_POPUP != myShowImportPopupCheckBox.isSelected();
   }
 
   @RequiredUIAccess
   @Override
   public void apply() throws ConfigurationException {
-    final PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
+    PyCodeInsightSettings settings = PyCodeInsightSettings.getInstance();
     settings.PREFER_FROM_IMPORT = myRbFromImport.isSelected();
     settings.SHOW_IMPORT_POPUP = myShowImportPopupCheckBox.isSelected();
   }

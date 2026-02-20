@@ -49,12 +49,12 @@ public class PythonUnitTestTestIdUrlProvider implements PythonTestLocator, DumbA
 			return Collections.emptyList();
 		}
 
-		final List<String> list = StringUtil.split(path, ".");
+		List<String> list = StringUtil.split(path, ".");
 		if(list.isEmpty())
 		{
 			return Collections.emptyList();
 		}
-		final int listSize = list.size();
+		int listSize = list.size();
 
 		// parse path as [ns.]*fileName.className[.methodName]
 
@@ -64,11 +64,11 @@ public class PythonUnitTestTestIdUrlProvider implements PythonTestLocator, DumbA
 		}
 		if(listSize > 2)
 		{
-			final String className = list.get(listSize - 2);
-			final String methodName = list.get(listSize - 1);
+			String className = list.get(listSize - 2);
+			String methodName = list.get(listSize - 1);
 
 			String fileName = list.get(listSize - 3);
-			final List<Location> locations = PythonUnitTestUtil.findLocations(project, fileName, className, methodName);
+			List<Location> locations = PythonUnitTestUtil.findLocations(project, fileName, className, methodName);
 			if(locations.size() > 0)
 			{
 				return locations;

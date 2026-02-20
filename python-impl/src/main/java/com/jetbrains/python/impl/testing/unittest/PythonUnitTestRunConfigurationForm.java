@@ -38,14 +38,14 @@ public class PythonUnitTestRunConfigurationForm implements PythonUnitTestRunConf
   private PythonTestRunConfigurationForm myTestRunConfigurationForm;
 
 
-  public PythonUnitTestRunConfigurationForm(final Project project, final PythonUnitTestRunConfiguration configuration) {
+  public PythonUnitTestRunConfigurationForm(Project project, final PythonUnitTestRunConfiguration configuration) {
     myRootPanel = new JPanel(new BorderLayout());
     myTestRunConfigurationForm = new PythonTestRunConfigurationForm(project, configuration);
     myIsPureUnittest = new JCheckBox("Inspect only subclasses of unittest.TestCase");
     myIsPureUnittest.setSelected(configuration.isPureUnittest());
 
-    final ActionListener testTypeListener = new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
+    ActionListener testTypeListener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
         myIsPureUnittest.setVisible(myTestRunConfigurationForm.getTestType() != AbstractPythonTestRunConfiguration.TestType.TEST_FUNCTION);
       }
     };

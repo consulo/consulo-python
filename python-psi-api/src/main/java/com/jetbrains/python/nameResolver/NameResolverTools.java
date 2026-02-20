@@ -55,9 +55,9 @@ public final class NameResolverTools {
    * @param namesProviders some enum that has one or more names
    * @return true if element's fqn is one of names, provided by provider
    */
-  public static boolean isElementWithName(@Nonnull final Collection<? extends PyElement> elements,
-                                          @Nonnull final FQNamesProvider... namesProviders) {
-    for (final PyElement element : elements) {
+  public static boolean isElementWithName(@Nonnull Collection<? extends PyElement> elements,
+                                          @Nonnull FQNamesProvider... namesProviders) {
+    for (PyElement element : elements) {
       if (isName(element, namesProviders)) {
         return true;
       }
@@ -73,14 +73,14 @@ public final class NameResolverTools {
    * @param namesProviders some enum that has one or more names
    * @return true if element's fqn is one of names, provided by provider
    */
-  public static boolean isName(@Nonnull final PyElement element, @Nonnull final FQNamesProvider... namesProviders) {
+  public static boolean isName(@Nonnull PyElement element, @Nonnull FQNamesProvider... namesProviders) {
     assert element.isValid();
-    final Pair<String, String> qualifiedAndClassName = QUALIFIED_AND_CLASS_NAME.getValue(element);
-    final String qualifiedName = qualifiedAndClassName.first;
-    final String className = qualifiedAndClassName.second;
+    Pair<String, String> qualifiedAndClassName = QUALIFIED_AND_CLASS_NAME.getValue(element);
+    String qualifiedName = qualifiedAndClassName.first;
+    String className = qualifiedAndClassName.second;
 
-    for (final FQNamesProvider provider : namesProviders) {
-      final List<String> names = Arrays.asList(provider.getNames());
+    for (FQNamesProvider provider : namesProviders) {
+      List<String> names = Arrays.asList(provider.getNames());
       if (qualifiedName != null && names.contains(qualifiedName)) {
         return true;
       }
@@ -99,8 +99,8 @@ public final class NameResolverTools {
    * @return parent call or null if not found
    */
   @Nullable
-  public static PyCallExpression findCallExpParent(@Nonnull final PsiElement anchor, @Nonnull final FQNamesProvider functionName) {
-    final PsiElement parent = PsiTreeUtil.findFirstParent(anchor, new MyFunctionCondition(functionName));
+  public static PyCallExpression findCallExpParent(@Nonnull PsiElement anchor, @Nonnull FQNamesProvider functionName) {
+    PsiElement parent = PsiTreeUtil.findFirstParent(anchor, new MyFunctionCondition(functionName));
     if (parent instanceof PyCallExpression) {
       return (PyCallExpression)parent;
     }
@@ -115,26 +115,26 @@ public final class NameResolverTools {
    * @param function names to check
    * @return true if callee is correct
    */
-  public static boolean isCalleeShortCut(@Nonnull final PyCallExpression call, @Nonnull final FQNamesProvider function) {
-    final PyExpression callee = call.getCallee();
+  public static boolean isCalleeShortCut(@Nonnull PyCallExpression call, @Nonnull FQNamesProvider function) {
+    PyExpression callee = call.getCallee();
     if (callee == null) {
       return false;
     }
 
-    final String callableName = callee.getName();
+    String callableName = callee.getName();
 
-    final Collection<String> possibleNames = new LinkedList<>();
-    for (final String lastComponent : getLastComponents(function)) {
+    Collection<String> possibleNames = new LinkedList<>();
+    for (String lastComponent : getLastComponents(function)) {
       possibleNames.add(lastComponent);
     }
     return possibleNames.contains(callableName) && call.isCallee(function);
   }
 
   @Nonnull
-  private static List<String> getLastComponents(@Nonnull final FQNamesProvider provider) {
-    final List<String> result = new ArrayList<>();
-    for (final String name : provider.getNames()) {
-      final String component = QualifiedName.fromDottedString(name).getLastComponent();
+  private static List<String> getLastComponents(@Nonnull FQNamesProvider provider) {
+    List<String> result = new ArrayList<>();
+    for (String name : provider.getNames()) {
+      String component = QualifiedName.fromDottedString(name).getLastComponent();
       if (component != null) {
         result.add(component);
       }
@@ -148,8 +148,8 @@ public final class NameResolverTools {
    * @param text  test to check
    * @param names
    */
-  public static boolean isContainsName(@Nonnull final String text, @Nonnull final FQNamesProvider names) {
-    for (final String lastComponent : getLastComponents(names)) {
+  public static boolean isContainsName(@Nonnull String text, @Nonnull FQNamesProvider names) {
+    for (String lastComponent : getLastComponents(names)) {
       if (text.contains(lastComponent)) {
         return true;
       }
@@ -163,7 +163,7 @@ public final class NameResolverTools {
    * @param file  file to check
    * @param names
    */
-  public static boolean isContainsName(@Nonnull final PsiFile file, @Nonnull final FQNamesProvider names) {
+  public static boolean isContainsName(@Nonnull PsiFile file, @Nonnull FQNamesProvider names) {
     return isContainsName(file.getText(), names);
   }
 
@@ -172,10 +172,10 @@ public final class NameResolverTools {
    *
    * @param child class to check
    */
-  public static boolean isSubclass(@Nonnull final PyClass child,
-                                   @Nonnull final FQNamesProvider parentName,
-                                   @Nonnull final TypeEvalContext context) {
-    for (final String nameToCheck : parentName.getNames()) {
+  public static boolean isSubclass(@Nonnull PyClass child,
+                                   @Nonnull FQNamesProvider parentName,
+                                   @Nonnull TypeEvalContext context) {
+    for (String nameToCheck : parentName.getNames()) {
       if (child.isSubclass(nameToCheck, context)) {
         return true;
       }
@@ -190,12 +190,12 @@ public final class NameResolverTools {
     @Nonnull
     private final FQNamesProvider myNameToSearch;
 
-    MyFunctionCondition(@Nonnull final FQNamesProvider name) {
+    MyFunctionCondition(@Nonnull FQNamesProvider name) {
       myNameToSearch = name;
     }
 
     @Override
-    public boolean value(final PsiElement element) {
+    public boolean value(PsiElement element) {
       if (element instanceof PyCallExpression) {
         return ((PyCallExpression)element).isCallee(myNameToSearch);
       }
@@ -210,11 +210,11 @@ public final class NameResolverTools {
   {
     @Override
     @Nonnull
-    public Pair<String, String> apply(@Nonnull final PyElement param) {
+    public Pair<String, String> apply(@Nonnull PyElement param) {
       PyElement elementToCheck = param;
 
       // Trying to use no implicit context if possible...
-      final PsiReference reference;
+      PsiReference reference;
       if (param instanceof PyReferenceOwner) {
         reference = ((PyReferenceOwner)param).getReference(PyResolveContext.noImplicits());
       }
@@ -223,7 +223,7 @@ public final class NameResolverTools {
       }
 
       if (reference != null) {
-        final PsiElement resolvedElement = reference.resolve();
+        PsiElement resolvedElement = reference.resolve();
         if (resolvedElement instanceof PyElement) {
           elementToCheck = (PyElement)resolvedElement;
         }
@@ -234,7 +234,7 @@ public final class NameResolverTools {
       }
       String className = null;
       if (elementToCheck instanceof PyFunction) {
-        final PyClass aClass = ((PyFunction)elementToCheck).getContainingClass();
+        PyClass aClass = ((PyFunction)elementToCheck).getContainingClass();
         if (aClass != null) {
           className = aClass.getQualifiedName();
         }

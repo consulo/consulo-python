@@ -50,15 +50,15 @@ public abstract class PyBaseDocstringInspection extends PyInspection {
             if (PythonUnitTestUtil.isUnitTestCaseFunction(node)) {
                 return;
             }
-            final PyClass containingClass = node.getContainingClass();
+            PyClass containingClass = node.getContainingClass();
             if (containingClass != null && PythonUnitTestUtil.isUnitTestCaseClass(containingClass)) {
                 return;
             }
-            final Property property = node.getProperty();
+            Property property = node.getProperty();
             if (property != null && (node == property.getSetter().valueOrNull() || node == property.getDeleter().valueOrNull())) {
                 return;
             }
-            final String name = node.getName();
+            String name = node.getName();
             if (name != null && !name.startsWith("_")) {
                 checkDocString(node);
             }
@@ -69,7 +69,7 @@ public abstract class PyBaseDocstringInspection extends PyInspection {
             if (PythonUnitTestUtil.isUnitTestCaseClass(node)) {
                 return;
             }
-            final String name = node.getName();
+            String name = node.getName();
             if (name == null || name.startsWith("_")) {
                 return;
             }

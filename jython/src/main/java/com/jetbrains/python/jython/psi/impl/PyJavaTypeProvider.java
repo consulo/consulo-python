@@ -40,7 +40,7 @@ import java.util.List;
 @ExtensionImpl
 public class PyJavaTypeProvider extends PyTypeProviderBase {
   @Nullable
-  public PyType getReferenceType(@Nonnull final PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
+  public PyType getReferenceType(@Nonnull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
     if (referenceTarget instanceof PsiClass) {
       return new PyJavaClassType((PsiClass)referenceTarget, true);
     }
@@ -60,8 +60,8 @@ public class PyJavaTypeProvider extends PyTypeProviderBase {
   @Nullable
   public static PyType asPyType(PsiType type) {
     if (type instanceof PsiClassType) {
-      final PsiClassType classType = (PsiClassType)type;
-      final PsiClass psiClass = classType.resolve();
+      PsiClassType classType = (PsiClassType)type;
+      PsiClass psiClass = classType.resolve();
       if (psiClass != null) {
         return new PyJavaClassType(psiClass, false);
       }
@@ -69,27 +69,27 @@ public class PyJavaTypeProvider extends PyTypeProviderBase {
     return null;
   }
 
-  public Ref<PyType> getParameterType(@Nonnull final PyNamedParameter param,
-                                      @Nonnull final PyFunction func,
+  public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param,
+                                      @Nonnull PyFunction func,
                                       @Nonnull TypeEvalContext context) {
     if (!(param.getParent() instanceof PyParameterList)) {
       return null;
     }
     List<PyNamedParameter> params = ParamHelper.collectNamedParameters((PyParameterList)param.getParent());
-    final int index = params.indexOf(param);
+    int index = params.indexOf(param);
     if (index < 0) {
       return null;
     }
-    final List<PyType> superMethodParameterTypes = new ArrayList<>();
+    List<PyType> superMethodParameterTypes = new ArrayList<>();
     PySuperMethodsSearch.search(func, context).forEach(psiElement -> {
       if (psiElement instanceof PsiMethod) {
-        final PsiMethod method = (PsiMethod)psiElement;
-        final PsiParameter[] psiParameters = method.getParameterList().getParameters();
+        PsiMethod method = (PsiMethod)psiElement;
+        PsiParameter[] psiParameters = method.getParameterList().getParameters();
         int javaIndex = method.hasModifierProperty(PsiModifier.STATIC) ? index : index - 1; // adjust for 'self' parameter
         if (javaIndex < psiParameters.length) {
           PsiType paramType = psiParameters[javaIndex].getType();
           if (paramType instanceof PsiClassType) {
-            final PsiClass psiClass = ((PsiClassType)paramType).resolve();
+            PsiClass psiClass = ((PsiClassType)paramType).resolve();
             if (psiClass != null) {
               superMethodParameterTypes.add(new PyJavaClassType(psiClass, false));
             }
@@ -99,7 +99,7 @@ public class PyJavaTypeProvider extends PyTypeProviderBase {
       return true;
     });
     if (superMethodParameterTypes.size() > 0) {
-      final PyType type = superMethodParameterTypes.get(0);
+      PyType type = superMethodParameterTypes.get(0);
       if (type != null) {
         return Ref.create(type);
       }

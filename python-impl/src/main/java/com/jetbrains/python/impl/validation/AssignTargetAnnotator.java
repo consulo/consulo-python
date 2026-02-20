@@ -31,19 +31,19 @@ public class AssignTargetAnnotator extends PyAnnotator {
   }
 
   @Override
-  public void visitPyAssignmentStatement(final PyAssignmentStatement node) {
+  public void visitPyAssignmentStatement(PyAssignmentStatement node) {
     for (PyExpression expression : node.getRawTargets()) {
       expression.accept(new ExprVisitor(Operation.Assign));
     }
   }
 
   @Override
-  public void visitPyAugAssignmentStatement(final PyAugAssignmentStatement node) {
+  public void visitPyAugAssignmentStatement(PyAugAssignmentStatement node) {
     node.getTarget().accept(new ExprVisitor(Operation.AugAssign));
   }
 
   @Override
-  public void visitPyDelStatement(final PyDelStatement node) {
+  public void visitPyDelStatement(PyDelStatement node) {
     ExprVisitor visitor = new ExprVisitor(Operation.Delete);
     for (PyExpression expr : node.getTargets()) {
       expr.accept(visitor);
@@ -51,7 +51,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
   }
 
   @Override
-  public void visitPyExceptBlock(final PyExceptPart node) {
+  public void visitPyExceptBlock(PyExceptPart node) {
     PyExpression target = node.getTarget();
     if (target != null) {
       target.accept(new ExprVisitor(Operation.Except));
@@ -59,7 +59,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
   }
 
   @Override
-  public void visitPyForStatement(final PyForStatement node) {
+  public void visitPyForStatement(PyForStatement node) {
     PyExpression target = node.getForPart().getTarget();
     if (target != null) {
       target.accept(new ExprVisitor(Operation.For));
@@ -86,7 +86,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
     }
 
     @Override
-    public void visitPyReferenceExpression(final PyReferenceExpression node) {
+    public void visitPyReferenceExpression(PyReferenceExpression node) {
       String referencedName = node.getReferencedName();
       if (PyNames.NONE.equals(referencedName)) {
         getHolder().createErrorAnnotation(node, (myOp == Operation.Delete) ? DELETING_NONE : ASSIGNMENT_TO_NONE);
@@ -94,10 +94,10 @@ public class AssignTargetAnnotator extends PyAnnotator {
     }
 
     @Override
-    public void visitPyTargetExpression(final PyTargetExpression node) {
+    public void visitPyTargetExpression(PyTargetExpression node) {
       String targetName = node.getName();
       if (PyNames.NONE.equals(targetName)) {
-        final VirtualFile vfile = node.getContainingFile().getVirtualFile();
+        VirtualFile vfile = node.getContainingFile().getVirtualFile();
         if (vfile != null && !vfile.getUrl().contains("/" + PythonSdkType.SKELETON_DIR_NAME + "/")){
           getHolder().createErrorAnnotation(node, (myOp == Operation.Delete) ? DELETING_NONE : ASSIGNMENT_TO_NONE);
         }
@@ -113,23 +113,23 @@ public class AssignTargetAnnotator extends PyAnnotator {
     }
 
     @Override
-    public void visitPyCallExpression(final PyCallExpression node) {
+    public void visitPyCallExpression(PyCallExpression node) {
       getHolder().createErrorAnnotation(node, (myOp == Operation.Delete) ? CANT_DELETE_FUNCTION_CALL : CANT_ASSIGN_TO_FUNCTION_CALL);
     }
 
     @Override
-    public void visitPyGeneratorExpression(final PyGeneratorExpression node) {
+    public void visitPyGeneratorExpression(PyGeneratorExpression node) {
       getHolder().createErrorAnnotation(node, PyBundle.message(
         myOp == Operation.AugAssign ? "ANN.cant.aug.assign.to.generator" : "ANN.cant.assign.to.generator"));
     }
 
     @Override
-    public void visitPyBinaryExpression(final PyBinaryExpression node) {
+    public void visitPyBinaryExpression(PyBinaryExpression node) {
       getHolder().createErrorAnnotation(node, PyBundle.message("ANN.cant.assign.to.operator"));
     }
 
     @Override
-    public void visitPyTupleExpression(final PyTupleExpression node) {
+    public void visitPyTupleExpression(PyTupleExpression node) {
       if (node.getElements().length == 0) {
         getHolder().createErrorAnnotation(node, PyBundle.message("ANN.cant.assign.to.parens"));
       }
@@ -142,7 +142,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
     }
 
     @Override
-    public void visitPyParenthesizedExpression(final PyParenthesizedExpression node) {
+    public void visitPyParenthesizedExpression(PyParenthesizedExpression node) {
       if (myOp == Operation.AugAssign) {
         getHolder().createErrorAnnotation(node, PyBundle.message("ANN.cant.aug.assign.to.tuple.or.generator"));
       }
@@ -152,7 +152,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
     }
 
     @Override
-    public void visitPyListLiteralExpression(final PyListLiteralExpression node) {
+    public void visitPyListLiteralExpression(PyListLiteralExpression node) {
       if (node.getElements().length == 0) {
         getHolder().createErrorAnnotation(node, PyBundle.message("ANN.cant.assign.to.brackets"));
       }
@@ -165,7 +165,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
     }
 
     @Override
-    public void visitPyListCompExpression(final PyListCompExpression node) {
+    public void visitPyListCompExpression(PyListCompExpression node) {
       markError(node, PyBundle.message(myOp == Operation.AugAssign ? "ANN.cant.aug.assign.to.comprh" : "ANN.cant.assign.to.comprh"));
     }
 
@@ -197,11 +197,11 @@ public class AssignTargetAnnotator extends PyAnnotator {
       checkLiteral(node);
     }
 
-    public void visitPyNumericLiteralExpression(final PyNumericLiteralExpression node) {
+    public void visitPyNumericLiteralExpression(PyNumericLiteralExpression node) {
       checkLiteral(node);
     }
 
-    public void visitPyStringLiteralExpression(final PyStringLiteralExpression node) {
+    public void visitPyStringLiteralExpression(PyStringLiteralExpression node) {
       checkLiteral(node);
     }
 
@@ -209,7 +209,7 @@ public class AssignTargetAnnotator extends PyAnnotator {
       getHolder().createErrorAnnotation(node, PyBundle.message(myOp == Operation.Delete? "ANN.cant.delete.literal" : "ANN.cant.assign.to.literal"));
     }
 
-    public void visitPyLambdaExpression(final PyLambdaExpression node) {
+    public void visitPyLambdaExpression(PyLambdaExpression node) {
       getHolder().createErrorAnnotation(node, PyBundle.message("ANN.cant.assign.to.lambda"));
     }
 

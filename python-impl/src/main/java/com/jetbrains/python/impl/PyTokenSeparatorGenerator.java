@@ -54,13 +54,13 @@ public class PyTokenSeparatorGenerator implements TokenSeparatorGenerator
 
 		if(left.getPsi().isValid() && right.getPsi().isValid())
 		{
-			final PsiElement commonParent = PsiTreeUtil.findCommonParent(left.getPsi(), right.getPsi());
+			PsiElement commonParent = PsiTreeUtil.findCommonParent(left.getPsi(), right.getPsi());
 			if(commonParent == null)
 			{
 				return null;
 			}
-			final PsiElement leftPrevAncestor = PsiTreeUtil.findPrevParent(commonParent, left.getPsi());
-			final PsiElement rightPrevAncestor = PsiTreeUtil.findPrevParent(commonParent, right.getPsi());
+			PsiElement leftPrevAncestor = PsiTreeUtil.findPrevParent(commonParent, left.getPsi());
+			PsiElement rightPrevAncestor = PsiTreeUtil.findPrevParent(commonParent, right.getPsi());
 
 			if(isStatementOrFunction(leftPrevAncestor) && isStatementOrFunction(rightPrevAncestor))
 			{
@@ -79,12 +79,12 @@ public class PyTokenSeparatorGenerator implements TokenSeparatorGenerator
 		{
 			return null;
 		}
-		final PyStatement leftStatement = PsiTreeUtil.getParentOfType(left.getPsi(), PyStatement.class);
+		PyStatement leftStatement = PsiTreeUtil.getParentOfType(left.getPsi(), PyStatement.class);
 		if(leftStatement != null && !PsiTreeUtil.isAncestor(leftStatement, right.getPsi(), false))
 		{
 			return createLineBreak(manager);
 		}
-		final Lexer lexer = new PythonIndentingLexer();
+		Lexer lexer = new PythonIndentingLexer();
 		if(LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer) == ParserDefinition.SpaceRequirements.MUST)
 		{
 			return createSpace(manager);
@@ -107,7 +107,7 @@ public class PyTokenSeparatorGenerator implements TokenSeparatorGenerator
 		return createWhitespace(manager, "\n");
 	}
 
-	private static ASTNode createWhitespace(PsiManager manager, final String text)
+	private static ASTNode createWhitespace(PsiManager manager, String text)
 	{
 		return Factory.createSingleLeafElement(TokenType.WHITE_SPACE, text, 0, text.length(), null, manager);
 	}

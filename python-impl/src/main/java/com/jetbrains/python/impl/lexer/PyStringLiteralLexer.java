@@ -57,7 +57,7 @@ public class PyStringLiteralLexer extends LexerBase {
   /**
    * @param originalLiteralToken the AST node we're layering over.
    */
-  public PyStringLiteralLexer(final IElementType originalLiteralToken) {
+  public PyStringLiteralLexer(IElementType originalLiteralToken) {
     myOriginalLiteralToken = originalLiteralToken;
     myIsTriple = PyTokenTypes.TRIPLE_NODES.contains(myOriginalLiteralToken);
   }
@@ -129,7 +129,7 @@ public class PyStringLiteralLexer extends LexerBase {
     }
     if (nextChar == 'u' || nextChar == 'U') {
       if (isUnicodeMode()) {
-        final int width = nextChar == 'u'? 4 : 8; // is it uNNNN or Unnnnnnnn
+        int width = nextChar == 'u'? 4 : 8; // is it uNNNN or Unnnnnnnn
         for(int i = myStart + 2; i < myStart + width + 2; i++) {
           if (i >= myEnd || !StringUtil.isHexDigit(myBuffer.charAt(i))) return StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN;
         }
@@ -192,9 +192,9 @@ public class PyStringLiteralLexer extends LexerBase {
   }
 
   // all subsequent chars are escaped spaces
-  private boolean isTrailingSpace(final int start) {
+  private boolean isTrailingSpace(int start) {
     for (int i=start; i<myBufferEnd; i+=2) {
-      final char c = myBuffer.charAt(i);
+      char c = myBuffer.charAt(i);
       if (c != '\\') return false;
       if (i == myBufferEnd-1) return false;
       if (myBuffer.charAt(i+1) != ' ') return false;
@@ -254,7 +254,7 @@ public class PyStringLiteralLexer extends LexerBase {
 
       // unicode escape
       if (myBuffer.charAt(i) == 'u' || myBuffer.charAt(i) == 'U') {
-        final int width = myBuffer.charAt(i) == 'u'? 4 : 8; // is it uNNNN or Unnnnnnnn
+        int width = myBuffer.charAt(i) == 'u'? 4 : 8; // is it uNNNN or Unnnnnnnn
         i++;
         for (; i < start + width + 2; i++) {
           if (i == myBufferEnd || myBuffer.charAt(i) == '\n' || myBuffer.charAt(i) == myQuoteChar) {
@@ -281,7 +281,7 @@ public class PyStringLiteralLexer extends LexerBase {
     }
     else { // not a \something
       //LOG.assertTrue(myState == AFTER_FIRST_QUOTE || myBuffer.charAt(i) == myQuoteChar);
-      final int quote_limit = myIsTriple ? 3 : 1;
+      int quote_limit = myIsTriple ? 3 : 1;
       int qcnt = 0; // count consequent quotes
       while (i < myBufferEnd) { // scan to next \something
         if (myBuffer.charAt(i) == '\\') {

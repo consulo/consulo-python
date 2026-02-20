@@ -21,7 +21,7 @@ public abstract class PyStringLiteralTest extends PyTestCase
 {
 	public void testEscaperDecode()
 	{
-		final PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'");
+		PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'");
 		assertNotNull(expr);
 		assertEquals("fo", decodeRange(expr, TextRange.create(3, 5)));
 		assertEquals("\n", decodeRange(expr, TextRange.create(1, 3)));
@@ -29,10 +29,10 @@ public abstract class PyStringLiteralTest extends PyTestCase
 
 	public void testEscaperOffsetInHost()
 	{
-		final PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'");
+		PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'");
 		assertNotNull(expr);
-		final LiteralTextEscaper<? extends PsiLanguageInjectionHost> escaper = expr.createLiteralTextEscaper();
-		final TextRange newLineFoo = TextRange.create(1, 6);
+		LiteralTextEscaper<? extends PsiLanguageInjectionHost> escaper = expr.createLiteralTextEscaper();
+		TextRange newLineFoo = TextRange.create(1, 6);
 		assertEquals(1, escaper.getOffsetInHost(0, newLineFoo));
 		assertEquals(3, escaper.getOffsetInHost(1, newLineFoo));
 		assertEquals(4, escaper.getOffsetInHost(2, newLineFoo));
@@ -43,10 +43,10 @@ public abstract class PyStringLiteralTest extends PyTestCase
 
 	public void testEscaperOffsetInHostSubString()
 	{
-		final PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'");
+		PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'");
 		assertNotNull(expr);
-		final LiteralTextEscaper<? extends PsiLanguageInjectionHost> escaper = expr.createLiteralTextEscaper();
-		final TextRange fooOnly = TextRange.create(3, 6);
+		LiteralTextEscaper<? extends PsiLanguageInjectionHost> escaper = expr.createLiteralTextEscaper();
+		TextRange fooOnly = TextRange.create(3, 6);
 		assertEquals(3, escaper.getOffsetInHost(0, fooOnly));
 		assertEquals(4, escaper.getOffsetInHost(1, fooOnly));
 		assertEquals(5, escaper.getOffsetInHost(2, fooOnly));
@@ -56,30 +56,30 @@ public abstract class PyStringLiteralTest extends PyTestCase
 
 	public void testIterateCharacterRanges()
 	{
-		final PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'  'bar'");
+		PyStringLiteralExpression expr = createLiteralFromText("'\\nfoo'  'bar'");
 		assertNotNull(expr);
-		final List<String> characters = new ArrayList<String>();
+		List<String> characters = new ArrayList<String>();
 		List<Pair<TextRange, String>> decodedFragments = expr.getDecodedFragments();
 		for(Pair<TextRange, String> decodedFragment : decodedFragments)
 		{
 			characters.add(decodedFragment.getSecond());
 		}
 
-		final List<String> expected = Arrays.asList("\n", "f", "o", "o", "b", "a", "r");
+		List<String> expected = Arrays.asList("\n", "f", "o", "o", "b", "a", "r");
 		assertSameElements(characters, expected);
 	}
 
 	private static String decodeRange(PyStringLiteralExpression expr, TextRange range)
 	{
-		final StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder();
 		expr.createLiteralTextEscaper().decode(range, builder);
 		return builder.toString();
 	}
 
-	private PyStringLiteralExpression createLiteralFromText(final String text)
+	private PyStringLiteralExpression createLiteralFromText(String text)
 	{
-		final PsiFile file = PsiFileFactory.getInstance(myFixture.getProject()).createFileFromText("test.py", "a = " + text);
-		final PyStringLiteralExpression expr = PsiTreeUtil.getParentOfType(file.findElementAt(5), PyStringLiteralExpression.class);
+		PsiFile file = PsiFileFactory.getInstance(myFixture.getProject()).createFileFromText("test.py", "a = " + text);
+		PyStringLiteralExpression expr = PsiTreeUtil.getParentOfType(file.findElementAt(5), PyStringLiteralExpression.class);
 		assert expr != null;
 		return expr;
 	}

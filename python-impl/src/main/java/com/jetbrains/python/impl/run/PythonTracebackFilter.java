@@ -35,33 +35,33 @@ public class PythonTracebackFilter implements Filter {
   private final Project myProject;
   private final String myWorkingDirectory;
 
-  public PythonTracebackFilter(final Project project) {
+  public PythonTracebackFilter(Project project) {
     myProject = project;
     myWorkingDirectory = null;
   }
 
-  public PythonTracebackFilter(final Project project, @Nullable final String workingDirectory) {
+  public PythonTracebackFilter(Project project, @Nullable String workingDirectory) {
     myProject = project;
     myWorkingDirectory = workingDirectory;
   }
 
   @Override
   @Nullable
-  public final Result applyFilter(@Nonnull final String line, final int entireLength) {
+  public final Result applyFilter(@Nonnull String line, int entireLength) {
 
-    for (final TraceBackParser parser : TraceBackParser.PARSERS) {
-      final LinkInTrace linkInTrace = parser.findLinkInTrace(line);
+    for (TraceBackParser parser : TraceBackParser.PARSERS) {
+      LinkInTrace linkInTrace = parser.findLinkInTrace(line);
       if (linkInTrace == null) {
         continue;
       }
-      final int lineNumber = linkInTrace.getLineNumber();
-      final VirtualFile vFile = findFileByName(linkInTrace.getFileName());
+      int lineNumber = linkInTrace.getLineNumber();
+      VirtualFile vFile = findFileByName(linkInTrace.getFileName());
 
       if (vFile != null) {
-        final OpenFileHyperlinkInfo hyperlink = new OpenFileHyperlinkInfo(myProject, vFile, lineNumber - 1);
-        final int textStartOffset = entireLength - line.length();
-        final int startPos = linkInTrace.getStartPos();
-        final int endPos = linkInTrace.getEndPos();
+        OpenFileHyperlinkInfo hyperlink = new OpenFileHyperlinkInfo(myProject, vFile, lineNumber - 1);
+        int textStartOffset = entireLength - line.length();
+        int startPos = linkInTrace.getStartPos();
+        int endPos = linkInTrace.getEndPos();
         return new Result(startPos + textStartOffset, endPos + textStartOffset, hyperlink);
       }
     }
@@ -69,7 +69,7 @@ public class PythonTracebackFilter implements Filter {
   }
 
   @Nullable
-  protected VirtualFile findFileByName(@Nonnull final String fileName) {
+  protected VirtualFile findFileByName(@Nonnull String fileName) {
     VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(fileName);
     if (vFile == null && !StringUtil.isEmptyOrSpaces(myWorkingDirectory)) {
       vFile = LocalFileSystem.getInstance().findFileByIoFile(new File(myWorkingDirectory, fileName));

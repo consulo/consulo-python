@@ -42,18 +42,18 @@ public final class PyTypeUtil
 	 * Returns members of certain type from {@link PyClassLikeType}.
 	 */
 	@Nonnull
-	public static <T extends PsiElement> List<T> getMembersOfType(@Nonnull final PyClassLikeType type,
-			@Nonnull final Class<T> expectedMemberType,
+	public static <T extends PsiElement> List<T> getMembersOfType(@Nonnull PyClassLikeType type,
+			@Nonnull Class<T> expectedMemberType,
 			boolean inherited,
-			@Nonnull final TypeEvalContext context)
+			@Nonnull TypeEvalContext context)
 	{
 
-		final List<T> result = new ArrayList<>();
+		List<T> result = new ArrayList<>();
 		type.visitMembers(t -> {
 			if(expectedMemberType.isInstance(t))
 			{
 				@SuppressWarnings("unchecked") // Already checked
-				final T castedElement = (T) t;
+                T castedElement = (T) t;
 				result.add(castedElement);
 			}
 			return true;
@@ -71,7 +71,7 @@ public final class PyTypeUtil
 	 * @return data or null if not found
 	 */
 	@Nullable
-	public static <T> T findData(@Nonnull final PyType type, @Nonnull final Key<T> key)
+	public static <T> T findData(@Nonnull PyType type, @Nonnull Key<T> key)
 	{
 		if(type instanceof UserDataHolder)
 		{
@@ -79,13 +79,13 @@ public final class PyTypeUtil
 		}
 		if(type instanceof PyUnionType)
 		{
-			for(final PyType memberType : ((PyUnionType) type).getMembers())
+			for(PyType memberType : ((PyUnionType) type).getMembers())
 			{
 				if(memberType == null)
 				{
 					continue;
 				}
-				final T result = findData(memberType, key);
+				T result = findData(memberType, key);
 				if(result != null)
 				{
 					return result;

@@ -54,7 +54,7 @@ public class PythonModulePathCache extends PythonPathCache implements Disposable
   }
 
   private static void updateCacheForSdk(Module module) {
-    final Sdk sdk = PythonSdkType.findPythonSdk(module);
+    Sdk sdk = PythonSdkType.findPythonSdk(module);
     if (sdk != null) {
       // initialize cache for SDK
       PythonSdkPathCache.getInstance(module.getProject(), sdk);

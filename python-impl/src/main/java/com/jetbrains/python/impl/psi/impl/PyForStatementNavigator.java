@@ -32,12 +32,12 @@ public class PyForStatementNavigator {
   }
 
   @Nullable
-  public static PyForStatement getPyForStatementByIterable(final PsiElement element){
-    final PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
+  public static PyForStatement getPyForStatementByIterable(PsiElement element){
+    PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
     if (forStatement == null){
       return null;
     }
-    final PyExpression target = forStatement.getForPart().getTarget();
+    PyExpression target = forStatement.getForPart().getTarget();
     if (target != null && PsiTreeUtil.isAncestor(target, element, false)){
       return forStatement;
     }
@@ -45,12 +45,12 @@ public class PyForStatementNavigator {
   }
 
   @Nullable
-  public static Object getPyForStatementByBody(final PsiElement element) {
-    final PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
+  public static Object getPyForStatementByBody(PsiElement element) {
+    PyForStatement forStatement = PsiTreeUtil.getParentOfType(element, PyForStatement.class, false);
     if (forStatement == null){
       return null;
     }
-    final PyForPart forPart = forStatement.getForPart();
+    PyForPart forPart = forStatement.getForPart();
     return forPart == element || forPart.getStatementList() == element ? forStatement : null;
   }
 }

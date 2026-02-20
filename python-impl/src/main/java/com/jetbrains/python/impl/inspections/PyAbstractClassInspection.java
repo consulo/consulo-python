@@ -73,14 +73,14 @@ public class PyAbstractClassInspection extends PyInspection {
             if (isAbstract(pyClass)) {
                 return;
             }
-            final Set<PyFunction> toBeImplemented = new HashSet<>();
-            final Collection<PyFunction> functions = PyOverrideImplementUtil.getAllSuperFunctions(pyClass, myTypeEvalContext);
+            Set<PyFunction> toBeImplemented = new HashSet<>();
+            Collection<PyFunction> functions = PyOverrideImplementUtil.getAllSuperFunctions(pyClass, myTypeEvalContext);
             for (PyFunction method : functions) {
                 if (isAbstractMethodForClass(method, pyClass)) {
                     toBeImplemented.add(method);
                 }
             }
-            final ASTNode nameNode = pyClass.getNameNode();
+            ASTNode nameNode = pyClass.getNameNode();
             if (!toBeImplemented.isEmpty() && nameNode != null) {
                 registerProblem(
                     nameNode.getPsi(),
@@ -91,12 +91,12 @@ public class PyAbstractClassInspection extends PyInspection {
         }
 
         private boolean isAbstract(@Nonnull PyClass pyClass) {
-            final PyType metaClass = pyClass.getMetaClassType(myTypeEvalContext);
+            PyType metaClass = pyClass.getMetaClassType(myTypeEvalContext);
             if (metaClass instanceof PyClassLikeType && PyNames.ABC_META_CLASS.equals(metaClass.getName())) {
                 return true;
             }
             if (metaClass == null) {
-                final PyExpression metaClassExpr = as(pyClass.getMetaClassExpression(), PyReferenceExpression.class);
+                PyExpression metaClassExpr = as(pyClass.getMetaClassExpression(), PyReferenceExpression.class);
                 if (metaClassExpr != null && PyNames.ABC_META_CLASS.equals(metaClassExpr.getName())) {
                     return true;
                 }
@@ -110,7 +110,7 @@ public class PyAbstractClassInspection extends PyInspection {
         }
 
         private static boolean isAbstractMethodForClass(@Nonnull PyFunction method, @Nonnull PyClass cls) {
-            final String methodName = method.getName();
+            String methodName = method.getName();
             if (methodName == null ||
                 cls.findMethodByName(methodName, false, null) != null ||
                 cls.findClassAttribute(methodName, false, null) != null) {

@@ -73,22 +73,22 @@ public class PyRedeclarationInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyFunction(final PyFunction node) {
+        public void visitPyFunction(PyFunction node) {
             if (!isDecorated(node)) {
                 processElement(node);
             }
         }
 
         @Override
-        public void visitPyTargetExpression(final PyTargetExpression node) {
-            final ScopeOwner owner = ScopeUtil.getScopeOwner(node);
+        public void visitPyTargetExpression(PyTargetExpression node) {
+            ScopeOwner owner = ScopeUtil.getScopeOwner(node);
             if (owner instanceof PyFile || owner instanceof PyClass) {
                 processElement(node);
             }
         }
 
         @Override
-        public void visitPyClass(final PyClass node) {
+        public void visitPyClass(PyClass node) {
             if (!isDecorated(node)) {
                 processElement(node);
             }
@@ -105,9 +105,9 @@ public class PyRedeclarationInspection extends PyInspection {
 
         private static boolean isDecorated(@Nonnull PyDecoratable node) {
             boolean isDecorated = false;
-            final PyDecoratorList decoratorList = node.getDecoratorList();
+            PyDecoratorList decoratorList = node.getDecoratorList();
             if (decoratorList != null) {
-                final PyDecorator[] decorators = decoratorList.getDecorators();
+                PyDecorator[] decorators = decoratorList.getDecorators();
                 if (decorators.length > 0) {
                     isDecorated = true;
                 }
@@ -120,12 +120,12 @@ public class PyRedeclarationInspection extends PyInspection {
                 return;
             }
             final String name = element.getName();
-            final ScopeOwner owner = ScopeUtil.getScopeOwner(element);
+            ScopeOwner owner = ScopeUtil.getScopeOwner(element);
             if (owner != null && name != null) {
-                final Instruction[] instructions = ControlFlowCache.getControlFlow(owner).getInstructions();
+                Instruction[] instructions = ControlFlowCache.getControlFlow(owner).getInstructions();
                 PsiElement elementInControlFlow = element;
                 if (element instanceof PyTargetExpression) {
-                    final PyImportStatement importStatement = PsiTreeUtil.getParentOfType(element, PyImportStatement.class);
+                    PyImportStatement importStatement = PsiTreeUtil.getParentOfType(element, PyImportStatement.class);
                     if (importStatement != null) {
                         elementInControlFlow = importStatement;
                     }
@@ -141,9 +141,9 @@ public class PyRedeclarationInspection extends PyInspection {
                         @Override
                         public ControlFlowUtil.Operation apply(Instruction instruction) {
                             if (instruction instanceof ReadWriteInstruction && instruction.num() != startInstruction) {
-                                final ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
+                                ReadWriteInstruction rwInstruction = (ReadWriteInstruction) instruction;
                                 if (name.equals(rwInstruction.getName())) {
-                                    final PsiElement originalElement = rwInstruction.getElement();
+                                    PsiElement originalElement = rwInstruction.getElement();
                                     if (originalElement != null) {
                                         if (rwInstruction.getAccess().isReadAccess()) {
                                             readElementRef.set(originalElement);
@@ -161,13 +161,13 @@ public class PyRedeclarationInspection extends PyInspection {
                         }
                     }
                 );
-                final PsiElement writeElement = writeElementRef.get();
+                PsiElement writeElement = writeElementRef.get();
                 if (writeElement != null && readElementRef.get() == null) {
-                    final List<LocalQuickFix> quickFixes = new ArrayList<LocalQuickFix>();
+                    List<LocalQuickFix> quickFixes = new ArrayList<LocalQuickFix>();
                     if (suggestRename(element, writeElement)) {
                         quickFixes.add(new PyRenameElementQuickFix());
                     }
-                    final PsiElement identifier = element.getNameIdentifier();
+                    PsiElement identifier = element.getNameIdentifier();
                     registerProblem(
                         identifier != null ? identifier : element,
                         PyLocalize.inspRedeclaredName(name).get(),

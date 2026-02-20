@@ -39,13 +39,13 @@ import java.util.List;
 public class PyLiteralSelectionHandler extends ExtendWordSelectionHandlerBase {
   @Override
   public boolean canSelect(PsiElement e) {
-    final ASTNode node = e.getNode();
+    ASTNode node = e.getNode();
     return node != null && PyTokenTypes.STRING_NODES.contains(node.getElementType());
   }
 
   @Override
   public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
-    final PyStringLiteralExpression literal = PsiTreeUtil.getParentOfType(e, PyStringLiteralExpression.class);
+    PyStringLiteralExpression literal = PsiTreeUtil.getParentOfType(e, PyStringLiteralExpression.class);
     if (literal != null) {
       List<TextRange> ranges = literal.getStringValueTextRanges();
       List<ASTNode> nodes = literal.getStringNodes();

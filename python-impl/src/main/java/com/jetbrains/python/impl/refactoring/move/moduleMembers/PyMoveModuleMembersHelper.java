@@ -80,12 +80,12 @@ public class PyMoveModuleMembersHelper
 	 */
 	public static boolean isTargetOfSimpleAssignment(@Nonnull PsiElement element)
 	{
-		final PyTargetExpression target = as(element, PyTargetExpression.class);
+		PyTargetExpression target = as(element, PyTargetExpression.class);
 		if(target == null || target.isQualified())
 		{
 			return false;
 		}
-		final PyAssignmentStatement assignment = as(target.getParent(), PyAssignmentStatement.class);
+		PyAssignmentStatement assignment = as(target.getParent(), PyAssignmentStatement.class);
 		return assignment != null && assignment.getTargets().length == 1;
 	}
 
@@ -96,7 +96,7 @@ public class PyMoveModuleMembersHelper
 	 */
 	public static List<PyElement> getTopLevelModuleMembers(@Nonnull PyFile pyFile)
 	{
-		final List<PyElement> result = new ArrayList<>();
+		List<PyElement> result = new ArrayList<>();
 		for(PyTargetExpression attr : pyFile.getTopLevelAttributes())
 		{
 			if(isMovableModuleMember(attr))
@@ -142,7 +142,7 @@ public class PyMoveModuleMembersHelper
 		{
 			return (PsiNamedElement) element;
 		}
-		final PyAssignmentStatement assignment = as(element, PyAssignmentStatement.class);
+		PyAssignmentStatement assignment = as(element, PyAssignmentStatement.class);
 		if(assignment != null)
 		{
 			return as(assignment.getTargets()[0], PyTargetExpression.class);

@@ -47,12 +47,12 @@ public class ConvertDictCompQuickFix implements LocalQuickFix {
 
     private static void replaceComprehension(Project project, PyDictCompExpression expression) {
         if (expression.getResultExpression() instanceof PyKeyValueExpression) {
-            final PyKeyValueExpression keyValueExpression = (PyKeyValueExpression) expression.getResultExpression();
-            final PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
+            PyKeyValueExpression keyValueExpression = (PyKeyValueExpression) expression.getResultExpression();
+            PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
             assert keyValueExpression.getValue() != null;
 
-            final List<PyComprehensionComponent> components = expression.getComponents();
-            final StringBuilder replacement = new StringBuilder("dict([(" + keyValueExpression.getKey().getText() + ", " +
+            List<PyComprehensionComponent> components = expression.getComponents();
+            StringBuilder replacement = new StringBuilder("dict([(" + keyValueExpression.getKey().getText() + ", " +
                 keyValueExpression.getValue().getText() + ")");
             int slashNum = 1;
             for (PyComprehensionComponent component : components) {
@@ -64,7 +64,7 @@ public class ConvertDictCompQuickFix implements LocalQuickFix {
                     replacement.append(" ");
                 }
                 if (component instanceof PyComprehensionIfComponent) {
-                    final PyExpression test = ((PyComprehensionIfComponent) component).getTest();
+                    PyExpression test = ((PyComprehensionIfComponent) component).getTest();
                     if (test != null) {
                         replacement.append("if ");
                         replacement.append(test.getText());

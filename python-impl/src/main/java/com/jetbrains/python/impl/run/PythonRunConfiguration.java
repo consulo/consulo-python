@@ -68,7 +68,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 		return new PythonRunConfigurationEditor(this);
 	}
 
-	public RunProfileState getState(@Nonnull final Executor executor, @Nonnull final ExecutionEnvironment env) throws ExecutionException
+	public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
 	{
 		return new PythonScriptCommandLineState(this, env);
 	}
@@ -85,7 +85,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 
 	public String suggestedName()
 	{
-		final String scriptName = getScriptName();
+		String scriptName = getScriptName();
 		if(scriptName == null)
 		{
 			return null;
