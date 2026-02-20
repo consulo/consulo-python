@@ -42,6 +42,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.util.lang.Pair;
 import consulo.util.lang.ref.SimpleReference;
 import jakarta.annotation.Nonnull;
@@ -219,7 +220,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
     }
 
     public Icon getIcon(int flags) {
-        return (Icon) PlatformIconGroup.nodesParameter();
+        return TargetAWT.to(PlatformIconGroup.nodesParameter());
     }
 
     @Override
