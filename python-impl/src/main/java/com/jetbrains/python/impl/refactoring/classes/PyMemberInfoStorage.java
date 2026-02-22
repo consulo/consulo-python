@@ -15,69 +15,60 @@
  */
 package com.jetbrains.python.impl.refactoring.classes;
 
-import java.util.ArrayList;
-
-import consulo.language.editor.refactoring.classMember.AbstractMemberInfoStorage;
-import consulo.language.editor.refactoring.classMember.MemberInfoBase;
-import java.util.HashSet;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.MembersManager;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyElement;
+import com.jetbrains.python.psi.PyFunction;
+import consulo.language.editor.refactoring.classMember.AbstractMemberInfoStorage;
+import consulo.language.editor.refactoring.classMember.MemberInfoBase;
+
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author Dennis.Ushakov
  */
-public class PyMemberInfoStorage extends AbstractMemberInfoStorage<PyElement, PyClass, PyMemberInfo<PyElement>>
-{
+public class PyMemberInfoStorage extends AbstractMemberInfoStorage<PyElement, PyClass, PyMemberInfo<PyElement>> {
 
-	public PyMemberInfoStorage(PyClass aClass)
-	{
-		this(aClass, new MemberInfoBase.EmptyFilter<>());
-	}
+    public PyMemberInfoStorage(PyClass aClass) {
+        this(aClass, new MemberInfoBase.EmptyFilter<>());
+    }
 
-	public PyMemberInfoStorage(PyClass aClass, MemberInfoBase.Filter<PyElement> memberInfoFilter)
-	{
-		super(aClass, memberInfoFilter);
-	}
+    public PyMemberInfoStorage(PyClass aClass, MemberInfoBase.Filter<PyElement> memberInfoFilter) {
+        super(aClass, memberInfoFilter);
+    }
 
-	@Override
-	protected boolean isInheritor(PyClass baseClass, PyClass aClass)
-	{
-		return getSubclasses(baseClass).contains(aClass);
-	}
+    @Override
+    protected boolean isInheritor(PyClass baseClass, PyClass aClass) {
+        return getSubclasses(baseClass).contains(aClass);
+    }
 
-	@Override
-	protected void buildSubClassesMap(PyClass aClass)
-	{
-		buildSubClassesMapImpl(aClass, new HashSet<>());
-	}
+    @Override
+    protected void buildSubClassesMap(PyClass aClass) {
+        buildSubClassesMapImpl(aClass, new HashSet<>());
+    }
 
-	private void buildSubClassesMapImpl(PyClass aClass, HashSet<PyClass> visited)
-	{
-		visited.add(aClass);
-		for(PyClass clazz : aClass.getSuperClasses(null))
-		{
-			getSubclasses(clazz).add(aClass);
-			if(!visited.contains(clazz))
-			{
-				buildSubClassesMapImpl(clazz, visited);
-			}
-		}
-	}
+    private void buildSubClassesMapImpl(PyClass aClass, HashSet<PyClass> visited) {
+        visited.add(aClass);
+        for (PyClass clazz : aClass.getSuperClasses(null)) {
+            getSubclasses(clazz).add(aClass);
+            if (!visited.contains(clazz)) {
+                buildSubClassesMapImpl(clazz, visited);
+            }
+        }
+    }
 
-	@Override
-	protected void extractClassMembers(PyClass aClass, ArrayList<PyMemberInfo<PyElement>> temp)
-	{
-		temp.addAll(MembersManager.getAllMembersCouldBeMoved(aClass));
-	}
+    @Override
+    protected void extractClassMembers(PyClass aClass, List<PyMemberInfo<PyElement>> temp) {
+        temp.addAll(MembersManager.getAllMembersCouldBeMoved(aClass));
+    }
 
-	@Override
-	protected boolean memberConflict(PyElement member1, PyElement member)
-	{
-		return member1 instanceof PyFunction && member instanceof PyFunction &&
-				PyRefactoringUtil.areConflictingMethods((PyFunction) member, (PyFunction) member1);
-	}
+    @Override
+    protected boolean memberConflict(PyElement member1, PyElement member) {
+        return member1 instanceof PyFunction
+            && member instanceof PyFunction
+            && PyRefactoringUtil.areConflictingMethods((PyFunction) member, (PyFunction) member1);
+    }
 }
