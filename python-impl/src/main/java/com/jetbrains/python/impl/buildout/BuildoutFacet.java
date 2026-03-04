@@ -19,8 +19,8 @@ package com.jetbrains.python.impl.buildout;
 /**
  * Facet for buildout support.
  * Knows which script in bin/ contains paths we want to add.
- * User: dcheryasov
- * Date: Jul 25, 2010 3:23:50 PM
+ * @author dcheryasov
+ * @since 2010-07-25
  */
 public class BuildoutFacet /*extends Facet<BuildoutFacetConfiguration> implements PythonPathContributingFacet, LibraryContributingFacet */{
 
@@ -201,8 +201,8 @@ public class BuildoutFacet /*extends Facet<BuildoutFacetConfiguration> implement
       if (line.endsWith(",")) {
         line = line.substring(0, line.length() - 1);
       }
-      if (line.startsWith("'") && line.endsWith("'")) {
-        result.add(StringUtil.unescapeStringCharacters(line.substring(1, line.length() - 1)));
+      if (StringEscapeUtil.isQuoted(line, '\'')) {
+        result.add(StringEscapeUtil.unescape(line, 1, line.length() - 1));
       }
       index++;
     }

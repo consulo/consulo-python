@@ -17,6 +17,8 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.psi.PsiElement;
@@ -26,6 +28,7 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.util.lang.StringEscapeUtil;
 import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;
 
@@ -55,6 +58,8 @@ public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
         return PyLocalize.intnTripleQuotedString();
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -82,6 +87,8 @@ public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
         return false;
     }
 
+    @Override
+    @RequiredWriteAction
     public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyStringLiteralExpression string =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
@@ -142,9 +149,7 @@ public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
             subString = convertToValidSubString(trimmed.substring(0, trimmed.length() - 3), firstQuote);
         }
         else {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder = StringUtil.escapeStringCharacters(s.length(), s, String.valueOf(firstQuote), true, stringBuilder);
-            subString = stringBuilder.toString();
+            subString = StringEscapeUtil.escape(s, firstQuote);
         }
         return subString;
     }
