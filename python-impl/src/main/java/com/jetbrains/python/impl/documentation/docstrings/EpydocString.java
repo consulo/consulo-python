@@ -15,15 +15,15 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.jetbrains.python.toolbox.Substring;
 import consulo.util.lang.xml.XmlStringUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import consulo.util.lang.StringUtil;
-import com.jetbrains.python.toolbox.Substring;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author yole
@@ -254,7 +254,7 @@ public class EpydocString extends TagBasedDocString {
     private static class HTMLConverter extends MarkupConverter {
         @Override
         protected void appendText(String text) {
-            myResult.append(joinLines(XmlStringUtil.escapeString(text, false, true), true));
+            myResult.append(joinLines(XmlStringUtil.escapeText(text), true));
         }
 
         @Override
@@ -274,7 +274,7 @@ public class EpydocString extends TagBasedDocString {
                     appendTagPair(markupContent, "code");
                     break;
                 default:
-                    myResult.append(StringUtil.escapeXml(markupContent));
+                    XmlStringUtil.escapeText(markupContent, myResult);
                     break;
             }
         }
@@ -285,21 +285,25 @@ public class EpydocString extends TagBasedDocString {
             myResult.append("</").append(tagName).append(">");
         }
 
+        private static final Pattern URL_HAS_PROTOCOL = Pattern.compile("^[a-z]+:");
+
         private void appendLink(String markupContent) {
-            String linkText = StringUtil.escapeXml(markupContent);
+            String linkText = markupContent;
             String linkUrl = linkText;
             int pos = markupContent.indexOf('<');
             if (pos >= 0 && markupContent.endsWith(">")) {
-                linkText = StringUtil.escapeXml(markupContent.substring(0, pos).trim());
-                linkUrl = joinLines(StringUtil.escapeXml(markupContent.substring(pos + 1, markupContent.length() - 1)), false);
+                linkText = markupContent.substring(0, pos).trim();
+                linkUrl = joinLines(markupContent.substring(pos + 1, markupContent.length() - 1), false);
             }
             myResult.append("<a href=\"");
-            if (!linkUrl.matches("[a-z]+:.+")) {
+            if (!URL_HAS_PROTOCOL.matcher(linkUrl).find()) {
                 myResult.append("http://");
             }
-            myResult.append(linkUrl).append("\">").append(linkText).append("</a>");
+            XmlStringUtil.escapeAttr(linkUrl, '"', myResult);
+            myResult.append("\">");
+            XmlStringUtil.escapeText(linkText, myResult);
+            myResult.append("</a>");
         }
-
     }
 
     private static int findMatchingEndBrace(String s, int bracePos) {
@@ -319,6 +323,7 @@ public class EpydocString extends TagBasedDocString {
         return -1;
     }
 
+    // TODO: optimize using StringBuilder
     private static String joinLines(String s, boolean addSpace) {
         while (true) {
             int lineBreakStart = s.indexOf('\n');
