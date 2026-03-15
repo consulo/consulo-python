@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
@@ -32,14 +31,13 @@ import com.jetbrains.python.psi.PyRaiseStatement;
  * @author Alexey.Ivanov
  */
 public class ReplaceRaiseStatementQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.intnReplaceRaiseStatement();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement raiseStatement = descriptor.getPsiElement();
         if (raiseStatement instanceof PyRaiseStatement) {
             PyExpression[] expressions = ((PyRaiseStatement) raiseStatement).getExpressions();

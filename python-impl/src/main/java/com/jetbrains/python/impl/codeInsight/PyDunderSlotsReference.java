@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.annotation.HighlightSeverity;
 import consulo.util.lang.Comparing;
@@ -36,7 +35,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  */
 public class PyDunderSlotsReference extends PsiReferenceBase<PyStringLiteralExpression> implements PsiReferenceEx
 {
-	public PyDunderSlotsReference(@Nonnull PyStringLiteralExpression element)
+	public PyDunderSlotsReference(PyStringLiteralExpression element)
 	{
 		super(element, element.getStringValueTextRanges().get(0));
 	}
@@ -68,7 +67,6 @@ public class PyDunderSlotsReference extends PsiReferenceBase<PyStringLiteralExpr
 		return false;
 	}
 
-	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{

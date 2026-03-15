@@ -24,7 +24,6 @@ import consulo.codeEditor.Editor;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Dennis.Ushakov
@@ -34,10 +33,10 @@ public class PyPullUpHandler extends PyClassRefactoringHandler {
 
     @Override
     protected void doRefactorImpl(
-        @Nonnull final Project project,
-        @Nonnull final PyClass classUnderRefactoring,
-        @Nonnull final PyMemberInfoStorage infoStorage,
-        @Nonnull Editor editor
+        final Project project,
+        final PyClass classUnderRefactoring,
+        final PyMemberInfoStorage infoStorage,
+        Editor editor
     ) {
         //TODO: Move to vp (presenter) as well
         final PyPullUpNothingToRefactorMessage nothingToRefactor =
@@ -53,22 +52,19 @@ public class PyPullUpHandler extends PyClassRefactoringHandler {
             PyPullUpPresenter.class,
             PyPullUpView.class,
             new Creator<>() {
-                @Nonnull
                 @Override
-                public PyPullUpPresenter createPresenter(@Nonnull PyPullUpView view) {
+                public PyPullUpPresenter createPresenter(PyPullUpView view) {
                     return new PyPullUpPresenterImpl(view, infoStorage, classUnderRefactoring);
                 }
 
-                @Nonnull
                 @Override
-                public PyPullUpView createView(@Nonnull PyPullUpPresenter presenter) {
+                public PyPullUpView createView(PyPullUpPresenter presenter) {
                     return new PyPullUpViewSwingImpl(project, presenter, classUnderRefactoring, nothingToRefactor);
                 }
             }
         );
     }
 
-    @Nonnull
     @Override
     protected LocalizeValue getTitle() {
         return REFACTORING_NAME;

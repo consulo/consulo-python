@@ -27,8 +27,7 @@ import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolder;
 import org.jetbrains.annotations.TestOnly;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +77,7 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
 	 */
 	@TestOnly
 	@Nullable
-	static NavigatablePsiElement[] getNavigationTargets(@Nonnull UserDataHolder holder)
+	static NavigatablePsiElement[] getNavigationTargets(UserDataHolder holder)
 	{
 		return holder.getUserData(MARKERS);
 	}
@@ -86,5 +85,5 @@ abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIcon
 	protected abstract String getTitle(T elt);
 
 	@Nullable
-	protected abstract Query<T> search(T elt, @Nonnull TypeEvalContext context);
+	protected abstract Query<T> search(T elt, TypeEvalContext context);
 }

@@ -21,8 +21,7 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyElement;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -31,14 +30,13 @@ import java.util.Collection;
  */
 class PyPullUpProcessor extends PyMembersRefactoringBaseProcessor {
     PyPullUpProcessor(
-        @Nonnull PyClass from,
-        @Nonnull PyClass to,
-        @Nonnull Collection<PyMemberInfo<PyElement>> membersToMove
+        PyClass from,
+        PyClass to,
+        Collection<PyMemberInfo<PyElement>> membersToMove
     ) {
         super(from.getProject(), membersToMove, from, to);
     }
 
-    @Nonnull
     @Override
     protected LocalizeValue getCommandName() {
         return PyPullUpHandler.REFACTORING_NAME;

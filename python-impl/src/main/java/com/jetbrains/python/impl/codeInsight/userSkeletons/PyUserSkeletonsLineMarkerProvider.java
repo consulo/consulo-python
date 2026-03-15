@@ -29,8 +29,7 @@ import consulo.language.editor.gutter.LineMarkerProvider;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiNavigateUtil;
 import consulo.platform.base.icon.PlatformIconGroup;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,13 +42,13 @@ public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider {
     @Nullable
     @Override
     @RequiredReadAction
-    public LineMarkerInfo getLineMarkerInfo(@Nonnull PsiElement element) {
+    public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
         return null;
     }
 
     @Override
     @RequiredReadAction
-    public void collectSlowLineMarkers(@Nonnull List<PsiElement> elements, @Nonnull Collection<LineMarkerInfo> result) {
+    public void collectSlowLineMarkers(List<PsiElement> elements, Collection<LineMarkerInfo> result) {
         for (PsiElement element : elements) {
             PyElement skeleton = getUserSkeleton(element);
             if (skeleton != null) {
@@ -72,14 +71,13 @@ public class PyUserSkeletonsLineMarkerProvider implements LineMarkerProvider {
     }
 
     @Nullable
-    private static PyElement getUserSkeleton(@Nonnull PsiElement element) {
+    private static PyElement getUserSkeleton(PsiElement element) {
         if (element instanceof PyFunction || element instanceof PyTargetExpression) {
             return PyUserSkeletonsUtil.getUserSkeleton((PyElement) element);
         }
         return null;
     }
 
-    @Nonnull
     @Override
     public Language getLanguage() {
         return PythonLanguage.INSTANCE;

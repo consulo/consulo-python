@@ -38,8 +38,7 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
@@ -61,7 +60,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Override
-  public PyType getReferenceType(@Nonnull PsiElement referenceTarget, @Nonnull TypeEvalContext context, @Nullable PsiElement anchor) {
+  public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
     PyType type = getBaseStringType(referenceTarget);
     if (type != null) {
       return type;
@@ -78,7 +77,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static PyType getBaseStringType(@Nonnull PsiElement referenceTarget) {
+  private static PyType getBaseStringType(PsiElement referenceTarget) {
     PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(referenceTarget);
     if (referenceTarget instanceof PyElement && builtinCache.isBuiltin(referenceTarget) &&
       "basestring".equals(((PyElement)referenceTarget).getName())) {
@@ -88,7 +87,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static PyType getEnumType(@Nonnull PsiElement referenceTarget, @Nonnull TypeEvalContext context, @Nullable PsiElement anchor) {
+  private static PyType getEnumType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
     if (referenceTarget instanceof PyTargetExpression) {
       PyTargetExpression target = (PyTargetExpression)referenceTarget;
       ScopeOwner owner = ScopeUtil.getScopeOwner(target);
@@ -138,7 +137,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
 
   @Nullable
   @Override
-  public Ref<PyType> getCallType(@Nonnull PyFunction function, @Nullable PyCallSiteExpression callSite, @Nonnull TypeEvalContext context) {
+  public Ref<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context) {
     if (callSite != null && isListGetItem(function)) {
       PyExpression receiver = PyTypeChecker.getReceiver(callSite, function);
       Map<PyExpression, PyNamedParameter> mapping = PyCallExpressionHelper.mapArguments(callSite, function, context);
@@ -172,7 +171,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
     return null;
   }
 
-  private static boolean isListGetItem(@Nonnull PyFunction function) {
+  private static boolean isListGetItem(PyFunction function) {
     return PyNames.GETITEM.equals(function.getName()) && Optional.ofNullable(PyBuiltinCache.getInstance(function).getListType())
                                                                  .map(PyClassType::getPyClass)
                                                                  .map(cls -> cls.equals(function
@@ -182,9 +181,9 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
 
   @Nullable
   private static Ref<PyType> analyzeListGetItemCallType(@Nullable PyExpression receiver,
-                                                        @Nonnull Map<PyExpression, PyNamedParameter> parameters,
-                                                        @Nonnull Map<PyGenericType, PyType> substitutions,
-                                                        @Nonnull TypeEvalContext context) {
+                                                        Map<PyExpression, PyNamedParameter> parameters,
+                                                        Map<PyGenericType, PyType> substitutions,
+                                                        TypeEvalContext context) {
     if (parameters.size() != 1 || substitutions.size() > 1) {
       return null;
     }
@@ -211,8 +210,8 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static Ref<PyType> getTupleMultiplicationResultType(@Nonnull PyBinaryExpression multiplication,
-                                                              @Nonnull TypeEvalContext context) {
+  private static Ref<PyType> getTupleMultiplicationResultType(PyBinaryExpression multiplication,
+                                                              TypeEvalContext context) {
     PyTupleType leftTupleType = as(context.getType(multiplication.getLeftExpression()), PyTupleType.class);
     if (leftTupleType == null) {
       return null;
@@ -249,7 +248,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static Ref<PyType> getTupleConcatenationResultType(@Nonnull PyBinaryExpression addition, @Nonnull TypeEvalContext context) {
+  private static Ref<PyType> getTupleConcatenationResultType(PyBinaryExpression addition, TypeEvalContext context) {
     if (addition.getRightExpression() != null) {
       PyTupleType leftTupleType = as(context.getType(addition.getLeftExpression()), PyTupleType.class);
       PyTupleType rightTupleType = as(context.getType(addition.getRightExpression()), PyTupleType.class);
@@ -270,7 +269,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static Ref<PyType> getTupleInitializationType(@Nonnull PyCallExpression call, @Nonnull TypeEvalContext context) {
+  private static Ref<PyType> getTupleInitializationType(PyCallExpression call, TypeEvalContext context) {
     PyExpression[] arguments = call.getArguments();
 
     if (arguments.length != 1) {
@@ -293,9 +292,9 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
 
   @Nullable
   @Override
-  public PyType getContextManagerVariableType(@Nonnull PyClass contextManager,
-                                              @Nonnull PyExpression withExpression,
-                                              @Nonnull TypeEvalContext context) {
+  public PyType getContextManagerVariableType(PyClass contextManager,
+                                              PyExpression withExpression,
+                                              TypeEvalContext context) {
     if ("contextlib.closing".equals(contextManager.getQualifiedName()) && withExpression instanceof PyCallExpression) {
       PyExpression closee = ((PyCallExpression)withExpression).getArgument(0, PyExpression.class);
       if (closee != null) {
@@ -310,8 +309,8 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static PyType getNamedTupleType(@Nonnull PsiElement referenceTarget,
-                                          @Nonnull TypeEvalContext context,
+  private static PyType getNamedTupleType(PsiElement referenceTarget,
+                                          TypeEvalContext context,
                                           @Nullable PsiElement anchor) {
     if (referenceTarget instanceof PyTargetExpression) {
       PyTargetExpression target = (PyTargetExpression)referenceTarget;
@@ -330,10 +329,9 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
     return null;
   }
 
-  @Nonnull
-  private static Ref<PyType> getOpenFunctionType(@Nonnull String callQName,
-                                                 @Nonnull Map<PyExpression, PyNamedParameter> arguments,
-                                                 @Nonnull PsiElement anchor) {
+  private static Ref<PyType> getOpenFunctionType(String callQName,
+                                                 Map<PyExpression, PyNamedParameter> arguments,
+                                                 PsiElement anchor) {
     String mode = "r";
     for (Map.Entry<PyExpression, PyNamedParameter> entry : arguments.entrySet()) {
       PyNamedParameter parameter = entry.getValue();
@@ -362,7 +360,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static String getQualifiedName(@Nonnull PyFunction f, @Nullable PsiElement callSite) {
+  private static String getQualifiedName(PyFunction f, @Nullable PsiElement callSite) {
     PyPsiUtils.assertValid(f);
     String result = f.getName();
     PyClass c = f.getContainingClass();
@@ -382,7 +380,7 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static PyType getNamedTupleTypeFromStub(@Nonnull PsiElement referenceTarget,
+  private static PyType getNamedTupleTypeFromStub(PsiElement referenceTarget,
                                                   @Nullable PyNamedTupleStub stub,
                                                   int definitionLevel) {
     if (stub == null) {
@@ -398,8 +396,8 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static PyType getNamedTupleTypeFromAST(@Nonnull PyTargetExpression expression,
-                                                 @Nonnull TypeEvalContext context,
+  private static PyType getNamedTupleTypeFromAST(PyTargetExpression expression,
+                                                 TypeEvalContext context,
                                                  int definitionLevel) {
     if (context.maySwitchToAST(expression)) {
       return getNamedTupleTypeFromStub(expression, PyNamedTupleStubImpl.create(expression), definitionLevel);
@@ -409,8 +407,8 @@ public class PyStdlibTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
-  private static PyType getNamedTupleTypeFromAST(@Nonnull PyCallExpression expression,
-                                                 @Nonnull TypeEvalContext context,
+  private static PyType getNamedTupleTypeFromAST(PyCallExpression expression,
+                                                 TypeEvalContext context,
                                                  int definitionLevel) {
     if (context.maySwitchToAST(expression)) {
       return getNamedTupleTypeFromStub(expression, PyNamedTupleStubImpl.create(expression), definitionLevel);

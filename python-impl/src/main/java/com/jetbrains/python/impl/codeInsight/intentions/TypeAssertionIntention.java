@@ -36,7 +36,6 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * Helps to specify type by assertion
@@ -44,13 +43,12 @@ import jakarta.annotation.Nonnull;
  * @author ktisha
  */
 public class TypeAssertionIntention extends PyBaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnInsertAssertion();
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -80,7 +78,7 @@ public class TypeAssertionIntention extends PyBaseIntentionAction {
     }
 
     @Override
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyExpression problemElement = PsiTreeUtil.getParentOfType(elementAt, PyReferenceExpression.class);
         if (problemElement != null) {

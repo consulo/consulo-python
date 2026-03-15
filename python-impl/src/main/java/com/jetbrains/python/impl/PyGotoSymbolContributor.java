@@ -32,8 +32,7 @@ import consulo.language.psi.stub.StubIndex;
 import consulo.navigation.NavigationItem;
 import consulo.project.content.scope.ProjectAwareSearchScope;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -42,7 +41,7 @@ import jakarta.annotation.Nullable;
 public class PyGotoSymbolContributor implements GotoSymbolContributor
 {
 	@Override
-	public void processNames(@Nonnull Processor<String> processor, @Nonnull SearchScope searchScope, @Nullable IdFilter idFilter)
+	public void processNames(Processor<String> processor, SearchScope searchScope, @Nullable IdFilter idFilter)
 	{
 		ProjectAwareSearchScope projectAwareSearchScope = (ProjectAwareSearchScope) searchScope;
 
@@ -52,7 +51,7 @@ public class PyGotoSymbolContributor implements GotoSymbolContributor
 	}
 
 	@Override
-	public void processElementsWithName(@Nonnull String s, @Nonnull Processor<NavigationItem> processor, @Nonnull FindSymbolParameters findSymbolParameters)
+	public void processElementsWithName(String s, Processor<NavigationItem> processor, FindSymbolParameters findSymbolParameters)
 	{
 		StubIndex.getInstance().processElements(PyClassNameIndex.KEY, s, findSymbolParameters.getProject(), findSymbolParameters.getSearchScope(), findSymbolParameters.getIdFilter(), PyClass.class,
 				processor);

@@ -20,10 +20,9 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.inject.Inject;
 
-import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -59,7 +58,6 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
     return LocalizeValue.localizeTODO("Python Debugger");
   }
 
-  @Nonnull
   public String getId() {
     return "py.debugger";
   }

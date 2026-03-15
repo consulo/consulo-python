@@ -23,8 +23,7 @@ import consulo.annotation.component.ServiceAPI;
 import consulo.ide.ServiceManager;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
@@ -35,13 +34,13 @@ public abstract class PySignatureCacheManager {
     return ServiceManager.getService(project, PySignatureCacheManager.class);
   }
 
-  public abstract void recordSignature(@Nonnull PySignature signature);
+  public abstract void recordSignature(PySignature signature);
 
   @Nullable
-  public abstract String findParameterType(@Nonnull PyFunction function, @Nonnull String name);
+  public abstract String findParameterType(PyFunction function, String name);
 
   @Nullable
-  public abstract PySignature findSignature(@Nonnull PyFunction function);
+  public abstract PySignature findSignature(PyFunction function);
 
   public abstract void clearCache();
 }

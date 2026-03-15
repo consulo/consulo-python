@@ -16,14 +16,13 @@
 
 package com.jetbrains.python.impl.debugger;
 
-import jakarta.annotation.Nonnull;
 
 
 /**
  * @author traff
  */
 public class PyExceptionBreakpointHandler extends ExceptionBreakpointHandler<PyExceptionBreakpointProperties> {
-   public PyExceptionBreakpointHandler(@Nonnull PyDebugProcess debugProcess) {
+   public PyExceptionBreakpointHandler(PyDebugProcess debugProcess) {
     super(debugProcess, PyExceptionBreakpointType.class);
   }
 }

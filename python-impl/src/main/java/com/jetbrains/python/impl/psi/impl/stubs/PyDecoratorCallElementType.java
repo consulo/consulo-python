@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.psi.impl.stubs;
 
 import java.io.IOException;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
@@ -44,30 +43,28 @@ public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStu
 		super("DECORATOR_CALL");
 	}
 
-	@Nonnull
-	public PsiElement createElement(@Nonnull ASTNode node)
+	public PsiElement createElement(ASTNode node)
 	{
 		return new PyDecoratorImpl(node);
 	}
 
-	public PyDecorator createPsi(@Nonnull PyDecoratorStub stub)
+	public PyDecorator createPsi(PyDecoratorStub stub)
 	{
 		return new PyDecoratorImpl(stub);
 	}
 
-	@Nonnull
-	public PyDecoratorStub createStub(@Nonnull PyDecorator psi, StubElement parentStub)
+	public PyDecoratorStub createStub(PyDecorator psi, StubElement parentStub)
 	{
 		return new PyDecoratorStubImpl(psi.getQualifiedName(), parentStub);
 	}
 
-	public void serialize(@Nonnull PyDecoratorStub stub, @Nonnull StubOutputStream dataStream) throws IOException
+	public void serialize(PyDecoratorStub stub, StubOutputStream dataStream) throws IOException
 	{
 		QualifiedName.serialize(stub.getQualifiedName(), dataStream);
 	}
 
 	@Override
-	public void indexStub(@Nonnull PyDecoratorStub stub, @Nonnull IndexSink sink)
+	public void indexStub(PyDecoratorStub stub, IndexSink sink)
 	{
 		// Index decorators stub by name (todo: index by FQDN as well!)
 		QualifiedName qualifiedName = stub.getQualifiedName();
@@ -77,8 +74,7 @@ public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStu
 		}
 	}
 
-	@Nonnull
-	public PyDecoratorStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
+	public PyDecoratorStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		QualifiedName q_name = QualifiedName.deserialize(dataStream);
 		return new PyDecoratorStubImpl(q_name, parentStub);

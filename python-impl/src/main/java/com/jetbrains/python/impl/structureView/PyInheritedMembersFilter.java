@@ -23,7 +23,6 @@ import consulo.ide.localize.IdeLocalize;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.ex.action.Shortcut;
 import consulo.ui.ex.keymap.KeymapManager;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan
@@ -41,7 +40,6 @@ public class PyInheritedMembersFilter implements FileStructureFilter {
         return !(treeNode instanceof PyStructureViewElement sve && sve.isInherited());
     }
 
-    @Nonnull
     @Override
     public String getName() {
         return ID;
@@ -52,7 +50,6 @@ public class PyInheritedMembersFilter implements FileStructureFilter {
         return getName();
     }
 
-    @Nonnull
     @Override
     public ActionPresentation getPresentation() {
         return new ActionPresentationData(

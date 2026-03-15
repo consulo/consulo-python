@@ -26,7 +26,6 @@ import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,9 +34,8 @@ import java.util.Set;
  */
 @ExtensionImpl
 public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesCollector {
-  @Nonnull
   @Override
-  public Set<UsageDescriptor> getProjectUsages(@Nonnull Project project) throws CollectUsagesException {
+  public Set<UsageDescriptor> getProjectUsages(Project project) throws CollectUsagesException {
     Set<UsageDescriptor> result = new HashSet<UsageDescriptor>();
     for (Module m : ModuleManager.getInstance(project).getModules()) {
       Sdk pythonSdk = PythonSdkType.findPythonSdk(m);
@@ -51,7 +49,6 @@ public class PyInterpreterUsagesCollector extends AbstractApplicationUsagesColle
     return result;
   }
 
-  @Nonnull
   @Override
   public String getGroupId() {
     return "consulo.python:interpreter";

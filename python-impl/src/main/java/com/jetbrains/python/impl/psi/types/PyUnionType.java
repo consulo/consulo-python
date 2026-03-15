@@ -26,8 +26,7 @@ import consulo.language.util.ProcessingContext;
 import consulo.util.collection.SmartList;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -43,7 +42,7 @@ public class PyUnionType implements PyType
 	}
 
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(String name, @Nullable PyExpression location, AccessDirection direction, PyResolveContext resolveContext)
 	{
 		SmartList<RatedResolveResult> ret = new SmartList<>();
 		boolean allNulls = true;
@@ -203,7 +202,7 @@ public class PyUnionType implements PyType
 	 * @return union with excluded types
 	 */
 	@Nullable
-	public PyType exclude(@Nullable PyType type, @Nonnull TypeEvalContext context)
+	public PyType exclude(@Nullable PyType type, TypeEvalContext context)
 	{
 		List<PyType> members = new ArrayList<>();
 		for(PyType m : getMembers())
@@ -227,7 +226,7 @@ public class PyUnionType implements PyType
 	}
 
 	@Nullable
-	public PyType excludeNull(@Nonnull TypeEvalContext context)
+	public PyType excludeNull(TypeEvalContext context)
 	{
 		return exclude(null, context);
 	}

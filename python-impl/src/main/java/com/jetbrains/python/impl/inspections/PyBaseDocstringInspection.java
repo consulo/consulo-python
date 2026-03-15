@@ -19,34 +19,32 @@ import com.jetbrains.python.impl.testing.PythonUnitTestUtil;
 import com.jetbrains.python.psi.*;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Mikhail Golubev
  */
 public abstract class PyBaseDocstringInspection extends PyInspection {
-    @Nonnull
     @Override
     public abstract Visitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     );
 
     protected static abstract class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
         @Override
-        public final void visitPyFile(@Nonnull PyFile node) {
+        public final void visitPyFile(PyFile node) {
             checkDocString(node);
         }
 
         @Override
-        public final void visitPyFunction(@Nonnull PyFunction node) {
+        public final void visitPyFunction(PyFunction node) {
             if (PythonUnitTestUtil.isUnitTestCaseFunction(node)) {
                 return;
             }
@@ -65,7 +63,7 @@ public abstract class PyBaseDocstringInspection extends PyInspection {
         }
 
         @Override
-        public final void visitPyClass(@Nonnull PyClass node) {
+        public final void visitPyClass(PyClass node) {
             if (PythonUnitTestUtil.isUnitTestCaseClass(node)) {
                 return;
             }
@@ -76,6 +74,6 @@ public abstract class PyBaseDocstringInspection extends PyInspection {
             checkDocString(node);
         }
 
-        protected abstract void checkDocString(@Nonnull PyDocStringOwner node);
+        protected abstract void checkDocString(PyDocStringOwner node);
     }
 }

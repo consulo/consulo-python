@@ -25,8 +25,7 @@ import consulo.project.Project;
 import consulo.ui.ex.awt.TextComponentAccessor;
 import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
@@ -36,14 +35,11 @@ import java.awt.*;
 class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtractSuperclassPresenter, PyExtractSuperclassInitializationInfo> implements PyExtractSuperclassView
 {
 	private static final String FILE_OR_DIRECTORY = RefactoringBundle.message("extract.superclass.elements.header");
-	@Nonnull
 	private final JTextArea myExtractedSuperNameField = new JTextArea();
-	@Nonnull
 	private final FileChooserDescriptor myFileChooserDescriptor;
-	@Nonnull
 	private final TextFieldWithBrowseButton myTargetDirField;
 
-	PyExtractSuperclassViewSwingImpl(@Nonnull PyClass classUnderRefactoring, @Nonnull Project project, @Nonnull PyExtractSuperclassPresenter presenter)
+	PyExtractSuperclassViewSwingImpl(PyClass classUnderRefactoring, Project project, PyExtractSuperclassPresenter presenter)
 	{
 		super(project, presenter, RefactoringBundle.message("extract.superclass.from"), true);
 		setTitle(PyExtractSuperclassHandler.REFACTORING_NAME);
@@ -101,21 +97,19 @@ class PyExtractSuperclassViewSwingImpl extends MembersBasedViewSwingImpl<PyExtra
 	}
 
 	@Override
-	public void configure(@Nonnull PyExtractSuperclassInitializationInfo configInfo)
+	public void configure(PyExtractSuperclassInitializationInfo configInfo)
 	{
 		super.configure(configInfo);
 		myFileChooserDescriptor.setRoots(configInfo.getRoots());
 		myTargetDirField.setText(configInfo.getDefaultFilePath());
 	}
 
-	@Nonnull
 	@Override
 	public String getModuleFile()
 	{
 		return myTargetDirField.getText();
 	}
 
-	@Nonnull
 	@Override
 	public String getSuperClassName()
 	{

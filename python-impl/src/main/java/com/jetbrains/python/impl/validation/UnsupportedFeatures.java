@@ -26,8 +26,7 @@ import consulo.language.editor.intention.IntentionAction;
 import consulo.language.editor.intention.QuickFixWrapper;
 import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,9 +47,9 @@ public class UnsupportedFeatures extends CompatibilityVisitor {
     @Override
     @RequiredReadAction
     protected void registerProblem(
-        @Nonnull PsiElement node,
-        @Nonnull TextRange range,
-        @Nonnull String message,
+        PsiElement node,
+        TextRange range,
+        String message,
         @Nullable LocalQuickFix localQuickFix,
         boolean asError
     ) {
@@ -78,23 +77,21 @@ public class UnsupportedFeatures extends CompatibilityVisitor {
         }
     }
 
-    @Nonnull
     @RequiredReadAction
     private static IntentionAction createIntention(
-        @Nonnull PsiElement node,
-        @Nonnull LocalizeValue message,
-        @Nonnull LocalQuickFix localQuickFix
+        PsiElement node,
+        LocalizeValue message,
+        LocalQuickFix localQuickFix
     ) {
         return createIntention(node, node.getTextRange(), message, localQuickFix);
     }
 
-    @Nonnull
     @RequiredReadAction
     private static IntentionAction createIntention(
-        @Nonnull PsiElement node,
+        PsiElement node,
         @Nullable TextRange range,
-        @Nonnull LocalizeValue message,
-        @Nonnull LocalQuickFix localQuickFix
+        LocalizeValue message,
+        LocalQuickFix localQuickFix
     ) {
         LocalQuickFix[] quickFixes = {localQuickFix};
         ProblemDescriptorImpl descr =

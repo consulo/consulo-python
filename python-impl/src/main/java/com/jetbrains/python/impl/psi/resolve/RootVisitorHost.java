@@ -36,7 +36,6 @@ import consulo.module.content.layer.orderEntry.ModuleSourceOrderEntry;
 import consulo.module.content.layer.orderEntry.OrderEntry;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -46,7 +45,7 @@ import java.util.Set;
  * @author yole
  */
 public class RootVisitorHost {
-  public static void visitRoots(@Nonnull PsiElement elt, @Nonnull RootVisitor visitor) {
+  public static void visitRoots(PsiElement elt, RootVisitor visitor) {
     // real search
     Module module = elt.getModule();
     if (module != null) {
@@ -60,7 +59,7 @@ public class RootVisitorHost {
     }
   }
 
-  public static void visitRoots(@Nonnull Module module, boolean skipSdk, final RootVisitor visitor) {
+  public static void visitRoots(Module module, boolean skipSdk, final RootVisitor visitor) {
     OrderEnumerator enumerator = OrderEnumerator.orderEntries(module).recursively();
     if (skipSdk) {
       enumerator = enumerator.withoutSdk();
@@ -102,7 +101,7 @@ public class RootVisitorHost {
     }
   }
 
-  public static boolean visitSdkRoots(@Nonnull Sdk sdk, @Nonnull RootVisitor visitor) {
+  public static boolean visitSdkRoots(Sdk sdk, RootVisitor visitor) {
     VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
     for (VirtualFile root : roots) {
       if (!visitor.visitRoot(root, null, sdk, false)) {

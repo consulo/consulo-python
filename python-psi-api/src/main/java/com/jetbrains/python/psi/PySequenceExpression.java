@@ -15,14 +15,12 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public interface PySequenceExpression extends PyExpression
 {
-	@Nonnull
 	PyExpression[] getElements();
 
 	/**

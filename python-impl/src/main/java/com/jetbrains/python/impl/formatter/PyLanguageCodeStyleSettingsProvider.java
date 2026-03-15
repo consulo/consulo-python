@@ -26,7 +26,6 @@ import consulo.language.codeStyle.setting.IndentOptionsEditor;
 import consulo.language.codeStyle.setting.LanguageCodeStyleSettingsProvider;
 import consulo.language.codeStyle.ui.setting.SmartIndentOptionsEditor;
 
-import jakarta.annotation.Nonnull;
 
 import static consulo.language.codeStyle.setting.CodeStyleSettingsCustomizable.*;
 
@@ -35,14 +34,13 @@ import static consulo.language.codeStyle.setting.CodeStyleSettingsCustomizable.*
  */
 @ExtensionImpl
 public class PyLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;
   }
 
   @Override
-  public String getCodeSample(@Nonnull SettingsType settingsType) {
+  public String getCodeSample(SettingsType settingsType) {
     if (settingsType == SettingsType.SPACING_SETTINGS) {
       return SPACING_SETTINGS_PREVIEW;
     }
@@ -59,7 +57,7 @@ public class PyLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
   }
 
   @Override
-  public void customizeSettings(@Nonnull CodeStyleSettingsCustomizable consumer, @Nonnull SettingsType settingsType) {
+  public void customizeSettings(CodeStyleSettingsCustomizable consumer, SettingsType settingsType) {
     if (settingsType == SettingsType.SPACING_SETTINGS) {
       consumer.showStandardOptions("SPACE_BEFORE_METHOD_CALL_PARENTHESES",
                                    "SPACE_BEFORE_METHOD_PARENTHESES",

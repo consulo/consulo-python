@@ -25,7 +25,6 @@ import consulo.language.editor.inspection.scheme.InspectionProjectProfileManager
 import consulo.language.editor.intention.LowPriorityAction;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author catherine
@@ -37,14 +36,13 @@ public class AddIgnoredRoleFix implements LocalQuickFix, LowPriorityAction {
         myRole = role;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return LocalizeValue.localizeTODO(RestBundle.message("QFIX.ignore.role", myRole));
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
         profile.<RestRoleInspection, RestRoleInspectionState>modifyToolSettings(
             RestRoleInspection.class.getSimpleName(),

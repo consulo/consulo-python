@@ -26,7 +26,6 @@ import consulo.language.Language;
 import consulo.language.editor.structureView.PsiStructureViewFactory;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -41,7 +40,6 @@ public class PyStructureViewFactory implements PsiStructureViewFactory
 		{
 
 			@Override
-			@Nonnull
 			public StructureViewModel createStructureViewModel(Editor editor)
 			{
 				return new PyStructureViewModel(psiFile);
@@ -49,7 +47,6 @@ public class PyStructureViewFactory implements PsiStructureViewFactory
 		};
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

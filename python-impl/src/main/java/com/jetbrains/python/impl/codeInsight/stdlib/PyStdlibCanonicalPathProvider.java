@@ -20,8 +20,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ import java.util.List;
 public class PyStdlibCanonicalPathProvider implements PyCanonicalPathProvider {
   @Nullable
   @Override
-  public QualifiedName getCanonicalPath(@Nonnull QualifiedName qName, PsiElement foothold) {
+  public QualifiedName getCanonicalPath(QualifiedName qName, PsiElement foothold) {
     return restoreStdlibCanonicalPath(qName);
   }
 

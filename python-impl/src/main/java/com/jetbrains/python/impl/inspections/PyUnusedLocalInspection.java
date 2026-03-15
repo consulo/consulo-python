@@ -23,7 +23,6 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.dataholder.Key;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg
@@ -32,24 +31,21 @@ import jakarta.annotation.Nonnull;
 public class PyUnusedLocalInspection extends PyInspection {
     private static Key<PyUnusedLocalInspectionVisitor> KEY = Key.create("PyUnusedLocal.Visitor");
 
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyUnusedLocalInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameUnused();
     }
 
     @Override
-    @Nonnull
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         PyUnusedLocalInspectionState inspectionState = (PyUnusedLocalInspectionState) state;
@@ -70,7 +66,7 @@ public class PyUnusedLocalInspection extends PyInspection {
     }
 
     @Override
-    public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder, Object state) {
+    public void inspectionFinished(LocalInspectionToolSession session, ProblemsHolder holder, Object state) {
         PyUnusedLocalInspectionVisitor visitor = session.getUserData(KEY);
         if (visitor != null) {
             visitor.registerProblems();

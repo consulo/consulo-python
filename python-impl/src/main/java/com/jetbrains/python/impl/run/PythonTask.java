@@ -42,8 +42,7 @@ import consulo.python.buildout.module.extension.BuildoutModuleExtension;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.io.FileUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,8 +77,7 @@ public class PythonTask {
         this(module, runTabTitle, PythonSdkType.findPythonSdk(module));
     }
 
-    @Nonnull
-    public static PythonTask create(@Nonnull Module module, @Nonnull String runTabTitle, @Nonnull Sdk sdk) {
+    public static PythonTask create(Module module, String runTabTitle, Sdk sdk) {
         // Ctor throws checked exception which is not good, so this wrapper saves user from dumb code
         try {
             return new PythonTask(module, runTabTitle, sdk);
@@ -264,7 +262,6 @@ public class PythonTask {
      * @return stdout
      * @throws ExecutionException in case of error. Consider using {@link consulo.ide.impl.idea.execution.util.ExecutionErrorDialog}
      */
-    @Nonnull
     public final String runNoConsole() throws ExecutionException {
         ProcessHandler process = createProcess(new HashMap<>());
         CapturingProcessAdapter listener = new CapturingProcessAdapter();

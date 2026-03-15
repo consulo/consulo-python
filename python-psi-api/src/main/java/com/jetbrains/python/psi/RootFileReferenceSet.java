@@ -25,8 +25,7 @@ import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.ManagingFS;
 import consulo.virtualFileSystem.fileType.FileType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,7 +37,7 @@ import java.util.List;
 public class RootFileReferenceSet extends FileReferenceSet
 {
 	public RootFileReferenceSet(String str,
-			@Nonnull PsiElement element,
+			PsiElement element,
 			int startInElement,
 			PsiReferenceProvider provider,
 			boolean caseSensitive,
@@ -48,7 +47,7 @@ public class RootFileReferenceSet extends FileReferenceSet
 		super(str, element, startInElement, provider, caseSensitive, endingSlashNotAllowed, suitableFileTypes);
 	}
 
-	public RootFileReferenceSet(String s, @Nonnull PsiElement element, int offset, PsiReferenceProvider provider, boolean sensitive)
+	public RootFileReferenceSet(String s, PsiElement element, int offset, PsiReferenceProvider provider, boolean sensitive)
 	{
 		super(s, element, offset, provider, sensitive);
 	}
@@ -66,7 +65,6 @@ public class RootFileReferenceSet extends FileReferenceSet
 		}
 	}
 
-	@Nonnull
 	@Override
 	public Collection<PsiFileSystemItem> computeDefaultContexts()
 	{

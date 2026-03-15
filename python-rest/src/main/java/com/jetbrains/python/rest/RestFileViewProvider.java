@@ -27,7 +27,6 @@ import consulo.language.psi.PsiManager;
 import consulo.language.template.TemplateLanguageFileViewProvider;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -43,14 +42,12 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
     super(manager, virtualFile, physical);
   }
 
-  @Nonnull
   @Override
   public Language getBaseLanguage() {
     return RestLanguage.INSTANCE;
   }
 
   @Override
-  @Nonnull
   public Language getTemplateDataLanguage() {
     return PythonLanguage.getInstance();
   }
@@ -61,7 +58,6 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   }
 
   @Override
-  @Nonnull
   public Set<Language> getLanguages() {
     if (myLanguages == null) {
       myLanguages = new LinkedHashSet<>();
@@ -76,7 +72,7 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   }
 
   @Override
-  protected PsiFile createFile(@Nonnull Language lang) {
+  protected PsiFile createFile(Language lang) {
     ParserDefinition def = ParserDefinition.forLanguage(lang);
     if (def == null) return null;
     if (lang == getTemplateDataLanguage()) {

@@ -46,8 +46,7 @@ import consulo.util.lang.Couple;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileManager;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -98,7 +97,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 		}
 	}
 
-	private static void updateRelativeImportsInModule(@Nonnull PyFile module)
+	private static void updateRelativeImportsInModule(PyFile module)
 	{
 		String originalLocation = module.getUserData(ORIGINAL_FILE_LOCATION);
 		if(originalLocation == null)
@@ -163,13 +162,13 @@ public class PyMoveFileHandler extends MoveFileHandler
 		}
 	}
 
-	private static boolean canBeRelative(@Nonnull PyFromImportStatement statement)
+	private static boolean canBeRelative(PyFromImportStatement statement)
 	{
 		return !LanguageLevel.forElement(statement).isPy3K() || statement.getRelativeLevel() > 0;
 	}
 
 
-	private static boolean canBeRelative(@Nonnull PyImportElement statement)
+	private static boolean canBeRelative(PyImportElement statement)
 	{
 		return !LanguageLevel.forElement(statement).isPy3K();
 	}
@@ -178,8 +177,8 @@ public class PyMoveFileHandler extends MoveFileHandler
 	 * @param referenceExpr is null if we resolve import of type "from .. import bar", and "foo" for import of type "from foo import bar"
 	 */
 	@Nullable
-	private static PsiFileSystemItem resolveRelativeImportFromModuleLocation(@Nonnull PsiManager manager,
-			@Nonnull String moduleLocation,
+	private static PsiFileSystemItem resolveRelativeImportFromModuleLocation(PsiManager manager,
+			String moduleLocation,
 			@Nullable PyReferenceExpression referenceExpr,
 			int relativeLevel)
 	{
@@ -226,7 +225,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 		return null;
 	}
 
-	private static boolean probablyNamespacePackage(@Nonnull PsiFile anchor, @Nonnull PsiDirectory destination, @Nonnull PsiDirectory root)
+	private static boolean probablyNamespacePackage(PsiFile anchor, PsiDirectory destination, PsiDirectory root)
 	{
 		if(!LanguageLevel.forElement(anchor).isAtLeast(LanguageLevel.PYTHON33))
 		{
@@ -350,8 +349,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 		}
 	}
 
-	@Nonnull
-	private static PsiElement replaceWithQualifiedExpression(@Nonnull PsiElement oldElement, @Nullable QualifiedName newElementName)
+	private static PsiElement replaceWithQualifiedExpression(PsiElement oldElement, @Nullable QualifiedName newElementName)
 	{
 		if(newElementName != null && PyClassRefactoringUtil.isValidQualifiedName(newElementName))
 		{
@@ -374,8 +372,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 	 * @return updated import statement
 	 * @see #replaceWithQualifiedExpression(PsiElement, QualifiedName)
 	 */
-	@Nonnull
-	private static PsiElement replaceRelativeImportSourceWithQualifiedExpression(@Nonnull PyFromImportStatement importStatement, @Nullable QualifiedName qualifiedName)
+	private static PsiElement replaceRelativeImportSourceWithQualifiedExpression(PyFromImportStatement importStatement, @Nullable QualifiedName qualifiedName)
 	{
 		Couple<PsiElement> range = getRelativeImportSourceRange(importStatement);
 		if(range != null && qualifiedName != null)
@@ -394,7 +391,7 @@ public class PyMoveFileHandler extends MoveFileHandler
 	}
 
 	@Nullable
-	private static Couple<PsiElement> getRelativeImportSourceRange(@Nonnull PyFromImportStatement statement)
+	private static Couple<PsiElement> getRelativeImportSourceRange(PyFromImportStatement statement)
 	{
 		PsiElement fromKeyword = statement.getFirstChild();
 		assert fromKeyword.getNode().getElementType() == PyTokenTypes.FROM_KEYWORD;

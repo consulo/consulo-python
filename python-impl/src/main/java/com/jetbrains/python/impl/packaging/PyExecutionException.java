@@ -19,7 +19,6 @@ import consulo.process.ExecutionException;
 import consulo.process.util.ProcessOutput;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,35 +27,30 @@ import java.util.List;
  */
 public class PyExecutionException extends ExecutionException
 {
-	@Nonnull
 	private String myCommand;
-	@Nonnull
 	private List<String> myArgs;
-	@Nonnull
 	private final String myStdout;
-	@Nonnull
 	private final String myStderr;
 	private final int myExitCode;
-	@Nonnull
 	private final List<? extends PyExecutionFix> myFixes;
 
-	public PyExecutionException(@Nonnull String message, @Nonnull String command, @Nonnull List<String> args)
+	public PyExecutionException(String message, String command, List<String> args)
 	{
 		this(message, command, args, "", "", 0, Collections.<PyExecutionFix>emptyList());
 	}
 
-	public PyExecutionException(@Nonnull String message, @Nonnull String command, @Nonnull List<String> args, @Nonnull ProcessOutput output)
+	public PyExecutionException(String message, String command, List<String> args, ProcessOutput output)
 	{
 		this(message, command, args, output.getStdout(), output.getStderr(), output.getExitCode(), Collections.<PyExecutionFix>emptyList());
 	}
 
-	public PyExecutionException(@Nonnull String message,
-			@Nonnull String command,
-			@Nonnull List<String> args,
-			@Nonnull String stdout,
-			@Nonnull String stderr,
+	public PyExecutionException(String message,
+			String command,
+			List<String> args,
+			String stdout,
+			String stderr,
 			int exitCode,
-			@Nonnull List<? extends PyExecutionFix> fixes)
+			List<? extends PyExecutionFix> fixes)
 	{
 		super(message);
 		myCommand = command;
@@ -85,19 +79,16 @@ public class PyExecutionException extends ExecutionException
 		return b.toString();
 	}
 
-	@Nonnull
 	public String getCommand()
 	{
 		return myCommand;
 	}
 
-	@Nonnull
 	public List<String> getArgs()
 	{
 		return myArgs;
 	}
 
-	@Nonnull
 	public List<? extends PyExecutionFix> getFixes()
 	{
 		return myFixes;
@@ -108,13 +99,11 @@ public class PyExecutionException extends ExecutionException
 		return myExitCode;
 	}
 
-	@Nonnull
 	public String getStdout()
 	{
 		return myStdout;
 	}
 
-	@Nonnull
 	public String getStderr()
 	{
 		return myStderr;

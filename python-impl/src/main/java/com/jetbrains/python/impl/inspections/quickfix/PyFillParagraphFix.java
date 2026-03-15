@@ -24,7 +24,6 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
 
 public class PyFillParagraphFix extends BaseIntentionAction implements HighPriorityAction {
     public PyFillParagraphFix() {
@@ -32,12 +31,12 @@ public class PyFillParagraphFix extends BaseIntentionAction implements HighPrior
     }
 
     @Override
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         return true;
     }
 
     @Override
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         FillParagraphAction action = new consulo.ide.impl.idea.codeInsight.editorActions.fillParagraph.FillParagraphAction();
         action.actionPerformedImpl(project, editor);
     }

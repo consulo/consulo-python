@@ -29,7 +29,7 @@ import consulo.project.content.scope.ProjectScopes;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

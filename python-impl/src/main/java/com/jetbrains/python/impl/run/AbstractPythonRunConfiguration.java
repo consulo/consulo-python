@@ -55,8 +55,7 @@ import consulo.util.xml.serializer.WriteExternalException;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jdom.Element;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -146,7 +145,6 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 		};
 	}
 
-	@Nonnull
 	@Override
 	public final SettingsEditor<T> getConfigurationEditor()
 	{
@@ -492,7 +490,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 * @return string spec or null if spec calculation is impossible
 	 */
 	@Nullable
-	public String getTestSpec(@Nonnull Location<?> location, @Nonnull AbstractTestProxy failedTest)
+	public String getTestSpec(Location<?> location, AbstractTestProxy failedTest)
 	{
 		PsiElement element = location.getPsiElement();
 		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
@@ -525,7 +523,6 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 * @return working directory to run, never null, does its best to guess which dir to use.
 	 * Unlike {@link #getWorkingDirectory()} it does not simply take directory from config.
 	 */
-	@Nonnull
 	public String getWorkingDirectorySafe()
 	{
 		String result = StringUtil.isEmpty(myWorkingDirectory) ? getProject().getBasePath() : myWorkingDirectory;
@@ -570,7 +567,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	/**
 	 * Adds test specs (like method, class, script, etc) to list of runner parameters.
 	 */
-	public void addTestSpecsAsParameters(@Nonnull ParamsGroup paramsGroup, @Nonnull List<String> testSpecs)
+	public void addTestSpecsAsParameters(ParamsGroup paramsGroup, List<String> testSpecs)
 	{
 		// By default we simply add them as arguments
 		paramsGroup.addParameters(testSpecs);

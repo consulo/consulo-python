@@ -26,7 +26,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to replace statement that has no effect with function call
@@ -34,13 +33,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class CompatibilityPrintCallQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixStatementEffect();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement expression = descriptor.getPsiElement();
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         replacePrint(expression, elementGenerator);

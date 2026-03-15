@@ -19,7 +19,6 @@ import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.AccessRule;
-import jakarta.annotation.Nonnull;
 
 import java.util.function.Predicate;
 
@@ -30,8 +29,8 @@ import java.util.function.Predicate;
 public class DefaultPyOverridingMethodsSearchExecutor implements PyOverridingMethodsSearchExecutor {
     @Override
     public boolean execute(
-        @Nonnull PyOverridingMethodsSearch.SearchParameters queryParameters,
-        @Nonnull Predicate<? super PyFunction> consumer
+        PyOverridingMethodsSearch.SearchParameters queryParameters,
+        Predicate<? super PyFunction> consumer
     ) {
         PyFunction baseMethod = queryParameters.getFunction();
 

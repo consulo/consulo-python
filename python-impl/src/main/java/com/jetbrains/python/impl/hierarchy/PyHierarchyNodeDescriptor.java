@@ -27,7 +27,6 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.ui.annotation.RequiredUIAccess;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +36,7 @@ import jakarta.annotation.Nonnull;
  */
 public class PyHierarchyNodeDescriptor extends consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor
 {
-	public PyHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, @Nonnull PsiElement element, boolean isBase)
+	public PyHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, PsiElement element, boolean isBase)
 	{
 		super(element.getProject(), parentDescriptor, element, isBase);
 	}

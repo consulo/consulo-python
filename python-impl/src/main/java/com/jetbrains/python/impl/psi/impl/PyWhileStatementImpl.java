@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PyElementTypes;
@@ -34,7 +33,6 @@ public class PyWhileStatementImpl extends PyPartitionedElementImpl implements Py
     pyVisitor.visitPyWhileStatement(this);
   }
 
-  @Nonnull
   public PyWhilePart getWhilePart() {
     return (PyWhilePart)getPartNotNull(PyElementTypes.WHILE_PART);
   }

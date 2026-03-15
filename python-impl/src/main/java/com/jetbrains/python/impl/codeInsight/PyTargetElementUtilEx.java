@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,13 +39,13 @@ import java.util.Set;
 @ExtensionImpl
 public class PyTargetElementUtilEx implements TargetElementUtilExtender {
   @Override
-  public boolean includeSelfInGotoImplementation(@Nonnull PsiElement element) {
+  public boolean includeSelfInGotoImplementation(PsiElement element) {
     return element.getLanguage() != PythonLanguage.getInstance();
   }
 
   @Nullable
   @Override
-  public PsiElement getReferenceOrReferencedElement(@Nonnull PsiReference ref, @Nonnull Set<String> flags) {
+  public PsiElement getReferenceOrReferencedElement(PsiReference ref, Set<String> flags) {
     if (!flags.contains(ELEMENT_NAME_ACCEPTED)) {
       return null;
     }

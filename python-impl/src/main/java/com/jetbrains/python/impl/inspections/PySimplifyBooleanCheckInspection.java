@@ -29,8 +29,7 @@ import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,24 +42,21 @@ import java.util.List;
 public class PySimplifyBooleanCheckInspection extends PyInspection {
     private static List<String> COMPARISON_LITERALS = ImmutableList.of("True", "False", "[]");
 
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PySimplifyBooleanCheckInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameCheckCanBeSimplified();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         PySimplifyBooleanCheckInspectionState inspectionState = (PySimplifyBooleanCheckInspectionState) state;
@@ -70,7 +66,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
     private static class Visitor extends PyInspectionVisitor {
         private final boolean myIgnoreComparisonToZero;
 
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, boolean ignoreComparisonToZero) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session, boolean ignoreComparisonToZero) {
             super(holder, session);
             myIgnoreComparisonToZero = ignoreComparisonToZero;
         }
@@ -90,7 +86,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
 
         public PyBinaryExpressionVisitor(
             @Nullable ProblemsHolder holder,
-            @Nonnull LocalInspectionToolSession session,
+            LocalInspectionToolSession session,
             boolean ignoreComparisonToZero
         ) {
             super(holder, session);
@@ -114,7 +110,7 @@ public class PySimplifyBooleanCheckInspection extends PyInspection {
             }
         }
 
-        private static boolean operandsEqualTo(@Nonnull PyBinaryExpression expr, @Nonnull Collection<String> literals) {
+        private static boolean operandsEqualTo(PyBinaryExpression expr, Collection<String> literals) {
             String leftExpressionText = expr.getLeftExpression().getText();
             PyExpression rightExpression = expr.getRightExpression();
             String rightExpressionText = rightExpression != null ? rightExpression.getText() : null;

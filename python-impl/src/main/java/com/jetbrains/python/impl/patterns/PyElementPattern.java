@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.patterns;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.pattern.InitialPatternCondition;
 import consulo.language.pattern.PsiElementPattern;
@@ -30,7 +29,7 @@ public class PyElementPattern<T extends PyElement, Self extends PyElementPattern
     super(aClass);
   }
 
-  public PyElementPattern(@Nonnull InitialPatternCondition<T> condition) {
+  public PyElementPattern(InitialPatternCondition<T> condition) {
     super(condition);
   }
 
@@ -39,7 +38,7 @@ public class PyElementPattern<T extends PyElement, Self extends PyElementPattern
       super(aClass);
     }
 
-    public Capture(@Nonnull InitialPatternCondition<T> condition) {
+    public Capture(InitialPatternCondition<T> condition) {
       super(condition);
     }
   }

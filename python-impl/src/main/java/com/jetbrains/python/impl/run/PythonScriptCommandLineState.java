@@ -40,8 +40,7 @@ import consulo.ui.ex.action.AnAction;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -120,9 +119,9 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
 
     private CommandLinePatcher[] myPatchers;
 
-    public PythonScriptWithConsoleRunner(@Nonnull Project project,
-                                         @Nonnull Sdk sdk,
-                                         @Nonnull PyConsoleType consoleType,
+    public PythonScriptWithConsoleRunner(Project project,
+                                         Sdk sdk,
+                                         PyConsoleType consoleType,
                                          @Nullable String workingDir,
                                          Map<String, String> environmentVariables,
                                          CommandLinePatcher[] patchers,
@@ -143,8 +142,8 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
     }
 
     @Override
-    protected GeneralCommandLine createCommandLine(@Nonnull Sdk sdk,
-                                                   @Nonnull Map<String, String> environmentVariables,
+    protected GeneralCommandLine createCommandLine(Sdk sdk,
+                                                   Map<String, String> environmentVariables,
                                                    String workingDir,
                                                    int[] ports) {
       GeneralCommandLine consoleCmdLine = doCreateConsoleCmdLine(sdk, environmentVariables, workingDir, ports, PythonHelper.RUN_IN_CONSOLE);

@@ -22,7 +22,7 @@ import consulo.language.dataFlow.map.DFAMap;
 import consulo.language.dataFlow.map.MapSemilattice;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;

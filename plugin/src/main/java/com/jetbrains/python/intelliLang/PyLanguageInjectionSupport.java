@@ -25,7 +25,6 @@ import consulo.language.inject.advanced.AbstractLanguageInjectionSupport;
 import consulo.language.inject.advanced.BaseInjection;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiLanguageInjectionHost;
-import jakarta.annotation.Nonnull;
 import org.jdom.Element;
 
 import java.util.List;
@@ -37,13 +36,11 @@ import java.util.List;
 public class PyLanguageInjectionSupport extends AbstractLanguageInjectionSupport {
   private static final String SUPPORT_ID = "python";
 
-  @Nonnull
   @Override
   public String getId() {
     return SUPPORT_ID;
   }
 
-  @Nonnull
   @Override
   public Class[] getPatternClasses() {
     return new Class[] { PythonPatterns.class };
@@ -63,7 +60,6 @@ public class PyLanguageInjectionSupport extends AbstractLanguageInjectionSupport
   public BaseInjection createInjection(Element element) {
     // This is how DefaultLanguageInjector gets its injection ranges
     return new BaseInjection(getId()) {
-      @Nonnull
       @Override
       public List<TextRange> getInjectedArea(PsiElement element) {
         if (element instanceof PyStringLiteralExpression) {

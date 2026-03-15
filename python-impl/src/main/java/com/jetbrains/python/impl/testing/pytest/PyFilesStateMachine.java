@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.testing.pytest;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.util.lang.Pair;
 
@@ -183,7 +182,6 @@ final class PyFilesStateMachine
 	/**
 	 * @return when machine is in {@link PyFilesStateMachineState#FINISHED} use this method to get file and line number
 	 */
-	@Nonnull
 	Pair<String, String> getFileAndLine()
 	{
 		return Pair.create(myFileName.toString(), myLineNumber.toString());

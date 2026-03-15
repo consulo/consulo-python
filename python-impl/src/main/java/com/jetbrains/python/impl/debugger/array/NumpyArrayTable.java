@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.debugger.array;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.project.Project;
 import com.jetbrains.python.debugger.ArrayChunk;
@@ -33,7 +32,7 @@ public final class NumpyArrayTable extends NumericContainerViewTable
 
 	private ArrayTableCellRenderer myArrayTableCellRenderer;
 
-	public NumpyArrayTable(@Nonnull Project project, @Nonnull ViewNumericContainerDialog dialog, @Nonnull PyDebugValue value)
+	public NumpyArrayTable(Project project, ViewNumericContainerDialog dialog, PyDebugValue value)
 	{
 		super(project, dialog, value);
 	}

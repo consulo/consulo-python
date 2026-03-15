@@ -24,8 +24,7 @@ import consulo.execution.ui.console.DuplexConsoleView;
 import consulo.execution.ui.console.TextConsoleBuilderFactory;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
@@ -48,12 +47,11 @@ public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleVie
   }
 
   @Override
-  public void executeCode(@Nonnull String code, @Nullable Editor e) {
+  public void executeCode(String code, @Nullable Editor e) {
     enableConsole(false);
     getPydevConsoleView().executeCode(code, e);
   }
 
-  @Nonnull
   public PythonConsoleView getPydevConsoleView() {
     return getSecondaryConsoleView();
   }

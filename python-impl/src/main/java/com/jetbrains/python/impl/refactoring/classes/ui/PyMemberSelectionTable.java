@@ -23,8 +23,7 @@ import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.editor.refactoring.ui.AbstractMemberSelectionTable;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class PyMemberSelectionTable extends AbstractMemberSelectionTable<PyEleme
     private final boolean mySupportAbstract;
 
     public PyMemberSelectionTable(
-        @Nonnull List<PyMemberInfo<PyElement>> memberInfos,
+        List<PyMemberInfo<PyElement>> memberInfos,
         @Nullable MemberInfoModel<PyElement, PyMemberInfo<PyElement>> model,
         boolean supportAbstract
     ) {

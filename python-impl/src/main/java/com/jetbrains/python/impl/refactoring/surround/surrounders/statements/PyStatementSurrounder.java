@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.surroundWith.Surrounder;
 import consulo.logging.Logger;
@@ -26,7 +25,7 @@ import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,15 +36,15 @@ import jakarta.annotation.Nullable;
 public abstract class PyStatementSurrounder implements Surrounder {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.refactoring.surround.surrounders.statements.PyStatementSurrounder");
 
-  public boolean isApplicable(@Nonnull PsiElement[] elements) {
+  public boolean isApplicable(PsiElement[] elements) {
     return true;
   }
 
   @Nullable
-  protected abstract TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
+  protected abstract TextRange surroundStatement(Project project, Editor editor, PsiElement[] elements)
     throws IncorrectOperationException;
 
-  public TextRange surroundElements(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
+  public TextRange surroundElements(Project project, Editor editor, PsiElement[] elements)
     throws IncorrectOperationException {
     return surroundStatement(project, editor, elements);
   }

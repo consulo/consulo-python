@@ -39,8 +39,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.Couple;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author oleg
@@ -48,7 +47,7 @@ import jakarta.annotation.Nullable;
 public class PyExtractMethodHandler implements RefactoringActionHandler
 {
 	@Override
-	public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext)
+	public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext)
 	{
 		editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
 		// select editor text fragment
@@ -60,7 +59,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 	}
 
 	@Override
-	public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext)
+	public void invoke(Project project, PsiElement[] elements, DataContext dataContext)
 	{
 	}
 
@@ -150,7 +149,7 @@ public class PyExtractMethodHandler implements RefactoringActionHandler
 				".extractMethod");
 	}
 
-	private static boolean rangeBelongsToSameClassBody(@Nonnull PsiElement element1, @Nonnull PsiElement element2)
+	private static boolean rangeBelongsToSameClassBody(PsiElement element1, PsiElement element2)
 	{
 		PyClass firstScopeOwner = PsiTreeUtil.getParentOfType(element1, PyClass.class, false, ScopeOwner.class);
 		PyClass secondScopeOwner = PsiTreeUtil.getParentOfType(element2, PyClass.class, false, ScopeOwner.class);

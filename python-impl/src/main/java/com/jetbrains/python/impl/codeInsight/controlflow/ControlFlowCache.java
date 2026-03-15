@@ -23,7 +23,6 @@ import consulo.language.controlFlow.ControlFlow;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.ref.SoftReference;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -40,7 +39,7 @@ public class ControlFlowCache {
     scopeOwner.putUserData(SCOPE_KEY, null);
   }
 
-  public static ControlFlow getControlFlow(@Nonnull ScopeOwner element) {
+  public static ControlFlow getControlFlow(ScopeOwner element) {
     SoftReference<ControlFlow> ref = element.getUserData(CONTROL_FLOW_KEY);
     ControlFlow flow = ref != null ? ref.get() : null;
     if (flow == null) {
@@ -50,8 +49,7 @@ public class ControlFlowCache {
     return flow;
   }
 
-  @Nonnull
-  public static Scope getScope(@Nonnull ScopeOwner element) {
+  public static Scope getScope(ScopeOwner element) {
     SoftReference<Scope> ref = element.getUserData(SCOPE_KEY);
     Scope scope = ref != null ? ref.get() : null;
     if (scope == null) {

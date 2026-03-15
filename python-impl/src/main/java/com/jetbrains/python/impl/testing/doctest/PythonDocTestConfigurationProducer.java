@@ -37,8 +37,7 @@ import consulo.module.Module;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
 
     @Override
     protected boolean isTestFunction(
-        @Nonnull PyFunction pyFunction,
+        PyFunction pyFunction,
         @Nullable AbstractPythonTestRunConfiguration configuration
     ) {
         return PythonDocTestUtil.isDocTestFunction(pyFunction);
@@ -58,7 +57,7 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
 
     @Override
     protected boolean isTestClass(
-        @Nonnull PyClass pyClass,
+        PyClass pyClass,
         @Nullable AbstractPythonTestRunConfiguration configuration,
         @Nullable TypeEvalContext context
     ) {
@@ -66,13 +65,13 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
     }
 
     @Override
-    protected boolean isTestFile(@Nonnull PyFile file) {
+    protected boolean isTestFile(PyFile file) {
         List<PyElement> testCases = PythonDocTestUtil.getDocTestCasesFromFile(file);
         return !testCases.isEmpty();
     }
 
     @Override
-    protected boolean isAvailable(@Nonnull Location location) {
+    protected boolean isAvailable(Location location) {
         Module module = location.getModule();
         if (!isPythonModule(module)) {
             return false;
@@ -111,7 +110,7 @@ public class PythonDocTestConfigurationProducer extends PythonTestConfigurationP
 
     @Override
     @RequiredReadAction
-    protected boolean isTestFolder(@Nonnull VirtualFile virtualFile, @Nonnull Project project) {
+    protected boolean isTestFolder(VirtualFile virtualFile, Project project) {
         return false;
     }
 }

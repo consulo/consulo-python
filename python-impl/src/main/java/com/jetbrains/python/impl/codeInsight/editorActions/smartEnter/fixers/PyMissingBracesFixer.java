@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
@@ -43,7 +42,7 @@ public class PyMissingBracesFixer extends PyFixer<PyElement>
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyElement psiElement) throws IncorrectOperationException
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyElement psiElement) throws IncorrectOperationException
 	{
 		if(psiElement instanceof PySetLiteralExpression || psiElement instanceof PyDictLiteralExpression)
 		{

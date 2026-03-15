@@ -26,8 +26,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,25 +39,23 @@ import java.util.Collection;
  */
 @ExtensionImpl
 public class PyReturnFromInitInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameInitReturn();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -72,7 +69,7 @@ public class PyReturnFromInitInspection extends PyInspection {
             }
         }
 
-        private static void findReturnValueInside(@Nonnull PsiElement node, Collection<PsiElement> offenders) {
+        private static void findReturnValueInside(PsiElement node, Collection<PsiElement> offenders) {
             for (PsiElement child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
                 if (child instanceof PyFunction || child instanceof PyClass) {
                     continue; // ignore possible inner functions and classes

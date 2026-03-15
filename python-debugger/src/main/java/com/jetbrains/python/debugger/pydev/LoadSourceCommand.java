@@ -1,8 +1,7 @@
 package com.jetbrains.python.debugger.pydev;
 
 import com.jetbrains.python.debugger.PyDebuggerException;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
@@ -12,7 +11,7 @@ public class LoadSourceCommand extends AbstractCommand {
 
   private String myContent = null;
 
-  protected LoadSourceCommand(@Nonnull RemoteDebugger debugger, String path) {
+  protected LoadSourceCommand(RemoteDebugger debugger, String path) {
     super(debugger, LOAD_SOURCE);
     myPath = path;
   }

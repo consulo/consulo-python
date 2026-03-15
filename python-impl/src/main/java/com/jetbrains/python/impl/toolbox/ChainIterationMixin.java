@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.toolbox;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common logic of chain iterators.

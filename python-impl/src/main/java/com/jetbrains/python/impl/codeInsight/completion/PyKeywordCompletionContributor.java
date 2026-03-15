@@ -36,10 +36,8 @@ import consulo.language.psi.*;
 import consulo.language.psi.filter.ElementFilter;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ProcessingContext;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 import static consulo.language.pattern.PlatformPatterns.psiFile;
@@ -324,7 +322,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 			psiElement().afterLeaf(psiElement().inside(psiElement(PyWithItem.class).with(new PatternCondition<PyWithItem>("withoutAsKeyword")
 			{
 				@Override
-				public boolean accepts(@Nonnull PyWithItem item, ProcessingContext context)
+				public boolean accepts(PyWithItem item, ProcessingContext context)
 				{
 					return item.getNode().findChildByType(PyTokenTypes.AS_KEYWORD) == null;
 				}
@@ -415,7 +413,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 
 	// ======
 
-	private static void putKeywords(CompletionResultSet result, TailType tail, @NonNls @Nonnull String... words)
+	private static void putKeywords(CompletionResultSet result, TailType tail, String... words)
 	{
 		for(String s : words)
 		{
@@ -424,7 +422,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 	}
 
 	private static void putKeyword(
-			@Nonnull @NonNls String keyword,
+			String keyword,
 			InsertHandler<PythonLookupElement> handler,
 			TailType tail,
 			CompletionResultSet result)
@@ -451,7 +449,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 				new CompletionProvider()
 				{
 					public void addCompletions(
-                        @Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result
+                        CompletionParameters parameters, ProcessingContext context, CompletionResultSet result
 					)
 					{
 						putKeywords(result, TailType.NONE, "def", "class", "for", "if", "while", "with");
@@ -478,7 +476,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 				new CompletionProvider()
 				{
 					public void addCompletions(
-                        @Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result
+                        CompletionParameters parameters, ProcessingContext context, CompletionResultSet result
 					)
 					{
 						putKeywords(result, TailType.SPACE, "assert", "del", "exec", "from", "import", "raise");
@@ -571,7 +569,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 				new CompletionProvider()
 				{
 					public void addCompletions(
-                        @Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result
+                        CompletionParameters parameters, ProcessingContext context, CompletionResultSet result
 					)
 					{
 						putKeyword("except", UnindentingInsertHandler.INSTANCE, TailType.NONE, result);
@@ -683,7 +681,7 @@ public class PyKeywordCompletionContributor extends CompletionContributor
                                       final ProcessingContext context,
                                       @NotNull final CompletionResultSet result
         ) {
-          final @NonNls String[] space_strings = {"if"};
+          final String[] space_strings = {"if"};
           putKeywords(space_strings, TailType.SPACE, result);
         }
       }
@@ -767,8 +765,8 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 			myInsertHandler = insertHandler;
 		}
 
-		public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context,
-                                   @Nonnull CompletionResultSet result)
+		public void addCompletions(CompletionParameters parameters, ProcessingContext context,
+                                   CompletionResultSet result)
 		{
 			for(String s : myKeywords)
 			{
@@ -782,7 +780,6 @@ public class PyKeywordCompletionContributor extends CompletionContributor
 		}
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

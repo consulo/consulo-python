@@ -26,18 +26,17 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 @ExtensionImpl
 public class PythonFindUsagesProvider implements FindUsagesProvider {
-  public boolean canFindUsagesFor(@Nonnull PsiElement psiElement) {
+  public boolean canFindUsagesFor(PsiElement psiElement) {
     return psiElement instanceof PsiNamedElement || psiElement instanceof PyReferenceExpression;
   }
 
-  public String getHelpId(@Nonnull PsiElement psiElement) {
+  public String getHelpId(PsiElement psiElement) {
     if (psiElement instanceof PyClass) {
       return "reference.dialogs.findUsages.class";
     }
@@ -50,8 +49,7 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     return null;
   }
 
-  @Nonnull
-  public String getType(@Nonnull PsiElement element) {
+  public String getType(PsiElement element) {
     if (element instanceof PyNamedParameter) return "parameter";  //TODO: replace strings to messages
     if (element instanceof PyFunction) {
       if (((PyFunction) element).getContainingClass() != null) {
@@ -74,8 +72,7 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     return "";
   }
 
-  @Nonnull
-  public String getDescriptiveName(@Nonnull PsiElement element) {
+  public String getDescriptiveName(PsiElement element) {
     if (element instanceof PsiNamedElement) {
       String name = ((PsiNamedElement)element).getName();
       return name == null ? "<unnamed>" : name;
@@ -90,8 +87,7 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     return "";
   }
 
-  @Nonnull
-  public String getNodeText(@Nonnull PsiElement element, boolean useFullName) {
+  public String getNodeText(PsiElement element, boolean useFullName) {
     if (element instanceof PyNamedParameter) {
       StringBuilder result = new StringBuilder(((PyNamedParameter)element).getName());
       PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
@@ -121,7 +117,6 @@ public class PythonFindUsagesProvider implements FindUsagesProvider {
     return new PyWordsScanner();
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

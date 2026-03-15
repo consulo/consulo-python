@@ -27,7 +27,6 @@ import consulo.util.collection.primitive.ints.IntSet;
 import consulo.util.collection.primitive.ints.IntSets;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.PrimitiveIterator;
 
 /**
@@ -41,7 +40,7 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
   }
 
   @Override
-  public CharSequence adjustWhiteSpaceIfNecessary(@Nonnull CharSequence whiteSpaceText, @Nonnull PsiElement startElement, int startOffset,
+  public CharSequence adjustWhiteSpaceIfNecessary(CharSequence whiteSpaceText, PsiElement startElement, int startOffset,
                                                   int endOffset, CodeStyleSettings codeStyleSettings) {
     CharSequence whiteSpace = super.adjustWhiteSpaceIfNecessary(whiteSpaceText, startElement, startOffset, endOffset, codeStyleSettings);
     if (whiteSpace.length() > 0 && whiteSpace.charAt(0) == '\n' && !StringUtil.contains(whiteSpace, 0, whiteSpace.length(), '\\') &&
@@ -69,9 +68,8 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
    * @param nodeAfter
    * @return symbols to use for replacing <code>[startOffset; endOffset)</code> sub-sequence of the given text
    */
-  @Nonnull
   @Override
-  public CharSequence adjustWhiteSpaceIfNecessary(@Nonnull CharSequence whiteSpaceText, @Nonnull CharSequence text, int startOffset,
+  public CharSequence adjustWhiteSpaceIfNecessary(CharSequence whiteSpaceText, CharSequence text, int startOffset,
                                                   int endOffset, CodeStyleSettings codeStyleSettings, ASTNode nodeAfter) {
     // The general idea is that '\' symbol before line feed should be preserved.
     IntSet initialBackSlashes = countBackSlashes(text, startOffset, endOffset);
@@ -140,7 +138,6 @@ public class PyWhiteSpaceFormattingStrategy extends StaticSymbolWhiteSpaceDefini
     return result;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

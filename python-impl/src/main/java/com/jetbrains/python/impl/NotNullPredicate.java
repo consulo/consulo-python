@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.base.Predicate;
 
 /**
@@ -41,7 +40,7 @@ public class NotNullPredicate<T> implements Predicate<T>
 		return applyNotNull(input);
 	}
 
-	protected boolean applyNotNull(@Nonnull T input)
+	protected boolean applyNotNull(T input)
 	{
 		return true;
 	}

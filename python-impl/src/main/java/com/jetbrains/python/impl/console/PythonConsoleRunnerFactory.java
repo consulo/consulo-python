@@ -21,18 +21,16 @@ import consulo.ide.ServiceManager;
 import consulo.module.Module;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
  */
 @ServiceAPI(ComponentScope.APPLICATION)
 public abstract class PythonConsoleRunnerFactory {
-  @Nonnull
   public static PythonConsoleRunnerFactory getInstance() {
     return ServiceManager.getService(PythonConsoleRunnerFactory.class);
   }
 
-  public abstract PydevConsoleRunner createConsoleRunner(@Nonnull Project project, @Nullable Module contextModule);
+  public abstract PydevConsoleRunner createConsoleRunner(Project project, @Nullable Module contextModule);
 }

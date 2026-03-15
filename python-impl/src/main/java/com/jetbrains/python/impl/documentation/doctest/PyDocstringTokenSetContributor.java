@@ -19,7 +19,6 @@ package com.jetbrains.python.impl.documentation.doctest;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PythonDialectsTokenSetContributorBase;
-import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -28,13 +27,11 @@ import jakarta.annotation.Nonnull;
 public class PyDocstringTokenSetContributor extends PythonDialectsTokenSetContributorBase {
   public static final TokenSet DOCSTRING_REFERENCE_EXPRESSIONS = TokenSet.create(PyDocstringTokenTypes.DOC_REFERENCE);
 
-  @Nonnull
   @Override
   public TokenSet getExpressionTokens() {
     return DOCSTRING_REFERENCE_EXPRESSIONS;
   }
 
-  @Nonnull
   @Override
   public TokenSet getReferenceExpressionTokens() {
     return DOCSTRING_REFERENCE_EXPRESSIONS;

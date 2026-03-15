@@ -27,19 +27,17 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Map;
 
 public class PyRemoveParameterQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameRemoveParameter();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         assert element instanceof PyParameter;
 

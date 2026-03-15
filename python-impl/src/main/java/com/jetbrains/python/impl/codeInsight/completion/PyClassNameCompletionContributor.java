@@ -53,7 +53,6 @@ import consulo.util.lang.function.Condition;
 import consulo.util.lang.function.Conditions;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collection;
 
 /**
@@ -63,7 +62,7 @@ import java.util.Collection;
 public class PyClassNameCompletionContributor extends CompletionContributor
 {
 	@Override
-	public void fillCompletionVariants(@Nonnull CompletionParameters parameters, @Nonnull CompletionResultSet result)
+	public void fillCompletionVariants(CompletionParameters parameters, CompletionResultSet result)
 	{
 		if(parameters.isExtendedCompletion())
 		{
@@ -176,7 +175,7 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 
 	private static final InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new PyFunctionInsertHandler()
 	{
-		public void handleInsert(@Nonnull InsertionContext context, @Nonnull LookupElement item)
+		public void handleInsert(InsertionContext context, LookupElement item)
 		{
 			int tailOffset = context.getTailOffset() - 1;
 			super.handleInsert(context, item);  // adds parentheses, modifies tail offset
@@ -221,14 +220,13 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		new WriteCommandAction(context.getProject(), context.getFile())
 		{
 			@Override
-			protected void run(@Nonnull Result result) throws Throwable
+			protected void run(Result result) throws Throwable
 			{
 				AddImportHelper.addImport(PyUtil.as(item.getPsiElement(), PsiNamedElement.class), context.getFile(), (PyElement) ref.getElement());
 			}
 		}.execute();
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

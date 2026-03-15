@@ -16,14 +16,11 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * The 'if/elif/else' statement.
  */
 public interface PyIfStatement extends PyStatementWithElse {
-  @Nonnull
   PyIfPart getIfPart();
-  @Nonnull
   PyIfPart[] getElifParts();
 }

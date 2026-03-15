@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.packaging.requirement;
 
-import jakarta.annotation.Nonnull;
 
 public enum PyRequirementRelation
 {
@@ -29,15 +28,13 @@ public enum PyRequirementRelation
 	COMPATIBLE("~="),
 	STR_EQ("===");
 
-	@Nonnull
 	private final String myValue;
 
-	PyRequirementRelation(@Nonnull String value)
+	PyRequirementRelation(String value)
 	{
 		myValue = value;
 	}
 
-	@Nonnull
 	@Override
 	public String toString()
 	{

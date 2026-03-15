@@ -22,21 +22,19 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
  * @since 2010-02-16
  */
 public class ConvertSetLiteralQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.intnConvertSetLiteralTo();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement setLiteral = descriptor.getPsiElement();
         if (setLiteral instanceof PySetLiteralExpression) {
             PyExpression[] expressions = ((PySetLiteralExpression) setLiteral).getElements();

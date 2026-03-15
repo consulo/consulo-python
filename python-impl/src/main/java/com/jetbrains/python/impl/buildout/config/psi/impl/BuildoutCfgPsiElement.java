@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.buildout.config.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.impl.psi.ASTWrapperPsiElement;
 import consulo.language.ast.ASTNode;
@@ -26,7 +25,7 @@ import consulo.language.psi.NavigatablePsiElement;
  * @author traff
  */
 public class BuildoutCfgPsiElement extends ASTWrapperPsiElement implements NavigatablePsiElement {
-  public BuildoutCfgPsiElement(@Nonnull ASTNode node) {
+  public BuildoutCfgPsiElement(ASTNode node) {
     super(node);
   }
 

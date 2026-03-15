@@ -23,8 +23,7 @@ import consulo.execution.action.Location;
 import consulo.language.psi.PsiFile;
 import consulo.module.Module;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Filters out Python scripts for which it doesn't make sense to run the standard Python configuration,
@@ -36,5 +35,5 @@ import jakarta.annotation.Nullable;
 public interface RunnableScriptFilter {
   ExtensionPointName<RunnableScriptFilter> EP_NAME = ExtensionPointName.create(RunnableScriptFilter.class);
 
-  boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable TypeEvalContext context);
+  boolean isRunnableScript(PsiFile script, Module module, Location location, @Nullable TypeEvalContext context);
 }

@@ -42,8 +42,7 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.function.Function;
 
 /**
@@ -59,14 +58,13 @@ public class AddFieldQuickFix implements LocalQuickFix {
   private String myIdentifier;
   private boolean replaceInitializer = false;
 
-  public AddFieldQuickFix(@Nonnull String identifier, @Nonnull String initializer, String className, boolean replace) {
+  public AddFieldQuickFix(String identifier, String initializer, String className, boolean replace) {
     myIdentifier = identifier;
     myInitializer = initializer;
     myClassName = className;
     replaceInitializer = replace;
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return PyLocalize.qfixNameAddField$0ToClass$1(myIdentifier, myClassName);
@@ -91,7 +89,7 @@ public class AddFieldQuickFix implements LocalQuickFix {
     return result;
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     // expect the descriptor to point to the unresolved identifier.
     PsiElement element = descriptor.getPsiElement();
     PyClassType type = getClassType(element);
@@ -118,7 +116,7 @@ public class AddFieldQuickFix implements LocalQuickFix {
     PyUtil.showBalloon(project, PyBundle.message("QFIX.failed.to.add.field"), NotificationType.ERROR);
   }
 
-  private static PyClassType getClassType(@Nonnull PsiElement element) {
+  private static PyClassType getClassType(PsiElement element) {
     if (element instanceof PyQualifiedExpression) {
       PyExpression qualifier = ((PyQualifiedExpression)element).getQualifier();
       if (qualifier == null) {
@@ -131,7 +129,7 @@ public class AddFieldQuickFix implements LocalQuickFix {
     return aClass != null ? new PyClassTypeImpl(aClass, false) : null;
   }
 
-  private void showTemplateBuilder(PsiElement initStatement, @Nonnull PsiFile file) {
+  private void showTemplateBuilder(PsiElement initStatement, PsiFile file) {
     initStatement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(initStatement);
     if (initStatement instanceof PyAssignmentStatement) {
       TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(initStatement);

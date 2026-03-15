@@ -31,8 +31,7 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +44,7 @@ import java.util.function.Consumer;
 @Singleton
 public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory {
   @Override
-  @Nonnull
-  public PydevConsoleRunnerImpl createConsoleRunner(@Nonnull Project project, @Nullable Module contextModule) {
+  public PydevConsoleRunnerImpl createConsoleRunner(Project project, @Nullable Module contextModule) {
     Pair<Sdk, Module> sdkAndModule = PydevConsoleRunner.findPythonSdkAndModule(project, contextModule);
 
     Module module = sdkAndModule.second;
@@ -113,12 +111,11 @@ public class PydevConsoleRunnerFactory extends PythonConsoleRunnerFactory {
     return createConsoleRunner(project, sdk, workingDir, envs, PyConsoleType.PYTHON, settingsProvider, rerunAction, setupFragment);
   }
 
-  public static void putIPythonEnvFlag(@Nonnull Project project, Map<String, String> envs) {
+  public static void putIPythonEnvFlag(Project project, Map<String, String> envs) {
     String ipythonEnabled = PyConsoleOptions.getInstance(project).isIpythonEnabled() ? "True" : "False";
     envs.put(PythonEnvUtil.IPYTHONENABLE, ipythonEnabled);
   }
 
-  @Nonnull
   protected PydevConsoleRunnerImpl createConsoleRunner(Project project,
                                                        Sdk sdk,
                                                        String workingDir,

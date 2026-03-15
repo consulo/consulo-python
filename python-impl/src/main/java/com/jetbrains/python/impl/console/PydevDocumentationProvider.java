@@ -28,9 +28,8 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author oleg
@@ -38,7 +37,6 @@ import jakarta.annotation.Nullable;
 @ExtensionImpl
 public class PydevDocumentationProvider extends AbstractDocumentationProvider implements LanguageDocumentationProvider {
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

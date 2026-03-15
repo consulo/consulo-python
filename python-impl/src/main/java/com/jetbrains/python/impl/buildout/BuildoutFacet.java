@@ -16,6 +16,8 @@
 
 package com.jetbrains.python.impl.buildout;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Facet for buildout support.
  * Knows which script in bin/ contains paths we want to add.

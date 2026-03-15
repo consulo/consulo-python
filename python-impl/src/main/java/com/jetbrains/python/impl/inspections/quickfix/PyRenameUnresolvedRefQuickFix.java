@@ -38,8 +38,7 @@ import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -50,14 +49,13 @@ import java.util.*;
  */
 public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixRenameUnresolvedReference();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
         if (referenceExpression == null) {
@@ -111,8 +109,8 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
 
 
     private static List<PyReferenceExpression> collectExpressionsToRename(
-        @Nonnull final PyReferenceExpression expression,
-        @Nonnull ScopeOwner parentScope
+        final PyReferenceExpression expression,
+        ScopeOwner parentScope
     ) {
 
         final List<PyReferenceExpression> result = new ArrayList<PyReferenceExpression>();
@@ -131,7 +129,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
     }
 
     @Nullable
-    private static Editor getEditor(@Nonnull Project project, @Nonnull PsiFile file, int offset) {
+    private static Editor getEditor(Project project, PsiFile file, int offset) {
         VirtualFile virtualFile = file.getVirtualFile();
         if (virtualFile != null) {
             return FileEditorManager.getInstance(project).openTextEditor(
@@ -141,7 +139,7 @@ public class PyRenameUnresolvedRefQuickFix implements LocalQuickFix {
         return null;
     }
 
-    private static LookupElement[] collectLookupItems(@Nonnull ScopeOwner parentScope) {
+    private static LookupElement[] collectLookupItems(ScopeOwner parentScope) {
         Set<LookupElement> items = new LinkedHashSet<LookupElement>();
 
         Collection<String> usedNames = PyRefactoringUtil.collectUsedNames(parentScope);

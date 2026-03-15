@@ -23,7 +23,6 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
-import jakarta.annotation.Nonnull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,8 +36,8 @@ public class DefaultPySuperMethodsSearchExecutor implements PySuperMethodsSearch
     @Override
     @RequiredReadAction
     public boolean execute(
-        @Nonnull PySuperMethodsSearch.SearchParameters queryParameters,
-        @Nonnull Predicate<? super PsiElement> consumer
+        PySuperMethodsSearch.SearchParameters queryParameters,
+        Predicate<? super PsiElement> consumer
     ) {
         PyFunction func = queryParameters.getDerivedMethod();
         String name = func.getName();

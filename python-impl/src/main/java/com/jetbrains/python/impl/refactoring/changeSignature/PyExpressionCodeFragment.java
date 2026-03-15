@@ -25,9 +25,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.project.Project;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -37,9 +35,9 @@ public class PyExpressionCodeFragment extends PyFileImpl implements PsiCodeFragm
 
   private GlobalSearchScope myResolveScope;
 
-  public PyExpressionCodeFragment(@Nonnull Project project,
-                                  @NonNls String name,
-                                  @Nonnull CharSequence text) {
+  public PyExpressionCodeFragment(Project project,
+                                  String name,
+                                  CharSequence text) {
     super(new SingleRootFileViewProvider(PsiManager.getInstance(project), new LightVirtualFile(name, PythonFileType.INSTANCE, text), true));
     ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
   }
@@ -60,10 +58,10 @@ public class PyExpressionCodeFragment extends PyFileImpl implements PsiCodeFragm
   }
 
   @Override
-  public void accept(@Nonnull PsiElementVisitor visitor) {
+  public void accept(PsiElementVisitor visitor) {
   }
 
-  public boolean isAcceptedFor(@Nonnull Class visitorClass) {
+  public boolean isAcceptedFor(Class visitorClass) {
     return false;
   }
 }

@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.debugger;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.application.ApplicationManager;
 import consulo.document.Document;
 import consulo.project.Project;
@@ -121,7 +120,7 @@ public class PyDebugSupportUtils
 	}
 
 	@Nullable
-	private static String getLineText(@Nonnull Document document, int line)
+	private static String getLineText(Document document, int line)
 	{
 		if(line > 0 && line < document.getLineCount())
 		{
@@ -130,7 +129,7 @@ public class PyDebugSupportUtils
 		return null;
 	}
 
-	public static boolean isContinuationLine(@Nonnull Document document, int line)
+	public static boolean isContinuationLine(Document document, int line)
 	{
 		String text = getLineText(document, line);
 		if(text != null && text.trim().endsWith("\\"))

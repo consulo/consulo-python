@@ -29,8 +29,7 @@ import com.jetbrains.python.psi.types.PyType;
 import consulo.language.psi.PsiElement;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
@@ -40,7 +39,7 @@ public class PySignatureUtil {
   }
 
   @Nullable
-  public static String getShortestImportableName(@Nullable PsiElement anchor, @Nonnull String type) {
+  public static String getShortestImportableName(@Nullable PsiElement anchor, String type) {
     PyType pyType = PyTypeParser.getTypeByName(anchor, type);
     if (pyType instanceof PyClassType) {
       PyClass c = ((PyClassType)pyType).getPyClass();
@@ -73,7 +72,7 @@ public class PySignatureUtil {
   }
 
   @Nullable
-  public static String getArgumentType(@Nonnull PyFunction function, @Nonnull String name) {
+  public static String getArgumentType(PyFunction function, String name) {
     PySignatureCacheManager cacheManager = PySignatureCacheManager.getInstance(function.getProject());
     PySignature signature = cacheManager.findSignature(function);
     if (signature != null) {

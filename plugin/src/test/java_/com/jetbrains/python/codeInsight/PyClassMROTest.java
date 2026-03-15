@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.types.PyClassLikeType;
@@ -56,7 +55,7 @@ public abstract class PyClassMROTest extends PyTestCase {
     assertMRO(getClass("H"), "E", "F", "B", "G", "C", "D", "A", "object");
   }
 
-  public void assertMRO(@Nonnull PyClass cls, @Nonnull String... mro) {
+  public void assertMRO(PyClass cls, String... mro) {
     List<PyClassLikeType> types = cls.getAncestorTypes(TypeEvalContext.codeInsightFallback(myFixture.getProject()));
     List<String> classNames = new ArrayList<String>();
     for (PyClassLikeType type : types) {
@@ -72,8 +71,7 @@ public abstract class PyClassMROTest extends PyTestCase {
     assertOrderedEquals(classNames, Arrays.asList(mro));
   }
 
-  @Nonnull
-  public PyClass getClass(@Nonnull String name) {
+  public PyClass getClass(String name) {
     myFixture.configureByFile(getPath(getTestName(false)));
     PyClass cls = myFixture.findElementByText(name, PyClass.class);
     assertNotNull(cls);

@@ -21,10 +21,8 @@ import consulo.configurable.*;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.ui.ex.awt.JBCheckBox;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.inject.Inject;
-import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 import java.util.List;
@@ -48,7 +46,6 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
         myProject = project;
     }
 
-    @Nonnull
     @Override
     public String getId() {
         return "pyconsole";
@@ -91,13 +88,11 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
                                                                final String helpReference) {
         return new SearchableConfigurable() {
 
-            @Nonnull
             @Override
             public String getId() {
                 return "PyConsoleConfigurable." + id;
             }
 
-            @Nls
             @Override
             public LocalizeValue getDisplayName() {
                 return name;
@@ -134,7 +129,6 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
         };
     }
 
-    @Nls
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO("Console");

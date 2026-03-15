@@ -27,8 +27,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ObjectUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Detect and report incompatibilities between __new__ and __init__ signatures.
@@ -37,25 +36,23 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class PyInitNewSignatureInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameNewInitSignature();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 

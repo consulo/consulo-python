@@ -33,7 +33,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,13 +41,12 @@ import java.util.List;
  * @author ktisha
  */
 public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameMakeFunction();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (problemFunction == null) {
@@ -84,9 +82,9 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
     }
 
     private static void updateUsage(
-        @Nonnull PsiElement finalElement,
-        @Nonnull PyReferenceExpression element,
-        @Nonnull PsiFile usageFile,
+        PsiElement finalElement,
+        PyReferenceExpression element,
+        PsiFile usageFile,
         boolean addImport
     ) {
         PyExpression qualifier = element.getQualifier();
@@ -122,7 +120,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
         }
     }
 
-    private static void removeFormerImport(@Nonnull PsiFile usageFile, boolean addImport) {
+    private static void removeFormerImport(PsiFile usageFile, boolean addImport) {
         if (usageFile instanceof PyFile && addImport) {
             LocalInspectionToolSession session = new LocalInspectionToolSession(usageFile, 0, usageFile.getTextLength());
             final PyUnresolvedReferencesInspection.Visitor visitor =
@@ -139,7 +137,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
         }
     }
 
-    private static void updateAssignment(PyReferenceExpression element, @Nonnull PsiElement resolved) {
+    private static void updateAssignment(PyReferenceExpression element, PsiElement resolved) {
         PsiElement parent = resolved.getParent();
         if (parent instanceof PyAssignmentStatement) {
             PyExpression value = ((PyAssignmentStatement) parent).getAssignedValue();
@@ -158,7 +156,7 @@ public class PyMakeFunctionFromMethodQuickFix implements LocalQuickFix {
         }
     }
 
-    private static void updateArgumentList(@Nonnull PyReferenceExpression element) {
+    private static void updateArgumentList(PyReferenceExpression element) {
         PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
         if (callExpression == null) {
             return;

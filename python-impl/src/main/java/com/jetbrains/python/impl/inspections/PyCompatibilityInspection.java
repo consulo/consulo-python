@@ -38,8 +38,7 @@ import consulo.module.content.ProjectRootManager;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.ArrayUtil;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -50,23 +49,20 @@ import java.util.*;
  */
 @ExtensionImpl
 public class PyCompatibilityInspection extends PyInspection {
-    @Nonnull
     public static final List<String> BACKPORTED_PACKAGES = List.of("enum", "typing");
 
     public static final int LATEST_INSPECTION_VERSION = 2;
 
-    @Nonnull
     public static final List<LanguageLevel> DEFAULT_PYTHON_VERSIONS = ImmutableList.of(LanguageLevel.PYTHON27, LanguageLevel.getLatest());
 
     @Nullable
-    public static PyCompatibilityInspection getInstance(@Nonnull PsiElement element) {
+    public static PyCompatibilityInspection getInstance(PsiElement element) {
         InspectionProfile inspectionProfile =
             InspectionProjectProfileManager.getInstance(element.getProject()).getInspectionProfile();
         String toolName = PyCompatibilityInspection.class.getSimpleName();
         return (PyCompatibilityInspection) inspectionProfile.getUnwrappedTool(toolName, element);
     }
 
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyCompatibilityInspectionState();
@@ -87,16 +83,14 @@ public class PyCompatibilityInspection extends PyInspection {
         return result;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameCompatibility();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
         LocalInspectionToolSession session,
         Object state
@@ -115,9 +109,9 @@ public class PyCompatibilityInspection extends PyInspection {
 
         @Override
         protected void registerProblem(
-            @Nonnull PsiElement element,
-            @Nonnull TextRange range,
-            @Nonnull String message,
+            PsiElement element,
+            TextRange range,
+            String message,
             @Nullable LocalQuickFix quickFix,
             boolean asError
         ) {
@@ -325,7 +319,7 @@ public class PyCompatibilityInspection extends PyInspection {
             warnAboutAsyncAndAwaitInPy35AndPy36(node);
         }
 
-        private void warnAboutAsyncAndAwaitInPy35AndPy36(@Nonnull PsiNameIdentifierOwner nameIdentifierOwner) {
+        private void warnAboutAsyncAndAwaitInPy35AndPy36(PsiNameIdentifierOwner nameIdentifierOwner) {
             PsiElement nameIdentifier = nameIdentifierOwner.getNameIdentifier();
 
             if (nameIdentifier != null && ArrayUtil.contains(nameIdentifierOwner.getName(), PyNames.AWAIT, PyNames.ASYNC)) {

@@ -16,12 +16,10 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Represents a literal dict expression, e.g. <tt>{'a': 1}</tt>
  */
 public interface PyDictLiteralExpression extends PySequenceExpression {
-  @Nonnull
   PyKeyValueExpression[] getElements();
 }

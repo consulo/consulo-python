@@ -34,7 +34,6 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -64,17 +63,15 @@ public class PythonTestConfigurationType implements ConfigurationType {
     }
 
     @Override
-    public boolean isApplicable(@Nonnull Project project) {
+    public boolean isApplicable(Project project) {
       return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
     }
 
-    @Nonnull
     @Override
     public String getId() {
       return "Unittests";
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
       return PyLocalize.runcfgUnittestDisplay_name();
@@ -92,11 +89,10 @@ public class PythonTestConfigurationType implements ConfigurationType {
     }
 
     @Override
-    public boolean isApplicable(@Nonnull Project project) {
+    public boolean isApplicable(Project project) {
       return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
     }
 
-    @Nonnull
     @Override
     public String getId() {
       return "Doctests";
@@ -119,11 +115,10 @@ public class PythonTestConfigurationType implements ConfigurationType {
     }
 
     @Override
-    public boolean isApplicable(@Nonnull Project project) {
+    public boolean isApplicable(Project project) {
       return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
     }
 
-    @Nonnull
     @Override
     public String getId() {
       return "py.test";
@@ -146,17 +141,15 @@ public class PythonTestConfigurationType implements ConfigurationType {
     }
 
     @Override
-    public boolean isApplicable(@Nonnull Project project) {
+    public boolean isApplicable(Project project) {
       return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
     }
 
-    @Nonnull
     @Override
     public String getId() {
       return "Nosetests";
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
       return PyLocalize.runcfgNosetestsDisplay_name();
@@ -174,17 +167,15 @@ public class PythonTestConfigurationType implements ConfigurationType {
     }
 
     @Override
-    public boolean isApplicable(@Nonnull Project project) {
+    public boolean isApplicable(Project project) {
       return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
     }
 
-    @Nonnull
     @Override
     public String getId() {
       return "Attests";
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
       return PyLocalize.runcfgAttestDisplay_name();
@@ -206,7 +197,6 @@ public class PythonTestConfigurationType implements ConfigurationType {
     return PythonIcons.Python.PythonTests;
   }
 
-  @Nonnull
   @Override
   public String getId() {
     return ID;

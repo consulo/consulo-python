@@ -26,7 +26,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.ui.ex.awt.UIUtil;
 
-import jakarta.annotation.Nonnull;
 import java.net.ServerSocket;
 import java.util.Map;
 
@@ -37,10 +36,10 @@ public class PyConsoleDebugProcess extends PyDebugProcess {
     private final int myLocalPort;
     private final PyConsoleDebugProcessHandler myConsoleDebugProcessHandler;
 
-    public PyConsoleDebugProcess(@Nonnull XDebugSession session,
-                                 @Nonnull ServerSocket serverSocket,
-                                 @Nonnull ExecutionConsole executionConsole,
-                                 @Nonnull PyConsoleDebugProcessHandler consoleDebugProcessHandler) {
+    public PyConsoleDebugProcess(XDebugSession session,
+                                 ServerSocket serverSocket,
+                                 ExecutionConsole executionConsole,
+                                 PyConsoleDebugProcessHandler consoleDebugProcessHandler) {
         super(session, serverSocket, executionConsole, consoleDebugProcessHandler, false);
         myLocalPort = serverSocket.getLocalPort();
         myConsoleDebugProcessHandler = consoleDebugProcessHandler;

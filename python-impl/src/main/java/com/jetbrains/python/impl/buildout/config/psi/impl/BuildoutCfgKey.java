@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.buildout.config.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 
@@ -24,7 +23,7 @@ import consulo.language.ast.ASTNode;
  * @author traff
  */
 public class BuildoutCfgKey extends BuildoutCfgPsiElement {
-  public BuildoutCfgKey(@Nonnull ASTNode node) {
+  public BuildoutCfgKey(ASTNode node) {
     super(node);
   }
 

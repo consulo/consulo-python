@@ -26,7 +26,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.Stack;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to remove all unnecessary backslashes in expression
@@ -34,12 +33,11 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class RemoveUnnecessaryBackslashQuickFix implements LocalQuickFix {
-    @Nonnull
     public LocalizeValue getName() {
         return PyLocalize.qfixRemoveUnnecessaryBackslash();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement problemElement = descriptor.getPsiElement();
         if (problemElement != null) {
             PsiElement parent = PsiTreeUtil.getParentOfType(problemElement, PythonEnterHandler.IMPLICIT_WRAP_CLASSES);

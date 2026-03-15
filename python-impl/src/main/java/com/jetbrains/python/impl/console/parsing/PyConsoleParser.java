@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.console.parsing;
 
-import jakarta.annotation.Nonnull;
 import consulo.language.ast.ASTNode;
 import consulo.language.parser.PsiBuilder;
 import consulo.language.ast.IElementType;
@@ -41,7 +40,6 @@ public class PyConsoleParser extends PyParser
 		myLanguageLevel = languageLevel;
 	}
 
-	@Nonnull
 	@Override
 	public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion)
 	{

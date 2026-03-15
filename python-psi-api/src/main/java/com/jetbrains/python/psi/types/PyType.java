@@ -18,8 +18,7 @@ package com.jetbrains.python.psi.types;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.util.dataholder.Key;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.ProcessingContext;
@@ -48,10 +47,10 @@ public interface PyType
 	 * or a list of elements that define the name, a la multiResolve().
 	 */
 	@Nullable
-	List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
+	List<? extends RatedResolveResult> resolveMember(String name,
 			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext);
+			AccessDirection direction,
+			PyResolveContext resolveContext);
 
 	/**
 	 * Proposes completion variants from type's attributes.

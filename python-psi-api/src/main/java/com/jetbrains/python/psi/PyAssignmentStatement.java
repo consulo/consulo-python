@@ -17,8 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.util.lang.Pair;
 
 /**
@@ -38,7 +37,6 @@ public interface PyAssignmentStatement extends PyStatement, PyNamedElementContai
 	 *
 	 * @return the list of assignment target expressions
 	 */
-	@Nonnull
 	PyExpression[] getRawTargets();
 
 
@@ -73,12 +71,11 @@ public interface PyAssignmentStatement extends PyStatement, PyNamedElementContai
 	 *
 	 * @return a list of [target, value] pairs; either part of a pair may be null, but not both.
 	 */
-	@Nonnull
 	List<Pair<PyExpression, PyExpression>> getTargetsToValuesMapping();
 
 	@Nullable
 	PyExpression getLeftHandSideExpression();
 
-	boolean isAssignmentTo(@Nonnull String name);
+	boolean isAssignmentTo(String name);
 
 }

@@ -79,8 +79,7 @@ import consulo.util.dataholder.Key;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.*;
@@ -120,9 +119,9 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   private PyStackFrame myConsoleContextFrame = null;
   private PyReferrersLoader myReferrersProvider;
 
-  public PyDebugProcess(@Nonnull XDebugSession session,
-                        @Nonnull ServerSocket serverSocket,
-                        @Nonnull ExecutionConsole executionConsole,
+  public PyDebugProcess(XDebugSession session,
+                        ServerSocket serverSocket,
+                        ExecutionConsole executionConsole,
                         @Nullable ProcessHandler processHandler,
                         boolean
                           multiProcess) {
@@ -134,17 +133,17 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
          processHandler);
   }
 
-  public PyDebugProcess(@Nonnull XDebugSession session,
-                        @Nonnull ExecutionConsole executionConsole,
+  public PyDebugProcess(XDebugSession session,
+                        ExecutionConsole executionConsole,
                         @Nullable ProcessHandler processHandler,
-                        @Nonnull String serverHost,
+                        String serverHost,
                         int serverPort) {
     this(session, process -> new ClientModeMultiProcessDebugger(process, serverHost, serverPort), executionConsole, processHandler);
   }
 
-  private PyDebugProcess(@Nonnull XDebugSession session,
-                         @Nonnull DebuggerFactory debuggerFactory,
-                         @Nonnull ExecutionConsole executionConsole,
+  private PyDebugProcess(XDebugSession session,
+                         DebuggerFactory debuggerFactory,
+                         ExecutionConsole executionConsole,
                          @Nullable ProcessHandler processHandler) {
     super(session);
 
@@ -260,14 +259,12 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     return myPositionConverter;
   }
 
-  @Nonnull
   @Override
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
     return myBreakpointHandlers;
   }
 
   @Override
-  @Nonnull
   public XDebuggerEditorsProvider getEditorsProvider() {
     return myEditorsProvider;
   }
@@ -279,7 +276,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   }
 
   @Override
-  @Nonnull
   public ExecutionConsole createConsole() {
     return myExecutionConsole;
   }
@@ -297,7 +293,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   protected void waitForConnection(final LocalizeValue connectionMessage, LocalizeValue connectionTitle) {
     ProgressManager.getInstance().run(new Task.Backgroundable(getSession().getProject(), connectionTitle, false) {
       @Override
-      public void run(@Nonnull ProgressIndicator indicator) {
+      public void run(ProgressIndicator indicator) {
         indicator.setTextValue(connectionMessage);
         try {
           beforeConnect();
@@ -431,9 +427,9 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   }
 
   @Override
-  public void registerAdditionalActions(@Nonnull DefaultActionGroup leftToolbar,
-                                        @Nonnull DefaultActionGroup topToolbar,
-                                        @Nonnull DefaultActionGroup settings) {
+  public void registerAdditionalActions(DefaultActionGroup leftToolbar,
+                                        DefaultActionGroup topToolbar,
+                                        DefaultActionGroup settings) {
     super.registerAdditionalActions(leftToolbar, topToolbar, settings);
     settings.add(new WatchReturnValuesAction(this));
     settings.add(new SimplifiedView(this));
@@ -444,7 +440,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     private final PyDebugProcess myProcess;
     private final String myText;
 
-    public WatchReturnValuesAction(@Nonnull PyDebugProcess debugProcess) {
+    public WatchReturnValuesAction(PyDebugProcess debugProcess) {
       super("", "Enables watching executed functions return values", null);
       myWatchesReturnValues = PyDebuggerSettings.getInstance().isWatchReturnValues();
       myProcess = debugProcess;
@@ -452,7 +448,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
 
     @Override
-    public void update(@Nonnull AnActionEvent e) {
+    public void update(AnActionEvent e) {
       super.update(e);
       Presentation presentation = e.getPresentation();
       presentation.setEnabled(true);
@@ -481,7 +477,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     private final PyDebugProcess myProcess;
     private final String myText;
 
-    public SimplifiedView(@Nonnull PyDebugProcess debugProcess) {
+    public SimplifiedView(PyDebugProcess debugProcess) {
       super("", "Disables watching classes, functions and modules objects", null);
       mySimplifiedView = PyDebuggerSettings.getInstance().isSimplifiedView();
       myProcess = debugProcess;
@@ -489,7 +485,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
 
     @Override
-    public void update(@Nonnull AnActionEvent e) {
+    public void update(AnActionEvent e) {
       super.update(e);
       Presentation presentation = e.getPresentation();
       presentation.setEnabled(true);
@@ -654,7 +650,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   }
 
   @Override
-  public void runToPosition(@Nonnull XSourcePosition position, @Nullable XSuspendContext context) {
+  public void runToPosition(XSourcePosition position, @Nullable XSuspendContext context) {
     dropFrameCaches();
     if (isConnected() && !mySuspendedThreads.isEmpty()) {
       PySourcePosition pyPosition = myPositionConverter.convertToPython(position);
@@ -788,7 +784,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     return PyDebugSupportUtils.canSaveToTemp(project, name);
   }
 
-  @Nonnull
   private PyStackFrame currentFrame() throws PyDebuggerException {
     if (!isConnected()) {
       throw new PyDebuggerException("Disconnected");
@@ -928,7 +923,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
   }
 
-  @Nonnull
   protected PySuspendContext createSuspendContext(PyThreadInfo threadInfo) {
     return new PySuspendContext(this, threadInfo);
   }
@@ -943,7 +937,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     myNewVariableValue.clear();
   }
 
-  @Nonnull
   public List<PydevCompletionVariant> getCompletions(String prefix) throws Exception {
     if (isConnected()) {
       dropFrameCaches();
@@ -953,7 +946,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     return Lists.newArrayList();
   }
 
-  @Nonnull
   public String getDescription(String prefix) throws Exception {
     if (isConnected()) {
       dropFrameCaches();
@@ -1070,7 +1062,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   }
 
 
-  @Nonnull
   private static Ref<PsiElement> resolveInCurrentFrame(final String name, XSourcePosition currentPosition, PsiFile file) {
     final Ref<PsiElement> elementRef = Ref.create();
     PsiElement currentElement = file.findElementAt(currentPosition.getOffset());
@@ -1081,7 +1072,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
     PyResolveUtil.scopeCrawlUp(new PsiScopeProcessor() {
       @Override
-      public boolean execute(@Nonnull PsiElement element, @Nonnull ResolveState state) {
+      public boolean execute(PsiElement element, ResolveState state) {
         if ((element instanceof PyImportElement)) {
           PyImportElement importElement = (PyImportElement)element;
           if (name.equals(importElement.getVisibleName())) {
@@ -1102,12 +1093,12 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
       @Nullable
       @Override
-      public <T> T getHint(@Nonnull Key<T> hintKey) {
+      public <T> T getHint(Key<T> hintKey) {
         return null;
       }
 
       @Override
-      public void handleEvent(@Nonnull Event event, @Nullable Object associated) {
+      public void handleEvent(Event event, @Nullable Object associated) {
 
       }
     }, currentElement, name, null);
@@ -1180,7 +1171,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   }
 
   private interface DebuggerFactory {
-    @Nonnull
-    ProcessDebugger createDebugger(@Nonnull PyDebugProcess process);
+    ProcessDebugger createDebugger(PyDebugProcess process);
   }
 }

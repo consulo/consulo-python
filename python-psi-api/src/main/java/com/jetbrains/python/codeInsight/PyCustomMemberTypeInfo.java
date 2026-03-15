@@ -19,7 +19,6 @@ import consulo.util.lang.Pair;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolder;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,15 +30,14 @@ import java.util.Map;
  */
 public class PyCustomMemberTypeInfo<K>
 {
-	@Nonnull
 	private final Map<Key<K>, K> myCustomInfo = new HashMap<>();
 
-	public PyCustomMemberTypeInfo(@Nonnull Key<K> key, @Nonnull K value)
+	public PyCustomMemberTypeInfo(Key<K> key, K value)
 	{
 		this(Collections.singleton(Pair.create(key, value)));
 	}
 
-	public PyCustomMemberTypeInfo(@Nonnull Iterable<Pair<Key<K>, K>> customInfo)
+	public PyCustomMemberTypeInfo(Iterable<Pair<Key<K>, K>> customInfo)
 	{
 		for(Pair<Key<K>, K> pair : customInfo)
 		{
@@ -47,12 +45,12 @@ public class PyCustomMemberTypeInfo<K>
 		}
 	}
 
-	public PyCustomMemberTypeInfo(@Nonnull Map<Key<K>, K> customInfo)
+	public PyCustomMemberTypeInfo(Map<Key<K>, K> customInfo)
 	{
 		myCustomInfo.putAll(customInfo);
 	}
 
-	void fill(@Nonnull UserDataHolder typeToFill)
+	void fill(UserDataHolder typeToFill)
 	{
 		for(Map.Entry<Key<K>, K> entry : myCustomInfo.entrySet())
 		{

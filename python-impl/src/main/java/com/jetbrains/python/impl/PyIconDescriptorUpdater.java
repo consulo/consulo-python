@@ -30,7 +30,6 @@ import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
 
 import java.util.Objects;
 
@@ -41,7 +40,7 @@ import java.util.Objects;
 public class PyIconDescriptorUpdater implements IconDescriptorUpdater {
     @Override
     @RequiredReadAction
-    public void updateIcon(@Nonnull IconDescriptor iconDescriptor, @Nonnull PsiElement element, int i) {
+    public void updateIcon(IconDescriptor iconDescriptor, PsiElement element, int i) {
         if (element instanceof PsiDirectory directory) {
             if (directory.findFile(PyNames.INIT_DOT_PY) != null) {
                 VirtualFile vFile = directory.getVirtualFile();

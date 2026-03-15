@@ -21,7 +21,6 @@ import consulo.language.psi.PsiElement;
 import consulo.usage.UsageViewBundle;
 import consulo.usage.UsageViewDescriptor;
 import consulo.usage.UsageViewUtil;
-import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -33,7 +32,6 @@ public class PyInvertBooleanUsageViewDescriptor implements UsageViewDescriptor {
         myElement = element;
     }
 
-    @Nonnull
     @Override
     public PsiElement[] getElements() {
         return new PsiElement[]{myElement};

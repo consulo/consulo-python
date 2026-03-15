@@ -8,7 +8,6 @@ import consulo.content.bundle.SdkModificator;
 import consulo.content.bundle.SdkTable;
 import consulo.content.bundle.SdkType;
 import consulo.virtualFileSystem.LocalFileSystem;
-import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.List;
  * @author yole
  */
 public abstract class PythonMockSdk {
-  @NonNls private static final String MOCK_SDK_NAME = "Mock Python SDK";
+  private static final String MOCK_SDK_NAME = "Mock Python SDK";
 
   private PythonMockSdk() {
   }

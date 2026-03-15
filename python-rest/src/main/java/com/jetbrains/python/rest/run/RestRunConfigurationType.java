@@ -29,7 +29,6 @@ import consulo.project.Project;
 import consulo.reStructuredText.localize.RestLocalize;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -59,7 +58,6 @@ public class RestRunConfigurationType implements ConfigurationType {
   }
 
   @Override
-  @Nonnull
   public String getId() {
     return "RestRunConfigurationType";
   }
@@ -71,10 +69,9 @@ public class RestRunConfigurationType implements ConfigurationType {
 
   private static abstract class RestConfigurationFactory extends ConfigurationFactory {
     private final String myId;
-    @Nonnull
     private final LocalizeValue myDisplayName;
 
-    public RestConfigurationFactory(@Nonnull ConfigurationType type, @Nonnull String id, @Nonnull LocalizeValue displayName) {
+    public RestConfigurationFactory(ConfigurationType type, String id, LocalizeValue displayName) {
       super(type);
       myId = id;
       myDisplayName = displayName;
@@ -86,7 +83,6 @@ public class RestRunConfigurationType implements ConfigurationType {
     }
 
     @Override
-    @Nonnull
     public LocalizeValue getDisplayName() {
       return myDisplayName;
     }

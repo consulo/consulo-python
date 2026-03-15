@@ -21,7 +21,6 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to remove redundant decorator
@@ -29,13 +28,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class RemoveDecoratorQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixRemoveDecorator();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         element.delete();
     }

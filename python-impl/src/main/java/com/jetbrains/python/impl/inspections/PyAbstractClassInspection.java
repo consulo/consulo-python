@@ -32,8 +32,7 @@ import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,25 +45,23 @@ import static com.jetbrains.python.impl.psi.PyUtil.as;
  */
 @ExtensionImpl
 public class PyAbstractClassInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameAbstractClass();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -90,7 +87,7 @@ public class PyAbstractClassInspection extends PyInspection {
             }
         }
 
-        private boolean isAbstract(@Nonnull PyClass pyClass) {
+        private boolean isAbstract(PyClass pyClass) {
             PyType metaClass = pyClass.getMetaClassType(myTypeEvalContext);
             if (metaClass instanceof PyClassLikeType && PyNames.ABC_META_CLASS.equals(metaClass.getName())) {
                 return true;
@@ -109,7 +106,7 @@ public class PyAbstractClassInspection extends PyInspection {
             return false;
         }
 
-        private static boolean isAbstractMethodForClass(@Nonnull PyFunction method, @Nonnull PyClass cls) {
+        private static boolean isAbstractMethodForClass(PyFunction method, PyClass cls) {
             String methodName = method.getName();
             if (methodName == null ||
                 cls.findMethodByName(methodName, false, null) != null ||

@@ -24,8 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.ast.ASTNode;
@@ -224,8 +223,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
         return new Pair<>(result, usesNamedFormat);
     }
 
-    @Nonnull
-    public static String convertFormatSpec(@Nonnull String modifier, @Nullable String widthAndPrecision, @Nullable String conversionChar) {
+    public static String convertFormatSpec(String modifier, @Nullable String widthAndPrecision, @Nullable String conversionChar) {
         StringBuilder result = new StringBuilder();
         // in strict order
         if (has(modifier, '-')) {
@@ -255,7 +253,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
         return where.indexOf(what) >= 0;
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -293,7 +291,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
     }
 
     @Override
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAt = file.findElementAt(editor.getCaretModel().getOffset());
         PyBinaryExpression element = PsiTreeUtil.getParentOfType(elementAt, PyBinaryExpression.class, false);
         if (element == null) {
@@ -352,7 +350,7 @@ public class ConvertFormatOperatorToMethodIntention extends PyBaseIntentionActio
         element.replace(sure(((PyParenthesizedExpression) parenthesized).getContainedExpression()));
     }
 
-    private static boolean isDictCall(@Nonnull PyExpression callee, @Nonnull PyClassType classType) {
+    private static boolean isDictCall(PyExpression callee, PyClassType classType) {
         PyClassType dictType = PyBuiltinCache.getInstance(callee.getContainingFile()).getDictType();
         if (dictType != null && classType.getPyClass() == dictType.getPyClass()) {
             if (callee instanceof PyReferenceExpression) {

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Element that may belong to class like field (target expression) or method (function)

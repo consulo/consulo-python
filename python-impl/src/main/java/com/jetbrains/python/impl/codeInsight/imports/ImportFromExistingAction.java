@@ -41,7 +41,6 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.icon.IconDescriptorUpdaters;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -66,7 +65,7 @@ public class ImportFromExistingAction implements QuestionAction
 	 * @param name         relevant name ot the target element (e.g. of identifier in an expression).
 	 * @param useQualified if True, use qualified "import modulename" instead of "from modulename import ...".
 	 */
-	public ImportFromExistingAction(@Nonnull PsiElement target, @Nonnull List<ImportCandidateHolder> sources, @Nonnull String name, boolean useQualified, boolean importLocally)
+	public ImportFromExistingAction(PsiElement target, List<ImportCandidateHolder> sources, String name, boolean useQualified, boolean importLocally)
 	{
 		myTarget = target;
 		mySources = sources;
@@ -238,7 +237,7 @@ public class ImportFromExistingAction implements QuestionAction
 		new WriteCommandAction(src.getProject(), PyBundle.message("ACT.CMD.use.import"), myTarget.getContainingFile())
 		{
 			@Override
-			protected void run(@Nonnull Result result) throws Throwable
+			protected void run(Result result) throws Throwable
 			{
 				doIt(item);
 			}

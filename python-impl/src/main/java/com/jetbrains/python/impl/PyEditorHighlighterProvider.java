@@ -26,8 +26,7 @@ import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.fileType.FileType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -37,13 +36,12 @@ public class PyEditorHighlighterProvider implements EditorHighlighterProvider
 {
 	@Override
 	public EditorHighlighter getEditorHighlighter(@Nullable Project project,
-												  @Nonnull FileType fileType, @Nullable VirtualFile virtualFile,
-												  @Nonnull EditorColorsScheme colors)
+												  FileType fileType, @Nullable VirtualFile virtualFile,
+												  EditorColorsScheme colors)
 	{
 		return new PythonEditorHighlighter(colors, project, virtualFile);
 	}
 
-	@Nonnull
 	@Override
 	public FileType getFileType()
 	{

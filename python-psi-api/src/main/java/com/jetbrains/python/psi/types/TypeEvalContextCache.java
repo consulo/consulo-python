@@ -18,7 +18,6 @@ package com.jetbrains.python.psi.types;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Project service to cache {@link TypeEvalContext}
@@ -39,6 +38,5 @@ public interface TypeEvalContextCache {
    * @param standard context you want to use. Just instantiate it and pass here.
    * @return context from cache (the one equals by constraints to yours or the one you provided)
    */
-  @Nonnull
-  TypeEvalContext getContext(@Nonnull TypeEvalContext standard);
+  TypeEvalContext getContext(TypeEvalContext standard);
 }

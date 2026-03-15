@@ -29,7 +29,6 @@ import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
-import org.jetbrains.annotations.NonNls;
 
 import java.util.Collection;
 
@@ -98,12 +97,12 @@ public class PyContainingFileRenamerFactory implements AutomaticRenamerFactory {
     }
 
     @Override
-    protected String nameToCanonicalName(@NonNls String name, PsiNamedElement element) {
+    protected String nameToCanonicalName(String name, PsiNamedElement element) {
       return FileUtil.getNameWithoutExtension(name);
     }
 
     @Override
-    protected String canonicalNameToName(@NonNls String canonicalName, PsiNamedElement element) {
+    protected String canonicalNameToName(String canonicalName, PsiNamedElement element) {
       return canonicalName + "." + FileUtil.getExtension(myClass.getContainingFile().getName());
     }
 

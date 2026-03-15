@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
 import java.util.Collection;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;
 import consulo.virtualFileSystem.VirtualFile;
@@ -33,32 +32,28 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersVi
 class PyExtractSuperclassInitializationInfo extends MembersViewInitializationInfo
 {
 
-	@Nonnull
 	private final String myDefaultFilePath;
-	@Nonnull
 	private final VirtualFile[] myRoots;
 
 	/**
 	 * @param defaultFilePath module file path to display. User will be able to change it later.
 	 * @param roots           virtual files where user may add new module
 	 */
-	PyExtractSuperclassInitializationInfo(@Nonnull MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
-			@Nonnull Collection<PyMemberInfo<PyElement>> memberInfos,
-			@Nonnull String defaultFilePath,
-			@Nonnull VirtualFile... roots)
+	PyExtractSuperclassInitializationInfo(MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
+			Collection<PyMemberInfo<PyElement>> memberInfos,
+			String defaultFilePath,
+			VirtualFile... roots)
 	{
 		super(memberInfoModel, memberInfos);
 		myDefaultFilePath = defaultFilePath;
 		myRoots = roots.clone();
 	}
 
-	@Nonnull
 	public String getDefaultFilePath()
 	{
 		return myDefaultFilePath;
 	}
 
-	@Nonnull
 	public VirtualFile[] getRoots()
 	{
 		return myRoots.clone();

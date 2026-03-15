@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.parsing;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.parser.PsiBuilder;
@@ -45,7 +44,6 @@ public class PyParser implements PsiParser
 		myLanguageLevel = languageLevel;
 	}
 
-	@Nonnull
 	public ASTNode parse(IElementType root, PsiBuilder builder, LanguageVersion languageVersion)
 	{
 		long start = System.currentTimeMillis();

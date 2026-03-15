@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.EditorFactory;
@@ -29,7 +28,7 @@ import consulo.language.psi.PsiElement;
 public class PyQuickFixUtil
 {
 	@Nullable
-	public static Editor getEditor(@Nonnull PsiElement element)
+	public static Editor getEditor(PsiElement element)
 	{
 		Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
 		if(document != null)

@@ -20,8 +20,7 @@ import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Allows you to inject quick info into python documentation provider
@@ -40,5 +39,5 @@ public interface PythonDocumentationQuickInfoProvider
 	 * @return info (if exists) or null (if another provider should be checked)
 	 */
 	@Nullable
-	String getQuickInfo(@Nonnull PsiElement originalElement);
+	String getQuickInfo(PsiElement originalElement);
 }

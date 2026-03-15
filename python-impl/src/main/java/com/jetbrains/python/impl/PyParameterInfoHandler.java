@@ -36,7 +36,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.CharArrayUtil;
 import consulo.util.lang.xml.XmlStringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.*;
 
@@ -59,7 +58,7 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
 
     @Override
     @RequiredReadAction
-    public PyArgumentList findElementForParameterInfo(@Nonnull CreateParameterInfoContext context) {
+    public PyArgumentList findElementForParameterInfo(CreateParameterInfoContext context) {
         PyArgumentList argumentList = findArgumentList(context, -1);
         if (argumentList != null) {
             PyCallExpression callExpr = argumentList.getCallExpression();
@@ -91,13 +90,13 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
     }
 
     @Override
-    public void showParameterInfo(@Nonnull PyArgumentList element, @Nonnull CreateParameterInfoContext context) {
+    public void showParameterInfo(PyArgumentList element, CreateParameterInfoContext context) {
         context.showHint(element, element.getTextOffset(), this);
     }
 
     @Override
     @RequiredReadAction
-    public PyArgumentList findElementForUpdatingParameterInfo(@Nonnull UpdateParameterInfoContext context) {
+    public PyArgumentList findElementForUpdatingParameterInfo(UpdateParameterInfoContext context) {
         return findArgumentList(context, context.getParameterListStart());
     }
 
@@ -108,7 +107,7 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
      */
     @Override
     @RequiredReadAction
-    public void updateParameterInfo(@Nonnull PyArgumentList argumentList, @Nonnull UpdateParameterInfoContext context) {
+    public void updateParameterInfo(PyArgumentList argumentList, UpdateParameterInfoContext context) {
         if (context.getParameterOwner() != argumentList) {
             context.removeHint();
             return;
@@ -154,7 +153,7 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
 
     @Override
     @RequiredReadAction
-    public void updateUI(PyCallExpression.PyArgumentsMapping oldMapping, @Nonnull ParameterInfoUIContext context) {
+    public void updateUI(PyCallExpression.PyArgumentsMapping oldMapping, ParameterInfoUIContext context) {
         if (oldMapping == null) {
             return;
         }
@@ -231,11 +230,11 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
 
     @RequiredReadAction
     private static void highlightNext(
-        @Nonnull PyMarkedCallee marked,
-        @Nonnull List<PyParameter> parameterList,
-        @Nonnull List<PyNamedParameter> namedParameters,
-        @Nonnull Map<PyNamedParameter, Integer> parameterToIndex,
-        @Nonnull Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags,
+        PyMarkedCallee marked,
+        List<PyParameter> parameterList,
+        List<PyNamedParameter> namedParameters,
+        Map<PyNamedParameter, Integer> parameterToIndex,
+        Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags,
         boolean isArgsEmpty,
         int lastParamIndex
     ) {
@@ -278,11 +277,11 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
      */
     @RequiredReadAction
     private static int collectHighlights(
-        @Nonnull PyCallExpression.PyArgumentsMapping mapping,
-        @Nonnull List<PyParameter> parameterList,
-        @Nonnull Map<PyNamedParameter, Integer> parameterToIndex,
-        @Nonnull Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags,
-        @Nonnull List<PyExpression> flatArgs,
+        PyCallExpression.PyArgumentsMapping mapping,
+        List<PyParameter> parameterList,
+        Map<PyNamedParameter, Integer> parameterToIndex,
+        Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags,
+        List<PyExpression> flatArgs,
         int currentParamOffset
     ) {
         PyMarkedCallee callee = mapping.getMarkedCallee();
@@ -329,8 +328,7 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
         return lastParamIndex;
     }
 
-    @Nonnull
-    private static List<PyNamedParameter> getFlattenedTupleParameterComponents(@Nonnull PyTupleParameter parameter) {
+    private static List<PyNamedParameter> getFlattenedTupleParameterComponents(PyTupleParameter parameter) {
         List<PyNamedParameter> results = new ArrayList<>();
         for (PyParameter component : parameter.getContents()) {
             if (component instanceof PyNamedParameter namedParam) {
@@ -344,9 +342,9 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
     }
 
     private static void highlightParameter(
-        @Nonnull PyNamedParameter parameter,
-        @Nonnull Map<PyNamedParameter, Integer> parameterToIndex,
-        @Nonnull Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags,
+        PyNamedParameter parameter,
+        Map<PyNamedParameter, Integer> parameterToIndex,
+        Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags,
         boolean mustHighlight
     ) {
         Integer parameterIndex = parameterToIndex.get(parameter);
@@ -364,10 +362,10 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
      * @param hintFlags        mark parameter as deprecated/highlighted/strikeout
      */
     private static List<String> buildParameterListHint(
-        @Nonnull List<PyParameter> parameters,
-        @Nonnull final List<PyNamedParameter> namedParameters,
-        @Nonnull final Map<PyNamedParameter, Integer> parameterToIndex,
-        @Nonnull final Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags
+        List<PyParameter> parameters,
+        final List<PyNamedParameter> namedParameters,
+        final Map<PyNamedParameter, Integer> parameterToIndex,
+        final Map<Integer, EnumSet<ParameterInfoUIContextEx.Flag>> hintFlags
     ) {
         final List<String> hintsList = new ArrayList<>();
         ParamHelper.walkDownParamArray(parameters.toArray(new PyParameter[parameters.size()]), new ParamHelper.ParamWalker() {
@@ -406,7 +404,6 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
         return hintsList;
     }
 
-    @Nonnull
     @Override
     public Language getLanguage() {
         return PythonLanguage.INSTANCE;

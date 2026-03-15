@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.codeInsight.dataflow.scope.impl;
 
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeVariable;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,12 +40,10 @@ public class ScopeVariableImpl implements ScopeVariable {
     this(name, parameter, Collections.singletonList(declaration));
   }
 
-  @Nonnull
   public String getName() {
     return myName;
   }
 
-  @Nonnull
   public Collection<PsiElement> getDeclarations() {
     return myDeclarations;
   }

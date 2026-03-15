@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
@@ -29,49 +28,43 @@ public class GoogleCodeStyleDocStringBuilder extends SectionBasedDocStringBuilde
 {
 	public static final String DEFAULT_CONTINUATION_INDENT = PyIndentUtil.FOUR_SPACES;
 
-	@Nonnull
-	public static String getDefaultSectionIndent(@Nonnull Project project)
+	public static String getDefaultSectionIndent(Project project)
 	{
 		return PyIndentUtil.getIndentFromSettings(project);
 	}
 
-	@Nonnull
-	public static GoogleCodeStyleDocStringBuilder forProject(@Nonnull Project project)
+	public static GoogleCodeStyleDocStringBuilder forProject(Project project)
 	{
 		return new GoogleCodeStyleDocStringBuilder(getDefaultSectionIndent(project));
 	}
 
-	public GoogleCodeStyleDocStringBuilder(@Nonnull String sectionIndent)
+	public GoogleCodeStyleDocStringBuilder(String sectionIndent)
 	{
 		super(sectionIndent, DEFAULT_CONTINUATION_INDENT);
 	}
 
 	@Override
-	@Nonnull
 	protected String getDefaultParametersHeader()
 	{
 		return "Args";
 	}
 
 	@Override
-	@Nonnull
 	protected String getDefaultReturnsHeader()
 	{
 		return "Returns";
 	}
 
-	@Nonnull
 	@Override
-	protected SectionBasedDocStringBuilder startSection(@Nonnull String title)
+	protected SectionBasedDocStringBuilder startSection(String title)
 	{
 		super.startSection(title);
 		addLine(StringUtil.capitalize(title) + ":");
 		return this;
 	}
 
-	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addParameter(@Nonnull String name, @Nullable String type, @Nonnull String description)
+	public SectionBasedDocStringBuilder addParameter(String name, @Nullable String type, String description)
 	{
 		if(type != null)
 		{
@@ -84,9 +77,8 @@ public class GoogleCodeStyleDocStringBuilder extends SectionBasedDocStringBuilde
 		return this;
 	}
 
-	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, @Nonnull String type, @Nonnull String description)
+	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, String type, String description)
 	{
 		if(name != null)
 		{

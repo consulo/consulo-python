@@ -42,7 +42,6 @@ import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.ref.Ref;
-import jakarta.annotation.Nonnull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,17 +53,15 @@ import java.util.Set;
 public class PyUnboundLocalVariableInspection extends PyInspection {
     private static Key<Set<ScopeOwner>> LARGE_FUNCTIONS_KEY = Key.create("PyUnboundLocalVariableInspection.LargeFunctions");
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameUnbound();
     }
 
-    @Nonnull
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session
+        LocalInspectionToolSession session
     ) {
         session.putUserData(LARGE_FUNCTIONS_KEY, new HashSet<>());
         return new Visitor(holder, session);
@@ -169,7 +166,7 @@ public class PyUnboundLocalVariableInspection extends PyInspection {
             }
         }
 
-        private static boolean isFirstUnboundRead(@Nonnull PyReferenceExpression node, @Nonnull ScopeOwner owner) {
+        private static boolean isFirstUnboundRead(PyReferenceExpression node, ScopeOwner owner) {
             String nodeName = node.getReferencedName();
             Scope scope = ControlFlowCache.getScope(owner);
             ControlFlow flow = ControlFlowCache.getControlFlow(owner);

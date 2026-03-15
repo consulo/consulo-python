@@ -28,14 +28,12 @@ import consulo.language.psi.stub.StubIndexKey;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collection;
 
 @ExtensionImpl
 public class PyFunctionNameIndex extends StringStubIndexExtension<PyFunction> {
   public static final StubIndexKey<String, PyFunction> KEY = StubIndexKey.createIndexKey("Py.function.shortName");
 
-  @Nonnull
   public StubIndexKey<String, PyFunction> getKey() {
     return KEY;
   }

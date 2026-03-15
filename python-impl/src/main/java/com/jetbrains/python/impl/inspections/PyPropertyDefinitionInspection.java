@@ -43,8 +43,7 @@ import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.ref.Ref;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +58,6 @@ import java.util.function.Predicate;
  */
 @ExtensionImpl
 public class PyPropertyDefinitionInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNamePropertyDefinition();
@@ -67,12 +65,11 @@ public class PyPropertyDefinitionInspection extends PyInspection {
 
     private static final ImmutableList<String> SUFFIXES = ImmutableList.of(PyNames.SETTER, PyNames.DELETER);
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
@@ -334,10 +331,10 @@ public class PyPropertyDefinitionInspection extends PyInspection {
         }
 
         private void checkReturnValueAllowed(
-            @Nonnull PyCallable callable,
-            @Nonnull PsiElement beingChecked,
+            PyCallable callable,
+            PsiElement beingChecked,
             boolean allowed,
-            @Nonnull String message
+            String message
         ) {
             if (callable instanceof PyFunction) {
                 PyFunction function = (PyFunction) callable;
@@ -363,7 +360,7 @@ public class PyPropertyDefinitionInspection extends PyInspection {
             }
         }
 
-        private static boolean someFlowHasExitPoint(@Nonnull PyFunction function, @Nonnull Predicate<PsiElement> exitPointPredicate) {
+        private static boolean someFlowHasExitPoint(PyFunction function, Predicate<PsiElement> exitPointPredicate) {
             Ref<Boolean> result = new Ref<>(false);
 
             ControlFlowUtil.process(

@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.refactoring.introduce.constant;
 
 import java.util.Collection;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
@@ -54,7 +53,7 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected PsiElement addDeclaration(@Nonnull PsiElement expression, @Nonnull PsiElement declaration, @Nonnull IntroduceOperation operation)
+	protected PsiElement addDeclaration(PsiElement expression, PsiElement declaration, IntroduceOperation operation)
 	{
 		PsiElement anchor = expression.getContainingFile();
 		assert anchor instanceof PyFile;
@@ -62,7 +61,7 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
-	protected Collection<String> generateSuggestedNames(@Nonnull PyExpression expression)
+	protected Collection<String> generateSuggestedNames(PyExpression expression)
 	{
 		Collection<String> names = new HashSet<>();
 		for(String name : super.generateSuggestedNames(expression))

@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.Language;
 import consulo.language.editor.refactoring.changeSignature.ChangeInfo;
@@ -87,7 +86,6 @@ public class PyChangeInfo implements ChangeInfo {
   public PyFunction getMethod() {
     return myFunction;
   }
-  @Nonnull
   @Override
   public PyParameterInfo[] getNewParameters() {
     return myNewParameterInfo;

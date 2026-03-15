@@ -27,8 +27,7 @@ import consulo.localize.LocalizeValue;
 import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -54,28 +53,24 @@ public class PythonFileType extends LanguageFileType {
     super(language);
   }
 
-  @Nonnull
   public String getId() {
     return "Python";
   }
 
-  @Nonnull
   public LocalizeValue getDescription() {
     return LocalizeValue.localizeTODO("Python files");
   }
 
-  @Nonnull
   public String getDefaultExtension() {
     return "py";
   }
 
-  @Nonnull
   public Image getIcon() {
     return PythonPsiIconGroup.python();
   }
 
   @Override
-  public String getCharset(@Nonnull VirtualFile file, byte[] content) {
+  public String getCharset(VirtualFile file, byte[] content) {
     if (CharsetToolkit.hasUTF8Bom(content)) {
       return CharsetToolkit.UTF8;
     }
@@ -85,7 +80,7 @@ public class PythonFileType extends LanguageFileType {
   }
 
   @Override
-  public Charset extractCharsetFromFileContent(@Nullable Project project, @Nullable VirtualFile file, @Nonnull CharSequence content) {
+  public Charset extractCharsetFromFileContent(@Nullable Project project, @Nullable VirtualFile file, CharSequence content) {
     String charsetName = getCharsetFromEncodingDeclaration(content);
     if (charsetName == null) {
       return null;

@@ -39,8 +39,7 @@ import consulo.logging.Logger;
 import consulo.project.Project;
 import consulo.util.dataholder.Key;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +72,6 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     ourProcessors.add(new PyPlainEnterProcessor());
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;
@@ -82,7 +80,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
   private static class TooManyAttemptsException extends Exception {
   }
 
-  private static void collectAllElements(PsiElement element, @Nonnull List<PsiElement> result, boolean recurse) {
+  private static void collectAllElements(PsiElement element, List<PsiElement> result, boolean recurse) {
     result.add(0, element);
     if (doNotStep(element)) {
       if (!recurse) {
@@ -104,7 +102,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     return (element instanceof PyStatementList) || (element instanceof PyStatement);
   }
 
-  private static boolean isModified(@Nonnull Editor editor) {
+  private static boolean isModified(Editor editor) {
     Long timestamp = editor.getUserData(SMART_ENTER_TIMESTAMP);
     return editor.getDocument().getModificationStamp() != timestamp.longValue();
   }
@@ -114,7 +112,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
   private static final Key<Long> SMART_ENTER_TIMESTAMP = Key.create("smartEnterOriginalTimestamp");
 
   @Override
-  public boolean process(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile psiFile) {
+  public boolean process(Project project, Editor editor, PsiFile psiFile) {
     Document document = editor.getDocument();
     String textForRollBack = document.getText();
     int offset = editor.getCaretModel().getOffset();
@@ -134,7 +132,7 @@ public class PySmartEnterProcessor extends SmartEnterProcessor {
     return true;
   }
 
-  private void process(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile psiFile, int attempt)
+  private void process(Project project, Editor editor, PsiFile psiFile, int attempt)
     throws TooManyAttemptsException {
     if (attempt > MAX_ATTEMPTS) {
       throw new TooManyAttemptsException();

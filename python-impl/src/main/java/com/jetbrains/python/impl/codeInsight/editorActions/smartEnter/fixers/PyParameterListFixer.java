@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
@@ -43,7 +42,7 @@ public class PyParameterListFixer extends PyFixer<PyParameterList>
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyParameterList parameters) throws IncorrectOperationException
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyParameterList parameters) throws IncorrectOperationException
 	{
 		PsiElement lBrace = PyPsiUtils.getChildByFilter(parameters, PyTokenTypes.OPEN_BRACES, 0);
 		PsiElement rBrace = PyPsiUtils.getChildByFilter(parameters, PyTokenTypes.CLOSE_BRACES, 0);

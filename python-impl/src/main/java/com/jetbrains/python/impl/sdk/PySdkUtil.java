@@ -33,8 +33,7 @@ import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +67,6 @@ public class PySdkUtil {
      * @param command  command to execute and its arguments
      * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
      */
-    @Nonnull
     public static ProcessOutput getProcessOutput(String homePath, String[] command) {
         return getProcessOutput(homePath, command, -1);
     }
@@ -82,12 +80,10 @@ public class PySdkUtil {
      * @param timeout  how many milliseconds to wait until the process terminates; non-positive means inifinity.
      * @return a tuple of (stdout lines, stderr lines, exit_code), lines in them have line terminators stripped, or may be null.
      */
-    @Nonnull
     public static ProcessOutput getProcessOutput(String homePath, String[] command, int timeout) {
         return getProcessOutput(homePath, command, null, timeout);
     }
 
-    @Nonnull
     public static ProcessOutput getProcessOutput(
         String homePath,
         String[] command,
@@ -97,7 +93,6 @@ public class PySdkUtil {
         return getProcessOutput(homePath, command, extraEnv, timeout, null, true);
     }
 
-    @Nonnull
     public static ProcessOutput getProcessOutput(
         String homePath,
         String[] command,
@@ -110,7 +105,7 @@ public class PySdkUtil {
     }
 
     public static ProcessOutput getProcessOutput(
-        @Nonnull GeneralCommandLine cmd,
+        GeneralCommandLine cmd,
         @Nullable String homePath,
         @Nullable Map<String, String> extraEnv,
         int timeout
@@ -119,7 +114,7 @@ public class PySdkUtil {
     }
 
     public static ProcessOutput getProcessOutput(
-        @Nonnull GeneralCommandLine cmd,
+        GeneralCommandLine cmd,
         @Nullable String homePath,
         @Nullable Map<String, String> extraEnv,
         int timeout,
@@ -165,7 +160,6 @@ public class PySdkUtil {
     private static ProcessOutput getOutputForException(Exception e) {
         LOG.warn(e);
         return new ProcessOutput() {
-            @Nonnull
             @Override
             public String getStderr() {
                 String err = super.getStderr();
@@ -180,10 +174,9 @@ public class PySdkUtil {
         };
     }
 
-    @Nonnull
     public static Map<String, String> mergeEnvVariables(
-        @Nonnull Map<String, String> environment,
-        @Nonnull Map<String, String> extraEnvironment
+        Map<String, String> environment,
+        Map<String, String> extraEnvironment
     ) {
         Map<String, String> result = new HashMap<>(environment);
         for (Map.Entry<String, String> entry : extraEnvironment.entrySet()) {
@@ -215,7 +208,7 @@ public class PySdkUtil {
     }
 
     @RequiredReadAction
-    public static boolean isElementInSkeletons(@Nonnull PsiElement element) {
+    public static boolean isElementInSkeletons(PsiElement element) {
         PsiFile file = element.getContainingFile();
         if (file != null) {
             VirtualFile virtualFile = file.getVirtualFile();
@@ -233,12 +226,12 @@ public class PySdkUtil {
     }
 
     @Nullable
-    public static VirtualFile findSkeletonsDir(@Nonnull Sdk sdk) {
+    public static VirtualFile findSkeletonsDir(Sdk sdk) {
         return findLibraryDir(sdk, PythonSdkType.SKELETON_DIR_NAME, BinariesOrderRootType.getInstance());
     }
 
     @Nullable
-    public static VirtualFile findAnyRemoteLibrary(@Nonnull Sdk sdk) {
+    public static VirtualFile findAnyRemoteLibrary(Sdk sdk) {
         return findLibraryDir(sdk, PythonSdkType.REMOTE_SOURCES_DIR_NAME, BinariesOrderRootType.getInstance());
     }
 

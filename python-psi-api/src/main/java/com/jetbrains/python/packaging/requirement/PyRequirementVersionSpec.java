@@ -17,19 +17,16 @@ package com.jetbrains.python.packaging.requirement;
 
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
 
 import static consulo.repository.ui.PackageVersionComparator.VERSION_COMPARATOR;
 
 public class PyRequirementVersionSpec {
 
-  @Nonnull
   private final PyRequirementRelation myRelation;
 
-  @Nonnull
   private final String myVersion;
 
-  public PyRequirementVersionSpec(@Nonnull PyRequirementRelation relation, @Nonnull String version) {
+  public PyRequirementVersionSpec(PyRequirementRelation relation, String version) {
     myRelation = relation;
     myVersion = version;
   }
@@ -57,17 +54,15 @@ public class PyRequirementVersionSpec {
     return 31 * myRelation.hashCode() + myVersion.hashCode();
   }
 
-  @Nonnull
   public PyRequirementRelation getRelation() {
     return myRelation;
   }
 
-  @Nonnull
   public String getVersion() {
     return myVersion;
   }
 
-  public boolean matches(@Nonnull String version) {
+  public boolean matches(String version) {
     switch (myRelation) {
       case LT:
         return VERSION_COMPARATOR.compare(version, myVersion) < 0;
@@ -96,7 +91,7 @@ public class PyRequirementVersionSpec {
     }
   }
 
-  private static Pair<String, String> splitIntoPublicAndLocalVersions(@Nonnull String version) {
+  private static Pair<String, String> splitIntoPublicAndLocalVersions(String version) {
     String[] publicAndLocalVersions = version.split("\\+", 2);
 
     String publicVersion = publicAndLocalVersions[0];

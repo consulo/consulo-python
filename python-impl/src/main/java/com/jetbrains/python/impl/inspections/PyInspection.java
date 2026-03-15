@@ -26,13 +26,11 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.intellij.lang.annotations.Pattern;
 
 public abstract class PyInspection extends LocalInspectionTool {
     @Pattern(VALID_ID_PATTERN)
-    @Nonnull
     @Override
     public String getID() {
         //noinspection PatternValidation
@@ -45,13 +43,11 @@ public abstract class PyInspection extends LocalInspectionTool {
         return PythonLanguage.getInstance();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getGroupDisplayName() {
         return InspectionLocalize.inspectionGeneralToolsGroupName();
     }
 
-    @Nonnull
     @Override
     public String getShortName() {
         return getClass().getSimpleName();
@@ -62,14 +58,13 @@ public abstract class PyInspection extends LocalInspectionTool {
         return true;
     }
 
-    @Nonnull
     @Override
     public HighlightDisplayLevel getDefaultLevel() {
         return HighlightDisplayLevel.WARNING;
     }
 
     @Override
-    public boolean isSuppressedFor(@Nonnull PsiElement element) {
+    public boolean isSuppressedFor(PsiElement element) {
         PsiFile file = element.getContainingFile();
         if (file instanceof PyFileImpl && !((PyFileImpl) file).isAcceptedFor(this.getClass())) {
             return true;

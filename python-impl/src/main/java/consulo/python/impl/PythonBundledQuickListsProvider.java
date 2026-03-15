@@ -2,7 +2,6 @@ package consulo.python.impl;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.ui.ex.action.BundledQuickListsProvider;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -10,7 +9,6 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PythonBundledQuickListsProvider implements BundledQuickListsProvider {
-  @Nonnull
   @Override
   public String[] getBundledListsRelativePaths() {
     return new String[] {

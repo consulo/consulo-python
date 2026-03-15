@@ -19,8 +19,7 @@ package com.jetbrains.python.impl.buildout.config.psi.impl;
 import consulo.language.ast.ASTNode;
 import consulo.util.lang.StringUtil;
 import consulo.language.psi.util.PsiTreeUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ import java.util.List;
  * @author traff
  */
 public class BuildoutCfgSection extends BuildoutCfgPsiElement {
-  public BuildoutCfgSection(@Nonnull ASTNode node) {
+  public BuildoutCfgSection(ASTNode node) {
     super(node);
   }
 

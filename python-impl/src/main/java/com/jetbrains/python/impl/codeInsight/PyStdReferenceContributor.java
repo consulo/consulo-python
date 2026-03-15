@@ -27,7 +27,6 @@ import consulo.language.Language;
 import consulo.language.psi.*;
 import consulo.language.util.ProcessingContext;
 
-import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 
@@ -42,10 +41,9 @@ public class PyStdReferenceContributor extends PsiReferenceContributor
 	{
 		registerClassAttributeReference(registrar, PyNames.ALL, new PsiReferenceProvider()
 		{
-			@Nonnull
 			@Override
-			public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
-														 @Nonnull ProcessingContext context)
+			public PsiReference[] getReferencesByElement(PsiElement element,
+														 ProcessingContext context)
 			{
 				return new PsiReference[]{new PyDunderAllReference((PyStringLiteralExpression) element)};
 			}
@@ -53,10 +51,9 @@ public class PyStdReferenceContributor extends PsiReferenceContributor
 
 		registerClassAttributeReference(registrar, PyNames.SLOTS, new PsiReferenceProvider()
 		{
-			@Nonnull
 			@Override
-			public PsiReference[] getReferencesByElement(@Nonnull PsiElement element,
-														 @Nonnull ProcessingContext context)
+			public PsiReference[] getReferencesByElement(PsiElement element,
+														 ProcessingContext context)
 			{
 				return new PsiReference[]{new PyDunderSlotsReference((PyStringLiteralExpression) element)};
 			}
@@ -73,7 +70,6 @@ public class PyStdReferenceContributor extends PsiReferenceContributor
 								psiElement(PyTargetExpression.class).withName(name)))), provider);
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

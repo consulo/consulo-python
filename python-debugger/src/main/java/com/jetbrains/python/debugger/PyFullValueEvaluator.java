@@ -2,7 +2,6 @@ package com.jetbrains.python.debugger;
 
 import consulo.execution.debug.frame.XFullValueEvaluator;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
@@ -29,7 +28,7 @@ public class PyFullValueEvaluator extends XFullValueEvaluator {
     }
 
     @Override
-    public void startEvaluation(@Nonnull XFullValueEvaluationCallback callback) {
+    public void startEvaluation(XFullValueEvaluationCallback callback) {
         String expression = myExpression.trim();
         if ("".equals(expression)) {
             callback.evaluated("");

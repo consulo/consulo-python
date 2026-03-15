@@ -60,8 +60,7 @@ import consulo.util.dataholder.Key;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.ref.SoftReference;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
@@ -123,7 +122,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
             Collections.reverse(myImportedNameDefiners);
         }
 
-        private boolean processDeclarations(@Nonnull List<PsiElement> elements, @Nonnull Predicate<PsiElement> processor) {
+        private boolean processDeclarations(List<PsiElement> elements, Predicate<PsiElement> processor) {
             for (PsiElement child : elements) {
                 if (!processor.test(child)) {
                     return false;
@@ -136,8 +135,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
             return true;
         }
 
-        @Nonnull
-        private List<RatedResolveResult> multiResolve(@Nonnull String name) {
+        private List<RatedResolveResult> multiResolve(String name) {
             synchronized (myNameDefinerNegativeCache) {
                 long modCount = myModificationTracker.getModificationCount();
                 if (modCount != myNameDefinerOOCBModCount) {
@@ -242,7 +240,6 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         return null;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public LanguageLevel getLanguageLevel() {
@@ -261,7 +258,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
     }
 
     @Override
-    public void accept(@Nonnull PsiElementVisitor visitor) {
+    public void accept(PsiElementVisitor visitor) {
         if (isAcceptedFor(visitor.getClass())) {
             if (visitor instanceof PyElementVisitor elemVisitor) {
                 elemVisitor.visitPyFile(this);
@@ -272,7 +269,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         }
     }
 
-    public boolean isAcceptedFor(@Nonnull Class visitorClass) {
+    public boolean isAcceptedFor(Class visitorClass) {
         for (Language lang : getViewProvider().getLanguages()) {
             List<PythonVisitorFilter> filters = PythonVisitorFilter.forLanguage(lang);
             for (PythonVisitorFilter filter : filters) {
@@ -288,16 +285,16 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
 
     @Override
     public boolean processDeclarations(
-        @Nonnull final PsiScopeProcessor processor,
-        @Nonnull ResolveState resolveState,
+        final PsiScopeProcessor processor,
+        ResolveState resolveState,
         PsiElement lastParent,
-        @Nonnull PsiElement place
+        PsiElement place
     ) {
         List<String> dunderAll = getDunderAll();
         final List<String> remainingDunderAll = dunderAll == null ? null : new ArrayList<>(dunderAll);
         PsiScopeProcessor wrapper = new PsiScopeProcessor() {
             @Override
-            public boolean execute(@Nonnull PsiElement element, @Nonnull ResolveState state) {
+            public boolean execute(PsiElement element, ResolveState state) {
                 if (!processor.execute(element, state)) {
                     return false;
                 }
@@ -308,12 +305,12 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
             }
 
             @Override
-            public <T> T getHint(@Nonnull Key<T> hintKey) {
+            public <T> T getHint(Key<T> hintKey) {
                 return processor.getHint(hintKey);
             }
 
             @Override
-            public void handleEvent(@Nonnull Event event, @Nullable Object associated) {
+            public void handleEvent(Event event, @Nullable Object associated) {
                 processor.handleEvent(event, associated);
             }
         };
@@ -401,7 +398,6 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         return PyPsiUtils.collectStubChildren(this, this.getStub(), PyElementTypes.CLASS_DECLARATION, PyClass.class);
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public List<PyFunction> getTopLevelFunctions() {
@@ -440,10 +436,9 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         return element;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
-    public List<RatedResolveResult> multiResolveName(@Nonnull String name) {
+    public List<RatedResolveResult> multiResolveName(String name) {
         List<RatedResolveResult> results =
             RecursionManager.doPreventingRecursion(this, false, () -> getExportedNameCache().multiResolve(name));
         if (results != null && !results.isEmpty()) {
@@ -491,7 +486,6 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         return null;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public Iterable<PyElement> iterateNames() {
@@ -509,7 +503,6 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         return result;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public List<PyImportElement> getImportTargets() {
@@ -522,7 +515,6 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         return ret;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public List<PyFromImportStatement> getFromImports() {
@@ -717,7 +709,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
 
 
     @Override
-    public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
         if (myType == null) {
             myType = new PyModuleType(this);
         }
@@ -762,7 +754,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
 
     @Override
     @RequiredWriteAction
-    public PsiElement setName(@Nonnull String name) throws IncorrectOperationException {
+    public PsiElement setName(String name) throws IncorrectOperationException {
         String path = getVirtualFile().getPath();
         PsiElement newElement = super.setName(name);
         PyUtil.deletePycFiles(path);
@@ -801,9 +793,8 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
                 return IconDescriptorUpdaters.getIcon(PyFileImpl.this, 0);
             }
 
-            @Nonnull
             @RequiredReadAction
-            private String getModuleName(@Nonnull PyFile file) {
+            private String getModuleName(PyFile file) {
                 if (PyUtil.isPackage(file)) {
                     PsiDirectory dir = file.getContainingDirectory();
                     if (dir != null) {

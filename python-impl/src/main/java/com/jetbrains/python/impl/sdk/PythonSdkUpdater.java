@@ -47,8 +47,7 @@ import consulo.ui.ex.awt.Messages;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.StandardFileSystems;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.*;
 import java.io.File;
@@ -75,12 +74,12 @@ public class PythonSdkUpdater implements PostStartupActivity {
      * Refreshes the SDKs of the modules for the open project after some delay.
      */
     @Override
-    public void runActivity(@Nonnull Project project, UIAccess uiAccess) {
+    public void runActivity(Project project, UIAccess uiAccess) {
         uiAccess.getScheduler().schedule(
             () -> ProgressManager.getInstance().run(
                 new Task.Backgroundable(project, LocalizeValue.localizeTODO("Updating Python Paths"), false) {
                     @Override
-                    public void run(@Nonnull ProgressIndicator indicator) {
+                    public void run(ProgressIndicator indicator) {
                         Project project = (Project)getProject();
                         if (project.isDisposed()) {
                             return;
@@ -112,7 +111,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
      */
     @RequiredReadAction
     public static boolean update(
-        @Nonnull Sdk sdk,
+        Sdk sdk,
         @Nullable SdkModificator sdkModificator,
         @Nullable Project project,
         @Nullable Component ownerComponent
@@ -143,7 +142,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
             }
             ProgressManager.getInstance().run(new Task.Backgroundable(project, PyLocalize.sdkGenUpdatingInterpreter(), false) {
                 @Override
-                public void run(@Nonnull ProgressIndicator indicator) {
+                public void run(ProgressIndicator indicator) {
                     Project project1 = (Project)getProject();
                     Sdk sdkInsideTask = PythonSdkType.findSdkByKey(key);
                     if (sdkInsideTask != null) {
@@ -206,7 +205,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
      */
     @RequiredUIAccess
     public static void updateOrShowError(
-        @Nonnull Sdk sdk,
+        Sdk sdk,
         @Nullable SdkModificator sdkModificator,
         @Nullable Project project,
         @Nullable Component ownerComponent
@@ -227,7 +226,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
      * May be invoked from any thread. May freeze the current thread while evaluating sys.path.
      */
     @RequiredReadAction
-    public static boolean updateLocalSdkPaths(@Nonnull Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project) {
+    public static boolean updateLocalSdkPaths(Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project) {
         if (!PythonSdkType.isRemote(sdk)) {
             List<VirtualFile> localSdkPaths;
             boolean forceCommit = ensureBinarySkeletonsDirectoryExists(sdk);
@@ -258,9 +257,8 @@ public class PythonSdkUpdater implements PostStartupActivity {
     /**
      * Returns all the paths for a local SDK.
      */
-    @Nonnull
     @RequiredReadAction
-    private static List<VirtualFile> getLocalSdkPaths(@Nonnull Sdk sdk, @Nullable Project project) throws InvalidSdkException {
+    private static List<VirtualFile> getLocalSdkPaths(Sdk sdk, @Nullable Project project) throws InvalidSdkException {
         return ImmutableList.<VirtualFile>builder().addAll(filterRootPaths(sdk, evaluateSysPath(sdk), project))
             .addAll(getSkeletonsPaths(sdk))
             .addAll(getUserAddedPaths(sdk))
@@ -270,8 +268,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
     /**
      * Returns all the paths manually added to an SDK by the user.
      */
-    @Nonnull
-    private static List<VirtualFile> getUserAddedPaths(@Nonnull Sdk sdk) {
+    private static List<VirtualFile> getUserAddedPaths(Sdk sdk) {
         SdkAdditionalData additionalData = sdk.getSdkAdditionalData();
         PythonSdkAdditionalData pythonAdditionalData = PyUtil.as(additionalData, PythonSdkAdditionalData.class);
         return pythonAdditionalData != null ? Lists.newArrayList(pythonAdditionalData.getAddedPathFiles()) : Collections.emptyList();
@@ -280,9 +277,8 @@ public class PythonSdkUpdater implements PostStartupActivity {
     /**
      * Filters valid paths from an initial set of Python paths and returns them as virtual files.
      */
-    @Nonnull
     @RequiredReadAction
-    private static List<VirtualFile> filterRootPaths(@Nonnull Sdk sdk, @Nonnull List<String> paths, @Nullable Project project) {
+    private static List<VirtualFile> filterRootPaths(Sdk sdk, List<String> paths, @Nullable Project project) {
         PythonSdkAdditionalData pythonAdditionalData = PyUtil.as(sdk.getSdkAdditionalData(), PythonSdkAdditionalData.class);
         Collection<VirtualFile> excludedPaths =
             pythonAdditionalData != null ? pythonAdditionalData.getExcludedPathFiles() : Collections.emptyList();
@@ -313,8 +309,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
     /**
      * Returns the paths of the binary skeletons and user skeletons for an SDK.
      */
-    @Nonnull
-    private static List<VirtualFile> getSkeletonsPaths(@Nonnull Sdk sdk) {
+    private static List<VirtualFile> getSkeletonsPaths(Sdk sdk) {
         List<VirtualFile> results = Lists.newArrayList();
         String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
         if (skeletonsPath != null) {
@@ -332,8 +327,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
         return results;
     }
 
-    @Nonnull
-    private static String getSdkPresentableName(@Nonnull Sdk sdk) {
+    private static String getSdkPresentableName(Sdk sdk) {
         String homePath = sdk.getHomePath();
         String name = sdk.getName();
         return homePath != null ? name + " (" + homePath + ")" : name;
@@ -349,8 +343,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
      * <p>
      * Returns all the existing paths except those manually excluded by the user.
      */
-    @Nonnull
-    private static List<String> evaluateSysPath(@Nonnull Sdk sdk) throws InvalidSdkException {
+    private static List<String> evaluateSysPath(Sdk sdk) throws InvalidSdkException {
         if (PythonSdkType.isRemote(sdk)) {
             throw new IllegalArgumentException("Cannot evaluate sys.path for remote Python interpreter " + sdk);
         }
@@ -366,9 +359,9 @@ public class PythonSdkUpdater implements PostStartupActivity {
      * You may invoke it from any thread. Blocks until the commit is done in the AWT thread.
      */
     private static void commitSdkPathsIfChanged(
-        @Nonnull Sdk sdk,
+        Sdk sdk,
         @Nullable SdkModificator sdkModificator,
-        @Nonnull List<VirtualFile> sdkPaths,
+        List<VirtualFile> sdkPaths,
         boolean forceCommit
     ) {
         String key = PythonSdkType.getSdkKey(sdk);
@@ -389,9 +382,8 @@ public class PythonSdkUpdater implements PostStartupActivity {
     /**
      * Returns unique Python SDKs for the open modules of the project.
      */
-    @Nonnull
     @RequiredReadAction
-    private static Set<Sdk> getPythonSdks(@Nonnull Project project) {
+    private static Set<Sdk> getPythonSdks(Project project) {
         Set<Sdk> pythonSdks = Sets.newLinkedHashSet();
         for (Module module : ModuleManager.getInstance(project).getModules()) {
             Sdk sdk = PythonSdkType.findPythonSdk(module);

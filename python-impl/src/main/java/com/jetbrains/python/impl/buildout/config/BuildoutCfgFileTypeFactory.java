@@ -23,7 +23,6 @@ import consulo.virtualFileSystem.fileType.FileTypeConsumer;
 import consulo.virtualFileSystem.fileType.FileTypeFactory;
 import jakarta.inject.Inject;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
@@ -40,7 +39,7 @@ public class BuildoutCfgFileTypeFactory extends FileTypeFactory
 	}
 
 	@Override
-	public void createFileTypes(@Nonnull FileTypeConsumer consumer)
+	public void createFileTypes(FileTypeConsumer consumer)
 	{
 		consumer.consume(BuildoutCfgFileType.INSTANCE, myFileNameMatcherFactory.createExactFileNameMatcher(BuildoutModuleExtension.BUILDOUT_CFG, true));
 	}

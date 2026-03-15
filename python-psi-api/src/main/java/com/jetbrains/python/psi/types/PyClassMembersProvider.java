@@ -21,8 +21,7 @@ import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
 /**
@@ -33,7 +32,6 @@ public interface PyClassMembersProvider
 {
 	ExtensionPointName<PyClassMembersProvider> EP_NAME = ExtensionPointName.create(PyClassMembersProvider.class);
 
-	@Nonnull
 	Collection<PyCustomMember> getMembers(PyClassType clazz, PsiElement location, @Nullable TypeEvalContext typeEvalContext);
 
 	@Nullable

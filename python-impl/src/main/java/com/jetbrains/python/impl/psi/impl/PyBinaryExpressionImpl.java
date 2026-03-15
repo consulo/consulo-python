@@ -35,8 +35,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.IncorrectOperationException;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,7 +106,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
   }
 
   @Override
-  public void deleteChildInternal(@Nonnull ASTNode child) {
+  public void deleteChildInternal(ASTNode child) {
     PyExpression left = getLeftExpression();
     PyExpression right = getRightExpression();
     if (left == child.getPsi() && right != null) {
@@ -121,19 +120,17 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
     }
   }
 
-  @Nonnull
   @Override
   public PsiPolyVariantReference getReference() {
     return getReference(PyResolveContext.noImplicits());
   }
 
-  @Nonnull
   @Override
   public PsiPolyVariantReference getReference(PyResolveContext context) {
     return new PyOperatorReference(this, context);
   }
 
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     if (isOperator("and") || isOperator("or")) {
       PyExpression left = getLeftExpression();
       PyType leftType = left != null ? context.getType(left) : null;

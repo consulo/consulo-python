@@ -26,7 +26,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to convert docstrings to the common form according to PEP-257
@@ -35,13 +34,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class ConvertDocstringQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixConvertSingleQuotedDocstring();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement expression = descriptor.getPsiElement();
         if (expression instanceof PyStringLiteralExpression && expression.isWritable()) {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

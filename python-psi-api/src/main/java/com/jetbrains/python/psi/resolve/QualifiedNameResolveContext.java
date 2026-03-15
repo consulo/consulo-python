@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.psi.resolve;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.module.Module;
 import consulo.language.util.ModuleUtilCore;
@@ -28,7 +27,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import com.jetbrains.python.PyNames;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -36,7 +35,6 @@ import jakarta.annotation.Nullable;
 public class QualifiedNameResolveContext {
   @Nullable private Module myModule;
   private PsiFile myFootholdFile;
-  @Nonnull
   PsiManager myPsiManager;
   private Sdk mySdk;
 
@@ -89,12 +87,10 @@ public class QualifiedNameResolveContext {
     return myFootholdFile;
   }
 
-  @Nonnull
   public PsiManager getPsiManager() {
     return myPsiManager;
   }
 
-  @Nonnull
   public Project getProject() {
     return myPsiManager.getProject();
   }

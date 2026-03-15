@@ -30,8 +30,7 @@ import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,18 +43,16 @@ import java.util.Map;
  */
 @ExtensionImpl
 public class PyAttributeOutsideInitInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameAttributeOutsideInit();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
@@ -63,7 +60,7 @@ public class PyAttributeOutsideInitInspection extends PyInspection {
 
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -127,7 +124,7 @@ public class PyAttributeOutsideInitInspection extends PyInspection {
         }
     }
 
-    private static boolean isApplicable(@Nonnull PyClass containingClass, @Nonnull TypeEvalContext context) {
+    private static boolean isApplicable(PyClass containingClass, TypeEvalContext context) {
         return !PythonUnitTestUtil.isUnitTestCaseClass(containingClass) && !containingClass.isSubclass(
             "django.db.models.base.Model",
             context

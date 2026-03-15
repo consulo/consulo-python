@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 
@@ -25,7 +24,6 @@ import consulo.language.psi.PsiElement;
  */
 public interface PyAugAssignmentStatement extends PyStatement
 {
-	@Nonnull
 	PyExpression getTarget();
 
 	@Nullable

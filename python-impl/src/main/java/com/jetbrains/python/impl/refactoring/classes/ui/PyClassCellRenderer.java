@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.refactoring.classes.ui;
 
 import java.awt.Component;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JLabel;

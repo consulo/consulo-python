@@ -26,8 +26,7 @@ import consulo.language.util.ProcessingContext;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,11 +37,10 @@ import java.util.Set;
  * @author vlan
  */
 public class PyStructuralType implements PyType {
-    @Nonnull
     private final Set<String> myAttributes;
     private final boolean myInferredFromUsages;
 
-    public PyStructuralType(@Nonnull Set<String> attributes, boolean inferredFromUsages) {
+    public PyStructuralType(Set<String> attributes, boolean inferredFromUsages) {
         myAttributes = attributes;
         myInferredFromUsages = inferredFromUsages;
     }
@@ -50,10 +48,10 @@ public class PyStructuralType implements PyType {
     @Nullable
     @Override
     public List<? extends RatedResolveResult> resolveMember(
-        @Nonnull String name,
+        String name,
         @Nullable PyExpression location,
-        @Nonnull AccessDirection direction,
-        @Nonnull PyResolveContext resolveContext
+        AccessDirection direction,
+        PyResolveContext resolveContext
     ) {
         return Collections.emptyList();
     }

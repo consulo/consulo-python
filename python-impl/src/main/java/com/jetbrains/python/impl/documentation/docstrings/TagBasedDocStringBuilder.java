@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Mikhail Golubev
@@ -24,43 +23,38 @@ public class TagBasedDocStringBuilder extends DocStringBuilder<TagBasedDocString
 {
 	private final String myTagPrefix;
 
-	public TagBasedDocStringBuilder(@Nonnull String prefix)
+	public TagBasedDocStringBuilder(String prefix)
 	{
 		myTagPrefix = prefix;
 	}
 
-	@Nonnull
-	public TagBasedDocStringBuilder addParameterDescription(@Nonnull String name, @Nonnull String description)
+	public TagBasedDocStringBuilder addParameterDescription(String name, String description)
 	{
 		return addLine(String.format("%sparam %s: %s", myTagPrefix, name, description));
 	}
 
-	@Nonnull
-	public TagBasedDocStringBuilder addParameterType(@Nonnull String name, @Nonnull String type)
+	public TagBasedDocStringBuilder addParameterType(String name, String type)
 	{
 		return addLine(String.format("%stype %s: %s", myTagPrefix, name, type));
 	}
 
-	@Nonnull
-	public TagBasedDocStringBuilder addReturnValueType(@Nonnull String type)
+	public TagBasedDocStringBuilder addReturnValueType(String type)
 	{
 		// named return values are not supported in Sphinx and Epydoc
 		return addLine(String.format("%srtype: %s", myTagPrefix, type));
 	}
 
-	public TagBasedDocStringBuilder addReturnValueDescription(@Nonnull String description)
+	public TagBasedDocStringBuilder addReturnValueDescription(String description)
 	{
 		return addLine(String.format("%sreturn: %s", myTagPrefix, description));
 	}
 
-	@Nonnull
-	public TagBasedDocStringBuilder addExceptionDescription(@Nonnull String type, @Nonnull String description)
+	public TagBasedDocStringBuilder addExceptionDescription(String type, String description)
 	{
 		return addLine(String.format("%sraise %s: %s", myTagPrefix, type, description));
 	}
 
-	@Nonnull
-	public TagBasedDocStringBuilder addSummary(@Nonnull String summary)
+	public TagBasedDocStringBuilder addSummary(String summary)
 	{
 		return addLine(summary).addLine("");
 	}

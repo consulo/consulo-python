@@ -27,7 +27,6 @@ import com.jetbrains.python.impl.highlighting.PyHighlighter;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.LanguageLevel;
 
-import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 
@@ -56,7 +55,6 @@ public class PyCodeStylePanel extends CodeStyleAbstractPanel
   protected void prepareForReformat(PsiFile psiFile) {
   }
 
-  @Nonnull
   @Override
   protected FileType getFileType() {
     return PythonFileType.INSTANCE;

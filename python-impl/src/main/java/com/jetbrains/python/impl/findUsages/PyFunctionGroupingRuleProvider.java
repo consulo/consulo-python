@@ -29,7 +29,6 @@ import consulo.usage.rule.UsageGroupingRule;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -42,7 +41,7 @@ public class PyFunctionGroupingRuleProvider implements FileStructureGroupRulePro
 
   private static class PyFunctionGroupingRule implements UsageGroupingRule
   {
-    public UsageGroup groupUsage(@Nonnull Usage usage) {
+    public UsageGroup groupUsage(Usage usage) {
       if (!(usage instanceof PsiElementUsage)) return null;
       PsiElement psiElement = ((PsiElementUsage)usage).getElement();
       PyFunction pyFunction = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class, false, PyClass.class);

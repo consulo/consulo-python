@@ -26,7 +26,6 @@ import consulo.module.Module;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public class TestRunnerService implements PersistentStateComponent<TestRunnerSer
     PROJECT_TEST_RUNNER = projectConfiguration;
   }
 
-  public static TestRunnerService getInstance(@Nonnull Module module) {
+  public static TestRunnerService getInstance(Module module) {
     return module.getInstance(TestRunnerService.class);
   }
 

@@ -39,7 +39,6 @@ import consulo.util.xml.serializer.JDOMExternalizerUtil;
 import consulo.util.xml.serializer.WriteExternalException;
 import org.jdom.Element;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -67,7 +66,7 @@ public class PyTestRunConfiguration extends AbstractPythonTestRunConfiguration i
     return new PyTestConfigurationEditor(getProject(), this);
   }
 
-  public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException {
     return new PyTestCommandLineState(this, env);
   }
 

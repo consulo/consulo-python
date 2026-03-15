@@ -26,8 +26,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,21 +50,20 @@ public abstract class PyPsiFacade {
   @Nullable
   public abstract PyClass findClass(String qName);
 
-  @Nonnull
-  public abstract PyClassType createClassType(@Nonnull PyClass pyClass, boolean isDefinition);
+  public abstract PyClassType createClassType(PyClass pyClass, boolean isDefinition);
 
   @Nullable
-  public abstract PyType createUnionType(@Nonnull Collection<PyType> members);
+  public abstract PyType createUnionType(Collection<PyType> members);
 
   @Nullable
-  public abstract PyType createTupleType(@Nonnull List<PyType> members, @Nonnull PsiElement anchor);
+  public abstract PyType createTupleType(List<PyType> members, PsiElement anchor);
 
   @Nullable
-  public abstract PyType parseTypeAnnotation(@Nonnull String annotation, @Nonnull PsiElement anchor);
+  public abstract PyType parseTypeAnnotation(String annotation, PsiElement anchor);
 
   @Nullable
-  public abstract PyClass createClassByQName(@Nonnull String qName, @Nonnull PsiElement anchor);
+  public abstract PyClass createClassByQName(String qName, PsiElement anchor);
 
   @Nullable
-  public abstract String findShortestImportableName(@Nonnull VirtualFile targetFile, @Nonnull PsiElement anchor);
+  public abstract String findShortestImportableName(VirtualFile targetFile, PsiElement anchor);
 }

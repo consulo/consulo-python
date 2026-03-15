@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.run;
 
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import consulo.execution.configuration.ConfigurationFactory;
 import consulo.project.Project;
 import consulo.util.xml.serializer.InvalidDataException;
@@ -28,7 +27,6 @@ import consulo.util.xml.serializer.WriteExternalException;
  */
 abstract public class AbstractServerPythonRunConfiguration<T extends AbstractServerPythonRunConfiguration> extends AbstractPythonRunConfiguration<T>
 {
-	@NonNls
 	private static final String LAUNCH_JAVASCRIPT_DEBUGGER = "launchJavascriptDebuger";
 	private boolean myLaunchJavascriptDebugger;
 

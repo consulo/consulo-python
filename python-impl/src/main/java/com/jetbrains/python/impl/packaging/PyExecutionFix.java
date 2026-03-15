@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.packaging;
 
-import jakarta.annotation.Nonnull;
 import consulo.content.bundle.Sdk;
 
 /**
@@ -23,8 +22,7 @@ import consulo.content.bundle.Sdk;
  */
 public interface PyExecutionFix
 {
-	@Nonnull
 	String getName();
 
-	void run(@Nonnull Sdk sdk);
+	void run(Sdk sdk);
 }

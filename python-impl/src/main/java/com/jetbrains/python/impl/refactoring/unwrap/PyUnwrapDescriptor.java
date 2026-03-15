@@ -27,8 +27,7 @@ import consulo.language.editor.refactoring.unwrap.Unwrapper;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * user : ktisha
@@ -65,7 +64,6 @@ public class PyUnwrapDescriptor extends UnwrapDescriptorBase {
     return endElement;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

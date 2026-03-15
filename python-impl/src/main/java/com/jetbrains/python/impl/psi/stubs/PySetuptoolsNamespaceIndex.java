@@ -29,8 +29,7 @@ import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,9 +46,8 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
   private static final String NAMESPACE_FILE_SUFFIX = "-nspkg.pth";
 
   private final DataIndexer<String, Void, FileContent> myDataIndexer = new DataIndexer<String, Void, FileContent>() {
-    @Nonnull
     @Override
-    public Map<String, Void> map(@Nonnull FileContent inputData) {
+    public Map<String, Void> map(FileContent inputData) {
       CharSequence content = inputData.getContentAsText();
       Matcher matcher = RE_NAMESPACE.matcher(content);
       Map<String, Void> results = new HashMap<>();
@@ -63,30 +61,26 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
 
   private FileBasedIndex.InputFilter myInputFilter = new FileBasedIndex.InputFilter() {
     @Override
-    public boolean acceptInput(@Nullable Project project, @Nonnull VirtualFile file) {
+    public boolean acceptInput(@Nullable Project project, VirtualFile file) {
       return StringUtil.endsWith(file.getNameSequence(), NAMESPACE_FILE_SUFFIX);
     }
   };
 
-  @Nonnull
   @Override
   public ID<String, Void> getName() {
     return NAME;
   }
 
-  @Nonnull
   @Override
   public DataIndexer<String, Void, FileContent> getIndexer() {
     return myDataIndexer;
   }
 
-  @Nonnull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
-  @Nonnull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return myInputFilter;
@@ -102,8 +96,7 @@ public class PySetuptoolsNamespaceIndex extends ScalarIndexExtension<String> {
     return 0;
   }
 
-  @Nonnull
-  public static Collection<VirtualFile> find(@Nonnull String name, @Nonnull Project project) {
+  public static Collection<VirtualFile> find(String name, Project project) {
     GlobalSearchScope scope = PyProjectScopeBuilder.excludeSdkTestsScope(project);
     return FileBasedIndex.getInstance().getContainingFiles(NAME, name, scope);
   }

@@ -17,8 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFileSystemItem;
 import consulo.language.psi.StubBasedPsiElement;
@@ -90,6 +89,5 @@ public interface PyFromImportStatement extends PyImportStatementBase, StubBasedP
 	 *
 	 * @return possible candidates the resolved import source (file or directory containing __init__.py), or an empty list if the import is unresolved.
 	 */
-	@Nonnull
 	List<PsiElement> resolveImportSourceCandidates();
 }

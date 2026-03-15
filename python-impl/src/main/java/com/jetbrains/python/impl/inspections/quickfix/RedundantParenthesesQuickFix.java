@@ -25,7 +25,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to remove redundant parentheses from if/while/except statement
@@ -33,13 +32,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class RedundantParenthesesQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixRedundantParentheses();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PsiElement binaryExpression = ((PyParenthesizedExpression) element).getContainedExpression();
         PyBinaryExpression parent = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class);

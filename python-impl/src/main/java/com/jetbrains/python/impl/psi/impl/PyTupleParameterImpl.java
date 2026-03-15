@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 import consulo.language.ast.ASTNode;
 import consulo.navigation.ItemPresentation;
 import com.jetbrains.python.impl.PyElementTypes;
@@ -79,7 +78,6 @@ public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub
 		pyVisitor.visitPyTupleParameter(this);
 	}
 
-	@Nonnull
 	public PyParameter[] getContents()
 	{
 		return getStubOrPsiChildren(PythonDialectsTokenSetProvider.INSTANCE.getParameterTokens(), new PyParameter[0]);

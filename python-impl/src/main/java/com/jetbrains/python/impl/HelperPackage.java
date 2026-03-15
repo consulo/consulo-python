@@ -18,7 +18,6 @@ package com.jetbrains.python.impl;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParamsGroup;
 import consulo.content.bundle.Sdk;
@@ -28,25 +27,22 @@ import consulo.content.bundle.Sdk;
  */
 public interface HelperPackage
 {
-	void addToPythonPath(@Nonnull Map<String, String> environment);
+	void addToPythonPath(Map<String, String> environment);
 
 	/**
 	 * @return entry (directory or ZIP archive) that will be added to <tt>PYTHONPATH</tt> environment variable before the process is started.
 	 */
-	@Nonnull
 	String getPythonPathEntry();
 
-	void addToGroup(@Nonnull ParamsGroup group, @Nonnull GeneralCommandLine cmd);
+	void addToGroup(ParamsGroup group, GeneralCommandLine cmd);
 
 	/**
 	 * @return the first parameter passed to Python interpreter that indicates which script to run. For scripts started as modules it's
 	 * module name with <tt>-m</tt> flag, like <tt>-mpackage.module.name</tt>, and for average helpers it's full path to the script.
 	 */
-	@Nonnull
 	String asParamString();
 
-	@Nonnull
-	GeneralCommandLine newCommandLine(@Nonnull String sdkPath, @Nonnull List<String> parameters);
+	GeneralCommandLine newCommandLine(String sdkPath, List<String> parameters);
 
 	/**
 	 * Version-sensitive version of {@link #newCommandLine(String, List)}. It adds additional directories with libraries inside python-helpers
@@ -57,6 +53,5 @@ public interface HelperPackage
 	 * @param parameters additional command line parameters of this helper
 	 * @return instance {@link GeneralCommandLine} used to start the process
 	 */
-	@Nonnull
-	GeneralCommandLine newCommandLine(@Nonnull Sdk pythonSdk, @Nonnull List<String> parameters);
+	GeneralCommandLine newCommandLine(Sdk pythonSdk, List<String> parameters);
 }

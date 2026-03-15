@@ -21,8 +21,7 @@ import consulo.language.dataFlow.DFALimitExceededException;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public interface Scope
 	 * @return defined scope local/instance/class variables and parameters, using reaching defs
 	 */
 	@Nullable
-	ScopeVariable getDeclaredVariable(@Nonnull PsiElement anchorElement, @Nonnull String name) throws DFALimitExceededException;
+	ScopeVariable getDeclaredVariable(PsiElement anchorElement, String name) throws DFALimitExceededException;
 
 	boolean isGlobal(String name);
 
@@ -43,15 +42,11 @@ public interface Scope
 
 	boolean containsDeclaration(String name);
 
-	@Nonnull
 	List<PyImportedNameDefiner> getImportedNameDefiners();
 
-	@Nonnull
 	Collection<PsiNamedElement> getNamedElements(String name, boolean includeNestedGlobals);
 
-	@Nonnull
 	Collection<PsiNamedElement> getNamedElements();
 
-	@Nonnull
 	Collection<PyTargetExpression> getTargetExpressions();
 }

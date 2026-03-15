@@ -22,8 +22,7 @@ import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author vlan
@@ -34,7 +33,7 @@ public class PyABCUtil
 	{
 	}
 
-	public static boolean isSubclass(@Nonnull PyClass subClass, @Nonnull PyClass superClass, @Nullable TypeEvalContext context)
+	public static boolean isSubclass(PyClass subClass, PyClass superClass, @Nullable TypeEvalContext context)
 	{
 		String superName = superClass.getName();
 		if(superName != null)
@@ -44,12 +43,12 @@ public class PyABCUtil
 		return false;
 	}
 
-	public static boolean isSubclass(@Nonnull PyClass subClass, @Nonnull String superClassName, @Nullable TypeEvalContext context)
+	public static boolean isSubclass(PyClass subClass, String superClassName, @Nullable TypeEvalContext context)
 	{
 		return isSubclass(subClass, superClassName, true, context);
 	}
 
-	public static boolean isSubclass(@Nonnull PyClass subClass, @Nonnull String superClassName, boolean inherited, @Nullable TypeEvalContext context)
+	public static boolean isSubclass(PyClass subClass, String superClassName, boolean inherited, @Nullable TypeEvalContext context)
 	{
 		if(PyNames.CALLABLE.equals(superClassName))
 		{
@@ -126,7 +125,7 @@ public class PyABCUtil
 		return false;
 	}
 
-	public static boolean isSubtype(@Nonnull PyType type, @Nonnull String superClassName, @Nonnull TypeEvalContext context)
+	public static boolean isSubtype(PyType type, String superClassName, TypeEvalContext context)
 	{
 		if(type instanceof PyStructuralType)
 		{

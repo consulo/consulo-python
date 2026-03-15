@@ -22,7 +22,6 @@ import consulo.python.language.PythonLanguageVersion;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.dataholder.Key;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -83,7 +82,6 @@ public enum LanguageLevel {
 
   public static LanguageLevel FORCE_LANGUAGE_LEVEL = null;
 
-  @Nonnull
   public static LanguageLevel getDefault() {
     return DEFAULT2;
   }
@@ -129,15 +127,15 @@ public enum LanguageLevel {
     return myVersion % 100;
   }
   
-  public boolean isOlderThan(@Nonnull LanguageLevel other) {
+  public boolean isOlderThan(LanguageLevel other) {
     return myVersion < other.myVersion;
   }
 
-  public boolean isAtLeast(@Nonnull LanguageLevel other) {
+  public boolean isAtLeast(LanguageLevel other) {
     return myVersion >= other.myVersion;
   }
 
-  public static LanguageLevel fromPythonVersion(@Nonnull String pythonVersion) {
+  public static LanguageLevel fromPythonVersion(String pythonVersion) {
     if (pythonVersion == null) return null;
 
     if (pythonVersion.startsWith("2")) {
@@ -202,8 +200,7 @@ public enum LanguageLevel {
 
   public static final Key<LanguageLevel> KEY = Key.create("python.language.level");
 
-  @Nonnull
-  public static LanguageLevel forElement(@Nonnull PsiElement element) {
+  public static LanguageLevel forElement(PsiElement element) {
     PsiFile containingFile = element.getContainingFile();
     if (containingFile instanceof PyFile) {
       LanguageVersion languageVersion = containingFile.getLanguageVersion();
@@ -215,12 +212,10 @@ public enum LanguageLevel {
     return getDefault();
   }
 
-  @Nonnull
   public String toPythonVersion() {
     return getMajorVersion() + "." + getMinorVersion();
   }
 
-  @Nonnull
   public static LanguageLevel getLatest() {
     //noinspection ConstantConditions
     return ArrayUtil.getLastElement(values());

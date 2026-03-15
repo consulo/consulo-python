@@ -15,13 +15,11 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Ilya.Kazakevich
  */
 public interface PyStatementListContainer extends PyElement
 {
-	@Nonnull
 	PyStatementList getStatementList();
 }

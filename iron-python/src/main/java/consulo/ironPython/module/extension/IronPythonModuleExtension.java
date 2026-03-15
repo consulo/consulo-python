@@ -5,7 +5,6 @@ import consulo.content.bundle.SdkType;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.content.layer.extension.ModuleExtensionWithSdkBase;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -13,12 +12,11 @@ import jakarta.annotation.Nonnull;
  */
 public class IronPythonModuleExtension extends ModuleExtensionWithSdkBase<IronPythonModuleExtension> implements BaseIronPythonModuleExtension<IronPythonModuleExtension>
 {
-	public IronPythonModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer modifiableRootModel)
+	public IronPythonModuleExtension(String id, ModuleRootLayer modifiableRootModel)
 	{
 		super(id, modifiableRootModel);
 	}
 
-	@Nonnull
 	@Override
 	public Class<? extends SdkType> getSdkTypeClass()
 	{

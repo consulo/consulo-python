@@ -24,8 +24,7 @@ import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.usage.localize.UsageLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -36,15 +35,14 @@ public class PyPushDownProcessor extends PyMembersRefactoringBaseProcessor {
     private static final LocalizeValue HEADER = RefactoringLocalize.pushDownMembersElementsHeader();
 
     public PyPushDownProcessor(
-        @Nonnull Project project,
-        @Nonnull Collection<PyMemberInfo<PyElement>> membersToMove,
-        @Nonnull PyClass from
+        Project project,
+        Collection<PyMemberInfo<PyElement>> membersToMove,
+        PyClass from
     ) {
         super(project, membersToMove, from, getChildren(from));
     }
 
-    @Nonnull
-    private static PyClass[] getChildren(@Nonnull PyClass from) {
+    private static PyClass[] getChildren(PyClass from) {
         Collection<PyClass> all = getInheritors(from);
         return all.toArray(new PyClass[all.size()]);
     }
@@ -53,8 +51,7 @@ public class PyPushDownProcessor extends PyMembersRefactoringBaseProcessor {
      * @param from class to check for inheritors
      * @return inheritors of class
      */
-    @Nonnull
-    static Collection<PyClass> getInheritors(@Nonnull PyClass from) {
+    static Collection<PyClass> getInheritors(PyClass from) {
         return PyClassInheritorsSearch.search(from, false).findAll();
     }
 
@@ -76,7 +73,6 @@ public class PyPushDownProcessor extends PyMembersRefactoringBaseProcessor {
         return null;
     }
 
-    @Nonnull
     @Override
     protected LocalizeValue getCommandName() {
         return PyPushDownHandler.REFACTORING_NAME;

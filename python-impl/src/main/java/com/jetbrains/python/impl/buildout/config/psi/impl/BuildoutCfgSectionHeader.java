@@ -17,14 +17,13 @@
 package com.jetbrains.python.impl.buildout.config.psi.impl;
 
 import consulo.language.ast.ASTNode;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
  */
 public class BuildoutCfgSectionHeader extends BuildoutCfgPsiElement {
-  public BuildoutCfgSectionHeader(@Nonnull ASTNode node) {
+  public BuildoutCfgSectionHeader(ASTNode node) {
     super(node);
   }
 

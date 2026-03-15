@@ -29,7 +29,6 @@ import consulo.util.collection.ContainerUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -63,7 +62,6 @@ public class BuildoutConfigPanel extends JPanel
 		//initErrorValidation();
 	}
 
-	@Nonnull
 	public static VirtualFile getScriptFile(String script_name) throws ConfigurationException
 	{
 		VirtualFile script_file = LocalFileSystem.getInstance().findFileByPath(script_name);

@@ -38,8 +38,7 @@ import consulo.language.psi.ResolveResult;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,18 +52,16 @@ import java.util.Set;
  */
 @ExtensionImpl
 public class PyArgumentListInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameIncorrectCallArguments();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
@@ -158,7 +155,7 @@ public class PyArgumentListInspection extends PyInspection {
         inspectPyArgumentList(node, holder, context, 0);
     }
 
-    private static boolean decoratedClassInitCall(@Nullable PyExpression callee, @Nonnull PyFunction function) {
+    private static boolean decoratedClassInitCall(@Nullable PyExpression callee, PyFunction function) {
         if (callee instanceof PyReferenceExpression && PyUtil.isInit(function)) {
             PsiPolyVariantReference classReference = ((PyReferenceExpression) callee).getReference();
 
@@ -197,7 +194,7 @@ public class PyArgumentListInspection extends PyInspection {
         }
     }
 
-    private static Set<String> getDuplicateKeywordArguments(@Nonnull PyArgumentList node) {
+    private static Set<String> getDuplicateKeywordArguments(PyArgumentList node) {
         Set<String> keywordArgumentNames = new HashSet<>();
         Set<String> results = new HashSet<>();
         for (PyExpression argument : node.getArguments()) {
@@ -213,9 +210,9 @@ public class PyArgumentListInspection extends PyInspection {
     }
 
     private static void highlightParametersMismatch(
-        @Nonnull PyArgumentList node,
-        @Nonnull ProblemsHolder holder,
-        @Nonnull PyCallExpression.PyArgumentsMapping mapping
+        PyArgumentList node,
+        ProblemsHolder holder,
+        PyCallExpression.PyArgumentsMapping mapping
     ) {
         Set<String> duplicateKeywords = getDuplicateKeywordArguments(node);
         for (PyExpression argument : mapping.getUnmappedArguments()) {

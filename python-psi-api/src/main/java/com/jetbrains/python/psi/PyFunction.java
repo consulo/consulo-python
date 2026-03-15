@@ -25,8 +25,7 @@ import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.StubBasedPsiElement;
 import consulo.util.collection.ArrayFactory;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -108,13 +107,11 @@ public interface PyFunction extends PsiNamedElement, StubBasedPsiElement<PyFunct
 	 *
 	 * @return assignment statements for function attributes
 	 */
-	@Nonnull
 	List<PyAssignmentStatement> findAttributes();
 
 	/**
 	 * @return function protection level (underscore based)
 	 */
-	@Nonnull
 	ProtectionLevel getProtectionLevel();
 
 	enum ProtectionLevel

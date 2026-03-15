@@ -21,8 +21,7 @@ import consulo.document.util.TextRange;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,11 +30,10 @@ import java.util.List;
  * @author yole
  */
 public class PyKeywordArgumentReference extends PsiReferenceBase.Poly<PyKeywordArgument> {
-  public PyKeywordArgumentReference(@Nonnull PyKeywordArgument element, TextRange textRange) {
+  public PyKeywordArgumentReference(PyKeywordArgument element, TextRange textRange) {
     super(element, textRange, true);
   }
 
-  @Nonnull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     String keyword = myElement.getKeyword();
@@ -87,7 +85,6 @@ public class PyKeywordArgumentReference extends PsiReferenceBase.Poly<PyKeywordA
     return null;
   }
 
-  @Nonnull
   @Override
   public Object[] getVariants() {
     return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.

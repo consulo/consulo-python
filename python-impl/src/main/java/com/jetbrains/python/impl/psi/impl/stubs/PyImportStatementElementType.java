@@ -27,7 +27,6 @@ import com.jetbrains.python.psi.PyImportStatement;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyImportStatementImpl;
 import com.jetbrains.python.psi.stubs.PyImportStatementStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -44,25 +43,24 @@ public class PyImportStatementElementType extends PyStubElementType<PyImportStat
   }
 
   @Override
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PyImportStatementImpl(node);
   }
 
   @Override
-  public PyImportStatement createPsi(@Nonnull PyImportStatementStub stub) {
+  public PyImportStatement createPsi(PyImportStatementStub stub) {
     return new PyImportStatementImpl(stub);
   }
 
   @Override
-  public PyImportStatementStub createStub(@Nonnull PyImportStatement psi, StubElement parentStub) {
+  public PyImportStatementStub createStub(PyImportStatement psi, StubElement parentStub) {
     return new PyImportStatementStubImpl(parentStub, getStubElementType());
   }
 
-  public void serialize(@Nonnull PyImportStatementStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
+  public void serialize(PyImportStatementStub stub, StubOutputStream dataStream) throws IOException {
   }
 
-  @Nonnull
-  public PyImportStatementStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PyImportStatementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new PyImportStatementStubImpl(parentStub, getStubElementType());
   }
 

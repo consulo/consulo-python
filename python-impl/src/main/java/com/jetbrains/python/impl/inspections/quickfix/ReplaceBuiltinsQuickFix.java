@@ -22,21 +22,19 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
  * @since 2010-02-19
  */
 public class ReplaceBuiltinsQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.intnConvertBuiltinImport();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         PsiElement importStatement = descriptor.getPsiElement();
         if (importStatement instanceof PyImportStatement) {

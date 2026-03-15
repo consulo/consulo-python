@@ -17,7 +17,7 @@
 package com.jetbrains.python.psi;
 
 import consulo.language.psi.PsiNamedElement;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.ast.ASTNode;
 
 /**

@@ -39,8 +39,7 @@ import consulo.repository.ui.PackageVersionComparator;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.SimpleReference;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -113,7 +112,7 @@ public class PyTestConfigurationProducer extends PythonTestConfigurationProducer
 
     @Nullable
     @RequiredReadAction
-    private static String getKeywords(@Nonnull PsiElement element, @Nonnull Sdk sdk) {
+    private static String getKeywords(PsiElement element, Sdk sdk) {
         PyFunction pyFunction = findTestFunction(element);
         PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
         String keywords = null;

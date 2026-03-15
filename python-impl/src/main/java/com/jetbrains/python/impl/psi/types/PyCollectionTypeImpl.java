@@ -24,8 +24,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.psi.PsiElement;
 import consulo.util.collection.ContainerUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -33,10 +32,9 @@ import java.util.List;
  */
 public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectionType
 {
-	@Nonnull
 	private final List<PyType> myElementTypes;
 
-	public PyCollectionTypeImpl(@Nonnull PyClass source, boolean isDefinition, @Nonnull List<PyType> elementTypes)
+	public PyCollectionTypeImpl(PyClass source, boolean isDefinition, List<PyType> elementTypes)
 	{
 		super(source, isDefinition);
 		myElementTypes = elementTypes;
@@ -45,7 +43,7 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@Nonnull TypeEvalContext context)
+	public PyType getReturnType(TypeEvalContext context)
 	{
 		if(isDefinition())
 		{
@@ -56,23 +54,22 @@ public class PyCollectionTypeImpl extends PyClassTypeImpl implements PyCollectio
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nonnull TypeEvalContext context, @Nullable PyCallSiteExpression callSite)
+	public PyType getCallType(TypeEvalContext context, @Nullable PyCallSiteExpression callSite)
 	{
 		return getReturnType(context);
 	}
 
-	@Nonnull
 	@Override
-	public List<PyType> getElementTypes(@Nonnull TypeEvalContext context)
+	public List<PyType> getElementTypes(TypeEvalContext context)
 	{
 		return myElementTypes;
 	}
 
 	@Nullable
-	public static PyCollectionTypeImpl createTypeByQName(@Nonnull PsiElement anchor,
-			@Nonnull String classQualifiedName,
+	public static PyCollectionTypeImpl createTypeByQName(PsiElement anchor,
+			String classQualifiedName,
 			boolean isDefinition,
-			@Nonnull List<PyType> elementTypes)
+			List<PyType> elementTypes)
 	{
 		PyClass pyClass = PyPsiFacade.getInstance(anchor.getProject()).createClassByQName(classQualifiedName, anchor);
 		if(pyClass == null)

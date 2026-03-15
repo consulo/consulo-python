@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
@@ -33,13 +32,12 @@ import com.jetbrains.python.psi.*;
  */
 public class ReplaceFunctionWithSetLiteralQuickFix implements LocalQuickFix {
     @Override
-    @Nonnull
     public LocalizeValue getName() {
         return PyLocalize.qfixReplaceFunctionSetWithLiteral();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElement[] elements = PySetFunctionToLiteralInspection.getSetCallArguments((PyCallExpression) descriptor.getPsiElement());
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         PsiElement functionCall = descriptor.getPsiElement();

@@ -21,7 +21,6 @@ import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
 
 import java.io.File;
 
@@ -41,7 +40,7 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
     }
 
     @Override
-    public boolean isValidSdkPath(@Nonnull File file) {
+    public boolean isValidSdkPath(File file) {
         String name = FileUtil.getNameWithoutExtension(file).toLowerCase();
         return name.startsWith("mayapy");
     }
@@ -51,13 +50,11 @@ public class MayaSdkFlavor extends PythonSdkFlavor {
         return "--version";
     }
 
-    @Nonnull
     @Override
     public String getName() {
         return "MayaPy";
     }
 
-    @Nonnull
     @Override
     public Image getIcon() {
         return PythonPsiIconGroup.python(); //TODO: maya icon

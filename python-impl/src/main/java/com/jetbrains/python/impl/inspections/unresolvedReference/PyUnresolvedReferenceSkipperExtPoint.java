@@ -20,7 +20,6 @@ import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Inject this point to ask "unused reference" inspection to skip some unused references.
@@ -31,7 +30,6 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionAPI(ComponentScope.APPLICATION)
 public interface PyUnresolvedReferenceSkipperExtPoint {
-  @Nonnull
   ExtensionPointName<PyUnresolvedReferenceSkipperExtPoint> EP_NAME = ExtensionPointName.create(PyUnresolvedReferenceSkipperExtPoint.class);
 
   /**
@@ -40,5 +38,5 @@ public interface PyUnresolvedReferenceSkipperExtPoint {
    * @param importNameDefiner unused import
    * @return true if should be skipped
    */
-  boolean unusedImportShouldBeSkipped(@Nonnull PyImportedNameDefiner importNameDefiner);
+  boolean unusedImportShouldBeSkipped(PyImportedNameDefiner importNameDefiner);
 }

@@ -35,8 +35,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ref.Ref;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,25 +49,23 @@ import java.util.function.Function;
  */
 @ExtensionImpl
 public class PyRedeclarationInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameRedeclaration();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -94,7 +91,7 @@ public class PyRedeclarationInspection extends PyInspection {
             }
         }
 
-        private static boolean isConditional(@Nonnull PsiElement node) {
+        private static boolean isConditional(PsiElement node) {
             return PsiTreeUtil.getParentOfType(
                 node,
                 PyIfStatement.class,
@@ -103,7 +100,7 @@ public class PyRedeclarationInspection extends PyInspection {
             ) != null;
         }
 
-        private static boolean isDecorated(@Nonnull PyDecoratable node) {
+        private static boolean isDecorated(PyDecoratable node) {
             boolean isDecorated = false;
             PyDecoratorList decoratorList = node.getDecoratorList();
             if (decoratorList != null) {
@@ -115,7 +112,7 @@ public class PyRedeclarationInspection extends PyInspection {
             return isDecorated;
         }
 
-        private void processElement(@Nonnull final PsiNameIdentifierOwner element) {
+        private void processElement(final PsiNameIdentifierOwner element) {
             if (isConditional(element)) {
                 return;
             }
@@ -179,7 +176,7 @@ public class PyRedeclarationInspection extends PyInspection {
             }
         }
 
-        private static boolean suggestRename(@Nonnull PsiNameIdentifierOwner element, @Nonnull PsiElement originalElement) {
+        private static boolean suggestRename(PsiNameIdentifierOwner element, PsiElement originalElement) {
             // Target expressions in the same scope are treated as the same variable
             if ((element instanceof PyTargetExpression) && originalElement instanceof PyTargetExpression) {
                 return false;

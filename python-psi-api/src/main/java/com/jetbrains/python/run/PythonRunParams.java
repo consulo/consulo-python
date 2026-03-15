@@ -18,7 +18,7 @@ package com.jetbrains.python.run;
 import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.module.Module;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 /**

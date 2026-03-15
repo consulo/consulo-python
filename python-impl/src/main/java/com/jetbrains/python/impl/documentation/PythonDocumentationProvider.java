@@ -56,10 +56,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -73,16 +71,11 @@ import static com.jetbrains.python.impl.documentation.DocumentationBuilderKit.*;
  */
 @ExtensionImpl
 public class PythonDocumentationProvider extends AbstractDocumentationProvider implements ExternalDocumentationProvider, LanguageDocumentationProvider {
-  @NonNls
   static final String LINK_TYPE_CLASS = "#class#";
-  @NonNls
   static final String LINK_TYPE_PARENT = "#parent#";
-  @NonNls
   static final String LINK_TYPE_PARAM = "#param#";
-  @NonNls
   static final String LINK_TYPE_TYPENAME = "#typename#";
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;
@@ -91,7 +84,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   // provides ctrl+hover info
   @Override
   @Nullable
-  public String getQuickNavigateInfo(PsiElement element, @Nonnull PsiElement originalElement) {
+  public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
     for (PythonDocumentationQuickInfoProvider point : PythonDocumentationQuickInfoProvider.EP_NAME.getExtensionList()) {
       String info = point.getQuickInfo(originalElement);
       if (info != null) {
@@ -149,10 +142,9 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
    * @param escaper         sanitizes values that come directly from doc string or code
    * @return chain of strings for further chaining
    */
-  @Nonnull
-  static ChainIterable<String> describeFunction(@Nonnull PyFunction fun,
+  static ChainIterable<String> describeFunction(PyFunction fun,
                                                 FP.Lambda1<Iterable<String>, Iterable<String>> funcNameWrapper,
-                                                @Nonnull FP.Lambda1<String, String> escaper) {
+                                                FP.Lambda1<String, String> escaper) {
     ChainIterable<String> cat = new ChainIterable<>();
     String name = fun.getName();
     cat.addItem("def ").addWith(funcNameWrapper, $(name));
@@ -171,7 +163,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
   @Nullable
-  private static String describeExpression(@Nonnull PyExpression expr, @Nonnull PsiElement originalElement) {
+  private static String describeExpression(PyExpression expr, PsiElement originalElement) {
     String name = expr.getName();
     if (name != null) {
       StringBuilder result = new StringBuilder((expr instanceof PyNamedParameter) ? "parameter" : "variable");
@@ -191,18 +183,18 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
     return null;
   }
 
-  private static String describeType(@Nonnull PyTypedElement element) {
+  private static String describeType(PyTypedElement element) {
     TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile());
     return String.format("Inferred type: %s", getTypeName(context.getType(element), context));
   }
 
-  private static void getTypeDescription(@Nonnull PyFunction fun, @Nonnull ChainIterable<String> body) {
+  private static void getTypeDescription(PyFunction fun, ChainIterable<String> body) {
     TypeEvalContext context = TypeEvalContext.userInitiated(fun.getProject(), fun.getContainingFile());
     PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
     builder.build(context.getType(fun), true).toBodyWithLinks(body, fun);
   }
 
-  public static String getTypeName(@Nullable PyType type, @Nonnull TypeEvalContext context) {
+  public static String getTypeName(@Nullable PyType type, TypeEvalContext context) {
     PyTypeModelBuilder.TypeModel typeModel = buildTypeModel(type, context);
     return typeModel.asString();
   }
@@ -212,15 +204,15 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
     return builder.build(type, true);
   }
 
-  public static void describeExpressionTypeWithLinks(@Nonnull ChainIterable<String> body,
-                                                     @Nonnull PyReferenceExpression expression,
-                                                     @Nonnull TypeEvalContext context) {
+  public static void describeExpressionTypeWithLinks(ChainIterable<String> body,
+                                                     PyReferenceExpression expression,
+                                                     TypeEvalContext context) {
     PyType type = context.getType(expression);
     describeTypeWithLinks(body, expression, type, context);
   }
 
-  public static void describeTypeWithLinks(@Nonnull ChainIterable<String> body,
-                                           @Nonnull PsiElement anchor,
+  public static void describeTypeWithLinks(ChainIterable<String> body,
+                                           PsiElement anchor,
                                            PyType type,
                                            TypeEvalContext context) {
     PyTypeModelBuilder builder = new PyTypeModelBuilder(context);
@@ -228,10 +220,9 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
 
-  @Nonnull
-  static ChainIterable<String> describeDecorators(@Nonnull PyDecoratable what,
+  static ChainIterable<String> describeDecorators(PyDecoratable what,
                                                   FP.Lambda1<Iterable<String>, Iterable<String>> decoNameWrapper,
-                                                  @Nonnull String decoSeparator,
+                                                  String decoSeparator,
                                                   FP.Lambda1<String, String> escaper) {
     ChainIterable<String> cat = new ChainIterable<>();
     PyDecoratorList decoList = what.getDecoratorList();
@@ -251,8 +242,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
    * @param allowHtml
    * @param linkOwnName if true, add link to class's own name  @return cat for easy chaining
    */
-  @Nonnull
-  static ChainIterable<String> describeClass(@Nonnull PyClass cls,
+  static ChainIterable<String> describeClass(PyClass cls,
                                              FP.Lambda1<Iterable<String>, Iterable<String>> nameWrapper,
                                              boolean allowHtml,
                                              boolean linkOwnName) {
@@ -293,8 +283,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
   //
-  @Nonnull
-  private static Iterable<String> describeDeco(@Nonnull PyDecorator deco, FP.Lambda1<Iterable<String>, Iterable<String>> nameWrapper,
+  private static Iterable<String> describeDeco(PyDecorator deco, FP.Lambda1<Iterable<String>, Iterable<String>> nameWrapper,
                                                //  addWith in tags, if need be
                                                FP.Lambda1<String, String> argWrapper
                                                // add escaping, if need be
@@ -320,7 +309,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
   @Override
-  public PsiElement getDocumentationElementForLink(PsiManager psiManager, @Nonnull String link, @Nonnull PsiElement context) {
+  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
     if (link.equals(LINK_TYPE_CLASS)) {
       return inferContainingClassOf(context);
     }
@@ -402,7 +391,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
     return null;
   }
 
-  private static boolean pageExists(@Nonnull String url) {
+  private static boolean pageExists(String url) {
     if (new File(url).exists()) {
       return true;
     }
@@ -447,7 +436,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
   @Override
-  public boolean canPromptToConfigureDocumentation(@Nonnull PsiElement element) {
+  public boolean canPromptToConfigureDocumentation(PsiElement element) {
     PsiFile containingFile = element.getContainingFile();
     if (containingFile instanceof PyFile) {
       Project project = element.getProject();
@@ -463,7 +452,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
   @Override
-  public void promptToConfigureDocumentation(@Nonnull PsiElement element) {
+  public void promptToConfigureDocumentation(PsiElement element) {
     Project project = element.getProject();
     QualifiedName qName = QualifiedNameFinder.findCanonicalImportPath(element, element);
     if (qName != null && qName.getComponentCount() > 0) {
@@ -481,7 +470,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
 
   @Nullable
   @Override
-  public PsiElement getCustomDocumentationElement(@Nonnull Editor editor, @Nonnull PsiFile file, @Nullable PsiElement contextElement) {
+  public PsiElement getCustomDocumentationElement(Editor editor, PsiFile file, @Nullable PsiElement contextElement) {
     if (contextElement != null && PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens()
                                                                          .contains(contextElement.getNode().getElementType())) {
       return contextElement;
@@ -503,7 +492,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   }
 
   @Nullable
-  private static PyClass inferClassOfParameter(@Nonnull PsiElement context) {
+  private static PyClass inferClassOfParameter(PsiElement context) {
     if (context instanceof PyNamedParameter) {
       PyType type =
         TypeEvalContext.userInitiated(context.getProject(), context.getContainingFile()).getType((PyNamedParameter)context);

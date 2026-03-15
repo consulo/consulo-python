@@ -24,8 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -55,10 +54,9 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	private static final Collection<? extends MembersManager<? extends PyElement>> MANAGERS = Arrays.asList(new MethodsManager(), new SuperClassesManager(), new ClassFieldsManager(),
 			new InstanceFieldsManager(), new PropertiesManager());
 
-	@Nonnull
 	private final Class<T> myExpectedClass;
 
-	protected MembersManager(@Nonnull Class<T> expectedClass)
+	protected MembersManager(Class<T> expectedClass)
 	{
 		myExpectedClass = expectedClass;
 	}
@@ -69,8 +67,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param pyClass class to find members
 	 * @return list of members could be moved
 	 */
-	@Nonnull
-	public static List<PyMemberInfo<PyElement>> getAllMembersCouldBeMoved(@Nonnull PyClass pyClass)
+	public static List<PyMemberInfo<PyElement>> getAllMembersCouldBeMoved(PyClass pyClass)
 	{
 		List<PyMemberInfo<PyElement>> result = new ArrayList<>();
 
@@ -91,12 +88,11 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @return member infos
 	 */
 	//TODO: Move to  TypeSafeMovingStrategy
-	@Nonnull
 	@SuppressWarnings({
 			"unchecked",
 			"rawtypes"
 	}) //We check type at runtime
-	private static Collection<PyMemberInfo<PyElement>> transformSafely(@Nonnull PyClass pyClass, @Nonnull MembersManager<?> manager)
+	private static Collection<PyMemberInfo<PyElement>> transformSafely(PyClass pyClass, MembersManager<?> manager)
 	{
 		List<? extends PyElement> membersCouldBeMoved = manager.getMembersCouldBeMoved(pyClass);
 		manager.checkElementTypes((Iterable) membersCouldBeMoved);
@@ -111,7 +107,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param from        source
 	 * @param to          destination
 	 */
-	public static void moveAllMembers(@Nonnull Collection<PyMemberInfo<PyElement>> memberInfos, @Nonnull PyClass from, @Nonnull PyClass... to)
+	public static void moveAllMembers(Collection<PyMemberInfo<PyElement>> memberInfos, PyClass from, PyClass... to)
 	{
 		List<PyMemberInfo<PyElement>> memberInfosSorted = new ArrayList<>(memberInfos);
 		Collections.sort(memberInfosSorted, (o1, o2) -> PyDependenciesComparator.INSTANCE.compare(o1.getMember(), o2.getMember()));
@@ -141,7 +137,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 *
 	 * @param elements elements to check against manager
 	 */
-	void checkElementTypes(@Nonnull Iterable<T> elements)
+	void checkElementTypes(Iterable<T> elements)
 	{
 		for(PyElement pyElement : elements)
 		{
@@ -157,7 +153,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @return member or null if not found
 	 */
 	@Nullable
-	public static PyMemberInfo<PyElement> findMember(@Nonnull Collection<PyMemberInfo<PyElement>> members, @Nonnull Predicate<PyMemberInfo<PyElement>> predicate)
+	public static PyMemberInfo<PyElement> findMember(Collection<PyMemberInfo<PyElement>> members, Predicate<PyMemberInfo<PyElement>> predicate)
 	{
 		for(PyMemberInfo<PyElement> pyMemberInfo : members)
 		{
@@ -177,7 +173,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @return member or null if not found
 	 */
 	@Nullable
-	public static PyMemberInfo<PyElement> findMember(@Nonnull PyClass pyClass, @Nonnull Predicate<PyMemberInfo<PyElement>> predicate)
+	public static PyMemberInfo<PyElement> findMember(PyClass pyClass, Predicate<PyMemberInfo<PyElement>> predicate)
 	{
 		return findMember(getAllMembersCouldBeMoved(pyClass), predicate);
 	}
@@ -189,8 +185,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param pyElement element to find
 	 * @return member info with element
 	 */
-	@Nonnull
-	public static PyMemberInfo<PyElement> findMember(@Nonnull PyClass pyClass, @Nonnull PyElement pyElement)
+	public static PyMemberInfo<PyElement> findMember(PyClass pyClass, PyElement pyElement)
 	{
 		PyMemberInfo<PyElement> result = findMember(pyClass, new FindByElement(pyElement));
 		if(result != null)
@@ -206,8 +201,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param pyClass class with members
 	 * @return list of members
 	 */
-	@Nonnull
-	protected abstract List<? extends PyElement> getMembersCouldBeMoved(@Nonnull PyClass pyClass);
+	protected abstract List<? extends PyElement> getMembersCouldBeMoved(PyClass pyClass);
 
 
 	/**
@@ -218,7 +212,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @return elements to store
 	 * @see #moveAllMembers(java.util.Collection, com.jetbrains.python.psi.PyClass, com.jetbrains.python.psi.PyClass...)
 	 */
-	protected Collection<? extends PyElement> getElementsToStoreReferences(@Nonnull Collection<T> elements)
+	protected Collection<? extends PyElement> getElementsToStoreReferences(Collection<T> elements)
 	{
 		return elements;
 	}
@@ -230,7 +224,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 *
 	 * @see #getElementsToStoreReferences(java.util.Collection)
 	 */
-	protected abstract Collection<PyElement> moveMembers(@Nonnull PyClass from, @Nonnull Collection<PyMemberInfo<T>> members, @Nonnull PyClass... to);
+	protected abstract Collection<PyElement> moveMembers(PyClass from, Collection<PyMemberInfo<T>> members, PyClass... to);
 
 
 	/**
@@ -241,16 +235,15 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @return member info
 	 */
 	@SuppressWarnings("NullableProblems") //IDEA-120100
-	@Nonnull
 	@Override
-	public abstract PyMemberInfo<T> apply(@Nonnull T input);
+	public abstract PyMemberInfo<T> apply(T input);
 
 	/**
 	 * Deletes all elements
 	 *
 	 * @param pyElementsToDelete elements to delete
 	 */
-	protected static void deleteElements(@Nonnull Collection<? extends PsiElement> pyElementsToDelete)
+	protected static void deleteElements(Collection<? extends PsiElement> pyElementsToDelete)
 	{
 		for(PsiElement element : pyElementsToDelete)
 		{
@@ -265,8 +258,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param <T>         type of element
 	 * @return list of elements
 	 */
-	@Nonnull
-	protected static <T extends PyElement> Collection<T> fetchElements(@Nonnull Collection<PyMemberInfo<T>> memberInfos)
+	protected static <T extends PyElement> Collection<T> fetchElements(Collection<PyMemberInfo<T>> memberInfos)
 	{
 		return memberInfos.stream().map(o -> o.getMember()).filter(o -> o != null).collect(Collectors.toList());
 	}
@@ -279,7 +271,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param aClass class where this member wanna be moved
 	 * @return true if conflict exists.
 	 */
-	public abstract boolean hasConflict(@Nonnull T member, @Nonnull PyClass aClass);
+	public abstract boolean hasConflict(T member, PyClass aClass);
 
 	/**
 	 * Returns all elements this member depends on.
@@ -289,8 +281,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param destinationClass         where this member would be moved (or null if new class is unknown)
 	 * @return collection of elements this member depends on excluding those, would be available in destination class
 	 */
-	@Nonnull
-	public static Collection<? extends PyElement> getAllDependencies(@Nonnull PyClass classWhereMemberDeclared, @Nonnull PyElement member, @Nullable PyClass destinationClass)
+	public static Collection<? extends PyElement> getAllDependencies(PyClass classWhereMemberDeclared, PyElement member, @Nullable PyClass destinationClass)
 	{
 		PyMemberInfo<PyElement> memberInfo = findMember(classWhereMemberDeclared, member);
 
@@ -338,8 +329,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param member member to check dependencies for
 	 * @return dependencies
 	 */
-	@Nonnull
-	protected abstract MultiMap<PyClass, PyElement> getDependencies(@Nonnull PyElement member);
+	protected abstract MultiMap<PyClass, PyElement> getDependencies(PyElement member);
 
 	/**
 	 * Get dependencies by members and classes they declared in (obtained from {@link #getDependencies(com.jetbrains.python.psi.PyElement)})
@@ -348,8 +338,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 	 * @param usedElements class-to-element dependencies
 	 * @return dependencies
 	 */
-	@Nonnull
-	protected abstract Collection<PyElement> getDependencies(@Nonnull MultiMap<PyClass, PyElement> usedElements);
+	protected abstract Collection<PyElement> getDependencies(MultiMap<PyClass, PyElement> usedElements);
 
 
 	private static class FindByElement extends NotNullPredicate<PyMemberInfo<PyElement>>
@@ -362,7 +351,7 @@ public abstract class MembersManager<T extends PyElement> implements Function<T,
 		}
 
 		@Override
-		public boolean applyNotNull(@Nonnull PyMemberInfo<PyElement> input)
+		public boolean applyNotNull(PyMemberInfo<PyElement> input)
 		{
 			return input.getMember().equals(myPyElement);
 		}

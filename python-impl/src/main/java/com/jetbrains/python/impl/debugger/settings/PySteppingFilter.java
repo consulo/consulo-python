@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.debugger.settings;
 
-import jakarta.annotation.Nonnull;
 import consulo.project.Project;
 import consulo.util.io.FileUtil;
 
@@ -23,7 +22,6 @@ public class PySteppingFilter
 {
 	private boolean myIsEnabled;
 	private
-	@Nonnull
 	String myFilter;
 
 	public PySteppingFilter()
@@ -32,7 +30,7 @@ public class PySteppingFilter
 		myFilter = "";
 	}
 
-	public PySteppingFilter(boolean isEnabled, @Nonnull String filter)
+	public PySteppingFilter(boolean isEnabled, String filter)
 	{
 		myIsEnabled = isEnabled;
 		myFilter = filter;
@@ -48,14 +46,12 @@ public class PySteppingFilter
 		myIsEnabled = enabled;
 	}
 
-	@Nonnull
 	public String getFilter()
 	{
 		return myFilter;
 	}
 
-	@Nonnull
-	public String getAbsolutePlatformIndependentFilter(@Nonnull Project project)
+	public String getAbsolutePlatformIndependentFilter(Project project)
 	{
 		StringBuilder resultFilter = new StringBuilder();
 		String[] filters = myFilter.split(PyDebuggerSettings.FILTERS_DIVIDER);
@@ -70,7 +66,7 @@ public class PySteppingFilter
 		return resultFilter.toString().replace('\\', '/');
 	}
 
-	public void setFilter(@Nonnull String filter)
+	public void setFilter(String filter)
 	{
 		myFilter = filter;
 	}

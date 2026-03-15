@@ -5,7 +5,7 @@ import consulo.language.editor.inspection.InspectionToolState;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.refactoring.introduce.parameter;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.psi.PsiElement;
@@ -55,7 +54,7 @@ public class PyIntroduceParameterHandler extends IntroduceHandler
 
 	@Nullable
 	@Override
-	protected PsiElement addDeclaration(@Nonnull PsiElement expression, @Nonnull PsiElement declaration, @Nonnull IntroduceOperation operation)
+	protected PsiElement addDeclaration(PsiElement expression, PsiElement declaration, IntroduceOperation operation)
 	{
 		return doIntroduceParameter(expression, (PyAssignmentStatement) declaration);
 	}

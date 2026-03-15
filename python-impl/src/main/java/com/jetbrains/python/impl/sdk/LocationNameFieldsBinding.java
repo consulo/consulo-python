@@ -12,8 +12,7 @@ import consulo.ui.ex.awt.event.DocumentAdapter;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -60,7 +59,7 @@ public class LocationNameFieldsBinding {
                 TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
             ) {
                 @Override
-                protected void onFileChosen(@Nonnull VirtualFile chosenFile) {
+                protected void onFileChosen(VirtualFile chosenFile) {
                     myBaseDir = chosenFile.getPath();
                     if (isProjectNameChanged(nameField.getText()) && !nameField.getText().equals(chosenFile.getName())) {
                         myExternalModify = true;
@@ -78,7 +77,7 @@ public class LocationNameFieldsBinding {
         locationField.addActionListener(listener);
         locationField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(@Nonnull DocumentEvent e) {
+            protected void textChanged(DocumentEvent e) {
                 if (myExternalModify) {
                     return;
                 }
@@ -102,7 +101,7 @@ public class LocationNameFieldsBinding {
         });
     }
 
-    private boolean isProjectNameChanged(@Nonnull String currentName) {
+    private boolean isProjectNameChanged(String currentName) {
         return !currentName.equals(mySuggestedProjectName);
     }
 
@@ -110,7 +109,7 @@ public class LocationNameFieldsBinding {
         NameFieldDocument(JTextField projectNameTextField, TextFieldWithBrowseButton locationField) {
             addDocumentListener(new DocumentAdapter() {
                 @Override
-                protected void textChanged(@Nonnull DocumentEvent e) {
+                protected void textChanged(DocumentEvent e) {
                     if (!myModifyingLocation && !myExternalModify) {
                         myModifyingProjectName = true;
                         File f = new File(myBaseDir);

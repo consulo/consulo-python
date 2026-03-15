@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.util.lang.StringUtil;
 
@@ -35,46 +34,39 @@ public abstract class DocStringBuilder<This extends DocStringBuilder>
 		myLines = new ArrayList<>();
 	}
 
-	@Nonnull
-	public This addLine(@Nonnull String line)
+	public This addLine(String line)
 	{
 		return addLine(line, myLines.size());
 	}
 
-	@Nonnull
-	public This addLine(@Nonnull String line, int index)
+	public This addLine(String line, int index)
 	{
 		myLines.add(index, line);
 		//noinspection unchecked
 		return (This) this;
 	}
 
-	@Nonnull
 	public This addEmptyLine()
 	{
 		return addLine("", myLines.size());
 	}
 
-	@Nonnull
 	public This addEmptyLine(int index)
 	{
 		return addLine("", index);
 	}
 
-	@Nonnull
 	public List<String> getLines()
 	{
 		return Collections.unmodifiableList(myLines);
 	}
 
-	@Nonnull
 	public String buildContent(int indent, boolean indentFirst)
 	{
 		return buildContent(StringUtil.repeatSymbol(' ', indent), indentFirst);
 	}
 
-	@Nonnull
-	public String buildContent(@Nonnull String indentation, boolean indentFirst)
+	public String buildContent(String indentation, boolean indentFirst)
 	{
 		StringBuilder result = new StringBuilder();
 		boolean first = true;

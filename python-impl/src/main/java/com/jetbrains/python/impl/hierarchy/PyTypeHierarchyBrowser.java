@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.hierarchy;
 import java.util.Comparator;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 
@@ -43,13 +42,13 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 {
 	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.hierarchy.TypeHierarchyBrowser");
 
-	protected PyTypeHierarchyBrowser(@Nonnull PyClass pyClass)
+	protected PyTypeHierarchyBrowser(PyClass pyClass)
 	{
 		super(pyClass.getProject(), pyClass);
 	}
 
 	@Nullable
-	protected PsiElement getElementFromDescriptor(@Nonnull HierarchyNodeDescriptor descriptor)
+	protected PsiElement getElementFromDescriptor(HierarchyNodeDescriptor descriptor)
 	{
 		if(!(descriptor instanceof PyHierarchyNodeDescriptor))
 		{
@@ -58,7 +57,7 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 		return descriptor.getPsiElement();
 	}
 
-	protected void createTrees(@Nonnull Map<String, JTree> trees)
+	protected void createTrees(Map<String, JTree> trees)
 	{
 		createTreeAndSetupCommonActions(trees, "PyTypeHierarchyPopupMenu");
 	}
@@ -69,13 +68,12 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 		return null;
 	}
 
-	protected boolean isApplicableElement(@Nonnull PsiElement element)
+	protected boolean isApplicableElement(PsiElement element)
 	{
 		return (element instanceof PyClass);
 	}
 
-	@Nullable
-	protected consulo.ide.impl.idea.ide.hierarchy.HierarchyTreeStructure createHierarchyTreeStructure(@Nonnull String typeName, @Nonnull PsiElement psiElement)
+	protected consulo.ide.impl.idea.ide.hierarchy.@Nullable HierarchyTreeStructure createHierarchyTreeStructure(String typeName, PsiElement psiElement)
 	{
 		if(SUPERTYPES_HIERARCHY_TYPE.equals(typeName))
 		{
@@ -112,7 +110,6 @@ public class PyTypeHierarchyBrowser extends TypeHierarchyBrowserBase
 		return (psiElement instanceof PyClass);
 	}
 
-	@Nonnull
 	protected String getQualifiedName(PsiElement psiElement)
 	{
 		if(psiElement instanceof PyClass)

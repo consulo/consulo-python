@@ -30,8 +30,7 @@ import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -66,8 +65,8 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
    *                      For modules and packages it should be <em>qualified name of their parental package</em>
    *                      (empty for modules and packages located at source roots).
    */
-  public ImportCandidateHolder(@Nonnull PsiElement importable,
-                               @Nonnull PsiFileSystemItem file,
+  public ImportCandidateHolder(PsiElement importable,
+                               PsiFileSystemItem file,
                                @Nullable PyImportElement importElement,
                                @Nullable QualifiedName path,
                                @Nullable String asName) {
@@ -79,14 +78,13 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
     assert importElement != null || path != null; // one of these must be present
   }
 
-  public ImportCandidateHolder(@Nonnull PsiElement importable,
-                               @Nonnull PsiFileSystemItem file,
+  public ImportCandidateHolder(PsiElement importable,
+                               PsiFileSystemItem file,
                                @Nullable PyImportElement importElement,
                                @Nullable QualifiedName path) {
     this(importable, file, importElement, path, null);
   }
 
-  @Nonnull
   public PsiElement getImportable() {
     return myImportable;
   }
@@ -96,7 +94,6 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
     return myImportElement;
   }
 
-  @Nonnull
   public PsiFileSystemItem getFile() {
     return myFile;
   }
@@ -115,8 +112,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
    * @param source     known ImportElement to import the name; its 'as' clause is used if present.
    * @return a properly qualified name.
    */
-  @Nonnull
-  public static String getQualifiedName(@Nonnull String name, @Nullable QualifiedName importPath, @Nullable PyImportElement source) {
+  public static String getQualifiedName(String name, @Nullable QualifiedName importPath, @Nullable PyImportElement source) {
     StringBuilder sb = new StringBuilder();
     if (source != null) {
       PsiElement parent = source.getParent();
@@ -136,8 +132,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
     return sb.toString();
   }
 
-  @Nonnull
-  public String getPresentableText(@Nonnull String myName) {
+  public String getPresentableText(String myName) {
     StringBuilder sb = new StringBuilder(getQualifiedName(myName, myPath, myImportElement));
     PsiElement parent = null;
     if (myImportElement != null) {
@@ -167,7 +162,7 @@ public class ImportCandidateHolder implements Comparable<ImportCandidateHolder> 
     return sb.toString();
   }
 
-  public int compareTo(@Nonnull ImportCandidateHolder other) {
+  public int compareTo(ImportCandidateHolder other) {
     int lRelevance = getRelevance();
     int rRelevance = other.getRelevance();
     if (rRelevance != lRelevance) {

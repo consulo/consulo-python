@@ -37,7 +37,6 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -49,9 +48,9 @@ import java.util.Collections;
 class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImpl<PyExtractSuperclassView, MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements PyExtractSuperclassPresenter {
   private final NamesValidator myNamesValidator = NamesValidator.forLanguage(PythonLanguage.getInstance());
 
-  PyExtractSuperclassPresenterImpl(@Nonnull PyExtractSuperclassView view,
-                                   @Nonnull PyClass classUnderRefactoring,
-                                   @Nonnull PyMemberInfoStorage infoStorage) {
+  PyExtractSuperclassPresenterImpl(PyExtractSuperclassView view,
+                                   PyClass classUnderRefactoring,
+                                   PyMemberInfoStorage infoStorage) {
     super(view, classUnderRefactoring, infoStorage, new PyExtractSuperclassInfoModel(classUnderRefactoring));
   }
 
@@ -103,7 +102,6 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
     myView.initAndShow();
   }
 
-  @Nonnull
   @Override
   protected String getCommandName() {
     return RefactoringBundle.message("extract.superclass.command.name", myView.getSuperClassName(), myClassUnderRefactoring.getName());
@@ -117,7 +115,6 @@ class PyExtractSuperclassPresenterImpl extends MembersBasedPresenterNoPreviewImp
                                                 myView.getModuleFile());
   }
 
-  @Nonnull
   @Override
   protected Iterable<? extends PyClass> getDestClassesToCheckConflicts() {
     return Collections.emptyList(); // No conflict can take place in newly created classes

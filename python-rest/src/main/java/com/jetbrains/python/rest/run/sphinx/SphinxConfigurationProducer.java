@@ -33,8 +33,7 @@ import consulo.project.Project;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -92,7 +91,7 @@ public class SphinxConfigurationProducer extends RuntimeConfigurationProducer im
   @Nullable
   @Override
   protected RunnerAndConfigurationSettings findExistingByElement(Location location,
-                                                                 @Nonnull List<RunnerAndConfigurationSettings> existingConfigurations,
+                                                                 List<RunnerAndConfigurationSettings> existingConfigurations,
                                                                  ConfigurationContext context) {
     PsiElement element = location.getPsiElement();
     if (!(element instanceof PsiDirectory)) return null;

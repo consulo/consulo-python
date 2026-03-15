@@ -28,7 +28,6 @@ import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.collection.MultiMap;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
@@ -48,24 +47,20 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	/**
 	 * Panel to be displayed on the top
 	 */
-	@Nonnull
 	protected final JPanel myTopPanel;
 	/**
 	 * Panel to be displayed at the center
 	 */
-	@Nonnull
 	protected final JComponent myCenterPanel;
 
 	/**
 	 * Presenter
 	 */
-	@Nonnull
 	protected final P myPresenter;
 
 	/**
 	 * Panel with members
 	 */
-	@Nonnull
 	protected final PyMemberSelectionPanel myPyMemberSelectionPanel;
 
 	private boolean myConfigured;
@@ -77,7 +72,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	 * @param title           window title
 	 * @param supportAbstract supports "abstract" column?
 	 */
-	protected MembersBasedViewSwingImpl(@Nonnull Project project, @Nonnull P presenter, @Nonnull String title, boolean supportAbstract)
+	protected MembersBasedViewSwingImpl(Project project, P presenter, String title, boolean supportAbstract)
 	{
 		super(project, true);
 		myTopPanel = new JPanel(new BorderLayout());
@@ -89,7 +84,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 
 
 	@Override
-	public boolean showConflictsDialog(@Nonnull MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @Nonnull Collection<PyMemberInfo<?>> dependenciesConflicts)
+	public boolean showConflictsDialog(MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, Collection<PyMemberInfo<?>> dependenciesConflicts)
 	{
 		Preconditions.checkArgument(!(duplicatesConflict.isEmpty() && dependenciesConflicts.isEmpty()), "Can't show dialog for empty conflicts");
 		DialogWrapper conflictsDialog = new MembersConflictDialog(myProject, duplicatesConflict, dependenciesConflicts);
@@ -97,7 +92,7 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	}
 
 	@Override
-	public void showError(@Nonnull String message)
+	public void showError(String message)
 	{
 		Messages.showErrorDialog(getContentPane(), message);
 	}
@@ -114,7 +109,6 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 		myPresenter.okClicked();
 	}
 
-	@Nonnull
 	@Override
 	protected JComponent createNorthPanel()
 	{
@@ -133,7 +127,6 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 		return myCenterPanel;
 	}
 
-	@Nonnull
 	@Override
 	public Collection<PyMemberInfo<PyElement>> getSelectedMemberInfos()
 	{
@@ -141,13 +134,13 @@ public abstract class MembersBasedViewSwingImpl<P extends MembersBasedPresenter,
 	}
 
 	@Override
-	public void invokeRefactoring(@Nonnull BaseRefactoringProcessor processor)
+	public void invokeRefactoring(BaseRefactoringProcessor processor)
 	{
 		super.invokeRefactoring(processor);
 	}
 
 	@Override
-	public void configure(@Nonnull C configInfo)
+	public void configure(C configInfo)
 	{
 		Preconditions.checkArgument(!myConfigured, "Already configured");
 		myConfigured = true;

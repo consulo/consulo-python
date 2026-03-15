@@ -28,20 +28,18 @@ import consulo.language.psi.PsiWhiteSpace;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
  */
 public class ReplaceExceptPartQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.intnConvertExceptTo();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement exceptPart = descriptor.getPsiElement();
         if (exceptPart instanceof PyExceptPart) {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

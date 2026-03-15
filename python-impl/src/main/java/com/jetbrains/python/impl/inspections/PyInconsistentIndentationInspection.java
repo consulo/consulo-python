@@ -28,7 +28,6 @@ import consulo.language.editor.inspection.scheme.InspectionManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +37,13 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyInconsistentIndentationInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO("Inconsistent indentation");
     }
 
     @Override
-    public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
+    public ProblemDescriptor[] checkFile(PsiFile file, InspectionManager manager, boolean isOnTheFly) {
         if (file.getLanguage() instanceof PythonLanguage) {
             return new IndentValidator(file, manager, isOnTheFly).invoke();
         }

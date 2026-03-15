@@ -34,8 +34,7 @@ import consulo.language.psi.stub.IStubElementType;
 import consulo.language.psi.stub.StubElement;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +54,6 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		super(node);
 	}
 
-	@Nonnull
 	@Override
 	public PythonLanguage getLanguage()
 	{
@@ -75,7 +73,7 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		return className;
 	}
 
-	public void accept(@Nonnull PsiElementVisitor visitor)
+	public void accept(PsiElementVisitor visitor)
 	{
 		PyUtil.verboseOnly(() -> PyPsiUtils.assertValid(this));
 		if(visitor instanceof PyElementVisitor)
@@ -93,7 +91,6 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		pyVisitor.visitPyElement(this);
 	}
 
-	@Nonnull
 	protected <T extends PyElement> T[] childrenToPsi(TokenSet filterSet, T[] array)
 	{
 		ASTNode[] nodes = getNode().getChildren(filterSet);
@@ -126,14 +123,13 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 	}
 
 	@Nullable
-	protected <T extends PyElement> T childToPsi(@Nonnull TokenSet elTypes)
+	protected <T extends PyElement> T childToPsi(TokenSet elTypes)
 	{
 		ASTNode node = getNode().findChildByType(elTypes);
 		//noinspection unchecked
 		return node != null ? (T) node.getPsi() : null;
 	}
 
-	@Nonnull
 	protected <T extends PyElement> T childToPsiNotNull(TokenSet filterSet, int index)
 	{
 		PyElement child = childToPsi(filterSet, index);
@@ -145,7 +141,6 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
 		return (T) child;
 	}
 
-	@Nonnull
 	protected <T extends PyElement> T childToPsiNotNull(IElementType elType)
 	{
 		PyElement child = childToPsi(elType);

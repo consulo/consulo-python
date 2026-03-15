@@ -30,7 +30,6 @@ import com.jetbrains.python.impl.run.PythonCommandLineState;
 import consulo.jython.icon.JythonIconGroup;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +51,7 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 		return PYTHON_PATH_PREFIX + StringUtil.join(appendSystemEnvPaths(path, JYTHONPATH), File.pathSeparator);
 	}
 
-	public boolean isValidSdkPath(@Nonnull File file)
+	public boolean isValidSdkPath(File file)
 	{
 		return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("jython");
 	}
@@ -99,7 +98,6 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 		return JythonProcessHandler.createProcessHandler(commandLine);
 	}
 
-	@Nonnull
 	@Override
 	public Collection<String> collectDebugPythonPath()
 	{
@@ -110,7 +108,6 @@ public class JythonSdkFlavor extends PythonSdkFlavor
 		return list;
 	}
 
-	@Nonnull
 	@Override
 	public String getName()
 	{

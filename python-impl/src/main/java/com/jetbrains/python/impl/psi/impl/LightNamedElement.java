@@ -24,8 +24,6 @@ import consulo.language.psi.PsiManager;
 import consulo.language.psi.PsiNamedElement;
 import com.jetbrains.python.psi.PyElement;
 import consulo.language.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -42,7 +40,7 @@ public class LightNamedElement extends LightElement implements PyElement, PsiNam
     return myName;
   }
 
-  public void accept(@Nonnull PsiElementVisitor visitor) {
+  public void accept(PsiElementVisitor visitor) {
     visitor.visitElement(this);
   }
 
@@ -54,7 +52,7 @@ public class LightNamedElement extends LightElement implements PyElement, PsiNam
     return myName;
   }
 
-  public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
+  public PsiElement setName(String name) throws IncorrectOperationException
   {
     throw new UnsupportedOperationException("LightNamedElement#setName() is not supported");
   }

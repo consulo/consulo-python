@@ -26,7 +26,6 @@ import consulo.language.psi.PsiManager;
 import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.PyStringLiteralFileReferenceSet;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +38,6 @@ public class PyTemplateFileReferenceSet extends PyStringLiteralFileReferenceSet 
     super(element, false);
   }
 
-  @Nonnull
   @Override
   public Collection<PsiFileSystemItem> computeDefaultContexts() {
     List<PsiFileSystemItem> contexts = ContainerUtil.newArrayList();

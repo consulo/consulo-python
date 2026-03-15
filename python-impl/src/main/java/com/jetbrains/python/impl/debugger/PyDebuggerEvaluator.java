@@ -26,8 +26,7 @@ import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.evaluation.XDebuggerEvaluator;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 
 public class PyDebuggerEvaluator extends XDebuggerEvaluator
@@ -37,14 +36,14 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 	private Project myProject;
 	private final PyFrameAccessor myDebugProcess;
 
-	public PyDebuggerEvaluator(@Nonnull Project project, @Nonnull PyFrameAccessor debugProcess)
+	public PyDebuggerEvaluator(Project project, PyFrameAccessor debugProcess)
 	{
 		myProject = project;
 		myDebugProcess = debugProcess;
 	}
 
 	@Override
-	public void evaluate(@Nonnull String expression, @Nonnull XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition)
+	public void evaluate(String expression, XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition)
 	{
 		doEvaluate(expression, callback, true);
 	}
@@ -87,9 +86,8 @@ public class PyDebuggerEvaluator extends XDebuggerEvaluator
 		return PyDebugSupportUtils.getExpressionRangeAtOffset(project, document, offset);
 	}
 
-	@Nonnull
 	@Override
-	public String formatTextForEvaluation(@Nonnull String text)
+	public String formatTextForEvaluation(String text)
 	{
 		return PyConsoleIndentUtil.normalize(text);
 	}

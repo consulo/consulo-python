@@ -16,12 +16,10 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public interface PyNonlocalStatement extends PyStatement {
-  @Nonnull
   PyTargetExpression[] getVariables();
 }

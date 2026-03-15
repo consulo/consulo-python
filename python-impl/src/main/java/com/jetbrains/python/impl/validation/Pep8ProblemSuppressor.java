@@ -22,8 +22,7 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Custom filter that allows to selectively suppress warnings and errors produced by pycodestyle.py (former pep8.py).
@@ -44,5 +43,5 @@ public interface Pep8ProblemSuppressor {
    * @param targetElement PSI element found in the place of a problem on which annotation is going be attached in the editor
    * @return whether notification about this problem should be hidden in the editor
    */
-  boolean isProblemSuppressed(@Nonnull Pep8ExternalAnnotator.Problem problem, @Nonnull PsiFile file, @Nullable PsiElement targetElement);
+  boolean isProblemSuppressed(Pep8ExternalAnnotator.Problem problem, PsiFile file, @Nullable PsiElement targetElement);
 }

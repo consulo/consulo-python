@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
@@ -33,13 +32,13 @@ public abstract class PyFixer<T extends PyElement>
 {
 	private final Class<T> myClass;
 
-	public PyFixer(@Nonnull Class<T> aClass)
+	public PyFixer(Class<T> aClass)
 	{
 		myClass = aClass;
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void apply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PsiElement element) throws IncorrectOperationException
+	public final void apply(Editor editor, PySmartEnterProcessor processor, PsiElement element) throws IncorrectOperationException
 	{
 		if(myClass.isInstance(element) && isApplicable(editor, (T) element))
 		{
@@ -47,10 +46,10 @@ public abstract class PyFixer<T extends PyElement>
 		}
 	}
 
-	protected boolean isApplicable(@Nonnull Editor editor, @Nonnull T element)
+	protected boolean isApplicable(Editor editor, T element)
 	{
 		return myClass.isInstance(element);
 	}
 
-	protected abstract void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull T element);
+	protected abstract void doApply(Editor editor, PySmartEnterProcessor processor, T element);
 }

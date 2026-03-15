@@ -35,8 +35,7 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class QualifiedNameFinder
 	 * the name with fewest qualifiers is selected.
 	 */
 	@Nullable
-	public static String findShortestImportableName(@Nonnull PsiElement foothold, @Nonnull VirtualFile vfile)
+	public static String findShortestImportableName(PsiElement foothold, VirtualFile vfile)
 	{
 		QualifiedName qName = findShortestImportableQName(foothold, vfile);
 		return qName == null ? null : qName.toString();
@@ -68,13 +67,12 @@ public class QualifiedNameFinder
 	}
 
 	@Nullable
-	public static QualifiedName findShortestImportableQName(@Nonnull PsiElement foothold, @Nonnull VirtualFile vfile)
+	public static QualifiedName findShortestImportableQName(PsiElement foothold, VirtualFile vfile)
 	{
 		return shortestQName(findImportableQNames(foothold, vfile));
 	}
 
-	@Nonnull
-	public static List<QualifiedName> findImportableQNames(@Nonnull PsiElement foothold, @Nonnull VirtualFile vfile)
+	public static List<QualifiedName> findImportableQNames(PsiElement foothold, VirtualFile vfile)
 	{
 		PythonPathCache cache = ResolveImportUtil.getPathCache(foothold);
 		List<QualifiedName> names = cache != null ? cache.getNames(vfile) : null;
@@ -93,13 +91,13 @@ public class QualifiedNameFinder
 	}
 
 	@Nullable
-	private static QualifiedName shortestQName(@Nonnull List<QualifiedName> qNames)
+	private static QualifiedName shortestQName(List<QualifiedName> qNames)
 	{
 		return qNames.stream().min((o1, o2) -> o1.getComponentCount() - o2.getComponentCount()).orElse(null);
 	}
 
 	@Nullable
-	public static String findShortestImportableName(Module module, @Nonnull VirtualFile vfile)
+	public static String findShortestImportableName(Module module, VirtualFile vfile)
 	{
 		PythonPathCache cache = PythonModulePathCache.getInstance(module);
 		List<QualifiedName> names = cache.getNames(vfile);
@@ -125,7 +123,7 @@ public class QualifiedNameFinder
 	 * @return the qualified name, or null if it wasn't possible to calculate one
 	 */
 	@Nullable
-	public static QualifiedName findCanonicalImportPath(@Nonnull PsiElement symbol, @Nullable PsiElement foothold)
+	public static QualifiedName findCanonicalImportPath(PsiElement symbol, @Nullable PsiElement foothold)
 	{
 		PsiFileSystemItem srcfile = symbol instanceof PsiFileSystemItem ? (PsiFileSystemItem) symbol : symbol.getContainingFile();
 		if(srcfile == null)
@@ -185,7 +183,7 @@ public class QualifiedNameFinder
 	}
 
 	@Nullable
-	public static String getQualifiedName(@Nonnull PyElement element)
+	public static String getQualifiedName(PyElement element)
 	{
 		String name = element.getName();
 		if(name != null)
@@ -231,10 +229,9 @@ public class QualifiedNameFinder
 	{
 		@Nullable
 		private final VirtualFile myVFile;
-		@Nonnull
 		private final List<QualifiedName> myResults = new ArrayList<>();
 
-		private PathChoosingVisitor(@Nonnull VirtualFile file)
+		private PathChoosingVisitor(VirtualFile file)
 		{
 			if(!file.isDirectory() && file.getName().equals(PyNames.INIT_DOT_PY))
 			{
@@ -271,7 +268,6 @@ public class QualifiedNameFinder
 			return true;
 		}
 
-		@Nonnull
 		public List<QualifiedName> getResults()
 		{
 			return myResults;

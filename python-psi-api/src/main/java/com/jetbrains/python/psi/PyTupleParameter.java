@@ -18,7 +18,6 @@ package com.jetbrains.python.psi;
 
 import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyTupleParameterStub;
-import jakarta.annotation.Nonnull;
 
 /**
  * Tuple parameter. Defines nothing; this interface is only needed for stub creation.
@@ -28,6 +27,5 @@ public interface PyTupleParameter extends PyParameter, StubBasedPsiElement<PyTup
   /**
    * @return the nested parameters within this tuple parameter.
    */
-  @Nonnull
   PyParameter[] getContents();
 }

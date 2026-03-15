@@ -22,8 +22,7 @@ import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User : catherine
@@ -36,7 +35,7 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
   }
 
   public RestInspectionVisitor(@Nullable ProblemsHolder problemsHolder,
-                               @Nonnull LocalInspectionToolSession session) {
+                               LocalInspectionToolSession session) {
     myHolder = problemsHolder;
   }
 
@@ -56,8 +55,8 @@ public abstract class RestInspectionVisitor extends RestElementVisitor {
   }
 
   protected final void registerProblem(@Nullable PsiElement element,
-                                       @Nonnull String message,
-                                       @Nonnull LocalQuickFix quickFix){
+                                       String message,
+                                       LocalQuickFix quickFix){
       if (element == null || element.getTextLength() == 0){
           return;
       }

@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.findUsages;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
@@ -39,7 +38,7 @@ public class PyClassGroupingRuleProvider implements FileStructureGroupRuleProvid
   }
 
   private static class PyClassGroupingRule implements UsageGroupingRule {
-    public UsageGroup groupUsage(@Nonnull Usage usage) {
+    public UsageGroup groupUsage(Usage usage) {
       if (!(usage instanceof PsiElementUsage)) return null;
       PsiElement psiElement = ((PsiElementUsage)usage).getElement();
       PyClass pyClass = PsiTreeUtil.getParentOfType(psiElement, PyClass.class);

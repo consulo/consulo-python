@@ -40,8 +40,7 @@ import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.SimpleReference;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -49,14 +48,11 @@ import java.util.*;
  * @author vlan
  */
 public class PyPackageManagerUI {
-    @Nonnull
     private static final Logger LOG = Logger.getInstance(PyPackageManagerUI.class);
 
     @Nullable
     private Listener myListener;
-    @Nonnull
     private Project myProject;
-    @Nonnull
     private Sdk mySdk;
 
     public interface Listener {
@@ -65,7 +61,7 @@ public class PyPackageManagerUI {
         void finished(List<ExecutionException> exceptions);
     }
 
-    public PyPackageManagerUI(@Nonnull Project project, @Nonnull Sdk sdk, @Nullable Listener listener) {
+    public PyPackageManagerUI(Project project, Sdk sdk, @Nullable Listener listener) {
         myProject = project;
         mySdk = sdk;
         myListener = listener;
@@ -75,12 +71,12 @@ public class PyPackageManagerUI {
         ProgressManager.getInstance().run(new InstallManagementTask(myProject, mySdk, myListener));
     }
 
-    public void install(@Nonnull List<PyRequirement> requirements, @Nonnull List<String> extraArgs) {
+    public void install(List<PyRequirement> requirements, List<String> extraArgs) {
         ProgressManager.getInstance().run(new InstallTask(myProject, mySdk, requirements, extraArgs, myListener));
     }
 
     @RequiredUIAccess
-    public void uninstall(@Nonnull List<PyPackage> packages) {
+    public void uninstall(List<PyPackage> packages) {
         if (checkDependents(packages)) {
             return;
         }
@@ -88,7 +84,7 @@ public class PyPackageManagerUI {
     }
 
     @RequiredUIAccess
-    private boolean checkDependents(@Nonnull List<PyPackage> packages) {
+    private boolean checkDependents(List<PyPackage> packages) {
         try {
             Map<String, Set<PyPackage>> dependentPackages = collectDependents(packages, mySdk);
             int[] warning = {0};
@@ -134,7 +130,7 @@ public class PyPackageManagerUI {
         return false;
     }
 
-    private static Map<String, Set<PyPackage>> collectDependents(@Nonnull List<PyPackage> packages, Sdk sdk) throws ExecutionException {
+    private static Map<String, Set<PyPackage>> collectDependents(List<PyPackage> packages, Sdk sdk) throws ExecutionException {
         Map<String, Set<PyPackage>> dependentPackages = new HashMap<>();
         for (PyPackage pkg : packages) {
             Set<PyPackage> dependents = PyPackageManager.getInstance(sdk).getDependents(pkg);
@@ -152,36 +148,31 @@ public class PyPackageManagerUI {
     private abstract static class PackagingTask extends Task.Backgroundable {
         private static final NotificationGroup PACKAGING_GROUP_ID = NotificationGroup.balloonGroup("Python Packaging");
 
-        @Nonnull
         protected final Sdk mySdk;
         @Nullable
         protected final Listener myListener;
 
-        public PackagingTask(@Nullable Project project, @Nonnull Sdk sdk, @Nonnull String title, @Nullable Listener listener) {
+        public PackagingTask(@Nullable Project project, Sdk sdk, String title, @Nullable Listener listener) {
             super(project, title);
             mySdk = sdk;
             myListener = listener;
         }
 
         @Override
-        public void run(@Nonnull ProgressIndicator indicator) {
+        public void run(ProgressIndicator indicator) {
             taskStarted(indicator);
             taskFinished(runTask(indicator));
         }
 
-        @Nonnull
-        protected abstract List<ExecutionException> runTask(@Nonnull ProgressIndicator indicator);
+        protected abstract List<ExecutionException> runTask(ProgressIndicator indicator);
 
-        @Nonnull
         protected abstract String getSuccessTitle();
 
-        @Nonnull
         protected abstract String getSuccessDescription();
 
-        @Nonnull
         protected abstract String getFailureTitle();
 
-        protected void taskStarted(@Nonnull ProgressIndicator indicator) {
+        protected void taskStarted(ProgressIndicator indicator) {
             Project project = (Project) getProject();
             PackagingNotification[] notifications =
                 NotificationsManager.getNotificationsManager().getNotificationsOfType(PackagingNotification.class, project);
@@ -194,7 +185,7 @@ public class PyPackageManagerUI {
             }
         }
 
-        protected void taskFinished(@Nonnull List<ExecutionException> exceptions) {
+        protected void taskFinished(List<ExecutionException> exceptions) {
             SimpleReference<Notification> notificationRef = new SimpleReference<>(null);
             if (exceptions.isEmpty()) {
                 notificationRef.set(new PackagingNotification(
@@ -238,10 +229,10 @@ public class PyPackageManagerUI {
         private static class PackagingNotification extends Notification {
 
             public PackagingNotification(
-                @Nonnull NotificationGroup groupDisplayId,
-                @Nonnull String title,
-                @Nonnull String content,
-                @Nonnull consulo.project.ui.notification.NotificationType type,
+                NotificationGroup groupDisplayId,
+                String title,
+                String content,
+                consulo.project.ui.notification.NotificationType type,
                 @Nullable NotificationListener listener
             ) {
                 super(groupDisplayId, title, content, type, listener);
@@ -250,16 +241,14 @@ public class PyPackageManagerUI {
     }
 
     private static class InstallTask extends PackagingTask {
-        @Nonnull
         private final List<PyRequirement> myRequirements;
-        @Nonnull
         private final List<String> myExtraArgs;
 
         public InstallTask(
             @Nullable Project project,
-            @Nonnull Sdk sdk,
-            @Nonnull List<PyRequirement> requirements,
-            @Nonnull List<String> extraArgs,
+            Sdk sdk,
+            List<PyRequirement> requirements,
+            List<String> extraArgs,
             @Nullable Listener listener
         ) {
             super(project, sdk, "Installing packages", listener);
@@ -267,9 +256,8 @@ public class PyPackageManagerUI {
             myExtraArgs = extraArgs;
         }
 
-        @Nonnull
         @Override
-        protected List<ExecutionException> runTask(@Nonnull ProgressIndicator indicator) {
+        protected List<ExecutionException> runTask(ProgressIndicator indicator) {
             List<ExecutionException> exceptions = new ArrayList<>();
             int size = myRequirements.size();
             PyPackageManager manager = PyPackageManagers.getInstance().forSdk(mySdk);
@@ -298,19 +286,16 @@ public class PyPackageManagerUI {
             return exceptions;
         }
 
-        @Nonnull
         @Override
         protected String getSuccessTitle() {
             return "Packages installed successfully";
         }
 
-        @Nonnull
         @Override
         protected String getSuccessDescription() {
             return "Installed packages: " + PyPackageUtil.requirementsToString(myRequirements);
         }
 
-        @Nonnull
         @Override
         protected String getFailureTitle() {
             return "Install packages failed";
@@ -319,13 +304,12 @@ public class PyPackageManagerUI {
 
     private static class InstallManagementTask extends InstallTask {
 
-        public InstallManagementTask(@Nullable Project project, @Nonnull Sdk sdk, @Nullable Listener listener) {
+        public InstallManagementTask(@Nullable Project project, Sdk sdk, @Nullable Listener listener) {
             super(project, sdk, Collections.<PyRequirement>emptyList(), Collections.<String>emptyList(), listener);
         }
 
-        @Nonnull
         @Override
-        protected List<ExecutionException> runTask(@Nonnull ProgressIndicator indicator) {
+        protected List<ExecutionException> runTask(ProgressIndicator indicator) {
             List<ExecutionException> exceptions = new ArrayList<>();
             PyPackageManager manager = PyPackageManagers.getInstance().forSdk(mySdk);
             indicator.setText("Installing packaging tools...");
@@ -340,7 +324,6 @@ public class PyPackageManagerUI {
             return exceptions;
         }
 
-        @Nonnull
         @Override
         protected String getSuccessDescription() {
             return "Installed Python packaging tools";
@@ -348,17 +331,15 @@ public class PyPackageManagerUI {
     }
 
     private static class UninstallTask extends PackagingTask {
-        @Nonnull
         private final List<PyPackage> myPackages;
 
-        public UninstallTask(@Nullable Project project, @Nonnull Sdk sdk, @Nullable Listener listener, @Nonnull List<PyPackage> packages) {
+        public UninstallTask(@Nullable Project project, Sdk sdk, @Nullable Listener listener, List<PyPackage> packages) {
             super(project, sdk, "Uninstalling packages", listener);
             myPackages = packages;
         }
 
-        @Nonnull
         @Override
-        protected List<ExecutionException> runTask(@Nonnull ProgressIndicator indicator) {
+        protected List<ExecutionException> runTask(ProgressIndicator indicator) {
             PyPackageManager manager = PyPackageManagers.getInstance().forSdk(mySdk);
             indicator.setIndeterminate(true);
             try {
@@ -373,20 +354,17 @@ public class PyPackageManagerUI {
             }
         }
 
-        @Nonnull
         @Override
         protected String getSuccessTitle() {
             return "Packages uninstalled successfully";
         }
 
-        @Nonnull
         @Override
         protected String getSuccessDescription() {
             String packagesString = StringUtil.join(myPackages, pkg -> "'" + pkg.getName() + "'", ", ");
             return "Uninstalled packages: " + packagesString;
         }
 
-        @Nonnull
         @Override
         protected String getFailureTitle() {
             return "Uninstall packages failed";

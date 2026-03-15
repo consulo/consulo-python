@@ -26,8 +26,7 @@ import consulo.module.extension.ModuleExtension;
 import consulo.project.Project;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.python.psi.icon.PythonPsiIconGroup;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -45,7 +44,6 @@ public class CreatePythonFileAction extends CreateFileFromTemplateAction impleme
       .addKind(LocalizeValue.localizeTODO("Python unit test"), PythonFileType.INSTANCE.getIcon(), "Python Unit Test");
   }
 
-  @Nonnull
   @Override
   protected LocalizeValue getActionName(PsiDirectory directory, String newName, String templateName) {
     return LocalizeValue.localizeTODO("Create Python script " + newName);

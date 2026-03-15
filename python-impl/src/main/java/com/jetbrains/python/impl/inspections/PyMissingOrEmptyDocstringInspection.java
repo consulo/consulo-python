@@ -27,30 +27,27 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Mikhail Golubev
  */
 @ExtensionImpl
 public class PyMissingOrEmptyDocstringInspection extends PyBaseDocstringInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameMissingOrEmptyDocstring();
     }
 
-    @Nonnull
     @Override
     public Visitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session) {
             @Override
-            protected void checkDocString(@Nonnull PyDocStringOwner node) {
+            protected void checkDocString(PyDocStringOwner node) {
                 PyStringLiteralExpression docStringExpression = node.getDocStringExpression();
                 if (docStringExpression == null) {
                     for (PyInspectionExtension extension : PyInspectionExtension.EP_NAME.getExtensionList()) {

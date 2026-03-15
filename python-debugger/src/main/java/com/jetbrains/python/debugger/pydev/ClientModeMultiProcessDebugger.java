@@ -11,8 +11,7 @@ import consulo.execution.debug.breakpoint.SuspendPolicy;
 import consulo.execution.debug.frame.XValueChildrenList;
 import consulo.logging.Logger;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -23,18 +22,16 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	private static final Logger LOG = Logger.getInstance(ClientModeMultiProcessDebugger.class);
 
 	private final IPyDebugProcess myDebugProcess;
-	@Nonnull
 	private final String myHost;
 	private final int myPort;
 
-	@Nonnull
 	private final RemoteDebugger myMainDebugger;
 	private final Object myOtherDebuggersObject = new Object();
 	private final List<RemoteDebugger> myOtherDebuggers = Lists.newArrayList();
 
 	private ThreadRegistry myThreadRegistry = new ThreadRegistry();
 
-	public ClientModeMultiProcessDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull String host, int port)
+	public ClientModeMultiProcessDebugger(IPyDebugProcess debugProcess, String host, int port)
 	{
 		myDebugProcess = debugProcess;
 		myHost = host;
@@ -45,7 +42,6 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 		myOtherDebuggers.add(myMainDebugger);
 	}
 
-	@Nonnull
 	private RemoteDebugger createDebugger()
 	{
 		return new RemoteDebugger(myDebugProcess, myHost, myPort)
@@ -178,8 +174,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 		debugger(threadId).loadReferrers(threadId, frameId, var, callback);
 	}
 
-	@Nonnull
-	private ProcessDebugger debugger(@Nonnull String threadId)
+	private ProcessDebugger debugger(String threadId)
 	{
 		ProcessDebugger debugger = myThreadRegistry.getDebugger(threadId);
 		if(debugger != null)
@@ -233,7 +228,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 			return myThreadIdToDebugger.get(threadId);
 		}
 
-		public static String threadName(@Nonnull String name, @Nonnull String id)
+		public static String threadName(String name, String id)
 		{
 			int indx = id.indexOf("_", id.indexOf("_") + 1);
 			if(indx != -1)
@@ -344,7 +339,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void execute(@Nonnull AbstractCommand command)
+	public void execute(AbstractCommand command)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -386,7 +381,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setTempBreakpoint(@Nonnull String type, @Nonnull String file, int line)
+	public void setTempBreakpoint(String type, String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -395,7 +390,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeTempBreakpoint(@Nonnull String file, int line)
+	public void removeTempBreakpoint(String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -404,13 +399,13 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setBreakpoint(@Nonnull String typeId,
-			@Nonnull String file,
+	public void setBreakpoint(String typeId,
+			String file,
 			int line,
 			@Nullable String condition,
 			@Nullable String logExpression,
 			@Nullable String funcName,
-			@Nonnull SuspendPolicy policy)
+			SuspendPolicy policy)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{
@@ -419,7 +414,7 @@ public class ClientModeMultiProcessDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeBreakpoint(@Nonnull String typeId, @Nonnull String file, int line)
+	public void removeBreakpoint(String typeId, String file, int line)
 	{
 		for(ProcessDebugger d : allDebuggers())
 		{

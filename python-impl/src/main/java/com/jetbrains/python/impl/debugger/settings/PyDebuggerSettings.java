@@ -24,8 +24,7 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.SmartList;
 import consulo.util.xml.serializer.XmlSerializerUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +39,6 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
     private boolean myLibrariesFilterEnabled;
     private boolean mySteppingFiltersEnabled;
     private
-    @Nonnull
     List<PySteppingFilter> mySteppingFilters;
     public static final String FILTERS_DIVIDER = ";";
     private boolean myWatchReturnValues = false;
@@ -87,13 +85,11 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
         mySteppingFiltersEnabled = steppingFiltersEnabled;
     }
 
-    @Nonnull
     public List<PySteppingFilter> getSteppingFilters() {
         return mySteppingFilters;
     }
 
-    @Nonnull
-    public String getSteppingFiltersForProject(@Nonnull Project project) {
+    public String getSteppingFiltersForProject(Project project) {
         StringBuilder sb = new StringBuilder();
         for (PySteppingFilter filter : mySteppingFilters) {
             if (filter.isEnabled()) {
@@ -103,7 +99,7 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
         return sb.toString();
     }
 
-    public void setSteppingFilters(@Nonnull List<PySteppingFilter> steppingFilters) {
+    public void setSteppingFilters(List<PySteppingFilter> steppingFilters) {
         mySteppingFilters = steppingFilters;
     }
 
@@ -118,9 +114,8 @@ public class PyDebuggerSettings extends XDebuggerSettings<PyDebuggerSettings> im
         XmlSerializerUtil.copyBean(state, this);
     }
 
-    @Nonnull
     @Override
-    public Collection<? extends Configurable> createConfigurables(@Nonnull DebuggerSettingsCategory category) {
+    public Collection<? extends Configurable> createConfigurables(DebuggerSettingsCategory category) {
         switch (category) {
             case STEPPING:
                 return singletonList(IdeaSimpleConfigurable.create("python.debug.configurable",

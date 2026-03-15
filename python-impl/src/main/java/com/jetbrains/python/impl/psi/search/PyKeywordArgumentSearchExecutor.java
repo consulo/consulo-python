@@ -24,7 +24,6 @@ import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.search.ReferencesSearchQueryExecutor;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.util.query.QueryExecutorBase;
-import jakarta.annotation.Nonnull;
 
 import java.util.function.Predicate;
 
@@ -36,8 +35,8 @@ public class PyKeywordArgumentSearchExecutor extends QueryExecutorBase<PsiRefere
     implements ReferencesSearchQueryExecutor {
     @Override
     public void processQuery(
-        @Nonnull ReferencesSearch.SearchParameters queryParameters,
-        @Nonnull Predicate<? super PsiReference> consumer
+        ReferencesSearch.SearchParameters queryParameters,
+        Predicate<? super PsiReference> consumer
     ) {
         PsiElement element = queryParameters.getElementToSearch();
         if (!(element instanceof PyNamedParameter)) {

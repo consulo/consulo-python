@@ -19,8 +19,7 @@ import consulo.language.psi.PsiElement;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.ObjectUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,20 +38,18 @@ public enum DocStringFormat {
 
   public static final List<String> ALL_NAMES = getAllNames();
 
-  @Nonnull
   private static List<String> getAllNames() {
     return Collections.unmodifiableList(ContainerUtil.map(values(), format -> format.getName()));
   }
 
   public static final List<String> ALL_NAMES_BUT_PLAIN = getAllNamesButPlain();
 
-  @Nonnull
   private static List<String> getAllNamesButPlain() {
     return Collections.unmodifiableList(ContainerUtil.mapNotNull(values(), format -> format == PLAIN ? null : format.getName()));
   }
 
   @Nullable
-  public static DocStringFormat fromName(@Nonnull String name) {
+  public static DocStringFormat fromName(String name) {
     for (DocStringFormat format : values()) {
       if (format.getName().equalsIgnoreCase(name)) {
         return format;
@@ -61,25 +58,22 @@ public enum DocStringFormat {
     return null;
   }
 
-  @Nonnull
-  public static DocStringFormat fromNameOrPlain(@Nonnull String name) {
+  public static DocStringFormat fromNameOrPlain(String name) {
     return ObjectUtil.notNull(fromName(name), PLAIN);
   }
 
   private final String myName;
   private final String myFormatterCommand;
 
-  DocStringFormat(@Nonnull String name, @Nonnull String formatterCommand) {
+  DocStringFormat(String name, String formatterCommand) {
     myName = name;
     myFormatterCommand = formatterCommand;
   }
 
-  @Nonnull
   public String getName() {
     return myName;
   }
 
-  @Nonnull
   public String getFormatterCommand() {
     return myFormatterCommand;
   }

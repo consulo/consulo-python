@@ -19,8 +19,7 @@ import com.jetbrains.python.psi.PyArgumentList;
 import consulo.util.dataholder.UserDataHolderEx;
 import junit.framework.Assert;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.awt.*;
 import java.util.EnumSet;
 import java.util.Map;
@@ -713,7 +712,6 @@ public abstract class PyParameterInfoTest extends LightMarkedTestCase
 		}
 
 		@Override
-		@Nonnull
 		public Editor getEditor()
 		{
 			return myEditor;

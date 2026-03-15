@@ -25,9 +25,7 @@ import consulo.language.impl.file.SingleRootFileViewProvider;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiManager;
 import consulo.project.Project;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * clone of JSExpressionCodeFragment
@@ -37,7 +35,7 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
   private boolean myPhysical;
   private FileViewProvider myViewProvider;
 
-  public PyExpressionCodeFragmentImpl(Project project, @NonNls String name, CharSequence text, boolean isPhysical) {
+  public PyExpressionCodeFragmentImpl(Project project, String name, CharSequence text, boolean isPhysical) {
     super((new SingleRootFileViewProvider(PsiManager.getInstance(project),
                                           new LightVirtualFile(name, FileTypeManager.getInstance().getFileTypeByFileName(name), text),
                                           isPhysical)));
@@ -60,7 +58,6 @@ public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpres
     return myContext != null && myContext.isValid() ? myContext : super.getContext();
   }
 
-  @Nonnull
   public FileViewProvider getViewProvider() {
     if (myViewProvider != null) return myViewProvider;
     return super.getViewProvider();

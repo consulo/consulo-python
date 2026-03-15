@@ -70,8 +70,7 @@ import consulo.util.lang.TimeoutUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
@@ -141,7 +140,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     }
   }
 
-  public void setExecutionHandler(@Nonnull PydevConsoleExecuteActionHandler consoleExecuteActionHandler) {
+  public void setExecutionHandler(PydevConsoleExecuteActionHandler consoleExecuteActionHandler) {
     myExecuteActionHandler = consoleExecuteActionHandler;
   }
 
@@ -182,10 +181,10 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   }
 
   @Override
-  public void executeCode(final @Nonnull String code, @Nullable final Editor editor) {
+  public void executeCode(final String code, @Nullable final Editor editor) {
     myInitialized.doWhenDone(() -> ProgressManager.getInstance().run(new Task.Backgroundable(null, "Executing Code in Console...", false) {
       @Override
-      public void run(@Nonnull ProgressIndicator indicator) {
+      public void run(ProgressIndicator indicator) {
         long time = System.currentTimeMillis();
         while (!myExecuteActionHandler.isEnabled() || !myExecuteActionHandler.canExecuteNow()) {
           if (indicator.isCanceled()) {
@@ -223,7 +222,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     }
   }
 
-  public void executeStatement(@Nonnull String statement, @Nonnull Key attributes) {
+  public void executeStatement(String statement, Key attributes) {
     print(statement, outputTypeForAttributes(attributes));
     myExecuteActionHandler.processLine(statement);
   }
@@ -232,12 +231,12 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     super.print(text, outputType);
   }
 
-  public void print(String text, @Nonnull Key attributes) {
+  public void print(String text, Key attributes) {
     print(text, outputTypeForAttributes(attributes));
   }
 
   @Override
-  public void print(@Nonnull String text, @Nonnull ConsoleViewContentType outputType) {
+  public void print(String text, ConsoleViewContentType outputType) {
     detectIPython(text, outputType);
     if (PyConsoleUtil.detectIPythonEnd(text)) {
       myIsIPythonOutput = false;
@@ -284,11 +283,11 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     }
   }
 
-  private boolean detectHyperlink(@Nonnull String text) {
+  private boolean detectHyperlink(String text) {
     return myIsIPythonOutput && text.startsWith("File:");
   }
 
-  private void printHyperlink(@Nonnull String text, @Nonnull ConsoleViewContentType contentType) {
+  private void printHyperlink(String text, ConsoleViewContentType contentType) {
     if (!StringUtil.isEmpty(text)) {
       VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(text.trim());
 
@@ -366,8 +365,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     highlighter.putUserData(PyConsoleCopyHandler.PROMPT_LENGTH_MARKER, prompt.length() + 1);
   }
 
-  @Nonnull
-  public String addTextRangeToHistory(@Nonnull TextRange textRange, @Nonnull EditorEx inputEditor, boolean preserveMarkup) {
+  public String addTextRangeToHistory(TextRange textRange, EditorEx inputEditor, boolean preserveMarkup) {
     String text;
     EditorHighlighter highlighter;
     if (inputEditor instanceof EditorWindow) {
@@ -397,7 +395,6 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   }
 
 
-  @Nonnull
   @Override
   protected JComponent createCenterComponent() {
     //workaround for extra lines appearing in the console
@@ -466,7 +463,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
 
 
   @Override
-  public void setPromptAttributes(@Nonnull ConsoleViewContentType textAttributes) {
+  public void setPromptAttributes(ConsoleViewContentType textAttributes) {
     myPromptView.setPromptAttributes(textAttributes);
   }
 

@@ -27,7 +27,6 @@ import consulo.language.editor.intention.HighPriorityAction;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to add self to unresolved reference
@@ -38,19 +37,18 @@ public class UnresolvedReferenceAddSelfQuickFix implements LocalQuickFix, HighPr
     private PyReferenceExpression myElement;
     private String myQualifier;
 
-    public UnresolvedReferenceAddSelfQuickFix(@Nonnull PyReferenceExpression element, @Nonnull String qualifier) {
+    public UnresolvedReferenceAddSelfQuickFix(PyReferenceExpression element, String qualifier) {
         myElement = element;
         myQualifier = qualifier;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public LocalizeValue getName() {
         return PyLocalize.qfixUnresolvedReference(myElement.getText(), myQualifier);
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         if (!FileModificationService.getInstance().preparePsiElementForWrite(myElement)) {
             return;
         }

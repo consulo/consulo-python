@@ -25,7 +25,6 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * Insert 'self' in a method that lacks any arguments
@@ -40,13 +39,12 @@ public class AddSelfQuickFix implements LocalQuickFix {
         myParamName = paramName;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixAddParameterSelf(myParamName);
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement problem_elt = descriptor.getPsiElement();
         if (problem_elt instanceof PyParameterList) {
             PyParameterList param_list = (PyParameterList) problem_elt;

@@ -24,20 +24,18 @@ import consulo.language.editor.intention.LowPriorityAction;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public class ConfigureTemplateDirectoriesAction implements LocalQuickFix, LowPriorityAction {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return LocalizeValue.localizeTODO("Configure template directories");
     }
 
     @Override
-    public void applyFix(@Nonnull final Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(final Project project, ProblemDescriptor descriptor) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {

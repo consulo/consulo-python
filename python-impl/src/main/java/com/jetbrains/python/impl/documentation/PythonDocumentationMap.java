@@ -33,8 +33,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,7 +193,7 @@ public class PythonDocumentationMap implements PersistentStateComponent<PythonDo
   }
 
   @Nullable
-  private static String transformPattern(@Nonnull String urlPattern, QualifiedName moduleQName, @Nullable PsiNamedElement element,
+  private static String transformPattern(String urlPattern, QualifiedName moduleQName, @Nullable PsiNamedElement element,
                                          String pyVersion) {
     Map<String, String> macros = new HashMap<String, String>();
     macros.put("element.name", element == null ? null : element.getName());
@@ -222,7 +221,7 @@ public class PythonDocumentationMap implements PersistentStateComponent<PythonDo
   }
 
   @Nullable
-  private static String transformPattern(@Nonnull String urlPattern, Map<String, String> macroValues) {
+  private static String transformPattern(String urlPattern, Map<String, String> macroValues) {
     for (Map.Entry<String, String> entry : macroValues.entrySet()) {
       if (entry.getValue() == null) {
         if (urlPattern.contains("{" + entry.getKey())) {

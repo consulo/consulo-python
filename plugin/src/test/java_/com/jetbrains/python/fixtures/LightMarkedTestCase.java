@@ -7,7 +7,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import com.intellij.testFramework.TestDataFile;
 import java.util.HashMap;
-import org.jetbrains.annotations.NonNls;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,7 +24,7 @@ public abstract class LightMarkedTestCase extends PyTestCase {
   /**
    * Marker "as expected", any alphanumeric sting in angle brackets.
    */
-  public static final @NonNls String MARKER = "<[a-zA-Z0-9_]+>";
+  public static final String MARKER = "<[a-zA-Z0-9_]+>";
 
   /**
    * Uses MARKER as regexp.
@@ -34,7 +33,7 @@ public abstract class LightMarkedTestCase extends PyTestCase {
    * @return a mapping of markers to PSI elements
    * @throws Exception
    */
-  protected Map<String, PsiElement> configureByFile(@TestDataFile @NonNls String filePath) {
+  protected Map<String, PsiElement> configureByFile(@TestDataFile String filePath) {
     return configureByFile(filePath, MARKER);
   }
 
@@ -45,7 +44,7 @@ public abstract class LightMarkedTestCase extends PyTestCase {
    * @return a mapping of markers to PSI elements
    * @throws Exception
    */
-  protected Map<String, PsiElement> configureByFile(@TestDataFile @NonNls String filePath, @NonNls String markerRegexp) {
+  protected Map<String, PsiElement> configureByFile(@TestDataFile String filePath, String markerRegexp) {
     String fullPath = getTestDataPath() + filePath;
     VirtualFile vFile = getVirtualFileByName(fullPath);
     assertNotNull("file " + fullPath + " not found", vFile);
@@ -73,7 +72,7 @@ public abstract class LightMarkedTestCase extends PyTestCase {
    * @return mapping of markers to the PSI elements
    * @throws Exception
    */
-  protected Map<String, PsiElement> configureByFileText(String fileText, String fileName, @NonNls String markerRegexp) {
+  protected Map<String, PsiElement> configureByFileText(String fileText, String fileName, String markerRegexp) {
     // build a map of marks to positions, and the text with marks stripped
     Pattern pat = Pattern.compile(markerRegexp);
     Matcher mat = pat.matcher(fileText);

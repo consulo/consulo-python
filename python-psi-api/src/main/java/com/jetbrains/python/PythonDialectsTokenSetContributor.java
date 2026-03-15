@@ -16,7 +16,6 @@
 
 package com.jetbrains.python;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
@@ -35,48 +34,40 @@ public interface PythonDialectsTokenSetContributor {
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyStatement}.
    */
-  @Nonnull
   TokenSet getStatementTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyExpression}.
    */
-  @Nonnull
   TokenSet getExpressionTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.NameDefiner}.
    */
-  @Nonnull
   TokenSet getNameDefinerTokens();
 
   /**
    * Returns element types that are language keywords.
    */
-  @Nonnull
   TokenSet getKeywordTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyParameter}.
    */
-  @Nonnull
   TokenSet getParameterTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyFunction}.
    */
-  @Nonnull
   TokenSet getFunctionDeclarationTokens();
 
   /**
    * Returns element types that can be used as unbalanced braces recovery tokens in the lexer.
    */
-  @Nonnull
   TokenSet getUnbalancedBracesRecoveryTokens();
 
   /**
    * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyReferenceExpression}.
    */
-  @Nonnull
   TokenSet getReferenceExpressionTokens();
 }

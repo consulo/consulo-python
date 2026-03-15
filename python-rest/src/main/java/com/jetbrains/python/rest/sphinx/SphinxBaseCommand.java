@@ -40,8 +40,7 @@ import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -107,7 +106,7 @@ public class SphinxBaseCommand
 		}
 	}
 
-	public void execute(@Nonnull Module module)
+	public void execute(Module module)
 	{
 		Project project = module.getProject();
 

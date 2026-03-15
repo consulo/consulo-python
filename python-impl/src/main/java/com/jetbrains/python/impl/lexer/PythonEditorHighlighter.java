@@ -31,8 +31,7 @@ import consulo.project.Project;
 import consulo.util.dataholder.Key;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User : catherine
@@ -40,7 +39,7 @@ import jakarta.annotation.Nullable;
 public class PythonEditorHighlighter extends LexerEditorHighlighter
 {
 
-  public PythonEditorHighlighter(@Nonnull EditorColorsScheme scheme, @Nullable Project project, @Nullable VirtualFile file) {
+  public PythonEditorHighlighter(EditorColorsScheme scheme, @Nullable Project project, @Nullable VirtualFile file) {
     super(SyntaxHighlighterFactory.getSyntaxHighlighter(file != null ? file.getFileType() : PythonFileType.INSTANCE,
                                                                project,
                                                                file),

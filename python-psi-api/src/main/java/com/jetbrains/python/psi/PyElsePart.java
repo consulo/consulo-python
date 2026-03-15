@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The 'else:' part of various compound statements.

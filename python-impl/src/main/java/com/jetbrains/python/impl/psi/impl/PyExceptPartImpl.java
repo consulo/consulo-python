@@ -17,8 +17,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;
@@ -64,13 +63,11 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
 		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 1);
 	}
 
-	@Nonnull
 	public PyStatementList getStatementList()
 	{
 		return childToPsiNotNull(PyElementTypes.STATEMENT_LIST);
 	}
 
-	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
 		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(getTarget());
@@ -86,7 +83,7 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull String the_name)
+	public PsiNamedElement getNamedElement(String the_name)
 	{
 		// Requires switching from stubs to AST in getTarget()
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);

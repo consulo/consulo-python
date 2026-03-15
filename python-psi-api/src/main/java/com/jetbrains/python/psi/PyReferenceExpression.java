@@ -20,8 +20,7 @@ import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -38,12 +37,10 @@ public interface PyReferenceExpression extends PyQualifiedExpression, PyReferenc
    *
    * @param resolveContext the resolve context
    */
-  @Nonnull
   QualifiedResolveResult followAssignmentsChain(PyResolveContext resolveContext);
 
   @Nullable
   QualifiedName asQualifiedName();
 
-  @Nonnull
   PsiPolyVariantReference getReference();
 }

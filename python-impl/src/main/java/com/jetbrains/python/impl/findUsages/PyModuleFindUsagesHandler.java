@@ -32,7 +32,6 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.impl.PyImportedModule;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,19 +44,17 @@ public class PyModuleFindUsagesHandler extends FindUsagesHandler
 {
   private final PsiFileSystemItem myElement;
 
-  protected PyModuleFindUsagesHandler(@Nonnull PsiFileSystemItem file) {
+  protected PyModuleFindUsagesHandler(PsiFileSystemItem file) {
     super(file);
     PsiElement e = PyUtil.turnInitIntoDir(file);
     myElement = e instanceof PsiFileSystemItem ? (PsiFileSystemItem)e : file;
   }
 
-  @Nonnull
   @Override
   public PsiElement[] getPrimaryElements() {
     return new PsiElement[] {myElement};
   }
 
-  @Nonnull
   @Override
   public AbstractFindUsagesDialog getFindUsagesDialog(boolean isSingleFile, boolean toShowInNewTab, boolean mustOpenInNewTab) {
     return new CommonFindUsagesDialog(myElement,
@@ -68,7 +65,7 @@ public class PyModuleFindUsagesHandler extends FindUsagesHandler
                                       isSingleFile,
                                       this) {
       @Override
-      public void configureLabelComponent(@Nonnull SimpleColoredComponent coloredComponent) {
+      public void configureLabelComponent(SimpleColoredComponent coloredComponent) {
         coloredComponent.append(myElement instanceof PsiDirectory ? "Package " : "Module ");
         coloredComponent.append(myElement.getName(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
       }
@@ -76,7 +73,7 @@ public class PyModuleFindUsagesHandler extends FindUsagesHandler
   }
 
   @Override
-  public Collection<PsiReference> findReferencesToHighlight(@Nonnull PsiElement target, @Nonnull SearchScope searchScope) {
+  public Collection<PsiReference> findReferencesToHighlight(PsiElement target, SearchScope searchScope) {
     if (target instanceof PyImportedModule) {
       target = ((PyImportedModule) target).resolve();
     }

@@ -24,8 +24,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -33,7 +32,7 @@ import jakarta.annotation.Nullable;
 @ExtensionImpl(id = "pyVar", order = "after pyFile")
 public class RenamePyVariableProcessor extends RenamePyElementProcessor {
   @Override
-  public boolean canProcessElement(@Nonnull PsiElement element) {
+  public boolean canProcessElement(PsiElement element) {
     // extension ordering in python-plugin-common.xml ensures that classes and functions are handled by their own processors
     return element instanceof PyElement && !(element instanceof PyReferenceExpression);
   }

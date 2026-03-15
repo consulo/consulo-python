@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.refactoring.invertBoolean;
 
 import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
-import jakarta.annotation.Nonnull;
 import consulo.dataContext.DataContext;
 import consulo.codeEditor.Editor;
 import consulo.project.Project;
@@ -37,7 +36,7 @@ import com.jetbrains.python.psi.PyNamedParameter;
 public class PyInvertBooleanHandler implements RefactoringActionHandler {
     @Override
     @RequiredUIAccess
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+    public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext) {
         PsiElement element = dataContext.getData(PsiElement.KEY);
         if (element == null && editor != null && file != null) {
             element = file.findElementAt(editor.getCaretModel().getOffset());
@@ -62,7 +61,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
 
     @Override
     @RequiredUIAccess
-    public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext) {
+    public void invoke(Project project, PsiElement[] elements, DataContext dataContext) {
         if (elements.length == 1) {
             PyAssignmentStatement assignmentStatement = PsiTreeUtil.getParentOfType(elements[0], PyAssignmentStatement.class);
             if (assignmentStatement != null) {
@@ -72,7 +71,7 @@ public class PyInvertBooleanHandler implements RefactoringActionHandler {
     }
 
     @RequiredUIAccess
-    private static void invoke(@Nonnull PsiElement element) {
+    private static void invoke(PsiElement element) {
         new PyInvertBooleanDialog(element).show();
     }
 }

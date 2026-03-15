@@ -1,6 +1,5 @@
 package com.jetbrains.python.impl.findUsages;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.find.FindUsagesHandler;
 import com.jetbrains.python.psi.PyTargetExpression;
@@ -10,7 +9,7 @@ import com.jetbrains.python.psi.PyTargetExpression;
  */
 public class PyTargetExpressionFindUsagesHandler extends FindUsagesHandler
 {
-	public PyTargetExpressionFindUsagesHandler(@Nonnull PyTargetExpression psiElement)
+	public PyTargetExpressionFindUsagesHandler(PyTargetExpression psiElement)
 	{
 		super(psiElement);
 	}

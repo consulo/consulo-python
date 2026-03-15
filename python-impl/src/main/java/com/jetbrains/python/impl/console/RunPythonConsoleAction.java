@@ -25,7 +25,6 @@ import consulo.content.bundle.Sdk;
 import consulo.util.lang.Pair;
 import consulo.ui.annotation.RequiredUIAccess;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg
@@ -52,7 +51,7 @@ public class RunPythonConsoleAction extends AnAction implements DumbAware {
 
     @Override
     @RequiredUIAccess
-    public void actionPerformed(@Nonnull AnActionEvent e) {
+    public void actionPerformed(AnActionEvent e) {
         Project project = e.getRequiredData(Project.KEY);
 
         PythonConsoleRunnerFactory runnerFactory = PythonConsoleRunnerFactory.getInstance();

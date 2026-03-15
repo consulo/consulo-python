@@ -43,7 +43,6 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
@@ -60,18 +59,17 @@ public class AddFunctionQuickFix implements LocalQuickFix {
   private final String myIdentifier;
   private final String myModuleName;
 
-  public AddFunctionQuickFix(@Nonnull String identifier, String moduleName) {
+  public AddFunctionQuickFix(String identifier, String moduleName) {
     myIdentifier = identifier;
     myModuleName = moduleName;
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return PyLocalize.qfixNameAddFunction$0ToModule$1(myIdentifier, myModuleName);
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     try {
       PsiElement problemElement = descriptor.getPsiElement();
       if (!(problemElement instanceof PyQualifiedExpression)) {
@@ -135,7 +133,7 @@ public class AddFunctionQuickFix implements LocalQuickFix {
     }
   }
 
-  private static void showTemplateBuilder(PyFunction method, @Nonnull PsiFile file) {
+  private static void showTemplateBuilder(PyFunction method, PsiFile file) {
     method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
 
     final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(method);

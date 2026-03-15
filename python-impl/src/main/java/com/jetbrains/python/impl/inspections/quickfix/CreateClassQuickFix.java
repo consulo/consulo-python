@@ -28,7 +28,6 @@ import consulo.language.editor.template.TemplateBuilderFactory;
 import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -42,7 +41,6 @@ public class CreateClassQuickFix implements LocalQuickFix {
         myAnchor = anchor;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         if (myAnchor instanceof PyFile) {
@@ -51,7 +49,7 @@ public class CreateClassQuickFix implements LocalQuickFix {
         return LocalizeValue.localizeTODO("Create class '" + myClassName + "'");
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement anchor = myAnchor;
         if (!anchor.isValid()) {
             return;

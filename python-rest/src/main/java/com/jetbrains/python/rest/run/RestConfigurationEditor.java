@@ -28,9 +28,8 @@ import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
 import com.jetbrains.rest.RestBundle;
-import jakarta.annotation.Nonnull;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,7 +105,6 @@ public class RestConfigurationEditor extends SettingsEditor<RestRunConfiguration
       configuration.setOpenInBrowser(false);
   }
 
-  @Nonnull
   protected JComponent createEditor() {
     return myMainPanel;
   }

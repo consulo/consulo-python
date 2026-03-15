@@ -18,7 +18,7 @@ package com.jetbrains.python.psi;
 
 import consulo.language.psi.PsiPolyVariantReference;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole

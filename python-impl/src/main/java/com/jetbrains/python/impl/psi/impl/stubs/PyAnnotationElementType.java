@@ -29,7 +29,6 @@ import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyAnnotationImpl;
 import com.jetbrains.python.psi.stubs.PyAnnotationStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -42,24 +41,23 @@ public class PyAnnotationElementType extends PyStubElementType<PyAnnotationStub,
     super(debugName);
   }
 
-  public PyAnnotation createPsi(@Nonnull PyAnnotationStub stub) {
+  public PyAnnotation createPsi(PyAnnotationStub stub) {
     return new PyAnnotationImpl(stub);
   }
 
-  public PyAnnotationStub createStub(@Nonnull PyAnnotation psi, StubElement parentStub) {
+  public PyAnnotationStub createStub(PyAnnotation psi, StubElement parentStub) {
     return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
   }
 
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PyAnnotationImpl(node);
   }
 
-  public void serialize(@Nonnull PyAnnotationStub stub, @Nonnull StubOutputStream dataStream)
+  public void serialize(PyAnnotationStub stub, StubOutputStream dataStream)
       throws IOException {
   }
 
-  @Nonnull
-  public PyAnnotationStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub)
+  public PyAnnotationStub deserialize(StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
   }

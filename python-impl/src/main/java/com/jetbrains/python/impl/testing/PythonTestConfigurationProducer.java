@@ -40,8 +40,7 @@ import consulo.python.module.extension.PyModuleExtension;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.SimpleReference;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collections;
@@ -159,7 +158,7 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return file instanceof PyFile pyFile && isTestFile(pyFile) && setupConfigurationFromFile(pyFile, configuration);
     }
 
-    private boolean setupConfigurationFromFolder(@Nonnull PsiDirectory element, @Nonnull AbstractPythonTestRunConfiguration configuration) {
+    private boolean setupConfigurationFromFolder(PsiDirectory element, AbstractPythonTestRunConfiguration configuration) {
         VirtualFile virtualFile = element.getVirtualFile();
         if (!isTestFolder(virtualFile, element.getProject())) {
             return false;
@@ -174,14 +173,14 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return true;
     }
 
-    private static void setModuleSdk(@Nonnull PsiElement element, @Nonnull AbstractPythonTestRunConfiguration configuration) {
+    private static void setModuleSdk(PsiElement element, AbstractPythonTestRunConfiguration configuration) {
         configuration.setUseModuleSdk(true);
         configuration.setModule(element.getModule());
     }
 
     protected boolean setupConfigurationFromFunction(
-        @Nonnull PyFunction pyFunction,
-        @Nonnull AbstractPythonTestRunConfiguration configuration
+        PyFunction pyFunction,
+        AbstractPythonTestRunConfiguration configuration
     ) {
         PyClass containingClass = pyFunction.getContainingClass();
         configuration.setMethodName(pyFunction.getName());
@@ -197,8 +196,8 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
     }
 
     protected boolean setupConfigurationFromClass(
-        @Nonnull PyClass pyClass,
-        @Nonnull AbstractPythonTestRunConfiguration configuration
+        PyClass pyClass,
+        AbstractPythonTestRunConfiguration configuration
     ) {
         configuration.setTestType(AbstractPythonTestRunConfiguration.TestType.TEST_CLASS);
         configuration.setClassName(pyClass.getName());
@@ -206,16 +205,16 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
     }
 
     protected boolean setupConfigurationFromFile(
-        @Nonnull PyFile pyFile,
-        @Nonnull AbstractPythonTestRunConfiguration configuration
+        PyFile pyFile,
+        AbstractPythonTestRunConfiguration configuration
     ) {
         configuration.setTestType(AbstractPythonTestRunConfiguration.TestType.TEST_SCRIPT);
         return setupConfigurationScript(configuration, pyFile);
     }
 
     protected static boolean setupConfigurationScript(
-        @Nonnull AbstractPythonTestRunConfiguration cfg,
-        @Nonnull PyElement element
+        AbstractPythonTestRunConfiguration cfg,
+        PyElement element
     ) {
         PyFile containingFile = PyUtil.getContainingPyFile(element);
         if (containingFile == null) {
@@ -241,7 +240,7 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
     }
 
     @RequiredReadAction
-    protected boolean isTestFolder(@Nonnull VirtualFile virtualFile, @Nonnull Project project) {
+    protected boolean isTestFolder(VirtualFile virtualFile, Project project) {
         String name = virtualFile.getName();
         HashSet<VirtualFile> roots = Sets.newHashSet();
         Module[] modules = ModuleManager.getInstance(project).getModules();
@@ -253,12 +252,12 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
     }
 
     @RequiredReadAction
-    protected boolean isAvailable(@Nonnull Location location) {
+    protected boolean isAvailable(Location location) {
         return false;
     }
 
     protected boolean isTestClass(
-        @Nonnull PyClass pyClass,
+        PyClass pyClass,
         @Nullable AbstractPythonTestRunConfiguration configuration,
         @Nullable TypeEvalContext context
     ) {
@@ -266,13 +265,13 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
     }
 
     protected boolean isTestFunction(
-        @Nonnull PyFunction pyFunction,
+        PyFunction pyFunction,
         @Nullable AbstractPythonTestRunConfiguration configuration
     ) {
         return PythonUnitTestUtil.isTestCaseFunction(pyFunction);
     }
 
-    protected boolean isTestFile(@Nonnull PyFile file) {
+    protected boolean isTestFile(PyFile file) {
         List<PyStatement> testCases = getTestCaseClassesFromFile(file);
         return !testCases.isEmpty();
     }
@@ -281,7 +280,7 @@ abstract public class PythonTestConfigurationProducer extends RunConfigurationPr
         return module != null && ModuleUtilCore.getExtension(module, PyModuleExtension.class) != null;
     }
 
-    protected List<PyStatement> getTestCaseClassesFromFile(@Nonnull PyFile pyFile) {
+    protected List<PyStatement> getTestCaseClassesFromFile(PyFile pyFile) {
         return PythonUnitTestUtil.getTestCaseClassesFromFile(pyFile, TypeEvalContext.userInitiated(pyFile.getProject(), pyFile));
     }
 

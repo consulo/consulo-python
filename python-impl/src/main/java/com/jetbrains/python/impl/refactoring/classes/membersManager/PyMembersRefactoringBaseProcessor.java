@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.editor.refactoring.event.RefactoringEventData;
 import consulo.project.Project;
@@ -41,11 +40,8 @@ import com.jetbrains.python.impl.refactoring.classes.PyClassRefactoringUtil;
 public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringProcessor implements UsageViewDescriptor
 {
 
-	@Nonnull
 	protected final Collection<PyMemberInfo<PyElement>> myMembersToMove;
-	@Nonnull
 	protected final PyClass myFrom;
-	@Nonnull
 	private final PyClass[] myTo;
 
 	/**
@@ -53,10 +49,10 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	 * @param from          source
 	 * @param to            where to move
 	 */
-	protected PyMembersRefactoringBaseProcessor(@Nonnull Project project,
-			@Nonnull Collection<PyMemberInfo<PyElement>> membersToMove,
-			@Nonnull PyClass from,
-			@Nonnull PyClass... to)
+	protected PyMembersRefactoringBaseProcessor(Project project,
+			Collection<PyMemberInfo<PyElement>> membersToMove,
+			PyClass from,
+			PyClass... to)
 	{
 		super(project);
 		myFrom = from;
@@ -64,14 +60,12 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 		myTo = to.clone();
 	}
 
-	@Nonnull
 	@Override
-	protected UsageViewDescriptor createUsageViewDescriptor(@Nonnull UsageInfo[] usages)
+	protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages)
 	{
 		return this;
 	}
 
-	@Nonnull
 	@Override
 	public PsiElement[] getElements()
 	{
@@ -81,7 +75,6 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	/**
 	 * @return destinations (so user would be able to choose if she wants to move member to certain place or not)
 	 */
-	@Nonnull
 	@Override
 	protected final PyUsageInfo[] findUsages()
 	{
@@ -94,7 +87,7 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 	}
 
 	@Override
-	protected final void performRefactoring(@Nonnull UsageInfo[] usages)
+	protected final void performRefactoring(UsageInfo[] usages)
 	{
 		Collection<PyClass> destinations = new ArrayList<>(usages.length);
 		for(UsageInfo usage : usages)
@@ -123,7 +116,7 @@ public abstract class PyMembersRefactoringBaseProcessor extends BaseRefactoringP
 
 	@Nullable
 	@Override
-	protected RefactoringEventData getAfterData(@Nonnull UsageInfo[] usages)
+	protected RefactoringEventData getAfterData(UsageInfo[] usages)
 	{
 		RefactoringEventData data = new RefactoringEventData();
 		data.addElements(myTo);

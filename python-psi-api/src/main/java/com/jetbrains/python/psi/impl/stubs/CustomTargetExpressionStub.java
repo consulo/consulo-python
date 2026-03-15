@@ -18,8 +18,7 @@ package com.jetbrains.python.psi.impl.stubs;
 
 import consulo.language.psi.stub.StubOutputStream;
 import consulo.language.psi.util.QualifiedName;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -27,7 +26,6 @@ import java.io.IOException;
  * @author yole
  */
 public interface CustomTargetExpressionStub {
-  @Nonnull
   Class<? extends CustomTargetExpressionStubType> getTypeClass();
   void serialize(StubOutputStream stream) throws IOException;
 

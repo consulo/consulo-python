@@ -27,15 +27,14 @@ import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.module.Module;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
  */
 @ExtensionImpl
 public class PythonUnitTestRunnableScriptFilter implements RunnableScriptFilter {
-  public boolean isRunnableScript(PsiFile script, @Nonnull Module module, Location location, @Nullable TypeEvalContext context) {
+  public boolean isRunnableScript(PsiFile script, Module module, Location location, @Nullable TypeEvalContext context) {
     return script instanceof PyFile && PythonUnitTestUtil.getTestCaseClassesFromFile(script, context)
                                                          .size() > 0 && !isIfNameMain(location) && TestRunnerService.getInstance(module)
                                                                                                                     .getProjectConfiguration()

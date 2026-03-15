@@ -26,8 +26,7 @@ import consulo.ide.ServiceManager;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @State(
   name = "PythonFoldingSettings",
@@ -46,7 +45,6 @@ public class PythonFoldingSettings implements PersistentStateComponent<PythonFol
     return this;
   }
 
-  @Nonnull
   public static PythonFoldingSettings getInstance() {
     return ServiceManager.getService(PythonFoldingSettings.class);
   }

@@ -30,8 +30,7 @@ import consulo.ui.ex.ColoredItemPresentation;
 import consulo.ui.image.Image;
 import com.jetbrains.python.impl.PythonIcons;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -120,7 +119,6 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     return name != null ? name.hashCode() : 0;
   }
 
-  @Nonnull
   public StructureViewTreeElement[] getChildren() {
     Collection<StructureViewTreeElement> children = new ArrayList<>();
     for (PyElement e : getElementChildren(myElement)) {
@@ -230,7 +228,6 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     return false;
   }
 
-  @Nonnull
   @Override
   public ItemPresentation getPresentation() {
     final ItemPresentation presentation = myElement.getPresentation();

@@ -24,7 +24,6 @@ import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.*;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +40,12 @@ public class RemoveArgumentEqualDefaultQuickFix implements LocalQuickFix {
     myProblemElements = problemElements;
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return PyLocalize.qfixRemoveArgumentEqualDefault();
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
 
     PyArgumentList argumentList = PsiTreeUtil.getParentOfType(element, PyArgumentList.class);

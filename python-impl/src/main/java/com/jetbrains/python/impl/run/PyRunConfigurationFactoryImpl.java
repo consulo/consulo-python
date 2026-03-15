@@ -27,7 +27,6 @@ import consulo.module.Module;
 import consulo.project.Project;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -54,7 +53,7 @@ public class PyRunConfigurationFactoryImpl extends PyRunConfigurationFactory {
     return settings;
   }
 
-  private static RunnerAndConfigurationSettings createConfigurationSettings(ConfigurationFactory factory, @Nonnull Module module) {
+  private static RunnerAndConfigurationSettings createConfigurationSettings(ConfigurationFactory factory, Module module) {
     RunnerAndConfigurationSettings settings =
       RunManager.getInstance(module.getProject()).createRunConfiguration(module.getName(), factory);
     ModuleBasedConfiguration configuration = (ModuleBasedConfiguration)settings.getConfiguration();

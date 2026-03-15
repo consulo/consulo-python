@@ -22,7 +22,6 @@ import consulo.usage.UsageInfo;
 import consulo.usage.UsageViewDescriptor;
 import com.jetbrains.python.psi.PyFunction;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -43,7 +42,6 @@ public class PyChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     return new PyChangeInfo(method, parameterInfo, newName);
   }
 
-  @Nonnull
   @Override
   protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
     return new PyChangeSignatureUsageViewDescriptor(usages);

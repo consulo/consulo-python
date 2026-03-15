@@ -6,7 +6,6 @@ import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import org.jetbrains.annotations.Contract;
 import org.xmlpull.mxp1.MXParser;
@@ -195,7 +194,6 @@ public class ProtocolParser
 		return new PyIo(s, ctx);
 	}
 
-	@Nonnull
 	public static PyThreadInfo parseThread(String text, PyPositionConverter positionConverter) throws PyDebuggerException
 	{
 		XppReader reader = openReader(text, true);
@@ -225,8 +223,7 @@ public class ProtocolParser
 		return new PyThreadInfo(id, name, frames, stopReason, message);
 	}
 
-	@Nonnull
-	public static String getThreadId(@Nonnull String payload)
+	public static String getThreadId(String payload)
 	{
 		return payload.split("\t")[0];
 	}
@@ -246,7 +243,6 @@ public class ProtocolParser
 		return new PyStackFrameInfo(threadId, id, name, positionConverter.create(file, line));
 	}
 
-	@Nonnull
 	public static PyDebugValue parseValue(String text, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
 		XppReader reader = openReader(text, true);
@@ -254,7 +250,6 @@ public class ProtocolParser
 		return parseValue(reader, frameAccessor);
 	}
 
-	@Nonnull
 	public static List<PyDebugValue> parseReferrers(String text, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
 		List<PyDebugValue> values = new LinkedList<>();
@@ -285,7 +280,6 @@ public class ProtocolParser
 	}
 
 
-	@Nonnull
 	public static List<PyDebugValue> parseValues(String text, PyFrameAccessor frameAccessor) throws PyDebuggerException
 	{
 		List<PyDebugValue> values = new LinkedList<>();

@@ -1,6 +1,5 @@
 package com.jetbrains.python;
 
-import jakarta.annotation.Nonnull;
 import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -790,7 +789,7 @@ public abstract class PyTypeTest extends PyTestCase {
            "expr = c.foo\n");
   }
 
-  private static TypeEvalContext getTypeEvalContext(@Nonnull PyExpression element) {
+  private static TypeEvalContext getTypeEvalContext(PyExpression element) {
     return TypeEvalContext.userInitiated(element.getProject(), element.getContainingFile()).withTracing();
   }
 

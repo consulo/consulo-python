@@ -26,7 +26,6 @@ import consulo.project.Project;
 import consulo.util.lang.Pair;
 import consulo.virtualFileSystem.encoding.EncodingProjectManager;
 
-import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -48,7 +47,6 @@ public class PythonDebugConsoleCommunication extends AbstractConsoleCommunicatio
 		myDebugProcess = debugProcess;
 	}
 
-	@Nonnull
 	@Override
 	public List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception
 	{

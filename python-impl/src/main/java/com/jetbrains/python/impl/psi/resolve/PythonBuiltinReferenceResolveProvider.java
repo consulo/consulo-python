@@ -27,7 +27,6 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +35,8 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PythonBuiltinReferenceResolveProvider implements PyReferenceResolveProvider {
-  @Nonnull
   @Override
-  public List<RatedResolveResult> resolveName(@Nonnull PyQualifiedExpression element) {
+  public List<RatedResolveResult> resolveName(PyQualifiedExpression element) {
     List<RatedResolveResult> result = new ArrayList<>();
     PsiElement realContext = PyPsiUtils.getRealContext(element);
     String referencedName = element.getReferencedName();

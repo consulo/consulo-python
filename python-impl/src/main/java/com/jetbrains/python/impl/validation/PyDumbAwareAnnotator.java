@@ -24,7 +24,6 @@ import consulo.language.editor.annotation.Annotator;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -35,7 +34,7 @@ public class PyDumbAwareAnnotator implements Annotator, DumbAware {
   public PyDumbAwareAnnotator() {
   }
 
-  public void annotate(@Nonnull PsiElement element, @Nonnull AnnotationHolder holder) {
+  public void annotate(PsiElement element, AnnotationHolder holder) {
     PsiFile file = element.getContainingFile();
 
     for(PyAnnotator annotator: EP_NAME.getExtensionList()) {

@@ -24,16 +24,14 @@ import consulo.language.psi.PsiPolyVariantReference;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 public class PyAddExceptionSuperClassQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameAddExceptionBase();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyCallExpression) {
             PyExpression callee = ((PyCallExpression) element).getCallee();

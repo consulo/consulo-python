@@ -27,7 +27,6 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -46,14 +45,13 @@ public class PythonConfigurationType implements ConfigurationType {
             super(configurationType);
         }
 
-        @Nonnull
         @Override
         public String getId() {
             return "Python";
         }
 
         @Override
-        public boolean isApplicable(@Nonnull Project project) {
+        public boolean isApplicable(Project project) {
             return ModuleExtensionHelper.getInstance(project).hasModuleExtension(PyModuleExtension.class);
         }
 
@@ -63,13 +61,11 @@ public class PythonConfigurationType implements ConfigurationType {
         }
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.pythonConfigurationName();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getConfigurationTypeDescription() {
         return PyLocalize.pythonConfigurationDescription();
@@ -89,7 +85,6 @@ public class PythonConfigurationType implements ConfigurationType {
         return myFactory;
     }
 
-    @Nonnull
     @Override
     public String getId() {
         return "PythonConfigurationType";

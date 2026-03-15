@@ -61,8 +61,7 @@ import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -136,7 +135,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 
     @Override
     @RequiredWriteAction
-    public PsiElement setName(@Nonnull String name) throws IncorrectOperationException {
+    public PsiElement setName(String name) throws IncorrectOperationException {
         ASTNode oldNameElement = getNameElement();
         if (oldNameElement != null) {
             ASTNode nameElement = PyUtil.createNewName(this, name);
@@ -147,7 +146,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 
     @Override
     @RequiredReadAction
-    public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
         if (!TypeEvalStack.mayEvaluate(this)) {
             return null;
         }
@@ -322,7 +321,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
     }
 
     @Nullable
-    private PyType getTypeFromIteration(@Nonnull TypeEvalContext context) {
+    private PyType getTypeFromIteration(TypeEvalContext context) {
         PyExpression target = null;
         PyExpression source = null;
         PyForPart forPart = PsiTreeUtil.getParentOfType(this, PyForPart.class);
@@ -360,8 +359,8 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
     public static PyType getIterationType(
         @Nullable PyType iterableType,
         @Nullable PyExpression source,
-        @Nonnull PsiElement anchor,
-        @Nonnull TypeEvalContext context
+        PsiElement anchor,
+        TypeEvalContext context
     ) {
         if (iterableType instanceof PyTupleType tupleType) {
             return tupleType.getIteratedItemType();
@@ -409,7 +408,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
     }
 
     @Nullable
-    private static PyFunction findMethodByName(@Nonnull PyType type, @Nonnull String name, @Nonnull TypeEvalContext context) {
+    private static PyFunction findMethodByName(PyType type, String name, TypeEvalContext context) {
         PyResolveContext resolveContext = PyResolveContext.defaultContext().withTypeEvalContext(context);
         List<? extends RatedResolveResult> results = type.resolveMember(name, null, AccessDirection.READ, resolveContext);
         if (results != null && !results.isEmpty()) {
@@ -424,8 +423,8 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
 
     @Nullable
     public static PyType getContextSensitiveType(
-        @Nonnull PyFunction function,
-        @Nonnull TypeEvalContext context,
+        PyFunction function,
+        TypeEvalContext context,
         @Nullable PyExpression source
     ) {
         return function.getCallType(source, Collections.<PyExpression, PyNamedParameter>emptyMap(), context);
@@ -488,7 +487,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
     @Nullable
     @Override
     @RequiredReadAction
-    public PsiElement resolveAssignedValue(@Nonnull PyResolveContext resolveContext) {
+    public PsiElement resolveAssignedValue(PyResolveContext resolveContext) {
         TypeEvalContext context = resolveContext.getTypeEvalContext();
         if (context.maySwitchToAST(this)) {
             PyExpression value = findAssignedValue();
@@ -586,14 +585,12 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
         return null;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public PsiReference getReference() {
         return getReference(PyResolveContext.defaultContext());
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public PsiPolyVariantReference getReference(PyResolveContext resolveContext) {
@@ -603,7 +600,6 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
         return new PyTargetReference(this, resolveContext);
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public SearchScope getUseScope() {

@@ -21,9 +21,7 @@ import com.jetbrains.python.PythonFileType;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.virtualFileSystem.fileType.FileTypeConsumer;
 import consulo.virtualFileSystem.fileType.FileTypeFactory;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -32,7 +30,7 @@ import jakarta.annotation.Nonnull;
 public class PythonFileTypeFactory extends FileTypeFactory
 {
 	@Override
-	public void createFileTypes(@NonNls @Nonnull FileTypeConsumer consumer)
+	public void createFileTypes(FileTypeConsumer consumer)
 	{
 		consumer.consume(PythonFileType.INSTANCE, "py;pyw;");
 		consumer.consume(QtUIFileType.INSTANCE, "ui");

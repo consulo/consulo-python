@@ -2,7 +2,6 @@ package com.jetbrains.python;
 
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.inspections.*;
-import org.jetbrains.annotations.NonNls;
 import consulo.language.editor.intention.IntentionAction;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.TestDataPath;
@@ -419,14 +418,13 @@ public abstract class PyQuickFixTest extends PyTestCase {
   }
 
   @Override
-  @NonNls
   protected String getTestDataPath() {
     return PythonTestUtil.getTestDataPath() + "/inspections/";
   }
 
-  protected void doInspectionTest(@TestDataFile @NonNls String testFileName,
+  protected void doInspectionTest(@TestDataFile String testFileName,
                                   Class inspectionClass,
-                                  @NonNls String quickFixName,
+                                  String quickFixName,
                                   boolean applyFix,
                                   boolean available) {
     doInspectionTest(new String[]{testFileName}, inspectionClass, quickFixName, applyFix, available);
@@ -442,9 +440,9 @@ public abstract class PyQuickFixTest extends PyTestCase {
    * @param available       true if the fix should be available, false if it should be explicitly not available.
    * @throws Exception
    */
-  protected void doInspectionTest(@NonNls String[] testFiles,
+  protected void doInspectionTest(String[] testFiles,
                                   Class inspectionClass,
-                                  @NonNls String quickFixName,
+                                  String quickFixName,
                                   boolean applyFix,
                                   boolean available) {
     myFixture.enableInspections(inspectionClass);
@@ -466,7 +464,6 @@ public abstract class PyQuickFixTest extends PyTestCase {
 
   // Turns "name.ext" to "name_insertion.ext"
 
-  @NonNls
   private static String graftBeforeExt(String name, String insertion) {
     int dotpos = name.indexOf('.');
     if (dotpos < 0) dotpos = name.length();

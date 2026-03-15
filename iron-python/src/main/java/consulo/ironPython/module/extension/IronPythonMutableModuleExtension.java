@@ -10,8 +10,7 @@ import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.layout.VerticalLayout;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author VISTALL
@@ -19,12 +18,11 @@ import jakarta.annotation.Nullable;
  */
 public class IronPythonMutableModuleExtension extends IronPythonModuleExtension implements MutableModuleExtensionWithSdk<IronPythonModuleExtension>
 {
-	public IronPythonMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
+	public IronPythonMutableModuleExtension(String id, ModuleRootLayer module)
 	{
 		super(id, module);
 	}
 
-	@Nonnull
 	@Override
 	public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk()
 	{
@@ -34,7 +32,7 @@ public class IronPythonMutableModuleExtension extends IronPythonModuleExtension 
 	@RequiredUIAccess
 	@Nullable
 	@Override
-	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
+	public Component createConfigurationComponent(Disposable disposable, Runnable runnable)
 	{
 		VerticalLayout layout = VerticalLayout.create();
 		layout.add(ModuleExtensionBundleBoxBuilder.createAndDefine(this, disposable, runnable).build());
@@ -48,7 +46,7 @@ public class IronPythonMutableModuleExtension extends IronPythonModuleExtension 
 	}
 
 	@Override
-	public boolean isModified(@Nonnull IronPythonModuleExtension extension)
+	public boolean isModified(IronPythonModuleExtension extension)
 	{
 		return isModifiedImpl(extension);
 	}

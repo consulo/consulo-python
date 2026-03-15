@@ -24,8 +24,7 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -36,23 +35,23 @@ public interface PyTypeProvider
 	ExtensionPointName<PyTypeProvider> EP_NAME = ExtensionPointName.create(PyTypeProvider.class);
 
 	@Nullable
-	PyType getReferenceExpressionType(@Nonnull PyReferenceExpression referenceExpression, @Nonnull TypeEvalContext context);
+	PyType getReferenceExpressionType(PyReferenceExpression referenceExpression, TypeEvalContext context);
 
 	@Nullable
-	PyType getReferenceType(@Nonnull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor);
+	PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor);
 
 	@Nullable
-	Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context);
+	Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context);
 
 	@Nullable
-	Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context);
+	Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context);
 
 	@Nullable
-	Ref<PyType> getCallType(@Nonnull PyFunction function, @Nullable PyCallSiteExpression callSite, @Nonnull TypeEvalContext context);
+	Ref<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context);
 
 	@Nullable
 	PyType getContextManagerVariableType(PyClass contextManager, PyExpression withExpression, TypeEvalContext context);
 
 	@Nullable
-	PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context);
+	PyType getCallableType(PyCallable callable, TypeEvalContext context);
 }

@@ -35,8 +35,7 @@ import consulo.util.xml.serializer.annotation.OptionTag;
 import consulo.util.xml.serializer.annotation.Transient;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -50,11 +49,10 @@ import java.util.List;
 public class PyDocumentationSettings implements PersistentStateComponent<PyDocumentationSettings> {
   public static final DocStringFormat DEFAULT_DOCSTRING_FORMAT = DocStringFormat.REST;
 
-  public static PyDocumentationSettings getInstance(@Nonnull Module module) {
+  public static PyDocumentationSettings getInstance(Module module) {
     return module.getInstance(PyDocumentationSettings.class);
   }
 
-  @Nonnull
   private DocStringFormat myDocStringFormat = DEFAULT_DOCSTRING_FORMAT;
   private boolean myAnalyzeDoctest = true;
 
@@ -66,18 +64,17 @@ public class PyDocumentationSettings implements PersistentStateComponent<PyDocum
     return isFormat(file, DocStringFormat.PLAIN);
   }
 
-  private boolean isFormat(@Nullable PsiFile file, @Nonnull DocStringFormat format) {
+  private boolean isFormat(@Nullable PsiFile file, DocStringFormat format) {
     return file instanceof PyFile ? getFormatForFile(file) == format : myDocStringFormat == format;
   }
 
-  @Nonnull
-  public DocStringFormat getFormatForFile(@Nonnull PsiFile file) {
+  public DocStringFormat getFormatForFile(PsiFile file) {
     DocStringFormat fileFormat = getFormatFromDocformatAttribute(file);
     return fileFormat != null && fileFormat != DocStringFormat.PLAIN ? fileFormat : myDocStringFormat;
   }
 
   @Nullable
-  public static DocStringFormat getFormatFromDocformatAttribute(@Nonnull PsiFile file) {
+  public static DocStringFormat getFormatFromDocformatAttribute(PsiFile file) {
     if (file instanceof PyFile) {
       PyTargetExpression expr = ((PyFile)file).findTopLevelAttribute(PyNames.DOCFORMAT);
       if (expr != null) {
@@ -97,25 +94,23 @@ public class PyDocumentationSettings implements PersistentStateComponent<PyDocum
   }
 
   @Transient
-  @Nonnull
   public DocStringFormat getFormat() {
     return myDocStringFormat;
   }
 
-  public void setFormat(@Nonnull DocStringFormat format) {
+  public void setFormat(DocStringFormat format) {
     myDocStringFormat = format;
   }
 
   // Legacy name of the field to preserve settings format
   @SuppressWarnings("unused")
   @OptionTag("myDocStringFormat")
-  @Nonnull
   public String getFormatName() {
     return myDocStringFormat.getName();
   }
 
   @SuppressWarnings("unused")
-  public void setFormatName(@Nonnull String name) {
+  public void setFormatName(String name) {
     myDocStringFormat = DocStringFormat.fromNameOrPlain(name);
   }
 

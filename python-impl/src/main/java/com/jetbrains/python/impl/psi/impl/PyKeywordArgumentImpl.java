@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
@@ -27,9 +26,8 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -60,7 +58,7 @@ public class PyKeywordArgumentImpl extends PyElementImpl implements PyKeywordArg
     return getClass().getSimpleName() + ": " + getKeyword();
   }
 
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     PyExpression e = getValueExpression();
     return e != null ? context.getType(e) : null;
   }
@@ -80,7 +78,7 @@ public class PyKeywordArgumentImpl extends PyElementImpl implements PyKeywordArg
   }
 
   @Override
-  public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
+  public PsiElement setName(String name) throws IncorrectOperationException
   {
     PyElementGenerator generator = PyElementGenerator.getInstance(getProject());
     PyExpression expression = getValueExpression();

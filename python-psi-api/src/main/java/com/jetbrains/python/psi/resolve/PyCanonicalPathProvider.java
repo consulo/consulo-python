@@ -22,8 +22,7 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Allows to provide a custom qualified name when a specific symbol is going to be imported into a specific file.
@@ -42,5 +41,5 @@ public interface PyCanonicalPathProvider {
    * @return the qualified name to use in the import statement, or null if no replacement is necessary.
    */
   @Nullable
-  QualifiedName getCanonicalPath(@Nonnull QualifiedName qName, @Nullable PsiElement foothold);
+  QualifiedName getCanonicalPath(QualifiedName qName, @Nullable PsiElement foothold);
 }

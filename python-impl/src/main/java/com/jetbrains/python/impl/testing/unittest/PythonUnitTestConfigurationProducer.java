@@ -33,8 +33,7 @@ import consulo.execution.action.Location;
 import consulo.language.psi.PsiElement;
 import consulo.module.Module;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 
     @Override
     @RequiredReadAction
-    protected boolean isAvailable(@Nonnull Location location) {
+    protected boolean isAvailable(Location location) {
         PsiElement element = location.getPsiElement();
         Module module = element.getModule();
         return module != null && TestRunnerService.getInstance(module)
@@ -56,7 +55,7 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 
     @Override
     protected boolean isTestFunction(
-        @Nonnull PyFunction pyFunction,
+        PyFunction pyFunction,
         @Nullable AbstractPythonTestRunConfiguration configuration
     ) {
         boolean isTestFunction = super.isTestFunction(pyFunction, configuration);
@@ -66,7 +65,7 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 
     @Override
     protected boolean isTestClass(
-        @Nonnull PyClass pyClass,
+        PyClass pyClass,
         @Nullable AbstractPythonTestRunConfiguration configuration,
         TypeEvalContext context
     ) {
@@ -77,7 +76,7 @@ public class PythonUnitTestConfigurationProducer extends PythonTestConfiguration
 
     @Override
     @RequiredReadAction
-    protected boolean isTestFile(@Nonnull PyFile file) {
+    protected boolean isTestFile(PyFile file) {
         if (PyNames.SETUP_DOT_PY.equals(file.getName())) {
             return true;
         }

@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.ui.ex.ColoredItemPresentation;
 import consulo.colorScheme.TextAttributesKey;
@@ -33,10 +32,9 @@ import consulo.ui.image.Image;
  */
 public class PyElementPresentation implements ColoredItemPresentation
 {
-	@Nonnull
 	private final PyElement myElement;
 
-	public PyElementPresentation(@Nonnull PyElement element)
+	public PyElementPresentation(PyElement element)
 	{
 		myElement = element;
 	}
@@ -70,7 +68,7 @@ public class PyElementPresentation implements ColoredItemPresentation
 		return IconDescriptorUpdaters.getIcon(myElement, 0);
 	}
 
-	public static String getPackageForFile(@Nonnull PsiFile containingFile)
+	public static String getPackageForFile(PsiFile containingFile)
 	{
 		VirtualFile vFile = containingFile.getVirtualFile();
 

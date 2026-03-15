@@ -27,8 +27,7 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.Stack;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +47,12 @@ import java.util.List;
  * @author catherine
  */
 public class ConvertVariadicParamIntention extends BaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnConvertVariadicParam();
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -93,7 +91,7 @@ public class ConvertVariadicParamIntention extends BaseIntentionAction {
         return null;
     }
 
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyFunction function =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyFunction.class);
         replaceSubscriptions(function, project);

@@ -26,7 +26,6 @@ import consulo.language.parser.PsiParser;
 import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author ktisha
@@ -35,38 +34,32 @@ import jakarta.annotation.Nonnull;
 public class PyDocstringParserDefinition extends PythonParserDefinition {
     public static final IFileElementType PYTHON_DOCSTRING_FILE = new PyDocstringFileElementType(PyDocstringLanguageDialect.INSTANCE);
 
-    @Nonnull
     @Override
     public Language getLanguage() {
         return PyDocstringLanguageDialect.INSTANCE;
     }
 
-    @Nonnull
     @Override
     public Lexer createLexer(LanguageVersion languageVersion) {
         return new PyDocstringLexer();
     }
 
-    @Nonnull
     @Override
     public PsiParser createParser(LanguageVersion languageVersion) {
         return new PyDocstringParser();
     }
 
 
-    @Nonnull
     @Override
     public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
         return TokenSet.orSet(super.getWhitespaceTokens(languageVersion), TokenSet.create(PyDocstringTokenTypes.DOTS));
     }
 
-    @Nonnull
     @Override
     public IFileElementType getFileNodeType() {
         return PYTHON_DOCSTRING_FILE;
     }
 
-    @Nonnull
     @Override
     public PsiFile createFile(FileViewProvider viewProvider) {
         return new PyDocstringFile(viewProvider);

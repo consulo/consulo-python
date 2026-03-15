@@ -25,7 +25,6 @@ import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyExceptPartImpl;
 import com.jetbrains.python.psi.stubs.PyExceptPartStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -38,27 +37,26 @@ public class PyExceptPartElementType extends PyStubElementType<PyExceptPartStub,
   }
 
   @Override
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PyExceptPartImpl(node);
   }
 
   @Override
-  public PyExceptPart createPsi(@Nonnull PyExceptPartStub stub) {
+  public PyExceptPart createPsi(PyExceptPartStub stub) {
     return new PyExceptPartImpl(stub);
   }
 
   @Override
-  public PyExceptPartStub createStub(@Nonnull PyExceptPart psi, StubElement parentStub) {
+  public PyExceptPartStub createStub(PyExceptPart psi, StubElement parentStub) {
     return new PyExceptPartStubImpl(parentStub);
   }
 
   @Override
-  public void serialize(@Nonnull PyExceptPartStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
+  public void serialize(PyExceptPartStub stub, StubOutputStream dataStream) throws IOException {
   }
 
-  @Nonnull
   @Override
-  public PyExceptPartStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PyExceptPartStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new PyExceptPartStubImpl(parentStub);
   }
 }

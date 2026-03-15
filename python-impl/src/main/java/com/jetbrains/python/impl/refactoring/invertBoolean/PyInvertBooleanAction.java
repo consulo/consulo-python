@@ -17,7 +17,6 @@
 package com.jetbrains.python.impl.refactoring.invertBoolean;
 
 import consulo.annotation.access.RequiredReadAction;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.Language;
 import consulo.dataContext.DataContext;
@@ -44,12 +43,12 @@ public class PyInvertBooleanAction extends BaseRefactoringAction {
 
     @Override
     @RequiredReadAction
-    protected boolean isEnabledOnElements(@Nonnull PsiElement[] elements) {
+    protected boolean isEnabledOnElements(PsiElement[] elements) {
         return elements.length == 1 && isApplicable(elements[0], elements[0].getContainingFile());
     }
 
     @RequiredReadAction
-    private static boolean isApplicable(@Nonnull PsiElement element, @Nonnull PsiFile file) {
+    private static boolean isApplicable(PsiElement element, PsiFile file) {
         VirtualFile virtualFile = file.getVirtualFile();
         if (virtualFile != null && ProjectRootManager.getInstance(element.getProject()).getFileIndex().isInLibraryClasses(virtualFile)) {
             return false;
@@ -77,16 +76,16 @@ public class PyInvertBooleanAction extends BaseRefactoringAction {
     @Override
     @RequiredReadAction
     protected boolean isAvailableOnElementInEditorAndFile(
-        @Nonnull PsiElement element,
-        @Nonnull Editor editor,
-        @Nonnull PsiFile file,
-        @Nonnull DataContext context
+        PsiElement element,
+        Editor editor,
+        PsiFile file,
+        DataContext context
     ) {
         return isApplicable(element, element.getContainingFile());
     }
 
     @Override
-    protected RefactoringActionHandler getHandler(@Nonnull DataContext dataContext) {
+    protected RefactoringActionHandler getHandler(DataContext dataContext) {
         return new PyInvertBooleanHandler();
     }
 

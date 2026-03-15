@@ -23,8 +23,7 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.psi.PsiElement;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -238,7 +237,6 @@ public class PyBlockEvaluator {
     return value instanceof List ? (List) value : null;
   }
 
-  @Nonnull
   public List<String> getValueAsStringList(String name) {
     Object value = myNamespace.get(name);
     if (value instanceof List) {
@@ -260,7 +258,6 @@ public class PyBlockEvaluator {
     return myVisitedFiles;
   }
 
-  @Nonnull
   public List<PyExpression> getDeclarations(String name) {
     List<PyExpression> expressions = myDeclarations.get(name);
     return expressions != null ? expressions : Collections.<PyExpression>emptyList();

@@ -33,8 +33,7 @@ import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -95,7 +94,7 @@ public class DocutilsConfigurationProducer extends RuntimeConfigurationProducer 
   @Nullable
   @Override
   protected RunnerAndConfigurationSettings findExistingByElement(Location location,
-                                                                 @Nonnull List<RunnerAndConfigurationSettings> existingConfigurations,
+                                                                 List<RunnerAndConfigurationSettings> existingConfigurations,
                                                                  ConfigurationContext context) {
     PsiFile script = location.getPsiElement().getContainingFile();
     if (script == null) {

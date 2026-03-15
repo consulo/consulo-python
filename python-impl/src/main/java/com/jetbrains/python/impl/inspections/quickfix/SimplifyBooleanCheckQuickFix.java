@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
@@ -57,13 +56,12 @@ public class SimplifyBooleanCheckQuickFix implements LocalQuickFix {
     return "[]".equals(expression.getText());
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return PyLocalize.qfixSimplify$0(myReplacementText);
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
     if (!element.isValid() || !(element instanceof PyBinaryExpression)) {
       return;

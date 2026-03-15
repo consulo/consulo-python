@@ -20,7 +20,6 @@ import consulo.language.editor.inspection.AbstractBatchSuppressByNoInspectionCom
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -28,7 +27,7 @@ import jakarta.annotation.Nonnull;
 public class PySuppressInspectionFix extends AbstractBatchSuppressByNoInspectionCommentFix {
     private final Class<? extends PyElement> myContainerClass;
 
-    public PySuppressInspectionFix(String ID, @Nonnull LocalizeValue text, Class<? extends PyElement> containerClass) {
+    public PySuppressInspectionFix(String ID, LocalizeValue text, Class<? extends PyElement> containerClass) {
         super(ID, false);
         setText(text);
         myContainerClass = containerClass;

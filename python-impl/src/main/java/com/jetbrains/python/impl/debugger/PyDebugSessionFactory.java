@@ -25,8 +25,7 @@ import consulo.execution.runner.ExecutionEnvironment;
 import consulo.process.ExecutionException;
 import org.jetbrains.annotations.Contract;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Alexander Koshevoy
@@ -35,12 +34,11 @@ import jakarta.annotation.Nullable;
 public abstract class PyDebugSessionFactory {
   public static final ExtensionPointName<PyDebugSessionFactory> EP_NAME = ExtensionPointName.create(PyDebugSessionFactory.class);
 
-  protected abstract boolean appliesTo(@Nonnull Sdk sdk);
+  protected abstract boolean appliesTo(Sdk sdk);
 
-  @Nonnull
-  public abstract XDebugSession createSession(@Nonnull PyDebugRunner runner,
-                                              @Nonnull PythonCommandLineState state,
-                                              @Nonnull ExecutionEnvironment environment) throws ExecutionException;
+  public abstract XDebugSession createSession(PyDebugRunner runner,
+                                              PythonCommandLineState state,
+                                              ExecutionEnvironment environment) throws ExecutionException;
 
   @Contract("null -> null")
   @Nullable

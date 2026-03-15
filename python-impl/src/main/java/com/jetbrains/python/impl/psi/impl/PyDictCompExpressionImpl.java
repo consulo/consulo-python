@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyDictCompExpression;
@@ -32,7 +31,7 @@ public class PyDictCompExpressionImpl extends PyComprehensionElementImpl impleme
     super(astNode);
   }
 
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     return PyBuiltinCache.getInstance(this).getDictType();
   }
 

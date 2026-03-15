@@ -27,7 +27,6 @@ import consulo.language.Language;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -38,7 +37,7 @@ import jakarta.annotation.Nonnull;
 public class PyDocstringVisitorFilter implements PythonVisitorFilter
 {
   @Override
-  public boolean isSupported(@Nonnull Class visitorClass, @Nonnull PsiFile file) {
+  public boolean isSupported(Class visitorClass, PsiFile file) {
     //inspections
     if (visitorClass == PyArgumentListInspection.class) {
       return false;
@@ -64,7 +63,6 @@ public class PyDocstringVisitorFilter implements PythonVisitorFilter
     return true;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PyDocstringLanguageDialect.INSTANCE;

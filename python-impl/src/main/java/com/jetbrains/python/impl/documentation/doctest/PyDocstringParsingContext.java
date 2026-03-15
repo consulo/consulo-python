@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.documentation.doctest;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.parser.PsiBuilder;
 import consulo.language.ast.IElementType;

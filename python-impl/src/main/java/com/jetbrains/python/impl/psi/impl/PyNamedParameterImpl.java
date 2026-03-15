@@ -45,8 +45,7 @@ import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.util.lang.Pair;
 import consulo.util.lang.ref.SimpleReference;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
@@ -104,7 +103,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 
     @Override
     @RequiredReadAction
-    public PsiElement setName(@Nonnull String name) throws IncorrectOperationException {
+    public PsiElement setName(String name) throws IncorrectOperationException {
         ASTNode oldNameIdentifier = getNameIdentifierNode();
         if (oldNameIdentifier != null) {
             ASTNode nameElement = PyUtil.createNewName(this, name);
@@ -187,7 +186,6 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
         return getDefaultValue() != null;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public String getRepr(boolean includeDefaultValue) {
@@ -235,7 +233,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 
     @Override
     @RequiredReadAction
-    public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
         PsiElement parent = getParentByStub();
         if (parent instanceof PyParameterList parameterList) {
             PyFunction func = parameterList.getContainingFunction();
@@ -320,9 +318,8 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
         return new PyElementPresentation(this);
     }
 
-    @Nonnull
     @RequiredReadAction
-    private Set<String> collectUsedAttributes(@Nonnull final TypeEvalContext context) {
+    private Set<String> collectUsedAttributes(final TypeEvalContext context) {
         final Set<String> result = new LinkedHashSet<>();
         final ScopeOwner owner = ScopeUtil.getScopeOwner(this);
         String name = getName();
@@ -415,7 +412,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
 
     @Nullable
     @RequiredReadAction
-    private PyNamedParameter getParameterByCallArgument(@Nonnull PsiElement element, @Nonnull TypeEvalContext context) {
+    private PyNamedParameter getParameterByCallArgument(PsiElement element, TypeEvalContext context) {
         PyArgumentList argumentList = PsiTreeUtil.getParentOfType(element, PyArgumentList.class);
         if (argumentList != null) {
             boolean elementIsArgument = false;
@@ -449,7 +446,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
     }
 
     @RequiredReadAction
-    private static void processLocalCalls(@Nonnull PyFunction function, @Nonnull Predicate<PyCallExpression> processor) {
+    private static void processLocalCalls(PyFunction function, Predicate<PyCallExpression> processor) {
         PsiFile file = function.getContainingFile();
         String name = function.getName();
         if (file != null && name != null) {
@@ -473,7 +470,6 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
         return super.toString() + "('" + getName() + "')";
     }
 
-    @Nonnull
     @Override
     public SearchScope getUseScope() {
 		if (ScopeUtil.getScopeOwner(this) instanceof PyFunction owner) {

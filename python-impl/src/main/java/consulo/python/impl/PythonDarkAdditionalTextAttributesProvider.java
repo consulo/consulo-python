@@ -7,7 +7,6 @@ import consulo.colorScheme.EditorColorSchemeExtender;
 import consulo.colorScheme.EditorColorsScheme;
 import consulo.colorScheme.EffectType;
 import consulo.ui.color.RGBColor;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -15,7 +14,6 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PythonDarkAdditionalTextAttributesProvider implements EditorColorSchemeExtender {
-    @Nonnull
     @Override
     public String getColorSchemeId() {
         return EditorColorsScheme.DARCULA_SCHEME_NAME;

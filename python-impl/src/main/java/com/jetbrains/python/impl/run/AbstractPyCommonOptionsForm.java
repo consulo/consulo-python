@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.run;
 
 import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;
 import consulo.ui.ex.awt.PanelWithAnchor;
-import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -27,7 +26,6 @@ import java.awt.event.ActionListener;
  */
 public interface AbstractPyCommonOptionsForm extends AbstractPythonRunConfigurationParams, PanelWithAnchor
 {
-	@NonNls
 	String EXPAND_PROPERTY_KEY = "ExpandEnvironmentPanel";
 
 	JComponent getMainPanel();

@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.StubBasedPsiElement;
 import consulo.language.psi.stub.StubElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -137,8 +136,7 @@ public class ScopeUtil {
     return null;
   }
 
-  @Nonnull
-  public static Collection<PsiElement> getReadWriteElements(@Nonnull String name, @Nonnull ScopeOwner scopeOwner, boolean isReadAccess,
+  public static Collection<PsiElement> getReadWriteElements(String name, ScopeOwner scopeOwner, boolean isReadAccess,
                                                             boolean isWriteAccess) {
     ControlFlow flow = ControlFlowCache.getControlFlow(scopeOwner);
     Collection<PsiElement> result = new ArrayList<PsiElement>();

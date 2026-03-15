@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
@@ -50,9 +49,8 @@ class PropertiesManager extends MembersManager<PyElement>
 	}
 
 
-	@Nonnull
 	@Override
-	protected List<? extends PyElement> getMembersCouldBeMoved(@Nonnull PyClass pyClass)
+	protected List<? extends PyElement> getMembersCouldBeMoved(PyClass pyClass)
 	{
 		List<PyElement> elements = new ArrayList<>(pyClass.getProperties().size());
 		for(Property property : pyClass.getProperties().values())
@@ -62,8 +60,7 @@ class PropertiesManager extends MembersManager<PyElement>
 		return elements;
 	}
 
-	@Nonnull
-	private static PyElement getElement(@Nonnull Property property)
+	private static PyElement getElement(Property property)
 	{
 		PyCallable getter = property.getGetter().valueOrNull();
 		PyCallable setter = property.getSetter().valueOrNull();
@@ -89,8 +86,7 @@ class PropertiesManager extends MembersManager<PyElement>
 		}
 	}
 
-	@Nonnull
-	private static Property getProperty(@Nonnull PyClass pyClass, @Nonnull PyElement element)
+	private static Property getProperty(PyClass pyClass, PyElement element)
 	{
 		Collection<Property> properties = pyClass.getProperties().values();
 		if(element instanceof PyTargetExpression)
@@ -104,8 +100,7 @@ class PropertiesManager extends MembersManager<PyElement>
 		throw new IllegalArgumentException("Not function nor target");
 	}
 
-	@Nonnull
-	private static Property getPropertyByFunction(@Nonnull Collection<Property> properties, @Nonnull PyFunction functionToSearch)
+	private static Property getPropertyByFunction(Collection<Property> properties, PyFunction functionToSearch)
 	{
 		for(Property property : properties)
 		{
@@ -120,8 +115,7 @@ class PropertiesManager extends MembersManager<PyElement>
 		throw new IllegalArgumentException("No property found");
 	}
 
-	@Nonnull
-	private static Property getPropertyByTargetExpression(@Nonnull Iterable<Property> properties, @Nonnull PyTargetExpression element)
+	private static Property getPropertyByTargetExpression(Iterable<Property> properties, PyTargetExpression element)
 	{
 		for(Property property : properties)
 		{
@@ -133,8 +127,7 @@ class PropertiesManager extends MembersManager<PyElement>
 		throw new IllegalArgumentException("No property found");
 	}
 
-	@Nonnull
-	private static Collection<PyFunction> getAllFunctions(@Nonnull Property property)
+	private static Collection<PyFunction> getAllFunctions(Property property)
 	{
 		Collection<PyFunction> result = new ArrayList<>(3);
 		PyCallable getter = property.getGetter().valueOrNull();
@@ -157,7 +150,7 @@ class PropertiesManager extends MembersManager<PyElement>
 	}
 
 	@Override
-	protected Collection<PyElement> moveMembers(@Nonnull PyClass from, @Nonnull Collection<PyMemberInfo<PyElement>> members, @Nonnull PyClass... to)
+	protected Collection<PyElement> moveMembers(PyClass from, Collection<PyMemberInfo<PyElement>> members, PyClass... to)
 	{
 		Collection<PyElement> result = new ArrayList<>();
 
@@ -177,14 +170,13 @@ class PropertiesManager extends MembersManager<PyElement>
 		return result;
 	}
 
-	@Nonnull
 	@Override
-	public PyMemberInfo<PyElement> apply(@Nonnull PyElement input)
+	public PyMemberInfo<PyElement> apply(PyElement input)
 	{
 		return new PyMemberInfo<>(input, false, getName(input), false, this, false);
 	}
 
-	private static String getName(@Nonnull PyElement input)
+	private static String getName(PyElement input)
 	{
 		PyClass clazz = PsiTreeUtil.getParentOfType(input, PyClass.class);
 		assert clazz != null : "Element not declared in class";
@@ -193,14 +185,13 @@ class PropertiesManager extends MembersManager<PyElement>
 	}
 
 	@Override
-	public boolean hasConflict(@Nonnull PyElement member, @Nonnull PyClass aClass)
+	public boolean hasConflict(PyElement member, PyClass aClass)
 	{
 		return false;
 	}
 
-	@Nonnull
 	@Override
-	protected MultiMap<PyClass, PyElement> getDependencies(@Nonnull PyElement member)
+	protected MultiMap<PyClass, PyElement> getDependencies(PyElement member)
 	{
 		PyRecursiveElementVisitorWithResult visitor = new PyReferenceVisitor();
 		member.accept(visitor);
@@ -208,9 +199,8 @@ class PropertiesManager extends MembersManager<PyElement>
 		return visitor.myResult;
 	}
 
-	@Nonnull
 	@Override
-	protected Collection<PyElement> getDependencies(@Nonnull MultiMap<PyClass, PyElement> usedElements)
+	protected Collection<PyElement> getDependencies(MultiMap<PyClass, PyElement> usedElements)
 	{
 		return Collections.emptyList();
 	}

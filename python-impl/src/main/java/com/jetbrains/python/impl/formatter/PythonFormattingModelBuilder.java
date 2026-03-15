@@ -25,7 +25,6 @@ import consulo.language.ast.TokenSet;
 import consulo.language.codeStyle.*;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
-import jakarta.annotation.Nonnull;
 
 import static com.jetbrains.python.PyTokenTypes.*;
 import static com.jetbrains.python.impl.PyElementTypes.*;
@@ -38,9 +37,8 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilder, Cus
 {
 	public static final TokenSet STATEMENT_OR_DECLARATION = PythonDialectsTokenSetProvider.INSTANCE.getStatementTokens();
 
-	@Nonnull
 	@Override
-	public FormattingModel createModel(@Nonnull FormattingContext formattingContext)
+	public FormattingModel createModel(FormattingContext formattingContext)
 	{
 		PsiElement element = formattingContext.getPsiElement();
 		CodeStyleSettings settings = formattingContext.getCodeStyleSettings();
@@ -131,7 +129,6 @@ public class PythonFormattingModelBuilder implements FormattingModelBuilder, Cus
 		return file != null && file.getLanguage() == PythonLanguage.getInstance();
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

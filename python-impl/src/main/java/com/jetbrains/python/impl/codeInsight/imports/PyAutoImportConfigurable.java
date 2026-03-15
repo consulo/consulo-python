@@ -23,10 +23,8 @@ import consulo.configurable.ConfigurationException;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
-import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.Nls;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 
 /**
@@ -39,7 +37,6 @@ public class PyAutoImportConfigurable implements ApplicationConfigurable {
   private JRadioButton myRbImport;
   private JCheckBox myShowImportPopupCheckBox;
 
-  @Nonnull
   @Override
   public String getId() {
     return "editor.preferences.import.python";
@@ -81,7 +78,6 @@ public class PyAutoImportConfigurable implements ApplicationConfigurable {
     settings.SHOW_IMPORT_POPUP = myShowImportPopupCheckBox.isSelected();
   }
 
-  @Nls
   @Override
   public LocalizeValue getDisplayName() {
     return PyLocalize.python();

@@ -24,7 +24,6 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.impl.psi.types.PyUnionType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class PyConditionalExpressionImpl extends PyElementImpl implements PyCond
     super(astNode);
   }
 
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     PyExpression truePart = getTruePart();
     PyExpression falsePart = getFalsePart();
     if (truePart == null || falsePart == null) {

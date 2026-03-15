@@ -27,8 +27,7 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author catherine
@@ -47,7 +46,6 @@ public class DocstringQuickFix implements LocalQuickFix {
         myUnexpectedParamName = unexpectedParamName;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         if (myMissingParam != null) {
@@ -65,7 +63,7 @@ public class DocstringQuickFix implements LocalQuickFix {
         }
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyDocStringOwner.class);
         if (docStringOwner == null) {
             return;
@@ -90,7 +88,7 @@ public class DocstringQuickFix implements LocalQuickFix {
         }
     }
 
-    private static void addEmptyDocstring(@Nonnull PyDocStringOwner docStringOwner) {
+    private static void addEmptyDocstring(PyDocStringOwner docStringOwner) {
         if (docStringOwner instanceof PyFunction
             || docStringOwner instanceof PyClass pyClass && pyClass.findInitOrNew(false, null) != null) {
             PyGenerateDocstringIntention.generateDocstring(docStringOwner, PyQuickFixUtil.getEditor(docStringOwner));

@@ -34,7 +34,6 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.Couple;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +44,7 @@ import java.util.function.Function;
  * @author Alexey.Ivanov
  */
 public class PyStringConcatenationToFormatIntention extends PyBaseIntentionAction {
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -99,7 +98,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
         return true;
     }
 
-    private static Collection<PyExpression> getSimpleExpressions(@Nonnull PyBinaryExpression expression) {
+    private static Collection<PyExpression> getSimpleExpressions(PyBinaryExpression expression) {
         List<PyExpression> res = new ArrayList<>();
         if (expression.getLeftExpression() instanceof PyBinaryExpression) {
             res.addAll(getSimpleExpressions((PyBinaryExpression) expression.getLeftExpression()));
@@ -116,7 +115,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
         return res;
     }
 
-    private static Collection<PyElementType> getOperators(@Nonnull PyBinaryExpression expression) {
+    private static Collection<PyElementType> getOperators(PyBinaryExpression expression) {
         List<PyElementType> res = new ArrayList<>();
         if (expression.getLeftExpression() instanceof PyBinaryExpression) {
             res.addAll(getOperators((PyBinaryExpression) expression.getLeftExpression()));
@@ -130,7 +129,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
 
     @Override
     @RequiredWriteAction
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement element =
             PsiTreeUtil.getTopmostParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyBinaryExpression.class);
 

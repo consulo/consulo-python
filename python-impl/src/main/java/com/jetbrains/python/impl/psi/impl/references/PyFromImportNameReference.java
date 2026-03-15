@@ -23,7 +23,6 @@ import com.jetbrains.python.impl.psi.impl.PyReferenceExpressionImpl;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +42,6 @@ public class PyFromImportNameReference extends PyImportReference {
     assert myStatement != null;
   }
 
-  @Nonnull
   @Override
   protected List<RatedResolveResult> resolveInner() {
     QualifiedName qName = myElement.asQualifiedName();

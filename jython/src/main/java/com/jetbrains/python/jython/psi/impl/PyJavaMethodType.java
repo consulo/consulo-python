@@ -30,8 +30,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,28 +54,28 @@ public class PyJavaMethodType implements PyCallableType
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@Nonnull TypeEvalContext context)
+	public PyType getReturnType(TypeEvalContext context)
 	{
 		return PyJavaTypeProvider.asPyType(myMethod.getReturnType());
 	}
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
+	public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite)
 	{
 		return getReturnType(context);
 	}
 
 	@Nullable
 	@Override
-	public List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
+	public List<PyCallableParameter> getParameters(TypeEvalContext context)
 	{
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(String name, @Nullable PyExpression location, AccessDirection direction, PyResolveContext resolveContext)
 	{
 		return Collections.emptyList();
 	}

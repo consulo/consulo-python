@@ -18,7 +18,7 @@ package com.jetbrains.python.psi;
 
 import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyAnnotationStub;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole

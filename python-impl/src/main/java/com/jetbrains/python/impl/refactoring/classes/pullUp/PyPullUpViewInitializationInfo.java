@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
@@ -35,21 +34,19 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersVi
  */
 class PyPullUpViewInitializationInfo extends MembersViewInitializationInfo
 {
-	@Nonnull
 	private final Collection<PyClass> myParents;
 
 	/**
 	 * @param parents list of possible parents to display.
 	 */
-	PyPullUpViewInitializationInfo(@Nonnull MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
-			@Nonnull List<PyMemberInfo<PyElement>> memberInfos,
-			@Nonnull Collection<PyClass> parents)
+	PyPullUpViewInitializationInfo(MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel,
+			List<PyMemberInfo<PyElement>> memberInfos,
+			Collection<PyClass> parents)
 	{
 		super(memberInfoModel, memberInfos);
 		myParents = new ArrayList<>(parents);
 	}
 
-	@Nonnull
 	public Collection<PyClass> getParents()
 	{
 		return Collections.unmodifiableCollection(myParents);

@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Alexey.Ivanov
@@ -41,7 +40,7 @@ public class PyTypeHierachyProvider implements TypeHierarchyProvider {
     @Nullable
     @Override
     @RequiredReadAction
-    public PsiElement getTarget(@Nonnull DataContext dataContext) {
+    public PsiElement getTarget(DataContext dataContext) {
         PsiElement element = dataContext.getData(PsiElement.KEY);
         if (element == null) {
             Editor editor = dataContext.getData(Editor.KEY);
@@ -56,7 +55,6 @@ public class PyTypeHierachyProvider implements TypeHierarchyProvider {
         return element;
     }
 
-    @Nonnull
     @Override
     public HierarchyBrowser createHierarchyBrowser(PsiElement target) {
         return new PyTypeHierarchyBrowser((PyClass) target);
@@ -64,11 +62,10 @@ public class PyTypeHierachyProvider implements TypeHierarchyProvider {
 
     @Override
     @RequiredReadAction
-    public void browserActivated(@Nonnull HierarchyBrowser hierarchyBrowser) {
+    public void browserActivated(HierarchyBrowser hierarchyBrowser) {
         ((PyTypeHierarchyBrowser) hierarchyBrowser).changeView(TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE);
     }
 
-    @Nonnull
     @Override
     public Language getLanguage() {
         return PythonLanguage.INSTANCE;

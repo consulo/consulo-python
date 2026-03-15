@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Date;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.logging.Logger;
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
@@ -19,16 +18,15 @@ public abstract class BaseDebuggerTransport implements DebuggerTransport
 
 	protected final Object mySocketObject = new Object();
 
-	@Nonnull
 	protected final RemoteDebugger myDebugger;
 
-	protected BaseDebuggerTransport(@Nonnull RemoteDebugger debugger)
+	protected BaseDebuggerTransport(RemoteDebugger debugger)
 	{
 		myDebugger = debugger;
 	}
 
 	@Override
-	public boolean sendFrame(@Nonnull ProtocolFrame frame)
+	public boolean sendFrame(ProtocolFrame frame)
 	{
 		logFrame(frame, true);
 

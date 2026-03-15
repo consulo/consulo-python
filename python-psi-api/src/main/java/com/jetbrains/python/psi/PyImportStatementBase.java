@@ -17,7 +17,6 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -27,13 +26,11 @@ public interface PyImportStatementBase extends PyStatement
 	/**
 	 * @return elements that constitute the "import" clause
 	 */
-	@Nonnull
 	PyImportElement[] getImportElements();
 
 	/**
 	 * @return qualified names of imported elements regardless way they were imported.
 	 * "from bar import foo" or "import bar.foo" or "from bar import foo as spam" are all "bar.foo"
 	 */
-	@Nonnull
 	List<String> getFullyQualifiedObjectNames();
 }

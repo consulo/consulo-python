@@ -25,7 +25,6 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * Intention to convert dict constructor to dict literal expression with only explicit keyword arguments
@@ -38,13 +37,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnConvertDictConstructorToDictLiteral();
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -68,7 +66,7 @@ public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionActi
         return false;
     }
 
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyCallExpression expression =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

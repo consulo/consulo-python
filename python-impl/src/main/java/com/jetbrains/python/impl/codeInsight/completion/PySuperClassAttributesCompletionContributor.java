@@ -27,7 +27,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ProcessingContext;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -42,7 +41,7 @@ public class PySuperClassAttributesCompletionContributor extends CompletionContr
 				CompletionProvider()
 		{
 			@Override
-			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
+			public void addCompletions(CompletionParameters parameters, ProcessingContext context, CompletionResultSet result)
 			{
 				PsiElement position = parameters.getOriginalPosition();
 				PyClass containingClass = PsiTreeUtil.getParentOfType(position, PyClass.class);
@@ -59,7 +58,7 @@ public class PySuperClassAttributesCompletionContributor extends CompletionContr
 		});
 	}
 
-	public static List<PyTargetExpression> getSuperClassAttributes(@Nonnull PyClass cls)
+	public static List<PyTargetExpression> getSuperClassAttributes(PyClass cls)
 	{
 		List<PyTargetExpression> attrs = Lists.newArrayList();
 		List<String> seenNames = Lists.newArrayList();
@@ -81,7 +80,6 @@ public class PySuperClassAttributesCompletionContributor extends CompletionContr
 		return attrs;
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

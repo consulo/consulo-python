@@ -30,8 +30,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,7 +47,7 @@ public abstract class IntroduceValidator {
            !(myNamesValidator.isKeyword(name, project));
   }
 
-  public boolean checkPossibleName(@Nonnull String name, @Nonnull PyExpression expression) {
+  public boolean checkPossibleName(String name, PyExpression expression) {
     return check(name, expression) == null;
   }
 

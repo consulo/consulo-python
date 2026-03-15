@@ -17,8 +17,7 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.base.Function;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.ast.ASTNode;
@@ -44,7 +43,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  * @author ktisha
  */
 public abstract class TypeIntention extends PyBaseIntentionAction {
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile) || file instanceof PyDocstringFile) {
             return false;
         }
@@ -121,7 +120,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         return parameter == null || parameter.isSelf() ? null : parameter;
     }
 
-    private boolean isAvailableForReturn(@Nonnull PsiElement elementAt) {
+    private boolean isAvailableForReturn(PsiElement elementAt) {
         return resolvesToFunction(elementAt, new Function<PyFunction, Boolean>() {
             @Override
             public Boolean apply(PyFunction input) {
@@ -130,7 +129,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         });
     }
 
-    static boolean resolvesToFunction(@Nonnull PsiElement elementAt, Function<PyFunction, Boolean> isAvailableForFunction) {
+    static boolean resolvesToFunction(PsiElement elementAt, Function<PyFunction, Boolean> isAvailableForFunction) {
         PyFunction parentFunction = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
         if (parentFunction != null) {
             ASTNode nameNode = parentFunction.getNameNode();
@@ -173,7 +172,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         return false;
     }
 
-    protected boolean isReturnTypeDefined(@Nonnull PyFunction function) {
+    protected boolean isReturnTypeDefined(PyFunction function) {
         return false;
     }
 
@@ -212,7 +211,7 @@ public abstract class TypeIntention extends PyBaseIntentionAction {
         return PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
     }
 
-    protected static PyResolveContext getResolveContext(@Nonnull PsiElement origin) {
+    protected static PyResolveContext getResolveContext(PsiElement origin) {
         return PyResolveContext.defaultContext()
             .withTypeEvalContext(TypeEvalContext.codeAnalysis(origin.getProject(), origin.getContainingFile()));
     }

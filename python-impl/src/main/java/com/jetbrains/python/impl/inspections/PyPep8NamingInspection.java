@@ -43,8 +43,7 @@ import consulo.project.Project;
 import consulo.ui.ex.awt.JBList;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,24 +74,21 @@ public class PyPep8NamingInspection extends PyInspection {
             .put("N814", "CamelCase variable imported as constant")
             .build();
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session, (PyPep8NamingInspectionState) state);
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO("PEP 8 naming convention violation");
     }
 
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyPep8NamingInspectionState();
@@ -149,7 +145,7 @@ public class PyPep8NamingInspection extends PyInspection {
             }
         }
 
-        private void registerAndAddRenameAndIgnoreErrorQuickFixes(@Nullable PsiElement node, @Nonnull String errorCode) {
+        private void registerAndAddRenameAndIgnoreErrorQuickFixes(@Nullable PsiElement node, String errorCode) {
             if (getHolder() != null && getHolder().isOnTheFly()) {
                 registerProblem(node, ERROR_CODES_DESCRIPTION.get(errorCode), new PyRenameElementQuickFix(), new IgnoreErrorFix(errorCode));
             }
@@ -195,11 +191,11 @@ public class PyPep8NamingInspection extends PyInspection {
             }
         }
 
-        private boolean isOverriddenMethod(@Nonnull PyFunction function) {
+        private boolean isOverriddenMethod(PyFunction function) {
             return PySuperMethodsSearch.search(function, myTypeEvalContext).findFirst() != null;
         }
 
-        private boolean isIgnoredOrHasIgnoredAncestor(@Nonnull PyClass pyClass) {
+        private boolean isIgnoredOrHasIgnoredAncestor(PyClass pyClass) {
             Set<String> blackList = Sets.newHashSet(myState.ignoredBaseClasses);
             if (blackList.contains(pyClass.getQualifiedName())) {
                 return true;
@@ -285,7 +281,7 @@ public class PyPep8NamingInspection extends PyInspection {
     private static class IgnoreBaseClassQuickFix implements LocalQuickFix {
         private final List<String> myBaseClassNames;
 
-        public IgnoreBaseClassQuickFix(@Nonnull PyClass baseClass, @Nonnull TypeEvalContext context) {
+        public IgnoreBaseClassQuickFix(PyClass baseClass, TypeEvalContext context) {
             myBaseClassNames = new ArrayList<>();
             ContainerUtil.addIfNotNull(getBaseClassNames(), baseClass.getQualifiedName());
             for (PyClass ancestor : baseClass.getAncestorClasses(context)) {
@@ -293,14 +289,13 @@ public class PyPep8NamingInspection extends PyInspection {
             }
         }
 
-        @Nonnull
         @Override
         public LocalizeValue getName() {
             return LocalizeValue.localizeTODO("Ignore method names for descendants of class");
         }
 
         @Override
-        public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        public void applyFix(Project project, ProblemDescriptor descriptor) {
             JBList list = new JBList(getBaseClassNames());
             Runnable updateBlackList = () ->
             {
@@ -337,14 +332,13 @@ public class PyPep8NamingInspection extends PyInspection {
             myCode = code;
         }
 
-        @Nonnull
         @Override
         public LocalizeValue getName() {
             return myText;
         }
 
         @Override
-        public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        public void applyFix(Project project, ProblemDescriptor descriptor) {
             PsiFile file = descriptor.getStartElement().getContainingFile();
             InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
             profile.<PyPep8NamingInspection, PyPep8NamingInspectionState>modifyToolSettings(INSPECTION_SHORT_NAME, file, (i, s) ->

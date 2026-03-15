@@ -23,8 +23,7 @@ import java.util.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,6 @@ public class PyStringFormatParser {
       return myEndIndex;
     }
 
-    @Nonnull
     public TextRange getTextRange() {
       return TextRange.create(myStartIndex, myEndIndex);
     }
@@ -157,9 +155,7 @@ public class PyStringFormatParser {
     }
   }
 
-  @Nonnull
   private final String myLiteral;
-  @Nonnull
   private final List<FormatStringChunk> myResult = new ArrayList<FormatStringChunk>();
   private int myPos;
 
@@ -168,17 +164,15 @@ public class PyStringFormatParser {
   private static final String LENGTH_MODIFIERS = "hlL";
   private static final String VALID_CONVERSION_TYPES = "diouxXeEfFgGcrs";
 
-  private PyStringFormatParser(@Nonnull String literal) {
+  private PyStringFormatParser(String literal) {
     myLiteral = literal;
   }
 
-  @Nonnull
-  public static List<FormatStringChunk> parsePercentFormat(@Nonnull String s) {
+  public static List<FormatStringChunk> parsePercentFormat(String s) {
     return new PyStringFormatParser(s).parse();
   }
 
-  @Nonnull
-  public static List<FormatStringChunk> parseNewStyleFormat(@Nonnull String s) {
+  public static List<FormatStringChunk> parseNewStyleFormat(String s) {
     List<FormatStringChunk> results = new ArrayList<FormatStringChunk>();
     int pos = 0;
     int n = s.length();
@@ -224,7 +218,6 @@ public class PyStringFormatParser {
     return results;
   }
 
-  @Nonnull
   private List<FormatStringChunk> parse() {
     myPos = 0;
     while(myPos < myLiteral.length()) {
@@ -279,7 +272,7 @@ public class PyStringFormatParser {
     chunk.setEndIndex(myPos);
   }
 
-  private boolean isAtSet(@Nonnull String characterSet) {
+  private boolean isAtSet(String characterSet) {
     return myPos < myLiteral.length() && characterSet.indexOf(myLiteral.charAt(myPos)) >= 0;
   }
 
@@ -287,7 +280,6 @@ public class PyStringFormatParser {
     return myPos < myLiteral.length() && myLiteral.charAt(myPos) == c;
   }
 
-  @Nonnull
   private String parseWidth() {
     if (isAt('*')) {
       myPos++;
@@ -296,8 +288,7 @@ public class PyStringFormatParser {
     return parseWhileCharacterInSet(DIGITS);
   }
 
-  @Nonnull
-  private String parseWhileCharacterInSet(@Nonnull String characterSet) {
+  private String parseWhileCharacterInSet(String characterSet) {
     int flagStart = myPos;
     while(isAtSet(characterSet)) {
       myPos++;
@@ -305,8 +296,7 @@ public class PyStringFormatParser {
     return myLiteral.substring(flagStart, myPos);
   }
 
-  @Nonnull
-  public static List<SubstitutionChunk> filterSubstitutions(@Nonnull List<FormatStringChunk> chunks) {
+  public static List<SubstitutionChunk> filterSubstitutions(List<FormatStringChunk> chunks) {
     List<SubstitutionChunk> results = new ArrayList<SubstitutionChunk>();
     for (FormatStringChunk chunk : chunks) {
       if (chunk instanceof SubstitutionChunk) {
@@ -316,8 +306,7 @@ public class PyStringFormatParser {
     return results;
   }
 
-  @Nonnull
-  public static List<SubstitutionChunk> getPositionalSubstitutions(@Nonnull List<SubstitutionChunk> substitutions) {
+  public static List<SubstitutionChunk> getPositionalSubstitutions(List<SubstitutionChunk> substitutions) {
     ArrayList<SubstitutionChunk> result = new ArrayList<SubstitutionChunk>();
     for (SubstitutionChunk s : substitutions) {
       if (s.getMappingKey() == null) {
@@ -327,8 +316,7 @@ public class PyStringFormatParser {
     return result;
   }
 
-  @Nonnull
-  public static Map<String, SubstitutionChunk> getKeywordSubstitutions(@Nonnull List<SubstitutionChunk> substitutions) {
+  public static Map<String, SubstitutionChunk> getKeywordSubstitutions(List<SubstitutionChunk> substitutions) {
     Map<String, SubstitutionChunk> result = new HashMap<String, SubstitutionChunk>();
     for (SubstitutionChunk s : substitutions) {
       String key = s.getMappingKey();
@@ -339,8 +327,7 @@ public class PyStringFormatParser {
     return result;
   }
 
-  @Nonnull
-  public static List<TextRange> substitutionsToRanges(@Nonnull List<SubstitutionChunk> substitutions) {
+  public static List<TextRange> substitutionsToRanges(List<SubstitutionChunk> substitutions) {
     List<TextRange> ranges = new ArrayList<TextRange>();
     for (SubstitutionChunk substitution : substitutions) {
       ranges.add(TextRange.create(substitution.getStartIndex(), substitution.getEndIndex()));
@@ -352,7 +339,7 @@ public class PyStringFormatParser {
    * Return the RHS operand of %-based string literal format expression.
    */
   @Nullable
-  public static PyExpression getFormatValueExpression(@Nonnull PyStringLiteralExpression element) {
+  public static PyExpression getFormatValueExpression(PyStringLiteralExpression element) {
     PsiElement parent = element.getParent();
     if (parent instanceof PyBinaryExpression) {
       PyBinaryExpression binaryExpr = (PyBinaryExpression)parent;
@@ -371,7 +358,7 @@ public class PyStringFormatParser {
    * Return the argument list of the str.format() literal format expression.
    */
   @Nullable
-  public static PyArgumentList getNewStyleFormatValueExpression(@Nonnull PyStringLiteralExpression element) {
+  public static PyArgumentList getNewStyleFormatValueExpression(PyStringLiteralExpression element) {
     PsiElement parent = element.getParent();
     if (parent instanceof PyQualifiedExpression) {
       PyQualifiedExpression qualifiedExpr = (PyQualifiedExpression)parent;
@@ -387,8 +374,7 @@ public class PyStringFormatParser {
     return null;
   }
 
-  @Nonnull
-  public static List<TextRange> getEscapeRanges(@Nonnull String s) {
+  public static List<TextRange> getEscapeRanges(String s) {
     List<TextRange> ranges = new ArrayList<TextRange>();
     Matcher matcher = PyStringLiteralExpressionImpl.PATTERN_ESCAPE.matcher(s);
     while (matcher.find()) {

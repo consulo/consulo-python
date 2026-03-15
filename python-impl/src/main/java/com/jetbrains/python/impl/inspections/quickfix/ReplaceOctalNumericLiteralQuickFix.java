@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
@@ -31,14 +30,13 @@ import com.jetbrains.python.psi.PyNumericLiteralExpression;
  * @since 2010-03-06
  */
 public class ReplaceOctalNumericLiteralQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.intnReplaceOctalNumericLiteral();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement numericLiteralExpression = descriptor.getPsiElement();
         if (numericLiteralExpression instanceof PyNumericLiteralExpression) {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

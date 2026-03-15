@@ -28,8 +28,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Alexey.Ivanov
@@ -37,7 +36,7 @@ import jakarta.annotation.Nullable;
 public class PyWithIfSurrounder extends PyStatementSurrounder {
   @Override
   @Nullable
-  protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
+  protected TextRange surroundStatement(Project project, Editor editor, PsiElement[] elements)
     throws IncorrectOperationException {
     PyIfStatement ifStatement = PyElementGenerator.getInstance(project).createFromText(LanguageLevel.getDefault(), PyIfStatement.class, "if True:\n    ");
     PsiElement parent = elements[0].getParent();

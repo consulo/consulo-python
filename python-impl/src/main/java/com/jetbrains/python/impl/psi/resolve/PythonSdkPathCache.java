@@ -29,7 +29,6 @@ import consulo.util.collection.Maps;
 import consulo.util.dataholder.Key;
 import consulo.virtualFileSystem.VirtualFileManager;
 
-import jakarta.annotation.Nonnull;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -39,7 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PythonSdkPathCache extends PythonPathCache implements Disposable {
   private static final Key<Map<Project, PythonSdkPathCache>> KEY = Key.create("PythonPathCache");
 
-  public static PythonSdkPathCache getInstance(@Nonnull Project project, @Nonnull Sdk sdk) {
+  public static PythonSdkPathCache getInstance(Project project, Sdk sdk) {
     synchronized (KEY) {
       Map<Project, PythonSdkPathCache> cacheMap = sdk.getUserData(KEY);
       if (cacheMap == null) {
@@ -59,7 +58,7 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
   private final Sdk mySdk;
   private final AtomicReference<PyBuiltinCache> myBuiltins = new AtomicReference<PyBuiltinCache>();
 
-  public PythonSdkPathCache(@Nonnull final Project project, @Nonnull final Sdk sdk) {
+  public PythonSdkPathCache(final Project project, final Sdk sdk) {
     myProject = project;
     mySdk = sdk;
     sdk.getRootProvider().addRootSetChangedListener(new RootProvider.RootSetChangedListener() {
@@ -101,7 +100,6 @@ public class PythonSdkPathCache extends PythonPathCache implements Disposable {
     }
   }
 
-  @Nonnull
   public PyBuiltinCache getBuiltins() {
     while (true) {
       PyBuiltinCache pyBuiltinCache = myBuiltins.get();

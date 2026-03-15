@@ -1,6 +1,5 @@
 package com.jetbrains.python.debugger;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.application.ApplicationManager;
 import consulo.execution.debug.frame.XValueModifier;
@@ -17,7 +16,7 @@ public class PyValueModifier extends XValueModifier {
   }
 
   @Override
-  public void setValue(@Nonnull final String expression, @Nonnull final XModificationCallback callback) {
+  public void setValue(final String expression, final XModificationCallback callback) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
         try {

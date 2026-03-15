@@ -8,7 +8,6 @@ import consulo.module.extension.ModuleExtension;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.python.psi.icon.PythonPsiIconGroup;
 import consulo.ui.image.Image;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -16,33 +15,28 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class BasePyModuleExtensionProvider implements ModuleExtensionProvider<BasePyModuleExtension> {
-  @Nonnull
   @Override
   public String getId() {
     return "python";
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return LocalizeValue.localizeTODO("Python");
   }
 
-  @Nonnull
   @Override
   public Image getIcon() {
     return PythonPsiIconGroup.python();
   }
 
-  @Nonnull
   @Override
-  public ModuleExtension<BasePyModuleExtension> createImmutableExtension(@Nonnull ModuleRootLayer moduleRootLayer) {
+  public ModuleExtension<BasePyModuleExtension> createImmutableExtension(ModuleRootLayer moduleRootLayer) {
     return new BasePyModuleExtension(getId(), moduleRootLayer);
   }
 
-  @Nonnull
   @Override
-  public MutableModuleExtension<BasePyModuleExtension> createMutableExtension(@Nonnull ModuleRootLayer moduleRootLayer) {
+  public MutableModuleExtension<BasePyModuleExtension> createMutableExtension(ModuleRootLayer moduleRootLayer) {
     return new BasePyMutableModuleExtension(getId(), moduleRootLayer);
   }
 }

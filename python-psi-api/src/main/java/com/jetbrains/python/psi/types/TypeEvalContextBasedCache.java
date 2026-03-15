@@ -20,8 +20,7 @@ import consulo.application.util.CachedValueProvider;
 import consulo.application.util.CachedValuesManager;
 import consulo.language.psi.PsiModificationTracker;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -37,19 +36,16 @@ public final class TypeEvalContextBasedCache<T>
 	/**
 	 * Lock to sync
 	 */
-	@Nonnull
 	private final Object myLock = new Object();
-	@Nonnull
 	private final CachedValue<Map<TypeEvalConstraints, T>> myCachedMapStorage;
 
-	@Nonnull
 	private final Function<TypeEvalContext, T> myProvider;
 
 	/**
 	 * @param manager       Cache manager to be used to store cache
 	 * @param valueProvider engine to create value based on context.
 	 */
-	public TypeEvalContextBasedCache(@Nonnull CachedValuesManager manager, @Nonnull Function<TypeEvalContext, T> valueProvider)
+	public TypeEvalContextBasedCache(CachedValuesManager manager, Function<TypeEvalContext, T> valueProvider)
 	{
 		myCachedMapStorage = manager.createCachedValue(new MapCreator<T>(), false);
 		myProvider = valueProvider;
@@ -61,8 +57,7 @@ public final class TypeEvalContextBasedCache<T>
 	 * @param context to be used as key
 	 * @return value
 	 */
-	@Nonnull
-	public T getValue(@Nonnull TypeEvalContext context)
+	public T getValue(TypeEvalContext context)
 	{
 
 		// Map is not thread safe, and "getValue" is not atomic. I do not want several maps to be created.

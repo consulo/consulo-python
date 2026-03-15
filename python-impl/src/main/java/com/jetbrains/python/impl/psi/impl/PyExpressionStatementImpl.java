@@ -19,7 +19,6 @@ package com.jetbrains.python.impl.psi.impl;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
-import jakarta.annotation.Nonnull;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyExpressionStatement;
 
@@ -31,7 +30,6 @@ public class PyExpressionStatementImpl extends PyElementImpl implements PyExpres
     super(astNode);
   }
 
-  @Nonnull
   public PyExpression getExpression() {
     return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
   }

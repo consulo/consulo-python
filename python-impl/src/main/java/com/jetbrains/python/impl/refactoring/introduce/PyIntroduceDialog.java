@@ -28,9 +28,8 @@ import consulo.language.editor.ui.awt.StringComboboxEditor;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyExpression;
-import jakarta.annotation.Nonnull;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.Collection;
@@ -58,9 +57,9 @@ public class PyIntroduceDialog extends DialogWrapper {
   private final PyExpression myExpression;
   private final String myHelpId;
 
-  public PyIntroduceDialog(@Nonnull Project project,
-                           @Nonnull String caption,
-                           @Nonnull IntroduceValidator validator,
+  public PyIntroduceDialog(Project project,
+                           String caption,
+                           IntroduceValidator validator,
                            String helpId,
                            IntroduceOperation operation) {
     super(project, true);

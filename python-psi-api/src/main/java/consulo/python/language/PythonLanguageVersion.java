@@ -3,7 +3,6 @@ package consulo.python.language;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.LanguageLevel;
 import consulo.language.version.LanguageVersion;
-import jakarta.annotation.Nonnull;
 
 /**
  * TODO fully migrate from LanguageLevel
@@ -39,11 +38,11 @@ public class PythonLanguageVersion extends LanguageVersion {
     return myLanguageLevel.isPy3K();
   }
 
-  public boolean isOlderThan(@Nonnull LanguageLevel other) {
+  public boolean isOlderThan(LanguageLevel other) {
     return myLanguageLevel.isOlderThan(other);
   }
 
-  public boolean isAtLeast(@Nonnull LanguageLevel other) {
+  public boolean isAtLeast(LanguageLevel other) {
     return myLanguageLevel.isAtLeast(other);
   }
 

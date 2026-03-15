@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.hierarchy.treestructures;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
 import consulo.ide.impl.idea.ide.hierarchy.HierarchyTreeStructure;
 import consulo.project.Project;
@@ -42,13 +41,12 @@ public class PySubTypesHierarchyTreeStructure extends HierarchyTreeStructure
 		super(project, baseDescriptor);
 	}
 
-	public PySubTypesHierarchyTreeStructure(@Nonnull PyClass cl)
+	public PySubTypesHierarchyTreeStructure(PyClass cl)
 	{
 		super(cl.getProject(), new PyHierarchyNodeDescriptor(null, cl, true));
 	}
 
-	@Nonnull
-	protected Object[] buildChildren(@Nonnull HierarchyNodeDescriptor descriptor)
+	protected Object[] buildChildren(HierarchyNodeDescriptor descriptor)
 	{
 		List<PyHierarchyNodeDescriptor> res = new ArrayList<PyHierarchyNodeDescriptor>();
 		PsiElement element = ((PyHierarchyNodeDescriptor) descriptor).getPsiElement();

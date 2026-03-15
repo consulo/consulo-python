@@ -28,8 +28,7 @@ import consulo.language.psi.SmartPsiElementPointer;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author lada
@@ -41,9 +40,9 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
     private final String myReturnTypeName;
 
     public PyMakeFunctionReturnTypeQuickFix(
-        @Nonnull PyFunction function,
+        PyFunction function,
         @Nullable String returnTypeName,
-        @Nonnull TypeEvalContext context
+        TypeEvalContext context
     ) {
         SmartPointerManager manager = SmartPointerManager.getInstance(function.getProject());
         myFunction = manager.createSmartPsiElementPointer(function);
@@ -56,7 +55,6 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
             : returnTypeName;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public LocalizeValue getName() {
@@ -65,7 +63,7 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameMake$0Return$1(functionName, myReturnTypeName);
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         if (myAnnotation != null) {
             PyAnnotation annotation = myAnnotation.getElement();

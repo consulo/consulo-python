@@ -29,7 +29,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole

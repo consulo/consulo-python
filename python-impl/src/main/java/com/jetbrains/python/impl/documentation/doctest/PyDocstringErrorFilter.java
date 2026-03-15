@@ -20,7 +20,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.HighlightErrorFilter;
 import consulo.language.psi.PsiErrorElement;
 import consulo.language.psi.PsiFile;
-import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -30,7 +29,7 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyDocstringErrorFilter extends HighlightErrorFilter {
 
-  public boolean shouldHighlightErrorElement(@Nonnull PsiErrorElement element) {
+  public boolean shouldHighlightErrorElement(PsiErrorElement element) {
     PsiFile file = element.getContainingFile();
     return !(file instanceof PyDocstringFile);
   }

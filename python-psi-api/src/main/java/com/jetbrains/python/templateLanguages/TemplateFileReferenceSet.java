@@ -30,8 +30,7 @@ import consulo.language.psi.PsiManager;
 import consulo.language.psi.PsiReferenceProvider;
 import consulo.util.collection.ContainerUtil;
 import com.jetbrains.python.PythonStringUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -91,7 +90,6 @@ public class TemplateFileReferenceSet extends FileReferenceSet
     }
   }
 
-  @Nonnull
   @Override
   public Collection<PsiFileSystemItem> computeDefaultContexts() {
     List<PsiFileSystemItem> contexts = ContainerUtil.newArrayList();

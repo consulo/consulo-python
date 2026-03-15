@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.stub.IStubElementType;
 import consulo.language.psi.stub.StubBase;
@@ -38,7 +37,7 @@ public class PyFunctionStubImpl extends StubBase<PyFunction> implements PyFuncti
 			boolean isAsync,
 			@Nullable String typeComment,
 			StubElement parent,
-			@Nonnull IStubElementType stubElementType)
+			IStubElementType stubElementType)
 	{
 		super(parent, stubElementType);
 		myName = name;

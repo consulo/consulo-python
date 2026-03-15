@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.concurrent.Future;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.application.ApplicationManager;
 import consulo.logging.Logger;
@@ -21,18 +20,15 @@ public abstract class BaseDebuggerReader extends BaseOutputReader
 {
 	private static final Logger LOG = Logger.getInstance(BaseDebuggerReader.class);
 
-	@Nonnull
 	private final RemoteDebugger myDebugger;
-	@Nonnull
 	private StringBuilder myTextBuilder = new StringBuilder();
 
-	public BaseDebuggerReader(@Nonnull InputStream inputStream, @Nonnull Charset charset, @Nonnull RemoteDebugger debugger)
+	public BaseDebuggerReader(InputStream inputStream, Charset charset, RemoteDebugger debugger)
 	{
 		super(inputStream, charset);
 		myDebugger = debugger;
 	}
 
-	@Nonnull
 	protected RemoteDebugger getDebugger()
 	{
 		return myDebugger;
@@ -74,9 +70,8 @@ public abstract class BaseDebuggerReader extends BaseOutputReader
 
 	protected abstract void onCommunicationError();
 
-	@Nonnull
 	@Override
-	protected Future<?> executeOnPooledThread(@Nonnull Runnable runnable)
+	protected Future<?> executeOnPooledThread(Runnable runnable)
 	{
 		return ApplicationManager.getApplication().executeOnPooledThread(runnable);
 	}
@@ -102,7 +97,7 @@ public abstract class BaseDebuggerReader extends BaseOutputReader
 	}
 
 	@Override
-	protected void onTextAvailable(@Nonnull String text)
+	protected void onTextAvailable(String text)
 	{
 		myTextBuilder.append(text);
 		if(text.contains("\n"))

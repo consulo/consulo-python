@@ -22,7 +22,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -33,7 +32,7 @@ import jakarta.annotation.Nonnull;
 public class ConsoleVisitorFilter implements PythonVisitorFilter
 {
   @Override
-  public boolean isSupported(@Nonnull Class visitorClass, @Nonnull PsiFile file) {
+  public boolean isSupported(Class visitorClass, PsiFile file) {
     //if we're in console
     if (PydevConsoleRunner.isInPydevConsole(file)) {
       //inspections
@@ -52,7 +51,6 @@ public class ConsoleVisitorFilter implements PythonVisitorFilter
     return true;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

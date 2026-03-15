@@ -28,8 +28,7 @@ import consulo.ui.ex.awt.VerticalFlowLayout;
 import consulo.ui.layout.VerticalLayout;
 import consulo.util.lang.Comparing;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 
 /**
@@ -38,7 +37,7 @@ import javax.swing.*;
  */
 public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>, SwingMutableModuleExtension
 {
-	public BuildoutMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module)
+	public BuildoutMutableModuleExtension(String id, ModuleRootLayer module)
 	{
 		super(id, module);
 	}
@@ -46,7 +45,7 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 	@RequiredUIAccess
 	@Nullable
 	@Override
-	public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
+	public Component createConfigurationComponent(Disposable disposable, Runnable runnable)
 	{
 		return VerticalLayout.create().add(Label.create("Unsupported platform"));
 	}
@@ -54,7 +53,7 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 	@RequiredUIAccess
 	@Nullable
 	@Override
-	public JComponent createConfigurablePanel(@Nonnull Disposable disposable, @Nonnull Runnable runnable)
+	public JComponent createConfigurablePanel(Disposable disposable, Runnable runnable)
 	{
 		JPanel panel = new JPanel(new VerticalFlowLayout(true, false));
 		panel.add(new BuildoutConfigPanel(this));
@@ -68,7 +67,7 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 	}
 
 	@Override
-	public boolean isModified(@Nonnull BuildoutModuleExtension extension)
+	public boolean isModified(BuildoutModuleExtension extension)
 	{
 		return myIsEnabled != extension.isEnabled() || !Comparing.strEqual(myScriptName, extension.getScriptName());
 	}

@@ -26,7 +26,6 @@ import consulo.language.editor.annotation.AnnotationBuilder;
 import consulo.language.editor.annotation.HighlightSeverity;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Marks built-in names.
@@ -80,7 +79,7 @@ public class PyBuiltinAnnotator extends PyAnnotator
 	 * @param node what to work with
 	 * @return true iff the node was highlighted.
 	 */
-	private boolean highlightAsAttribute(@Nonnull PyQualifiedExpression node, @Nonnull String name)
+	private boolean highlightAsAttribute(PyQualifiedExpression node, String name)
 	{
 		LanguageLevel languageLevel = LanguageLevel.forElement(node);
 		if(PyNames.UnderscoredAttributes.contains(name) || PyNames.getBuiltinMethods(languageLevel).containsKey(name))

@@ -27,7 +27,6 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * Inspection to detect redundant parentheses in if/while statement.
@@ -36,24 +35,21 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PyRedundantParenthesesInspection extends PyInspection {
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyRedundantParenthesesInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameRedundantParentheses();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         PyRedundantParenthesesInspectionState inspectionState = (PyRedundantParenthesesInspectionState) state;
@@ -65,8 +61,8 @@ public class PyRedundantParenthesesInspection extends PyInspection {
         private final boolean myIgnoreTupleInReturn;
 
         public Visitor(
-            @Nonnull ProblemsHolder holder,
-            @Nonnull LocalInspectionToolSession session,
+            ProblemsHolder holder,
+            LocalInspectionToolSession session,
             boolean ignorePercOperator,
             boolean ignoreTupleInReturn
         ) {

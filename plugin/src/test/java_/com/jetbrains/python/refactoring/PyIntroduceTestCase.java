@@ -10,7 +10,7 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -58,7 +58,7 @@ public abstract class PyIntroduceTestCase extends PyTestCase {
     }
   }
 
-  protected void doTestInplace(@Nullable consulo.ide.impl.idea.util.Consumer<IntroduceOperation> customization) {
+  protected void doTestInplace(consulo.ide.impl.idea.util.@Nullable Consumer<IntroduceOperation> customization) {
     String name = getTestName(true);
     myFixture.configureByFile(name + ".py");
     boolean enabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();

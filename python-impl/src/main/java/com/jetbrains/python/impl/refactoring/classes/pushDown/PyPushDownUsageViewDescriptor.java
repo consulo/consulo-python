@@ -16,8 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.classes.pushDown;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.editor.refactoring.RefactoringBundle;
@@ -36,7 +35,6 @@ public class PyPushDownUsageViewDescriptor implements UsageViewDescriptor {
     myClass = clazz;
   }
 
-  @Nonnull
   public PsiElement[] getElements() {
     return new PsiElement[] {myClass};
   }

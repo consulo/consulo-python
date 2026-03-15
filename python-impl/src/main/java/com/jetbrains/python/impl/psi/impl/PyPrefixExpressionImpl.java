@@ -37,8 +37,7 @@ import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.QualifiedName;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,6 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
         return child != null ? child.getPsi() : null;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public PyElementType getOperator() {
@@ -83,7 +81,6 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
         return getReference(PyResolveContext.noImplicits());
     }
 
-    @Nonnull
     @Override
     public PsiPolyVariantReference getReference(PyResolveContext context) {
         return new PyOperatorReference(this, context);
@@ -91,7 +88,7 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
 
     @Override
     @RequiredReadAction
-    public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
         if (getOperator() == PyTokenTypes.NOT_KEYWORD) {
             return PyBuiltinCache.getInstance(this).getBoolType();
         }
@@ -153,7 +150,7 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
     }
 
     @Nullable
-    private static PyType getGeneratorReturnType(@Nullable PyType type, @Nonnull TypeEvalContext context) {
+    private static PyType getGeneratorReturnType(@Nullable PyType type, TypeEvalContext context) {
         if (type instanceof PyClassLikeType classLikeType && type instanceof PyCollectionType collectionType) {
             // TODO: Understand typing.Generator as well
             String classQName = classLikeType.getClassQName();

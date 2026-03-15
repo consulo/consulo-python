@@ -42,8 +42,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ import java.util.List;
  * @author ktisha
  */
 public class PyDocReference extends PyReferenceImpl {
-    public PyDocReference(PyQualifiedExpression element, @Nonnull PyResolveContext context) {
+    public PyDocReference(PyQualifiedExpression element, PyResolveContext context) {
         super(element, context);
     }
 
@@ -61,7 +60,6 @@ public class PyDocReference extends PyReferenceImpl {
         return HighlightSeverity.WARNING;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public ResolveResult[] multiResolve(boolean incompleteCode) {
@@ -109,12 +107,12 @@ public class PyDocReference extends PyReferenceImpl {
 
     @Nullable
     @RequiredReadAction
-    private PsiElement getScopeControlFlowAnchor(@Nonnull PsiLanguageInjectionHost host) {
+    private PsiElement getScopeControlFlowAnchor(PsiLanguageInjectionHost host) {
         return isInsideFormattedStringNode(host) ? PsiTreeUtil.getParentOfType(host, PyStatement.class) : null;
     }
 
     @RequiredReadAction
-    private boolean isInsideFormattedStringNode(@Nonnull PsiLanguageInjectionHost host) {
+    private boolean isInsideFormattedStringNode(PsiLanguageInjectionHost host) {
         if (host instanceof PyStringLiteralExpression stringLiteral) {
             ASTNode node = findContainingStringNode(getElement(), stringLiteral);
             return node != null && new StringNodeInfo(node).isFormatted();
@@ -124,7 +122,7 @@ public class PyDocReference extends PyReferenceImpl {
 
     @Nullable
     @RequiredReadAction
-    private static ASTNode findContainingStringNode(@Nonnull PsiElement injectedElement, @Nonnull PyStringLiteralExpression host) {
+    private static ASTNode findContainingStringNode(PsiElement injectedElement, PyStringLiteralExpression host) {
         InjectedLanguageManager manager = InjectedLanguageManager.getInstance(host.getProject());
         List<Pair<PsiElement, TextRange>> files = manager.getInjectedPsiFiles(host);
         if (files != null) {
@@ -143,7 +141,6 @@ public class PyDocReference extends PyReferenceImpl {
         return null;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public Object[] getVariants() {

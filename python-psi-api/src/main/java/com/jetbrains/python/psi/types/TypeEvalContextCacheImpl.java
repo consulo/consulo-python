@@ -20,7 +20,6 @@ import consulo.application.util.CachedValuesManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
 import java.util.function.Function;
 
 /**
@@ -33,20 +32,17 @@ import java.util.function.Function;
 @ServiceImpl
 @Singleton
 final class TypeEvalContextCacheImpl implements TypeEvalContextCache {
-  @Nonnull
   private static final Function<TypeEvalContext, TypeEvalContext> VALUE_PROVIDER = new MyValueProvider();
-  @Nonnull
   private final TypeEvalContextBasedCache<TypeEvalContext> myCache;
 
   @Inject
-  TypeEvalContextCacheImpl(@Nonnull CachedValuesManager manager) {
+  TypeEvalContextCacheImpl(CachedValuesManager manager) {
     myCache = new TypeEvalContextBasedCache<>(manager, VALUE_PROVIDER);
   }
 
 
-  @Nonnull
   @Override
-  public TypeEvalContext getContext(@Nonnull TypeEvalContext standard) {
+  public TypeEvalContext getContext(TypeEvalContext standard) {
     return myCache.getValue(standard);
   }
 

@@ -24,8 +24,7 @@ import consulo.language.Language;
 import consulo.language.PairedBraceMatcher;
 import consulo.language.ast.IElementType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -43,7 +42,7 @@ public class PyBraceMatcher implements PairedBraceMatcher {
     return PAIRS;
   }
 
-  public boolean isPairedBracesAllowedBeforeType(@Nonnull IElementType lbraceType, @Nullable IElementType contextType) {
+  public boolean isPairedBracesAllowedBeforeType(IElementType lbraceType, @Nullable IElementType contextType) {
     return
       PyTokenTypes.WHITESPACE_OR_LINEBREAK.contains(contextType) ||
         contextType == PyTokenTypes.END_OF_LINE_COMMENT ||
@@ -56,7 +55,6 @@ public class PyBraceMatcher implements PairedBraceMatcher {
         contextType == null;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

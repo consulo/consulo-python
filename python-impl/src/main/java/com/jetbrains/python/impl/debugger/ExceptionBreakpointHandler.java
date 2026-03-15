@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.debugger;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.execution.debug.breakpoint.XBreakpoint;
 import consulo.execution.debug.breakpoint.XBreakpointHandler;
@@ -30,18 +29,18 @@ abstract public class ExceptionBreakpointHandler<T extends ExceptionBreakpointPr
 
   private final PyDebugProcess myDebugProcess;
 
-  public ExceptionBreakpointHandler(@Nonnull PyDebugProcess debugProcess, @Nonnull Class<? extends XBreakpointType<XBreakpoint<T>, T>> breakpointTypeClass) {
+  public ExceptionBreakpointHandler(PyDebugProcess debugProcess, Class<? extends XBreakpointType<XBreakpoint<T>, T>> breakpointTypeClass) {
     super(breakpointTypeClass);
     myDebugProcess = debugProcess;
   }
 
   @Override
-  public void registerBreakpoint(@Nonnull XBreakpoint<T> breakpoint) {
+  public void registerBreakpoint(XBreakpoint<T> breakpoint) {
     myDebugProcess.addExceptionBreakpoint(breakpoint);
   }
 
   @Override
-  public void unregisterBreakpoint(@Nonnull XBreakpoint<T> breakpoint, boolean temporary) {
+  public void unregisterBreakpoint(XBreakpoint<T> breakpoint, boolean temporary) {
     myDebugProcess.removeExceptionBreakpoint(breakpoint);
   }
 }

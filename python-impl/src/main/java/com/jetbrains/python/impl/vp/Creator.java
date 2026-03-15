@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.vp;
 
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Creates view and presenter allowing them to have links to each other.
@@ -35,8 +34,7 @@ public interface Creator<V, P extends Presenter>
 	 * @param view for that presenter
 	 * @return presenter
 	 */
-	@Nonnull
-	P createPresenter(@Nonnull V view);
+	P createPresenter(V view);
 
 	/**
 	 * Creates view
@@ -44,7 +42,6 @@ public interface Creator<V, P extends Presenter>
 	 * @param presenter for this view
 	 * @return view
 	 */
-	@Nonnull
-	V createView(@Nonnull P presenter);
+	V createView(P presenter);
 
 }

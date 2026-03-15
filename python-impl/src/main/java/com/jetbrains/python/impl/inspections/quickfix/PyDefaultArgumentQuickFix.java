@@ -23,7 +23,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to replace mutable default argument. For instance,
@@ -39,13 +38,12 @@ import jakarta.annotation.Nonnull;
 public class PyDefaultArgumentQuickFix implements LocalQuickFix {
 
     @Override
-    @Nonnull
     public LocalizeValue getName() {
         return PyLocalize.qfixDefaultArgument();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement defaultValue = descriptor.getPsiElement();
         PsiElement param = PsiTreeUtil.getParentOfType(defaultValue, PyNamedParameter.class);
         PyFunction function = PsiTreeUtil.getParentOfType(defaultValue, PyFunction.class);

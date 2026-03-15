@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.jetbrains.python.toolbox.Substring;
 
 /**
@@ -51,7 +50,7 @@ public class SphinxDocString extends TagBasedDocString
 			":exception"
 	};
 
-	public SphinxDocString(@Nonnull Substring docstringText)
+	public SphinxDocString(Substring docstringText)
 	{
 		super(docstringText, ":");
 	}
@@ -62,14 +61,12 @@ public class SphinxDocString extends TagBasedDocString
 		return s != null ? s.concatTrimmedLines(" ") : null;
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getParameters()
 	{
 		return toUniqueStrings(getParameterSubstrings());
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getKeywordArguments()
 	{
@@ -112,7 +109,6 @@ public class SphinxDocString extends TagBasedDocString
 		return concatTrimmedLines(getTagValue(RETURN_TAGS));
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getRaisedExceptions()
 	{
@@ -142,7 +138,6 @@ public class SphinxDocString extends TagBasedDocString
 		return Collections.emptyList();
 	}
 
-	@Nonnull
 	@Override
 	public List<Substring> getKeywordArgumentSubstrings()
 	{
@@ -161,7 +156,6 @@ public class SphinxDocString extends TagBasedDocString
 		return paramName == null ? getTagValue("type") : getTagValue("type", paramName);
 	}
 
-	@Nonnull
 	@Override
 	public String getDescription()
 	{

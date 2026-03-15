@@ -35,15 +35,13 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
  */
 @ExtensionImpl
 public class PyDocstringTypesInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameDocstringTypes();
@@ -54,19 +52,18 @@ public class PyDocstringTypesInspection extends PyInspection {
         return false;
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -78,7 +75,7 @@ public class PyDocstringTypesInspection extends PyInspection {
             }
         }
 
-        private void checkDocString(@Nonnull PyFunction function) {
+        private void checkDocString(PyFunction function) {
             PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
             if (docStringExpression != null) {
                 PySignatureCacheManager manager = PySignatureCacheManager.getInstance(function.getProject());
@@ -140,14 +137,13 @@ public class PyDocstringTypesInspection extends PyInspection {
             myStringLiteralExpression = expression;
         }
 
-        @Nonnull
         @Override
         public LocalizeValue getName() {
             return LocalizeValue.localizeTODO("Change " + myParamName + " type from " + myTypeSubstring.getValue() + " to " + myNewType);
         }
 
         @Override
-        public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        public void applyFix(Project project, ProblemDescriptor descriptor) {
             String newValue = myTypeSubstring.getTextRange().replace(myTypeSubstring.getSuperString(), myNewType);
 
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

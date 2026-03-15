@@ -20,9 +20,7 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.PythonFileType;
-import org.jetbrains.annotations.NonNls;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 
@@ -33,22 +31,21 @@ public class PyElementType extends IElementType {
 
   private String mySpecialMethodName;
 
-  public PyElementType(@Nonnull @NonNls String debugName) {
+  public PyElementType(String debugName) {
     super(debugName, PythonFileType.INSTANCE.getLanguage());
   }
 
-  public PyElementType(@Nonnull @NonNls String debugName, @Nonnull Class<? extends PsiElement> psiElementClass) {
+  public PyElementType(String debugName, Class<? extends PsiElement> psiElementClass) {
     this(debugName);
     myPsiElementClass = psiElementClass;
   }
 
-  public PyElementType(@Nonnull @NonNls String debugName, @Nonnull @NonNls String specialMethodName) {
+  public PyElementType(String debugName, String specialMethodName) {
     this(debugName);
     mySpecialMethodName = specialMethodName;
   }
 
-  @Nonnull
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     if (myPsiElementClass == null) {
       throw new IllegalStateException("Cannot create an element for " + node.getElementType() + " without element class");
     }

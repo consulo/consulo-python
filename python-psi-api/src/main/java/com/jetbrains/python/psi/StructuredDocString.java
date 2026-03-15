@@ -17,8 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.jetbrains.python.toolbox.Substring;
 
 /**
@@ -29,16 +28,13 @@ public interface StructuredDocString
 
 	String getSummary();
 
-	@Nonnull
 	String getDescription(); // for formatter
 
-	@Nonnull
 	List<String> getParameters();
 
 	/**
 	 * @return all names of parameters mentioned in the docstring as substrings.
 	 */
-	@Nonnull
 	List<Substring> getParameterSubstrings();
 
 	/**
@@ -67,10 +63,8 @@ public interface StructuredDocString
 	 * Keyword arguments are those arguments that usually don't exist in function signature,
 	 * but are passed e.g. via {@code **kwargs} mechanism.
 	 */
-	@Nonnull
 	List<String> getKeywordArguments();
 
-	@Nonnull
 	List<Substring> getKeywordArgumentSubstrings();
 
 	// getKeywordArgumentType(name)
@@ -95,7 +89,6 @@ public interface StructuredDocString
 	@Nullable
 	String getReturnDescription(); // for formatter
 
-	@Nonnull
 	List<String> getRaisedExceptions(); // for formatter
 
 	@Nullable

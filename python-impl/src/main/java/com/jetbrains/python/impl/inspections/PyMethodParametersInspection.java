@@ -35,9 +35,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ref.Ref;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-import org.jetbrains.annotations.NonNls;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Looks for the 'self' or its equivalents.
@@ -46,29 +44,25 @@ import org.jetbrains.annotations.NonNls;
  */
 @ExtensionImpl
 public class PyMethodParametersInspection extends PyInspection {
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyMethodParametersInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameProblematicFirstParameter();
     }
 
-    @Nonnull
     public HighlightDisplayLevel getDefaultLevel() {
         return HighlightDisplayLevel.WEAK_WARNING;
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session, (PyMethodParametersInspectionState) state);
@@ -80,7 +74,7 @@ public class PyMethodParametersInspection extends PyInspection {
 
         public Visitor(
             @Nullable ProblemsHolder holder,
-            @Nonnull LocalInspectionToolSession session,
+            LocalInspectionToolSession session,
             PyMethodParametersInspectionState state
         ) {
             super(holder, session);
@@ -170,7 +164,7 @@ public class PyMethodParametersInspection extends PyInspection {
                             return;
                         }
                         // every dup, swap, drop, or dup+drop of "self"
-                        @NonNls String[] mangled = {
+                        String[] mangled = {
                             "eslf",
                             "sself",
                             "elf",

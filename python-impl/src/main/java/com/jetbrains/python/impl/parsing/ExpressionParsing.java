@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.parsing;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.parser.PsiBuilder;
 import consulo.logging.Logger;
 import consulo.language.ast.IElementType;
@@ -440,7 +440,7 @@ public class ExpressionParsing extends Parsing {
     parseSliceListTail(exprStart, null);
   }
 
-  private boolean parseSliceListTail(PsiBuilder.Marker exprStart, @Nullable PsiBuilder.Marker sliceOrTupleStart) {
+  private boolean parseSliceListTail(PsiBuilder.Marker exprStart, PsiBuilder.@Nullable Marker sliceOrTupleStart) {
     boolean inSlice = sliceOrTupleStart == null;
     while (atToken(PyTokenTypes.COMMA)) {
       nextToken();

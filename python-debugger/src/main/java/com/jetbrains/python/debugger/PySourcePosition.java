@@ -1,8 +1,7 @@
 package com.jetbrains.python.debugger;
 
 import consulo.util.io.FileUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class PySourcePosition {
 
@@ -56,7 +55,7 @@ public abstract class PySourcePosition {
     return "PySourcePosition(" + file + ":" + line + ")";
   }
 
-  public static boolean isWindowsPath(@Nonnull String path) {
+  public static boolean isWindowsPath(String path) {
     return path.contains("\\") || (path.length() > 1 && path.charAt(1) == ':');
   }
 }

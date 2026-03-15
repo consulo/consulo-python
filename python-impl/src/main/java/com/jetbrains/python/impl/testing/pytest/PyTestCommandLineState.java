@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.testing.pytest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.process.ExecutionException;
 import consulo.execution.executor.Executor;
@@ -60,7 +59,6 @@ public class PyTestCommandLineState extends PythonTestCommandLineStateBase
 		return PythonHelper.PYTEST;
 	}
 
-	@Nonnull
 	@Override
 	protected List<String> getTestSpecs()
 	{
@@ -88,7 +86,6 @@ public class PyTestCommandLineState extends PythonTestCommandLineStateBase
 
 	}
 
-	@Nonnull
 	protected ConsoleView createAndAttachConsole(Project project, ProcessHandler processHandler, Executor executor) throws ExecutionException
 	{
 		ConsoleView consoleView = super.createAndAttachConsole(project, processHandler, executor);

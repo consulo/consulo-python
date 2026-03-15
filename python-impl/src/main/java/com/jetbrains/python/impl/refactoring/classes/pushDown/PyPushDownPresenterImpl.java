@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pushDown;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.BaseRefactoringProcessor;
 import consulo.project.Project;
@@ -34,23 +33,20 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersVi
  */
 public class PyPushDownPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPushDownView, MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements PyPushDownPresenter
 {
-	@Nonnull
 	private final Project myProject;
 
-	public PyPushDownPresenterImpl(@Nonnull Project project, @Nonnull PyPushDownView view, @Nonnull PyClass classUnderRefactoring, @Nonnull PyMemberInfoStorage infoStorage)
+	public PyPushDownPresenterImpl(Project project, PyPushDownView view, PyClass classUnderRefactoring, PyMemberInfoStorage infoStorage)
 	{
 		super(view, classUnderRefactoring, infoStorage, new UsedByDependencyMemberInfoModel<>(classUnderRefactoring));
 		myProject = project;
 	}
 
-	@Nonnull
 	@Override
 	public BaseRefactoringProcessor createProcessor()
 	{
 		return new PyPushDownProcessor(myProject, myView.getSelectedMemberInfos(), myClassUnderRefactoring);
 	}
 
-	@Nonnull
 	@Override
 	protected Iterable<? extends PyClass> getDestClassesToCheckConflicts()
 	{

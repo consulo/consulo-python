@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.testing.pytest;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.util.lang.Pair;
 import com.jetbrains.python.impl.traceBackParsers.LinkInTrace;
@@ -31,7 +30,7 @@ public final class PyTestTracebackParser implements TraceBackParser
 
 	@Nullable
 	@Override
-	public LinkInTrace findLinkInTrace(@Nonnull String line)
+	public LinkInTrace findLinkInTrace(String line)
 	{
 		PyFilesStateMachine quoteMachine = new PyFilesStateMachine(true);
 		PyFilesStateMachine spaceMachine = new PyFilesStateMachine(false);
@@ -64,8 +63,7 @@ public final class PyTestTracebackParser implements TraceBackParser
 		return null;
 	}
 
-	@Nonnull
-	private static LinkInTrace createLinkInTrace(@Nonnull PyFilesStateMachine machine)
+	private static LinkInTrace createLinkInTrace(PyFilesStateMachine machine)
 	{
 		Pair<String, String> fileAndLine = machine.getFileAndLine();
 		int start = machine.getStart();

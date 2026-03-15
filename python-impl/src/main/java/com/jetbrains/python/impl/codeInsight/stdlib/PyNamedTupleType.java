@@ -20,8 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.psi.PsiElement;
 import consulo.util.collection.ArrayUtil;
@@ -64,10 +63,10 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
+	public List<? extends RatedResolveResult> resolveMember(String name,
 			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext,
+			AccessDirection direction,
+			PyResolveContext resolveContext,
 			boolean inherited)
 	{
 		List<? extends RatedResolveResult> classMembers = super.resolveMember(name, location, direction, resolveContext, inherited);
@@ -109,7 +108,7 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
+	public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite)
 	{
 		if(myDefinitionLevel > 0)
 		{
@@ -130,9 +129,8 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 		return "PyNamedTupleType: " + myName;
 	}
 
-	@Nonnull
 	@Override
-	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
+	public Set<String> getMemberNames(boolean inherited, TypeEvalContext context)
 	{
 		Set<String> result = super.getMemberNames(inherited, context);
 		result.addAll(myFields);
@@ -145,7 +143,6 @@ public class PyNamedTupleType extends PyClassTypeImpl implements PyCallableType
 		return myFields.size();
 	}
 
-	@Nonnull
 	public List<String> getElementNames()
 	{
 		return Collections.unmodifiableList(myFields);

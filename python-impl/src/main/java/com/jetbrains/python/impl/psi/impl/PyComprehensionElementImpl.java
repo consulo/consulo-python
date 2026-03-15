@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;
@@ -179,7 +178,6 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 		return node;
 	}
 
-	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
 		// extract whatever names are defined in "for" components
@@ -204,7 +202,7 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull String the_name)
+	public PsiNamedElement getNamedElement(String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}

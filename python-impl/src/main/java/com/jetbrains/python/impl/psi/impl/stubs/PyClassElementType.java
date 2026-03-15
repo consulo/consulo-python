@@ -31,10 +31,8 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.*;
 import consulo.language.psi.util.QualifiedName;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.*;
 
@@ -49,31 +47,28 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 		this("CLASS_DECLARATION");
 	}
 
-	public PyClassElementType(@Nonnull @NonNls String debugName)
+	public PyClassElementType(String debugName)
 	{
 		super(debugName);
 	}
 
-	@Nonnull
-	public PsiElement createElement(@Nonnull ASTNode node)
+	public PsiElement createElement(ASTNode node)
 	{
 		return new PyClassImpl(node);
 	}
 
-	public PyClass createPsi(@Nonnull PyClassStub stub)
+	public PyClass createPsi(PyClassStub stub)
 	{
 		return new PyClassImpl(stub);
 	}
 
-	@Nonnull
-	public PyClassStub createStub(@Nonnull PyClass psi, StubElement parentStub)
+	public PyClassStub createStub(PyClass psi, StubElement parentStub)
 	{
 		return new PyClassStubImpl(psi.getName(), parentStub, getSuperClassQNames(psi), PyPsiUtils.toQualifiedName(psi.getMetaClassExpression()), psi.getOwnSlots(), PyPsiUtils.strValue(psi
 				.getDocStringExpression()), getStubElementType());
 	}
 
-	@Nonnull
-	public static Map<QualifiedName, QualifiedName> getSuperClassQNames(@Nonnull PyClass pyClass)
+	public static Map<QualifiedName, QualifiedName> getSuperClassQNames(PyClass pyClass)
 	{
 		Map<QualifiedName, QualifiedName> result = new LinkedHashMap<>();
 
@@ -84,7 +79,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 	}
 
 	@Nullable
-	private static QualifiedName resolveOriginalSuperClassQName(@Nonnull PyExpression superClassExpression)
+	private static QualifiedName resolveOriginalSuperClassQName(PyExpression superClassExpression)
 	{
 		if(superClassExpression instanceof PyReferenceExpression)
 		{
@@ -108,7 +103,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 		return PyPsiUtils.toQualifiedName(superClassExpression);
 	}
 
-	public void serialize(@Nonnull PyClassStub pyClassStub, @Nonnull StubOutputStream dataStream) throws IOException
+	public void serialize(PyClassStub pyClassStub, StubOutputStream dataStream) throws IOException
 	{
 		dataStream.writeName(pyClassStub.getName());
 
@@ -128,8 +123,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 		dataStream.writeUTFFast(docString != null ? docString : "");
 	}
 
-	@Nonnull
-	public PyClassStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
+	public PyClassStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(dataStream.readName());
 
@@ -150,7 +144,7 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 		return new PyClassStubImpl(name, parentStub, superClasses, metaClass, slots, docString, getStubElementType());
 	}
 
-	public void indexStub(@Nonnull PyClassStub stub, @Nonnull IndexSink sink)
+	public void indexStub(PyClassStub stub, IndexSink sink)
 	{
 		String name = stub.getName();
 		if(name != null)
@@ -168,7 +162,6 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 				className));
 	}
 
-	@Nonnull
 	protected IStubElementType getStubElementType()
 	{
 		return PyElementTypes.CLASS_DECLARATION;

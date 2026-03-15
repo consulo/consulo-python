@@ -32,8 +32,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
@@ -42,13 +41,11 @@ import jakarta.annotation.Nullable;
 public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCfgElementTypes, BuildoutCfgTokenTypes {
   private final BuildoutCfgASTFactory astFactory = new BuildoutCfgASTFactory();
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return BuildoutCfgLanguage.INSTANCE;
   }
 
-  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new BuildoutCfgFlexLexer();
   }
@@ -62,22 +59,18 @@ public class BuildoutCfgParserDefinition implements ParserDefinition, BuildoutCf
     return FILE;
   }
 
-  @Nonnull
   public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return TokenSet.create(WHITESPACE);
   }
 
-  @Nonnull
   public TokenSet getCommentTokens(LanguageVersion languageVersion) {
     return TokenSet.create(COMMENT);
   }
 
-  @Nonnull
   public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return TokenSet.create(TEXT);
   }
 
-  @Nonnull
   public PsiElement createElement(ASTNode node) {
     return astFactory.create(node);
   }

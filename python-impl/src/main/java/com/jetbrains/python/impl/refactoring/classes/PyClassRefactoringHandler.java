@@ -31,8 +31,7 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Dennis.Ushakov
@@ -40,7 +39,7 @@ import jakarta.annotation.Nullable;
 public abstract class PyClassRefactoringHandler implements RefactoringActionHandler, ElementsHandler {
     @Override
     @RequiredUIAccess
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+    public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext) {
         PsiElement element1 = null;
         PsiElement element2 = null;
         SelectionModel selectionModel = editor.getSelectionModel();
@@ -72,7 +71,7 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
 
     @Override
     @RequiredUIAccess
-    public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext) {
+    public void invoke(Project project, PsiElement[] elements, DataContext dataContext) {
         PsiFile file = dataContext.getRequiredData(PsiFile.KEY);
         Editor editor = dataContext.getData(Editor.KEY);
         doRefactor(project, elements[0], elements[elements.length - 1], editor, file);
@@ -80,11 +79,11 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
 
     @RequiredUIAccess
     private void doRefactor(
-        @Nonnull Project project,
+        Project project,
         PsiElement element1,
         PsiElement element2,
         Editor editor,
-        @Nonnull PsiFile file
+        PsiFile file
     ) {
         CommonRefactoringUtil.checkReadOnlyStatus(project, file);
 
@@ -100,14 +99,14 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
     }
 
     protected abstract void doRefactorImpl(
-        @Nonnull Project project,
-        @Nonnull PyClass classUnderRefactoring,
-        @Nonnull PyMemberInfoStorage infoStorage,
-        @Nonnull Editor editor
+        Project project,
+        PyClass classUnderRefactoring,
+        PyMemberInfoStorage infoStorage,
+        Editor editor
     );
 
     @RequiredUIAccess
-    protected boolean inClass(@Nullable PyClass clazz, @Nonnull Project project, Editor editor, LocalizeValue errorMessage) {
+    protected boolean inClass(@Nullable PyClass clazz, Project project, Editor editor, LocalizeValue errorMessage) {
         if (clazz == null) {
             CommonRefactoringUtil.showErrorHint(project, editor, errorMessage, getTitle(), getHelpId());
             return false;
@@ -115,7 +114,6 @@ public abstract class PyClassRefactoringHandler implements RefactoringActionHand
         return true;
     }
 
-    @Nonnull
     protected abstract LocalizeValue getTitle();
 
     protected abstract String getHelpId();

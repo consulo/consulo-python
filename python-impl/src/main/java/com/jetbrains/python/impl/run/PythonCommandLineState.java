@@ -69,8 +69,7 @@ import consulo.virtualFileSystem.archive.ArchiveFileSystem;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 import consulo.virtualFileSystem.encoding.EncodingProjectManager;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
@@ -123,9 +122,8 @@ public abstract class PythonCommandLineState extends CommandLineState {
     return myConfig.getSdk();
   }
 
-  @Nonnull
   @Override
-  public ExecutionResult execute(@Nonnull Executor executor, @Nonnull ProgramRunner runner) throws ExecutionException {
+  public ExecutionResult execute(Executor executor, ProgramRunner runner) throws ExecutionException {
     return execute(executor, (CommandLinePatcher[])null);
   }
 
@@ -138,7 +136,6 @@ public abstract class PythonCommandLineState extends CommandLineState {
     return new DefaultExecutionResult(console, processHandler, actions.toArray(new AnAction[actions.size()]));
   }
 
-  @Nonnull
   protected ConsoleView createAndAttachConsole(Project project,
                                                ProcessHandler processHandler,
                                                Executor executor) throws ExecutionException {
@@ -166,7 +163,6 @@ public abstract class PythonCommandLineState extends CommandLineState {
   }
 
   @Override
-  @Nonnull
   protected ProcessHandler startProcess() throws ExecutionException {
     return startProcess(new CommandLinePatcher[]{});
   }
@@ -224,7 +220,6 @@ public abstract class PythonCommandLineState extends CommandLineState {
     return commandLine;
   }
 
-  @Nonnull
   public static GeneralCommandLine createPythonCommandLine(Project project, PythonRunParams config, boolean isDebug) {
     GeneralCommandLine commandLine = new GeneralCommandLine();
 
@@ -351,7 +346,7 @@ public abstract class PythonCommandLineState extends CommandLineState {
     }
   }
 
-  private static void addIfNeeded(@Nonnull VirtualFile file, @Nonnull Collection<String> pathList) {
+  private static void addIfNeeded(VirtualFile file, Collection<String> pathList) {
     addIfNeeded(pathList, file.getPath());
   }
 
@@ -384,12 +379,10 @@ public abstract class PythonCommandLineState extends CommandLineState {
     return StringUtil.isEmpty(name) ? null : ModuleManager.getInstance(project).findModuleByName(name);
   }
 
-  @Nonnull
   public static Collection<String> collectPythonPath(@Nullable Module module) {
     return collectPythonPath(module, true, true);
   }
 
-  @Nonnull
   public static Collection<String> collectPythonPath(@Nullable Module module, boolean addContentRoots, boolean addSourceRoots) {
     Collection<String> pythonPathList = Sets.newLinkedHashSet();
     if (module != null) {
@@ -514,7 +507,6 @@ public abstract class PythonCommandLineState extends CommandLineState {
     myMultiprocessDebug = multiprocessDebug;
   }
 
-  @Nonnull
   protected UrlFilter createUrlFilter(ProcessHandler handler) {
     return new UrlFilter();
   }

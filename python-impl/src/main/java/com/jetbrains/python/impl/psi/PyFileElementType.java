@@ -42,8 +42,7 @@ import consulo.language.version.LanguageVersion;
 import consulo.language.version.LanguageVersionUtil;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -105,7 +104,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
   }
 
   @Nullable
-  private ASTNode parseConsoleCode(@Nonnull ASTNode node, PythonConsoleData consoleData) {
+  private ASTNode parseConsoleCode(ASTNode node, PythonConsoleData consoleData) {
     Lexer lexer = createConsoleLexer(node, consoleData);
     PsiElement psi = node.getPsi();
     if (psi != null) {
@@ -151,22 +150,20 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
     return ((PyFile)file).getLanguageLevel();
   }
 
-  @Nonnull
   @Override
   public String getExternalId() {
     return "python.FILE";
   }
 
   @Override
-  public void serialize(@Nonnull PyFileStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
+  public void serialize(PyFileStub stub, StubOutputStream dataStream) throws IOException {
     writeNullableList(dataStream, stub.getDunderAll());
     writeBitSet(dataStream, stub.getFutureFeatures());
     dataStream.writeName(stub.getDeprecationMessage());
   }
 
-  @Nonnull
   @Override
-  public PyFileStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PyFileStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     List<String> all = readNullableList(dataStream);
     BitSet future_features = readBitSet(dataStream);
     StringRef deprecationMessage = dataStream.readName();

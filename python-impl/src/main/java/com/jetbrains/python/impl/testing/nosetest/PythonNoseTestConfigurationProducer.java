@@ -26,8 +26,7 @@ import consulo.language.psi.PsiElement;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ExtensionImpl
 public class PythonNoseTestConfigurationProducer extends
@@ -37,7 +36,7 @@ public class PythonNoseTestConfigurationProducer extends
     super(PythonTestConfigurationType.getInstance().PY_NOSETEST_FACTORY);
   }
 
-  protected boolean isAvailable(@Nonnull Location location) {
+  protected boolean isAvailable(Location location) {
     PsiElement element = location.getPsiElement();
     Module module = location.getModule();
     if (module == null) {
@@ -51,7 +50,7 @@ public class PythonNoseTestConfigurationProducer extends
   }
 
   @Override
-  protected boolean isTestFunction(@Nonnull PyFunction pyFunction, @Nullable AbstractPythonTestRunConfiguration configuration) {
+  protected boolean isTestFunction(PyFunction pyFunction, @Nullable AbstractPythonTestRunConfiguration configuration) {
     return PythonUnitTestUtil.isTestCaseFunction(pyFunction, false);
   }
 }

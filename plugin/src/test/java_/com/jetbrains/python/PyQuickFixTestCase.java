@@ -2,8 +2,6 @@ package com.jetbrains.python;
 
 import consulo.language.editor.intention.IntentionAction;
 import com.jetbrains.python.fixtures.PyTestCase;
-import org.jetbrains.annotations.NonNls;
-import jakarta.annotation.Nonnull;
 
 import java.util.Arrays;
 
@@ -12,7 +10,6 @@ import java.util.Arrays;
  */
 public abstract class PyQuickFixTestCase extends PyTestCase {
   @Override
-  @NonNls
   protected String getTestDataPath() {
     return PythonTestUtil.getTestDataPath() + "/quickFixes/" + getClass().getSimpleName();
   }
@@ -35,7 +32,7 @@ public abstract class PyQuickFixTestCase extends PyTestCase {
     myFixture.checkHighlighting(true, false, false);
   }
 
-  protected void doMultifilesTest(@Nonnull Class inspectionClass, @Nonnull String hint, @Nonnull String[] files) {
+  protected void doMultifilesTest(Class inspectionClass, String hint, String[] files) {
     String testFileName = getTestName(true);
     myFixture.enableInspections(inspectionClass);
     String [] filenames = Arrays.copyOf(files, files.length + 1);

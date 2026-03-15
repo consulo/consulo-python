@@ -18,11 +18,9 @@ package com.jetbrains.python.psi;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
 
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNameIdentifierOwner;
@@ -54,7 +52,6 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * @param context type eval context (pass null to use loose, but better provide one)
 	 * @see #getAncestorTypes(TypeEvalContext) for the full list of ancestors.
 	 */
-	@Nonnull
 	List<PyClass> getAncestorClasses(@Nullable TypeEvalContext context);
 
 	/**
@@ -64,8 +61,7 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 *
 	 * @see #getAncestorTypes(TypeEvalContext) for the full list of ancestors.
 	 */
-	@Nonnull
-	List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context);
+	List<PyClassLikeType> getSuperClassTypes(TypeEvalContext context);
 
 	/**
 	 * Returns only those super classes for expressions from the super classes list, that are resolved to PyClass PSI elements.
@@ -76,7 +72,6 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * @see #getSuperClassTypes(TypeEvalContext) for the full list of super classes.
 	 * @see #getAncestorTypes(TypeEvalContext) for the full list of ancestors.
 	 */
-	@Nonnull
 	PyClass[] getSuperClasses(@Nullable TypeEvalContext context);
 
 	/**
@@ -92,7 +87,6 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * <p>
 	 * Operates at the AST level.
 	 */
-	@Nonnull
 	PyExpression[] getSuperClassExpressions();
 
 	/**
@@ -102,7 +96,6 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 *
 	 * @return class methods
 	 */
-	@Nonnull
 	PyFunction[] getMethods();
 
 	/**
@@ -110,7 +103,6 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 *
 	 * @return Map [property_name] = [{@link com.jetbrains.python.psi.Property}]
 	 */
-	@Nonnull
 	Map<String, Property> getProperties();
 
 	/**
@@ -122,7 +114,7 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * @return
 	 */
 	@Nullable
-	PyFunction findMethodByName(@Nullable @NonNls String name, boolean inherited, TypeEvalContext context);
+	PyFunction findMethodByName(@Nullable String name, boolean inherited, TypeEvalContext context);
 
 	/**
 	 * Finds either __init__ or __new__, whichever is defined for given class.
@@ -146,7 +138,7 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * @return descriptor of property accessors, or null if such property does not exist.
 	 */
 	@Nullable
-	Property findProperty(@Nonnull String name, boolean inherited, @Nullable TypeEvalContext context);
+	Property findProperty(String name, boolean inherited, @Nullable TypeEvalContext context);
 
 	/**
 	 * Apply a processor to every method, looking at superclasses in method resolution order as needed.
@@ -187,11 +179,10 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * <p>
 	 * TODO: Replace it and {@link #getClassAttributes()} with a single getClassAttributes(@NotNull TypeEvalContext context, boolean inherited)
 	 */
-	@Nonnull
-	List<PyTargetExpression> getClassAttributesInherited(@Nonnull TypeEvalContext context);
+	List<PyTargetExpression> getClassAttributesInherited(TypeEvalContext context);
 
 	@Nullable
-	PyTargetExpression findClassAttribute(@Nonnull String name, boolean inherited, TypeEvalContext context);
+	PyTargetExpression findClassAttribute(String name, boolean inherited, TypeEvalContext context);
 
 	/**
 	 * Effectively collects assignments to attributes of {@code self} in {@code __init__}, {@code __new__} and
@@ -240,7 +231,7 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 */
 	boolean isSubclass(PyClass parent, @Nullable TypeEvalContext context);
 
-	boolean isSubclass(@Nonnull String superClassQName, @Nullable TypeEvalContext context);
+	boolean isSubclass(String superClassQName, @Nullable TypeEvalContext context);
 
 	/**
 	 * Returns the aggregated list of names defined in __slots__ attributes of the class and its ancestors.
@@ -262,9 +253,9 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	@Nullable
 	String getDocStringValue();
 
-	boolean processClassLevelDeclarations(@Nonnull PsiScopeProcessor processor);
+	boolean processClassLevelDeclarations(PsiScopeProcessor processor);
 
-	boolean processInstanceLevelDeclarations(@Nonnull PsiScopeProcessor processor, @Nullable PsiElement location);
+	boolean processInstanceLevelDeclarations(PsiScopeProcessor processor, @Nullable PsiElement location);
 
 	//TODO: Add "addMetaClass" or move methods out of here
 
@@ -274,7 +265,7 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * The metaclass might be defined outside the class in case of Python 2 file-level __metaclass__ attributes.
 	 */
 	@Nullable
-	PyType getMetaClassType(@Nonnull TypeEvalContext context);
+	PyType getMetaClassType(TypeEvalContext context);
 
 	/**
 	 * Returns the expression that defines the metaclass of the class.
@@ -289,5 +280,5 @@ public interface PyClass extends PsiNameIdentifierOwner, PyStatement, PyDocStrin
 	 * @return {@link com.jetbrains.python.psi.types.PyType} casted if it has right type
 	 */
 	@Nullable
-	PyClassLikeType getType(@Nonnull TypeEvalContext context);
+	PyClassLikeType getType(TypeEvalContext context);
 }

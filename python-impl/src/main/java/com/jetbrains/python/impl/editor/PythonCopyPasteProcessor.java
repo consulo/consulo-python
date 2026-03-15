@@ -42,8 +42,7 @@ import consulo.project.Project;
 import consulo.util.lang.CharFilter;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -139,8 +138,8 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return text;
   }
 
-  private static String getIndentText(@Nonnull PsiFile file,
-                                      @Nonnull Document document,
+  private static String getIndentText(PsiFile file,
+                                      Document document,
                                       int caretOffset,
                                       int lineNumber, int firstLineIndent) {
 
@@ -175,7 +174,7 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return indentText;
   }
 
-  private static int calculateIndentToRemove(@Nonnull String text, @Nonnull CharFilter filter) {
+  private static int calculateIndentToRemove(String text, CharFilter filter) {
     List<String> strings = StringUtil.split(text, "\n", false);
     int minIndent = StringUtil.findFirst(text, filter);
     for (String  s : strings) {
@@ -186,7 +185,7 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return minIndent;
   }
 
-  private static boolean isApplicable(@Nonnull PsiFile file, @Nonnull String text, int caretOffset) {
+  private static boolean isApplicable(PsiFile file, String text, int caretOffset) {
     boolean useTabs =
       CodeStyleSettingsManager.getSettings(file.getProject()).useTabCharacter(PythonFileType.INSTANCE);
     PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
@@ -197,14 +196,14 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return false;
   }
 
-  private static boolean inStatementList(@Nonnull PsiFile file, int caretOffset) {
+  private static boolean inStatementList(PsiFile file, int caretOffset) {
     PsiElement element = file.findElementAt(caretOffset);
     return PsiTreeUtil.getParentOfType(element, PyStatementList.class) != null ||
            PsiTreeUtil.getParentOfType(element, PyFunction.class) != null ||
            PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
   }
 
-  private static boolean addLinebreak(@Nonnull String text, @Nonnull String toString, boolean useTabs) {
+  private static boolean addLinebreak(String text, String toString, boolean useTabs) {
     if ((text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1)
         && !text.endsWith("\n") && !StringUtil.isEmptyOrSpaces(toString))
       return true;

@@ -20,8 +20,7 @@ import consulo.module.Module;
 import consulo.process.ExecutionException;
 import consulo.util.dataholder.Key;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
@@ -33,8 +32,7 @@ public abstract class PyPackageManager {
 
   public static final String USE_USER_SITE = "--user";
 
-  @Nonnull
-  public static PyPackageManager getInstance(@Nonnull Sdk sdk) {
+  public static PyPackageManager getInstance(Sdk sdk) {
     return PyPackageManagers.getInstance().forSdk(sdk);
   }
 
@@ -42,26 +40,23 @@ public abstract class PyPackageManager {
 
   public abstract boolean hasManagement() throws ExecutionException;
 
-  public abstract void install(@Nonnull String requirementString) throws ExecutionException;
+  public abstract void install(String requirementString) throws ExecutionException;
 
-  public abstract void install(@Nonnull List<PyRequirement> requirements, @Nonnull List<String> extraArgs) throws ExecutionException;
+  public abstract void install(List<PyRequirement> requirements, List<String> extraArgs) throws ExecutionException;
 
-  public abstract void uninstall(@Nonnull List<PyPackage> packages) throws ExecutionException;
+  public abstract void uninstall(List<PyPackage> packages) throws ExecutionException;
 
   public abstract void refresh();
 
-  @Nonnull
-  public abstract String createVirtualEnv(@Nonnull String destinationDir, boolean useGlobalSite) throws ExecutionException;
+  public abstract String createVirtualEnv(String destinationDir, boolean useGlobalSite) throws ExecutionException;
 
   @Nullable
   public abstract List<PyPackage> getPackages();
 
-  @Nonnull
   public abstract List<PyPackage> refreshAndGetPackages(boolean alwaysRefresh) throws ExecutionException;
 
   @Nullable
-  public abstract List<PyRequirement> getRequirements(@Nonnull Module module);
+  public abstract List<PyRequirement> getRequirements(Module module);
 
-  @Nonnull
-  public abstract Set<PyPackage> getDependents(@Nonnull PyPackage pkg) throws ExecutionException;
+  public abstract Set<PyPackage> getDependents(PyPackage pkg) throws ExecutionException;
 }

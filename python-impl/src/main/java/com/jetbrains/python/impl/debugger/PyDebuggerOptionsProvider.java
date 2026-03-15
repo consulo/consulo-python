@@ -27,7 +27,6 @@ import consulo.project.Project;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
@@ -43,11 +42,10 @@ import jakarta.annotation.Nonnull;
 public class PyDebuggerOptionsProvider implements PersistentStateComponent<PyDebuggerOptionsProvider.State> {
   private State myState = new State();
 
-  @Nonnull
   private final Project myProject;
 
   @Inject
-  public PyDebuggerOptionsProvider(@Nonnull Project project) {
+  public PyDebuggerOptionsProvider(Project project) {
     myProject = project;
   }
 

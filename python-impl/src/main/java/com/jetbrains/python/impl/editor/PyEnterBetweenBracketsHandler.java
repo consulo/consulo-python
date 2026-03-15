@@ -24,7 +24,6 @@ import consulo.dataContext.DataContext;
 import consulo.ide.impl.idea.codeInsight.editorActions.enter.EnterBetweenBracesHandler;
 import consulo.language.psi.PsiFile;
 import consulo.util.lang.ref.SimpleReference;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -34,11 +33,11 @@ public class PyEnterBetweenBracketsHandler extends EnterBetweenBracesHandler {
     @Override
     @RequiredReadAction
     public Result preprocessEnter(
-        @Nonnull PsiFile file,
-        @Nonnull Editor editor,
-        @Nonnull SimpleReference<Integer> caretOffsetRef,
-        @Nonnull SimpleReference<Integer> caretAdvance,
-        @Nonnull DataContext dataContext,
+        PsiFile file,
+        Editor editor,
+        SimpleReference<Integer> caretOffsetRef,
+        SimpleReference<Integer> caretAdvance,
+        DataContext dataContext,
         EditorActionHandler originalHandler
     ) {
         if (!file.getLanguage().is(PythonLanguage.getInstance())) {

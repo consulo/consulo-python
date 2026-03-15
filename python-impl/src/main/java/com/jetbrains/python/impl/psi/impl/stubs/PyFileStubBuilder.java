@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
@@ -32,7 +31,7 @@ import com.jetbrains.python.impl.psi.PyUtil;
  */
 public class PyFileStubBuilder extends DefaultStubBuilder {
   @Override
-  protected StubElement createStubForFile(@Nonnull PsiFile file) {
+  protected StubElement createStubForFile(PsiFile file) {
     if (file instanceof PyFile) {
       return new PyFileStubImpl((PyFile)file);
     }
@@ -41,12 +40,12 @@ public class PyFileStubBuilder extends DefaultStubBuilder {
   }
 
   @Override
-  protected boolean skipChildProcessingWhenBuildingStubs(@Nonnull PsiElement parent, @Nonnull PsiElement element) {
+  protected boolean skipChildProcessingWhenBuildingStubs(PsiElement parent, PsiElement element) {
     return parent instanceof PyIfStatement && PyUtil.isIfNameEqualsMain((PyIfStatement)parent);
   }
 
   @Override
-  public boolean skipChildProcessingWhenBuildingStubs(@Nonnull ASTNode parent, @Nonnull ASTNode node) {
+  public boolean skipChildProcessingWhenBuildingStubs(ASTNode parent, ASTNode node) {
     PsiElement psi = parent.getPsi();
     return psi instanceof PyIfStatement && PyUtil.isIfNameEqualsMain((PyIfStatement)psi);
   }

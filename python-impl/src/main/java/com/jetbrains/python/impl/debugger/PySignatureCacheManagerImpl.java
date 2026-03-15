@@ -42,8 +42,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -80,7 +79,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Override
-  public void recordSignature(@Nonnull PySignature signature) {
+  public void recordSignature(PySignature signature) {
     GlobalSearchScope scope = (GlobalSearchScope) ProjectScopes.getProjectScope(myProject);
 
     VirtualFile file = getFile(signature);
@@ -130,7 +129,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     writeAttribute(file, attrString);
   }
 
-  private void writeAttribute(@Nonnull VirtualFile file, @Nonnull String attrString) {
+  private void writeAttribute(VirtualFile file, String attrString) {
     String cachedValue = mySignatureCache.asMap().get(file);
     if (!attrString.equals(cachedValue)) {
       mySignatureCache.put(file, attrString);
@@ -138,7 +137,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     }
   }
 
-  private static void writeAttributeToAFile(@Nonnull VirtualFile file, @Nonnull String attrString) {
+  private static void writeAttributeToAFile(VirtualFile file, String attrString) {
     try {
       CALL_SIGNATURES_ATTRIBUTE.writeAttributeBytes(file, attrString.getBytes());
     }
@@ -160,7 +159,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Nullable
-  public String findParameterType(@Nonnull PyFunction function, @Nonnull String name) {
+  public String findParameterType(PyFunction function, String name) {
     PySignature signature = findSignature(function);
     if (signature != null) {
       return signature.getArgTypeQualifiedName(name);
@@ -169,7 +168,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Nullable
-  public PySignature findSignature(@Nonnull PyFunction function) {
+  public PySignature findSignature(PyFunction function) {
     VirtualFile file = getFile(function);
     if (file != null) {
       return readSignatureAttributeFromFile(file, getFunctionName(function));
@@ -195,7 +194,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Nullable
-  private PySignature readSignatureAttributeFromFile(@Nonnull VirtualFile file, @Nonnull String name) {
+  private PySignature readSignatureAttributeFromFile(VirtualFile file, String name) {
     String content = readAttribute(file);
 
     if (content != null) {
@@ -212,7 +211,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Nullable
-  private String readAttribute(@Nonnull VirtualFile file) {
+  private String readAttribute(VirtualFile file) {
     try {
       String attrContent = mySignatureCache.get(file);
       if (!StringUtil.isEmpty(attrContent)) {
@@ -225,8 +224,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     return null;
   }
 
-  @Nonnull
-  private static String readAttributeFromFile(@Nonnull VirtualFile file) {
+  private static String readAttributeFromFile(VirtualFile file) {
     byte[] data;
     try {
       data = CALL_SIGNATURES_ATTRIBUTE.readAttributeBytes(file);
@@ -266,12 +264,12 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Nullable
-  private static VirtualFile getFile(@Nonnull PySignature signature) {
+  private static VirtualFile getFile(PySignature signature) {
     return LocalFileSystem.getInstance().findFileByPath(signature.getFile());
   }
 
   @Nullable
-  private static VirtualFile getFile(@Nonnull PyFunction function) {
+  private static VirtualFile getFile(PyFunction function) {
     PsiFile file = function.getContainingFile();
 
     return file != null ? file.getOriginalFile().getVirtualFile() : null;

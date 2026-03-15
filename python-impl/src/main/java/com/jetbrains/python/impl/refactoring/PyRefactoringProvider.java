@@ -37,8 +37,7 @@ import consulo.language.editor.refactoring.changeSignature.ChangeSignatureHandle
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Alexey.Ivanov
@@ -81,7 +80,7 @@ public class PyRefactoringProvider extends RefactoringSupportProvider {
   }
 
   @Override
-  public boolean isInplaceRenameAvailable(@Nonnull PsiElement element, PsiElement context) {
+  public boolean isInplaceRenameAvailable(PsiElement element, PsiElement context) {
     if (context != null && context.getContainingFile() != element.getContainingFile()) return false;
     PyFunction containingFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
     if (containingFunction != null) {
@@ -104,7 +103,6 @@ public class PyRefactoringProvider extends RefactoringSupportProvider {
     return new PyIntroduceParameterHandler();
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

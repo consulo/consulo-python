@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import consulo.execution.action.Location;
@@ -203,12 +202,12 @@ public class PythonUnitTestUtil
 		return false;
 	}
 
-	public static boolean isTestCaseClass(@Nonnull PyClass cls, @Nullable TypeEvalContext context)
+	public static boolean isTestCaseClass(PyClass cls, @Nullable TypeEvalContext context)
 	{
 		return isTestCaseClassWithContext(cls, PYTHON_TEST_QUALIFIED_CLASSES, context);
 	}
 
-	public static boolean isTestCaseClassWithContext(@Nonnull PyClass cls, Set<String> testQualifiedNames, @Nullable TypeEvalContext context)
+	public static boolean isTestCaseClassWithContext(PyClass cls, Set<String> testQualifiedNames, @Nullable TypeEvalContext context)
 	{
 		TypeEvalContext contextToUse = (context != null ? context : TypeEvalContext.codeInsightFallback(cls.getProject()));
 		for(PyClassLikeType type : cls.getAncestorTypes(contextToUse))
@@ -240,7 +239,7 @@ public class PythonUnitTestUtil
 		return false;
 	}
 
-	public static List<Location> findLocations(@Nonnull Project project, @Nonnull String fileName, @Nullable String className, @Nullable String methodName)
+	public static List<Location> findLocations(Project project, String fileName, @Nullable String className, @Nullable String methodName)
 	{
 		if(fileName.contains("%"))
 		{

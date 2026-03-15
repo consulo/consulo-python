@@ -27,7 +27,6 @@ import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,8 +38,7 @@ import java.util.Map;
 public class PyPackageManagersImpl extends PyPackageManagers {
   private final Map<String, PyPackageManagerImpl> myInstances = new HashMap<>();
 
-  @Nonnull
-  public synchronized PyPackageManager forSdk(@Nonnull Sdk sdk) {
+  public synchronized PyPackageManager forSdk(Sdk sdk) {
     String key = PythonSdkType.getSdkKey(sdk);
     PyPackageManagerImpl manager = myInstances.get(key);
     if (manager == null) {
@@ -57,7 +55,7 @@ public class PyPackageManagersImpl extends PyPackageManagers {
     return manager;
   }
 
-  private static boolean sdkIsSetUp(@Nonnull Sdk sdk) {
+  private static boolean sdkIsSetUp(Sdk sdk) {
     VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
     return roots.length != 0;
   }
@@ -70,7 +68,7 @@ public class PyPackageManagersImpl extends PyPackageManagers {
   }
 
   @Override
-  public void clearCache(@Nonnull Sdk sdk) {
+  public void clearCache(Sdk sdk) {
     String key = PythonSdkType.getSdkKey(sdk);
     if (myInstances.containsKey(key)) {
       myInstances.remove(key);

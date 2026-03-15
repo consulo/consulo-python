@@ -24,8 +24,7 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 
 /**
@@ -47,7 +46,7 @@ public class PythonTracebackFilter implements Filter {
 
   @Override
   @Nullable
-  public final Result applyFilter(@Nonnull String line, int entireLength) {
+  public final Result applyFilter(String line, int entireLength) {
 
     for (TraceBackParser parser : TraceBackParser.PARSERS) {
       LinkInTrace linkInTrace = parser.findLinkInTrace(line);
@@ -69,7 +68,7 @@ public class PythonTracebackFilter implements Filter {
   }
 
   @Nullable
-  protected VirtualFile findFileByName(@Nonnull String fileName) {
+  protected VirtualFile findFileByName(String fileName) {
     VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(fileName);
     if (vFile == null && !StringUtil.isEmptyOrSpaces(myWorkingDirectory)) {
       vFile = LocalFileSystem.getInstance().findFileByIoFile(new File(myWorkingDirectory, fileName));

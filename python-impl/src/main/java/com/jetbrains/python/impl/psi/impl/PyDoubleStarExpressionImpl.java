@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -45,7 +44,7 @@ public class PyDoubleStarExpressionImpl extends PyElementImpl implements PyDoubl
 
 	@Nullable
 	@Override
-	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
+	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		return null;
 	}

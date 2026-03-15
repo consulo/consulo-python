@@ -21,8 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.icon.IconDescriptorUpdaters;
@@ -44,7 +43,7 @@ import com.jetbrains.python.impl.psi.impl.LightNamedElement;
  * @author yole
  */
 public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpression> {
-  public PyDunderAllReference(@Nonnull PyStringLiteralExpression element) {
+  public PyDunderAllReference(PyStringLiteralExpression element) {
     super(element);
     List<TextRange> ranges = element.getStringValueTextRanges();
     if (ranges.size() > 0) {
@@ -60,7 +59,6 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
     return containingFile.getElementNamed(name);
   }
 
-  @Nonnull
   @Override
   public Object[] getVariants() {
     final List<LookupElement> result = new ArrayList<LookupElement>();
@@ -72,7 +70,7 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
     }
     containingFile.processDeclarations(new PsiScopeProcessor() {
       @Override
-      public boolean execute(@Nonnull PsiElement element, ResolveState state) {
+      public boolean execute(PsiElement element, ResolveState state) {
         if (element instanceof PsiNamedElement && !(element instanceof LightNamedElement)) {
           String name = ((PsiNamedElement)element).getName();
           if (name != null && PyUtil.getInitialUnderscores(name) == 0 && !seenNames.contains(name)) {
@@ -91,7 +89,7 @@ public class PyDunderAllReference extends PsiReferenceBase<PyStringLiteralExpres
       }
 
       @Override
-      public <T> T getHint(@Nonnull Key<T> hintKey) {
+      public <T> T getHint(Key<T> hintKey) {
         return null;
       }
 

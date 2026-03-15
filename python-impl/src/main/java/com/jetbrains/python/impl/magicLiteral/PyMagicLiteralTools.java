@@ -22,8 +22,7 @@ import consulo.language.psi.PsiModificationTracker;
 import consulo.language.psi.util.PsiCacheKey;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.function.Function;
 
 /**
@@ -49,7 +48,7 @@ public final class PyMagicLiteralTools {
    * @param element element to check
    * @return true if magic
    */
-  public static boolean isMagicLiteral(@Nonnull PsiElement element) {
+  public static boolean isMagicLiteral(PsiElement element) {
     return (element instanceof StringLiteralExpression) && (getPoint((StringLiteralExpression)element) != null);
   }
 
@@ -60,7 +59,7 @@ public final class PyMagicLiteralTools {
    * @return extension point (if any) or null if literal is unknown to all installed magic literal extesnion points
    */
   @Nullable
-  public static PyMagicLiteralExtensionPoint getPoint(@Nonnull StringLiteralExpression element) {
+  public static PyMagicLiteralExtensionPoint getPoint(StringLiteralExpression element) {
     return MAGIC_LITERAL_POINT.getValue(element).get();
   }
 

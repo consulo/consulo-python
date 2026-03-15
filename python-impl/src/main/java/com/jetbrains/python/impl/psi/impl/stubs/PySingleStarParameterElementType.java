@@ -25,7 +25,6 @@ import com.jetbrains.python.psi.PySingleStarParameter;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PySingleStarParameterImpl;
 import com.jetbrains.python.psi.stubs.PySingleStarParameterStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -38,25 +37,24 @@ public class PySingleStarParameterElementType extends PyStubElementType<PySingle
   }
 
   @Override
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PySingleStarParameterImpl(node);
   }
 
   @Override
-  public PySingleStarParameter createPsi(@Nonnull PySingleStarParameterStub stub) {
+  public PySingleStarParameter createPsi(PySingleStarParameterStub stub) {
     return new PySingleStarParameterImpl(stub);
   }
 
   @Override
-  public PySingleStarParameterStub createStub(@Nonnull PySingleStarParameter psi, StubElement parentStub) {
+  public PySingleStarParameterStub createStub(PySingleStarParameter psi, StubElement parentStub) {
     return new PySingleStarParameterStubImpl(parentStub);
   }
 
-  public void serialize(@Nonnull PySingleStarParameterStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
+  public void serialize(PySingleStarParameterStub stub, StubOutputStream dataStream) throws IOException {
   }
 
-  @Nonnull
-  public PySingleStarParameterStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PySingleStarParameterStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new PySingleStarParameterStubImpl(parentStub);
   }
 }

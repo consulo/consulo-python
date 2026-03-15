@@ -42,8 +42,7 @@ import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.util.lang.ref.SimpleReference;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.regex.Matcher;
 
@@ -84,11 +83,11 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     @Override
     @RequiredReadAction
     public Result preprocessEnter(
-        @Nonnull PsiFile file,
-        @Nonnull Editor editor,
-        @Nonnull SimpleReference<Integer> caretOffset,
-        @Nonnull SimpleReference<Integer> caretAdvance,
-        @Nonnull DataContext dataContext,
+        PsiFile file,
+        Editor editor,
+        SimpleReference<Integer> caretOffset,
+        SimpleReference<Integer> caretAdvance,
+        DataContext dataContext,
         EditorActionHandler originalHandler
     ) {
         int offset = caretOffset.get();
@@ -364,7 +363,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     @Nullable
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    private static <T extends PsiElement> T getNonStrictParentOfType(@Nonnull PsiElement element, @Nonnull Class<? extends T>... classes) {
+    private static <T extends PsiElement> T getNonStrictParentOfType(PsiElement element, Class<? extends T>... classes) {
         PsiElement run = element;
         while (run != null) {
             for (Class<? extends T> aClass : classes) {
@@ -392,7 +391,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
 
     @Override
     @RequiredUIAccess
-    public Result postProcessEnter(@Nonnull PsiFile file, @Nonnull Editor editor, @Nonnull DataContext dataContext) {
+    public Result postProcessEnter(PsiFile file, Editor editor, DataContext dataContext) {
         if (!(file instanceof PyFile)) {
             return Result.Continue;
         }
@@ -406,7 +405,7 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
     }
 
     @RequiredUIAccess
-    private static void addGoogleDocStringSectionIndent(@Nonnull PsiFile file, @Nonnull Editor editor, int offset) {
+    private static void addGoogleDocStringSectionIndent(PsiFile file, Editor editor, int offset) {
         Document document = editor.getDocument();
         PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
         PsiElement element = file.findElementAt(offset);
@@ -436,9 +435,8 @@ public class PythonEnterHandler extends EnterHandlerDelegateAdapter {
         EMPTY
     }
 
-    @Nonnull
     @RequiredReadAction
-    public static DocstringState canGenerateDocstring(@Nonnull PsiElement element, int firstQuoteOffset, @Nonnull Document document) {
+    public static DocstringState canGenerateDocstring(PsiElement element, int firstQuoteOffset, Document document) {
         if (firstQuoteOffset < 0 || firstQuoteOffset > document.getTextLength() - 3) {
             return DocstringState.NONE;
         }

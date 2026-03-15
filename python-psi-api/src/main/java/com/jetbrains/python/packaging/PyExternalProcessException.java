@@ -17,7 +17,6 @@
 package com.jetbrains.python.packaging;
 
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +29,11 @@ public class PyExternalProcessException extends Exception {
   private static final Pattern WITH_CR_DELIMITER_PATTERN = Pattern.compile("(?<=\r|\n|\r\n)");
 
   private final int myRetcode;
-  @Nonnull
   private String myName;
-  @Nonnull
   private List<String> myArgs;
-  @Nonnull
   private String myMessage;
 
-  public PyExternalProcessException(int retcode, @Nonnull String name, @Nonnull List<String> args, @Nonnull String message) {
+  public PyExternalProcessException(int retcode, String name, List<String> args, String message) {
     super(String.format("External process error '%s %s':\n%s", name, StringUtil.join(args, " "), message));
     myRetcode = retcode;
     myName = name;
@@ -45,7 +41,7 @@ public class PyExternalProcessException extends Exception {
     myMessage = stripLinesWithoutLineFeeds(message);
   }
 
-  public PyExternalProcessException(int retcode, @Nonnull String name, @Nonnull List<String> args, @Nonnull String message, Throwable cause) {
+  public PyExternalProcessException(int retcode, String name, List<String> args, String message, Throwable cause) {
     super(String.format("External process error '%s %s':\n%s", name, StringUtil.join(args, " "), message), cause);
     myRetcode = retcode;
     myName = name;
@@ -69,23 +65,19 @@ public class PyExternalProcessException extends Exception {
     return myRetcode;
   }
 
-  @Nonnull
   public String getName() {
     return myName;
   }
 
-  @Nonnull
   public List<String> getArgs() {
     return myArgs;
   }
 
-  @Nonnull
   public String getMessage() {
     return myMessage;
   }
 
-  @Nonnull
-  private static String stripLinesWithoutLineFeeds(@Nonnull String s) {
+  private static String stripLinesWithoutLineFeeds(String s) {
     String[] lines = WITH_CR_DELIMITER_PATTERN.split(s);
     List<String> result = new ArrayList<String>();
     for (String line : lines) {

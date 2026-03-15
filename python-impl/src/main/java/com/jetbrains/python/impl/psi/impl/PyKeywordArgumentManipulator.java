@@ -26,7 +26,6 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.AbstractElementManipulator;
 import consulo.language.util.IncorrectOperationException;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -50,7 +49,6 @@ public class PyKeywordArgumentManipulator extends AbstractElementManipulator<PyK
     throw new IncorrectOperationException("unsupported manipulation on keyword argument");
   }
 
-  @Nonnull
   @Override
   public Class<PyKeywordArgument> getElementClass() {
     return PyKeywordArgument.class;

@@ -24,7 +24,6 @@ import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -35,13 +34,12 @@ public class PyAddPropertyForFieldQuickFix implements LocalQuickFix {
         myName = name;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return myName;
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyReferenceExpression) {
             PsiReference reference = element.getReference();

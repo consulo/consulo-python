@@ -16,12 +16,11 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A list of function decorators.
@@ -31,7 +30,6 @@ public interface PyDecoratorList extends PyElement, StubBasedPsiElement<PyDecora
   /**
    * @return decorators of function, in order of declaration (outermost first).
    */
-  @Nonnull
   PyDecorator[] getDecorators();
 
   @Nullable

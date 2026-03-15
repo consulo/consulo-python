@@ -31,7 +31,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ProcessingContext;
 
-import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 
@@ -47,7 +46,7 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
 		{
 			@RequiredReadAction
 			@Override
-			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
+			public void addCompletions(CompletionParameters parameters, ProcessingContext context, CompletionResultSet result)
 			{
 				PyCallExpression call = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyCallExpression.class);
 				if(call == null)
@@ -99,7 +98,6 @@ public class PyConstructorArgumentCompletionContributor extends CompletionContri
     } */
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

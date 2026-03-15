@@ -35,7 +35,6 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 import static com.jetbrains.python.impl.psi.PyUtil.StringNodeInfo;
@@ -49,7 +48,7 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 	private static class StringLiteralTokenizer extends Tokenizer<PyStringLiteralExpression>
 	{
 		@Override
-		public void tokenize(@Nonnull PyStringLiteralExpression element, TokenConsumer consumer)
+		public void tokenize(PyStringLiteralExpression element, TokenConsumer consumer)
 		{
 			TokenSplitter splitter = PlainTextTokenSplitter.getInstance();
 			List<ASTNode> strNodes = element.getStringNodes();
@@ -83,7 +82,7 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 	private static class FormatStringTokenizer extends Tokenizer<PyStringLiteralExpression>
 	{
 		@Override
-		public void tokenize(@Nonnull PyStringLiteralExpression element, TokenConsumer consumer)
+		public void tokenize(PyStringLiteralExpression element, TokenConsumer consumer)
 		{
 			String stringValue = element.getStringValue();
 			List<PyStringFormatParser.FormatStringChunk> chunks = PyStringFormatParser.parsePercentFormat(stringValue);
@@ -104,7 +103,6 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 	private StringLiteralTokenizer myStringLiteralTokenizer = new StringLiteralTokenizer();
 	private FormatStringTokenizer myFormatStringTokenizer = new FormatStringTokenizer();
 
-	@Nonnull
 	@Override
 	public Tokenizer getTokenizer(PsiElement element)
 	{
@@ -124,7 +122,6 @@ public class PythonSpellcheckerStrategy extends SpellcheckingStrategy
 		return super.getTokenizer(element);
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

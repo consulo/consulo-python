@@ -28,7 +28,6 @@ import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.JBUI;
 import consulo.ui.ex.awt.LabeledComponent;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -43,7 +42,7 @@ public class PyManagePackagesDialog extends DialogWrapper
 {
 	private JPanel myMainPanel;
 
-	public PyManagePackagesDialog(@Nonnull final Project project, @Nonnull Sdk sdk)
+	public PyManagePackagesDialog(final Project project, Sdk sdk)
 	{
 		super(project, true);
 		setTitle("Manage Python Packages");
@@ -94,7 +93,6 @@ public class PyManagePackagesDialog extends DialogWrapper
 		return "PyManagePackagesDialog";
 	}
 
-	@Nonnull
 	@Override
 	protected Action[] createActions()
 	{

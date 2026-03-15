@@ -23,8 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -57,7 +56,6 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public class PyCustomType implements PyClassLikeType
 {
 
-	@Nonnull
 	private final List<PyClassLikeType> myTypesToMimic = new ArrayList<>();
 
 	@Nullable
@@ -73,7 +71,7 @@ public class PyCustomType implements PyClassLikeType
 	 *                     (like ctor)
 	 * @param typesToMimic types to "mimic": delegate calls to  (must be one at least!)
 	 */
-	public PyCustomType(@Nullable Processor<PyElement> filter, boolean instanceType, @Nonnull PyClassLikeType... typesToMimic)
+	public PyCustomType(@Nullable Processor<PyElement> filter, boolean instanceType, PyClassLikeType... typesToMimic)
 	{
 		Preconditions.checkArgument(typesToMimic.length > 0, "Provide at least one class");
 		myFilter = filter;
@@ -84,7 +82,6 @@ public class PyCustomType implements PyClassLikeType
 	/**
 	 * @return class we mimic (if any). Check class manual for more info.
 	 */
-	@Nonnull
 	public final List<PyClassLikeType> getTypesToMimic()
 	{
 		return Collections.unmodifiableList(myTypesToMimic);
@@ -110,19 +107,18 @@ public class PyCustomType implements PyClassLikeType
 		return null;
 	}
 
-	@Nonnull
 	@Override
-	public final List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context)
+	public final List<PyClassLikeType> getSuperClassTypes(TypeEvalContext context)
 	{
 		return Collections.emptyList();
 	}
 
 	@Nullable
 	@Override
-	public final List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
+	public final List<? extends RatedResolveResult> resolveMember(String name,
 			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext,
+			AccessDirection direction,
+			PyResolveContext resolveContext,
 			boolean inherited)
 	{
 		List<RatedResolveResult> globalResult = new ArrayList<>();
@@ -156,7 +152,7 @@ public class PyCustomType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public final PyClassLikeType getMetaClassType(@Nonnull TypeEvalContext context, boolean inherited)
+	public final PyClassLikeType getMetaClassType(TypeEvalContext context, boolean inherited)
 	{
 		return null;
 	}
@@ -181,38 +177,37 @@ public class PyCustomType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public final PyType getReturnType(@Nonnull TypeEvalContext context)
+	public final PyType getReturnType(TypeEvalContext context)
 	{
 		return (myInstanceType ? null : toInstance());
 	}
 
 	@Nullable
 	@Override
-	public final PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
+	public final PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite)
 	{
 		return getReturnType(context);
 	}
 
 	@Nullable
 	@Override
-	public final List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
+	public final List<PyCallableParameter> getParameters(TypeEvalContext context)
 	{
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public final List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
+	public final List<? extends RatedResolveResult> resolveMember(String name,
 			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext)
+			AccessDirection direction,
+			PyResolveContext resolveContext)
 	{
 		return resolveMember(name, location, direction, resolveContext, true);
 	}
 
-	@Nonnull
 	@Override
-	public final List<PyClassLikeType> getAncestorTypes(@Nonnull TypeEvalContext context)
+	public final List<PyClassLikeType> getAncestorTypes(TypeEvalContext context)
 	{
 		Collection<PyClassLikeType> result = new LinkedHashSet<>();
 		for(PyClassLikeType type : myTypesToMimic)
@@ -300,7 +295,7 @@ public class PyCustomType implements PyClassLikeType
 	}
 
 	@Override
-	public final void visitMembers(@Nonnull Processor<PsiElement> processor, boolean inherited, @Nonnull TypeEvalContext context)
+	public final void visitMembers(Processor<PsiElement> processor, boolean inherited, TypeEvalContext context)
 	{
 		for(PyClassLikeType type : myTypesToMimic)
 		{
@@ -319,9 +314,8 @@ public class PyCustomType implements PyClassLikeType
 		}
 	}
 
-	@Nonnull
 	@Override
-	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
+	public Set<String> getMemberNames(boolean inherited, TypeEvalContext context)
 	{
 		Set<String> result = new LinkedHashSet<>();
 

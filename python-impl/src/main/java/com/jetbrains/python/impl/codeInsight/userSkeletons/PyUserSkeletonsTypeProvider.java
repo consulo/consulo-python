@@ -26,8 +26,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author vlan
@@ -36,7 +35,7 @@ import jakarta.annotation.Nullable;
 public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 {
 	@Override
-	public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context)
+	public Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context)
 	{
 		String name = param.getName();
 		if(name != null)
@@ -60,7 +59,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 
 	@Nullable
 	@Override
-	public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
+	public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context)
 	{
 		PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
 		if(callableSkeleton != null)
@@ -75,7 +74,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public PyType getReferenceType(@Nonnull PsiElement target, TypeEvalContext context, @Nullable PsiElement anchor)
+	public PyType getReferenceType(PsiElement target, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(target instanceof PyTargetExpression)
 		{
@@ -90,7 +89,7 @@ public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
 
 	@Nullable
 	@Override
-	public PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
+	public PyType getCallableType(PyCallable callable, TypeEvalContext context)
 	{
 		PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
 		if(callableSkeleton != null)

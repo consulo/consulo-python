@@ -25,7 +25,6 @@ import consulo.language.editor.generation.OverrideMethodHandler;
 import consulo.language.psi.PsiFile;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
@@ -38,7 +37,7 @@ public class PyOverrideMethodsHandler implements OverrideMethodHandler
 		return (file instanceof PyFile) && (PyOverrideImplementUtil.getContextClass(editor, file) != null);
 	}
 
-	public void invoke(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile file)
+	public void invoke(Project project, Editor editor, PsiFile file)
 	{
 		PyClass aClass = PyOverrideImplementUtil.getContextClass(editor, file);
 		if(aClass != null)
@@ -52,7 +51,6 @@ public class PyOverrideMethodsHandler implements OverrideMethodHandler
 		return false;
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

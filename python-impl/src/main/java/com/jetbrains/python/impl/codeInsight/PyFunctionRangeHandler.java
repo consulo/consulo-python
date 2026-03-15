@@ -23,7 +23,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.editor.hint.DeclarationRangeHandler;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -31,17 +30,15 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyFunctionRangeHandler implements DeclarationRangeHandler<PyFunction>
 {
-	@Nonnull
 	@Override
 	public Class<PyFunction> getElementClass()
 	{
 		return PyFunction.class;
 	}
 
-	@Nonnull
 	@Override
 	@RequiredReadAction
-	public TextRange getDeclarationRange(@Nonnull PyFunction container)
+	public TextRange getDeclarationRange(PyFunction container)
 	{
 		int start = container.getTextRange().getStartOffset();
 		PyParameterList parameterList = ((PyFunction) container).getParameterList();

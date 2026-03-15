@@ -23,21 +23,19 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
  * @since 2010-03-06
  */
 public class RemoveTrailingLQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.intnRemoveTrailingL();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement numericLiteralExpression = descriptor.getPsiElement();
         if (numericLiteralExpression instanceof PyNumericLiteralExpression) {
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

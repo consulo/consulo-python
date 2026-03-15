@@ -1,8 +1,7 @@
 package com.jetbrains.python.debugger.pydev;
 
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.execution.debug.breakpoint.SuspendPolicy;
 
 public class SetBreakpointCommand extends LineBreakpointCommand
@@ -17,23 +16,22 @@ public class SetBreakpointCommand extends LineBreakpointCommand
 	@Nullable
 	final String myFuncName;
 	private
-	@Nonnull
 	final SuspendPolicy mySuspendPolicy;
 
-	public SetBreakpointCommand(@Nonnull RemoteDebugger debugger, @Nonnull String type, @Nonnull String file, int line)
+	public SetBreakpointCommand(RemoteDebugger debugger, String type, String file, int line)
 	{
 		this(debugger, type, file, line, null, null, null, SuspendPolicy.NONE);
 	}
 
 
-	public SetBreakpointCommand(@Nonnull RemoteDebugger debugger,
-			@Nonnull String type,
-			@Nonnull String file,
+	public SetBreakpointCommand(RemoteDebugger debugger,
+			String type,
+			String file,
 			int line,
 			@Nullable String condition,
 			@Nullable String logExpression,
 			@Nullable String funcName,
-			@Nonnull SuspendPolicy policy)
+			SuspendPolicy policy)
 	{
 		super(debugger, type, SET_BREAKPOINT, file, line);
 		myCondition = condition;
@@ -49,7 +47,6 @@ public class SetBreakpointCommand extends LineBreakpointCommand
 		payload.add(buildCondition(myFuncName)).add(mySuspendPolicy.name()).add(buildCondition(myCondition)).add(buildCondition(myLogExpression));
 	}
 
-	@Nonnull
 	private static String buildCondition(String expression)
 	{
 		String condition;

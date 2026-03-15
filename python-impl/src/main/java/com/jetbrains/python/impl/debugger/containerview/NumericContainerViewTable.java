@@ -22,7 +22,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.JTable;
 
 import consulo.application.ApplicationManager;
@@ -53,7 +52,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 	protected ColoredCellRenderer myTableCellRenderer;
 	protected AsyncArrayTableModel myPagingModel;
 
-	public NumericContainerViewTable(@Nonnull Project project, @Nonnull ViewNumericContainerDialog dialog, @Nonnull PyDebugValue value)
+	public NumericContainerViewTable(Project project, ViewNumericContainerDialog dialog, PyDebugValue value)
 	{
 		myProject = project;
 		myDialog = dialog;
@@ -84,7 +83,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 	}
 
 
-	private void initUi(@Nonnull ArrayChunk chunk, boolean inPlace)
+	private void initUi(ArrayChunk chunk, boolean inPlace)
 	{
 		myPagingModel = createTableModel(Math.min(chunk.getRows(), ROWS_IN_DEFAULT_VIEW), Math.min(chunk.getColumns(), COLUMNS_IN_DEFAULT_VIEW));
 		myPagingModel.addToCache(chunk);
@@ -157,8 +156,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 		});
 	}
 
-	@Nonnull
-	private static NumericContainerRendererForm createForm(@Nonnull Project project, KeyListener resliceCallback, KeyAdapter formatCallback)
+	private static NumericContainerRendererForm createForm(Project project, KeyListener resliceCallback, KeyAdapter formatCallback)
 	{
 		return new NumericContainerRendererForm(project, resliceCallback, formatCallback);
 	}
@@ -275,7 +273,7 @@ public abstract class NumericContainerViewTable implements TableChunkDatasource
 
 
 	@Override
-	public final String correctStringValue(@Nonnull Object value)
+	public final String correctStringValue(Object value)
 	{
 		if(value instanceof String)
 		{

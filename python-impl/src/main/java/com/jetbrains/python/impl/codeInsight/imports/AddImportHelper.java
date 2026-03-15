@@ -42,8 +42,7 @@ import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -72,8 +71,7 @@ public class AddImportHelper {
     private static final Comparator<PyImportStatementBase> IMPORT_NAMES_COMPARATOR =
         (import1, import2) -> ContainerUtil.compareLexicographically(getSortNames(import1), getSortNames(import2));
 
-    @Nonnull
-    private static List<String> getSortNames(@Nonnull PyImportStatementBase importStatement) {
+    private static List<String> getSortNames(PyImportStatementBase importStatement) {
         List<String> result = new ArrayList<>();
         PyFromImportStatement fromImport = as(importStatement, PyFromImportStatement.class);
         if (fromImport != null) {
@@ -104,8 +102,7 @@ public class AddImportHelper {
      *
      * @see ImportPriority
      */
-    @Nonnull
-    public static Comparator<PyImportStatementBase> getSameGroupImportsComparator(@Nonnull Project project) {
+    public static Comparator<PyImportStatementBase> getSameGroupImportsComparator(Project project) {
         PyCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(project).getCustomSettings(PyCodeStyleSettings.class);
         if (settings.OPTIMIZE_IMPORTS_SORT_BY_TYPE_FIRST) {
             return IMPORT_TYPE_COMPARATOR.thenComparing(IMPORT_NAMES_COMPARATOR);
@@ -128,7 +125,7 @@ public class AddImportHelper {
     }
 
     @RequiredWriteAction
-    public static void addLocalImportStatement(@Nonnull PsiElement element, @Nonnull String name) {
+    public static void addLocalImportStatement(PsiElement element, String name) {
         PyElementGenerator generator = PyElementGenerator.getInstance(element.getProject());
         LanguageLevel languageLevel = LanguageLevel.forElement(element);
 
@@ -140,7 +137,7 @@ public class AddImportHelper {
     }
 
     @RequiredWriteAction
-    public static void addLocalFromImportStatement(@Nonnull PsiElement element, @Nonnull String qualifier, @Nonnull String name) {
+    public static void addLocalFromImportStatement(PsiElement element, String qualifier, String name) {
         PyElementGenerator generator = PyElementGenerator.getInstance(element.getProject());
         LanguageLevel languageLevel = LanguageLevel.forElement(element);
 
@@ -152,7 +149,7 @@ public class AddImportHelper {
     }
 
     @Nullable
-    public static PsiElement getLocalInsertPosition(@Nonnull PsiElement anchor) {
+    public static PsiElement getLocalInsertPosition(PsiElement anchor) {
         return PsiTreeUtil.getParentOfType(anchor, PyStatement.class, false);
     }
 
@@ -165,7 +162,7 @@ public class AddImportHelper {
     @Nullable
     @RequiredReadAction
     private static PsiElement getInsertPosition(
-        @Nonnull PsiElement insertParent,
+        PsiElement insertParent,
         @Nullable PyImportStatementBase newImport,
         @Nullable ImportPriority priority
     ) {
@@ -239,8 +236,8 @@ public class AddImportHelper {
     @RequiredReadAction
     private static boolean shouldInsertBefore(
         @Nullable PyImportStatementBase newImport,
-        @Nonnull PyImportStatementBase existingImport,
-        @Nonnull ImportPriority priority
+        PyImportStatementBase existingImport,
+        ImportPriority priority
     ) {
         ImportPriority existingImportPriority = getImportPriority(existingImport);
         int byPriority = priority.compareTo(existingImportPriority);
@@ -253,9 +250,8 @@ public class AddImportHelper {
         return getSameGroupImportsComparator(existingImport.getProject()).compare(newImport, existingImport) < 0;
     }
 
-    @Nonnull
     @RequiredReadAction
-    public static ImportPriority getImportPriority(@Nonnull PyImportStatementBase importStatement) {
+    public static ImportPriority getImportPriority(PyImportStatementBase importStatement) {
         PsiElement resolved;
         if (importStatement instanceof PyFromImportStatement fromImportStatement) {
             if (fromImportStatement.isFromFuture()) {
@@ -296,9 +292,8 @@ public class AddImportHelper {
         return getImportPriority(importStatement, resolvedFileOrDir);
     }
 
-    @Nonnull
     @RequiredReadAction
-    public static ImportPriority getImportPriority(@Nonnull PsiElement importLocation, @Nonnull PsiFileSystemItem toImport) {
+    public static ImportPriority getImportPriority(PsiElement importLocation, PsiFileSystemItem toImport) {
         VirtualFile vFile = toImport.getVirtualFile();
         if (vFile == null) {
             return UNRESOLVED_SYMBOL_PRIORITY;
@@ -327,8 +322,8 @@ public class AddImportHelper {
      */
     @RequiredWriteAction
     public static boolean addImportStatement(
-        @Nonnull PsiFile file,
-        @Nonnull String name,
+        PsiFile file,
+        String name,
         @Nullable String asName,
         @Nullable ImportPriority priority,
         @Nullable PsiElement anchor
@@ -380,9 +375,9 @@ public class AddImportHelper {
      */
     @RequiredWriteAction
     public static void addFromImportStatement(
-        @Nonnull PsiFile file,
-        @Nonnull String from,
-        @Nonnull String name,
+        PsiFile file,
+        String from,
+        String name,
         @Nullable String asName,
         @Nullable ImportPriority priority,
         @Nullable PsiElement anchor
@@ -407,8 +402,8 @@ public class AddImportHelper {
      */
     @RequiredWriteAction
     public static void addFromImportStatement(
-        @Nonnull PsiFile file,
-        @Nonnull PyFromImportStatement newImport,
+        PsiFile file,
+        PyFromImportStatement newImport,
         @Nullable ImportPriority priority,
         @Nullable PsiElement anchor
     ) {
@@ -458,9 +453,9 @@ public class AddImportHelper {
      */
     @RequiredWriteAction
     public static boolean addOrUpdateFromImportStatement(
-        @Nonnull PsiFile file,
-        @Nonnull String from,
-        @Nonnull String name,
+        PsiFile file,
+        String from,
+        String name,
         @Nullable String asName,
         @Nullable ImportPriority priority,
         @Nullable PsiElement anchor

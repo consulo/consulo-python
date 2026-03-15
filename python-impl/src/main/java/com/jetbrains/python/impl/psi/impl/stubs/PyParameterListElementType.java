@@ -30,7 +30,6 @@ import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyParameterListImpl;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -43,24 +42,23 @@ public class PyParameterListElementType extends PyStubElementType<PyParameterLis
     super(debugName);
   }
 
-  public PyParameterList createPsi(@Nonnull PyParameterListStub stub) {
+  public PyParameterList createPsi(PyParameterListStub stub) {
     return new PyParameterListImpl(stub);
   }
 
-  public PyParameterListStub createStub(@Nonnull PyParameterList psi, StubElement parentStub) {
+  public PyParameterListStub createStub(PyParameterList psi, StubElement parentStub) {
     return new PyParameterListStubImpl(parentStub, getStubElementType());
   }
 
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PyParameterListImpl(node);
   }
 
-  public void serialize(@Nonnull PyParameterListStub stub, @Nonnull StubOutputStream dataStream)
+  public void serialize(PyParameterListStub stub, StubOutputStream dataStream)
       throws IOException {
   }
 
-  @Nonnull
-  public PyParameterListStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub)
+  public PyParameterListStub deserialize(StubInputStream dataStream, StubElement parentStub)
       throws IOException {
     return new PyParameterListStubImpl(parentStub, getStubElementType());
   }

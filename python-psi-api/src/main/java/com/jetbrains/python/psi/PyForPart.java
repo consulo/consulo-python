@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Main part of a 'for' statement

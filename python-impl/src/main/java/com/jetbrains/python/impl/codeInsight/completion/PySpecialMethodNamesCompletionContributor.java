@@ -31,7 +31,6 @@ import consulo.language.editor.completion.lookup.TailType;
 import consulo.language.editor.completion.lookup.TailTypeDecorator;
 import consulo.language.util.ProcessingContext;
 
-import jakarta.annotation.Nonnull;
 import java.util.Map;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
@@ -60,9 +59,9 @@ public class PySpecialMethodNamesCompletionContributor extends CompletionContrib
                        .and(psiElement()
                               .afterLeaf("def")),
            new CompletionProvider() {
-             public void addCompletions(@Nonnull CompletionParameters parameters,
+             public void addCompletions(CompletionParameters parameters,
                                         ProcessingContext context,
-                                        @Nonnull CompletionResultSet result) {
+                                        CompletionResultSet result) {
                LanguageLevel languageLevel = LanguageLevel.forElement(parameters.getOriginalFile());
                for (Map.Entry<String, PyNames.BuiltinDescription> entry : PyNames.getBuiltinMethods(languageLevel).entrySet()) {
                  LookupElementBuilder item = LookupElementBuilder.create(entry.getKey() + entry.getValue().getSignature())
@@ -76,7 +75,6 @@ public class PySpecialMethodNamesCompletionContributor extends CompletionContrib
            });
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

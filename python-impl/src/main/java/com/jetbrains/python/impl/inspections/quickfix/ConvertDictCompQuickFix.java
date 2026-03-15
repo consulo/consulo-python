@@ -22,7 +22,6 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -31,14 +30,13 @@ import java.util.List;
  * @since 2010-02-20
  */
 public class ConvertDictCompQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.intnConvertDictCompTo();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (!LanguageLevel.forElement(element).isPy3K() && element instanceof PyDictCompExpression) {
             replaceComprehension(project, (PyDictCompExpression) element);

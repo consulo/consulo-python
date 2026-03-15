@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.codeInsight.completion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.editor.AutoPopupController;
 import consulo.language.editor.completion.lookup.InsertionContext;
@@ -38,7 +37,7 @@ public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElem
 	public static PyFunctionInsertHandler INSTANCE = new PyFunctionInsertHandler();
 
 	@Override
-	public void handleInsert(@Nonnull InsertionContext context, @Nonnull LookupElement item)
+	public void handleInsert(InsertionContext context, LookupElement item)
 	{
 		super.handleInsert(context, item);
 		if(hasParams(context, item))
@@ -48,18 +47,18 @@ public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElem
 	}
 
 	@Override
-	protected boolean placeCaretInsideParentheses(@Nonnull InsertionContext context, @Nonnull LookupElement item)
+	protected boolean placeCaretInsideParentheses(InsertionContext context, LookupElement item)
 	{
 		return hasParams(context, item);
 	}
 
-	private static boolean hasParams(@Nonnull InsertionContext context, @Nonnull LookupElement item)
+	private static boolean hasParams(InsertionContext context, LookupElement item)
 	{
 		PyFunction function = getFunction(item);
 		return function != null && hasParams(context, function);
 	}
 
-	public static boolean hasParams(@Nonnull InsertionContext context, @Nonnull PyFunction function)
+	public static boolean hasParams(InsertionContext context, PyFunction function)
 	{
 		PsiElement element = context.getFile().findElementAt(context.getStartOffset());
 		PyReferenceExpression refExpr = PsiTreeUtil.getParentOfType(element, PyReferenceExpression.class);
@@ -68,7 +67,7 @@ public class PyFunctionInsertHandler extends ParenthesesInsertHandler<LookupElem
 	}
 
 	@Nullable
-	private static PyFunction getFunction(@Nonnull LookupElement item)
+	private static PyFunction getFunction(LookupElement item)
 	{
 		return PyUtil.as(item.getPsiElement(), PyFunction.class);
 	}

@@ -34,7 +34,6 @@ import consulo.util.collection.MultiMap;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.*;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
@@ -51,8 +50,7 @@ public class PyImportOptimizer implements ImportOptimizer {
   }
 
   @Override
-  @Nonnull
-  public Runnable processFile(@Nonnull PsiFile file) {
+  public Runnable processFile(PsiFile file) {
     LocalInspectionToolSession session = new LocalInspectionToolSession(file, 0, file.getTextLength());
     final PyUnresolvedReferencesInspection.Visitor visitor =
       new PyUnresolvedReferencesInspection.Visitor(null, session, Collections.emptyList());
@@ -71,7 +69,6 @@ public class PyImportOptimizer implements ImportOptimizer {
     };
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;
@@ -92,7 +89,7 @@ public class PyImportOptimizer implements ImportOptimizer {
     private final Map<ImportPriority, List<PyImportStatementBase>> myGroups;
     private final PyCodeStyleSettings myPySettings;
 
-    private ImportSorter(@Nonnull PyFile file) {
+    private ImportSorter(PyFile file) {
       myFile = file;
       myPySettings = CodeStyleSettingsManager.getSettings(myFile.getProject()).getCustomSettings(PyCodeStyleSettings.class);
       myImportBlock = myFile.getImportBlock();
@@ -125,8 +122,7 @@ public class PyImportOptimizer implements ImportOptimizer {
       }
     }
 
-    @Nonnull
-    private List<PyImportStatementBase> transformImportStatements(@Nonnull List<PyImportStatementBase> imports) {
+    private List<PyImportStatementBase> transformImportStatements(List<PyImportStatementBase> imports) {
       List<PyImportStatementBase> result = new ArrayList<>();
 
       PyElementGenerator generator = PyElementGenerator.getInstance(myFile.getProject());
@@ -204,8 +200,7 @@ public class PyImportOptimizer implements ImportOptimizer {
       return result;
     }
 
-    @Nonnull
-    public static String getNormalizedFromImportSource(@Nonnull PyFromImportStatement statement) {
+    public static String getNormalizedFromImportSource(PyFromImportStatement statement) {
       return StringUtil.repeatSymbol('.', statement.getRelativeLevel()) + Objects.toString(statement.getImportSourceQName(), "");
     }
 
@@ -257,7 +252,7 @@ public class PyImportOptimizer implements ImportOptimizer {
       }
     }
 
-    private void addImports(@Nonnull PyImportStatementBase anchor) {
+    private void addImports(PyImportStatementBase anchor) {
       // EnumMap returns values in key order, i.e. according to import groups priority
       for (List<PyImportStatementBase> imports : myGroups.values()) {
         for (PyImportStatementBase newImport : imports) {

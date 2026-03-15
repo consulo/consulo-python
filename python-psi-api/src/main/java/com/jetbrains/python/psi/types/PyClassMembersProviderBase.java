@@ -19,8 +19,7 @@ import com.jetbrains.python.codeInsight.PyCustomMember;
 import com.jetbrains.python.psi.PyClass;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -29,7 +28,6 @@ import java.util.Collections;
  */
 public abstract class PyClassMembersProviderBase implements PyClassMembersProvider
 {
-	@Nonnull
 	@Override
 	public Collection<PyCustomMember> getMembers(PyClassType clazz, PsiElement location, TypeEvalContext typeEvalContext)
 	{

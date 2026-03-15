@@ -3,7 +3,6 @@ package com.jetbrains.python.debugger.pydev;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import consulo.application.ApplicationManager;
 
-import jakarta.annotation.Nonnull;
 
 
 public abstract class AbstractCommand<T>
@@ -65,14 +64,13 @@ public abstract class AbstractCommand<T>
 	public static final String TAB_CHAR = "@_@TAB_CHAR@_@";
 
 
-	@Nonnull
 	private final RemoteDebugger myDebugger;
 	private final int myCommandCode;
 
 	private final ResponseProcessor<T> myResponseProcessor;
 
 
-	protected AbstractCommand(@Nonnull RemoteDebugger debugger, int commandCode)
+	protected AbstractCommand(RemoteDebugger debugger, int commandCode)
 	{
 		myDebugger = debugger;
 		myCommandCode = commandCode;
@@ -89,7 +87,6 @@ public abstract class AbstractCommand<T>
 		return myResponseProcessor;
 	}
 
-	@Nonnull
 	public final String getPayload()
 	{
 		Payload payload = new Payload();
@@ -254,7 +251,6 @@ public abstract class AbstractCommand<T>
 		return command == ERROR;
 	}
 
-	@Nonnull
 	public RemoteDebugger getDebugger()
 	{
 		return myDebugger;

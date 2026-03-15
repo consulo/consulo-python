@@ -30,7 +30,6 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringEscapeUtil;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -52,7 +51,6 @@ import java.util.List;
  * @author catherine
  */
 public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnTripleQuotedString();
@@ -60,7 +58,7 @@ public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
 
     @Override
     @RequiredReadAction
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -89,7 +87,7 @@ public class PyConvertTripleQuotedStringIntention extends BaseIntentionAction {
 
     @Override
     @RequiredWriteAction
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyStringLiteralExpression string =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

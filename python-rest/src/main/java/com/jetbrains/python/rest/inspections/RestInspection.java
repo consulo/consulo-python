@@ -21,20 +21,17 @@ import consulo.language.editor.inspection.LocalInspectionTool;
 import consulo.language.editor.intention.SuppressIntentionAction;
 import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author catherine
  */
 public abstract class RestInspection extends LocalInspectionTool implements CustomSuppressableInspectionTool {
-    @Nonnull
     @Override
     public LocalizeValue getGroupDisplayName() {
         return LocalizeValue.localizeTODO(RestBundle.message("INSP.GROUP.rest"));
     }
 
-    @Nonnull
     @Override
     public String getShortName() {
         return getClass().getSimpleName();
@@ -51,7 +48,7 @@ public abstract class RestInspection extends LocalInspectionTool implements Cust
     }
 
     @Override
-    public boolean isSuppressedFor(@Nonnull PsiElement element) {
+    public boolean isSuppressedFor(PsiElement element) {
         return false;
     }
 }

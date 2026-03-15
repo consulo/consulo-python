@@ -24,10 +24,9 @@ import consulo.configurable.StandardConfigurableIds;
 import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.project.Project;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.inject.Inject;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan
@@ -37,11 +36,10 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyIntegratedToolsModulesConfigurable extends ModuleAwareProjectConfigurable implements NonDefaultProjectConfigurable, ProjectConfigurable {
   @Inject
-  public PyIntegratedToolsModulesConfigurable(@Nonnull Project project) {
+  public PyIntegratedToolsModulesConfigurable(Project project) {
     super(project, LocalizeValue.localizeTODO("Python Integrated Tools"), "reference-python-integrated-tools");
   }
 
-  @Nonnull
   @Override
   public String getId() {
     return "py.integrated.tools";
@@ -53,9 +51,8 @@ public class PyIntegratedToolsModulesConfigurable extends ModuleAwareProjectConf
     return StandardConfigurableIds.EXECUTION_GROUP;
   }
 
-  @Nonnull
   @Override
-  protected Configurable createModuleConfigurable(@Nonnull Module module) {
+  protected Configurable createModuleConfigurable(Module module) {
     return new PyIntegratedToolsConfigurable(module);
   }
 }

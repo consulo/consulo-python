@@ -25,7 +25,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class PyNegateComparisonIntention extends BaseIntentionAction {
         invertedComparasions.put(PyTokenTypes.NE_OLD, PyTokenTypes.EQEQ);
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -77,7 +76,7 @@ public class PyNegateComparisonIntention extends BaseIntentionAction {
         return false;
     }
 
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
 
         PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
         PyBinaryExpression binaryExpression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);

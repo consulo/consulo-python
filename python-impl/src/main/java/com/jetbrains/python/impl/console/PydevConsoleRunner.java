@@ -39,8 +39,7 @@ import consulo.util.lang.Pair;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.encoding.EncodingProjectManager;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
@@ -60,8 +59,7 @@ public interface PydevConsoleRunner {
     void handleConsoleInitialized(LanguageConsoleView consoleView);
   }
 
-  @Nonnull
-  static Pair<Sdk, Module> findPythonSdkAndModule(@Nonnull Project project, @Nullable Module contextModule) {
+  static Pair<Sdk, Module> findPythonSdkAndModule(Project project, @Nullable Module contextModule) {
     Sdk sdk = null;
     Module module = null;
     PyConsoleOptions.PyConsoleSettings settings = PyConsoleOptions.getInstance(project).getPythonConsoleSettings();
@@ -129,7 +127,7 @@ public interface PydevConsoleRunner {
     return command.replace(PydevConsoleRunnerImpl.WORKING_DIR_ENV, path);
   }
 
-  static Map<String, String> addDefaultEnvironments(Sdk sdk, Map<String, String> envs, @Nonnull Project project) {
+  static Map<String, String> addDefaultEnvironments(Sdk sdk, Map<String, String> envs, Project project) {
     setCorrectStdOutEncoding(envs, project);
 
     PythonSdkFlavor.initPythonPath(envs, true, PythonCommandLineState.getAddedPaths(sdk));
@@ -142,7 +140,7 @@ public interface PydevConsoleRunner {
    * @param envs    map of envs to add variable
    * @param project current project
    */
-  static void setCorrectStdOutEncoding(@Nonnull Map<String, String> envs, @Nonnull Project project) {
+  static void setCorrectStdOutEncoding(Map<String, String> envs, Project project) {
     Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
     String encoding = defaultCharset.name();
     setPythonIOEncoding(setPythonUnbuffered(envs), encoding);
@@ -155,7 +153,7 @@ public interface PydevConsoleRunner {
    * @param commandLine command line
    * @param project     current project
    */
-  static void setCorrectStdOutEncoding(@Nonnull GeneralCommandLine commandLine, @Nonnull Project project) {
+  static void setCorrectStdOutEncoding(GeneralCommandLine commandLine, Project project) {
     Charset defaultCharset = EncodingProjectManager.getInstance(project).getDefaultCharset();
     commandLine.setCharset(defaultCharset);
     setPythonIOEncoding(commandLine.getEnvironment(), defaultCharset.name());

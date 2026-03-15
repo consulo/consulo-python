@@ -26,7 +26,6 @@ import consulo.usage.rule.PsiElementUsage;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyImportStatementBase;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -34,7 +33,7 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyImportFilteringRule implements ImportFilteringRule {
   @Override
-  public boolean isVisible(@Nonnull Usage usage) {
+  public boolean isVisible(Usage usage) {
     if (usage instanceof PsiElementUsage) {
       PsiElement psiElement = ((PsiElementUsage)usage).getElement();
       PsiFile containingFile = psiElement.getContainingFile();

@@ -10,9 +10,7 @@ import com.intellij.psi.*;
 import com.intellij.testFramework.TestDataFile;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
-import org.jetbrains.annotations.NonNls;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +19,7 @@ import java.io.IOException;
  * @author yole
  */
 public abstract class PyResolveTestCase extends PyTestCase {
-  @NonNls protected static final String MARKER = "<ref>";
+  protected static final String MARKER = "<ref>";
 
 
   protected PsiReference configureByFile(@TestDataFile String filePath) {
@@ -115,7 +113,6 @@ public abstract class PyResolveTestCase extends PyTestCase {
     return offset;
   }
 
-  @Nonnull
   public static PsiPolyVariantReference findReferenceByMarker(PsiFile psiFile) {
     int offset = findMarkerOffset(psiFile);
     PsiPolyVariantReference ref = (PsiPolyVariantReference)psiFile.findReferenceAt(offset);

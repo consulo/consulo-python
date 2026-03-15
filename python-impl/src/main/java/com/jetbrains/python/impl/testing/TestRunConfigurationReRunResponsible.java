@@ -17,8 +17,7 @@ package com.jetbrains.python.impl.testing;
 
 import java.util.Collection;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.process.ExecutionException;
 import consulo.execution.executor.Executor;
@@ -43,5 +42,5 @@ public interface TestRunConfigurationReRunResponsible
 	 * @throws ExecutionException failed to run
 	 */
 	@Nullable
-	RunProfileState rerunTests(@Nonnull Executor executor, @Nonnull ExecutionEnvironment environment, @Nonnull Collection<PsiElement> failedTests) throws ExecutionException;
+	RunProfileState rerunTests(Executor executor, ExecutionEnvironment environment, Collection<PsiElement> failedTests) throws ExecutionException;
 }

@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
-import jakarta.annotation.Nonnull;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyTokenTypes;
@@ -41,7 +40,7 @@ public class PyExceptFixer extends PyFixer<PyExceptPart>
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyExceptPart exceptPart) throws IncorrectOperationException
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyExceptPart exceptPart) throws IncorrectOperationException
 	{
 		PsiElement colon = PyPsiUtils.getFirstChildOfType(exceptPart, PyTokenTypes.COLON);
 		if(colon == null)

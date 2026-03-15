@@ -32,7 +32,6 @@ import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,14 +43,13 @@ import java.util.List;
 @ExtensionImpl
 public class PyTestFinder implements TestFinder
 {
-	public PyDocStringOwner findSourceElement(@Nonnull PsiElement element)
+	public PyDocStringOwner findSourceElement(PsiElement element)
 	{
 		return PsiTreeUtil.getParentOfType(element, PyClass.class, PyFunction.class);
 	}
 
-	@Nonnull
 	@Override
-	public Collection<PsiElement> findTestsForClass(@Nonnull PsiElement element)
+	public Collection<PsiElement> findTestsForClass(PsiElement element)
 	{
 		PyDocStringOwner source = findSourceElement(element);
 		if(source == null)
@@ -103,9 +101,8 @@ public class PyTestFinder implements TestFinder
 		return TestFinderHelper.getSortedElements(classesWithProximities, true);
 	}
 
-	@Nonnull
 	@Override
-	public Collection<PsiElement> findClassesForTest(@Nonnull PsiElement element)
+	public Collection<PsiElement> findClassesForTest(PsiElement element)
 	{
 		PyFunction sourceFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
 		PyClass source = PsiTreeUtil.getParentOfType(element, PyClass.class);
@@ -147,7 +144,7 @@ public class PyTestFinder implements TestFinder
 	}
 
 	@Override
-	public boolean isTest(@Nonnull PsiElement element)
+	public boolean isTest(PsiElement element)
 	{
 		PyClass cl = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
 		if(cl != null)

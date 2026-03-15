@@ -31,8 +31,7 @@ import consulo.project.Project;
 import consulo.repository.ui.InstalledPackage;
 import consulo.repository.ui.PackageManagementService;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +56,6 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 
 	class PyInstallPackageManagementFix implements PyExecutionFix
 	{
-		@Nonnull
 		@Override
 		public String getName()
 		{
@@ -65,7 +63,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 		}
 
 		@Override
-		public void run(@Nonnull final Sdk sdk)
+		public void run(final Sdk sdk)
 		{
 			PyPackageManagerUI ui = new PyPackageManagerUI(myProject, sdk, new PyPackageManagerUI.Listener()
 			{
@@ -197,7 +195,7 @@ public class PyInstalledPackagesPanel extends InstalledPackagesPanel
 	}
 
 	@Override
-	protected boolean canInstallPackage(@Nonnull InstalledPackage pyPackage)
+	protected boolean canInstallPackage(InstalledPackage pyPackage)
 	{
 		return installEnabled();
 	}

@@ -26,8 +26,7 @@ import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType;
 import com.jetbrains.python.impl.psi.impl.stubs.PropertyStubType;
 import com.jetbrains.python.toolbox.Maybe;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -38,7 +37,6 @@ import java.io.IOException;
  */
 public class PropertyStubStorage extends PropertyBunch<String> implements CustomTargetExpressionStub {
 
-  @Nonnull
   @Override
   protected Maybe<String> translate(@Nullable PyExpression ref) {
     if (ref != null) {
@@ -55,7 +53,6 @@ public class PropertyStubStorage extends PropertyBunch<String> implements Custom
     else stream.writeName(IMPOSSIBLE_NAME);
   }
 
-  @Nonnull
   @Override
   public Class<? extends CustomTargetExpressionStubType> getTypeClass() {
     return PropertyStubType.class;

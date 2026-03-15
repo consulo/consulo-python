@@ -29,7 +29,6 @@ import consulo.repository.ui.RepoPackage;
 import consulo.util.concurrent.AsyncResult;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,24 +36,21 @@ import java.util.List;
 public class PyCondaManagementService extends PyPackageManagementService {
   private static final Logger LOG = Logger.getInstance(PyCondaManagementService.class);
 
-  public PyCondaManagementService(@Nonnull Project project, @Nonnull Sdk sdk) {
+  public PyCondaManagementService(Project project, Sdk sdk) {
     super(project, sdk);
   }
 
   @Override
-  @Nonnull
   public List<RepoPackage> getAllPackagesCached() {
     return versionMapToPackageList(PyCondaPackageService.getInstance().getCondaPackages());
   }
 
   @Override
-  @Nonnull
   public List<RepoPackage> getAllPackages() {
     return versionMapToPackageList(PyCondaPackageService.getInstance().loadAndGetPackages());
   }
 
   @Override
-  @Nonnull
   public List<RepoPackage> reloadAllPackages() {
     return getAllPackages();
   }
@@ -114,7 +110,6 @@ public class PyCondaManagementService extends PyPackageManagementService {
     return false;
   }
 
-  @Nonnull
   @Override
   public AsyncResult<List<String>> fetchPackageVersions(String packageName) {
     List<String> versions = PyCondaPackageService.getInstance().getPackageVersions(packageName);

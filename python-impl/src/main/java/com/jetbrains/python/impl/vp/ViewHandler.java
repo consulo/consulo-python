@@ -19,8 +19,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import consulo.application.ApplicationManager;
@@ -38,7 +37,7 @@ class ViewHandler<C> implements InvocationHandler
 	 */
 	private C realView;
 
-	public void setRealView(@Nonnull C realView)
+	public void setRealView(C realView)
 	{
 		this.realView = realView;
 	}
@@ -61,17 +60,15 @@ class ViewHandler<C> implements InvocationHandler
 	 */
 	private static class Invoker implements Runnable
 	{
-		@Nonnull
 		private final Method method;
 		@Nullable
 		private final Object[] args;
-		@Nonnull
 		private final Object target;
 
 		private InvocationTargetException exception;
 		private Object result;
 
-		private Invoker(@Nonnull Object target, @Nonnull Method method, @Nullable Object[] args)
+		private Invoker(Object target, Method method, @Nullable Object[] args)
 		{
 			this.target = target;
 			this.method = method;

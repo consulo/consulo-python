@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import com.jetbrains.python.debugger.PydevXmlUtils;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -48,7 +47,6 @@ public class GetCompletionsCommand extends AbstractFrameCommand {
     payload.add("FRAME").add(myActionToken);
   }
 
-  @Nonnull
   public List<PydevCompletionVariant> getCompletions() {
     if (myCompletions != null) {
       return myCompletions;

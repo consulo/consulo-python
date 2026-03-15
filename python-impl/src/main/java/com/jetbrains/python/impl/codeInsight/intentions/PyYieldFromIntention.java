@@ -25,21 +25,19 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author vlan
  */
 public class PyYieldFromIntention extends BaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnYieldFrom();
     }
 
     @Override
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (LanguageLevel.forElement(file).isAtLeast(LanguageLevel.PYTHON33)) {
             PyForStatement forLoop = findForStatementAtCaret(editor, file);
             if (forLoop != null) {
@@ -57,7 +55,7 @@ public class PyYieldFromIntention extends BaseIntentionAction {
     }
 
     @Override
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyForStatement forLoop = findForStatementAtCaret(editor, file);
         if (forLoop != null) {
             PyExpression source = forLoop.getForPart().getSource();
@@ -79,13 +77,13 @@ public class PyYieldFromIntention extends BaseIntentionAction {
     }
 
     @Nullable
-    private static PyForStatement findForStatementAtCaret(@Nonnull Editor editor, @Nonnull PsiFile file) {
+    private static PyForStatement findForStatementAtCaret(Editor editor, PsiFile file) {
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         return PsiTreeUtil.getParentOfType(elementAtCaret, PyForStatement.class);
     }
 
     @Nullable
-    private static PyTargetExpression findSingleForLoopTarget(@Nonnull PyForStatement forLoop) {
+    private static PyTargetExpression findSingleForLoopTarget(PyForStatement forLoop) {
         PyForPart forPart = forLoop.getForPart();
         PyExpression forTarget = forPart.getTarget();
         if (forTarget instanceof PyTargetExpression) {
@@ -95,7 +93,7 @@ public class PyYieldFromIntention extends BaseIntentionAction {
     }
 
     @Nullable
-    private static PyReferenceExpression findSingleYieldValue(@Nonnull PyForStatement forLoop) {
+    private static PyReferenceExpression findSingleYieldValue(PyForStatement forLoop) {
         PyForPart forPart = forLoop.getForPart();
         PyStatementList stmtList = forPart.getStatementList();
         if (stmtList != null && forLoop.getElsePart() == null) {

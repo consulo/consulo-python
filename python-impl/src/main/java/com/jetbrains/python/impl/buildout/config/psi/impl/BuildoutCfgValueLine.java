@@ -22,7 +22,6 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiReference;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.List;
  * @author traff
  */
 public class BuildoutCfgValueLine extends BuildoutCfgPsiElement {
-    public BuildoutCfgValueLine(@Nonnull ASTNode node) {
+    public BuildoutCfgValueLine(ASTNode node) {
         super(node);
     }
 
@@ -40,7 +39,6 @@ public class BuildoutCfgValueLine extends BuildoutCfgPsiElement {
         return "BuildoutCfgValue:" + getNode().getElementType().toString();
     }
 
-    @Nonnull
     @Override
     public PsiReference[] getReferences() {
         if (BuildoutPsiUtil.isInBuildoutSection(this) && BuildoutPsiUtil.isAssignedTo(this, "parts")) {

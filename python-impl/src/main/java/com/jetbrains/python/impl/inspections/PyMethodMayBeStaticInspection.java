@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,18 +39,16 @@ import java.util.Locale;
  */
 @ExtensionImpl
 public class PyMethodMayBeStaticInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameMethodMayBeStatic();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
@@ -59,7 +56,7 @@ public class PyMethodMayBeStaticInspection extends PyInspection {
 
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -168,7 +165,7 @@ public class PyMethodMayBeStaticInspection extends PyInspection {
         }
     }
 
-    private static boolean isTestElement(@Nonnull PyFunction node) {
+    private static boolean isTestElement(PyFunction node) {
         String methodName = node.getName();
         PyClass pyClass = node.getContainingClass();
         String className = pyClass == null ? null : pyClass.getName();

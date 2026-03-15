@@ -44,7 +44,6 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 /**
  * Helps to specify type  in annotations in python3.
@@ -52,17 +51,15 @@ import jakarta.annotation.Nonnull;
  * @author ktisha
  */
 public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention {
-    @Nonnull
     private LocalizeValue myText = PyLocalize.intnSpecifyTypeInAnnotation();
 
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return myText;
     }
 
     @Override
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!LanguageLevel.forElement(file).isPy3K()) {
             return false;
         }
@@ -70,7 +67,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention {
     }
 
     @Override
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyExpression problemElement = getProblemElement(elementAt);
         PsiReference reference = problemElement == null ? null : problemElement.getReference();
@@ -89,7 +86,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention {
         }
     }
 
-    static PyNamedParameter annotateParameter(Project project, Editor editor, @Nonnull PyNamedParameter parameter, boolean createTemplate) {
+    static PyNamedParameter annotateParameter(Project project, Editor editor, PyNamedParameter parameter, boolean createTemplate) {
         PyExpression defaultParamValue = parameter.getDefaultValue();
 
         String paramName = StringUtil.notNullize(parameter.getName());
@@ -136,7 +133,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention {
     }
 
 
-    static String returnType(@Nonnull PyFunction function) {
+    static String returnType(PyFunction function) {
         String returnType = PyNames.OBJECT;
         PySignature signature = PySignatureCacheManager.getInstance(function.getProject()).findSignature(function);
         if (signature != null) {
@@ -220,7 +217,7 @@ public class SpecifyTypeInPy3AnnotationsIntention extends TypeIntention {
     }
 
     @Override
-    protected boolean isReturnTypeDefined(@Nonnull PyFunction function) {
+    protected boolean isReturnTypeDefined(PyFunction function) {
         return function.getAnnotation() != null;
     }
 

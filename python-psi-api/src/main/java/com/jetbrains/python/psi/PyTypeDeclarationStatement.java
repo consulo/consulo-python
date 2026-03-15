@@ -15,13 +15,11 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Mikhail Golubev
  */
 public interface PyTypeDeclarationStatement extends PyStatement, PyAnnotationOwner
 {
-	@Nonnull
 	PyExpression getTarget();
 }

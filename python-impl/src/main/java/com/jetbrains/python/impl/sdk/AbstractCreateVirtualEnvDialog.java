@@ -41,8 +41,7 @@ import consulo.util.io.PathUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -234,7 +233,7 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
             String myPath;
 
             @Override
-            public void run(@Nonnull ProgressIndicator indicator) {
+            public void run(ProgressIndicator indicator) {
                 try {
                     indicator.setTextValue(PyLocalize.sdkCreateVenvDialogCreatingVenv());
                     myPath = createEnvironment(basicSdk);

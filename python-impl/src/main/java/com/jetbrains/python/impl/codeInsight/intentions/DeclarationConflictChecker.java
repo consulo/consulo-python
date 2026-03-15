@@ -28,8 +28,7 @@ import consulo.usage.UsageViewManager;
 import consulo.usage.UsageViewPresentation;
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,10 +51,9 @@ public class DeclarationConflictChecker {
    * @param ignored    if an element defining the name is also listed here, ignore it.
    * @return a list of pairs (referring element, element that defines name).
    */
-  @Nonnull
-  public static List<Pair<PsiElement, PsiElement>> findDefinitions(@Nonnull String name,
-                                                                   @Nonnull Collection<PsiReference> references,
-                                                                   @Nonnull Set<PsiElement> ignored) {
+  public static List<Pair<PsiElement, PsiElement>> findDefinitions(String name,
+                                                                   Collection<PsiReference> references,
+                                                                   Set<PsiElement> ignored) {
     List<Pair<PsiElement, PsiElement>> conflicts = new ArrayList<>();
     for (PsiReference ref : references) {
       PsiElement refElement = ref.getElement();

@@ -17,8 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.Collection;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.FunctionParameter;
 
@@ -33,10 +32,8 @@ public interface PyArgumentList extends PyElement
 	/**
 	 * @return all argument list param expressions (keyword argument or nameless)
 	 */
-	@Nonnull
 	Collection<PyExpression> getArgumentExpressions();
 
-	@Nonnull
 	PyExpression[] getArguments();
 
 	@Nullable
@@ -51,7 +48,7 @@ public interface PyArgumentList extends PyElement
 	 *
 	 * @param arg argument to add
 	 */
-	void addArgument(@Nonnull PyExpression arg);
+	void addArgument(PyExpression arg);
 
 	void addArgumentFirst(PyExpression arg);
 
@@ -74,5 +71,5 @@ public interface PyArgumentList extends PyElement
 	 * @return function parameter value expression or null if does not exist
 	 */
 	@Nullable
-	PyExpression getValueExpressionForParam(@Nonnull FunctionParameter parameter);
+	PyExpression getValueExpressionForParam(FunctionParameter parameter);
 }

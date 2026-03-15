@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.documentation.doctest;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.Language;
 import com.jetbrains.python.impl.psi.PyFileElementType;
@@ -29,7 +28,6 @@ public class PyDocstringFileElementType extends PyFileElementType {
     super(language);
   }
 
-  @Nonnull
   @Override
   public String getExternalId() {
     return "PyDocstring.FILE";

@@ -24,7 +24,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 public class PyUpdatePropertySignatureQuickFix implements LocalQuickFix {
     private final boolean myHasValue;
@@ -33,14 +32,13 @@ public class PyUpdatePropertySignatureQuickFix implements LocalQuickFix {
         myHasValue = hasValue;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameUpdateParameters();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyCallable function = PsiTreeUtil.getParentOfType(element, PyCallable.class, false);
         assert function != null;

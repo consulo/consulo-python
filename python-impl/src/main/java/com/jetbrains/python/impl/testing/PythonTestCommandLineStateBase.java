@@ -40,7 +40,6 @@ import com.jetbrains.python.impl.run.CommandLinePatcher;
 import com.jetbrains.python.impl.run.PythonCommandLineState;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +62,6 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 	}
 
 	@Override
-	@Nonnull
 	protected ConsoleView createAndAttachConsole(Project project, ProcessHandler processHandler, Executor executor) throws ExecutionException
 	{
 
@@ -102,7 +100,7 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 		return cmd;
 	}
 
-	protected void setWorkingDirectory(@Nonnull GeneralCommandLine cmd)
+	protected void setWorkingDirectory(GeneralCommandLine cmd)
 	{
 		String workingDirectory = myConfiguration.getWorkingDirectory();
 		if(!StringUtil.isEmptyOrSpaces(workingDirectory))
@@ -164,6 +162,5 @@ public abstract class PythonTestCommandLineStateBase extends PythonCommandLineSt
 
 	protected abstract HelperPackage getRunner();
 
-	@Nonnull
 	protected abstract List<String> getTestSpecs();
 }

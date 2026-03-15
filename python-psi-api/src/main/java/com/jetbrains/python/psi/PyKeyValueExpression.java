@@ -16,8 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -25,7 +24,6 @@ import jakarta.annotation.Nullable;
 public interface PyKeyValueExpression extends PyExpression {
   PyKeyValueExpression[] EMPTY_ARRAY = new PyKeyValueExpression[0]; 
 
-  @Nonnull
   PyExpression getKey();
 
   @Nullable

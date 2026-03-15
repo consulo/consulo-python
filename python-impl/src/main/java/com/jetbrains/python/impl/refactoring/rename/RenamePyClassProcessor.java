@@ -25,7 +25,6 @@ import consulo.language.psi.PsiReference;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.language.psi.search.ReferencesSearch;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +37,7 @@ import java.util.List;
 public class RenamePyClassProcessor extends RenamePyElementProcessor
 {
 	@Override
-	public boolean canProcessElement(@Nonnull PsiElement element)
+	public boolean canProcessElement(PsiElement element)
 	{
 		return element instanceof PyClass;
 	}
@@ -67,7 +66,6 @@ public class RenamePyClassProcessor extends RenamePyElementProcessor
 		PyCodeInsightSettings.getInstance().RENAME_SEARCH_NON_CODE_FOR_CLASS = enabled;
 	}
 
-	@Nonnull
 	@Override
 	public Collection<PsiReference> findReferences(PsiElement element)
 	{

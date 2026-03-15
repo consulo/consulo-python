@@ -2,7 +2,7 @@ package com.jetbrains.python.intentions;
 
 import java.util.List;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.editor.CodeInsightSettings;
 import consulo.language.editor.intention.IntentionAction;
 import com.jetbrains.python.impl.PyBundle;

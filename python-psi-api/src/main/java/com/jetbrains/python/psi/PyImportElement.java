@@ -17,8 +17,7 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.StubBasedPsiElement;
@@ -64,6 +63,5 @@ public interface PyImportElement extends PyElement, PyImportedNameDefiner, StubB
 	/**
 	 * Resolves the import element to the elements being imported.
 	 */
-	@Nonnull
 	List<RatedResolveResult> multiResolve();
 }

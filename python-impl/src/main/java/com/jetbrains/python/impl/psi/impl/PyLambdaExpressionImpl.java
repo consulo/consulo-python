@@ -25,8 +25,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 /**
@@ -44,7 +43,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 		pyVisitor.visitPyLambdaExpression(this);
 	}
 
-	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
+	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		for(PyTypeProvider provider : PyTypeProvider.EP_NAME.getExtensionList())
 		{
@@ -57,7 +56,6 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 		return new PyFunctionTypeImpl(this);
 	}
 
-	@Nonnull
 	public PyParameterList getParameterList()
 	{
 		PyElement child = childToPsi(PyElementTypes.PARAMETER_LIST_SET, 0);
@@ -71,7 +69,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
+	public PyType getReturnType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		PyExpression body = getBody();
 		return body != null ? context.getType(body) : null;
@@ -79,14 +77,14 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
+	public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite)
 	{
 		return context.getReturnType(this);
 	}
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nullable PyExpression receiver, @Nonnull Map<PyExpression, PyNamedParameter> parameters, @Nonnull TypeEvalContext context)
+	public PyType getCallType(@Nullable PyExpression receiver, Map<PyExpression, PyNamedParameter> parameters, TypeEvalContext context)
 	{
 		return context.getReturnType(this);
 	}

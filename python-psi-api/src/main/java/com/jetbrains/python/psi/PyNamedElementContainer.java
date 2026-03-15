@@ -17,7 +17,6 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 
@@ -31,6 +30,5 @@ public interface PyNamedElementContainer extends PsiElement
 	/**
 	 * Return named children visible in the current scope.
 	 */
-	@Nonnull
 	List<PsiNamedElement> getNamedElements();
 }

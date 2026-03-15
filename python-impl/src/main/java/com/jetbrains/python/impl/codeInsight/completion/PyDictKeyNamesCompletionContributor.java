@@ -37,7 +37,6 @@ import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 
@@ -93,7 +92,7 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
      * @return
      */
     @RequiredReadAction
-    private static CompletionResultSet createResult(@Nonnull PsiElement original, @Nonnull CompletionResultSet result, int offset) {
+    private static CompletionResultSet createResult(PsiElement original, CompletionResultSet result, int offset) {
         PyStringLiteralExpression prevElement = PsiTreeUtil.getPrevSiblingOfType(original, PyStringLiteralExpression.class);
         if (prevElement != null) {
             ASTNode prevNode = prevElement.getNode();
@@ -236,7 +235,6 @@ public class PyDictKeyNamesCompletionContributor extends CompletionContributor {
         return item;
     }
 
-    @Nonnull
     @Override
     public Language getLanguage() {
         return PythonLanguage.INSTANCE;

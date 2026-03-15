@@ -20,7 +20,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndexKey;
 import com.jetbrains.python.psi.PyClass;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -29,7 +28,6 @@ import jakarta.annotation.Nonnull;
 public class PySuperClassIndex extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String, PyClass> KEY = StubIndexKey.createIndexKey("Py.class.super");
 
-  @Nonnull
   public StubIndexKey<String, PyClass> getKey() {
     return KEY;
   }

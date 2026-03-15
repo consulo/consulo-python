@@ -20,7 +20,6 @@ import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.execution.test.sm.runner.SMTestLocator;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Test locators are injected with their protocol id to support new test locators
@@ -29,9 +28,7 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionAPI(ComponentScope.APPLICATION)
 public interface PythonTestLocator extends SMTestLocator {
-  @Nonnull
   ExtensionPointName<PythonTestLocator> EP_NAME = ExtensionPointName.create(PythonTestLocator.class);
 
-  @Nonnull
   String getProtocolId();
 }

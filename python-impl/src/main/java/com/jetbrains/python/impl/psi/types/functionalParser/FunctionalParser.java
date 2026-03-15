@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.psi.types.functionalParser;
 
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
 
@@ -26,35 +25,25 @@ import java.util.function.Function;
 * @author vlan
 */
 public interface FunctionalParser<R, T> {
-  @Nonnull
-  R parse(@Nonnull List<Token<T>> tokens) throws ParserException;
+  R parse(List<Token<T>> tokens) throws ParserException;
 
-  @Nonnull
-  Pair<R, State> parse(@Nonnull List<Token<T>> tokens,
-                                            @Nonnull FunctionalParserBase.State state) throws ParserException;
+  Pair<R, State> parse(List<Token<T>> tokens,
+                                            FunctionalParserBase.State state) throws ParserException;
 
-  @Nonnull
-  <R2> FunctionalParser<Pair<R, R2>, T> then(@Nonnull FunctionalParser<R2, T> parser);
+  <R2> FunctionalParser<Pair<R, R2>, T> then(FunctionalParser<R2, T> parser);
 
-  @Nonnull
-  <R2> FunctionalParser<R2, T> skipThen(@Nonnull FunctionalParser<R2, T> parser);
+  <R2> FunctionalParser<R2, T> skipThen(FunctionalParser<R2, T> parser);
 
-  @Nonnull
-  <R2> FunctionalParser<R, T> thenSkip(@Nonnull FunctionalParser<R2, T> parser);
+  <R2> FunctionalParser<R, T> thenSkip(FunctionalParser<R2, T> parser);
 
-  @Nonnull
-  FunctionalParser<R, T> or(@Nonnull FunctionalParser<R, T> parser);
+  FunctionalParser<R, T> or(FunctionalParser<R, T> parser);
 
-  @Nonnull
-  <R2> FunctionalParser<R2, T> map(@Nonnull Function<R, R2> f);
+  <R2> FunctionalParser<R2, T> map(Function<R, R2> f);
 
-  @Nonnull
   FunctionalParser<R, T> endOfInput();
 
-  @Nonnull
-  FunctionalParser<R, T> named(@Nonnull String name);
+  FunctionalParser<R, T> named(String name);
 
-  @Nonnull
   FunctionalParser<R, T> cached();
 
   class State {
@@ -68,7 +57,7 @@ public interface FunctionalParser<R, T> {
       myMax = 0;
     }
 
-    State(@Nonnull State state, int pos, int max) {
+    State(State state, int pos, int max) {
       myKey = state.myKey;
       myPos = pos;
       myMax = max;

@@ -16,12 +16,10 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * The 'while' statement.
  */
 public interface PyWhileStatement extends PyLoopStatement, PyStatementWithElse {
-  @Nonnull
   PyWhilePart getWhilePart();
 }

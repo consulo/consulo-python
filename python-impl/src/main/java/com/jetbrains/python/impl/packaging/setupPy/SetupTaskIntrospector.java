@@ -31,8 +31,7 @@ import consulo.module.Module;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -45,7 +44,7 @@ public class SetupTaskIntrospector
 	private static final Map<String, List<SetupTask>> ourDistutilsTaskCache = new HashMap<>();
 	private static final Map<String, List<SetupTask>> ourSetuptoolsTaskCache = new HashMap<>();
 
-	public static boolean usesSetuptools(@Nonnull PyFile file)
+	public static boolean usesSetuptools(PyFile file)
 	{
 		List<PyFromImportStatement> imports = file.getFromImports();
 		for(PyFromImportStatement anImport : imports)
@@ -225,8 +224,7 @@ public class SetupTaskIntrospector
 		return result;
 	}
 
-	@Nullable
-	private static SetupTask.Option createOptionFromTuple(PyExpression tuple, List<String> booleanOptions, Map<String, String> negativeOptMap)
+	private static SetupTask.@Nullable Option createOptionFromTuple(PyExpression tuple, List<String> booleanOptions, Map<String, String> negativeOptMap)
 	{
 		tuple = PyPsiUtils.flattenParens(tuple);
 		if(tuple instanceof PyTupleExpression)

@@ -21,7 +21,7 @@ import com.jetbrains.python.psi.PyExpression;
 
 import java.util.List;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Knows about the last qualifier that occurred in assignment resolution chain.

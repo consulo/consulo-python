@@ -20,8 +20,7 @@ import com.jetbrains.python.debugger.PyThreadInfo;
 import consulo.execution.debug.frame.XExecutionStack;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,14 +33,14 @@ public class PyExecutionStack extends XExecutionStack
 	private final PyThreadInfo myThreadInfo;
 	private PyStackFrame myTopFrame;
 
-	public PyExecutionStack(@Nonnull PyDebugProcess debugProcess, @Nonnull PyThreadInfo threadInfo)
+	public PyExecutionStack(PyDebugProcess debugProcess, PyThreadInfo threadInfo)
 	{
 		super(threadInfo.getName());
 		myDebugProcess = debugProcess;
 		myThreadInfo = threadInfo;
 	}
 
-	public PyExecutionStack(@Nonnull PyDebugProcess debugProcess, @Nonnull PyThreadInfo threadInfo, @Nullable Image icon)
+	public PyExecutionStack(PyDebugProcess debugProcess, PyThreadInfo threadInfo, @Nullable Image icon)
 	{
 		super(threadInfo.getName(), icon);
 		myDebugProcess = debugProcess;

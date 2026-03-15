@@ -7,7 +7,6 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.ast.ASTNode;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Mikhail Golubev
@@ -20,7 +19,7 @@ public abstract class PySequenceExpressionImpl extends PyElementImpl implements 
 	}
 
 	@Override
-	public void deleteChildInternal(@Nonnull ASTNode child)
+	public void deleteChildInternal(ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getElements()))
 		{
@@ -29,7 +28,6 @@ public abstract class PySequenceExpressionImpl extends PyElementImpl implements 
 		super.deleteChildInternal(child);
 	}
 
-	@Nonnull
 	public PyExpression[] getElements()
 	{
 		return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);

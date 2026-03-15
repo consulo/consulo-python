@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenSet;
@@ -38,7 +37,6 @@ public class PyTryExceptStatementImpl extends PyPartitionedElementImpl implement
     pyVisitor.visitPyTryExceptStatement(this);
   }
 
-  @Nonnull
   public PyExceptPart[] getExceptParts() {
     return childrenToPsi(EXCEPT_BLOCKS, PyExceptPart.EMPTY_ARRAY);
   }
@@ -47,7 +45,6 @@ public class PyTryExceptStatementImpl extends PyPartitionedElementImpl implement
     return (PyElsePart)getPart(PyElementTypes.ELSE_PART);
   }
 
-  @Nonnull
   public PyTryPart getTryPart() {
     return (PyTryPart)getPartNotNull(PyElementTypes.TRY_PART);
   }

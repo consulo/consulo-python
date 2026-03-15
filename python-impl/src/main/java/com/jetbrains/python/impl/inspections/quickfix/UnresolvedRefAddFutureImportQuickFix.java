@@ -26,7 +26,6 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to add 'from __future__ import with_statement'' if python version is less than 2.6
@@ -34,13 +33,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class UnresolvedRefAddFutureImportQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixUnresolvedReferenceAddFuture();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyFile file = (PyFile) element.getContainingFile();
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) {

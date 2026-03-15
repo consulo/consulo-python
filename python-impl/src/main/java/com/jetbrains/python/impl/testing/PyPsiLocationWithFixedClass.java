@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.testing;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.execution.action.PsiLocation;
 import consulo.project.Project;
@@ -30,16 +29,14 @@ import com.jetbrains.python.psi.PyFunction;
  */
 public final class PyPsiLocationWithFixedClass extends PsiLocation<PyFunction>
 {
-	@Nonnull
 	private final PyClass myFixedClass;
 
-	PyPsiLocationWithFixedClass(@Nonnull Project project, @Nonnull PyFunction psiElement, @Nonnull PyClass fixedClass)
+	PyPsiLocationWithFixedClass(Project project, PyFunction psiElement, PyClass fixedClass)
 	{
 		super(project, psiElement);
 		myFixedClass = fixedClass;
 	}
 
-	@Nonnull
 	public PyClass getFixedClass()
 	{
 		return myFixedClass;

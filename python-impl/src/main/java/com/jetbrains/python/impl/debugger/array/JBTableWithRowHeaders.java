@@ -22,7 +22,6 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -73,7 +72,7 @@ public class JBTableWithRowHeaders extends JBTable
 
 
 	@Override
-	public void setModel(@Nonnull TableModel model)
+	public void setModel(TableModel model)
 	{
 
 		super.setModel(model);
@@ -102,7 +101,7 @@ public class JBTableWithRowHeaders extends JBTable
 		}
 
 		@Override
-		protected void paintComponent(@Nonnull Graphics g)
+		protected void paintComponent(Graphics g)
 		{
 			if(!Strings.isNullOrEmpty(getEmptyText().getText()))
 			{
@@ -113,7 +112,7 @@ public class JBTableWithRowHeaders extends JBTable
 
 
 		@Override
-		public void setModel(@Nonnull TableModel model)
+		public void setModel(TableModel model)
 		{
 			setAutoCreateColumnsFromModel(true);
 			super.setModel(model);

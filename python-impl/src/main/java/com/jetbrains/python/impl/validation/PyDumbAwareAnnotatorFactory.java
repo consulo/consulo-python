@@ -6,8 +6,7 @@ import consulo.application.dumb.DumbAware;
 import consulo.language.Language;
 import consulo.language.editor.annotation.Annotator;
 import consulo.language.editor.annotation.AnnotatorFactory;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author VISTALL
@@ -21,7 +20,6 @@ public class PyDumbAwareAnnotatorFactory implements AnnotatorFactory, DumbAware 
     return new PyDumbAwareAnnotator();
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

@@ -19,14 +19,12 @@ package com.jetbrains.python.impl.debugger;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.execution.debug.breakpoint.XLineBreakpointTypeBase;
 
-import jakarta.annotation.Nonnull;
 
 @ExtensionImpl
 public class PyLineBreakpointType extends XLineBreakpointTypeBase
 {
 	public static final String ID = "python-line";
 
-	@Nonnull
 	public static PyLineBreakpointType getInstance()
 	{
 		return EXTENSION_POINT_NAME.findExtensionOrFail(PyLineBreakpointType.class);

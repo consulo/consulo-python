@@ -37,8 +37,7 @@ import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.fileType.FileType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author VISTALL
@@ -49,7 +48,7 @@ public class PyLineBreakpointTypeResolver implements XLineBreakpointTypeResolver
   @Nullable
   @Override
   @RequiredReadAction
-  public XLineBreakpointType<?> resolveBreakpointType(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int line) {
+  public XLineBreakpointType<?> resolveBreakpointType(Project project, VirtualFile virtualFile, int line) {
     final Ref<PyLineBreakpointType> result = Ref.create();
     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     if (document != null) {
@@ -80,7 +79,6 @@ public class PyLineBreakpointTypeResolver implements XLineBreakpointTypeResolver
     return result.get();
   }
 
-  @Nonnull
   @Override
   public FileType getFileType() {
     return PythonFileType.INSTANCE;

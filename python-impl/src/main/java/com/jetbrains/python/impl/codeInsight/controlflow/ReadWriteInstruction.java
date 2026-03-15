@@ -22,9 +22,8 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.controlFlow.ControlFlowBuilder;
 import consulo.language.controlFlow.base.InstructionImpl;
 import consulo.language.psi.PsiElement;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ReadWriteInstruction extends InstructionImpl
 {
@@ -125,7 +124,6 @@ public class ReadWriteInstruction extends InstructionImpl
 		return myGetType.getType(context, anchor);
 	}
 
-	@NonNls
 	@Override
 	public String getElementPresentation()
 	{

@@ -38,8 +38,7 @@ import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.image.Image;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -63,9 +62,9 @@ public class PyStackFrame extends XStackFrame {
   private final PyStackFrameInfo myFrameInfo;
   private final XSourcePosition myPosition;
 
-  public PyStackFrame(@Nonnull Project project,
-                      @Nonnull PyFrameAccessor debugProcess,
-                      @Nonnull PyStackFrameInfo frameInfo,
+  public PyStackFrame(Project project,
+                      PyFrameAccessor debugProcess,
+                      PyStackFrameInfo frameInfo,
                       XSourcePosition position) {
     myProject = project;
     myDebugProcess = debugProcess;
@@ -89,7 +88,7 @@ public class PyStackFrame extends XStackFrame {
   }
 
   @Override
-  public void customizePresentation(@Nonnull ColoredTextContainer component) {
+  public void customizePresentation(ColoredTextContainer component) {
     if (myPosition == null) {
       component.append("<frame not available>", SimpleTextAttributes.GRAY_ATTRIBUTES);
       return;
@@ -126,7 +125,7 @@ public class PyStackFrame extends XStackFrame {
   }
 
   @Override
-  public void computeChildren(@Nonnull XCompositeNode node) {
+  public void computeChildren(XCompositeNode node) {
     if (node.isObsolete()) {
       return;
     }
@@ -146,7 +145,7 @@ public class PyStackFrame extends XStackFrame {
     });
   }
 
-  protected void addChildren(@Nonnull XCompositeNode node, @Nullable XValueChildrenList children) {
+  protected void addChildren(XCompositeNode node, @Nullable XValueChildrenList children) {
     if (children == null) {
       node.addChildren(XValueChildrenList.EMPTY, true);
       return;
@@ -199,11 +198,11 @@ public class PyStackFrame extends XStackFrame {
     }
   }
 
-  private static void addReturnedValuesGroup(@Nonnull XCompositeNode node, Map<String, XValue> returnedValues) {
+  private static void addReturnedValuesGroup(XCompositeNode node, Map<String, XValue> returnedValues) {
     ArrayList<XValueGroup> group = Lists.newArrayList();
     group.add(new XValueGroup(RETURN_VALUES_GROUP_NAME) {
       @Override
-      public void computeChildren(@Nonnull XCompositeNode node) {
+      public void computeChildren(XCompositeNode node) {
         XValueChildrenList list = new XValueChildrenList();
         for (Map.Entry<String, XValue> entry : returnedValues.entrySet()) {
           list.add(entry.getKey() + "()", entry.getValue());
@@ -220,11 +219,11 @@ public class PyStackFrame extends XStackFrame {
     node.addChildren(XValueChildrenList.topGroups(group), true);
   }
 
-  private static void addSpecialValuesGroup(@Nonnull XCompositeNode node, List<Map<String, XValue>> specialValuesGroups) {
+  private static void addSpecialValuesGroup(XCompositeNode node, List<Map<String, XValue>> specialValuesGroups) {
     ArrayList<XValueGroup> group = Lists.newArrayList();
     group.add(new XValueGroup(SPECIAL_VARIABLES_GROUP_NAME) {
       @Override
-      public void computeChildren(@Nonnull XCompositeNode node) {
+      public void computeChildren(XCompositeNode node) {
         XValueChildrenList list = new XValueChildrenList();
         for (Map<String, XValue> group : specialValuesGroups) {
           for (Map.Entry<String, XValue> entry : group.entrySet()) {

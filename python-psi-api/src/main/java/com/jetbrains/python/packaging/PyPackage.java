@@ -19,8 +19,7 @@ package com.jetbrains.python.packaging;
 import consulo.application.util.UserHomeFileUtil;
 import consulo.repository.ui.InstalledPackage;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -30,13 +29,12 @@ public class PyPackage extends InstalledPackage {
   private final String myLocation;
   private final List<PyRequirement> myRequirements;
 
-  public PyPackage(@Nonnull String name, @Nonnull String version, @Nullable String location, @Nonnull List<PyRequirement> requirements) {
+  public PyPackage(String name, String version, @Nullable String location, List<PyRequirement> requirements) {
     super(name, version);
     myLocation = location;
     myRequirements = requirements;
   }
 
-  @Nonnull
   public List<PyRequirement> getRequirements() {
     return myRequirements;
   }

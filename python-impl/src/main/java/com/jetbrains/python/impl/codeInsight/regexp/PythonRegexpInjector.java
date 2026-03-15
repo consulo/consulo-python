@@ -27,8 +27,7 @@ import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +36,10 @@ import java.util.List;
  */
 public abstract class PythonRegexpInjector implements MultiHostInjector {
   private static class RegexpMethodDescriptor {
-    @Nonnull
     private final String methodName;
     private final int argIndex;
 
-    private RegexpMethodDescriptor(@Nonnull String methodName, int argIndex) {
+    private RegexpMethodDescriptor(String methodName, int argIndex) {
       this.methodName = methodName;
       this.argIndex = argIndex;
     }
@@ -60,12 +58,12 @@ public abstract class PythonRegexpInjector implements MultiHostInjector {
     addMethod("subn");
   }
 
-  private void addMethod(@Nonnull String name) {
+  private void addMethod(String name) {
     myDescriptors.add(new RegexpMethodDescriptor(name, 0));
   }
 
   @Override
-  public void injectLanguages(@Nonnull MultiHostRegistrar registrar, @Nonnull PsiElement context) {
+  public void injectLanguages(MultiHostRegistrar registrar, PsiElement context) {
     PsiElement contextParent = context.getParent();
     if (PyInjectionUtil.isLargestStringLiteral(context) && contextParent instanceof PyArgumentList) {
       PyExpression[] args = ((PyArgumentList)contextParent).getArguments();
@@ -89,7 +87,7 @@ public abstract class PythonRegexpInjector implements MultiHostInjector {
     }
   }
 
-  private static boolean isVerbose(@Nonnull PyCallExpression call) {
+  private static boolean isVerbose(PyCallExpression call) {
     PyExpression[] arguments = call.getArguments();
     if (arguments.length <= 1) {
       return false;
@@ -114,7 +112,7 @@ public abstract class PythonRegexpInjector implements MultiHostInjector {
     return false;
   }
 
-  private boolean isRegexpMethod(@Nonnull PsiElement element, int index) {
+  private boolean isRegexpMethod(PsiElement element, int index) {
     if (!(element instanceof PyFunction)) {
       return false;
     }
@@ -127,7 +125,7 @@ public abstract class PythonRegexpInjector implements MultiHostInjector {
     return false;
   }
 
-  private boolean canBeRegexpCall(@Nonnull PyExpression callee) {
+  private boolean canBeRegexpCall(PyExpression callee) {
     String text = callee.getText();
     for (RegexpMethodDescriptor descriptor : myDescriptors) {
       if (text.endsWith(descriptor.methodName)) {

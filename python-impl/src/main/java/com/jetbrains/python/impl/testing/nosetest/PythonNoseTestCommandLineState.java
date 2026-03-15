@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.testing.nosetest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParamsGroup;
 import consulo.execution.runner.ExecutionEnvironment;
@@ -46,7 +45,6 @@ public class PythonNoseTestCommandLineState extends PythonTestCommandLineStateBa
 		return PythonHelper.NOSE;
 	}
 
-	@Nonnull
 	protected List<String> getTestSpecs()
 	{
 		List<String> specs = new ArrayList<>();

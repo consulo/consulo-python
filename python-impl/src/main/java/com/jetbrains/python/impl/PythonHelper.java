@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 import consulo.process.cmd.GeneralCommandLine;
@@ -81,7 +80,6 @@ public enum PythonHelper implements HelperPackage
 	public static final String PY3_HELPER_DEPENDENCIES_DIR = "py3only";
 	public static final String PY2_HELPER_DEPENDENCIES_DIR = "py2only";
 
-	@Nonnull
 	private static PathHelperPackage findModule(String moduleEntryPoint, String path, boolean asModule)
 	{
 		if(PythonHelpersLocator.getHelperFile(path + ".zip").isFile())
@@ -124,28 +122,26 @@ public enum PythonHelper implements HelperPackage
 		}
 
 		@Override
-		public void addToPythonPath(@Nonnull Map<String, String> environment)
+		public void addToPythonPath(Map<String, String> environment)
 		{
 			PythonEnvUtil.addToPythonPath(environment, getPythonPathEntry());
 		}
 
 		@Override
-		public void addToGroup(@Nonnull ParamsGroup group, @Nonnull GeneralCommandLine cmd)
+		public void addToGroup(ParamsGroup group, GeneralCommandLine cmd)
 		{
 			addToPythonPath(cmd.getEnvironment());
 			group.addParameter(asParamString());
 		}
 
-		@Nonnull
 		@Override
 		public String asParamString()
 		{
 			return FileUtil.toSystemDependentName(myPath.getAbsolutePath());
 		}
 
-		@Nonnull
 		@Override
-		public GeneralCommandLine newCommandLine(@Nonnull String sdkPath, @Nonnull List<String> parameters)
+		public GeneralCommandLine newCommandLine(String sdkPath, List<String> parameters)
 		{
 			List<String> args = Lists.newArrayList();
 			args.add(sdkPath);
@@ -158,9 +154,8 @@ public enum PythonHelper implements HelperPackage
 			return cmd;
 		}
 
-		@Nonnull
 		@Override
-		public GeneralCommandLine newCommandLine(@Nonnull Sdk pythonSdk, @Nonnull List<String> parameters)
+		public GeneralCommandLine newCommandLine(Sdk pythonSdk, List<String> parameters)
 		{
 			String sdkHomePath = pythonSdk.getHomePath();
 			assert sdkHomePath != null;
@@ -185,14 +180,12 @@ public enum PythonHelper implements HelperPackage
 			this.myModuleName = moduleName;
 		}
 
-		@Nonnull
 		@Override
 		public String asParamString()
 		{
 			return "-m" + myModuleName;
 		}
 
-		@Nonnull
 		@Override
 		public String getPythonPathEntry()
 		{
@@ -216,13 +209,12 @@ public enum PythonHelper implements HelperPackage
 		}
 
 		@Override
-		public void addToPythonPath(@Nonnull Map<String, String> environment)
+		public void addToPythonPath(Map<String, String> environment)
 		{
 			PythonEnvUtil.setPythonDontWriteBytecode(environment);
 			super.addToPythonPath(environment);
 		}
 
-		@Nonnull
 		@Override
 		public String getPythonPathEntry()
 		{
@@ -231,7 +223,6 @@ public enum PythonHelper implements HelperPackage
 	}
 
 
-	@Nonnull
 	@Override
 	public String getPythonPathEntry()
 	{
@@ -239,34 +230,31 @@ public enum PythonHelper implements HelperPackage
 	}
 
 	@Override
-	public void addToPythonPath(@Nonnull Map<String, String> environment)
+	public void addToPythonPath(Map<String, String> environment)
 	{
 		myModule.addToPythonPath(environment);
 	}
 
 	@Override
-	public void addToGroup(@Nonnull ParamsGroup group, @Nonnull GeneralCommandLine cmd)
+	public void addToGroup(ParamsGroup group, GeneralCommandLine cmd)
 	{
 		myModule.addToGroup(group, cmd);
 	}
 
-	@Nonnull
 	@Override
 	public String asParamString()
 	{
 		return myModule.asParamString();
 	}
 
-	@Nonnull
 	@Override
-	public GeneralCommandLine newCommandLine(@Nonnull String sdkPath, @Nonnull List<String> parameters)
+	public GeneralCommandLine newCommandLine(String sdkPath, List<String> parameters)
 	{
 		return myModule.newCommandLine(sdkPath, parameters);
 	}
 
-	@Nonnull
 	@Override
-	public GeneralCommandLine newCommandLine(@Nonnull Sdk pythonSdk, @Nonnull List<String> parameters)
+	public GeneralCommandLine newCommandLine(Sdk pythonSdk, List<String> parameters)
 	{
 		return myModule.newCommandLine(pythonSdk, parameters);
 	}

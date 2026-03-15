@@ -19,7 +19,6 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,13 +28,12 @@ import java.util.List;
  */
 public class PyDynamicallyEvaluatedType extends PyUnionType
 {
-	private PyDynamicallyEvaluatedType(@Nonnull Collection<PyType> members)
+	private PyDynamicallyEvaluatedType(Collection<PyType> members)
 	{
 		super(members);
 	}
 
-	@Nonnull
-	public static PyDynamicallyEvaluatedType create(@Nonnull PyType type)
+	public static PyDynamicallyEvaluatedType create(PyType type)
 	{
 		List<PyType> members = new ArrayList<>();
 		if(type instanceof PyUnionType)

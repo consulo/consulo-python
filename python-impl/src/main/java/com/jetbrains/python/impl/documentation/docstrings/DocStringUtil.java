@@ -34,10 +34,8 @@ import consulo.module.ModuleManager;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -48,7 +46,7 @@ public class DocStringUtil {
   }
 
   @Nullable
-  public static String getDocStringValue(@Nonnull PyDocStringOwner owner) {
+  public static String getDocStringValue(PyDocStringOwner owner) {
     return PyPsiUtils.strValue(owner.getDocStringExpression());
   }
 
@@ -60,8 +58,7 @@ public class DocStringUtil {
    * @return structured docstring for one of supported formats or instance of {@link PlainDocString} if none was recognized.
    * @see #parse(String, PsiElement)
    */
-  @Nonnull
-  public static StructuredDocString parse(@Nonnull String text) {
+  public static StructuredDocString parse(String text) {
     return parse(text, null);
   }
 
@@ -74,8 +71,7 @@ public class DocStringUtil {
    * @see DocStringFormat#ALL_NAMES_BUT_PLAIN
    * @see #guessDocStringFormat(String, PsiElement)
    */
-  @Nonnull
-  public static StructuredDocString parse(@Nonnull String text, @Nullable PsiElement anchor) {
+  public static StructuredDocString parse(String text, @Nullable PsiElement anchor) {
     DocStringFormat format = guessDocStringFormat(text, anchor);
     return parseDocStringContent(format, text);
   }
@@ -87,18 +83,15 @@ public class DocStringUtil {
    * @param stringLiteral supposedly result of {@link PyDocStringOwner#getDocStringExpression()}
    * @return structured docstring for one of supported formats or instance of {@link PlainDocString} if none was recognized.
    */
-  @Nonnull
-  public static StructuredDocString parseDocString(@Nonnull PyStringLiteralExpression stringLiteral) {
+  public static StructuredDocString parseDocString(PyStringLiteralExpression stringLiteral) {
     return parseDocString(guessDocStringFormat(stringLiteral.getStringValue(), stringLiteral), stringLiteral);
   }
 
-  @Nonnull
-  public static StructuredDocString parseDocString(@Nonnull DocStringFormat format, @Nonnull PyStringLiteralExpression stringLiteral) {
+  public static StructuredDocString parseDocString(DocStringFormat format, PyStringLiteralExpression stringLiteral) {
     return parseDocString(format, stringLiteral.getStringNodes().get(0));
   }
 
-  @Nonnull
-  public static StructuredDocString parseDocString(@Nonnull DocStringFormat format, @Nonnull ASTNode node) {
+  public static StructuredDocString parseDocString(DocStringFormat format, ASTNode node) {
     //Preconditions.checkArgument(node.getElementType() == PyTokenTypes.DOCSTRING);
     return parseDocString(format, node.getText());
   }
@@ -106,8 +99,7 @@ public class DocStringUtil {
   /**
    * @param stringText docstring text with possible string prefix and quotes
    */
-  @Nonnull
-  public static StructuredDocString parseDocString(@Nonnull DocStringFormat format, @Nonnull String stringText) {
+  public static StructuredDocString parseDocString(DocStringFormat format, String stringText) {
     return parseDocString(format, stripPrefixAndQuotes(stringText));
   }
 
@@ -115,13 +107,11 @@ public class DocStringUtil {
    * @param stringContent docstring text without string prefix and quotes, but not escaped, otherwise ranges of {@link Substring} returned
    *                      from {@link StructuredDocString} may be invalid
    */
-  @Nonnull
-  public static StructuredDocString parseDocStringContent(@Nonnull DocStringFormat format, @Nonnull String stringContent) {
+  public static StructuredDocString parseDocStringContent(DocStringFormat format, String stringContent) {
     return parseDocString(format, new Substring(stringContent));
   }
 
-  @Nonnull
-  public static StructuredDocString parseDocString(@Nonnull DocStringFormat format, @Nonnull Substring content) {
+  public static StructuredDocString parseDocString(DocStringFormat format, Substring content) {
     switch (format) {
       case REST:
         return new SphinxDocString(content);
@@ -136,8 +126,7 @@ public class DocStringUtil {
     }
   }
 
-  @Nonnull
-  private static Substring stripPrefixAndQuotes(@Nonnull String text) {
+  private static Substring stripPrefixAndQuotes(String text) {
     TextRange contentRange = PyStringLiteralExpressionImpl.getNodeTextRange(text);
     return new Substring(text, contentRange.getStartOffset(), contentRange.getEndOffset());
   }
@@ -147,8 +136,7 @@ public class DocStringUtil {
    * {@link #guessDocStringFormat(String, PsiElement)} of this method.
    * @see #guessDocStringFormat(String, PsiElement)
    */
-  @Nonnull
-  public static DocStringFormat guessDocStringFormat(@Nonnull String text) {
+  public static DocStringFormat guessDocStringFormat(String text) {
     if (isLikeEpydocDocString(text)) {
       return DocStringFormat.EPYTEXT;
     }
@@ -170,8 +158,7 @@ public class DocStringUtil {
    * @return docstring inferred heuristically and if unsuccessful fallback to configured format retrieved from anchor PSI element
    * @see #getConfiguredDocStringFormat(PsiElement)
    */
-  @Nonnull
-  public static DocStringFormat guessDocStringFormat(@Nonnull String text, @Nullable PsiElement anchor) {
+  public static DocStringFormat guessDocStringFormat(String text, @Nullable PsiElement anchor) {
     DocStringFormat guessed = guessDocStringFormat(text);
     return guessed == DocStringFormat.PLAIN && anchor != null ? getConfiguredDocStringFormat(anchor) : guessed;
   }
@@ -181,24 +168,23 @@ public class DocStringUtil {
    * @return docstring format configured for file or module containing given anchor PSI element
    * @see PyDocumentationSettings#getFormatForFile(PsiFile)
    */
-  @Nonnull
-  public static DocStringFormat getConfiguredDocStringFormat(@Nonnull PsiElement anchor) {
+  public static DocStringFormat getConfiguredDocStringFormat(PsiElement anchor) {
     PyDocumentationSettings settings = PyDocumentationSettings.getInstance(getModuleForElement(anchor));
     return settings.getFormatForFile(anchor.getContainingFile());
   }
 
-  public static boolean isLikeSphinxDocString(@Nonnull String text) {
+  public static boolean isLikeSphinxDocString(String text) {
     return text.contains(":param ") ||
       text.contains(":return:") || text.contains(":returns:") ||
       text.contains(":rtype") || text.contains(":type");
   }
 
-  public static boolean isLikeEpydocDocString(@Nonnull String text) {
+  public static boolean isLikeEpydocDocString(String text) {
     return text.contains("@param ") || text.contains("@return:") || text.contains("@rtype") || text.contains("@type");
   }
 
-  public static boolean isLikeGoogleDocString(@Nonnull String text) {
-    for (@NonNls String title : StringUtil.findMatches(text, GoogleCodeStyleDocString.SECTION_HEADER, 1)) {
+  public static boolean isLikeGoogleDocString(String text) {
+    for (String title : StringUtil.findMatches(text, GoogleCodeStyleDocString.SECTION_HEADER, 1)) {
       if (SectionBasedDocString.isValidSectionTitle(title)) {
         return true;
       }
@@ -206,12 +192,12 @@ public class DocStringUtil {
     return false;
   }
 
-  public static boolean isLikeNumpyDocstring(@Nonnull String text) {
+  public static boolean isLikeNumpyDocstring(String text) {
     String[] lines = StringUtil.splitByLines(text, false);
     for (int i = 0; i < lines.length; i++) {
       String line = lines[i];
       if (NumpyDocString.SECTION_HEADER.matcher(line).matches() && i > 0) {
-        @NonNls String lineBefore = lines[i - 1];
+        String lineBefore = lines[i - 1];
         if (SectionBasedDocString.SECTION_NAMES.contains(lineBefore.trim().toLowerCase())) {
           return true;
         }
@@ -241,7 +227,7 @@ public class DocStringUtil {
   }
 
   @Nullable
-  public static StructuredDocString getStructuredDocString(@Nonnull PyDocStringOwner owner) {
+  public static StructuredDocString getStructuredDocString(PyDocStringOwner owner) {
     String value = owner.getDocStringValue();
     return value == null ? null : parse(value, owner);
   }
@@ -251,7 +237,7 @@ public class DocStringUtil {
    * Useful to test whether particular PSI element is or belongs to such docstring.
    */
   @Nullable
-  public static PyStringLiteralExpression getParentDefinitionDocString(@Nonnull PsiElement element) {
+  public static PyStringLiteralExpression getParentDefinitionDocString(PsiElement element) {
     PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(element, PyDocStringOwner.class);
     if (docStringOwner != null) {
       PyStringLiteralExpression docString = docStringOwner.getDocStringExpression();
@@ -262,7 +248,7 @@ public class DocStringUtil {
     return null;
   }
 
-  public static boolean isDocStringExpression(@Nonnull PyExpression expression) {
+  public static boolean isDocStringExpression(PyExpression expression) {
     if (getParentDefinitionDocString(expression) == expression) {
       return true;
     }
@@ -273,7 +259,7 @@ public class DocStringUtil {
   }
 
   @Nullable
-  public static String getAttributeDocComment(@Nonnull PyTargetExpression attr) {
+  public static String getAttributeDocComment(PyTargetExpression attr) {
     if (attr.getParent() instanceof PyAssignmentStatement) {
       PyAssignmentStatement assignment = (PyAssignmentStatement)attr.getParent();
       PsiElement prevSibling = PyPsiUtils.getPrevNonWhitespaceSibling(assignment);
@@ -284,7 +270,7 @@ public class DocStringUtil {
     return null;
   }
 
-  public static boolean isVariableDocString(@Nonnull PyStringLiteralExpression expr) {
+  public static boolean isVariableDocString(PyStringLiteralExpression expr) {
     PsiElement parent = expr.getParent();
     if (!(parent instanceof PyExpressionStatement)) {
       return false;
@@ -319,12 +305,11 @@ public class DocStringUtil {
    * @param anchor PSI element that will be used to locate containing file and project module
    * @return false if no structured docstring format was specified initially and user didn't select any, true otherwise
    */
-  public static boolean ensureNotPlainDocstringFormat(@Nonnull PsiElement anchor) {
+  public static boolean ensureNotPlainDocstringFormat(PsiElement anchor) {
     return ensureNotPlainDocstringFormatForFile(anchor.getContainingFile(), getModuleForElement(anchor));
   }
 
-  @Nonnull
-  private static Module getModuleForElement(@Nonnull PsiElement element) {
+  private static Module getModuleForElement(PsiElement element) {
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module == null) {
       module = ModuleManager.getInstance(element.getProject()).getModules()[0];
@@ -332,7 +317,7 @@ public class DocStringUtil {
     return module;
   }
 
-  private static boolean ensureNotPlainDocstringFormatForFile(@Nonnull PsiFile file, @Nonnull Module module) {
+  private static boolean ensureNotPlainDocstringFormatForFile(PsiFile file, Module module) {
     PyDocumentationSettings settings = PyDocumentationSettings.getInstance(module);
     if (settings.isPlain(file)) {
       List<String> values = DocStringFormat.ALL_NAMES_BUT_PLAIN;

@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.debugger;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.util.xml.serializer.annotation.Attribute;
 import com.jetbrains.python.debugger.pydev.AddExceptionBreakpointCommand;
@@ -39,7 +38,7 @@ public class PyExceptionBreakpointProperties extends ExceptionBreakpointProperti
   public PyExceptionBreakpointProperties() {
   }
 
-  public PyExceptionBreakpointProperties(@Nonnull String exception) {
+  public PyExceptionBreakpointProperties(String exception) {
     myException = exception;
   }
 

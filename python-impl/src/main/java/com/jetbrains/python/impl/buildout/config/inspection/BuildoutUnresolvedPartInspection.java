@@ -31,7 +31,6 @@ import consulo.language.psi.PsiRecursiveElementVisitor;
 import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -40,25 +39,21 @@ import java.util.List;
  */
 @ExtensionImpl
 public class BuildoutUnresolvedPartInspection extends LocalInspectionTool {
-    @Nonnull
     @Override
     public LocalizeValue getGroupDisplayName() {
         return PyLocalize.buildout();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.buildoutUnresolvedPartInspection();
     }
 
-    @Nonnull
     @Override
     public String getShortName() {
         return "BuildoutUnresolvedPartInspection";
     }
 
-    @Nonnull
     @Override
     public HighlightDisplayLevel getDefaultLevel() {
         return HighlightDisplayLevel.WARNING;
@@ -70,7 +65,7 @@ public class BuildoutUnresolvedPartInspection extends LocalInspectionTool {
     }
 
     @Override
-    public ProblemDescriptor[] checkFile(@Nonnull PsiFile file, @Nonnull InspectionManager manager, boolean isOnTheFly) {
+    public ProblemDescriptor[] checkFile(PsiFile file, InspectionManager manager, boolean isOnTheFly) {
         List<ProblemDescriptor> problems = Lists.newArrayList();
         if (file.getFileType().equals(BuildoutCfgFileType.INSTANCE)) {
             Visitor visitor = new Visitor();

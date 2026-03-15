@@ -21,7 +21,6 @@ import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 import consulo.application.util.query.QueryExecutor;
 import consulo.language.psi.PsiElement;
-import jakarta.annotation.Nonnull;
 
 import java.util.function.Predicate;
 
@@ -31,8 +30,8 @@ import java.util.function.Predicate;
 public class PyDotNetSuperMethodsSearchExecutor implements QueryExecutor<PsiElement, PySuperMethodsSearch.SearchParameters> {
     @Override
     public boolean execute(
-        @Nonnull PySuperMethodsSearch.SearchParameters queryParameters,
-        @Nonnull Predicate<? super PsiElement> consumer
+        PySuperMethodsSearch.SearchParameters queryParameters,
+        Predicate<? super PsiElement> consumer
     ) {
         PyFunction func = queryParameters.getDerivedMethod();
         PyClass containingClass = func.getContainingClass();

@@ -51,8 +51,7 @@ import consulo.ui.annotation.RequiredUIAccess;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,9 +98,9 @@ public class PyInlineLocalHandler extends InlineActionHandler {
   }
 
   @RequiredUIAccess
-  private static void invoke(@Nonnull Project project,
-                             @Nonnull Editor editor,
-                             @Nonnull PyTargetExpression local,
+  private static void invoke(Project project,
+                             Editor editor,
+                             PyTargetExpression local,
                              @Nullable PyReferenceExpression refExpr) {
     if (!CommonRefactoringUtil.checkReadOnlyStatus(project, local)) {
       return;
@@ -310,8 +309,7 @@ public class PyInlineLocalHandler extends InlineActionHandler {
     return ((PyAugAssignmentStatement)def).getTarget();
   }
 
-  @Nonnull
-  private static PyExpression prepareValue(@Nonnull PyStatement def, @Nonnull String localName, @Nonnull Project project) {
+  private static PyExpression prepareValue(PyStatement def, String localName, Project project) {
     PyExpression value = getValue(def);
     assert value != null;
     if (def instanceof PyAugAssignmentStatement) {

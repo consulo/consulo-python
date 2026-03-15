@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.types.functionalParser;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.document.util.TextRange;
 
@@ -24,30 +23,24 @@ import consulo.document.util.TextRange;
 * @author vlan
 */
 public class Token<T> {
-  @Nonnull
   private final CharSequence myText;
-  @Nonnull
   private final TextRange myRange;
-  @Nonnull
   private final T myType;
 
-  public Token(@Nonnull T type, @Nonnull CharSequence text, @Nonnull TextRange range) {
+  public Token(T type, CharSequence text, TextRange range) {
     myText = text;
     myRange = range;
     myType = type;
   }
 
-  @Nonnull
   public T getType() {
     return myType;
   }
 
-  @Nonnull
   public CharSequence getText() {
     return myText;
   }
 
-  @Nonnull
   public TextRange getRange() {
     return myRange;
   }

@@ -64,8 +64,7 @@ import consulo.util.dataholder.Key;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.SimpleReference;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -127,7 +126,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
 
     @Override
     @RequiredWriteAction
-    public PsiElement setName(@Nonnull String name) throws IncorrectOperationException {
+    public PsiElement setName(String name) throws IncorrectOperationException {
         ASTNode nameElement = PyUtil.createNewName(this, name);
         ASTNode nameNode = getNameNode();
         if (nameNode != null) {
@@ -164,14 +163,12 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
         return getNode().findChildByType(PyTokenTypes.IDENTIFIER);
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public PyParameterList getParameterList() {
         return getRequiredStubOrPsiChild(PyElementTypes.PARAMETER_LIST);
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public PyStatementList getStatementList() {
@@ -203,14 +200,14 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     @Nullable
     @Override
     @RequiredReadAction
-    public PyType getReturnType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+    public PyType getReturnType(TypeEvalContext context, TypeEvalContext.Key key) {
         PyType type = getReturnType(context);
         return isAsync() && isAsyncAllowed() ? createCoroutineType(type) : type;
     }
 
     @Nullable
     @RequiredReadAction
-    private PyType getReturnType(@Nonnull TypeEvalContext context) {
+    private PyType getReturnType(TypeEvalContext context) {
         for (PyTypeProvider typeProvider : Application.get().getExtensionList(PyTypeProvider.class)) {
             SimpleReference<PyType> returnTypeRef = typeProvider.getReturnType(this, context);
             if (returnTypeRef != null) {
@@ -231,7 +228,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
 
     @Nullable
     @Override
-    public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite) {
+    public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite) {
         for (PyTypeProvider typeProvider : callSite.getApplication().getExtensionList(PyTypeProvider.class)) {
             SimpleReference<PyType> typeRef = typeProvider.getCallType(this, callSite, context);
             if (typeRef != null) {
@@ -245,7 +242,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     }
 
     @Nullable
-    private static PyType derefType(@Nonnull SimpleReference<PyType> typeRef, @Nonnull PyTypeProvider typeProvider) {
+    private static PyType derefType(SimpleReference<PyType> typeRef, PyTypeProvider typeProvider) {
         PyType type = typeRef.get();
         if (type != null) {
             type.assertValid(typeProvider.toString());
@@ -257,8 +254,8 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     @Override
     public PyType getCallType(
         @Nullable PyExpression receiver,
-        @Nonnull Map<PyExpression, PyNamedParameter> parameters,
-        @Nonnull TypeEvalContext context
+        Map<PyExpression, PyNamedParameter> parameters,
+        TypeEvalContext context
     ) {
         return analyzeCallType(context.getReturnType(this), receiver, parameters, context);
     }
@@ -267,8 +264,8 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     private PyType analyzeCallType(
         @Nullable PyType type,
         @Nullable PyExpression receiver,
-        @Nonnull Map<PyExpression, PyNamedParameter> parameters,
-        @Nonnull TypeEvalContext context
+        Map<PyExpression, PyNamedParameter> parameters,
+        TypeEvalContext context
     ) {
         if (PyTypeChecker.hasGenerics(type, context)) {
             Map<PyGenericType, PyType> substitutions = PyTypeChecker.unifyGenericCall(receiver, parameters, context);
@@ -312,7 +309,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     }
 
     @Nullable
-    private PyType replaceSelf(@Nullable PyType returnType, @Nullable PyExpression receiver, @Nonnull TypeEvalContext context) {
+    private PyType replaceSelf(@Nullable PyType returnType, @Nullable PyExpression receiver, TypeEvalContext context) {
         // TODO: Currently we substitute only simple subclass types, but we could handle union and collection types as well
         if (receiver != null
             && returnType instanceof PyClassType returnClassType
@@ -324,7 +321,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
         return returnType;
     }
 
-    private static boolean isDynamicallyEvaluated(@Nonnull Collection<PyNamedParameter> parameters, @Nonnull TypeEvalContext context) {
+    private static boolean isDynamicallyEvaluated(Collection<PyNamedParameter> parameters, TypeEvalContext context) {
         for (PyNamedParameter parameter : parameters) {
             if (context.getType(parameter) instanceof PyDynamicallyEvaluatedType) {
                 return true;
@@ -335,7 +332,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
 
     @Nullable
     @RequiredReadAction
-    private SimpleReference<? extends PyType> getYieldStatementType(@Nonnull final TypeEvalContext context) {
+    private SimpleReference<? extends PyType> getYieldStatementType(final TypeEvalContext context) {
         SimpleReference<PyType> elementType = null;
         PyBuiltinCache cache = PyBuiltinCache.getInstance(this);
         PyStatementList statements = getStatementList();
@@ -442,7 +439,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     }
 
     @Override
-    public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
         PyType callableType = Application.get().getExtensionPoint(PyTypeProvider.class)
             .computeSafeIfAny(provider -> provider.getCallableType(this, context));
         if (callableType != null) {
@@ -643,7 +640,6 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
         return null;
     }
 
-    @Nonnull
     @Override
     public SearchScope getUseScope() {
         if (ScopeUtil.getScopeOwner(this) instanceof PyFunction function) {
@@ -738,7 +734,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     }
 
     @Nullable
-    private static Modifier getModifierFromStub(@Nonnull PyFunctionStub stub) {
+    private static Modifier getModifierFromStub(PyFunctionStub stub) {
         Optional<List<StubElement>> siblingsStubsOptional = Optional.of(stub)
             .map(StubElement::getParentStub)
             .map(StubElement::getChildrenStubs);
@@ -813,7 +809,6 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
         return QualifiedNameFinder.getQualifiedName(this);
     }
 
-    @Nonnull
     @Override
     public List<PyAssignmentStatement> findAttributes() {
         /**
@@ -835,9 +830,8 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     /**
      * @param self should be this
      */
-    @Nonnull
     @RequiredReadAction
-    private static List<PyAssignmentStatement> findAttributesStatic(@Nonnull PsiElement self) {
+    private static List<PyAssignmentStatement> findAttributesStatic(PsiElement self) {
         List<PyAssignmentStatement> result = new ArrayList<>();
         for (PyAssignmentStatement statement : new PsiQuery(self).siblings(PyAssignmentStatement.class).getElements()) {
             List<PyQualifiedExpression> elements = new PsiQuery(statement.getTargets()).filter(PyQualifiedExpression.class).getElements();
@@ -858,7 +852,6 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
         return result;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public ProtectionLevel getProtectionLevel() {

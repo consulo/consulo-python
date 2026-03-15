@@ -25,8 +25,7 @@ import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.fileType.FileType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User : catherine
@@ -36,14 +35,13 @@ public class RestEditorHighlighterProvider implements EditorHighlighterProvider
 {
 	@Override
 	public EditorHighlighter getEditorHighlighter(@Nullable Project project,
-												  @Nonnull FileType fileType,
+												  FileType fileType,
 												  @Nullable VirtualFile virtualFile,
-												  @Nonnull EditorColorsScheme colors)
+												  EditorColorsScheme colors)
 	{
 		return new RestEditorHighlighter(colors, project, virtualFile);
 	}
 
-	@Nonnull
 	@Override
 	public FileType getFileType()
 	{

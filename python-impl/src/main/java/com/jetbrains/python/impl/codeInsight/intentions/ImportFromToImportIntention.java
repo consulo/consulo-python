@@ -32,8 +32,7 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -147,7 +146,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
         return dots;
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -202,7 +201,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
     }
 
     @Override
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         InfoHolder info = InfoHolder.collect(getElementFromEditor(editor, file));
         try {
             String qualifier; // we don't always qualify with module name
@@ -225,7 +224,7 @@ public class ImportFromToImportIntention extends PyBaseIntentionAction {
             final Map<PsiReference, PyImportElement> references = new HashMap<>();
             final List<PsiReference> star_references = new ArrayList<>();
             PsiTreeUtil.processElements(file, new PsiElementProcessor() {
-                public boolean execute(@Nonnull PsiElement element) {
+                public boolean execute(PsiElement element) {
                     PyPsiUtils.assertValid(element);
                     if (element instanceof PyReferenceExpression && PsiTreeUtil.getParentOfType(element, PyImportElement.class) == null) {
                         PyReferenceExpression ref = (PyReferenceExpression) element;

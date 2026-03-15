@@ -1,6 +1,5 @@
 package com.jetbrains.python.console.pydev;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
 
@@ -9,7 +8,6 @@ import java.util.function.Function;
  */
 public interface ConsoleCommunication
 {
-	@Nonnull
 	List<PydevCompletionVariant> getCompletions(String text, String actualToken) throws Exception;
 
 	String getDescription(String text) throws Exception;

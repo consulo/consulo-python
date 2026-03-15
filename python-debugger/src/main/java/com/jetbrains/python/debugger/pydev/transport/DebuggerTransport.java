@@ -2,7 +2,6 @@ package com.jetbrains.python.debugger.pydev.transport;
 
 import java.io.IOException;
 
-import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.debugger.pydev.ProtocolFrame;
 
@@ -15,11 +14,11 @@ public interface DebuggerTransport
 
 	void close();
 
-	boolean sendFrame(@Nonnull ProtocolFrame frame);
+	boolean sendFrame(ProtocolFrame frame);
 
 	boolean isConnected();
 
 	void disconnect();
 
-	void messageReceived(@Nonnull ProtocolFrame frame);
+	void messageReceived(ProtocolFrame frame);
 }

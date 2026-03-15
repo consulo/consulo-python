@@ -4,7 +4,6 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -13,7 +12,6 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyStringLiteralExpressionRegexpInjector extends PythonRegexpInjector
 {
-	@Nonnull
 	@Override
 	public Class<? extends PsiElement> getElementClass()
 	{

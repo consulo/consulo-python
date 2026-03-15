@@ -32,7 +32,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.ui.ex.popup.JBPopup;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +43,7 @@ import java.util.List;
 @ExtensionImpl
 public class PyGotoSuperHandler implements GotoSuperActionHander
 {
-	public void invoke(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiFile file)
+	public void invoke(Project project, Editor editor, PsiFile file)
 	{
 		PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
 		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
@@ -99,7 +98,7 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 		}
 	}
 
-	private static Collection<PyTargetExpression> getAllSuperAttributesByName(@Nonnull PyTargetExpression classAttr, PyClass pyClass)
+	private static Collection<PyTargetExpression> getAllSuperAttributesByName(PyTargetExpression classAttr, PyClass pyClass)
 	{
 		String name = classAttr.getName();
 		if(name == null)
@@ -118,7 +117,7 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 		return result;
 	}
 
-	private static Collection<PyFunction> getAllSuperMethodsByName(@Nonnull PyFunction method, PyClass pyClass)
+	private static Collection<PyFunction> getAllSuperMethodsByName(PyFunction method, PyClass pyClass)
 	{
 		String name = method.getName();
 		if(name == null)
@@ -148,7 +147,6 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 		return true;
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

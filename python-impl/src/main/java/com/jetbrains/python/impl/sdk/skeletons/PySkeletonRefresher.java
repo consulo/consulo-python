@@ -49,8 +49,7 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.*;
 import java.io.*;
@@ -78,7 +77,6 @@ public class PySkeletonRefresher {
     private Project myProject;
     @Nullable
     private final ProgressIndicator myIndicator;
-    @Nonnull
     private final Sdk mySdk;
     private String mySkeletonsPath;
 
@@ -115,7 +113,7 @@ public class PySkeletonRefresher {
         @Nullable Project project,
         Component ownerComponent,
         String skeletonsPath,
-        @Nonnull Sdk sdk
+        Sdk sdk
     ) throws InvalidSdkException {
         Map<String, List<String>> errors = new TreeMap<>();
         List<String> failedSdks = new SmartList<>();
@@ -164,9 +162,9 @@ public class PySkeletonRefresher {
     }
 
     private static void logErrors(
-        @Nonnull Map<String, List<String>> errors,
-        @Nonnull List<String> failedSdks,
-        @Nonnull String message
+        Map<String, List<String>> errors,
+        List<String> failedSdks,
+        String message
     ) {
         LOG.warn("Some skeletons failed to generate");
         LOG.warn(message);
@@ -196,7 +194,7 @@ public class PySkeletonRefresher {
     public PySkeletonRefresher(
         @Nullable Project project,
         @Nullable Component ownerComponent,
-        @Nonnull Sdk sdk,
+        Sdk sdk,
         @Nullable String skeletonsPath,
         @Nullable ProgressIndicator indicator,
         @Nullable String folder
@@ -208,7 +206,7 @@ public class PySkeletonRefresher {
         mySkeletonsGenerator = new PySkeletonGenerator(getSkeletonsPath(), mySdk, folder);
     }
 
-    private void indicate(@Nonnull LocalizeValue msg) {
+    private void indicate(LocalizeValue msg) {
         if (myIndicator != null) {
             myIndicator.checkCanceled();
             myIndicator.setTextValue(msg);
@@ -228,7 +226,7 @@ public class PySkeletonRefresher {
         }
     }
 
-    private static String calculateExtraSysPath(@Nonnull Sdk sdk, @Nullable String skeletonsPath) {
+    private static String calculateExtraSysPath(Sdk sdk, @Nullable String skeletonsPath) {
         File skeletons = skeletonsPath != null ? new File(skeletonsPath) : null;
 
         VirtualFile userSkeletonsDir = PyUserSkeletonsUtil.getUserSkeletonsDirectory();
@@ -262,7 +260,6 @@ public class PySkeletonRefresher {
      *
      * @return path name of skeleton dir for the SDK, guaranteed to be already created.
      */
-    @Nonnull
     public String getSkeletonsPath() throws InvalidSdkException {
         if (mySkeletonsPath == null) {
             mySkeletonsPath = PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), mySdk.getHomePath());
@@ -413,7 +410,7 @@ public class PySkeletonRefresher {
     }
 
     @Nullable
-    public static SkeletonHeader readSkeletonHeader(@Nonnull File file) {
+    public static SkeletonHeader readSkeletonHeader(File file) {
         try {
             try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
                 String line = null;
@@ -449,16 +446,14 @@ public class PySkeletonRefresher {
     }
 
     public static class SkeletonHeader {
-        @Nonnull
         private final String myFile;
         private final int myVersion;
 
-        public SkeletonHeader(@Nonnull String binaryFile, int version) {
+        public SkeletonHeader(String binaryFile, int version) {
             myFile = binaryFile;
             myVersion = version;
         }
 
-        @Nonnull
         public String getBinaryFile() {
             return myFile;
         }
@@ -870,7 +865,7 @@ public class PySkeletonRefresher {
      * @param resultConsumer accepts true if generation completed successfully
      */
     public void generateSkeleton(
-        @Nonnull String modname,
+        String modname,
         @Nullable String modfilename,
         @Nullable List<String> assemblyRefs,
         Consumer<Boolean> resultConsumer

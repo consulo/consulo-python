@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.virtualFileSystem.fileType.FileType;
 import consulo.application.util.SystemInfo;
@@ -38,18 +37,18 @@ public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet
 	private final PyStringLiteralExpression myStringLiteralExpression;
 
 
-	public PyStringLiteralFileReferenceSet(@Nonnull PyStringLiteralExpression element)
+	public PyStringLiteralFileReferenceSet(PyStringLiteralExpression element)
 	{
 		this(element, SystemInfo.isFileSystemCaseSensitive);
 	}
 
-	public PyStringLiteralFileReferenceSet(@Nonnull PyStringLiteralExpression element, boolean caseSensitive)
+	public PyStringLiteralFileReferenceSet(PyStringLiteralExpression element, boolean caseSensitive)
 	{
 		this(element.getStringValue(), element, element.getStringValueTextRange().getStartOffset(), null, caseSensitive, true, FileType.EMPTY_ARRAY);
 	}
 
-	public PyStringLiteralFileReferenceSet(@Nonnull String str,
-			@Nonnull PyStringLiteralExpression element,
+	public PyStringLiteralFileReferenceSet(String str,
+			PyStringLiteralExpression element,
 			int startInElement,
 			PsiReferenceProvider provider,
 			boolean caseSensitive,
@@ -72,8 +71,7 @@ public class PyStringLiteralFileReferenceSet extends RootFileReferenceSet
 		}
 	}
 
-	@Nonnull
-	private List<FileReference> getFileReferences(@Nonnull PyStringLiteralExpression expression)
+	private List<FileReference> getFileReferences(PyStringLiteralExpression expression)
 	{
 		String value = expression.getStringValue();
 		Matcher matcher = DELIMITERS.matcher(value);

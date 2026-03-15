@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.parsing;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.parser.PsiBuilder;
 import consulo.logging.Logger;
 import consulo.language.ast.IElementType;
@@ -71,7 +70,7 @@ public class Parsing
 		return false;
 	}
 
-	protected boolean parseIdentifierOrSkip(@Nonnull IElementType... validSuccessiveTokens)
+	protected boolean parseIdentifierOrSkip(IElementType... validSuccessiveTokens)
 	{
 		if(myBuilder.getTokenType() == PyTokenTypes.IDENTIFIER)
 		{
@@ -100,7 +99,7 @@ public class Parsing
 		return myBuilder.getTokenType() == tokenType;
 	}
 
-	protected boolean atToken(@Nonnull IElementType tokenType, @Nonnull String tokenText)
+	protected boolean atToken(IElementType tokenType, String tokenText)
 	{
 		return myBuilder.getTokenType() == tokenType && tokenText.equals(myBuilder.getTokenText());
 	}

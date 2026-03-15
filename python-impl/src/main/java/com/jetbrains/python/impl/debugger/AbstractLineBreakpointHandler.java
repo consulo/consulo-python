@@ -23,7 +23,6 @@ import consulo.execution.debug.breakpoint.*;
 import consulo.execution.debug.breakpoint.XLineBreakpoint;
 import consulo.execution.debug.breakpoint.XBreakpointType;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
 
   public AbstractLineBreakpointHandler(
     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> breakpointTypeClass,
-    @Nonnull PyDebugProcess debugProcess) {
+    PyDebugProcess debugProcess) {
     super(breakpointTypeClass);
     myDebugProcess = debugProcess;
   }
@@ -50,7 +49,7 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
     }
   }
 
-  public void registerBreakpoint(@Nonnull XLineBreakpoint<XBreakpointProperties> breakpoint) {
+  public void registerBreakpoint(XLineBreakpoint<XBreakpointProperties> breakpoint) {
     XSourcePosition position = breakpoint.getSourcePosition();
     if (position != null) {
       myDebugProcess.addBreakpoint(myDebugProcess.getPositionConverter().convertToPython(position), breakpoint);
@@ -58,7 +57,7 @@ public class AbstractLineBreakpointHandler extends XBreakpointHandler<XLineBreak
     }
   }
 
-  public void unregisterBreakpoint(@Nonnull XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary) {
+  public void unregisterBreakpoint(XLineBreakpoint<XBreakpointProperties> breakpoint, boolean temporary) {
     XSourcePosition position = myBreakPointPositions.get(breakpoint);
     if (position != null) {
       myDebugProcess.removeBreakpoint(myDebugProcess.getPositionConverter().convertToPython(position));

@@ -57,8 +57,7 @@ import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -153,19 +152,19 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
   private final IntroduceValidator myValidator;
   protected final String myDialogTitle;
 
-  protected IntroduceHandler(@Nonnull IntroduceValidator validator, @Nonnull String dialogTitle) {
+  protected IntroduceHandler(IntroduceValidator validator, String dialogTitle) {
     myValidator = validator;
     myDialogTitle = dialogTitle;
   }
 
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+  public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext) {
     performAction(new IntroduceOperation(project, editor, file, null));
   }
 
-  public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(Project project, PsiElement[] elements, DataContext dataContext) {
   }
 
-  public Collection<String> getSuggestedNames(@Nonnull PyExpression expression) {
+  public Collection<String> getSuggestedNames(PyExpression expression) {
     Collection<String> candidates = generateSuggestedNames(expression);
 
     Collection<String> res = new ArrayList<>();
@@ -334,19 +333,19 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
     performActionOnElement(operation);
   }
 
-  private static boolean breaksStringFormatting(@Nonnull String s, @Nonnull TextRange range) {
+  private static boolean breaksStringFormatting(String s, TextRange range) {
     return breaksRanges(substitutionsToRanges(filterSubstitutions(parsePercentFormat(s))), range);
   }
 
-  private static boolean breaksNewStyleStringFormatting(@Nonnull String s, @Nonnull TextRange range) {
+  private static boolean breaksNewStyleStringFormatting(String s, TextRange range) {
     return breaksRanges(substitutionsToRanges(filterSubstitutions(parseNewStyleFormat(s))), range);
   }
 
-  private static boolean breaksStringEscaping(@Nonnull String s, @Nonnull TextRange range) {
+  private static boolean breaksStringEscaping(String s, TextRange range) {
     return breaksRanges(getEscapeRanges(s), range);
   }
 
-  private static boolean breaksRanges(@Nonnull List<TextRange> ranges, @Nonnull TextRange range) {
+  private static boolean breaksRanges(List<TextRange> ranges, TextRange range) {
     for (TextRange r : ranges) {
       if (range.contains(r)) {
         continue;
@@ -535,7 +534,7 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
   private static class InitializerTextBuilder extends PyRecursiveElementVisitor {
     private final StringBuilder myResult = new StringBuilder();
 
-    public InitializerTextBuilder(@Nonnull PyExpression expression) {
+    public InitializerTextBuilder(PyExpression expression) {
       if (PsiTreeUtil.findChildOfType(expression, PsiComment.class) != null) {
         myResult.append(expression.getText());
       }
@@ -594,7 +593,7 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
       }
     }
 
-    private boolean needToWrapTopLevelExpressionInParenthesis(@Nonnull PyExpression node) {
+    private boolean needToWrapTopLevelExpressionInParenthesis(PyExpression node) {
       if (node instanceof PyGeneratorExpression) {
         PsiElement firstChild = node.getFirstChild();
         if (firstChild != null && firstChild.getNode().getElementType() != PyTokenTypes.LPAR) {
@@ -620,15 +619,15 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
     return true;
   }
 
-  protected List<PsiElement> getOccurrences(PsiElement element, @Nonnull PyExpression expression) {
+  protected List<PsiElement> getOccurrences(PsiElement element, PyExpression expression) {
     return PyRefactoringUtil.getOccurrences(expression, ScopeUtil.getScopeOwner(expression));
   }
 
-  private PsiElement performReplace(@Nonnull final PsiElement declaration, final IntroduceOperation operation) {
+  private PsiElement performReplace(final PsiElement declaration, final IntroduceOperation operation) {
     final PyExpression expression = operation.getInitializer();
     final Project project = operation.getProject();
     return new WriteCommandAction<PsiElement>(project, expression.getContainingFile()) {
-      protected void run(@Nonnull Result<PsiElement> result) throws Throwable {
+      protected void run(Result<PsiElement> result) throws Throwable {
         try {
           RefactoringEventData afterData = new RefactoringEventData();
           afterData.addElement(declaration);
@@ -687,9 +686,9 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
   }
 
   @Nullable
-  protected abstract PsiElement addDeclaration(@Nonnull PsiElement expression,
-                                               @Nonnull PsiElement declaration,
-                                               @Nonnull IntroduceOperation operation);
+  protected abstract PsiElement addDeclaration(PsiElement expression,
+                                               PsiElement declaration,
+                                               IntroduceOperation operation);
 
   protected void postRefactoring(PsiElement element) {
   }

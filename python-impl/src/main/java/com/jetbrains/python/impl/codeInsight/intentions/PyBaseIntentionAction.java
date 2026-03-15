@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.FileModificationService;
 import consulo.language.editor.intention.BaseIntentionAction;
@@ -26,12 +25,12 @@ import consulo.language.util.IncorrectOperationException;
 
 public abstract class PyBaseIntentionAction extends BaseIntentionAction {
     @Override
-    public final void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public final void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
             return;
         }
         doInvoke(project, editor, file);
     }
 
-    public abstract void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException;
+    public abstract void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException;
 }

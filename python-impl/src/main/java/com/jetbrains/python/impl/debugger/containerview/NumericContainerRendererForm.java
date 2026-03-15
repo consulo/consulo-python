@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.debugger.containerview;
 
 import java.awt.event.KeyListener;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,7 +46,7 @@ public class NumericContainerRendererForm
 	protected JPanel myMainPanel;
 	protected JLabel myFormatLabel;
 
-	public NumericContainerRendererForm(@Nonnull Project project, KeyListener resliceCallback, KeyListener reformatCallback)
+	public NumericContainerRendererForm(Project project, KeyListener resliceCallback, KeyListener reformatCallback)
 	{
 		myResliceCallback = resliceCallback;
 		myProject = project;

@@ -38,7 +38,6 @@ import consulo.usage.UsageInfo;
 import consulo.util.collection.MultiMap;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.SimpleReference;
-import jakarta.annotation.Nonnull;
 
 import java.util.*;
 
@@ -51,9 +50,8 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
     private boolean isMethod = false;
     private boolean isAfterStar = false;
 
-    @Nonnull
     @Override
-    public UsageInfo[] findUsages(@Nonnull ChangeInfo info) {
+    public UsageInfo[] findUsages(ChangeInfo info) {
         if (info instanceof PyChangeInfo pyChangeInfo) {
             List<UsageInfo> usages = PyRefactoringUtil.findUsages(pyChangeInfo.getMethod(), true);
             Query<PyFunction> search = PyOverridingMethodsSearch.search(pyChangeInfo.getMethod(), true);
@@ -67,9 +65,8 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
         return UsageInfo.EMPTY_ARRAY;
     }
 
-    @Nonnull
     @Override
-    public MultiMap<PsiElement, LocalizeValue> findConflicts(@Nonnull ChangeInfo info, SimpleReference<UsageInfo[]> refUsages) {
+    public MultiMap<PsiElement, LocalizeValue> findConflicts(ChangeInfo info, SimpleReference<UsageInfo[]> refUsages) {
         MultiMap<PsiElement, LocalizeValue> conflicts = new MultiMap<>();
         if (info instanceof PyChangeInfo pyChangeInfo && info.isNameChanged()) {
             PyFunction function = pyChangeInfo.getMethod();
@@ -87,10 +84,10 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
     @Override
     @RequiredWriteAction
     public boolean processUsage(
-        @Nonnull ChangeInfo changeInfo,
-        @Nonnull UsageInfo usageInfo,
+        ChangeInfo changeInfo,
+        UsageInfo usageInfo,
         boolean beforeMethodChange,
-        @Nonnull UsageInfo[] usages
+        UsageInfo[] usages
     ) {
         if (!isPythonUsage(usageInfo)) {
             return false;
@@ -150,7 +147,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
     }
 
     @RequiredReadAction
-    private List<String> collectParameters(PyParameterInfo[] newParameters, @Nonnull PyArgumentList argumentList) {
+    private List<String> collectParameters(PyParameterInfo[] newParameters, PyArgumentList argumentList) {
         useKeywords = false;
         isMethod = false;
         isAfterStar = false;
@@ -311,7 +308,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
 
     @Override
     @RequiredWriteAction
-    public boolean processPrimaryMethod(@Nonnull ChangeInfo changeInfo) {
+    public boolean processPrimaryMethod(ChangeInfo changeInfo) {
         if (changeInfo instanceof PyChangeInfo pyChangeInfo && changeInfo.getLanguage().is(PythonLanguage.INSTANCE)) {
             processFunctionDeclaration(pyChangeInfo, pyChangeInfo.getMethod());
             return true;
@@ -320,7 +317,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
     }
 
     @RequiredWriteAction
-    private static void processFunctionDeclaration(@Nonnull PyChangeInfo changeInfo, @Nonnull PyFunction function) {
+    private static void processFunctionDeclaration(PyChangeInfo changeInfo, PyFunction function) {
         if (changeInfo.isParameterNamesChanged()) {
             PyParameter[] oldParameters = function.getParameterList().getParameters();
             for (PyParameterInfo paramInfo : changeInfo.getNewParameters()) {
@@ -343,7 +340,7 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
     }
 
     @RequiredReadAction
-    private static void fixDoc(PyChangeInfo changeInfo, @Nonnull PyFunction function) {
+    private static void fixDoc(PyChangeInfo changeInfo, PyFunction function) {
         PyStringLiteralExpression docStringExpression = function.getDocStringExpression();
         if (docStringExpression == null) {
             return;
@@ -418,16 +415,16 @@ public class PyChangeSignatureUsageProcessor implements ChangeSignatureUsageProc
     }
 
     @Override
-    public boolean shouldPreviewUsages(@Nonnull ChangeInfo changeInfo, @Nonnull UsageInfo[] usages) {
+    public boolean shouldPreviewUsages(ChangeInfo changeInfo, UsageInfo[] usages) {
         return false;
     }
 
     @Override
     public void registerConflictResolvers(
-        @Nonnull List<ResolveSnapshotProvider.ResolveSnapshot> snapshots,
-        @Nonnull ResolveSnapshotProvider resolveSnapshotProvider,
-        @Nonnull UsageInfo[] usages,
-        @Nonnull ChangeInfo changeInfo
+        List<ResolveSnapshotProvider.ResolveSnapshot> snapshots,
+        ResolveSnapshotProvider resolveSnapshotProvider,
+        UsageInfo[] usages,
+        ChangeInfo changeInfo
     ) {
     }
 }

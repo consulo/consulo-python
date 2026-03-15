@@ -23,7 +23,6 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.AbstractElementManipulator;
 import consulo.language.util.IncorrectOperationException;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg
@@ -45,7 +44,6 @@ public class PyReferenceExpressionManipulator extends AbstractElementManipulator
 		return new TextRange(startOffset - element.getTextOffset(), element.getTextLength());
 	}
 
-	@Nonnull
 	@Override
 	public Class<PyReferenceExpression> getElementClass()
 	{

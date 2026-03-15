@@ -33,8 +33,7 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +63,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
         // is anything that resolves to our imported module is just an exact reference to that module
         private int myRelativeLevel; // true if "from ... import"
 
-        public IntentionState(@Nonnull Editor editor, @Nonnull PsiFile file) {
+        public IntentionState(Editor editor, PsiFile file) {
             boolean available = false;
             myImportElement = findImportElement(editor, file);
             if (myImportElement != null) {
@@ -106,7 +105,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
                 if (myReferee != null && myModuleName != null && myQualifierName != null) {
                     final Collection<PsiReference> references = new ArrayList<>();
                     PsiTreeUtil.processElements(file, new PsiElementProcessor() {
-                        public boolean execute(@Nonnull PsiElement element) {
+                        public boolean execute(PsiElement element) {
                             if (element instanceof PyReferenceExpression && PsiTreeUtil.getParentOfType(
                                 element,
                                 PyImportElement.class
@@ -206,7 +205,6 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
             }
         }
 
-        @Nonnull
         public LocalizeValue getText() {
             String moduleName = "?";
             if (myImportElement != null) {
@@ -218,7 +216,6 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
             return PyLocalize.intnConvertToFrom$0Import$1(getDots() + moduleName, "...");
         }
 
-        @Nonnull
         private String getDots() {
             String dots = "";
             for (int i = 0; i < myRelativeLevel; i += 1) {
@@ -229,7 +226,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
     }
 
     @Nullable
-    private static PyImportElement findImportElement(@Nonnull Editor editor, @Nonnull PsiFile file) {
+    private static PyImportElement findImportElement(Editor editor, PsiFile file) {
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         PyImportElement importElement = PsiTreeUtil.getParentOfType(elementAtCaret, PyImportElement.class);
         PyPsiUtils.assertValid(importElement);
@@ -241,7 +238,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
         }
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -255,7 +252,7 @@ public class ImportToImportFromIntention extends PyBaseIntentionAction {
     }
 
     @Override
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         IntentionState state = new IntentionState(editor, file);
         state.invoke();
     }

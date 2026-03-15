@@ -37,8 +37,7 @@ import consulo.logging.Logger;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -50,18 +49,16 @@ public class PyTypeCheckerInspection extends PyInspection {
     private static final Logger LOG = Logger.getInstance(PyTypeCheckerInspection.class);
     private static Key<Long> TIME_KEY = Key.create("PyTypeCheckerInspection.StartTime");
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO("Type checker");
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         if (LOG.isDebugEnabled()) {
@@ -71,7 +68,7 @@ public class PyTypeCheckerInspection extends PyInspection {
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -127,7 +124,7 @@ public class PyTypeCheckerInspection extends PyInspection {
         }
 
         @Nullable
-        private PyType getExpectedReturnType(@Nonnull PyFunction function) {
+        private PyType getExpectedReturnType(PyFunction function) {
             PyType returnType = myTypeEvalContext.getReturnType(function);
 
             if (returnType instanceof PyCollectionType && PyNames.FAKE_COROUTINE.equals(returnType.getName())) {
@@ -216,10 +213,9 @@ public class PyTypeCheckerInspection extends PyInspection {
             }
         }
 
-        @Nonnull
         private Map<PyExpression, Pair<String, ProblemHighlightType>> checkMapping(
             @Nullable PyExpression receiver,
-            @Nonnull Map<PyExpression, PyNamedParameter> mapping
+            Map<PyExpression, PyNamedParameter> mapping
         ) {
             Map<PyExpression, Pair<String, ProblemHighlightType>> problems = new HashMap<>();
             Map<PyGenericType, PyType> substitutions = new LinkedHashMap<>();
@@ -251,8 +247,8 @@ public class PyTypeCheckerInspection extends PyInspection {
         private static Pair<String, ProblemHighlightType> checkTypes(
             @Nullable PyType expected,
             @Nullable PyType actual,
-            @Nonnull TypeEvalContext context,
-            @Nonnull Map<PyGenericType, PyType> substitutions
+            TypeEvalContext context,
+            Map<PyGenericType, PyType> substitutions
         ) {
             if (actual != null && expected != null) {
                 if (!PyTypeChecker.match(expected, actual, context, substitutions)) {
@@ -302,7 +298,7 @@ public class PyTypeCheckerInspection extends PyInspection {
     }
 
     @Nullable
-    private static Set<String> getAttributes(@Nonnull PyType type, @Nonnull TypeEvalContext context) {
+    private static Set<String> getAttributes(PyType type, TypeEvalContext context) {
         if (type instanceof PyStructuralType) {
             return ((PyStructuralType) type).getAttributeNames();
         }
@@ -313,7 +309,7 @@ public class PyTypeCheckerInspection extends PyInspection {
     }
 
     @Override
-    public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder problemsHolder) {
+    public void inspectionFinished(LocalInspectionToolSession session, ProblemsHolder problemsHolder) {
         if (LOG.isDebugEnabled()) {
             Long startTime = session.getUserData(TIME_KEY);
             if (startTime != null) {

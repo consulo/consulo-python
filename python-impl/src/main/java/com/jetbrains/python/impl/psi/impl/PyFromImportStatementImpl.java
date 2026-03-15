@@ -36,8 +36,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.collection.ContainerUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -107,7 +106,6 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return importSource.asQualifiedName();
 	}
 
-	@Nonnull
 	public PyImportElement[] getImportElements()
 	{
 		PyFromImportStatementStub stub = getStub();
@@ -176,7 +174,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return findChildByType(PyTokenTypes.RPAR);
 	}
 
-	public boolean processDeclarations(@Nonnull PsiScopeProcessor processor, @Nonnull ResolveState state, PsiElement lastParent, @Nonnull PsiElement place)
+	public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place)
 	{
 		// import is per-file
 		if(place.getContainingFile() != getContainingFile())
@@ -252,7 +250,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Override
-	public void deleteChildInternal(@Nonnull ASTNode child)
+	public void deleteChildInternal(ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getImportElements()))
 		{
@@ -267,7 +265,6 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return as(ContainerUtil.getFirstItem(resolveImportSourceCandidates()), PsiFileSystemItem.class);
 	}
 
-	@Nonnull
 	@Override
 	public List<PsiElement> resolveImportSourceCandidates()
 	{
@@ -284,7 +281,6 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return ResolveImportUtil.resolveFromImportStatementSource(this, qName);
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getFullyQualifiedObjectNames()
 	{
@@ -303,7 +299,6 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return result;
 	}
 
-	@Nonnull
 	@Override
 	public Iterable<PyElement> iterateNames()
 	{
@@ -311,9 +306,8 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return resolved != null ? ImmutableList.<PyElement>of(resolved) : Collections.<PyElement>emptyList();
 	}
 
-	@Nonnull
 	@Override
-	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
+	public List<RatedResolveResult> multiResolveName(String name)
 	{
 		QualifiedName importSourceQName = getImportSourceQName();
 		if(importSourceQName != null && importSourceQName.endsWith(name))

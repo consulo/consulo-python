@@ -57,8 +57,7 @@ import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.inject.Inject;
 import org.jdom.Element;
 
@@ -130,8 +129,7 @@ public final class PythonSdkType extends SdkType {
     /**
      * @return name of builtins skeleton file; for Python 2.x it is '{@code __builtins__.py}'.
      */
-    @Nonnull
-    public static String getBuiltinsFileName(@Nonnull Sdk sdk) {
+    public static String getBuiltinsFileName(Sdk sdk) {
         LanguageLevel level = getLanguageLevelForSdk(sdk);
         return level.isOlderThan(LanguageLevel.PYTHON30) ? PyBuiltinCache.BUILTIN_FILE : PyBuiltinCache.BUILTIN_FILE_3K;
     }
@@ -171,7 +169,6 @@ public final class PythonSdkType extends SdkType {
         return null;
     }
 
-    @Nonnull
     @Override
     public Collection<String> suggestHomePaths() {
         List<String> candidates = new ArrayList<>();
@@ -207,7 +204,7 @@ public final class PythonSdkType extends SdkType {
         return PythonSdkFlavor.getFlavor(path) != null;
     }
 
-    public static boolean isInvalid(@Nonnull Sdk sdk) {
+    public static boolean isInvalid(Sdk sdk) {
         VirtualFile interpreter = sdk.getHomeDirectory();
         return interpreter == null || !interpreter.exists();
     }
@@ -226,7 +223,6 @@ public final class PythonSdkType extends SdkType {
         return isRemote(findSdkByPath(sdkPath));
     }
 
-    @Nonnull
     @Override
     public FileChooserDescriptor getHomeChooserDescriptor() {
         boolean isWindows = Platform.current().os().isWindows();
@@ -266,9 +262,9 @@ public final class PythonSdkType extends SdkType {
     }
 
     public void showCustomCreateUI(
-        @Nonnull SdkModel sdkModel,
-        @Nonnull JComponent parentComponent,
-        @Nonnull Consumer<Sdk> sdkCreatedCallback
+        SdkModel sdkModel,
+        JComponent parentComponent,
+        Consumer<Sdk> sdkCreatedCallback
     ) {
         Project project = DataManager.getInstance().getDataContext(parentComponent).getData(Project.KEY);
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
@@ -291,7 +287,7 @@ public final class PythonSdkType extends SdkType {
         );
     }
 
-    public static boolean isVirtualEnv(@Nonnull Sdk sdk) {
+    public static boolean isVirtualEnv(Sdk sdk) {
         String path = sdk.getHomePath();
         return isVirtualEnv(path);
     }
@@ -329,7 +325,7 @@ public final class PythonSdkType extends SdkType {
      * @return if the surroundings look like a virtualenv installation, its root is returned (normally the grandparent of binaryPath).
      */
     @Nullable
-    public static File getVirtualEnvRoot(@Nonnull String binaryPath) {
+    public static File getVirtualEnvRoot(String binaryPath) {
         File bin = new File(binaryPath).getParentFile();
         if (bin != null) {
             String rootPath = bin.getParent();
@@ -442,21 +438,21 @@ public final class PythonSdkType extends SdkType {
     @Override
     @Nullable
     public AdditionalDataConfigurable createAdditionalDataConfigurable(
-        @Nonnull SdkModel sdkModel,
-        @Nonnull SdkModificator sdkModificator
+        SdkModel sdkModel,
+        SdkModificator sdkModificator
     ) {
         return null;
     }
 
     @Override
-    public void saveAdditionalData(@Nonnull SdkAdditionalData additionalData, @Nonnull Element additional) {
+    public void saveAdditionalData(SdkAdditionalData additionalData, Element additional) {
         if (additionalData instanceof PythonSdkAdditionalData pythonSdkAdditionalData) {
             pythonSdkAdditionalData.save(additional);
         }
     }
 
     @Override
-    public SdkAdditionalData loadAdditionalData(@Nonnull Sdk currentSdk, Element additional) {
+    public SdkAdditionalData loadAdditionalData(Sdk currentSdk, Element additional) {
         return PythonSdkAdditionalData.load(currentSdk, additional);
     }
 
@@ -465,7 +461,7 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Override
-    public String sdkPath(@Nonnull VirtualFile homePath) {
+    public String sdkPath(VirtualFile homePath) {
         String path = super.sdkPath(homePath);
         PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(path);
         if (flavor != null) {
@@ -479,12 +475,11 @@ public final class PythonSdkType extends SdkType {
 
 
     @Override
-    public void setupSdkPaths(@Nonnull Sdk sdk) {
+    public void setupSdkPaths(Sdk sdk) {
         PythonSdkUpdater.updateLocalSdkPaths(sdk, null, null);
     }
 
-    @Nonnull
-    public static VirtualFile getSdkRootVirtualFile(@Nonnull VirtualFile path) {
+    public static VirtualFile getSdkRootVirtualFile(VirtualFile path) {
         String suffix = path.getExtension();
         if (suffix != null) {
             suffix = suffix.toLowerCase(); // Why on earth empty suffix is null and not ""?
@@ -511,7 +506,6 @@ public final class PythonSdkType extends SdkType {
         return basePath + File.separator + SKELETON_DIR_NAME;
     }
 
-    @Nonnull
     public static List<String> getSysPath(String bin_path) throws InvalidSdkException {
         String working_dir = new File(bin_path).getParent();
         Application application = ApplicationManager.getApplication();
@@ -525,8 +519,7 @@ public final class PythonSdkType extends SdkType {
         }
     }
 
-    @Nonnull
-    public static List<String> getSysPathsFromScript(@Nonnull String binaryPath) throws InvalidSdkException {
+    public static List<String> getSysPathsFromScript(String binaryPath) throws InvalidSdkException {
         // to handle the situation when PYTHONPATH contains ., we need to run the syspath script in the
         // directory of the script itself - otherwise the dir in which we run the script (e.g. /usr/bin) will be added to SDK path
         GeneralCommandLine cmd = PythonHelper.SYSPATH.newCommandLine(binaryPath, new ArrayList<>());
@@ -546,7 +539,7 @@ public final class PythonSdkType extends SdkType {
      * Returns a piece of env good as additional env for getProcessOutput.
      */
     @Nullable
-    public static Map<String, String> getVirtualEnvExtraEnv(@Nonnull String binaryPath) {
+    public static Map<String, String> getVirtualEnvExtraEnv(String binaryPath) {
         File root = getVirtualEnvRoot(binaryPath);
         if (root != null) {
             return Map.of("PATH", root.toString());
@@ -593,7 +586,6 @@ public final class PythonSdkType extends SdkType {
         return null;
     }
 
-    @Nonnull
     public static LanguageLevel getLanguageLevelForSdk(@Nullable Sdk sdk) {
         if (sdk != null && sdk.getSdkType() instanceof PythonSdkType) {
             PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(sdk);
@@ -605,12 +597,12 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Override
-    public boolean isRootTypeApplicable(@Nonnull OrderRootType type) {
+    public boolean isRootTypeApplicable(OrderRootType type) {
         return type == BinariesOrderRootType.getInstance();
     }
 
     @Override
-    public boolean sdkHasValidPath(@Nonnull Sdk sdk) {
+    public boolean sdkHasValidPath(Sdk sdk) {
         if (PySdkUtil.isRemote(sdk)) {
             return true;
         }
@@ -652,7 +644,7 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Nullable
-    public static Sdk findPython2Sdk(@Nonnull List<Sdk> sdks) {
+    public static Sdk findPython2Sdk(List<Sdk> sdks) {
         for (Sdk sdk : ContainerUtil.sorted(sdks, PreferredSdkComparator.INSTANCE)) {
             if (!getLanguageLevelForSdk(sdk).isPy3K()) {
                 return sdk;
@@ -680,7 +672,7 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Nullable
-    public static String getPythonExecutable(@Nonnull String rootPath) {
+    public static String getPythonExecutable(String rootPath) {
         File rootFile = new File(rootPath);
         if (rootFile.isFile()) {
             return rootFile.getAbsolutePath();
@@ -707,7 +699,7 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Nullable
-    public static String getExecutablePath(@Nonnull String homeDirectory, @Nonnull String name) {
+    public static String getExecutablePath(String homeDirectory, String name) {
         File binPath = new File(homeDirectory);
         File binDir = binPath.getParentFile();
         if (binDir == null) {
@@ -771,17 +763,16 @@ public final class PythonSdkType extends SdkType {
 
     @Nullable
     @RequiredReadAction
-    public static Sdk getSdk(@Nonnull PsiElement element) {
+    public static Sdk getSdk(PsiElement element) {
         return ModuleUtilCore.getSdk(element, PyModuleExtension.class);
     }
 
-    @Nonnull
-    public static String getSdkKey(@Nonnull Sdk sdk) {
+    public static String getSdkKey(Sdk sdk) {
         return sdk.getName();
     }
 
     @Nullable
-    public static Sdk findSdkByKey(@Nonnull String key) {
+    public static Sdk findSdkByKey(String key) {
         return SdkTable.getInstance().findSdk(key);
     }
 }

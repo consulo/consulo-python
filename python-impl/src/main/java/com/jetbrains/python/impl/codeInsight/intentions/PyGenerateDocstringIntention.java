@@ -28,8 +28,7 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Intention to add documentation string for function (with checked format).
@@ -37,16 +36,14 @@ import jakarta.annotation.Nullable;
  * @author catherine
  */
 public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
-    @Nonnull
     private LocalizeValue myText = LocalizeValue.empty();
 
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return myText;
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile) || file instanceof PyDocstringFile) {
             return false;
         }
@@ -81,7 +78,7 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
         }
     }
 
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction function = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);
 
@@ -92,7 +89,7 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
         generateDocstring(function, editor);
     }
 
-    public static void generateDocstring(@Nonnull PyDocStringOwner docStringOwner, @Nullable Editor editor) {
+    public static void generateDocstring(PyDocStringOwner docStringOwner, @Nullable Editor editor) {
         if (!DocStringUtil.ensureNotPlainDocstringFormat(docStringOwner)) {
             return;
         }

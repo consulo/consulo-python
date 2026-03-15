@@ -20,8 +20,7 @@ import static com.jetbrains.python.impl.psi.PyUtil.as;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
@@ -51,7 +50,7 @@ public class PyMoveModuleMembersHelper
 	 * @param element PSI element to check
 	 * @return whether this element is acceptable for "Move ..." refactoring
 	 */
-	public static boolean isMovableModuleMember(@Nonnull PsiElement element)
+	public static boolean isMovableModuleMember(PsiElement element)
 	{
 		if(!(hasMovableElementType(element) && PyUtil.isTopLevel(element)))
 		{
@@ -64,7 +63,7 @@ public class PyMoveModuleMembersHelper
 		return true;
 	}
 
-	public static boolean hasMovableElementType(@Nonnull PsiElement element)
+	public static boolean hasMovableElementType(PsiElement element)
 	{
 		return element instanceof PyClass || element instanceof PyFunction || element instanceof PyTargetExpression;
 	}
@@ -78,7 +77,7 @@ public class PyMoveModuleMembersHelper
 	 *
 	 * @param element PSI element to check
 	 */
-	public static boolean isTargetOfSimpleAssignment(@Nonnull PsiElement element)
+	public static boolean isTargetOfSimpleAssignment(PsiElement element)
 	{
 		PyTargetExpression target = as(element, PyTargetExpression.class);
 		if(target == null || target.isQualified())
@@ -94,7 +93,7 @@ public class PyMoveModuleMembersHelper
 	 * {@link PyFile#getTopLevelClasses()} and {@link PyFile#getTopLevelFunctions()}. Target expression are filtered with
 	 * {@link #isTargetOfSimpleAssignment(PsiElement)}.
 	 */
-	public static List<PyElement> getTopLevelModuleMembers(@Nonnull PyFile pyFile)
+	public static List<PyElement> getTopLevelModuleMembers(PyFile pyFile)
 	{
 		List<PyElement> result = new ArrayList<>();
 		for(PyTargetExpression attr : pyFile.getTopLevelAttributes())
@@ -116,7 +115,7 @@ public class PyMoveModuleMembersHelper
 	 * @see #extractNamedElement(PsiElement)
 	 */
 	@Nullable
-	public static PsiElement expandNamedElementBody(@Nonnull PsiNamedElement element)
+	public static PsiElement expandNamedElementBody(PsiNamedElement element)
 	{
 		if(element instanceof PyClass || element instanceof PyFunction)
 		{
@@ -136,7 +135,7 @@ public class PyMoveModuleMembersHelper
 	 * @see #expandNamedElementBody(PsiNamedElement)
 	 */
 	@Nullable
-	public static PsiNamedElement extractNamedElement(@Nonnull PsiElement element)
+	public static PsiNamedElement extractNamedElement(PsiElement element)
 	{
 		if(element instanceof PyClass || element instanceof PyFunction || element instanceof PyTargetExpression)
 		{

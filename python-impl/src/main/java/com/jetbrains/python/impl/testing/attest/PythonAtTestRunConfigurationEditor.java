@@ -19,7 +19,6 @@ package com.jetbrains.python.impl.testing.attest;
 import consulo.configurable.ConfigurationException;
 import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 
@@ -41,7 +40,6 @@ public class PythonAtTestRunConfigurationEditor extends SettingsEditor<PythonAtT
     PythonAtTestRunConfiguration.copyParams(myForm, config);
   }
 
-  @Nonnull
   protected JComponent createEditor() {
     return myForm.getPanel();
   }

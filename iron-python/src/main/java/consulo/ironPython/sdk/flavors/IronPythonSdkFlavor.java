@@ -24,7 +24,6 @@ import consulo.process.cmd.GeneralCommandLine;
 import consulo.ui.image.Image;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.io.File;
 import java.util.*;
 
@@ -67,7 +66,7 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 	}
 
 	@Override
-	public boolean isValidSdkPath(@Nonnull File file)
+	public boolean isValidSdkPath(File file)
 	{
 		String name = file.getName();
 		return name.equals("ipy.exe") || name.equals("ipy64.exe");
@@ -114,7 +113,6 @@ public class IronPythonSdkFlavor extends PythonSdkFlavor
 		addToEnv("IRONPYTHONPATH", StringUtil.join(path, File.pathSeparator), env);
 	}
 
-	@Nonnull
 	@Override
 	public String getName()
 	{

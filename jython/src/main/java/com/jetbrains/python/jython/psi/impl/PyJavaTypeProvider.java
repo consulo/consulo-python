@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.util.ModuleUtilCore;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ import java.util.List;
 @ExtensionImpl
 public class PyJavaTypeProvider extends PyTypeProviderBase {
   @Nullable
-  public PyType getReferenceType(@Nonnull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
+  public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
     if (referenceTarget instanceof PsiClass) {
       return new PyJavaClassType((PsiClass)referenceTarget, true);
     }
@@ -69,9 +68,9 @@ public class PyJavaTypeProvider extends PyTypeProviderBase {
     return null;
   }
 
-  public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param,
-                                      @Nonnull PyFunction func,
-                                      @Nonnull TypeEvalContext context) {
+  public Ref<PyType> getParameterType(PyNamedParameter param,
+                                      PyFunction func,
+                                      TypeEvalContext context) {
     if (!(param.getParent() instanceof PyParameterList)) {
       return null;
     }

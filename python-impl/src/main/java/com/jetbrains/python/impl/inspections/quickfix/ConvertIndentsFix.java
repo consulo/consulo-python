@@ -25,7 +25,6 @@ import consulo.language.psi.PsiDocumentManager;
 import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -37,14 +36,13 @@ public class ConvertIndentsFix implements LocalQuickFix {
         myToSpaces = toSpaces;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return myToSpaces ? LocalizeValue.localizeTODO("Convert indents to spaces") : LocalizeValue.localizeTODO("Convert indents to tabs");
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiFile file = descriptor.getPsiElement().getContainingFile();
         Document document = PsiDocumentManager.getInstance(project).getDocument(file);
         if (document != null) {

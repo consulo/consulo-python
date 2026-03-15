@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.psi.impl.stubs;
 
 import java.io.IOException;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
@@ -39,29 +38,26 @@ public class PyStarImportElementElementType extends PyStubElementType<PyStarImpo
 		super("STAR_IMPORT_ELEMENT");
 	}
 
-	@Nonnull
-	public PsiElement createElement(@Nonnull ASTNode node)
+	public PsiElement createElement(ASTNode node)
 	{
 		return new PyStarImportElementImpl(node);
 	}
 
-	public PyStarImportElement createPsi(@Nonnull PyStarImportElementStub stub)
+	public PyStarImportElement createPsi(PyStarImportElementStub stub)
 	{
 		return new PyStarImportElementImpl(stub);
 	}
 
-	@Nonnull
-	public PyStarImportElementStub createStub(@Nonnull PyStarImportElement psi, StubElement parentStub)
+	public PyStarImportElementStub createStub(PyStarImportElement psi, StubElement parentStub)
 	{
 		return new PyStarImportElementStubImpl(parentStub);
 	}
 
-	public void serialize(@Nonnull PyStarImportElementStub stub, @Nonnull StubOutputStream dataStream) throws IOException
+	public void serialize(PyStarImportElementStub stub, StubOutputStream dataStream) throws IOException
 	{
 	}
 
-	@Nonnull
-	public PyStarImportElementStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
+	public PyStarImportElementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		return new PyStarImportElementStubImpl(parentStub);
 	}

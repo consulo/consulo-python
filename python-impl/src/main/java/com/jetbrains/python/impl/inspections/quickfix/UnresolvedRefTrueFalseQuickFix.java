@@ -23,7 +23,6 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * QuickFix to replace true with True, false with False
@@ -41,13 +40,12 @@ public class UnresolvedRefTrueFalseQuickFix implements LocalQuickFix {
         newName = new String(charArray);
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixUnresolvedReferenceReplace$0(newName);
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
 
         PyExpression expression = elementGenerator.createExpressionFromText(newName);

@@ -28,8 +28,7 @@ import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Set;
 
@@ -45,13 +44,12 @@ public class PyImplementMethodsQuickFix implements LocalQuickFix {
         myToImplement = toBeImplemented;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameImplementMethods();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         Editor editor = getEditor(project, descriptor.getPsiElement().getContainingFile());
         if (editor != null) {
             PyOverrideImplementUtil.chooseAndOverrideOrImplementMethods(

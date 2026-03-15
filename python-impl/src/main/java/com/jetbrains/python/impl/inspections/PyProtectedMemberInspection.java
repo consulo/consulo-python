@@ -39,8 +39,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,24 +54,21 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyProtectedMemberInspection extends PyInspection {
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyProtectedMemberInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameProtectedMemberAccess();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         PyProtectedMemberInspectionState inspectionState = (PyProtectedMemberInspectionState) state;
@@ -85,7 +81,7 @@ public class PyProtectedMemberInspection extends PyInspection {
 
         public Visitor(
             @Nullable ProblemsHolder holder,
-            @Nonnull LocalInspectionToolSession session,
+            LocalInspectionToolSession session,
             PyProtectedMemberInspectionState inspectionState
         ) {
             super(holder, session);
@@ -126,7 +122,7 @@ public class PyProtectedMemberInspection extends PyInspection {
             checkReference(node, qualifier);
         }
 
-        private void checkReference(@Nonnull PyReferenceExpression node, @Nonnull PyExpression qualifier) {
+        private void checkReference(PyReferenceExpression node, PyExpression qualifier) {
             if (myTypeEvalContext.getType(qualifier) instanceof PyNamedTupleType) {
                 return;
             }

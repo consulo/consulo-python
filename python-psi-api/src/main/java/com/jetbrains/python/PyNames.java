@@ -17,17 +17,14 @@ package com.jetbrains.python;
 
 import com.google.common.collect.ImmutableMap;
 import com.jetbrains.python.psi.LanguageLevel;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 
 /**
  * @author dcheryasov
  */
-@NonNls
 public class PyNames {
   public static final String SITE_PACKAGES = "site-packages";
   /**
@@ -550,7 +547,7 @@ public class PyNames {
    * @param name what to check
    * @return true iff the name is either a keyword or a reserved name, like None.
    */
-  public static boolean isReserved(@NonNls String name) {
+  public static boolean isReserved(String name) {
     return Keywords.contains(name) || NONE.equals(name);
   }
 
@@ -563,11 +560,11 @@ public class PyNames {
    * @param name what to check
    * @return true iff name is not reserved and is a well-formed identifier.
    */
-  public static boolean isIdentifier(@Nonnull @NonNls String name) {
+  public static boolean isIdentifier(String name) {
     return !isReserved(name) && isIdentifierString(name);
   }
 
-  public static boolean isIdentifierString(@Nonnull @NonNls String name) {
+  public static boolean isIdentifierString(String name) {
     return IDENTIFIER_PATTERN.matcher(name).matches();
   }
 

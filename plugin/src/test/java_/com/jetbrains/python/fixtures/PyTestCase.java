@@ -28,8 +28,7 @@ import com.jetbrains.python.impl.psi.impl.PyFileImpl;
 import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
 import consulo.container.boot.ContainerPathManager;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 
 /**
@@ -108,7 +107,7 @@ public abstract class PyTestCase extends UsefulTestCase
 		PythonLanguageLevelPusher.setForcedLanguageLevel(myFixture.getProject(), languageLevel);
 	}
 
-	protected void runWithLanguageLevel(@Nonnull LanguageLevel languageLevel, @Nonnull Runnable action)
+	protected void runWithLanguageLevel(LanguageLevel languageLevel, Runnable action)
 	{
 		setLanguageLevel(languageLevel);
 		try
@@ -136,7 +135,7 @@ public abstract class PyTestCase extends UsefulTestCase
 		}
 
 		@Override
-		public void configureSdk(@Nonnull Consumer<Sdk> consumer)
+		public void configureSdk(Consumer<Sdk> consumer)
 		{
 			consumer.consume(PythonMockSdk.findOrCreate(myPythonVersion));
 		}

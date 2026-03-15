@@ -30,7 +30,6 @@ import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.impl.psi.impl.PyImportElementImpl;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -47,28 +46,27 @@ public class PyImportElementElementType extends PyStubElementType<PyImportElemen
   }
 
   @Override
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PyImportElementImpl(node);
   }
 
   @Override
-  public PyImportElement createPsi(@Nonnull PyImportElementStub stub) {
+  public PyImportElement createPsi(PyImportElementStub stub) {
     return new PyImportElementImpl(stub);
   }
 
   @Override
-  public PyImportElementStub createStub(@Nonnull PyImportElement psi, StubElement parentStub) {
+  public PyImportElementStub createStub(PyImportElement psi, StubElement parentStub) {
     PyTargetExpression asName = psi.getAsNameElement();
     return new PyImportElementStubImpl(psi.getImportedQName(), asName != null ? asName.getName() : "", parentStub, getStubElementType());
   }
 
-  public void serialize(@Nonnull PyImportElementStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
+  public void serialize(PyImportElementStub stub, StubOutputStream dataStream) throws IOException {
     QualifiedName.serialize(stub.getImportedQName(), dataStream);
     dataStream.writeName(stub.getAsName());
   }
 
-  @Nonnull
-  public PyImportElementStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PyImportElementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     QualifiedName qName = QualifiedName.deserialize(dataStream);
     StringRef asName = dataStream.readName();
     return new PyImportElementStubImpl(qName, asName.getString(), parentStub, getStubElementType());

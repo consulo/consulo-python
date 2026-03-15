@@ -38,8 +38,7 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.ContainerUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,20 +69,20 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
      * @param qualify       if true, add an "import ..." statement and qualify the name; else use "from ... import name"
      */
     public AutoImportQuickFix(
-        @Nonnull PsiElement node,
-        @Nonnull Class<? extends PsiReference> referenceType,
-        @Nonnull String name,
+        PsiElement node,
+        Class<? extends PsiReference> referenceType,
+        String name,
         boolean qualify
     ) {
         this(node, referenceType, name, qualify, Collections.emptyList());
     }
 
     private AutoImportQuickFix(
-        @Nonnull PsiElement node,
-        @Nonnull Class<? extends PsiReference> referenceType,
-        @Nonnull String name,
+        PsiElement node,
+        Class<? extends PsiReference> referenceType,
+        String name,
         boolean qualify,
-        @Nonnull Collection<ImportCandidateHolder> candidates
+        Collection<ImportCandidateHolder> candidates
     ) {
         super(node);
         myReferenceType = referenceType;
@@ -99,7 +98,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
      * @param file          the file which is the source of the importable
      * @param importElement an existing import element that can be a source for the importable.
      */
-    public void addImport(@Nonnull PsiElement importable, @Nonnull PsiFile file, @Nullable PyImportElement importElement) {
+    public void addImport(PsiElement importable, PsiFile file, @Nullable PyImportElement importElement) {
         myImports.add(new ImportCandidateHolder(importable, file, importElement, null));
     }
 
@@ -110,20 +109,19 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
      * @param file       the file which is the source of the importable
      * @param path       import path for the file, as a qualified name (a.b.c)
      */
-    public void addImport(@Nonnull PsiElement importable, @Nonnull PsiFileSystemItem file, @Nullable QualifiedName path) {
+    public void addImport(PsiElement importable, PsiFileSystemItem file, @Nullable QualifiedName path) {
         myImports.add(new ImportCandidateHolder(importable, file, null, path));
     }
 
     public void addImport(
-        @Nonnull PsiElement importable,
-        @Nonnull PsiFileSystemItem file,
+        PsiElement importable,
+        PsiFileSystemItem file,
         @Nullable QualifiedName path,
         @Nullable String asName
     ) {
         myImports.add(new ImportCandidateHolder(importable, file, null, path, asName));
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         if (myUseQualifiedImport) {
@@ -186,7 +184,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
     }
 
     @Override
-    public void invoke(@Nonnull Project project, @Nonnull PsiFile file, @Nonnull PsiElement startElement, @Nonnull PsiElement endElement) {
+    public void invoke(Project project, PsiFile file, PsiElement startElement, PsiElement endElement) {
         invoke(getStartElement().getContainingFile());
     }
 
@@ -210,7 +208,6 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
         myExpended = true;
     }
 
-    @Nonnull
     protected ImportFromExistingAction createAction() {
         return new ImportFromExistingAction(getStartElement(), myImports, myInitialName, myUseQualifiedImport, false);
     }
@@ -219,7 +216,6 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
         Collections.sort(myImports);
     }
 
-    @Nonnull
     public List<ImportCandidateHolder> getCandidates() {
         return Collections.unmodifiableList(myImports);
     }
@@ -244,16 +240,13 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
         return false;
     }
 
-    @Nonnull
     public AutoImportQuickFix forLocalImport() {
         return new AutoImportQuickFix(getStartElement(), myReferenceType, myInitialName, myUseQualifiedImport, myImports) {
-            @Nonnull
             @Override
             public LocalizeValue getText() {
                 return PyLocalize.qfixLocalAutoImportImportLocally(super.getText());
             }
 
-            @Nonnull
             @Override
             protected ImportFromExistingAction createAction() {
                 return new ImportFromExistingAction(getStartElement(), myImports, myInitialName, myUseQualifiedImport, true);
@@ -261,12 +254,11 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
         };
     }
 
-    @Nonnull
     public String getNameToImport() {
         return myInitialName;
     }
 
-    private static boolean isResolved(@Nonnull PsiReference reference) {
+    private static boolean isResolved(PsiReference reference) {
         if (reference instanceof PsiPolyVariantReference) {
             return ((PsiPolyVariantReference) reference).multiResolve(false).length > 0;
         }
@@ -274,7 +266,7 @@ public class AutoImportQuickFix extends LocalQuickFixOnPsiElement implements Hig
     }
 
     @Nullable
-    private PsiReference findOriginalReference(@Nonnull PsiElement element) {
+    private PsiReference findOriginalReference(PsiElement element) {
         return ContainerUtil.findInstance(element.getReferences(), myReferenceType);
     }
 }

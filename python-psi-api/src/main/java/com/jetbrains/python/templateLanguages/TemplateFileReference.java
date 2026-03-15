@@ -31,15 +31,14 @@ import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
 /**
  * @author yole
  */
 public class TemplateFileReference extends WeakFileReference {
-  public TemplateFileReference(@Nonnull FileReferenceSet fileReferenceSet, TextRange range, int index, String text) {
+  public TemplateFileReference(FileReferenceSet fileReferenceSet, TextRange range, int index, String text) {
     super(fileReferenceSet, range, index, text);
   }
 
@@ -50,7 +49,7 @@ public class TemplateFileReference extends WeakFileReference {
   }
 
   @Override
-  public PsiElement bindToElement(@Nonnull PsiElement element, boolean absolute) throws IncorrectOperationException {
+  public PsiElement bindToElement(PsiElement element, boolean absolute) throws IncorrectOperationException {
     if (!(element instanceof PsiFileSystemItem)) {
       throw new IncorrectOperationException("Cannot bind to element, should be instanceof PsiFileSystemItem: " + element);
     }

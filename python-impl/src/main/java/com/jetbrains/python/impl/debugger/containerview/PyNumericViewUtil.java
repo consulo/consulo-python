@@ -19,7 +19,6 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
 import consulo.util.lang.Pair;
 
 /**
@@ -72,7 +71,7 @@ public class PyNumericViewUtil
 		return range;
 	}
 
-	private static Pair<Double, Double> parsePyComplex(@Nonnull String pyComplexValue)
+	private static Pair<Double, Double> parsePyComplex(String pyComplexValue)
 	{
 		if(pyComplexValue.startsWith("(") && pyComplexValue.endsWith(")"))
 		{

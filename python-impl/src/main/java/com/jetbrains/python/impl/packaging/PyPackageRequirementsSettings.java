@@ -26,7 +26,6 @@ import consulo.module.Module;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan
@@ -39,31 +38,27 @@ import jakarta.annotation.Nonnull;
 public class PyPackageRequirementsSettings implements PersistentStateComponent<PyPackageRequirementsSettings> {
   public static final String DEFAULT_REQUIREMENTS_PATH = "requirements.txt";
 
-  @Nonnull
   private String myRequirementsPath = DEFAULT_REQUIREMENTS_PATH;
 
-  @Nonnull
   @Override
   public PyPackageRequirementsSettings getState() {
     return this;
   }
 
   @Override
-  public void loadState(@Nonnull PyPackageRequirementsSettings state) {
+  public void loadState(PyPackageRequirementsSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
-  @Nonnull
   public String getRequirementsPath() {
     return myRequirementsPath;
   }
 
-  public void setRequirementsPath(@Nonnull String path) {
+  public void setRequirementsPath(String path) {
     myRequirementsPath = path;
   }
 
-  @Nonnull
-  public static PyPackageRequirementsSettings getInstance(@Nonnull Module module) {
+  public static PyPackageRequirementsSettings getInstance(Module module) {
     return module.getInstance(PyPackageRequirementsSettings.class);
   }
 }

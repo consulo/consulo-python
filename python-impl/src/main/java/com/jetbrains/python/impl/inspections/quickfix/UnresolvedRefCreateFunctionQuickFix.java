@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.FileModificationService;
@@ -47,13 +46,12 @@ public class UnresolvedRefCreateFunctionQuickFix implements LocalQuickFix {
         myReference = reference;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixUnresolvedReferenceCreateFunction$0(myReference.getText());
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         if (!myElement.isValid() || !FileModificationService.getInstance().preparePsiElementForWrite(myElement)) {
             return;
         }

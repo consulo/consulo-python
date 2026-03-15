@@ -27,7 +27,6 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -35,16 +34,14 @@ import jakarta.annotation.Nonnull;
 public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityAction {
     public static final String END_WILDCARD = ".*";
 
-    @Nonnull
     private final QualifiedName myIdentifier;
     private final boolean myIgnoreAllAttributes;
 
-    public AddIgnoredIdentifierQuickFix(@Nonnull QualifiedName identifier, boolean ignoreAllAttributes) {
+    public AddIgnoredIdentifierQuickFix(QualifiedName identifier, boolean ignoreAllAttributes) {
         myIdentifier = identifier;
         myIgnoreAllAttributes = ignoreAllAttributes;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         if (myIgnoreAllAttributes) {
@@ -56,7 +53,7 @@ public class AddIgnoredIdentifierQuickFix implements LocalQuickFix, LowPriorityA
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement context = descriptor.getPsiElement();
         InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
         profile.<PyUnresolvedReferencesInspection, PyUnresolvedReferencesInspectionState>modifyToolSettings(

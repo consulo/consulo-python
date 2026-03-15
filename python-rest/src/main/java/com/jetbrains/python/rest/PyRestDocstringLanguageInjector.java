@@ -25,7 +25,6 @@ import consulo.language.inject.LanguageInjector;
 import consulo.language.psi.PsiLanguageInjectionHost;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -37,8 +36,8 @@ public class PyRestDocstringLanguageInjector implements LanguageInjector {
     @Override
     @RequiredReadAction
     public void injectLanguages(
-        @Nonnull PsiLanguageInjectionHost host,
-        @Nonnull InjectedLanguagePlaces injectionPlacesRegistrar
+        PsiLanguageInjectionHost host,
+        InjectedLanguagePlaces injectionPlacesRegistrar
     ) {
         if (host instanceof RestLine) {
             int start = 0;

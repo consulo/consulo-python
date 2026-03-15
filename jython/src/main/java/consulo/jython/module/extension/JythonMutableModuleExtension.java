@@ -10,22 +10,21 @@ import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.layout.VerticalLayout;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author VISTALL
  * @since 25.10.13.
  */
 public class JythonMutableModuleExtension extends JythonModuleExtension implements MutableModuleExtensionWithSdk<JythonModuleExtension> {
-  public JythonMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module) {
+  public JythonMutableModuleExtension(String id, ModuleRootLayer module) {
     super(id, module);
   }
 
   @RequiredUIAccess
   @Nullable
   @Override
-  public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable) {
+  public Component createConfigurationComponent(Disposable disposable, Runnable runnable) {
     VerticalLayout layout = VerticalLayout.create();
     layout.add(ModuleExtensionBundleBoxBuilder.createAndDefine(this, disposable, runnable).build());
     return layout;
@@ -37,11 +36,10 @@ public class JythonMutableModuleExtension extends JythonModuleExtension implemen
   }
 
   @Override
-  public boolean isModified(@Nonnull JythonModuleExtension extension) {
+  public boolean isModified(JythonModuleExtension extension) {
     return isModifiedImpl(extension);
   }
 
-  @Nonnull
   @Override
   public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk() {
     return (MutableModuleInheritableNamedPointer<Sdk>)super.getInheritableSdk();

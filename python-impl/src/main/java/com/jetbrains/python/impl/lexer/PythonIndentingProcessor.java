@@ -25,8 +25,7 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import consulo.util.collection.primitive.ints.IntStack;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,7 +185,7 @@ public class PythonIndentingProcessor extends MergingLexerAdapter {
   }
 
   @Override
-  public void start(@Nonnull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+  public void start(CharSequence buffer, int startOffset, int endOffset, int initialState) {
     checkStartState(startOffset, initialState);
     super.start(buffer, startOffset, endOffset, initialState);
     setStartState();

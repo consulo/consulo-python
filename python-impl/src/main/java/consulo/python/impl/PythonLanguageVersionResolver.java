@@ -13,8 +13,7 @@ import consulo.language.version.LanguageVersion;
 import consulo.language.version.LanguageVersionResolver;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author VISTALL
@@ -23,9 +22,8 @@ import jakarta.annotation.Nullable;
 @ExtensionImpl
 public class PythonLanguageVersionResolver implements LanguageVersionResolver {
   @RequiredReadAction
-  @Nonnull
   @Override
-  public LanguageVersion getLanguageVersion(@Nonnull Language language, @Nullable PsiElement psiElement) {
+  public LanguageVersion getLanguageVersion(Language language, @Nullable PsiElement psiElement) {
     if (psiElement == null) {
       return PythonLanguage.INSTANCE.getVersion(LanguageLevel.getDefault());
     }
@@ -39,9 +37,8 @@ public class PythonLanguageVersionResolver implements LanguageVersionResolver {
   }
 
   @RequiredReadAction
-  @Nonnull
   @Override
-  public LanguageVersion getLanguageVersion(@Nonnull Language language, @Nullable Project project, @Nullable VirtualFile virtualFile) {
+  public LanguageVersion getLanguageVersion(Language language, @Nullable Project project, @Nullable VirtualFile virtualFile) {
     if (project != null && virtualFile != null) {
       LanguageLevel level = PyUtil.getLanguageLevelForVirtualFile(project, virtualFile);
       return PythonLanguage.INSTANCE.getVersion(level);
@@ -50,7 +47,6 @@ public class PythonLanguageVersionResolver implements LanguageVersionResolver {
     return PythonLanguage.INSTANCE.getVersion(LanguageLevel.getDefault());
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

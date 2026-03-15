@@ -12,8 +12,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.logging.Logger;
 import consulo.util.io.CharsetToolkit;
 import com.jetbrains.python.debugger.IPyDebugProcess;
@@ -56,7 +55,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 		private AtomicInteger num = new AtomicInteger(1);
 
 		@Override
-		public Thread newThread(@Nonnull Runnable r)
+		public Thread newThread(Runnable r)
 		{
 			return new Thread(r, "Python Debug Script Connection " + num.getAndIncrement());
 		}
@@ -66,14 +65,11 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 	private static final long CHECK_CONNECTION_APPROVED_DELAY = 1000L;
 	private static final long SLEEP_TIME_BETWEEN_CONNECTION_TRIES = 150L;
 
-	@Nonnull
 	private final IPyDebugProcess myDebugProcess;
 
-	@Nonnull
 	private final String myHost;
 	private final int myPort;
 
-	@Nonnull
 	private volatile State myState = State.INIT;
 
 	@Nullable
@@ -81,7 +77,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 	@Nullable
 	private volatile DebuggerReader myDebuggerReader;
 
-	public ClientModeDebuggerTransport(@Nonnull IPyDebugProcess debugProcess, @Nonnull RemoteDebugger debugger, @Nonnull String host, int port)
+	public ClientModeDebuggerTransport(IPyDebugProcess debugProcess, RemoteDebugger debugger, String host, int port)
 	{
 		super(debugger);
 		myDebugProcess = debugProcess;
@@ -269,7 +265,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 	}
 
 	@Override
-	public void messageReceived(@Nonnull ProtocolFrame frame)
+	public void messageReceived(ProtocolFrame frame)
 	{
 		if(myState == State.CONNECTED)
 		{
@@ -301,7 +297,7 @@ public class ClientModeDebuggerTransport extends BaseDebuggerTransport
 
 	public class DebuggerReader extends BaseDebuggerReader
 	{
-		public DebuggerReader(@Nonnull RemoteDebugger debugger, @Nonnull InputStream stream) throws IOException
+		public DebuggerReader(RemoteDebugger debugger, InputStream stream) throws IOException
 		{
 			super(stream, CharsetToolkit.UTF8_CHARSET, debugger); //TODO: correct encoding?
 			start(getClass().getName());

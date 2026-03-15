@@ -23,7 +23,6 @@ import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndex;
 import consulo.language.psi.stub.StubIndexKey;
 import com.jetbrains.python.psi.PyTargetExpression;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -39,7 +38,6 @@ public class PyInstanceAttributeIndex extends StringStubIndexExtension<PyTargetE
     return super.getVersion() + 1;
   }
 
-  @Nonnull
   @Override
   public StubIndexKey<String, PyTargetExpression> getKey() {
     return KEY;

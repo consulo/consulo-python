@@ -28,7 +28,6 @@ import consulo.execution.runner.RunContentBuilder;
 import consulo.execution.ui.RunContentDescriptor;
 import consulo.process.ExecutionException;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -36,12 +35,11 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PythonRunner extends DefaultProgramRunner {
 
-  @Nonnull
   public String getRunnerId() {
     return "PythonRunner";
   }
 
-  public boolean canRun(@Nonnull String executorId, @Nonnull RunProfile profile) {
+  public boolean canRun(String executorId, RunProfile profile) {
     return executorId.equals(DefaultRunExecutor.EXECUTOR_ID) && profile instanceof AbstractPythonRunConfiguration;
   }
 

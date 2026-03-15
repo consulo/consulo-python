@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
 
-import jakarta.annotation.Nonnull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
@@ -31,17 +30,16 @@ import com.jetbrains.python.psi.PyElement;
  */
 class NamePredicate extends NotNullPredicate<PyElement>
 {
-	@Nonnull
 	private final String myName;
 
 
-	NamePredicate(@Nonnull String name)
+	NamePredicate(String name)
 	{
 		myName = name;
 	}
 
 	@Override
-	protected boolean applyNotNull(@Nonnull PyElement input)
+	protected boolean applyNotNull(PyElement input)
 	{
 		return myName.equals(input.getName());
 	}
@@ -54,7 +52,7 @@ class NamePredicate extends NotNullPredicate<PyElement>
 	 * @param stock  collection elements to search between
 	 * @return true if stock contains element with name equal to needle's name
 	 */
-	static boolean hasElementWithSameName(@Nonnull NavigationItem needle, @Nonnull Iterable<? extends PyElement> stock)
+	static boolean hasElementWithSameName(NavigationItem needle, Iterable<? extends PyElement> stock)
 	{
 		String name = needle.getName();
 		if(name != null)

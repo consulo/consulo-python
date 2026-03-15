@@ -58,8 +58,7 @@ import consulo.project.content.scope.ProjectScopes;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -73,7 +72,6 @@ public class PyQualifiedReference extends PyReferenceImpl {
         super(element, context);
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     protected List<RatedResolveResult> resolveInner() {
@@ -221,7 +219,7 @@ public class PyQualifiedReference extends PyReferenceImpl {
     }
 
     @RequiredReadAction
-    private static boolean canQualifyAnImplicitName(@Nonnull PyExpression qualifier) {
+    private static boolean canQualifyAnImplicitName(PyExpression qualifier) {
         if (qualifier instanceof PyCallExpression call) {
             PyExpression callee = call.getCallee();
             if (callee instanceof PyReferenceExpression calleeRef && PyNames.SUPER.equals(callee.getName())) {
@@ -234,7 +232,7 @@ public class PyQualifiedReference extends PyReferenceImpl {
         return true;
     }
 
-    private static boolean addAssignedAttributes(ResolveResultList ret, String referencedName, @Nonnull PyQualifiedExpression qualifier) {
+    private static boolean addAssignedAttributes(ResolveResultList ret, String referencedName, PyQualifiedExpression qualifier) {
         QualifiedName qName = qualifier.asQualifiedName();
         if (qName == null) {
             return false;
@@ -264,7 +262,6 @@ public class PyQualifiedReference extends PyReferenceImpl {
         ret.poke(docString, RatedResolveResult.RATE_HIGH);
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public Object[] getVariants() {
@@ -424,8 +421,7 @@ public class PyQualifiedReference extends PyReferenceImpl {
         return ArrayUtil.toObjectArray(results);
     }
 
-    @Nonnull
-    public static Collection<PyExpression> collectAssignedAttributes(@Nonnull QualifiedName qualifierQName, @Nonnull PsiElement anchor) {
+    public static Collection<PyExpression> collectAssignedAttributes(QualifiedName qualifierQName, PsiElement anchor) {
         Set<String> names = new HashSet<>();
         List<PyExpression> results = new ArrayList<>();
         for (ScopeOwner owner = ScopeUtil.getScopeOwner(anchor); owner != null; owner = ScopeUtil.getScopeOwner(owner)) {
@@ -488,7 +484,6 @@ public class PyQualifiedReference extends PyReferenceImpl {
         return false;
     }
 
-    @Nonnull
     protected PyQualifiedReference copyWithResolveContext(PyResolveContext context) {
         return new PyQualifiedReference(myElement, context);
     }

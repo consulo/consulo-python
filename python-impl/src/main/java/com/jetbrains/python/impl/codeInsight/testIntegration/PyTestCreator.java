@@ -38,7 +38,6 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.logging.Logger;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -84,7 +83,7 @@ public class PyTestCreator implements TestCreator
 	 *
 	 * @return file with test
 	 */
-	static PsiFile generateTestAndNavigate(@Nonnull final Project project, @Nonnull final CreateTestDialog dialog)
+	static PsiFile generateTestAndNavigate(final Project project, final CreateTestDialog dialog)
 	{
 		return PostprocessReformattingAspect.getInstance(project).postponeFormattingInside(() -> ApplicationManager.getApplication().runWriteAction(new Computable<PsiFile>()
 		{
@@ -111,8 +110,7 @@ public class PyTestCreator implements TestCreator
 	 *
 	 * @return newly created test class
 	 */
-	@Nonnull
-	static PyElement generateTest(@Nonnull Project project, @Nonnull CreateTestDialog dialog)
+	static PyElement generateTest(Project project, CreateTestDialog dialog)
 	{
 		IdeDocumentHistory.getInstance(project).includeCurrentPlaceAsChangePlace();
 
@@ -147,7 +145,6 @@ public class PyTestCreator implements TestCreator
 		return createdClass;
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

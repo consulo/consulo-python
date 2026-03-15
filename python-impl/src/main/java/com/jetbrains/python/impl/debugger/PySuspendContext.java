@@ -22,7 +22,6 @@ import consulo.execution.debug.frame.XSuspendContext;
 import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collection;
 
 
@@ -31,19 +30,17 @@ public class PySuspendContext extends XSuspendContext {
     private final PyExecutionStack myActiveStack;
     private PyDebugProcess myDebugProcess;
 
-    public PySuspendContext(@Nonnull PyDebugProcess debugProcess, @Nonnull PyThreadInfo threadInfo) {
+    public PySuspendContext(PyDebugProcess debugProcess, PyThreadInfo threadInfo) {
         myDebugProcess = debugProcess;
         myActiveStack = new PyExecutionStack(debugProcess, threadInfo, getThreadIcon(threadInfo));
     }
 
     @Override
-    @Nonnull
     public PyExecutionStack getActiveExecutionStack() {
         return myActiveStack;
     }
 
-    @Nonnull
-    public static Image getThreadIcon(@Nonnull PyThreadInfo threadInfo) {
+    public static Image getThreadIcon(PyThreadInfo threadInfo) {
         if ((threadInfo.getState() == PyThreadInfo.State.SUSPENDED) && (threadInfo.getStopReason() == AbstractCommand.SET_BREAKPOINT)) {
             return ExecutionDebugIconGroup.threadThreadatbreakpoint();
         }
@@ -52,7 +49,6 @@ public class PySuspendContext extends XSuspendContext {
         }
     }
 
-    @Nonnull
     @Override
     public XExecutionStack[] getExecutionStacks() {
         Collection<PyThreadInfo> threads = myDebugProcess.getThreads();

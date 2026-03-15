@@ -43,8 +43,7 @@ import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jdom.Element;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 
 /**
@@ -65,7 +64,6 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
     super(project, configurationFactory);
   }
 
-  @Nonnull
   @Override
   public String getWorkingDirectorySafe() {
     String workingDirectoryFromConfig = getWorkingDirectory();
@@ -299,7 +297,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
       if ((myTestType == TestType.TEST_FOLDER && pathsEqual(vFile, myFolderName)) || pathsEqual(vFile, getWorkingDirectory())) {
         return new RefactoringElementAdapter() {
           @Override
-          protected void elementRenamedOrMoved(@Nonnull PsiElement newElement) {
+          protected void elementRenamedOrMoved(PsiElement newElement) {
             String newPath = FileUtil.toSystemDependentName(((PsiDirectory)newElement).getVirtualFile().getPath());
             setWorkingDirectory(newPath);
             if (myTestType == TestType.TEST_FOLDER) {
@@ -308,7 +306,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
           }
 
           @Override
-          public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName) {
+          public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
             String systemDependant = FileUtil.toSystemDependentName(oldQualifiedName);
             setWorkingDirectory(systemDependant);
             if (myTestType == TestType.TEST_FOLDER) {
@@ -332,7 +330,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
       if (element instanceof PsiFile) {
         return new RefactoringElementAdapter() {
           @Override
-          protected void elementRenamedOrMoved(@Nonnull PsiElement newElement) {
+          protected void elementRenamedOrMoved(PsiElement newElement) {
             VirtualFile virtualFile = ((PsiFile)newElement).getVirtualFile();
             if (virtualFile != null) {
               myScriptName = FileUtil.toSystemDependentName(virtualFile.getPath());
@@ -340,7 +338,7 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
           }
 
           @Override
-          public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName) {
+          public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
             myScriptName = FileUtil.toSystemDependentName(oldQualifiedName);
           }
         };
@@ -349,12 +347,12 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
         Comparing.equal(((PyClass)element).getName(), myClassName)) {
         return new RefactoringElementAdapter() {
           @Override
-          protected void elementRenamedOrMoved(@Nonnull PsiElement newElement) {
+          protected void elementRenamedOrMoved(PsiElement newElement) {
             myClassName = ((PyClass)newElement).getName();
           }
 
           @Override
-          public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName) {
+          public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
             myClassName = oldQualifiedName;
           }
         };
@@ -366,12 +364,12 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
                    .getName(), myClassName))) {
           return new RefactoringElementAdapter() {
             @Override
-            protected void elementRenamedOrMoved(@Nonnull PsiElement newElement) {
+            protected void elementRenamedOrMoved(PsiElement newElement) {
               myMethodName = ((PyFunction)newElement).getName();
             }
 
             @Override
-            public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName) {
+            public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
               int methodIdx = oldQualifiedName.indexOf("#") + 1;
               if (methodIdx > 0 && methodIdx < oldQualifiedName.length()) {
                 myMethodName = oldQualifiedName.substring(methodIdx);

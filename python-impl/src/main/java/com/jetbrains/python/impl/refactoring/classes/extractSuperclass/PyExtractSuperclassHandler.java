@@ -28,7 +28,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.annotation.RequiredUIAccess;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Dennis.Ushakov
@@ -39,10 +38,10 @@ public class PyExtractSuperclassHandler extends PyClassRefactoringHandler {
     @Override
     @RequiredUIAccess
     protected void doRefactorImpl(
-        @Nonnull final Project project,
-        @Nonnull final PyClass classUnderRefactoring,
-        @Nonnull final PyMemberInfoStorage infoStorage,
-        @Nonnull Editor editor
+        final Project project,
+        final PyClass classUnderRefactoring,
+        final PyMemberInfoStorage infoStorage,
+        Editor editor
     ) {
         //TODO: Move to presenter
         if (PyUtil.filterOutObject(infoStorage.getClassMemberInfos(classUnderRefactoring)).isEmpty()) {
@@ -60,22 +59,19 @@ public class PyExtractSuperclassHandler extends PyClassRefactoringHandler {
             PyExtractSuperclassPresenter.class,
             PyExtractSuperclassView.class,
             new Creator<>() {
-                @Nonnull
                 @Override
-                public PyExtractSuperclassPresenter createPresenter(@Nonnull PyExtractSuperclassView view) {
+                public PyExtractSuperclassPresenter createPresenter(PyExtractSuperclassView view) {
                     return new PyExtractSuperclassPresenterImpl(view, classUnderRefactoring, infoStorage);
                 }
 
-                @Nonnull
                 @Override
-                public PyExtractSuperclassView createView(@Nonnull PyExtractSuperclassPresenter presenter) {
+                public PyExtractSuperclassView createView(PyExtractSuperclassPresenter presenter) {
                     return new PyExtractSuperclassViewSwingImpl(classUnderRefactoring, project, presenter);
                 }
             }
         );
     }
 
-    @Nonnull
     @Override
     protected LocalizeValue getTitle() {
         return REFACTORING_NAME;

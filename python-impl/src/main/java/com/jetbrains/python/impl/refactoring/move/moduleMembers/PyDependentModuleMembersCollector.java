@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.move.moduleMembers;
 
-import jakarta.annotation.Nonnull;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.editor.refactoring.classMember.DependentMembersCollectorBase;
@@ -35,7 +34,7 @@ public class PyDependentModuleMembersCollector extends DependentMembersCollector
 {
 	private final PyFile myModule;
 
-	public PyDependentModuleMembersCollector(@Nonnull PyFile module)
+	public PyDependentModuleMembersCollector(PyFile module)
 	{
 		super(module, null);
 		myModule = module;
@@ -67,7 +66,7 @@ public class PyDependentModuleMembersCollector extends DependentMembersCollector
 		}
 	}
 
-	private boolean isValidSameModuleDependency(@Nonnull PsiElement element)
+	private boolean isValidSameModuleDependency(PsiElement element)
 	{
 		return PyMoveModuleMembersHelper.isMovableModuleMember(element) && element.getContainingFile() == myModule;
 	}

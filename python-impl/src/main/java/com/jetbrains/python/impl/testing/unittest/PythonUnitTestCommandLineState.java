@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.testing.unittest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParamsGroup;
@@ -54,7 +53,6 @@ public class PythonUnitTestCommandLineState extends PythonTestCommandLineStateBa
 		return PythonHelper.UT;
 	}
 
-	@Nonnull
 	protected List<String> getTestSpecs()
 	{
 		List<String> specs = new ArrayList<>();

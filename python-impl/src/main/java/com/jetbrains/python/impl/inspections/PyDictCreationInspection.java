@@ -27,8 +27,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,25 +37,23 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyDictCreationInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameDictCreation();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -96,9 +93,9 @@ public class PyDictCreationInspection extends PyInspection {
 
     @Nullable
     public static List<Pair<PyExpression, PyExpression>> getDictTargets(
-        @Nonnull PyExpression target,
-        @Nonnull String name,
-        @Nonnull PyAssignmentStatement assignmentStatement
+        PyExpression target,
+        String name,
+        PyAssignmentStatement assignmentStatement
     ) {
         List<Pair<PyExpression, PyExpression>> targets = new ArrayList<Pair<PyExpression, PyExpression>>();
         for (Pair<PyExpression, PyExpression> targetToValue : assignmentStatement.getTargetsToValuesMapping()) {
@@ -117,7 +114,7 @@ public class PyDictCreationInspection extends PyInspection {
         return targets;
     }
 
-    private static boolean referencesTarget(@Nonnull PyExpression expression, @Nonnull final PsiElement target) {
+    private static boolean referencesTarget(PyExpression expression, final PsiElement target) {
         final List<PsiElement> refs = new ArrayList<PsiElement>();
         expression.accept(new PyRecursiveElementVisitor() {
             @Override

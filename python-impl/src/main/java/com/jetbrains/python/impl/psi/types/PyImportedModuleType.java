@@ -36,8 +36,7 @@ import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.collection.ContainerUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,19 +46,18 @@ import java.util.Set;
  * @author yole
  */
 public class PyImportedModuleType implements PyType {
-  @Nonnull
   private PyImportedModule myImportedModule;
 
-  public PyImportedModuleType(@Nonnull PyImportedModule importedModule) {
+  public PyImportedModuleType(PyImportedModule importedModule) {
     myImportedModule = importedModule;
   }
 
   @Nullable
   @Override
-  public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
+  public List<? extends RatedResolveResult> resolveMember(String name,
                                                           @Nullable PyExpression location,
-                                                          @Nonnull AccessDirection direction,
-                                                          @Nonnull PyResolveContext resolveContext) {
+                                                          AccessDirection direction,
+                                                          PyResolveContext resolveContext) {
     PsiElement resolved = myImportedModule.resolve();
     if (resolved != null) {
       PsiFile containingFile = location != null ? location.getContainingFile() : null;
@@ -114,7 +112,6 @@ public class PyImportedModuleType implements PyType {
   public void assertValid(String message) {
   }
 
-  @Nonnull
   public PyImportedModule getImportedModule() {
     return myImportedModule;
   }

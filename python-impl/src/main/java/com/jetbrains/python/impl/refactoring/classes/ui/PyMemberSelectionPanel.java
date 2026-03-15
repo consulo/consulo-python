@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -50,7 +49,7 @@ public class PyMemberSelectionPanel extends JPanel
 	 *
 	 * @param title
 	 */
-	public PyMemberSelectionPanel(@Nonnull String title, boolean supportAbstract)
+	public PyMemberSelectionPanel(String title, boolean supportAbstract)
 	{
 		this(title, EMPTY_MEMBER_INFO, null, supportAbstract);
 	}
@@ -84,7 +83,7 @@ public class PyMemberSelectionPanel extends JPanel
 	 * @param memberInfoModel model to display memebers in table
 	 * @param members         members to display
 	 */
-	public void init(@Nonnull MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel, @Nonnull Collection<PyMemberInfo<PyElement>> members)
+	public void init(MemberInfoModel<PyElement, PyMemberInfo<PyElement>> memberInfoModel, Collection<PyMemberInfo<PyElement>> members)
 	{
 		Preconditions.checkState(!myInitialized, "Already myInitialized");
 		myTable.setMemberInfos(members);
@@ -96,7 +95,6 @@ public class PyMemberSelectionPanel extends JPanel
 	/**
 	 * @return list of members, selected by user
 	 */
-	@Nonnull
 	public Collection<PyMemberInfo<PyElement>> getSelectedMemberInfos()
 	{
 		Preconditions.checkState(myInitialized, "Call #init first");

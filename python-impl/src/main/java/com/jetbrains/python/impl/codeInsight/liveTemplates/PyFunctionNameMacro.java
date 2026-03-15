@@ -26,8 +26,7 @@ import consulo.language.editor.template.macro.Macro;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -46,7 +45,7 @@ public class PyFunctionNameMacro extends Macro {
 
   @Nullable
   @Override
-  public Result calculateResult(@Nonnull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression[] params, ExpressionContext context) {
     PsiElement place = context.getPsiElementAtStartOffset();
     PyFunction pyFunction = PsiTreeUtil.getParentOfType(place, PyFunction.class);
     if (pyFunction == null) {

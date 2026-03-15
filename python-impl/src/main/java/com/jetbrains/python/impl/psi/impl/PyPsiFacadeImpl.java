@@ -36,8 +36,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -70,40 +69,39 @@ public class PyPsiFacadeImpl extends PyPsiFacade {
     return PyClassNameIndex.findClass(qName, myProject);
   }
 
-  @Nonnull
   @Override
-  public PyClassType createClassType(@Nonnull PyClass pyClass, boolean isDefinition) {
+  public PyClassType createClassType(PyClass pyClass, boolean isDefinition) {
     return new PyClassTypeImpl(pyClass, isDefinition);
   }
 
   @Nullable
   @Override
-  public PyType createUnionType(@Nonnull Collection<PyType> members) {
+  public PyType createUnionType(Collection<PyType> members) {
     return PyUnionType.union(members);
   }
 
   @Nullable
   @Override
-  public PyType createTupleType(@Nonnull List<PyType> members, @Nonnull PsiElement anchor) {
+  public PyType createTupleType(List<PyType> members, PsiElement anchor) {
     return PyTupleType.create(anchor, members);
   }
 
   @Nullable
   @Override
-  public PyType parseTypeAnnotation(@Nonnull String annotation, @Nonnull PsiElement anchor) {
+  public PyType parseTypeAnnotation(String annotation, PsiElement anchor) {
     return PyTypeParser.getTypeByName(anchor, annotation);
   }
 
   @Nullable
   @Override
-  public final PyClass createClassByQName(@Nonnull String qName, @Nonnull PsiElement anchor) {
+  public final PyClass createClassByQName(String qName, PsiElement anchor) {
     PyClassType classType = PyUtil.as(parseTypeAnnotation(qName, anchor), PyClassType.class);
     return (classType != null ? classType.getPyClass() : null);
   }
 
   @Nullable
   @Override
-  public String findShortestImportableName(@Nonnull VirtualFile targetFile, @Nonnull PsiElement anchor) {
+  public String findShortestImportableName(VirtualFile targetFile, PsiElement anchor) {
     return QualifiedNameFinder.findShortestImportableName(anchor, targetFile);
   }
 }

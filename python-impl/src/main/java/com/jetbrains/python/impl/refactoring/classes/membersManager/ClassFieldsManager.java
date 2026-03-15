@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import com.google.common.collect.FluentIterable;
 import com.jetbrains.python.impl.NotNullPredicate;
@@ -46,13 +45,13 @@ class ClassFieldsManager extends FieldsManager
 	}
 
 	@Override
-	public boolean hasConflict(@Nonnull PyTargetExpression member, @Nonnull PyClass aClass)
+	public boolean hasConflict(PyTargetExpression member, PyClass aClass)
 	{
 		return NamePredicate.hasElementWithSameName(member, aClass.getClassAttributes());
 	}
 
 	@Override
-	protected Collection<PyElement> moveAssignments(@Nonnull PyClass from, @Nonnull Collection<PyAssignmentStatement> statements, @Nonnull PyClass... to)
+	protected Collection<PyElement> moveAssignments(PyClass from, Collection<PyAssignmentStatement> statements, PyClass... to)
 	{
 		return moveAssignmentsImpl(from, statements, to);
 	}
@@ -65,7 +64,7 @@ class ClassFieldsManager extends FieldsManager
 	 * @param to         destination
 	 * @return newly created assignments
 	 */
-	static Collection<PyElement> moveAssignmentsImpl(@Nonnull PyClass from, @Nonnull Collection<PyAssignmentStatement> statements, @Nonnull PyClass... to)
+	static Collection<PyElement> moveAssignmentsImpl(PyClass from, Collection<PyAssignmentStatement> statements, PyClass... to)
 	{
 		//TODO: Copy/paste with InstanceFieldsManager. Move to parent?
 		Collection<PyElement> result = new ArrayList<>();
@@ -78,14 +77,13 @@ class ClassFieldsManager extends FieldsManager
 	}
 
 	@Override
-	protected boolean classHasField(@Nonnull PyClass pyClass, @Nonnull String fieldName)
+	protected boolean classHasField(PyClass pyClass, String fieldName)
 	{
 		return pyClass.findClassAttribute(fieldName, true, null) != null;
 	}
 
-	@Nonnull
 	@Override
-	protected List<PyTargetExpression> getFieldsByClass(@Nonnull PyClass pyClass)
+	protected List<PyTargetExpression> getFieldsByClass(PyClass pyClass)
 	{
 		return FluentIterable.from(pyClass.getClassAttributes()).filter(new NoMetaAndProperties(pyClass)).toList();
 	}
@@ -96,16 +94,15 @@ class ClassFieldsManager extends FieldsManager
 	 */
 	private static class NoMetaAndProperties extends NotNullPredicate<PyTargetExpression>
 	{
-		@Nonnull
 		private final PyClass myClass;
 
-		private NoMetaAndProperties(@Nonnull PyClass aClass)
+		private NoMetaAndProperties(PyClass aClass)
 		{
 			myClass = aClass;
 		}
 
 		@Override
-		public boolean applyNotNull(@Nonnull PyTargetExpression input)
+		public boolean applyNotNull(PyTargetExpression input)
 		{
 			String name = input.getName();
 			if(name == null)

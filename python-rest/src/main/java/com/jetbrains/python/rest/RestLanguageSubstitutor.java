@@ -27,7 +27,6 @@ import consulo.module.Module;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -35,7 +34,7 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class RestLanguageSubstitutor extends LanguageSubstitutor {
   @Override
-  public Language getLanguage(@Nonnull VirtualFile vFile, @Nonnull Project project) {
+  public Language getLanguage(VirtualFile vFile, Project project) {
     Module module = ModuleUtilCore.findModuleForFile(vFile, project);
     if (module == null) {
       return null;
@@ -47,7 +46,6 @@ public class RestLanguageSubstitutor extends LanguageSubstitutor {
     return null;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PlainTextLanguage.INSTANCE;

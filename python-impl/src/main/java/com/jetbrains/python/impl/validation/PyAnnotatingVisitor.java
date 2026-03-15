@@ -23,7 +23,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.logging.Logger;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +66,7 @@ public class PyAnnotatingVisitor implements Annotator {
     }
   }
 
-  public void annotate(@Nonnull PsiElement psiElement, @Nonnull AnnotationHolder holder) {
+  public void annotate(PsiElement psiElement, AnnotationHolder holder) {
     PsiFile file = psiElement.getContainingFile();
     for (PyAnnotator annotator : myAnnotators) {
       if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(annotator.getClass())) continue;

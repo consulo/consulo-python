@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
@@ -39,7 +38,7 @@ public class PyArgumentListFixer extends PyFixer<PyArgumentList>
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyArgumentList arguments) throws IncorrectOperationException
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyArgumentList arguments) throws IncorrectOperationException
 	{
 		PsiElement rBrace = PyPsiUtils.getChildByFilter(arguments, PyTokenTypes.CLOSE_BRACES, 0);
 		if(arguments.getParent() instanceof PyClass || arguments.getParent() instanceof PyDecorator)

@@ -28,24 +28,21 @@ import consulo.language.psi.*;
 import consulo.project.Project;
 import consulo.virtualFileSystem.fileType.FileType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 
 public class PyDebuggerEditorsProvider extends XDebuggerEditorsProvider
 {
-  @Nonnull
   @Override
   public FileType getFileType() {
     return PythonFileType.INSTANCE;
   }
 
-  @Nonnull
   @Override
-  public Document createDocument(@Nonnull Project project,
-                                 @Nonnull String text,
+  public Document createDocument(Project project,
+                                 String text,
                                  @Nullable XSourcePosition sourcePosition,
-                                 @Nonnull EvaluationMode mode) {
+                                 EvaluationMode mode) {
     text = text.trim();
     PyExpressionCodeFragmentImpl fragment = new PyExpressionCodeFragmentImpl(project, "fragment.py", text, true);
 

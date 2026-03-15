@@ -22,8 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.execution.test.AbstractTestProxy;
 import consulo.execution.test.action.AbstractRerunFailedTestsAction;
@@ -50,14 +49,14 @@ import com.jetbrains.python.impl.run.CommandLinePatcher;
 
 public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 {
-	protected PyRerunFailedTestsAction(@Nonnull ComponentContainer componentContainer)
+	protected PyRerunFailedTestsAction(ComponentContainer componentContainer)
 	{
 		super(componentContainer);
 	}
 
 	@Override
 	@Nullable
-	protected MyRunProfile getRunProfile(@Nonnull ExecutionEnvironment environment)
+	protected MyRunProfile getRunProfile(ExecutionEnvironment environment)
 	{
 		TestFrameworkRunningModel model = getModel();
 		if(model == null)
@@ -75,7 +74,6 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 			super(configuration);
 		}
 
-		@Nonnull
 		@Override
 		public Module[] getModules()
 		{
@@ -84,7 +82,7 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 
 		@Nullable
 		@Override
-		public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
+		public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException
 		{
 			AbstractPythonRunConfiguration configuration = ((AbstractPythonRunConfiguration) getPeer());
 
@@ -137,7 +135,6 @@ public class PyRerunFailedTestsAction extends AbstractRerunFailedTestsAction
 			return super.execute(executor, patchers);
 		}
 
-		@Nonnull
 		@Override
 		protected List<String> getTestSpecs()
 		{

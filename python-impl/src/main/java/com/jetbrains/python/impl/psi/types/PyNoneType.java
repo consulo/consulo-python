@@ -24,8 +24,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -40,7 +39,7 @@ public class PyNoneType implements PyType  // TODO must extend ClassType. It's a
 	}
 
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(String name, @Nullable PyExpression location, AccessDirection direction, PyResolveContext resolveContext)
 	{
 		return null;
 	}

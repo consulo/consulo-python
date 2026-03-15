@@ -28,7 +28,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.util.lang.ThreeState;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -37,9 +36,8 @@ import java.util.List;
 @ExtensionImpl
 public class PyCompletionConfidence extends CompletionConfidence
 {
-	@Nonnull
 	@Override
-	public ThreeState shouldSkipAutopopup(@Nonnull PsiElement contextElement, @Nonnull PsiFile psiFile, int offset)
+	public ThreeState shouldSkipAutopopup(PsiElement contextElement, PsiFile psiFile, int offset)
 	{
 		ASTNode node = contextElement.getNode();
 		if(node != null)
@@ -65,7 +63,6 @@ public class PyCompletionConfidence extends CompletionConfidence
 		return super.shouldSkipAutopopup(contextElement, psiFile, offset);
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

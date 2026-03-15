@@ -16,21 +16,18 @@
 
 package com.jetbrains.python.impl.psi.types.functionalParser;
 
-import jakarta.annotation.Nonnull;
 
 /**
 * @author vlan
 */
 public class ParserException extends Exception {
-  @Nonnull
   private final FunctionalParserBase.State myState;
 
-  public ParserException(@Nonnull String message, @Nonnull FunctionalParserBase.State state) {
+  public ParserException(String message, FunctionalParserBase.State state) {
     super(message);
     myState = state;
   }
 
-  @Nonnull
   FunctionalParserBase.State getState() {
     return myState;
   }

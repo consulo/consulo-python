@@ -22,7 +22,6 @@ import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.project.Project;
 import consulo.ui.ex.awt.ComboBox;
 import consulo.ui.ex.awt.JBUI;
-import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,11 +33,8 @@ import java.awt.event.ItemListener;
  * Pull up view implementation
  */
 class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter, PyPullUpViewInitializationInfo> implements PyPullUpView, ItemListener {
-    @Nonnull
     private final ComboBox myParentsCombo;
-    @Nonnull
     private final DefaultComboBoxModel<PyClass> myParentsComboBoxModel;
-    @Nonnull
     private final PyPullUpNothingToRefactorMessage myNothingToRefactorMessage;
 
     /**
@@ -48,10 +44,10 @@ class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter,
      * @param nothingToRefactorMessage class that displays message "nothing to refactor" when presenter calls {@link #showNothingToRefactor()}
      */
     PyPullUpViewSwingImpl(
-        @Nonnull Project project,
-        @Nonnull PyPullUpPresenter presenter,
-        @Nonnull PyClass clazz,
-        @Nonnull PyPullUpNothingToRefactorMessage nothingToRefactorMessage
+        Project project,
+        PyPullUpPresenter presenter,
+        PyClass clazz,
+        PyPullUpNothingToRefactorMessage nothingToRefactorMessage
     ) {
         super(project, presenter, RefactoringLocalize.membersToBePulledUp().get(), true);
         setTitle(PyPullUpHandler.REFACTORING_NAME);
@@ -85,13 +81,11 @@ class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter,
         myCenterPanel.add(myPyMemberSelectionPanel, BorderLayout.CENTER);
     }
 
-    @Nonnull
     @Override
     protected String getHelpId() {
         return "python.reference.pullMembersUp";
     }
 
-    @Nonnull
     @Override
     public PyClass getSelectedParent() {
         return (PyClass) myParentsComboBoxModel.getSelectedItem();
@@ -103,7 +97,7 @@ class PyPullUpViewSwingImpl extends MembersBasedViewSwingImpl<PyPullUpPresenter,
     }
 
     @Override
-    public void configure(@Nonnull PyPullUpViewInitializationInfo configInfo) {
+    public void configure(PyPullUpViewInitializationInfo configInfo) {
         super.configure(configInfo);
         for (PyClass parent : configInfo.getParents()) {
             myParentsComboBoxModel.addElement(parent);

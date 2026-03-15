@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.language.psi.PsiNamedElement;
@@ -44,7 +43,6 @@ public interface PyNamedParameter extends PyParameter, PsiNamedElement, PsiNameI
 	 * @param includeDefaultValue if true, include the default value after an " = ".
 	 * @return Canonical representation of parameter. Includes asterisks for *param and **param, and name.
 	 */
-	@Nonnull
 	String getRepr(boolean includeDefaultValue);
 
 	@Nullable

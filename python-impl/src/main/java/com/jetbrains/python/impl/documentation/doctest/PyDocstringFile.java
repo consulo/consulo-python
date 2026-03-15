@@ -21,7 +21,6 @@ import consulo.language.file.FileViewProvider;
 import consulo.language.psi.PsiLanguageInjectionHost;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.impl.PyFileImpl;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author ktisha
@@ -37,7 +36,6 @@ public class PyDocstringFile extends PyFileImpl {
         return "DocstringFile:" + getName();
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public LanguageLevel getLanguageLevel() {

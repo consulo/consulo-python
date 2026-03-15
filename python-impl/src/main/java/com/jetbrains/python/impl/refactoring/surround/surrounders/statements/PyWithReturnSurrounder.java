@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.codeEditor.Editor;
@@ -30,7 +29,7 @@ import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
 import consulo.language.util.IncorrectOperationException;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,7 +38,7 @@ import jakarta.annotation.Nullable;
  * Time: 6:00:47 PM
  */
 public class PyWithReturnSurrounder extends PyStatementSurrounder {
-  public boolean isApplicable(@Nonnull PsiElement[] elements) {
+  public boolean isApplicable(PsiElement[] elements) {
     return (elements.length == 1) &&
            (elements[0] instanceof PyExpressionStatement) &&
            (PsiTreeUtil.getParentOfType(elements[0], PyFunction.class) != null);
@@ -47,7 +46,7 @@ public class PyWithReturnSurrounder extends PyStatementSurrounder {
 
   @Override
   @Nullable
-  protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
+  protected TextRange surroundStatement(Project project, Editor editor, PsiElement[] elements)
     throws IncorrectOperationException
   {
     PyReturnStatement returnStatement =

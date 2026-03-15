@@ -23,8 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
@@ -76,36 +75,33 @@ class MethodsManager extends MembersManager<PyFunction>
 	}
 
 	@Override
-	public boolean hasConflict(@Nonnull PyFunction member, @Nonnull PyClass aClass)
+	public boolean hasConflict(PyFunction member, PyClass aClass)
 	{
 		return NamePredicate.hasElementWithSameName(member, Arrays.asList(aClass.getMethods()));
 	}
 
-	@Nonnull
 	@Override
-	protected Collection<PyElement> getDependencies(@Nonnull MultiMap<PyClass, PyElement> usedElements)
+	protected Collection<PyElement> getDependencies(MultiMap<PyClass, PyElement> usedElements)
 	{
 		return Collections.emptyList();
 	}
 
-	@Nonnull
 	@Override
-	protected MultiMap<PyClass, PyElement> getDependencies(@Nonnull PyElement member)
+	protected MultiMap<PyClass, PyElement> getDependencies(PyElement member)
 	{
 		MyPyRecursiveElementVisitor visitor = new MyPyRecursiveElementVisitor();
 		member.accept(visitor);
 		return visitor.myResult;
 	}
 
-	@Nonnull
 	@Override
-	protected List<? extends PyElement> getMembersCouldBeMoved(@Nonnull PyClass pyClass)
+	protected List<? extends PyElement> getMembersCouldBeMoved(PyClass pyClass)
 	{
 		return FluentIterable.from(Arrays.asList(pyClass.getMethods())).filter(new NamelessFilter<>()).filter(NO_PROPERTIES).toList();
 	}
 
 	@Override
-	protected Collection<PyElement> moveMembers(@Nonnull PyClass from, @Nonnull Collection<PyMemberInfo<PyFunction>> members, @Nonnull PyClass... to)
+	protected Collection<PyElement> moveMembers(PyClass from, Collection<PyMemberInfo<PyFunction>> members, PyClass... to)
 	{
 		Collection<PyFunction> methodsToMove = fetchElements(Collections2.filter(members, new AbstractFilter(false)));
 		Collection<PyFunction> methodsToAbstract = fetchElements(Collections2.filter(members, new AbstractFilter(true)));
@@ -163,7 +159,7 @@ class MethodsManager extends MembersManager<PyFunction>
 	 * @return true if added. False if class already has metaclass so we did not touch it.
 	 */
 	// TODO: Copy/Paste with PyClass.getMeta..
-	private static boolean addMetaAbcIfNeeded(@Nonnull PyClass aClass)
+	private static boolean addMetaAbcIfNeeded(PyClass aClass)
 	{
 		PsiFile file = aClass.getContainingFile();
 		PyType type = aClass.getMetaClassType(TypeEvalContext.userInitiated(aClass.getProject(), file));
@@ -191,7 +187,7 @@ class MethodsManager extends MembersManager<PyFunction>
 	 * @param file         where to add import
 	 * @param nameToImport what to import
 	 */
-	private static void addImportFromAbc(@Nonnull PsiFile file, @Nonnull String nameToImport)
+	private static void addImportFromAbc(PsiFile file, String nameToImport)
 	{
 		AddImportHelper.addOrUpdateFromImportStatement(file, ABC_META_PACKAGE, nameToImport, null, ImportPriority.BUILTIN, null);
 	}
@@ -225,9 +221,8 @@ class MethodsManager extends MembersManager<PyFunction>
 		return result;
 	}
 
-	@Nonnull
 	@Override
-	public PyMemberInfo<PyFunction> apply(@Nonnull PyFunction pyFunction)
+	public PyMemberInfo<PyFunction> apply(PyFunction pyFunction)
 	{
 		PyUtil.MethodFlags flags = PyUtil.MethodFlags.of(pyFunction);
 		assert flags != null : "No flags return while element is function " + pyFunction;
@@ -238,7 +233,7 @@ class MethodsManager extends MembersManager<PyFunction>
 	/**
 	 * @return if method could be made abstract? (that means "create abstract version if method in parent class")
 	 */
-	private static boolean couldBeAbstract(@Nonnull PyFunction function)
+	private static boolean couldBeAbstract(PyFunction function)
 	{
 		if(PyUtil.isInit(function))
 		{
@@ -270,8 +265,7 @@ class MethodsManager extends MembersManager<PyFunction>
 		return null;
 	}
 
-	@Nonnull
-	private static String buildDisplayMethodName(@Nonnull PyFunction pyFunction)
+	private static String buildDisplayMethodName(PyFunction pyFunction)
 	{
 		StringBuilder builder = new StringBuilder(pyFunction.getName());
 		builder.append('(');
@@ -305,7 +299,7 @@ class MethodsManager extends MembersManager<PyFunction>
 		}
 
 		@Override
-		protected boolean applyNotNull(@Nonnull PyMemberInfo<PyFunction> input)
+		protected boolean applyNotNull(PyMemberInfo<PyFunction> input)
 		{
 			return input.isToAbstract() == myAllowAbstractOnly;
 		}
@@ -348,7 +342,7 @@ class MethodsManager extends MembersManager<PyFunction>
 	private static class NoPropertiesPredicate implements Predicate<PyFunction>
 	{
 		@Override
-		public boolean apply(@Nonnull PyFunction input)
+		public boolean apply(PyFunction input)
 		{
 			return input.getProperty() == null;
 		}

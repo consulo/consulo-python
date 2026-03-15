@@ -27,7 +27,6 @@ import consulo.language.psi.PsiFileSystemItem;
 import consulo.language.psi.CachingReference;
 import consulo.language.psi.path.FileReferenceSet;
 import consulo.language.util.IncorrectOperationException;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -39,7 +38,7 @@ import java.util.Collection;
 public class FileReferenceWithOneContext extends FileReference
 {
 
-  public FileReferenceWithOneContext(@Nonnull FileReferenceSet fileReferenceSet,
+  public FileReferenceWithOneContext(FileReferenceSet fileReferenceSet,
                                      TextRange range, int index, String text) {
     super(fileReferenceSet, range, index, text);
   }

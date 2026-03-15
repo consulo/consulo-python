@@ -25,7 +25,6 @@ import com.jetbrains.python.PythonStringUtil;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgFile;
 import com.jetbrains.python.impl.buildout.config.psi.impl.BuildoutCfgSection;
 import com.jetbrains.python.psi.PyElementGenerator;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -55,7 +54,6 @@ public class BuildoutPartReference extends PsiReferenceBase<PsiElement> {
     return null;
   }
 
-  @Nonnull
   public Object[] getVariants() {
     List<String> res = Lists.newArrayList();
     BuildoutCfgFile file = PsiTreeUtil.getParentOfType(myElement, BuildoutCfgFile.class);
@@ -72,7 +70,7 @@ public class BuildoutPartReference extends PsiReferenceBase<PsiElement> {
   }
 
   @Override
-  public PsiElement handleElementRename(@Nonnull String newElementName) {
+  public PsiElement handleElementRename(String newElementName) {
     String fullName = PythonStringUtil.replaceLastSuffix(getElement().getText(), "/", newElementName);
     return myElement.replace(PyElementGenerator.getInstance(myElement.getProject()).createStringLiteralAlreadyEscaped(fullName));
   }

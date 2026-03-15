@@ -28,8 +28,7 @@ import consulo.language.psi.stub.IStubElementType;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -122,7 +121,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 
 	@Override
 	@Nullable
-	public PyNamedParameter findParameterByName(@Nonnull final String name)
+	public PyNamedParameter findParameterByName(final String name)
 	{
 		final Ref<PyNamedParameter> result = new Ref<>();
 		ParamHelper.walkDownParamArray(getParameters(), new ParamHelper.ParamVisitor()
@@ -191,7 +190,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
 	}
 
 	@Override
-	public void deleteChildInternal(@Nonnull ASTNode node)
+	public void deleteChildInternal(ASTNode node)
 	{
 		if(ArrayUtil.contains(node.getPsi(), getParameters()))
 		{

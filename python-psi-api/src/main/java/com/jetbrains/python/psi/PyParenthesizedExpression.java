@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface PyParenthesizedExpression extends PyExpression {
   @Nullable

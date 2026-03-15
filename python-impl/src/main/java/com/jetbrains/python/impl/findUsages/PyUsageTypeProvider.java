@@ -28,7 +28,6 @@ import consulo.usage.UsageTarget;
 import consulo.usage.UsageType;
 import consulo.usage.UsageTypeProviderEx;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -47,7 +46,7 @@ public class PyUsageTypeProvider implements UsageTypeProviderEx
 		return getUsageType(element, UsageTarget.EMPTY_ARRAY);
 	}
 
-	public UsageType getUsageType(PsiElement element, @Nonnull UsageTarget[] targets)
+	public UsageType getUsageType(PsiElement element, UsageTarget[] targets)
 	{
 		if(element instanceof PyElement)
 		{

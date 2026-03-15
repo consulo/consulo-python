@@ -17,7 +17,6 @@
 package com.jetbrains.python.impl.refactoring;
 
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,14 +32,13 @@ public class NameSuggesterUtil {
   private NameSuggesterUtil() {
   }
 
-  private static String deleteNonLetterFromString(@Nonnull String string) {
+  private static String deleteNonLetterFromString(String string) {
     Pattern pattern = Pattern.compile("[^a-zA-Z_]+");
     Matcher matcher = pattern.matcher(string);
     return matcher.replaceAll("_");
   }
 
-  @Nonnull
-  public static Collection<String> generateNames(@Nonnull String name) {
+  public static Collection<String> generateNames(String name) {
     name = StringUtil.decapitalize(deleteNonLetterFromString(StringUtil.unquoteString(name.replace('.', '_'))));
     if (name.startsWith("get")) {
       name = name.substring(3);
@@ -68,7 +66,7 @@ public class NameSuggesterUtil {
     return reversed;
   }
 
-  public static Collection<String> generateNamesByType(@Nonnull String name) {
+  public static Collection<String> generateNamesByType(String name) {
     Collection<String> possibleNames = new LinkedHashSet<String>();
     name = StringUtil.decapitalize(deleteNonLetterFromString(name.replace('.', '_')));
     name = toUnderscoreCase(name);
@@ -77,8 +75,7 @@ public class NameSuggesterUtil {
     return possibleNames;
   }
 
-  @Nonnull
-  public static String toUnderscoreCase(@Nonnull String name) {
+  public static String toUnderscoreCase(String name) {
     StringBuilder buffer = new StringBuilder();
     int length = name.length();
 

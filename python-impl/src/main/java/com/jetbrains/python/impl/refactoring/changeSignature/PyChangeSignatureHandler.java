@@ -38,8 +38,7 @@ import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.awt.UIUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User : ktisha
@@ -68,7 +67,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 
 	@Override
 	@RequiredUIAccess
-	public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext)
+	public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext)
 	{
 		PsiElement element = findTargetMember(file, editor);
 		if (element == null)
@@ -80,7 +79,7 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 
 	@Override
 	@RequiredUIAccess
-	public void invoke(@Nonnull Project project, @Nonnull PsiElement[] elements, @Nullable DataContext dataContext)
+	public void invoke(Project project, PsiElement[] elements, @Nullable DataContext dataContext)
 	{
 		if (elements.length != 1)
 		{
@@ -148,13 +147,13 @@ public class PyChangeSignatureHandler implements ChangeSignatureHandler
 	}
 
 	@RequiredUIAccess
-	private static void showCannotRefactorErrorHint(@Nonnull Project project, @Nullable Editor editor, @Nonnull String details)
+	private static void showCannotRefactorErrorHint(Project project, @Nullable Editor editor, String details)
 	{
 		String message = RefactoringBundle.getCannotRefactorMessage(details);
 		CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME.get(), REFACTORING_NAME.get());
 	}
 
-	private static boolean isNotUnderSourceRoot(@Nonnull Project project, @Nullable PsiFile psiFile)
+	private static boolean isNotUnderSourceRoot(Project project, @Nullable PsiFile psiFile)
 	{
 		if (psiFile == null)
 		{

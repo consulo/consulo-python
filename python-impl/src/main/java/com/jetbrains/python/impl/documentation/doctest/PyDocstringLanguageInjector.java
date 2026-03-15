@@ -28,7 +28,6 @@ import consulo.module.Module;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -39,8 +38,8 @@ import java.util.List;
 public class PyDocstringLanguageInjector implements LanguageInjector {
     @Override
     public void injectLanguages(
-        @Nonnull PsiLanguageInjectionHost host,
-        @Nonnull InjectedLanguagePlaces injectionPlacesRegistrar
+        PsiLanguageInjectionHost host,
+        InjectedLanguagePlaces injectionPlacesRegistrar
     ) {
         if (!(host instanceof PyStringLiteralExpression)) {
             return;

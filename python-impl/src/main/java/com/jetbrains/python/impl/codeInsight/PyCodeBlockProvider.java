@@ -29,8 +29,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -85,7 +84,6 @@ public class PyCodeBlockProvider implements CodeBlockProvider {
     return null;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

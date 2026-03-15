@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.psi.resolve;
 import java.util.Collection;
 import java.util.Collections;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
@@ -51,7 +50,7 @@ public class PyResolveUtil
 	/**
 	 * Crawls up scopes of the PSI tree, checking named elements and name definers.
 	 */
-	public static void scopeCrawlUp(@Nonnull PsiScopeProcessor processor, @Nonnull PsiElement element, @Nullable String name, @Nullable PsiElement roof)
+	public static void scopeCrawlUp(PsiScopeProcessor processor, PsiElement element, @Nullable String name, @Nullable PsiElement roof)
 	{
 		// Use real context here to enable correct completion and resolve in case of PyExpressionCodeFragment!!!
 		PsiElement realContext = PyPsiUtils.getRealContext(element);
@@ -78,12 +77,12 @@ public class PyResolveUtil
 		scopeCrawlUp(processor, owner, originalOwner, name, roof);
 	}
 
-	public static void scopeCrawlUp(@Nonnull PsiScopeProcessor processor, @Nonnull ScopeOwner scopeOwner, @Nullable String name, @Nullable PsiElement roof)
+	public static void scopeCrawlUp(PsiScopeProcessor processor, ScopeOwner scopeOwner, @Nullable String name, @Nullable PsiElement roof)
 	{
 		scopeCrawlUp(processor, scopeOwner, scopeOwner, name, roof);
 	}
 
-	public static void scopeCrawlUp(@Nonnull PsiScopeProcessor processor, @Nullable ScopeOwner scopeOwner, @Nullable ScopeOwner originalScopeOwner, @Nullable String name, @Nullable PsiElement roof)
+	public static void scopeCrawlUp(PsiScopeProcessor processor, @Nullable ScopeOwner scopeOwner, @Nullable ScopeOwner originalScopeOwner, @Nullable String name, @Nullable PsiElement roof)
 	{
 		while(scopeOwner != null)
 		{
@@ -127,8 +126,7 @@ public class PyResolveUtil
 		}
 	}
 
-	@Nonnull
-	public static Collection<PsiElement> resolveLocally(@Nonnull PyReferenceExpression referenceExpression)
+	public static Collection<PsiElement> resolveLocally(PyReferenceExpression referenceExpression)
 	{
 		String referenceName = referenceExpression.getName();
 
@@ -143,8 +141,7 @@ public class PyResolveUtil
 		return processor.getElements();
 	}
 
-	@Nonnull
-	public static Collection<PsiElement> resolveLocally(@Nonnull ScopeOwner scopeOwner, @Nonnull String name)
+	public static Collection<PsiElement> resolveLocally(ScopeOwner scopeOwner, String name)
 	{
 		PyResolveProcessor processor = new PyResolveProcessor(name, true);
 		scopeCrawlUp(processor, scopeOwner, name, null);

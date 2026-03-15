@@ -22,7 +22,6 @@ import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,16 +32,14 @@ public class PythonUnitTestTestIdUrlProvider implements PythonTestLocator, DumbA
 
 	public static final PythonUnitTestTestIdUrlProvider INSTANCE = new PythonUnitTestTestIdUrlProvider();
 
-	@Nonnull
 	@Override
 	public final String getProtocolId()
 	{
 		return PROTOCOL_ID;
 	}
 
-	@Nonnull
 	@Override
-	public List<Location> getLocation(@Nonnull String protocol, @Nonnull String path, @Nonnull Project project, @Nonnull GlobalSearchScope scope)
+	public List<Location> getLocation(String protocol, String path, Project project, GlobalSearchScope scope)
 	{
 		if(!PROTOCOL_ID.equals(protocol))
 		{

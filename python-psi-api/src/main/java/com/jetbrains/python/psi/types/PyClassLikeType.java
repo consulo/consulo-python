@@ -18,8 +18,7 @@ package com.jetbrains.python.psi.types;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.psi.PsiElement;
 import consulo.application.util.function.Processor;
 import com.jetbrains.python.psi.AccessDirection;
@@ -40,14 +39,13 @@ public interface PyClassLikeType extends PyCallableType, PyWithAncestors
 	@Nullable
 	String getClassQName();
 
-	@Nonnull
-	List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context);
+	List<PyClassLikeType> getSuperClassTypes(TypeEvalContext context);
 
 	@Nullable
-	List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
+	List<? extends RatedResolveResult> resolveMember(String name,
 			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext,
+			AccessDirection direction,
+			PyResolveContext resolveContext,
 			boolean inherited);
 
 	// TODO: Pull to PyType at next iteration
@@ -61,13 +59,12 @@ public interface PyClassLikeType extends PyCallableType, PyWithAncestors
 	 * @param context   context to be used to resolve types
 	 * @see PyTypeUtil#getMembersOfType(PyClassLikeType, Class, TypeEvalContext)
 	 */
-	void visitMembers(@Nonnull Processor<PsiElement> processor, boolean inherited, @Nonnull TypeEvalContext context);
+	void visitMembers(Processor<PsiElement> processor, boolean inherited, TypeEvalContext context);
 
-	@Nonnull
-	Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context);
+	Set<String> getMemberNames(boolean inherited, TypeEvalContext context);
 
 	boolean isValid();
 
 	@Nullable
-	PyClassLikeType getMetaClassType(@Nonnull TypeEvalContext context, boolean inherited);
+	PyClassLikeType getMetaClassType(TypeEvalContext context, boolean inherited);
 }

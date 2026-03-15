@@ -20,8 +20,7 @@ import consulo.util.collection.Lists;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.net.ServerSocket;
 import java.security.SecureRandom;
 import java.util.*;
@@ -54,22 +53,21 @@ public class RemoteDebugger implements ProcessDebugger
 
 	private final List<RemoteDebuggerCloseListener> myCloseListeners = Lists.newLockFreeCopyOnWriteList();
 
-	@Nonnull
 	private final DebuggerTransport myDebuggerTransport;
 
-	public RemoteDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull String host, int port)
+	public RemoteDebugger(IPyDebugProcess debugProcess, String host, int port)
 	{
 		myDebugProcess = debugProcess;
 		myDebuggerTransport = new ClientModeDebuggerTransport(debugProcess, this, host, port);
 	}
 
-	public RemoteDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull ServerSocket socket, int timeout)
+	public RemoteDebugger(IPyDebugProcess debugProcess, ServerSocket socket, int timeout)
 	{
 		myDebugProcess = debugProcess;
 		myDebuggerTransport = new ServerModeDebuggerTransport(this, socket, timeout);
 	}
 
-	protected RemoteDebugger(@Nonnull IPyDebugProcess debugProcess, @Nonnull DebuggerTransport debuggerTransport)
+	protected RemoteDebugger(IPyDebugProcess debugProcess, DebuggerTransport debuggerTransport)
 	{
 		myDebugProcess = debugProcess;
 		myDebuggerTransport = debuggerTransport;
@@ -360,7 +358,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void execute(@Nonnull AbstractCommand command)
+	public void execute(AbstractCommand command)
 	{
 		if(command instanceof ResumeOrStepCommand)
 		{
@@ -436,7 +434,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setTempBreakpoint(@Nonnull String type, @Nonnull String file, int line)
+	public void setTempBreakpoint(String type, String file, int line)
 	{
 		SetBreakpointCommand command = new SetBreakpointCommand(this, type, file, line);
 		execute(command);  // set temp. breakpoint
@@ -444,7 +442,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void removeTempBreakpoint(@Nonnull String file, int line)
+	public void removeTempBreakpoint(String file, int line)
 	{
 		String type = myTempBreakpoints.get(Pair.create(file, line));
 		if(type != null)
@@ -459,13 +457,13 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	@Override
-	public void setBreakpoint(@Nonnull String typeId,
-			@Nonnull String file,
+	public void setBreakpoint(String typeId,
+			String file,
 			int line,
 			@Nullable String condition,
 			@Nullable String logExpression,
 			@Nullable String funcName,
-			@Nonnull SuspendPolicy policy)
+			SuspendPolicy policy)
 	{
 		SetBreakpointCommand command = new SetBreakpointCommand(this, typeId, file, line, condition, logExpression, funcName, policy);
 		execute(command);
@@ -473,7 +471,7 @@ public class RemoteDebugger implements ProcessDebugger
 
 
 	@Override
-	public void removeBreakpoint(@Nonnull String typeId, @Nonnull String file, int line)
+	public void removeBreakpoint(String typeId, String file, int line)
 	{
 		RemoveBreakpointCommand command = new RemoveBreakpointCommand(this, typeId, file, line);
 		execute(command);
@@ -487,7 +485,7 @@ public class RemoteDebugger implements ProcessDebugger
 	}
 
 	// for DebuggerReader only
-	public void processResponse(@Nonnull String line)
+	public void processResponse(String line)
 	{
 		try
 		{

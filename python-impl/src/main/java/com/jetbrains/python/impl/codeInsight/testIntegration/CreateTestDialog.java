@@ -23,7 +23,6 @@ import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.util.lang.StringUtil;
 import consulo.ui.ex.awt.BooleanTableCellRenderer;
-import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -152,7 +151,6 @@ public class CreateTestDialog extends DialogWrapper {
     return res;
   }
 
-  @Nonnull
   protected Action[] createActions() {
     return new Action[]{getOKAction(), getCancelAction(), getHelpAction()};
   }

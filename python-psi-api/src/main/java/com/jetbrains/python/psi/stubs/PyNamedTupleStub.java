@@ -17,16 +17,13 @@ package com.jetbrains.python.psi.stubs;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 
 public interface PyNamedTupleStub extends CustomTargetExpressionStub
 {
 
-	@Nonnull
 	String getName();
 
-	@Nonnull
 	List<String> getFields();
 }

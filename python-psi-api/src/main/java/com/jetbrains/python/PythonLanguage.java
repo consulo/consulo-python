@@ -20,7 +20,6 @@ import com.jetbrains.python.psi.LanguageLevel;
 import consulo.language.Language;
 import consulo.language.version.LanguageVersion;
 import consulo.python.language.PythonLanguageVersion;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -50,13 +49,11 @@ public class PythonLanguage extends Language {
     return true;
   }
 
-  @Nonnull
   @Override
   protected LanguageVersion[] findVersions() {
     return myVersions;
   }
 
-  @Nonnull
   public LanguageVersion getVersion(LanguageLevel languageLevel) {
     return myVersions[languageLevel.ordinal()];
   }

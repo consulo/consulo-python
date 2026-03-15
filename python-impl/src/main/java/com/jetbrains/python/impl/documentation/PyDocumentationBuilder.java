@@ -54,8 +54,7 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -151,7 +150,7 @@ public class PyDocumentationBuilder {
     }
   }
 
-  private void buildForKeyword(@Nonnull String name) {
+  private void buildForKeyword(String name) {
     try {
       FileReader reader = new FileReader(PythonHelpersLocator.getHelperPath("/tools/python_keywords/" + name));
       try {
@@ -172,9 +171,9 @@ public class PyDocumentationBuilder {
     }
   }
 
-  private void buildFromParameter(@Nonnull TypeEvalContext context,
+  private void buildFromParameter(TypeEvalContext context,
                                   @Nullable PsiElement outerElement,
-                                  @Nonnull PsiElement elementDefinition) {
+                                  PsiElement elementDefinition) {
     myBody.addItem(combUp("Parameter " + PyUtil.getReadableRepr(elementDefinition, false)));
     boolean typeFromDocstringAdded = addTypeAndDescriptionFromDocstring((PyNamedParameter)elementDefinition);
     if (outerElement instanceof PyExpression) {
@@ -211,7 +210,7 @@ public class PyDocumentationBuilder {
 
   private boolean buildFromProperty(PsiElement elementDefinition,
                                     @Nullable PsiElement outerElement,
-                                    @Nonnull TypeEvalContext context) {
+                                    TypeEvalContext context) {
     if (myOriginalElement == null) {
       return false;
     }
@@ -274,8 +273,7 @@ public class PyDocumentationBuilder {
     return true;
   }
 
-  @Nonnull
-  private static String getAccessorKind(@Nonnull AccessDirection dir) {
+  private static String getAccessorKind(AccessDirection dir) {
     String accessorKind;
     if (dir == AccessDirection.READ) {
       accessorKind = "Getter";
@@ -289,7 +287,7 @@ public class PyDocumentationBuilder {
     return accessorKind;
   }
 
-  private void buildFromDocstring(@Nonnull PsiElement elementDefinition, boolean isProperty) {
+  private void buildFromDocstring(PsiElement elementDefinition, boolean isProperty) {
     PyClass pyClass = null;
     PyStringLiteralExpression docStringExpression = ((PyDocStringOwner)elementDefinition).getDocStringExpression();
 
@@ -358,12 +356,12 @@ public class PyDocumentationBuilder {
     return myElement;
   }
 
-  private static PsiElement resolveWithoutImplicits(@Nonnull PyReferenceExpression element) {
+  private static PsiElement resolveWithoutImplicits(PyReferenceExpression element) {
     QualifiedResolveResult resolveResult = element.followAssignmentsChain(PyResolveContext.noImplicits());
     return resolveResult.isImplicit() ? null : resolveResult.getElement();
   }
 
-  private void addInheritedDocString(@Nonnull PyFunction pyFunction, @Nullable PyClass pyClass) {
+  private void addInheritedDocString(PyFunction pyFunction, @Nullable PyClass pyClass) {
     boolean notFound = true;
     String methodName = pyFunction.getName();
     if (pyClass == null || methodName == null) {
@@ -442,10 +440,10 @@ public class PyDocumentationBuilder {
     }
   }
 
-  private static void addFormattedDocString(@Nonnull PsiElement element,
-                                            @Nonnull String docstring,
-                                            @Nonnull ChainIterable<String> formattedOutput,
-                                            @Nonnull ChainIterable<String> unformattedOutput) {
+  private static void addFormattedDocString(PsiElement element,
+                                            String docstring,
+                                            ChainIterable<String> formattedOutput,
+                                            ChainIterable<String> unformattedOutput) {
     Project project = element.getProject();
 
     List<String> formatted = PyStructuredDocstringFormatter.formatDocstring(element, docstring);
@@ -489,7 +487,7 @@ public class PyDocumentationBuilder {
    * @param parameter parameter of a function
    * @return true if type from docstring was added
    */
-  private boolean addTypeAndDescriptionFromDocstring(@Nonnull PyNamedParameter parameter) {
+  private boolean addTypeAndDescriptionFromDocstring(PyNamedParameter parameter) {
     PyFunction function = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
     if (function != null) {
       String docString = PyPsiUtils.strValue(function.getDocStringExpression());
@@ -518,7 +516,7 @@ public class PyDocumentationBuilder {
     return false;
   }
 
-  private static Pair<String, String> getTypeAndDescription(@Nullable String docString, @Nonnull PyNamedParameter followed) {
+  private static Pair<String, String> getTypeAndDescription(@Nullable String docString, PyNamedParameter followed) {
     String type = null;
     String desc = null;
     if (docString != null) {
@@ -547,7 +545,7 @@ public class PyDocumentationBuilder {
     }
   }
 
-  public static String[] removeCommonIndentation(@Nonnull String docstring) {
+  public static String[] removeCommonIndentation(String docstring) {
     // detect common indentation
     String[] lines = LineTokenizer.tokenize(docstring, false);
     boolean isFirst = true;
@@ -591,7 +589,7 @@ public class PyDocumentationBuilder {
     return ArrayUtil.toStringArray(result);
   }
 
-  private void addModulePath(@Nonnull PyFile followed) {
+  private void addModulePath(PyFile followed) {
     // what to prepend to a module description?
     VirtualFile file = followed.getVirtualFile();
     if (file == null) {
@@ -620,7 +618,7 @@ public class PyDocumentationBuilder {
       myPath = path;
     }
 
-    public boolean visitRoot(@Nonnull VirtualFile root, Module module, Sdk sdk, boolean isModuleSource) {
+    public boolean visitRoot(VirtualFile root, Module module, Sdk sdk, boolean isModuleSource) {
       String vpath = VirtualFileUtil.urlToPath(root.getUrl());
       if (myPath.startsWith(vpath)) {
         myResult = vpath;

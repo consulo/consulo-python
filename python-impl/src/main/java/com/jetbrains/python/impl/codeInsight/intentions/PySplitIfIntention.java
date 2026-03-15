@@ -26,14 +26,13 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Alexey.Ivanov
  * @since 2010-03-10
  */
 public class PySplitIfIntention extends PyBaseIntentionAction {
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -73,7 +72,7 @@ public class PySplitIfIntention extends PyBaseIntentionAction {
         return true;
     }
 
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAtOffset = file.findElementAt(editor.getCaretModel().getOffset());
         // PY-745
         IElementType elementType = elementAtOffset.getNode().getElementType();

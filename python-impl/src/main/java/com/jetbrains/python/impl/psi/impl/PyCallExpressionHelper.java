@@ -35,8 +35,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -193,14 +192,12 @@ public class PyCallExpressionHelper
 	}
 
 
-	@Nullable
-	public static PyCallExpression.PyMarkedCallee resolveCallee(PyCallExpression us, PyResolveContext resolveContext)
+	public static PyCallExpression.@Nullable PyMarkedCallee resolveCallee(PyCallExpression us, PyResolveContext resolveContext)
 	{
 		return resolveCallee(us, resolveContext, 0);
 	}
 
-	@Nullable
-	public static PyCallExpression.PyMarkedCallee resolveCallee(PyCallExpression us, PyResolveContext resolveContext, int implicitOffset)
+	public static PyCallExpression.@Nullable PyMarkedCallee resolveCallee(PyCallExpression us, PyResolveContext resolveContext, int implicitOffset)
 	{
 		PyFunction.Modifier wrappedModifier = null;
 		boolean isConstructorCall = false;
@@ -287,7 +284,7 @@ public class PyCallExpressionHelper
 		return null;
 	}
 
-	private static boolean isResolvedToMultipleTargets(@Nullable PyExpression callee, @Nonnull PyResolveContext resolveContext)
+	private static boolean isResolvedToMultipleTargets(@Nullable PyExpression callee, PyResolveContext resolveContext)
 	{
 		if(callee != null)
 		{
@@ -308,7 +305,7 @@ public class PyCallExpressionHelper
 	 * @param function      resolved method which is being called; plain functions are OK but make little sense.
 	 * @return a non-negative number of parameters that are implicit to this call.
 	 */
-	public static int getImplicitArgumentCount(@Nonnull PyReferenceExpression callReference, @Nonnull PyFunction function, @Nonnull PyResolveContext resolveContext)
+	public static int getImplicitArgumentCount(PyReferenceExpression callReference, PyFunction function, PyResolveContext resolveContext)
 	{
 		PyDecorator decorator = PsiTreeUtil.getParentOfType(callReference, PyDecorator.class);
 		if(decorator != null && PsiTreeUtil.isAncestor(decorator.getCallee(), callReference, false))
@@ -388,7 +385,7 @@ public class PyCallExpressionHelper
 		return implicit_offset;
 	}
 
-	private static boolean isQualifiedByInstance(@Nullable PyCallable resolved, @Nonnull List<PyExpression> qualifiers, @Nonnull TypeEvalContext context)
+	private static boolean isQualifiedByInstance(@Nullable PyCallable resolved, List<PyExpression> qualifiers, TypeEvalContext context)
 	{
 		PyDocStringOwner owner = PsiTreeUtil.getStubOrPsiParentOfType(resolved, PyDocStringOwner.class);
 		if(!(owner instanceof PyClass))
@@ -410,7 +407,7 @@ public class PyCallExpressionHelper
 		return false;
 	}
 
-	private static boolean isQualifiedByInstance(@Nullable PyCallable resolved, @Nonnull PyExpression qualifier, @Nonnull TypeEvalContext context)
+	private static boolean isQualifiedByInstance(@Nullable PyCallable resolved, PyExpression qualifier, TypeEvalContext context)
 	{
 		if(isQualifiedByClass(resolved, qualifier, context))
 		{
@@ -428,7 +425,7 @@ public class PyCallExpressionHelper
 		return true; // NOTE. best guess: unknown qualifier is more probably an instance.
 	}
 
-	private static boolean isQualifiedByClass(@Nullable PyCallable resolved, @Nonnull PyExpression qualifier, @Nonnull TypeEvalContext context)
+	private static boolean isQualifiedByClass(@Nullable PyCallable resolved, PyExpression qualifier, TypeEvalContext context)
 	{
 		PyType qualifierType = context.getType(qualifier);
 		if(qualifierType instanceof PyClassType)
@@ -481,7 +478,7 @@ public class PyCallExpressionHelper
 	 * @return argument expression or null if has wrong type of does not exist
 	 */
 	@Nullable
-	public static <T extends PsiElement> T getArgument(@Nonnull FunctionParameter parameter, @Nonnull Class<T> argClass, @Nonnull PyCallExpression expression)
+	public static <T extends PsiElement> T getArgument(FunctionParameter parameter, Class<T> argClass, PyCallExpression expression)
 	{
 		PyArgumentList list = expression.getArgumentList();
 		if(list == null)
@@ -508,7 +505,7 @@ public class PyCallExpressionHelper
 		return null;
 	}
 
-	public static PyType getCallType(@Nonnull PyCallExpression call, @Nonnull TypeEvalContext context)
+	public static PyType getCallType(PyCallExpression call, TypeEvalContext context)
 	{
 		if(!TypeEvalStack.mayEvaluate(call))
 		{
@@ -600,7 +597,7 @@ public class PyCallExpressionHelper
 	 * @return type that union will return if you call it
 	 */
 	@Nullable
-	private static PyType getCallResultTypeFromUnion(@Nonnull PyCallSiteExpression call, @Nonnull TypeEvalContext context, @Nonnull PyUnionType type)
+	private static PyType getCallResultTypeFromUnion(PyCallSiteExpression call, TypeEvalContext context, PyUnionType type)
 	{
 		Collection<PyType> callResultTypes = new HashSet<>();
 
@@ -628,7 +625,7 @@ public class PyCallExpressionHelper
 	}
 
 	@Nullable
-	private static Ref<? extends PyType> getCallTargetReturnType(@Nonnull PyCallExpression call, @Nonnull PsiElement target, @Nonnull TypeEvalContext context)
+	private static Ref<? extends PyType> getCallTargetReturnType(PyCallExpression call, PsiElement target, TypeEvalContext context)
 	{
 		PyClass cls = null;
 		PyFunction init = null;
@@ -691,8 +688,7 @@ public class PyCallExpressionHelper
 		return null;
 	}
 
-	@Nonnull
-	private static Maybe<PyType> getSuperCallType(@Nonnull PyCallExpression call, TypeEvalContext context)
+	private static Maybe<PyType> getSuperCallType(PyCallExpression call, TypeEvalContext context)
 	{
 		PyExpression callee = call.getCallee();
 		if(callee instanceof PyReferenceExpression)
@@ -778,7 +774,7 @@ public class PyCallExpressionHelper
 	}
 
 	@Nullable
-	private static PyType getSuperClassUnionType(@Nonnull PyClass pyClass, TypeEvalContext context)
+	private static PyType getSuperClassUnionType(PyClass pyClass, TypeEvalContext context)
 	{
 		// TODO: this is closer to being correct than simply taking first superclass type but still not entirely correct;
 		// super can also delegate to sibling types
@@ -808,14 +804,13 @@ public class PyCallExpressionHelper
 	 * @return true if matches
 	 * @see com.jetbrains.python.nameResolver
 	 */
-	public static boolean isCallee(@Nonnull PyCallExpression expression, @Nonnull FQNamesProvider... namesProviders)
+	public static boolean isCallee(PyCallExpression expression, FQNamesProvider... namesProviders)
 	{
 		PyExpression callee = expression.getCallee();
 		return (callee != null) && NameResolverTools.isName(callee, namesProviders);
 	}
 
-	@Nonnull
-	public static PyCallExpression.PyArgumentsMapping mapArguments(@Nonnull PyCallExpression callExpression, @Nonnull PyResolveContext resolveContext, int implicitOffset)
+	public static PyCallExpression.PyArgumentsMapping mapArguments(PyCallExpression callExpression, PyResolveContext resolveContext, int implicitOffset)
 	{
 
 		PyArgumentList argumentList = callExpression.getArgumentList();
@@ -837,11 +832,10 @@ public class PyCallExpressionHelper
 				mappingResults.getMappedTupleParameters());
 	}
 
-	@Nonnull
-	public static Map<PyExpression, PyNamedParameter> mapArguments(@Nonnull PyCallSiteExpression callSite,
-			@Nonnull PyCallable callable,
-			@Nonnull List<PyParameter> parameters,
-			@Nonnull TypeEvalContext context)
+	public static Map<PyExpression, PyNamedParameter> mapArguments(PyCallSiteExpression callSite,
+			PyCallable callable,
+			List<PyParameter> parameters,
+			TypeEvalContext context)
 	{
 		List<PyExpression> arguments = PyTypeChecker.getArguments(callSite, callable);
 		PyResolveContext resolveContext = PyResolveContext.noImplicits().withTypeEvalContext(context);
@@ -849,15 +843,13 @@ public class PyCallExpressionHelper
 		return analyzeArguments(arguments, explicitParameters).getMappedParameters();
 	}
 
-	@Nonnull
-	public static Map<PyExpression, PyNamedParameter> mapArguments(@Nonnull PyCallSiteExpression callSite, @Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
+	public static Map<PyExpression, PyNamedParameter> mapArguments(PyCallSiteExpression callSite, PyCallable callable, TypeEvalContext context)
 	{
 		List<PyParameter> parameters = PyUtil.getParameters(callable, context);
 		return mapArguments(callSite, callable, parameters, context);
 	}
 
-	@Nonnull
-	private static ArgumentMappingResults analyzeArguments(@Nonnull List<PyExpression> arguments, @Nonnull List<PyParameter> parameters)
+	private static ArgumentMappingResults analyzeArguments(List<PyExpression> arguments, List<PyParameter> parameters)
 	{
 		boolean seenSingleStar = false;
 		boolean mappedVariadicArgumentsToParameters = false;
@@ -1022,25 +1014,19 @@ public class PyCallExpressionHelper
 
 	public static class ArgumentMappingResults
 	{
-		@Nonnull
 		private final Map<PyExpression, PyNamedParameter> myMappedParameters;
-		@Nonnull
 		private final List<PyParameter> myUnmappedParameters;
-		@Nonnull
 		private final List<PyExpression> myUnmappedArguments;
-		@Nonnull
 		private final List<PyNamedParameter> myParametersMappedToVariadicPositionalArguments;
-		@Nonnull
 		private final List<PyNamedParameter> myParametersMappedToVariadicKeywordArguments;
-		@Nonnull
 		private final Map<PyExpression, PyTupleParameter> myMappedTupleParameters;
 
-		public ArgumentMappingResults(@Nonnull Map<PyExpression, PyNamedParameter> mappedParameters,
-				@Nonnull List<PyParameter> unmappedParameters,
-				@Nonnull List<PyExpression> unmappedArguments,
-				@Nonnull List<PyNamedParameter> parametersMappedToVariadicPositionalArguments,
-				@Nonnull List<PyNamedParameter> parametersMappedToVariadicKeywordArguments,
-				@Nonnull Map<PyExpression, PyTupleParameter> mappedTupleParameters)
+		public ArgumentMappingResults(Map<PyExpression, PyNamedParameter> mappedParameters,
+				List<PyParameter> unmappedParameters,
+				List<PyExpression> unmappedArguments,
+				List<PyNamedParameter> parametersMappedToVariadicPositionalArguments,
+				List<PyNamedParameter> parametersMappedToVariadicKeywordArguments,
+				Map<PyExpression, PyTupleParameter> mappedTupleParameters)
 		{
 			myMappedParameters = mappedParameters;
 			myUnmappedParameters = unmappedParameters;
@@ -1050,37 +1036,31 @@ public class PyCallExpressionHelper
 			myMappedTupleParameters = mappedTupleParameters;
 		}
 
-		@Nonnull
 		public Map<PyExpression, PyNamedParameter> getMappedParameters()
 		{
 			return myMappedParameters;
 		}
 
-		@Nonnull
 		public List<PyParameter> getUnmappedParameters()
 		{
 			return myUnmappedParameters;
 		}
 
-		@Nonnull
 		public List<PyExpression> getUnmappedArguments()
 		{
 			return myUnmappedArguments;
 		}
 
-		@Nonnull
 		public List<PyNamedParameter> getParametersMappedToVariadicPositionalArguments()
 		{
 			return myParametersMappedToVariadicPositionalArguments;
 		}
 
-		@Nonnull
 		public List<PyNamedParameter> getParametersMappedToVariadicKeywordArguments()
 		{
 			return myParametersMappedToVariadicKeywordArguments;
 		}
 
-		@Nonnull
 		public Map<PyExpression, PyTupleParameter> getMappedTupleParameters()
 		{
 			return myMappedTupleParameters;
@@ -1089,14 +1069,11 @@ public class PyCallExpressionHelper
 
 	private static class TupleMappingResults
 	{
-		@Nonnull
 		private final Map<PyExpression, PyNamedParameter> myParameters;
-		@Nonnull
 		private final List<PyParameter> myUnmappedParameters;
-		@Nonnull
 		private final List<PyExpression> myUnmappedArguments;
 
-		TupleMappingResults(@Nonnull Map<PyExpression, PyNamedParameter> mappedParameters, @Nonnull List<PyParameter> unmappedParameters, @Nonnull List<PyExpression> unmappedArguments)
+		TupleMappingResults(Map<PyExpression, PyNamedParameter> mappedParameters, List<PyParameter> unmappedParameters, List<PyExpression> unmappedArguments)
 		{
 
 			myParameters = mappedParameters;
@@ -1104,27 +1081,23 @@ public class PyCallExpressionHelper
 			myUnmappedArguments = unmappedArguments;
 		}
 
-		@Nonnull
 		public Map<PyExpression, PyNamedParameter> getParameters()
 		{
 			return myParameters;
 		}
 
-		@Nonnull
 		public List<PyParameter> getUnmappedParameters()
 		{
 			return myUnmappedParameters;
 		}
 
-		@Nonnull
 		public List<PyExpression> getUnmappedArguments()
 		{
 			return myUnmappedArguments;
 		}
 	}
 
-	@Nonnull
-	private static TupleMappingResults mapComponentsOfTupleParameter(@Nullable PyExpression argument, @Nonnull PyTupleParameter parameter)
+	private static TupleMappingResults mapComponentsOfTupleParameter(@Nullable PyExpression argument, PyTupleParameter parameter)
 	{
 		List<PyParameter> unmappedParameters = new ArrayList<>();
 		List<PyExpression> unmappedArguments = new ArrayList<>();
@@ -1185,7 +1158,7 @@ public class PyCallExpressionHelper
 	}
 
 	@Nullable
-	private static PyKeywordArgument removeKeywordArgument(@Nonnull List<PyKeywordArgument> arguments, @Nullable String name)
+	private static PyKeywordArgument removeKeywordArgument(List<PyKeywordArgument> arguments, @Nullable String name)
 	{
 		PyKeywordArgument result = null;
 		for(PyKeywordArgument argument : arguments)
@@ -1204,8 +1177,7 @@ public class PyCallExpressionHelper
 		return result;
 	}
 
-	@Nonnull
-	private static List<PyKeywordArgument> filterKeywordArguments(@Nonnull List<PyExpression> arguments)
+	private static List<PyKeywordArgument> filterKeywordArguments(List<PyExpression> arguments)
 	{
 		List<PyKeywordArgument> results = new ArrayList<>();
 		for(PyExpression argument : arguments)
@@ -1220,16 +1192,13 @@ public class PyCallExpressionHelper
 
 	private static class PositionalArgumentsAnalysisResults
 	{
-		@Nonnull
 		private final List<PyExpression> allPositionalArguments;
-		@Nonnull
 		private final List<PyExpression> componentsOfVariadicPositionalArguments;
-		@Nonnull
 		private final List<PyExpression> variadicPositionalArguments;
 
-		public PositionalArgumentsAnalysisResults(@Nonnull List<PyExpression> allPositionalArguments,
-				@Nonnull List<PyExpression> componentsOfVariadicPositionalArguments,
-				@Nonnull List<PyExpression> variadicPositionalArguments)
+		public PositionalArgumentsAnalysisResults(List<PyExpression> allPositionalArguments,
+				List<PyExpression> componentsOfVariadicPositionalArguments,
+				List<PyExpression> variadicPositionalArguments)
 		{
 			this.allPositionalArguments = allPositionalArguments;
 			this.componentsOfVariadicPositionalArguments = componentsOfVariadicPositionalArguments;
@@ -1237,8 +1206,7 @@ public class PyCallExpressionHelper
 		}
 	}
 
-	@Nonnull
-	private static PositionalArgumentsAnalysisResults filterPositionalAndVariadicArguments(@Nonnull List<PyExpression> arguments)
+	private static PositionalArgumentsAnalysisResults filterPositionalAndVariadicArguments(List<PyExpression> arguments)
 	{
 		List<PyExpression> variadicArguments = new ArrayList<>();
 		List<PyExpression> allPositionalArguments = new ArrayList<>();
@@ -1289,8 +1257,7 @@ public class PyCallExpressionHelper
 		return new PositionalArgumentsAnalysisResults(allPositionalArguments, componentsOfVariadicPositionalArguments, variadicArguments);
 	}
 
-	@Nonnull
-	private static List<PyExpression> filterVariadicKeywordArguments(@Nonnull List<PyExpression> arguments)
+	private static List<PyExpression> filterVariadicKeywordArguments(List<PyExpression> arguments)
 	{
 		List<PyExpression> results = new ArrayList<>();
 		for(PyExpression argument : arguments)
@@ -1303,24 +1270,23 @@ public class PyCallExpressionHelper
 		return results;
 	}
 
-	public static boolean isVariadicKeywordArgument(@Nonnull PyExpression argument)
+	public static boolean isVariadicKeywordArgument(PyExpression argument)
 	{
 		return argument instanceof PyStarArgument && ((PyStarArgument) argument).isKeyword();
 	}
 
-	public static boolean isVariadicPositionalArgument(@Nonnull PyExpression argument)
+	public static boolean isVariadicPositionalArgument(PyExpression argument)
 	{
 		return argument instanceof PyStarArgument && !((PyStarArgument) argument).isKeyword();
 	}
 
 	@Nullable
-	private static <T> T next(@Nonnull List<T> list)
+	private static <T> T next(List<T> list)
 	{
 		return list.isEmpty() ? null : list.remove(0);
 	}
 
-	@Nonnull
-	private static List<PyParameter> dropImplicitParameters(@Nonnull List<PyParameter> parameters, int offset)
+	private static List<PyParameter> dropImplicitParameters(List<PyParameter> parameters, int offset)
 	{
 		ArrayList<PyParameter> results = new ArrayList<>(parameters);
 		for(int i = 0; i < offset && !results.isEmpty(); i++)

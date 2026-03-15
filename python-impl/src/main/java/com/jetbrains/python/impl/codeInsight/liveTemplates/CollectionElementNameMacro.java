@@ -26,7 +26,6 @@ import consulo.language.editor.template.TextResult;
 import consulo.language.editor.template.macro.Macro;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,12 +43,11 @@ public class CollectionElementNameMacro extends Macro
     return "collectionElementName()";
   }
 
-  @Nonnull
   public String getDefaultValue() {
     return "a";
   }
 
-  public Result calculateResult(@Nonnull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression[] params, ExpressionContext context) {
     if (params.length != 1) {
       return null;
     }
@@ -80,7 +78,7 @@ public class CollectionElementNameMacro extends Macro
     return result == null ? param : result;
   }
 
-  public LookupElement[] calculateLookupItems(@Nonnull Expression[] params, ExpressionContext context) {
+  public LookupElement[] calculateLookupItems(Expression[] params, ExpressionContext context) {
     Result result = calculateResult(params, context);
     if (result == null) {
       return null;

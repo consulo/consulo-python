@@ -33,8 +33,7 @@ import consulo.ui.image.Image;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -151,7 +150,6 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return new ItemPresentation()
 		{
 
-			@Nonnull
 			private String getRefName(String default_name)
 			{
 				PyReferenceExpression ref = getImportReferenceExpression();
@@ -217,7 +215,6 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		};
 	}
 
-	@Nonnull
 	public Iterable<PyElement> iterateNames()
 	{
 		PyElement ret = getAsNameElement();
@@ -236,8 +233,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return Collections.singleton(ret);
 	}
 
-	@Nonnull
-	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
+	public List<RatedResolveResult> multiResolveName(String name)
 	{
 		return getElementsNamed(name, true);
 	}
@@ -250,8 +246,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
 	}
 
-	@Nonnull
-	private List<RatedResolveResult> getElementsNamed(@Nonnull String name, boolean resolveImportElement)
+	private List<RatedResolveResult> getElementsNamed(String name, boolean resolveImportElement)
 	{
 		String asName = getAsName();
 		if(asName != null)
@@ -293,7 +288,6 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
 	}
 
-	@Nonnull
 	@Override
 	public List<RatedResolveResult> multiResolve()
 	{

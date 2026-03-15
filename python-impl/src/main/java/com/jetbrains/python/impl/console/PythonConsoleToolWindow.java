@@ -32,8 +32,7 @@ import consulo.ui.ex.content.Content;
 import consulo.ui.ex.content.ContentFactory;
 import consulo.ui.ex.toolWindow.ToolWindow;
 import consulo.util.dataholder.Key;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -49,8 +48,7 @@ import java.util.List;
 @ServiceAPI(ComponentScope.PROJECT)
 @ServiceImpl
 public class PythonConsoleToolWindow {
-    @Nonnull
-    public static PythonConsoleToolWindow getInstance(@Nonnull Project project) {
+    public static PythonConsoleToolWindow getInstance(Project project) {
         return project.getInstance(PythonConsoleToolWindow.class);
     }
 
@@ -81,7 +79,7 @@ public class PythonConsoleToolWindow {
     }
 
 
-    public void init(@Nonnull ToolWindow toolWindow, @Nonnull RunContentDescriptor contentDescriptor) {
+    public void init(ToolWindow toolWindow, RunContentDescriptor contentDescriptor) {
         setContent(toolWindow, contentDescriptor);
 
         if (!myInitialized) {
@@ -89,14 +87,14 @@ public class PythonConsoleToolWindow {
         }
     }
 
-    private void doInit(@Nonnull final ToolWindow toolWindow) {
+    private void doInit(final ToolWindow toolWindow) {
         myInitialized = true;
 
         toolWindow.setToHideOnEmptyContent(true);
 
         myProject.getMessageBus().connect().subscribe(ToolWindowManagerListener.class, new ToolWindowManagerListener() {
             @Override
-            public void toolWindowRegistered(@Nonnull String id) {
+            public void toolWindowRegistered(String id) {
             }
 
             @Override
@@ -139,7 +137,7 @@ public class PythonConsoleToolWindow {
         setContent(getToolWindow(myProject), contentDescriptor);
     }
 
-    private static Content createContent(@Nonnull RunContentDescriptor contentDescriptor) {
+    private static Content createContent(RunContentDescriptor contentDescriptor) {
         SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
 
         Content content = ContentFactory.getInstance().createContent(panel, contentDescriptor.getDisplayName(), false);
@@ -188,7 +186,7 @@ public class PythonConsoleToolWindow {
     }
 
 
-    public void activate(@Nonnull Runnable runnable) {
+    public void activate(Runnable runnable) {
         getToolWindow(myProject).activate(runnable);
     }
 

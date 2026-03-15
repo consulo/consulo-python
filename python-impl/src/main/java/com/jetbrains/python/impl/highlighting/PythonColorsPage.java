@@ -26,8 +26,6 @@ import consulo.language.editor.highlight.SyntaxHighlighter;
 import consulo.language.editor.highlight.SyntaxHighlighterFactory;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.NonNls;
 
 import java.util.Map;
 
@@ -63,7 +61,6 @@ public class PythonColorsPage implements ColorSettingsPage {
     new AttributesDescriptor("Invalid escape sequence", PyHighlighter.PY_INVALID_STRING_ESCAPE),
   };
 
-  @NonNls
   private static final Map<String, TextAttributesKey> ourTagToDescriptorMap = ImmutableMap.<String, TextAttributesKey>builder()
     .put("docComment", PyHighlighter.PY_DOC_COMMENT)
     .put("docCommentTag", PyHighlighter.PY_DOC_COMMENT_TAG)
@@ -78,24 +75,20 @@ public class PythonColorsPage implements ColorSettingsPage {
     .put("kwarg", PyHighlighter.PY_KEYWORD_ARGUMENT)
     .build();
 
-  @Nonnull
   public LocalizeValue getDisplayName() {
     return PyLocalize.python();
   }
 
-  @Nonnull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
   }
 
-  @Nonnull
   public SyntaxHighlighter getHighlighter() {
     SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(PythonFileType.INSTANCE, null, null);
     assert highlighter != null;
     return highlighter;
   }
 
-  @Nonnull
   public String getDemoText() {
     return
       "@<decorator>decorator</decorator>(param=1)\n" +

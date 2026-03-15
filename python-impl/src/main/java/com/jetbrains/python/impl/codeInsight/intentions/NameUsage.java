@@ -29,8 +29,7 @@ import consulo.usage.TextChunk;
 import consulo.usage.UsagePresentation;
 import consulo.usage.rule.PsiElementUsage;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.awt.*;
 
 /**
@@ -70,7 +69,6 @@ class NameUsage implements PsiElementUsage {
     return null;
   }
 
-  @Nonnull
   public UsagePresentation getPresentation() {
     return new UsagePresentation() {
       @Nullable
@@ -78,7 +76,6 @@ class NameUsage implements PsiElementUsage {
         return myElement.isValid() ? IconDescriptorUpdaters.getIcon(myElement, 0) : null;
       }
 
-      @Nonnull
       public TextChunk[] getText() {
         if (myElement.isValid()) {
           TextChunk[] chunks = new TextChunk[3];
@@ -98,7 +95,6 @@ class NameUsage implements PsiElementUsage {
         else return new TextChunk[]{new TextChunk(SLANTED, "?")}; 
       }
 
-      @Nonnull
       public String getPlainText() {
         return myElement.getText();
       }

@@ -17,8 +17,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import java.util.Collections;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyClass;
@@ -47,7 +46,7 @@ public class PyListCompExpressionImpl extends PyComprehensionElementImpl impleme
 
 	@Nullable
 	@Override
-	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
+	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		PyExpression resultExpr = getResultExpression();
 		PyBuiltinCache cache = PyBuiltinCache.getInstance(this);

@@ -8,7 +8,6 @@ import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.editor.hint.DeclarationRangeHandler;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -16,17 +15,15 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyClassRangeHandler implements DeclarationRangeHandler<PyClass>
 {
-	@Nonnull
 	@Override
 	public Class<PyClass> getElementClass()
 	{
 		return PyClass.class;
 	}
 
-	@Nonnull
 	@Override
 	@RequiredReadAction
-	public TextRange getDeclarationRange(@Nonnull PyClass container)
+	public TextRange getDeclarationRange(PyClass container)
 	{
 		int start = container.getTextRange().getStartOffset();
 		PyArgumentList argumentList = ((PyClass) container).getSuperClassExpressionList();

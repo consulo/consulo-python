@@ -1,21 +1,18 @@
 package com.jetbrains.python.debugger;
 
 
-import jakarta.annotation.Nonnull;
 
 public class PyLockEvent extends PyConcurrencyEvent
 {
 	private final
-	@Nonnull
 	String myLockId;
 
-	public PyLockEvent(long time, @Nonnull String threadId, @Nonnull String name, @Nonnull String id, boolean isAsyncio)
+	public PyLockEvent(long time, String threadId, String name, String id, boolean isAsyncio)
 	{
 		super(time, threadId, name, isAsyncio);
 		myLockId = id;
 	}
 
-	@Nonnull
 	@Override
 	public String getEventActionName()
 	{
@@ -40,7 +37,6 @@ public class PyLockEvent extends PyConcurrencyEvent
 		return sb.toString();
 	}
 
-	@Nonnull
 	public String getLockId()
 	{
 		return myLockId;

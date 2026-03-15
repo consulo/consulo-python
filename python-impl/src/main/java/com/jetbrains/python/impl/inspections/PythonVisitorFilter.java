@@ -26,7 +26,6 @@ import consulo.language.extension.LanguageExtension;
 import consulo.language.extension.LanguageOneToMany;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -40,10 +39,9 @@ public interface PythonVisitorFilter extends LanguageExtension {
   ExtensionPointCacheKey<PythonVisitorFilter, ByLanguageValue<List<PythonVisitorFilter>>> KEY =
     ExtensionPointCacheKey.create("PythonVisitorFilter", LanguageOneToMany.build(false));
 
-  @Nonnull
-  static List<PythonVisitorFilter> forLanguage(@Nonnull Language language) {
+  static List<PythonVisitorFilter> forLanguage(Language language) {
     return Application.get().getExtensionPoint(PythonVisitorFilter.class).getOrBuildCache(KEY).requiredGet(language);
   }
 
-  boolean isSupported(@Nonnull Class visitorClass, @Nonnull PsiFile file);
+  boolean isSupported(Class visitorClass, PsiFile file);
 }

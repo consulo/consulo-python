@@ -34,8 +34,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.fileType.FileType;
 import consulo.virtualFileSystem.fileType.INativeFileType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 
@@ -55,19 +54,16 @@ public abstract class QtFileType implements FileType, INativeFileType {
     myIcon = icon;
   }
 
-  @Nonnull
   @Override
   public String getId() {
     return myName;
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getDescription() {
     return myDescription;
   }
 
-  @Nonnull
   @Override
   public String getDefaultExtension() {
     return myDefaultExtension;
@@ -89,13 +85,13 @@ public abstract class QtFileType implements FileType, INativeFileType {
   }
 
   @Override
-  public String getCharset(@Nonnull VirtualFile file, byte[] content) {
+  public String getCharset(VirtualFile file, byte[] content) {
     return null;
   }
 
   @RequiredUIAccess
   @Override
-  public void openFileInAssociatedApplication(ComponentManager project, @Nonnull VirtualFile file) {
+  public void openFileInAssociatedApplication(ComponentManager project, VirtualFile file) {
     String qtTool = findQtTool(ModuleUtilCore.findModuleForFile(file, (Project)project), getToolName());
     if (qtTool == null) {
       Messages.showErrorDialog((Project) project, "Can't find Qt Designer", "Error");

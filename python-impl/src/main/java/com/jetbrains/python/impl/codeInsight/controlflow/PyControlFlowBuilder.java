@@ -32,7 +32,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 {
 	private final ControlFlowBuilder myBuilder = new ControlFlowBuilder();
 
-	public ControlFlow buildControlFlow(@Nonnull ScopeOwner owner)
+	public ControlFlow buildControlFlow(ScopeOwner owner)
 	{
 		return myBuilder.build(this, owner);
 	}

@@ -20,7 +20,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.stub.StringStubIndexExtension;
 import consulo.language.psi.stub.StubIndexKey;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Python Decorator stub index.
@@ -36,7 +35,6 @@ public class PyDecoratorStubIndex extends StringStubIndexExtension<PyDecorator>
 	 */
 	public static final StubIndexKey<String, PyDecorator> KEY = StubIndexKey.createIndexKey("Python.Decorator");
 
-	@Nonnull
 	@Override
 	public StubIndexKey<String, PyDecorator> getKey()
 	{

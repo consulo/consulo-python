@@ -27,8 +27,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -67,7 +66,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	private static ImmutableSet<String> GENERIC_CLASSES = ImmutableSet.<String>builder().add("typing.Generic").add("typing.AbstractGeneric").add("typing.Protocol").build();
 
 	@Nullable
-	public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context)
+	public Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context)
 	{
 		PyAnnotation annotation = param.getAnnotation();
 		if(annotation != null)
@@ -123,14 +122,14 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 		return null;
 	}
 
-	private static boolean omitFirstParamInTypeComment(@Nonnull PyFunction func)
+	private static boolean omitFirstParamInTypeComment(PyFunction func)
 	{
 		return func.getContainingClass() != null && func.getModifier() != PyFunction.Modifier.STATICMETHOD;
 	}
 
 	@Nullable
 	@Override
-	public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context)
+	public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context)
 	{
 		if(callable instanceof PyFunction)
 		{
@@ -167,7 +166,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 
 	@Nullable
 	@Override
-	public Ref<PyType> getCallType(@Nonnull PyFunction function, @Nullable PyCallSiteExpression callSite, @Nonnull TypeEvalContext context)
+	public Ref<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context)
 	{
 		if("typing.cast".equals(function.getQualifiedName()))
 		{
@@ -179,7 +178,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public PyType getReferenceType(@Nonnull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
+	public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(referenceTarget instanceof PyTargetExpression)
 		{
@@ -222,7 +221,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	 * or {@link PyTypeParser#parsePep484FunctionTypeComment(PsiElement, String)}.
 	 */
 	@Nullable
-	public static String getTypeCommentValue(@Nonnull String text)
+	public static String getTypeCommentValue(String text)
 	{
 		Matcher m = TYPE_COMMENT_PATTERN.matcher(text);
 		if(m.matches())
@@ -232,13 +231,13 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 		return null;
 	}
 
-	private static boolean isAny(@Nonnull PyType type)
+	private static boolean isAny(PyType type)
 	{
 		return type instanceof PyClassType && "typing.Any".equals(((PyClassType) type).getPyClass().getQualifiedName());
 	}
 
 	@Nullable
-	private static PyType getOptionalTypeFromDefaultNone(@Nonnull PyNamedParameter param, @Nonnull PyType type, @Nonnull TypeEvalContext context)
+	private static PyType getOptionalTypeFromDefaultNone(PyNamedParameter param, PyType type, TypeEvalContext context)
 	{
 		PyExpression defaultValue = param.getDefaultValue();
 		if(defaultValue != null)
@@ -253,7 +252,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getGenericConstructorType(@Nonnull PyFunction function, @Nonnull Context context)
+	private static PyType getGenericConstructorType(PyFunction function, Context context)
 	{
 		if(PyUtil.isInit(function))
 		{
@@ -271,8 +270,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 		return null;
 	}
 
-	@Nonnull
-	private static List<PyGenericType> collectGenericTypes(@Nonnull PyClass cls, @Nonnull Context context)
+	private static List<PyGenericType> collectGenericTypes(PyClass cls, Context context)
 	{
 		boolean isGeneric = false;
 		for(PyClass ancestor : cls.getAncestorClasses(context.getTypeContext()))
@@ -311,7 +309,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getType(@Nonnull PyExpression expression, @Nonnull Context context)
+	private static PyType getType(PyExpression expression, Context context)
 	{
 		List<PyType> members = Lists.newArrayList();
 		for(PsiElement resolved : tryResolving(expression, context.getTypeContext()))
@@ -322,7 +320,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getTypeForResolvedElement(@Nonnull PsiElement resolved, @Nonnull Context context)
+	private static PyType getTypeForResolvedElement(PsiElement resolved, Context context)
 	{
 		if(context.getExpressionCache().contains(resolved))
 		{
@@ -382,7 +380,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	public static PyType getType(@Nonnull PsiElement resolved, @Nonnull List<PyType> elementTypes)
+	public static PyType getType(PsiElement resolved, List<PyType> elementTypes)
 	{
 		String qualifiedName = getQualifiedName(resolved);
 
@@ -455,13 +453,13 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	public static PyType getTypeFromTargetExpression(@Nonnull PyTargetExpression expression, @Nonnull TypeEvalContext context)
+	public static PyType getTypeFromTargetExpression(PyTargetExpression expression, TypeEvalContext context)
 	{
 		return getTypeFromTargetExpression(expression, new Context(context));
 	}
 
 	@Nullable
-	private static PyType getTypeFromTargetExpression(@Nonnull PyTargetExpression expression, @Nonnull Context context)
+	private static PyType getTypeFromTargetExpression(PyTargetExpression expression, Context context)
 	{
 		// XXX: Requires switching from stub to AST
 		PyExpression assignedValue = expression.findAssignedValue();
@@ -469,7 +467,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static Ref<PyType> getClassType(@Nonnull PsiElement element, @Nonnull TypeEvalContext context)
+	private static Ref<PyType> getClassType(PsiElement element, TypeEvalContext context)
 	{
 		if(element instanceof PyTypedElement)
 		{
@@ -496,7 +494,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static Ref<PyType> getOptionalType(@Nonnull PsiElement element, @Nonnull Context context)
+	private static Ref<PyType> getOptionalType(PsiElement element, Context context)
 	{
 		if(element instanceof PySubscriptionExpression)
 		{
@@ -521,7 +519,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getStringBasedType(@Nonnull PsiElement element, @Nonnull Context context)
+	private static PyType getStringBasedType(PsiElement element, Context context)
 	{
 		if(element instanceof PyStringLiteralExpression)
 		{
@@ -533,7 +531,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getStringBasedType(@Nonnull String contents, @Nonnull PsiElement anchor, @Nonnull Context context)
+	private static PyType getStringBasedType(String contents, PsiElement anchor, Context context)
 	{
 		Project project = anchor.getProject();
 		PyExpressionCodeFragmentImpl codeFragment = new PyExpressionCodeFragmentImpl(project, "dummy.py", contents, false);
@@ -554,7 +552,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getCallableType(@Nonnull PsiElement resolved, @Nonnull Context context)
+	private static PyType getCallableType(PsiElement resolved, Context context)
 	{
 		if(resolved instanceof PySubscriptionExpression)
 		{
@@ -594,13 +592,13 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 		return null;
 	}
 
-	private static boolean isEllipsis(@Nonnull PyExpression parametersExpr)
+	private static boolean isEllipsis(PyExpression parametersExpr)
 	{
 		return parametersExpr instanceof PyNoneLiteralExpression && ((PyNoneLiteralExpression) parametersExpr).isEllipsis();
 	}
 
 	@Nullable
-	private static PyType getUnionType(@Nonnull PsiElement element, @Nonnull Context context)
+	private static PyType getUnionType(PsiElement element, Context context)
 	{
 		if(element instanceof PySubscriptionExpression)
 		{
@@ -616,7 +614,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyGenericType getGenericType(@Nonnull PsiElement element, @Nonnull Context context)
+	private static PyGenericType getGenericType(PsiElement element, Context context)
 	{
 		if(element instanceof PyCallExpression)
 		{
@@ -647,7 +645,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getGenericTypeBound(@Nonnull PyExpression[] typeVarArguments, @Nonnull Context context)
+	private static PyType getGenericTypeBound(PyExpression[] typeVarArguments, Context context)
 	{
 		List<PyType> types = new ArrayList<>();
 		for(int i = 1; i < typeVarArguments.length; i++)
@@ -657,8 +655,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 		return PyUnionType.union(types);
 	}
 
-	@Nonnull
-	private static List<PyType> getIndexTypes(@Nonnull PySubscriptionExpression expression, @Nonnull Context context)
+	private static List<PyType> getIndexTypes(PySubscriptionExpression expression, Context context)
 	{
 		List<PyType> types = new ArrayList<>();
 		PyExpression indexExpr = expression.getIndexExpression();
@@ -678,7 +675,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getParameterizedType(@Nonnull PsiElement element, @Nonnull Context context)
+	private static PyType getParameterizedType(PsiElement element, Context context)
 	{
 		if(element instanceof PySubscriptionExpression)
 		{
@@ -712,15 +709,14 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static PyType getBuiltinCollection(@Nonnull PsiElement element)
+	private static PyType getBuiltinCollection(PsiElement element)
 	{
 		String collectionName = getQualifiedName(element);
 		String builtinName = COLLECTION_CLASSES.get(collectionName);
 		return builtinName != null ? PyTypeParser.getTypeByName(element, builtinName) : null;
 	}
 
-	@Nonnull
-	private static List<PsiElement> tryResolving(@Nonnull PyExpression expression, @Nonnull TypeEvalContext context)
+	private static List<PsiElement> tryResolving(PyExpression expression, TypeEvalContext context)
 	{
 		List<PsiElement> elements = Lists.newArrayList();
 		if(expression instanceof PyReferenceExpression)
@@ -764,8 +760,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 		return !elements.isEmpty() ? elements : Collections.singletonList(expression);
 	}
 
-	@Nonnull
-	private static Collection<String> resolveToQualifiedNames(@Nonnull PyExpression expression, @Nonnull TypeEvalContext context)
+	private static Collection<String> resolveToQualifiedNames(PyExpression expression, TypeEvalContext context)
 	{
 		Set<String> names = Sets.newLinkedHashSet();
 		for(PsiElement resolved : tryResolving(expression, context))
@@ -780,7 +775,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 	}
 
 	@Nullable
-	private static String getQualifiedName(@Nonnull PsiElement element)
+	private static String getQualifiedName(PsiElement element)
 	{
 		if(element instanceof PyQualifiedNameOwner)
 		{
@@ -792,23 +787,19 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 
 	private static class Context
 	{
-		@Nonnull
 		private final TypeEvalContext myContext;
-		@Nonnull
 		private final Set<PsiElement> myCache = new HashSet<>();
 
-		private Context(@Nonnull TypeEvalContext context)
+		private Context(TypeEvalContext context)
 		{
 			myContext = context;
 		}
 
-		@Nonnull
 		public TypeEvalContext getTypeContext()
 		{
 			return myContext;
 		}
 
-		@Nonnull
 		public Set<PsiElement> getExpressionCache()
 		{
 			return myCache;

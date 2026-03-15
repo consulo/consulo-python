@@ -26,7 +26,6 @@ import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -68,8 +67,8 @@ public class PyOpenDebugConsoleAction extends AnAction implements DumbAware {
 
 
     private static void selectRunningProcess(
-        @Nonnull DataContext dataContext,
-        @Nonnull Project project,
+        DataContext dataContext,
+        Project project,
         Consumer<PythonDebugLanguageConsoleView> consumer
     ) {
         Collection<RunContentDescriptor> consoles = getConsoles(project);

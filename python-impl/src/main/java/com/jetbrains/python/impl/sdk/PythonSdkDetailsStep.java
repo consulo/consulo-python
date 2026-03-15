@@ -31,8 +31,7 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.io.FileUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -89,9 +88,9 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     public PythonSdkDetailsStep(
         @Nullable Project project,
         @Nullable DialogWrapper moreDialog,
-        @Nonnull Component ownerComponent,
-        @Nonnull Sdk[] existingSdks,
-        @Nonnull Consumer<Sdk> sdkAddedCallback
+        Component ownerComponent,
+        Sdk[] existingSdks,
+        Consumer<Sdk> sdkAddedCallback
     ) {
         super(null, getAvailableOptions(moreDialog != null));
         myProject = project;
@@ -193,8 +192,8 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     @Nullable
     @RequiredUIAccess
     public static Sdk setupSdk(
-        @Nonnull Sdk[] allSdks,
-        @Nonnull VirtualFile homeDir,
+        Sdk[] allSdks,
+        VirtualFile homeDir,
         SdkType sdkType,
         boolean silent,
         @Nullable SdkAdditionalData additionalData,
@@ -221,8 +220,8 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     public static Sdk createSdk(
-        @Nonnull Sdk[] allSdks,
-        @Nonnull VirtualFile homeDir,
+        Sdk[] allSdks,
+        VirtualFile homeDir,
         SdkType sdkType,
         @Nullable SdkAdditionalData additionalData,
         @Nullable String customSdkSuggestedName
@@ -274,13 +273,12 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     @Nullable
-    public static VirtualFile getSuggestedSdkRoot(@Nonnull SdkType sdkType) {
+    public static VirtualFile getSuggestedSdkRoot(SdkType sdkType) {
         String homePath = ContainerUtil.getFirstItem(sdkType.suggestHomePaths());
         return homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);
     }
 
-    @Nonnull
-    public static List<String> filterExistingPaths(@Nonnull SdkType sdkType, Collection<String> sdkHomes, Sdk[] sdks) {
+    public static List<String> filterExistingPaths(SdkType sdkType, Collection<String> sdkHomes, Sdk[] sdks) {
         List<String> result = new ArrayList<>();
         for (String sdkHome : sdkHomes) {
             if (findByPath(sdkType, sdks, sdkHome) == null) {
@@ -291,7 +289,7 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     @Nullable
-    private static Sdk findByPath(@Nonnull SdkType sdkType, @Nonnull Sdk[] sdks, @Nonnull String sdkHome) {
+    private static Sdk findByPath(SdkType sdkType, Sdk[] sdks, String sdkHome) {
         for (Sdk sdk : sdks) {
             String path = sdk.getHomePath();
             if (sdk.getSdkType() == sdkType && path != null

@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.debugger.dataframe;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.project.Project;
 import com.jetbrains.python.debugger.ArrayChunk;
@@ -36,7 +35,7 @@ public class DataFrameTable extends NumericContainerViewTable implements TableCh
 
 	private Project myProject;
 
-	public DataFrameTable(@Nonnull Project project, @Nonnull ViewNumericContainerDialog dialog, @Nonnull PyDebugValue value)
+	public DataFrameTable(Project project, ViewNumericContainerDialog dialog, PyDebugValue value)
 	{
 		super(project, dialog, value);
 	}

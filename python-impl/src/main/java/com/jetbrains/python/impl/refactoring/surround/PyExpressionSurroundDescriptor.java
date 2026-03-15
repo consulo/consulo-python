@@ -27,7 +27,6 @@ import consulo.language.editor.surroundWith.Surrounder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,7 +38,6 @@ import jakarta.annotation.Nonnull;
 public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
   private static final Surrounder[] SURROUNDERS = {new PyWithParenthesesSurrounder()};
 
-  @Nonnull
   public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     PsiElement element = PyRefactoringUtil.findExpressionInRange(file, startOffset, endOffset);
     if (!(element instanceof PyExpression)) {
@@ -48,7 +46,6 @@ public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
     return new PsiElement[]{element};
   }
 
-  @Nonnull
   public Surrounder[] getSurrounders() {
     return SURROUNDERS;
   }
@@ -58,7 +55,6 @@ public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
     return false;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

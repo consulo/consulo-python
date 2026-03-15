@@ -34,8 +34,7 @@ import consulo.util.lang.CharFilter;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -44,8 +43,7 @@ import java.util.List;
 @ExtensionImpl
 public class PyFillParagraphHandler extends ParagraphFillHandler {
 
-  @Nonnull
-  protected String getPrefix(@Nonnull PsiElement element) {
+  protected String getPrefix(PsiElement element) {
     PyStringLiteralExpression stringLiteralExpression =
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {
@@ -87,9 +85,8 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
     return indent;
   }
 
-  @Nonnull
   @Override
-  protected String getPostfix(@Nonnull PsiElement element) {
+  protected String getPostfix(PsiElement element) {
     PyStringLiteralExpression stringLiteralExpression =
       PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class);
     if (stringLiteralExpression != null) {
@@ -131,7 +128,6 @@ public class PyFillParagraphHandler extends ParagraphFillHandler {
     return psiFile instanceof PyFile;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

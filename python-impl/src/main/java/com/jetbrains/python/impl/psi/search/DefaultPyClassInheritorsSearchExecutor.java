@@ -24,7 +24,6 @@ import consulo.application.AccessRule;
 import consulo.language.psi.stub.StubIndex;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,8 +42,8 @@ public class DefaultPyClassInheritorsSearchExecutor implements PyClassInheritors
 
     @Override
     public boolean execute(
-        @Nonnull PyClassInheritorsSearch.SearchParameters queryParameters,
-        @Nonnull Predicate<? super PyClass> consumer
+        PyClassInheritorsSearch.SearchParameters queryParameters,
+        Predicate<? super PyClass> consumer
     ) {
         Set<PyClass> processed = new HashSet<>();
 

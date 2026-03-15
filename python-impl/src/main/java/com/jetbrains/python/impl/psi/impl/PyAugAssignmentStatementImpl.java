@@ -24,8 +24,7 @@ import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -43,7 +42,6 @@ public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAug
 		pyVisitor.visitPyAugAssignmentStatement(this);
 	}
 
-	@Nonnull
 	public PyExpression getTarget()
 	{
 		PyExpression target = childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);

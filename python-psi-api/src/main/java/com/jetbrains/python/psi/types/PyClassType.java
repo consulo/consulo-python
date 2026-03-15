@@ -19,13 +19,11 @@ package com.jetbrains.python.psi.types;
 import com.jetbrains.python.psi.PyClass;
 import consulo.util.dataholder.UserDataHolder;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public interface PyClassType extends PyClassLikeType, UserDataHolder
 {
-  @Nonnull
   PyClass getPyClass();
 }

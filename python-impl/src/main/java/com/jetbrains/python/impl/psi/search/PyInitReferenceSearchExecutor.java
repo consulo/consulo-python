@@ -30,7 +30,6 @@ import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.search.ReferencesSearchQueryExecutor;
 import consulo.language.psi.search.UsageSearchContext;
 import consulo.project.util.query.QueryExecutorBase;
-import jakarta.annotation.Nonnull;
 
 import java.util.function.Predicate;
 
@@ -41,8 +40,8 @@ import java.util.function.Predicate;
 public class PyInitReferenceSearchExecutor extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> implements ReferencesSearchQueryExecutor {
     @Override
     public void processQuery(
-        @Nonnull ReferencesSearch.SearchParameters queryParameters,
-        @Nonnull Predicate<? super PsiReference> consumer
+        ReferencesSearch.SearchParameters queryParameters,
+        Predicate<? super PsiReference> consumer
     ) {
         PsiElement element = queryParameters.getElementToSearch();
         if (!(element instanceof PyFunction function)) {

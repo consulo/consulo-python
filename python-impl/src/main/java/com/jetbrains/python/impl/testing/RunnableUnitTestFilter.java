@@ -22,7 +22,6 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiFile;
 import consulo.module.Module;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Filters out Python unit tests for which it doesn't make sense to run the standard unit test configuration,
@@ -34,5 +33,5 @@ import jakarta.annotation.Nonnull;
 public interface RunnableUnitTestFilter {
   ExtensionPointName<RunnableUnitTestFilter> EP_NAME = ExtensionPointName.create(RunnableUnitTestFilter.class);
 
-  boolean isRunnableUnitTest(PsiFile script, @Nonnull Module module);
+  boolean isRunnableUnitTest(PsiFile script, Module module);
 }

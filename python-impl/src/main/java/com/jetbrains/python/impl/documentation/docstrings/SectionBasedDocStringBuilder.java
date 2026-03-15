@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Mikhail Golubev
@@ -29,27 +28,24 @@ public abstract class SectionBasedDocStringBuilder extends DocStringBuilder<Sect
 
 	private String myCurSectionTitle = null;
 
-	protected SectionBasedDocStringBuilder(@Nonnull String defaultSectionIndent, @Nonnull String defaultContinuationIndent)
+	protected SectionBasedDocStringBuilder(String defaultSectionIndent, String defaultContinuationIndent)
 	{
 		mySectionIndent = defaultSectionIndent;
 		myContinuationIndent = defaultContinuationIndent;
 	}
 
-	@Nonnull
 	public SectionBasedDocStringBuilder startParametersSection()
 	{
 		// TODO make default section titles configurable
 		return startSection(getDefaultParametersHeader());
 	}
 
-	@Nonnull
 	public SectionBasedDocStringBuilder startReturnsSection()
 	{
 		return startSection(getDefaultReturnsHeader());
 	}
 
-	@Nonnull
-	protected SectionBasedDocStringBuilder startSection(@Nonnull String title)
+	protected SectionBasedDocStringBuilder startSection(String title)
 	{
 		if(myCurSectionTitle != null)
 		{
@@ -59,33 +55,26 @@ public abstract class SectionBasedDocStringBuilder extends DocStringBuilder<Sect
 		return this;
 	}
 
-	@Nonnull
 	public SectionBasedDocStringBuilder endSection()
 	{
 		myCurSectionTitle = null;
 		return this;
 	}
 
-	@Nonnull
 	protected abstract String getDefaultParametersHeader();
 
-	@Nonnull
 	protected abstract String getDefaultReturnsHeader();
 
-	@Nonnull
-	public abstract SectionBasedDocStringBuilder addParameter(@Nonnull String name, @Nullable String type, @Nonnull String description);
+	public abstract SectionBasedDocStringBuilder addParameter(String name, @Nullable String type, String description);
 
-	@Nonnull
-	public abstract SectionBasedDocStringBuilder addReturnValue(@Nullable String name, @Nonnull String type, @Nonnull String description);
+	public abstract SectionBasedDocStringBuilder addReturnValue(@Nullable String name, String type, String description);
 
-	@Nonnull
-	protected SectionBasedDocStringBuilder addSectionLine(@Nonnull String line)
+	protected SectionBasedDocStringBuilder addSectionLine(String line)
 	{
 		return addLine(mySectionIndent + line);
 	}
 
-	@Nonnull
-	protected SectionBasedDocStringBuilder withSectionIndent(@Nonnull String indent)
+	protected SectionBasedDocStringBuilder withSectionIndent(String indent)
 	{
 		mySectionIndent = indent;
 		return this;

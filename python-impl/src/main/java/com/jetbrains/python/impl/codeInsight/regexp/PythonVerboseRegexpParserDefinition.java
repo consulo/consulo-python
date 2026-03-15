@@ -29,7 +29,6 @@ import org.intellij.lang.regexp.RegExpFile;
 import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpParser;
 
-import jakarta.annotation.Nonnull;
 import java.util.EnumSet;
 
 /**
@@ -45,13 +44,11 @@ public class PythonVerboseRegexpParserDefinition extends PythonRegexpParserDefin
     VERBOSE_CAPABILITIES.add(RegExpCapability.COMMENT_MODE);
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonVerboseRegexpLanguage.INSTANCE;
   }
 
-  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new RegExpLexer(VERBOSE_CAPABILITIES);
   }

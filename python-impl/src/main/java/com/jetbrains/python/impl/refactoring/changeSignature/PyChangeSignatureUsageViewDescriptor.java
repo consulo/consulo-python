@@ -21,7 +21,6 @@ import consulo.language.psi.PsiUtilCore;
 import consulo.language.editor.refactoring.ui.UsageViewDescriptorAdapter;
 import consulo.usage.UsageInfo;
 import com.jetbrains.python.impl.PyBundle;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +40,6 @@ public class PyChangeSignatureUsageViewDescriptor extends UsageViewDescriptorAda
     myDeclarationsElements = PsiUtilCore.toPsiElementArray(declarationsElements);
   }
 
-  @Nonnull
   @Override
   public PsiElement[] getElements() {
     return myDeclarationsElements;

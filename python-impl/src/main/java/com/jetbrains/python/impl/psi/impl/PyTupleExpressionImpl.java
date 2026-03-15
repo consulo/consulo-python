@@ -23,7 +23,6 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.ast.ASTNode;
 import consulo.util.collection.ContainerUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -43,7 +42,7 @@ public class PyTupleExpressionImpl extends PySequenceExpressionImpl implements P
 		pyVisitor.visitPyTupleExpression(this);
 	}
 
-	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
+	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		return PyTupleType.create(this, ContainerUtil.map(getElements(), context::getType));
 	}
@@ -54,7 +53,7 @@ public class PyTupleExpressionImpl extends PySequenceExpressionImpl implements P
 	}
 
 	@Override
-	public void deleteChildInternal(@Nonnull ASTNode child)
+	public void deleteChildInternal(ASTNode child)
 	{
 		super.deleteChildInternal(child);
 		PyExpression[] children = getElements();

@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.QualifiedName;
@@ -44,7 +43,6 @@ public class PyDecoratorListImpl extends PyBaseElementImpl<PyDecoratorListStub> 
     super(stub, PyElementTypes.DECORATOR_LIST);
   }
 
-  @Nonnull
   public PyDecorator[] getDecorators() {
     PyDecorator[] decoarray = new PyDecorator[0];
     return getStubOrPsiChildren(PyElementTypes.DECORATOR_CALL, decoarray);

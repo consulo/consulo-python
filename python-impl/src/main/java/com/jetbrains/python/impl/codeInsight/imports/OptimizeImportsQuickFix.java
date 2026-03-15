@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.codeInsight.imports;
 
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
 import consulo.language.editor.intention.HighPriorityAction;
 import consulo.language.editor.intention.IntentionAction;
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -34,25 +33,23 @@ import consulo.language.util.IncorrectOperationException;
  * @author yole
  */
 public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return LocalizeValue.localizeTODO("Optimize imports");
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return getText();
     }
 
     @Override
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         return file instanceof PyFile;
     }
 
     @Override
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         optimizeImports(project, file);
     }
 
@@ -61,7 +58,7 @@ public class OptimizeImportsQuickFix implements LocalQuickFix, IntentionAction, 
         return false;
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (element == null) {  // stale PSI
             return;

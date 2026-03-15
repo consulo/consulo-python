@@ -3,7 +3,6 @@ package com.jetbrains.python.inspections;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.impl.inspections.PyCompatibilityInspection;
 import com.jetbrains.python.psi.LanguageLevel;
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -136,7 +135,7 @@ public abstract class PyCompatibilityInspectionTest extends PyTestCase {
     doTest();
   }
 
-  private void doTest(@Nonnull LanguageLevel level) {
+  private void doTest(LanguageLevel level) {
     runWithLanguageLevel(level, new Runnable() {
       @Override
       public void run() {

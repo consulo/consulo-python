@@ -25,8 +25,7 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * QuickFix to replace chained comparisons with more simple version
@@ -45,13 +44,12 @@ public class ChainedComparisonsQuickFix implements LocalQuickFix {
         getInnerRight = getInner;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixChainedComparison();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement expression = descriptor.getPsiElement();
         if (expression != null && expression.isWritable()) {
             if (expression instanceof PyBinaryExpression) {

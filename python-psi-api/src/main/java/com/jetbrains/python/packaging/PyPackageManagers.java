@@ -22,7 +22,6 @@ import consulo.ide.ServiceManager;
 import consulo.project.Project;
 import consulo.repository.ui.PackageManagementService;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -30,15 +29,13 @@ import jakarta.annotation.Nonnull;
 @ServiceAPI(ComponentScope.APPLICATION)
 public abstract class PyPackageManagers {
 
-  @Nonnull
   public static PyPackageManagers getInstance() {
     return ServiceManager.getService(PyPackageManagers.class);
   }
 
-  @Nonnull
-  public abstract PyPackageManager forSdk(@Nonnull Sdk sdk);
+  public abstract PyPackageManager forSdk(Sdk sdk);
 
   public abstract PackageManagementService getManagementService(Project project, Sdk sdk);
 
-  public abstract void clearCache(@Nonnull Sdk sdk);
+  public abstract void clearCache(Sdk sdk);
 }

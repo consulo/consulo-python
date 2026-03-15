@@ -31,10 +31,8 @@ import consulo.ui.ex.awt.Splitter;
 import consulo.ui.ex.awt.speedSearch.ListSpeedSearch;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.function.Condition;
-import org.jetbrains.annotations.Nls;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -49,19 +47,17 @@ import java.util.Map;
  */
 @Deprecated
 public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurable> implements SearchableConfigurable, Configurable.NoScroll {
-  @Nonnull
   private final Project myProject;
   private final LocalizeValue myDisplayName;
   private final String myHelpTopic;
   private final Map<Module, T> myModuleConfigurables = new HashMap<Module, T>();
 
-  public ModuleAwareProjectConfigurable(@Nonnull Project project, LocalizeValue displayName, String helpTopic) {
+  public ModuleAwareProjectConfigurable(Project project, LocalizeValue displayName, String helpTopic) {
     myProject = project;
     myDisplayName = displayName;
     myHelpTopic = helpTopic;
   }
 
-  @Nls
   @Override
   public LocalizeValue getDisplayName() {
     return myDisplayName;
@@ -72,7 +68,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     return myHelpTopic;
   }
 
-  protected boolean isSuitableForModule(@Nonnull Module module) {
+  protected boolean isSuitableForModule(Module module) {
     return true;
   }
 
@@ -137,7 +133,6 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     return null;
   }
 
-  @Nonnull
   protected abstract T createModuleConfigurable(Module module);
 
   @Override
@@ -172,7 +167,6 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     myModuleConfigurables.clear();
   }
 
-  @Nonnull
   @Override
   public String getId() {
     return getClass().getName();
@@ -183,7 +177,6 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     return null;
   }
 
-  @Nonnull
   protected final Project getProject() {
     return myProject;
   }

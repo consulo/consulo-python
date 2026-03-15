@@ -24,7 +24,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.collection.MultiMap;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -44,17 +43,16 @@ public class MembersConflictDialog extends ConflictsDialog {
      *                              pass [bar] field
      */
     public MembersConflictDialog(
-        @Nonnull Project project,
-        @Nonnull MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict,
-        @Nonnull Collection<PyMemberInfo<?>> dependenciesConflicts
+        Project project,
+        MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict,
+        Collection<PyMemberInfo<?>> dependenciesConflicts
     ) {
         super(project, convertDescription(duplicatesConflict, dependenciesConflicts), null, true, false);
     }
 
-    @Nonnull
     private static MultiMap<PsiElement, LocalizeValue> convertDescription(
-        @Nonnull MultiMap<PyClass, PyMemberInfo<?>> duplicateConflictDescriptions,
-        @Nonnull Collection<PyMemberInfo<?>> dependenciesConflicts
+        MultiMap<PyClass, PyMemberInfo<?>> duplicateConflictDescriptions,
+        Collection<PyMemberInfo<?>> dependenciesConflicts
     ) {
         MultiMap<PsiElement, LocalizeValue> result = new MultiMap<>();
         for (PyClass aClass : duplicateConflictDescriptions.keySet()) {

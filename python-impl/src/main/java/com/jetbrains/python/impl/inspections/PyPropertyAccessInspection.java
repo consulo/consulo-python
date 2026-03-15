@@ -28,7 +28,6 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
 
 import java.util.HashMap;
 
@@ -40,7 +39,6 @@ import java.util.HashMap;
  */
 @ExtensionImpl
 public class PyPropertyAccessInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNamePropertyAccess();
@@ -51,12 +49,11 @@ public class PyPropertyAccessInspection extends PyInspection {
         return true;
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
@@ -65,7 +62,7 @@ public class PyPropertyAccessInspection extends PyInspection {
     public static class Visitor extends PyInspectionVisitor {
         private final HashMap<Pair<PyClass, String>, Property> myPropertyCache = new HashMap<>();
 
-        public Visitor(@Nonnull ProblemsHolder holder, LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 

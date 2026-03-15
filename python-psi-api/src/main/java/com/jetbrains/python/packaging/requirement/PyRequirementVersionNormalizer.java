@@ -19,76 +19,57 @@ import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.util.lang.StringUtil;
 
 public final class PyRequirementVersionNormalizer
 {
 
-	@Nonnull
 	private static final String EPOCH_GROUP = "epoch";
 
-	@Nonnull
 	private static final String RELEASE_GROUP = "release";
 
-	@Nonnull
 	private static final String PRE_RELEASE_TYPE_GROUP = "pretype";
 
-	@Nonnull
 	private static final String PRE_RELEASE_NUMBER_GROUP = "prenumber";
 
-	@Nonnull
 	private static final String POST_RELEASE_TYPE_GROUP = "posttype";
 
-	@Nonnull
 	private static final String POST_RELEASE_NUMBER_GROUP = "postnumber";
 
-	@Nonnull
 	private static final String IMPLICIT_POST_RELEASE_NUMBER_GROUP = "implicitpostnumber";
 
-	@Nonnull
 	private static final String DEV_RELEASE_TYPE_GROUP = "devtype";
 
-	@Nonnull
 	private static final String DEV_RELEASE_NUMBER_GROUP = "devnumber";
 
-	@Nonnull
 	private static final String LOCAL_VERSION_GROUP = "local";
 
-	@Nonnull
 	private static final String SEP_REGEXP = "(\\.|-|_)?";
 
-	@Nonnull
 	private static final String EPOCH_REGEXP = "(?<" + EPOCH_GROUP + ">\\d+!)?";
 
-	@Nonnull
 	private static final String RELEASE_REGEXP = "(?<" + RELEASE_GROUP + ">(\\d+(\\.\\d+)*)|(\\d+\\.(\\d+\\.)*\\*))";
 
-	@Nonnull
 	private static final String PRE_RELEASE_REGEXP = "(" +
 			SEP_REGEXP +
 			"(?<" + PRE_RELEASE_TYPE_GROUP + ">a|alpha|b|beta|rc|c|pre|preview)" +
 			"(" + SEP_REGEXP + "(?<" + PRE_RELEASE_NUMBER_GROUP + ">\\d+))?" +
 			")?";
 
-	@Nonnull
 	private static final String POST_RELEASE_REGEXP = "(" +
 			"(" + SEP_REGEXP + "(?<" + POST_RELEASE_TYPE_GROUP + ">post|rev|r)(" + SEP_REGEXP + "(?<" + POST_RELEASE_NUMBER_GROUP + ">\\d+))?)" +
 			"|" +
 			"(-(?<" + IMPLICIT_POST_RELEASE_NUMBER_GROUP + ">\\d+))" +
 			")?";
 
-	@Nonnull
 	private static final String DEV_RELEASE_REGEXP = "(" +
 			SEP_REGEXP + "(?<" + DEV_RELEASE_TYPE_GROUP + ">dev)(?<" + DEV_RELEASE_NUMBER_GROUP + ">\\d+)?" +
 			")?";
 
-	@Nonnull
 	private static final String LOCAL_VERSION_REGEXP = "(?<" + LOCAL_VERSION_GROUP + ">\\+[a-z0-9]([a-z0-9\\._-]*[a-z0-9])?)?";
 
-	@Nonnull
 	private static final Pattern VERSION = Pattern.compile("^" +
 			"v?" +
 			EPOCH_REGEXP +
@@ -100,7 +81,7 @@ public final class PyRequirementVersionNormalizer
 			"$", Pattern.CASE_INSENSITIVE);
 
 	@Nullable
-	public static String normalize(@Nonnull String version)
+	public static String normalize(String version)
 	{
 		Matcher matcher = VERSION.matcher(version);
 		if(matcher.matches())
@@ -168,14 +149,12 @@ public final class PyRequirementVersionNormalizer
 		return null;
 	}
 
-	@Nonnull
-	private static String normalizeNumber(@Nonnull String number)
+	private static String normalizeNumber(String number)
 	{
 		return new BigInteger(number).toString();
 	}
 
-	@Nonnull
-	private static String normalizePreReleaseType(@Nonnull String preReleaseType)
+	private static String normalizePreReleaseType(String preReleaseType)
 	{
 		if(preReleaseType.equalsIgnoreCase("a") || preReleaseType.equalsIgnoreCase("alpha"))
 		{
@@ -191,8 +170,7 @@ public final class PyRequirementVersionNormalizer
 		}
 	}
 
-	@Nonnull
-	private static String normalizeLocalVersion(@Nonnull String localVersion)
+	private static String normalizeLocalVersion(String localVersion)
 	{
 		return localVersion.replaceAll("[-_]", ".");
 	}

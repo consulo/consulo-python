@@ -27,7 +27,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 import consulo.util.dataholder.Key;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +40,6 @@ public class PyStdlibClassMembersProvider extends PyClassMembersProviderBase
 {
 	private Key<List<PyCustomMember>> mySocketMembersKey = Key.create("socket.members");
 
-	@Nonnull
 	@Override
 	public Collection<PyCustomMember> getMembers(PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
 	{

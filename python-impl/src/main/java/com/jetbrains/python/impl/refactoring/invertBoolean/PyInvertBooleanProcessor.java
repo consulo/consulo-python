@@ -34,7 +34,6 @@ import consulo.usage.MoveRenameUsageInfo;
 import consulo.usage.UsageInfo;
 import consulo.usage.UsageViewDescriptor;
 import consulo.util.lang.ref.SimpleReference;
-import jakarta.annotation.Nonnull;
 
 import java.util.*;
 
@@ -49,7 +48,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     private final SmartPointerManager mySmartPointerManager;
 
     @RequiredReadAction
-    public PyInvertBooleanProcessor(@Nonnull PsiElement namedElement, @Nonnull String newName) {
+    public PyInvertBooleanProcessor(PsiElement namedElement, String newName) {
         super(namedElement.getProject());
         myElement = namedElement;
         myNewName = newName;
@@ -58,14 +57,13 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     }
 
     @Override
-    @Nonnull
-    protected UsageViewDescriptor createUsageViewDescriptor(@Nonnull UsageInfo[] usages) {
+    protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo[] usages) {
         return new PyInvertBooleanUsageViewDescriptor(myElement);
     }
 
     @Override
     @RequiredUIAccess
-    protected boolean preprocessUsages(@Nonnull SimpleReference<UsageInfo[]> refUsages) {
+    protected boolean preprocessUsages(SimpleReference<UsageInfo[]> refUsages) {
         if (!myNewName.equals(myElement instanceof PsiNamedElement namedElement ? namedElement.getName() : myElement.getText())) {
             if (myRenameProcessor.preprocessUsages(refUsages)) {
                 prepareSuccessful();
@@ -77,7 +75,6 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         return true;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     protected UsageInfo[] findUsages() {
@@ -111,7 +108,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
     }
 
     @RequiredReadAction
-    private void addRefsToInvert(@Nonnull List<SmartPsiElementPointer> toInvert, @Nonnull PsiElement psiElement) {
+    private void addRefsToInvert(List<SmartPsiElementPointer> toInvert, PsiElement psiElement) {
         Collection<PsiReference> refs = ReferencesSearch.search(psiElement).findAll();
 
         for (PsiReference ref : refs) {
@@ -140,8 +137,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         }
     }
 
-    @Nonnull
-    private static UsageInfo[] extractUsagesForElement(@Nonnull PsiElement element, @Nonnull UsageInfo[] usages) {
+    private static UsageInfo[] extractUsagesForElement(PsiElement element, UsageInfo[] usages) {
         List<UsageInfo> extractedUsages = new ArrayList<>(usages.length);
         for (UsageInfo usage : usages) {
             if (usage instanceof MoveRenameUsageInfo usageInfo && element.equals(usageInfo.getReferencedElement())) {
@@ -153,7 +149,7 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
 
     @Override
     @RequiredWriteAction
-    protected void performRefactoring(@Nonnull UsageInfo[] usages) {
+    protected void performRefactoring(UsageInfo[] usages) {
         for (PsiElement element : myRenameProcessor.getElements()) {
             try {
                 RenameUtil.doRename(
@@ -181,9 +177,8 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         }
     }
 
-    @Nonnull
     @RequiredReadAction
-    private PyExpression invertExpression(@Nonnull PsiElement expression) {
+    private PyExpression invertExpression(PsiElement expression) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(myProject);
         if (expression instanceof PyBoolLiteralExpression boolLiteralExpression) {
             String value = boolLiteralExpression.getValue() ? PyNames.FALSE : PyNames.TRUE;
@@ -206,7 +201,6 @@ public class PyInvertBooleanProcessor extends BaseRefactoringProcessor {
         return elementGenerator.createExpressionFromText(LanguageLevel.forElement(expression), "not " + expression.getText());
     }
 
-    @Nonnull
     @Override
     protected LocalizeValue getCommandName() {
         return RefactoringLocalize.invertBooleanTitle();

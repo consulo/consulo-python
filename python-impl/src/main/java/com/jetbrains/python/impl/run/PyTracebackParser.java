@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.run;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
 import com.jetbrains.python.impl.traceBackParsers.LinkInTrace;
 import com.jetbrains.python.impl.traceBackParsers.TraceBackParserAdapter;
 
@@ -37,9 +36,8 @@ public class PyTracebackParser extends TraceBackParserAdapter
 		super(Pattern.compile("File \"([^0-9][^\"]{0,200})\", line (\\d{1,8})"));
 	}
 
-	@Nonnull
 	@Override
-	protected LinkInTrace findLinkInTrace(@Nonnull String line, @Nonnull Matcher matchedMatcher)
+	protected LinkInTrace findLinkInTrace(String line, Matcher matchedMatcher)
 	{
 		String fileName = matchedMatcher.group(1).replace('\\', '/');
 		int lineNumber = Integer.parseInt(matchedMatcher.group(2));

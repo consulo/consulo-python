@@ -23,7 +23,6 @@ import consulo.language.lexer.LexerBase;
 import consulo.logging.Logger;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Specialized lexer for string literals. To be used as a layer in a LayeredLexer.
@@ -62,7 +61,7 @@ public class PyStringLiteralLexer extends LexerBase {
     myIsTriple = PyTokenTypes.TRIPLE_NODES.contains(myOriginalLiteralToken);
   }
 
-  public void start(@Nonnull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+  public void start(CharSequence buffer, int startOffset, int endOffset, int initialState) {
     myBuffer = buffer;
     myStart = startOffset;
     myState = initialState;
@@ -321,7 +320,6 @@ public class PyStringLiteralLexer extends LexerBase {
     //assert myStart < myEnd || (myStart == myEnd && myEnd == myBufferEnd) : "Inconsistent: start " + myStart + ", end " + myEnd + ", buf end " + myBufferEnd;
   }
 
-  @Nonnull
   public CharSequence getBufferSequence() {
     return myBuffer;
   }

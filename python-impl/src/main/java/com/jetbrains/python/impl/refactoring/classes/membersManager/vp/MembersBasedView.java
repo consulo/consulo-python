@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.refactoring.classes.membersManager.vp;
 
 import java.util.Collection;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.BaseRefactoringProcessor;
 import consulo.util.collection.MultiMap;
@@ -46,14 +45,14 @@ public interface MembersBasedView<C extends MembersViewInitializationInfo>
 	 *                              pass [bar] field
 	 * @return true if user's choice is "continue". False if "cancel"
 	 */
-	boolean showConflictsDialog(@Nonnull MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, @Nonnull Collection<PyMemberInfo<?>> dependenciesConflicts);
+	boolean showConflictsDialog(MultiMap<PyClass, PyMemberInfo<?>> duplicatesConflict, Collection<PyMemberInfo<?>> dependenciesConflicts);
 
 	/**
 	 * Displays error message
 	 *
 	 * @param message message to display
 	 */
-	void showError(@Nonnull String message);
+	void showError(String message);
 
 	/**
 	 * Configures view and <strong>must</strong> be called once, before {@link #initAndShow()}
@@ -62,12 +61,11 @@ public interface MembersBasedView<C extends MembersViewInitializationInfo>
 	 *
 	 * @param configInfo configuration info
 	 */
-	void configure(@Nonnull C configInfo);
+	void configure(C configInfo);
 
 	/**
 	 * @return collection of member infos user selected
 	 */
-	@Nonnull
 	Collection<PyMemberInfo<PyElement>> getSelectedMemberInfos();
 
 	/**
@@ -76,7 +74,7 @@ public interface MembersBasedView<C extends MembersViewInitializationInfo>
 	 *
 	 * @param processor refactoring processor
 	 */
-	void invokeRefactoring(@Nonnull BaseRefactoringProcessor processor);
+	void invokeRefactoring(BaseRefactoringProcessor processor);
 
 	/**
 	 * Displays dialog. Be sure to run {@link #configure(MembersViewInitializationInfo)} first

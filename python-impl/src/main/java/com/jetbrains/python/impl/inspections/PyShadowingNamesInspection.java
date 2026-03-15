@@ -32,8 +32,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Warns about shadowing names defined in outer scopes.
@@ -42,40 +41,38 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class PyShadowingNamesInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO("Shadowing names from outer scopes");
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
         @Override
-        public void visitPyClass(@Nonnull PyClass node) {
+        public void visitPyClass(PyClass node) {
             processElement(node);
         }
 
         @Override
-        public void visitPyFunction(@Nonnull PyFunction node) {
+        public void visitPyFunction(PyFunction node) {
             processElement(node);
         }
 
         @Override
-        public void visitPyNamedParameter(@Nonnull PyNamedParameter node) {
+        public void visitPyNamedParameter(PyNamedParameter node) {
             if (node.isSelf()) {
                 return;
             }
@@ -83,13 +80,13 @@ public class PyShadowingNamesInspection extends PyInspection {
         }
 
         @Override
-        public void visitPyTargetExpression(@Nonnull PyTargetExpression node) {
+        public void visitPyTargetExpression(PyTargetExpression node) {
             if (!node.isQualified()) {
                 processElement(node);
             }
         }
 
-        private void processElement(@Nonnull PsiNameIdentifierOwner element) {
+        private void processElement(PsiNameIdentifierOwner element) {
             ScopeOwner owner = ScopeUtil.getScopeOwner(element);
             if (owner instanceof PyClass) {
                 return;

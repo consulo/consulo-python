@@ -20,22 +20,21 @@ import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStubType;
 import com.jetbrains.python.psi.stubs.PyNamedTupleStub;
 import consulo.language.psi.stub.StubInputStream;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 
 public class PyNamedTupleStubType extends CustomTargetExpressionStubType<PyNamedTupleStub>
 {
 	@Nullable
 	@Override
-	public PyNamedTupleStub createStub(@Nonnull PyTargetExpression psi)
+	public PyNamedTupleStub createStub(PyTargetExpression psi)
 	{
 		return PyNamedTupleStubImpl.create(psi);
 	}
 
 	@Nullable
 	@Override
-	public PyNamedTupleStub deserializeStub(@Nonnull StubInputStream stream) throws IOException
+	public PyNamedTupleStub deserializeStub(StubInputStream stream) throws IOException
 	{
 		return PyNamedTupleStubImpl.deserialize(stream);
 	}

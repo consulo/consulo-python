@@ -29,8 +29,7 @@ import consulo.language.psi.stub.StubOutputStream;
 import consulo.language.psi.util.QualifiedName;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,20 +40,18 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   @Nullable
   private final QualifiedName myCalleeName;
 
-  @Nonnull
   private final String myName;
 
-  @Nonnull
   private final List<String> myFields;
 
-  private PyNamedTupleStubImpl(@Nullable QualifiedName calleeName, @Nonnull String name, @Nonnull List<String> fields) {
+  private PyNamedTupleStubImpl(@Nullable QualifiedName calleeName, String name, List<String> fields) {
     myCalleeName = calleeName;
     myName = name;
     myFields = Collections.unmodifiableList(new ArrayList<>(fields));
   }
 
   @Nullable
-  public static PyNamedTupleStub create(@Nonnull PyTargetExpression expression) {
+  public static PyNamedTupleStub create(PyTargetExpression expression) {
     PyExpression assignedValue = expression.findAssignedValue();
 
     if (assignedValue instanceof PyCallExpression) {
@@ -65,7 +62,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   }
 
   @Nullable
-  public static PyNamedTupleStub create(@Nonnull PyCallExpression expression) {
+  public static PyNamedTupleStub create(PyCallExpression expression) {
     PyReferenceExpression calleeReference = PyUtil.as(expression.getCallee(), PyReferenceExpression.class);
 
     if (calleeReference == null) {
@@ -94,7 +91,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   }
 
   @Nullable
-  public static PyNamedTupleStub deserialize(@Nonnull StubInputStream stream) throws IOException {
+  public static PyNamedTupleStub deserialize(StubInputStream stream) throws IOException {
     StringRef calleeName = stream.readName();
     StringRef name = stream.readName();
     List<String> fields = deserializeFields(stream, stream.readVarInt());
@@ -106,14 +103,13 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
     return new PyNamedTupleStubImpl(QualifiedName.fromDottedString(calleeName.getString()), name.getString(), fields);
   }
 
-  @Nonnull
   @Override
   public Class<? extends CustomTargetExpressionStubType> getTypeClass() {
     return PyNamedTupleStubType.class;
   }
 
   @Override
-  public void serialize(@Nonnull StubOutputStream stream) throws IOException {
+  public void serialize(StubOutputStream stream) throws IOException {
     stream.writeName(myCalleeName == null ? null : myCalleeName.toString());
     stream.writeName(myName);
     stream.writeVarInt(myFields.size());
@@ -129,20 +125,18 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
     return myCalleeName;
   }
 
-  @Nonnull
   @Override
   public String getName() {
     return myName;
   }
 
-  @Nonnull
   @Override
   public List<String> getFields() {
     return myFields;
   }
 
   @Nullable
-  private static QualifiedName getNamedTupleQName(@Nonnull PyReferenceExpression referenceExpression) {
+  private static QualifiedName getNamedTupleQName(PyReferenceExpression referenceExpression) {
     QualifiedName name = getFullyQualifiedNamedTupleQName(referenceExpression);
 
     if (name != null) {
@@ -153,7 +147,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   }
 
   @Nullable
-  private static String resolveTupleName(@Nonnull PyCallExpression callExpression) {
+  private static String resolveTupleName(PyCallExpression callExpression) {
     // SUPPORTED CASES:
 
     // name = "Point"
@@ -173,7 +167,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   }
 
   @Nullable
-  private static List<String> resolveTupleFields(@Nonnull PyCallExpression callExpression) {
+  private static List<String> resolveTupleFields(PyCallExpression callExpression) {
     // SUPPORTED CASES:
 
     // fields = ["x", "y"]
@@ -196,8 +190,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
     return extractFields(fieldsExpression);
   }
 
-  @Nonnull
-  private static List<String> deserializeFields(@Nonnull StubInputStream stream, int fieldsSize) throws IOException {
+  private static List<String> deserializeFields(StubInputStream stream, int fieldsSize) throws IOException {
     List<String> fields = new ArrayList<>(fieldsSize);
 
     for (int i = 0; i < fieldsSize; i++) {
@@ -212,7 +205,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   }
 
   @Nullable
-  private static QualifiedName getFullyQualifiedNamedTupleQName(@Nonnull PyReferenceExpression referenceExpression) {
+  private static QualifiedName getFullyQualifiedNamedTupleQName(PyReferenceExpression referenceExpression) {
     // SUPPORTED CASES:
 
     // import collections
@@ -237,7 +230,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
   }
 
   @Nullable
-  private static QualifiedName getImportedNamedTupleQName(@Nonnull PyReferenceExpression referenceExpression) {
+  private static QualifiedName getImportedNamedTupleQName(PyReferenceExpression referenceExpression) {
     // SUPPORTED CASES:
 
     // from collections import namedtuple
@@ -267,7 +260,7 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
     return null;
   }
 
-  private static boolean resolvesToCollections(@Nonnull PyReferenceExpression referenceExpression) {
+  private static boolean resolvesToCollections(PyReferenceExpression referenceExpression) {
     for (PsiElement element : PyResolveUtil.resolveLocally(referenceExpression)) {
       if (element instanceof PyImportElement) {
         PyImportElement importElement = (PyImportElement)element;
@@ -281,12 +274,12 @@ public class PyNamedTupleStubImpl implements PyNamedTupleStub {
     return false;
   }
 
-  private static boolean equals(@Nullable QualifiedName qualifiedName, @Nonnull String name) {
+  private static boolean equals(@Nullable QualifiedName qualifiedName, String name) {
     return qualifiedName != null && name.equals(qualifiedName.toString());
   }
 
   @Nullable
-  private static PyExpression fullResolveLocally(@Nonnull PyReferenceExpression referenceExpression) {
+  private static PyExpression fullResolveLocally(PyReferenceExpression referenceExpression) {
     for (PsiElement element : PyResolveUtil.resolveLocally(referenceExpression)) {
       if (element instanceof PyTargetExpression) {
         PyExpression assignedValue = ((PyTargetExpression)element).findAssignedValue();

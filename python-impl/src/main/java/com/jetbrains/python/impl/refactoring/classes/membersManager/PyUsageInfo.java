@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.membersManager;
 
-import jakarta.annotation.Nonnull;
 import consulo.usage.UsageInfo;
 import com.jetbrains.python.psi.PyClass;
 
@@ -27,16 +26,14 @@ import com.jetbrains.python.psi.PyClass;
  */
 class PyUsageInfo extends UsageInfo
 {
-	@Nonnull
 	private final PyClass myTo;
 
-	PyUsageInfo(@Nonnull PyClass to)
+	PyUsageInfo(PyClass to)
 	{
 		super(to, true); //TODO: Make super generic and get rid of field?
 		myTo = to;
 	}
 
-	@Nonnull
 	public PyClass getTo()
 	{
 		return myTo;

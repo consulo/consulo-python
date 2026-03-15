@@ -24,7 +24,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 import consulo.usage.UsageViewLongNameLocation;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -32,7 +31,7 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyElementDescriptionProvider implements ElementDescriptionProvider
 {
-  public String getElementDescription(@Nonnull PsiElement element, @Nonnull ElementDescriptionLocation location) {
+  public String getElementDescription(PsiElement element, ElementDescriptionLocation location) {
     if (location instanceof UsageViewLongNameLocation) {
       if (element instanceof PsiNamedElement && element instanceof PyElement) {
         return ((PsiNamedElement)element).getName();

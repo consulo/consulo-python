@@ -22,7 +22,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.action.FileQuoteHandler;
 import consulo.virtualFileSystem.fileType.FileType;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
@@ -45,7 +44,6 @@ public class PythonQuoteHandler extends BaseQuoteHandler implements FileQuoteHan
 		});
 	}
 
-	@Nonnull
 	@Override
 	public FileType getFileType()
 	{

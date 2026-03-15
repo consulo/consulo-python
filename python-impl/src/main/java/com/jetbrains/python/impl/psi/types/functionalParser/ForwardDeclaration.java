@@ -17,7 +17,6 @@
 package com.jetbrains.python.impl.psi.types.functionalParser;
 
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -27,20 +26,17 @@ import java.util.List;
 public class ForwardDeclaration<R, T> extends FunctionalParserBase<R, T> {
   private FunctionalParser<R, T> myParser = null;
 
-  @Nonnull
   public static <R, T> ForwardDeclaration<R, T> create() {
     return new ForwardDeclaration<R, T>();
   }
 
-  @Nonnull
-  public ForwardDeclaration<R, T> define(@Nonnull FunctionalParser<R, T> parser) {
+  public ForwardDeclaration<R, T> define(FunctionalParser<R, T> parser) {
     myParser = parser;
     return this;
   }
 
-  @Nonnull
   @Override
-  public Pair<R, State> parse(@Nonnull List<Token<T>> tokens, @Nonnull State state) throws ParserException {
+  public Pair<R, State> parse(List<Token<T>> tokens, State state) throws ParserException {
     if (myParser != null) {
       return myParser.parse(tokens, state);
     }

@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.psi.impl;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;
@@ -48,13 +47,11 @@ public class PyForStatementImpl extends PyPartitionedElementImpl implements PyFo
 		return (PyElsePart) getPart(PyElementTypes.ELSE_PART);
 	}
 
-	@Nonnull
 	public PyForPart getForPart()
 	{
 		return findNotNullChildByClass(PyForPart.class);
 	}
 
-	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
 		PyExpression tgt = getForPart().getTarget();

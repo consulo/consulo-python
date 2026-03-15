@@ -28,7 +28,6 @@ import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Dennis.Ushakov
@@ -39,10 +38,10 @@ public class PyPushDownHandler extends PyClassRefactoringHandler {
     @Override
     @RequiredUIAccess
     protected void doRefactorImpl(
-        @Nonnull final Project project,
-        @Nonnull final PyClass classUnderRefactoring,
-        @Nonnull final PyMemberInfoStorage infoStorage,
-        @Nonnull Editor editor
+        final Project project,
+        final PyClass classUnderRefactoring,
+        final PyMemberInfoStorage infoStorage,
+        Editor editor
     ) {
         //TODO: Move to presenter?
         Query<PyClass> query = PyClassInheritorsSearch.search(classUnderRefactoring, false);
@@ -56,22 +55,19 @@ public class PyPushDownHandler extends PyClassRefactoringHandler {
             PyPushDownPresenter.class,
             PyPushDownView.class,
             new Creator<>() {
-                @Nonnull
                 @Override
-                public PyPushDownPresenter createPresenter(@Nonnull PyPushDownView view) {
+                public PyPushDownPresenter createPresenter(PyPushDownView view) {
                     return new PyPushDownPresenterImpl(project, view, classUnderRefactoring, infoStorage);
                 }
 
-                @Nonnull
                 @Override
-                public PyPushDownView createView(@Nonnull PyPushDownPresenter presenter) {
+                public PyPushDownView createView(PyPushDownPresenter presenter) {
                     return new PyPushDownViewSwingImpl(classUnderRefactoring, project, presenter);
                 }
             }
         );
     }
 
-    @Nonnull
     @Override
     protected LocalizeValue getTitle() {
         return REFACTORING_NAME;

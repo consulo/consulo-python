@@ -23,8 +23,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.language.psi.PsiElement;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,12 +32,11 @@ import java.util.List;
  */
 public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 {
-	@Nonnull
 	private final List<PyType> myElementTypes;
 	private final boolean myHomogeneous;
 
 	@Nullable
-	public static PyTupleType create(@Nonnull PsiElement anchor, @Nonnull List<PyType> elementTypes)
+	public static PyTupleType create(PsiElement anchor, List<PyType> elementTypes)
 	{
 		PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
 		if(tuple != null)
@@ -49,7 +47,7 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 	}
 
 	@Nullable
-	public static PyTupleType createHomogeneous(@Nonnull PsiElement anchor, @Nullable PyType elementType)
+	public static PyTupleType createHomogeneous(PsiElement anchor, @Nullable PyType elementType)
 	{
 		PyClass tuple = PyBuiltinCache.getInstance(anchor).getClass(PyNames.TUPLE);
 		if(tuple != null)
@@ -59,14 +57,13 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 		return null;
 	}
 
-	public PyTupleType(@Nonnull PyClass tupleClass, @Nonnull List<PyType> elementTypes, boolean homogeneous)
+	public PyTupleType(PyClass tupleClass, List<PyType> elementTypes, boolean homogeneous)
 	{
 		super(tupleClass, false);
 		myElementTypes = elementTypes;
 		myHomogeneous = homogeneous;
 	}
 
-	@Nonnull
 	public String getName()
 	{
 		if(myHomogeneous)
@@ -152,9 +149,8 @@ public class PyTupleType extends PyClassTypeImpl implements PyCollectionType
 		return result;
 	}
 
-	@Nonnull
 	@Override
-	public List<PyType> getElementTypes(@Nonnull TypeEvalContext context)
+	public List<PyType> getElementTypes(TypeEvalContext context)
 	{
 		return myElementTypes;
 	}

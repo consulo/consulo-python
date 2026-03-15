@@ -25,8 +25,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.buildout.config.BuildoutCfgFileType;
 import com.jetbrains.python.impl.buildout.config.BuildoutCfgLanguage;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +40,6 @@ public class BuildoutCfgFile extends PsiFileBase
     super(viewProvider, BuildoutCfgLanguage.INSTANCE);
   }
 
-  @Nonnull
   public FileType getFileType() {
     return BuildoutCfgFileType.INSTANCE;
   }

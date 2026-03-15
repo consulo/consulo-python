@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.refactoring.surround.surrounders.expressions;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.surroundWith.Surrounder;
 import consulo.logging.Logger;
@@ -37,17 +36,17 @@ public abstract class PyExpressionSurrounder implements Surrounder
 {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.refactoring.surround.surrounders.expressions.PyExpressionSurrounder");
 
-  public boolean isApplicable(@Nonnull PsiElement[] elements) {
+  public boolean isApplicable(PsiElement[] elements) {
     LOG.assertTrue(elements.length == 1 && elements[0] instanceof PyExpression);
     return isApplicable((PyExpression)elements[0]);
   }
 
-  public abstract boolean isApplicable(@Nonnull PyExpression expr);
+  public abstract boolean isApplicable(PyExpression expr);
 
-  public abstract TextRange surroundExpression(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PyExpression element)
+  public abstract TextRange surroundExpression(Project project, Editor editor, PyExpression element)
     throws IncorrectOperationException;
 
-  public TextRange surroundElements(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
+  public TextRange surroundElements(Project project, Editor editor, PsiElement[] elements)
     throws IncorrectOperationException
   {
     return surroundExpression(project, editor, (PyExpression)elements[0]);

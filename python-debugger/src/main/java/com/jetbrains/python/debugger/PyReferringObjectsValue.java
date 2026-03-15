@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.debugger;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.execution.debug.frame.XValueChildrenList;
 import consulo.logging.Logger;
@@ -27,17 +26,16 @@ public class PyReferringObjectsValue extends PyDebugValue
 	private static final Logger LOG = Logger.getInstance(PyReferringObjectsValue.class);
 
 	private final
-	@Nonnull
 	PyReferrersLoader myReferrersLoader;
 
-	public PyReferringObjectsValue(@Nonnull String name,
+	public PyReferringObjectsValue(String name,
 			String type,
 			String typeQualifier,
 			String value,
 			boolean container,
 			boolean isReturnedVal,
 			boolean errorOnEval,
-			@Nonnull PyFrameAccessor frameAccessor)
+			PyFrameAccessor frameAccessor)
 	{
 		super(name, type, typeQualifier, value, container, isReturnedVal, false, errorOnEval, frameAccessor);
 		myReferrersLoader = frameAccessor.getReferrersLoader();
@@ -56,7 +54,7 @@ public class PyReferringObjectsValue extends PyDebugValue
 	}
 
 	@Override
-	public void computeChildren(@Nonnull final XCompositeNode node)
+	public void computeChildren(final XCompositeNode node)
 	{
 		if(node.isObsolete())
 		{

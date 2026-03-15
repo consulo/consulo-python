@@ -21,8 +21,7 @@ import consulo.util.lang.StringUtil;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.jetbrains.python.impl.PyElementTypes;
 import com.jetbrains.python.psi.PyNumericLiteralExpression;
 import com.jetbrains.python.psi.types.PyType;
@@ -141,7 +140,7 @@ public class PyNumericLiteralExpressionImpl extends PyElementImpl
     return new BigInteger(text, radix);
   }
 
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     ASTNode node = getNode();
     IElementType type = node.getElementType();
     if (type == PyElementTypes.INTEGER_LITERAL_EXPRESSION) {

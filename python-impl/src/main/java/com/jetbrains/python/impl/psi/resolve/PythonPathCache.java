@@ -20,7 +20,6 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.event.*;
 
-import jakarta.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,27 +54,27 @@ public abstract class PythonPathCache {
 
   protected class MyVirtualFileAdapter extends VirtualFileAdapter {
     @Override
-    public void fileCreated(@Nonnull VirtualFileEvent event) {
+    public void fileCreated(VirtualFileEvent event) {
       clearCache();
     }
 
     @Override
-    public void fileDeleted(@Nonnull VirtualFileEvent event) {
+    public void fileDeleted(VirtualFileEvent event) {
       clearCache();
     }
 
     @Override
-    public void fileMoved(@Nonnull VirtualFileMoveEvent event) {
+    public void fileMoved(VirtualFileMoveEvent event) {
       clearCache();
     }
 
     @Override
-    public void fileCopied(@Nonnull VirtualFileCopyEvent event) {
+    public void fileCopied(VirtualFileCopyEvent event) {
       clearCache();
     }
 
     @Override
-    public void propertyChanged(@Nonnull VirtualFilePropertyEvent event) {
+    public void propertyChanged(VirtualFilePropertyEvent event) {
       if (event.getPropertyName().equals(VirtualFile.PROP_NAME)) {
         clearCache();
       }

@@ -2,8 +2,7 @@ package com.jetbrains.python.debugger;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import consulo.util.lang.StringUtil;
 
@@ -20,14 +19,14 @@ public class PySignature
 
 	private final List<NamedParameter> myArgs = Lists.newArrayList();
 
-	public PySignature(@Nonnull String file, @Nonnull String name)
+	public PySignature(String file, String name)
 	{
 		myFile = file;
 		myFunctionName = name;
 	}
 
 	@Nullable
-	public String getArgTypeQualifiedName(@Nonnull String name)
+	public String getArgTypeQualifiedName(String name)
 	{
 		for(NamedParameter param : myArgs)
 		{
@@ -39,19 +38,16 @@ public class PySignature
 		return null;
 	}
 
-	@Nonnull
 	public String getFile()
 	{
 		return myFile;
 	}
 
-	@Nonnull
 	public String getFunctionName()
 	{
 		return myFunctionName;
 	}
 
-	@Nonnull
 	public List<NamedParameter> getArgs()
 	{
 		return myArgs;
@@ -78,8 +74,7 @@ public class PySignature
 		return this;
 	}
 
-	@Nonnull
-	public PySignature addAllArgs(@Nonnull PySignature signature)
+	public PySignature addAllArgs(PySignature signature)
 	{
 		for(NamedParameter param : signature.getArgs())
 		{
@@ -122,15 +117,14 @@ public class PySignature
 		private final String myName;
 		private final List<String> myTypes;
 
-		private NamedParameter(@Nonnull String name, @Nonnull String type)
+		private NamedParameter(String name, String type)
 		{
 			myName = name;
 
 			myTypes = parseTypes(type);
 		}
 
-		@Nonnull
-		private static List<String> parseTypes(@Nonnull String type)
+		private static List<String> parseTypes(String type)
 		{
 			if(type.startsWith(UNION_PREFIX) && type.endsWith("]"))
 			{

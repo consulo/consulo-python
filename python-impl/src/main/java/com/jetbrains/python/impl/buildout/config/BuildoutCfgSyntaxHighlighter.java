@@ -23,8 +23,6 @@ import consulo.colorScheme.TextAttributesKey;
 import consulo.language.editor.highlight.SyntaxHighlighterBase;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.impl.buildout.config.lexer.BuildoutCfgFlexLexer;
-import org.jetbrains.annotations.NonNls;
-import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -32,11 +30,8 @@ import java.util.Map;
  * @author: traff
  */
 public class BuildoutCfgSyntaxHighlighter extends SyntaxHighlighterBase implements BuildoutCfgTokenTypes {
-  @NonNls
   static final String COMMENT_ID = "BUILDOUT_COMMENT";
-  @NonNls
   static final String TEXT_ID = "BUILDOUT_TEXT";
-  @NonNls
   static final String BRACKETS_ID = "BUILDOUT_BRACKETS";
 
 
@@ -85,12 +80,10 @@ public class BuildoutCfgSyntaxHighlighter extends SyntaxHighlighterBase implemen
   }
 
 
-  @Nonnull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));
   }
 
-  @Nonnull
   public Lexer getHighlightingLexer() {
     return new BuildoutCfgFlexLexer();
   }

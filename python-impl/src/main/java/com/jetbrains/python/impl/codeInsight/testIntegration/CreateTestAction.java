@@ -33,7 +33,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -41,13 +40,12 @@ import java.util.List;
  * @author catherine
  */
 public class CreateTestAction extends PsiElementBaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return CodeInsightLocalize.intentionCreateTest();
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, @Nonnull PsiElement element) {
+    public boolean isAvailable(Project project, Editor editor, PsiElement element) {
         PyClass psiClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
 
         if (psiClass != null && PyTestUtil.isPyTestClass(psiClass, null)) {
@@ -57,7 +55,7 @@ public class CreateTestAction extends PsiElementBaseIntentionAction {
     }
 
     @Override
-    public void invoke(@Nonnull Project project, Editor editor, @Nonnull PsiElement element) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiElement element) throws IncorrectOperationException {
         PyFunction srcFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         PyClass srcClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
 

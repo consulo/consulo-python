@@ -31,7 +31,6 @@ import consulo.process.ExecutionException;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -53,7 +52,7 @@ public class SphinxRunConfiguration extends RestRunConfiguration {
   }
 
   @Override
-  public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException {
     return new SphinxCommandLineState(this, env);
   }
 

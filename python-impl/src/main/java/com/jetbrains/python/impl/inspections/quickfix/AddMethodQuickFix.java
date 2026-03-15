@@ -43,7 +43,6 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.NotificationType;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
 
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
@@ -65,13 +64,12 @@ public class AddMethodQuickFix implements LocalQuickFix {
     myReplaceUsage = replaceUsage;
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return PyLocalize.qfixNameAddMethod$0ToClass$1(myIdentifier, myClassName);
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     try {
       // there can be no name clash, else the name would have resolved, and it hasn't.
       PsiElement problemElement = descriptor.getPsiElement();
@@ -154,7 +152,7 @@ public class AddMethodQuickFix implements LocalQuickFix {
     }
   }
 
-  private static PyClassType getClassType(@Nonnull PsiElement problemElement) {
+  private static PyClassType getClassType(PsiElement problemElement) {
     if ((problemElement instanceof PyQualifiedExpression)) {
       PyExpression qualifier = ((PyQualifiedExpression)problemElement).getQualifier();
       if (qualifier == null) {
@@ -167,7 +165,7 @@ public class AddMethodQuickFix implements LocalQuickFix {
     return pyClass != null ? new PyClassTypeImpl(pyClass, false) : null;
   }
 
-  private static void showTemplateBuilder(@Nonnull PyFunction method) {
+  private static void showTemplateBuilder(PyFunction method) {
     method = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(method);
     PsiFile file = method.getContainingFile();
     if (file == null) {

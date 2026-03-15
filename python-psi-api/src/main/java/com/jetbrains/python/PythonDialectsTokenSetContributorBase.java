@@ -18,55 +18,46 @@ package com.jetbrains.python;
 
 import consulo.language.ast.TokenSet;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan
  */
 public abstract class PythonDialectsTokenSetContributorBase implements PythonDialectsTokenSetContributor {
-  @Nonnull
   @Override
   public TokenSet getStatementTokens() {
     return TokenSet.EMPTY;
   }
 
-  @Nonnull
   @Override
   public TokenSet getExpressionTokens() {
     return TokenSet.EMPTY;
   }
 
-  @Nonnull
   @Override
   public TokenSet getNameDefinerTokens() {
     return TokenSet.EMPTY;
   }
 
-  @Nonnull
   @Override
   public TokenSet getKeywordTokens() {
     return TokenSet.EMPTY;
   }
 
-  @Nonnull
   @Override
   public TokenSet getParameterTokens() {
     return TokenSet.EMPTY;
   }
 
-  @Nonnull
   @Override
   public TokenSet getFunctionDeclarationTokens() {
     return TokenSet.EMPTY;
   }
 
-  @Nonnull
   @Override
   public TokenSet getUnbalancedBracesRecoveryTokens() {
     return TokenSet.EMPTY;
   }
 
-  @Nonnull
   @Override
   public TokenSet getReferenceExpressionTokens() {
     return TokenSet.EMPTY;

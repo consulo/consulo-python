@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.traceBackParsers;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Information about trace produced by {@link TraceBackParser}
@@ -24,7 +23,6 @@ import jakarta.annotation.Nonnull;
  */
 public final class LinkInTrace
 {
-	@Nonnull
 	private final String myFileName;
 	private final int myLineNumber;
 	private final int myStartPos;
@@ -36,7 +34,7 @@ public final class LinkInTrace
 	 * @param startPos   start position of link in line
 	 * @param endPos     end position of link in line
 	 */
-	public LinkInTrace(@Nonnull String fileName, int lineNumber, int startPos, int endPos)
+	public LinkInTrace(String fileName, int lineNumber, int startPos, int endPos)
 	{
 		myFileName = fileName;
 		myLineNumber = lineNumber;
@@ -47,7 +45,6 @@ public final class LinkInTrace
 	/**
 	 * @return name of file this line has link to
 	 */
-	@Nonnull
 	public String getFileName()
 	{
 		return myFileName;

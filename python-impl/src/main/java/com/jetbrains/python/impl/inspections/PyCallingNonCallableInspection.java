@@ -26,33 +26,30 @@ import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.ProblemsHolder;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
  */
 @ExtensionImpl
 public class PyCallingNonCallableInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO("Trying to call a non-callable object");
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -74,7 +71,7 @@ public class PyCallingNonCallableInspection extends PyInspection {
             }
         }
 
-        private void checkCallable(@Nonnull PyElement node, @Nullable PyExpression callee, @Nullable PyType type) {
+        private void checkCallable(PyElement node, @Nullable PyExpression callee, @Nullable PyType type) {
             Boolean callable = callee != null ? isCallable(callee, myTypeEvalContext) : PyTypeChecker.isCallable(type);
             if (callable == null) {
                 return;
@@ -95,7 +92,7 @@ public class PyCallingNonCallableInspection extends PyInspection {
     }
 
     @Nullable
-    private static Boolean isCallable(@Nonnull PyExpression element, @Nonnull TypeEvalContext context) {
+    private static Boolean isCallable(PyExpression element, TypeEvalContext context) {
         if (element instanceof PyQualifiedExpression && PyNames.CLASS.equals(element.getName())) {
             return true;
         }

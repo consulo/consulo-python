@@ -17,9 +17,7 @@ package com.jetbrains.python.impl.psi.impl.stubs;
 
 import java.io.IOException;
 
-import jakarta.annotation.Nonnull;
 
-import org.jetbrains.annotations.NonNls;
 import consulo.language.ast.ASTNode;
 import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
@@ -48,24 +46,22 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 		this("FUNCTION_DECLARATION");
 	}
 
-	public PyFunctionElementType(@Nonnull @NonNls String debugName)
+	public PyFunctionElementType(String debugName)
 	{
 		super(debugName);
 	}
 
-	@Nonnull
-	public PsiElement createElement(@Nonnull ASTNode node)
+	public PsiElement createElement(ASTNode node)
 	{
 		return new PyFunctionImpl(node);
 	}
 
-	public PyFunction createPsi(@Nonnull PyFunctionStub stub)
+	public PyFunction createPsi(PyFunctionStub stub)
 	{
 		return new PyFunctionImpl(stub);
 	}
 
-	@Nonnull
-	public PyFunctionStub createStub(@Nonnull PyFunction psi, StubElement parentStub)
+	public PyFunctionStub createStub(PyFunction psi, StubElement parentStub)
 	{
 		PyFunctionImpl function = (PyFunctionImpl) psi;
 		String message = function.extractDeprecationMessage();
@@ -74,7 +70,7 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 		return new PyFunctionStubImpl(psi.getName(), PyPsiUtils.strValue(docStringExpression), message, function.isAsync(), typeComment, parentStub, getStubElementType());
 	}
 
-	public void serialize(@Nonnull PyFunctionStub stub, @Nonnull StubOutputStream dataStream) throws IOException
+	public void serialize(PyFunctionStub stub, StubOutputStream dataStream) throws IOException
 	{
 		dataStream.writeName(stub.getName());
 		dataStream.writeUTFFast(StringUtil.notNullize(stub.getDocString()));
@@ -83,8 +79,7 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 		dataStream.writeName(stub.getTypeComment());
 	}
 
-	@Nonnull
-	public PyFunctionStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
+	public PyFunctionStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(dataStream.readName());
 		String docString = dataStream.readUTFFast();
@@ -95,7 +90,7 @@ public class PyFunctionElementType extends PyStubElementType<PyFunctionStub, PyF
 				.getString(), parentStub, getStubElementType());
 	}
 
-	public void indexStub(@Nonnull PyFunctionStub stub, @Nonnull IndexSink sink)
+	public void indexStub(PyFunctionStub stub, IndexSink sink)
 	{
 		String name = stub.getName();
 		if(name != null)

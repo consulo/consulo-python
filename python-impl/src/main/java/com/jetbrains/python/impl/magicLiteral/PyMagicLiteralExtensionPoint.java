@@ -20,7 +20,6 @@ import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Any magic literal extension point should imlement this interface
@@ -36,12 +35,11 @@ public interface PyMagicLiteralExtensionPoint {
    * @param element element to check
    * @return true if magic.
    */
-  boolean isMagicLiteral(@Nonnull StringLiteralExpression element);
+  boolean isMagicLiteral(StringLiteralExpression element);
 
 
   /**
    * @return human-readable type of this literal. Actually, that is extension point name
    */
-  @Nonnull
   String getLiteralType();
 }

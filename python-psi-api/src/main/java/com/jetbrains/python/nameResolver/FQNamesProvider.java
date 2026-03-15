@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.nameResolver;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Some enum value that represents one or more fully qualified names for some function
@@ -27,7 +26,6 @@ public interface FQNamesProvider
 	/**
 	 * @return one or more fully qualified names
 	 */
-	@Nonnull
 	String[] getNames();
 
 	/**

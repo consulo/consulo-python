@@ -21,7 +21,7 @@ import consulo.logging.Logger;
 import consulo.process.local.EnvironmentUtil;
 import consulo.util.io.FileUtil;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;

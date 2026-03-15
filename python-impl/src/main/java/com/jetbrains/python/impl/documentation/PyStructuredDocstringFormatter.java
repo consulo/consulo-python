@@ -37,8 +37,7 @@ import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.ProcessOutput;
 import consulo.util.io.CharsetToolkit;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -62,7 +61,7 @@ public class PyStructuredDocstringFormatter
 	 *                  Supposedly result of {@link PyStringLiteralExpression#getStringValue()}.
 	 */
 	@Nullable
-	public static List<String> formatDocstring(@Nonnull PsiElement element, @Nonnull String docstring)
+	public static List<String> formatDocstring(PsiElement element, String docstring)
 	{
 		Module module = ModuleUtilCore.findModuleForPsiElement(element);
 		if(module == null)
@@ -110,7 +109,7 @@ public class PyStructuredDocstringFormatter
 	}
 
 	@Nullable
-	private static String runExternalTool(@Nonnull Module module, @Nonnull DocStringFormat format, @Nonnull String docstring)
+	private static String runExternalTool(Module module, DocStringFormat format, String docstring)
 	{
 		Sdk sdk;
 		String missingInterpreterMessage;
@@ -155,7 +154,7 @@ public class PyStructuredDocstringFormatter
 		return output.getStdout();
 	}
 
-	private static String formatStructuredDocString(@Nonnull StructuredDocString docString)
+	private static String formatStructuredDocString(StructuredDocString docString)
 	{
 		StringBuilder result = new StringBuilder();
 
@@ -223,7 +222,7 @@ public class PyStructuredDocstringFormatter
 		return result.toString();
 	}
 
-	private static void formatParameterDescriptions(@Nonnull StructuredDocString docString, @Nonnull StringBuilder result, boolean keyword)
+	private static void formatParameterDescriptions(StructuredDocString docString, StringBuilder result, boolean keyword)
 	{
 		List<String> parameters = keyword ? docString.getKeywordArguments() : docString.getParameters();
 		if(parameters.size() > 0)

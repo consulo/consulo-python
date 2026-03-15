@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PyElementTypes;
@@ -35,12 +34,10 @@ public class PyIfStatementImpl extends PyPartitionedElementImpl implements PyIfS
     pyVisitor.visitPyIfStatement(this);
   }
 
-  @Nonnull
   public PyIfPart getIfPart() {
     return (PyIfPart)getPartNotNull(PyElementTypes.IF_PART_IF);
   }
 
-  @Nonnull
   public PyIfPart[] getElifParts() {
     return childrenToPsi(PyElementTypes.ELIFS, PyIfPart.EMPTY_ARRAY);
   }

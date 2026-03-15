@@ -40,7 +40,6 @@ import consulo.util.xml.serializer.WriteExternalException;
 import consulo.virtualFileSystem.VirtualFile;
 import org.jdom.Element;
 
-import jakarta.annotation.Nonnull;
 import java.io.File;
 
 /**
@@ -68,7 +67,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 		return new PythonRunConfigurationEditor(this);
 	}
 
-	public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
+	public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException
 	{
 		return new PythonScriptCommandLineState(this, env);
 	}
@@ -168,7 +167,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 				return new RefactoringElementAdapter()
 				{
 					@Override
-					public void elementRenamedOrMoved(@Nonnull PsiElement newElement)
+					public void elementRenamedOrMoved(PsiElement newElement)
 					{
 						VirtualFile virtualFile = ((PsiFile) newElement).getVirtualFile();
 						if(virtualFile != null)
@@ -178,7 +177,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 					}
 
 					@Override
-					public void undoElementMovedOrRenamed(@Nonnull PsiElement newElement, @Nonnull String oldQualifiedName)
+					public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName)
 					{
 						updateScriptName(oldQualifiedName);
 					}

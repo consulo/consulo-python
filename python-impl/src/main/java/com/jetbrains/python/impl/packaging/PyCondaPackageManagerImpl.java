@@ -35,8 +35,7 @@ import consulo.process.util.ProcessOutput;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +46,7 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 {
 	public static final String PYTHON = "python";
 
-	PyCondaPackageManagerImpl(@Nonnull Sdk sdk)
+	PyCondaPackageManagerImpl(Sdk sdk)
 	{
 		super(sdk);
 	}
@@ -65,12 +64,12 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 	}
 
 	@Override
-	protected void installManagement(@Nonnull String name) throws ExecutionException
+	protected void installManagement(String name) throws ExecutionException
 	{
 	}
 
 	@Override
-	public void install(@Nonnull List<PyRequirement> requirements, @Nonnull List<String> extraArgs) throws ExecutionException
+	public void install(List<PyRequirement> requirements, List<String> extraArgs) throws ExecutionException
 	{
 		ArrayList<String> arguments = new ArrayList<>();
 		for(PyRequirement requirement : requirements)
@@ -89,7 +88,7 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 		}
 	}
 
-	private ProcessOutput getCondaOutput(@Nonnull String command, List<String> arguments) throws ExecutionException
+	private ProcessOutput getCondaOutput(String command, List<String> arguments) throws ExecutionException
 	{
 		Sdk sdk = getSdk();
 
@@ -136,13 +135,13 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 	}
 
 	@Override
-	public void install(@Nonnull String requirementString) throws ExecutionException
+	public void install(String requirementString) throws ExecutionException
 	{
 		getCondaOutput("install", Lists.newArrayList(requirementString, "-y"));
 	}
 
 	@Override
-	public void uninstall(@Nonnull List<PyPackage> packages) throws ExecutionException
+	public void uninstall(List<PyPackage> packages) throws ExecutionException
 	{
 		ArrayList<String> arguments = new ArrayList<>();
 		for(PyPackage aPackage : packages)
@@ -154,7 +153,6 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 		getCondaOutput("remove", arguments);
 	}
 
-	@Nonnull
 	@Override
 	protected List<PyPackage> collectPackages() throws ExecutionException
 	{
@@ -164,8 +162,7 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 		return Lists.newArrayList(packages);
 	}
 
-	@Nonnull
-	protected static List<PyPackage> parseCondaToolOutput(@Nonnull String s) throws ExecutionException
+	protected static List<PyPackage> parseCondaToolOutput(String s) throws ExecutionException
 	{
 		String[] lines = StringUtil.splitByLines(s);
 		List<PyPackage> packages = new ArrayList<>();
@@ -197,7 +194,7 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 		return packages;
 	}
 
-	public static boolean isCondaVEnv(@Nonnull Sdk sdk)
+	public static boolean isCondaVEnv(Sdk sdk)
 	{
 		String condaName = "conda-meta";
 		VirtualFile homeDirectory = sdk.getHomeDirectory();
@@ -210,8 +207,7 @@ public class PyCondaPackageManagerImpl extends PyPackageManagerImpl
 		return condaMeta != null;
 	}
 
-	@Nonnull
-	public static String createVirtualEnv(@Nonnull String destinationDir, String version) throws ExecutionException
+	public static String createVirtualEnv(String destinationDir, String version) throws ExecutionException
 	{
 		String condaExecutable = PyCondaPackageService.getSystemCondaExecutable();
 		if(condaExecutable == null)

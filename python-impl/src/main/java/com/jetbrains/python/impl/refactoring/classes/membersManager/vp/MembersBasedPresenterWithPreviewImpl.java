@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.membersManager.vp;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.BaseRefactoringProcessor;
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;
@@ -43,7 +42,7 @@ public abstract class MembersBasedPresenterWithPreviewImpl<T extends MembersBase
 	 * @param infoStorage           info storage
 	 * @param model                 Member model (to be used for dependencies checking)
 	 */
-	protected MembersBasedPresenterWithPreviewImpl(@Nonnull T view, @Nonnull PyClass classUnderRefactoring, @Nonnull PyMemberInfoStorage infoStorage, @Nonnull M model)
+	protected MembersBasedPresenterWithPreviewImpl(T view, PyClass classUnderRefactoring, PyMemberInfoStorage infoStorage, M model)
 	{
 		super(view, classUnderRefactoring, infoStorage, model);
 	}
@@ -63,6 +62,5 @@ public abstract class MembersBasedPresenterWithPreviewImpl<T extends MembersBase
 	/**
 	 * @return processor for refactoring
 	 */
-	@Nonnull
 	public abstract BaseRefactoringProcessor createProcessor();
 }

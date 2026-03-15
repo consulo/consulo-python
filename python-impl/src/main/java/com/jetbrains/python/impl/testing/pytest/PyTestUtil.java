@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.testing.pytest;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -40,7 +39,7 @@ public class PyTestUtil
 {
 	private static final Set<String> PYTHON_TEST_QUALIFIED_CLASSES = ImmutableSet.of("unittest.TestCase", "unittest.case.TestCase");
 
-	static List<PyStatement> getPyTestCasesFromFile(PsiFileSystemItem file, @Nonnull TypeEvalContext context)
+	static List<PyStatement> getPyTestCasesFromFile(PsiFileSystemItem file, TypeEvalContext context)
 	{
 		List<PyStatement> result = Lists.newArrayList();
 		if(file instanceof PyFile)
@@ -60,7 +59,7 @@ public class PyTestUtil
 		return result;
 	}
 
-	private static List<PyStatement> getResult(PyFile file, @Nonnull TypeEvalContext context)
+	private static List<PyStatement> getResult(PyFile file, TypeEvalContext context)
 	{
 		List<PyStatement> result = Lists.newArrayList();
 		for(PyClass cls : file.getTopLevelClasses())

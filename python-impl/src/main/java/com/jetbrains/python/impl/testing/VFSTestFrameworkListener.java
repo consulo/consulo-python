@@ -44,8 +44,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.Contract;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     MessageBus messageBus = application.getMessageBus();
     messageBus.connect().subscribe(BulkFileListener.class, new BulkFileListener.Adapter() {
       @Override
-      public void after(@Nonnull List<? extends VFileEvent> events) {
+      public void after(List<? extends VFileEvent> events) {
         for (VFileEvent event : events) {
           if (!(event.getFileSystem() instanceof LocalFileSystem) || event instanceof VFileContentChangeEvent) {
             continue;
@@ -113,7 +112,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     myQueue = new MergingUpdateQueue("TestFrameworkChecker", 5000, true, null, application, null, Alarm.ThreadToUse.POOLED_THREAD);
   }
 
-  public void updateAllTestFrameworks(@Nonnull Sdk sdk) {
+  public void updateAllTestFrameworks(Sdk sdk) {
     Map<String, Boolean> whichInstalled = checkTestFrameworksInstalled(sdk, PyNames.PY_TEST, PyNames.NOSE_TEST, PyNames.AT_TEST);
     ApplicationManager.getApplication().invokeLater(() -> {
       for (Map.Entry<String, Boolean> entry : whichInstalled.entrySet()) {
@@ -126,7 +125,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     });
   }
 
-  private void scheduleTestFrameworkCheck(@Nonnull Sdk sdk, @Nonnull String testPackageName) {
+  private void scheduleTestFrameworkCheck(Sdk sdk, String testPackageName) {
     myQueue.queue(new Update(Pair.create(sdk, testPackageName)) {
       @Override
       public void run() {
@@ -135,7 +134,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     });
   }
 
-  private void checkFrameworkInstalledAndUpdateSettings(@Nullable Sdk sdk, @Nonnull String testPackageName) {
+  private void checkFrameworkInstalledAndUpdateSettings(@Nullable Sdk sdk, String testPackageName) {
     Boolean installed = checkTestFrameworkInstalled(sdk, testPackageName);
     if (installed != null) {
       //noinspection ConstantConditions
@@ -147,12 +146,11 @@ public class VFSTestFrameworkListener implements BulkFileListener {
    * @return null if we can't be sure
    */
   @Contract("null, _ -> null")
-  private Boolean checkTestFrameworkInstalled(@Nullable Sdk sdk, @Nonnull String testPackageName) {
+  private Boolean checkTestFrameworkInstalled(@Nullable Sdk sdk, String testPackageName) {
     return checkTestFrameworksInstalled(sdk, testPackageName).get(testPackageName);
   }
 
-  @Nonnull
-  private Map<String, Boolean> checkTestFrameworksInstalled(@Nullable Sdk sdk, @Nonnull String... testPackageNames) {
+  private Map<String, Boolean> checkTestFrameworksInstalled(@Nullable Sdk sdk, String... testPackageNames) {
     Map<String, Boolean> result = new HashMap<>();
     if (sdk == null || StringUtil.isEmptyOrSpaces(sdk.getHomePath())) {
       LOG.info("Searching test runner in empty sdk");
@@ -171,11 +169,11 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     return result;
   }
 
-  private void setPyTestInstalled(boolean installed, @Nonnull String sdkHome) {
+  private void setPyTestInstalled(boolean installed, String sdkHome) {
     myService.SDK_TO_PYTEST.put(sdkHome, installed);
   }
 
-  public boolean isPyTestInstalled(@Nonnull Sdk sdk) {
+  public boolean isPyTestInstalled(Sdk sdk) {
     Boolean isInstalled = myService.SDK_TO_PYTEST.get(sdk.getHomePath());
     if (isInstalled == null) {
       scheduleTestFrameworkCheck(sdk, PyNames.PY_TEST);
@@ -184,11 +182,11 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     return isInstalled;
   }
 
-  private void setNoseTestInstalled(boolean installed, @Nonnull String sdkHome) {
+  private void setNoseTestInstalled(boolean installed, String sdkHome) {
     myService.SDK_TO_NOSETEST.put(sdkHome, installed);
   }
 
-  public boolean isNoseTestInstalled(@Nonnull Sdk sdk) {
+  public boolean isNoseTestInstalled(Sdk sdk) {
     Boolean isInstalled = myService.SDK_TO_NOSETEST.get(sdk.getHomePath());
     if (isInstalled == null) {
       scheduleTestFrameworkCheck(sdk, PyNames.NOSE_TEST);
@@ -197,11 +195,11 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     return isInstalled;
   }
 
-  private void setAtTestInstalled(boolean installed, @Nonnull String sdkHome) {
+  private void setAtTestInstalled(boolean installed, String sdkHome) {
     myService.SDK_TO_ATTEST.put(sdkHome, installed);
   }
 
-  public boolean isAtTestInstalled(@Nonnull Sdk sdk) {
+  public boolean isAtTestInstalled(Sdk sdk) {
     Boolean isInstalled = myService.SDK_TO_ATTEST.get(sdk.getHomePath());
     if (isInstalled == null) {
       scheduleTestFrameworkCheck(sdk, PyNames.AT_TEST);
@@ -210,7 +208,7 @@ public class VFSTestFrameworkListener implements BulkFileListener {
     return isInstalled;
   }
 
-  public void setTestFrameworkInstalled(boolean installed, @Nonnull String sdkHome, @Nonnull String name) {
+  public void setTestFrameworkInstalled(boolean installed, String sdkHome, String name) {
     switch (name) {
       case PyNames.NOSE_TEST:
         setNoseTestInstalled(installed, sdkHome);

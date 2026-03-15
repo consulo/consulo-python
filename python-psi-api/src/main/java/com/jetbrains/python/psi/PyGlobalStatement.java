@@ -15,14 +15,12 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public interface PyGlobalStatement extends PyStatement, PyNamedElementContainer
 {
-	@Nonnull
 	PyTargetExpression[] getGlobals();
 
 	void addGlobal(String name);

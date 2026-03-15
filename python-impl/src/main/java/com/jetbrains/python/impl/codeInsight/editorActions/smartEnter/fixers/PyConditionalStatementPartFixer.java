@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
@@ -44,7 +43,7 @@ public class PyConditionalStatementPartFixer extends PyFixer<PyConditionalStatem
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyConditionalStatementPart statementPart) throws IncorrectOperationException
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyConditionalStatementPart statementPart) throws IncorrectOperationException
 	{
 		PyExpression condition = statementPart.getCondition();
 		Document document = editor.getDocument();

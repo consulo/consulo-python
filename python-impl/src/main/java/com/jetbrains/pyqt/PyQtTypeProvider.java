@@ -28,8 +28,7 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.util.QualifiedName;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User : ktisha
@@ -40,7 +39,7 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
   private static final String ourQt4Signal = "pyqtSignal";
 
   @Override
-  public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context) {
+  public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
     if (PyNames.INIT.equals(callable.getName()) && callable instanceof PyFunction) {
       PyFunction function = (PyFunction)callable;
       PyClass containingClass = function.getContainingClass();
@@ -62,7 +61,7 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
 
   @Nullable
   @Override
-  public PyType getCallableType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context) {
+  public PyType getCallableType(PyCallable callable, TypeEvalContext context) {
     if (callable instanceof PyFunction) {
       String qualifiedName = callable.getQualifiedName();
       if (qualifiedName != null && qualifiedName.startsWith("PyQt")) {

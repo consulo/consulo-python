@@ -29,8 +29,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileManager;
 import consulo.virtualFileSystem.pointer.VirtualFilePointerContainer;
 import consulo.virtualFileSystem.pointer.VirtualFilePointerManager;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.jdom.Element;
 
 import java.util.Collections;
@@ -61,7 +60,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
         myExcludedPaths = VirtualFilePointerManager.getInstance().createContainer(ApplicationManager.getApplication());
     }
 
-    protected PythonSdkAdditionalData(@Nonnull PythonSdkAdditionalData from) {
+    protected PythonSdkAdditionalData(PythonSdkAdditionalData from) {
         myFlavor = from.getFlavor();
         myAddedPaths = from.myAddedPaths.clone(ApplicationManager.getApplication());
         myExcludedPaths = from.myExcludedPaths.clone(ApplicationManager.getApplication());
@@ -73,14 +72,14 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
         return new PythonSdkAdditionalData(this);
     }
 
-    public void setAddedPathsFromVirtualFiles(@Nonnull Set<VirtualFile> addedPaths) {
+    public void setAddedPathsFromVirtualFiles(Set<VirtualFile> addedPaths) {
         myAddedPaths.killAll();
         for (VirtualFile file : addedPaths) {
             myAddedPaths.add(file);
         }
     }
 
-    public void setExcludedPathsFromVirtualFiles(@Nonnull Set<VirtualFile> addedPaths) {
+    public void setExcludedPathsFromVirtualFiles(Set<VirtualFile> addedPaths) {
         myExcludedPaths.killAll();
         for (VirtualFile file : addedPaths) {
             myExcludedPaths.add(file);
@@ -112,7 +111,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
         }
     }
 
-    public void save(@Nonnull Element rootElement) {
+    public void save(Element rootElement) {
         savePaths(rootElement, myAddedPaths, PATHS_ADDED_BY_USER_ROOT, PATH_ADDED_BY_USER);
         savePaths(rootElement, myExcludedPaths, PATHS_REMOVED_BY_USER_ROOT, PATH_REMOVED_BY_USER);
 
@@ -134,7 +133,6 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
         return myFlavor;
     }
 
-    @Nonnull
     public static PythonSdkAdditionalData load(Sdk sdk, @Nullable Element element) {
         PythonSdkAdditionalData data = new PythonSdkAdditionalData(PythonSdkFlavor.getFlavor(sdk.getHomePath()));
         data.load(element);
@@ -149,7 +147,7 @@ public class PythonSdkAdditionalData implements SdkAdditionalData {
         }
     }
 
-    private static void collectPaths(@Nonnull List<String> paths, VirtualFilePointerContainer container) {
+    private static void collectPaths(List<String> paths, VirtualFilePointerContainer container) {
         for (String path : paths) {
             if (StringUtil.isEmpty(path)) {
                 continue;

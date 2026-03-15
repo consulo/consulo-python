@@ -27,8 +27,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -44,18 +43,16 @@ import java.util.Set;
  */
 @ExtensionImpl
 public class PyArgumentEqualDefaultInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameArgumentEqualDefault();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
@@ -67,7 +64,7 @@ public class PyArgumentEqualDefaultInspection extends PyInspection {
     }
 
     private static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -182,9 +179,9 @@ public class PyArgumentEqualDefaultInspection extends PyInspection {
         }
 
         private static boolean isBothInstanceOf(
-            @Nonnull PyExpression key,
-            @Nonnull PyExpression defaultValue,
-            @Nonnull Class clazz
+            PyExpression key,
+            PyExpression defaultValue,
+            Class clazz
         ) {
             return clazz.isInstance(key) && clazz.isInstance(defaultValue);
         }

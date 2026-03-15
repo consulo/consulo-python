@@ -33,8 +33,7 @@ import consulo.language.psi.PsiPolyVariantReference;
 import consulo.language.psi.PsiReference;
 import consulo.language.psi.util.QualifiedName;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,13 +48,11 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 		super(astNode);
 	}
 
-	@Nonnull
 	public PyExpression getOperand()
 	{
 		return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
 	}
 
-	@Nonnull
 	@Override
 	public PyExpression getRootOperand()
 	{
@@ -81,7 +78,7 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 
 	@Nullable
 	@Override
-	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
+	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		PsiPolyVariantReference reference = getReference(PyResolveContext.noImplicits().withTypeEvalContext(context));
 		List<PyType> members = new ArrayList<>();
@@ -126,7 +123,6 @@ public class PySubscriptionExpressionImpl extends PyElementImpl implements PySub
 		return getReference(PyResolveContext.noImplicits());
 	}
 
-	@Nonnull
 	@Override
 	public PsiPolyVariantReference getReference(PyResolveContext context)
 	{

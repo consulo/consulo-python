@@ -23,9 +23,7 @@ import consulo.language.editor.completion.CompletionWeigher;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementPresentation;
 import consulo.language.psi.PsiUtilCore;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Weighs down items starting with two underscores.
@@ -35,10 +33,10 @@ import jakarta.annotation.Nonnull;
  */
 @ExtensionImpl
 public class PythonCompletionWeigher extends CompletionWeigher {
-  @NonNls private static final String DOUBLE_UNDER = "__";
+  private static final String DOUBLE_UNDER = "__";
 
   @Override
-  public Comparable weigh(@Nonnull LookupElement element, @Nonnull CompletionLocation location) {
+  public Comparable weigh(LookupElement element, CompletionLocation location) {
     if (!PsiUtilCore.findLanguageFromElement(location.getCompletionParameters().getPosition()).isKindOf(PythonLanguage.getInstance())) {
       return 0;
     }

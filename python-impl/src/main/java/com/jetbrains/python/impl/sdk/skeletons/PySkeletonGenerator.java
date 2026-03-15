@@ -31,8 +31,7 @@ import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
@@ -49,7 +48,6 @@ public class PySkeletonGenerator {
     protected static final String GENERATOR3 = "generator3.py";
 
     private final String mySkeletonsPath;
-    @Nonnull
     private final Map<String, String> myEnv;
 
     public void finishSkeletonsGeneration() {
@@ -74,7 +72,7 @@ public class PySkeletonGenerator {
      * @param pySdk         SDK
      * @param currentFolder current folder (some flavors may search for binary files there) or null if unknown
      */
-    public PySkeletonGenerator(String skeletonPath, @Nonnull Sdk pySdk, @Nullable String currentFolder) {
+    public PySkeletonGenerator(String skeletonPath, Sdk pySdk, @Nullable String currentFolder) {
         mySkeletonsPath = skeletonPath;
         PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(pySdk);
         if (flavor != null) {
@@ -174,7 +172,7 @@ public class PySkeletonGenerator {
         return PySdkUtil.getProcessOutput(homePath, commandLine, env, timeout);
     }
 
-    public void generateBuiltinSkeletons(@Nonnull Sdk sdk) throws InvalidSdkException {
+    public void generateBuiltinSkeletons(Sdk sdk) throws InvalidSdkException {
         //noinspection ResultOfMethodCallIgnored
         new File(mySkeletonsPath).mkdirs();
         String binaryPath = sdk.getHomePath();
@@ -196,8 +194,7 @@ public class PySkeletonGenerator {
         LOG.info("Rebuilding builtin skeletons took " + (System.currentTimeMillis() - startTime) + " ms");
     }
 
-    @Nonnull
-    public ListBinariesResult listBinaries(@Nonnull Sdk sdk, @Nonnull String extraSysPath) throws InvalidSdkException {
+    public ListBinariesResult listBinaries(Sdk sdk, String extraSysPath) throws InvalidSdkException {
         String homePath = sdk.getHomePath();
         long startTime = System.currentTimeMillis();
         if (homePath == null) {
@@ -259,7 +256,7 @@ public class PySkeletonGenerator {
         return new ListBinariesResult(generatorVersion, binaries);
     }
 
-    public boolean deleteOrLog(@Nonnull File item) {
+    public boolean deleteOrLog(File item) {
         boolean deleted = item.delete();
         if (!deleted) {
             LOG.warn("Failed to delete skeleton file " + item.getAbsolutePath());

@@ -28,8 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.component.extension.Extensions;
@@ -309,7 +308,7 @@ public final class PythonImportUtils
 		return result;
 	}
 
-	public static boolean isImportableModule(PsiFile targetFile, @Nonnull PsiFileSystemItem file)
+	public static boolean isImportableModule(PsiFile targetFile, PsiFileSystemItem file)
 	{
 		PsiDirectory parent = (PsiDirectory) file.getParent();
 		return parent != null && file != targetFile &&

@@ -26,7 +26,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 /**
  * Intention to convert dict literal expression to dict constructor if the keys are all string constants on a literal dict.
@@ -38,13 +37,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnConvertDictLiteralToDictConstructor();
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -78,7 +76,7 @@ public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction
         return false;
     }
 
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyDictLiteralExpression dictExpression =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyDictLiteralExpression.class);
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

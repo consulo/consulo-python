@@ -26,8 +26,7 @@ import consulo.process.event.ProcessEvent;
 import consulo.process.event.ProcessListener;
 import consulo.util.dataholder.Key;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.OutputStream;
 
 /**
@@ -44,13 +43,13 @@ public class PyConsoleDebugProcessHandler extends BaseProcessHandler implements 
 		processHandler.addProcessListener(new ProcessListener()
 		{
 			@Override
-			public void processTerminated(@Nonnull ProcessEvent event)
+			public void processTerminated(ProcessEvent event)
 			{
 				PyConsoleDebugProcessHandler.this.notifyProcessTerminated(event.getExitCode());
 			}
 
 			@Override
-			public void onTextAvailable(@Nonnull ProcessEvent event, @Nonnull Key outputType)
+			public void onTextAvailable(ProcessEvent event, Key outputType)
 			{
 				PyConsoleDebugProcessHandler.this.notifyTextAvailable(event.getText(), outputType);
 			}

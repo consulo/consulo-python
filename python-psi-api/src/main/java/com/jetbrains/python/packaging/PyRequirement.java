@@ -28,8 +28,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.document.Document;
 import consulo.document.FileDocumentManager;
 import consulo.util.io.FileUtil;
@@ -49,24 +48,18 @@ public class PyRequirement
 
 	// common regular expressions
 
-	@Nonnull
 	private static final String LINE_WS_REGEXP = "[ \t]";
 
-	@Nonnull
 	private static final String COMMENT_GROUP = "comment";
 
-	@Nonnull
 	private static final String COMMENT_REGEXP = "(?<" + COMMENT_GROUP + ">" + LINE_WS_REGEXP + "+#.*)?";
 
-	@Nonnull
 	private static final String NAME_GROUP = "name";
 
 	// archive-related regular expressions
 
-	@Nonnull
 	private static final Pattern GITHUB_ARCHIVE_URL = Pattern.compile("https?://github\\.com/[^/\\s]+/(?<" + NAME_GROUP + ">[^/\\s]+)/archive/\\S+" + COMMENT_REGEXP);
 
-	@Nonnull
 	private static final Pattern ARCHIVE_URL = Pattern.compile("https?://\\S+/" +
 			"(?<" + NAME_GROUP + ">\\S+)" +
 			"(\\.tar\\.gz|\\.zip)(#(sha1|sha224|sha256|sha384|sha512|md5)=\\w+)?" + COMMENT_REGEXP);
@@ -74,68 +67,49 @@ public class PyRequirement
 	// vcs-related regular expressions
 	// don't forget to update calculateVcsInstallOptions(Matcher) after this section changing
 
-	@Nonnull
 	private static final String VCS_EDITABLE_GROUP = "editable";
 
-	@Nonnull
 	private static final String VCS_EDITABLE_REGEXP = "((?<" + VCS_EDITABLE_GROUP + ">-e|--editable)" + LINE_WS_REGEXP + "+)?";
 
-	@Nonnull
 	private static final String VCS_SRC_BEFORE_GROUP = "srcb";
 
-	@Nonnull
 	private static final String VCS_SRC_AFTER_GROUP = "srca";
 
-	@Nonnull
 	private static final String VCS_SRC_BEFORE_REGEXP = "(?<" + VCS_SRC_BEFORE_GROUP + ">--src" + LINE_WS_REGEXP + "+\\S+" + LINE_WS_REGEXP + "+)?";
 
-	@Nonnull
 	private static final String VCS_SRC_AFTER_REGEXP = "(?<" + VCS_SRC_AFTER_GROUP + ">" + LINE_WS_REGEXP + "+--src" + LINE_WS_REGEXP + "+\\S+)?";
 
-	@Nonnull
 	private static final String PATH_IN_VCS_GROUP = "path";
 
-	@Nonnull
 	private static final String PATH_IN_VCS_REGEXP = "(?<" + PATH_IN_VCS_GROUP + ">[^@#\\s]+)";
 
-	@Nonnull
 	private static final String VCS_REVISION_REGEXP = "(@[^#\\s]+)?";
 
-	@Nonnull
 	private static final String VCS_EGG_BEFORE_SUBDIR_GROUP = "eggb";
 
-	@Nonnull
 	private static final String VCS_EGG_AFTER_SUBDIR_GROUP = "egga";
 
-	@Nonnull
 	private static final String VCS_PARAMS_REGEXP = "(" +
 			"(#egg=(?<" + VCS_EGG_BEFORE_SUBDIR_GROUP + ">[^&\\s]+)(&subdirectory=\\S+)?)" +
 			"|" +
 			"(#subdirectory=[^&\\s]+&egg=(?<" + VCS_EGG_AFTER_SUBDIR_GROUP + ">\\S+))" +
 			")?";
 
-	@Nonnull
 	private static final String VCS_GROUP = "vcs";
 
-	@Nonnull
 	private static final String VCS_URL_PREFIX = VCS_SRC_BEFORE_REGEXP + VCS_EDITABLE_REGEXP + "(?<" + VCS_GROUP + ">";
 
-	@Nonnull
 	private static final String VCS_URL_SUFFIX = PATH_IN_VCS_REGEXP + VCS_REVISION_REGEXP + VCS_PARAMS_REGEXP + ")" + VCS_SRC_AFTER_REGEXP + COMMENT_REGEXP;
 
-	@Nonnull
 	private static final String GIT_USER_AT_REGEXP = "[\\w-]+@";
 
 	// supports: git+user@...
-	@Nonnull
 	private static final Pattern GIT_PROJECT_URL = Pattern.compile(VCS_URL_PREFIX + "git\\+" + GIT_USER_AT_REGEXP + "[^:\\s]+:" + VCS_URL_SUFFIX);
 
 	// supports: bzr+lp:...
-	@Nonnull
 	private static final Pattern BZR_PROJECT_URL = Pattern.compile(VCS_URL_PREFIX + "bzr\\+lp:" + VCS_URL_SUFFIX);
 
 	// supports: (bzr|git|hg|svn)(+smth)?://...
-	@Nonnull
 	private static final Pattern VCS_PROJECT_URL = Pattern.compile(VCS_URL_PREFIX + "(bzr|git|hg|svn)(\\+[A-Za-z]+)?://?[^/]+/" + VCS_URL_SUFFIX);
 
 	// requirement-related regular expressions
@@ -144,42 +118,31 @@ public class PyRequirement
 	// PEP-508 + PEP-440
 	// https://www.python.org/dev/peps/pep-0508/
 	// https://www.python.org/dev/peps/pep-0440/
-	@Nonnull
 	private static final String IDENTIFIER_REGEXP = "[A-Za-z0-9]([-_\\.]?[A-Za-z0-9])*";
 
-	@Nonnull
 	private static final String REQUIREMENT_NAME_REGEXP = "(?<" + NAME_GROUP + ">" + IDENTIFIER_REGEXP + ")";
 
-	@Nonnull
 	private static final String REQUIREMENT_EXTRAS_GROUP = "extras";
 
-	@Nonnull
 	private static final String REQUIREMENT_EXTRAS_REGEXP = "(?<" + REQUIREMENT_EXTRAS_GROUP + ">" +
 			"\\[" +
 			IDENTIFIER_REGEXP + "(" + LINE_WS_REGEXP + "*," + LINE_WS_REGEXP + "*" + IDENTIFIER_REGEXP + ")*" +
 			"\\]" +
 			")?";
 
-	@Nonnull
 	private static final String REQUIREMENT_VERSIONS_SPECS_GROUP = "versionspecs";
 
-	@Nonnull
 	private static final String REQUIREMENT_VERSION_SPEC_REGEXP = "(<=?|!=|===?|>=?|~=)" + LINE_WS_REGEXP + "*[\\.\\*\\+!\\w-]+";
 
-	@Nonnull
 	private static final String REQUIREMENT_VERSIONS_SPECS_REGEXP = "(?<" + REQUIREMENT_VERSIONS_SPECS_GROUP + ">" + REQUIREMENT_VERSION_SPEC_REGEXP +
 			"(" + LINE_WS_REGEXP + "*," + LINE_WS_REGEXP + "*" + REQUIREMENT_VERSION_SPEC_REGEXP + ")*)?";
 
-	@Nonnull
 	private static final String REQUIREMENT_OPTIONS_GROUP = "options";
 
-	@Nonnull
 	private static final String REQUIREMENT_OPTIONS_REGEXP = "(?<" + REQUIREMENT_OPTIONS_GROUP + ">(" + LINE_WS_REGEXP + "+(--global-option|--install-option)=\"[^\"]*\")+)?";
 
-	@Nonnull
 	private static final String REQUIREMENT_GROUP = "requirement";
 
-	@Nonnull
 	private static final Pattern REQUIREMENT = Pattern.compile("(?<" + REQUIREMENT_GROUP + ">" +
 			REQUIREMENT_NAME_REGEXP +
 			LINE_WS_REGEXP + "*" +
@@ -190,39 +153,35 @@ public class PyRequirement
 			REQUIREMENT_OPTIONS_REGEXP +
 			COMMENT_REGEXP);
 
-	@Nonnull
 	private final String myName;
 
-	@Nonnull
 	private final List<PyRequirementVersionSpec> myVersionSpecs;
 
-	@Nonnull
 	private final List<String> myInstallOptions;
 
-	@Nonnull
 	private final String myExtras;
 
-	public PyRequirement(@Nonnull String name)
+	public PyRequirement(String name)
 	{
 		this(name, Collections.emptyList());
 	}
 
-	public PyRequirement(@Nonnull String name, @Nonnull String version)
+	public PyRequirement(String name, String version)
 	{
 		this(name, Collections.singletonList(calculateVersionSpec(version, PyRequirementRelation.EQ)));
 	}
 
-	public PyRequirement(@Nonnull String name, @Nonnull String version, @Nonnull List<String> installOptions)
+	public PyRequirement(String name, String version, List<String> installOptions)
 	{
 		this(name, Collections.singletonList(calculateVersionSpec(version, PyRequirementRelation.EQ)), installOptions);
 	}
 
-	public PyRequirement(@Nonnull String name, @Nonnull String version, @Nonnull List<String> installOptions, @Nonnull String extras)
+	public PyRequirement(String name, String version, List<String> installOptions, String extras)
 	{
 		this(name, Collections.singletonList(calculateVersionSpec(version, PyRequirementRelation.EQ)), installOptions, extras);
 	}
 
-	public PyRequirement(@Nonnull String name, @Nonnull List<PyRequirementVersionSpec> versionSpecs)
+	public PyRequirement(String name, List<PyRequirementVersionSpec> versionSpecs)
 	{
 		myName = name;
 		myVersionSpecs = versionSpecs;
@@ -230,7 +189,7 @@ public class PyRequirement
 		myInstallOptions = Collections.singletonList(toString());
 	}
 
-	public PyRequirement(@Nonnull String name, @Nonnull List<PyRequirementVersionSpec> versionSpecs, @Nonnull List<String> installOptions)
+	public PyRequirement(String name, List<PyRequirementVersionSpec> versionSpecs, List<String> installOptions)
 	{
 		myName = name;
 		myVersionSpecs = versionSpecs;
@@ -238,7 +197,7 @@ public class PyRequirement
 		myExtras = "";
 	}
 
-	public PyRequirement(@Nonnull String name, @Nonnull List<PyRequirementVersionSpec> versionSpecs, @Nonnull List<String> installOptions, @Nonnull String extras)
+	public PyRequirement(String name, List<PyRequirementVersionSpec> versionSpecs, List<String> installOptions, String extras)
 	{
 		myName = name;
 		myVersionSpecs = versionSpecs;
@@ -246,19 +205,16 @@ public class PyRequirement
 		myExtras = extras;
 	}
 
-	@Nonnull
 	public String getName()
 	{
 		return myName;
 	}
 
-	@Nonnull
 	public String getFullName()
 	{
 		return myName + myExtras;
 	}
 
-	@Nonnull
 	public List<String> getInstallOptions()
 	{
 		return myInstallOptions;
@@ -315,7 +271,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	public PyPackage match(@Nonnull List<PyPackage> packages)
+	public PyPackage match(List<PyPackage> packages)
 	{
 		String normalizedName = normalizeName(myName);
 
@@ -324,7 +280,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	public static PyRequirement fromLine(@Nonnull String line)
+	public static PyRequirement fromLine(String line)
 	{
 		PyRequirement githubArchiveUrl = parseGithubArchiveUrl(line);
 		if(githubArchiveUrl != null)
@@ -347,20 +303,17 @@ public class PyRequirement
 		return parseRequirement(line);
 	}
 
-	@Nonnull
-	public static List<PyRequirement> fromText(@Nonnull String text)
+	public static List<PyRequirement> fromText(String text)
 	{
 		return fromText(text, null, new HashSet<>());
 	}
 
-	@Nonnull
-	public static List<PyRequirement> fromFile(@Nonnull VirtualFile file)
+	public static List<PyRequirement> fromFile(VirtualFile file)
 	{
 		return fromText(loadText(file), file, new HashSet<>());
 	}
 
-	@Nonnull
-	public static PyRequirementVersionSpec calculateVersionSpec(@Nonnull String version, @Nonnull PyRequirementRelation expectedRelation)
+	public static PyRequirementVersionSpec calculateVersionSpec(String version, PyRequirementRelation expectedRelation)
 	{
 		String normalizedVersion = PyRequirementVersionNormalizer.normalize(version);
 
@@ -368,7 +321,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static PyRequirement parseGithubArchiveUrl(@Nonnull String line)
+	private static PyRequirement parseGithubArchiveUrl(String line)
 	{
 		Matcher matcher = GITHUB_ARCHIVE_URL.matcher(line);
 
@@ -381,7 +334,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static PyRequirement parseArchiveUrl(@Nonnull String line)
+	private static PyRequirement parseArchiveUrl(String line)
 	{
 		Matcher matcher = ARCHIVE_URL.matcher(line);
 
@@ -394,7 +347,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static PyRequirement parseVcsProjectUrl(@Nonnull String line)
+	private static PyRequirement parseVcsProjectUrl(String line)
 	{
 		Matcher vcsMatcher = VCS_PROJECT_URL.matcher(line);
 		if(vcsMatcher.matches())
@@ -418,7 +371,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static PyRequirement parseRequirement(@Nonnull String line)
+	private static PyRequirement parseRequirement(String line)
 	{
 		Matcher matcher = REQUIREMENT.matcher(line);
 		if(matcher.matches())
@@ -441,8 +394,7 @@ public class PyRequirement
 		return null;
 	}
 
-	@Nonnull
-	private static List<PyRequirement> fromText(@Nonnull String text, @Nullable VirtualFile containingFile, @Nonnull Set<VirtualFile> visitedFiles)
+	private static List<PyRequirement> fromText(String text, @Nullable VirtualFile containingFile, Set<VirtualFile> visitedFiles)
 	{
 		if(containingFile != null)
 		{
@@ -453,16 +405,14 @@ public class PyRequirement
 				.toCollection(LinkedHashSet::new)).stream().collect(Collectors.toList());
 	}
 
-	@Nonnull
-	private static String loadText(@Nonnull VirtualFile file)
+	private static String loadText(VirtualFile file)
 	{
 		Document document = FileDocumentManager.getInstance().getDocument(file);
 
 		return document == null ? "" : document.getText();
 	}
 
-	@Nonnull
-	private static String dropComments(@Nonnull String line, @Nonnull Matcher matcher)
+	private static String dropComments(String line, Matcher matcher)
 	{
 		int commentIndex = matcher.start(COMMENT_GROUP);
 
@@ -474,8 +424,7 @@ public class PyRequirement
 		return line.substring(0, findFirstNotWhiteSpaceBefore(line, commentIndex) + 1);
 	}
 
-	@Nonnull
-	private static Pair<String, String> parseNameAndVersionFromVcsOrArchive(@Nonnull String name)
+	private static Pair<String, String> parseNameAndVersionFromVcsOrArchive(String name)
 	{
 		boolean isName = true;
 		List<String> nameParts = new ArrayList<>();
@@ -503,8 +452,7 @@ public class PyRequirement
 		return Pair.create(normalizeVcsOrArchiveNameParts(nameParts), normalizeVcsOrArchiveVersionParts(versionParts));
 	}
 
-	@Nonnull
-	private static PyRequirement createVcsOrArchiveRequirement(@Nonnull List<String> installOptions, @Nonnull Pair<String, String> nameAndVersion)
+	private static PyRequirement createVcsOrArchiveRequirement(List<String> installOptions, Pair<String, String> nameAndVersion)
 	{
 		String name = nameAndVersion.getFirst();
 		String version = nameAndVersion.getSecond();
@@ -518,7 +466,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static PyRequirement createVcsRequirement(@Nonnull Matcher matcher)
+	private static PyRequirement createVcsRequirement(Matcher matcher)
 	{
 		String path = matcher.group(PATH_IN_VCS_GROUP);
 		String egg = getEgg(matcher);
@@ -529,7 +477,6 @@ public class PyRequirement
 		return createVcsOrArchiveRequirement(calculateVcsInstallOptions(matcher), nameAndVersion);
 	}
 
-	@Nonnull
 	private static List<PyRequirementVersionSpec> parseVersionSpecs(@Nullable String versionSpecs)
 	{
 		if(versionSpecs == null)
@@ -541,8 +488,7 @@ public class PyRequirement
 				.toList());
 	}
 
-	@Nonnull
-	private static List<String> calculateRequirementInstallOptions(@Nonnull Matcher matcher)
+	private static List<String> calculateRequirementInstallOptions(Matcher matcher)
 	{
 		List<String> result = new ArrayList<>();
 		result.add(matcher.group(REQUIREMENT_GROUP));
@@ -561,8 +507,7 @@ public class PyRequirement
 		return result;
 	}
 
-	@Nonnull
-	private static List<String> splitByLinesAndCollapse(@Nonnull String text)
+	private static List<String> splitByLinesAndCollapse(String text)
 	{
 		List<String> result = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
@@ -593,8 +538,7 @@ public class PyRequirement
 		return result;
 	}
 
-	@Nonnull
-	private static List<PyRequirement> parseLine(@Nonnull String line, @Nullable VirtualFile containingFile, @Nonnull Set<VirtualFile> visitedFiles)
+	private static List<PyRequirement> parseLine(String line, @Nullable VirtualFile containingFile, Set<VirtualFile> visitedFiles)
 	{
 		if(line.startsWith("-r"))
 		{
@@ -609,20 +553,18 @@ public class PyRequirement
 		return Collections.singletonList(fromLine(line));
 	}
 
-	@Nonnull
-	private static String normalizeVcsOrArchiveNameParts(@Nonnull List<String> nameParts)
+	private static String normalizeVcsOrArchiveNameParts(List<String> nameParts)
 	{
 		return normalizeName(StringUtil.join(nameParts, "-"));
 	}
 
 	@Nullable
-	private static String normalizeVcsOrArchiveVersionParts(@Nonnull List<String> versionParts)
+	private static String normalizeVcsOrArchiveVersionParts(List<String> versionParts)
 	{
 		return versionParts.isEmpty() ? null : normalizeVersion(StringUtil.join(versionParts, "-"));
 	}
 
-	@Nonnull
-	private static List<String> calculateVcsInstallOptions(@Nonnull Matcher matcher)
+	private static List<String> calculateVcsInstallOptions(Matcher matcher)
 	{
 		List<String> result = new ArrayList<>();
 
@@ -650,15 +592,14 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static String getEgg(@Nonnull Matcher matcher)
+	private static String getEgg(Matcher matcher)
 	{
 		String beforeSubdir = matcher.group(VCS_EGG_BEFORE_SUBDIR_GROUP);
 
 		return beforeSubdir == null ? matcher.group(VCS_EGG_AFTER_SUBDIR_GROUP) : beforeSubdir;
 	}
 
-	@Nonnull
-	private static String extractProject(@Nonnull String path)
+	private static String extractProject(String path)
 	{
 		int end = path.endsWith("/") ? path.length() - 1 : path.length();
 		int slashIndex = path.lastIndexOf("/", end - 1);
@@ -676,8 +617,7 @@ public class PyRequirement
 		return path;
 	}
 
-	@Nonnull
-	private static String dropTrunk(@Nonnull String path)
+	private static String dropTrunk(String path)
 	{
 		String slashTrunk = "/trunk";
 
@@ -696,8 +636,7 @@ public class PyRequirement
 		return path;
 	}
 
-	@Nonnull
-	private static String dropRevision(@Nonnull String path)
+	private static String dropRevision(String path)
 	{
 		int atIndex = path.lastIndexOf("@");
 
@@ -710,7 +649,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static PyRequirementVersionSpec parseVersionSpec(@Nonnull String versionSpec)
+	private static PyRequirementVersionSpec parseVersionSpec(String versionSpec)
 	{
 		PyRequirementRelation relation = null;
 
@@ -763,8 +702,7 @@ public class PyRequirement
 		return null;
 	}
 
-	@Nonnull
-	private static List<PyRequirement> parseRecursiveLine(@Nonnull String line, @Nullable VirtualFile containingFile, @Nonnull Set<VirtualFile> visitedFiles, int flagLength)
+	private static List<PyRequirement> parseRecursiveLine(String line, @Nullable VirtualFile containingFile, Set<VirtualFile> visitedFiles, int flagLength)
 	{
 		if(containingFile == null)
 		{
@@ -788,19 +726,17 @@ public class PyRequirement
 		return Collections.emptyList();
 	}
 
-	@Nonnull
-	private static String normalizeName(@Nonnull String s)
+	private static String normalizeName(String s)
 	{
 		return s.replace("_", "-");
 	}
 
-	@Nonnull
-	private static String normalizeVersion(@Nonnull String s)
+	private static String normalizeVersion(String s)
 	{
 		return s.replace("_", "-").replaceAll("-?py[\\d\\.]+", "");
 	}
 
-	private static int findFirstNotWhiteSpaceAfter(@Nonnull String line, int beginIndex)
+	private static int findFirstNotWhiteSpaceAfter(String line, int beginIndex)
 	{
 		for(int i = beginIndex; i < line.length(); i++)
 		{
@@ -813,7 +749,7 @@ public class PyRequirement
 		return line.length();
 	}
 
-	private static int findFirstNotWhiteSpaceBefore(@Nonnull String line, int beginIndex)
+	private static int findFirstNotWhiteSpaceBefore(String line, int beginIndex)
 	{
 		for(int i = beginIndex; i >= 0; i--)
 		{
@@ -827,7 +763,7 @@ public class PyRequirement
 	}
 
 	@Nullable
-	private static VirtualFile findRecursiveFile(@Nonnull VirtualFile containingFile, @Nonnull String path)
+	private static VirtualFile findRecursiveFile(VirtualFile containingFile, String path)
 	{
 		VirtualFile dir = containingFile.getParent();
 		if(dir == null)

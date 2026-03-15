@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.testing.attest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.util.io.FileUtil;
 import com.jetbrains.python.impl.PythonHelper;
@@ -44,7 +43,6 @@ public class PythonAtTestCommandLineState extends PythonTestCommandLineStateBase
 		return PythonHelper.ATTEST;
 	}
 
-	@Nonnull
 	protected List<String> getTestSpecs()
 	{
 		List<String> specs = new ArrayList<>();

@@ -27,7 +27,6 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
@@ -35,9 +34,9 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
   @Override
-  public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param,
-                                      @Nonnull PyFunction func,
-                                      @Nonnull TypeEvalContext context) {
+  public Ref<PyType> getParameterType(PyNamedParameter param,
+                                      PyFunction func,
+                                      TypeEvalContext context) {
     String name = param.getName();
     if (name != null) {
       String typeName = PySignatureCacheManager.getInstance(param.getProject()).findParameterType(func, name);
@@ -52,7 +51,7 @@ public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
   }
 
   @Override
-  public Ref<PyType> getReturnType(@Nonnull PyCallable callable, @Nonnull TypeEvalContext context) {
+  public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
     if (callable instanceof PyFunction) {
       PyFunction function = (PyFunction)callable;
       PySignature signature = PySignatureCacheManager.getInstance(function.getProject()).findSignature(function);

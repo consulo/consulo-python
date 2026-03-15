@@ -20,7 +20,6 @@ import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyEmptyExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -30,7 +29,7 @@ public class PyEmptyExpressionImpl extends PyElementImpl implements PyEmptyExpre
     super(astNode);
   }
 
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     return null;
   }
 }

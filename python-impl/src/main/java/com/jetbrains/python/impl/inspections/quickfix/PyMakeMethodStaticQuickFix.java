@@ -26,7 +26,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.usage.UsageInfo;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +34,12 @@ import java.util.List;
  * @author ktisha
  */
 public class PyMakeMethodStaticQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixNameMakeStatic();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
         if (problemFunction == null) {
@@ -81,7 +79,7 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix {
         }
     }
 
-    private static void updateUsage(@Nonnull PyReferenceExpression element) {
+    private static void updateUsage(PyReferenceExpression element) {
         PyExpression qualifier = element.getQualifier();
         if (qualifier == null) {
             return;
@@ -96,7 +94,7 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix {
         }
     }
 
-    private static void updateArgumentList(@Nonnull PyReferenceExpression element) {
+    private static void updateArgumentList(PyReferenceExpression element) {
         PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
         if (callExpression == null) {
             return;

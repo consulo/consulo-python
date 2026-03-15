@@ -33,8 +33,7 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Couple;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -48,7 +47,6 @@ import java.util.*;
  * @author catherine
  */
 public class AddCallSuperQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixAddSuper();
@@ -56,7 +54,7 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
 
     @Override
     @RequiredWriteAction
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), PyFunction.class);
         if (problemFunction == null) {
             return;
@@ -117,8 +115,7 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
         PyPsiUtils.removeRedundantPass(statementList);
     }
 
-    @Nonnull
-    private static String getSelfParameterName(@Nonnull ParametersInfo info) {
+    private static String getSelfParameterName(ParametersInfo info) {
         PyParameter selfParameter = info.getSelfParameter();
         if (selfParameter == null) {
             return PyNames.CANONICAL_SELF;
@@ -126,11 +123,10 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
         return StringUtil.defaultIfEmpty(selfParameter.getName(), PyNames.CANONICAL_SELF);
     }
 
-    @Nonnull
     @RequiredReadAction
     private static Couple<List<String>> buildNewFunctionParamsAndSuperInitCallArgs(
-        @Nonnull ParametersInfo origInfo,
-        @Nonnull ParametersInfo superInfo,
+        ParametersInfo origInfo,
+        ParametersInfo superInfo,
         boolean addSelfToCall
     ) {
         List<String> newFunctionParams = new ArrayList<>();
@@ -304,7 +300,7 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
 
         private final Set<String> myAllParameterNames = new LinkedHashSet<>();
 
-        public ParametersInfo(@Nonnull PyParameterList parameterList) {
+        public ParametersInfo(PyParameterList parameterList) {
             PyParameter positionalContainer = null;
             PyParameter singleStarParam = null;
             PyParameter keywordContainer = null;
@@ -354,12 +350,10 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
             return mySelfParam;
         }
 
-        @Nonnull
         public List<PyParameter> getRequiredParameters() {
             return Collections.unmodifiableList(myRequiredParams);
         }
 
-        @Nonnull
         public List<PyParameter> getOptionalParameters() {
             return Collections.unmodifiableList(myOptionalParams);
         }
@@ -374,12 +368,10 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
             return mySingleStarParam;
         }
 
-        @Nonnull
         public List<PyParameter> getRequiredKeywordOnlyParameters() {
             return Collections.unmodifiableList(myRequiredKwOnlyParams);
         }
 
-        @Nonnull
         public List<PyParameter> getOptionalKeywordOnlyParameters() {
             return Collections.unmodifiableList(myOptionalKwOnlyParams);
         }
@@ -389,21 +381,19 @@ public class AddCallSuperQuickFix implements LocalQuickFix {
             return myKeywordContainerParam;
         }
 
-        @Nonnull
         public Set<String> getAllParameterNames() {
             return Collections.unmodifiableSet(myAllParameterNames);
         }
     }
 
-    @Nonnull
-    private static List<String> collectParameterNames(@Nonnull PyParameter param) {
+    private static List<String> collectParameterNames(PyParameter param) {
         List<String> result = new ArrayList<>();
         collectParameterNames(param, result);
         return result;
     }
 
 
-    private static void collectParameterNames(@Nonnull PyParameter param, @Nonnull Collection<String> acc) {
+    private static void collectParameterNames(PyParameter param, Collection<String> acc) {
         PyTupleParameter tupleParam = param.getAsTuple();
         if (tupleParam != null) {
             for (PyParameter subParam : tupleParam.getContents()) {

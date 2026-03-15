@@ -20,7 +20,6 @@ package com.jetbrains.python.impl.documentation.doctest;
 import com.jetbrains.python.PythonFileType;
 import consulo.localize.LocalizeValue;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : ktisha
@@ -32,19 +31,16 @@ public class PyDocstringFileType extends PythonFileType {
     super(PyDocstringLanguageDialect.INSTANCE);
   }
 
-  @Nonnull
   @Override
   public String getId() {
     return "PyDocstring";
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getDescription() {
     return LocalizeValue.localizeTODO("python docstring");
   }
 
-  @Nonnull
   @Override
   public String getDefaultExtension() {
     return "docstring";

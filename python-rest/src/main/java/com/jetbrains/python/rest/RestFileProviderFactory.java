@@ -24,7 +24,6 @@ import consulo.language.file.LanguageFileViewProviderFactory;
 import consulo.language.psi.PsiManager;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -33,12 +32,11 @@ import jakarta.annotation.Nonnull;
 public class RestFileProviderFactory implements LanguageFileViewProviderFactory
 {
 	@Override
-	public FileViewProvider createFileViewProvider(@Nonnull VirtualFile virtualFile, Language language, @Nonnull PsiManager psiManager, boolean physical)
+	public FileViewProvider createFileViewProvider(VirtualFile virtualFile, Language language, PsiManager psiManager, boolean physical)
 	{
 		return new RestFileViewProvider(psiManager, virtualFile, physical);
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

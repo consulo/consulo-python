@@ -24,8 +24,7 @@ import consulo.execution.ui.console.Filter;
 import consulo.execution.ui.console.TextConsoleBuilder;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 
 /**
@@ -64,7 +63,7 @@ public class PyDebugConsoleBuilder extends TextConsoleBuilder {
   }
 
   @Override
-  public void setState(@Nonnull ConsoleState consoleState) {
+  public void setState(ConsoleState consoleState) {
 
   }
 

@@ -21,7 +21,6 @@ import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +40,12 @@ public class ListCreationQuickFix implements LocalQuickFix {
         myStatements.add(statement);
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixListCreation();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         StringBuilder stringBuilder = new StringBuilder();
         PyExpression assignedValue = myStatement.getAssignedValue();

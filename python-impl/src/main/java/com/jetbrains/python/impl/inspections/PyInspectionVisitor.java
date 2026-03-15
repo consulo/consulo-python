@@ -17,8 +17,7 @@ package com.jetbrains.python.impl.inspections;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.localize.LocalizeValue;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.editor.intention.HintAction;
 import consulo.language.editor.inspection.LocalInspectionToolSession;
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -41,13 +40,12 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 public abstract class PyInspectionVisitor extends PyElementVisitor {
     @Nullable
     private final ProblemsHolder myHolder;
-    @Nonnull
     private final LocalInspectionToolSession mySession;
     protected final TypeEvalContext myTypeEvalContext;
 
     public static final Key<TypeEvalContext> INSPECTION_TYPE_EVAL_CONTEXT = Key.create("PyInspectionTypeEvalContext");
 
-    public PyInspectionVisitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+    public PyInspectionVisitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session) {
         myHolder = holder;
         mySession = session;
         TypeEvalContext context;
@@ -71,7 +69,6 @@ public abstract class PyInspectionVisitor extends PyElementVisitor {
         return myHolder;
     }
 
-    @Nonnull
     public LocalInspectionToolSession getSession() {
         return mySession;
     }
@@ -91,8 +88,8 @@ public abstract class PyInspectionVisitor extends PyElementVisitor {
     @RequiredReadAction
     protected final void registerProblem(
         @Nullable PsiElement element,
-        @Nonnull String message,
-        @Nonnull LocalQuickFix... quickFixes
+        String message,
+        LocalQuickFix... quickFixes
     ) {
         if (element == null || element.getTextLength() == 0) {
             return;
@@ -126,8 +123,8 @@ public abstract class PyInspectionVisitor extends PyElementVisitor {
      */
     @RequiredReadAction
     protected final void registerProblem(
-        @Nonnull PsiElement psiElement,
-        @Nonnull String descriptionTemplate,
+        PsiElement psiElement,
+        String descriptionTemplate,
         ProblemHighlightType highlightType,
         @Nullable HintAction hintAction,
         LocalQuickFix... fixes
@@ -142,8 +139,8 @@ public abstract class PyInspectionVisitor extends PyElementVisitor {
      */
     @RequiredReadAction
     protected final void registerProblem(
-        @Nonnull PsiElement psiElement,
-        @Nonnull String descriptionTemplate,
+        PsiElement psiElement,
+        String descriptionTemplate,
         ProblemHighlightType highlightType,
         @Nullable HintAction hintAction,
         @Nullable TextRange rangeInElement,

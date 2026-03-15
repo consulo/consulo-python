@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.validation;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.PyBundle;

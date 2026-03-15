@@ -37,21 +37,19 @@ import consulo.localize.LocalizeValue;
 import consulo.navigation.OpenFileDescriptorFactory;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author ktisha
  */
 public class PyRenameElementQuickFix implements LocalQuickFix {
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return LocalizeValue.localizeTODO("Rename element");
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
             (PsiNameIdentifierOwner) element :
@@ -88,7 +86,7 @@ public class PyRenameElementQuickFix implements LocalQuickFix {
     }
 
     private static void renameInUnitTestMode(
-        @Nonnull Project project, @Nonnull PsiNameIdentifierOwner nameOwner,
+        Project project, PsiNameIdentifierOwner nameOwner,
         @Nullable Editor editor
     ) {
         PsiElement substitution = RenamePsiElementProcessor.forElement(nameOwner).substituteElementToRename(nameOwner, editor);

@@ -38,8 +38,7 @@ import consulo.language.psi.PsiNamedElement;
 import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -58,16 +57,16 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Override
 	@Nullable
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, PyExpression location, @Nonnull AccessDirection direction,
-                                                            @Nonnull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(String name, PyExpression location, AccessDirection direction,
+                                                            PyResolveContext resolveContext)
 	{
 		return resolveMember(name, location, direction, resolveContext, true);
 	}
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location,
-			@Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext, boolean inherited)
+	public List<? extends RatedResolveResult> resolveMember(String name, @Nullable PyExpression location,
+			AccessDirection direction, PyResolveContext resolveContext, boolean inherited)
 	{
 		ResolveResultList resultList = new ResolveResultList();
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
@@ -83,7 +82,7 @@ public class PyDotNetClassType implements PyClassLikeType
 	}
 
 	@Override
-	public void visitMembers(@Nonnull Processor<PsiElement> processor, boolean inherited, @Nonnull TypeEvalContext context)
+	public void visitMembers(Processor<PsiElement> processor, boolean inherited, TypeEvalContext context)
 	{
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
 		{
@@ -91,9 +90,8 @@ public class PyDotNetClassType implements PyClassLikeType
 		}
 	}
 
-	@Nonnull
 	@Override
-	public Set<String> getMemberNames(boolean inherited, @Nonnull TypeEvalContext context)
+	public Set<String> getMemberNames(boolean inherited, TypeEvalContext context)
 	{
 		Set<String> names = new HashSet<>();
 		for(DotNetNamedElement dotNetNamedElement : myClass.getMembers())
@@ -149,14 +147,14 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyType getReturnType(@Nonnull TypeEvalContext context)
+	public PyType getReturnType(TypeEvalContext context)
 	{
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public PyType getCallType(@Nonnull TypeEvalContext context, @Nonnull PyCallSiteExpression callSite)
+	public PyType getCallType(TypeEvalContext context, PyCallSiteExpression callSite)
 	{
 		if(myDefinition)
 		{
@@ -167,7 +165,7 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public List<PyCallableParameter> getParameters(@Nonnull TypeEvalContext context)
+	public List<PyCallableParameter> getParameters(TypeEvalContext context)
 	{
 		return null;
 	}
@@ -191,10 +189,9 @@ public class PyDotNetClassType implements PyClassLikeType
 		return myClass.getPresentableQName();
 	}
 
-	@Nonnull
 	@Override
 	@RequiredReadAction
-	public List<PyClassLikeType> getSuperClassTypes(@Nonnull TypeEvalContext context)
+	public List<PyClassLikeType> getSuperClassTypes(TypeEvalContext context)
 	{
 		List<PyClassLikeType> result = new ArrayList<PyClassLikeType>();
 		for(DotNetTypeRef typeRef : myClass.getExtendTypeRefs())
@@ -216,7 +213,7 @@ public class PyDotNetClassType implements PyClassLikeType
 
 	@Nullable
 	@Override
-	public PyClassLikeType getMetaClassType(@Nonnull TypeEvalContext context, boolean inherited)
+	public PyClassLikeType getMetaClassType(TypeEvalContext context, boolean inherited)
 	{
 		return null;
 	}
@@ -226,9 +223,8 @@ public class PyDotNetClassType implements PyClassLikeType
 		return myClass;
 	}
 
-	@Nonnull
 	@Override
-	public List<PyClassLikeType> getAncestorTypes(@Nonnull TypeEvalContext context)
+	public List<PyClassLikeType> getAncestorTypes(TypeEvalContext context)
 	{
 		return Collections.emptyList();
 	}

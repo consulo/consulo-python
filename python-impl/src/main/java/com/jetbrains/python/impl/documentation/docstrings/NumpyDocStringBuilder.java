@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.util.lang.StringUtil;
 import com.jetbrains.python.impl.psi.PyIndentUtil;
@@ -39,22 +38,19 @@ public class NumpyDocStringBuilder extends SectionBasedDocStringBuilder
 	}
 
 	@Override
-	@Nonnull
 	protected String getDefaultParametersHeader()
 	{
 		return "Parameters";
 	}
 
 	@Override
-	@Nonnull
 	protected String getDefaultReturnsHeader()
 	{
 		return "Returns";
 	}
 
-	@Nonnull
 	@Override
-	protected SectionBasedDocStringBuilder startSection(@Nonnull String title)
+	protected SectionBasedDocStringBuilder startSection(String title)
 	{
 		super.startSection(title);
 		addLine(StringUtil.capitalize(title));
@@ -62,9 +58,8 @@ public class NumpyDocStringBuilder extends SectionBasedDocStringBuilder
 		return this;
 	}
 
-	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addParameter(@Nonnull String name, @Nullable String type, @Nonnull String description)
+	public SectionBasedDocStringBuilder addParameter(String name, @Nullable String type, String description)
 	{
 		if(type != null)
 		{
@@ -81,9 +76,8 @@ public class NumpyDocStringBuilder extends SectionBasedDocStringBuilder
 		return this;
 	}
 
-	@Nonnull
 	@Override
-	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, @Nonnull String type, @Nonnull String description)
+	public SectionBasedDocStringBuilder addReturnValue(@Nullable String name, String type, String description)
 	{
 		if(name != null)
 		{

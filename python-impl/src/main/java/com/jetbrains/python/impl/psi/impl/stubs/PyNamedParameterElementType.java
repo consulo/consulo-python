@@ -21,9 +21,7 @@ package com.jetbrains.python.impl.psi.impl.stubs;
 
 import java.io.IOException;
 
-import jakarta.annotation.Nonnull;
 
-import org.jetbrains.annotations.NonNls;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IStubElementType;
@@ -48,30 +46,28 @@ public class PyNamedParameterElementType extends PyStubElementType<PyNamedParame
 		this("NAMED_PARAMETER");
 	}
 
-	public PyNamedParameterElementType(@Nonnull @NonNls String debugName)
+	public PyNamedParameterElementType(String debugName)
 	{
 		super(debugName);
 	}
 
-	public PyNamedParameter createPsi(@Nonnull PyNamedParameterStub stub)
+	public PyNamedParameter createPsi(PyNamedParameterStub stub)
 	{
 		return new PyNamedParameterImpl(stub);
 	}
 
-	@Nonnull
-	public PyNamedParameterStub createStub(@Nonnull PyNamedParameter psi, StubElement parentStub)
+	public PyNamedParameterStub createStub(PyNamedParameter psi, StubElement parentStub)
 	{
 		return new PyNamedParameterStubImpl(psi.getName(), psi.isPositionalContainer(), psi.isKeywordContainer(), psi.hasDefaultValue(), psi.getTypeCommentAnnotation(), parentStub,
 				getStubElementType());
 	}
 
-	@Nonnull
-	public PsiElement createElement(@Nonnull ASTNode node)
+	public PsiElement createElement(ASTNode node)
 	{
 		return new PyNamedParameterImpl(node);
 	}
 
-	public void serialize(@Nonnull PyNamedParameterStub stub, @Nonnull StubOutputStream dataStream) throws IOException
+	public void serialize(PyNamedParameterStub stub, StubOutputStream dataStream) throws IOException
 	{
 		dataStream.writeName(stub.getName());
 
@@ -92,8 +88,7 @@ public class PyNamedParameterElementType extends PyStubElementType<PyNamedParame
 		dataStream.writeName(stub.getTypeComment());
 	}
 
-	@Nonnull
-	public PyNamedParameterStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException
+	public PyNamedParameterStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		String name = StringRef.toString(dataStream.readName());
 		byte flags = dataStream.readByte();

@@ -25,8 +25,7 @@ import consulo.language.Language;
 import consulo.language.psi.PsiComment;
 import consulo.language.ast.IElementType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -94,7 +93,6 @@ public class PythonCommenter implements CodeDocumentationAwareCommenter, Indente
     return true;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

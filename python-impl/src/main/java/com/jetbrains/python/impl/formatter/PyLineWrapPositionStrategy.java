@@ -31,8 +31,7 @@ import consulo.project.Project;
 import consulo.util.lang.CharArrayUtil;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -57,7 +56,7 @@ public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy 
   }
 
   @Override
-  protected boolean canUseOffset(@Nonnull Document document, int offset, boolean virtual) {
+  protected boolean canUseOffset(Document document, int offset, boolean virtual) {
     if (virtual) {
       return true;
     }
@@ -75,7 +74,7 @@ public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy 
   }
 
   @Override
-  public int calculateWrapPosition(@Nonnull Document document,
+  public int calculateWrapPosition(Document document,
                                    @Nullable Project project,
                                    int startOffset,
                                    int endOffset,
@@ -107,7 +106,6 @@ public class PyLineWrapPositionStrategy extends GenericLineWrapPositionStrategy 
     return wrapPosition;
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

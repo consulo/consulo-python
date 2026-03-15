@@ -37,7 +37,6 @@ import consulo.project.Project;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -67,7 +66,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	}
 
 	@Override
-	public void processLine(@Nonnull String text)
+	public void processLine(String text)
 	{
 		executeMultiLine(text);
 	}
@@ -85,7 +84,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 		return PsiTreeUtil.findChildOfAnyType(pyFile, PyStatementList.class) == null && pyFile.getStatements().size() < 2;
 	}
 
-	private void sendLineToConsole(@Nonnull ConsoleCommunication.ConsoleCodeFragment code)
+	private void sendLineToConsole(ConsoleCommunication.ConsoleCodeFragment code)
 	{
 		ConsoleCommunication consoleComm = this.consoleCommunication;
 		if(!consoleCommunication.isWaitingForInput())
@@ -219,7 +218,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 	}
 
 	@Override
-	public void runExecuteAction(@Nonnull LanguageConsoleView console)
+	public void runExecuteAction(LanguageConsoleView console)
 	{
 		if(isEnabled())
 		{
@@ -272,7 +271,7 @@ public class PydevConsoleExecuteActionHandler extends ProcessBackedConsoleExecut
 		super.runExecuteAction(console);
 	}
 
-	private static boolean shouldCopyToHistory(@Nonnull LanguageConsoleView console)
+	private static boolean shouldCopyToHistory(LanguageConsoleView console)
 	{
 		return !PyConsoleUtil.isPagingPrompt(console.getPrompt());
 	}

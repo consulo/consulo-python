@@ -22,7 +22,6 @@ import consulo.fileEditor.structureView.tree.TreeElement;
 
 import consulo.ide.localize.IdeLocalize;
 import consulo.platform.base.icon.PlatformIconGroup;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author vlan
@@ -40,7 +39,6 @@ public class PyFieldsFilter implements Filter {
         return !(treeNode instanceof PyStructureViewElement sve && sve.isField());
     }
 
-    @Nonnull
     @Override
     public String getName() {
         return ID;
@@ -51,7 +49,6 @@ public class PyFieldsFilter implements Filter {
         return getName();
     }
 
-    @Nonnull
     @Override
     public ActionPresentation getPresentation() {
         return new ActionPresentationData(IdeLocalize.actionStructureviewShowFields().get(), null, PlatformIconGroup.nodesField());

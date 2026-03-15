@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.ide.ServiceManager;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
@@ -47,7 +46,6 @@ public class TypeEvalContext
 		}
 	}
 
-	@Nonnull
 	private final TypeEvalConstraints myConstraints;
 
 	private List<String> myTrace;
@@ -93,7 +91,7 @@ public class TypeEvalContext
 		return myConstraints.myAllowDataFlow || element.getContainingFile() == myConstraints.myOrigin;
 	}
 
-	public boolean allowCallContext(@Nonnull PsiElement element)
+	public boolean allowCallContext(PsiElement element)
 	{
 		return myConstraints.myAllowCallContext && element.getContainingFile() == myConstraints.myOrigin;
 	}
@@ -104,7 +102,7 @@ public class TypeEvalContext
 	 * It is as detailed as {@link TypeEvalContext#userInitiated(Project, PsiFile)}, but allows inferring types based on the context in which
 	 * the analyzed code was called or may be called. Since this is basically guesswork, the results should be used only for code completion.
 	 */
-	public static TypeEvalContext codeCompletion(@Nonnull Project project, @Nullable PsiFile origin)
+	public static TypeEvalContext codeCompletion(Project project, @Nullable PsiFile origin)
 	{
 		return getContextFromCache(project, new TypeEvalContext(true, true, true, origin));
 	}
@@ -116,7 +114,7 @@ public class TypeEvalContext
 	 * <p>
 	 * For code completion see {@link TypeEvalContext#codeCompletion(Project, PsiFile)}.
 	 */
-	public static TypeEvalContext userInitiated(@Nonnull Project project, @Nullable PsiFile origin)
+	public static TypeEvalContext userInitiated(Project project, @Nullable PsiFile origin)
 	{
 		return getContextFromCache(project, new TypeEvalContext(true, true, false, origin));
 	}
@@ -127,7 +125,7 @@ public class TypeEvalContext
 	 * <p>
 	 * Inspections should not create a new type evaluation context. They should re-use the context of the inspection session.
 	 */
-	public static TypeEvalContext codeAnalysis(@Nonnull Project project, @Nullable PsiFile origin)
+	public static TypeEvalContext codeAnalysis(Project project, @Nullable PsiFile origin)
 	{
 		return getContextFromCache(project, new TypeEvalContext(false, false, false, origin));
 	}
@@ -154,7 +152,7 @@ public class TypeEvalContext
 	 * <p>
 	 * Should be used only when normal code insight context is not enough for getting good results.
 	 */
-	public static TypeEvalContext deepCodeInsight(@Nonnull Project project)
+	public static TypeEvalContext deepCodeInsight(Project project)
 	{
 		return getContextFromCache(project, new TypeEvalContext(false, true, false, null));
 	}
@@ -167,8 +165,7 @@ public class TypeEvalContext
 	 * @return context to use
 	 * @see TypeEvalContextCache#getContext(TypeEvalContext)
 	 */
-	@Nonnull
-	private static TypeEvalContext getContextFromCache(@Nonnull Project project, @Nonnull TypeEvalContext context)
+	private static TypeEvalContext getContextFromCache(Project project, TypeEvalContext context)
 	{
 		return ServiceManager.getService(project, TypeEvalContextCache.class).getContext(context);
 	}
@@ -217,7 +214,7 @@ public class TypeEvalContext
 	}
 
 	@Nullable
-	public PyType getType(@Nonnull PyTypedElement element)
+	public PyType getType(PyTypedElement element)
 	{
 		Set<PyTypedElement> evaluating = myEvaluating.get();
 		if(evaluating.contains(element))
@@ -251,7 +248,7 @@ public class TypeEvalContext
 	}
 
 	@Nullable
-	public PyType getReturnType(@Nonnull PyCallable callable)
+	public PyType getReturnType(PyCallable callable)
 	{
 		Set<PyCallable> evaluating = myEvaluatingReturn.get();
 		if(evaluating.contains(callable))
@@ -284,7 +281,7 @@ public class TypeEvalContext
 		}
 	}
 
-	private static void assertValid(@Nullable PyType result, @Nonnull PyTypedElement element)
+	private static void assertValid(@Nullable PyType result, PyTypedElement element)
 	{
 		if(result != null)
 		{
@@ -292,7 +289,7 @@ public class TypeEvalContext
 		}
 	}
 
-	public boolean maySwitchToAST(@Nonnull PsiElement element)
+	public boolean maySwitchToAST(PsiElement element)
 	{
 		return myConstraints.myAllowStubToAST || myConstraints.myOrigin == element.getContainingFile();
 	}
@@ -306,7 +303,6 @@ public class TypeEvalContext
 	/**
 	 * @return context constraints (see {@link com.jetbrains.python.psi.types.TypeEvalConstraints}
 	 */
-	@Nonnull
 	TypeEvalConstraints getConstraints()
 	{
 		return myConstraints;

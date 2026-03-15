@@ -20,7 +20,6 @@ import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -34,6 +33,5 @@ public interface PyReferenceResolveProvider
 	/**
 	 * Allows to provide a custom resolve result for qualified expression
 	 */
-	@Nonnull
-	List<RatedResolveResult> resolveName(@Nonnull PyQualifiedExpression element);
+	List<RatedResolveResult> resolveName(PyQualifiedExpression element);
 }

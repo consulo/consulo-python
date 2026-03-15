@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.refactoring.classes.pullUp;
 import java.util.Collection;
 import java.util.Collections;
 
-import jakarta.annotation.Nonnull;
 import com.google.common.base.Preconditions;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
 import consulo.project.Project;
@@ -37,7 +36,6 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersBa
  */
 class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullUpView, PyPullUpInfoModel> implements PyPullUpPresenter
 {
-	@Nonnull
 	private final Collection<PyClass> myParents;
 
 	/**
@@ -45,7 +43,7 @@ class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullU
 	 * @param infoStorage member storage
 	 * @param clazz       class to refactor
 	 */
-	PyPullUpPresenterImpl(@Nonnull PyPullUpView view, @Nonnull PyMemberInfoStorage infoStorage, @Nonnull PyClass clazz)
+	PyPullUpPresenterImpl(PyPullUpView view, PyMemberInfoStorage infoStorage, PyClass clazz)
 	{
 		super(view, clazz, infoStorage, new PyPullUpInfoModel(clazz, view));
 		myParents = PyAncestorsUtils.getAncestorsUnderUserControl(clazz);
@@ -90,7 +88,6 @@ class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullU
 		super.okClicked();
 	}
 
-	@Nonnull
 	@Override
 	public BaseRefactoringProcessor createProcessor()
 	{
@@ -132,7 +129,6 @@ class PyPullUpPresenterImpl extends MembersBasedPresenterWithPreviewImpl<PyPullU
 		myModel.setSuperClass(myView.getSelectedParent());
 	}
 
-	@Nonnull
 	@Override
 	protected Iterable<? extends PyClass> getDestClassesToCheckConflicts()
 	{

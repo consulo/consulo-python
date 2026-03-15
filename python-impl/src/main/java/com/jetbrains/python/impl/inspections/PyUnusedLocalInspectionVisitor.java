@@ -53,8 +53,7 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.undoRedo.CommandProcessor;
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -71,8 +70,8 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor {
     private final HashSet<PsiElement> myUsedElements;
 
     public PyUnusedLocalInspectionVisitor(
-        @Nonnull ProblemsHolder holder,
-        @Nonnull LocalInspectionToolSession session,
+        ProblemsHolder holder,
+        LocalInspectionToolSession session,
         boolean ignoreTupleUnpacking,
         boolean ignoreLambdaParameters,
         boolean ignoreRangeIterationVariables
@@ -191,7 +190,7 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor {
         }
     }
 
-    private static boolean parameterInMethodWithFixedSignature(@Nonnull ScopeOwner owner, @Nonnull PsiElement element) {
+    private static boolean parameterInMethodWithFixedSignature(ScopeOwner owner, PsiElement element) {
         if (owner instanceof PyFunction && element instanceof PyParameter) {
             PyFunction function = (PyFunction) owner;
             String functionName = function.getName();
@@ -237,9 +236,9 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor {
     }
 
     private void analyzeReadsInScope(
-        @Nonnull String name,
-        @Nonnull ScopeOwner owner,
-        @Nonnull Instruction[] instructions,
+        String name,
+        ScopeOwner owner,
+        Instruction[] instructions,
         int startInstruction,
         @Nullable PsiElement scopeAnchor
     ) {
@@ -483,18 +482,17 @@ public class PyUnusedLocalInspectionVisitor extends PyInspectionVisitor {
         return false;
     }
 
-    private void registerWarning(@Nonnull PsiElement element, String msg, LocalQuickFix... quickfixes) {
+    private void registerWarning(PsiElement element, String msg, LocalQuickFix... quickfixes) {
         registerProblem(element, msg, ProblemHighlightType.LIKE_UNUSED_SYMBOL, null, quickfixes);
     }
 
     private static class ReplaceWithWildCard implements LocalQuickFix {
-        @Nonnull
         @Override
         public LocalizeValue getName() {
             return PyLocalize.inspUnusedLocalsReplaceWithWildcard();
         }
 
-        public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+        public void applyFix(Project project, ProblemDescriptor descriptor) {
             if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.getPsiElement())) {
                 return;
             }

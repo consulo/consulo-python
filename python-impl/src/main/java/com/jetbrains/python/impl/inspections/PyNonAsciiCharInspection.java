@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -40,24 +39,21 @@ import java.nio.charset.CharsetEncoder;
  */
 @ExtensionImpl
 public class PyNonAsciiCharInspection extends PyInspection {
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyNonAsciiCharInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameNonAscii();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session, (PyNonAsciiCharInspectionState) state);
@@ -66,7 +62,7 @@ public class PyNonAsciiCharInspection extends PyInspection {
     private class Visitor extends PyInspectionVisitor {
         private final PyNonAsciiCharInspectionState myState;
 
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, PyNonAsciiCharInspectionState state) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session, PyNonAsciiCharInspectionState state) {
             super(holder, session);
             myState = state;
         }

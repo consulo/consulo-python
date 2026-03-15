@@ -34,8 +34,7 @@ import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.intellij.lang.regexp.DefaultRegExpPropertiesProvider;
 import org.intellij.lang.regexp.RegExpLanguageHost;
 import org.intellij.lang.regexp.psi.RegExpChar;
@@ -102,7 +101,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
         myDecodedFragments = null;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public List<TextRange> getStringValueTextRanges() {
@@ -147,7 +145,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
         return getContainingFile() instanceof PyFile pyFile && pyFile.hasImportFromFuture(FutureFeature.UNICODE_LITERALS);
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public List<Pair<TextRange, String>> getDecodedFragments() {
@@ -176,8 +173,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
         return stringNodes.size() == 1 && stringNodes.get(0).getElementType() == PyTokenTypes.DOCSTRING;
     }
 
-    @Nonnull
-    private static List<Pair<TextRange, String>> getDecodedFragments(@Nonnull String encoded, int offset, boolean raw, boolean unicode) {
+    private static List<Pair<TextRange, String>> getDecodedFragments(String encoded, int offset, boolean raw, boolean unicode) {
         List<Pair<TextRange, String>> result = new ArrayList<>();
         Matcher escMatcher = PATTERN_ESCAPE.matcher(encoded);
         int index = 0;
@@ -240,11 +236,10 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     }
 
     @Nullable
-    private static String escapeRegexGroup(@Nonnull Matcher matcher, EscapeRegexGroup group) {
+    private static String escapeRegexGroup(Matcher matcher, EscapeRegexGroup group) {
         return matcher.group(group.ordinal());
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public List<ASTNode> getStringNodes() {
@@ -292,7 +287,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 
     @Override
     @RequiredReadAction
-    public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
         List<ASTNode> nodes = getStringNodes();
         if (nodes.size() > 0) {
             String text = getStringNodes().get(0).getText();
@@ -315,7 +310,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     }
 
     @Override
-    @Nonnull
     public PsiReference[] getReferences() {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
     }
@@ -330,7 +324,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
                 return getStringValue();
             }
 
-            @Nonnull
             @Override
             public String getLocationString() {
                 return "(" + PyElementPresentation.getPackageForFile(getContainingFile()) + ")";
@@ -345,12 +338,11 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     }
 
     @Override
-    public PsiLanguageInjectionHost updateText(@Nonnull String text) {
+    public PsiLanguageInjectionHost updateText(String text) {
         return ElementManipulators.handleContentChange(this, text);
     }
 
     @Override
-    @Nonnull
     public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
         return new StringLiteralTextEscaper(this);
     }
@@ -358,14 +350,14 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     private static class StringLiteralTextEscaper extends LiteralTextEscaper<PyStringLiteralExpression> {
         private final PyStringLiteralExpressionImpl myHost;
 
-        protected StringLiteralTextEscaper(@Nonnull PyStringLiteralExpressionImpl host) {
+        protected StringLiteralTextEscaper(PyStringLiteralExpressionImpl host) {
             super(host);
             myHost = host;
         }
 
         @Override
         @RequiredReadAction
-        public boolean decode(@Nonnull TextRange rangeInsideHost, @Nonnull StringBuilder outChars) {
+        public boolean decode(TextRange rangeInsideHost, StringBuilder outChars) {
             for (Pair<TextRange, String> fragment : myHost.getDecodedFragments()) {
                 TextRange encodedTextRange = fragment.getFirst();
                 TextRange intersection = encodedTextRange.intersection(rangeInsideHost);
@@ -388,7 +380,7 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 
         @Override
         @RequiredReadAction
-        public int getOffsetInHost(int offsetInDecoded, @Nonnull TextRange rangeInsideHost) {
+        public int getOffsetInHost(int offsetInDecoded, TextRange rangeInsideHost) {
             int offset = 0;
             int endOffset = -1;
             for (Pair<TextRange, String> fragment : myHost.getDecodedFragments()) {
@@ -437,7 +429,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
         return createLiteralTextEscaper().getOffsetInHost(valueOffset, getStringValueTextRange());
     }
 
-    @Nonnull
     @Override
     public Class getHostClass() {
         return getClass();
@@ -497,11 +488,10 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     }
 
     @Override
-    public boolean isValidCategory(@Nonnull String category) {
+    public boolean isValidCategory(String category) {
         return myPropertiesProvider.isValidCategory(category);
     }
 
-    @Nonnull
     @Override
     public String[][] getAllKnownProperties() {
         return myPropertiesProvider.getAllKnownProperties();
@@ -513,7 +503,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
         return myPropertiesProvider.getPropertyDescription(name);
     }
 
-    @Nonnull
     @Override
     public String[][] getKnownCharacterClasses() {
         return myPropertiesProvider.getKnownCharacterClasses();

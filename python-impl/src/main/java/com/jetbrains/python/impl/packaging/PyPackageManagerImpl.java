@@ -53,8 +53,7 @@ import consulo.virtualFileSystem.event.BulkFileListener;
 import consulo.virtualFileSystem.event.VFileEvent;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -91,7 +90,6 @@ public class PyPackageManagerImpl extends PyPackageManager
 	private volatile List<PyPackage> myPackagesCache = null;
 	private final AtomicBoolean myUpdatingCache = new AtomicBoolean(false);
 
-	@Nonnull
 	final private Sdk mySdk;
 
 	@Override
@@ -150,7 +148,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 		}
 	}
 
-	protected void installManagement(@Nonnull String name) throws ExecutionException
+	protected void installManagement(String name) throws ExecutionException
 	{
 		String dirName = extractHelper(name + ".tar.gz");
 		try
@@ -164,8 +162,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 		}
 	}
 
-	@Nonnull
-	private String extractHelper(@Nonnull String name) throws ExecutionException
+	private String extractHelper(String name) throws ExecutionException
 	{
 		String helperPath = getHelperPath(name);
 		ArrayList<String> args = Lists.newArrayList(UNTAR, helperPath);
@@ -178,7 +175,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 		return dirName;
 	}
 
-	PyPackageManagerImpl(@Nonnull Sdk sdk)
+	PyPackageManagerImpl(Sdk sdk)
 	{
 		mySdk = sdk;
 		subscribeToLocalChanges();
@@ -191,21 +188,20 @@ public class PyPackageManagerImpl extends PyPackageManager
 		connection.subscribe(BulkFileListener.class, new MySdkRootWatcher());
 	}
 
-	@Nonnull
 	public Sdk getSdk()
 	{
 		return mySdk;
 	}
 
 	@Override
-	public void install(@Nonnull String requirementString) throws ExecutionException
+	public void install(String requirementString) throws ExecutionException
 	{
 		installManagement();
 		install(Collections.singletonList(PyRequirement.fromLine(requirementString)), Collections.emptyList());
 	}
 
 	@Override
-	public void install(@Nonnull List<PyRequirement> requirements, @Nonnull List<String> extraArgs) throws ExecutionException
+	public void install(List<PyRequirement> requirements, List<String> extraArgs) throws ExecutionException
 	{
 		List<String> args = new ArrayList<>();
 		args.add(INSTALL);
@@ -266,7 +262,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 	}
 
 	@Override
-	public void uninstall(@Nonnull List<PyPackage> packages) throws ExecutionException
+	public void uninstall(List<PyPackage> packages) throws ExecutionException
 	{
 		List<String> args = new ArrayList<>();
 		try
@@ -307,7 +303,6 @@ public class PyPackageManagerImpl extends PyPackageManager
 		return packages != null ? Collections.unmodifiableList(packages) : null;
 	}
 
-	@Nonnull
 	protected List<PyPackage> collectPackages() throws ExecutionException
 	{
 		String output;
@@ -335,8 +330,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 	}
 
 	@Override
-	@Nonnull
-	public Set<PyPackage> getDependents(@Nonnull PyPackage pkg) throws ExecutionException
+	public Set<PyPackage> getDependents(PyPackage pkg) throws ExecutionException
 	{
 		List<PyPackage> packages = refreshAndGetPackages(false);
 		Set<PyPackage> dependents = new HashSet<>();
@@ -355,8 +349,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 	}
 
 	@Override
-	@Nonnull
-	public String createVirtualEnv(@Nonnull String destinationDir, boolean useGlobalSite) throws ExecutionException
+	public String createVirtualEnv(String destinationDir, boolean useGlobalSite) throws ExecutionException
 	{
 		List<String> args = new ArrayList<>();
 		Sdk sdk = getSdk();
@@ -417,7 +410,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 
 	@Override
 	@Nullable
-	public List<PyRequirement> getRequirements(@Nonnull Module module)
+	public List<PyRequirement> getRequirements(Module module)
 	{
 		return Optional.ofNullable(PyPackageUtil.getRequirementsFromTxt(module)).orElseGet(() -> PyPackageUtil.findSetupPyRequires(module));
 	}
@@ -426,7 +419,6 @@ public class PyPackageManagerImpl extends PyPackageManager
 	//   public List<PyPackage> refreshAndGetPackagesIfNotInProgress(boolean alwaysRefresh) throws ExecutionException
 
 	@Override
-	@Nonnull
 	public List<PyPackage> refreshAndGetPackages(boolean alwaysRefresh) throws ExecutionException
 	{
 		List<PyPackage> currentPackages = myPackagesCache;
@@ -473,9 +465,8 @@ public class PyPackageManagerImpl extends PyPackageManager
 		return null;
 	}
 
-	@Nonnull
-	private String getHelperResult(@Nonnull String helper,
-								   @Nonnull List<String> args,
+	private String getHelperResult(String helper,
+								   List<String> args,
 								   boolean askForSudo,
 								   boolean showProgress,
 								   @Nullable String parentDir) throws ExecutionException
@@ -494,9 +485,8 @@ public class PyPackageManagerImpl extends PyPackageManager
 		return PythonHelpersLocator.getHelperPath(helper);
 	}
 
-	@Nonnull
-	private String getPythonProcessResult(@Nonnull String path,
-										  @Nonnull List<String> args,
+	private String getPythonProcessResult(String path,
+										  List<String> args,
 										  boolean askForSudo,
 										  boolean showProgress,
 										  @Nullable String workingDir) throws ExecutionException
@@ -514,9 +504,8 @@ public class PyPackageManagerImpl extends PyPackageManager
 		return output.getStdout();
 	}
 
-	@Nonnull
-	protected ProcessOutput getPythonProcessOutput(@Nonnull String helperPath,
-												   @Nonnull List<String> args,
+	protected ProcessOutput getPythonProcessOutput(String helperPath,
+												   List<String> args,
 												   boolean askForSudo,
 												   boolean showProgress,
 												   @Nullable String workingDir) throws ExecutionException
@@ -575,7 +564,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 						}
 					}
 
-					private boolean isMeaningfulOutput(@Nonnull String trimmed)
+					private boolean isMeaningfulOutput(String trimmed)
 					{
 						return trimmed.length() > 3;
 					}
@@ -606,8 +595,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 		}
 	}
 
-	@Nonnull
-	private static List<PyPackage> parsePackagingToolOutput(@Nonnull String s) throws ExecutionException
+	private static List<PyPackage> parsePackagingToolOutput(String s) throws ExecutionException
 	{
 		String[] lines = StringUtil.splitByLines(s);
 		List<PyPackage> packages = new ArrayList<>();
@@ -639,7 +627,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 	private class MySdkRootWatcher extends BulkFileListener.Adapter
 	{
 		@Override
-		public void after(@Nonnull List<? extends VFileEvent> events)
+		public void after(List<? extends VFileEvent> events)
 		{
 			Sdk sdk = getSdk();
 			VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());

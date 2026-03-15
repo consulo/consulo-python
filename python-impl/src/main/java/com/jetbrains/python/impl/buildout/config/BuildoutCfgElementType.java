@@ -16,14 +16,12 @@
 
 package com.jetbrains.python.impl.buildout.config;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.IElementType;
-import org.jetbrains.annotations.NonNls;
 
 
 public class BuildoutCfgElementType extends IElementType {
-    public BuildoutCfgElementType(@Nonnull @NonNls String s) {
+    public BuildoutCfgElementType(String s) {
         super(s, BuildoutCfgLanguage.INSTANCE);
     }
 }

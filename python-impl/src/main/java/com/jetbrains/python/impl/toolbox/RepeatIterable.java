@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.toolbox;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,7 +33,7 @@ public class RepeatIterable<T> implements Iterable<T> {
    * Create an iterator that repeats the contents of given list.
    * @param master the list to repeat
    */
-  public RepeatIterable(@Nonnull List<T> master) {
+  public RepeatIterable(List<T> master) {
     this.master = master;
   }
 
@@ -42,7 +41,7 @@ public class RepeatIterable<T> implements Iterable<T> {
    * Create an iterator that repeats given value.
    * @param single the value to repeat
    */
-  public RepeatIterable(@Nonnull T single) {
+  public RepeatIterable(T single) {
     master = new ArrayList<T>(1);
     master.add(single);
   }

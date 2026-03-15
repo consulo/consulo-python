@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.psi.impl.stubs;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.psi.stub.IStubElementType;
 import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
@@ -36,7 +35,6 @@ public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
 	@Nullable
 	private final String myName;
 
-	@Nonnull
 	private final Map<QualifiedName, QualifiedName> mySuperClasses;
 
 	@Nullable
@@ -50,11 +48,11 @@ public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
 
 	public PyClassStubImpl(@Nullable String name,
 			@Nullable StubElement parentStub,
-			@Nonnull Map<QualifiedName, QualifiedName> superClasses,
+			Map<QualifiedName, QualifiedName> superClasses,
 			@Nullable QualifiedName metaClass,
 			@Nullable List<String> slots,
 			@Nullable String docString,
-			@Nonnull IStubElementType stubElementType)
+			IStubElementType stubElementType)
 	{
 		super(parentStub, stubElementType);
 		myName = name;
@@ -70,7 +68,6 @@ public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
 		return myName;
 	}
 
-	@Nonnull
 	public Map<QualifiedName, QualifiedName> getSuperClasses()
 	{
 		return mySuperClasses;

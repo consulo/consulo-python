@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.psi.types;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -27,8 +26,7 @@ import java.util.List;
  */
 public interface PyCollectionType extends PyType
 {
-	@Nonnull
-	List<PyType> getElementTypes(@Nonnull TypeEvalContext context);
+	List<PyType> getElementTypes(TypeEvalContext context);
 
 	@Nullable
 	PyType getIteratedItemType();

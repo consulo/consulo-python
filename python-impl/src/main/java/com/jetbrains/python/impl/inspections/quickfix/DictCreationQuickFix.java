@@ -27,7 +27,6 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Map;
@@ -39,18 +38,17 @@ import java.util.Map;
 public class DictCreationQuickFix implements LocalQuickFix {
     private final PyAssignmentStatement myStatement;
 
-    public DictCreationQuickFix(@Nonnull PyAssignmentStatement statement) {
+    public DictCreationQuickFix(PyAssignmentStatement statement) {
         myStatement = statement;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixDictCreation();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         Map<String, String> statementsMap = Maps.newLinkedHashMap();
         PyExpression assignedValue = myStatement.getAssignedValue();

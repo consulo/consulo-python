@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.util.lang.function.Condition;
 import consulo.language.psi.PsiElement;
@@ -39,20 +38,19 @@ import com.jetbrains.python.psi.PyReferenceExpression;
 class DependencyVisitor extends PyRecursiveElementVisitor
 {
 
-	@Nonnull
 	private final PyElement myElementToFind;
 	private boolean myDependencyFound;
 
 	/**
 	 * @param elementToFind what to find
 	 */
-	DependencyVisitor(@Nonnull PyElement elementToFind)
+	DependencyVisitor(PyElement elementToFind)
 	{
 		myElementToFind = elementToFind;
 	}
 
 	@Override
-	public void visitPyCallExpression(@Nonnull PyCallExpression node)
+	public void visitPyCallExpression(PyCallExpression node)
 	{
 		PyExpression callee = node.getCallee();
 		if(callee != null)

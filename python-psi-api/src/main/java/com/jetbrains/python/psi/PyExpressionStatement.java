@@ -16,12 +16,10 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public interface PyExpressionStatement extends PyStatement {
-  @Nonnull
   PyExpression getExpression();
 }

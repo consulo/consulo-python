@@ -39,7 +39,6 @@ import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -63,13 +62,11 @@ public class PyExceptionBreakpointType
         super("python-exception", "Python Exception Breakpoint");
     }
 
-    @Nonnull
     @Override
     public Image getEnabledIcon() {
         return ExecutionDebugIconGroup.breakpointBreakpointexception();
     }
 
-    @Nonnull
     @Override
     public Image getDisabledIcon() {
         return ExecutionDebugIconGroup.breakpointBreakpointexceptiondisabled();
@@ -124,7 +121,7 @@ public class PyExceptionBreakpointType
         private final HashMap<Integer, Pair<WeakReference<PyClass>, Boolean>> processedElements = Maps.newHashMap();
 
         @Override
-        public boolean test(@Nonnull final PyClass pyClass) {
+        public boolean test(final PyClass pyClass) {
             VirtualFile virtualFile = pyClass.getContainingFile().getVirtualFile();
             if (virtualFile == null) {
                 return false;
@@ -168,7 +165,7 @@ public class PyExceptionBreakpointType
     }
 
     @Override
-    public XBreakpoint<PyExceptionBreakpointProperties> createDefaultBreakpoint(@Nonnull XBreakpointCreator<PyExceptionBreakpointProperties> creator) {
+    public XBreakpoint<PyExceptionBreakpointProperties> createDefaultBreakpoint(XBreakpointCreator<PyExceptionBreakpointProperties> creator) {
         XBreakpoint<PyExceptionBreakpointProperties> breakpoint = creator.createBreakpoint(createDefaultBreakpointProperties());
         breakpoint.setEnabled(true);
         return breakpoint;
@@ -194,7 +191,6 @@ public class PyExceptionBreakpointType
         private JRadioButton myAlwaysRadio;
         private JRadioButton myOnlyOnFirstRadio;
 
-        @Nonnull
         @Override
         public JComponent getComponent() {
             myNotifyOnTerminateCheckBox = new JCheckBox("On termination");
@@ -263,7 +259,7 @@ public class PyExceptionBreakpointType
         }
 
         @Override
-        public void saveTo(@Nonnull XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
+        public void saveTo(XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
             breakpoint.getProperties().setNotifyOnTerminate(myNotifyOnTerminateCheckBox.isSelected());
 
             breakpoint.getProperties().setNotifyAlways(myNotifyOnRaiseCheckBox.isSelected() && myAlwaysRadio.isSelected());
@@ -271,7 +267,7 @@ public class PyExceptionBreakpointType
         }
 
         @Override
-        public void loadFrom(@Nonnull XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
+        public void loadFrom(XBreakpoint<PyExceptionBreakpointProperties> breakpoint) {
             myNotifyOnTerminateCheckBox.setSelected(breakpoint.getProperties().isNotifyOnTerminate());
 
             boolean always = breakpoint.getProperties().isNotifyAlways();

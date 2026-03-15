@@ -39,7 +39,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -57,13 +56,11 @@ public class PythonParserDefinition implements ParserDefinition {
     myStringLiteralTokens = TokenSet.orSet(PyTokenTypes.STRING_NODES, TokenSet.create(PyElementTypes.STRING_LITERAL_EXPRESSION));
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;
   }
 
-  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new PythonIndentingLexer();
   }
@@ -72,28 +69,23 @@ public class PythonParserDefinition implements ParserDefinition {
     return PyFileElementType.INSTANCE;
   }
 
-  @Nonnull
   public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return myWhitespaceTokens;
   }
 
-  @Nonnull
   public TokenSet getCommentTokens(LanguageVersion languageVersion) {
     return myCommentTokens;
   }
 
-  @Nonnull
   public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return myStringLiteralTokens;
   }
 
-  @Nonnull
   public PsiParser createParser(LanguageVersion languageVersion) {
     return new PyParser();
   }
 
-  @Nonnull
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     IElementType type = node.getElementType();
     if (type instanceof PyElementType) {
       PyElementType pyElType = (PyElementType)type;

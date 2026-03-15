@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.classMember.AbstractUsesDependencyMemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
@@ -27,7 +26,7 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo
  */
 class PyExtractSuperclassInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement, PyClass, PyMemberInfo<PyElement>>
 {
-	PyExtractSuperclassInfoModel(@Nonnull PyClass clazz)
+	PyExtractSuperclassInfoModel(PyClass clazz)
 	{
 		super(clazz, null, false);
 	}
@@ -39,13 +38,13 @@ class PyExtractSuperclassInfoModel extends AbstractUsesDependencyMemberInfoModel
 	}
 
 	@Override
-	public int checkForProblems(@Nonnull PyMemberInfo<PyElement> member)
+	public int checkForProblems(PyMemberInfo<PyElement> member)
 	{
 		return member.isChecked() ? OK : super.checkForProblems(member);
 	}
 
 	@Override
-	protected int doCheck(@Nonnull PyMemberInfo<PyElement> memberInfo, int problem)
+	protected int doCheck(PyMemberInfo<PyElement> memberInfo, int problem)
 	{
 		return problem;
 	}

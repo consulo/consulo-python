@@ -24,7 +24,6 @@ import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -46,19 +45,19 @@ public abstract class PyInspectionExtension {
     return null;
   }
 
-  public boolean ignoreMethodParameters(@Nonnull PyFunction function) {
+  public boolean ignoreMethodParameters(PyFunction function) {
     return false;
   }
 
-  public boolean ignorePackageNameInRequirements(@Nonnull PyQualifiedExpression importedExpression) {
+  public boolean ignorePackageNameInRequirements(PyQualifiedExpression importedExpression) {
     return false;
   }
 
-  public boolean ignoreUnresolvedReference(@Nonnull PyElement node, @Nonnull PsiReference reference) {
+  public boolean ignoreUnresolvedReference(PyElement node, PsiReference reference) {
     return false;
   }
 
-  public boolean ignoreUnresolvedMember(@Nonnull PyType type, @Nonnull String name) {
+  public boolean ignoreUnresolvedMember(PyType type, String name) {
     return false;
   }
 
@@ -69,7 +68,7 @@ public abstract class PyInspectionExtension {
    * @param context    type eval to be used
    * @return true if ignore
    */
-  public boolean ignoreProtectedSymbol(@Nonnull PyReferenceExpression expression, @Nonnull TypeEvalContext context) {
+  public boolean ignoreProtectedSymbol(PyReferenceExpression expression, TypeEvalContext context) {
     return false;
   }
 }

@@ -24,8 +24,7 @@ import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ServiceAPI(ComponentScope.PROJECT)
 public abstract class PyElementGenerator {
@@ -53,9 +52,9 @@ public abstract class PyElementGenerator {
                                                                           String unescaped,
                                                                           boolean preferUTF8);
 
-  public abstract PyStringLiteralExpression createStringLiteralFromString(@Nonnull String unescaped);
+  public abstract PyStringLiteralExpression createStringLiteralFromString(String unescaped);
 
-  public abstract PyStringLiteralExpression createStringLiteral(@Nonnull PyStringLiteralExpression oldElement, @Nonnull String unescaped);
+  public abstract PyStringLiteralExpression createStringLiteral(PyStringLiteralExpression oldElement, String unescaped);
 
   public abstract PyListLiteralExpression createListLiteral();
 
@@ -83,16 +82,14 @@ public abstract class PyElementGenerator {
    * @param toInsert  what to insert
    * @return newly inserted element
    */
-  @Nonnull
-  public abstract PsiElement insertItemIntoListRemoveRedundantCommas(@Nonnull PyElement list,
+  public abstract PsiElement insertItemIntoListRemoveRedundantCommas(PyElement list,
                                                                      @Nullable PyExpression afterThis,
-                                                                     @Nonnull PyExpression toInsert);
+                                                                     PyExpression toInsert);
 
   public abstract PsiElement insertItemIntoList(PyElement list,
                                                 @Nullable PyExpression afterThis,
                                                 PyExpression toInsert) throws IncorrectOperationException;
 
-  @Nonnull
   public abstract PyCallExpression createCallExpression(LanguageLevel langLevel, String functionName);
 
   public abstract PyImportElement createImportElement(LanguageLevel languageLevel, String name);
@@ -102,10 +99,8 @@ public abstract class PyElementGenerator {
                                             String fieldName,
                                             AccessDirection accessDirection);
 
-  @Nonnull
   public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, String text);
 
-  @Nonnull
   public abstract <T> T createPhysicalFromText(LanguageLevel langLevel, Class<T> aClass, String text);
 
   /**
@@ -118,27 +113,24 @@ public abstract class PyElementGenerator {
    * @param path      a sequence of numbers, each telling which child to select at current tree level; 0 means first child, etc.
    * @return the newly created PSI element
    */
-  @Nonnull
   public abstract <T> T createFromText(LanguageLevel langLevel, Class<T> aClass, String text, int[] path);
 
-  public abstract PyNamedParameter createParameter(@Nonnull String name,
+  public abstract PyNamedParameter createParameter(String name,
                                                    @Nullable String defaultValue,
                                                    @Nullable String annotation,
-                                                   @Nonnull LanguageLevel level);
+                                                   LanguageLevel level);
 
-  public abstract PyNamedParameter createParameter(@Nonnull String name);
+  public abstract PyNamedParameter createParameter(String name);
 
   /**
    * @param text parameters list already in parentheses, e.g. {@code (foo, *args, **kwargs)}.
    */
-  @Nonnull
-  public abstract PyParameterList createParameterList(@Nonnull LanguageLevel languageLevel, @Nonnull String text);
+  public abstract PyParameterList createParameterList(LanguageLevel languageLevel, String text);
 
   /**
    * @param text argument list already in parentheses, e.g. {@code (1, 2, *xs)}.
    */
-  @Nonnull
-  public abstract PyArgumentList createArgumentList(@Nonnull LanguageLevel languageLevel, @Nonnull String text);
+  public abstract PyArgumentList createArgumentList(LanguageLevel languageLevel, String text);
 
   public abstract PyKeywordArgument createKeywordArgument(LanguageLevel languageLevel, String keyword, String value);
 
@@ -148,13 +140,11 @@ public abstract class PyElementGenerator {
 
   public abstract PyPassStatement createPassStatement();
 
-  @Nonnull
-  public abstract PyDecoratorList createDecoratorList(@Nonnull String... decoratorTexts);
+  public abstract PyDecoratorList createDecoratorList(String... decoratorTexts);
 
   /**
    * Creates new line whitespace
    */
-  @Nonnull
   public abstract PsiElement createNewLine();
 
   /**
@@ -166,10 +156,9 @@ public abstract class PyElementGenerator {
    * @param alias         optional alias for {@code as alias} part
    * @return created {@link com.jetbrains.python.psi.PyFromImportStatement}
    */
-  @Nonnull
-  public abstract PyFromImportStatement createFromImportStatement(@Nonnull LanguageLevel languageLevel,
-                                                                  @Nonnull String qualifier,
-                                                                  @Nonnull String name,
+  public abstract PyFromImportStatement createFromImportStatement(LanguageLevel languageLevel,
+                                                                  String qualifier,
+                                                                  String name,
                                                                   @Nullable String alias);
 
   /**
@@ -180,8 +169,7 @@ public abstract class PyElementGenerator {
    * @param alias         optional alias for {@code as alias} part
    * @return created {@link com.jetbrains.python.psi.PyImportStatement}
    */
-  @Nonnull
-  public abstract PyImportStatement createImportStatement(@Nonnull LanguageLevel languageLevel,
-                                                          @Nonnull String name,
+  public abstract PyImportStatement createImportStatement(LanguageLevel languageLevel,
+                                                          String name,
                                                           @Nullable String alias);
 }

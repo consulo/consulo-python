@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.documentation.docstrings;
 
-import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.impl.documentation.docstrings.SectionBasedDocString.Section;
 import com.jetbrains.python.toolbox.Substring;
@@ -25,24 +24,23 @@ import com.jetbrains.python.toolbox.Substring;
  */
 public class NumpyDocStringUpdater extends SectionBasedDocStringUpdater
 {
-	public NumpyDocStringUpdater(@Nonnull SectionBasedDocString docString, @Nonnull String minContentIndent)
+	public NumpyDocStringUpdater(SectionBasedDocString docString, String minContentIndent)
 	{
 		super(docString, minContentIndent);
 	}
 
 	@Override
-	protected void updateParamDeclarationWithType(@Nonnull Substring nameSubstring, @Nonnull String type)
+	protected void updateParamDeclarationWithType(Substring nameSubstring, String type)
 	{
 		insert(myOriginalDocString.getLine(nameSubstring.getEndLine()).trimRight().getEndOffset(), " : " + type);
 	}
 
 	@Override
-	protected int getSectionTitleLastLine(@Nonnull Section section)
+	protected int getSectionTitleLastLine(Section section)
 	{
 		return getSectionStartLine(section) + 1;
 	}
 
-	@Nonnull
 	@Override
 	protected SectionBasedDocStringBuilder createBuilder()
 	{

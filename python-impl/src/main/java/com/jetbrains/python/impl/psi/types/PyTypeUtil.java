@@ -22,8 +22,7 @@ import consulo.language.psi.PsiElement;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolder;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,11 +40,10 @@ public final class PyTypeUtil
 	/**
 	 * Returns members of certain type from {@link PyClassLikeType}.
 	 */
-	@Nonnull
-	public static <T extends PsiElement> List<T> getMembersOfType(@Nonnull PyClassLikeType type,
-			@Nonnull Class<T> expectedMemberType,
+	public static <T extends PsiElement> List<T> getMembersOfType(PyClassLikeType type,
+			Class<T> expectedMemberType,
 			boolean inherited,
-			@Nonnull TypeEvalContext context)
+			TypeEvalContext context)
 	{
 
 		List<T> result = new ArrayList<>();
@@ -71,7 +69,7 @@ public final class PyTypeUtil
 	 * @return data or null if not found
 	 */
 	@Nullable
-	public static <T> T findData(@Nonnull PyType type, @Nonnull Key<T> key)
+	public static <T> T findData(PyType type, Key<T> key)
 	{
 		if(type instanceof UserDataHolder)
 		{

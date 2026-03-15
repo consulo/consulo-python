@@ -21,8 +21,7 @@ import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class PyInjectionUtil {
    * Returns true if the element is the largest expression that represents a string literal, possibly with concatenation, parentheses,
    * or formatting.
    */
-  public static boolean isLargestStringLiteral(@Nonnull PsiElement element) {
+  public static boolean isLargestStringLiteral(PsiElement element) {
     PsiElement parent = element.getParent();
     return isStringLiteralPart(element) && (parent == null || !isStringLiteralPart(parent));
   }
@@ -47,11 +46,11 @@ public class PyInjectionUtil {
    * Registers language injections in the given registrar for the specified string literal element or its ancestor that contains
    * string concatenations or formatting.
    */
-  public static void registerStringLiteralInjection(@Nonnull PsiElement element, @Nonnull MultiHostRegistrar registrar) {
+  public static void registerStringLiteralInjection(PsiElement element, MultiHostRegistrar registrar) {
     processStringLiteral(element, registrar, "", "", Formatting.NONE);
   }
 
-  private static boolean isStringLiteralPart(@Nonnull PsiElement element) {
+  private static boolean isStringLiteralPart(PsiElement element) {
     if (element instanceof PyStringLiteralExpression) {
       return true;
     }
@@ -74,7 +73,7 @@ public class PyInjectionUtil {
   }
 
   @Nullable
-  private static PyExpression getFormatCallQualifier(@Nonnull PyCallExpression element) {
+  private static PyExpression getFormatCallQualifier(PyCallExpression element) {
     PyExpression callee = element.getCallee();
     if (callee instanceof PyQualifiedExpression) {
       PyQualifiedExpression qualifiedExpr = (PyQualifiedExpression)callee;
@@ -86,8 +85,8 @@ public class PyInjectionUtil {
     return null;
   }
 
-  private static void processStringLiteral(@Nonnull PsiElement element, @Nonnull MultiHostRegistrar registrar, @Nonnull String prefix,
-                                           @Nonnull String suffix, @Nonnull Formatting formatting) {
+  private static void processStringLiteral(PsiElement element, MultiHostRegistrar registrar, String prefix,
+                                           String suffix, Formatting formatting) {
     String missingValue = "missing";
     if (element instanceof PyStringLiteralExpression) {
       PyStringLiteralExpression expr = (PyStringLiteralExpression)element;

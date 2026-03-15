@@ -28,7 +28,6 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.search.PyOverridingMethodsSearch;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.toolbox.Maybe;
-import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -38,7 +37,7 @@ import java.util.Map;
 @ExtensionImpl(id = "pyFunc", order = "before pyVar")
 public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
   @Override
-  public boolean canProcessElement(@Nonnull PsiElement element) {
+  public boolean canProcessElement(PsiElement element) {
     return element instanceof PyFunction;
   }
 

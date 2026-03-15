@@ -28,8 +28,7 @@ import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,13 +54,12 @@ public class PythonStringUtil {
    *
    * @return string without heading and trailing pair of ' or "
    */
-  @Nonnull
-  public static String getStringValue(@Nonnull String s) {
+  public static String getStringValue(String s) {
     return getStringValueTextRange(s).substring(s);
   }
 
 
-  public static TextRange getStringValueTextRange(@Nonnull String s) {
+  public static TextRange getStringValueTextRange(String s) {
     Pair<String, String> quotes = getQuotes(s);
     if (quotes != null) {
       return TextRange.create(quotes.getFirst().length(), s.length() - quotes.getSecond().length());
@@ -69,7 +67,6 @@ public class PythonStringUtil {
     return TextRange.allOf(s);
   }
 
-  @Nonnull
   public static String removeFirstPrefix(@Nullable String s, String separator) {
     if (s != null) {
       int pos = s.indexOf(separator);
@@ -80,7 +77,6 @@ public class PythonStringUtil {
     return "";
   }
 
-  @Nonnull
   public static String removeLastSuffix(@Nullable String s, String separator) {
     if (s != null) {
       int pos = s.lastIndexOf(separator);
@@ -118,7 +114,6 @@ public class PythonStringUtil {
     return false;
   }
 
-  @Nonnull
   public static String getFirstPrefix(String s, String separator) {
     if (s != null) {
       int pos = s.indexOf(separator);
@@ -167,7 +162,7 @@ public class PythonStringUtil {
   }
 
 
-  public static TextRange lastSuffixTextRange(@Nonnull String text, String separator) {
+  public static TextRange lastSuffixTextRange(String text, String separator) {
     int offset = text.lastIndexOf(separator) + 1;
     int length = text.length() - offset;
 
@@ -198,7 +193,7 @@ public class PythonStringUtil {
    *         UR"unicode raw string" -> (UR", ")
    */
   @Nullable
-  public static Pair<String, String> getQuotes(@Nonnull String text) {
+  public static Pair<String, String> getQuotes(String text) {
     boolean start = true;
     int pos = 0;
     for (int i = 0; i < text.length(); i++) {
@@ -227,7 +222,7 @@ public class PythonStringUtil {
   }
 
   @Nullable
-  private static Pair<String, String> getQuotes(@Nonnull String text, @Nonnull String prefix, @Nonnull String quote) {
+  private static Pair<String, String> getQuotes(String text, String prefix, String quote) {
     int length = text.length();
     int n = quote.length();
     if (length >= 2 * n && text.startsWith(quote) && text.endsWith(quote)) {

@@ -30,7 +30,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User : catherine
@@ -38,7 +37,7 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class PythonSpaceHandler extends TypedHandlerDelegate {
   @Override
-  public Result charTyped(char c, Project project, @Nonnull Editor editor, @Nonnull PsiFile file) {
+  public Result charTyped(char c, Project project, Editor editor, PsiFile file) {
     CodeInsightSettings codeInsightSettings = CodeInsightSettings.getInstance();
     if (c == ' ' && codeInsightSettings.JAVADOC_STUB_ON_ENTER) {
       int offset = editor.getCaretModel().getOffset();

@@ -32,8 +32,7 @@ import consulo.language.psi.PsiNameIdentifierOwner;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -45,24 +44,21 @@ import java.util.Set;
  */
 @ExtensionImpl
 public class PyShadowingBuiltinsInspection extends PyInspection {
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyShadowingBuiltinsInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO("Shadowing built-ins");
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         PyShadowingBuiltinsInspectionState inspectionState = (PyShadowingBuiltinsInspectionState) state;
@@ -74,36 +70,36 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
 
         public Visitor(
             @Nullable ProblemsHolder holder,
-            @Nonnull LocalInspectionToolSession session,
-            @Nonnull Collection<String> ignoredNames
+            LocalInspectionToolSession session,
+            Collection<String> ignoredNames
         ) {
             super(holder, session);
             myIgnoredNames = ImmutableSet.copyOf(ignoredNames);
         }
 
         @Override
-        public void visitPyClass(@Nonnull PyClass node) {
+        public void visitPyClass(PyClass node) {
             processElement(node);
         }
 
         @Override
-        public void visitPyFunction(@Nonnull PyFunction node) {
+        public void visitPyFunction(PyFunction node) {
             processElement(node);
         }
 
         @Override
-        public void visitPyNamedParameter(@Nonnull PyNamedParameter node) {
+        public void visitPyNamedParameter(PyNamedParameter node) {
             processElement(node);
         }
 
         @Override
-        public void visitPyTargetExpression(@Nonnull PyTargetExpression node) {
+        public void visitPyTargetExpression(PyTargetExpression node) {
             if (node.getQualifier() == null) {
                 processElement(node);
             }
         }
 
-        private void processElement(@Nonnull PsiNameIdentifierOwner element) {
+        private void processElement(PsiNameIdentifierOwner element) {
             ScopeOwner owner = ScopeUtil.getScopeOwner(element);
             if (owner instanceof PyClass) {
                 return;
@@ -123,21 +119,19 @@ public class PyShadowingBuiltinsInspection extends PyInspection {
         }
 
         private static class PyIgnoreBuiltinQuickFix implements LocalQuickFix, LowPriorityAction {
-            @Nonnull
             private final String myName;
 
-            private PyIgnoreBuiltinQuickFix(@Nonnull String name) {
+            private PyIgnoreBuiltinQuickFix(String name) {
                 myName = name;
             }
 
-            @Nonnull
             @Override
             public LocalizeValue getName() {
                 return LocalizeValue.localizeTODO("Ignore shadowed built-in name \"" + myName + "\"");
             }
 
             @Override
-            public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+            public void applyFix(Project project, ProblemDescriptor descriptor) {
                 PsiElement element = descriptor.getPsiElement();
                 if (element != null) {
                     InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();

@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.psi.impl;
 import consulo.language.psi.PsiElement;
 import consulo.util.collection.ArrayUtil;
 import com.jetbrains.python.psi.PyGlobalStatement;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author oleg

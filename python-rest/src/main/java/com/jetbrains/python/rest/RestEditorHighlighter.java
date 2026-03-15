@@ -30,8 +30,7 @@ import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.fileType.FileType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Enables python highlighting for Rest files
@@ -41,7 +40,7 @@ import jakarta.annotation.Nullable;
 public class RestEditorHighlighter extends LayeredLexerEditorHighlighter
 {
 
-	public RestEditorHighlighter(@Nonnull EditorColorsScheme scheme, @Nullable Project project, @Nullable VirtualFile file)
+	public RestEditorHighlighter(EditorColorsScheme scheme, @Nullable Project project, @Nullable VirtualFile file)
 	{
 		super(SyntaxHighlighterFactory.getSyntaxHighlighter(RestLanguage.INSTANCE, project, file), scheme);
 

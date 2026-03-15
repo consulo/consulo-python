@@ -47,8 +47,7 @@ import consulo.project.Project;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.speedSearch.SpeedSearchComparator;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -58,7 +57,7 @@ import java.util.*;
 public class PyOverrideImplementUtil {
     @Nullable
     @RequiredReadAction
-    public static PyClass getContextClass(@Nonnull Editor editor, @Nonnull PsiFile file) {
+    public static PyClass getContextClass(Editor editor, PsiFile file) {
         int offset = editor.getCaretModel().getOffset();
         PsiElement element = file.findElementAt(offset);
         if (element == null) {
@@ -78,7 +77,7 @@ public class PyOverrideImplementUtil {
     }
 
     @RequiredUIAccess
-    public static void chooseAndOverrideMethods(Project project, @Nonnull Editor editor, @Nonnull PyClass pyClass) {
+    public static void chooseAndOverrideMethods(Project project, Editor editor, PyClass pyClass) {
         FeatureUsageTracker.getInstance().triggerFeatureUsed(ProductivityFeatureNames.CODEASSISTS_OVERRIDE_IMPLEMENT);
         chooseAndOverrideOrImplementMethods(project, editor, pyClass);
     }
@@ -86,8 +85,8 @@ public class PyOverrideImplementUtil {
     @RequiredUIAccess
     private static void chooseAndOverrideOrImplementMethods(
         Project project,
-        @Nonnull Editor editor,
-        @Nonnull PyClass pyClass
+        Editor editor,
+        PyClass pyClass
     ) {
         PyPsiUtils.assertValid(pyClass);
         Application.get().assertReadAccessAllowed();
@@ -102,11 +101,11 @@ public class PyOverrideImplementUtil {
 
     @RequiredUIAccess
     public static void chooseAndOverrideOrImplementMethods(
-        @Nonnull final Project project,
-        @Nonnull Editor editor,
-        @Nonnull PyClass pyClass,
-        @Nonnull Collection<PyFunction> superFunctions,
-        @Nonnull String title,
+        final Project project,
+        Editor editor,
+        PyClass pyClass,
+        Collection<PyFunction> superFunctions,
+        String title,
         boolean implement
     ) {
         List<PyMethodMember> elements = new ArrayList<>();
@@ -131,7 +130,7 @@ public class PyOverrideImplementUtil {
                     return new SpeedSearchComparator(false) {
                         @Nullable
                         @Override
-                        public List<MatcherTextRange> matchingFragments(@Nonnull String pattern, @Nonnull String text) {
+                        public List<MatcherTextRange> matchingFragments(String pattern, String text) {
                             return super.matchingFragments(PyMethodMember.trimUnderscores(pattern), text);
                         }
                     };
@@ -160,7 +159,7 @@ public class PyOverrideImplementUtil {
         new WriteCommandAction(pyClass.getProject(), pyClass.getContainingFile()) {
             @Override
             @RequiredWriteAction
-            protected void run(@Nonnull Result result) throws Throwable {
+            protected void run(Result result) throws Throwable {
                 write(pyClass, membersToOverride, editor, implement);
             }
         }.execute();
@@ -168,9 +167,9 @@ public class PyOverrideImplementUtil {
 
     @RequiredWriteAction
     private static void write(
-        @Nonnull PyClass pyClass,
-        @Nonnull List<PyMethodMember> newMembers,
-        @Nonnull Editor editor,
+        PyClass pyClass,
+        List<PyMethodMember> newMembers,
+        Editor editor,
         boolean implement
     ) {
         PyStatementList statementList = pyClass.getStatementList();
@@ -295,7 +294,7 @@ public class PyOverrideImplementUtil {
         return pyFunctionBuilder;
     }
 
-    public static boolean raisesNotImplementedError(@Nonnull PyFunction function) {
+    public static boolean raisesNotImplementedError(PyFunction function) {
         PyStatementList statementList = function.getStatementList();
         IfVisitor visitor = new IfVisitor();
         statementList.accept(visitor);
@@ -320,9 +319,8 @@ public class PyOverrideImplementUtil {
     /**
      * Returns all super functions available through MRO.
      */
-    @Nonnull
     @RequiredReadAction
-    public static List<PyFunction> getAllSuperFunctions(@Nonnull PyClass pyClass, @Nonnull TypeEvalContext context) {
+    public static List<PyFunction> getAllSuperFunctions(PyClass pyClass, TypeEvalContext context) {
         Map<String, PyFunction> functions = Maps.newLinkedHashMap();
         for (PyClassLikeType type : pyClass.getAncestorTypes(context)) {
             if (type != null) {

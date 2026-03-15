@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenSet;
@@ -39,7 +38,6 @@ public class PyNonlocalStatementImpl extends PyElementImpl implements PyNonlocal
     visitor.visitPyNonlocalStatement(this);
   }
 
-  @Nonnull
   @Override
   public PyTargetExpression[] getVariables() {
     return childrenToPsi(TARGET_EXPRESSION_SET, PyTargetExpression.EMPTY_ARRAY);

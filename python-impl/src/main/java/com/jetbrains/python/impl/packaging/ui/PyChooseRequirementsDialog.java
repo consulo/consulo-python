@@ -21,7 +21,6 @@ import consulo.ui.ex.awt.DialogWrapper;
 import consulo.ui.ex.awt.ElementsChooser;
 import consulo.ui.ex.awt.JBLabel;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -32,13 +31,13 @@ import java.util.List;
 public class PyChooseRequirementsDialog extends DialogWrapper {
   private final ElementsChooser<PyRequirement> myRequirementsChooser;
 
-  public PyChooseRequirementsDialog(@Nonnull Project project, @Nonnull List<PyRequirement> requirements) {
+  public PyChooseRequirementsDialog(Project project, List<PyRequirement> requirements) {
     super(project, false);
     setTitle("Choose Packages to Install");
     setOKButtonText("Install");
     myRequirementsChooser = new ElementsChooser<PyRequirement>(true) {
       @Override
-      public String getItemText(@Nonnull PyRequirement requirement) {
+      public String getItemText(PyRequirement requirement) {
         return requirement.toString();
       }
     };

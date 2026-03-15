@@ -43,8 +43,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileManager;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +65,7 @@ public final class PyExtractSuperclassHelper {
   }
 
   static void extractSuperclass(PyClass clazz,
-                                @Nonnull Collection<PyMemberInfo<PyElement>> selectedMemberInfos,
+                                Collection<PyMemberInfo<PyElement>> selectedMemberInfos,
                                 String superBaseName,
                                 String targetFile) {
     Project project = clazz.getProject();
@@ -121,11 +120,11 @@ public final class PyExtractSuperclassHelper {
   /**
    * If class explicitly extends object we shall move it even in Py3K
    */
-  private static boolean isObjectParentDeclaredExplicitly(@Nonnull PyClass clazz) {
+  private static boolean isObjectParentDeclaredExplicitly(PyClass clazz) {
     return Arrays.stream(clazz.getSuperClassExpressions()).filter(o -> PyNames.OBJECT.equals(o.getName())).findFirst().isPresent();
   }
 
-  private static PyClass placeNewClass(Project project, PyClass newClass, @Nonnull PyClass clazz, String targetFile) {
+  private static PyClass placeNewClass(Project project, PyClass newClass, PyClass clazz, String targetFile) {
     VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(VirtualFileUtil.pathToUrl(targetFile));
     // file is the same as the source
     if (Comparing.equal(file, clazz.getContainingFile().getVirtualFile())) {

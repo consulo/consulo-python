@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.util.lang.StringUtil;
 import com.jetbrains.python.impl.psi.PyIndentUtil;
 import com.jetbrains.python.toolbox.Substring;
@@ -32,7 +31,7 @@ public abstract class DocStringLineParser
 	protected final List<Substring> myLines;
 	protected final Substring myDocStringContent;
 
-	protected DocStringLineParser(@Nonnull Substring content)
+	protected DocStringLineParser(Substring content)
 	{
 		myDocStringContent = content;
 		myLines = Collections.unmodifiableList(content.splitLines());
@@ -43,7 +42,6 @@ public abstract class DocStringLineParser
 		return PyIndentUtil.getLineIndentSize(getLine(lineNum));
 	}
 
-	@Nonnull
 	public String getLineIndent(int lineNum)
 	{
 		return PyIndentUtil.getLineIndent(getLine(lineNum)).toString();
@@ -59,7 +57,6 @@ public abstract class DocStringLineParser
 		return StringUtil.isEmptyOrSpaces(getLine(lineNum));
 	}
 
-	@Nonnull
 	public Substring getLine(int lineNum)
 	{
 		return myLines.get(lineNum);
@@ -76,13 +73,11 @@ public abstract class DocStringLineParser
 		return myLines.size();
 	}
 
-	@Nonnull
 	public List<Substring> getLines()
 	{
 		return myLines;
 	}
 
-	@Nonnull
 	public Substring getDocStringContent()
 	{
 		return myDocStringContent;

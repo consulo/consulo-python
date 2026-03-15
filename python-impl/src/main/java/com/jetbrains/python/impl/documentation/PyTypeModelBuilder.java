@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.jetbrains.python.impl.psi.types.*;
@@ -61,7 +60,7 @@ public class PyTypeModelBuilder
 			return visitor.getString();
 		}
 
-		public void toBodyWithLinks(@Nonnull ChainIterable<String> body, @Nonnull PsiElement anchor)
+		public void toBodyWithLinks(ChainIterable<String> body, PsiElement anchor)
 		{
 			TypeToBodyWithLinksVisitor visitor = new TypeToBodyWithLinksVisitor(body, anchor);
 			this.accept(visitor);
@@ -302,7 +301,7 @@ public class PyTypeModelBuilder
 	}
 
 	@Nullable
-	private static PyType getOptionalType(@Nonnull PyUnionType type)
+	private static PyType getOptionalType(PyUnionType type)
 	{
 		Collection<PyType> members = type.getMembers();
 		if(members.size() == 2)
@@ -328,7 +327,7 @@ public class PyTypeModelBuilder
 		return null;
 	}
 
-	private TypeModel build(@Nonnull PyCallableType type)
+	private TypeModel build(PyCallableType type)
 	{
 		List<TypeModel> parameterModels = null;
 		List<PyCallableParameter> parameters = type.getParameters(myContext);

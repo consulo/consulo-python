@@ -34,8 +34,7 @@ import consulo.language.psi.stub.IStubElementType;
 import consulo.language.psi.util.QualifiedName;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +61,6 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		super(stub, nodeType);
 	}
 
-	@Nonnull
 	public PyImportElement[] getImportElements()
 	{
 		PyImportStatementStub stub = getStub();
@@ -80,7 +78,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	}
 
 	@Override
-	public void deleteChildInternal(@Nonnull ASTNode child)
+	public void deleteChildInternal(ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getImportElements()))
 		{
@@ -89,7 +87,6 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		super.deleteChildInternal(child);
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getFullyQualifiedObjectNames()
 	{
@@ -102,8 +99,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	 * @param elements import elements
 	 * @return list of qualified names
 	 */
-	@Nonnull
-	public static List<String> getImportElementNames(@Nonnull PyImportElement... elements)
+	public static List<String> getImportElementNames(PyImportElement... elements)
 	{
 		List<String> result = new ArrayList<>(elements.length);
 		for(PyImportElement element : elements)
@@ -117,7 +113,6 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		return result;
 	}
 
-	@Nonnull
 	@Override
 	public Iterable<PyElement> iterateNames()
 	{
@@ -125,9 +120,8 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		return resolved != null ? ImmutableList.<PyElement>of(resolved) : Collections.<PyElement>emptyList();
 	}
 
-	@Nonnull
 	@Override
-	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
+	public List<RatedResolveResult> multiResolveName(String name)
 	{
 		PyImportElement[] elements = getImportElements();
 		if(elements.length == 1)

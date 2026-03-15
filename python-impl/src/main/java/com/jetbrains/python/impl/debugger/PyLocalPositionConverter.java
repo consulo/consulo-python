@@ -32,8 +32,7 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileSystem;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 
 public class PyLocalPositionConverter implements PyPositionConverter {
@@ -76,8 +75,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
     }
   }
 
-  @Nonnull
-  final public PySourcePosition create(@Nonnull String filePath, int line) {
+  final public PySourcePosition create(String filePath, int line) {
     File file = new File(filePath);
 
     if (file.exists()) {
@@ -88,12 +86,10 @@ public class PyLocalPositionConverter implements PyPositionConverter {
     }
   }
 
-  @Nonnull
-  public final PySourcePosition convertToPython(@Nonnull XSourcePosition position) {
+  public final PySourcePosition convertToPython(XSourcePosition position) {
     return convertToPython(convertFilePath(position.getFile().getPath()), convertLocalLineToRemote(position.getFile(), position.getLine()));
   }
 
-  @Nonnull
   protected PySourcePosition convertToPython(String filePath, int line) {
     return new PyLocalSourcePosition(filePath, line);
   }
@@ -112,7 +108,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   @Nullable
-  public XSourcePosition convertFromPython(@Nonnull PySourcePosition position) {
+  public XSourcePosition convertFromPython(PySourcePosition position) {
     return createXSourcePosition(getVirtualFile(position.getFile()), position.getLine());
   }
 

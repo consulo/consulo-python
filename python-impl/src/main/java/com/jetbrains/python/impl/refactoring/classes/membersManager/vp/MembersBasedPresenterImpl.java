@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.refactoring.classes.membersManager.vp;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.language.editor.refactoring.classMember.MemberInfoModel;
@@ -40,16 +39,12 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo
  */
 abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extends MemberInfoModel<PyElement, PyMemberInfo<PyElement>>> implements MembersBasedPresenter
 {
-	@Nonnull
 	protected final T myView;
-	@Nonnull
 	protected final PyClass myClassUnderRefactoring;
-	@Nonnull
 	protected final PyMemberInfoStorage myStorage;
 	/**
 	 * Member model
 	 */
-	@Nonnull
 	protected final M myModel;
 
 	/**
@@ -58,7 +53,7 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	 * @param infoStorage           info storage
 	 * @param model                 Member model (to be used for dependencies checking)
 	 */
-	MembersBasedPresenterImpl(@Nonnull T view, @Nonnull PyClass classUnderRefactoring, @Nonnull PyMemberInfoStorage infoStorage, @Nonnull M model)
+	MembersBasedPresenterImpl(T view, PyClass classUnderRefactoring, PyMemberInfoStorage infoStorage, M model)
 	{
 		myView = view;
 		myClassUnderRefactoring = classUnderRefactoring;
@@ -123,7 +118,6 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	 * @return map of conflicts (if any)
 	 * @see #getDestClassesToCheckConflicts()
 	 */
-	@Nonnull
 	protected final MultiMap<PyClass, PyMemberInfo<?>> getConflicts()
 	{
 		MultiMap<PyClass, PyMemberInfo<?>> result = new MultiMap<>();
@@ -145,6 +139,5 @@ abstract class MembersBasedPresenterImpl<T extends MembersBasedView<?>, M extend
 	 * @return classes where this refactoring will move members. To be used to check for conflicts (if one of target classes already has members)
 	 * @see #getConflicts()
 	 */
-	@Nonnull
 	protected abstract Iterable<? extends PyClass> getDestClassesToCheckConflicts();
 }

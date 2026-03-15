@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.FileModificationService;
 import consulo.language.editor.inspection.LocalQuickFix;
@@ -30,12 +29,11 @@ import consulo.language.psi.PsiElement;
  * @since 2009-07-30
  */
 public class RemoveTrailingSemicolonQuickFix implements LocalQuickFix {
-  @Nonnull
   public LocalizeValue getName() {
     return PyLocalize.qfixRemoveTrailingSemicolon();
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     PsiElement problemElement = descriptor.getPsiElement();
     if ((problemElement != null) && (";".equals(problemElement.getText()))) {
 

@@ -24,7 +24,6 @@ import consulo.language.psi.stub.StubIndexKey;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collection;
 
 /**
@@ -34,7 +33,6 @@ import java.util.Collection;
 public class PyClassNameIndexInsensitive extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String,PyClass> KEY = StubIndexKey.createIndexKey("Py.class.shortNameInsensitive");
 
-  @Nonnull
   @Override
   public StubIndexKey<String, PyClass> getKey() {
     return KEY;

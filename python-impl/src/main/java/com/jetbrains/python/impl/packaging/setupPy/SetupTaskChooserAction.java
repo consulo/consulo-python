@@ -34,7 +34,6 @@ import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.awt.Messages;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +83,7 @@ public class SetupTaskChooserAction extends AnAction {
     }
 
     @RequiredUIAccess
-    public static void runSetupTask(String taskName, @Nonnull Module module) {
+    public static void runSetupTask(String taskName, Module module) {
         PyFile setupPy = PyPackageUtil.findSetupPy(module);
         try {
             List<SetupTask.Option> options = SetupTaskIntrospector.getSetupTaskOptions(module, taskName);

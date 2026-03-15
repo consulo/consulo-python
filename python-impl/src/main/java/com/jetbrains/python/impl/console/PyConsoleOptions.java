@@ -35,8 +35,7 @@ import consulo.util.lang.ComparatorUtil;
 import consulo.util.xml.serializer.annotation.*;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 /**
@@ -108,7 +107,6 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
     public String myWorkingDirectory = "";
     public boolean myAddContentRoots = true;
     public boolean myAddSourceRoots;
-    @Nonnull
     private PathMappingSettings myMappings = new PathMappingSettings();
 
     public PyConsoleSettings() {

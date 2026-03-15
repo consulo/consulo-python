@@ -37,8 +37,7 @@ import consulo.ui.image.Image;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolderBase;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -68,7 +67,7 @@ public class PyCustomMember extends UserDataHolderBase {
     private Image myIcon = PlatformIconGroup.nodesMethod();
     private PyCustomMemberTypeInfo<?> myCustomTypeInfo;
 
-    public PyCustomMember(@Nonnull String name, @Nullable String type, boolean resolveToInstance) {
+    public PyCustomMember(String name, @Nullable String type, boolean resolveToInstance) {
         myName = name;
         myResolveToInstance = resolveToInstance;
         myTypeName = type;
@@ -77,7 +76,7 @@ public class PyCustomMember extends UserDataHolderBase {
         myTypeCallback = null;
     }
 
-    public PyCustomMember(@Nonnull String name) {
+    public PyCustomMember(String name) {
         myName = name;
         myResolveToInstance = false;
         myTypeName = null;
@@ -86,7 +85,7 @@ public class PyCustomMember extends UserDataHolderBase {
         myTypeCallback = null;
     }
 
-    public PyCustomMember(@Nonnull String name, @Nullable String type, Function<PsiElement, PyType> typeCallback) {
+    public PyCustomMember(String name, @Nullable String type, Function<PsiElement, PyType> typeCallback) {
         myName = name;
 
         myResolveToInstance = false;
@@ -96,7 +95,7 @@ public class PyCustomMember extends UserDataHolderBase {
         myTypeCallback = typeCallback;
     }
 
-    public PyCustomMember(@Nonnull String name, @Nullable PsiElement target, @Nullable String typeName) {
+    public PyCustomMember(String name, @Nullable PsiElement target, @Nullable String typeName) {
         myName = name;
         myTarget = target;
         myResolveToInstance = false;
@@ -104,7 +103,7 @@ public class PyCustomMember extends UserDataHolderBase {
         myTypeCallback = null;
     }
 
-    public PyCustomMember(@Nonnull String name, @Nullable PsiElement target) {
+    public PyCustomMember(String name, @Nullable PsiElement target) {
         this(name, target, null);
     }
 
@@ -121,7 +120,6 @@ public class PyCustomMember extends UserDataHolderBase {
     /**
      * Force resolving to {@link MyInstanceElement} even if element is function
      */
-    @Nonnull
     public final PyCustomMember alwaysResolveToCustomElement() {
         myAlwaysResolveToCustomElement = true;
         return this;
@@ -181,7 +179,7 @@ public class PyCustomMember extends UserDataHolderBase {
     }
 
     @Nullable
-    public PsiElement resolve(@Nonnull PsiElement context) {
+    public PsiElement resolve(PsiElement context) {
         if (myTarget != null) {
             return myTarget;
         }
@@ -190,9 +188,8 @@ public class PyCustomMember extends UserDataHolderBase {
         if (myTypeName != null) {
 
             ParameterizedCachedValueProvider<PyClass, PsiElement> provider = new ParameterizedCachedValueProvider<>() {
-                @Nullable
                 @Override
-                public CachedValueProvider.Result<PyClass> compute(PsiElement param) {
+                public CachedValueProvider.@Nullable Result<PyClass> compute(PsiElement param) {
                     PyClass result = PyPsiFacade.getInstance(param.getProject()).createClassByQName(myTypeName, param);
                     return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
                 }
@@ -211,7 +208,7 @@ public class PyCustomMember extends UserDataHolderBase {
     }
 
     @Nullable
-    private PsiElement findResolveTarget(@Nonnull PsiElement context) {
+    private PsiElement findResolveTarget(PsiElement context) {
         if (myPsiPath != null) {
             return myPsiPath.resolve(context);
         }
@@ -243,14 +240,14 @@ public class PyCustomMember extends UserDataHolderBase {
      * @return true if reference points to it
      */
     @RequiredReadAction
-    public final boolean isReferenceToMe(@Nonnull PsiReference reference) {
+    public final boolean isReferenceToMe(PsiReference reference) {
         return reference.resolve() instanceof MyInstanceElement instanceElem && instanceElem.getThis().equals(this);
     }
 
     /**
      * @param icon icon to use (will be used method icon otherwise)
      */
-    public PyCustomMember withIcon(@Nonnull Image icon) {
+    public PyCustomMember withIcon(Image icon) {
         myIcon = icon;
         return this;
     }
@@ -261,7 +258,7 @@ public class PyCustomMember extends UserDataHolderBase {
      *
      * @param customInfo custom info to add
      */
-    public PyCustomMember withCustomTypeInfo(@Nonnull PyCustomMemberTypeInfo<?> customInfo) {
+    public PyCustomMember withCustomTypeInfo(PyCustomMemberTypeInfo<?> customInfo) {
         if (myTypeName != null) {
             throw new IllegalArgumentException("Cant add custom type info if no type provided");
         }
@@ -284,7 +281,7 @@ public class PyCustomMember extends UserDataHolderBase {
         }
 
         @Override
-        public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+        public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
             if (myTypeCallback != null) {
                 return myTypeCallback.apply(myContext);
             }

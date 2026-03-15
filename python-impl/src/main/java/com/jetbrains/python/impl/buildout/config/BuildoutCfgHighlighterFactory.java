@@ -21,20 +21,17 @@ import consulo.language.Language;
 import consulo.language.editor.highlight.SingleLazyInstanceSyntaxHighlighterFactory;
 import consulo.language.editor.highlight.SyntaxHighlighter;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
  */
 @ExtensionImpl
 public class BuildoutCfgHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
-  @Nonnull
   @Override
   protected SyntaxHighlighter createHighlighter() {
     return new BuildoutCfgSyntaxHighlighter();
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return BuildoutCfgLanguage.INSTANCE;

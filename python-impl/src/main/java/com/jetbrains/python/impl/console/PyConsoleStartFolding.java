@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.console;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.codeEditor.event.FoldingListener;
 import consulo.document.Document;
@@ -125,7 +124,7 @@ public class PyConsoleStartFolding extends DocumentAdapter implements ConsoleCom
 	}
 
 	@Override
-	public void onFoldRegionStateChange(@Nonnull FoldRegion region)
+	public void onFoldRegionStateChange(FoldRegion region)
 	{
 		if(region.equals(myStartFoldRegion) && region.isExpanded())
 		{

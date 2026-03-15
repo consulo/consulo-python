@@ -19,7 +19,6 @@ package com.jetbrains.python.impl.findUsages;
 import consulo.find.FindUsagesHandler;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -30,22 +29,21 @@ public class PyFunctionFindUsagesHandler extends FindUsagesHandler
 {
   private final List<PsiElement> myAllElements;
 
-  protected PyFunctionFindUsagesHandler(@Nonnull PsiElement psiElement) {
+  protected PyFunctionFindUsagesHandler(PsiElement psiElement) {
     super(psiElement);
     myAllElements = null;
   }
 
-  protected PyFunctionFindUsagesHandler(@Nonnull PsiElement psiElement, List<PsiElement> allElements) {
+  protected PyFunctionFindUsagesHandler(PsiElement psiElement, List<PsiElement> allElements) {
     super(psiElement);
     myAllElements = allElements;
   }
 
   @Override
-  protected boolean isSearchForTextOccurencesAvailable(@Nonnull PsiElement psiElement, boolean isSingleFile) {
+  protected boolean isSearchForTextOccurencesAvailable(PsiElement psiElement, boolean isSingleFile) {
     return true;
   }
 
-  @Nonnull
   @Override
   public PsiElement[] getPrimaryElements() {
     return myAllElements != null ? myAllElements.toArray(new PsiElement[myAllElements.size()]) : super.getPrimaryElements();

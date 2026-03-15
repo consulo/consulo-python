@@ -3,7 +3,7 @@ package com.jetbrains.python.console.pydev;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class PyCodeCompletionImages {
     /**

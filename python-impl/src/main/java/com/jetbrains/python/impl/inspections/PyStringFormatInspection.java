@@ -35,8 +35,7 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -51,18 +50,16 @@ import static com.jetbrains.python.impl.inspections.PyStringFormatParser.parsePe
  */
 @ExtensionImpl
 public class PyStringFormatInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameStrFormat();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
@@ -350,14 +347,14 @@ public class PyStringFormatInspection extends PyInspection {
                 return (expressions.length + additionalExpressions.size());
             }
 
-            private void registerProblem(@Nonnull PsiElement problemTarget, @Nonnull String message) {
+            private void registerProblem(PsiElement problemTarget, String message) {
                 myProblemRegister = true;
                 myVisitor.registerProblem(problemTarget, message);
             }
 
             private void checkExpressionType(
-                @Nonnull PyExpression expression,
-                @Nonnull String expectedTypeName,
+                PyExpression expression,
+                String expectedTypeName,
                 PsiElement problemTarget
             ) {
                 PyType actual = myTypeEvalContext.getType(expression);
@@ -368,7 +365,7 @@ public class PyStringFormatInspection extends PyInspection {
             }
 
             private void checkTypeCompatible(
-                @Nonnull PsiElement problemTarget,
+                PsiElement problemTarget,
                 @Nullable PyType actual,
                 @Nullable PyType expected
             ) {
@@ -380,7 +377,7 @@ public class PyStringFormatInspection extends PyInspection {
                 }
             }
 
-            private void inspectFormat(@Nonnull PyStringLiteralExpression formatExpression) {
+            private void inspectFormat(PyStringLiteralExpression formatExpression) {
                 String value = formatExpression.getStringValue();
                 List<PyStringFormatParser.SubstitutionChunk> chunks = filterSubstitutions(parsePercentFormat(value));
 
@@ -420,7 +417,7 @@ public class PyStringFormatInspection extends PyInspection {
                 }
             }
 
-            private void inspectWidth(@Nonnull PyStringLiteralExpression formatExpression, String width) {
+            private void inspectWidth(PyStringLiteralExpression formatExpression, String width) {
                 if ("*".equals(width)) {
                     ++myExpectedArguments;
                     if (myUsedMappingKeys.size() > 0) {
@@ -452,7 +449,7 @@ public class PyStringFormatInspection extends PyInspection {
                 }
             }
 
-            private void inspectArgumentsNumber(@Nonnull PyExpression rightExpression) {
+            private void inspectArgumentsNumber(PyExpression rightExpression) {
                 int arguments = inspectArguments(rightExpression, rightExpression);
                 if (myUsedMappingKeys.isEmpty() && arguments >= 0) {
                     if (myExpectedArguments < arguments) {

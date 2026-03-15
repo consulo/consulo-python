@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.codeEditor.Editor;
 import consulo.util.lang.StringUtil;
@@ -37,7 +36,7 @@ public class PyStringLiteralFixer extends PyFixer<PyStringLiteralExpression>
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyStringLiteralExpression psiElement) throws IncorrectOperationException
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyStringLiteralExpression psiElement) throws IncorrectOperationException
 	{
 		String text = psiElement.getText();
 		if(StringUtil.startsWith(text, "\"\"\""))

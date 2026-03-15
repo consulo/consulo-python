@@ -29,7 +29,6 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.impl.refactoring.move.moduleMembers.PyDependentModuleMembersCollector;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author Dennis.Ushakov
@@ -66,7 +65,6 @@ public class PyMembersRefactoringSupport implements ClassMembersRefactoringSuppo
 		return true;
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

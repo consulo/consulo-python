@@ -25,7 +25,6 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
 
-import jakarta.annotation.Nonnull;
 
 public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implements PyListLiteralExpression
 {
@@ -40,7 +39,7 @@ public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		pyVisitor.visitPyListLiteralExpression(this);
 	}
 
-	public PsiElement add(@Nonnull PsiElement psiElement) throws IncorrectOperationException
+	public PsiElement add(PsiElement psiElement) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		PyExpression element = (PyExpression) psiElement;
@@ -57,20 +56,20 @@ public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		}
 	}
 
-	public PsiElement addAfter(@Nonnull PsiElement psiElement, PsiElement afterThis) throws IncorrectOperationException
+	public PsiElement addAfter(PsiElement psiElement, PsiElement afterThis) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		checkPyExpression(afterThis);
 		return PyElementGenerator.getInstance(getProject()).insertItemIntoList(this, (PyExpression) afterThis, (PyExpression) psiElement);
 	}
 
-	public PsiElement addBefore(@Nonnull PsiElement psiElement, PsiElement beforeThis) throws IncorrectOperationException
+	public PsiElement addBefore(PsiElement psiElement, PsiElement beforeThis) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		return PyElementGenerator.getInstance(getProject()).insertItemIntoList(this, null, (PyExpression) psiElement);
 	}
 
-	public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key)
+	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		return PyBuiltinCache.getInstance(this).createLiteralCollectionType(this, "list", context);
 	}

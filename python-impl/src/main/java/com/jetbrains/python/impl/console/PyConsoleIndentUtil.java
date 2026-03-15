@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import consulo.util.lang.StringUtil;
 import consulo.util.collection.ArrayUtil;
-import jakarta.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Scanner;
@@ -34,11 +33,11 @@ public class PyConsoleIndentUtil {
   private PyConsoleIndentUtil() {
   }
 
-  public static String normalize(@Nonnull String codeFragment) {
+  public static String normalize(String codeFragment) {
     return normalize(codeFragment, 0);
   }
 
-  public static String normalize(@Nonnull String codeFragment, int addIndent) {
+  public static String normalize(String codeFragment, int addIndent) {
     Scanner s = new Scanner(codeFragment);
 
     List<String> lines = Lists.newArrayList();
@@ -150,7 +149,7 @@ public class PyConsoleIndentUtil {
     return result.toString();
   }
 
-  public static boolean shouldIndent(@Nonnull String line) {
+  public static boolean shouldIndent(String line) {
     line = stripComments(line);
     return line.endsWith(":");
   }
@@ -163,7 +162,7 @@ public class PyConsoleIndentUtil {
     return line;
   }
 
-  public static boolean shouldSkipNext(@Nonnull String line) {
+  public static boolean shouldSkipNext(String line) {
     line = stripComments(line);
     return line.endsWith(",");
   }

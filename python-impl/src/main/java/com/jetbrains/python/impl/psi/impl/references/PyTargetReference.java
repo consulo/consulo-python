@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.psi.impl.references;
 
 import consulo.annotation.access.RequiredReadAction;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiElementResolveResult;
@@ -37,7 +36,6 @@ public class PyTargetReference extends PyReferenceImpl {
     super(element, context);
   }
 
-  @Nonnull
   @Override
   @RequiredReadAction
   public ResolveResult[] multiResolve(boolean incompleteCode) {
@@ -58,7 +56,6 @@ public class PyTargetReference extends PyReferenceImpl {
     return new ResolveResult[] { new PsiElementResolveResult(myElement) };
   }
 
-  @Nonnull
   @Override
   @RequiredReadAction
   public Object[] getVariants() {

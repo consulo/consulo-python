@@ -27,8 +27,7 @@ import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +36,10 @@ import java.util.List;
  * @author vlan
  */
 public class PyOperatorReference extends PyReferenceImpl {
-  public PyOperatorReference(PyQualifiedExpression element, @Nonnull PyResolveContext context) {
+  public PyOperatorReference(PyQualifiedExpression element, PyResolveContext context) {
     super(element, context);
   }
 
-  @Nonnull
   @Override
   protected List<RatedResolveResult> resolveInner() {
     List<RatedResolveResult> res = new ArrayList<RatedResolveResult>();
@@ -108,7 +106,7 @@ public class PyOperatorReference extends PyReferenceImpl {
     return name.replaceFirst("__([a-z]+)__", "__r$1__");
   }
 
-  private static boolean isTrueDivEnabled(@Nonnull PyElement anchor) {
+  private static boolean isTrueDivEnabled(PyElement anchor) {
     PsiFile file = anchor.getContainingFile();
     if (file instanceof PyFile pyFile) {
       return FutureFeature.DIVISION.requiredAt(pyFile.getLanguageLevel()) || pyFile.hasImportFromFuture(FutureFeature.DIVISION);
@@ -136,7 +134,6 @@ public class PyOperatorReference extends PyReferenceImpl {
     }
   }
 
-  @Nonnull
   private List<RatedResolveResult> resolveMember(@Nullable PyExpression object, @Nullable String name) {
     ArrayList<RatedResolveResult> results = new ArrayList<RatedResolveResult>();
     if (object != null && name != null) {

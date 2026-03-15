@@ -25,8 +25,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.util.ProcessingContext;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -34,12 +33,11 @@ import java.util.List;
  */
 public class PyGenericType implements PyType
 {
-	@Nonnull
 	private final String myName;
 	@Nullable
 	private PyType myBound;
 
-	public PyGenericType(@Nonnull String name, @Nullable PyType bound)
+	public PyGenericType(String name, @Nullable PyType bound)
 	{
 		myName = name;
 		myBound = bound;
@@ -47,7 +45,7 @@ public class PyGenericType implements PyType
 
 	@Nullable
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name, @Nullable PyExpression location, @Nonnull AccessDirection direction, @Nonnull PyResolveContext resolveContext)
+	public List<? extends RatedResolveResult> resolveMember(String name, @Nullable PyExpression location, AccessDirection direction, PyResolveContext resolveContext)
 	{
 		return null;
 	}
@@ -58,7 +56,6 @@ public class PyGenericType implements PyType
 		return new Object[0];
 	}
 
-	@Nonnull
 	@Override
 	public String getName()
 	{
@@ -106,7 +103,6 @@ public class PyGenericType implements PyType
 		return myName.hashCode();
 	}
 
-	@Nonnull
 	@Override
 	public String toString()
 	{

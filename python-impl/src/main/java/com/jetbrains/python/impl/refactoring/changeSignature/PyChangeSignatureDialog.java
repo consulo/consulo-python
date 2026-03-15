@@ -50,8 +50,7 @@ import consulo.ui.ex.awt.table.JBTableRowEditor;
 import consulo.ui.ex.awt.tree.Tree;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nullable;
-import org.jetbrains.annotations.NonNls;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -219,7 +218,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
 
   @Override
   protected String calculateSignature() {
-    @NonNls StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder();
     builder.append(getMethodName());
     builder.append("(");
     List<PyParameterTableModelItem> parameters = myParametersTableModel.getItems();

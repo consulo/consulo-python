@@ -17,8 +17,7 @@
 package com.jetbrains.python.psi.types;
 
 import com.jetbrains.python.psi.PyParameter;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author vlan
@@ -28,7 +27,7 @@ public interface PyCallableParameter {
   String getName();
 
   @Nullable
-  PyType getType(@Nonnull TypeEvalContext context);
+  PyType getType(TypeEvalContext context);
 
   @Nullable
   PyParameter getParameter();

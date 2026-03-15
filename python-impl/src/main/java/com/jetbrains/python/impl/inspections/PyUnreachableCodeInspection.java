@@ -29,7 +29,6 @@ import consulo.language.psi.PsiElementVisitor;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ref.Ref;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,25 +38,23 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyUnreachableCodeInspection extends PyInspection {
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameUnreachableCode();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         return new Visitor(holder, session);
     }
 
     public static class Visitor extends PyInspectionVisitor {
-        public Visitor(@Nonnull ProblemsHolder holder, @Nonnull LocalInspectionToolSession session) {
+        public Visitor(ProblemsHolder holder, LocalInspectionToolSession session) {
             super(holder, session);
         }
 
@@ -82,7 +79,7 @@ public class PyUnreachableCodeInspection extends PyInspection {
         }
     }
 
-    public static boolean hasAnyInterruptedControlFlowPaths(@Nonnull PsiElement element) {
+    public static boolean hasAnyInterruptedControlFlowPaths(PsiElement element) {
         ScopeOwner owner = ScopeUtil.getScopeOwner(element);
         if (owner != null) {
             ControlFlow flow = ControlFlowCache.getControlFlow(owner);

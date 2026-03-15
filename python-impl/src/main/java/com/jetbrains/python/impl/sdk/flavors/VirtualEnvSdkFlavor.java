@@ -29,8 +29,7 @@ import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -129,7 +128,7 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
         return roots;
     }
 
-    private static void addEnvsFolder(@Nonnull List<VirtualFile> roots, @Nullable VirtualFile condaFolder) {
+    private static void addEnvsFolder(List<VirtualFile> roots, @Nullable VirtualFile condaFolder) {
         if (condaFolder != null) {
             VirtualFile envs = condaFolder.findChild("envs");
             if (envs != null) {
@@ -208,14 +207,13 @@ public class VirtualEnvSdkFlavor extends CPythonSdkFlavor {
     }
 
     @Override
-    public boolean isValidSdkPath(@Nonnull File file) {
+    public boolean isValidSdkPath(File file) {
         if (!super.isValidSdkPath(file)) {
             return false;
         }
         return PythonSdkType.getVirtualEnvRoot(file.getPath()) != null;
     }
 
-    @Nonnull
     @Override
     public Image getIcon() {
         return PythonImplIconGroup.pythonVirtualenv();

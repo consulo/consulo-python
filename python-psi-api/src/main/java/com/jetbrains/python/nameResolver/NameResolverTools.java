@@ -28,8 +28,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.util.lang.Pair;
 import consulo.util.lang.function.Condition;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -55,8 +54,8 @@ public final class NameResolverTools {
    * @param namesProviders some enum that has one or more names
    * @return true if element's fqn is one of names, provided by provider
    */
-  public static boolean isElementWithName(@Nonnull Collection<? extends PyElement> elements,
-                                          @Nonnull FQNamesProvider... namesProviders) {
+  public static boolean isElementWithName(Collection<? extends PyElement> elements,
+                                          FQNamesProvider... namesProviders) {
     for (PyElement element : elements) {
       if (isName(element, namesProviders)) {
         return true;
@@ -73,7 +72,7 @@ public final class NameResolverTools {
    * @param namesProviders some enum that has one or more names
    * @return true if element's fqn is one of names, provided by provider
    */
-  public static boolean isName(@Nonnull PyElement element, @Nonnull FQNamesProvider... namesProviders) {
+  public static boolean isName(PyElement element, FQNamesProvider... namesProviders) {
     assert element.isValid();
     Pair<String, String> qualifiedAndClassName = QUALIFIED_AND_CLASS_NAME.getValue(element);
     String qualifiedName = qualifiedAndClassName.first;
@@ -99,7 +98,7 @@ public final class NameResolverTools {
    * @return parent call or null if not found
    */
   @Nullable
-  public static PyCallExpression findCallExpParent(@Nonnull PsiElement anchor, @Nonnull FQNamesProvider functionName) {
+  public static PyCallExpression findCallExpParent(PsiElement anchor, FQNamesProvider functionName) {
     PsiElement parent = PsiTreeUtil.findFirstParent(anchor, new MyFunctionCondition(functionName));
     if (parent instanceof PyCallExpression) {
       return (PyCallExpression)parent;
@@ -115,7 +114,7 @@ public final class NameResolverTools {
    * @param function names to check
    * @return true if callee is correct
    */
-  public static boolean isCalleeShortCut(@Nonnull PyCallExpression call, @Nonnull FQNamesProvider function) {
+  public static boolean isCalleeShortCut(PyCallExpression call, FQNamesProvider function) {
     PyExpression callee = call.getCallee();
     if (callee == null) {
       return false;
@@ -130,8 +129,7 @@ public final class NameResolverTools {
     return possibleNames.contains(callableName) && call.isCallee(function);
   }
 
-  @Nonnull
-  private static List<String> getLastComponents(@Nonnull FQNamesProvider provider) {
+  private static List<String> getLastComponents(FQNamesProvider provider) {
     List<String> result = new ArrayList<>();
     for (String name : provider.getNames()) {
       String component = QualifiedName.fromDottedString(name).getLastComponent();
@@ -148,7 +146,7 @@ public final class NameResolverTools {
    * @param text  test to check
    * @param names
    */
-  public static boolean isContainsName(@Nonnull String text, @Nonnull FQNamesProvider names) {
+  public static boolean isContainsName(String text, FQNamesProvider names) {
     for (String lastComponent : getLastComponents(names)) {
       if (text.contains(lastComponent)) {
         return true;
@@ -163,7 +161,7 @@ public final class NameResolverTools {
    * @param file  file to check
    * @param names
    */
-  public static boolean isContainsName(@Nonnull PsiFile file, @Nonnull FQNamesProvider names) {
+  public static boolean isContainsName(PsiFile file, FQNamesProvider names) {
     return isContainsName(file.getText(), names);
   }
 
@@ -172,9 +170,9 @@ public final class NameResolverTools {
    *
    * @param child class to check
    */
-  public static boolean isSubclass(@Nonnull PyClass child,
-                                   @Nonnull FQNamesProvider parentName,
-                                   @Nonnull TypeEvalContext context) {
+  public static boolean isSubclass(PyClass child,
+                                   FQNamesProvider parentName,
+                                   TypeEvalContext context) {
     for (String nameToCheck : parentName.getNames()) {
       if (child.isSubclass(nameToCheck, context)) {
         return true;
@@ -187,10 +185,9 @@ public final class NameResolverTools {
    * Looks for call of some function
    */
   private static class MyFunctionCondition implements Condition<PsiElement> {
-    @Nonnull
     private final FQNamesProvider myNameToSearch;
 
-    MyFunctionCondition(@Nonnull FQNamesProvider name) {
+    MyFunctionCondition(FQNamesProvider name) {
       myNameToSearch = name;
     }
 
@@ -209,8 +206,7 @@ public final class NameResolverTools {
   private static class QualifiedAndClassNameObtainer implements Function<PyElement, Pair<String, String>>
   {
     @Override
-    @Nonnull
-    public Pair<String, String> apply(@Nonnull PyElement param) {
+    public Pair<String, String> apply(PyElement param) {
       PyElement elementToCheck = param;
 
       // Trying to use no implicit context if possible...

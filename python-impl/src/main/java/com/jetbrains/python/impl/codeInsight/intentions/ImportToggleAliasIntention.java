@@ -42,7 +42,6 @@ import consulo.ui.NotificationType;
 import consulo.ui.ex.InputValidator;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,7 +118,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
         }
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -130,7 +129,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
     }
 
     @Override
-    public void doInvoke(@Nonnull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         // sanity check: isAvailable must have set it.
         IntentionState state = IntentionState.fromContext(editor, file);
         //
@@ -183,7 +182,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
                 final Collection<PsiReference> references = new ArrayList<>();
                 ScopeOwner scope = PsiTreeUtil.getParentOfType(state.myImportElement, ScopeOwner.class);
                 PsiTreeUtil.processElements(scope, new PsiElementProcessor() {
-                    public boolean execute(@Nonnull PsiElement element) {
+                    public boolean execute(PsiElement element) {
                         getReferences(element);
                         if (element instanceof PyStringLiteralExpression) {
                             PsiLanguageInjectionHost host = (PsiLanguageInjectionHost) element;
@@ -195,7 +194,7 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
                                     if (first instanceof ScopeOwner) {
                                         ScopeOwner scopeOwner = (ScopeOwner) first;
                                         PsiTreeUtil.processElements(scopeOwner, new PsiElementProcessor() {
-                                            public boolean execute(@Nonnull PsiElement element) {
+                                            public boolean execute(PsiElement element) {
                                                 getReferences(element);
                                                 return true;
                                             }

@@ -23,7 +23,6 @@ import consulo.document.util.TextRange;
 import consulo.language.psi.AbstractElementManipulator;
 import consulo.util.lang.Pair;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
@@ -57,7 +56,6 @@ public class PyStringLiteralExpressionManipulator extends AbstractElementManipul
 		return super.getRangeInElement(element);
 	}
 
-	@Nonnull
 	@Override
 	public Class<PyStringLiteralExpressionImpl> getElementClass()
 	{

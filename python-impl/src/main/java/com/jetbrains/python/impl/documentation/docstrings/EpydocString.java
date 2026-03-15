@@ -17,8 +17,7 @@ package com.jetbrains.python.impl.documentation.docstrings;
 
 import com.jetbrains.python.toolbox.Substring;
 import consulo.util.lang.xml.XmlStringUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,11 +101,10 @@ public class EpydocString extends TagBasedDocString {
         "see"
     };
 
-    public EpydocString(@Nonnull Substring docstringText) {
+    public EpydocString(Substring docstringText) {
         super(docstringText, "@");
     }
 
-    @Nonnull
     @Override
     public String getDescription() {
         String html = inlineMarkupToHTML(myDescription);
@@ -114,13 +112,11 @@ public class EpydocString extends TagBasedDocString {
         return html;
     }
 
-    @Nonnull
     @Override
     public List<String> getParameters() {
         return toUniqueStrings(getParameterSubstrings());
     }
 
-    @Nonnull
     @Override
     public List<String> getKeywordArguments() {
         return toUniqueStrings(getKeywordArgumentSubstrings());
@@ -168,7 +164,6 @@ public class EpydocString extends TagBasedDocString {
         return inlineMarkupToHTML(getTagValue(KEYWORD_ARGUMENT_TAGS, paramName));
     }
 
-    @Nonnull
     @Override
     public List<String> getRaisedExceptions() {
         return toUniqueStrings(getTagArguments(RAISES_TAGS));
@@ -378,7 +373,6 @@ public class EpydocString extends TagBasedDocString {
         return list;
     }
 
-    @Nonnull
     @Override
     public List<Substring> getKeywordArgumentSubstrings() {
         return getTagArguments(KEYWORD_ARGUMENT_TAGS);

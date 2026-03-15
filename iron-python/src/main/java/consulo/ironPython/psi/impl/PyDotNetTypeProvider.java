@@ -32,8 +32,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.util.ModuleUtilCore;
 import consulo.util.lang.ref.Ref;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 {
 	@Override
 	@Nullable
-	public PyType getReferenceType(@Nonnull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
+	public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
 		if(referenceTarget instanceof DotNetTypeDeclaration)
 		{
@@ -80,7 +79,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public Ref<PyType> getParameterType(@Nonnull PyNamedParameter param, @Nonnull PyFunction func, @Nonnull TypeEvalContext context)
+	public Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context)
 	{
 		if(!(param.getParent() instanceof PyParameterList))
 		{

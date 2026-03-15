@@ -30,8 +30,7 @@ import consulo.ui.ex.awt.UIUtil;
 import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
 import consulo.ui.color.ColorValue;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -115,7 +114,7 @@ public class ConsolePromptDecorator extends EditorLinePainter implements TextAnn
 
 	@Nullable
 	@Override
-	public Collection<LineExtensionInfo> getLineExtensions(@Nonnull Project project, @Nonnull VirtualFile virtualFile, int i)
+	public Collection<LineExtensionInfo> getLineExtensions(Project project, VirtualFile virtualFile, int i)
 	{
 		return null;
 	}

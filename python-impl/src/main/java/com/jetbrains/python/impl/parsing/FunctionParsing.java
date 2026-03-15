@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.parsing;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.parser.PsiBuilder;
 import consulo.language.parser.WhitespacesBinders;
@@ -36,7 +35,7 @@ public class FunctionParsing extends Parsing
 		super(context);
 	}
 
-	public void parseFunctionDeclaration(@Nonnull PsiBuilder.Marker endMarker, boolean async)
+	public void parseFunctionDeclaration(PsiBuilder.Marker endMarker, boolean async)
 	{
 		assertCurrentToken(PyTokenTypes.DEF_KEYWORD);
 		parseFunctionInnards(endMarker, async);
@@ -47,7 +46,7 @@ public class FunctionParsing extends Parsing
 		return FUNCTION_TYPE;
 	}
 
-	protected void parseFunctionInnards(@Nonnull PsiBuilder.Marker functionMarker, boolean async)
+	protected void parseFunctionInnards(PsiBuilder.Marker functionMarker, boolean async)
 	{
 		myBuilder.advanceLexer();
 		parseIdentifierOrSkip(PyTokenTypes.LPAR);

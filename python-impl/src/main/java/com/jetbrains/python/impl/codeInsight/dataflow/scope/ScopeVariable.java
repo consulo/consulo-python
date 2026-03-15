@@ -17,7 +17,6 @@
 package com.jetbrains.python.impl.codeInsight.dataflow.scope;
 
 import consulo.language.psi.PsiElement;
-import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -25,10 +24,8 @@ import java.util.Collection;
  * @author oleg
  */
 public interface ScopeVariable {
-  @Nonnull
   String getName();
 
-  @Nonnull
   Collection<PsiElement> getDeclarations();
 
   boolean isParameter();

@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.parsing;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import jakarta.annotation.Nonnull;
 import consulo.language.parser.PsiBuilder;
 import com.jetbrains.python.psi.LanguageLevel;
 
@@ -42,18 +41,16 @@ public class ParsingContext
 		myScopes.push(emptyParsingScope());
 	}
 
-	@Nonnull
 	public ParsingScope popScope()
 	{
 		return myScopes.pop();
 	}
 
-	public void pushScope(@Nonnull ParsingScope scope)
+	public void pushScope(ParsingScope scope)
 	{
 		myScopes.push(scope);
 	}
 
-	@Nonnull
 	public ParsingScope getScope()
 	{
 		return myScopes.peek();

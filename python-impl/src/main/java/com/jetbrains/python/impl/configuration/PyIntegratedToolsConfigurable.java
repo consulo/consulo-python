@@ -43,8 +43,6 @@ import consulo.ui.ex.awt.IdeBorderFactory;
 import consulo.ui.ex.awt.ListCellRendererWrapper;
 import consulo.ui.ex.awt.TextFieldWithBrowseButton;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -59,9 +57,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
   private JComboBox myTestRunnerComboBox;
   private JComboBox myDocstringFormatComboBox;
   private PythonTestConfigurationsModel myModel;
-  @Nonnull
   private final Module myModule;
-  @Nonnull
   private final Project myProject;
   private final PyDocumentationSettings myDocumentationSettings;
   private TextFieldWithBrowseButton myWorkDir;
@@ -72,7 +68,7 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
   private JPanel myDocStringsPanel;
   private JPanel myRestPanel;
 
-  public PyIntegratedToolsConfigurable(@Nonnull Module module) {
+  public PyIntegratedToolsConfigurable(Module module) {
     myModule = module;
     myProject = myModule.getProject();
     myDocumentationSettings = PyDocumentationSettings.getInstance(myModule);
@@ -102,7 +98,6 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
     myRestPanel.setBorder(IdeBorderFactory.createTitledBorder("reStructuredText"));
   }
 
-  @Nonnull
   private String getRequirementsPath() {
     String path = PyPackageRequirementsSettings.getInstance(myModule).getRequirementsPath();
     if (path.equals(PyPackageRequirementsSettings.DEFAULT_REQUIREMENTS_PATH) && !PyPackageUtil.hasRequirementsTxt(myModule)) {
@@ -185,7 +180,6 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
 		};
 	} */
 
-  @Nls
   @Override
   public LocalizeValue getDisplayName() {
     return LocalizeValue.localizeTODO("Python Integrated Tools");
@@ -300,7 +294,6 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
   public void disposeUIResources() {
   }
 
-  @Nonnull
   @Override
   public String getId() {
     return "PyIntegratedToolsConfigurable";

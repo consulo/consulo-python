@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.parsing;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.jetbrains.annotations.NonNls;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.parser.ITokenTypeRemapper;
 import consulo.language.parser.PsiBuilder;
 import consulo.logging.Logger;
@@ -38,35 +37,20 @@ import com.jetbrains.python.psi.PyElementType;
 public class StatementParsing extends Parsing implements ITokenTypeRemapper
 {
 	private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.parsing.StatementParsing");
-	@NonNls
 	protected static final String TOK_FUTURE_IMPORT = "__future__";
-	@NonNls
 	protected static final String TOK_WITH_STATEMENT = "with_statement";
-	@NonNls
 	protected static final String TOK_NESTED_SCOPES = "nested_scopes";
-	@NonNls
 	protected static final String TOK_PRINT_FUNCTION = "print_function";
-	@NonNls
 	protected static final String TOK_WITH = "with";
-	@NonNls
 	protected static final String TOK_AS = "as";
-	@NonNls
 	protected static final String TOK_PRINT = "print";
-	@NonNls
 	protected static final String TOK_NONE = "None";
-	@NonNls
 	protected static final String TOK_TRUE = "True";
-	@NonNls
 	protected static final String TOK_DEBUG = "__debug__";
-	@NonNls
 	protected static final String TOK_FALSE = "False";
-	@NonNls
 	protected static final String TOK_NONLOCAL = "nonlocal";
-	@NonNls
 	protected static final String TOK_EXEC = "exec";
-	@NonNls
 	protected static final String TOK_ASYNC = "async";
-	@NonNls
 	protected static final String TOK_AWAIT = "await";
 
 	private static final String EXPRESSION_EXPECTED = "Expression expected";
@@ -1038,7 +1022,7 @@ public class StatementParsing extends Parsing implements ITokenTypeRemapper
 		parseSuite(null, null);
 	}
 
-	public void parseSuite(@Nullable PsiBuilder.Marker endMarker, @Nullable IElementType elType)
+	public void parseSuite(PsiBuilder.@Nullable Marker endMarker, @Nullable IElementType elType)
 	{
 		if(myBuilder.getTokenType() == PyTokenTypes.STATEMENT_BREAK)
 		{

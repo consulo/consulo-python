@@ -26,7 +26,6 @@ import consulo.util.io.FileUtil;
 import consulo.util.lang.Comparing;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 
@@ -67,7 +66,7 @@ public class PythonRunConfigurationForm implements PythonRunConfigurationParams,
                                                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
 
         @Override
-        protected void onFileChosen(@Nonnull VirtualFile chosenFile) {
+        protected void onFileChosen(VirtualFile chosenFile) {
           super.onFileChosen(chosenFile);
           myCommonOptionsForm.setWorkingDirectory(chosenFile.getParent().getPath());
         }

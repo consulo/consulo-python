@@ -36,8 +36,7 @@ import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,10 +57,10 @@ public class PyDotNetNamespaceType implements PyType
 	}
 
 	@Override
-	public List<? extends RatedResolveResult> resolveMember(@Nonnull String name,
+	public List<? extends RatedResolveResult> resolveMember(String name,
 			@Nullable PyExpression location,
-			@Nonnull AccessDirection direction,
-			@Nonnull PyResolveContext resolveContext)
+			AccessDirection direction,
+			PyResolveContext resolveContext)
 	{
 		Project project = myNamespaceAsElement.getProject();
 		DotNetPsiSearcher facade = DotNetPsiSearcher.getInstance(project);

@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
 import static com.jetbrains.python.impl.psi.PyUtil.sure;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.document.Document;
 import consulo.codeEditor.Editor;
@@ -41,7 +40,7 @@ public class PyForPartFixer extends PyFixer<PyForPart>
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyForPart forPart)
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyForPart forPart)
 	{
 		PsiElement colon = PyPsiUtils.getFirstChildOfType(forPart, PyTokenTypes.COLON);
 		Document document = editor.getDocument();

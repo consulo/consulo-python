@@ -17,7 +17,7 @@
 package com.jetbrains.python.psi;
 
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole

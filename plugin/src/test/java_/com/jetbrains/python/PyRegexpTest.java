@@ -2,7 +2,6 @@ package com.jetbrains.python;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.lexer.Lexer;
 import consulo.util.lang.Pair;
@@ -138,7 +137,7 @@ public abstract class PyRegexpTest extends PyTestCase {
                        "(foomissingbaz$)");
   }
 
-  private void doTestInjectedText(@Nonnull String text, @Nonnull String expected) {
+  private void doTestInjectedText(String text, String expected) {
     myFixture.configureByText(PythonFileType.INSTANCE, text);
     InjectedLanguageManager languageManager = InjectedLanguageManager.getInstance(myFixture.getProject());
     PsiLanguageInjectionHost host = languageManager.getInjectionHost(myFixture.getElementAtCaret());

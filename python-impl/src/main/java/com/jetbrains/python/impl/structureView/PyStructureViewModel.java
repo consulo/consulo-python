@@ -24,19 +24,18 @@ import consulo.fileEditor.structureView.tree.Sorter;
 import consulo.language.editor.structureView.StructureViewModelBase;
 import consulo.language.psi.PsiFile;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
  */
 public class PyStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider, StructureViewModel.ExpandInfoProvider {
-  public PyStructureViewModel(@Nonnull PsiFile psiFile) {
+  public PyStructureViewModel(PsiFile psiFile) {
     this(psiFile, new PyStructureViewElement((PyElement) psiFile));
     withSorters(Sorter.ALPHA_SORTER);
     withSuitableClasses(PyFunction.class, PyClass.class);
   }
 
-  public PyStructureViewModel(@Nonnull PsiFile file, @Nonnull StructureViewTreeElement element) {
+  public PyStructureViewModel(PsiFile file, StructureViewTreeElement element) {
     super(file, element);
   }
 
@@ -56,7 +55,6 @@ public class PyStructureViewModel extends StructureViewModelBase implements Stru
     return element instanceof PyClass;
   }
 
-  @Nonnull
   @Override
   public Filter[] getFilters() {
     return new Filter[] {

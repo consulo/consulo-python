@@ -33,8 +33,7 @@ import consulo.localize.LocalizeValue;
 import consulo.usage.UsageInfo;
 import consulo.util.io.FileUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +46,7 @@ import java.util.Map;
 @ExtensionImpl(id = "pyFile")
 public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
     @Override
-    public boolean canProcessElement(@Nonnull PsiElement element) {
+    public boolean canProcessElement(PsiElement element) {
         return element instanceof PyFile;
     }
 
@@ -61,7 +60,6 @@ public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
         return element;
     }
 
-    @Nonnull
     @Override
     @RequiredReadAction
     public Collection<PsiReference> findReferences(PsiElement element) {
@@ -104,7 +102,7 @@ public class RenamePyFileProcessor extends RenamePsiFileProcessorBase {
     }
 
     @RequiredReadAction
-    private static boolean isNotAliasedInImportElement(@Nonnull PsiReference reference) {
+    private static boolean isNotAliasedInImportElement(PsiReference reference) {
         if (reference instanceof PsiPolyVariantReference polyRef) {
             for (ResolveResult result : polyRef.multiResolve(false)) {
                 if (result.getElement() instanceof PyImportElement importElem && importElem.getAsName() != null) {

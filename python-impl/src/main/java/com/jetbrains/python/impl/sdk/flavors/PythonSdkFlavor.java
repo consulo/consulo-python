@@ -40,8 +40,7 @@ import consulo.util.lang.PatternUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.encoding.EncodingManager;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -56,11 +55,11 @@ public abstract class PythonSdkFlavor {
     public static final ExtensionPointName<PythonSdkFlavor> EP_NAME = ExtensionPointName.create(PythonSdkFlavor.class);
     private static final Logger LOG = Logger.getInstance(PythonSdkFlavor.class);
 
-    public static Collection<String> appendSystemPythonPath(@Nonnull Collection<String> pythonPath) {
+    public static Collection<String> appendSystemPythonPath(Collection<String> pythonPath) {
         return appendSystemEnvPaths(pythonPath, PythonEnvUtil.PYTHONPATH);
     }
 
-    protected static Collection<String> appendSystemEnvPaths(@Nonnull Collection<String> pythonPath, String envname) {
+    protected static Collection<String> appendSystemEnvPaths(Collection<String> pythonPath, String envname) {
         String syspath = System.getenv(envname);
         if (syspath != null) {
             pythonPath.addAll(List.of(syspath.split(File.pathSeparator)));
@@ -69,9 +68,9 @@ public abstract class PythonSdkFlavor {
     }
 
     public static void initPythonPath(
-        @Nonnull Map<String, String> envs,
+        Map<String, String> envs,
         boolean passParentEnvs,
-        @Nonnull Collection<String> pythonPathList
+        Collection<String> pythonPathList
     ) {
         if (passParentEnvs && !envs.containsKey(PythonEnvUtil.PYTHONPATH)) {
             pythonPathList = appendSystemPythonPath(pythonPathList);
@@ -186,7 +185,7 @@ public abstract class PythonSdkFlavor {
         return file.isFile() && isValidSdkPath(file);
     }
 
-    public boolean isValidSdkPath(@Nonnull File file) {
+    public boolean isValidSdkPath(File file) {
         return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("python");
     }
 
@@ -227,7 +226,7 @@ public abstract class PythonSdkFlavor {
         return PythonProcessHandler.createDefaultProcessHandler(commandLine, withMediator);
     }
 
-    public static void setupEncodingEnvs(Map<String, String> envs, @Nonnull Charset charset) {
+    public static void setupEncodingEnvs(Map<String, String> envs, Charset charset) {
         String encoding = charset.name();
         PythonEnvUtil.setPythonIOEncoding(envs, encoding);
     }
@@ -241,7 +240,6 @@ public abstract class PythonSdkFlavor {
         }
     }
 
-    @Nonnull
     public abstract String getName();
 
     public LanguageLevel getLanguageLevel(Sdk sdk) {
@@ -253,7 +251,6 @@ public abstract class PythonSdkFlavor {
         return LanguageLevel.getDefault();
     }
 
-    @Nonnull
     public Image getIcon() {
         return PythonPsiIconGroup.python();
     }
@@ -267,7 +264,6 @@ public abstract class PythonSdkFlavor {
         return path;
     }
 
-    @Nonnull
     public Collection<String> collectDebugPythonPath() {
         return Collections.emptyList();
     }

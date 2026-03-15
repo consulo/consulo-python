@@ -21,12 +21,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.impl.psi.PyUtil;
-import org.jetbrains.annotations.NonNls;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Collections2;
 import consulo.language.ast.ASTNode;
 import consulo.language.inject.InjectedLanguageManager;
@@ -86,9 +84,8 @@ public final class PyClassRefactoringUtil
 	 *                                   For example: MyClass.Foo will become Foo it this param is MyClass.
 	 * @return new (copied) fields
 	 */
-	@Nonnull
-	public static List<PyAssignmentStatement> copyFieldDeclarationToStatement(@Nonnull Collection<PyAssignmentStatement> assignmentStatements,
-			@Nonnull PyStatementList superClassStatement,
+	public static List<PyAssignmentStatement> copyFieldDeclarationToStatement(Collection<PyAssignmentStatement> assignmentStatements,
+			PyStatementList superClassStatement,
 			@Nullable PyClass dequalifyIfDeclaredInClass)
 	{
 		List<PyAssignmentStatement> declarations = new ArrayList<>(assignmentStatements.size());
@@ -120,7 +117,7 @@ public final class PyClassRefactoringUtil
 	 * @param assignmentStatement statement to change
 	 * @param newValue            new value
 	 */
-	private static void setNewAssigneeValue(@Nonnull PyAssignmentStatement assignmentStatement, @Nonnull String newValue)
+	private static void setNewAssigneeValue(PyAssignmentStatement assignmentStatement, String newValue)
 	{
 		PyExpression oldValue = assignmentStatement.getAssignedValue();
 		PyExpression newExpression = PyElementGenerator.getInstance(assignmentStatement.getProject()).createExpressionFromText(LanguageLevel.forElement(assignmentStatement), newValue);
@@ -141,8 +138,7 @@ public final class PyClassRefactoringUtil
 	 * @param dequalifyIfDeclaredInClass class to check
 	 * @return value as string
 	 */
-	@Nonnull
-	private static String getNewValueToAssign(@Nonnull PyReferenceExpression currentValue, @Nonnull PyClass dequalifyIfDeclaredInClass)
+	private static String getNewValueToAssign(PyReferenceExpression currentValue, PyClass dequalifyIfDeclaredInClass)
 	{
 		PyExpression qualifier = currentValue.getQualifier();
 		if((qualifier instanceof PyReferenceExpression) && ((PyReferenceExpression) qualifier).getReference().isReferenceTo(dequalifyIfDeclaredInClass))
@@ -153,7 +149,6 @@ public final class PyClassRefactoringUtil
 		return currentValue.getText();
 	}
 
-	@Nonnull
 	public static List<PyFunction> copyMethods(Collection<PyFunction> methods, PyClass superClass, boolean skipIfExist)
 	{
 		if(methods.isEmpty())
@@ -176,8 +171,7 @@ public final class PyClassRefactoringUtil
 	 * @param skipIfExist do not add anything if method already exists
 	 * @return newly added methods or existing one (if skipIfExists is true and method already exists)
 	 */
-	@Nonnull
-	public static List<PyFunction> addMethods(@Nonnull PyClass destination, boolean skipIfExist, @Nonnull PyFunction... methods)
+	public static List<PyFunction> addMethods(PyClass destination, boolean skipIfExist, PyFunction... methods)
 	{
 
 		PyStatementList destStatementList = destination.getStatementList();
@@ -211,8 +205,7 @@ public final class PyClassRefactoringUtil
 	 * @param method            method to add
 	 * @return newlty added method
 	 */
-	@Nonnull
-	private static PyFunction insertMethodInProperPlace(@Nonnull PyStatementList destStatementList, @Nonnull PyFunction method)
+	private static PyFunction insertMethodInProperPlace(PyStatementList destStatementList, PyFunction method)
 	{
 		boolean methodIsInit = PyUtil.isInit(method);
 		if(!methodIsInit)
@@ -242,17 +235,17 @@ public final class PyClassRefactoringUtil
 	 * @param element newly created element to restore references
 	 * @see #rememberNamedReferences(com.intellij.psi.PsiElement, String...)
 	 */
-	public static void restoreNamedReferences(@Nonnull PsiElement element)
+	public static void restoreNamedReferences(PsiElement element)
 	{
 		restoreNamedReferences(element, null);
 	}
 
-	public static void restoreNamedReferences(@Nonnull PsiElement newElement, @Nullable PsiElement oldElement)
+	public static void restoreNamedReferences(PsiElement newElement, @Nullable PsiElement oldElement)
 	{
 		restoreNamedReferences(newElement, oldElement, PsiElement.EMPTY_ARRAY);
 	}
 
-	public static void restoreNamedReferences(@Nonnull final PsiElement newElement, @Nullable final PsiElement oldElement, @Nonnull final PsiElement[] otherMovedElements)
+	public static void restoreNamedReferences(final PsiElement newElement, @Nullable final PsiElement oldElement, final PsiElement[] otherMovedElements)
 	{
 		newElement.acceptChildren(new PyRecursiveElementVisitor()
 		{
@@ -279,7 +272,7 @@ public final class PyClassRefactoringUtil
 	}
 
 
-	private static void restoreReference(@Nonnull PyReferenceExpression node, @Nonnull PsiElement[] otherMovedElements)
+	private static void restoreReference(PyReferenceExpression node, PsiElement[] otherMovedElements)
 	{
 		try
 		{
@@ -357,17 +350,17 @@ public final class PyClassRefactoringUtil
 		return true;
 	}
 
-	public static boolean insertImport(@Nonnull PsiElement anchor, @Nonnull PsiNamedElement element)
+	public static boolean insertImport(PsiElement anchor, PsiNamedElement element)
 	{
 		return insertImport(anchor, element, null);
 	}
 
-	public static boolean insertImport(@Nonnull PsiElement anchor, @Nonnull PsiNamedElement element, @Nullable String asName)
+	public static boolean insertImport(PsiElement anchor, PsiNamedElement element, @Nullable String asName)
 	{
 		return insertImport(anchor, element, asName, PyCodeInsightSettings.getInstance().PREFER_FROM_IMPORT);
 	}
 
-	public static boolean insertImport(@Nonnull PsiElement anchor, @Nonnull PsiNamedElement element, @Nullable String asName, boolean preferFromImport)
+	public static boolean insertImport(PsiElement anchor, PsiNamedElement element, @Nullable String asName, boolean preferFromImport)
 	{
 		if(PyBuiltinCache.getInstance(element).isBuiltin(element))
 		{
@@ -417,7 +410,7 @@ public final class PyClassRefactoringUtil
 	 * @param element     element to store references for
 	 * @param namesToSkip if reference inside of element has one of this names, it will not be saved.
 	 */
-	public static void rememberNamedReferences(@Nonnull final PsiElement element, @Nonnull final String... namesToSkip)
+	public static void rememberNamedReferences(final PsiElement element, final String... namesToSkip)
 	{
 		element.acceptChildren(new PyRecursiveElementVisitor()
 		{
@@ -442,7 +435,7 @@ public final class PyClassRefactoringUtil
 		});
 	}
 
-	private static void rememberReference(@Nonnull PyReferenceExpression node, @Nonnull PsiElement element)
+	private static void rememberReference(PyReferenceExpression node, PsiElement element)
 	{
 		// We will remember reference in deepest node (except for references to PyImportedModules, as we need references to modules, not to
 		// their packages)
@@ -503,7 +496,7 @@ public final class PyClassRefactoringUtil
 	}
 
 	@Nullable
-	private static PsiElement resolveExpression(@Nonnull PyExpression expr)
+	private static PsiElement resolveExpression(PyExpression expr)
 	{
 		if(expr instanceof PyReferenceExpression)
 		{
@@ -512,8 +505,7 @@ public final class PyClassRefactoringUtil
 		return null;
 	}
 
-	@Nonnull
-	private static List<PsiElement> multiResolveExpression(@Nonnull PyReferenceExpression expr)
+	private static List<PsiElement> multiResolveExpression(PyReferenceExpression expr)
 	{
 		return ContainerUtil.mapNotNull(expr.getReference().multiResolve(false), result -> result.getElement());
 	}
@@ -527,7 +519,7 @@ public final class PyClassRefactoringUtil
 	 * @param element         PSI element reference to which should be updated
 	 * @return whether import statement was actually updated
 	 */
-	public static boolean updateUnqualifiedImportOfElement(@Nonnull PyImportStatementBase importStatement, @Nonnull PsiNamedElement element)
+	public static boolean updateUnqualifiedImportOfElement(PyImportStatementBase importStatement, PsiNamedElement element)
 	{
 		String name = getOriginalName(element);
 		if(name != null)
@@ -569,7 +561,7 @@ public final class PyClassRefactoringUtil
 		return false;
 	}
 
-	private static void deleteImportStatementFromInjected(@Nonnull PyImportStatementBase importStatement)
+	private static void deleteImportStatementFromInjected(PyImportStatementBase importStatement)
 	{
 		PsiElement sibling = importStatement.getPrevSibling();
 		importStatement.delete();
@@ -580,7 +572,7 @@ public final class PyClassRefactoringUtil
 	}
 
 	@Nullable
-	public static String getOriginalName(@Nonnull PsiNamedElement element)
+	public static String getOriginalName(PsiNamedElement element)
 	{
 		if(element instanceof PyFile)
 		{
@@ -612,7 +604,7 @@ public final class PyClassRefactoringUtil
 	 * @param clazz        destination
 	 * @param superClasses classes to add
 	 */
-	public static void addSuperclasses(@Nonnull Project project, @Nonnull PyClass clazz, @Nonnull PyClass... superClasses)
+	public static void addSuperclasses(Project project, PyClass clazz, PyClass... superClasses)
 	{
 
 		Collection<String> superClassNames = new ArrayList<>();
@@ -639,8 +631,8 @@ public final class PyClassRefactoringUtil
 	 * @param paramExpressions param expressions. Like "object" or "MySuperClass". Will not add any param exp. if null.
 	 * @param keywordArguments keyword args like "metaclass=ABCMeta". key-value pairs.  Will not add any keyword arg. if null.
 	 */
-	public static void addSuperClassExpressions(@Nonnull Project project,
-			@Nonnull PyClass clazz,
+	public static void addSuperClassExpressions(Project project,
+			PyClass clazz,
 			@Nullable Collection<String> paramExpressions,
 			@Nullable Collection<Pair<String, String>> keywordArguments)
 	{
@@ -688,7 +680,7 @@ public final class PyClassRefactoringUtil
 	 *
 	 * @param file file to optimize imports
 	 */
-	public static void optimizeImports(@Nonnull PsiFile file)
+	public static void optimizeImports(PsiFile file)
 	{
 		new PyImportOptimizer().processFile(file).run();
 	}
@@ -702,7 +694,7 @@ public final class PyClassRefactoringUtil
 	 * @return newly inserted attribute
 	 */
 	@Nullable
-	public static PsiElement addClassAttributeIfNotExist(@Nonnull PyClass aClass, @Nonnull String attributeName, @Nonnull String value)
+	public static PsiElement addClassAttributeIfNotExist(PyClass aClass, String attributeName, String value)
 	{
 		if(aClass.findClassAttribute(attributeName, false, null) != null)
 		{
@@ -722,7 +714,7 @@ public final class PyClassRefactoringUtil
 		private final PsiFile myFile;
 		private final String myName;
 
-		public DynamicNamedElement(@Nonnull PsiFile file, @Nonnull String name)
+		public DynamicNamedElement(PsiFile file, String name)
 		{
 			super(file.getManager(), file.getLanguage());
 			myName = name;
@@ -742,7 +734,7 @@ public final class PyClassRefactoringUtil
 		}
 
 		@Override
-		public PsiElement setName(@NonNls @Nonnull String name) throws IncorrectOperationException
+		public PsiElement setName(String name) throws IncorrectOperationException
 		{
 			return null;
 		}

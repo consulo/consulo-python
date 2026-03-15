@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.psi.resolve;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole

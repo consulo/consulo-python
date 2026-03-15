@@ -28,8 +28,7 @@ import consulo.project.Project;
 import consulo.util.collection.FactoryMap;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,14 +40,12 @@ public class PySyntaxHighlighterFactory extends SyntaxHighlighterFactory {
   private final Map<LanguageLevel, PyHighlighter> myMap = new ConcurrentHashMap<>();
 
   @Override
-  @Nonnull
   public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
     LanguageLevel level =
       project != null && virtualFile != null ? PyUtil.getLanguageLevelForVirtualFile(project, virtualFile) : LanguageLevel.getDefault();
     return myMap.computeIfAbsent(level, PyHighlighter::new);
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;

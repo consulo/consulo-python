@@ -16,14 +16,13 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PyElementTypes;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyStatementPart;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common parts functionality.
@@ -35,7 +34,6 @@ public class PyPartitionedElementImpl extends PyElementImpl {
     super(astNode);
   }
 
-  @Nonnull
   PyStatementPart[] getParts() {
     return childrenToPsi(PyElementTypes.PARTS, PyStatementPart.EMPTY_ARRAY);
   }
@@ -47,7 +45,6 @@ public class PyPartitionedElementImpl extends PyElementImpl {
     return (PyStatementPart)n.getPsi();
   }
 
-  @Nonnull
   protected PyStatementPart getPartNotNull(PyElementType which) {
     ASTNode n = getNode().findChildByType(which);
     assert n != null;

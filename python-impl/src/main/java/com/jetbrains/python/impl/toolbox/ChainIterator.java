@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.toolbox;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Iterator;
 

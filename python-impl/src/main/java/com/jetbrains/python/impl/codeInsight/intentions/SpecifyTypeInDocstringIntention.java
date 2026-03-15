@@ -34,8 +34,7 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helps to specify type.
@@ -43,17 +42,15 @@ import jakarta.annotation.Nullable;
  * @author ktisha
  */
 public class SpecifyTypeInDocstringIntention extends TypeIntention {
-    @Nonnull
     private LocalizeValue myText = PyLocalize.intnSpecifyType();
 
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return myText;
     }
 
     @Override
-    public void doInvoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyExpression problemElement = getProblemElement(elementAt);
         PsiReference reference = problemElement == null ? null : problemElement.getReference();
@@ -73,7 +70,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
         }
     }
 
-    private static void generateDocstring(@Nullable PyNamedParameter param, @Nonnull PyFunction pyFunction) {
+    private static void generateDocstring(@Nullable PyNamedParameter param, PyFunction pyFunction) {
         if (!DocStringUtil.ensureNotPlainDocstringFormat(pyFunction)) {
             return;
         }
@@ -106,7 +103,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
     }
 
     @Override
-    protected boolean isParamTypeDefined(@Nonnull PyParameter parameter) {
+    protected boolean isParamTypeDefined(PyParameter parameter) {
         PyFunction pyFunction = PsiTreeUtil.getParentOfType(parameter, PyFunction.class);
         if (pyFunction != null) {
             StructuredDocString structuredDocString = pyFunction.getStructuredDocString();
@@ -120,7 +117,7 @@ public class SpecifyTypeInDocstringIntention extends TypeIntention {
     }
 
     @Override
-    protected boolean isReturnTypeDefined(@Nonnull PyFunction function) {
+    protected boolean isReturnTypeDefined(PyFunction function) {
         StructuredDocString structuredDocString = function.getStructuredDocString();
         return structuredDocString != null && structuredDocString.getReturnType() != null;
     }

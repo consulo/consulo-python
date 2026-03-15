@@ -28,7 +28,6 @@ import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyFromImportStatementImpl;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyFromImportStatementStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -45,30 +44,29 @@ public class PyFromImportStatementElementType extends PyStubElementType<PyFromIm
   }
 
   @Override
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PyFromImportStatementImpl(node);
   }
 
   @Override
-  public PyFromImportStatement createPsi(@Nonnull PyFromImportStatementStub stub) {
+  public PyFromImportStatement createPsi(PyFromImportStatementStub stub) {
     return new PyFromImportStatementImpl(stub);
   }
 
   @Override
-  public PyFromImportStatementStub createStub(@Nonnull PyFromImportStatement psi, StubElement parentStub) {
+  public PyFromImportStatementStub createStub(PyFromImportStatement psi, StubElement parentStub) {
     return new PyFromImportStatementStubImpl(psi.getImportSourceQName(), psi.isStarImport(), psi.getRelativeLevel(), parentStub,
                                              getStubElementType());
   }
 
-  public void serialize(@Nonnull PyFromImportStatementStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
+  public void serialize(PyFromImportStatementStub stub, StubOutputStream dataStream) throws IOException {
     QualifiedName qName = stub.getImportSourceQName();
     QualifiedName.serialize(qName, dataStream);
     dataStream.writeBoolean(stub.isStarImport());
     dataStream.writeVarInt(stub.getRelativeLevel());
   }
 
-  @Nonnull
-  public PyFromImportStatementStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PyFromImportStatementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     QualifiedName qName = QualifiedName.deserialize(dataStream);
     boolean isStarImport = dataStream.readBoolean();
     int relativeLevel = dataStream.readVarInt();

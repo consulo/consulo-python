@@ -21,7 +21,6 @@ import com.jetbrains.python.psi.PyBoolLiteralExpression;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -31,7 +30,7 @@ public class PyBoolLiteralExpressionImpl extends PyElementImpl implements PyBool
     super(astNode);
   }
 
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     return PyBuiltinCache.getInstance(this).getBoolType();
   }
 

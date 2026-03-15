@@ -21,8 +21,7 @@ import consulo.configurable.ApplicationConfigurable;
 import consulo.configurable.BeanConfigurable;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
@@ -36,7 +35,6 @@ public class PySpecificSmartKeysOptions extends BeanConfigurable<PyCodeInsightSe
     checkBox("INSERT_TYPE_DOCSTUB", "Insert 'type' and 'rtype' to the documentation comment stub");
   }
 
-  @Nonnull
   @Override
   public String getId() {
     return "editor.preferences.smartKeys.python";

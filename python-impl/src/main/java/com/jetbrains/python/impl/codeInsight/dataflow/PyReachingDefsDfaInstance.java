@@ -30,7 +30,6 @@ import consulo.language.dataFlow.map.DfaMapInstance;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -105,7 +104,6 @@ public class PyReachingDefsDfaInstance implements DfaMapInstance<ScopeVariable>
     return map;
   }
 
-  @Nonnull
   public DFAMap<ScopeVariable> initial() {
     return INITIAL_MAP;
   }

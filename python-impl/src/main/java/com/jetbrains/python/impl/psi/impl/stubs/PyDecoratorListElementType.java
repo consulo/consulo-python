@@ -25,7 +25,6 @@ import com.jetbrains.python.psi.PyDecoratorList;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyDecoratorListImpl;
 import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
-import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 
@@ -40,24 +39,23 @@ public class PyDecoratorListElementType extends PyStubElementType<PyDecoratorLis
     super("DECORATOR_LIST");
   }
 
-  public PsiElement createElement(@Nonnull ASTNode node) {
+  public PsiElement createElement(ASTNode node) {
     return new PyDecoratorListImpl(node);
   }
 
-  public PyDecoratorList createPsi(@Nonnull PyDecoratorListStub stub) {
+  public PyDecoratorList createPsi(PyDecoratorListStub stub) {
     return new PyDecoratorListImpl(stub);
   }
 
-  public PyDecoratorListStub createStub(@Nonnull PyDecoratorList psi, StubElement parentStub) {
+  public PyDecoratorListStub createStub(PyDecoratorList psi, StubElement parentStub) {
     return new PyDecoratorListStubImpl(parentStub);
   }
 
-  public void serialize(@Nonnull PyDecoratorListStub stub, @Nonnull StubOutputStream dataStream) throws IOException {
+  public void serialize(PyDecoratorListStub stub, StubOutputStream dataStream) throws IOException {
     // nothing
   }
 
-  @Nonnull
-  public PyDecoratorListStub deserialize(@Nonnull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public PyDecoratorListStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new PyDecoratorListStubImpl(parentStub);
   }
 }

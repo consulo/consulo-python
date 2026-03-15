@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.documentation.docstrings;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.jetbrains.python.impl.psi.PyIndentUtil;
 import com.jetbrains.python.psi.StructuredDocString;
@@ -35,7 +34,7 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 	private final String mySummary;
 	private final String myDescription;
 
-	public PlainDocString(@Nonnull Substring content)
+	public PlainDocString(Substring content)
 	{
 		super(content);
 		int firstNonEmpty = consumeEmptyLines(0);
@@ -66,7 +65,6 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return mySummary;
 	}
 
-	@Nonnull
 	@Override
 	public String getDescription()
 	{
@@ -79,14 +77,12 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return false;
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getParameters()
 	{
 		return Collections.emptyList();
 	}
 
-	@Nonnull
 	@Override
 	public List<Substring> getParameterSubstrings()
 	{
@@ -114,14 +110,12 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return null;
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getKeywordArguments()
 	{
 		return Collections.emptyList();
 	}
 
-	@Nonnull
 	@Override
 	public List<Substring> getKeywordArgumentSubstrings()
 	{
@@ -156,7 +150,6 @@ public class PlainDocString extends DocStringLineParser implements StructuredDoc
 		return null;
 	}
 
-	@Nonnull
 	@Override
 	public List<String> getRaisedExceptions()
 	{

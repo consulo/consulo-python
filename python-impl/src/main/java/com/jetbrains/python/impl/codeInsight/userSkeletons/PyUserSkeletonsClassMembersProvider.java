@@ -27,8 +27,7 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,9 +39,8 @@ import java.util.List;
 @ExtensionImpl
 public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderBase implements PyOverridingAncestorsClassMembersProvider
 {
-	@Nonnull
 	@Override
-	public Collection<PyCustomMember> getMembers(@Nonnull PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
+	public Collection<PyCustomMember> getMembers(PyClassType classType, PsiElement location, TypeEvalContext typeEvalContext)
 	{
 		PyClass cls = classType.getPyClass();
 		PyClass skeleton = PyUserSkeletonsUtil.getUserSkeleton(cls);
@@ -55,7 +53,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 
 	@Nullable
 	@Override
-	public PsiElement resolveMember(@Nonnull PyClassType classType, @Nonnull String name, PsiElement location, TypeEvalContext context)
+	public PsiElement resolveMember(PyClassType classType, String name, PsiElement location, TypeEvalContext context)
 	{
 		PyClass cls = classType.getPyClass();
 		PyClass skeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(cls, context);
@@ -66,7 +64,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 		return null;
 	}
 
-	public static PsiElement findClassMember(@Nonnull PyClass cls, @Nonnull String name, boolean isDefinition)
+	public static PsiElement findClassMember(PyClass cls, String name, boolean isDefinition)
 	{
 		PyFunction function = cls.findMethodByName(name, false, null);
 		if(function != null)
@@ -94,7 +92,7 @@ public class PyUserSkeletonsClassMembersProvider extends PyClassMembersProviderB
 		return null;
 	}
 
-	public static Collection<PyCustomMember> getClassMembers(@Nonnull PyClass cls, boolean isDefinition)
+	public static Collection<PyCustomMember> getClassMembers(PyClass cls, boolean isDefinition)
 	{
 		List<PyCustomMember> result = new ArrayList<>();
 		for(PyFunction function : cls.getMethods())

@@ -15,8 +15,7 @@
  */
 package com.jetbrains.python.impl;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyElementVisitor;
@@ -34,7 +33,6 @@ public class PyTypeDeclarationStatementImpl extends PyElementImpl implements PyT
 		super(astNode);
 	}
 
-	@Nonnull
 	@Override
 	public PyExpression getTarget()
 	{

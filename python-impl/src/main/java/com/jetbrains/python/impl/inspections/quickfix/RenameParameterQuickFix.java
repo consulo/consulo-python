@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
@@ -38,14 +37,13 @@ public class RenameParameterQuickFix implements LocalQuickFix {
     myNewName = newName;
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     PsiElement elt = descriptor.getPsiElement();
     if (elt != null && elt instanceof PyNamedParameter && elt.isWritable()) {
       new RenameProcessor(project, elt, myNewName, false, true).run();
     }
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return PyLocalize.qfixRenameParameterTo$0(myNewName);

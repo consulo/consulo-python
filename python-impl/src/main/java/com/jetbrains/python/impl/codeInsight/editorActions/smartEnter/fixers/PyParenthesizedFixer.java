@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.fixers;
 
-import jakarta.annotation.Nonnull;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.PySmartEnterProcessor;
@@ -36,7 +35,7 @@ public class PyParenthesizedFixer extends PyFixer<PyParenthesizedExpression>
 	}
 
 	@Override
-	public void doApply(@Nonnull Editor editor, @Nonnull PySmartEnterProcessor processor, @Nonnull PyParenthesizedExpression expression) throws IncorrectOperationException
+	public void doApply(Editor editor, PySmartEnterProcessor processor, PyParenthesizedExpression expression) throws IncorrectOperationException
 	{
 		PsiElement lastChild = expression.getLastChild();
 		if(lastChild != null && !")".equals(lastChild.getText()))

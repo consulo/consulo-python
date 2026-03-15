@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.psi.resolve;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.util.lang.function.Condition;
 import consulo.util.dataholder.Key;
 import consulo.util.io.FileUtil;
@@ -71,7 +70,7 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 
 
 	@Override
-	public boolean execute(@Nonnull PsiElement element, @Nonnull ResolveState substitutor)
+	public boolean execute(PsiElement element, ResolveState substitutor)
 	{
 		if(myNodeFilter != null && !myNodeFilter.value(element))
 		{
@@ -180,13 +179,13 @@ public abstract class VariantsProcessor implements PsiScopeProcessor
 
 	@Override
 	@Nullable
-	public <T> T getHint(@Nonnull Key<T> hintKey)
+	public <T> T getHint(Key<T> hintKey)
 	{
 		return null;
 	}
 
 	@Override
-	public void handleEvent(@Nonnull Event event, Object associated)
+	public void handleEvent(Event event, Object associated)
 	{
 	}
 

@@ -27,7 +27,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
@@ -57,8 +56,7 @@ public class PyNameSuggestionProvider implements NameSuggestionProvider {
     return SuggestedNameInfo.NULL_INFO;
   }
 
-  @Nonnull
-  protected String toCamelCase(@Nonnull String name, boolean uppercaseFirstLetter) {
+  protected String toCamelCase(String name, boolean uppercaseFirstLetter) {
     List<String> strings = StringUtil.split(name, "_");
     if (strings.size() > 0) {
       StringBuilder buf = new StringBuilder();

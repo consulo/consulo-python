@@ -26,7 +26,6 @@ import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
 import org.intellij.lang.regexp.*;
 
-import jakarta.annotation.Nonnull;
 import java.util.EnumSet;
 
 /**
@@ -39,13 +38,11 @@ public class PythonRegexpParserDefinition extends RegExpParserDefinition {
                                                                       RegExpCapability.OCTAL_NO_LEADING_ZERO,
                                                                       RegExpCapability.OMIT_NUMBERS_IN_QUANTIFIERS);
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonRegexpLanguage.INSTANCE;
   }
 
-  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new RegExpLexer(CAPABILITIES);
   }

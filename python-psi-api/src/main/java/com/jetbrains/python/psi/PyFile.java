@@ -22,8 +22,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.python.language.PythonLanguageVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -34,7 +33,6 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
     @RequiredReadAction
     List<PyClass> getTopLevelClasses();
 
-    @Nonnull
     @RequiredReadAction
     List<PyFunction> getTopLevelFunctions();
 
@@ -53,7 +51,6 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
     @RequiredReadAction
     PyTargetExpression findTopLevelAttribute(String name);
 
-    @Nonnull
     @RequiredReadAction
     default LanguageLevel getLanguageLevel() {
         if (getLanguageVersion() instanceof PythonLanguageVersion pythonLanguageVersion) {
@@ -68,7 +65,6 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
      *
      * @return the list of 'from ... import' statements.
      */
-    @Nonnull
     List<PyFromImportStatement> getFromImports();
 
     /**
@@ -80,14 +76,12 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
     /**
      * Iterate over exported PSI elements defined in the file.
      */
-    @Nonnull
     Iterable<PyElement> iterateNames();
 
     /**
      * Return the resolved exported elements.
      */
-    @Nonnull
-    List<RatedResolveResult> multiResolveName(@Nonnull String name);
+    List<RatedResolveResult> multiResolveName(String name);
 
     /**
      * @deprecated Use {@link #multiResolveName(String)} instead.
@@ -101,7 +95,6 @@ public interface PyFile extends PyElement, PsiFile, PyDocStringOwner, ScopeOwner
      *
      * @return the list of import targets.
      */
-    @Nonnull
     List<PyImportElement> getImportTargets();
 
     /**

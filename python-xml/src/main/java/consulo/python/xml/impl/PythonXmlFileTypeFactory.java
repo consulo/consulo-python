@@ -21,7 +21,6 @@ import consulo.virtualFileSystem.fileType.FileTypeConsumer;
 import consulo.virtualFileSystem.fileType.FileTypeFactory;
 import consulo.xml.ide.highlighter.XmlFileType;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -31,7 +30,7 @@ import jakarta.annotation.Nonnull;
 public class PythonXmlFileTypeFactory extends FileTypeFactory
 {
 	@Override
-	public void createFileTypes(@Nonnull FileTypeConsumer fileTypeConsumer)
+	public void createFileTypes(FileTypeConsumer fileTypeConsumer)
 	{
 		fileTypeConsumer.consume(XmlFileType.INSTANCE, "qrc");
 	}

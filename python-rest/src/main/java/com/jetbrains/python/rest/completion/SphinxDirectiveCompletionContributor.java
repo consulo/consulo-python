@@ -34,7 +34,6 @@ import consulo.language.editor.completion.CompletionProvider;
 import consulo.language.editor.completion.CompletionContributor;
 import consulo.python.module.extension.PyModuleExtension;
 
-import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 import static consulo.language.pattern.StandardPatterns.or;
@@ -54,7 +53,7 @@ public class SphinxDirectiveCompletionContributor extends CompletionContributor
 		{
 			@RequiredReadAction
 			@Override
-			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
+			public void addCompletions(CompletionParameters parameters, ProcessingContext context, CompletionResultSet result)
 			{
 				Sdk sdk = ModuleUtilCore.getSdk(parameters.getPosition(), PyModuleExtension.class);
 				if(sdk != null)
@@ -68,7 +67,6 @@ public class SphinxDirectiveCompletionContributor extends CompletionContributor
 		});
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

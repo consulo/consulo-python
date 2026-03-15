@@ -1,6 +1,5 @@
 package com.jetbrains.python.inspections;
 
-import jakarta.annotation.Nonnull;
 
 import com.intellij.testFramework.TestModuleDescriptor;
 import com.jetbrains.python.fixtures.PyTestCase;
@@ -29,7 +28,7 @@ public abstract class Py3UnresolvedReferencesInspectionTest extends PyTestCase {
     });
   }
 
-  private void doMultiFileTest(@Nonnull final String filename) {
+  private void doMultiFileTest(final String filename) {
     runWithLanguageLevel(LanguageLevel.PYTHON33, new Runnable() {
       @Override
       public void run() {

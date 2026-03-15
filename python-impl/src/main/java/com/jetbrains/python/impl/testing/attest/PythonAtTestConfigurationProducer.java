@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
 
     @Override
     @RequiredReadAction
-    protected boolean isAvailable(@Nonnull Location location) {
+    protected boolean isAvailable(Location location) {
         PsiElement element = location.getPsiElement();
         Module module = location.getModule();
         if (module == null) {
@@ -60,7 +59,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
 
     @Override
     protected boolean isTestClass(
-        @Nonnull PyClass pyClass,
+        PyClass pyClass,
         @Nullable AbstractPythonTestRunConfiguration configuration,
         @Nullable TypeEvalContext context
     ) {
@@ -72,7 +71,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
         return false;
     }
 
-    private static boolean hasTestFunction(@Nonnull PyClass pyClass) {
+    private static boolean hasTestFunction(PyClass pyClass) {
         PyFunction[] methods = pyClass.getMethods();
         for (PyFunction function : methods) {
             PyDecoratorList decorators = function.getDecoratorList();
@@ -89,7 +88,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
     }
 
     @Override
-    protected boolean isTestFunction(@Nonnull PyFunction pyFunction, @Nullable AbstractPythonTestRunConfiguration configuration) {
+    protected boolean isTestFunction(PyFunction pyFunction, @Nullable AbstractPythonTestRunConfiguration configuration) {
         PyDecoratorList decorators = pyFunction.getDecoratorList();
         if (decorators == null) {
             return false;
@@ -103,7 +102,7 @@ public class PythonAtTestConfigurationProducer extends PythonTestConfigurationPr
     }
 
     @Override
-    protected List<PyStatement> getTestCaseClassesFromFile(@Nonnull PyFile file) {
+    protected List<PyStatement> getTestCaseClassesFromFile(PyFile file) {
         List<PyStatement> result = Lists.newArrayList();
         for (PyClass cls : file.getTopLevelClasses()) {
             if (isTestClass(cls, null, null)) {

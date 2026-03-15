@@ -36,7 +36,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.LanguageUtil;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -112,7 +111,6 @@ public class PyTokenSeparatorGenerator implements TokenSeparatorGenerator
 		return Factory.createSingleLeafElement(TokenType.WHITE_SPACE, text, 0, text.length(), null, manager);
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

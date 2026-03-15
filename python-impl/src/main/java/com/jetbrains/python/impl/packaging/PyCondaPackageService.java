@@ -36,8 +36,7 @@ import consulo.util.xml.serializer.XmlSerializerUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
@@ -82,11 +81,11 @@ public class PyCondaPackageService implements PersistentStateComponent<PyCondaPa
     return CONDA_CHANNELS;
   }
 
-  public void addChannel(@Nonnull String url) {
+  public void addChannel(String url) {
     CONDA_CHANNELS.add(url);
   }
 
-  public void removeChannel(@Nonnull String url) {
+  public void removeChannel(String url) {
     if (CONDA_CHANNELS.contains(url)) {
       CONDA_CHANNELS.remove(url);
     }
@@ -131,7 +130,7 @@ public class PyCondaPackageService implements PersistentStateComponent<PyCondaPa
   }
 
   @Nullable
-  public static String getCondaExecutable(@Nonnull String condaName) {
+  public static String getCondaExecutable(String condaName) {
     VirtualFile userHome = LocalFileSystem.getInstance().findFileByPath(SystemProperties.getUserHome().replace('\\', '/'));
     if (userHome != null) {
       for (String root : VirtualEnvSdkFlavor.CONDA_DEFAULT_ROOTS) {
@@ -233,8 +232,7 @@ public class PyCondaPackageService implements PersistentStateComponent<PyCondaPa
     LAST_TIME_CHECKED = System.currentTimeMillis();
   }
 
-  @Nonnull
-  public List<String> getPackageVersions(@Nonnull String packageName) {
+  public List<String> getPackageVersions(String packageName) {
     if (PACKAGES_TO_RELEASES.containsKey(packageName)) {
       return PACKAGES_TO_RELEASES.get(packageName);
     }

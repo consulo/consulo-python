@@ -21,7 +21,6 @@ import consulo.language.Language;
 import consulo.language.psi.PsiReferenceContributor;
 import consulo.language.psi.PsiReferenceRegistrar;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -30,12 +29,11 @@ import jakarta.annotation.Nonnull;
 public class DocStringReferenceContributor extends PsiReferenceContributor
 {
 	@Override
-	public void registerReferenceProviders(@Nonnull PsiReferenceRegistrar registrar)
+	public void registerReferenceProviders(PsiReferenceRegistrar registrar)
 	{
 		registrar.registerReferenceProvider(DocStringTagCompletionContributor.DOCSTRING_PATTERN, new DocStringReferenceProvider());
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

@@ -22,8 +22,7 @@ package com.jetbrains.python.psi.stubs;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.stub.NamedStub;
 import consulo.language.psi.util.QualifiedName;
@@ -35,7 +34,6 @@ public interface PyClassStub extends NamedStub<PyClass>
 	/**
 	 * @return a {@code Map} which contains imported class names as keys and their original names as values
 	 */
-	@Nonnull
 	Map<QualifiedName, QualifiedName> getSuperClasses();
 
 	@Nullable

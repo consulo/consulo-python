@@ -24,8 +24,7 @@ import consulo.language.ast.TokenSet;
 import consulo.language.psi.PsiNamedElement;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,20 +46,18 @@ public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStat
 		pyVisitor.visitPyGlobalStatement(this);
 	}
 
-	@Nonnull
 	public PyTargetExpression[] getGlobals()
 	{
 		return childrenToPsi(TARGET_EXPRESSION_SET, PyTargetExpression.EMPTY_ARRAY);
 	}
 
-	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
 		return Arrays.<PsiNamedElement>asList(getGlobals());
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull String the_name)
+	public PsiNamedElement getNamedElement(String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}
@@ -73,7 +70,7 @@ public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStat
 	}
 
 	@Override
-	public void deleteChildInternal(@Nonnull ASTNode child)
+	public void deleteChildInternal(ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getGlobals()))
 		{

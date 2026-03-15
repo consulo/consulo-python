@@ -25,7 +25,6 @@ import consulo.language.psi.PsiFile;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author yole
@@ -38,23 +37,22 @@ public class AutoImportHintAction implements LocalQuickFix, HintAction, HighPrio
     }
 
     @Override
-    public boolean showHint(@Nonnull Editor editor) {
+    public boolean showHint(Editor editor) {
         return myDelegate.showHint(editor);
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return myDelegate.getText();
     }
 
     @Override
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         return myDelegate.isAvailable();
     }
 
     @Override
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         myDelegate.invoke(file);
     }
 
@@ -63,14 +61,13 @@ public class AutoImportHintAction implements LocalQuickFix, HintAction, HighPrio
         return false;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return myDelegate.getName();
     }
 
     @Override
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         myDelegate.applyFix(project, descriptor);
     }
 }

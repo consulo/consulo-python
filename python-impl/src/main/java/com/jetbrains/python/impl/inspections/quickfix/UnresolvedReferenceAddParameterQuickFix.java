@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.language.editor.template.TemplateBuilder;
@@ -44,13 +43,12 @@ public class UnresolvedReferenceAddParameterQuickFix implements LocalQuickFix {
     myName = name;
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return PyLocalize.qfixUnresolvedReferenceAddParam$0(myName);
   }
 
-  public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+  public void applyFix(Project project, ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
     PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
     PyNamedParameter parameter = elementGenerator.createParameter(element.getText() + "=None");

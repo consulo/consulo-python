@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class for elements that have a qualified name (classes and functions).

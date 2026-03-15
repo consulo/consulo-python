@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.refactoring.classMember.AbstractUsesDependencyMemberInfoModel;
 import com.jetbrains.python.psi.PyClass;
@@ -29,11 +28,10 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo
  */
 class PyPullUpInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement, PyClass, PyMemberInfo<PyElement>>
 {
-	@Nonnull
 	private final PyPullUpView myView;
 
 
-	PyPullUpInfoModel(@Nonnull PyClass classUnderRefactoring, @Nonnull PyPullUpView view)
+	PyPullUpInfoModel(PyClass classUnderRefactoring, PyPullUpView view)
 	{
 		super(classUnderRefactoring, null, false);
 		myView = view;
@@ -46,14 +44,14 @@ class PyPullUpInfoModel extends AbstractUsesDependencyMemberInfoModel<PyElement,
 	}
 
 	@Override
-	public int checkForProblems(@Nonnull PyMemberInfo<PyElement> member)
+	public int checkForProblems(PyMemberInfo<PyElement> member)
 	{
 		return member.isChecked() ? OK : super.checkForProblems(member);
 	}
 
 
 	@Override
-	protected int doCheck(@Nonnull PyMemberInfo<PyElement> memberInfo, int problem)
+	protected int doCheck(PyMemberInfo<PyElement> memberInfo, int problem)
 	{
 		return problem;
 	}

@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.templateLanguages.psi;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 

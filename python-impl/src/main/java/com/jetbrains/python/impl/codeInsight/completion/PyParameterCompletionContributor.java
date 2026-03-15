@@ -24,7 +24,6 @@ import consulo.language.editor.completion.*;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.util.ProcessingContext;
 import consulo.platform.base.icon.PlatformIconGroup;
-import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 
@@ -46,7 +45,6 @@ public class PyParameterCompletionContributor extends CompletionContributor {
         );
     }
 
-    @Nonnull
     @Override
     public Language getLanguage() {
         return PythonLanguage.INSTANCE;
@@ -62,9 +60,9 @@ public class PyParameterCompletionContributor extends CompletionContributor {
         @Override
         @RequiredReadAction
         public void addCompletions(
-            @Nonnull CompletionParameters parameters,
+            CompletionParameters parameters,
             ProcessingContext context,
-            @Nonnull CompletionResultSet result
+            CompletionResultSet result
         ) {
             result.addElement(LookupElementBuilder.create(myName).withIcon(PlatformIconGroup.nodesParameter()));
         }

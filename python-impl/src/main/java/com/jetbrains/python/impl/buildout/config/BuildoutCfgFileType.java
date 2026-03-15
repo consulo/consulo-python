@@ -21,8 +21,7 @@ import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import com.jetbrains.python.impl.PythonIcons;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
@@ -35,17 +34,14 @@ public class BuildoutCfgFileType extends LanguageFileType {
     super(BuildoutCfgLanguage.INSTANCE);
   }
 
-  @Nonnull
   public String getId() {
     return "BuildoutCfg";
   }
 
-  @Nonnull
   public LocalizeValue getDescription() {
     return LocalizeValue.localizeTODO("Buildout config files");
   }
 
-  @Nonnull
   public String getDefaultExtension() {
     return DEFAULT_EXTENSION;
   }

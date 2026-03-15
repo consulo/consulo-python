@@ -26,7 +26,6 @@ import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * add missing encoding declaration
@@ -44,13 +43,12 @@ public class AddEncodingQuickFix implements LocalQuickFix {
         myEncodingFormatIndex = encodingFormatIndex;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixAddEncoding();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiFile file = descriptor.getPsiElement().getContainingFile();
         if (file == null) {
             return;

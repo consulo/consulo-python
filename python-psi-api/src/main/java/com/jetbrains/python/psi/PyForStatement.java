@@ -15,14 +15,12 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * The 'for/else' statement.
  */
 public interface PyForStatement extends PyLoopStatement, PyStatementWithElse, PyNamedElementContainer
 {
-	@Nonnull
 	PyForPart getForPart();
 
 	boolean isAsync();

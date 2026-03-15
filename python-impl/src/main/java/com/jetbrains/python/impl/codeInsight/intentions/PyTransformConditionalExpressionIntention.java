@@ -24,7 +24,6 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * Intention to transform conditional expression into if/else statement.
@@ -40,13 +39,12 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class PyTransformConditionalExpressionIntention extends BaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnTransformIntoIfElseStatement();
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -59,7 +57,7 @@ public class PyTransformConditionalExpressionIntention extends BaseIntentionActi
         return false;
     }
 
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyAssignmentStatement assignmentStatement =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyAssignmentStatement.class);
         assert assignmentStatement != null;

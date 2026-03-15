@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.run;
 
 import consulo.configurable.ConfigurationException;
 import consulo.execution.configuration.ui.SettingsEditor;
-import jakarta.annotation.Nonnull;
 
 import javax.swing.*;
 
@@ -40,7 +39,6 @@ public class PythonRunConfigurationEditor  extends SettingsEditor<PythonRunConfi
     PythonRunConfiguration.copyParams(myForm, config);
   }
 
-  @Nonnull
   protected JComponent createEditor() {
     return myForm.getPanel();
   }

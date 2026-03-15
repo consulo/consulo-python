@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.debugger;
 
 import com.jetbrains.python.debugger.PyPositionConverter;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff

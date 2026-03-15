@@ -27,7 +27,6 @@ import consulo.language.pattern.PsiElementPattern;
 import consulo.language.psi.PsiFile;
 import consulo.language.util.ProcessingContext;
 
-import jakarta.annotation.Nonnull;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
 
@@ -45,7 +44,7 @@ public class DocStringTagCompletionContributor extends CompletionContributor
 		extend(CompletionType.BASIC, psiElement().withParent(DOCSTRING_PATTERN), new CompletionProvider()
 		{
 			@Override
-			public void addCompletions(@Nonnull CompletionParameters parameters, ProcessingContext context, @Nonnull CompletionResultSet result)
+			public void addCompletions(CompletionParameters parameters, ProcessingContext context, CompletionResultSet result)
 			{
 				PsiFile file = parameters.getOriginalFile();
 				DocStringFormat format = DocStringUtil.getConfiguredDocStringFormat(file);
@@ -95,7 +94,6 @@ public class DocStringTagCompletionContributor extends CompletionContributor
 		});
 	}
 
-	@Nonnull
 	@Override
 	public Language getLanguage()
 	{

@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.refactoring.surround.surrounders.statements;
 
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import consulo.language.editor.CodeInsightUtilCore;
 import consulo.codeEditor.Editor;
@@ -31,7 +30,7 @@ import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyWhileStatement;
 import consulo.language.util.IncorrectOperationException;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,7 +41,7 @@ import jakarta.annotation.Nullable;
 public class PyWithWhileElseSurrounder extends PyStatementSurrounder {
   @Override
   @Nullable
-  protected TextRange surroundStatement(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PsiElement[] elements)
+  protected TextRange surroundStatement(Project project, Editor editor, PsiElement[] elements)
     throws IncorrectOperationException
   {
     PyWhileStatement whileStatement =

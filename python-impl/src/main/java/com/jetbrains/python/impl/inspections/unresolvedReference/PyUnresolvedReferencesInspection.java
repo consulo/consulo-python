@@ -77,9 +77,7 @@ import consulo.util.collection.SmartList;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.Pair;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-import org.jetbrains.annotations.NonNls;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -103,24 +101,21 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
         return (PyUnresolvedReferencesInspection) inspectionProfile.getUnwrappedTool(SHORT_NAME_KEY.toString(), element);
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return PyLocalize.inspNameUnresolvedRefs();
     }
 
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new PyUnresolvedReferencesInspectionState();
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
-        @Nonnull LocalInspectionToolSession session,
+        LocalInspectionToolSession session,
         Object state
     ) {
         PyUnresolvedReferencesInspectionState inspectionState = (PyUnresolvedReferencesInspectionState) state;
@@ -135,7 +130,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
     }
 
     @Override
-    public void inspectionFinished(@Nonnull LocalInspectionToolSession session, @Nonnull ProblemsHolder holder, Object state) {
+    public void inspectionFinished(LocalInspectionToolSession session, ProblemsHolder holder, Object state) {
         Visitor visitor = session.getUserData(KEY);
         assert visitor != null;
         if (PyCodeInsightSettings.getInstance().HIGHLIGHT_UNUSED_IMPORTS) {
@@ -150,12 +145,12 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
         private final ImmutableSet<String> myIgnoredIdentifiers;
         private volatile Boolean myIsEnabled = null;
 
-        public Visitor(@Nullable ProblemsHolder holder, @Nonnull LocalInspectionToolSession session, List<String> ignoredIdentifiers) {
+        public Visitor(@Nullable ProblemsHolder holder, LocalInspectionToolSession session, List<String> ignoredIdentifiers) {
             super(holder, session);
             myIgnoredIdentifiers = ImmutableSet.copyOf(ignoredIdentifiers);
         }
 
-        public boolean isEnabled(@Nonnull PsiElement anchor) {
+        public boolean isEnabled(PsiElement anchor) {
             if (myIsEnabled == null) {
                 if (PySkeletonRefresher.isGeneratingSkeletons()) {
                     myIsEnabled = false;
@@ -204,7 +199,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
             }
         }
 
-        private boolean canHaveAttribute(@Nonnull PyClass cls, @Nullable String attrName) {
+        private boolean canHaveAttribute(PyClass cls, @Nullable String attrName) {
             List<String> slots = cls.getOwnSlots();
 
             // Class instance can contain attributes with arbitrary names
@@ -256,7 +251,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
             return null;
         }
 
-        private static boolean isGuardedByHasattr(@Nonnull PyElement node, @Nonnull String name) {
+        private static boolean isGuardedByHasattr(PyElement node, String name) {
             String nodeName = node.getName();
             if (nodeName != null) {
                 ScopeOwner owner = ScopeUtil.getDeclarationScopeOwner(node, nodeName);
@@ -354,7 +349,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
             }
         }
 
-        private void markTargetImportsAsUsed(@Nonnull PsiPolyVariantReference reference) {
+        private void markTargetImportsAsUsed(PsiPolyVariantReference reference) {
             ResolveResult[] resolveResults = reference.multiResolve(false);
             for (ResolveResult resolveResult : resolveResults) {
                 if (resolveResult instanceof ImportedResolveResult) {
@@ -466,9 +461,9 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
         }
 
         private void registerUnresolvedReferenceProblem(
-            @Nonnull PyElement node,
-            @Nonnull PsiReference reference,
-            @Nonnull HighlightSeverity severity
+            PyElement node,
+            PsiReference reference,
+            HighlightSeverity severity
         ) {
             if (reference instanceof DocStringTypeReference) {
                 return;
@@ -690,7 +685,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
          * @param type    type
          * @return true if has one
          */
-        private static boolean isHasCustomMember(@Nonnull String refName, @Nonnull PyType type) {
+        private static boolean isHasCustomMember(String refName, PyType type) {
             // TODO: check
             return false;
             /*return (type instanceof PyCustomType) && ((PyCustomType)type).hasMember(refName);*/
@@ -700,8 +695,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
          * Return the canonical qualified names for a reference (even for an unresolved one).
          * If reference is qualified and its qualifier has union type, all possible canonical names will be returned.
          */
-        @Nonnull
-        private static List<QualifiedName> getCanonicalNames(@Nonnull PsiReference reference, @Nonnull TypeEvalContext context) {
+        private static List<QualifiedName> getCanonicalNames(PsiReference reference, TypeEvalContext context) {
             PsiElement element = reference.getElement();
             List<QualifiedName> result = new SmartList<>();
             if (reference instanceof PyOperatorReference && element instanceof PyQualifiedExpression) {
@@ -792,7 +786,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
             return null;
         }
 
-        private boolean ignoreUnresolvedMemberForType(@Nonnull PyType type, PsiReference reference, String name) {
+        private boolean ignoreUnresolvedMemberForType(PyType type, PsiReference reference, String name) {
             if (type instanceof PyNoneType || PyTypeChecker.isUnknown(type)) {
                 // this almost always means that we don't know the type, so don't show an error in this case
                 return true;
@@ -853,9 +847,9 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
         }
 
         private static boolean hasUnresolvedDynamicMember(
-            @Nonnull PyClassType type,
+            PyClassType type,
             PsiReference reference,
-            @Nonnull String name,
+            String name,
             TypeEvalContext typeEvalContext
         ) {
             for (PyClassMembersProvider provider : Extensions.getExtensions(PyClassMembersProvider.EP_NAME)) {
@@ -869,7 +863,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
             return false;
         }
 
-        private boolean isDecoratedAsDynamic(@Nonnull PyClass cls, boolean inherited) {
+        private boolean isDecoratedAsDynamic(PyClass cls, boolean inherited) {
             if (inherited) {
                 if (isDecoratedAsDynamic(cls, false)) {
                     return true;
@@ -1024,7 +1018,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
             return false;
         }
 
-        private void addCreateClassFix(@NonNls String refText, PsiElement element, List<LocalQuickFix> actions) {
+        private void addCreateClassFix(String refText, PsiElement element, List<LocalQuickFix> actions) {
             if (refText.length() > 2 && Character.isUpperCase(refText.charAt(0)) && !refText.toUpperCase().equals(refText) &&
                 PsiTreeUtil.getParentOfType(element, PyImportStatementBase.class) == null) {
                 PsiElement anchor = element;
@@ -1212,7 +1206,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
      * @param importNameDefiner unused import
      * @return true of one or more asks
      */
-    private static boolean importShouldBeSkippedByExtPoint(@Nonnull PyImportedNameDefiner importNameDefiner) {
+    private static boolean importShouldBeSkippedByExtPoint(PyImportedNameDefiner importNameDefiner) {
         for (PyUnresolvedReferenceSkipperExtPoint skipper : PyUnresolvedReferenceSkipperExtPoint.EP_NAME.getExtensions()) {
             if (skipper.unusedImportShouldBeSkipped(importNameDefiner)) {
                 return true;

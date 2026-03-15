@@ -46,8 +46,7 @@ import consulo.language.psi.search.ReferencesSearch;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +64,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   }
 
   @Override
-  public void invoke(@Nonnull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+  public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext) {
     IntroduceOperation operation = new IntroduceOperation(project, editor, file, null);
     operation.addAvailableInitPlace(InitPlace.CONSTRUCTOR);
     if (isTestClass(file, editor)) {
@@ -161,9 +160,9 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
 
   @Nullable
   @Override
-  protected PsiElement addDeclaration(@Nonnull PsiElement expression,
-                                      @Nonnull PsiElement declaration,
-                                      @Nonnull IntroduceOperation operation) {
+  protected PsiElement addDeclaration(PsiElement expression,
+                                      PsiElement declaration,
+                                      IntroduceOperation operation) {
     PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
     PsiElement anchor = PyUtil.getContainingClassOrSelf(expr);
     assert anchor instanceof PyClass;
@@ -178,7 +177,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
     return PyIntroduceVariableHandler.doIntroduceVariable(expression, declaration, operation.getOccurrences(), operation.isReplaceAll());
   }
 
-  private static boolean inConstructor(@Nonnull PsiElement expression) {
+  private static boolean inConstructor(PsiElement expression) {
     PsiElement expr = expression instanceof PyClass ? expression : expression.getParent();
     PyClass clazz = PyUtil.getContainingClassOrSelf(expr);
     ScopeOwner current = ScopeUtil.getScopeOwner(expression);
@@ -207,7 +206,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   }
 
   @Override
-  protected List<PsiElement> getOccurrences(PsiElement element, @Nonnull PyExpression expression) {
+  protected List<PsiElement> getOccurrences(PsiElement element, PyExpression expression) {
     if (isAssignedLocalVariable(element)) {
       PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
       Collection<PsiReference> references = ReferencesSearch.search(element, new LocalSearchScope(function)).findAll();

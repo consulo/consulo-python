@@ -41,8 +41,7 @@ import consulo.util.lang.StringEscapeUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +56,6 @@ import java.util.regex.Pattern;
 public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleExtension> implements PythonPathContributingFacet, LibraryContributingFacet {
     private static final Logger LOGGER = Logger.getInstance(BuildoutModuleExtension.class);
 
-    @Nonnull
     public static List<VirtualFile> getExtraPathForAllOpenModules() {
         List<VirtualFile> results = new ArrayList<>();
         for (Project project : ProjectManager.getInstance().getOpenProjects()) {
@@ -85,7 +83,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
     protected String myScriptName;
     protected List<String> myPaths;
 
-    public BuildoutModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module) {
+    public BuildoutModuleExtension(String id, ModuleRootLayer module) {
         super(id, module);
     }
 
@@ -118,7 +116,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
     }
 
     @Nullable
-    public static List<String> extractBuildoutPaths(@Nonnull VirtualFile script) {
+    public static List<String> extractBuildoutPaths(VirtualFile script) {
         try {
             List<String> paths = extractFromScript(script);
             if (paths == null) {
@@ -147,7 +145,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
      * @return extracted paths, or null if extraction fails.
      */
     @Nullable
-    public static List<String> extractFromScript(@Nonnull VirtualFile script) throws IOException {
+    public static List<String> extractFromScript(VirtualFile script) throws IOException {
         String text = VfsUtil.loadText(script);
         Pattern pat = Pattern.compile("(?:^\\s*(['\"])(.*)(\\1),\\s*$)|(\\])", Pattern.MULTILINE);
         String bait_string = "sys.path[0:0]";
@@ -316,7 +314,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
 
     @Override
     @RequiredReadAction
-    public void commit(@Nonnull BuildoutModuleExtension mutableModuleExtension) {
+    public void commit(BuildoutModuleExtension mutableModuleExtension) {
         super.commit(mutableModuleExtension);
         myScriptName = mutableModuleExtension.getScriptName();
     }

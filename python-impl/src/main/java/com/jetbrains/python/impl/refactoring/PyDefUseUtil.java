@@ -29,8 +29,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
 import consulo.util.lang.Comparing;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -42,7 +41,6 @@ public class PyDefUseUtil
 	{
 	}
 
-	@Nonnull
 	public static List<Instruction> getLatestDefs(ScopeOwner block, String varName, PsiElement anchor, boolean acceptTypeAssertions, boolean acceptImplicitImports)
 	{
 		ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);
@@ -124,7 +122,6 @@ public class PyDefUseUtil
 		return element instanceof PyElement ? ((PyElement) element).getName() : null;
 	}
 
-	@Nonnull
 	public static PsiElement[] getPostRefs(ScopeOwner block, PyTargetExpression var, PyExpression anchor)
 	{
 		ControlFlow controlFlow = ControlFlowCache.getControlFlow(block);

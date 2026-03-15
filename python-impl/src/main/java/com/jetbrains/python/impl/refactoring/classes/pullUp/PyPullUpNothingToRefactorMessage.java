@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.codeEditor.Editor;
 import consulo.language.editor.refactoring.util.CommonRefactoringUtil;
@@ -32,11 +31,8 @@ import com.jetbrains.python.psi.PyClass;
 class PyPullUpNothingToRefactorMessage
 {
 
-	@Nonnull
 	private final Project myProject;
-	@Nonnull
 	private final Editor myEditor;
-	@Nonnull
 	private final PyClass myClassUnderRefactoring;
 
 	/**
@@ -44,7 +40,7 @@ class PyPullUpNothingToRefactorMessage
 	 * @param editor                editor to be used
 	 * @param classUnderRefactoring class user refactors
 	 */
-	PyPullUpNothingToRefactorMessage(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PyClass classUnderRefactoring)
+	PyPullUpNothingToRefactorMessage(Project project, Editor editor, PyClass classUnderRefactoring)
 	{
 		myProject = project;
 		myEditor = editor;

@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.refactoring.classes.extractSuperclass;
 
-import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersBasedView;
 
@@ -28,13 +27,11 @@ public interface PyExtractSuperclassView extends MembersBasedView<PyExtractSuper
 	/**
 	 * @return path to destination file (module) where user wants to create new class
 	 */
-	@Nonnull
 	String getModuleFile();
 
 	/**
 	 * @return name user wants to give to new class
 	 */
-	@Nonnull
 	String getSuperClassName();
 
 }

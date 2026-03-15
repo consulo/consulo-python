@@ -15,9 +15,7 @@
  */
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
-import org.jetbrains.annotations.NonNls;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IStubElementType;
@@ -30,7 +28,7 @@ import com.jetbrains.python.PythonFileType;
  */
 public abstract class PyStubElementType<StubT extends StubElement, PsiT extends PyElement> extends IStubElementType<StubT, PsiT>
 {
-	public PyStubElementType(@Nonnull @NonNls String debugName)
+	public PyStubElementType(String debugName)
 	{
 		super(debugName, PythonFileType.INSTANCE.getLanguage());
 	}
@@ -41,14 +39,12 @@ public abstract class PyStubElementType<StubT extends StubElement, PsiT extends 
 		return "Py:" + super.toString();
 	}
 
-	@Nonnull
-	public abstract PsiElement createElement(@Nonnull ASTNode node);
+	public abstract PsiElement createElement(ASTNode node);
 
-	public void indexStub(@Nonnull StubT stub, @Nonnull IndexSink sink)
+	public void indexStub(StubT stub, IndexSink sink)
 	{
 	}
 
-	@Nonnull
 	public String getExternalId()
 	{
 		return "py." + super.toString();

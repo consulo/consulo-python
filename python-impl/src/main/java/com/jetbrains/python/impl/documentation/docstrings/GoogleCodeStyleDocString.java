@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 import consulo.util.lang.Pair;
 import consulo.util.collection.ContainerUtil;
@@ -38,7 +37,7 @@ public class GoogleCodeStyleDocString extends SectionBasedDocString
 	public static final List<String> PREFERRED_SECTION_HEADERS = ImmutableList.of("Args", "Keyword Args", "Returns", "Yields", "Raises", "Attributes", "See Also", "Methods", "References",
 			"Examples", "Notes", "Warnings");
 
-	public GoogleCodeStyleDocString(@Nonnull Substring text)
+	public GoogleCodeStyleDocString(Substring text)
 	{
 		super(text);
 	}
@@ -130,7 +129,6 @@ public class GoogleCodeStyleDocString extends SectionBasedDocString
 	}
 
 
-	@Nonnull
 	@Override
 	protected Pair<Substring, Integer> parseSectionHeader(int lineNum)
 	{

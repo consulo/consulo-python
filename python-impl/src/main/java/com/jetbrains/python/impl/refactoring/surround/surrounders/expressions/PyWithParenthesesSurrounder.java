@@ -24,7 +24,6 @@ import consulo.language.editor.localize.CodeInsightLocalize;
 import consulo.language.util.IncorrectOperationException;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,12 +37,12 @@ public class PyWithParenthesesSurrounder extends PyExpressionSurrounder {
   }
 
   @Override
-  public boolean isApplicable(@Nonnull PyExpression elements) {
+  public boolean isApplicable(PyExpression elements) {
     return true;
   }
 
   @Override
-  public TextRange surroundExpression(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PyExpression element)
+  public TextRange surroundExpression(Project project, Editor editor, PyExpression element)
     throws IncorrectOperationException {
     PyParenthesizedExpression parenthesesExpression = (PyParenthesizedExpression)PyElementGenerator.getInstance(project)
       .createFromText(LanguageLevel.getDefault(), PyExpressionStatement.class, "(a)").getExpression();

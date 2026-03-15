@@ -17,12 +17,11 @@
 package com.jetbrains.python.impl.console;
 
 import consulo.codeEditor.Editor;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author traff
  */
 public interface PyCodeExecutor {
-  void executeCode(@Nonnull String code, @Nullable Editor e);
+  void executeCode(String code, @Nullable Editor e);
 }

@@ -35,8 +35,7 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,12 +46,11 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 {
 	@Nullable
 	private PyType myType;
-	@Nonnull
 	private TextRange myFullRange;
 	@Nullable
 	private final PyImportElement myImportElement;
 
-	public DocStringTypeReference(PsiElement element, TextRange range, @Nonnull TextRange fullRange, @Nullable PyType type, @Nullable PyImportElement importElement)
+	public DocStringTypeReference(PsiElement element, TextRange range, TextRange fullRange, @Nullable PyType type, @Nullable PyImportElement importElement)
 	{
 		super(element, range);
 		myFullRange = fullRange;
@@ -62,7 +60,7 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 
 	@Nullable
 	@Override
-	public PsiElement bindToElement(@Nonnull PsiElement element) throws IncorrectOperationException
+	public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException
 	{
 		if(element.equals(resolve()))
 		{
@@ -106,7 +104,6 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 		return super.isReferenceTo(element);
 	}
 
-	@Nonnull
 	@Override
 	public ResolveResult[] multiResolve(boolean incompleteCode)
 	{
@@ -138,7 +135,6 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 		return results.toArray(ResolveResult.EMPTY_ARRAY);
 	}
 
-	@Nonnull
 	@Override
 	public Object[] getVariants()
 	{
@@ -146,7 +142,6 @@ public class DocStringTypeReference extends PsiPolyVariantReferenceBase<PsiEleme
 		return ArrayUtil.EMPTY_OBJECT_ARRAY;
 	}
 
-	@Nonnull
 	public List<Object> collectTypeVariants()
 	{
 		PsiFile file = myElement.getContainingFile();

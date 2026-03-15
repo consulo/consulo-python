@@ -8,8 +8,7 @@ import consulo.module.extension.ModuleExtension;
 import consulo.module.extension.MutableModuleExtension;
 import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.image.Image;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author VISTALL
@@ -17,7 +16,6 @@ import jakarta.annotation.Nullable;
  */
 @ExtensionImpl
 public class BuildoutModuleExtensionProvider implements ModuleExtensionProvider<BuildoutModuleExtension> {
-  @Nonnull
   @Override
   public String getId() {
     return "py-buildout";
@@ -29,27 +27,23 @@ public class BuildoutModuleExtensionProvider implements ModuleExtensionProvider<
     return "python";
   }
 
-  @Nonnull
   @Override
   public LocalizeValue getName() {
     return LocalizeValue.localizeTODO("Buildout");
   }
 
-  @Nonnull
   @Override
   public Image getIcon() {
     return PythonImplIconGroup.pythonBuildoutBuildout();
   }
 
-  @Nonnull
   @Override
-  public ModuleExtension<BuildoutModuleExtension> createImmutableExtension(@Nonnull ModuleRootLayer moduleRootLayer) {
+  public ModuleExtension<BuildoutModuleExtension> createImmutableExtension(ModuleRootLayer moduleRootLayer) {
     return new BuildoutModuleExtension(getId(), moduleRootLayer);
   }
 
-  @Nonnull
   @Override
-  public MutableModuleExtension<BuildoutModuleExtension> createMutableExtension(@Nonnull ModuleRootLayer moduleRootLayer) {
+  public MutableModuleExtension<BuildoutModuleExtension> createMutableExtension(ModuleRootLayer moduleRootLayer) {
     return new BuildoutMutableModuleExtension(getId(), moduleRootLayer);
   }
 }

@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.refactoring.classes.pullUp;
 
 
-import jakarta.annotation.Nonnull;
 
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersBasedView;
@@ -31,7 +30,6 @@ public interface PyPullUpView extends MembersBasedView<PyPullUpViewInitializatio
 	/**
 	 * @return Parent that user selected
 	 */
-	@Nonnull
 	PyClass getSelectedParent();
 
 	/**

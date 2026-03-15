@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -51,7 +50,7 @@ public class PyYieldExpressionImpl extends PyElementImpl implements PyYieldExpre
   }
 
   @Override
-  public PyType getType(@Nonnull TypeEvalContext context, @Nonnull TypeEvalContext.Key key) {
+  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     PyExpression e = getExpression();
     return e != null ? context.getType(e) : null;
   }

@@ -42,8 +42,7 @@ import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 import org.apache.xmlrpc.webserver.WebServer;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.util.*;
 import java.util.function.Function;
@@ -144,7 +143,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
     if (this.myClient != null) {
       new Task.Backgroundable(myProject, "Close Console Communication", true) {
         @Override
-        public void run(@Nonnull ProgressIndicator indicator) {
+        public void run(ProgressIndicator indicator) {
           try {
             PydevConsoleCommunication.this.myClient.execute(CLOSE, new Object[0]);
           }
@@ -309,7 +308,6 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
   /**
    * @return completions from the client
    */
-  @Nonnull
   public List<PydevCompletionVariant> getCompletions(String text, String actTok) throws Exception {
     if (myDebugCommunication != null && myDebugCommunication.isSuspended()) {
       return myDebugCommunication.getCompletions(text, actTok);
@@ -360,7 +358,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
       new Task.Backgroundable(myProject, "REPL Communication", true) {
 
         @Override
-        public void run(@Nonnull ProgressIndicator indicator) {
+        public void run(ProgressIndicator indicator) {
           boolean needInput = false;
           try {
 
@@ -619,8 +617,8 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
    * @throws Exception if connection fails
    */
   public void connectToDebugger(int localPort,
-                                @Nonnull Map<String, Boolean> dbgOpts,
-                                @Nonnull Map<String, String> extraEnvs) throws Exception {
+                                Map<String, Boolean> dbgOpts,
+                                Map<String, String> extraEnvs) throws Exception {
     if (waitingForInput) {
       throw new Exception("Can't connect debugger now, waiting for input");
     }

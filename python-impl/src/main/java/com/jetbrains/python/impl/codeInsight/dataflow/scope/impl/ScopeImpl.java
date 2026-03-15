@@ -33,7 +33,6 @@ import consulo.language.dataFlow.map.DFAMapEngine;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
 
-import jakarta.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -65,7 +64,7 @@ public class ScopeImpl implements Scope
 		}
 	}
 
-	public ScopeVariable getDeclaredVariable(@Nonnull PsiElement anchorElement, @Nonnull String name) throws DFALimitExceededException
+	public ScopeVariable getDeclaredVariable(PsiElement anchorElement, String name) throws DFALimitExceededException
 	{
 		computeScopeVariables();
 		for(int i = 0; i < myFlow.length; i++)
@@ -158,7 +157,6 @@ public class ScopeImpl implements Scope
 		return false;
 	}
 
-	@Nonnull
 	@Override
 	public List<PyImportedNameDefiner> getImportedNameDefiners()
 	{
@@ -169,7 +167,6 @@ public class ScopeImpl implements Scope
 		return myImportedNameDefiners;
 	}
 
-	@Nonnull
 	@Override
 	public Collection<PsiNamedElement> getNamedElements(String name, boolean includeNestedGlobals)
 	{
@@ -198,7 +195,6 @@ public class ScopeImpl implements Scope
 		return Collections.emptyList();
 	}
 
-	@Nonnull
 	@Override
 	public Collection<PsiNamedElement> getNamedElements()
 	{
@@ -214,7 +210,6 @@ public class ScopeImpl implements Scope
 		return results;
 	}
 
-	@Nonnull
 	@Override
 	public Collection<PyTargetExpression> getTargetExpressions()
 	{

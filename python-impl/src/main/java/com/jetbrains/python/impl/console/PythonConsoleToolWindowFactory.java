@@ -19,7 +19,6 @@ import consulo.application.dumb.DumbAware;
 import consulo.project.Project;
 import consulo.ui.ex.toolWindow.ToolWindow;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * @author traff
@@ -28,7 +27,7 @@ public class PythonConsoleToolWindowFactory implements DumbAware {
   public static final String ID = "Python Console";
 
   //@Override
-  public void createToolWindowContent(@Nonnull Project project, @Nonnull ToolWindow toolWindow) {
+  public void createToolWindowContent(Project project, ToolWindow toolWindow) {
     PydevConsoleRunner runner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(project, null);
     runner.runSync();
   }

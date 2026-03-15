@@ -38,8 +38,7 @@ import consulo.module.extension.ModuleExtension;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +56,6 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	final Set<PsiElement> myForeignResults = Sets.newLinkedHashSet();
 	private final QualifiedNameResolveContext myContext = new QualifiedNameResolveContext();
 	private final
-	@Nonnull
 	QualifiedName myQualifiedName;
 	boolean myCheckForPackage = true;
 	private boolean myVisitAllModules = false;
@@ -66,12 +64,12 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	private boolean myWithoutForeign;
 	private boolean myWithMembers;
 
-	public QualifiedNameResolverImpl(@Nonnull String qNameString)
+	public QualifiedNameResolverImpl(String qNameString)
 	{
 		myQualifiedName = QualifiedName.fromDottedString(qNameString);
 	}
 
-	public QualifiedNameResolverImpl(@Nonnull QualifiedName qName)
+	public QualifiedNameResolverImpl(QualifiedName qName)
 	{
 		myQualifiedName = qName;
 	}
@@ -84,7 +82,7 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	}
 
 	@Override
-	public QualifiedNameResolver fromElement(@Nonnull PsiElement foothold)
+	public QualifiedNameResolver fromElement(PsiElement foothold)
 	{
 		myContext.setFromElement(foothold);
 		if(PydevConsoleRunner.isInPydevConsole(foothold))
@@ -100,14 +98,14 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	}
 
 	@Override
-	public QualifiedNameResolver fromModule(@Nonnull Module module)
+	public QualifiedNameResolver fromModule(Module module)
 	{
 		myContext.setFromModule(module);
 		return this;
 	}
 
 	@Override
-	public QualifiedNameResolver fromSdk(@Nonnull Project project, @Nonnull Sdk sdk)
+	public QualifiedNameResolver fromSdk(Project project, Sdk sdk)
 	{
 		myContext.setFromSdk(project, sdk);
 		return this;
@@ -242,7 +240,6 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	}
 
 	@Override
-	@Nonnull
 	public List<PsiElement> resultsAsList()
 	{
 		if(!myContext.isValid())
@@ -359,7 +356,6 @@ public class QualifiedNameResolverImpl implements RootVisitor, QualifiedNameReso
 	}
 
 	@Override
-	@Nonnull
 	public <T extends PsiElement> List<T> resultsOfType(Class<T> clazz)
 	{
 		List<T> result = new ArrayList<T>();

@@ -29,7 +29,6 @@ import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.Presentation;
-import jakarta.annotation.Nonnull;
 
 /**
  * @author catherine
@@ -41,14 +40,14 @@ public class RunSphinxQuickStartAction extends AnAction implements DumbAware {
     }
 
     @Override
-    public void update(@Nonnull AnActionEvent event) {
+    public void update(AnActionEvent event) {
         super.update(event);
         RestPythonUtil.updateSphinxQuickStartRequiredAction(event);
     }
 
     @Override
     @RequiredUIAccess
-    public void actionPerformed(@Nonnull AnActionEvent e) {
+    public void actionPerformed(AnActionEvent e) {
         Presentation presentation = RestPythonUtil.updateSphinxQuickStartRequiredAction(e);
         assert presentation.isEnabled() && presentation.isVisible() : "Sphinx requirements for action are not satisfied";
 

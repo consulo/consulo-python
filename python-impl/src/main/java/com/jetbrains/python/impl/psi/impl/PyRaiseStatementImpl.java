@@ -21,7 +21,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyRaiseStatement;
-import jakarta.annotation.Nonnull;
 
 /**
  * Describes 'raise' statement.
@@ -36,7 +35,6 @@ public class PyRaiseStatementImpl extends PyElementImpl implements PyRaiseStatem
     pyVisitor.visitPyRaiseStatement(this);
   }
 
-  @Nonnull
   public PyExpression[] getExpressions() {
     PyExpression[] expressions = PsiTreeUtil.getChildrenOfType(this, PyExpression.class);
     return expressions != null ? expressions : PyExpression.EMPTY_ARRAY;

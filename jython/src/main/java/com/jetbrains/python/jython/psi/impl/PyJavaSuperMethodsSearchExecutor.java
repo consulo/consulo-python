@@ -28,7 +28,6 @@ import consulo.application.util.function.Processor;
 import consulo.language.psi.PsiElement;
 import consulo.util.collection.ContainerUtil;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.function.Predicate;
 
@@ -39,8 +38,8 @@ import java.util.function.Predicate;
 public class PyJavaSuperMethodsSearchExecutor implements PySuperMethodsSearchExecutor {
     @Override
     public boolean execute(
-        @Nonnull PySuperMethodsSearch.SearchParameters queryParameters,
-        @Nonnull Predicate<? super PsiElement> consumer
+        PySuperMethodsSearch.SearchParameters queryParameters,
+        Predicate<? super PsiElement> consumer
     ) {
         PyFunction func = queryParameters.getDerivedMethod();
         PyClass containingClass = func.getContainingClass();

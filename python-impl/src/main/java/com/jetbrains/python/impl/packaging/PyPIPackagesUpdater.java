@@ -29,7 +29,6 @@ import consulo.project.Project;
 import consulo.project.startup.PostStartupActivity;
 import consulo.ui.UIAccess;
 
-import jakarta.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -41,7 +40,7 @@ public class PyPIPackagesUpdater implements PostStartupActivity {
   private static final Logger LOG = Logger.getInstance(PyPIPackagesUpdater.class);
 
   @Override
-  public void runActivity(@Nonnull Project project, UIAccess uiAccess) {
+  public void runActivity(Project project, UIAccess uiAccess) {
     Application application = ApplicationManager.getApplication();
     final PyPackageService service = PyPackageService.getInstance();
     if (checkNeeded(project, service)) {

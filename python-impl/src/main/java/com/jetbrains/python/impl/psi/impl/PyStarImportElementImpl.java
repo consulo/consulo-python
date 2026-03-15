@@ -33,8 +33,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.navigation.ItemPresentation;
 import consulo.ui.image.Image;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +53,6 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		super(stub, PyElementTypes.STAR_IMPORT_ELEMENT);
 	}
 
-	@Nonnull
 	public Iterable<PyElement> iterateNames()
 	{
 		if(getParent() instanceof PyFromImportStatement)
@@ -76,8 +74,7 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		return Collections.emptyList();
 	}
 
-	@Nonnull
-	private static Iterable<PyElement> filterStarImportableNames(@Nonnull Iterable<PyElement> declaredNames, @Nonnull final PyFile file)
+	private static Iterable<PyElement> filterStarImportableNames(Iterable<PyElement> declaredNames, final PyFile file)
 	{
 		return Iterables.filter(declaredNames, new Predicate<PyElement>()
 		{
@@ -90,14 +87,12 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
 		});
 	}
 
-	@Nonnull
-	public List<RatedResolveResult> multiResolveName(@Nonnull String name)
+	public List<RatedResolveResult> multiResolveName(String name)
 	{
 		return PyUtil.getParameterizedCachedValue(this, name, this::calculateMultiResolveName);
 	}
 
-	@Nonnull
-	private List<RatedResolveResult> calculateMultiResolveName(@Nonnull String name)
+	private List<RatedResolveResult> calculateMultiResolveName(String name)
 	{
 		if(PyUtil.isClassPrivateName(name))
 		{

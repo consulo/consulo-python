@@ -24,7 +24,6 @@ import consulo.ui.image.Image;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
 
 import java.io.File;
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.List;
 @ExtensionImpl
 public class PyPySdkFlavor extends PythonSdkFlavor {
     @Override
-    public boolean isValidSdkPath(@Nonnull File file) {
+    public boolean isValidSdkPath(File file) {
         return FileUtil.getNameWithoutExtension(file).toLowerCase().startsWith("pypy");
     }
 
@@ -49,7 +48,6 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
         return "--version";
     }
 
-    @Nonnull
     @Override
     public String getName() {
         return "PyPy";
@@ -66,7 +64,7 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
         return LanguageLevel.getDefault();
     }
 
-    private static String getPythonVersion(@Nonnull String pypyVersion) {
+    private static String getPythonVersion(String pypyVersion) {
         String DEFAULT = "2.4";
         String LATEST = "2.7";
         List<String> vs = StringUtil.split(pypyVersion, ".");
@@ -92,7 +90,6 @@ public class PyPySdkFlavor extends PythonSdkFlavor {
         return DEFAULT;
     }
 
-    @Nonnull
     @Override
     public Image getIcon() {
         return PythonImplIconGroup.pythonPypy();

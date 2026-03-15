@@ -10,7 +10,6 @@ import consulo.language.psi.stub.StubIndexKey;
 import consulo.project.Project;
 import consulo.util.collection.ContainerUtil;
 
-import jakarta.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -22,13 +21,12 @@ import java.util.List;
 public class PyClassAttributesIndex extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String, PyClass> KEY = StubIndexKey.createIndexKey("Py.class.attributes");
 
-  @Nonnull
   @Override
   public StubIndexKey<String, PyClass> getKey() {
     return KEY;
   }
 
-  public static Collection<PyClass> find(@Nonnull String name, @Nonnull Project project) {
+  public static Collection<PyClass> find(String name, Project project) {
     return StubIndex.getElements(KEY, name, project, GlobalSearchScope.allScope(project), PyClass.class);
   }
 
@@ -38,8 +36,7 @@ public class PyClassAttributesIndex extends StringStubIndexExtension<PyClass> {
    * <p>
    * This method <b>must not</b> access the AST because it is being called during stub indexing.
    */
-  @Nonnull
-  public static List<String> getAllDeclaredAttributeNames(@Nonnull PyClass pyClass) {
+  public static List<String> getAllDeclaredAttributeNames(PyClass pyClass) {
     List<PsiNamedElement> members = ContainerUtil.<PsiNamedElement>concat(pyClass.getInstanceAttributes(),
                                                                                 pyClass.getClassAttributes(),
                                                                                 Arrays.asList(pyClass.getMethods()));

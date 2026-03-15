@@ -24,10 +24,8 @@ import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.ex.awt.AddEditRemovePanel;
 import consulo.ui.ex.awt.ColoredTableCellRenderer;
 import consulo.ui.ex.awt.DialogWrapper;
-import org.jetbrains.annotations.Nls;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -42,7 +40,6 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
 
   private PythonDocumentationPanel myPanel = new PythonDocumentationPanel();
 
-  @Nonnull
   @Override
   public String getId() {
     return ID;
@@ -54,8 +51,6 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
     return StandardConfigurableIds.EDITOR_GROUP;
   }
 
-  @Nonnull
-  @Nls
   @Override
   public LocalizeValue getDisplayName() {
     return LocalizeValue.localizeTODO("Python External Documentation");
@@ -141,8 +136,7 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
       return showEditor(null);
     }
 
-    @Nullable
-    private PythonDocumentationMap.Entry showEditor(PythonDocumentationMap.Entry entry) {
+    private PythonDocumentationMap.@Nullable Entry showEditor(PythonDocumentationMap.Entry entry) {
       PythonDocumentationEntryEditor editor = new PythonDocumentationEntryEditor(this);
       if (entry != null) {
         editor.setEntry(entry);

@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.refactoring.introduce.variable;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.impl.PyBundle;

@@ -35,7 +35,6 @@ import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,13 +45,12 @@ import java.util.List;
  * @author catherine
  */
 public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
-    @Nonnull
     @Override
     public LocalizeValue getText() {
         return PyLocalize.intnConvertLambdaToFunction();
     }
 
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -73,7 +71,7 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
         return false;
     }
 
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyLambdaExpression lambdaExpression =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
         if (lambdaExpression != null) {

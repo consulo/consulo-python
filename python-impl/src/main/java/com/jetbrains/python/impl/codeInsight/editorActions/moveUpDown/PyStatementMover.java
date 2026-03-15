@@ -34,8 +34,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User : ktisha
@@ -43,7 +42,7 @@ import jakarta.annotation.Nullable;
 @ExtensionImpl(id = "pyStatement", order = "before line")
 public class PyStatementMover extends LineMover {
   @Override
-  public boolean checkAvailable(@Nonnull Editor editor, @Nonnull PsiFile file, @Nonnull MoveInfo info, boolean down) {
+  public boolean checkAvailable(Editor editor, PsiFile file, MoveInfo info, boolean down) {
     if (!(file instanceof PyFile)) return false;
     int offset = editor.getCaretModel().getOffset();
     SelectionModel selectionModel = editor.getSelectionModel();
@@ -78,8 +77,8 @@ public class PyStatementMover extends LineMover {
   }
 
   @Nullable
-  private static LineRange getDestinationScope(@Nonnull PsiFile file, @Nonnull Editor editor,
-                                               @Nonnull PsiElement elementToMove, boolean down) {
+  private static LineRange getDestinationScope(PsiFile file, Editor editor,
+                                               PsiElement elementToMove, boolean down) {
     Document document = file.getViewProvider().getDocument();
     if (document == null) return null;
 
@@ -123,7 +122,7 @@ public class PyStatementMover extends LineMover {
     return new LineRange(startLine, endLine + 1);
   }
 
-  private static boolean moveOutsideFile(@Nonnull final PsiElement elementToMove, @Nonnull final Document document, int lineNumber) {
+  private static boolean moveOutsideFile(final PsiElement elementToMove, final Document document, int lineNumber) {
     if (lineNumber < 0) return true;
     if (lineNumber >= document.getLineCount()) {
       int elementOffset = elementToMove.getTextRange().getStartOffset();
@@ -143,7 +142,7 @@ public class PyStatementMover extends LineMover {
     return false;
   }
 
-  private static boolean moveToEmptyLine(@Nonnull PsiElement elementToMove, boolean down) {
+  private static boolean moveToEmptyLine(PsiElement elementToMove, boolean down) {
     PyStatementList statementList = getStatementList(elementToMove);
     if (statementList != null) {
       if (down) {
@@ -160,14 +159,14 @@ public class PyStatementMover extends LineMover {
     return statementList == null;
   }
 
-  private static PyStatementList getStatementList(@Nonnull PsiElement elementToMove) {
+  private static PyStatementList getStatementList(PsiElement elementToMove) {
     return PsiTreeUtil.getParentOfType(elementToMove, PyStatementList.class, true,
                                                                 PyStatementWithElse.class, PyLoopStatement.class,
                                                                 PyFunction.class, PyClass.class);
   }
 
   @Nullable
-  private static ScopeRange moveOut(@Nonnull PsiElement elementToMove, @Nonnull Editor editor, boolean down) {
+  private static ScopeRange moveOut(PsiElement elementToMove, Editor editor, boolean down) {
     PyStatementList statementList = getStatementList(elementToMove);
     if (statementList == null) return null;
 
@@ -191,7 +190,7 @@ public class PyStatementMover extends LineMover {
     }
   }
 
-  private static PsiElement getScopeForComment(@Nonnull PsiElement elementToMove, @Nonnull Editor editor,
+  private static PsiElement getScopeForComment(PsiElement elementToMove, Editor editor,
                                                @Nullable PsiElement parent, boolean down) {
     PsiElement scope = PsiTreeUtil.getParentOfType(parent, PyStatementList.class, PyFile.class);
     int offset = elementToMove.getTextOffset();
@@ -209,8 +208,8 @@ public class PyStatementMover extends LineMover {
   }
 
   @Nullable
-  private static LineRange moveInto(@Nonnull PsiElement elementToMove, @Nonnull PsiFile file,
-                                    @Nonnull Editor editor, boolean down, int offset) {
+  private static LineRange moveInto(PsiElement elementToMove, PsiFile file,
+                                    Editor editor, boolean down, int offset) {
 
     PsiElement rawElement = PyUtil.findNonWhitespaceAtOffset(file, offset);
     if (rawElement == null) return null;
@@ -219,8 +218,8 @@ public class PyStatementMover extends LineMover {
   }
 
   @Nullable
-  private static LineRange moveUpInto(@Nonnull PsiElement elementToMove, @Nonnull Editor editor,
-                                      @Nonnull PsiElement rawElement, boolean down) {
+  private static LineRange moveUpInto(PsiElement elementToMove, Editor editor,
+                                      PsiElement rawElement, boolean down) {
     Document document = editor.getDocument();
     PsiElement element = getCommentOrStatement(document, rawElement);
     PyStatementList statementList = getStatementList(elementToMove);
@@ -246,7 +245,7 @@ public class PyStatementMover extends LineMover {
   }
 
   @Nullable
-  private static LineRange moveDownInto(@Nonnull Document document, @Nonnull PsiElement rawElement) {
+  private static LineRange moveDownInto(Document document, PsiElement rawElement) {
     PsiElement element = getCommentOrStatement(document, rawElement);
     PyStatementList statementList2 = getStatementList(element);
     if (statementList2 != null) {                     // move to one-line conditional/loop statement
@@ -272,7 +271,7 @@ public class PyStatementMover extends LineMover {
     return null;
   }
 
-  private static PsiElement getDestinationElement(@Nonnull PsiElement elementToMove, @Nonnull Document document,
+  private static PsiElement getDestinationElement(PsiElement elementToMove, Document document,
                                                   int lineEndOffset, boolean down) {
     PsiElement destination = elementToMove.getContainingFile().findElementAt(lineEndOffset);
     if (destination == null) return null;
@@ -293,8 +292,7 @@ public class PyStatementMover extends LineMover {
     return destination;
   }
 
-  @Nonnull
-  private static PsiElement getCommentOrStatement(@Nonnull Document document, @Nonnull PsiElement destination) {
+  private static PsiElement getCommentOrStatement(Document document, PsiElement destination) {
     PsiElement statement = PsiTreeUtil.getParentOfType(destination, PyStatement.class, false);
     if (statement == null) return destination;
     if (destination instanceof PsiComment) {
@@ -307,7 +305,7 @@ public class PyStatementMover extends LineMover {
   }
 
   @Override
-  public void beforeMove(@Nonnull final Editor editor, @Nonnull final MoveInfo info, boolean down) {
+  public void beforeMove(final Editor editor, final MoveInfo info, boolean down) {
     final LineRange toMove = info.toMove;
     final LineRange toMove2 = info.toMove2;
 
@@ -345,7 +343,7 @@ public class PyStatementMover extends LineMover {
 
   }
 
-  private static SelectionContainer getSelectionLenContainer(@Nonnull Editor editor, @Nonnull MyLineRange toMove) {
+  private static SelectionContainer getSelectionLenContainer(Editor editor, MyLineRange toMove) {
     SelectionModel selectionModel = editor.getSelectionModel();
     PsiElement startToMove = toMove.myStartElement;
     PsiElement endToMove = toMove.myEndElement;
@@ -369,9 +367,9 @@ public class PyStatementMover extends LineMover {
     return new SelectionContainer(len, additionalSelection, column == 0);
   }
 
-  private static void restoreCaretAndSelection(@Nonnull PsiFile file, @Nonnull Editor editor, boolean selectionStartAtCaret,
-                                               boolean hasSelection, @Nonnull SelectionContainer selectionContainer, int shift,
-                                               int offset, @Nonnull MyLineRange toMove) {
+  private static void restoreCaretAndSelection(PsiFile file, Editor editor, boolean selectionStartAtCaret,
+                                               boolean hasSelection, SelectionContainer selectionContainer, int shift,
+                                               int offset, MyLineRange toMove) {
     Document document = editor.getDocument();
     SelectionModel selectionModel = editor.getSelectionModel();
     CaretModel caretModel = editor.getCaretModel();
@@ -444,7 +442,7 @@ public class PyStatementMover extends LineMover {
     return shift;
   }
 
-  private static int moveTheSameLevel(@Nonnull ScopeRange toMove2, @Nonnull MyLineRange toMove) {
+  private static int moveTheSameLevel(ScopeRange toMove2, MyLineRange toMove) {
     PsiElement anchor = toMove2.getAnchor();
     PsiElement anchorCopy = anchor.copy();
     PsiElement startToMove = toMove.myStartElement;
@@ -468,7 +466,7 @@ public class PyStatementMover extends LineMover {
     return addedElement.getTextRange().getStartOffset();
   }
 
-  private static int moveInOut(@Nonnull MyLineRange toMove, @Nonnull final Editor editor, @Nonnull MoveInfo info) {
+  private static int moveInOut(MyLineRange toMove, final Editor editor, MoveInfo info) {
     boolean removePass = false;
     ScopeRange toMove2 = (ScopeRange)info.toMove2;
     PsiElement scope = toMove2.getScope();
@@ -542,8 +540,8 @@ public class PyStatementMover extends LineMover {
     return offset;
   }
 
-  private static void adjustLineIndents(@Nonnull Editor editor, @Nonnull PsiElement scope, @Nonnull Project project,
-                                        @Nonnull PsiElement addedElement, int size) {
+  private static void adjustLineIndents(Editor editor, PsiElement scope, Project project,
+                                        PsiElement addedElement, int size) {
     CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
     Document document = editor.getDocument();
 
@@ -569,7 +567,7 @@ public class PyStatementMover extends LineMover {
     }
   }
 
-  private static void addPassStatement(@Nonnull MyLineRange toMove, @Nonnull Project project) {
+  private static void addPassStatement(MyLineRange toMove, Project project) {
     PsiElement startElement = toMove.myStartElement;
     PsiElement endElement = toMove.myEndElement;
     PyStatementList initialScope = getStatementList(startElement);
@@ -589,7 +587,7 @@ public class PyStatementMover extends LineMover {
     int size = 0;
     int statementsSize = 0;
 
-    public MyLineRange(@Nonnull PsiElement start, PsiElement end) {
+    public MyLineRange(PsiElement start, PsiElement end) {
       super(start, end);
       myStartElement = start;
       myEndElement = end;
@@ -631,7 +629,7 @@ public class PyStatementMover extends LineMover {
     private boolean addBefore;
     private boolean theSameLevel;
 
-    public ScopeRange(@Nonnull PsiElement scope, @Nullable PsiElement anchor, boolean before) {
+    public ScopeRange(PsiElement scope, @Nullable PsiElement anchor, boolean before) {
       super(scope);
       myScope = scope;
       myAnchor = anchor;

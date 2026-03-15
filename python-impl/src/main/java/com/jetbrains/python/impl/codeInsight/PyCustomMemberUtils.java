@@ -20,8 +20,7 @@ import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.editor.completion.lookup.ParenthesesInsertHandler;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * TODO: Move methods to {@link com.jetbrains.python.codeInsight.PyCustomMember}. Only dependency hell prevents me from doing it
@@ -40,8 +39,7 @@ public final class PyCustomMemberUtils
 	 * @param typeText type text (if any)
 	 * @return lookup element
 	 */
-	@Nonnull
-	public static LookupElementBuilder toLookUpElement(@Nonnull PyCustomMember member, @Nullable String typeText)
+	public static LookupElementBuilder toLookUpElement(PyCustomMember member, @Nullable String typeText)
 	{
 
 		LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(member.getName()).withIcon(member.getIcon()).withTypeText(typeText);

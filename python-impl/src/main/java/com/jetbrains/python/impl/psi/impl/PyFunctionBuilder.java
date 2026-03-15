@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
@@ -50,7 +49,6 @@ public class PyFunctionBuilder
 	private final List<String> myStatements = new ArrayList<>();
 	private final List<String> myDecorators = new ArrayList<>();
 	private String myAnnotation = null;
-	@Nonnull
 	private final Map<String, String> myDecoratorValues = new HashMap<>();
 	private boolean myAsync = false;
 	private PyDocstringGenerator myDocStringGenerator;
@@ -62,8 +60,7 @@ public class PyFunctionBuilder
 	 * @param decoratorsToCopyIfExist list of decorator names to be copied to new function.
 	 * @return builder configured by this function
 	 */
-	@Nonnull
-	public static PyFunctionBuilder copySignature(@Nonnull PyFunction source, @Nonnull String... decoratorsToCopyIfExist)
+	public static PyFunctionBuilder copySignature(PyFunction source, String... decoratorsToCopyIfExist)
 	{
 		String name = source.getName();
 		PyFunctionBuilder functionBuilder = new PyFunctionBuilder((name != null) ? name : "", source);
@@ -95,7 +92,7 @@ public class PyFunctionBuilder
 	}
 
 	@Deprecated
-	public PyFunctionBuilder(@Nonnull String name)
+	public PyFunctionBuilder(String name)
 	{
 		myName = name;
 		myDocStringGenerator = null;
@@ -106,7 +103,7 @@ public class PyFunctionBuilder
 	 *                       It's needed to detect configured docstring format and Python indentation size and, as result,
 	 *                       generate properly formatted docstring.
 	 */
-	public PyFunctionBuilder(@Nonnull String name, @Nonnull PsiElement settingsAnchor)
+	public PyFunctionBuilder(String name, PsiElement settingsAnchor)
 	{
 		myName = name;
 		myDocStringGenerator = PyDocstringGenerator.create(DocStringUtil.getConfiguredDocStringFormat(settingsAnchor), PyIndentUtil.getIndentFromSettings(settingsAnchor.getProject()),
@@ -120,17 +117,15 @@ public class PyFunctionBuilder
 	 * @param name   param name
 	 * @param type   param type
 	 */
-	@Nonnull
-	public PyFunctionBuilder parameterWithType(@Nonnull String name, @Nonnull String type)
+	public PyFunctionBuilder parameterWithType(String name, String type)
 	{
 		parameter(name);
 		myDocStringGenerator.withParamTypedByName(name, type);
 		return this;
 	}
 
-	@Nonnull
 	@Deprecated
-	public PyFunctionBuilder parameterWithType(@Nonnull String name, @Nonnull String type, @Nonnull DocStringFormat format)
+	public PyFunctionBuilder parameterWithType(String name, String type, DocStringFormat format)
 	{
 		parameter(name);
 		myDocStringGenerator.withParamTypedByName(name, type);
@@ -234,7 +229,7 @@ public class PyFunctionBuilder
 	 * @param decoratorName decorator name
 	 * @param value         its argument
 	 */
-	public void decorate(@Nonnull String decoratorName, @Nonnull String value)
+	public void decorate(String decoratorName, String value)
 	{
 		decorate(decoratorName);
 		myDecoratorValues.put(decoratorName, value);

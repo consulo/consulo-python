@@ -55,8 +55,7 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.Couple;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -72,11 +71,11 @@ public class PyExtractMethodUtil
 	{
 	}
 
-	public static void extractFromStatements(@Nonnull Project project,
-			@Nonnull Editor editor,
-			@Nonnull PyCodeFragment fragment,
-			@Nonnull PsiElement statement1,
-			@Nonnull PsiElement statement2)
+	public static void extractFromStatements(Project project,
+			Editor editor,
+			PyCodeFragment fragment,
+			PsiElement statement1,
+			PsiElement statement2)
 	{
 		if(!fragment.getOutputVariables().isEmpty() && fragment.isReturnInstructionInside())
 		{
@@ -204,15 +203,13 @@ public class PyExtractMethodUtil
 		}, PyBundle.message("refactoring.extract.method"), null);
 	}
 
-	@Nonnull
-	private static List<SimpleMatch> collectDuplicates(@Nonnull SimpleDuplicatesFinder finder, @Nonnull PsiElement originalScopeAnchor, @Nonnull PyFunction generatedMethod)
+	private static List<SimpleMatch> collectDuplicates(SimpleDuplicatesFinder finder, PsiElement originalScopeAnchor, PyFunction generatedMethod)
 	{
 		List<PsiElement> scopes = collectScopes(originalScopeAnchor, generatedMethod);
 		return ExtractMethodHelper.collectDuplicates(finder, scopes, generatedMethod);
 	}
 
-	@Nonnull
-	private static List<PsiElement> collectScopes(@Nonnull PsiElement anchor, @Nonnull PyFunction generatedMethod)
+	private static List<PsiElement> collectScopes(PsiElement anchor, PyFunction generatedMethod)
 	{
 		ScopeOwner owner = ScopeUtil.getScopeOwner(anchor);
 		if(owner instanceof PsiFile)
@@ -238,12 +235,12 @@ public class PyExtractMethodUtil
 		return scope;
 	}
 
-	private static void processDuplicates(@Nonnull List<SimpleMatch> duplicates, @Nonnull PsiElement replacement, @Nonnull Editor editor)
+	private static void processDuplicates(List<SimpleMatch> duplicates, PsiElement replacement, Editor editor)
 	{
 		ExtractMethodHelper.replaceDuplicates(replacement, editor, pair -> replaceElements(pair.first, pair.second.copy()), duplicates);
 	}
 
-	private static void processGlobalWrites(@Nonnull PyFunction function, @Nonnull PyCodeFragment fragment)
+	private static void processGlobalWrites(PyFunction function, PyCodeFragment fragment)
 	{
 		Set<String> globalWrites = fragment.getGlobalWrites();
 		Set<String> newGlobalNames = new LinkedHashSet<>();
@@ -264,7 +261,7 @@ public class PyExtractMethodUtil
 		}
 	}
 
-	private static void processNonlocalWrites(@Nonnull PyFunction function, @Nonnull PyCodeFragment fragment)
+	private static void processNonlocalWrites(PyFunction function, PyCodeFragment fragment)
 	{
 		Set<String> nonlocalWrites = fragment.getNonlocalWrites();
 		Set<String> newNonlocalNames = new LinkedHashSet<>();
@@ -287,7 +284,7 @@ public class PyExtractMethodUtil
 	}
 
 
-	private static void appendSelf(@Nonnull PsiElement firstElement, @Nonnull StringBuilder builder, boolean staticMethod)
+	private static void appendSelf(PsiElement firstElement, StringBuilder builder, boolean staticMethod)
 	{
 		if(staticMethod)
 		{
@@ -302,7 +299,7 @@ public class PyExtractMethodUtil
 		builder.append(".");
 	}
 
-	public static void extractFromExpression(@Nonnull Project project, @Nonnull Editor editor, @Nonnull PyCodeFragment fragment, @Nonnull PsiElement expression)
+	public static void extractFromExpression(Project project, Editor editor, PyCodeFragment fragment, PsiElement expression)
 	{
 		if(!fragment.getOutputVariables().isEmpty())
 		{
@@ -405,7 +402,7 @@ public class PyExtractMethodUtil
 		}
 	}
 
-	private static void setSelectionAndCaret(@Nonnull Editor editor, @Nullable PsiElement callElement)
+	private static void setSelectionAndCaret(Editor editor, @Nullable PsiElement callElement)
 	{
 		editor.getSelectionModel().removeSelection();
 		if(callElement != null)
@@ -415,8 +412,7 @@ public class PyExtractMethodUtil
 		}
 	}
 
-	@Nonnull
-	private static PsiElement replaceElements(@Nonnull List<PsiElement> elementsRange, @Nonnull PsiElement callElement)
+	private static PsiElement replaceElements(List<PsiElement> elementsRange, PsiElement callElement)
 	{
 		callElement = elementsRange.get(0).replace(callElement);
 		if(elementsRange.size() > 1)
@@ -426,8 +422,7 @@ public class PyExtractMethodUtil
 		return callElement;
 	}
 
-	@Nonnull
-	private static PsiElement replaceElements(@Nonnull SimpleMatch match, @Nonnull PsiElement element)
+	private static PsiElement replaceElements(SimpleMatch match, PsiElement element)
 	{
 		List<PsiElement> elementsRange = PyPsiUtils.collectElements(match.getStartElement(), match.getEndElement());
 		Map<String, String> changedParameters = match.getChangedParameters();
@@ -472,15 +467,14 @@ public class PyExtractMethodUtil
 	}
 
 	// Creates string for call
-	@Nonnull
-	private static String createCallArgsString(@Nonnull AbstractVariableData[] variableDatas)
+	private static String createCallArgsString(AbstractVariableData[] variableDatas)
 	{
 		return StringUtil.join(ContainerUtil.mapNotNull(variableDatas, data -> data.isPassAsParameter() ? data.getOriginalName() : null), ",");
 	}
 
-	private static void processParameters(@Nonnull Project project,
-			@Nonnull PyFunction generatedMethod,
-			@Nonnull AbstractVariableData[] variableData,
+	private static void processParameters(Project project,
+			PyFunction generatedMethod,
+			AbstractVariableData[] variableData,
 			boolean isMethod,
 			boolean isClassMethod,
 			boolean isStaticMethod)
@@ -528,8 +522,7 @@ public class PyExtractMethodUtil
 		generatedMethod.getParameterList().replace(pyParameterList);
 	}
 
-	@Nonnull
-	private static Map<String, String> createMap(@Nonnull AbstractVariableData[] variableData)
+	private static Map<String, String> createMap(AbstractVariableData[] variableData)
 	{
 		Map<String, String> map = new HashMap<>();
 		for(AbstractVariableData data : variableData)
@@ -539,8 +532,7 @@ public class PyExtractMethodUtil
 		return map;
 	}
 
-	@Nonnull
-	private static PyFunction insertGeneratedMethod(@Nonnull PsiElement anchor, @Nonnull PyFunction generatedMethod)
+	private static PyFunction insertGeneratedMethod(PsiElement anchor, PyFunction generatedMethod)
 	{
 		Pair<PsiElement, TextRange> data = anchor.getUserData(PyReplaceExpressionUtil.SELECTION_BREAKS_AST_NODE);
 		if(data != null)
@@ -567,7 +559,7 @@ public class PyExtractMethodUtil
 		result.accept(new PsiRecursiveElementVisitor()
 		{
 			@Override
-			public void visitElement(@Nonnull PsiElement element)
+			public void visitElement(PsiElement element)
 			{
 				super.visitElement(element);
 				CodeEditUtil.setNodeGenerated(element.getNode(), true);
@@ -576,12 +568,11 @@ public class PyExtractMethodUtil
 		return (PyFunction) result;
 	}
 
-	@Nonnull
-	private static PyFunction generateMethodFromExpression(@Nonnull Project project,
-			@Nonnull String methodName,
-			@Nonnull AbstractVariableData[] variableData,
-			@Nonnull PsiElement expression,
-			@Nullable PyUtil.MethodFlags flags,
+	private static PyFunction generateMethodFromExpression(Project project,
+			String methodName,
+			AbstractVariableData[] variableData,
+			PsiElement expression,
+			PyUtil.@Nullable MethodFlags flags,
 			boolean isAsync)
 	{
 		PyFunctionBuilder builder = new PyFunctionBuilder(methodName, expression);
@@ -604,12 +595,11 @@ public class PyExtractMethodUtil
 		return builder.buildFunction(project, LanguageLevel.forElement(expression));
 	}
 
-	@Nonnull
-	private static PyFunction generateMethodFromElements(@Nonnull Project project,
-			@Nonnull String methodName,
-			@Nonnull AbstractVariableData[] variableData,
-			@Nonnull List<PsiElement> elementsRange,
-			@Nullable PyUtil.MethodFlags flags,
+	private static PyFunction generateMethodFromElements(Project project,
+			String methodName,
+			AbstractVariableData[] variableData,
+			List<PsiElement> elementsRange,
+			PyUtil.@Nullable MethodFlags flags,
 			boolean isAsync)
 	{
 		assert !elementsRange.isEmpty() : "Empty statements list was selected!";
@@ -649,7 +639,7 @@ public class PyExtractMethodUtil
 		return method;
 	}
 
-	private static void addDecorators(@Nonnull PyFunctionBuilder builder, @Nullable PyUtil.MethodFlags flags)
+	private static void addDecorators(PyFunctionBuilder builder, PyUtil.@Nullable MethodFlags flags)
 	{
 		if(flags != null)
 		{
@@ -664,7 +654,7 @@ public class PyExtractMethodUtil
 		}
 	}
 
-	private static void addFakeParameters(@Nonnull PyFunctionBuilder builder, @Nonnull AbstractVariableData[] variableData)
+	private static void addFakeParameters(PyFunctionBuilder builder, AbstractVariableData[] variableData)
 	{
 		for(AbstractVariableData data : variableData)
 		{
@@ -672,10 +662,9 @@ public class PyExtractMethodUtil
 		}
 	}
 
-	@Nonnull
-	private static Pair<String, AbstractVariableData[]> getNameAndVariableData(@Nonnull final Project project,
-			@Nonnull final CodeFragment fragment,
-			@Nonnull PsiElement element,
+	private static Pair<String, AbstractVariableData[]> getNameAndVariableData(final Project project,
+			final CodeFragment fragment,
+			PsiElement element,
 			final boolean isClassMethod,
 			final boolean isStaticMethod)
 	{
@@ -715,8 +704,7 @@ public class PyExtractMethodUtil
 		final boolean isMethod = PyPsiUtils.isMethodContext(element);
 		final ExtractMethodDecorator decorator = new ExtractMethodDecorator()
 		{
-			@Nonnull
-			public String createMethodSignature(String methodName, @Nonnull AbstractVariableData[] variableDatas)
+			public String createMethodSignature(String methodName, AbstractVariableData[] variableDatas)
 			{
 				StringBuilder builder = new StringBuilder();
 				if(isClassMethod)
@@ -765,7 +753,6 @@ public class PyExtractMethodUtil
 		return Pair.create(dialog.getMethodName(), dialog.getAbstractVariableData());
 	}
 
-	@Nonnull
 	public static String getRefactoringId()
 	{
 		return "refactoring.python.extract.method";
@@ -815,7 +802,7 @@ public class PyExtractMethodUtil
 			return null;
 		}
 
-		public boolean isValidName(@Nonnull String name)
+		public boolean isValidName(String name)
 		{
 			NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.getInstance());
 			assert validator != null;

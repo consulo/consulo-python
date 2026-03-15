@@ -24,7 +24,6 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.search.DefinitionsScopedSearch;
 import consulo.language.psi.search.DefinitionsScopedSearchExecutor;
-import jakarta.annotation.Nonnull;
 
 import java.util.function.Predicate;
 
@@ -35,8 +34,8 @@ import java.util.function.Predicate;
 public class PyDefinitionsSearch implements DefinitionsScopedSearchExecutor {
     @Override
     public boolean execute(
-        @Nonnull DefinitionsScopedSearch.SearchParameters parameters,
-        @Nonnull Predicate<? super PsiElement> consumer
+        DefinitionsScopedSearch.SearchParameters parameters,
+        Predicate<? super PsiElement> consumer
     ) {
         PsiElement element = parameters.getElement();
         if (element instanceof PyClass pyClass) {

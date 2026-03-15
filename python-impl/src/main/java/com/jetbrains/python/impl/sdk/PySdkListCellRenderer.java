@@ -27,8 +27,7 @@ import consulo.ui.image.Image;
 import consulo.ui.image.ImageEffects;
 import consulo.util.lang.StringUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -104,7 +103,7 @@ public class PySdkListCellRenderer extends ListCellRendererWrapper<Object> {
         }
     }
 
-    private String shortenName(@Nonnull String name) {
+    private String shortenName(String name) {
         Matcher matcher = PYTHON_PATTERN.matcher(name);
         if (matcher.matches()) {
             String path = matcher.group(2);

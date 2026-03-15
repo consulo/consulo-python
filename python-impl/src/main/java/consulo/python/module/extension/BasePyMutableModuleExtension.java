@@ -26,28 +26,26 @@ import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.layout.VerticalLayout;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author VISTALL
  * @since 27.09.13.
  */
 public class BasePyMutableModuleExtension extends BasePyModuleExtension implements MutableModuleExtensionWithSdk<BasePyModuleExtension> {
-  public BasePyMutableModuleExtension(@Nonnull String id, @Nonnull ModuleRootLayer module) {
+  public BasePyMutableModuleExtension(String id, ModuleRootLayer module) {
     super(id, module);
   }
 
   @RequiredUIAccess
   @Nullable
   @Override
-  public Component createConfigurationComponent(@Nonnull Disposable disposable, @Nonnull Runnable runnable) {
+  public Component createConfigurationComponent(Disposable disposable, Runnable runnable) {
     VerticalLayout layout = VerticalLayout.create();
     layout.add(ModuleExtensionBundleBoxBuilder.createAndDefine(this, disposable, runnable).build());
     return layout;
   }
 
-  @Nonnull
   @Override
   public MutableModuleInheritableNamedPointer<Sdk> getInheritableSdk() {
     return (MutableModuleInheritableNamedPointer<Sdk>)super.getInheritableSdk();
@@ -59,7 +57,7 @@ public class BasePyMutableModuleExtension extends BasePyModuleExtension implemen
   }
 
   @Override
-  public boolean isModified(@Nonnull BasePyModuleExtension extension) {
+  public boolean isModified(BasePyModuleExtension extension) {
     return isModifiedImpl(extension);
   }
 }

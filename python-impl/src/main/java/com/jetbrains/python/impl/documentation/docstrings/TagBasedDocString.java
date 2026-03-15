@@ -22,8 +22,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Maps;
 import consulo.document.util.TextRange;
 import consulo.util.lang.StringUtil;
@@ -67,12 +66,11 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 			"return",
 			"returns"
 	};
-	@Nonnull
 	private final String myTagPrefix;
 
 	public static String TYPE = "type";
 
-	protected TagBasedDocString(@Nonnull Substring docStringText, @Nonnull String tagPrefix)
+	protected TagBasedDocString(Substring docStringText, String tagPrefix)
 	{
 		super(docStringText);
 		myTagPrefix = tagPrefix;
@@ -96,7 +94,6 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 
 	public abstract List<String> getAdditionalTags();
 
-	@Nonnull
 	@Override
 	public String getDescription()
 	{
@@ -117,7 +114,6 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 		return "";
 	}
 
-	@Nonnull
 	private Map<Substring, Substring> getTagValuesMap(String key)
 	{
 		Map<Substring, Substring> map = myArgTagValues.get(key);
@@ -226,14 +222,14 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 	}
 
 	@Nullable
-	public Substring getTagValue(String tagName, @Nonnull String argName)
+	public Substring getTagValue(String tagName, String argName)
 	{
 		Map<Substring, Substring> argValues = myArgTagValues.get(tagName);
 		return argValues != null ? argValues.get(new Substring(argName)) : null;
 	}
 
 	@Nullable
-	public Substring getTagValue(String[] tagNames, @Nonnull String argName)
+	public Substring getTagValue(String[] tagNames, String argName)
 	{
 		for(String tagName : tagNames)
 		{
@@ -259,7 +255,6 @@ public abstract class TagBasedDocString extends DocStringLineParser implements S
 		return Collections.emptyList();
 	}
 
-	@Nonnull
 	@Override
 	public List<Substring> getParameterSubstrings()
 	{

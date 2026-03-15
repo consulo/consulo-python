@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.codeInsight;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.*;

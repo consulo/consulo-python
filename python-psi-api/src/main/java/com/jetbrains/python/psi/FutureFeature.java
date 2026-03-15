@@ -16,7 +16,6 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * Lists interesting features importable from __future__.
@@ -44,7 +43,7 @@ public enum FutureFeature {
    * @param proposed version in which the feature has become importable
    * @param included version in which the feature is included by default
    */
-  FutureFeature(@Nonnull String name, int proposed, int included) {
+  FutureFeature(String name, int proposed, int included) {
     myName = name;
     myOptionalVersion = proposed;
     myRequiredVersion = included;

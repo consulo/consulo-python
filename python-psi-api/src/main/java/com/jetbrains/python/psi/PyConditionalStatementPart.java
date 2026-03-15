@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.psi;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A statement part that has a condition before it.

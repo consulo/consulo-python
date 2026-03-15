@@ -20,8 +20,7 @@ import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.execution.configuration.ui.SettingsEditor;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Alexander Koshevoy
@@ -30,14 +29,13 @@ import jakarta.annotation.Nullable;
 public interface PyRunConfigurationEditorExtension {
   ExtensionPointName<PyRunConfigurationEditorExtension> EP_NAME = ExtensionPointName.create(PyRunConfigurationEditorExtension.class);
 
-  boolean accepts(@Nonnull AbstractPythonRunConfiguration configuration);
+  boolean accepts(AbstractPythonRunConfiguration configuration);
 
-  @Nonnull
-  SettingsEditor<AbstractPythonRunConfiguration> createEditor(@Nonnull AbstractPythonRunConfiguration configuration);
+  SettingsEditor<AbstractPythonRunConfiguration> createEditor(AbstractPythonRunConfiguration configuration);
 
   class Factory {
     @Nullable
-    public static PyRunConfigurationEditorExtension getExtension(@Nonnull AbstractPythonRunConfiguration<?> configuration) {
+    public static PyRunConfigurationEditorExtension getExtension(AbstractPythonRunConfiguration<?> configuration) {
       for (PyRunConfigurationEditorExtension extension : EP_NAME.getExtensionList()) {
         if (extension.accepts(configuration)) {
           return extension;

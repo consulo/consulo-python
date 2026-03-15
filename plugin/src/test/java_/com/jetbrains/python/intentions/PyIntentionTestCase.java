@@ -5,14 +5,12 @@ import com.jetbrains.python.PythonTestUtil;
 import com.jetbrains.python.fixtures.PyTestCase;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
-import org.jetbrains.annotations.NonNls;
 
 /**
  * User: ktisha
  */
 public abstract class PyIntentionTestCase extends PyTestCase {
   @Override
-  @NonNls
   protected String getTestDataPath() {
     return PythonTestUtil.getTestDataPath() + "/intentions/" + getClass().getSimpleName();
   }

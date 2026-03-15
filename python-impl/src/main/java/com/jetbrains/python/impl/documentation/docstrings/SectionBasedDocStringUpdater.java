@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableList;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
@@ -42,13 +41,13 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 
 	private final List<AddParameter> myAddParameterRequests = new ArrayList<>();
 
-	public SectionBasedDocStringUpdater(@Nonnull SectionBasedDocString docString, @Nonnull String minContentIndent)
+	public SectionBasedDocStringUpdater(SectionBasedDocString docString, String minContentIndent)
 	{
 		super(docString, minContentIndent);
 	}
 
 	@Override
-	public final void addParameter(@Nonnull String name, @Nullable String type)
+	public final void addParameter(String name, @Nullable String type)
 	{
 		// because any of requests to add new parameter can lead to creation of a new parameter section
 		// it's not safe to process them independently
@@ -92,7 +91,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	}
 
 	@Override
-	public void removeParameter(@Nonnull String name)
+	public void removeParameter(String name)
 	{
 		for(Section section : myOriginalDocString.getParameterSections())
 		{
@@ -133,8 +132,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		}
 	}
 
-	@Nonnull
-	private static Substring expandParamNameSubstring(@Nonnull Substring name)
+	private static Substring expandParamNameSubstring(Substring name)
 	{
 		String superString = name.getSuperString();
 		int startWithStars = name.getStartOffset();
@@ -158,12 +156,12 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		return name;
 	}
 
-	private static int skipSpacesForward(@Nonnull String superString, int offset)
+	private static int skipSpacesForward(String superString, int offset)
 	{
 		return CharArrayUtil.shiftForward(superString, offset, " \t");
 	}
 
-	private static int skipSpacesBackward(@Nonnull String superString, int offset)
+	private static int skipSpacesBackward(String superString, int offset)
 	{
 		return CharArrayUtil.shiftBackward(superString, offset, " \t");
 	}
@@ -222,13 +220,12 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		}
 	}
 
-	@Nonnull
-	private static String buildBlock(@Nonnull SectionBasedDocStringBuilder builder, @Nonnull List<AddParameter> params, @Nonnull String sectionIndent, @Nonnull String indent)
+	private static String buildBlock(SectionBasedDocStringBuilder builder, List<AddParameter> params, String sectionIndent, String indent)
 	{
 		return addParametersInBlock(builder, params, sectionIndent).buildContent(indent, true);
 	}
 
-	private static SectionBasedDocStringBuilder addParametersInBlock(@Nonnull SectionBasedDocStringBuilder builder, @Nonnull List<AddParameter> params, @Nonnull String sectionIndent)
+	private static SectionBasedDocStringBuilder addParametersInBlock(SectionBasedDocStringBuilder builder, List<AddParameter> params, String sectionIndent)
 	{
 		builder.withSectionIndent(sectionIndent);
 		for(AddParameter param : params)
@@ -238,7 +235,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		return builder;
 	}
 
-	private void insertNewSection(@Nonnull SectionBasedDocStringBuilder builder, @Nonnull String sectionTitle)
+	private void insertNewSection(SectionBasedDocStringBuilder builder, String sectionTitle)
 	{
 		Pair<Integer, Boolean> pos = findPreferredSectionLine(sectionTitle);
 		if(pos.getSecond())
@@ -264,7 +261,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	 * @return pair (lineNum, insertAfter), i.e. first item is line number,
 	 * second item is true if new section should be inserted after this line and false otherwise
 	 */
-	private Pair<Integer, Boolean> findPreferredSectionLine(@Nonnull String sectionTitle)
+	private Pair<Integer, Boolean> findPreferredSectionLine(String sectionTitle)
 	{
 		String normalized = SectionBasedDocString.getNormalizedSectionTitle(sectionTitle);
 		int index = CANONICAL_SECTION_ORDER.indexOf(normalized);
@@ -302,23 +299,22 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 	}
 
 
-	protected abstract void updateParamDeclarationWithType(@Nonnull Substring nameSubstring, @Nonnull String type);
+	protected abstract void updateParamDeclarationWithType(Substring nameSubstring, String type);
 
-	@Nonnull
 	protected abstract SectionBasedDocStringBuilder createBuilder();
 
 	@Nullable
-	private Substring findParamNameSubstring(@Nonnull String name)
+	private Substring findParamNameSubstring(String name)
 	{
 		return ContainerUtil.find(myOriginalDocString.getParameterSubstrings(), substring -> substring.toString().equals(name));
 	}
 
-	protected int getSectionTitleLastLine(@Nonnull Section paramSection)
+	protected int getSectionTitleLastLine(Section paramSection)
 	{
 		return getSectionStartLine(paramSection);
 	}
 
-	protected String createReturnLine(@Nonnull String type, @Nonnull String docStringIndent, @Nonnull String sectionIndent)
+	protected String createReturnLine(String type, String docStringIndent, String sectionIndent)
 	{
 		return createBuilder().withSectionIndent(sectionIndent).addReturnValue(null, type, "").buildContent(docStringIndent, true);
 	}
@@ -335,14 +331,12 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		return ContainerUtil.find(myOriginalDocString.getSections(), section -> section.getNormalizedTitle().equals(SectionBasedDocString.RETURNS_SECTION));
 	}
 
-	@Nonnull
 	protected String getExpectedSectionIndent()
 	{
 		Section first = ContainerUtil.getFirstItem(myOriginalDocString.getSections());
 		return first != null ? getSectionIndent(first) : myMinContentIndent;
 	}
 
-	@Nonnull
 	protected String getExpectedFieldIndent()
 	{
 		for(Section section : myOriginalDocString.getSections())
@@ -357,8 +351,7 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		return createBuilder().mySectionIndent;
 	}
 
-	@Nonnull
-	protected String getFieldIndent(@Nonnull Section section, @Nonnull SectionField field)
+	protected String getFieldIndent(Section section, SectionField field)
 	{
 		String titleIndent = getSectionIndent(section);
 		String fieldIndent = getLineIndent(getFieldStartLine(field));
@@ -366,36 +359,34 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 		return StringUtil.repeatSymbol(' ', diffSize);
 	}
 
-	@Nonnull
-	protected String getSectionIndent(@Nonnull Section section)
+	protected String getSectionIndent(Section section)
 	{
 		return getLineIndent(getSectionStartLine(section));
 	}
 
-	protected int getSectionStartLine(@Nonnull Section section)
+	protected int getSectionStartLine(Section section)
 	{
 		return section.getTitleAsSubstring().getStartLine();
 	}
 
-	protected int getSectionEndLine(@Nonnull Section section)
+	protected int getSectionEndLine(Section section)
 	{
 		List<SectionField> fields = section.getFields();
 		//noinspection ConstantConditions
 		return fields.isEmpty() ? getSectionTitleLastLine(section) : getFieldEndLine(ContainerUtil.getLastItem(fields));
 	}
 
-	protected int getFieldStartLine(@Nonnull SectionField field)
+	protected int getFieldStartLine(SectionField field)
 	{
 		return chooseFirstNotNull(field.getNameAsSubstring(), field.getTypeAsSubstring(), field.getDescriptionAsSubstring()).getStartLine();
 	}
 
-	protected int getFieldEndLine(@Nonnull SectionField field)
+	protected int getFieldEndLine(SectionField field)
 	{
 		return chooseFirstNotNull(field.getDescriptionAsSubstring(), field.getTypeAsSubstring(), field.getNameAsSubstring()).getEndLine();
 	}
 
-	@Nonnull
-	private static <T> T chooseFirstNotNull(@Nonnull T... values)
+	private static <T> T chooseFirstNotNull(T... values)
 	{
 		for(T value : values)
 		{
@@ -409,12 +400,11 @@ public abstract class SectionBasedDocStringUpdater extends DocStringUpdater<Sect
 
 	private static class AddParameter
 	{
-		@Nonnull
 		final String name;
 		@Nullable
 		final String type;
 
-		public AddParameter(@Nonnull String name, @Nullable String type)
+		public AddParameter(String name, @Nullable String type)
 		{
 			this.name = name;
 			this.type = type;

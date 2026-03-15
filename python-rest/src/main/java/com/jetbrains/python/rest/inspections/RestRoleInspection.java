@@ -40,9 +40,7 @@ import consulo.module.Module;
 import consulo.project.Project;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import org.jetbrains.annotations.Nls;
 
-import jakarta.annotation.Nonnull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -55,19 +53,16 @@ import java.util.Set;
  */
 @ExtensionImpl
 public class RestRoleInspection extends RestInspection {
-    @Nonnull
     @Override
     public HighlightDisplayLevel getDefaultLevel() {
         return HighlightDisplayLevel.WARNING;
     }
 
-    @Nonnull
     @Override
     public InspectionToolState<?> createStateProvider() {
         return new RestRoleInspectionState();
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getDisplayName() {
         return LocalizeValue.localizeTODO(RestBundle.message("INSP.role.not.defined"));
@@ -78,10 +73,9 @@ public class RestRoleInspection extends RestInspection {
         return false;
     }
 
-    @Nonnull
     @Override
     public PsiElementVisitor buildVisitor(
-        @Nonnull ProblemsHolder holder,
+        ProblemsHolder holder,
         boolean isOnTheFly,
         LocalInspectionToolSession session,
         Object state

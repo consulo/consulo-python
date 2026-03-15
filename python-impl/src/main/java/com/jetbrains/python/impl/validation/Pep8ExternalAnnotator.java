@@ -68,8 +68,7 @@ import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -89,7 +88,6 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
     private static final Logger LOG = Logger.getInstance(Pep8ExternalAnnotator.class);
     private static final Pattern E303_LINE_COUNT_PATTERN = Pattern.compile(".*\\((\\d+)\\)$");
 
-    @Nonnull
     @Override
     public Language getLanguage() {
         return PythonLanguage.INSTANCE;
@@ -101,7 +99,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         private final String myCode;
         private final String myDescription;
 
-        public Problem(int line, int column, @Nonnull String code, @Nonnull String description) {
+        public Problem(int line, int column, String code, String description) {
             myLine = line;
             myColumn = column;
             myCode = code;
@@ -116,12 +114,10 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             return myColumn;
         }
 
-        @Nonnull
         public String getCode() {
             return myCode;
         }
 
-        @Nonnull
         public String getDescription() {
             return myDescription;
         }
@@ -156,7 +152,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 
     @Nullable
     @Override
-    public State collectInformation(@Nonnull PsiFile file) {
+    public State collectInformation(PsiFile file) {
         VirtualFile vFile = file.getVirtualFile();
         if (vFile == null || vFile.getFileType() != PythonFileType.INSTANCE) {
             return null;
@@ -258,7 +254,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
     }
 
     @Override
-    public void apply(@Nonnull PsiFile file, Results annotationResult, @Nonnull AnnotationHolder holder) {
+    public void apply(PsiFile file, Results annotationResult, AnnotationHolder holder) {
         if (annotationResult == null || !file.isValid()) {
             return;
         }
@@ -358,9 +354,9 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
     }
 
     private static boolean ignoredDueToProblemSuppressors(
-        @Nonnull Project project,
-        @Nonnull Problem problem,
-        @Nonnull PsiFile file,
+        Project project,
+        Problem problem,
+        PsiFile file,
         @Nullable PsiElement element
     ) {
         Pep8ProblemSuppressor[] suppressors = Pep8ProblemSuppressor.EP_NAME.getExtensions();
@@ -453,19 +449,18 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
             myCode = code;
         }
 
-        @Nonnull
         @Override
         public LocalizeValue getText() {
             return LocalizeValue.localizeTODO("Ignore errors like this");
         }
 
         @Override
-        public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+        public boolean isAvailable(Project project, Editor editor, PsiFile file) {
             return true;
         }
 
         @Override
-        public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
             InspectionProfile profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile();
             profile.<PyPep8Inspection, PyPep8InspectionState>modifyToolSettings(PyPep8Inspection.INSPECTION_SHORT_NAME, file, (i, s) -> {
                 if (!s.ignoredErrors.contains(myCode)) {

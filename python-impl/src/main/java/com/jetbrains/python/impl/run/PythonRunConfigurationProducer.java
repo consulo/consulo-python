@@ -30,8 +30,7 @@ import consulo.language.psi.PsiFile;
 import consulo.module.Module;
 import consulo.util.lang.ref.SimpleReference;
 import consulo.virtualFileSystem.VirtualFile;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 
@@ -102,7 +101,7 @@ public class PythonRunConfigurationProducer extends RunConfigurationProducer<Pyt
     }
 
     @RequiredReadAction
-    private static boolean isAvailable(@Nonnull Location location, @Nullable PsiFile script) {
+    private static boolean isAvailable(Location location, @Nullable PsiFile script) {
         if (script == null || script.getFileType() != PythonFileType.INSTANCE) {
             return false;
         }

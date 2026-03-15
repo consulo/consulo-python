@@ -33,7 +33,6 @@ import consulo.language.util.ModuleUtilCore;
 import consulo.language.util.ProcessingContext;
 import consulo.module.Module;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collection;
 
 import static consulo.language.pattern.PlatformPatterns.psiElement;
@@ -49,7 +48,6 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
            new IdentifierCompletionProvider());
   }
 
-  @Nonnull
   @Override
   public Language getLanguage() {
     return PythonLanguage.INSTANCE;
@@ -61,9 +59,9 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void addCompletions(@Nonnull CompletionParameters parameters,
+    public void addCompletions(CompletionParameters parameters,
                                ProcessingContext context,
-                               @Nonnull CompletionResultSet result) {
+                               CompletionResultSet result) {
       if (parameters.isAutoPopup()) return;
       PyDocStringOwner docStringOwner = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), PyDocStringOwner.class);
       if (docStringOwner != null) {
@@ -100,7 +98,7 @@ public class PyDocstringCompletionContributor extends CompletionContributor {
   }
 
   @Override
-  public boolean invokeAutoPopup(@Nonnull PsiElement position, char typeChar) {
+  public boolean invokeAutoPopup(PsiElement position, char typeChar) {
     return false;
   }
 }

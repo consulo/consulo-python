@@ -18,8 +18,7 @@ package com.jetbrains.python.impl.refactoring.changeSignature;
 
 import consulo.language.editor.refactoring.changeSignature.ParameterInfo;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User : ktisha
@@ -46,13 +45,11 @@ public class PyParameterInfo implements ParameterInfo
     myDefaultInSignature = defaultInSignature;
   }
 
-  @Nonnull
   @Override
   public String getName() {
     return myName;
   }
 
-  @Nonnull
   public String getOldName() {
     return myOldName;
   }

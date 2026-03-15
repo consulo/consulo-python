@@ -44,8 +44,7 @@ import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.ProcessingContext;
 import consulo.util.collection.ArrayUtil;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -89,7 +88,6 @@ public class PyImportReference extends PyReferenceImpl
 		return super.getUnresolvedDescription();
 	}
 
-	@Nonnull
 	@Override
 	protected List<RatedResolveResult> resolveInner()
 	{
@@ -98,7 +96,6 @@ public class PyImportReference extends PyReferenceImpl
 		return qname == null ? Collections.<RatedResolveResult>emptyList() : ResolveImportUtil.resolveNameInImportStatement(parent, qname);
 	}
 
-	@Nonnull
 	@Override
 	@RequiredReadAction
 	public Object[] getVariants()
@@ -205,10 +202,9 @@ public class PyImportReference extends PyReferenceImpl
 		private final PsiFile myCurrentFile;
 		private final Set<String> myNamesAlready;
 		private final List<Object> myObjects;
-		@Nonnull
 		private final TypeEvalContext myContext;
 
-		public ImportVariantCollector(@Nonnull TypeEvalContext context)
+		public ImportVariantCollector(TypeEvalContext context)
 		{
 			myContext = context;
 			PsiFile currentFile = myElement.getContainingFile();
@@ -326,7 +322,7 @@ public class PyImportReference extends PyReferenceImpl
 			}
 		}
 
-		private void addImportedNames(@Nonnull PyImportElement[] importElements)
+		private void addImportedNames(PyImportElement[] importElements)
 		{
 			for(PyImportElement element : importElements)
 			{

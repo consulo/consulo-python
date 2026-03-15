@@ -27,8 +27,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFileSystemItem;
 import consulo.ui.ex.awt.Messages;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +38,7 @@ import java.util.List;
 @ExtensionImpl
 public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   @Override
-  public boolean canFindUsages(@Nonnull PsiElement element) {
+  public boolean canFindUsages(PsiElement element) {
     return element instanceof PyClass ||
       (element instanceof PyFile && PyUtil.isPackage((PyFile)element)) ||
       element instanceof PyImportedModule ||
@@ -49,7 +48,7 @@ public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
 
   @Nullable
   @Override
-  public FindUsagesHandler createFindUsagesHandler(@Nonnull PsiElement element, boolean forHighlightUsages) {
+  public FindUsagesHandler createFindUsagesHandler(PsiElement element, boolean forHighlightUsages) {
     if (element instanceof PyImportedModule) {
       PsiElement resolved = ((PyImportedModule)element).resolve();
       if (resolved != null) {

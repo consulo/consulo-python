@@ -17,7 +17,6 @@ package com.jetbrains.python.psi;
 
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
 
 import consulo.language.ast.ASTNode;
 import consulo.util.lang.Pair;
@@ -26,7 +25,6 @@ import consulo.language.psi.PsiLanguageInjectionHost;
 
 public interface PyStringLiteralExpression extends PyLiteralExpression, StringLiteralExpression, PsiLanguageInjectionHost
 {
-	@Nonnull
 	List<ASTNode> getStringNodes();
 
 	int valueOffsetToTextOffset(int valueOffset);
@@ -57,7 +55,6 @@ public interface PyStringLiteralExpression extends PyLiteralExpression, StringLi
 	 * ]
 	 * </code></pre>
 	 */
-	@Nonnull
 	List<Pair<TextRange, String>> getDecodedFragments();
 
 	/**
@@ -79,7 +76,6 @@ public interface PyStringLiteralExpression extends PyLiteralExpression, StringLi
 	 * ]
 	 * </code></pre>
 	 */
-	@Nonnull
 	List<TextRange> getStringValueTextRanges();
 
 	/**

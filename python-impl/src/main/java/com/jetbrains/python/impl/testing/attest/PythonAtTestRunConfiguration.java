@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.testing.attest;
 
 import org.jdom.Element;
-import jakarta.annotation.Nonnull;
 import consulo.process.ExecutionException;
 import consulo.execution.executor.Executor;
 import consulo.execution.configuration.ConfigurationFactory;
@@ -55,7 +54,7 @@ public class PythonAtTestRunConfiguration extends AbstractPythonTestRunConfigura
 	}
 
 	@Override
-	public RunProfileState getState(@Nonnull Executor executor, @Nonnull ExecutionEnvironment env) throws ExecutionException
+	public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException
 	{
 		return new PythonAtTestCommandLineState(this, env);
 	}

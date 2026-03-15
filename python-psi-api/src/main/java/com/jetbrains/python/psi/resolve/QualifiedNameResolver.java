@@ -20,8 +20,7 @@ import consulo.module.Module;
 import consulo.project.Project;
 import consulo.content.bundle.Sdk;
 import consulo.language.psi.PsiElement;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,11 +28,11 @@ import java.util.List;
  * @author yole
  */
 public interface QualifiedNameResolver {
-  QualifiedNameResolver fromElement(@Nonnull PsiElement foothold);
+  QualifiedNameResolver fromElement(PsiElement foothold);
 
-  QualifiedNameResolver fromModule(@Nonnull Module module);
+  QualifiedNameResolver fromModule(Module module);
 
-  QualifiedNameResolver fromSdk(@Nonnull Project project, @Nonnull Sdk sdk);
+  QualifiedNameResolver fromSdk(Project project, Sdk sdk);
 
   QualifiedNameResolver withAllModules();
 
@@ -45,13 +44,11 @@ public interface QualifiedNameResolver {
 
   QualifiedNameResolver withPlainDirectories();
 
-  @Nonnull
   List<PsiElement> resultsAsList();
 
   @Nullable
   PsiElement firstResult();
 
-  @Nonnull
   <T extends PsiElement> List<T> resultsOfType(Class<T> clazz);
 
   @Nullable

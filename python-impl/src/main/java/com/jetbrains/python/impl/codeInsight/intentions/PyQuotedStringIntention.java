@@ -27,7 +27,6 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 /**
  * Intention to convert between single-quoted and double-quoted strings.
@@ -35,7 +34,7 @@ import jakarta.annotation.Nonnull;
  * @author catherine
  */
 public class PyQuotedStringIntention extends BaseIntentionAction {
-    public boolean isAvailable(@Nonnull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
         }
@@ -73,7 +72,7 @@ public class PyQuotedStringIntention extends BaseIntentionAction {
         return false;
     }
 
-    public void invoke(@Nonnull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyStringLiteralExpression string =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyStringLiteralExpression.class);
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);

@@ -26,7 +26,6 @@ import consulo.module.Module;
 import consulo.util.xml.serializer.XmlSerializerUtil;
 import jakarta.inject.Singleton;
 
-import jakarta.annotation.Nonnull;
 
 /**
  * User: catherine
@@ -58,7 +57,7 @@ public class ReSTService implements PersistentStateComponent<ReSTService> {
     DOC_DIR = workDir;
   }
 
-  public static ReSTService getInstance(@Nonnull Module module) {
+  public static ReSTService getInstance(Module module) {
     return module.getInstance(ReSTService.class);
   }
 

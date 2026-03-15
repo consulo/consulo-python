@@ -20,7 +20,6 @@ import consulo.ide.impl.idea.ide.hierarchy.HierarchyBrowserManager;
 import consulo.ui.ex.tree.AlphaComparator;
 import consulo.ui.ex.tree.NodeDescriptor;
 import consulo.project.Project;
-import jakarta.annotation.Nonnull;
 
 import java.util.Comparator;
 
@@ -40,7 +39,6 @@ public class PyHierarchyUtils {
   private PyHierarchyUtils() {
   }
 
-  @Nonnull
   public static Comparator<NodeDescriptor> getComparator(Project project) {
     if (HierarchyBrowserManager.getInstance(project).getState().SORT_ALPHABETICALLY) {
       return AlphaComparator.INSTANCE;

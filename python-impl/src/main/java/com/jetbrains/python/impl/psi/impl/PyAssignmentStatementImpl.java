@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.ast.ASTNode;
@@ -63,7 +62,6 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 		return myTargets;
 	}
 
-	@Nonnull
 	@Override
 	public PyExpression[] getRawTargets()
 	{
@@ -164,7 +162,6 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 		return (PyExpression) child;
 	}
 
-	@Nonnull
 	public List<Pair<PyExpression, PyExpression>> getTargetsToValuesMapping()
 	{
 		List<Pair<PyExpression, PyExpression>> ret = new SmartList<>();
@@ -204,7 +201,7 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 	}
 
 	@Override
-	public boolean isAssignmentTo(@Nonnull String name)
+	public boolean isAssignmentTo(String name)
 	{
 		PyExpression lhs = getLeftHandSideExpression();
 		return lhs instanceof PyTargetExpression && name.equals(lhs.getName());
@@ -278,7 +275,6 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 		}
 	}
 
-	@Nonnull
 	public List<PsiNamedElement> getNamedElements()
 	{
 		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(getTargets());
@@ -299,7 +295,7 @@ public class PyAssignmentStatementImpl extends PyElementImpl implements PyAssign
 	}
 
 	@Nullable
-	public PsiNamedElement getNamedElement(@Nonnull String the_name)
+	public PsiNamedElement getNamedElement(String the_name)
 	{
 		// performance: check simple case first
 		PyExpression[] targets = getTargets();

@@ -17,8 +17,7 @@ package com.jetbrains.python.impl.refactoring.classes.pushDown;
 
 import java.awt.BorderLayout;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.project.Project;
@@ -31,7 +30,7 @@ import com.jetbrains.python.impl.refactoring.classes.membersManager.vp.MembersVi
  */
 public class PyPushDownViewSwingImpl extends MembersBasedViewSwingImpl<PyPushDownPresenter, MembersViewInitializationInfo> implements PyPushDownView
 {
-	public PyPushDownViewSwingImpl(@Nonnull PyClass classUnderRefactoring, @Nonnull Project project, @Nonnull PyPushDownPresenter presenter)
+	public PyPushDownViewSwingImpl(PyClass classUnderRefactoring, Project project, PyPushDownPresenter presenter)
 	{
 		super(project, presenter, RefactoringBundle.message("push.members.from.0.down.label", classUnderRefactoring.getName()), false);
 

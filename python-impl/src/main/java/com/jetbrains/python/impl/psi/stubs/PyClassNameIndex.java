@@ -29,15 +29,13 @@ import consulo.language.psi.stub.StubIndexKey;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
 @ExtensionImpl
 public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String,PyClass> KEY = StubIndexKey.createIndexKey("Py.class.shortName");
 
-  @Nonnull
   public StubIndexKey<String, PyClass> getKey() {
     return KEY;
   }
@@ -55,7 +53,7 @@ public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
 
 
   @Nullable
-  public static PyClass findClass(@Nonnull String qName, Project project, GlobalSearchScope scope) {
+  public static PyClass findClass(String qName, Project project, GlobalSearchScope scope) {
     int pos = qName.lastIndexOf(".");
     String shortName = pos > 0 ? qName.substring(pos+1) : qName;
     for (PyClass pyClass : find(shortName, project, scope)) {

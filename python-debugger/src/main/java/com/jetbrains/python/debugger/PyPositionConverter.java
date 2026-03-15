@@ -1,21 +1,18 @@
 package com.jetbrains.python.debugger;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import consulo.execution.debug.XSourcePosition;
 
 
 public interface PyPositionConverter {
 
-  @Nonnull
-  PySourcePosition create(@Nonnull String file, int line);
+  PySourcePosition create(String file, int line);
 
-  @Nonnull
-  PySourcePosition convertToPython(@Nonnull XSourcePosition position);
+  PySourcePosition convertToPython(XSourcePosition position);
 
   @Nullable
-  XSourcePosition convertFromPython(@Nonnull PySourcePosition position);
+  XSourcePosition convertFromPython(PySourcePosition position);
 
   PySignature convertSignature(PySignature signature);
 }

@@ -26,7 +26,6 @@ import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
-import jakarta.annotation.Nonnull;
 
 public class PyCreatePropertyQuickFix implements LocalQuickFix {
     private final AccessDirection myAccessDirection;
@@ -35,13 +34,12 @@ public class PyCreatePropertyQuickFix implements LocalQuickFix {
         myAccessDirection = dir;
     }
 
-    @Nonnull
     @Override
     public LocalizeValue getName() {
         return PyLocalize.qfixCreateProperty();
     }
 
-    public void applyFix(@Nonnull Project project, @Nonnull ProblemDescriptor descriptor) {
+    public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyQualifiedExpression) {
             PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
