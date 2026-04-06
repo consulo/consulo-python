@@ -158,11 +158,11 @@ public class PythonSdkUpdater implements PostStartupActivity {
                                 }
                                 String sdkPresentableName = getSdkPresentableName(sdk);
                                 LOG.info("Performing background update of skeletons for SDK " + sdkPresentableName);
-                                indicator.setTextValue(LocalizeValue.localizeTODO("Updating skeletons..."));
+                                indicator.setText(LocalizeValue.localizeTODO("Updating skeletons..."));
                                 PySkeletonRefresher.refreshSkeletonsOfSdk(project1, ownerComponent, skeletonsPath, sdkInsideTask);
                                 indicator.setIndeterminate(true);
-                                indicator.setTextValue(LocalizeValue.localizeTODO("Scanning installed packages..."));
-                                indicator.setText2Value(LocalizeValue.empty());
+                                indicator.setText(LocalizeValue.localizeTODO("Scanning installed packages..."));
+                                indicator.setText2(LocalizeValue.empty());
                                 LOG.info("Performing background scan of packages for SDK " + sdkPresentableName);
                                 try {
                                     PyPackageManager.getInstance(sdkInsideTask).refreshAndGetPackages(true);

@@ -209,14 +209,14 @@ public class PySkeletonRefresher {
     private void indicate(LocalizeValue msg) {
         if (myIndicator != null) {
             myIndicator.checkCanceled();
-            myIndicator.setTextValue(msg);
-            myIndicator.setText2Value(LocalizeValue.empty());
+            myIndicator.setText(msg);
+            myIndicator.setText2(LocalizeValue.empty());
         }
     }
 
     private void indicateMinor(String msg) {
         if (myIndicator != null) {
-            myIndicator.setText2Value(LocalizeValue.ofNullable(msg));
+            myIndicator.setText2(LocalizeValue.ofNullable(msg));
         }
     }
 
