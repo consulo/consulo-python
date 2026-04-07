@@ -53,7 +53,7 @@ public class CreateSetupPyAction extends CreateFromTemplateAction {
 
     public CreateSetupPyAction() {
         super(FileTemplateManager.getDefaultInstance().getInternalTemplate("Setup Script"));
-        getTemplatePresentation().setTextValue(LocalizeValue.localizeTODO("Create setup.py"));
+        getTemplatePresentation().setText(LocalizeValue.localizeTODO("Create setup.py"));
     }
 
     @Override

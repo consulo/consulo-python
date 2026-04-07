@@ -39,7 +39,7 @@ public class PythonDebugLanguageConsoleView extends DuplexConsoleView<ConsoleVie
     enableConsole(!PyConsoleOptions.getInstance(project).isShowDebugConsoleByDefault());
 
     getSwitchConsoleActionPresentation().setIcon(ExecutionIconGroup.console());
-    getSwitchConsoleActionPresentation().setTextValue(PyLocalize.runConfigurationShowCommandLineActionName());
+    getSwitchConsoleActionPresentation().setText(PyLocalize.runConfigurationShowCommandLineActionName());
   }
 
   public PythonDebugLanguageConsoleView(Project project, Sdk sdk) {

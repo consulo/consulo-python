@@ -251,7 +251,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
         ProgressManager.getInstance().run(new Task.Backgroundable(myProject, LocalizeValue.localizeTODO("Connecting to Console"), false) {
             @Override
             public void run(ProgressIndicator indicator) {
-                indicator.setTextValue(LocalizeValue.localizeTODO("Connecting to console..."));
+                indicator.setText(LocalizeValue.localizeTODO("Connecting to console..."));
                 connect(myStatementsToExecute);
             }
         });
@@ -272,7 +272,7 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
             new Task.Backgroundable(myProject, LocalizeValue.localizeTODO("Connecting to Console"), false) {
                 @Override
                 public void run(ProgressIndicator indicator) {
-                    indicator.setTextValue(LocalizeValue.localizeTODO("Connecting to console..."));
+                    indicator.setText(LocalizeValue.localizeTODO("Connecting to console..."));
                     try {
                         initAndRun();
                         connect(myStatementsToExecute);

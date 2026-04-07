@@ -235,7 +235,7 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
             @Override
             public void run(ProgressIndicator indicator) {
                 try {
-                    indicator.setTextValue(PyLocalize.sdkCreateVenvDialogCreatingVenv());
+                    indicator.setText(PyLocalize.sdkCreateVenvDialogCreatingVenv());
                     myPath = createEnvironment(basicSdk);
                 }
                 catch (ExecutionException e) {
