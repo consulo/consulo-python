@@ -254,7 +254,7 @@ public final class PythonSdkType extends SdkType {
                 }
                 return super.isFileVisible(file, showHiddenFiles);
             }
-        }.withTitleValue(PyLocalize.sdkSelectPath()).withShowHiddenFiles(Platform.current().os().isUnix());
+        }.withTitle(PyLocalize.sdkSelectPath()).withShowHiddenFiles(Platform.current().os().isUnix());
     }
 
     public boolean supportsCustomCreateUI() {
