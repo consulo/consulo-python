@@ -6,5 +6,5 @@ module consulo.python.xml
 {
 	requires consulo.ide.api;
 
-	requires com.intellij.xml;
+	requires com.intellij.xml.api;
 }
