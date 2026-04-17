@@ -4,7 +4,19 @@
  */
 module consulo.python.debugger
 {
-	requires consulo.ide.api;
+	requires consulo.application.api;
+	requires consulo.base.icon.library;
+	requires consulo.execution.api;
+	requires consulo.execution.debug.api;
+	requires consulo.localize.api;
+	requires consulo.logging.api;
+	requires consulo.process.api;
+	requires consulo.project.api;
+	requires consulo.ui.api;
+	requires consulo.util.collection;
+	requires consulo.util.io;
+	requires consulo.util.lang;
+	requires consulo.virtual.file.system.api;
 
 	requires com.google.common;
 	requires xmlrpc.common;

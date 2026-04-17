@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>consulo</groupId>
-		<artifactId>arch.ide-api-provided</artifactId>
+		<artifactId>arch.bind.java</artifactId>
 		<version>3-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
@@ -146,6 +146,31 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>com.intellij.regexp</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-ide-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-document-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-language-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-language-inject-advanced-api</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>

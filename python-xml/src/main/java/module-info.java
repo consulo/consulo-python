@@ -4,7 +4,8 @@
  */
 module consulo.python.xml
 {
-	requires consulo.ide.api;
-
+	requires consulo.virtual.file.system.api;
 	requires com.intellij.xml.api;
+
+	exports consulo.python.xml.impl;
 }

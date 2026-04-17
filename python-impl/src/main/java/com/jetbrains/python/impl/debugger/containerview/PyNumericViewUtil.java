@@ -84,7 +84,7 @@ public class PyNumericViewUtil
 			String imag = matcher.group(2);
 			if(real.contains("j") && imag == null)
 			{
-				return new Pair<>(new Double(0.0), Double.parseDouble(real.substring(0, real.length() - 1)));
+				return new Pair<>(Double.valueOf(0.0), Double.parseDouble(real.substring(0, real.length() - 1)));
 			}
 			else
 			{

@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>consulo</groupId>
-		<artifactId>arch.ide-api-provided</artifactId>
+		<artifactId>arch.bind.java</artifactId>
 		<version>3-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
@@ -75,6 +75,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>consulo.python-python.psi.api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>consulo.python-python.impl</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
@@ -89,6 +95,97 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>consulo.dotnet.microsoft</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-ide-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-application-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-application-content-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-disposer-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-language-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-language-editor-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-module-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-module-content-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-module-ui-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-process-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-project-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-project-content-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-ui-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-util-collection</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>consulo</groupId>
+			<artifactId>consulo-util-lang</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
