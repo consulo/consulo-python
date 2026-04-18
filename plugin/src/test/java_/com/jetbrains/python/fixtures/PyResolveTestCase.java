@@ -1,15 +1,15 @@
 package com.jetbrains.python.fixtures;
 
+import com.intellij.testFramework.TestDataFile;
+import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.psi.LanguageLevel;
 import consulo.document.Document;
+import consulo.language.psi.*;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
-import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.TempFileSystem;
-import com.intellij.psi.*;
-import com.intellij.testFramework.TestDataFile;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
+import consulo.virtualFileSystem.VirtualFile;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -21,7 +21,6 @@ import java.io.IOException;
 public abstract class PyResolveTestCase extends PyTestCase {
   protected static final String MARKER = "<ref>";
 
-
   protected PsiReference configureByFile(@TestDataFile String filePath) {
     VirtualFile testDataRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(getTestDataPath()));
     VirtualFile file = testDataRoot.findFileByRelativePath(filePath);
@@ -29,7 +28,7 @@ public abstract class PyResolveTestCase extends PyTestCase {
 
     String fileText;
     try {
-      fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(file));
+      fileText = StringUtil.convertLineSeparators(VirtualFileUtil.loadText(file));
     }
     catch (IOException e) {
       throw new RuntimeException(e);

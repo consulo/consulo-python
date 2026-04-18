@@ -23,7 +23,6 @@ import com.jetbrains.python.impl.run.PythonCommandLineState;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.application.util.LineTokenizer;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
 import consulo.language.util.ModuleUtilCore;
 import consulo.logging.Logger;
 import consulo.module.Module;
@@ -41,6 +40,7 @@ import consulo.util.lang.StringEscapeUtil;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -146,7 +146,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
      */
     @Nullable
     public static List<String> extractFromScript(VirtualFile script) throws IOException {
-        String text = VfsUtil.loadText(script);
+        String text = VirtualFileUtil.loadText(script);
         Pattern pat = Pattern.compile("(?:^\\s*(['\"])(.*)(\\1),\\s*$)|(\\])", Pattern.MULTILINE);
         String bait_string = "sys.path[0:0]";
         int pos = text.indexOf(bait_string);
@@ -179,7 +179,7 @@ public class BuildoutModuleExtension extends ModuleExtensionBase<BuildoutModuleE
      */
     public static List<String> extractFromSitePy(VirtualFile vFile) throws IOException {
         List<String> result = new ArrayList<>();
-        String text = VfsUtil.loadText(vFile);
+        String text = VirtualFileUtil.loadText(vFile);
         String[] lines = LineTokenizer.tokenize(text, false);
         int index = 0;
         while (index < lines.length && !lines[index].startsWith("def addsitepackages(")) {

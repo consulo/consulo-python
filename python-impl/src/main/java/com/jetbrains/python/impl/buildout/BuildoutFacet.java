@@ -155,7 +155,7 @@ public class BuildoutFacet /*extends Facet<BuildoutFacetConfiguration> implement
    */
  /* @Nullable
   public static List<String> extractFromScript(@NotNull VirtualFile script) throws IOException {
-    String text = VfsUtil.loadText(script);
+    String text = VirtualFileUtil.loadText(script);
     Pattern pat = Pattern.compile("(?:^\\s*(['\"])(.*)(\\1),\\s*$)|(\\])", Pattern.MULTILINE);
     final String bait_string = "sys.path[0:0]";
     int pos = text.indexOf(bait_string);
@@ -188,7 +188,7 @@ public class BuildoutFacet /*extends Facet<BuildoutFacetConfiguration> implement
    */
   /*public static List<String> extractFromSitePy(VirtualFile vFile) throws IOException {
     List<String> result = new ArrayList<String>();
-    String text = VfsUtil.loadText(vFile);
+    String text = VirtualFileUtil.loadText(vFile);
     String[] lines = LineTokenizer.tokenize(text, false);
     int index = 0;
     while (index < lines.length && !lines[index].startsWith("def addsitepackages(")) {

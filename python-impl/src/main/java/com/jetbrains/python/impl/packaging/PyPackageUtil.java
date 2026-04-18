@@ -17,7 +17,6 @@ package com.jetbrains.python.impl.packaging;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.packaging.setupPy.SetupTaskIntrospector;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.packaging.PyPackage;
@@ -27,11 +26,10 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.QualifiedResolveResult;
 import com.jetbrains.python.psi.types.TypeEvalContext;
-import consulo.application.ApplicationManager;
+import consulo.application.Application;
 import consulo.content.bundle.Sdk;
 import consulo.document.Document;
 import consulo.document.FileDocumentManager;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
@@ -42,13 +40,15 @@ import consulo.module.content.ProjectFileIndex;
 import consulo.module.content.ProjectRootManager;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.Ref;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import consulo.virtualFileSystem.util.VirtualFileVisitor;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -126,7 +126,11 @@ public class PyPackageUtil {
             return null;
         }
 
-        return Stream.of(REQUIRES, INSTALL_REQUIRES).map(setupCall::getKeywordArgument).map(requires -> resolveRequiresValue(module, requires)).filter(requires -> requires != null).findFirst()
+        return Stream.of(REQUIRES, INSTALL_REQUIRES)
+            .map(setupCall::getKeywordArgument)
+            .map(requires -> resolveRequiresValue(module, requires))
+            .filter(requires -> requires != null)
+            .findFirst()
             .orElse(null);
     }
 
@@ -145,15 +149,22 @@ public class PyPackageUtil {
     }
 
     private static List<PyRequirement> getSetupPyRequiresFromArguments(Module module, PyCallExpression setupCall, String... argumentNames) {
-        return PyRequirement.fromText(Stream.of(argumentNames).map(setupCall::getKeywordArgument).map(requires -> resolveRequiresValue(module, requires)).filter(requires -> requires != null).flatMap
-                (requires -> Stream.of(requires.getElements())).filter(PyStringLiteralExpression.class::isInstance).map(requirement -> ((PyStringLiteralExpression) requirement).getStringValue())
-            .collect(Collectors.joining("\n")));
+        return PyRequirement.fromText(
+            Stream.of(argumentNames)
+                .map(setupCall::getKeywordArgument)
+                .map(requires -> resolveRequiresValue(module, requires))
+                .filter(requires -> requires != null)
+                .flatMap(requires -> Stream.of(requires.getElements()))
+                .filter(PyStringLiteralExpression.class::isInstance)
+                .map(requirement -> ((PyStringLiteralExpression) requirement).getStringValue())
+                .collect(Collectors.joining("\n"))
+        );
     }
 
     private static List<PyRequirement> mergeSetupPyRequirements(List<PyRequirement> requirementsFromRequires, List<PyRequirement> requirementsFromLinks) {
         if (!requirementsFromLinks.isEmpty()) {
-            Map<String, List<PyRequirement>> nameToRequirements = requirementsFromRequires.stream().collect(Collectors.groupingBy(PyRequirement::getName, LinkedHashMap::new,
-                Collectors.toList()));
+            Map<String, List<PyRequirement>> nameToRequirements = requirementsFromRequires.stream()
+                .collect(Collectors.groupingBy(PyRequirement::getName, LinkedHashMap::new, Collectors.toList()));
 
             for (PyRequirement requirementFromLinks : requirementsFromLinks) {
                 nameToRequirements.replace(requirementFromLinks.getName(), Collections.singletonList(requirementFromLinks));
@@ -230,11 +241,11 @@ public class PyPackageUtil {
 
     private static void collectPackageNames(Project project, final VirtualFile root, final List<String> results) {
         final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-        VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor() {
+        VirtualFileUtil.visitChildrenRecursively(root, new VirtualFileVisitor() {
             @Override
             public boolean visitFile(VirtualFile file) {
                 if (!fileIndex.isExcluded(file) && file.isDirectory() && file.findChild(PyNames.INIT_DOT_PY) != null) {
-                    results.add(VfsUtilCore.getRelativePath(file, root, '.'));
+                    results.add(VirtualFileUtil.getRelativePath(file, root, '.'));
                 }
                 return true;
             }
@@ -251,7 +262,7 @@ public class PyPackageUtil {
         Ref<List<PyPackage>> packagesRef = Ref.create();
         @SuppressWarnings("ThrowableInstanceNeverThrown") Throwable callStacktrace = new Throwable();
         LOG.debug("Showing modal progress for collecting installed packages", new Throwable());
-        PyUtil.runWithProgress(null, PyBundle.message("sdk.scanning.installed.packages"), true, false, indicator -> {
+        PyUtil.runWithProgress(null, PyLocalize.sdkScanningInstalledPackages().get(), true, false, indicator -> {
             indicator.setIndeterminate(true);
             try {
                 packagesRef.set(PyPackageManager.getInstance(sdk).refreshAndGetPackages(false));
@@ -278,7 +289,7 @@ public class PyPackageUtil {
      * @return whether packages were refreshed successfully, e.g. this update wasn't cancelled because of another refresh in progress
      */
     public static boolean updatePackagesSynchronouslyWithGuard(PyPackageManager manager, AtomicBoolean isUpdating) {
-        assert !ApplicationManager.getApplication().isDispatchThread();
+        assert !Application.get().isDispatchThread();
         if (!isUpdating.compareAndSet(false, true)) {
             return false;
         }
@@ -366,8 +377,12 @@ public class PyPackageUtil {
         if (generated instanceof PyCallExpression) {
             PyCallExpression callExpression = (PyCallExpression) generated;
 
-            return Stream.of(callExpression.getArguments()).filter(PyKeywordArgument.class::isInstance).map(PyKeywordArgument.class::cast).filter(kwarg -> keyword.equals(kwarg.getKeyword()))
-                .findFirst().orElse(null);
+            return Stream.of(callExpression.getArguments())
+                .filter(PyKeywordArgument.class::isInstance)
+                .map(PyKeywordArgument.class::cast)
+                .filter(kwarg -> keyword.equals(kwarg.getKeyword()))
+                .findFirst()
+                .orElse(null);
         }
 
         return null;

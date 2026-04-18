@@ -39,7 +39,6 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
 import consulo.application.util.RecursionManager;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtilCore;
 import consulo.language.Language;
 import consulo.language.file.FileViewProvider;
 import consulo.language.icon.IconDescriptorUpdaters;
@@ -60,6 +59,7 @@ import consulo.util.dataholder.Key;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.ref.SoftReference;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -837,7 +837,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
                             VirtualFile parent = virtualFile.getParent();
                             VirtualFile rootParent = root.getParent();
                             if (rootParent != null && parent != null) {
-                                return VfsUtilCore.getRelativePath(parent, rootParent, File.separatorChar);
+                                return VirtualFileUtil.getRelativePath(parent, rootParent, File.separatorChar);
                             }
                         }
                     }

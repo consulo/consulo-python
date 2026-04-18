@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.run;
 
 import consulo.application.util.SystemInfo;
 import consulo.logging.Logger;
 import consulo.process.local.EnvironmentUtil;
+import consulo.util.io.FilePermissionCopier;
 import consulo.util.io.FileUtil;
 
 import org.jspecify.annotations.Nullable;
@@ -107,8 +107,8 @@ public class PyVirtualEnvReader extends EnvironmentUtil.ShellEnvReader {
     File activateFile = FileUtil.createTempFile("pycharm-virualenv-activate.", ".bat", false);
     File envFile = FileUtil.createTempFile("pycharm-virualenv-envs.", ".tmp", false);
     try {
-      consulo.ide.impl.idea.openapi.util.io.FileUtil.copy(new File(activate), activateFile);
-      consulo.ide.impl.idea.openapi.util.io.FileUtil.appendToFile(activateFile, "\n\nset");
+      FileUtil.copy(new File(activate), activateFile, FilePermissionCopier.BY_NIO2);
+      FileUtil.appendToFile(activateFile, "\n\nset");
       List<String> command = Arrays.asList(activateFile.getPath(), ">", envFile.getAbsolutePath());
 
       return runProcessAndReadOutputAndEnvs(command, null, envFile.toPath()).getValue();
