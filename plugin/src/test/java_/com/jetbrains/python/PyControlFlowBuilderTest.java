@@ -8,11 +8,11 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.Instruction;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import junit.framework.Assert;
 
 import java.io.IOException;
@@ -240,7 +240,7 @@ public abstract class PyControlFlowBuilderTest extends LightMarkedTestCase {
     }
     VirtualFile vFile = PyTestCase.getVirtualFileByName(fullPath);
     try {
-      String fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile), "\n");
+      String fileText = StringUtil.convertLineSeparators(VirtualFileUtil.loadText(vFile), "\n");
       Assert.assertEquals(fileText.trim(), buffer.toString().trim());
     }
     catch (IOException e) {

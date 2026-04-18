@@ -1,14 +1,14 @@
 package com.jetbrains.python.fixtures;
 
-import consulo.util.lang.StringUtil;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
-import consulo.virtualFileSystem.VirtualFile;
+import com.intellij.testFramework.TestDataFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
-import com.intellij.testFramework.TestDataFile;
-import java.util.HashMap;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +51,7 @@ public abstract class LightMarkedTestCase extends PyTestCase {
 
     String text;
     try {
-      text = VfsUtil.loadText(vFile);
+      text = VirtualFileUtil.loadText(vFile);
     }
     catch (IOException e) {
       throw new RuntimeException(e);

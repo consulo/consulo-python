@@ -1,15 +1,15 @@
 package com.jetbrains.python;
 
-import consulo.util.lang.StringUtil;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
-import consulo.virtualFileSystem.VirtualFile;
-import consulo.language.psi.PsiElement;
 import com.intellij.testFramework.TestDataFile;
-import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
 import com.jetbrains.python.fixtures.PyTestCase;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.impl.psi.impl.PythonLanguageLevelPusher;
+import com.jetbrains.python.psi.*;
+import consulo.language.psi.PsiElement;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
 import junit.framework.Assert;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public abstract class PyQuickDocTest extends LightMarkedTestCase {
 
     String loadedText;
     try {
-      loadedText = VfsUtil.loadText(vFile);
+      loadedText = VirtualFileUtil.loadText(vFile);
     }
     catch (IOException e) {
       throw new RuntimeException(e);

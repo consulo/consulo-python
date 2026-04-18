@@ -1,18 +1,18 @@
 package com.jetbrains.python.refactoring;
 
-import consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException;
-import consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragment;
-import consulo.util.lang.Pair;
-import consulo.util.lang.StringUtil;
-import consulo.ide.impl.idea.openapi.vfs.VfsUtil;
-import consulo.virtualFileSystem.VirtualFile;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.PythonTestUtil;
-import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragmentUtil;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.fixtures.LightMarkedTestCase;
+import com.jetbrains.python.impl.codeInsight.codeFragment.PyCodeFragmentUtil;
 import com.jetbrains.python.psi.PyFile;
+import consulo.ide.impl.idea.codeInsight.codeFragment.CannotCreateCodeFragmentException;
+import consulo.ide.impl.idea.codeInsight.codeFragment.CodeFragment;
+import consulo.virtualFileSystem.util.VirtualFileUtil;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
+import consulo.virtualFileSystem.VirtualFile;
 
 import java.util.TreeSet;
 
@@ -34,7 +34,7 @@ public abstract class PyCodeFragmentTest extends LightMarkedTestCase {
     String fullPath = getTestDataPath() + testName + ".test";
 
     VirtualFile vFile = getVirtualFileByName(fullPath);
-    String fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile), "\n");
+    String fileText = StringUtil.convertLineSeparators(VirtualFileUtil.loadText(vFile), "\n");
 
     int beginMarker = fileText.indexOf(BEGIN_MARKER);
     int endMarker = fileText.indexOf(END_MARKER);

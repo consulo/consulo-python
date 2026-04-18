@@ -27,7 +27,6 @@ import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
-import consulo.application.util.SystemInfo;
 import consulo.application.util.TempFileService;
 import consulo.component.messagebus.MessageBusConnection;
 import consulo.content.base.BinariesOrderRootType;
@@ -38,6 +37,7 @@ import consulo.execution.RunCanceledByUserException;
 import consulo.http.HttpProxyManager;
 import consulo.logging.Logger;
 import consulo.module.Module;
+import consulo.platform.Platform;
 import consulo.process.*;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.event.ProcessEvent;
@@ -52,8 +52,8 @@ import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.event.BulkFileListener;
 import consulo.virtualFileSystem.event.VFileEvent;
 import consulo.virtualFileSystem.util.VirtualFileUtil;
-
 import org.jspecify.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -276,7 +276,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 					String location = pkg.getLocation();
 					if(location != null)
 					{
-						canModify = consulo.ide.impl.idea.openapi.util.io.FileUtil.ensureCanCreateFile(new File(location));
+						canModify = FileUtil.ensureCanCreateFile(new File(location));
 					}
 				}
 				args.add(pkg.getName());
@@ -525,8 +525,8 @@ public class PyPackageManagerImpl extends PyPackageManager
 		cmdline.addAll(args);
 		LOG.info("Running packaging tool: " + StringUtil.join(cmdline, " "));
 
-		boolean canCreate = consulo.ide.impl.idea.openapi.util.io.FileUtil.ensureCanCreateFile(new File(homePath));
-		boolean useSudo = !canCreate && !SystemInfo.isWindows && askForSudo;
+		boolean canCreate = FileUtil.ensureCanCreateFile(new File(homePath));
+		boolean useSudo = !canCreate && !Platform.current().os().isWindows() && askForSudo;
 
 		try
 		{
