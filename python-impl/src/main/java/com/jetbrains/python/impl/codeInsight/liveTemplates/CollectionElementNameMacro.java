@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.liveTemplates;
 
 import consulo.annotation.component.ExtensionImpl;
@@ -24,6 +23,7 @@ import consulo.language.editor.template.ExpressionContext;
 import consulo.language.editor.template.Result;
 import consulo.language.editor.template.TextResult;
 import consulo.language.editor.template.macro.Macro;
+import consulo.localize.LocalizeValue;
 import consulo.util.lang.StringUtil;
 
 import java.util.ArrayList;
@@ -33,65 +33,69 @@ import java.util.List;
  * @author yole
  */
 @ExtensionImpl
-public class CollectionElementNameMacro extends Macro
-{
-  public String getName() {
-    return "collectionElementName";
-  }
+public class CollectionElementNameMacro extends Macro {
+    @Override
+    public String getName() {
+        return "collectionElementName";
+    }
 
-  public String getPresentableName() {
-    return "collectionElementName()";
-  }
+    @Override
+    public LocalizeValue getPresentableName() {
+        return LocalizeValue.of("collectionElementName()");
+    }
 
-  public String getDefaultValue() {
-    return "a";
-  }
+    @Override
+    public String getDefaultValue() {
+        return "a";
+    }
 
-  public Result calculateResult(Expression[] params, ExpressionContext context) {
-    if (params.length != 1) {
-      return null;
+    @Override
+    public Result calculateResult(Expression[] params, ExpressionContext context) {
+        if (params.length != 1) {
+            return null;
+        }
+        Result paramResult = params[0].calculateResult(context);
+        if (paramResult == null) {
+            return null;
+        }
+        String param = paramResult.toString();
+        int lastDot = param.lastIndexOf('.');
+        if (lastDot >= 0) {
+            param = param.substring(lastDot + 1);
+        }
+        if (param.endsWith(")")) {
+            int lastParen = param.lastIndexOf('(');
+            if (lastParen > 0) {
+                param = param.substring(0, lastParen);
+            }
+        }
+        String result = smartUnpluralize(param);
+        return new TextResult(result);
     }
-    Result paramResult = params[0].calculateResult(context);
-    if (paramResult == null) {
-      return null;
-    }
-    String param = paramResult.toString();
-    int lastDot = param.lastIndexOf('.');
-    if (lastDot >= 0) {
-      param = param.substring(lastDot+1);
-    }
-    if (param.endsWith(")")) {
-      int lastParen = param.lastIndexOf('(');
-      if (lastParen > 0) {
-        param = param.substring(0, lastParen);
-      }
-    }
-    String result = smartUnpluralize(param);
-    return new TextResult(result);
-  }
 
-  private static String smartUnpluralize(String param) {
-    if (param.endsWith("_list")) {
-      return param.substring(0, param.length()-5);
+    private static String smartUnpluralize(String param) {
+        if (param.endsWith("_list")) {
+            return param.substring(0, param.length() - 5);
+        }
+        String result = StringUtil.unpluralize(param);
+        return result == null ? param : result;
     }
-    String result = StringUtil.unpluralize(param);
-    return result == null ? param : result;
-  }
 
-  public LookupElement[] calculateLookupItems(Expression[] params, ExpressionContext context) {
-    Result result = calculateResult(params, context);
-    if (result == null) {
-      return null;
+    @Override
+    public LookupElement[] calculateLookupItems(Expression[] params, ExpressionContext context) {
+        Result result = calculateResult(params, context);
+        if (result == null) {
+            return null;
+        }
+        String[] words = result.toString().split("_");
+        if (words.length > 1) {
+            List<LookupElement> lookup = new ArrayList<>();
+            for (int i = 0; i < words.length; i++) {
+                String element = StringUtil.join(words, i, words.length, "_");
+                lookup.add(LookupElementBuilder.create(element));
+            }
+            return lookup.toArray(new LookupElement[lookup.size()]);
+        }
+        return null;
     }
-    String[] words = result.toString().split("_");
-    if (words.length > 1) {
-      List<LookupElement> lookup = new ArrayList<LookupElement>();
-      for(int i=0; i<words.length; i++) {
-        String element = StringUtil.join(words, i, words.length, "_");
-        lookup.add(LookupElementBuilder.create(element));
-      }
-      return lookup.toArray(new LookupElement[lookup.size()]);
-    }
-    return null;
-  }
 }
