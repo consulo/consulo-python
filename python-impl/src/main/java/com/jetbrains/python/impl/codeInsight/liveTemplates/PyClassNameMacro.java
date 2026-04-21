@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.liveTemplates;
 
 import com.jetbrains.python.psi.PyClass;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.template.Expression;
 import consulo.language.editor.template.ExpressionContext;
@@ -27,6 +27,7 @@ import consulo.language.editor.template.macro.Macro;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 
+import consulo.localize.LocalizeValue;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -34,30 +35,31 @@ import org.jspecify.annotations.Nullable;
  */
 @ExtensionImpl
 public class PyClassNameMacro extends Macro {
-  @Override
-  public String getName() {
-    return "pyClassName";
-  }
-
-  @Override
-  public String getPresentableName() {
-    return "pyClassName()";
-  }
-
-  @Nullable
-  @Override
-  public Result calculateResult(Expression[] params, ExpressionContext context) {
-    PsiElement place = context.getPsiElementAtStartOffset();
-    PyClass pyClass = PsiTreeUtil.getParentOfType(place, PyClass.class);
-    if (pyClass == null) {
-      return null;
+    @Override
+    public String getName() {
+        return "pyClassName";
     }
-    String name = pyClass.getName();
-    return name == null ? null : new TextResult(name);
-  }
 
-  @Override
-  public boolean isAcceptableInContext(TemplateContextType context) {
-    return context instanceof PythonTemplateContextType;
-  }
+    @Override
+    public LocalizeValue getPresentableName() {
+        return LocalizeValue.of("pyClassName()");
+    }
+
+    @Nullable
+    @Override
+    @RequiredReadAction
+    public Result calculateResult(Expression[] params, ExpressionContext context) {
+        PsiElement place = context.getPsiElementAtStartOffset();
+        PyClass pyClass = PsiTreeUtil.getParentOfType(place, PyClass.class);
+        if (pyClass == null) {
+            return null;
+        }
+        String name = pyClass.getName();
+        return name == null ? null : new TextResult(name);
+    }
+
+    @Override
+    public boolean isAcceptableInContext(TemplateContextType context) {
+        return context instanceof PythonTemplateContextType;
+    }
 }

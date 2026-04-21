@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.liveTemplates;
 
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.template.Expression;
 import consulo.language.editor.template.ExpressionContext;
@@ -26,6 +26,7 @@ import consulo.language.editor.template.macro.Macro;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 
+import consulo.localize.LocalizeValue;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -33,25 +34,26 @@ import org.jspecify.annotations.Nullable;
  */
 @ExtensionImpl
 public class PyFunctionNameMacro extends Macro {
-  @Override
-  public String getName() {
-    return "pyFunctionName";
-  }
-
-  @Override
-  public String getPresentableName() {
-    return "pyFunctionName()";
-  }
-
-  @Nullable
-  @Override
-  public Result calculateResult(Expression[] params, ExpressionContext context) {
-    PsiElement place = context.getPsiElementAtStartOffset();
-    PyFunction pyFunction = PsiTreeUtil.getParentOfType(place, PyFunction.class);
-    if (pyFunction == null) {
-      return null;
+    @Override
+    public String getName() {
+        return "pyFunctionName";
     }
-    String name = pyFunction.getName();
-    return name == null ? null : new TextResult(name);
-  }
+
+    @Override
+    public LocalizeValue getPresentableName() {
+        return LocalizeValue.of("pyFunctionName()");
+    }
+
+    @Nullable
+    @Override
+    @RequiredReadAction
+    public Result calculateResult(Expression[] params, ExpressionContext context) {
+        PsiElement place = context.getPsiElementAtStartOffset();
+        PyFunction pyFunction = PsiTreeUtil.getParentOfType(place, PyFunction.class);
+        if (pyFunction == null) {
+            return null;
+        }
+        String name = pyFunction.getName();
+        return name == null ? null : new TextResult(name);
+    }
 }
