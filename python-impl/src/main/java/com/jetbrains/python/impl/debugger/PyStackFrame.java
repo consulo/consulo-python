@@ -15,14 +15,12 @@
  */
 package com.jetbrains.python.impl.debugger;
 
-import com.google.common.collect.Lists;
 import com.jetbrains.python.debugger.PyDebugValue;
 import com.jetbrains.python.debugger.PyDebuggerException;
 import com.jetbrains.python.debugger.PyFrameAccessor;
 import com.jetbrains.python.debugger.PyStackFrameInfo;
-import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.impl.debugger.settings.PyDebuggerSettings;
-import consulo.application.ApplicationManager;
+import consulo.application.Application;
 import consulo.application.ReadAction;
 import consulo.document.Document;
 import consulo.document.FileDocumentManager;
@@ -30,231 +28,225 @@ import consulo.execution.debug.XSourcePosition;
 import consulo.execution.debug.evaluation.XDebuggerEvaluator;
 import consulo.execution.debug.frame.*;
 import consulo.execution.debug.icon.ExecutionDebugIconGroup;
+import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.content.ProjectRootManager;
 import consulo.project.Project;
+import consulo.python.impl.icon.PythonImplIconGroup;
 import consulo.ui.ex.ColoredTextContainer;
 import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.image.Image;
 import consulo.virtualFileSystem.VirtualFile;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.*;
 import java.util.stream.IntStream;
 
-
 public class PyStackFrame extends XStackFrame {
+    private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.pydev.PyStackFrame");
 
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.pydev.PyStackFrame");
+    private static final Object STACK_FRAME_EQUALITY_OBJECT = new Object();
+    public static final String DOUBLE_UNDERSCORE = "__";
+    public static final LocalizeValue RETURN_VALUES_GROUP_NAME = LocalizeValue.localizeTODO("Return Values");
+    public static final LocalizeValue SPECIAL_VARIABLES_GROUP_NAME = LocalizeValue.localizeTODO("Special Variables");
+    public static final Set<String> HIDE_TYPES = new HashSet<>(Arrays.asList("function", "type", "classobj", "module"));
+    public static final int DUNDER_VALUES_IND = 0;
+    public static final int SPECIAL_TYPES_IND = DUNDER_VALUES_IND + 1;
+    public static final int IPYTHON_VALUES_IND = SPECIAL_TYPES_IND + 1;
+    public static final int NUMBER_OF_GROUPS = IPYTHON_VALUES_IND + 1;
 
-  private static final Object STACK_FRAME_EQUALITY_OBJECT = new Object();
-  public static final String DOUBLE_UNDERSCORE = "__";
-  public static final String RETURN_VALUES_GROUP_NAME = "Return Values";
-  public static final String SPECIAL_VARIABLES_GROUP_NAME = "Special Variables";
-  public static final HashSet<String> HIDE_TYPES = new HashSet<>(Arrays.asList("function", "type", "classobj", "module"));
-  public static final int DUNDER_VALUES_IND = 0;
-  public static final int SPECIAL_TYPES_IND = DUNDER_VALUES_IND + 1;
-  public static final int IPYTHON_VALUES_IND = SPECIAL_TYPES_IND + 1;
-  public static final int NUMBER_OF_GROUPS = IPYTHON_VALUES_IND + 1;
+    private Project myProject;
+    private final PyFrameAccessor myDebugProcess;
+    private final PyStackFrameInfo myFrameInfo;
+    private final XSourcePosition myPosition;
 
-  private Project myProject;
-  private final PyFrameAccessor myDebugProcess;
-  private final PyStackFrameInfo myFrameInfo;
-  private final XSourcePosition myPosition;
-
-  public PyStackFrame(Project project,
-                      PyFrameAccessor debugProcess,
-                      PyStackFrameInfo frameInfo,
-                      XSourcePosition position) {
-    myProject = project;
-    myDebugProcess = debugProcess;
-    myFrameInfo = frameInfo;
-    myPosition = position;
-  }
-
-  @Override
-  public Object getEqualityObject() {
-    return STACK_FRAME_EQUALITY_OBJECT;
-  }
-
-  @Override
-  public XSourcePosition getSourcePosition() {
-    return myPosition;
-  }
-
-  @Override
-  public XDebuggerEvaluator getEvaluator() {
-    return new PyDebuggerEvaluator(myProject, myDebugProcess);
-  }
-
-  @Override
-  public void customizePresentation(ColoredTextContainer component) {
-    if (myPosition == null) {
-      component.append("<frame not available>", SimpleTextAttributes.GRAY_ATTRIBUTES);
-      return;
+    public PyStackFrame(Project project, PyFrameAccessor debugProcess, PyStackFrameInfo frameInfo, XSourcePosition position) {
+        myProject = project;
+        myDebugProcess = debugProcess;
+        myFrameInfo = frameInfo;
+        myPosition = position;
     }
 
-    VirtualFile file = myPosition.getFile();
-    boolean isExternal = ReadAction.compute(() -> {
-      Document document = FileDocumentManager.getInstance().getDocument(file);
-      if (document != null) {
-        return !ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file);
-      }
-      return false;
-    });
-
-
-    component.append(myFrameInfo.getName(), gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
-    component.append(", ", gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
-    component.append(myPosition.getFile().getName(), gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
-    component.append(":", gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
-    component.append(Integer.toString(myPosition.getLine() + 1), gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
-  }
-
-  private static SimpleTextAttributes gray(SimpleTextAttributes attributes, boolean gray) {
-    if (!gray) {
-      return attributes;
+    @Override
+    public Object getEqualityObject() {
+        return STACK_FRAME_EQUALITY_OBJECT;
     }
-    else {
-      return getGrayAttributes(attributes);
-    }
-  }
 
-  protected static SimpleTextAttributes getGrayAttributes(SimpleTextAttributes attributes) {
-    return (attributes.getStyle() & SimpleTextAttributes.STYLE_ITALIC) != 0 ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES : SimpleTextAttributes.GRAYED_ATTRIBUTES;
-  }
-
-  @Override
-  public void computeChildren(XCompositeNode node) {
-    if (node.isObsolete()) {
-      return;
+    @Override
+    public XSourcePosition getSourcePosition() {
+        return myPosition;
     }
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      try {
-        XValueChildrenList values = myDebugProcess.loadFrame();
-        if (!node.isObsolete()) {
-          addChildren(node, values);
+
+    @Override
+    public XDebuggerEvaluator getEvaluator() {
+        return new PyDebuggerEvaluator(myProject, myDebugProcess);
+    }
+
+    @Override
+    public void customizePresentation(ColoredTextContainer component) {
+        if (myPosition == null) {
+            component.append("<frame not available>", SimpleTextAttributes.GRAY_ATTRIBUTES);
+            return;
         }
-      }
-      catch (PyDebuggerException e) {
-        if (!node.isObsolete()) {
-          node.setErrorMessage("Unable to display frame variables");
-        }
-        LOG.warn(e);
-      }
-    });
-  }
 
-  protected void addChildren(XCompositeNode node, @Nullable XValueChildrenList children) {
-    if (children == null) {
-      node.addChildren(XValueChildrenList.EMPTY, true);
-      return;
+        VirtualFile file = myPosition.getFile();
+        boolean isExternal = ReadAction.compute(() -> {
+            Document document = FileDocumentManager.getInstance().getDocument(file);
+            return document != null && !ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file);
+        });
+
+        component.append(myFrameInfo.getName(), gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
+        component.append(", ", gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
+        component.append(myPosition.getFile().getName(), gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
+        component.append(":", gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
+        component.append(Integer.toString(myPosition.getLine() + 1), gray(SimpleTextAttributes.REGULAR_ATTRIBUTES, isExternal));
     }
-    PyDebuggerSettings debuggerSettings = PyDebuggerSettings.getInstance();
-    XValueChildrenList filteredChildren = new XValueChildrenList();
-    HashMap<String, XValue> returnedValues = new HashMap<>();
-    ArrayList<Map<String, XValue>> specialValuesGroups = new ArrayList<>();
-    IntStream.range(0, NUMBER_OF_GROUPS).mapToObj(i -> new HashMap()).forEach(specialValuesGroups::add);
-    boolean isSpecialEmpty = true;
 
-    for (int i = 0; i < children.size(); i++) {
-      XValue value = children.getValue(i);
-      String name = children.getName(i);
-      if (value instanceof PyDebugValue) {
-        PyDebugValue pyValue = (PyDebugValue)value;
-        if (pyValue.isReturnedVal() && debuggerSettings.isWatchReturnValues()) {
-          returnedValues.put(name, value);
-        }
-        else if (!debuggerSettings.isSimplifiedView()) {
-          filteredChildren.add(name, value);
+    private static SimpleTextAttributes gray(SimpleTextAttributes attributes, boolean gray) {
+        if (!gray) {
+            return attributes;
         }
         else {
-          int groupIndex = -1;
-          if (name.startsWith(DOUBLE_UNDERSCORE) && (name.endsWith(DOUBLE_UNDERSCORE)) && name.length() > 4) {
-            groupIndex = DUNDER_VALUES_IND;
-          }
-          else if (pyValue.isIPythonHidden()) {
-            groupIndex = IPYTHON_VALUES_IND;
-          }
-          else if (HIDE_TYPES.contains(pyValue.getType())) {
-            groupIndex = SPECIAL_TYPES_IND;
-          }
-          if (groupIndex > -1) {
-            specialValuesGroups.get(groupIndex).put(name, value);
-            isSpecialEmpty = false;
-          }
-          else {
-            filteredChildren.add(name, value);
-          }
+            return getGrayAttributes(attributes);
         }
-      }
     }
-    node.addChildren(filteredChildren, returnedValues.isEmpty() && isSpecialEmpty);
-    if (!returnedValues.isEmpty()) {
-      addReturnedValuesGroup(node, returnedValues);
-    }
-    if (!isSpecialEmpty) {
-      addSpecialValuesGroup(node, specialValuesGroups);
-    }
-  }
 
-  private static void addReturnedValuesGroup(XCompositeNode node, Map<String, XValue> returnedValues) {
-    ArrayList<XValueGroup> group = Lists.newArrayList();
-    group.add(new XValueGroup(RETURN_VALUES_GROUP_NAME) {
-      @Override
-      public void computeChildren(XCompositeNode node) {
-        XValueChildrenList list = new XValueChildrenList();
-        for (Map.Entry<String, XValue> entry : returnedValues.entrySet()) {
-          list.add(entry.getKey() + "()", entry.getValue());
+    protected static SimpleTextAttributes getGrayAttributes(SimpleTextAttributes attributes) {
+        return (attributes.getStyle() & SimpleTextAttributes.STYLE_ITALIC) != 0
+            ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES
+            : SimpleTextAttributes.GRAYED_ATTRIBUTES;
+    }
+
+    @Override
+    public void computeChildren(XCompositeNode node) {
+        if (node.isObsolete()) {
+            return;
         }
-        node.addChildren(list, true);
-      }
+        Application.get().executeOnPooledThread(() -> {
+            try {
+                XValueChildrenList values = myDebugProcess.loadFrame();
+                if (!node.isObsolete()) {
+                    addChildren(node, values);
+                }
+            }
+            catch (PyDebuggerException e) {
+                if (!node.isObsolete()) {
+                    node.setErrorMessage("Unable to display frame variables");
+                }
+                LOG.warn(e);
+            }
+        });
+    }
 
-      @Nullable
-      @Override
-      public Image getIcon() {
-        return ExecutionDebugIconGroup.nodeMethodlevelwatch();
-      }
-    });
-    node.addChildren(XValueChildrenList.topGroups(group), true);
-  }
-
-  private static void addSpecialValuesGroup(XCompositeNode node, List<Map<String, XValue>> specialValuesGroups) {
-    ArrayList<XValueGroup> group = Lists.newArrayList();
-    group.add(new XValueGroup(SPECIAL_VARIABLES_GROUP_NAME) {
-      @Override
-      public void computeChildren(XCompositeNode node) {
-        XValueChildrenList list = new XValueChildrenList();
-        for (Map<String, XValue> group : specialValuesGroups) {
-          for (Map.Entry<String, XValue> entry : group.entrySet()) {
-            list.add(entry.getKey(), entry.getValue());
-          }
+    protected void addChildren(XCompositeNode node, @Nullable XValueChildrenList children) {
+        if (children == null) {
+            node.addChildren(XValueChildrenList.EMPTY, true);
+            return;
         }
-        node.addChildren(list, true);
-      }
+        PyDebuggerSettings debuggerSettings = PyDebuggerSettings.getInstance();
+        XValueChildrenList filteredChildren = new XValueChildrenList();
+        Map<String, XValue> returnedValues = new HashMap<>();
+        List<Map<String, XValue>> specialValuesGroups = new ArrayList<>();
+        IntStream.range(0, NUMBER_OF_GROUPS).mapToObj(i -> new HashMap()).forEach(specialValuesGroups::add);
+        boolean isSpecialEmpty = true;
 
-      @Nullable
-      @Override
-      public Image getIcon() {
-        return PythonIcons.Python.Debug.SpecialVar;
-      }
-    });
-    node.addChildren(XValueChildrenList.topGroups(group), true);
-  }
+        for (int i = 0; i < children.size(); i++) {
+            XValue value = children.getValue(i);
+            String name = children.getName(i);
+            if (value instanceof PyDebugValue pyValue) {
+                if (pyValue.isReturnedVal() && debuggerSettings.isWatchReturnValues()) {
+                    returnedValues.put(name, value);
+                }
+                else if (!debuggerSettings.isSimplifiedView()) {
+                    filteredChildren.add(name, value);
+                }
+                else {
+                    int groupIndex = -1;
+                    if (name.startsWith(DOUBLE_UNDERSCORE) && name.endsWith(DOUBLE_UNDERSCORE) && name.length() > 4) {
+                        groupIndex = DUNDER_VALUES_IND;
+                    }
+                    else if (pyValue.isIPythonHidden()) {
+                        groupIndex = IPYTHON_VALUES_IND;
+                    }
+                    else if (HIDE_TYPES.contains(pyValue.getType())) {
+                        groupIndex = SPECIAL_TYPES_IND;
+                    }
+                    if (groupIndex > -1) {
+                        specialValuesGroups.get(groupIndex).put(name, value);
+                        isSpecialEmpty = false;
+                    }
+                    else {
+                        filteredChildren.add(name, value);
+                    }
+                }
+            }
+        }
+        node.addChildren(filteredChildren, returnedValues.isEmpty() && isSpecialEmpty);
+        if (!returnedValues.isEmpty()) {
+            addReturnedValuesGroup(node, returnedValues);
+        }
+        if (!isSpecialEmpty) {
+            addSpecialValuesGroup(node, specialValuesGroups);
+        }
+    }
 
-  public String getThreadId() {
-    return myFrameInfo.getThreadId();
-  }
+    private static void addReturnedValuesGroup(XCompositeNode node, Map<String, XValue> returnedValues) {
+        List<XValueGroup> group = new ArrayList<>();
+        group.add(new XValueGroup(RETURN_VALUES_GROUP_NAME) {
+            @Override
+            public void computeChildren(XCompositeNode node) {
+                XValueChildrenList list = new XValueChildrenList();
+                for (Map.Entry<String, XValue> entry : returnedValues.entrySet()) {
+                    list.add(entry.getKey() + "()", entry.getValue());
+                }
+                node.addChildren(list, true);
+            }
 
-  public String getFrameId() {
-    return myFrameInfo.getId();
-  }
+            @Nullable
+            @Override
+            public Image getIcon() {
+                return ExecutionDebugIconGroup.nodeMethodlevelwatch();
+            }
+        });
+        node.addChildren(XValueChildrenList.topGroups(group), true);
+    }
 
-  public String getThreadFrameId() {
-    return myFrameInfo.getThreadId() + ":" + myFrameInfo.getId();
-  }
+    private static void addSpecialValuesGroup(XCompositeNode node, List<Map<String, XValue>> specialValuesGroups) {
+        List<XValueGroup> group = new ArrayList<>();
+        group.add(new XValueGroup(SPECIAL_VARIABLES_GROUP_NAME) {
+            @Override
+            public void computeChildren(XCompositeNode node) {
+                XValueChildrenList list = new XValueChildrenList();
+                for (Map<String, XValue> group : specialValuesGroups) {
+                    for (Map.Entry<String, XValue> entry : group.entrySet()) {
+                        list.add(entry.getKey(), entry.getValue());
+                    }
+                }
+                node.addChildren(list, true);
+            }
 
-  protected XSourcePosition getPosition() {
-    return myPosition;
-  }
+            @Nullable
+            @Override
+            public Image getIcon() {
+                return PythonImplIconGroup.pythonDebugSpecialvar();
+            }
+        });
+        node.addChildren(XValueChildrenList.topGroups(group), true);
+    }
+
+    public String getThreadId() {
+        return myFrameInfo.getThreadId();
+    }
+
+    public String getFrameId() {
+        return myFrameInfo.getId();
+    }
+
+    public String getThreadFrameId() {
+        return myFrameInfo.getThreadId() + ":" + myFrameInfo.getId();
+    }
+
+    protected XSourcePosition getPosition() {
+        return myPosition;
+    }
 }
