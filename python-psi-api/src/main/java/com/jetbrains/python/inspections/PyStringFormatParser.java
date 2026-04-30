@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jetbrains.python.impl.inspections;
+package com.jetbrains.python.inspections;
 
 import consulo.document.util.TextRange;
 import consulo.util.lang.StringUtil;
@@ -22,7 +22,6 @@ import consulo.language.psi.PsiElement;
 import java.util.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -376,7 +375,7 @@ public class PyStringFormatParser {
 
   public static List<TextRange> getEscapeRanges(String s) {
     List<TextRange> ranges = new ArrayList<TextRange>();
-    Matcher matcher = PyStringLiteralExpressionImpl.PATTERN_ESCAPE.matcher(s);
+    Matcher matcher = PyStringLiteralExpression.PATTERN_ESCAPE.matcher(s);
     while (matcher.find()) {
       ranges.add(TextRange.create(matcher.start(), matcher.end()));
     }

@@ -2,8 +2,7 @@
  * @author VISTALL
  * @since 25/05/2023
  */
-open module consulo.python.impl
-{
+open module consulo.python.impl {
   requires consulo.application.api;
   requires consulo.application.content.api;
   requires consulo.application.ui.api;
@@ -72,8 +71,6 @@ open module consulo.python.impl
   requires com.google.common;
   requires com.google.gson;
 
-  requires com.intellij.regexp;
-
   requires xmlrpc.common;
   requires xmlrpc.server;
 
@@ -110,7 +107,6 @@ open module consulo.python.impl
   exports com.jetbrains.python.impl.codeInsight.intentions;
   exports com.jetbrains.python.impl.codeInsight.liveTemplates;
   exports com.jetbrains.python.impl.codeInsight.override;
-  exports com.jetbrains.python.impl.codeInsight.regexp;
   exports com.jetbrains.python.impl.codeInsight.stdlib;
   exports com.jetbrains.python.impl.codeInsight.testIntegration;
   exports com.jetbrains.python.impl.codeInsight.userSkeletons;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jetbrains.python.impl.codeInsight.regexp;
+package consulo.python.regexp.impl.internal;
 
 import consulo.language.Language;
 import org.intellij.lang.regexp.RegExpLanguage;

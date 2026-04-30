@@ -16,9 +16,9 @@
 package com.jetbrains.python.impl.refactoring;
 
 import static com.jetbrains.python.PyTokenTypes.*;
-import static com.jetbrains.python.impl.inspections.PyStringFormatParser.filterSubstitutions;
-import static com.jetbrains.python.impl.inspections.PyStringFormatParser.parseNewStyleFormat;
-import static com.jetbrains.python.impl.inspections.PyStringFormatParser.parsePercentFormat;
+import static com.jetbrains.python.inspections.PyStringFormatParser.filterSubstitutions;
+import static com.jetbrains.python.inspections.PyStringFormatParser.parseNewStyleFormat;
+import static com.jetbrains.python.inspections.PyStringFormatParser.parsePercentFormat;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.inspections.PyStringFormatParser;
+import com.jetbrains.python.inspections.PyStringFormatParser;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.psi.impl.PyPsiUtils;

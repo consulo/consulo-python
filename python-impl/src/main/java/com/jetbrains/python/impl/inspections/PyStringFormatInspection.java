@@ -23,6 +23,7 @@ import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.types.PySubscriptableType;
 import com.jetbrains.python.impl.psi.types.PyTypeChecker;
 import com.jetbrains.python.impl.psi.types.PyTypeParser;
+import com.jetbrains.python.inspections.PyStringFormatParser;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.PyType;
@@ -42,8 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.python.impl.inspections.PyStringFormatParser.filterSubstitutions;
-import static com.jetbrains.python.impl.inspections.PyStringFormatParser.parsePercentFormat;
+import static com.jetbrains.python.inspections.PyStringFormatParser.filterSubstitutions;
+import static com.jetbrains.python.inspections.PyStringFormatParser.parsePercentFormat;
 
 /**
  * @author Alexey.Ivanov

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.jetbrains.python.impl.codeInsight.regexp;
+package consulo.python.regexp.impl.internal;
 
-import com.jetbrains.python.impl.codeInsight.PyInjectionUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import consulo.language.Language;

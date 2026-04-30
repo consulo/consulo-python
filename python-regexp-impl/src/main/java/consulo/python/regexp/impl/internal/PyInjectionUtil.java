@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.jetbrains.python.impl.codeInsight;
+package consulo.python.regexp.impl.internal;
 
+import com.jetbrains.python.inspections.PyStringFormatParser;
 import consulo.language.inject.MultiHostRegistrar;
 import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
@@ -25,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-import static com.jetbrains.python.impl.inspections.PyStringFormatParser.*;
+import static com.jetbrains.python.inspections.PyStringFormatParser.*;
 
 /**
  * @author vlan
@@ -95,7 +96,7 @@ public class PyInjectionUtil {
       for (TextRange range : ranges) {
         if (formatting != Formatting.NONE) {
           String part = range.substring(text);
-          List<FormatStringChunk> chunks = formatting == Formatting.NEW_STYLE ? parseNewStyleFormat(part) : parsePercentFormat(part);
+          List<FormatStringChunk> chunks = formatting == Formatting.NEW_STYLE ? PyStringFormatParser.parseNewStyleFormat(part) : PyStringFormatParser.parsePercentFormat(part);
           for (int i = 0; i < chunks.size(); i++) {
             FormatStringChunk chunk = chunks.get(i);
             if (chunk instanceof ConstantChunk) {

@@ -6,7 +6,7 @@
   <depends optional="true">com.intellij.spellchecker</depends>
   <depends optional="true">org.jetbrains.plugins.rest</depends>
   <depends optional="true">com.intellij.xml</depends>
-  <depends>com.intellij.regexp</depends>
+  <depends optional="true">com.intellij.regexp</depends>
   <resource-bundle>com.jetbrains.python.impl.PyBundle</resource-bundle>
   <category>Custom Languages</category>
   <tags>

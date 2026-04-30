@@ -15,71 +15,74 @@
  */
 package com.jetbrains.python.psi;
 
-import java.util.List;
-
-
-import consulo.language.ast.ASTNode;
-import consulo.util.lang.Pair;
 import consulo.document.util.TextRange;
+import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiLanguageInjectionHost;
+import consulo.util.lang.Pair;
 
-public interface PyStringLiteralExpression extends PyLiteralExpression, StringLiteralExpression, PsiLanguageInjectionHost
-{
-	List<ASTNode> getStringNodes();
+import java.util.List;
+import java.util.regex.Pattern;
 
-	int valueOffsetToTextOffset(int valueOffset);
+public interface PyStringLiteralExpression extends PyLiteralExpression, StringLiteralExpression, PsiLanguageInjectionHost {
+    Pattern PATTERN_ESCAPE =
+        Pattern.compile("\\\\(\n|\\\\|'|\"|a|b|f|n|r|t|v|([0-7]{1,3})|x([0-9a-fA-F]{1,2})" + "|N(\\{.*?\\})|u([0-9a-fA-F]{4})|U([0-9a-fA-F]{8}))");
+    //        -> 1                        ->   2      <-->     3          <-     ->   4     <-->    5      <-   ->  6           <-<-
 
-	/**
-	 * Returns unescaped fragments of string's value together with their respective text ranges <i>relative to the element's start offset</i>.
-	 * For most escape sequences the decoded character is returned and the text range that spans the sequence itself.
-	 * Other "literal" fragments of the string are returned as is so that {@code pair.getFirst().length() == pair.getSecond().getLength()}.
-	 * <p>
-	 * For example, for the next "glued" string literal:
-	 * <p>
-	 * <pre><code>
-	 * u"\u0066\x6F\157" '\bar' r'\baz'
-	 * </code></pre>
-	 * <p>
-	 * this method returns:
-	 * <p>
-	 * <code><pre>
-	 * [
-	 *   ([2,8),"f"),
-	 *   ([8,12),"o"),
-	 *   ([12,16),"o"),
-	 *   ([16,16),""),
-	 *   ([19,21),"\b"),
-	 *   ([21,23),"ar"),
-	 *   ([27,29),"\\b"),
-	 *   ([29,31),"az"),
-	 * ]
-	 * </code></pre>
-	 */
-	List<Pair<TextRange, String>> getDecodedFragments();
+    List<ASTNode> getStringNodes();
 
-	/**
-	 * Returns value ranges for all nodes that form this string literal expression <i>relative to its start offset</i>.
-	 * Such range doesn't include neither node's prefix like "ur", nor its quotes.
-	 * <p>
-	 * For example, for the next "glued" string literal:
-	 * <pre><code>
-	 * u"\u0066\x6F\157" ur'' '''\t'''
-	 * </code></pre>
-	 * <p>
-	 * this method returns:
-	 * <p>
-	 * <code><pre>
-	 * [
-	 *   [2,16),
-	 *   [21,21),
-	 *   [26,28),
-	 * ]
-	 * </code></pre>
-	 */
-	List<TextRange> getStringValueTextRanges();
+    int valueOffsetToTextOffset(int valueOffset);
 
-	/**
-	 * @return true if this element has single string node and its type is {@link com.jetbrains.python.PyTokenTypes#DOCSTRING}
-	 */
-	boolean isDocString();
+    /**
+     * Returns unescaped fragments of string's value together with their respective text ranges <i>relative to the element's start offset</i>.
+     * For most escape sequences the decoded character is returned and the text range that spans the sequence itself.
+     * Other "literal" fragments of the string are returned as is so that {@code pair.getFirst().length() == pair.getSecond().getLength()}.
+     * <p>
+     * For example, for the next "glued" string literal:
+     * <p>
+     * <pre><code>
+     * u"\u0066\x6F\157" '\bar' r'\baz'
+     * </code></pre>
+     * <p>
+     * this method returns:
+     * <p>
+     * <code><pre>
+     * [
+     *   ([2,8),"f"),
+     *   ([8,12),"o"),
+     *   ([12,16),"o"),
+     *   ([16,16),""),
+     *   ([19,21),"\b"),
+     *   ([21,23),"ar"),
+     *   ([27,29),"\\b"),
+     *   ([29,31),"az"),
+     * ]
+     * </code></pre>
+     */
+    List<Pair<TextRange, String>> getDecodedFragments();
+
+    /**
+     * Returns value ranges for all nodes that form this string literal expression <i>relative to its start offset</i>.
+     * Such range doesn't include neither node's prefix like "ur", nor its quotes.
+     * <p>
+     * For example, for the next "glued" string literal:
+     * <pre><code>
+     * u"\u0066\x6F\157" ur'' '''\t'''
+     * </code></pre>
+     * <p>
+     * this method returns:
+     * <p>
+     * <code><pre>
+     * [
+     *   [2,16),
+     *   [21,21),
+     *   [26,28),
+     * ]
+     * </code></pre>
+     */
+    List<TextRange> getStringValueTextRanges();
+
+    /**
+     * @return true if this element has single string node and its type is {@link com.jetbrains.python.PyTokenTypes#DOCSTRING}
+     */
+    boolean isDocString();
 }

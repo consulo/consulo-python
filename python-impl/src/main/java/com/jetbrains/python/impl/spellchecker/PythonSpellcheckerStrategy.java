@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.spellchecker;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.inspections.PyStringFormatParser;
+import com.jetbrains.python.inspections.PyStringFormatParser;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.impl.psi.PyStringLiteralUtil;

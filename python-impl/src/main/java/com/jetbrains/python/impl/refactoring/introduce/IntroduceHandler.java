@@ -62,7 +62,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.jetbrains.python.impl.inspections.PyStringFormatParser.*;
+import static com.jetbrains.python.inspections.PyStringFormatParser.*;
 import static com.jetbrains.python.impl.psi.PyUtil.as;
 
 /**

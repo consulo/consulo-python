@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.codeInsight.regexp.PythonVerboseRegexpLanguage;
 import com.jetbrains.python.impl.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
 import com.jetbrains.python.psi.*;
@@ -24,10 +23,8 @@ import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
-import consulo.language.Language;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
-import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.navigation.ItemPresentation;
@@ -35,20 +32,12 @@ import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
 import org.jspecify.annotations.Nullable;
-import org.intellij.lang.regexp.DefaultRegExpPropertiesProvider;
-import org.intellij.lang.regexp.RegExpLanguageHost;
-import org.intellij.lang.regexp.psi.RegExpChar;
-import org.intellij.lang.regexp.psi.RegExpGroup;
-import org.intellij.lang.regexp.psi.RegExpNamedGroupRef;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PyStringLiteralExpressionImpl extends PyElementImpl implements PyStringLiteralExpression, RegExpLanguageHost {
-    public static final Pattern PATTERN_ESCAPE =
-        Pattern.compile("\\\\(\n|\\\\|'|\"|a|b|f|n|r|t|v|([0-7]{1,3})|x([0-9a-fA-F]{1,2})" + "|N(\\{.*?\\})|u([0-9a-fA-F]{4})|U([0-9a-fA-F]{8}))");
-    //        -> 1                        ->   2      <-->     3          <-     ->   4     <-->    5      <-   ->  6           <-<-
+public class PyStringLiteralExpressionImpl extends PyElementImpl implements PyStringLiteralExpression {
 
     private enum EscapeRegexGroup {
         WHOLE_MATCH,
@@ -65,7 +54,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     private List<TextRange> valueTextRanges;
     @Nullable
     private List<Pair<TextRange, String>> myDecodedFragments;
-    private final DefaultRegExpPropertiesProvider myPropertiesProvider;
 
     private static Map<String, String> initializeEscapeMap() {
         Map<String, String> map = new HashMap<>();
@@ -85,7 +73,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
 
     public PyStringLiteralExpressionImpl(ASTNode astNode) {
         super(astNode);
-        myPropertiesProvider = DefaultRegExpPropertiesProvider.getInstance();
     }
 
     @Override
@@ -427,84 +414,4 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     @RequiredReadAction
     public int valueOffsetToTextOffset(int valueOffset) {
         return createLiteralTextEscaper().getOffsetInHost(valueOffset, getStringValueTextRange());
-    }
-
-    @Override
-    public Class getHostClass() {
-        return getClass();
-    }
-
-    @Override
-    @RequiredReadAction
-    public boolean characterNeedsEscaping(char c) {
-        if (c == '#') {
-            return isVerboseInjection();
-        }
-        return c == ']' || c == '}' || c == '\"' || c == '\'';
-    }
-
-    @RequiredReadAction
-    private boolean isVerboseInjection() {
-        List<Pair<PsiElement, TextRange>> files = InjectedLanguageManager.getInstance(getProject()).getInjectedPsiFiles(this);
-        if (files != null) {
-            for (Pair<PsiElement, TextRange> file : files) {
-                Language language = file.getFirst().getLanguage();
-                if (language == PythonVerboseRegexpLanguage.INSTANCE) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean supportsPerl5EmbeddedComments() {
-        return true;
-    }
-
-    @Override
-    public boolean supportsPossessiveQuantifiers() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsPythonConditionalRefs() {
-        return true;
-    }
-
-    @Override
-    public boolean supportsNamedGroupSyntax(RegExpGroup group) {
-        return group.getType() == RegExpGroup.Type.PYTHON_NAMED_GROUP;
-    }
-
-    @Override
-    public boolean supportsNamedGroupRefSyntax(RegExpNamedGroupRef ref) {
-        return ref.isPythonNamedGroupRef();
-    }
-
-    @Override
-    public boolean supportsExtendedHexCharacter(RegExpChar regExpChar) {
-        return false;
-    }
-
-    @Override
-    public boolean isValidCategory(String category) {
-        return myPropertiesProvider.isValidCategory(category);
-    }
-
-    @Override
-    public String[][] getAllKnownProperties() {
-        return myPropertiesProvider.getAllKnownProperties();
-    }
-
-    @Nullable
-    @Override
-    public String getPropertyDescription(@Nullable String name) {
-        return myPropertiesProvider.getPropertyDescription(name);
-    }
-
-    @Override
-    public String[][] getKnownCharacterClasses() {
-        return myPropertiesProvider.getKnownCharacterClasses();
-    }
-}
+    }}
