@@ -227,15 +227,15 @@ public class PySdkUtil {
 
     @Nullable
     public static VirtualFile findSkeletonsDir(Sdk sdk) {
-        return findLibraryDir(sdk, PythonSdkType.SKELETON_DIR_NAME, BinariesOrderRootType.getInstance());
+        return findLibraryDir(sdk, PythonSdkType.SKELETON_DIR_NAME, BinariesOrderRootType.ID);
     }
 
     @Nullable
     public static VirtualFile findAnyRemoteLibrary(Sdk sdk) {
-        return findLibraryDir(sdk, PythonSdkType.REMOTE_SOURCES_DIR_NAME, BinariesOrderRootType.getInstance());
+        return findLibraryDir(sdk, PythonSdkType.REMOTE_SOURCES_DIR_NAME, BinariesOrderRootType.ID);
     }
 
-    private static VirtualFile findLibraryDir(Sdk sdk, String dirName, OrderRootType rootType) {
+    private static VirtualFile findLibraryDir(Sdk sdk, String dirName, String rootType) {
         VirtualFile[] virtualFiles = sdk.getRootProvider().getFiles(rootType);
         for (VirtualFile virtualFile : virtualFiles) {
             if (virtualFile.isValid() && virtualFile.getPath().contains(dirName)) {

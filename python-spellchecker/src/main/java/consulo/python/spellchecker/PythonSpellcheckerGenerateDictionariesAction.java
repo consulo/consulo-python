@@ -58,7 +58,7 @@ public class PythonSpellcheckerGenerateDictionariesAction extends AnAction {
             contentRoots[0].getPath() + "/dicts"
         );
 
-        VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+        VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.ID);
         for (VirtualFile root : roots) {
             if (root.getName().equals("Lib")) {
                 generator.addFolder("python", root);

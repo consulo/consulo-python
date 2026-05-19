@@ -83,8 +83,8 @@ public class FacetLibraryConfigurator {
 
   private static void fillLibrary(Project project, Library lib, List<String> paths) {
     Library.ModifiableModel modifiableModel = lib.getModifiableModel();
-    for (String root : lib.getUrls(BinariesOrderRootType.getInstance())) {
-      modifiableModel.removeRoot(root, BinariesOrderRootType.getInstance());
+    for (String root : lib.getUrls(BinariesOrderRootType.ID)) {
+      modifiableModel.removeRoot(root, BinariesOrderRootType.ID);
     }
     Set<VirtualFile> roots = new HashSet<VirtualFile>();
     ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
@@ -101,10 +101,10 @@ public class FacetLibraryConfigurator {
           continue;
         }
         if (pathEntry != null) {
-          modifiableModel.addRoot(pathEntry, BinariesOrderRootType.getInstance());
+          modifiableModel.addRoot(pathEntry, BinariesOrderRootType.ID);
         }
         else {
-          modifiableModel.addRoot("file://" + dir, BinariesOrderRootType.getInstance());
+          modifiableModel.addRoot("file://" + dir, BinariesOrderRootType.ID);
         }
       }
     }

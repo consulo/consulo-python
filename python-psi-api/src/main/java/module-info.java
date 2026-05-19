@@ -2,8 +2,7 @@
  * @author VISTALL
  * @since 25/05/2023
  */
-module consulo.python.language.api
-{
+module consulo.python.language.api {
   requires transitive consulo.ide.api;
 
   requires consulo.application.api;

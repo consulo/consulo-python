@@ -237,7 +237,7 @@ public class PySkeletonRefresher {
 
         List<VirtualFile> paths = new ArrayList<>();
 
-        paths.addAll(Arrays.asList(sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance())));
+        paths.addAll(Arrays.asList(sdk.getRootProvider().getFiles(BinariesOrderRootType.ID)));
         paths.addAll(BuildoutModuleExtension.getExtraPathForAllOpenModules());
 
         return Joiner.on(File.pathSeparator).join(ContainerUtil.mapNotNull(paths, (Function<VirtualFile, Object>)file -> {

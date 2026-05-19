@@ -421,7 +421,7 @@ public abstract class PythonCommandLineState extends CommandLineState {
           // skip libraries from Python facet
           continue;
         }
-        for (VirtualFile root : entry.getFiles(BinariesOrderRootType.getInstance())) {
+        for (VirtualFile root : entry.getFiles(BinariesOrderRootType.ID)) {
           Library library = ((LibraryOrderEntry)entry).getLibrary();
           addToPythonPath(root, list);
 

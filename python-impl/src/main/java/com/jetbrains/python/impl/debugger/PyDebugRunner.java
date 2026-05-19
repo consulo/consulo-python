@@ -450,7 +450,7 @@ public class PyDebugRunner extends GenericProgramRunner
 				if(sdk != null)
 				{
 					List<String> roots = Lists.newArrayList();
-					for(VirtualFile contentRoot : sdk.getSdkModificator().getRoots(BinariesOrderRootType.getInstance()))
+					for(VirtualFile contentRoot : sdk.getSdkModificator().getRoots(BinariesOrderRootType.ID))
 					{
 						roots.add(contentRoot.getPath());
 					}

@@ -56,7 +56,7 @@ public class PyPackageManagersImpl extends PyPackageManagers {
   }
 
   private static boolean sdkIsSetUp(Sdk sdk) {
-    VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+    VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.ID);
     return roots.length != 0;
   }
 

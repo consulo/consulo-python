@@ -366,14 +366,14 @@ public class PythonSdkUpdater implements PostStartupActivity {
     ) {
         String key = PythonSdkType.getSdkKey(sdk);
         SdkModificator modificatorToGetRoots = sdkModificator != null ? sdkModificator : sdk.getSdkModificator();
-        List<VirtualFile> currentSdkPaths = Arrays.asList(modificatorToGetRoots.getRoots(BinariesOrderRootType.getInstance()));
+        List<VirtualFile> currentSdkPaths = Arrays.asList(modificatorToGetRoots.getRoots(BinariesOrderRootType.ID));
         if (forceCommit || !Sets.newHashSet(sdkPaths).equals(Sets.newHashSet(currentSdkPaths))) {
             Sdk sdkInsideInvoke = PythonSdkType.findSdkByKey(key);
             SdkModificator modificatorToCommit = sdkModificator != null ? sdkModificator
                 : sdkInsideInvoke != null ? sdkInsideInvoke.getSdkModificator() : modificatorToGetRoots;
             modificatorToCommit.removeAllRoots();
             for (VirtualFile sdkPath : sdkPaths) {
-                modificatorToCommit.addRoot(PythonSdkType.getSdkRootVirtualFile(sdkPath), BinariesOrderRootType.getInstance());
+                modificatorToCommit.addRoot(PythonSdkType.getSdkRootVirtualFile(sdkPath), BinariesOrderRootType.ID);
             }
             modificatorToCommit.commitChanges();
         }

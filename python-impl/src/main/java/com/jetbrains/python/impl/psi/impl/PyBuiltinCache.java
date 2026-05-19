@@ -158,7 +158,7 @@ public class PyBuiltinCache
 		if(sdkType instanceof PythonSdkType)
 		{
 			// dig out the builtins file, create an instance based on it
-			String[] urls = sdk.getRootProvider().getUrls(BinariesOrderRootType.getInstance());
+			String[] urls = sdk.getRootProvider().getUrls(BinariesOrderRootType.ID);
 			for(String url : urls)
 			{
 				if(url.contains(PythonSdkType.SKELETON_DIR_NAME))

@@ -100,7 +100,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 		application.invokeLater(() -> {
 			Sdk sdk = getSdk();
 			application.runWriteAction(() -> {
-				VirtualFile[] files = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+				VirtualFile[] files = sdk.getRootProvider().getFiles(BinariesOrderRootType.ID);
 				VirtualFileUtil.markDirtyAndRefresh(true, true, true, files);
 			});
 			PythonSdkType.getInstance().setupSdkPaths(sdk);
@@ -630,7 +630,7 @@ public class PyPackageManagerImpl extends PyPackageManager
 		public void after(List<? extends VFileEvent> events)
 		{
 			Sdk sdk = getSdk();
-			VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+			VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.ID);
 			for(VFileEvent event : events)
 			{
 				VirtualFile file = event.getFile();

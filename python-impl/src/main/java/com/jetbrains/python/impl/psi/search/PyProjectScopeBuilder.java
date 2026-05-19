@@ -108,11 +108,11 @@ public class PyProjectScopeBuilder {
 
   @Nullable
   public static VirtualFile findLibDir(Sdk sdk) {
-    return findLibDir(sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance()));
+    return findLibDir(sdk.getRootProvider().getFiles(BinariesOrderRootType.ID));
   }
 
   public static VirtualFile findVirtualEnvLibDir(Sdk sdk) {
-    VirtualFile[] classVFiles = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+    VirtualFile[] classVFiles = sdk.getRootProvider().getFiles(BinariesOrderRootType.ID);
     String homePath = sdk.getHomePath();
     if (homePath != null) {
       File root = PythonSdkType.getVirtualEnvRoot(homePath);

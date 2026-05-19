@@ -597,8 +597,8 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Override
-    public boolean isRootTypeApplicable(OrderRootType type) {
-        return type == BinariesOrderRootType.getInstance();
+    public boolean isRootTypeApplicable(String type) {
+        return BinariesOrderRootType.ID.equals(type);
     }
 
     @Override

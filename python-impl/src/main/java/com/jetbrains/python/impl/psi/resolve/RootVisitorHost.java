@@ -102,7 +102,7 @@ public class RootVisitorHost {
   }
 
   public static boolean visitSdkRoots(Sdk sdk, RootVisitor visitor) {
-    VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.getInstance());
+    VirtualFile[] roots = sdk.getRootProvider().getFiles(BinariesOrderRootType.ID);
     for (VirtualFile root : roots) {
       if (!visitor.visitRoot(root, null, sdk, false)) {
         return true;
@@ -128,8 +128,8 @@ public class RootVisitorHost {
 
   private static boolean visitOrderEntryRoots(RootVisitor visitor, OrderEntry entry) {
     Set<VirtualFile> allRoots = new LinkedHashSet<VirtualFile>();
-    Collections.addAll(allRoots, entry.getFiles(SourcesOrderRootType.getInstance()));
-    Collections.addAll(allRoots, entry.getFiles(BinariesOrderRootType.getInstance()));
+    Collections.addAll(allRoots, entry.getFiles(SourcesOrderRootType.ID));
+    Collections.addAll(allRoots, entry.getFiles(BinariesOrderRootType.ID));
     Module module = entry instanceof ModuleOrderEntry ? ((ModuleOrderEntry) entry).getModule() : null;
     Sdk sdk = entry instanceof ModuleExtensionWithSdkOrderEntry ? ((ModuleExtensionWithSdkOrderEntry) entry).getSdk() : null;
     for (VirtualFile root : allRoots) {
