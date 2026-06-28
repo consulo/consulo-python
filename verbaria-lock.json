@@ -1,0 +1,15 @@
+{
+  "lockVersion" : 1,
+  "project" : "consulo-python",
+  "projectVersion" : "master",
+  "sourceLocale" : "en-US",
+  "generatedAt" : "2026-06-28T14:50:26.870706468Z",
+  "documents" : {
+    "consulo.python.impl.PyLocalize" : {
+      "source" : {
+        "revision" : 1,
+        "sig" : "680638f6239743439aca0e67a5a4d8a5"
+      }
+    }
+  }
+}
