@@ -23,6 +23,7 @@ import com.jetbrains.python.impl.psi.impl.PyAugAssignmentStatementNavigator;
 import com.jetbrains.python.impl.psi.impl.PyConstantExpressionEvaluator;
 import com.jetbrains.python.impl.psi.impl.PyImportStatementNavigator;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.ControlFlowBuilder;
 import consulo.language.controlFlow.Instruction;
@@ -31,6 +32,7 @@ import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.ref.Ref;
+import consulo.util.lang.ref.SimpleReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 	}
 
 	@Override
+    @RequiredReadAction
 	public void visitPyFunction(PyFunction node)
 	{
 		// Create node and stop here
@@ -98,6 +101,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 	}
 
 	@Override
+    @RequiredReadAction
 	public void visitPyClass(PyClass node)
 	{
 		// Create node and stop here
@@ -234,6 +238,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 	}
 
 	@Override
+    @RequiredReadAction
 	public void visitPyTargetExpression(PyTargetExpression node)
 	{
 		PsiElement[] children = node.getChildren();
@@ -303,7 +308,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 
 	private Instruction getPrevInstruction(PyElement condition)
 	{
-		Ref<Instruction> head = new Ref<>(myBuilder.prevInstruction);
+        SimpleReference<Instruction> head = new SimpleReference<>(myBuilder.prevInstruction);
 		myBuilder.processPending((pendingScope, instruction) -> {
 			if(pendingScope != null && PsiTreeUtil.isAncestor(condition, pendingScope, false))
 			{
@@ -411,7 +416,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 		boolean noPendingInScopeEdges = false;
 		if(!assertionEvaluator.getDefinitions().isEmpty())
 		{
-			Ref<Boolean> pendingInScopeEdges = Ref.create(false);
+            SimpleReference<Boolean> pendingInScopeEdges = SimpleReference.create(false);
 			myBuilder.processPending((pendingScope, instruction) -> {
 				if(pendingScope != null && PsiTreeUtil.isAncestor(node, pendingScope, false))
 				{
@@ -763,7 +768,7 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 				}
 			});
 
-			// Duplicate CFG for finally (-fail and -success) only if there are some successfull exits from the
+			// Duplicate CFG for finally (-fail and -success) only if there are some successful exits from the
 			// try part. Otherwise a single CFG for finally provides the correct control flow
 			Instruction finallyInstruction;
 			if(!normalExits.isEmpty())
@@ -888,6 +893,8 @@ public class PyControlFlowBuilder extends PyRecursiveElementVisitor
 		}
 	}
 
+    @Override
+    @RequiredReadAction
 	public void visitPyAssertStatement(PyAssertStatement node)
 	{
 		super.visitPyAssertStatement(node);

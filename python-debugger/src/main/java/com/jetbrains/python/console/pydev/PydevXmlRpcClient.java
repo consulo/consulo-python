@@ -22,7 +22,6 @@ import java.util.Vector;
  */
 public class PydevXmlRpcClient implements IPydevXmlRpcClient
 {
-
 	/**
 	 * Internal xml-rpc client (responsible for the actual communication with the server)
 	 */
@@ -40,7 +39,6 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 
 	private static final long TIME_LIMIT = 60000;
 
-
 	/**
 	 * Constructor (see fields description)
 	 */
@@ -51,7 +49,7 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 		URL url = new URL("http://" + hostname + ':' + port + "/RPC2");
 
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		config.setEncoding("UTF8"); //eventhough it uses UTF anyway
+		config.setEncoding("UTF8"); //even though it uses UTF anyway
 		config.setServerURL(url);
 
 		this.impl = new XmlRpcClient();
@@ -73,18 +71,18 @@ public class PydevXmlRpcClient implements IPydevXmlRpcClient
 	 *
 	 * @return the result from executing the given command in the server.
 	 */
-	public Object execute(String command, Object[] args, long timeout) throws XmlRpcException
+	@Override
+    public Object execute(String command, Object[] args, long timeout) throws XmlRpcException
 	{
 		final Object[] result = new Object[]{null};
 
 		//make an async call so that we can keep track of not actually having an answer.
 		this.impl.executeAsync(command, new Vector(Arrays.asList(args)), new AsyncCallback()
 		{
-
 			@Override
-			public void handleResult(XmlRpcRequest pRequest, Object recievedResult)
+			public void handleResult(XmlRpcRequest pRequest, Object receivedResult)
 			{
-				result[0] = recievedResult;
+				result[0] = receivedResult;
 			}
 
 			@Override

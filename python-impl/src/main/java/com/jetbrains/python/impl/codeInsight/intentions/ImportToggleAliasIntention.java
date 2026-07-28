@@ -261,11 +261,11 @@ public class ImportToggleAliasIntention extends PyBaseIntentionAction {
                 }
                 // alter references
                 for (PsiReference ref : references) {
-                    ASTNode ref_name_node = sure(sure(ref.getElement()).getNode());
-                    ASTNode parent = sure(ref_name_node.getTreeParent());
+                    ASTNode refNameNode = sure(sure(ref.getElement()).getNode());
+                    ASTNode parent = sure(refNameNode.getTreeParent());
                     ASTNode newNameNode = generator.createExpressionFromText(languageLevel, targetName).getNode();
                     assert newNameNode != null;
-                    parent.replaceChild(ref_name_node, newNameNode);
+                    parent.replaceChild(refNameNode, newNameNode);
                 }
             }
         }

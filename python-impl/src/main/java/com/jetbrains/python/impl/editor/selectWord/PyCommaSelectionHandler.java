@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.editor.selectWord;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.document.util.TextRange;
@@ -37,13 +37,19 @@ import java.util.List;
  */
 @ExtensionImpl
 public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
+  @Override
   public boolean canSelect(PsiElement e) {
-    return e instanceof PyReferenceExpression || e instanceof PyKeyValueExpression || e instanceof PyKeywordArgument
-      || e instanceof PyNumericLiteralExpression || e instanceof PyStringLiteralExpression || e instanceof PyNamedParameter
+    return e instanceof PyReferenceExpression
+      || e instanceof PyKeyValueExpression
+      || e instanceof PyKeywordArgument
+      || e instanceof PyNumericLiteralExpression
+      || e instanceof PyStringLiteralExpression
+      || e instanceof PyNamedParameter
       || e instanceof PyStarArgument;
   }
 
   @Override
+  @RequiredReadAction
   public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
     if (e != null) {
       List<TextRange> textRange = addNextComma(e, cursorOffset);
@@ -60,6 +66,7 @@ public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
    * @param cursorOffset is current cursor offset
    * @return result selection textRange
    */
+  @RequiredReadAction
   private static List<TextRange> addPreviousComma(PsiElement e, int cursorOffset) {
     PsiElement prevSibling = e.getPrevSibling();
     TextRange textRange = e.getTextRange();
@@ -89,10 +96,8 @@ public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
           }
         }
       }
-      if (offsetRange != null) {
-        if (offsetRange.contains(cursorOffset) && offsetRange.getLength() > 1) {
-          return Collections.singletonList(offsetRange);
-        }
+      if (offsetRange != null && offsetRange.contains(cursorOffset) && offsetRange.getLength() > 1) {
+        return Collections.singletonList(offsetRange);
       }
     }
     return Collections.emptyList();
@@ -101,10 +106,11 @@ public class PyCommaSelectionHandler extends ExtendWordSelectionHandlerBase {
   /**
    * add next comma and whitespace to selection
    *
-   * @param e            is crrent element
+   * @param e            is current element
    * @param cursorOffset is current cursor offset
    * @return result selection TextRange
    */
+  @RequiredReadAction
   private static List<TextRange> addNextComma(PsiElement e, int cursorOffset) {
     PsiElement nextCommaSibling = e.getNextSibling();
     if (nextCommaSibling != null) {

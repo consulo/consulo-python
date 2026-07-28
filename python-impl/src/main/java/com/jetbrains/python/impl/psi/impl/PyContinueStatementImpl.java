@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
 import org.jspecify.annotations.Nullable;
@@ -28,17 +27,18 @@ import com.jetbrains.python.psi.PyLoopStatement;
  * @author yole
  */
 public class PyContinueStatementImpl extends PyElementImpl implements PyContinueStatement {
-  public PyContinueStatementImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyContinueStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyContinueStatement(this);
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyContinueStatement(this);
+    }
 
-  @Nullable
-  public PyLoopStatement getLoopStatement() {
-    return PsiTreeUtil.getParentOfType(this, PyLoopStatement.class);
-  }
+    @Nullable
+    @Override
+    public PyLoopStatement getLoopStatement() {
+        return PsiTreeUtil.getParentOfType(this, PyLoopStatement.class);
+    }
 }

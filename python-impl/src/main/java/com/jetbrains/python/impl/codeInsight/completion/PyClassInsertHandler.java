@@ -24,39 +24,36 @@ import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.language.editor.completion.lookup.InsertHandler;
 import consulo.language.editor.completion.lookup.InsertionContext;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * @author yole
  */
-public class PyClassInsertHandler implements InsertHandler<LookupElement>
-{
-	public static PyClassInsertHandler INSTANCE = new PyClassInsertHandler();
+public class PyClassInsertHandler implements InsertHandler<LookupElement> {
+    public static PyClassInsertHandler INSTANCE = new PyClassInsertHandler();
 
-	private PyClassInsertHandler()
-	{
-	}
+    private PyClassInsertHandler() {
+    }
 
-	public void handleInsert(InsertionContext context, LookupElement item)
-	{
-		Editor editor = context.getEditor();
-		Document document = editor.getDocument();
-		if(context.getCompletionChar() == '(')
-		{
-			context.setAddCompletionChar(false);
-			int offset = context.getTailOffset();
-			document.insertString(offset, "()");
+    @Override
+    @RequiredUIAccess
+    public void handleInsert(InsertionContext context, LookupElement item) {
+        Editor editor = context.getEditor();
+        Document document = editor.getDocument();
+        if (context.getCompletionChar() == '(') {
+            context.setAddCompletionChar(false);
+            int offset = context.getTailOffset();
+            document.insertString(offset, "()");
 
-			PyClass pyClass = PyUtil.as(item.getPsiElement(), PyClass.class);
-			PyFunction init = pyClass != null ? pyClass.findInitOrNew(true, null) : null;
-			if(init != null && PyFunctionInsertHandler.hasParams(context, init))
-			{
-				editor.getCaretModel().moveToOffset(offset + 1);
-				AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(context.getEditor(), init);
-			}
-			else
-			{
-				editor.getCaretModel().moveToOffset(offset + 2);
-			}
-		}
-	}
+            PyClass pyClass = PyUtil.as(item.getPsiElement(), PyClass.class);
+            PyFunction init = pyClass != null ? pyClass.findInitOrNew(true, null) : null;
+            if (init != null && PyFunctionInsertHandler.hasParams(context, init)) {
+                editor.getCaretModel().moveToOffset(offset + 1);
+                AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(context.getEditor(), init);
+            }
+            else {
+                editor.getCaretModel().moveToOffset(offset + 2);
+            }
+        }
+    }
 }

@@ -13,29 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.psi.PyElsePart;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.impl.PyElementTypes;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 
 /**
- * User: dcheryasov
- * Date: Mar 15, 2009 9:40:35 PM
+ * @author dcheryasov
+ * @since 2009-03-15
  */
 public class PyElsePartImpl extends PyElementImpl implements PyElsePart {
-  
-  public PyElsePartImpl(ASTNode astNode) {
-    super(astNode);
-  }
-
-  public PyStatementList getStatementList() {
-    ASTNode n = getNode().findChildByType(PyElementTypes.STATEMENT_LISTS);
-    if (n != null) {
-      return (PyStatementList)n.getPsi();
+    public PyElsePartImpl(ASTNode astNode) {
+        super(astNode);
     }
-    return null;
-  }
+
+    @Override
+    @RequiredReadAction
+    public PyStatementList getStatementList() {
+        ASTNode n = getNode().findChildByType(PyElementTypes.STATEMENT_LISTS);
+        if (n != null) {
+            return (PyStatementList) n.getPsi();
+        }
+        return null;
+    }
 }

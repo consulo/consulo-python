@@ -20,6 +20,8 @@ import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.psi.impl.PyFunctionBuilder;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceValidator;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.language.controlFlow.ControlFlow;
 import consulo.language.controlFlow.Instruction;
@@ -50,6 +52,8 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
         return PyLocalize.intnConvertLambdaToFunction();
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -62,15 +66,14 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
                 ControlFlow flow = ControlFlowCache.getControlFlow(lambdaExpression);
                 List<Instruction> graph = Arrays.asList(flow.getInstructions());
                 List<PsiElement> elements = PyCodeFragmentUtil.getInputElements(graph, graph);
-                if (elements.size() > 0) {
-                    return false;
-                }
-                return true;
+                return elements.size() <= 0;
             }
         }
         return false;
     }
 
+    @Override
+    @RequiredWriteAction
     public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyLambdaExpression lambdaExpression =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyLambdaExpression.class);
@@ -81,8 +84,8 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
             }
 
             PsiElement parent = lambdaExpression.getParent();
-            if (parent instanceof PyAssignmentStatement) {
-                name = ((PyAssignmentStatement) parent).getLeftHandSideExpression().getText();
+            if (parent instanceof PyAssignmentStatement assignment) {
+                name = assignment.getLeftHandSideExpression().getText();
             }
 
             if (name.isEmpty()) {
@@ -142,10 +145,12 @@ public class PyConvertLambdaToFunctionIntention extends BaseIntentionAction {
 
         private final String myOldReferenceName;
 
+        @Override
         public Result calculateResult(ExpressionContext context) {
             return new TextResult(myOldReferenceName);
         }
 
+        @Override
         public Result calculateQuickResult(ExpressionContext context) {
             return null;
         }

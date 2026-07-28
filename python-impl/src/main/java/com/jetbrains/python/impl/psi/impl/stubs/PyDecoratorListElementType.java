@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl.stubs;
 
 import consulo.language.ast.ASTNode;
@@ -29,9 +28,8 @@ import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dcheryasov
- * Date: Sep 28, 2008
+ * @author dcheryasov
+ * @since 2008-09-28
  */
 public class PyDecoratorListElementType extends PyStubElementType<PyDecoratorListStub, PyDecoratorList> {
 
@@ -39,22 +37,27 @@ public class PyDecoratorListElementType extends PyStubElementType<PyDecoratorLis
     super("DECORATOR_LIST");
   }
 
+  @Override
   public PsiElement createElement(ASTNode node) {
     return new PyDecoratorListImpl(node);
   }
 
+  @Override
   public PyDecoratorList createPsi(PyDecoratorListStub stub) {
     return new PyDecoratorListImpl(stub);
   }
 
+  @Override
   public PyDecoratorListStub createStub(PyDecoratorList psi, StubElement parentStub) {
     return new PyDecoratorListStubImpl(parentStub);
   }
 
+  @Override
   public void serialize(PyDecoratorListStub stub, StubOutputStream dataStream) throws IOException {
     // nothing
   }
 
+  @Override
   public PyDecoratorListStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new PyDecoratorListStubImpl(parentStub);
   }

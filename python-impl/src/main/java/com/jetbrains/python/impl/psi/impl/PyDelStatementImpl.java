@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyDelStatement;
@@ -26,16 +26,18 @@ import com.jetbrains.python.psi.PyExpression;
  * @author yole
  */
 public class PyDelStatementImpl extends PyElementImpl implements PyDelStatement {
-  public PyDelStatementImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyDelStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyDelStatement(this);
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyDelStatement(this);
+    }
 
-  public PyExpression[] getTargets() {
-    return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);
-  }
+    @Override
+    @RequiredReadAction
+    public PyExpression[] getTargets() {
+        return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);
+    }
 }

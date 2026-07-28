@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
-
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.impl.PyElementTypes;
@@ -28,36 +27,38 @@ import com.jetbrains.python.psi.stubs.PyDecoratorListStub;
 /**
  * @author dcheryasov
  */
-public class PyDecoratorListImpl extends PyBaseElementImpl<PyDecoratorListStub> implements PyDecoratorList{
-  
-  public PyDecoratorListImpl(ASTNode astNode) {
-    super(astNode);
-  }
-
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyDecoratorList(this);
-  }
-
-  public PyDecoratorListImpl(PyDecoratorListStub stub) {
-    super(stub, PyElementTypes.DECORATOR_LIST);
-  }
-
-  public PyDecorator[] getDecorators() {
-    PyDecorator[] decoarray = new PyDecorator[0];
-    return getStubOrPsiChildren(PyElementTypes.DECORATOR_CALL, decoarray);
-    //return decoarray;
-  }
-
-  @Override
-  public PyDecorator findDecorator(String name) {
-    PyDecorator[] decorators = getDecorators();
-    for (PyDecorator decorator : decorators) {
-      QualifiedName qName = decorator.getQualifiedName();
-      if (qName != null && name.equals(qName.toString())) {
-        return decorator;
-      }
+public class PyDecoratorListImpl extends PyBaseElementImpl<PyDecoratorListStub> implements PyDecoratorList {
+    public PyDecoratorListImpl(ASTNode astNode) {
+        super(astNode);
     }
-    return null;
-  }
+
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyDecoratorList(this);
+    }
+
+    public PyDecoratorListImpl(PyDecoratorListStub stub) {
+        super(stub, PyElementTypes.DECORATOR_LIST);
+    }
+
+    @Override
+    @RequiredReadAction
+    public PyDecorator[] getDecorators() {
+        PyDecorator[] decoArray = new PyDecorator[0];
+        return getStubOrPsiChildren(PyElementTypes.DECORATOR_CALL, decoArray);
+        //return decoArray;
+    }
+
+    @Override
+    @RequiredReadAction
+    public PyDecorator findDecorator(String name) {
+        PyDecorator[] decorators = getDecorators();
+        for (PyDecorator decorator : decorators) {
+            QualifiedName qName = decorator.getQualifiedName();
+            if (qName != null && name.equals(qName.toString())) {
+                return decorator;
+            }
+        }
+        return null;
+    }
 }

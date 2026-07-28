@@ -16,6 +16,8 @@
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.impl.psi.PyUtil;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.codeEditor.Editor;
 import consulo.localize.LocalizeValue;
@@ -42,6 +44,8 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         return PyLocalize.intnConvertMethodToProperty();
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -85,6 +89,8 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         return available[0];
     }
 
+    @Override
+    @RequiredWriteAction
     public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
@@ -98,7 +104,7 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         List<UsageInfo> usages = PyRefactoringUtil.findUsages(problemFunction, false);
 
         PyDecoratorList problemDecoratorList = problemFunction.getDecoratorList();
-        List<String> decoTexts = new ArrayList<String>();
+        List<String> decoTexts = new ArrayList<>();
         decoTexts.add("@property");
         if (problemDecoratorList != null) {
             PyDecorator[] decorators = problemDecoratorList.getDecorators();
@@ -118,14 +124,11 @@ public class PyConvertMethodToPropertyIntention extends BaseIntentionAction {
         }
 
         for (UsageInfo usage : usages) {
-            PsiElement usageElement = usage.getElement();
-            if (usageElement instanceof PyReferenceExpression) {
-                PsiElement parent = usageElement.getParent();
-                if (parent instanceof PyCallExpression) {
-                    PyArgumentList argumentList = ((PyCallExpression) parent).getArgumentList();
-                    if (argumentList != null) {
-                        argumentList.delete();
-                    }
+            if (usage.getElement() instanceof PyReferenceExpression refExpr
+                && refExpr.getParent() instanceof PyCallExpression call) {
+                PyArgumentList argumentList = call.getArgumentList();
+                if (argumentList != null) {
+                    argumentList.delete();
                 }
             }
         }

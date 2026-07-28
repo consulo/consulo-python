@@ -19,6 +19,8 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.psi.PsiElement;
@@ -41,6 +43,8 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
         return PyLocalize.intnConvertStaticMethodToFunction();
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -64,6 +68,8 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
         return false;
     }
 
+    @Override
+    @RequiredWriteAction
     public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement element = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
@@ -93,9 +99,8 @@ public class PyConvertStaticMethodToFunctionIntention extends BaseIntentionActio
         file.addAfter(copy, containingClass);
 
         for (UsageInfo usage : usages) {
-            PsiElement usageElement = usage.getElement();
-            if (usageElement instanceof PyReferenceExpression) {
-                PyUtil.removeQualifier((PyReferenceExpression) usageElement);
+            if (usage.getElement() instanceof PyReferenceExpression refExpr) {
+                PyUtil.removeQualifier(refExpr);
             }
         }
     }

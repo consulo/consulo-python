@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenSet;
 import com.jetbrains.python.impl.PyElementTypes;
@@ -33,12 +34,15 @@ public class PyDictLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		super(astNode);
 	}
 
-	public PyKeyValueExpression[] getElements()
+	@Override
+    @RequiredReadAction
+    public PyKeyValueExpression[] getElements()
 	{
 		return childrenToPsi(KEY_VALUE_EXPRESSIONS, PyKeyValueExpression.EMPTY_ARRAY);
 	}
 
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
+	@Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		return PyBuiltinCache.getInstance(this).createLiteralCollectionType(this, "dict", context);
 	}

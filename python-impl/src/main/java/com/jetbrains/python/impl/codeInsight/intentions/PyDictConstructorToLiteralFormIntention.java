@@ -18,6 +18,8 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -42,6 +44,8 @@ public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionActi
         return PyLocalize.intnConvertDictConstructorToDictLiteral();
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -66,6 +70,8 @@ public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionActi
         return false;
     }
 
+    @Override
+    @RequiredWriteAction
     public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyCallExpression expression =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyCallExpression.class);
@@ -75,6 +81,7 @@ public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionActi
         }
     }
 
+    @RequiredWriteAction
     private static void replaceDictConstructor(PyCallExpression expression, PyElementGenerator elementGenerator) {
         PyExpression[] argumentList = expression.getArguments();
         StringBuilder stringBuilder = new StringBuilder();
@@ -82,23 +89,20 @@ public class PyDictConstructorToLiteralFormIntention extends PyBaseIntentionActi
         int size = argumentList.length;
 
         for (int i = 0; i != size; ++i) {
-            PyExpression argument = argumentList[i];
-            if (argument instanceof PyKeywordArgument) {
+            if (argumentList[i] instanceof PyKeywordArgument kwArg) {
                 stringBuilder.append("'");
-                stringBuilder.append(((PyKeywordArgument) argument).getKeyword());
+                stringBuilder.append(kwArg.getKeyword());
                 stringBuilder.append("' : ");
-                stringBuilder.append(((PyKeywordArgument) argument).getValueExpression().getText());
+                stringBuilder.append(kwArg.getValueExpression().getText());
                 if (i != size - 1) {
                     stringBuilder.append(",");
                 }
             }
-
         }
         PyDictLiteralExpression dict = (PyDictLiteralExpression) elementGenerator.createFromText(
             LanguageLevel.forElement(expression),
             PyExpressionStatement.class,
-            "{" + stringBuilder.toString() +
-                "}"
+            "{" + stringBuilder.toString() + "}"
         ).getExpression();
         expression.replace(dict);
     }

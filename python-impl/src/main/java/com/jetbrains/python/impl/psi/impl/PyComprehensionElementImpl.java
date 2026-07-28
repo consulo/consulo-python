@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import consulo.annotation.access.RequiredReadAction;
 import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
@@ -35,8 +36,8 @@ import com.jetbrains.python.impl.psi.PyUtil;
 
 /**
  * Comprehension-like element base, for list comps ang generators.
- * User: dcheryasov
- * Date: Jul 31, 2008
+ * @author dcheryasov
+ * @since 2008-07-31
  */
 public abstract class PyComprehensionElementImpl extends PyElementImpl implements PyComprehensionElement
 {
@@ -51,6 +52,8 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 	 * @return result expression.
 	 */
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PyExpression getResultExpression()
 	{
 		ASTNode[] exprs = getNode().getChildren(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
@@ -62,7 +65,9 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 	 *
 	 * @return all "for components"
 	 */
-	public List<PyComprehensionForComponent> getForComponents()
+	@Override
+    @RequiredReadAction
+    public List<PyComprehensionForComponent> getForComponents()
 	{
 		final List<PyComprehensionForComponent> list = new ArrayList<>(5);
 		visitComponents(new ComprehensionElementVisitor()
@@ -76,7 +81,8 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 		return list;
 	}
 
-	private void visitComponents(ComprehensionElementVisitor visitor)
+	@RequiredReadAction
+    private void visitComponents(ComprehensionElementVisitor visitor)
 	{
 		ASTNode node = getNode().getFirstChildNode();
 		while(node != null)
@@ -100,12 +106,14 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 
 				visitor.visitForComponent(new PyComprehensionForComponent()
 				{
-					public PyExpression getIteratorVariable()
+					@Override
+                    public PyExpression getIteratorVariable()
 					{
 						return variable;
 					}
 
-					public PyExpression getIteratedList()
+					@Override
+                    public PyExpression getIteratedList()
 					{
 						return iterated;
 					}
@@ -119,20 +127,16 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 			}
 			else if(type == PyTokenTypes.IF_KEYWORD)
 			{
-				final PyExpression test = (PyExpression) next.getPsi();
-				visitor.visitIfComponent(new PyComprehensionIfComponent()
-				{
-					public PyExpression getTest()
-					{
-						return test;
-					}
-				});
+				PyExpression test = (PyExpression) next.getPsi();
+				visitor.visitIfComponent(() -> test);
 			}
 			node = node.getTreeNext();
 		}
 	}
 
-	public List<PyComprehensionIfComponent> getIfComponents()
+	@Override
+    @RequiredReadAction
+    public List<PyComprehensionIfComponent> getIfComponents()
 	{
 		final List<PyComprehensionIfComponent> list = new ArrayList<>(5);
 		visitComponents(new ComprehensionElementVisitor()
@@ -146,7 +150,9 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 		return list;
 	}
 
-	public List<PyComprehensionComponent> getComponents()
+	@Override
+    @RequiredReadAction
+    public List<PyComprehensionComponent> getComponents()
 	{
 		final List<PyComprehensionComponent> list = new ArrayList<>(5);
 		visitComponents(new ComprehensionElementVisitor()
@@ -178,7 +184,9 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 		return node;
 	}
 
-	public List<PsiNamedElement> getNamedElements()
+	@Override
+    @RequiredReadAction
+    public List<PsiNamedElement> getNamedElements()
 	{
 		// extract whatever names are defined in "for" components
 		List<PyComprehensionForComponent> fors = getForComponents();
@@ -202,6 +210,7 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 	}
 
 	@Nullable
+    @RequiredReadAction
 	public PsiNamedElement getNamedElement(String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);

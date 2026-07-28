@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl.stubs;
 
 import consulo.language.psi.stub.StubBase;
@@ -25,18 +24,20 @@ import com.jetbrains.python.psi.PyDecorator;
 
 /**
  * Decorator stub storage.
- * User: dcheryasov
- * Date: Dec 18, 2008 10:01:57 PM
+ *
+ * @author dcheryasov
+ * @since 2008-12-18
  */
 public class PyDecoratorStubImpl extends StubBase<PyDecorator> implements PyDecoratorStub {
-  private final QualifiedName myQualifiedName;
+    private final QualifiedName myQualifiedName;
 
-  protected PyDecoratorStubImpl(QualifiedName qualname, StubElement parent) {
-    super(parent, PyElementTypes.DECORATOR_CALL);
-    myQualifiedName = qualname;
-  }
+    protected PyDecoratorStubImpl(QualifiedName qualifiedName, StubElement parent) {
+        super(parent, PyElementTypes.DECORATOR_CALL);
+        myQualifiedName = qualifiedName;
+    }
 
-  public QualifiedName getQualifiedName() {
-    return myQualifiedName;
-  }
+    @Override
+    public QualifiedName getQualifiedName() {
+        return myQualifiedName;
+    }
 }

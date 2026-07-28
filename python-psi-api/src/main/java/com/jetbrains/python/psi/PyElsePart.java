@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
 
 import org.jspecify.annotations.Nullable;
 
 /**
  * The 'else:' part of various compound statements.
- * User: dcheryasov
- * Date: Mar 15, 2009 9:34:51 PM
+ *
+ * @author dcheryasov
+ * @since 2009-03-15
  */
 public interface PyElsePart extends PyStatementPart {
-  /**
-   * @return the body of the 'else' part.
-   */
-  @Nullable
-  PyStatementList getStatementList();
+    /**
+     * @return the body of the 'else' part.
+     */
+    @Nullable
+    @Override
+    PyStatementList getStatementList();
 }

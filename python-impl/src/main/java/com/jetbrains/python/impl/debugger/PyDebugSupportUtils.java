@@ -15,18 +15,19 @@
  */
 package com.jetbrains.python.impl.debugger;
 
-import org.jspecify.annotations.Nullable;
-import consulo.application.ApplicationManager;
+import com.jetbrains.python.PyTokenTypes;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.document.Document;
-import consulo.project.Project;
-import consulo.application.util.function.Computable;
 import consulo.document.util.TextRange;
 import consulo.language.psi.PsiDocumentManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.*;
+import consulo.project.Project;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 
 public class PyDebugSupportUtils
@@ -37,48 +38,37 @@ public class PyDebugSupportUtils
 	}
 
 	// can expression be evaluated, or should be executed
-	public static boolean isExpression(final Project project, final String expression)
+	public static boolean isExpression(Project project, String expression)
 	{
-		return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>()
-		{
-			public Boolean compute()
-			{
-
-				PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
-				return file.getFirstChild() instanceof PyExpressionStatement && file.getFirstChild() == file.getLastChild();
-			}
-		});
+		return project.getApplication().runReadAction((Supplier<Boolean>) () -> {
+            PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
+            return file.getFirstChild() instanceof PyExpressionStatement && file.getFirstChild() == file.getLastChild();
+        });
 	}
 
 	@Nullable
-	public static TextRange getExpressionRangeAtOffset(final Project project, final Document document, final int offset)
+	public static TextRange getExpressionRangeAtOffset(Project project, Document document, int offset)
 	{
-		return ApplicationManager.getApplication().runReadAction(new Computable<TextRange>()
-		{
-			@Nullable
-			public TextRange compute()
-			{
-
-				PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-				if(psiFile != null)
-				{
-					PsiElement element = psiFile.findElementAt(offset);
-					if(!(element instanceof PyExpression) || element instanceof PyLiteralExpression)
-					{
-						element = PsiTreeUtil.getParentOfType(element, PyExpression.class);
-					}
-					if(element != null && element instanceof PyLiteralExpression)
-					{
-						return null;
-					}
-					if(element != null && isSimpleEnough(element) && isExpression(project, document.getText(element.getTextRange())))
-					{
-						return element.getTextRange();
-					}
-				}
-				return null;
-			}
-		});
+		return project.getApplication().runReadAction((Supplier<TextRange>) () -> {
+            PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
+            if(psiFile != null)
+            {
+                PsiElement element = psiFile.findElementAt(offset);
+                if(!(element instanceof PyExpression) || element instanceof PyLiteralExpression)
+                {
+                    element = PsiTreeUtil.getParentOfType(element, PyExpression.class);
+                }
+                if(element != null && element instanceof PyLiteralExpression)
+                {
+                    return null;
+                }
+                if(element != null && isSimpleEnough(element) && isExpression(project, document.getText(element.getTextRange())))
+                {
+                    return element.getTextRange();
+                }
+            }
+            return null;
+        });
 	}
 
 	// is expression suitable to quick evaluate/display tooltip
@@ -94,21 +84,17 @@ public class PyDebugSupportUtils
 
 	// is expression a variable reference and can be evaluated
 	// todo: use patterns (?)
-	public static boolean canSaveToTemp(final Project project, final String expression)
+	public static boolean canSaveToTemp(Project project, String expression)
 	{
-		return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>()
-		{
-			public Boolean compute()
-			{
-
-				PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
-				PsiElement root = file.getFirstChild();
-				return !isVariable(root) && (root instanceof PyExpressionStatement);
-			}
-		});
+		return project.getApplication().runReadAction((Supplier<Boolean>) () -> {
+            PsiFile file = PyElementGenerator.getInstance(project).createDummyFile(LanguageLevel.getDefault(), expression);
+            PsiElement root = file.getFirstChild();
+            return !isVariable(root) && (root instanceof PyExpressionStatement);
+        });
 	}
 
-	private static Boolean isVariable(PsiElement root)
+	@RequiredReadAction
+    private static Boolean isVariable(PsiElement root)
 	{
 		return root instanceof PyExpressionStatement &&
 				root.getFirstChild() instanceof PyReferenceExpression &&

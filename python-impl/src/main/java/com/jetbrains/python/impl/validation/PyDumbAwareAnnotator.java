@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.validation;
 
 import com.jetbrains.python.impl.psi.impl.PyFileImpl;
@@ -24,7 +23,6 @@ import consulo.language.editor.annotation.Annotator;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
-
 /**
  * @author yole
  */
@@ -34,11 +32,12 @@ public class PyDumbAwareAnnotator implements Annotator, DumbAware {
   public PyDumbAwareAnnotator() {
   }
 
+  @Override
   public void annotate(PsiElement element, AnnotationHolder holder) {
     PsiFile file = element.getContainingFile();
 
     for(PyAnnotator annotator: EP_NAME.getExtensionList()) {
-      if (file instanceof PyFileImpl && !((PyFileImpl)file).isAcceptedFor(annotator.getClass())) continue;
+      if (file instanceof PyFileImpl pyFile && !pyFile.isAcceptedFor(annotator.getClass())) continue;
       annotator.annotateElement(element, holder);
     }
   }

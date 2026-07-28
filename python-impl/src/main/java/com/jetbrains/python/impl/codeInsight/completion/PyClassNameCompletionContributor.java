@@ -20,12 +20,13 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.codeInsight.imports.AddImportHelper;
 import com.jetbrains.python.impl.codeInsight.imports.PythonImportUtils;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.search.PyProjectScopeBuilder;
 import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
 import com.jetbrains.python.impl.psi.stubs.PyFunctionNameIndex;
 import com.jetbrains.python.impl.psi.stubs.PyVariableNameIndex;
 import com.jetbrains.python.impl.psi.types.PyModuleType;
+import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Result;
 import consulo.document.Document;
@@ -49,11 +50,11 @@ import consulo.language.psi.stub.StubIndexKey;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.navigation.NavigationItem;
 import consulo.project.Project;
-import consulo.util.lang.function.Condition;
-import consulo.util.lang.function.Conditions;
+import consulo.util.lang.function.Predicates;
 import consulo.virtualFileSystem.VirtualFile;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * @author yole
@@ -62,13 +63,14 @@ import java.util.Collection;
 public class PyClassNameCompletionContributor extends CompletionContributor
 {
 	@Override
+    @RequiredReadAction
 	public void fillCompletionVariants(CompletionParameters parameters, CompletionResultSet result)
 	{
 		if(parameters.isExtendedCompletion())
 		{
 			PsiElement element = parameters.getPosition();
 			PsiElement parent = element.getParent();
-			if(parent instanceof PyReferenceExpression && ((PyReferenceExpression) parent).isQualified())
+			if(parent instanceof PyReferenceExpression refExpr && refExpr.isQualified())
 			{
 				return;
 			}
@@ -90,12 +92,30 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 				return;
 			}
 			PsiFile originalFile = parameters.getOriginalFile();
-			addVariantsFromIndex(result, originalFile, PyClassNameIndex.KEY, parent instanceof PyStringLiteralExpression ? STRING_LITERAL_INSERT_HANDLER : IMPORTING_INSERT_HANDLER, Conditions
-					.<PyClass>alwaysTrue(), PyClass.class);
-			addVariantsFromIndex(result, originalFile, PyFunctionNameIndex.KEY, getFunctionInsertHandler(parent), IS_TOPLEVEL, PyFunction.class);
-			addVariantsFromIndex(result, originalFile, PyVariableNameIndex.KEY, parent instanceof PyStringLiteralExpression ? STRING_LITERAL_INSERT_HANDLER : IMPORTING_INSERT_HANDLER, IS_TOPLEVEL,
-					PyTargetExpression.class);
-			addVariantsFromModules(result, originalFile, parent instanceof PyStringLiteralExpression);
+			addVariantsFromIndex(
+			    result,
+                originalFile,
+                PyClassNameIndex.KEY,
+                parent instanceof PyStringLiteralExpression ? STRING_LITERAL_INSERT_HANDLER : IMPORTING_INSERT_HANDLER,
+                Predicates.<PyClass>alwaysTrue(),
+                PyClass.class
+            );
+            addVariantsFromIndex(
+                result,
+                originalFile,
+                PyFunctionNameIndex.KEY,
+                getFunctionInsertHandler(parent),
+                IS_TOPLEVEL,
+                PyFunction.class
+            );
+            addVariantsFromIndex(result,
+                originalFile,
+                PyVariableNameIndex.KEY,
+                parent instanceof PyStringLiteralExpression ? STRING_LITERAL_INSERT_HANDLER : IMPORTING_INSERT_HANDLER,
+                IS_TOPLEVEL,
+                PyTargetExpression.class
+            );
+            addVariantsFromModules(result, originalFile, parent instanceof PyStringLiteralExpression);
 		}
 	}
 
@@ -112,7 +132,8 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		return FUNCTION_INSERT_HANDLER;
 	}
 
-	private static void addVariantsFromModules(CompletionResultSet result, PsiFile targetFile, boolean inStringLiteral)
+	@RequiredReadAction
+    private static void addVariantsFromModules(CompletionResultSet result, PsiFile targetFile, boolean inStringLiteral)
 	{
 		Collection<VirtualFile> files = FileTypeIndex.getFiles(PythonFileType.INSTANCE, PyProjectScopeBuilder.excludeSdkTestsScope(targetFile));
 		for(VirtualFile file : files)
@@ -134,13 +155,14 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		}
 	}
 
-	private static Condition<PsiElement> IS_TOPLEVEL = element -> PyUtil.isTopLevel(element);
+	private static final Predicate<PsiElement> IS_TOPLEVEL = PyUtil::isTopLevel;
 
-	private static <T extends PsiNamedElement> void addVariantsFromIndex(CompletionResultSet resultSet,
+	@RequiredReadAction
+    private static <T extends PsiNamedElement> void addVariantsFromIndex(CompletionResultSet resultSet,
                                                                          PsiFile targetFile,
                                                                          StubIndexKey<String, T> key,
                                                                          InsertHandler<LookupElement> insertHandler,
-                                                                         Condition<? super T> condition,
+                                                                         Predicate<? super T> condition,
                                                                          Class<T> elementClass)
 	{
 		Project project = targetFile.getProject();
@@ -151,31 +173,29 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		{
 			for(T element : StubIndex.getElements(key, elementName, project, scope, elementClass))
 			{
-				if(condition.value(element))
+				if(condition.test(element))
 				{
 					String name = element.getName();
 					if(name != null)
 					{
-						resultSet.addElement(LookupElementBuilder.createWithSmartPointer(name, element).withIcon(IconDescriptorUpdaters.getIcon(element, 0)).withTailText(" " + ((NavigationItem)
-								element).getPresentation().getLocationString(), true).withInsertHandler(insertHandler));
+						resultSet.addElement(LookupElementBuilder.createWithSmartPointer(name, element)
+                            .withIcon(IconDescriptorUpdaters.getIcon(element, 0))
+                            .withTailText(" " + ((NavigationItem) element).getPresentation().getLocationString(), true)
+                            .withInsertHandler(insertHandler));
 					}
 				}
 			}
 		}
 	}
 
-	private static final InsertHandler<LookupElement> IMPORTING_INSERT_HANDLER = new InsertHandler<LookupElement>()
-	{
-		public void handleInsert(InsertionContext context, LookupElement item)
-		{
-			addImportForLookupElement(context, item, context.getTailOffset() - 1);
-		}
-	};
-
+	private static final InsertHandler<LookupElement> IMPORTING_INSERT_HANDLER =
+        (context, item) -> addImportForLookupElement(context, item, context.getTailOffset() - 1);
 
 	private static final InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new PyFunctionInsertHandler()
 	{
-		public void handleInsert(InsertionContext context, LookupElement item)
+		@Override
+        @RequiredReadAction
+        public void handleInsert(InsertionContext context, LookupElement item)
 		{
 			int tailOffset = context.getTailOffset() - 1;
 			super.handleInsert(context, item);  // adds parentheses, modifies tail offset
@@ -184,26 +204,22 @@ public class PyClassNameCompletionContributor extends CompletionContributor
 		}
 	};
 
-	private static final InsertHandler<LookupElement> STRING_LITERAL_INSERT_HANDLER = new InsertHandler<LookupElement>()
-	{
-		@Override
-		public void handleInsert(InsertionContext context, LookupElement item)
-		{
-			PsiElement element = item.getPsiElement();
-			if(element instanceof PyQualifiedNameOwner)
-			{
-				String qName = ((PyQualifiedNameOwner) element).getQualifiedName();
-				String name = ((PyQualifiedNameOwner) element).getName();
-				if(qName != null && name != null)
-				{
-					String qNamePrefix = qName.substring(0, qName.length() - name.length());
-					context.getDocument().insertString(context.getStartOffset(), qNamePrefix);
-				}
-			}
-		}
-	};
+	private static final InsertHandler<LookupElement> STRING_LITERAL_INSERT_HANDLER = (context, item) -> {
+        PsiElement element = item.getPsiElement();
+        if(element instanceof PyQualifiedNameOwner qNameOwner)
+        {
+            String qName = qNameOwner.getQualifiedName();
+            String name = qNameOwner.getName();
+            if(qName != null && name != null)
+            {
+                String qNamePrefix = qName.substring(0, qName.length() - name.length());
+                context.getDocument().insertString(context.getStartOffset(), qNamePrefix);
+            }
+        }
+    };
 
-	private static void addImportForLookupElement(final InsertionContext context, final LookupElement item, int tailOffset)
+	@RequiredReadAction
+    private static void addImportForLookupElement(final InsertionContext context, final LookupElement item, int tailOffset)
 	{
 		PsiDocumentManager manager = PsiDocumentManager.getInstance(context.getProject());
 		Document document = manager.getDocument(context.getFile());

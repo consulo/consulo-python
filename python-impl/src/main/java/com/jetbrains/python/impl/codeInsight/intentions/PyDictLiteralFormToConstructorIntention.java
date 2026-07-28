@@ -17,6 +17,8 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.psi.PsiFile;
@@ -42,6 +44,8 @@ public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction
         return PyLocalize.intnConvertDictLiteralToDictConstructor();
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -76,6 +80,8 @@ public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction
         return false;
     }
 
+    @Override
+    @RequiredWriteAction
     public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyDictLiteralExpression dictExpression =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyDictLiteralExpression.class);
@@ -85,17 +91,16 @@ public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction
         }
     }
 
+    @RequiredWriteAction
     private static void replaceDictLiteral(PyDictLiteralExpression dictExpression, PyElementGenerator elementGenerator) {
         PyExpression[] argumentList = dictExpression.getElements();
         StringBuilder stringBuilder = new StringBuilder("dict(");
         int size = argumentList.length;
         for (int i = 0; i != size; ++i) {
-            PyExpression argument = argumentList[i];
-            if (argument instanceof PyKeyValueExpression) {
-                PyExpression key = ((PyKeyValueExpression) argument).getKey();
-                PyExpression value = ((PyKeyValueExpression) argument).getValue();
-                if (key instanceof PyStringLiteralExpression && value != null) {
-                    stringBuilder.append(((PyStringLiteralExpression) key).getStringValue());
+            if (argumentList[i] instanceof PyKeyValueExpression keyValueExpr) {
+                PyExpression value = keyValueExpr.getValue();
+                if (keyValueExpr.getKey() instanceof PyStringLiteralExpression keyLiteral && value != null) {
+                    stringBuilder.append(keyLiteral.getStringValue());
                     stringBuilder.append("=");
                     stringBuilder.append(value.getText());
                     if (i != size - 1) {
@@ -105,8 +110,10 @@ public class PyDictLiteralFormToConstructorIntention extends BaseIntentionAction
             }
         }
         stringBuilder.append(")");
-        PyCallExpression callExpression = (PyCallExpression) elementGenerator.createFromText(LanguageLevel.forElement(dictExpression),
-            PyExpressionStatement.class, stringBuilder.toString()
+        PyCallExpression callExpression = (PyCallExpression) elementGenerator.createFromText(
+            LanguageLevel.forElement(dictExpression),
+            PyExpressionStatement.class,
+            stringBuilder.toString()
         ).getExpression();
         dictExpression.replace(callExpression);
     }

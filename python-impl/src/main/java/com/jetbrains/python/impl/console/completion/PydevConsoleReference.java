@@ -15,50 +15,36 @@
  */
 package com.jetbrains.python.impl.console.completion;
 
-import java.util.List;
-import java.util.Map;
-
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import consulo.language.editor.completion.CompletionInitializationContext;
-import consulo.language.editor.completion.lookup.*;
-import consulo.language.editor.completion.lookup.LookupElement;
-import consulo.language.editor.completion.lookup.LookupElementBuilder;
-import consulo.document.Document;
-import consulo.codeEditor.Editor;
-import consulo.module.Module;
-import consulo.language.util.ModuleUtilCore;
-import consulo.document.util.TextRange;
-import consulo.util.lang.StringUtil;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiManager;
-import consulo.language.psi.PsiPolyVariantReferenceBase;
-import consulo.language.psi.PsiReference;
-import consulo.language.psi.ResolveResult;
-import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.console.pydev.IToken;
 import com.jetbrains.python.console.pydev.PyCodeCompletionImages;
 import com.jetbrains.python.console.pydev.PydevCompletionVariant;
-import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.psi.PyElement;
-import com.jetbrains.python.psi.PyElementGenerator;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyExpressionStatement;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyReferenceExpression;
-import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
-import consulo.language.editor.completion.lookup.InsertHandler;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.codeEditor.Editor;
+import consulo.document.Document;
+import consulo.document.util.TextRange;
+import consulo.language.editor.completion.CompletionInitializationContext;
+import consulo.language.editor.completion.lookup.LookupElement;
+import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.editor.completion.lookup.ParenthesesInsertHandler;
+import consulo.language.psi.*;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.ModuleUtilCore;
+import consulo.module.Module;
+import consulo.util.lang.StringUtil;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author oleg
  */
 public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferenceExpression>
 {
-
 	private final ConsoleCommunication myCommunication;
 	private final String myPrefix;
 	private final boolean myAllowRemoteResolve;
@@ -71,7 +57,9 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 		myAllowRemoteResolve = allowRemoteResolve;
 	}
 
-	public ResolveResult[] multiResolve(boolean incompleteCode)
+	@Override
+    @RequiredReadAction
+    public ResolveResult[] multiResolve(boolean incompleteCode)
 	{
 		if(!myAllowRemoteResolve)
 		{
@@ -100,13 +88,14 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 
 	}
 
-	public PyElement getDocumentationElement()
+	@RequiredReadAction
+    public PyElement getDocumentationElement()
 	{
 		return resolveToDummyDescription();
 	}
 
-
-	private PyExpression resolveToDummyDescription()
+	@RequiredReadAction
+    private PyExpression resolveToDummyDescription()
 	{
 		String qualifiedName = myElement.getText();
 		if(qualifiedName == null)
@@ -130,7 +119,7 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 
 		PyElementGenerator generator = PyElementGenerator.getInstance(myElement.getProject());
 		PyFile dummyFile = (PyFile) generator.createDummyFile(LanguageLevel.forElement(myElement), description);
-		Module module = ModuleUtilCore.findModuleForPsiElement(myElement);
+        Module module = myElement.getModule();
 		if(module != null)
 		{
 			dummyFile.putUserData(ModuleUtilCore.KEY_MODULE, module);
@@ -141,7 +130,9 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 		return pyStatement instanceof PyExpressionStatement ? ((PyExpressionStatement) pyStatement).getExpression() : null;
 	}
 
-	public Object[] getVariants()
+	@Override
+    @RequiredReadAction
+    public Object[] getVariants()
 	{
 		Map<String, LookupElement> variants = Maps.newHashMap();
 		try
@@ -159,20 +150,15 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 				if(args.equals("(%)"))
 				{
 					builder.withPresentableText("%" + completion.getName());
-					builder = builder.withInsertHandler(new InsertHandler<LookupElement>()
-					{
-						@Override
-						public void handleInsert(InsertionContext context, LookupElement item)
-						{
-							Editor editor = context.getEditor();
-							Document document = editor.getDocument();
-							int offset = context.getStartOffset();
-							if(offset == 0 || !"%".equals(document.getText(TextRange.from(offset - 1, 1))))
-							{
-								document.insertString(offset, "%");
-							}
-						}
-					});
+					builder = builder.withInsertHandler((context, item) -> {
+                        Editor editor = context.getEditor();
+                        Document document = editor.getDocument();
+                        int offset = context.getStartOffset();
+                        if(offset == 0 || !"%".equals(document.getText(TextRange.from(offset - 1, 1))))
+                        {
+                            document.insertString(offset, "%");
+                        }
+                    });
 					args = "";
 				}
 				else if(!StringUtil.isEmptyOrSpaces(args))
@@ -194,7 +180,8 @@ public class PydevConsoleReference extends PsiPolyVariantReferenceBase<PyReferen
 		return variants.values().toArray();
 	}
 
-	private String getText()
+	@RequiredReadAction
+    private String getText()
 	{
 		PsiElement element = PsiTreeUtil.getParentOfType(getElement(), PyFile.class);
 		if(element != null)

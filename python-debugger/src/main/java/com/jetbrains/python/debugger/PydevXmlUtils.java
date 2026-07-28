@@ -22,7 +22,6 @@ import java.util.List;
  *
  */
 public class PydevXmlUtils {
-
   static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 
   private PydevXmlUtils() {
@@ -52,7 +51,7 @@ public class PydevXmlUtils {
   }
 
   public static List<PydevCompletionVariant> decodeCompletions(Object fromServer, String actTok) {
-    List<PydevCompletionVariant> ret = new ArrayList<PydevCompletionVariant>();
+    List<PydevCompletionVariant> ret = new ArrayList<>();
 
     List completionList = objectToList(fromServer);
 
@@ -109,14 +108,13 @@ public class PydevXmlUtils {
     private List<Object[]> completions;
 
     public XMLToCompletionsInfo() {
-      completions = new ArrayList<Object[]>();
+      completions = new ArrayList<>();
     }
 
-    public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       // <comp p0="%s" p1="%s" p2="%s" p3="%s"/>
       if (qName.equals("comp")) {
-
         Object[] comp = new Object[]{
           decode(attributes.getValue("p0")),
           decode(attributes.getValue("p1")),
@@ -132,7 +130,6 @@ public class PydevXmlUtils {
       return completions;
     }
   }
-
 
   public static List<PydevCompletionVariant> xmlToCompletions(String payload, String actionToken) throws Exception {
     SAXParser parser = getSAXParser();

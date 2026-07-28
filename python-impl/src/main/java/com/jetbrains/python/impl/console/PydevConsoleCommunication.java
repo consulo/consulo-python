@@ -20,6 +20,7 @@ import com.jetbrains.python.debugger.*;
 import com.jetbrains.python.debugger.pydev.GetVariableCommand;
 import com.jetbrains.python.debugger.pydev.ProtocolParser;
 import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
+import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
@@ -221,9 +222,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
 
     VirtualFile file = StringUtil.isEmpty(path) ? null : LocalFileSystem.getInstance().findFileByPath(path);
     if (file != null) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        FileEditorManager.getInstance(myProject).openFile(file, true);
-      });
+      Application.get().invokeLater(() -> FileEditorManager.getInstance(myProject).openFile(file, true));
 
       return Boolean.TRUE;
     }
@@ -308,6 +307,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
   /**
    * @return completions from the client
    */
+  @Override
   public List<PydevCompletionVariant> getCompletions(String text, String actTok) throws Exception {
     if (myDebugCommunication != null && myDebugCommunication.isSuspended()) {
       return myDebugCommunication.getCompletions(text, actTok);
@@ -327,6 +327,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
   /**
    * @return the description of the given attribute in the shell
    */
+  @Override
   public String getDescription(String text) throws Exception {
     if (myDebugCommunication != null && myDebugCommunication.isSuspended()) {
       return myDebugCommunication.getDescription(text);
@@ -342,6 +343,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
    *
    * @param command the command to be executed in the client
    */
+  @Override
   public void execInterpreter(final ConsoleCodeFragment command, Function<InterpreterResponse, Object> onResponseReceived) {
     if (myDebugCommunication != null && myDebugCommunication.isSuspended()) {
       myDebugCommunication.execInterpreter(command, onResponseReceived);
@@ -384,7 +386,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
               // This string always works,
               // because it is hard-coded in
               // the XML-RPC library)
-              if (executed.first != null && executed.first.indexOf(refusedConnPattern) != -1) {
+              if (executed.first != null && executed.first.contains(refusedConnPattern)) {
                 if (firstCommWorked) {
                   break;
                 }
@@ -470,6 +472,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
     return myExecuting;
   }
 
+  @Override
   public boolean needsMore() {
     return myNeedsMore;
   }
@@ -622,7 +625,7 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
     if (waitingForInput) {
       throw new Exception("Can't connect debugger now, waiting for input");
     }
-    /* argument needs to be hashtable type for compatability with the RPC library */
+    /* argument needs to be hashtable type for compatibility with the RPC library */
     Hashtable<String, Object> opts = new Hashtable<>(dbgOpts);
     opts.put(PYDEVD_EXTRA_ENVS, new Hashtable<>(extraEnvs));
     Object result = myClient.execute(CONNECT_TO_DEBUGGER, new Object[]{
@@ -630,17 +633,16 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
       opts
     });
     Exception exception = null;
-    if (result instanceof Vector) {
-      Vector resultarray = (Vector)result;
-      if (resultarray.size() == 1) {
-        if ("connect complete".equals(resultarray.get(0))) {
+    if (result instanceof Vector resultArray) {
+      if (resultArray.size() == 1) {
+        if ("connect complete".equals(resultArray.get(0))) {
           return;
         }
-        if (resultarray.get(0) instanceof String) {
-          exception = new Exception((String)resultarray.get(0));
+        if (resultArray.get(0) instanceof String) {
+          exception = new Exception((String)resultArray.get(0));
         }
-        if (resultarray.get(0) instanceof Exception) {
-          exception = (Exception)resultarray.get(0);
+        if (resultArray.get(0) instanceof Exception) {
+          exception = (Exception)resultArray.get(0);
         }
       }
     }
@@ -660,7 +662,6 @@ public class PydevConsoleCommunication extends AbstractConsoleCommunication impl
   public PythonDebugConsoleCommunication getDebugCommunication() {
     return myDebugCommunication;
   }
-
 
   public void waitForTerminate() {
     if (myWebServer != null) {

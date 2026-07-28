@@ -114,7 +114,8 @@ public class PyConsoleParsingContext extends ParsingContext
 			ipythonCommand.done(PyElementTypes.EMPTY_EXPRESSION);
 		}
 
-		protected void checkEndOfStatement()
+		@Override
+        protected void checkEndOfStatement()
 		{
 			if(myPythonConsoleData.isIPythonEnabled())
 			{

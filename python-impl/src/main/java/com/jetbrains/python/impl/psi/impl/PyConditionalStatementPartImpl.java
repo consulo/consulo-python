@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyConditionalStatementPart;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 
 /**
- * User: dcheryasov
- * Date: Mar 16, 2009 4:46:26 AM
+ * @author dcheryasov
+ * @since 2009-03-16
  */
 public abstract class PyConditionalStatementPartImpl extends PyStatementPartImpl implements PyConditionalStatementPart {
   public PyConditionalStatementPartImpl(ASTNode astNode) {
     super(astNode);
   }
 
+  @Override
+  @RequiredReadAction
   public PyExpression getCondition() {
     ASTNode n = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
     if (n != null) {

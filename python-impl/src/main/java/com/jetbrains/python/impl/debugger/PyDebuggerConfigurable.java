@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.debugger;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import org.jspecify.annotations.Nullable;
+import consulo.ui.annotation.RequiredUIAccess;
 import jakarta.inject.Inject;
-
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * @author traff
@@ -54,42 +51,49 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
     return StandardConfigurableIds.EXECUTION_GROUP;
   }
 
+  @Override
   public LocalizeValue getDisplayName() {
     return LocalizeValue.localizeTODO("Python Debugger");
   }
 
+  @Override
   public String getId() {
     return "py.debugger";
   }
 
+  @Override
+  @RequiredUIAccess
   public JComponent createComponent() {
-    myClearCacheButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent event) {
-        PySignatureCacheManager.getInstance(myProject).clearCache();
-      }
-    });
+    myClearCacheButton.addActionListener(event -> PySignatureCacheManager.getInstance(myProject).clearCache());
     return myMainPanel;
   }
 
+  @Override
+  @RequiredUIAccess
   public boolean isModified() {
     return myAttachToSubprocess.isSelected() != mySettings.isAttachToSubprocess() ||
            mySaveSignatures.isSelected() != mySettings.isSaveCallSignatures() ||
            mySupportGevent.isSelected() != mySettings.isSupportGeventDebugging();
   }
 
+  @Override
+  @RequiredUIAccess
   public void apply() throws ConfigurationException {
     mySettings.setAttachToSubprocess(myAttachToSubprocess.isSelected());
     mySettings.setSaveCallSignatures(mySaveSignatures.isSelected());
     mySettings.setSupportGeventDebugging(mySupportGevent.isSelected());
   }
 
+  @Override
+  @RequiredUIAccess
   public void reset() {
     myAttachToSubprocess.setSelected(mySettings.isAttachToSubprocess());
     mySaveSignatures.setSelected(mySettings.isSaveCallSignatures());
     mySupportGevent.setSelected(mySettings.isSupportGeventDebugging());
   }
 
+  @Override
+  @RequiredUIAccess
   public void disposeUIResources() {
   }
 }

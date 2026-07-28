@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
 import consulo.language.ast.ASTNode;
@@ -25,11 +24,12 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  * @author yole
  */
 public class PyEmptyExpressionImpl extends PyElementImpl implements PyEmptyExpression {
-  public PyEmptyExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyEmptyExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-    return null;
-  }
+    @Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        return null;
+    }
 }
