@@ -563,14 +563,14 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
                 Editor editor = myConsoleView.getConsoleEditor();
                 if (LookupManager.getActiveLookup(editor) != null) {
                     AnAction replace = ActionManager.getInstance().getAction("EditorChooseLookupItemReplace");
-                    ActionImplUtil.performActionDumbAware(replace, e);
+                    ActionManager.getInstance().performActionDumbAware(replace, e);
                     return;
                 }
                 AnAction completionAction = ActionManager.getInstance().getAction("CodeCompletion");
                 if (completionAction == null) {
                     return;
                 }
-                ActionImplUtil.performActionDumbAware(completionAction, e);
+                ActionManager.getInstance().performActionDumbAware(completionAction, e);
             }
 
             @Override
