@@ -3,12 +3,11 @@
   "project" : "consulo-python",
   "projectVersion" : "master",
   "sourceLocale" : "en-US",
-  "generatedAt" : "2026-06-28T14:50:26.870706468Z",
+  "generatedAt" : "2026-07-24T17:08:39.185576211Z",
   "documents" : {
     "consulo.python.impl.PyLocalize" : {
       "source" : {
-        "revision" : 1,
-        "sig" : "680638f6239743439aca0e67a5a4d8a5"
+        "sig" : "7a6602312b1df54bc7aa4ec3cdf477fa"
       }
     }
   }
