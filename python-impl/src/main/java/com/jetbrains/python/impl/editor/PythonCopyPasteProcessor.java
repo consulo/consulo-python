@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.editor;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyStringLiteralExpression;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ApplicationManager;
+import consulo.application.Application;
 import consulo.codeEditor.CaretModel;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.RawText;
@@ -41,8 +44,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.CharFilter;
 import consulo.util.lang.StringUtil;
-
 import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 
 /**
@@ -58,32 +61,30 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
   }
 
   @Override
+  @RequiredReadAction
   public String preprocessOnPaste(Project project,
                                   PsiFile file,
                                   Editor editor,
                                   String text,
                                   RawText rawText) {
-    if (!CodeInsightSettings.getInstance().INDENT_TO_CARET_ON_PASTE || file.getLanguage() != PythonLanguage.getInstance()) {
+    if (!CodeInsightSettings.getInstance().INDENT_TO_CARET_ON_PASTE || file.getLanguage() != PythonLanguage.INSTANCE) {
       return text;
     }
     CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
-    final boolean useTabs = codeStyleSettings.useTabCharacter(PythonFileType.INSTANCE);
+    boolean useTabs = codeStyleSettings.useTabCharacter(PythonFileType.INSTANCE);
     int indentSize = codeStyleSettings.getIndentSize(PythonFileType.INSTANCE);
-    CharFilter NOT_INDENT_FILTER = new CharFilter() {
-      public boolean accept(char ch) {
-        return useTabs? ch != '\t' : ch != ' ';
-      }
-    };
+    CharFilter NOT_INDENT_FILTER = ch -> useTabs? ch != '\t' : ch != ' ';
     String indentChar = useTabs ? "\t" : " ";
 
     CaretModel caretModel = editor.getCaretModel();
     SelectionModel selectionModel = editor.getSelectionModel();
-    final Document document = editor.getDocument();
-    int caretOffset = selectionModel.getSelectionStart() != selectionModel.getSelectionEnd() ?
-                            selectionModel.getSelectionStart() : caretModel.getOffset();
+    Document document = editor.getDocument();
+    int caretOffset = selectionModel.getSelectionStart() != selectionModel.getSelectionEnd()
+      ? selectionModel.getSelectionStart()
+      : caretModel.getOffset();
     int lineNumber = document.getLineNumber(caretOffset);
-    final int lineStartOffset = getLineStartSafeOffset(document, lineNumber);
-    final int lineEndOffset = document.getLineEndOffset(lineNumber);
+    int lineStartOffset = getLineStartSafeOffset(document, lineNumber);
+    int lineEndOffset = document.getLineEndOffset(lineNumber);
 
     PsiElement element = file.findElementAt(caretOffset);
     if (PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression.class) != null) return text;
@@ -99,12 +100,7 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
       caretModel.moveToOffset(lineStartOffset);
 
       if (StringUtil.isEmptyOrSpaces(toString)) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            document.deleteString(lineStartOffset, lineEndOffset);
-          }
-        });
+        Application.get().runWriteAction(() -> document.deleteString(lineStartOffset, lineEndOffset));
       }
       editor.getSelectionModel().setSelection(lineStartOffset, selectionModel.getSelectionEnd());
     }
@@ -138,11 +134,11 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return text;
   }
 
+  @RequiredReadAction
   private static String getIndentText(PsiFile file,
                                       Document document,
                                       int caretOffset,
                                       int lineNumber, int firstLineIndent) {
-
     PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
     if (nonWS != null) {
       IElementType nonWSType = nonWS.getNode().getElementType();
@@ -185,29 +181,26 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     return minIndent;
   }
 
+  @RequiredReadAction
   private static boolean isApplicable(PsiFile file, String text, int caretOffset) {
-    boolean useTabs =
-      CodeStyleSettingsManager.getSettings(file.getProject()).useTabCharacter(PythonFileType.INSTANCE);
+    boolean useTabs = CodeStyleSettingsManager.getSettings(file.getProject()).useTabCharacter(PythonFileType.INSTANCE);
     PsiElement nonWS = PyUtil.findNextAtOffset(file, caretOffset, PsiWhiteSpace.class);
     if (nonWS == null || text.endsWith("\n"))
       return true;
-    if (inStatementList(file, caretOffset) && (text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1))
-      return true;
-    return false;
+    return inStatementList(file, caretOffset) && (text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1);
   }
 
+  @RequiredReadAction
   private static boolean inStatementList(PsiFile file, int caretOffset) {
     PsiElement element = file.findElementAt(caretOffset);
-    return PsiTreeUtil.getParentOfType(element, PyStatementList.class) != null ||
-           PsiTreeUtil.getParentOfType(element, PyFunction.class) != null ||
-           PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
+    return PsiTreeUtil.getParentOfType(element, PyStatementList.class) != null
+      || PsiTreeUtil.getParentOfType(element, PyFunction.class) != null
+      || PsiTreeUtil.getParentOfType(element, PyClass.class) != null;
   }
 
   private static boolean addLinebreak(String text, String toString, boolean useTabs) {
-    if ((text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1)
-        && !text.endsWith("\n") && !StringUtil.isEmptyOrSpaces(toString))
-      return true;
-    return false;
+    return (text.startsWith(useTabs ? "\t" : " ") || StringUtil.split(text, "\n").size() > 1)
+        && !text.endsWith("\n") && !StringUtil.isEmptyOrSpaces(toString);
   }
 
   public static int getLineStartSafeOffset(Document document, int line) {
@@ -215,5 +208,4 @@ public class PythonCopyPasteProcessor implements CopyPastePreProcessor {
     if (line < 0) return 0;
     return document.getLineStartOffset(line);
   }
-
 }

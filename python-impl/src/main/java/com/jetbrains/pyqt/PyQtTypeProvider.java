@@ -16,22 +16,22 @@
 package com.jetbrains.pyqt;
 
 import com.jetbrains.python.PyNames;
+import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
+import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
 import com.jetbrains.python.psi.PyCallable;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import com.jetbrains.python.impl.psi.stubs.PyClassNameIndex;
-import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.util.QualifiedName;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 @ExtensionImpl
 public class PyQtTypeProvider extends PyTypeProviderBase {
@@ -39,9 +39,9 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
   private static final String ourQt4Signal = "pyqtSignal";
 
   @Override
-  public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
-    if (PyNames.INIT.equals(callable.getName()) && callable instanceof PyFunction) {
-      PyFunction function = (PyFunction)callable;
+  @RequiredReadAction
+  public SimpleReference<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
+    if (PyNames.INIT.equals(callable.getName()) && callable instanceof PyFunction function) {
       PyClass containingClass = function.getContainingClass();
       if (containingClass != null && ourQt4Signal.equals(containingClass.getName())) {
         String classQName = containingClass.getQualifiedName();
@@ -51,7 +51,7 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
           PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, function.getProject());
           if (aClass != null) {
             PyType type = new PyClassTypeImpl(aClass, false);
-            return Ref.create(type);
+            return SimpleReference.create(type);
           }
         }
       }
@@ -62,12 +62,12 @@ public class PyQtTypeProvider extends PyTypeProviderBase {
   @Nullable
   @Override
   public PyType getCallableType(PyCallable callable, TypeEvalContext context) {
-    if (callable instanceof PyFunction) {
-      String qualifiedName = callable.getQualifiedName();
+    if (callable instanceof PyFunction function) {
+      String qualifiedName = function.getQualifiedName();
       if (qualifiedName != null && qualifiedName.startsWith("PyQt")) {
         QualifiedName name = QualifiedName.fromDottedString(qualifiedName);
         String qtVersion = name.getComponents().get(0);
-        String docstring = ((PyFunction)callable).getDocStringValue();
+        String docstring = function.getDocStringValue();
         if (docstring != null && docstring.contains("[signal]")) {
           PyClass aClass = PyClassNameIndex.findClass(qtVersion + "." + ourQtBoundSignal, callable.getProject());
           if (aClass != null) {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.debugger;
 
 import com.google.common.cache.CacheBuilder;
@@ -23,26 +22,27 @@ import com.google.common.collect.Lists;
 import com.jetbrains.python.debugger.PySignature;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ServiceImpl;
 import consulo.application.progress.ProgressManager;
-import consulo.content.ContentIterator;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.logging.Logger;
 import consulo.module.content.ProjectFileIndex;
 import consulo.project.Project;
 import consulo.project.content.scope.ProjectScopes;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.lang.StringUtil;
-import consulo.util.lang.ref.Ref;
+import consulo.util.lang.ref.SimpleReference;
 import consulo.virtualFileSystem.FileAttribute;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
 import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -159,6 +159,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Nullable
+  @Override
   public String findParameterType(PyFunction function, String name) {
     PySignature signature = findSignature(function);
     if (signature != null) {
@@ -168,6 +169,8 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
   }
 
   @Nullable
+  @Override
+  @RequiredReadAction
   public PySignature findSignature(PyFunction function) {
     VirtualFile file = getFile(function);
     if (file != null) {
@@ -178,6 +181,7 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     }
   }
 
+  @RequiredReadAction
   private static String getFunctionName(PyFunction function) {
     String name = function.getName();
     if (name == null) {
@@ -243,7 +247,6 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     return content != null ? content : "";
   }
 
-
   @Nullable
   private static PySignature stringToSignature(String path, String string) {
     String[] parts = string.split("\t");
@@ -275,29 +278,21 @@ public class PySignatureCacheManagerImpl extends PySignatureCacheManager {
     return file != null ? file.getOriginalFile().getVirtualFile() : null;
   }
 
-
   @Override
+  @RequiredUIAccess
   public void clearCache() {
-    final Ref<Boolean> deleted = Ref.create(false);
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-
-      @Override
-      public void run() {
-        ProjectFileIndex.SERVICE.getInstance(myProject).iterateContent(new ContentIterator() {
-          @Override
-          public boolean processFile(VirtualFile fileOrDir) {
-            if (readAttribute(fileOrDir) != null) {
-              writeAttribute(fileOrDir, "");
-              deleted.set(true);
-            }
-            if (ProgressManager.getInstance().getProgressIndicator().isCanceled()) {
-              return false;
-            }
-            return true;
+    SimpleReference<Boolean> deleted = SimpleReference.create(false);
+    ProgressManager.getInstance().runProcessWithProgressSynchronously((Runnable) () -> ProjectFileIndex.SERVICE.getInstance(myProject).iterateContent(
+        fileOrDir -> {
+          if (readAttribute(fileOrDir) != null) {
+            writeAttribute(fileOrDir, "");
+            deleted.set(true);
           }
-        });
-      }
-    }, "Cleaning the cache of dynamically collected types", true, myProject);
+          if (ProgressManager.getInstance().getProgressIndicator().isCanceled()) {
+            return false;
+          }
+          return true;
+        }), "Cleaning the cache of dynamically collected types", true, myProject);
 
 
     String message;

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.invertBoolean;
 
 import consulo.annotation.access.RequiredReadAction;
@@ -33,7 +32,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.*;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyInvertBooleanAction extends BaseRefactoringAction {
     @Override
@@ -91,6 +90,6 @@ public class PyInvertBooleanAction extends BaseRefactoringAction {
 
     @Override
     protected boolean isAvailableForLanguage(Language language) {
-        return language.isKindOf(PythonLanguage.getInstance());
+        return language.isKindOf(PythonLanguage.INSTANCE);
     }
 }

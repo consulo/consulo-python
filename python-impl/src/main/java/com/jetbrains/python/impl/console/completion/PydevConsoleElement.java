@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.console.completion;
 
 import consulo.util.lang.StringUtil;
@@ -29,7 +28,7 @@ public class PydevConsoleElement extends LightNamedElement {
   private final String myDescription;
 
   public PydevConsoleElement(PsiManager manager, String name, String description) {
-    super(manager, PythonLanguage.getInstance(), name);
+    super(manager, PythonLanguage.INSTANCE, name);
     myDescription = description;
   }
 

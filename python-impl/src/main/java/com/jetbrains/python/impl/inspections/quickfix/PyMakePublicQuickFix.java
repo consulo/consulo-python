@@ -25,6 +25,7 @@ import consulo.language.psi.PsiReference;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
@@ -35,6 +36,7 @@ public class PyMakePublicQuickFix implements LocalQuickFix {
     }
 
     @Override
+    @RequiredUIAccess
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         if (element instanceof PyReferenceExpression) {
@@ -44,20 +46,20 @@ public class PyMakePublicQuickFix implements LocalQuickFix {
             }
             element = reference.resolve();
         }
-        if (element instanceof PyTargetExpression) {
-            String name = ((PyTargetExpression) element).getName();
+        if (element instanceof PyTargetExpression target) {
+            String name = target.getName();
             if (name == null) {
                 return;
             }
-            VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+            VirtualFile virtualFile = target.getContainingFile().getVirtualFile();
             if (virtualFile != null) {
                 String publicName = StringUtil.trimLeading(name, '_');
-                new RenameProcessor(project, element, publicName, false, false).run();
+                new RenameProcessor(project, target, publicName, false, false).run();
             }
         }
     }
 
-    //@Override
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

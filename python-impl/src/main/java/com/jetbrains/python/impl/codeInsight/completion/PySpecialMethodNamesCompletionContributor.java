@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.completion;
 
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.PythonIcons;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyClass;
@@ -29,7 +27,7 @@ import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.editor.completion.lookup.TailType;
 import consulo.language.editor.completion.lookup.TailTypeDecorator;
-import consulo.language.util.ProcessingContext;
+import consulo.python.impl.icon.PythonImplIconGroup;
 
 import java.util.Map;
 
@@ -37,46 +35,44 @@ import static consulo.language.pattern.PlatformPatterns.psiElement;
 
 /**
  * Completes predefined method names like __str__
- * User: dcheryasov
- * Date: Dec 3, 2009 10:06:12 AM
+ *
+ * @author dcheryasov
+ * @since 2009-12-03
  */
 @ExtensionImpl
 public class PySpecialMethodNamesCompletionContributor extends CompletionContributor {
-  @Override
-  public AutoCompletionDecision handleAutoCompletionPossibility(AutoCompletionContext context) {
-    // auto-insert the obvious only case; else show other cases.
-    LookupElement[] items = context.getItems();
-    if (items.length == 1) {
-      return AutoCompletionDecision.insertItem(items[0]);
+    @Override
+    public AutoCompletionDecision handleAutoCompletionPossibility(AutoCompletionContext context) {
+        // auto-insert the obvious only case; else show other cases.
+        LookupElement[] items = context.getItems();
+        if (items.length == 1) {
+            return AutoCompletionDecision.insertItem(items[0]);
+        }
+        return AutoCompletionDecision.SHOW_LOOKUP;
     }
-    return AutoCompletionDecision.SHOW_LOOKUP;
-  }
 
-  public PySpecialMethodNamesCompletionContributor() {
-    extend(CompletionType.BASIC,
-           psiElement().withLanguage(PythonLanguage.getInstance())
-                       .and(psiElement().inside(psiElement(PyFunction.class).inside(psiElement(PyClass.class))))
-                       .and(psiElement()
-                              .afterLeaf("def")),
-           new CompletionProvider() {
-             public void addCompletions(CompletionParameters parameters,
-                                        ProcessingContext context,
-                                        CompletionResultSet result) {
-               LanguageLevel languageLevel = LanguageLevel.forElement(parameters.getOriginalFile());
-               for (Map.Entry<String, PyNames.BuiltinDescription> entry : PyNames.getBuiltinMethods(languageLevel).entrySet()) {
-                 LookupElementBuilder item = LookupElementBuilder.create(entry.getKey() + entry.getValue().getSignature())
-                                                                 .bold()
-                                                                 .withTypeText("predefined")
-                                                                 .withIcon(PythonIcons.Python.Nodes
-                                                                             .Cyan_dot);
-                 result.addElement(TailTypeDecorator.withTail(item, TailType.CASE_COLON));
-               }
-             }
-           });
-  }
+    public PySpecialMethodNamesCompletionContributor() {
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .withLanguage(PythonLanguage.INSTANCE)
+                .and(psiElement().inside(psiElement(PyFunction.class).inside(psiElement(PyClass.class))))
+                .and(psiElement().afterLeaf("def")),
+            (parameters, context, result) -> {
+                LanguageLevel languageLevel = LanguageLevel.forElement(parameters.getOriginalFile());
+                for (Map.Entry<String, PyNames.BuiltinDescription> entry : PyNames.getBuiltinMethods(languageLevel).entrySet()) {
+                    LookupElementBuilder item = LookupElementBuilder.create(entry.getKey() + entry.getValue().getSignature())
+                        .bold()
+                        .withTypeText("predefined")
+                        .withIcon(PythonImplIconGroup.pythonNodesCyan_dot());
+                    result.addElement(TailTypeDecorator.withTail(item, TailType.CASE_COLON));
+                }
+            }
+        );
+    }
 
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.INSTANCE;
-  }
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
+    }
 }

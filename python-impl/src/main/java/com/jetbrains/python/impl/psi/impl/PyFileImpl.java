@@ -196,7 +196,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
     }
 
     public PyFileImpl(FileViewProvider viewProvider) {
-        this(viewProvider, PythonLanguage.getInstance());
+        this(viewProvider, PythonLanguage.INSTANCE);
     }
 
     public PyFileImpl(FileViewProvider viewProvider, Language language) {
@@ -372,7 +372,7 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
                 if (!PyNames.isIdentifier(s)) {
                     continue;
                 }
-                if (!processor.execute(new LightNamedElement(myManager, PythonLanguage.getInstance(), s), resolveState)) {
+                if (!processor.execute(new LightNamedElement(myManager, PythonLanguage.INSTANCE, s), resolveState)) {
                     return false;
                 }
             }

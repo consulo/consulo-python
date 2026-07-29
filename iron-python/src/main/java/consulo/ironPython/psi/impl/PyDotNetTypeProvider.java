@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package consulo.ironPython.psi.impl;
 
+import com.jetbrains.python.impl.psi.impl.ParamHelper;
+import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PyParameterList;
-import com.jetbrains.python.impl.psi.impl.ParamHelper;
-import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
@@ -29,10 +28,9 @@ import consulo.dotnet.psi.*;
 import consulo.dotnet.psi.resolve.DotNetNamespaceAsElement;
 import consulo.dotnet.psi.resolve.DotNetTypeRef;
 import consulo.language.psi.PsiElement;
-import consulo.language.util.ModuleUtilCore;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,24 +42,24 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 {
 	@Override
 	@Nullable
+    @RequiredReadAction
 	public PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor)
 	{
-		if(referenceTarget instanceof DotNetTypeDeclaration)
+		if(referenceTarget instanceof DotNetTypeDeclaration typeDef)
 		{
-			return new PyDotNetClassType((DotNetTypeDeclaration) referenceTarget, true);
+			return new PyDotNetClassType(typeDef, true);
 		}
-		if(referenceTarget instanceof DotNetNamespaceAsElement)
+		if(referenceTarget instanceof DotNetNamespaceAsElement namespaceAsElem)
 		{
-			return new PyDotNetNamespaceType((DotNetNamespaceAsElement) referenceTarget, anchor == null ? null : ModuleUtilCore.findModuleForPsiElement(anchor));
+            return new PyDotNetNamespaceType(namespaceAsElem, anchor == null ? null : anchor.getModule());
 		}
-		if(referenceTarget instanceof DotNetLikeMethodDeclaration)
+		if(referenceTarget instanceof DotNetLikeMethodDeclaration method)
 		{
-			DotNetLikeMethodDeclaration method = (DotNetLikeMethodDeclaration) referenceTarget;
 			return new PyDotNetMethodType(method);
 		}
-		if(referenceTarget instanceof DotNetVariable)
+		if(referenceTarget instanceof DotNetVariable variable)
 		{
-			return asPyType(((DotNetVariable) referenceTarget).toTypeRef(true));
+			return asPyType(variable.toTypeRef(true));
 		}
 		return null;
 	}
@@ -79,21 +77,21 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 	}
 
 	@Override
-	public Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context)
+    @RequiredReadAction
+	public SimpleReference<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context)
 	{
-		if(!(param.getParent() instanceof PyParameterList))
+		if(!(param.getParent() instanceof PyParameterList paramList))
 		{
 			return null;
 		}
-		List<PyNamedParameter> params = ParamHelper.collectNamedParameters((PyParameterList) param.getParent());
+		List<PyNamedParameter> params = ParamHelper.collectNamedParameters(paramList);
 		int index = params.indexOf(param);
 		if(index < 0)
 		{
 			return null;
 		}
-		List<PyType> superMethodParameterTypes = new ArrayList<PyType>();
-		PySuperMethodsSearch.search(func, context).forEach(psiElement ->
-		{
+		List<PyType> superMethodParameterTypes = new ArrayList<>();
+		PySuperMethodsSearch.search(func, context).forEach(psiElement -> {
 			if(psiElement instanceof DotNetLikeMethodDeclaration)
 			{
 				DotNetLikeMethodDeclaration method = (DotNetLikeMethodDeclaration) psiElement;
@@ -113,7 +111,7 @@ public class PyDotNetTypeProvider extends PyTypeProviderBase
 		});
 		if(superMethodParameterTypes.size() > 0)
 		{
-			return Ref.create(superMethodParameterTypes.get(0));
+			return SimpleReference.create(superMethodParameterTypes.get(0));
 		}
 		return null;
 	}

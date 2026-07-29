@@ -40,7 +40,7 @@ import java.util.Set;
 public class PyTargetElementUtilEx implements TargetElementUtilExtender {
   @Override
   public boolean includeSelfInGotoImplementation(PsiElement element) {
-    return element.getLanguage() != PythonLanguage.getInstance();
+      return element.getLanguage() != PythonLanguage.INSTANCE;
   }
 
   @Nullable

@@ -103,7 +103,7 @@ public class PyChangeSignatureDialog extends ChangeSignatureDialogBase<PyParamet
   }
 
   public boolean isNameValid(String name, Project project) {
-    NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.getInstance());
+    NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.INSTANCE);
     return name != null
         && validator.isIdentifier(name, project)
         && !validator.isKeyword(name, project);
