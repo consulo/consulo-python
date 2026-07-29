@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.surround;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.impl.refactoring.surround.surrounders.expressions.PyWithParenthesesSurrounder;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.editor.surroundWith.SurroundDescriptor;
@@ -27,36 +27,36 @@ import consulo.language.editor.surroundWith.Surrounder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
-
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Aug 27, 2009
- * Time: 5:59:04 PM
+ * @author Alexey.Ivanov
+ * @since 2009-08-27
  */
 @ExtensionImpl
 public class PyExpressionSurroundDescriptor implements SurroundDescriptor {
-  private static final Surrounder[] SURROUNDERS = {new PyWithParenthesesSurrounder()};
+    private static final Surrounder[] SURROUNDERS = {new PyWithParenthesesSurrounder()};
 
-  public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-    PsiElement element = PyRefactoringUtil.findExpressionInRange(file, startOffset, endOffset);
-    if (!(element instanceof PyExpression)) {
-      return PsiElement.EMPTY_ARRAY;
+    @Override
+    @RequiredReadAction
+    public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
+        PsiElement element = PyRefactoringUtil.findExpressionInRange(file, startOffset, endOffset);
+        if (!(element instanceof PyExpression)) {
+            return PsiElement.EMPTY_ARRAY;
+        }
+        return new PsiElement[]{element};
     }
-    return new PsiElement[]{element};
-  }
 
-  public Surrounder[] getSurrounders() {
-    return SURROUNDERS;
-  }
+    @Override
+    public Surrounder[] getSurrounders() {
+        return SURROUNDERS;
+    }
 
-  @Override
-  public boolean isExclusive() {
-    return false;
-  }
+    @Override
+    public boolean isExclusive() {
+        return false;
+    }
 
-  @Override
-  public Language getLanguage() {
-    return PythonLanguage.INSTANCE;
-  }
+    @Override
+    public Language getLanguage() {
+        return PythonLanguage.INSTANCE;
+    }
 }

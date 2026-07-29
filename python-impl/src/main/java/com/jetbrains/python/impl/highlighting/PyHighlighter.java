@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.highlighting;
 
 import consulo.language.ast.StringEscapesTokenTypes;
@@ -41,6 +40,7 @@ public class PyHighlighter extends SyntaxHighlighterBase {
   private Map<IElementType, TextAttributesKey> keys;
   private final LanguageLevel myLanguageLevel;
 
+  @Override
   public Lexer getHighlightingLexer() {
     LayeredLexer ret = new LayeredLexer(createHighlightingLexer(myLanguageLevel));
     ret.registerLayer(
@@ -67,50 +67,50 @@ public class PyHighlighter extends SyntaxHighlighterBase {
     return new PythonHighlightingLexer(myLanguageLevel);
   }
 
-  public static final TextAttributesKey PY_KEYWORD = TextAttributesKey.createTextAttributesKey("PY.KEYWORD", KEYWORD);
+  public static final TextAttributesKey PY_KEYWORD = TextAttributesKey.of("PY.KEYWORD", KEYWORD);
 
-  public static final TextAttributesKey PY_BYTE_STRING = TextAttributesKey.createTextAttributesKey("PY.STRING.B", STRING);
-  public static final TextAttributesKey PY_UNICODE_STRING = TextAttributesKey.createTextAttributesKey("PY.STRING.U", STRING);
-  public static final TextAttributesKey PY_NUMBER = TextAttributesKey.createTextAttributesKey("PY.NUMBER", NUMBER);
+  public static final TextAttributesKey PY_BYTE_STRING = TextAttributesKey.of("PY.STRING.B", STRING);
+  public static final TextAttributesKey PY_UNICODE_STRING = TextAttributesKey.of("PY.STRING.U", STRING);
+  public static final TextAttributesKey PY_NUMBER = TextAttributesKey.of("PY.NUMBER", NUMBER);
 
-  static final TextAttributesKey PY_OPERATION_SIGN = TextAttributesKey.createTextAttributesKey("PY.OPERATION_SIGN", OPERATION_SIGN);
+  static final TextAttributesKey PY_OPERATION_SIGN = TextAttributesKey.of("PY.OPERATION_SIGN", OPERATION_SIGN);
 
-  static final TextAttributesKey PY_PARENTHS = TextAttributesKey.createTextAttributesKey("PY.PARENTHS", PARENTHESES);
+  static final TextAttributesKey PY_PARENTHS = TextAttributesKey.of("PY.PARENTHS", PARENTHESES);
 
-  static final TextAttributesKey PY_BRACKETS = TextAttributesKey.createTextAttributesKey("PY.BRACKETS", BRACKETS);
+  static final TextAttributesKey PY_BRACKETS = TextAttributesKey.of("PY.BRACKETS", BRACKETS);
 
-  static final TextAttributesKey PY_BRACES = TextAttributesKey.createTextAttributesKey("PY.BRACES", BRACES);
+  static final TextAttributesKey PY_BRACES = TextAttributesKey.of("PY.BRACES", BRACES);
 
-  static final TextAttributesKey PY_COMMA = TextAttributesKey.createTextAttributesKey("PY.COMMA", COMMA);
+  static final TextAttributesKey PY_COMMA = TextAttributesKey.of("PY.COMMA", COMMA);
 
-  static final TextAttributesKey PY_DOT = TextAttributesKey.createTextAttributesKey("PY.DOT", DOT);
+  static final TextAttributesKey PY_DOT = TextAttributesKey.of("PY.DOT", DOT);
 
-  public static final TextAttributesKey PY_LINE_COMMENT = TextAttributesKey.createTextAttributesKey("PY.LINE_COMMENT", LINE_COMMENT);
+  public static final TextAttributesKey PY_LINE_COMMENT = TextAttributesKey.of("PY.LINE_COMMENT", LINE_COMMENT);
 
-  public static final TextAttributesKey PY_DOC_COMMENT = TextAttributesKey.createTextAttributesKey("PY.DOC_COMMENT", DOC_COMMENT);
+  public static final TextAttributesKey PY_DOC_COMMENT = TextAttributesKey.of("PY.DOC_COMMENT", DOC_COMMENT);
 
-  public static final TextAttributesKey PY_DOC_COMMENT_TAG = TextAttributesKey.createTextAttributesKey("PY.DOC_COMMENT_TAG", DOC_COMMENT_TAG);
+  public static final TextAttributesKey PY_DOC_COMMENT_TAG = TextAttributesKey.of("PY.DOC_COMMENT_TAG", DOC_COMMENT_TAG);
 
-  public static final TextAttributesKey PY_DECORATOR = TextAttributesKey.createTextAttributesKey("PY.DECORATOR", IDENTIFIER);
+  public static final TextAttributesKey PY_DECORATOR = TextAttributesKey.of("PY.DECORATOR", IDENTIFIER);
 
-  public static final TextAttributesKey PY_CLASS_DEFINITION = TextAttributesKey.createTextAttributesKey("PY.CLASS_DEFINITION", CLASS_NAME);
+  public static final TextAttributesKey PY_CLASS_DEFINITION = TextAttributesKey.of("PY.CLASS_DEFINITION", CLASS_NAME);
 
-  public static final TextAttributesKey PY_FUNC_DEFINITION = TextAttributesKey.createTextAttributesKey("PY.FUNC_DEFINITION", FUNCTION_DECLARATION);
+  public static final TextAttributesKey PY_FUNC_DEFINITION = TextAttributesKey.of("PY.FUNC_DEFINITION", FUNCTION_DECLARATION);
 
-  public static final TextAttributesKey PY_PREDEFINED_DEFINITION = TextAttributesKey.createTextAttributesKey("PY.PREDEFINED_DEFINITION", PREDEFINED_SYMBOL);
+  public static final TextAttributesKey PY_PREDEFINED_DEFINITION = TextAttributesKey.of("PY.PREDEFINED_DEFINITION", PREDEFINED_SYMBOL);
 
-  public static final TextAttributesKey PY_PREDEFINED_USAGE = TextAttributesKey.createTextAttributesKey("PY.PREDEFINED_USAGE", PREDEFINED_SYMBOL);
+  public static final TextAttributesKey PY_PREDEFINED_USAGE = TextAttributesKey.of("PY.PREDEFINED_USAGE", PREDEFINED_SYMBOL);
 
-  public static final TextAttributesKey PY_BUILTIN_NAME = TextAttributesKey.createTextAttributesKey("PY.BUILTIN_NAME", PREDEFINED_SYMBOL);
+  public static final TextAttributesKey PY_BUILTIN_NAME = TextAttributesKey.of("PY.BUILTIN_NAME", PREDEFINED_SYMBOL);
 
-  public static final TextAttributesKey PY_PARAMETER = TextAttributesKey.createTextAttributesKey("PY.PARAMETER", PARAMETER);
-  public static final TextAttributesKey PY_SELF_PARAMETER = TextAttributesKey.createTextAttributesKey( "PY.SELF_PARAMETER", PARAMETER);
+  public static final TextAttributesKey PY_PARAMETER = TextAttributesKey.of("PY.PARAMETER", PARAMETER);
+  public static final TextAttributesKey PY_SELF_PARAMETER = TextAttributesKey.of( "PY.SELF_PARAMETER", PARAMETER);
 
-  public static final TextAttributesKey PY_KEYWORD_ARGUMENT = TextAttributesKey.createTextAttributesKey("PY.KEYWORD_ARGUMENT", PARAMETER);
+  public static final TextAttributesKey PY_KEYWORD_ARGUMENT = TextAttributesKey.of("PY.KEYWORD_ARGUMENT", PARAMETER);
 
-  public static final TextAttributesKey PY_VALID_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey("PY.VALID_STRING_ESCAPE", VALID_STRING_ESCAPE);
+  public static final TextAttributesKey PY_VALID_STRING_ESCAPE = TextAttributesKey.of("PY.VALID_STRING_ESCAPE", VALID_STRING_ESCAPE);
 
-  public static final TextAttributesKey PY_INVALID_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey("PY.INVALID_STRING_ESCAPE", INVALID_STRING_ESCAPE);
+  public static final TextAttributesKey PY_INVALID_STRING_ESCAPE = TextAttributesKey.of("PY.INVALID_STRING_ESCAPE", INVALID_STRING_ESCAPE);
   
   /**
    * The 'heavy' constructor that initializes everything. PySyntaxHighlighterFactory caches such instances per level.
@@ -118,7 +118,7 @@ public class PyHighlighter extends SyntaxHighlighterBase {
    */
   public PyHighlighter(LanguageLevel languageLevel) {
     myLanguageLevel = languageLevel;
-    keys = new HashMap<IElementType, TextAttributesKey>();
+    keys = new HashMap<>();
 
     fillMap(keys, PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens(), PY_KEYWORD);
     fillMap(keys, PyTokenTypes.OPERATIONS, PY_OPERATION_SIGN);
@@ -153,6 +153,7 @@ public class PyHighlighter extends SyntaxHighlighterBase {
     keys.put(StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN, PY_INVALID_STRING_ESCAPE);
   }
 
+  @Override
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(keys.get(tokenType));
   }

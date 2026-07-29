@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
@@ -26,16 +26,18 @@ import com.jetbrains.python.psi.PyExpressionStatement;
  * @author yole
  */
 public class PyExpressionStatementImpl extends PyElementImpl implements PyExpressionStatement {
-  public PyExpressionStatementImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyExpressionStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  public PyExpression getExpression() {
-    return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
-  }
+    @Override
+    @RequiredReadAction
+    public PyExpression getExpression() {
+        return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyExpressionStatement(this);
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyExpressionStatement(this);
+    }
 }

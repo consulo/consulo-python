@@ -20,6 +20,7 @@ import com.jetbrains.python.impl.documentation.docstrings.PyDocstringGenerator;
 import com.jetbrains.python.impl.documentation.doctest.PyDocstringFile;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -43,6 +44,8 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
         return myText;
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile) || file instanceof PyDocstringFile) {
             return false;
@@ -78,6 +81,8 @@ public class PyGenerateDocstringIntention extends PyBaseIntentionAction {
         }
     }
 
+    @Override
+    @RequiredReadAction
     public void doInvoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement elementAt = PyUtil.findNonWhitespaceAtOffset(file, editor.getCaretModel().getOffset());
         PyFunction function = PsiTreeUtil.getParentOfType(elementAt, PyFunction.class);

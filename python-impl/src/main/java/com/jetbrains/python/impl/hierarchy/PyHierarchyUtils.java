@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.hierarchy;
 
 import consulo.ide.impl.idea.ide.hierarchy.HierarchyBrowserManager;
@@ -24,27 +23,22 @@ import consulo.project.Project;
 import java.util.Comparator;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Aug 12, 2009
- * Time: 8:30:36 PM
+ * @author Alexey.Ivanov
+ * @since 2009-08-12
  */
 public class PyHierarchyUtils {
-  private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = new Comparator<NodeDescriptor>() {
-    public int compare(NodeDescriptor first, NodeDescriptor second) {
-      return first.getIndex() - second.getIndex();
-    }
-  };
+    private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR =
+        (first, second) -> first.getIndex() - second.getIndex();
 
-  private PyHierarchyUtils() {
-  }
+    private PyHierarchyUtils() {
+    }
 
-  public static Comparator<NodeDescriptor> getComparator(Project project) {
-    if (HierarchyBrowserManager.getInstance(project).getState().SORT_ALPHABETICALLY) {
-      return AlphaComparator.INSTANCE;
+    public static Comparator<NodeDescriptor> getComparator(Project project) {
+        if (HierarchyBrowserManager.getInstance(project).getState().SORT_ALPHABETICALLY) {
+            return AlphaComparator.INSTANCE;
+        }
+        else {
+            return NODE_DESCRIPTOR_COMPARATOR;
+        }
     }
-    else {
-      return NODE_DESCRIPTOR_COMPARATOR;
-    }
-  }
 }

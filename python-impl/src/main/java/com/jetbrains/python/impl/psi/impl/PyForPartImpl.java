@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiWhiteSpace;
@@ -28,8 +28,8 @@ import com.jetbrains.python.psi.PyForPart;
 import java.util.List;
 
 /**
- * User: dcheryasov
- * Date: Mar 15, 2009 9:57:48 PM
+ * @author dcheryasov
+ * @since 2009-03-15
  */
 public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
   public PyForPartImpl(ASTNode astNode) {
@@ -42,6 +42,7 @@ public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
    * @param eltType type of a node that must precede the node we're checking.
    * @return true if node is really a next sibling to a node of eltType type.
    */
+  @RequiredReadAction
   protected static boolean followsNodeOfType(ASTNode node, PyElementType eltType) {
     if (node != null) {
       PsiElement checker = node.getPsi();
@@ -63,6 +64,8 @@ public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
     return false;
   }
 
+  @Override
+  @RequiredReadAction
   public PyExpression getTarget() {
     ASTNode n = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
     if (followsNodeOfType(n, PyTokenTypes.FOR_KEYWORD)) {
@@ -71,6 +74,8 @@ public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
     else return null;
   }
 
+  @Override
+  @RequiredReadAction
   public PyExpression getSource() {
     List<PsiElement> exprs = findChildrenByType(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
     // normally there are 2 exprs, the second is the source.
@@ -79,5 +84,4 @@ public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
     if (followsNodeOfType(ret.getNode(), PyTokenTypes.IN_KEYWORD)) return ret;
     else return null;
   }
-
 }

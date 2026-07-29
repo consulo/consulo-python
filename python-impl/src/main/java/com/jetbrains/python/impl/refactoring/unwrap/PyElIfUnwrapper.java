@@ -13,53 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyPassStatement;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.psi.PyStatementWithElse;
 import com.jetbrains.python.impl.psi.impl.PyIfPartElifImpl;
 import consulo.language.util.IncorrectOperationException;
+import consulo.python.impl.localize.PyLocalize;
 
 import java.util.List;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyElIfUnwrapper extends PyUnwrapper {
-  public PyElIfUnwrapper() {
-    super(PyBundle.message("unwrap.elif"));
-  }
-
-  @Override
-  protected void doUnwrap(PsiElement element, Context context)
-    throws IncorrectOperationException
-  {
-    PsiElement parent = PsiTreeUtil.getParentOfType(element, PyStatementWithElse.class);
-    context.extractPart(element);
-    context.delete(parent);
-  }
-
-  @Override
-  public PsiElement collectAffectedElements(PsiElement e, List<PsiElement> toExtract) {
-    super.collectAffectedElements(e, toExtract);
-    return PsiTreeUtil.getParentOfType(e, PyStatementWithElse.class);
-  }
-
-  @Override
-  public boolean isApplicableTo(PsiElement e) {
-    if (e instanceof PyIfPartElifImpl) {
-      PyStatementList statementList = ((PyIfPartElifImpl)e).getStatementList();
-      if (statementList != null) {
-        PyStatement[] statements = statementList.getStatements();
-        return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
-      }
+    public PyElIfUnwrapper() {
+        super(PyLocalize.unwrapElif());
     }
-    return false;
-  }
+
+    @Override
+    @RequiredReadAction
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        PsiElement parent = PsiTreeUtil.getParentOfType(element, PyStatementWithElse.class);
+        context.extractPart(element);
+        context.delete(parent);
+    }
+
+    @Override
+    public PsiElement collectAffectedElements(PsiElement e, List<PsiElement> toExtract) {
+        super.collectAffectedElements(e, toExtract);
+        return PsiTreeUtil.getParentOfType(e, PyStatementWithElse.class);
+    }
+
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        if (e instanceof PyIfPartElifImpl elifPart) {
+            PyStatementList statementList = elifPart.getStatementList();
+            if (statementList != null) {
+                PyStatement[] statements = statementList.getStatements();
+                return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
+            }
+        }
+        return false;
+    }
 }

@@ -13,39 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
+import consulo.python.impl.localize.PyLocalize;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyForUnwrapper extends PyUnwrapper {
-  public PyForUnwrapper() {
-    super(PyBundle.message("unwrap.for"));
-  }
-
-  public boolean isApplicableTo(PsiElement e) {
-    if (e instanceof PyForStatement) {
-      PyStatementList statementList = ((PyForStatement)e).getForPart().getStatementList();
-      if (statementList != null) {
-        PyStatement[] statements = statementList.getStatements();
-        return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
-      }
+    public PyForUnwrapper() {
+        super(PyLocalize.unwrapFor());
     }
-    return false;
-  }
 
-  @Override
-  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-    PyForStatement forStatement = (PyForStatement)element;
-    context.extractPart(forStatement);
-    context.extractPart(forStatement.getElsePart());
-    context.delete(forStatement);
-  }
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        if (e instanceof PyForStatement forStmt) {
+            PyStatementList statementList = forStmt.getForPart().getStatementList();
+            if (statementList != null) {
+                PyStatement[] statements = statementList.getStatements();
+                return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @RequiredReadAction
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        PyForStatement forStatement = (PyForStatement) element;
+        context.extractPart(forStatement);
+        context.extractPart(forStatement.getElsePart());
+        context.delete(forStatement);
+    }
 }
-

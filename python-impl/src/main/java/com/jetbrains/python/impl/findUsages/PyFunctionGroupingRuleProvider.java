@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.findUsages;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
@@ -29,26 +29,29 @@ import consulo.usage.rule.UsageGroupingRule;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
 
-
 /**
  * @author yole
  */
 @ExtensionImpl(id = "py-function")
 public class PyFunctionGroupingRuleProvider implements FileStructureGroupRuleProvider {
-  public UsageGroupingRule getUsageGroupingRule(Project project) {
-    return new PyFunctionGroupingRule();
-  }
-
-  private static class PyFunctionGroupingRule implements UsageGroupingRule
-  {
-    public UsageGroup groupUsage(Usage usage) {
-      if (!(usage instanceof PsiElementUsage)) return null;
-      PsiElement psiElement = ((PsiElementUsage)usage).getElement();
-      PyFunction pyFunction = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class, false, PyClass.class);
-      if (pyFunction != null) {
-        return new PsiNamedElementUsageGroupBase<PyFunction>(pyFunction);
-      }
-      return null;
+    @Override
+    public UsageGroupingRule getUsageGroupingRule(Project project) {
+        return new PyFunctionGroupingRule();
     }
-  }
+
+    private static class PyFunctionGroupingRule implements UsageGroupingRule {
+        @Override
+        @RequiredReadAction
+        public UsageGroup groupUsage(Usage usage) {
+            if (!(usage instanceof PsiElementUsage elementUsage)) {
+                return null;
+            }
+            PsiElement psiElement = elementUsage.getElement();
+            PyFunction pyFunction = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class, false, PyClass.class);
+            if (pyFunction != null) {
+                return new PsiNamedElementUsageGroupBase<>(pyFunction);
+            }
+            return null;
+        }
+    }
 }

@@ -32,21 +32,22 @@ import java.util.Collection;
 
 @ExtensionImpl
 public class PyFunctionNameIndex extends StringStubIndexExtension<PyFunction> {
-  public static final StubIndexKey<String, PyFunction> KEY = StubIndexKey.createIndexKey("Py.function.shortName");
+    public static final StubIndexKey<String, PyFunction> KEY = StubIndexKey.createIndexKey("Py.function.shortName");
 
-  public StubIndexKey<String, PyFunction> getKey() {
-    return KEY;
-  }
+    @Override
+    public StubIndexKey<String, PyFunction> getKey() {
+        return KEY;
+    }
 
-  public static Collection<PyFunction> find(String name, Project project, GlobalSearchScope scope) {
-    return StubIndex.getInstance().get(KEY, name, project, scope);
-  }
+    public static Collection<PyFunction> find(String name, Project project, GlobalSearchScope scope) {
+        return StubIndex.getInstance().get(KEY, name, project, scope);
+    }
 
-  public static Collection<PyFunction> find(String name, Project project) {
-    return StubIndex.getInstance().get(KEY, name, project, ProjectScopes.getAllScope(project));
-  }
+    public static Collection<PyFunction> find(String name, Project project) {
+        return StubIndex.getInstance().get(KEY, name, project, ProjectScopes.getAllScope(project));
+    }
 
-  public static Collection<String> allKeys(Project project) {
-    return StubIndex.getInstance().getAllKeys(KEY, project);
-  }
+    public static Collection<String> allKeys(Project project) {
+        return StubIndex.getInstance().getAllKeys(KEY, project);
+    }
 }

@@ -42,6 +42,7 @@ import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.ProcessingContext;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.util.collection.ArrayUtil;
 
 import org.jspecify.annotations.Nullable;
@@ -92,8 +93,8 @@ public class PyImportReference extends PyReferenceImpl
 	protected List<RatedResolveResult> resolveInner()
 	{
 		PyImportElement parent = PsiTreeUtil.getParentOfType(myElement, PyImportElement.class); //importRef.getParent();
-		QualifiedName qname = myElement.asQualifiedName();
-		return qname == null ? Collections.<RatedResolveResult>emptyList() : ResolveImportUtil.resolveNameInImportStatement(parent, qname);
+		QualifiedName qName = myElement.asQualifiedName();
+		return qName == null ? Collections.<RatedResolveResult>emptyList() : ResolveImportUtil.resolveNameInImportStatement(parent, qName);
 	}
 
 	@Override
@@ -138,7 +139,8 @@ public class PyImportReference extends PyReferenceImpl
 		}
 	}
 
-	private static void replaceInsertHandler(Object[] variants, InsertHandler<LookupElement> insertHandler)
+	@RequiredReadAction
+    private static void replaceInsertHandler(Object[] variants, InsertHandler<LookupElement> insertHandler)
 	{
 		for(int i = 0; i < variants.length; i += 1)
 		{
@@ -178,7 +180,8 @@ public class PyImportReference extends PyReferenceImpl
 		return !(itemElement instanceof PsiFile);  // TODO deeper check?
 	}
 
-	private boolean alreadyHasImportKeyword()
+	@RequiredReadAction
+    private boolean alreadyHasImportKeyword()
 	{
 		if(PsiTreeUtil.getParentOfType(myElement, PyImportStatement.class) != null)
 		{
@@ -214,7 +217,8 @@ public class PyImportReference extends PyReferenceImpl
 			myObjects = new ArrayList<>();
 		}
 
-		public Object[] execute()
+		@RequiredReadAction
+        public Object[] execute()
 		{
 			int relativeLevel = -1;
 			InsertHandler<LookupElement> insertHandler = null;
@@ -313,7 +317,8 @@ public class PyImportReference extends PyReferenceImpl
 			return ArrayUtil.toObjectArray(myObjects);
 		}
 
-		private void fillFromQName(QualifiedName thisQName, InsertHandler<LookupElement> insertHandler)
+		@RequiredReadAction
+        private void fillFromQName(QualifiedName thisQName, InsertHandler<LookupElement> insertHandler)
 		{
 			QualifiedNameResolver visitor = new QualifiedNameResolverImpl(thisQName).fromElement(myCurrentFile);
 			for(PsiDirectory dir : visitor.resultsOfType(PsiDirectory.class))
@@ -341,7 +346,8 @@ public class PyImportReference extends PyReferenceImpl
 		/**
 		 * Adds variants found under given dir.
 		 */
-		private void fillFromDir(PsiDirectory targetDir, @Nullable InsertHandler<LookupElement> insertHandler)
+		@RequiredReadAction
+        private void fillFromDir(PsiDirectory targetDir, @Nullable InsertHandler<LookupElement> insertHandler)
 		{
 			if(targetDir != null)
 			{
@@ -374,7 +380,9 @@ public class PyImportReference extends PyReferenceImpl
 
 		private static final String IMPORT_KWD = " import ";
 
-		public void handleInsert(InsertionContext context, LookupElement item)
+        @Override
+        @RequiredUIAccess
+        public void handleInsert(InsertionContext context, LookupElement item)
 		{
 			Editor editor = context.getEditor();
 			Document document = editor.getDocument();

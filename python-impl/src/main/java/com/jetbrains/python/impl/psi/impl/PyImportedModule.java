@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import org.jspecify.annotations.Nullable;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
@@ -62,17 +63,21 @@ public class PyImportedModule extends LightElement
 		return myImportedPrefix;
 	}
 
-	public String getText()
+	@Override
+    @RequiredReadAction
+    public String getText()
 	{
 		return "import " + myImportedPrefix;
 	}
 
-	public void accept(PsiElementVisitor visitor)
+	@Override
+    public void accept(PsiElementVisitor visitor)
 	{
 		visitor.visitElement(this);
 	}
 
-	public PsiElement copy()
+	@Override
+    public PsiElement copy()
 	{
 		return new PyImportedModule(myImportElement, myContainingFile, myImportedPrefix);
 	}

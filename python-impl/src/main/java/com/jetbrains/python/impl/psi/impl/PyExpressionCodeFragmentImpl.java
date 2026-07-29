@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.psi.PyExpressionCodeFragment;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.file.FileTypeManager;
 import consulo.language.file.FileViewProvider;
 import consulo.language.file.light.LightVirtualFile;
@@ -26,55 +26,66 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiManager;
 import consulo.project.Project;
 
-
 /**
  * clone of JSExpressionCodeFragment
  */
 public class PyExpressionCodeFragmentImpl extends PyFileImpl implements PyExpressionCodeFragment {
-  private PsiElement myContext;
-  private boolean myPhysical;
-  private FileViewProvider myViewProvider;
+    private PsiElement myContext;
+    private boolean myPhysical;
+    private FileViewProvider myViewProvider;
 
-  public PyExpressionCodeFragmentImpl(Project project, String name, CharSequence text, boolean isPhysical) {
-    super((new SingleRootFileViewProvider(PsiManager.getInstance(project),
-                                          new LightVirtualFile(name, FileTypeManager.getInstance().getFileTypeByFileName(name), text),
-                                          isPhysical)));
-    myPhysical = isPhysical;
-    ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
-  }
+    public PyExpressionCodeFragmentImpl(Project project, String name, CharSequence text, boolean isPhysical) {
+        super((new SingleRootFileViewProvider(
+            PsiManager.getInstance(project),
+            new LightVirtualFile(name, FileTypeManager.getInstance().getFileTypeByFileName(name), text),
+            isPhysical
+        )));
+        myPhysical = isPhysical;
+        ((SingleRootFileViewProvider) getViewProvider()).forceCachedPsi(this);
+    }
 
-  protected PyExpressionCodeFragmentImpl clone() {
-    PyExpressionCodeFragmentImpl clone = (PyExpressionCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
-    clone.myPhysical = false;
-    clone.myOriginalFile = this;
-    SingleRootFileViewProvider cloneViewProvider =
-      new SingleRootFileViewProvider(getManager(), new LightVirtualFile(getName(), getLanguage(), getText()), false);
-    cloneViewProvider.forceCachedPsi(clone);
-    clone.myViewProvider = cloneViewProvider;
-    return clone;
-  }
+    @Override
+    @RequiredReadAction
+    protected PyExpressionCodeFragmentImpl clone() {
+        PyExpressionCodeFragmentImpl clone = (PyExpressionCodeFragmentImpl) cloneImpl((FileElement) calcTreeElement().clone());
+        clone.myPhysical = false;
+        clone.myOriginalFile = this;
+        SingleRootFileViewProvider cloneViewProvider =
+            new SingleRootFileViewProvider(getManager(), new LightVirtualFile(getName(), getLanguage(), getText()), false);
+        cloneViewProvider.forceCachedPsi(clone);
+        clone.myViewProvider = cloneViewProvider;
+        return clone;
+    }
 
-  public PsiElement getContext() {
-    return myContext != null && myContext.isValid() ? myContext : super.getContext();
-  }
+    @Override
+    @RequiredReadAction
+    public PsiElement getContext() {
+        return myContext != null && myContext.isValid() ? myContext : super.getContext();
+    }
 
-  public FileViewProvider getViewProvider() {
-    if (myViewProvider != null) return myViewProvider;
-    return super.getViewProvider();
-  }
+    @Override
+    public FileViewProvider getViewProvider() {
+        if (myViewProvider != null) {
+            return myViewProvider;
+        }
+        return super.getViewProvider();
+    }
 
-  public boolean isValid() {
-    if (!super.isValid()) return false;
-    if (myContext != null && !myContext.isValid()) return false;
-    return true;
-  }
+    @Override
+    @RequiredReadAction
+    public boolean isValid() {
+        if (!super.isValid()) {
+            return false;
+        }
+        return myContext == null || myContext.isValid();
+    }
 
-  public boolean isPhysical() {
-    return myPhysical;
-  }
+    @Override
+    public boolean isPhysical() {
+        return myPhysical;
+    }
 
-  public void setContext(PsiElement context) {
-    myContext = context;
-  }
-
+    public void setContext(PsiElement context) {
+        myContext = context;
+    }
 }

@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.psi.impl;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;
 import com.jetbrains.python.impl.PyElementTypes;
@@ -29,47 +30,44 @@ import com.jetbrains.python.psi.PyForPart;
 import com.jetbrains.python.psi.PyForStatement;
 import com.jetbrains.python.impl.psi.PyUtil;
 
-public class PyForStatementImpl extends PyPartitionedElementImpl implements PyForStatement
-{
-	public PyForStatementImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+public class PyForStatementImpl extends PyPartitionedElementImpl implements PyForStatement {
+    public PyForStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyForStatement(this);
-	}
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyForStatement(this);
+    }
 
-	public PyElsePart getElsePart()
-	{
-		return (PyElsePart) getPart(PyElementTypes.ELSE_PART);
-	}
+    @Override
+    public PyElsePart getElsePart() {
+        return (PyElsePart) getPart(PyElementTypes.ELSE_PART);
+    }
 
-	public PyForPart getForPart()
-	{
-		return findNotNullChildByClass(PyForPart.class);
-	}
+    @Override
+    @RequiredReadAction
+    public PyForPart getForPart() {
+        return findNotNullChildByClass(PyForPart.class);
+    }
 
-	public List<PsiNamedElement> getNamedElements()
-	{
-		PyExpression tgt = getForPart().getTarget();
-		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(tgt);
-		List<PsiNamedElement> results = Lists.newArrayList();
-		for(PyExpression expression : expressions)
-		{
-			if(expression instanceof PsiNamedElement)
-			{
-				results.add((PsiNamedElement) expression);
-			}
-		}
-		return results;
-	}
+    @Override
+    @RequiredReadAction
+    public List<PsiNamedElement> getNamedElements() {
+        PyExpression tgt = getForPart().getTarget();
+        List<PyExpression> expressions = PyUtil.flattenedParensAndStars(tgt);
+        List<PsiNamedElement> results = Lists.newArrayList();
+        for (PyExpression expression : expressions) {
+            if (expression instanceof PsiNamedElement) {
+                results.add((PsiNamedElement) expression);
+            }
+        }
+        return results;
+    }
 
-	@Override
-	public boolean isAsync()
-	{
-		return getNode().findChildByType(PyTokenTypes.ASYNC_KEYWORD) != null;
-	}
+    @Override
+    @RequiredReadAction
+    public boolean isAsync() {
+        return getNode().findChildByType(PyTokenTypes.ASYNC_KEYWORD) != null;
+    }
 }

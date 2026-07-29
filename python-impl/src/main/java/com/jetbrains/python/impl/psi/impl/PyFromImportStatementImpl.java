@@ -26,8 +26,10 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PyFromImportStatementStub;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
-import consulo.language.ast.TokenType;
+import consulo.language.ast.StandardTokenTypes;
 import consulo.language.psi.*;
 import consulo.language.psi.resolve.PsiScopeProcessor;
 import consulo.language.psi.resolve.ResolveState;
@@ -69,7 +71,9 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		pyVisitor.visitPyFromImportStatement(this);
 	}
 
-	public boolean isStarImport()
+	@Override
+    @RequiredReadAction
+    public boolean isStarImport()
 	{
 		PyFromImportStatementStub stub = getStub();
 		if(stub != null)
@@ -80,12 +84,16 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PyReferenceExpression getImportSource()
 	{
 		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens(), 0);
 	}
 
-	public QualifiedName getImportSourceQName()
+	@Override
+    @RequiredReadAction
+    public QualifiedName getImportSourceQName()
 	{
 		PyFromImportStatementStub stub = getStub();
 		if(stub != null)
@@ -106,12 +114,14 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return importSource.asQualifiedName();
 	}
 
-	public PyImportElement[] getImportElements()
+	@Override
+    @RequiredReadAction
+    public PyImportElement[] getImportElements()
 	{
 		PyFromImportStatementStub stub = getStub();
 		if(stub != null)
 		{
-			return stub.getChildrenByType(PyElementTypes.IMPORT_ELEMENT, count -> new PyImportElement[count]);
+			return stub.getChildrenByType(PyElementTypes.IMPORT_ELEMENT, PyImportElement[]::new);
 		}
 		List<PyImportElement> result = new ArrayList<>();
 		ASTNode importKeyword = getNode().findChildByType(PyTokenTypes.IMPORT_KEYWORD);
@@ -129,12 +139,16 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PyStarImportElement getStarImportElement()
 	{
 		return getStubOrPsiChild(PyElementTypes.STAR_IMPORT_ELEMENT);
 	}
 
-	public int getRelativeLevel()
+	@Override
+    @RequiredReadAction
+    public int getRelativeLevel()
 	{
 		PyFromImportStatementStub stub = getStub();
 		if(stub != null)
@@ -144,7 +158,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 
 		int result = 0;
 		ASTNode seeker = getNode().getFirstChildNode();
-		while(seeker != null && (seeker.getElementType() == PyTokenTypes.FROM_KEYWORD || seeker.getElementType() == TokenType.WHITE_SPACE))
+		while(seeker != null && (seeker.getElementType() == PyTokenTypes.FROM_KEYWORD || seeker.getElementType() == StandardTokenTypes.WHITE_SPACE))
 		{
 			seeker = seeker.getTreeNext();
 		}
@@ -156,25 +170,31 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return result;
 	}
 
-	public boolean isFromFuture()
+	@Override
+    @RequiredReadAction
+    public boolean isFromFuture()
 	{
 		QualifiedName qName = getImportSourceQName();
 		return qName != null && qName.matches(PyNames.FUTURE_MODULE);
 	}
 
 	@Override
-	public PsiElement getLeftParen()
+    @RequiredReadAction
+    public PsiElement getLeftParen()
 	{
 		return findChildByType(PyTokenTypes.LPAR);
 	}
 
 	@Override
+    @RequiredReadAction
 	public PsiElement getRightParen()
 	{
 		return findChildByType(PyTokenTypes.RPAR);
 	}
 
-	public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place)
+	@Override
+    @RequiredReadAction
+    public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place)
 	{
 		// import is per-file
 		if(place.getContainingFile() != getContainingFile())
@@ -210,7 +230,8 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		return true;
 	}
 
-	@Override
+    @Override
+    @RequiredWriteAction
 	public ASTNode addInternal(ASTNode first, ASTNode last, ASTNode anchor, Boolean before)
 	{
 		if(anchor == null)
@@ -224,10 +245,10 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 					lastChild = lastChild.getPrevSibling();
 					anchor = lastChild.getNode();
 				}
-				ASTNode rpar_node = lastChild.getNode();
-				if(rpar_node != null && rpar_node.getElementType() == PyTokenTypes.RPAR)
+				ASTNode rParNode = lastChild.getNode();
+				if(rParNode != null && rParNode.getElementType() == PyTokenTypes.RPAR)
 				{
-					anchor = rpar_node;
+					anchor = rParNode;
 				}
 			}
 		}
@@ -237,7 +258,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 		{
 			prevNode = prevNode.getTreePrev();
 		}
-		while(prevNode != null && prevNode.getElementType() == TokenType.WHITE_SPACE);
+		while(prevNode != null && prevNode.getElementType() == StandardTokenTypes.WHITE_SPACE);
 
 		if(prevNode != null && prevNode.getElementType() == PyElementTypes.IMPORT_ELEMENT &&
 				result.getElementType() == PyElementTypes.IMPORT_ELEMENT)
@@ -250,6 +271,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Override
+    @RequiredWriteAction
 	public void deleteChildInternal(ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getImportElements()))
@@ -260,12 +282,15 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PsiFileSystemItem resolveImportSource()
 	{
 		return as(ContainerUtil.getFirstItem(resolveImportSourceCandidates()), PsiFileSystemItem.class);
 	}
 
 	@Override
+    @RequiredReadAction
 	public List<PsiElement> resolveImportSourceCandidates()
 	{
 		QualifiedName qName = getImportSourceQName();
@@ -282,6 +307,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Override
+    @RequiredReadAction
 	public List<String> getFullyQualifiedObjectNames()
 	{
 		QualifiedName source = getImportSourceQName();
@@ -300,6 +326,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Override
+    @RequiredReadAction
 	public Iterable<PyElement> iterateNames()
 	{
 		PyElement resolved = as(resolveImplicitSubModule(), PyElement.class);
@@ -307,6 +334,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	}
 
 	@Override
+    @RequiredReadAction
 	public List<RatedResolveResult> multiResolveName(String name)
 	{
 		QualifiedName importSourceQName = getImportSourceQName();
@@ -327,6 +355,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 	 * http://stackoverflow.com/questions/6048786/from-module-import-in-init-py-makes-module-name-visible
 	 */
 	@Nullable
+    @RequiredReadAction
 	private PsiElement resolveImplicitSubModule()
 	{
 		QualifiedName importSourceQName = getImportSourceQName();

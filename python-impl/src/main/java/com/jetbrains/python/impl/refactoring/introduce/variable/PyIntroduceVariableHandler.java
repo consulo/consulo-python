@@ -15,15 +15,15 @@
  */
 package com.jetbrains.python.impl.refactoring.introduce.variable;
 
-import java.util.List;
-
-
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
+import com.jetbrains.python.psi.PyStatement;
+import consulo.annotation.access.RequiredWriteAction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.python.impl.localize.PyLocalize;
+
+import java.util.List;
 
 /**
  * @author Alexey.Ivanov
@@ -32,16 +32,18 @@ public class PyIntroduceVariableHandler extends IntroduceHandler
 {
 	public PyIntroduceVariableHandler()
 	{
-		super(new VariableValidator(), PyBundle.message("refactoring.introduce.variable.dialog.title"));
+		super(new VariableValidator(), PyLocalize.refactoringIntroduceVariableDialogTitle());
 	}
 
 	@Override
+    @RequiredWriteAction
 	protected PsiElement addDeclaration(PsiElement expression, PsiElement declaration, IntroduceOperation operation)
 	{
 		return doIntroduceVariable(expression, declaration, operation.getOccurrences(), operation.isReplaceAll());
 	}
 
-	public static PsiElement doIntroduceVariable(PsiElement expression, PsiElement declaration, List<PsiElement> occurrences, boolean replaceAll)
+	@RequiredWriteAction
+    public static PsiElement doIntroduceVariable(PsiElement expression, PsiElement declaration, List<PsiElement> occurrences, boolean replaceAll)
 	{
 		PsiElement anchor = replaceAll ? findAnchor(occurrences) : PsiTreeUtil.getParentOfType(expression, PyStatement.class);
 		assert anchor != null;

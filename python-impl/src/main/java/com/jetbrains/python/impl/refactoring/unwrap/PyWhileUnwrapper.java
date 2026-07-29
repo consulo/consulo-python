@@ -13,39 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
+import com.jetbrains.python.psi.PyPassStatement;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyWhileStatement;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
+import consulo.python.impl.localize.PyLocalize;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyWhileUnwrapper extends PyUnwrapper {
-  public PyWhileUnwrapper() {
-    super(PyBundle.message("unwrap.while"));
-  }
-
-  public boolean isApplicableTo(PsiElement e) {
-    if (e instanceof PyWhileStatement) {
-      PyStatementList statementList = ((PyWhileStatement)e).getWhilePart().getStatementList();
-      if (statementList != null) {
-        PyStatement[] statements = statementList.getStatements();
-        return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
-      }
+    public PyWhileUnwrapper() {
+        super(PyLocalize.unwrapWhile());
     }
-    return false;
-  }
 
-  @Override
-  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-    PyWhileStatement whileStatement = (PyWhileStatement)element;
-    context.extractPart(whileStatement);
-    context.extractPart(whileStatement.getElsePart());
-    context.delete(whileStatement);
-  }
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        if (e instanceof PyWhileStatement whileStmt) {
+            PyStatementList statementList = whileStmt.getWhilePart().getStatementList();
+            if (statementList != null) {
+                PyStatement[] statements = statementList.getStatements();
+                return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @RequiredReadAction
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        PyWhileStatement whileStatement = (PyWhileStatement) element;
+        context.extractPart(whileStatement);
+        context.extractPart(whileStatement.getElsePart());
+        context.delete(whileStatement);
+    }
 }
 

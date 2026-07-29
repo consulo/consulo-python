@@ -63,7 +63,7 @@ import java.util.function.Function;
  */
 public class PyIntroduceFieldHandler extends IntroduceHandler {
   public PyIntroduceFieldHandler() {
-    super(new IntroduceFieldValidator(), RefactoringLocalize.introduceFieldTitle().get());
+    super(new IntroduceFieldValidator(), RefactoringLocalize.introduceFieldTitle());
   }
 
   @Override
@@ -223,7 +223,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
     if (isAssignedLocalVariable(element)) {
       PyFunction function = PsiTreeUtil.getParentOfType(element, PyFunction.class);
       Collection<PsiReference> references = ReferencesSearch.search(element, new LocalSearchScope(function)).findAll();
-      ArrayList<PsiElement> result = new ArrayList<>();
+      List<PsiElement> result = new ArrayList<>();
       for (PsiReference reference : references) {
         PsiElement refElement = reference.getElement();
         if (refElement != element) {
@@ -332,7 +332,7 @@ public class PyIntroduceFieldHandler extends IntroduceHandler {
   }
 
   @Override
-  @RequiredWriteAction
+  @RequiredUIAccess
   protected void performInplaceIntroduce(IntroduceOperation operation) {
     PsiElement statement = performRefactoring(operation);
     // put caret on identifier after "self."

@@ -13,48 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
+import com.jetbrains.python.impl.psi.impl.PyIfPartIfImpl;
+import com.jetbrains.python.psi.PyIfStatement;
+import com.jetbrains.python.psi.PyPassStatement;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStatementList;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.psi.*;
-import com.jetbrains.python.impl.psi.impl.PyIfPartIfImpl;
+import consulo.python.impl.localize.PyLocalize;
 
 import java.util.List;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyIfUnwrapper extends PyUnwrapper {
-  public PyIfUnwrapper() {
-    super(PyBundle.message("unwrap.if"));
-  }
-
-  public boolean isApplicableTo(PsiElement e) {
-    if (e instanceof PyIfPartIfImpl) {
-      PyStatementList statementList = ((PyIfPartIfImpl)e).getStatementList();
-      if (statementList != null) {
-        PyStatement[] statements = statementList.getStatements();
-        return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
-      }
+    public PyIfUnwrapper() {
+        super(PyLocalize.unwrapIf());
     }
-    return false;
-  }
 
-  @Override
-  public PsiElement collectAffectedElements(PsiElement e, List<PsiElement> toExtract) {
-    super.collectAffectedElements(e, toExtract);
-    return PsiTreeUtil.getParentOfType(e, PyIfStatement.class);
-  }
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        if (e instanceof PyIfPartIfImpl ifPart) {
+            PyStatementList statementList = ifPart.getStatementList();
+            if (statementList != null) {
+                PyStatement[] statements = statementList.getStatements();
+                return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
+            }
+        }
+        return false;
+    }
 
+    @Override
+    public PsiElement collectAffectedElements(PsiElement e, List<PsiElement> toExtract) {
+        super.collectAffectedElements(e, toExtract);
+        return PsiTreeUtil.getParentOfType(e, PyIfStatement.class);
+    }
 
-  @Override
-  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-    PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
-    context.extractPart(ifStatement);
-    context.delete(ifStatement);
-  }
+    @Override
+    @RequiredReadAction
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        PyIfStatement ifStatement = PsiTreeUtil.getParentOfType(element, PyIfStatement.class);
+        context.extractPart(ifStatement);
+        context.delete(ifStatement);
+    }
 }

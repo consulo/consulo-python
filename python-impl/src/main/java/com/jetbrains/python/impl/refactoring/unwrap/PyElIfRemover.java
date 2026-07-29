@@ -13,40 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyPassStatement;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.PyStatementList;
 import com.jetbrains.python.impl.psi.impl.PyIfPartElifImpl;
 import consulo.language.util.IncorrectOperationException;
+import consulo.python.impl.localize.PyLocalize;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyElIfRemover extends PyUnwrapper {
-  public PyElIfRemover() {
-    super(PyBundle.message("remove.elif"));
-  }
-
-  @Override
-  public boolean isApplicableTo(PsiElement e) {
-    if (e instanceof PyIfPartElifImpl) {
-      PyStatementList statementList = ((PyIfPartElifImpl)e).getStatementList();
-      if (statementList != null) {
-        PyStatement[] statements = statementList.getStatements();
-        return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
-      }
+    public PyElIfRemover() {
+        super(PyLocalize.removeElif());
     }
-    return false;
-  }
 
-  @Override
-  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException
-  {
-    context.delete(element);
-  }
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        if (e instanceof PyIfPartElifImpl elifPart) {
+            PyStatementList statementList = elifPart.getStatementList();
+            if (statementList != null) {
+                PyStatement[] statements = statementList.getStatements();
+                return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        context.delete(element);
+    }
 }

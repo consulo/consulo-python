@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
 import consulo.language.ast.ASTNode;
@@ -21,15 +20,17 @@ import com.jetbrains.python.psi.PyIfPart;
 
 /**
  * PyIfPart that represents an 'elif' part.
- * User: dcheryasov
- * Date: Mar 12, 2009 5:21:11 PM
+ *
+ * @author dcheryasov
+ * @since 2009-03-12
  */
 public class PyIfPartElifImpl extends PyConditionalStatementPartImpl implements PyIfPart {
-  public PyIfPartElifImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyIfPartElifImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  public boolean isElif() {
-    return true;
-  }
+    @Override
+    public boolean isElif() {
+        return true;
+    }
 }

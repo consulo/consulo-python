@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight;
 
 import com.jetbrains.python.psi.PyElement;
@@ -28,9 +27,11 @@ import consulo.language.psi.PsiNamedElement;
  */
 @ExtensionImpl
 public class PyGotoTargetRendererProvider implements GotoTargetRendererProvider {
-  public PsiElementListCellRenderer getRenderer(PsiElement element) {
-    if (element instanceof PyElement && element instanceof PsiNamedElement) return new PyElementListCellRenderer();
-    return null;
-  }
-
+    @Override
+    public PsiElementListCellRenderer getRenderer(PsiElement element) {
+        if (element instanceof PyElement && element instanceof PsiNamedElement) {
+            return new PyElementListCellRenderer();
+        }
+        return null;
+    }
 }

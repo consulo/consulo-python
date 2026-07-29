@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl.stubs;
 
 import consulo.language.psi.stub.IStubElementType;
@@ -28,27 +27,28 @@ import org.jspecify.annotations.Nullable;
  * @author yole
  */
 public class PyImportElementStubImpl extends StubBase<PyImportElement> implements PyImportElementStub {
-  private final QualifiedName myImportedQName;
-  private final String myAsName;
+    private final QualifiedName myImportedQName;
+    private final String myAsName;
 
-  public PyImportElementStubImpl(@Nullable QualifiedName importedQName, String asName, StubElement parent,
-                                 IStubElementType elementType) {
-    super(parent, elementType);
-    myImportedQName = importedQName;
-    myAsName = asName;
-  }
+    public PyImportElementStubImpl(@Nullable QualifiedName importedQName, String asName, StubElement parent, IStubElementType elementType) {
+        super(parent, elementType);
+        myImportedQName = importedQName;
+        myAsName = asName;
+    }
 
-  @Nullable
-  public QualifiedName getImportedQName() {
-    return myImportedQName;
-  }
+    @Nullable
+    @Override
+    public QualifiedName getImportedQName() {
+        return myImportedQName;
+    }
 
-  public String getAsName() {
-    return myAsName;
-  }
+    @Override
+    public String getAsName() {
+        return myAsName;
+    }
 
-  @Override
-  public String toString() {
-    return "PyImportElementStub(importedQName=" + myImportedQName + " asName=" + myAsName + ")";
-  }
+    @Override
+    public String toString() {
+        return "PyImportElementStub(importedQName=" + myImportedQName + " asName=" + myAsName + ")";
+    }
 }

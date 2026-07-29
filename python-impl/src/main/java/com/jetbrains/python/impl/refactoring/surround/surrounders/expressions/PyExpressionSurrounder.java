@@ -13,42 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.surround.surrounders.expressions;
 
-
-import consulo.language.editor.surroundWith.Surrounder;
-import consulo.logging.Logger;
+import com.jetbrains.python.psi.PyExpression;
 import consulo.codeEditor.Editor;
-import consulo.project.Project;
 import consulo.document.util.TextRange;
+import consulo.language.editor.surroundWith.Surrounder;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.psi.PyExpression;
+import consulo.logging.Logger;
+import consulo.project.Project;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Aug 27, 2009
- * Time: 6:06:34 PM
+ * @author Alexey.Ivanov
+ * @since 2009-08-27
  */
-public abstract class PyExpressionSurrounder implements Surrounder
-{
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.python.refactoring.surround.surrounders.expressions.PyExpressionSurrounder");
+public abstract class PyExpressionSurrounder implements Surrounder {
+    private static final Logger LOG = Logger.getInstance(PyExpressionSurrounder.class);
 
-  public boolean isApplicable(PsiElement[] elements) {
-    LOG.assertTrue(elements.length == 1 && elements[0] instanceof PyExpression);
-    return isApplicable((PyExpression)elements[0]);
-  }
+    @Override
+    public boolean isApplicable(PsiElement[] elements) {
+        LOG.assertTrue(elements.length == 1 && elements[0] instanceof PyExpression);
+        return isApplicable((PyExpression) elements[0]);
+    }
 
-  public abstract boolean isApplicable(PyExpression expr);
+    public abstract boolean isApplicable(PyExpression expr);
 
-  public abstract TextRange surroundExpression(Project project, Editor editor, PyExpression element)
-    throws IncorrectOperationException;
+    public abstract TextRange surroundExpression(Project project, Editor editor, PyExpression element)
+        throws IncorrectOperationException;
 
-  public TextRange surroundElements(Project project, Editor editor, PsiElement[] elements)
-    throws IncorrectOperationException
-  {
-    return surroundExpression(project, editor, (PyExpression)elements[0]);
-  }
+    @Override
+    public TextRange surroundElements(Project project, Editor editor, PsiElement[] elements) throws IncorrectOperationException {
+        return surroundExpression(project, editor, (PyExpression) elements[0]);
+    }
 }

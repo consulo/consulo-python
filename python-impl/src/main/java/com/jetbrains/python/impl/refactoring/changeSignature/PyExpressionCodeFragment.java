@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.psi.impl.PyFileImpl;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.file.light.LightVirtualFile;
 import consulo.language.impl.file.SingleRootFileViewProvider;
 import consulo.language.psi.PsiCodeFragment;
@@ -26,42 +26,43 @@ import consulo.language.psi.PsiManager;
 import consulo.language.psi.scope.GlobalSearchScope;
 import consulo.project.Project;
 
-
 /**
- * User : ktisha
+ * @author ktisha
  */
-
 public class PyExpressionCodeFragment extends PyFileImpl implements PsiCodeFragment {
+    private GlobalSearchScope myResolveScope;
 
-  private GlobalSearchScope myResolveScope;
+    public PyExpressionCodeFragment(Project project, String name, CharSequence text) {
+        super(new SingleRootFileViewProvider(
+            PsiManager.getInstance(project),
+            new LightVirtualFile(name, PythonFileType.INSTANCE, text),
+            true
+        ));
+        ((SingleRootFileViewProvider) getViewProvider()).forceCachedPsi(this);
+    }
 
-  public PyExpressionCodeFragment(Project project,
-                                  String name,
-                                  CharSequence text) {
-    super(new SingleRootFileViewProvider(PsiManager.getInstance(project), new LightVirtualFile(name, PythonFileType.INSTANCE, text), true));
-    ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
-  }
+    @Override
+    public void forceResolveScope(GlobalSearchScope scope) {
+        myResolveScope = scope;
+    }
 
-  @Override
-  public void forceResolveScope(GlobalSearchScope scope) {
-    myResolveScope = scope;
-  }
+    @Override
+    public GlobalSearchScope getForcedResolveScope() {
+        return myResolveScope;
+    }
 
-  @Override
-  public GlobalSearchScope getForcedResolveScope() {
-    return myResolveScope;
-  }
+    @Override
+    @RequiredReadAction
+    public boolean isValid() {
+        return true;
+    }
 
-  @Override
-  public boolean isValid() {
-    return true;
-  }
+    @Override
+    public void accept(PsiElementVisitor visitor) {
+    }
 
-  @Override
-  public void accept(PsiElementVisitor visitor) {
-  }
-
-  public boolean isAcceptedFor(Class visitorClass) {
-    return false;
-  }
+    @Override
+    public boolean isAcceptedFor(Class visitorClass) {
+        return false;
+    }
 }

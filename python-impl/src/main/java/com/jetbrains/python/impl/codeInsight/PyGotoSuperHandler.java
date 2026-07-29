@@ -17,18 +17,23 @@ package com.jetbrains.python.impl.codeInsight;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.PyAssignmentStatement;
+import com.jetbrains.python.psi.PyClass;
+import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyTargetExpression;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.EditorPopupHelper;
 import consulo.language.Language;
-import consulo.language.editor.CodeInsightBundle;
 import consulo.language.editor.action.GotoSuperActionHander;
+import consulo.language.editor.localize.CodeInsightLocalize;
 import consulo.language.editor.ui.PopupNavigationUtil;
 import consulo.language.psi.NavigatablePsiElement;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.ui.ex.popup.JBPopup;
 
@@ -43,7 +48,9 @@ import java.util.List;
 @ExtensionImpl
 public class PyGotoSuperHandler implements GotoSuperActionHander
 {
-	public void invoke(Project project, Editor editor, PsiFile file)
+	@Override
+    @RequiredReadAction
+    public void invoke(Project project, Editor editor, PsiFile file)
 	{
 		PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
 		PyClass pyClass = PsiTreeUtil.getParentOfType(element, PyClass.class);
@@ -63,25 +70,28 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 				}
 				else
 				{
-					navigateOrChoose(editor, PyUtil.getAllSuperClasses(pyClass), "Choose superclass");
+					navigateOrChoose(editor, PyUtil.getAllSuperClasses(pyClass), LocalizeValue.localizeTODO("Choose superclass"));
 				}
 			}
 		}
 	}
 
-	private static void gotoSuperFunctions(Editor editor, PyFunction function, PyClass pyClass)
+	@RequiredReadAction
+    private static void gotoSuperFunctions(Editor editor, PyFunction function, PyClass pyClass)
 	{
 		Collection<PyFunction> superFunctions = getAllSuperMethodsByName(function, pyClass);
-		navigateOrChoose(editor, superFunctions, CodeInsightBundle.message("goto.super.method.chooser.title"));
+		navigateOrChoose(editor, superFunctions, CodeInsightLocalize.gotoSuperMethodChooserTitle());
 	}
 
-	private static void gotoSuperClassAttributes(Editor editor, PyTargetExpression attr, PyClass pyClass)
+	@RequiredReadAction
+    private static void gotoSuperClassAttributes(Editor editor, PyTargetExpression attr, PyClass pyClass)
 	{
 		Collection<PyTargetExpression> attrs = getAllSuperAttributesByName(attr, pyClass);
-		navigateOrChoose(editor, attrs, "Choose superclass attribute");
+		navigateOrChoose(editor, attrs, LocalizeValue.localizeTODO("Choose superclass attribute"));
 	}
 
-	private static void navigateOrChoose(Editor editor, Collection<? extends NavigatablePsiElement> superElements, String title)
+	@RequiredReadAction
+    private static void navigateOrChoose(Editor editor, Collection<? extends NavigatablePsiElement> superElements, LocalizeValue title)
 	{
 		if(!superElements.isEmpty())
 		{
@@ -92,7 +102,7 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 			}
 			else
 			{
-				JBPopup popup = PopupNavigationUtil.getPsiElementPopup(superElementArray, title);
+				JBPopup popup = PopupNavigationUtil.getPsiElementPopup(superElementArray, title.get());
 				EditorPopupHelper.getInstance().showPopupInBestPositionFor(editor, popup);
 			}
 		}
@@ -117,7 +127,8 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 		return result;
 	}
 
-	private static Collection<PyFunction> getAllSuperMethodsByName(PyFunction method, PyClass pyClass)
+	@RequiredReadAction
+    private static Collection<PyFunction> getAllSuperMethodsByName(PyFunction method, PyClass pyClass)
 	{
 		String name = method.getName();
 		if(name == null)
@@ -136,7 +147,8 @@ public class PyGotoSuperHandler implements GotoSuperActionHander
 		return result;
 	}
 
-	public boolean startInWriteAction()
+	@Override
+    public boolean startInWriteAction()
 	{
 		return false;
 	}

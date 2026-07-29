@@ -13,34 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.*;
 import consulo.language.util.IncorrectOperationException;
+import consulo.python.impl.localize.PyLocalize;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyTryUnwrapper extends PyUnwrapper {
-  public PyTryUnwrapper() {
-    super(PyBundle.message("unwrap.try"));
-  }
+    public PyTryUnwrapper() {
+        super(PyLocalize.unwrapTry());
+    }
 
-  public boolean isApplicableTo(PsiElement e) {
-    return e instanceof PyTryExceptStatement;
-  }
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        return e instanceof PyTryExceptStatement;
+    }
 
-  @Override
-  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException
-  {
-    PyTryExceptStatement statement = (PyTryExceptStatement)element;
-    context.extractPart(statement);
-    context.extractPart(statement.getElsePart());
-    context.extractPart(statement.getFinallyPart());
-    context.delete(statement);
-  }
+    @Override
+    @RequiredReadAction
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        PyTryExceptStatement statement = (PyTryExceptStatement) element;
+        context.extractPart(statement);
+        context.extractPart(statement.getElsePart());
+        context.extractPart(statement.getFinallyPart());
+        context.delete(statement);
+    }
 }
 
