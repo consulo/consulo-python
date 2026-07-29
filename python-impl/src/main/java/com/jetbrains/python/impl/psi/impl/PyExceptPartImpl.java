@@ -17,6 +17,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import java.util.List;
 
+import consulo.annotation.access.RequiredReadAction;
 import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
@@ -52,23 +53,31 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PyExpression getExceptClass()
 	{
 		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PyExpression getTarget()
 	{
 		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 1);
 	}
 
+    @Override
+    @RequiredReadAction
 	public PyStatementList getStatementList()
 	{
 		return childToPsiNotNull(PyElementTypes.STATEMENT_LIST);
 	}
 
-	public List<PsiNamedElement> getNamedElements()
+	@Override
+    @RequiredReadAction
+    public List<PsiNamedElement> getNamedElements()
 	{
 		List<PyExpression> expressions = PyUtil.flattenedParensAndStars(getTarget());
 		List<PsiNamedElement> results = Lists.newArrayList();
@@ -83,6 +92,7 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
 	}
 
 	@Nullable
+    @RequiredReadAction
 	public PsiNamedElement getNamedElement(String the_name)
 	{
 		// Requires switching from stubs to AST in getTarget()

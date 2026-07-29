@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
-
 
 /**
  * Represents a literal dict expression, e.g. <tt>{'a': 1}</tt>
  */
 public interface PyDictLiteralExpression extends PySequenceExpression {
-  PyKeyValueExpression[] getElements();
+    @Override
+    PyKeyValueExpression[] getElements();
 }

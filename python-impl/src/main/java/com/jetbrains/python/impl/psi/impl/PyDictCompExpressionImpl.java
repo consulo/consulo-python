@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
-
 
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.psi.PyDictCompExpression;
@@ -27,16 +25,17 @@ import com.jetbrains.python.psi.types.TypeEvalContext;
  * @author yole
  */
 public class PyDictCompExpressionImpl extends PyComprehensionElementImpl implements PyDictCompExpression {
-  public PyDictCompExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyDictCompExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-    return PyBuiltinCache.getInstance(this).getDictType();
-  }
+    @Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        return PyBuiltinCache.getInstance(this).getDictType();
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyDictCompExpression(this);
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyDictCompExpression(this);
+    }
 }

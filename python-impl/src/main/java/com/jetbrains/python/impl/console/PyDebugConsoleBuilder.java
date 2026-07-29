@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.console;
 
 import com.jetbrains.python.impl.run.PythonTracebackFilter;
@@ -25,51 +24,51 @@ import consulo.execution.ui.console.TextConsoleBuilder;
 import consulo.project.Project;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 
 /**
  * @author traff
  */
 public class PyDebugConsoleBuilder extends TextConsoleBuilder {
-  private final Project myProject;
-  private final ArrayList<Filter> myFilters = new ArrayList<>();
-  private final Sdk mySdk;
+    private final Project myProject;
+    private final ArrayList<Filter> myFilters = new ArrayList<>();
+    private final Sdk mySdk;
 
-  public PyDebugConsoleBuilder(Project project, @Nullable Sdk sdk) {
-    myProject = project;
-    this.mySdk = sdk;
-  }
-
-  public ConsoleView getConsole() {
-    ConsoleView consoleView = createConsole();
-    for (Filter filter : myFilters) {
-      consoleView.addMessageFilter(filter);
+    public PyDebugConsoleBuilder(Project project, @Nullable Sdk sdk) {
+        myProject = project;
+        this.mySdk = sdk;
     }
-    return consoleView;
-  }
 
-  protected ConsoleView createConsole() {
-    PythonDebugLanguageConsoleView consoleView = new PythonDebugLanguageConsoleView(myProject, mySdk);
-    consoleView.addMessageFilter(new PythonTracebackFilter(myProject));
-    return consoleView;
-  }
+    @Override
+    public ConsoleView getConsole() {
+        ConsoleView consoleView = createConsole();
+        for (Filter filter : myFilters) {
+            consoleView.addMessageFilter(filter);
+        }
+        return consoleView;
+    }
 
-  public void addFilter(Filter filter) {
-    myFilters.add(filter);
-  }
+    protected ConsoleView createConsole() {
+        PythonDebugLanguageConsoleView consoleView = new PythonDebugLanguageConsoleView(myProject, mySdk);
+        consoleView.addMessageFilter(new PythonTracebackFilter(myProject));
+        return consoleView;
+    }
 
-  @Override
-  public void setViewer(boolean isViewer) {
-  }
+    @Override
+    public void addFilter(Filter filter) {
+        myFilters.add(filter);
+    }
 
-  @Override
-  public void setState(ConsoleState consoleState) {
+    @Override
+    public void setViewer(boolean isViewer) {
+    }
 
-  }
+    @Override
+    public void setState(ConsoleState consoleState) {
+    }
 
-  @Override
-  public void setUsePredefinedMessageFilter(boolean b) {
-
-  }
-
+    @Override
+    public void setUsePredefinedMessageFilter(boolean b) {
+    }
 }

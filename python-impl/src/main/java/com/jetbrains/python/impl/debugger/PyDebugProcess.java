@@ -35,6 +35,7 @@ import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.application.Application;
 import consulo.application.ReadAction;
 import consulo.application.progress.ProgressIndicator;
@@ -69,6 +70,7 @@ import consulo.process.ProcessHandler;
 import consulo.process.event.ProcessEvent;
 import consulo.process.event.ProcessListener;
 import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnActionEvent;
 import consulo.ui.ex.action.DefaultActionGroup;
 import consulo.ui.ex.action.Presentation;
@@ -76,7 +78,7 @@ import consulo.ui.ex.action.ToggleAction;
 import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.awt.UIUtil;
 import consulo.util.dataholder.Key;
-import consulo.util.lang.ref.Ref;
+import consulo.util.lang.ref.SimpleReference;
 import consulo.virtualFileSystem.VirtualFile;
 
 import org.jspecify.annotations.Nullable;
@@ -166,8 +168,8 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     if (myProcessHandler != null) {
       myProcessHandler.addProcessListener(this);
     }
-    if (processHandler instanceof PositionConverterProvider) {
-      myPositionConverter = ((PositionConverterProvider)processHandler).createPositionConverter(this);
+    if (processHandler instanceof PositionConverterProvider positionConverterProvider) {
+      myPositionConverter = positionConverterProvider.createPositionConverter(this);
     }
     else {
       myPositionConverter = new PyLocalPositionConverter();
@@ -194,17 +196,17 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
       public void stackFrameChanged() {
         String currentFrameThreadId = null;
         XStackFrame currentFrame = session.getCurrentStackFrame();
-        if (currentFrame instanceof PyStackFrame) {
-          currentFrameThreadId = ((PyStackFrame)currentFrame).getThreadId();
+        if (currentFrame instanceof PyStackFrame stackFrame) {
+          currentFrameThreadId = stackFrame.getThreadId();
         }
         XExecutionStack activeStack = session.getSuspendContext().getActiveExecutionStack();
-        if ((activeStack == null) || (currentFrameThreadId == null)) {
+        if (activeStack == null || currentFrameThreadId == null) {
           return;
         }
         XStackFrame frameFromSuspendContext = activeStack.getTopFrame();
         String activeStackThreadId = null;
-        if (frameFromSuspendContext instanceof PyStackFrame) {
-          activeStackThreadId = ((PyStackFrame)frameFromSuspendContext).getThreadId();
+        if (frameFromSuspendContext instanceof PyStackFrame stackFrame) {
+          activeStackThreadId = stackFrame.getThreadId();
         }
         if (!currentFrameThreadId.equals(activeStackThreadId)) {
           // another thread was selected, we should update suspendContext
@@ -225,15 +227,12 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
   private MultiProcessDebugger createMultiprocessDebugger(ServerSocket serverSocket) {
     MultiProcessDebugger debugger = new MultiProcessDebugger(this, serverSocket, 10000);
-    debugger.addOtherDebuggerCloseListener(new MultiProcessDebugger.DebuggerProcessListener() {
-      @Override
-      public void threadsClosed(Set<String> threadIds) {
-        for (PyThreadInfo t : mySuspendedThreads) {
-          if (threadIds.contains(t.getId())) {
-            if (getSession().isSuspended()) {
-              getSession().resume();
-              break;
-            }
+    debugger.addOtherDebuggerCloseListener(threadIds -> {
+      for (PyThreadInfo t : mySuspendedThreads) {
+        if (threadIds.contains(t.getId())) {
+          if (getSession().isSuspended()) {
+            getSession().resume();
+            break;
           }
         }
       }
@@ -252,7 +251,6 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   public void setPositionConverter(PyPositionConverter positionConverter) {
     myPositionConverter = positionConverter;
   }
-
 
   @Override
   public PyPositionConverter getPositionConverter() {
@@ -461,6 +459,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
 
     @Override
+    @RequiredUIAccess
     public void setSelected(AnActionEvent e, boolean watch) {
       myWatchesReturnValues = watch;
       PyDebuggerSettings.getInstance().setWatchReturnValues(watch);
@@ -498,6 +497,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
 
     @Override
+    @RequiredUIAccess
     public void setSelected(AnActionEvent e, boolean hide) {
       mySimplifiedView = hide;
       PyDebuggerSettings.getInstance().setSimplifiedView(hide);
@@ -558,6 +558,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
   }
 
+  @Override
   public void suspendAllOtherThreads(PyThreadInfo thread) {
     myDebugger.suspendOtherThreads(thread);
   }
@@ -619,8 +620,8 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
   @Nullable
   private static String threadIdBeforeResumeOrStep(@Nullable XSuspendContext context) {
-    if (context instanceof PySuspendContext) {
-      return ((PySuspendContext)context).getActiveExecutionStack().getThreadId();
+    if (context instanceof PySuspendContext suspendContext) {
+      return suspendContext.getActiveExecutionStack().getThreadId();
     }
     else {
       return null;
@@ -658,8 +659,8 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
         Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
         if (document != null) {
           for (XBreakpointType breakpointType : XBreakpointType.EXTENSION_POINT_NAME.getExtensionList()) {
-            if (breakpointType instanceof PyBreakpointType && ((PyBreakpointType)breakpointType).canPutInDocument(getSession().getProject(),
-                                                                                                                  document)) {
+            if (breakpointType instanceof PyBreakpointType pyBreakpointType
+                && pyBreakpointType.canPutInDocument(getSession().getProject(), document)) {
               return breakpointType.getId();
             }
           }
@@ -813,11 +814,8 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
       Project project = getSession().getProject();
       if (document != null) {
         if (file.getFileType() == PythonFileType.INSTANCE) {
-          PsiElement psiElement = XDebuggerUtil.getInstance().
-                                               findContextElement(file,
-                                                                  document.getLineStartOffset(breakpoint.getSourcePosition().getLine()),
-                                                                  project,
-                                                                  false);
+          PsiElement psiElement = XDebuggerUtil.getInstance()
+              .findContextElement(file, document.getLineStartOffset(breakpoint.getSourcePosition().getLine()), project, false);
           PyFunction function = PsiTreeUtil.getParentOfType(psiElement, PyFunction.class);
           if (function != null) {
             return function.getName();
@@ -1042,7 +1040,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
 
     if (Strings.isNullOrEmpty(parentType)) {
-      Ref<PsiElement> elementRef = resolveInCurrentFrame(name, currentPosition, file);
+      SimpleReference<PsiElement> elementRef = resolveInCurrentFrame(name, currentPosition, file);
       return elementRef.isNull() ? null : XDebuggerUtil.getInstance().createPositionByElement(elementRef.get());
     }
     else {
@@ -1061,9 +1059,9 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     }
   }
 
-
-  private static Ref<PsiElement> resolveInCurrentFrame(final String name, XSourcePosition currentPosition, PsiFile file) {
-    final Ref<PsiElement> elementRef = Ref.create();
+  @RequiredReadAction
+  private static SimpleReference<PsiElement> resolveInCurrentFrame(final String name, XSourcePosition currentPosition, PsiFile file) {
+    final SimpleReference<PsiElement> elementRef = SimpleReference.create();
     PsiElement currentElement = file.findElementAt(currentPosition.getOffset());
 
     if (currentElement == null) {
@@ -1106,6 +1104,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
   }
 
   @Nullable
+  @RequiredReadAction
   private PsiFile getPsiFile(XSourcePosition currentPosition) {
     if (currentPosition == null) {
       return null;
@@ -1114,9 +1113,9 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     return PsiManager.getInstance(getProject()).findFile(currentPosition.getFile());
   }
 
-
   @Nullable
   @Override
+  @RequiredReadAction
   public XSourcePosition getSourcePositionForType(String typeName) {
     XSourcePosition currentPosition = getCurrentFrameSourcePosition();
 
@@ -1151,6 +1150,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     return null;
   }
 
+  @RequiredReadAction
   private PyType resolveTypeFromString(String typeName, PsiFile file) {
     typeName = typeName.replace("__builtin__.", "");
     PyType pyType = null;
@@ -1162,7 +1162,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
       PyElementGenerator generator = PyElementGenerator.getInstance(getProject());
       PyPsiFacade psiFacade = PyPsiFacade.getInstance(getProject());
       PsiFile dummyFile = generator.createDummyFile(((PyFile)file).getLanguageLevel(), "");
-      Module moduleForFile = ModuleUtilCore.findModuleForPsiElement(file);
+      Module moduleForFile = file.getModule();
       dummyFile.putUserData(ModuleUtilCore.KEY_MODULE, moduleForFile);
 
       pyType = psiFacade.parseTypeAnnotation(typeName, dummyFile);

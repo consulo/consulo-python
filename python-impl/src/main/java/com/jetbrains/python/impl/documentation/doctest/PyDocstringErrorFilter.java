@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.documentation.doctest;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.editor.HighlightErrorFilter;
 import consulo.language.psi.PsiErrorElement;
-import consulo.language.psi.PsiFile;
 
 /**
- * User : ktisha
+ * Do not highlight syntax errors in doc-tests.
  *
- * Do not highlight syntax errors in doctests
+ * @author ktisha
  */
 @ExtensionImpl
 public class PyDocstringErrorFilter extends HighlightErrorFilter {
-
-  public boolean shouldHighlightErrorElement(PsiErrorElement element) {
-    PsiFile file = element.getContainingFile();
-    return !(file instanceof PyDocstringFile);
-  }
+    @Override
+    public boolean shouldHighlightErrorElement(PsiErrorElement element) {
+        return !(element.getContainingFile() instanceof PyDocstringFile);
+    }
 }

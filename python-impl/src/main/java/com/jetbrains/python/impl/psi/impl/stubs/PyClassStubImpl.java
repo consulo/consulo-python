@@ -63,12 +63,14 @@ public class PyClassStubImpl extends StubBase<PyClass> implements PyClassStub
 	}
 
 	@Nullable
+    @Override
 	public String getName()
 	{
 		return myName;
 	}
 
-	public Map<QualifiedName, QualifiedName> getSuperClasses()
+	@Override
+    public Map<QualifiedName, QualifiedName> getSuperClasses()
 	{
 		return mySuperClasses;
 	}

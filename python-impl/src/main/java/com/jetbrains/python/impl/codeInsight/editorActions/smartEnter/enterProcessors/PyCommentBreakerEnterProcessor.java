@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.enterProcessors;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.codeEditor.CaretModel;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiComment;
@@ -24,12 +24,12 @@ import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.impl.codeInsight.editorActions.smartEnter.SmartEnterUtil;
 
 /**
- * Created by IntelliJ IDEA.
- * Author: Alexey.Ivanov
- * Date:   15.04.2010
- * Time:   18:39:07
+ * @author Alexey.Ivanov
+ * @since 2010-04-15
  */
 public class PyCommentBreakerEnterProcessor implements EnterProcessor {
+  @Override
+  @RequiredReadAction
   public boolean doEnter(Editor editor, PsiElement psiElement, boolean isModified) {
     if (isModified) {
       return false;

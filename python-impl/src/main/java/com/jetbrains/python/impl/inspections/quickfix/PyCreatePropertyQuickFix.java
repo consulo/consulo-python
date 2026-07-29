@@ -20,9 +20,9 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyClassType;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
-import consulo.language.psi.PsiElement;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
@@ -39,15 +39,16 @@ public class PyCreatePropertyQuickFix implements LocalQuickFix {
         return PyLocalize.qfixCreateProperty();
     }
 
+    @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
-        PsiElement element = descriptor.getPsiElement();
-        if (element instanceof PyQualifiedExpression) {
-            PyExpression qualifier = ((PyQualifiedExpression) element).getQualifier();
+        if (descriptor.getPsiElement() instanceof PyQualifiedExpression qExpr) {
+            PyExpression qualifier = qExpr.getQualifier();
             if (qualifier != null) {
-                PyType type = TypeEvalContext.codeAnalysis(element.getProject(), element.getContainingFile()).getType(qualifier);
-                if (type instanceof PyClassType) {
-                    PyClass cls = ((PyClassType) type).getPyClass();
-                    String propertyName = ((PyQualifiedExpression) element).getName();
+                PyType type = TypeEvalContext.codeAnalysis(qExpr.getProject(), qExpr.getContainingFile()).getType(qualifier);
+                if (type instanceof PyClassType classType) {
+                    PyClass cls = classType.getPyClass();
+                    String propertyName = qExpr.getName();
                     if (propertyName == null) {
                         return;
                     }

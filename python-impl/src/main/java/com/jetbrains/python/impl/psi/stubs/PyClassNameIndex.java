@@ -36,6 +36,7 @@ import java.util.Collection;
 public class PyClassNameIndex extends StringStubIndexExtension<PyClass> {
   public static final StubIndexKey<String,PyClass> KEY = StubIndexKey.createIndexKey("Py.class.shortName");
 
+  @Override
   public StubIndexKey<String, PyClass> getKey() {
     return KEY;
   }

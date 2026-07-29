@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.editor.ui.PsiElementListCellRenderer;
 import consulo.navigation.ItemPresentation;
 import consulo.navigation.NavigationItem;
@@ -25,27 +25,30 @@ import consulo.language.psi.PsiNamedElement;
 /**
  * @author yole
  */
-public class PyElementListCellRenderer extends PsiElementListCellRenderer
-{
-  public String getElementText(PsiElement element) {
-    if (element instanceof PsiNamedElement) {
-      String name = ((PsiNamedElement)element).getName();
-      return name == null ? "" : name;
+public class PyElementListCellRenderer extends PsiElementListCellRenderer {
+    @Override
+    @RequiredReadAction
+    public String getElementText(PsiElement element) {
+        if (element instanceof PsiNamedElement namedElem) {
+            String name = namedElem.getName();
+            return name == null ? "" : name;
+        }
+        return element.getText();
     }
-    return element.getText();
-  }
 
-  protected String getContainerText(PsiElement element, String name) {
-    if (element instanceof NavigationItem) {
-      ItemPresentation presentation = ((NavigationItem)element).getPresentation();
-      if (presentation != null) {
-        return presentation.getLocationString();
-      }
+    @Override
+    protected String getContainerText(PsiElement element, String name) {
+        if (element instanceof NavigationItem navItem) {
+            ItemPresentation presentation = navItem.getPresentation();
+            if (presentation != null) {
+                return presentation.getLocationString();
+            }
+        }
+        return null;
     }
-    return null;
-  }
 
-  protected int getIconFlags() {
-    return 0;
-  }
+    @Override
+    protected int getIconFlags() {
+        return 0;
+    }
 }

@@ -177,21 +177,25 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
     }
 
     @Attribute("sdk-home")
+    @Override
     public String getSdkHome() {
       return mySdkHome;
     }
 
     @Attribute("module-name")
+    @Override
     public String getModuleName() {
       return myModuleName;
     }
 
     @Attribute("working-directory")
+    @Override
     public String getWorkingDirectory() {
       return myWorkingDirectory;
     }
 
     @Attribute("is-module-sdk")
+    @Override
     public boolean isUseModuleSdk() {
       return myUseModuleSdk;
     }
@@ -200,21 +204,25 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
     @Property(surroundWithTag = false)
     @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false, keyAttributeName = "key",
       entryTagName = "env", valueAttributeName = "value", surroundValueWithTag = false)
+    @Override
     public Map<String, String> getEnvs() {
       return myEnvs;
     }
 
     @Attribute("add-content-roots")
+    @Override
     public boolean shouldAddContentRoots() {
       return myAddContentRoots;
     }
 
     @Attribute("add-source-roots")
+    @Override
     public boolean shouldAddSourceRoots() {
       return myAddSourceRoots;
     }
 
     @Attribute("interpreter-options")
+    @Override
     public String getInterpreterOptions() {
       return myInterpreterOptions;
     }
@@ -228,6 +236,7 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
       myCustomStartScript = customStartScript;
     }
 
+    @Override
     public void setSdkHome(String sdkHome) {
       mySdkHome = sdkHome;
     }
@@ -237,10 +246,12 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
       setModuleName(module.getName());
     }
 
+    @Override
     public void setInterpreterOptions(String interpreterOptions) {
       myInterpreterOptions = interpreterOptions;
     }
 
+    @Override
     public void setUseModuleSdk(boolean useModuleSdk) {
       myUseModuleSdk = useModuleSdk;
     }
@@ -260,6 +271,7 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
       myModuleName = moduleName;
     }
 
+    @Override
     public void setEnvs(Map<String, String> envs) {
       myEnvs = envs;
     }
@@ -275,14 +287,17 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
 
     }
 
+    @Override
     public void setWorkingDirectory(String workingDirectory) {
       myWorkingDirectory = workingDirectory;
     }
 
+    @Override
     public void setAddContentRoots(boolean addContentRoots) {
       myAddContentRoots = addContentRoots;
     }
 
+    @Override
     public void setAddSourceRoots(boolean addSourceRoots) {
       myAddSourceRoots = addSourceRoots;
     }

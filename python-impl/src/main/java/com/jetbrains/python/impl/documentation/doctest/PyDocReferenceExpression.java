@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.documentation.doctest;
 
 import consulo.language.ast.ASTNode;
@@ -29,25 +28,24 @@ import com.jetbrains.python.impl.psi.impl.references.PyQualifiedReference;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 
 /**
- *
- * User : ktisha
+ * @author ktisha
  */
 public class PyDocReferenceExpression extends PyReferenceExpressionImpl {
-
-  public PyDocReferenceExpression(ASTNode astNode) {
-    super(astNode);
-  }
-
-  public PsiPolyVariantReference getReference(PyResolveContext context) {
-    PyExpression qualifier = getQualifier();
-    if (qualifier != null) {
-      return new PyQualifiedReference(this, context);
+    public PyDocReferenceExpression(ASTNode astNode) {
+        super(astNode);
     }
-    PsiElement importParent = PsiTreeUtil.getParentOfType(this, PyImportElement.class, PyFromImportStatement.class);
-    if (importParent != null) {
-      return PyImportReference.forElement(this, importParent, context);
+
+    @Override
+    public PsiPolyVariantReference getReference(PyResolveContext context) {
+        PyExpression qualifier = getQualifier();
+        if (qualifier != null) {
+            return new PyQualifiedReference(this, context);
+        }
+        PsiElement importParent = PsiTreeUtil.getParentOfType(this, PyImportElement.class, PyFromImportStatement.class);
+        if (importParent != null) {
+            return PyImportReference.forElement(this, importParent, context);
+        }
+        return new PyDocReference(this, context);
     }
-    return new PyDocReference(this, context);
-  }
 }
 

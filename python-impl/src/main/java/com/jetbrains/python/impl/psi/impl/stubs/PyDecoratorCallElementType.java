@@ -33,8 +33,8 @@ import com.jetbrains.python.impl.psi.stubs.PyDecoratorStubIndex;
 
 /**
  * Actual serialized data of a decorator call.
- * User: dcheryasov
- * Date: Dec 18, 2008 9:09:57 PM
+ * @author dcheryasov
+ * @since 2008-12-18
  */
 public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStub, PyDecorator>
 {
@@ -43,22 +43,26 @@ public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStu
 		super("DECORATOR_CALL");
 	}
 
-	public PsiElement createElement(ASTNode node)
+	@Override
+    public PsiElement createElement(ASTNode node)
 	{
 		return new PyDecoratorImpl(node);
 	}
 
-	public PyDecorator createPsi(PyDecoratorStub stub)
+	@Override
+    public PyDecorator createPsi(PyDecoratorStub stub)
 	{
 		return new PyDecoratorImpl(stub);
 	}
 
-	public PyDecoratorStub createStub(PyDecorator psi, StubElement parentStub)
+	@Override
+    public PyDecoratorStub createStub(PyDecorator psi, StubElement parentStub)
 	{
 		return new PyDecoratorStubImpl(psi.getQualifiedName(), parentStub);
 	}
 
-	public void serialize(PyDecoratorStub stub, StubOutputStream dataStream) throws IOException
+	@Override
+    public void serialize(PyDecoratorStub stub, StubOutputStream dataStream) throws IOException
 	{
 		QualifiedName.serialize(stub.getQualifiedName(), dataStream);
 	}
@@ -74,7 +78,8 @@ public class PyDecoratorCallElementType extends PyStubElementType<PyDecoratorStu
 		}
 	}
 
-	public PyDecoratorStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
+	@Override
+    public PyDecoratorStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException
 	{
 		QualifiedName q_name = QualifiedName.deserialize(dataStream);
 		return new PyDecoratorStubImpl(q_name, parentStub);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.documentation.doctest;
 
 import consulo.language.ast.IElementType;
@@ -22,7 +21,7 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyDocstringLexer extends PythonIndentingLexer {
   @Override
@@ -48,7 +47,6 @@ public class PyDocstringLexer extends PythonIndentingLexer {
   }
 
   static final TokenSet ourIgnoreSet = TokenSet.create(PyTokenTypes.DOT, PyTokenTypes.GTGT, PyTokenTypes.GT);
-
 
   @Override
   protected int getNextLineIndent() {
@@ -82,6 +80,7 @@ public class PyDocstringLexer extends PythonIndentingLexer {
     return indent > 0? indent - 1 : indent;
   }
 
+  @Override
   protected void checkSignificantTokens() {
     IElementType tokenType = getBaseTokenType();
     if (!PyTokenTypes.WHITESPACE_OR_LINEBREAK.contains(tokenType) && tokenType != getCommentTokenType() &&
@@ -89,6 +88,7 @@ public class PyDocstringLexer extends PythonIndentingLexer {
       myLineHasSignificantTokens = true;
     }
   }
+
   @Override
   protected void checkStartState(int startOffset, int initialState) {
   }

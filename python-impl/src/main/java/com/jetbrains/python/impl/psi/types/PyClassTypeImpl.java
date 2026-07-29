@@ -47,7 +47,7 @@ import consulo.util.collection.ContainerUtil;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolderBase;
 import consulo.util.lang.Pair;
-import consulo.util.lang.ref.Ref;
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -187,7 +187,7 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 
 		if(resolveContext.allowProperties())
 		{
-			Ref<ResolveResultList> resultRef = findProperty(name, direction, true, resolveContext.getTypeEvalContext());
+			SimpleReference<ResolveResultList> resultRef = findProperty(name, direction, true, resolveContext.getTypeEvalContext());
 			if(resultRef != null)
 			{
 				return resultRef.get();
@@ -197,17 +197,16 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 		if("super".equals(getClassQName()) && isBuiltin() && location instanceof PyCallExpression)
 		{
 			// methods of super() call are not of class super!
-			PyExpression first_arg = ((PyCallExpression) location).getArgument(0, PyExpression.class);
-			if(first_arg != null)
+			PyExpression firstArg = ((PyCallExpression) location).getArgument(0, PyExpression.class);
+			if(firstArg != null)
 			{ // the usual case: first arg is the derived class that super() is proxying for
-				PyType first_arg_type = context.getType(first_arg);
-				if(first_arg_type instanceof PyClassType)
+                if(context.getType(firstArg) instanceof PyClassType classType)
 				{
-					PyClass derived_class = ((PyClassType) first_arg_type).getPyClass();
-					Iterator<PyClass> base_it = derived_class.getAncestorClasses(context).iterator();
-					if(base_it.hasNext())
+					PyClass derivedClass = classType.getPyClass();
+					Iterator<PyClass> baseIt = derivedClass.getAncestorClasses(context).iterator();
+					if(baseIt.hasNext())
 					{
-						return new PyClassTypeImpl(base_it.next(), true).resolveMember(name, location, direction, resolveContext);
+						return new PyClassTypeImpl(baseIt.next(), true).resolveMember(name, location, direction, resolveContext);
 					}
 					else
 					{
@@ -318,9 +317,9 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 		return Collections.emptyList();
 	}
 
-	private Ref<ResolveResultList> findProperty(String name, AccessDirection direction, boolean inherited, @Nullable TypeEvalContext context)
+	private SimpleReference<ResolveResultList> findProperty(String name, AccessDirection direction, boolean inherited, @Nullable TypeEvalContext context)
 	{
-		Ref<ResolveResultList> resultRef = null;
+        SimpleReference<ResolveResultList> resultRef = null;
 		Property property = myClass.findProperty(name, inherited, context);
 		if(property != null)
 		{
@@ -340,11 +339,11 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 				}
 				if(ret.size() > 0)
 				{
-					resultRef = Ref.create(ret);
+					resultRef = SimpleReference.create(ret);
 				}
 				else
 				{
-					resultRef = Ref.create();
+					resultRef = SimpleReference.create();
 				} // property is found, but the required accessor is explicitly absent
 			}
 		}
@@ -363,8 +362,14 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 				return ResolveResultList.to(classMember);
 			}
 
-			return ResolveResultList.to(myClass.getAncestorClasses(context).stream().filter(cls -> !PyUtil.isObjectClass(cls)).<PsiElement>map(cls -> cls.findClassAttribute(PyNames.__CLASS__, true,
-					context)).filter(target -> target != null).findFirst().orElse(myClass));
+			return ResolveResultList.to(
+			    myClass.getAncestorClasses(context).stream()
+                    .filter(cls -> !PyUtil.isObjectClass(cls))
+                    .<PsiElement>map(cls -> cls.findClassAttribute(PyNames.__CLASS__, true, context))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(myClass)
+            );
 		}
 
 		if(LanguageLevel.forElement(myClass).isOlderThan(LanguageLevel.PYTHON30) && !newStyleClass)
@@ -460,12 +465,8 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 			return true;
 		}
 		PyClass cls = getPyClass();
-		if(PyABCUtil.isSubclass(cls, PyNames.CALLABLE, null))
-		{
-			return true;
-		}
-		return false;
-	}
+        return PyABCUtil.isSubclass(cls, PyNames.CALLABLE, null);
+    }
 
 	private static boolean isMethodType(PyClassType type)
 	{
@@ -592,7 +593,9 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 	private static Key<Set<PyClassType>> CTX_VISITED = Key.create("PyClassType.Visited");
 	public static Key<Boolean> CTX_SUPPRESS_PARENTHESES = Key.create("PyFunction.SuppressParentheses");
 
-	public Object[] getCompletionVariants(String prefix, PsiElement location, ProcessingContext context)
+	@Override
+    @RequiredReadAction
+    public Object[] getCompletionVariants(String prefix, PsiElement location, ProcessingContext context)
 	{
 		Set<PyClassType> visited = context.get(CTX_VISITED);
 		if(visited == null)
@@ -635,10 +638,10 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 		if(!myClass.isNewStyleClass(typeEvalContext))
 		{
 			PyBuiltinCache cache = PyBuiltinCache.getInstance(myClass);
-			PyClassType classobjType = cache.getOldstyleClassobjType();
-			if(classobjType != null)
+			PyClassType classObjType = cache.getOldstyleClassobjType();
+			if(classObjType != null)
 			{
-				ret.addAll(Arrays.asList(classobjType.getCompletionVariants(prefix, location, context)));
+				ret.addAll(Arrays.asList(classObjType.getCompletionVariants(prefix, location, context)));
 			}
 		}
 
@@ -782,13 +785,10 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 
 	private static boolean isInSuperCall(PsiElement hook)
 	{
-		if(hook instanceof PyReferenceExpression)
-		{
-			PyExpression qualifier = ((PyReferenceExpression) hook).getQualifier();
-			return qualifier instanceof PyCallExpression && ((PyCallExpression) qualifier).isCalleeText(PyNames.SUPER);
-		}
-		return false;
-	}
+        return hook instanceof PyReferenceExpression refExpr
+            && refExpr.getQualifier() instanceof PyCallExpression callExpr
+            && callExpr.isCalleeText(PyNames.SUPER);
+    }
 
 	private void addInheritedMembers(String name, PsiElement expressionHook, Set<String> namesAlready, ProcessingContext context, List<Object> ret, TypeEvalContext typeEvalContext)
 	{
@@ -829,7 +829,9 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 		return lookupString.startsWith("_") && !lookupString.startsWith("__");
 	}
 
-	public String getName()
+	@Override
+    @RequiredReadAction
+    public String getName()
 	{
 		return getPyClass().getName();
 	}
@@ -841,6 +843,7 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 	}
 
 	@Override
+    @RequiredReadAction
 	public void assertValid(String message)
 	{
 		if(!myClass.isValid())
@@ -861,19 +864,11 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 			return false;
 		}
 
-		PyClassTypeImpl classType = (PyClassTypeImpl) o;
+		PyClassTypeImpl that = (PyClassTypeImpl) o;
 
-		if(myIsDefinition != classType.myIsDefinition)
-		{
-			return false;
-		}
-		if(!myClass.equals(classType.myClass))
-		{
-			return false;
-		}
-
-		return true;
-	}
+        return myIsDefinition == that.myIsDefinition
+            && myClass.equals(that.myClass);
+    }
 
 	@Override
 	public int hashCode()
@@ -885,20 +880,19 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 
 	public static boolean is(String qName, PyType type)
 	{
-		if(type instanceof PyClassType)
-		{
-			return qName.equals(((PyClassType) type).getClassQName());
-		}
-		return false;
-	}
+        return type instanceof PyClassType classType && qName.equals(classType.getClassQName());
+    }
 
 	@Override
+    @RequiredReadAction
 	public String toString()
 	{
 		return (isValid() ? "" : "[INVALID] ") + "PyClassType: " + getClassQName();
 	}
 
-	public boolean isValid()
+	@Override
+    @RequiredReadAction
+    public boolean isValid()
 	{
 		return myClass.isValid();
 	}
@@ -943,7 +937,8 @@ public class PyClassTypeImpl extends UserDataHolderBase implements PyClassType
 			this.instance = instance;
 		}
 
-		public boolean test(PsiElement target)
+		@Override
+        public boolean test(PsiElement target)
 		{
 			return (instance != target);
 		}

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyConditionalExpression;
@@ -31,39 +31,44 @@ import java.util.List;
  * @author yole
  */
 public class PyConditionalExpressionImpl extends PyElementImpl implements PyConditionalExpression {
-  public PyConditionalExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
-
-  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-    PyExpression truePart = getTruePart();
-    PyExpression falsePart = getFalsePart();
-    if (truePart == null || falsePart == null) {
-      return null;
+    public PyConditionalExpressionImpl(ASTNode astNode) {
+        super(astNode);
     }
-    return PyUnionType.union(context.getType(truePart), context.getType(falsePart));
-  }
 
-  @Override
-  public PyExpression getTruePart() {
-    List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
-    return expressions.get(0);
-  }
+    @Override
+    @RequiredReadAction
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        PyExpression truePart = getTruePart();
+        PyExpression falsePart = getFalsePart();
+        if (truePart == null || falsePart == null) {
+            return null;
+        }
+        return PyUnionType.union(context.getType(truePart), context.getType(falsePart));
+    }
 
-  @Override
-  public PyExpression getCondition() {
-    List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
-    return expressions.size() > 1 ? expressions.get(1) : null;
-  }
+    @Override
+    @RequiredReadAction
+    public PyExpression getTruePart() {
+        List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
+        return expressions.get(0);
+    }
 
-  @Override
-  public PyExpression getFalsePart() {
-    List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
-    return expressions.size() == 3 ? expressions.get(2) : null;
-  }
+    @Override
+    @RequiredReadAction
+    public PyExpression getCondition() {
+        List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
+        return expressions.size() > 1 ? expressions.get(1) : null;
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyConditionalExpression(this);
-  }
+    @Override
+    @RequiredReadAction
+    public PyExpression getFalsePart() {
+        List<PyExpression> expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, PyExpression.class);
+        return expressions.size() == 3 ? expressions.get(2) : null;
+    }
+
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyConditionalExpression(this);
+    }
 }

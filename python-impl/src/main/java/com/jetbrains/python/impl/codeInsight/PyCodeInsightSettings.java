@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight;
 
 import consulo.annotation.component.ComponentScope;
@@ -67,10 +66,12 @@ public class PyCodeInsightSettings implements PersistentStateComponent<PyCodeIns
 
   public boolean INSERT_TYPE_DOCSTUB = false;
 
+  @Override
   public PyCodeInsightSettings getState() {
     return this;
   }
 
+  @Override
   public void loadState(PyCodeInsightSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
