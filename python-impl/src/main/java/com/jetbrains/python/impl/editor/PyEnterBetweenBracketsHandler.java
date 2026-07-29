@@ -40,7 +40,7 @@ public class PyEnterBetweenBracketsHandler extends EnterBetweenBracesHandler {
         DataContext dataContext,
         EditorActionHandler originalHandler
     ) {
-        if (!file.getLanguage().is(PythonLanguage.getInstance())) {
+        if (!file.getLanguage().is(PythonLanguage.INSTANCE)) {
             return Result.Continue;
         }
         return super.preprocessEnter(file, editor, caretOffsetRef, caretAdvance, dataContext, originalHandler);

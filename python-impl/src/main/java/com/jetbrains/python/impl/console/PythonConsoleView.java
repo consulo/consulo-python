@@ -26,7 +26,7 @@ import com.jetbrains.python.impl.debugger.PyStackFrame;
 import com.jetbrains.python.impl.highlighting.PyHighlighter;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.psi.LanguageLevel;
-import consulo.application.ApplicationManager;
+import consulo.application.Application;
 import consulo.application.progress.ProgressIndicator;
 import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
@@ -40,7 +40,6 @@ import consulo.codeEditor.markup.RangeHighlighter;
 import consulo.colorScheme.EditorColorsManager;
 import consulo.colorScheme.EditorColorsScheme;
 import consulo.content.bundle.Sdk;
-import consulo.disposer.Disposable;
 import consulo.disposer.Disposer;
 import consulo.document.Document;
 import consulo.document.util.TextRange;
@@ -60,6 +59,7 @@ import consulo.language.psi.PsiFile;
 import consulo.logging.Logger;
 import consulo.process.ProcessOutputTypes;
 import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.JBSplitter;
 import consulo.ui.ex.awt.UIUtil;
 import consulo.ui.ex.awtUnsafe.TargetAWT;
@@ -69,8 +69,8 @@ import consulo.util.lang.StringUtil;
 import consulo.util.lang.TimeoutUtil;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-
 import org.jspecify.annotations.Nullable;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -78,7 +78,6 @@ import java.awt.*;
  * @author traff
  */
 public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.LanguageConsoleImpl implements ObservableConsoleView, PyCodeExecutor {
-
   private static final Logger LOG = Logger.getInstance(PythonConsoleView.class);
   private final ConsolePromptDecorator myPromptView;
 
@@ -94,10 +93,10 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
   private ActionCallback myInitialized = new ActionCallback();
 
   public PythonConsoleView(Project project, String title, Sdk sdk) {
-    super(project, title, PythonLanguage.getInstance());
+    super(project, title, PythonLanguage.INSTANCE);
 
     getVirtualFile().putUserData(LanguageLevel.KEY, PythonSdkType.getLanguageLevelForSdk(sdk));
-    // Mark editor as console one, to prevent autopopup completion
+    // Mark editor as console one, to prevent auto-popup completion
     getConsoleEditor().putUserData(PythonConsoleAutopopupBlockingHandler.REPL_KEY, new Object());
     getHistoryViewer().putUserData(ConsoleViewUtil.EDITOR_IS_CONSOLE_HISTORY_VIEW, true);
     super.setPrompt(null);
@@ -158,7 +157,6 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     }
   }
 
-
   public void inputRequested() {
     if (myExecuteActionHandler != null) {
       ConsoleCommunication consoleCommunication = myExecuteActionHandler.getConsoleCommunication();
@@ -192,8 +190,9 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
           }
           if (System.currentTimeMillis() - time > 1000) {
             if (editor != null) {
-              UIUtil.invokeLaterIfNeeded(() -> HintManager.getInstance()
-                                                          .showErrorHint(editor, myExecuteActionHandler.getCantExecuteMessage()));
+              UIUtil.invokeLaterIfNeeded(
+                () -> HintManager.getInstance().showErrorHint(editor, myExecuteActionHandler.getCantExecuteMessage())
+              );
             }
             return;
           }
@@ -206,18 +205,17 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     }));
   }
 
-
   public void executeInConsole(String code) {
     String codeToExecute = code.endsWith("\n") ? code : code + "\n";
 
     String text = getConsoleEditor().getDocument().getText();
-    ApplicationManager.getApplication().runWriteAction(() -> setInputText(codeToExecute));
+    Application.get().runWriteAction(() -> setInputText(codeToExecute));
     int oldOffset = getConsoleEditor().getCaretModel().getOffset();
     getConsoleEditor().getCaretModel().moveToOffset(codeToExecute.length());
     myExecuteActionHandler.runExecuteAction(this);
 
     if (!StringUtil.isEmpty(text)) {
-      ApplicationManager.getApplication().runWriteAction(() -> setInputText(text));
+      Application.get().runWriteAction(() -> setInputText(text));
       getConsoleEditor().getCaretModel().moveToOffset(oldOffset);
     }
   }
@@ -336,20 +334,17 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
       }
     });
     mySplitView = view;
-    Disposer.register(this, (Disposable) view);
+    Disposer.register(this, view);
     splitWindow();
   }
 
+  @RequiredUIAccess
   protected final void doAddPromptToHistory(boolean isMainPrompt) {
     flushDeferredText();
     EditorEx viewer = getHistoryViewer();
     Document document = viewer.getDocument();
     RangeHighlighter highlighter = getHistoryViewer().getMarkupModel()
-                                                     .addRangeHighlighter(document.getTextLength(),
-                                                                          document.getTextLength(),
-                                                                          0,
-                                                                          null,
-                                                                          HighlighterTargetArea.EXACT_RANGE);
+      .addRangeHighlighter(document.getTextLength(), document.getTextLength(), 0, null, HighlighterTargetArea.EXACT_RANGE);
     String prompt;
     if (isMainPrompt) {
       prompt = myPromptView.getMainPrompt();
@@ -365,11 +360,13 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     highlighter.putUserData(PyConsoleCopyHandler.PROMPT_LENGTH_MARKER, prompt.length() + 1);
   }
 
+  @Override
+  @RequiredUIAccess
   public String addTextRangeToHistory(TextRange textRange, EditorEx inputEditor, boolean preserveMarkup) {
     String text;
     EditorHighlighter highlighter;
-    if (inputEditor instanceof EditorWindow) {
-      PsiFile file = ((EditorWindow)inputEditor).getInjectedFile();
+    if (inputEditor instanceof EditorWindow editorWindow) {
+      PsiFile file = editorWindow.getInjectedFile();
       highlighter =
         HighlighterFactory.createHighlighter(file.getVirtualFile(), EditorColorsManager.getInstance().getGlobalScheme(), getProject());
       String fullText = InjectedLanguageManager.getInstance(file.getProject()).getUnescapedText(file);
@@ -393,7 +390,6 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     print("\n", ConsoleViewContentType.NORMAL_OUTPUT);
     return text;
   }
-
 
   @Override
   protected JComponent createCenterComponent() {
@@ -430,7 +426,7 @@ public class PythonConsoleView extends consulo.ide.impl.idea.execution.console.L
     JBSplitter pane = (JBSplitter)getComponent(0);
     removeAll();
     if (mySplitView != null) {
-      Disposer.dispose((Disposable) mySplitView);
+      Disposer.dispose(mySplitView);
       mySplitView = null;
     }
     add(pane.getFirstComponent(), BorderLayout.CENTER);

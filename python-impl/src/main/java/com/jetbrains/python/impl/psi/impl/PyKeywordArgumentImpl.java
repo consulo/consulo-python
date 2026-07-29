@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
-
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
@@ -38,32 +38,40 @@ public class PyKeywordArgumentImpl extends PyElementImpl implements PyKeywordArg
   }
 
   @Nullable
+  @Override
+  @RequiredReadAction
   public String getKeyword() {
     ASTNode node = getKeywordNode();
     return node != null ? node.getText() : null;
   }
 
   @Override
+  @RequiredReadAction
   public ASTNode getKeywordNode() {
     return getNode().findChildByType(PyTokenTypes.IDENTIFIER);
   }
 
   @Override
+  @RequiredReadAction
   public PyExpression getValueExpression() {
     return PsiTreeUtil.getChildOfType(this, PyExpression.class);
   }
 
   @Override
+  @RequiredReadAction
   public String toString() {
     return getClass().getSimpleName() + ": " + getKeyword();
   }
 
+  @Override
+  @RequiredReadAction
   public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
     PyExpression e = getValueExpression();
     return e != null ? context.getType(e) : null;
   }
 
   @Override
+  @RequiredReadAction
   public PsiReference getReference() {
     ASTNode keywordNode = getKeywordNode();
     if (keywordNode != null) {
@@ -73,17 +81,19 @@ public class PyKeywordArgumentImpl extends PyElementImpl implements PyKeywordArg
   }
 
   @Override
+  @RequiredReadAction
   public String getName() {
     return getKeyword();
   }
 
   @Override
+  @RequiredWriteAction
   public PsiElement setName(String name) throws IncorrectOperationException
   {
     PyElementGenerator generator = PyElementGenerator.getInstance(getProject());
     PyExpression expression = getValueExpression();
-    PyKeywordArgument keywordArgument = generator.createKeywordArgument(LanguageLevel.forElement(this), name,
-                                                                        expression != null ? expression.getText() : name);
+    PyKeywordArgument keywordArgument =
+      generator.createKeywordArgument(LanguageLevel.forElement(this), name, expression != null ? expression.getText() : name);
     getNode().replaceChild(getKeywordNode(), keywordArgument.getKeywordNode());
     return this;
   }

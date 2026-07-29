@@ -37,7 +37,7 @@ public class PythonCompletionWeigher extends CompletionWeigher {
 
   @Override
   public Comparable weigh(LookupElement element, CompletionLocation location) {
-    if (!PsiUtilCore.findLanguageFromElement(location.getCompletionParameters().getPosition()).isKindOf(PythonLanguage.getInstance())) {
+      if (!PsiUtilCore.findLanguageFromElement(location.getCompletionParameters().getPosition()).isKindOf(PythonLanguage.INSTANCE)) {
       return 0;
     }
 

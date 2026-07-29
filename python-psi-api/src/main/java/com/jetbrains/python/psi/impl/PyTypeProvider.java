@@ -18,12 +18,12 @@ package com.jetbrains.python.psi.impl;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
 import consulo.component.extension.ExtensionPointName;
 import consulo.language.psi.PsiElement;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -38,18 +38,23 @@ public interface PyTypeProvider
 	PyType getReferenceExpressionType(PyReferenceExpression referenceExpression, TypeEvalContext context);
 
 	@Nullable
+    @RequiredReadAction
 	PyType getReferenceType(PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor);
 
 	@Nullable
-	Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context);
+    @RequiredReadAction
+    SimpleReference<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context);
 
 	@Nullable
-	Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context);
+    @RequiredReadAction
+    SimpleReference<PyType> getReturnType(PyCallable callable, TypeEvalContext context);
 
 	@Nullable
-	Ref<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context);
+    @RequiredReadAction
+    SimpleReference<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context);
 
 	@Nullable
+    @RequiredReadAction
 	PyType getContextManagerVariableType(PyClass contextManager, PyExpression withExpression, TypeEvalContext context);
 
 	@Nullable

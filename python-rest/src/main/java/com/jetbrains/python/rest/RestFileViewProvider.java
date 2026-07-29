@@ -49,7 +49,7 @@ public class RestFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
 
   @Override
   public Language getTemplateDataLanguage() {
-    return PythonLanguage.getInstance();
+      return PythonLanguage.INSTANCE;
   }
 
   @Override

@@ -22,80 +22,69 @@ import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
 /**
  * @author vlan
  */
 @ExtensionImpl
-public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase
-{
-	@Override
-	public Ref<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context)
-	{
-		String name = param.getName();
-		if(name != null)
-		{
-			PyFunction functionSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(func, context);
-			if(functionSkeleton != null)
-			{
-				PyNamedParameter paramSkeleton = functionSkeleton.getParameterList().findParameterByName(name);
-				if(paramSkeleton != null)
-				{
-					PyType type = context.getType(paramSkeleton);
-					if(type != null)
-					{
-						return Ref.create(type);
-					}
-				}
-			}
-		}
-		return null;
-	}
+public class PyUserSkeletonsTypeProvider extends PyTypeProviderBase {
+    @Override
+    @RequiredReadAction
+    public SimpleReference<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context) {
+        String name = param.getName();
+        if (name != null) {
+            PyFunction functionSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(func, context);
+            if (functionSkeleton != null) {
+                PyNamedParameter paramSkeleton = functionSkeleton.getParameterList().findParameterByName(name);
+                if (paramSkeleton != null) {
+                    PyType type = context.getType(paramSkeleton);
+                    if (type != null) {
+                        return SimpleReference.create(type);
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
-	@Nullable
-	@Override
-	public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context)
-	{
-		PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
-		if(callableSkeleton != null)
-		{
-			PyType type = context.getReturnType(callableSkeleton);
-			if(type != null)
-			{
-				return Ref.create(type);
-			}
-		}
-		return null;
-	}
+    @Nullable
+    @Override
+    @RequiredReadAction
+    public SimpleReference<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
+        PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
+        if (callableSkeleton != null) {
+            PyType type = context.getReturnType(callableSkeleton);
+            if (type != null) {
+                return SimpleReference.create(type);
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public PyType getReferenceType(PsiElement target, TypeEvalContext context, @Nullable PsiElement anchor)
-	{
-		if(target instanceof PyTargetExpression)
-		{
-			PyTargetExpression targetSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext((PyTargetExpression) target, context);
-			if(targetSkeleton != null)
-			{
-				return context.getType(targetSkeleton);
-			}
-		}
-		return null;
-	}
+    @Override
+    @RequiredReadAction
+    public PyType getReferenceType(PsiElement target, TypeEvalContext context, @Nullable PsiElement anchor) {
+        if (target instanceof PyTargetExpression targetExpr) {
+            PyTargetExpression targetSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(targetExpr, context);
+            if (targetSkeleton != null) {
+                return context.getType(targetSkeleton);
+            }
+        }
+        return null;
+    }
 
-	@Nullable
-	@Override
-	public PyType getCallableType(PyCallable callable, TypeEvalContext context)
-	{
-		PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
-		if(callableSkeleton != null)
-		{
-			return context.getType(callableSkeleton);
-		}
-		return null;
-	}
+    @Nullable
+    @Override
+    public PyType getCallableType(PyCallable callable, TypeEvalContext context) {
+        PyCallable callableSkeleton = PyUserSkeletonsUtil.getUserSkeletonWithContext(callable, context);
+        if (callableSkeleton != null) {
+            return context.getType(callableSkeleton);
+        }
+        return null;
+    }
 }

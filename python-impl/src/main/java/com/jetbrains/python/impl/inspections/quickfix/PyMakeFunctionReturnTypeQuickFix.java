@@ -15,11 +15,11 @@
  */
 package com.jetbrains.python.impl.inspections.quickfix;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.documentation.PythonDocumentationProvider;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiComment;
@@ -63,6 +63,8 @@ public class PyMakeFunctionReturnTypeQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameMake$0Return$1(functionName, myReturnTypeName);
     }
 
+    @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
         if (myAnnotation != null) {
