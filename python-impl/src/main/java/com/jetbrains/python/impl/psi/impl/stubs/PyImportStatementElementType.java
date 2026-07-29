@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl.stubs;
 
 import consulo.language.ast.ASTNode;
@@ -34,37 +33,39 @@ import java.io.IOException;
  * @author yole
  */
 public class PyImportStatementElementType extends PyStubElementType<PyImportStatementStub, PyImportStatement> {
-  public PyImportStatementElementType() {
-    this("IMPORT_STATEMENT");
-  }
+    public PyImportStatementElementType() {
+        this("IMPORT_STATEMENT");
+    }
 
-  public PyImportStatementElementType(String debugName) {
-    super(debugName);
-  }
+    public PyImportStatementElementType(String debugName) {
+        super(debugName);
+    }
 
-  @Override
-  public PsiElement createElement(ASTNode node) {
-    return new PyImportStatementImpl(node);
-  }
+    @Override
+    public PsiElement createElement(ASTNode node) {
+        return new PyImportStatementImpl(node);
+    }
 
-  @Override
-  public PyImportStatement createPsi(PyImportStatementStub stub) {
-    return new PyImportStatementImpl(stub);
-  }
+    @Override
+    public PyImportStatement createPsi(PyImportStatementStub stub) {
+        return new PyImportStatementImpl(stub);
+    }
 
-  @Override
-  public PyImportStatementStub createStub(PyImportStatement psi, StubElement parentStub) {
-    return new PyImportStatementStubImpl(parentStub, getStubElementType());
-  }
+    @Override
+    public PyImportStatementStub createStub(PyImportStatement psi, StubElement parentStub) {
+        return new PyImportStatementStubImpl(parentStub, getStubElementType());
+    }
 
-  public void serialize(PyImportStatementStub stub, StubOutputStream dataStream) throws IOException {
-  }
+    @Override
+    public void serialize(PyImportStatementStub stub, StubOutputStream dataStream) throws IOException {
+    }
 
-  public PyImportStatementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-    return new PyImportStatementStubImpl(parentStub, getStubElementType());
-  }
+    @Override
+    public PyImportStatementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+        return new PyImportStatementStubImpl(parentStub, getStubElementType());
+    }
 
-  protected IStubElementType getStubElementType() {
-    return PyElementTypes.IMPORT_STATEMENT;
-  }
+    protected IStubElementType getStubElementType() {
+        return PyElementTypes.IMPORT_STATEMENT;
+    }
 }

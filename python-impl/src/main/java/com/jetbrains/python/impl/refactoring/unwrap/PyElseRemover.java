@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
 import consulo.language.psi.PsiElement;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyElement;
 import consulo.language.util.IncorrectOperationException;
+import consulo.python.impl.localize.PyLocalize;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyElseRemover extends PyElseUnwrapperBase {
-  public PyElseRemover() {
-    super(PyBundle.message("remove.else"));
-  }
+    public PyElseRemover() {
+        super(PyLocalize.removeElse());
+    }
 
-  @Override
-  protected void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException
-  {
-    context.delete(branch);
-  }
+    @Override
+    protected void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException {
+        context.delete(branch);
+    }
 }

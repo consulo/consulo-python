@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl.stubs;
 
 import consulo.language.ast.ASTNode;
@@ -61,11 +60,13 @@ public class PyImportElementElementType extends PyStubElementType<PyImportElemen
     return new PyImportElementStubImpl(psi.getImportedQName(), asName != null ? asName.getName() : "", parentStub, getStubElementType());
   }
 
+  @Override
   public void serialize(PyImportElementStub stub, StubOutputStream dataStream) throws IOException {
     QualifiedName.serialize(stub.getImportedQName(), dataStream);
     dataStream.writeName(stub.getAsName());
   }
 
+  @Override
   public PyImportElementStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
     QualifiedName qName = QualifiedName.deserialize(dataStream);
     StringRef asName = dataStream.readName();

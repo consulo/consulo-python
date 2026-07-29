@@ -26,6 +26,8 @@ import com.jetbrains.python.psi.PyImportStatement;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PyImportStatementStub;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenSet;
 import consulo.language.psi.PsiElement;
@@ -61,12 +63,14 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 		super(stub, nodeType);
 	}
 
-	public PyImportElement[] getImportElements()
+	@Override
+    @RequiredReadAction
+    public PyImportElement[] getImportElements()
 	{
 		PyImportStatementStub stub = getStub();
 		if(stub != null)
 		{
-			return stub.getChildrenByType(PyElementTypes.IMPORT_ELEMENT, count -> new PyImportElement[count]);
+			return stub.getChildrenByType(PyElementTypes.IMPORT_ELEMENT, PyImportElement[]::new);
 		}
 		return childrenToPsi(TokenSet.create(PyElementTypes.IMPORT_ELEMENT), new PyImportElement[0]);
 	}
@@ -78,6 +82,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	}
 
 	@Override
+    @RequiredWriteAction
 	public void deleteChildInternal(ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getImportElements()))
@@ -88,6 +93,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	}
 
 	@Override
+    @RequiredReadAction
 	public List<String> getFullyQualifiedObjectNames()
 	{
 		return getImportElementNames(getImportElements());
@@ -114,13 +120,15 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	}
 
 	@Override
+    @RequiredReadAction
 	public Iterable<PyElement> iterateNames()
 	{
 		PyElement resolved = as(resolveImplicitSubModule(), PyElement.class);
-		return resolved != null ? ImmutableList.<PyElement>of(resolved) : Collections.<PyElement>emptyList();
+		return resolved != null ? ImmutableList.of(resolved) : Collections.<PyElement>emptyList();
 	}
 
 	@Override
+    @RequiredReadAction
 	public List<RatedResolveResult> multiResolveName(String name)
 	{
 		PyImportElement[] elements = getImportElements();
@@ -142,6 +150,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 	 * http://stackoverflow.com/questions/6048786/from-module-import-in-init-py-makes-module-name-visible
 	 */
 	@Nullable
+    @RequiredReadAction
 	private PsiElement resolveImplicitSubModule()
 	{
 		PyImportElement[] elements = getImportElements();

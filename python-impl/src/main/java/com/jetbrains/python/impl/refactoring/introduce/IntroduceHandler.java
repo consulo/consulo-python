@@ -158,9 +158,9 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
   private final IntroduceValidator myValidator;
   protected final LocalizeValue myDialogTitle;
 
-  protected IntroduceHandler(IntroduceValidator validator, String dialogTitle) {
+  protected IntroduceHandler(IntroduceValidator validator, LocalizeValue dialogTitle) {
     myValidator = validator;
-    myDialogTitle = LocalizeValue.ofNullable(dialogTitle);
+    myDialogTitle = dialogTitle;
   }
 
   @Override

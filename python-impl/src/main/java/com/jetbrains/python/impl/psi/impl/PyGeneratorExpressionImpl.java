@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.psi.impl;
 import java.util.Arrays;
 import java.util.List;
 
+import consulo.annotation.access.RequiredReadAction;
 import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
@@ -52,6 +53,7 @@ public class PyGeneratorExpressionImpl extends PyComprehensionElementImpl implem
 
 	@Nullable
 	@Override
+    @RequiredReadAction
 	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		PyExpression resultExpr = getResultExpression();
@@ -65,7 +67,9 @@ public class PyGeneratorExpressionImpl extends PyComprehensionElementImpl implem
 		return null;
 	}
 
-	public List<PsiNamedElement> getNamedElements()
+	@Override
+    @RequiredReadAction
+    public List<PsiNamedElement> getNamedElements()
 	{
 		// extract whatever names are defined in "for" components
 		List<PyComprehensionForComponent> fors = getForComponents();
@@ -89,6 +93,8 @@ public class PyGeneratorExpressionImpl extends PyComprehensionElementImpl implem
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PsiNamedElement getNamedElement(String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);

@@ -27,6 +27,7 @@ import com.jetbrains.python.psi.resolve.PointInImport;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.types.PyType;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
@@ -54,6 +55,7 @@ public class PyImportedModuleType implements PyType {
 
   @Nullable
   @Override
+  @RequiredReadAction
   public List<? extends RatedResolveResult> resolveMember(String name,
                                                           @Nullable PyExpression location,
                                                           AccessDirection direction,
@@ -70,7 +72,7 @@ public class PyImportedModuleType implements PyType {
         List<PsiElement> importedSubmodules = PyModuleType.collectImportedSubmodules((PsiFileSystemItem)resolved, location);
         if (importedSubmodules != null) {
           Set<PsiElement> imported = Sets.newHashSet(importedSubmodules);
-          elements = ContainerUtil.filter(elements, element -> imported.contains(element));
+          elements = ContainerUtil.filter(elements, imported::contains);
         }
       }
       return ResolveImportUtil.rateResults(elements);
@@ -78,6 +80,7 @@ public class PyImportedModuleType implements PyType {
     return null;
   }
 
+  @Override
   public Object[] getCompletionVariants(String completionPrefix, PsiElement location, ProcessingContext context) {
     List<LookupElement> result = new ArrayList<>();
     PsiElement resolved = myImportedModule.resolve();
@@ -99,13 +102,15 @@ public class PyImportedModuleType implements PyType {
     return ArrayUtil.toObjectArray(result);
   }
 
+  @Override
+  @RequiredReadAction
   public String getName() {
     return "imported module " + myImportedModule.getImportedPrefix().toString();
   }
 
   @Override
   public boolean isBuiltin() {
-    return false;  // no module can be imported from builtins
+    return false;  // no module can be imported from built-ins
   }
 
   @Override

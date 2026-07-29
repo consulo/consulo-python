@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
 import consulo.language.psi.PsiElement;
@@ -21,32 +20,34 @@ import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyElsePart;
 import com.jetbrains.python.psi.PyIfStatement;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public abstract class PyElseUnwrapperBase extends PyUnwrapper {
-  public PyElseUnwrapperBase(String description) {
-    super(description);
-  }
-
-  @Override
-  public boolean isApplicableTo(PsiElement e) {
-      return (e instanceof PyElsePart);
-  }
-  @Override
-    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException
-  {
-      PyElement elseBranch;
-
-      if (element instanceof PyIfStatement && ((PyIfStatement)element).getElsePart() != null) {
-        elseBranch = ((PyIfStatement)element).getElsePart();
-      }
-      else {
-        elseBranch = (PyElement)element;
-      }
-      unwrapElseBranch(elseBranch, element.getParent(), context);
+    public PyElseUnwrapperBase(LocalizeValue description) {
+        super(description);
     }
-  protected abstract void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException;
+
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        return (e instanceof PyElsePart);
+    }
+
+    @Override
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        PyElement elseBranch;
+
+        if (element instanceof PyIfStatement ifStmt && ifStmt.getElsePart() != null) {
+            elseBranch = ifStmt.getElsePart();
+        }
+        else {
+            elseBranch = (PyElement) element;
+        }
+        unwrapElseBranch(elseBranch, element.getParent(), context);
+    }
+
+    protected abstract void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException;
 
 }

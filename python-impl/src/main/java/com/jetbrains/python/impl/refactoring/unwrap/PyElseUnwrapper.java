@@ -13,48 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyIfStatement;
 import com.jetbrains.python.psi.PyStatementWithElse;
+import consulo.python.impl.localize.PyLocalize;
 
 import java.util.List;
 import java.util.Set;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyElseUnwrapper extends PyElseUnwrapperBase {
-  public PyElseUnwrapper() {
-    super(PyBundle.message("unwrap.else"));
-  }
-
-  @Override
-  public PsiElement collectAffectedElements(PsiElement e, List<PsiElement> toExtract) {
-    super.collectAffectedElements(e, toExtract);
-    return PsiTreeUtil.getParentOfType(e, PyStatementWithElse.class);
-  }
-
-  @Override
-  public void collectElementsToIgnore(PsiElement element, Set<PsiElement> result) {
-    PsiElement parent = element.getParent();
-
-    while (parent instanceof PyIfStatement) {
-      result.add(parent);
-      parent = parent.getParent();
+    public PyElseUnwrapper() {
+        super(PyLocalize.unwrapElse());
     }
-  }
 
-  @Override
-  protected void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException {
-    parent = PsiTreeUtil.getParentOfType(branch, PyStatementWithElse.class);
-    context.extractPart(branch);
-    context.delete(parent);
-  }
+    @Override
+    public PsiElement collectAffectedElements(PsiElement e, List<PsiElement> toExtract) {
+        super.collectAffectedElements(e, toExtract);
+        return PsiTreeUtil.getParentOfType(e, PyStatementWithElse.class);
+    }
+
+    @Override
+    public void collectElementsToIgnore(PsiElement element, Set<PsiElement> result) {
+        PsiElement parent = element.getParent();
+
+        while (parent instanceof PyIfStatement ifStmt) {
+            result.add(ifStmt);
+            parent = ifStmt.getParent();
+        }
+    }
+
+    @Override
+    @RequiredReadAction
+    protected void unwrapElseBranch(PyElement branch, PsiElement parent, Context context) throws IncorrectOperationException {
+        parent = PsiTreeUtil.getParentOfType(branch, PyStatementWithElse.class);
+        context.extractPart(branch);
+        context.delete(parent);
+    }
 }

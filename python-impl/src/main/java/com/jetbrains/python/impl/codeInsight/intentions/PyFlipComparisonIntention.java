@@ -20,6 +20,8 @@ import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyElementGenerator;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyFile;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.psi.PsiElement;
@@ -46,6 +48,8 @@ public class PyFlipComparisonIntention extends BaseIntentionAction {
         PyTokenTypes.LT, ">"
     );
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -71,6 +75,8 @@ public class PyFlipComparisonIntention extends BaseIntentionAction {
         return false;
     }
 
+    @Override
+    @RequiredWriteAction
     public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
         PyBinaryExpression binaryExpression = PsiTreeUtil.getParentOfType(element, PyBinaryExpression.class, false);

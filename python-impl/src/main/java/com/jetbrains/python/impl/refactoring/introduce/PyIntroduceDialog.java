@@ -13,33 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.introduce;
 
-import consulo.document.event.DocumentEvent;
-import consulo.document.event.DocumentListener;
-import consulo.language.editor.ui.awt.*;
-import consulo.project.Project;
-import consulo.ui.ex.awt.ComboBox;
-import consulo.ui.ex.awt.DialogWrapper;
-import consulo.language.editor.ui.awt.EditorComboBoxEditor;
-import consulo.language.editor.ui.awt.EditorTextField;
-import consulo.language.editor.ui.awt.StringComboboxEditor;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyExpression;
-
+import consulo.document.event.DocumentEvent;
+import consulo.document.event.DocumentListener;
+import consulo.language.editor.ui.awt.EditorComboBoxEditor;
+import consulo.language.editor.ui.awt.EditorComboBoxRenderer;
+import consulo.language.editor.ui.awt.EditorTextField;
+import consulo.language.editor.ui.awt.StringComboboxEditor;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.awt.ComboBox;
+import consulo.ui.ex.awt.DialogWrapper;
 import org.jspecify.annotations.Nullable;
+
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.EnumSet;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Aug 18, 2009
- * Time: 8:43:28 PM
+ * @author Alexey.Ivanov
+ * @since 2009-08-18
  */
 public class PyIntroduceDialog extends DialogWrapper {
   private JPanel myContentPane;
@@ -89,26 +88,24 @@ public class PyIntroduceDialog extends DialogWrapper {
     myNameComboBox.setEditable(true);
     myNameComboBox.setMaximumRowCount(8);
 
-    myNameComboBox.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        updateControls();
-      }
-    });
+    myNameComboBox.addItemListener(e -> updateControls());
 
     ((EditorTextField)myNameComboBox.getEditor().getEditorComponent()).addDocumentListener(new DocumentListener() {
+      @Override
       public void beforeDocumentChange(DocumentEvent event) {
       }
 
+      @Override
       public void documentChanged(DocumentEvent event) {
         updateControls();
       }
     });
 
-    myContentPane.registerKeyboardAction(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        myNameComboBox.requestFocus();
-      }
-    }, KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    myContentPane.registerKeyboardAction(
+      e -> myNameComboBox.requestFocus(),
+      KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_MASK),
+      JComponent.WHEN_IN_FOCUSED_WINDOW
+    );
 
     for (String possibleName : possibleNames) {
       myNameComboBox.addItem(possibleName);
@@ -135,10 +132,13 @@ public class PyIntroduceDialog extends DialogWrapper {
     }
   }
 
+  @Override
+  @RequiredUIAccess
   public JComponent getPreferredFocusedComponent() {
     return myNameComboBox;
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myContentPane;
   }
@@ -167,7 +167,7 @@ public class PyIntroduceDialog extends DialogWrapper {
   private void updateControls() {
     boolean nameValid = myValidator.isNameValid(getName(), getProject());
     setOKActionEnabled(nameValid);
-    setErrorText(!nameValid ? PyBundle.message("refactoring.introduce.name.error") : null);
+    setErrorText(!nameValid ? PyLocalize.refactoringIntroduceNameError() : LocalizeValue.empty());
   }
 
   public IntroduceHandler.InitPlace getInitPlace() {

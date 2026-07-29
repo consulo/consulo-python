@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl.stubs;
 
 import consulo.language.psi.stub.IStubElementType;
@@ -27,32 +26,40 @@ import com.jetbrains.python.psi.stubs.PyFromImportStatementStub;
  * @author yole
  */
 public class PyFromImportStatementStubImpl extends StubBase<PyFromImportStatement> implements PyFromImportStatementStub {
-  private final QualifiedName myImportSourceQName;
-  private final boolean myStarImport;
-  private final int myRelativeLevel;
+    private final QualifiedName myImportSourceQName;
+    private final boolean myStarImport;
+    private final int myRelativeLevel;
 
-  public PyFromImportStatementStubImpl(QualifiedName importSourceQName, boolean isStarImport, int relativeLevel,
-                                       StubElement parent, IStubElementType elementType) {
-    super(parent, elementType);
-    myImportSourceQName = importSourceQName;
-    myStarImport = isStarImport;
-    myRelativeLevel = relativeLevel;
-  }
+    public PyFromImportStatementStubImpl(
+        QualifiedName importSourceQName,
+        boolean isStarImport,
+        int relativeLevel,
+        StubElement parent,
+        IStubElementType elementType
+    ) {
+        super(parent, elementType);
+        myImportSourceQName = importSourceQName;
+        myStarImport = isStarImport;
+        myRelativeLevel = relativeLevel;
+    }
 
-  public QualifiedName getImportSourceQName() {
-    return myImportSourceQName;
-  }
+    @Override
+    public QualifiedName getImportSourceQName() {
+        return myImportSourceQName;
+    }
 
-  public boolean isStarImport() {
-    return myStarImport;
-  }
+    @Override
+    public boolean isStarImport() {
+        return myStarImport;
+    }
 
-  public int getRelativeLevel() {
-    return myRelativeLevel;
-  }
+    @Override
+    public int getRelativeLevel() {
+        return myRelativeLevel;
+    }
 
-  @Override
-  public String toString() {
-    return "PyFromImportStatementStub(source=" + myImportSourceQName + " starImport=" + myStarImport + ")";
-  }
+    @Override
+    public String toString() {
+        return "PyFromImportStatementStub(source=" + myImportSourceQName + " starImport=" + myStarImport + ")";
+    }
 }

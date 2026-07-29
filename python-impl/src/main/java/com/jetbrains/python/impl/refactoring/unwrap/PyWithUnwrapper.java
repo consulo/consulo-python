@@ -13,43 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.unwrap;
 
+import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.psi.PyPassStatement;
+import com.jetbrains.python.psi.PyStatement;
+import com.jetbrains.python.psi.PyStatementList;
+import com.jetbrains.python.psi.PyWithStatement;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.impl.PyBundle;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.psi.*;
+import consulo.python.impl.localize.PyLocalize;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
 public class PyWithUnwrapper extends PyUnwrapper {
-  public PyWithUnwrapper() {
-    super(PyBundle.message("unwrap.with"));
-  }
-
-  public boolean isApplicableTo(PsiElement e) {
-    if (e instanceof PyWithStatement) {
-      ASTNode n = e.getNode().findChildByType(PyElementTypes.STATEMENT_LISTS);
-      if (n != null) {
-        PyStatementList statementList = (PyStatementList)n.getPsi();
-        if (statementList != null) {
-          PyStatement[] statements = statementList.getStatements();
-          return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
-        }
-      }
+    public PyWithUnwrapper() {
+        super(PyLocalize.unwrapWith());
     }
-    return false;
-  }
 
-  @Override
-  protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-    PyWithStatement withStatement = (PyWithStatement)element;
-    context.extractPart(withStatement);
-    context.delete(withStatement);
-  }
+    @Override
+    public boolean isApplicableTo(PsiElement e) {
+        if (e instanceof PyWithStatement) {
+            ASTNode n = e.getNode().findChildByType(PyElementTypes.STATEMENT_LISTS);
+            if (n != null) {
+                PyStatementList statementList = (PyStatementList) n.getPsi();
+                if (statementList != null) {
+                    PyStatement[] statements = statementList.getStatements();
+                    return statements.length == 1 && !(statements[0] instanceof PyPassStatement) || statements.length > 1;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @RequiredReadAction
+    protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
+        PyWithStatement withStatement = (PyWithStatement) element;
+        context.extractPart(withStatement);
+        context.delete(withStatement);
+    }
 }
 

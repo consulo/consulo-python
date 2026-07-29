@@ -15,22 +15,23 @@
  */
 package com.jetbrains.python.impl.refactoring.introduce.constant;
 
-import java.util.Collection;
-
-
-import consulo.util.lang.StringUtil;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.util.PsiTreeUtil;
-import java.util.HashSet;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.impl.codeInsight.imports.AddImportHelper;
-import com.jetbrains.python.psi.PyExpression;
-import com.jetbrains.python.psi.PyFile;
-import com.jetbrains.python.psi.PyParameterList;
 import com.jetbrains.python.impl.refactoring.PyReplaceExpressionUtil;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceHandler;
 import com.jetbrains.python.impl.refactoring.introduce.IntroduceOperation;
+import com.jetbrains.python.psi.PyExpression;
+import com.jetbrains.python.psi.PyFile;
+import com.jetbrains.python.psi.PyParameterList;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.util.lang.StringUtil;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * @author Alexey.Ivanov
@@ -39,10 +40,11 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 {
 	public PyIntroduceConstantHandler()
 	{
-		super(new ConstantValidator(), PyBundle.message("refactoring.introduce.constant.dialog.title"));
+		super(new ConstantValidator(), PyLocalize.refactoringIntroduceConstantDialogTitle());
 	}
 
 	@Override
+    @RequiredWriteAction
 	protected PsiElement replaceExpression(PsiElement expression, PyExpression newExpression, IntroduceOperation operation)
 	{
 		if(PsiTreeUtil.getParentOfType(expression, ScopeOwner.class) instanceof PyFile)
@@ -53,6 +55,7 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
+    @RequiredWriteAction
 	protected PsiElement addDeclaration(PsiElement expression, PsiElement declaration, IntroduceOperation operation)
 	{
 		PsiElement anchor = expression.getContainingFile();
@@ -61,6 +64,7 @@ public class PyIntroduceConstantHandler extends IntroduceHandler
 	}
 
 	@Override
+    @RequiredReadAction
 	protected Collection<String> generateSuggestedNames(PyExpression expression)
 	{
 		Collection<String> names = new HashSet<>();

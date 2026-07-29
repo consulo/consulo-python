@@ -19,6 +19,8 @@ import com.jetbrains.python.impl.PyElementTypes;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenSet;
 import consulo.language.psi.PsiNamedElement;
@@ -46,23 +48,30 @@ public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStat
 		pyVisitor.visitPyGlobalStatement(this);
 	}
 
-	public PyTargetExpression[] getGlobals()
+	@Override
+    @RequiredReadAction
+    public PyTargetExpression[] getGlobals()
 	{
 		return childrenToPsi(TARGET_EXPRESSION_SET, PyTargetExpression.EMPTY_ARRAY);
 	}
 
-	public List<PsiNamedElement> getNamedElements()
+	@Override
+    @RequiredReadAction
+    public List<PsiNamedElement> getNamedElements()
 	{
 		return Arrays.<PsiNamedElement>asList(getGlobals());
 	}
 
 	@Nullable
+    @RequiredReadAction
 	public PsiNamedElement getNamedElement(String the_name)
 	{
 		return PyUtil.IterHelper.findName(getNamedElements(), the_name);
 	}
 
-	public void addGlobal(String name)
+	@Override
+    @RequiredWriteAction
+    public void addGlobal(String name)
 	{
 		PyElementGenerator pyElementGenerator = PyElementGenerator.getInstance(getProject());
 		add(pyElementGenerator.createComma().getPsi());
@@ -70,6 +79,7 @@ public class PyGlobalStatementImpl extends PyElementImpl implements PyGlobalStat
 	}
 
 	@Override
+    @RequiredWriteAction
 	public void deleteChildInternal(ASTNode child)
 	{
 		if(ArrayUtil.contains(child.getPsi(), getGlobals()))

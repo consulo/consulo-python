@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
-
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import com.jetbrains.python.impl.PyElementTypes;
 import com.jetbrains.python.psi.*;
@@ -25,24 +24,28 @@ import com.jetbrains.python.psi.*;
  * @author yole
  */
 public class PyIfStatementImpl extends PyPartitionedElementImpl implements PyIfStatement {
-  public PyIfStatementImpl(ASTNode astNode) {
-    super(astNode);
-  }
+    public PyIfStatementImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyIfStatement(this);
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyIfStatement(this);
+    }
 
-  public PyIfPart getIfPart() {
-    return (PyIfPart)getPartNotNull(PyElementTypes.IF_PART_IF);
-  }
+    @Override
+    public PyIfPart getIfPart() {
+        return (PyIfPart) getPartNotNull(PyElementTypes.IF_PART_IF);
+    }
 
-  public PyIfPart[] getElifParts() {
-    return childrenToPsi(PyElementTypes.ELIFS, PyIfPart.EMPTY_ARRAY);
-  }
+    @Override
+    @RequiredReadAction
+    public PyIfPart[] getElifParts() {
+        return childrenToPsi(PyElementTypes.ELIFS, PyIfPart.EMPTY_ARRAY);
+    }
 
-  public PyElsePart getElsePart() {
-    return (PyElsePart)getPart(PyElementTypes.ELSE_PART);
-  }
+    @Override
+    public PyElsePart getElsePart() {
+        return (PyElsePart) getPart(PyElementTypes.ELSE_PART);
+    }
 }

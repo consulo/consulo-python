@@ -22,6 +22,7 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.RatedResolveResult;
 import com.jetbrains.python.psi.stubs.PyImportElementStub;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
@@ -59,14 +60,18 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		super(stub, nodeType);
 	}
 
-	@Nullable
+    @Nullable
+    @Override
+    @RequiredReadAction
 	public PyReferenceExpression getImportReferenceExpression()
 	{
 		ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens());
 		return node == null ? null : (PyReferenceExpression) node.getPsi();
 	}
 
-	public QualifiedName getImportedQName()
+	@Override
+    @RequiredReadAction
+    public QualifiedName getImportedQName()
 	{
 		PyImportElementStub stub = getStub();
 		if(stub != null)
@@ -77,12 +82,16 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return importReference != null ? importReference.asQualifiedName() : null;
 	}
 
+    @Override
+    @RequiredReadAction
 	public PyTargetExpression getAsNameElement()
 	{
 		return getStubOrPsiChild(PyElementTypes.TARGET_EXPRESSION);
 	}
 
-	public String getAsName()
+	@Override
+    @RequiredReadAction
+    public String getAsName()
 	{
 		PyImportElementStub stub = getStub();
 		if(stub != null)
@@ -96,6 +105,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 
 	@Override
 	@Nullable
+    @RequiredReadAction
 	public String getVisibleName()
 	{
 		PyImportElementStub stub = getStub();
@@ -129,7 +139,9 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	}
 
 	@Nullable
-	public PyStatement getContainingImportStatement()
+    @Override
+    @RequiredReadAction
+    public PyStatement getContainingImportStatement()
 	{
 		PyImportElementStub stub = getStub();
 		PsiElement parent;
@@ -149,8 +161,8 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	{
 		return new ItemPresentation()
 		{
-
-			private String getRefName(String default_name)
+			@RequiredReadAction
+            private String getRefName(String default_name)
 			{
 				PyReferenceExpression ref = getImportReferenceExpression();
 				if(ref != null)
@@ -164,12 +176,16 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 				return default_name;
 			}
 
-			public String getPresentableText()
+			@Override
+            @RequiredReadAction
+            public String getPresentableText()
 			{
 				return getRefName("<none>");
 			}
 
-			public String getLocationString()
+			@Override
+            @RequiredReadAction
+            public String getLocationString()
 			{
 				PyElement elt = PsiTreeUtil.getParentOfType(PyImportElementImpl.this, PyImportStatement.class, PyFromImportStatement.class);
 				StringBuilder buf = new StringBuilder("| ");
@@ -208,13 +224,16 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 				return buf.toString();
 			}
 
-			public Image getIcon()
+			@Override
+            public Image getIcon()
 			{
 				return null;
 			}
 		};
 	}
 
+    @Override
+    @RequiredReadAction
 	public Iterable<PyElement> iterateNames()
 	{
 		PyElement ret = getAsNameElement();
@@ -233,20 +252,24 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 		return Collections.singleton(ret);
 	}
 
-	public List<RatedResolveResult> multiResolveName(String name)
+	@Override
+    @RequiredReadAction
+    public List<RatedResolveResult> multiResolveName(String name)
 	{
 		return getElementsNamed(name, true);
 	}
 
 	@Nullable
 	@Override
+    @RequiredReadAction
 	public PsiElement getElementNamed(String name, boolean resolveImportElement)
 	{
 		List<RatedResolveResult> results = getElementsNamed(name, resolveImportElement);
 		return results.isEmpty() ? null : RatedResolveResult.sorted(results).get(0).getElement();
 	}
 
-	private List<RatedResolveResult> getElementsNamed(String name, boolean resolveImportElement)
+	@RequiredReadAction
+    private List<RatedResolveResult> getElementsNamed(String name, boolean resolveImportElement)
 	{
 		String asName = getAsName();
 		if(asName != null)
@@ -282,6 +305,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 
 	@Nullable
 	@Override
+    @RequiredReadAction
 	public PsiElement resolve()
 	{
 		List<RatedResolveResult> results = multiResolve();
@@ -289,6 +313,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	}
 
 	@Override
+    @RequiredReadAction
 	public List<RatedResolveResult> multiResolve()
 	{
 		QualifiedName qName = getImportedQName();
@@ -302,6 +327,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
 	}
 
 	@Override
+    @RequiredReadAction
 	public String toString()
 	{
 		QualifiedName qName = getImportedQName();
