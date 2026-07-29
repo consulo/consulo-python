@@ -57,7 +57,6 @@ import consulo.execution.ui.console.language.LanguageConsoleView;
 import consulo.execution.util.ConsoleTitleGen;
 import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
 import consulo.ide.impl.idea.execution.console.ConsoleHistoryControllerImpl;
-import consulo.ide.impl.idea.openapi.actionSystem.ex.ActionImplUtil;
 import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.editor.completion.lookup.LookupManager;
 import consulo.language.file.light.LightVirtualFile;
