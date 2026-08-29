@@ -15,75 +15,78 @@
  */
 package com.jetbrains.python.impl.codeInsight;
 
+import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.application.Application;
+import consulo.application.ReadAction;
+import consulo.application.util.query.Query;
 import consulo.language.editor.gutter.GutterIconNavigationHandler;
-import consulo.language.editor.ui.PsiElementListNavigator;
-import consulo.language.editor.ui.DefaultPsiElementCellRenderer;
-import consulo.application.ApplicationManager;
+import consulo.language.editor.ui.navigation.PsiTargetNavigationService;
 import consulo.language.psi.NavigatablePsiElement;
 import consulo.language.psi.PsiElement;
-import consulo.application.util.query.Query;
-import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.localize.LocalizeValue;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.event.ComponentEvent;
+import consulo.util.concurrent.coroutine.step.CodeExecution;
 import consulo.util.dataholder.Key;
 import consulo.util.dataholder.UserDataHolder;
 import org.jetbrains.annotations.TestOnly;
-
 import org.jspecify.annotations.Nullable;
-import java.awt.event.MouseEvent;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author yole
  */
-abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIconNavigationHandler<T>
-{
+abstract class PyLineMarkerNavigator<T extends PsiElement> implements GutterIconNavigationHandler<T> {
+    /**
+     * A popup cannot be inspected from a test, so in unit test mode the targets are left on the element
+     * instead of being shown, and read back through {@link #getNavigationTargets(UserDataHolder)}.
+     */
+    private static final Key<NavigatablePsiElement[]> MARKERS = new Key<>("PyLineMarkerNavigatorMarkers");
 
-	private static final Key<NavigatablePsiElement[]> MARKERS = new Key<>("PyLineMarkerNavigatorMarkers");
+    @Override
+    @RequiredUIAccess
+    public void navigate(ComponentEvent<?> e, T elt) {
+        LocalizeValue title = ReadAction.compute(() -> getTitle(elt));
 
-	@Override
-	public void navigate(MouseEvent e, T elt)
-	{
-		List<NavigatablePsiElement> navElements = new ArrayList<>();
-		Query<T> elementQuery = search(elt, TypeEvalContext.userInitiated(elt.getProject(), elt.getContainingFile()));
-		if(elementQuery == null)
-		{
-			return;
-		}
-		elementQuery.forEach(psiElement -> {
-			if(psiElement instanceof NavigatablePsiElement)
-			{
-				navElements.add((NavigatablePsiElement) psiElement);
-			}
-			return true;
-		});
-		/**
-		 * For test purposes, we should be able to access list of methods to check em.
-		 * {@link PsiElementListNavigator} simply opens then (hence it is swing-based) and can't be used in tests.
-		 * So, in unit tests we save data in element and data could be obtained with {@link #getNavigationTargets(UserDataHolder)}
-		 */
-		NavigatablePsiElement[] methods = navElements.toArray(new NavigatablePsiElement[navElements.size()]);
-		if(ApplicationManager.getApplication().isUnitTestMode())
-		{
-			elt.putUserData(MARKERS, methods);
-		}
-		else
-		{
-			PsiElementListNavigator.openTargets(e, methods, getTitle(elt), null, new DefaultPsiElementCellRenderer());
-		}
-	}
+        Application.get().getInstance(PsiTargetNavigationService.class)
+            .<NavigatablePsiElement>newNavigator(CodeExecution.supply(() -> {
+                Collection<NavigatablePsiElement> targets = collect(elt);
+                return targets == null ? List.of() : targets;
+            }))
+            .title(title)
+            .navigate(e, elt.getProject());
+    }
 
-	/**
-	 * @see {@link #navigate(MouseEvent, PsiElement)} and {@link #MARKERS}
-	 */
-	@TestOnly
-	@Nullable
-	static NavigatablePsiElement[] getNavigationTargets(UserDataHolder holder)
-	{
-		return holder.getUserData(MARKERS);
-	}
+    private @Nullable List<NavigatablePsiElement> collect(T elt) {
+        Query<T> query = ReadAction.compute(
+            () -> search(elt, TypeEvalContext.userInitiated(elt.getProject(), elt.getContainingFile()))
+        );
+        if (query == null) {
+            return null;
+        }
 
-	protected abstract String getTitle(T elt);
+        List<NavigatablePsiElement> targets = new ArrayList<>();
+        query.forEach(element -> {
+            if (element instanceof NavigatablePsiElement navigatable) {
+                targets.add(navigatable);
+            }
+            return true;
+        });
+        return targets;
+    }
 
-	@Nullable
-	protected abstract Query<T> search(T elt, TypeEvalContext context);
+    @TestOnly
+    static @Nullable NavigatablePsiElement[] getNavigationTargets(UserDataHolder holder) {
+        return holder.getUserData(MARKERS);
+    }
+
+    @RequiredReadAction
+    protected abstract LocalizeValue getTitle(T elt);
+
+    @RequiredReadAction
+    protected abstract @Nullable Query<T> search(T elt, TypeEvalContext context);
 }

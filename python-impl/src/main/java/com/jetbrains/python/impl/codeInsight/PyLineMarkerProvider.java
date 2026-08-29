@@ -37,6 +37,7 @@ import consulo.language.editor.Pass;
 import consulo.language.editor.gutter.LineMarkerInfo;
 import consulo.language.editor.gutter.LineMarkerProvider;
 import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.util.collection.MultiMap;
@@ -106,8 +107,8 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
     private static final PyLineMarkerNavigator<PsiElement> ourSuperMethodNavigator = new PyLineMarkerNavigator<>() {
         @Override
         @RequiredReadAction
-        protected String getTitle(PsiElement elt) {
-            return "Choose Super Method of " + ((PyFunction) elt.getParent()).getName();
+        protected LocalizeValue getTitle(PsiElement elt) {
+            return LocalizeValue.localizeTODO("Choose Super Method of " + ((PyFunction) elt.getParent()).getName());
         }
 
         @Nullable
@@ -119,8 +120,8 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
 
     private static final PyLineMarkerNavigator<PsiElement> ourSuperAttributeNavigator = new PyLineMarkerNavigator<>() {
         @Override
-        protected String getTitle(PsiElement elt) {
-            return "Choose Super Attribute of " + ((PyTargetExpression) elt).getName();
+        protected LocalizeValue getTitle(PsiElement elt) {
+            return LocalizeValue.localizeTODO("Choose Super Attribute of " + ((PyTargetExpression) elt).getName());
         }
 
         @Override
@@ -143,8 +144,8 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
     private static final PyLineMarkerNavigator<PyClass> ourSubclassNavigator = new PyLineMarkerNavigator<>() {
         @Override
         @RequiredReadAction
-        protected String getTitle(PyClass elt) {
-            return "Choose Subclass of " + elt.getName();
+        protected LocalizeValue getTitle(PyClass elt) {
+            return LocalizeValue.localizeTODO("Choose Subclass of " + elt.getName());
         }
 
         @Override
@@ -156,8 +157,8 @@ public class PyLineMarkerProvider implements LineMarkerProvider, PyLineSeparator
     private static final PyLineMarkerNavigator<PyFunction> ourOverridingMethodNavigator = new PyLineMarkerNavigator<>() {
         @Override
         @RequiredReadAction
-        protected String getTitle(PyFunction elt) {
-            return "Choose Overriding Method of " + elt.getName();
+        protected LocalizeValue getTitle(PyFunction elt) {
+            return LocalizeValue.localizeTODO("Choose Overriding Method of " + elt.getName());
         }
 
         @Override

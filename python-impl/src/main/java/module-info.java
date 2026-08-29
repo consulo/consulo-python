@@ -58,6 +58,7 @@ open module consulo.python.impl {
   requires consulo.usage.api;
   requires consulo.util.collection;
   requires consulo.util.concurrent;
+  requires consulo.util.concurrent.coroutine;
   requires consulo.util.dataholder;
   requires consulo.util.io;
   requires consulo.util.jdom;
