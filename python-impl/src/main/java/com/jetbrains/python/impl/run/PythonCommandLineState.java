@@ -73,6 +73,7 @@ import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -434,13 +435,13 @@ public abstract class PythonCommandLineState extends CommandLineState {
 
     // for Jython
     ModuleCompilerPathsManager extension = ModuleCompilerPathsManager.getInstance(module);
-    VirtualFile path = extension.getCompilerOutput(ProductionContentFolderTypeProvider.getInstance());
+    Path path = extension.getCompilerOutputPath(ProductionContentFolderTypeProvider.getInstance());
     if (path != null) {
-      pythonPathList.add(path.getPath());
+      pythonPathList.add(path.toString());
     }
-    VirtualFile pathForTests = extension.getCompilerOutput(TestContentFolderTypeProvider.getInstance());
+    Path pathForTests = extension.getCompilerOutputPath(TestContentFolderTypeProvider.getInstance());
     if (pathForTests != null) {
-      pythonPathList.add(pathForTests.getPath());
+      pythonPathList.add(pathForTests.toString());
     }
 
     List<ModuleExtension> extensions = ModuleRootManager.getInstance(module).getExtensions();
