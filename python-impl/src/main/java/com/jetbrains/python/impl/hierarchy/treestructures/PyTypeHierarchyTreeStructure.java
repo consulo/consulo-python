@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.hierarchy.treestructures;
 import java.util.List;
 
 
-import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
+import consulo.language.editor.hierarchy.HierarchyNodeDescriptor;
 import com.jetbrains.python.impl.hierarchy.PyHierarchyNodeDescriptor;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.impl.psi.PyUtil;

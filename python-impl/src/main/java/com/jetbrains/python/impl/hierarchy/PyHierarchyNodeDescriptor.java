@@ -15,72 +15,72 @@
  */
 package com.jetbrains.python.impl.hierarchy;
 
-import consulo.ide.IdeBundle;
-import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
-import consulo.ui.ex.tree.NodeDescriptor;
-import consulo.navigation.ItemPresentation;
-import consulo.ide.impl.idea.openapi.roots.ui.util.CompositeAppearance;
-import consulo.util.lang.Comparing;
-import consulo.language.psi.NavigatablePsiElement;
-import consulo.language.psi.PsiElement;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import consulo.language.editor.hierarchy.HierarchyNodeDescriptor;
+import consulo.language.editor.localize.LanguageEditorLocalize;
+import consulo.language.psi.NavigatablePsiElement;
+import consulo.language.psi.PsiElement;
+import consulo.navigation.ItemPresentation;
 import consulo.ui.annotation.RequiredUIAccess;
-
+import consulo.ui.ex.tree.NodeDescriptor;
+import consulo.ui.ex.util.CompositeAppearance;
+import consulo.util.lang.Comparing;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Jul 31, 2009
- * Time: 6:26:37 PM
+ * @author Alexey.Ivanov
+ * @since 2009-07-31
  */
-public class PyHierarchyNodeDescriptor extends consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor
-{
-	public PyHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, PsiElement element, boolean isBase)
-	{
-		super(element.getProject(), parentDescriptor, element, isBase);
-	}
+public class PyHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
+    public PyHierarchyNodeDescriptor(NodeDescriptor parentDescriptor, PsiElement element, boolean isBase) {
+        super(element.getProject(), parentDescriptor, element, isBase);
+    }
 
-	@RequiredUIAccess
-	@Override
-	public boolean update()
-	{
-		boolean changes = super.update();
-		CompositeAppearance oldText = myHighlightedText;
+    @RequiredUIAccess
+    @Override
+    public boolean update() {
+        boolean changes = super.update();
+        CompositeAppearance oldText = myHighlightedText;
 
-		myHighlightedText = new CompositeAppearance();
+        myHighlightedText = new CompositeAppearance();
 
-		NavigatablePsiElement element = (NavigatablePsiElement) getPsiElement();
-		if(element == null)
-		{
-			String invalidPrefix = IdeBundle.message("node.hierarchy.invalid");
-			if(!myHighlightedText.getText().startsWith(invalidPrefix))
-			{
-				myHighlightedText.getBeginning().addText(invalidPrefix, consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor.getInvalidPrefixAttributes());
-			}
-			return true;
-		}
+        NavigatablePsiElement element = (NavigatablePsiElement)getPsiElement();
+        if (element == null) {
+            String invalidPrefix = LanguageEditorLocalize.nodeHierarchyInvalid().get();
+            if (!myHighlightedText.getText().startsWith(invalidPrefix)) {
+                myHighlightedText.getBeginning().addText(invalidPrefix, HierarchyNodeDescriptor.getInvalidPrefixAttributes());
+            }
+            return true;
+        }
 
-		ItemPresentation presentation = element.getPresentation();
-		if(presentation != null)
-		{
-			if(element instanceof PyFunction)
-			{
-				PyClass cls = ((PyFunction) element).getContainingClass();
-				if(cls != null)
-				{
-					myHighlightedText.getEnding().addText(cls.getName() + ".");
-				}
-			}
-			myHighlightedText.getEnding().addText(presentation.getPresentableText());
-			myHighlightedText.getEnding().addText(" " + presentation.getLocationString(), consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor.getPackageNameAttributes());
-		}
-		myName = myHighlightedText.getText();
+        ItemPresentation presentation = element.getPresentation();
+        if (presentation != null) {
+            if (element instanceof PyFunction function) {
+                PyClass cls = function.getContainingClass();
+                if (cls != null) {
+                    myHighlightedText.getEnding().addText(cls.getName() + ".");
+                }
+            }
+            myHighlightedText.getEnding().addText(presentation.getPresentableText());
+            myHighlightedText.getEnding()
+                .addText(" " + presentation.getLocationString(), HierarchyNodeDescriptor.getPackageNameAttributes());
+        }
+        myName = myHighlightedText.getText();
 
-		if(!Comparing.equal(myHighlightedText, oldText))
-		{
-			changes = true;
-		}
-		return changes;
-	}
+        if (!Comparing.equal(myHighlightedText, oldText)) {
+            changes = true;
+        }
+        return changes;
+    }
+
+    @Override
+    public boolean canBeDeleted() {
+        return getPsiElement() instanceof PyClass;
+    }
+
+    @Override
+    public @Nullable String getQualifiedName() {
+        return getPsiElement() instanceof PyClass pyClass ? pyClass.getName() : null;
+    }
 }

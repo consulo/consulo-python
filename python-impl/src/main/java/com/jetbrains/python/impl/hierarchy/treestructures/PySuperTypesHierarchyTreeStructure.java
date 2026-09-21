@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
-import consulo.ide.impl.idea.ide.hierarchy.HierarchyTreeStructure;
+import consulo.language.editor.hierarchy.HierarchyNodeDescriptor;
+import consulo.language.editor.hierarchy.HierarchyTreeStructure;
 import consulo.language.psi.PsiElement;
 import com.jetbrains.python.impl.hierarchy.PyHierarchyNodeDescriptor;
 import com.jetbrains.python.psi.PyClass;

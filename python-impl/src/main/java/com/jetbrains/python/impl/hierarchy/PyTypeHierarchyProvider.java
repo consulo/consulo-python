@@ -21,14 +21,15 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;
 import consulo.dataContext.DataContext;
-import consulo.ide.impl.idea.ide.hierarchy.TypeHierarchyBrowserBase;
 import consulo.language.Language;
-import consulo.language.editor.hierarchy.HierarchyBrowser;
-import consulo.language.editor.hierarchy.TypeHierarchyProvider;
+import consulo.language.editor.hierarchy.HierarchyKind;
+import consulo.language.editor.hierarchy.HierarchyModel;
+import consulo.language.editor.hierarchy.HierarchyProvider;
+import consulo.language.editor.hierarchy.StandardHierarchyKinds;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
-
+import consulo.project.Project;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -36,11 +37,16 @@ import org.jspecify.annotations.Nullable;
  * @since 2009-07-31
  */
 @ExtensionImpl
-public class PyTypeHierachyProvider implements TypeHierarchyProvider {
+public class PyTypeHierarchyProvider implements HierarchyProvider<PyClass> {
+    @Override
+    public HierarchyKind getKind() {
+        return StandardHierarchyKinds.TYPE;
+    }
+
     @Nullable
     @Override
     @RequiredReadAction
-    public PsiElement getTarget(DataContext dataContext) {
+    public PyClass getTarget(DataContext dataContext) {
         PsiElement element = dataContext.getData(PsiElement.KEY);
         if (element == null) {
             Editor editor = dataContext.getData(Editor.KEY);
@@ -49,21 +55,16 @@ public class PyTypeHierachyProvider implements TypeHierarchyProvider {
                 element = file.findElementAt(editor.getCaretModel().getOffset());
             }
         }
-        if (!(element instanceof PyClass)) {
-            element = PsiTreeUtil.getParentOfType(element, PyClass.class);
+        if (element instanceof PyClass pyClass) {
+            return pyClass;
         }
-        return element;
+        return PsiTreeUtil.getParentOfType(element, PyClass.class);
     }
 
-    @Override
-    public HierarchyBrowser createHierarchyBrowser(PsiElement target) {
-        return new PyTypeHierarchyBrowser((PyClass) target);
-    }
-
-    @Override
     @RequiredReadAction
-    public void browserActivated(HierarchyBrowser hierarchyBrowser) {
-        ((PyTypeHierarchyBrowser) hierarchyBrowser).changeView(TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE);
+    @Override
+    public HierarchyModel<PyClass> createModel(Project project, PyClass target) {
+        return new PyTypeHierarchyModel(target);
     }
 
     @Override

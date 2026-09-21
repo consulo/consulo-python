@@ -18,8 +18,8 @@ package com.jetbrains.python.impl.hierarchy.treestructures;
 import java.util.ArrayList;
 import java.util.List;
 
-import consulo.ide.impl.idea.ide.hierarchy.HierarchyNodeDescriptor;
-import consulo.ide.impl.idea.ide.hierarchy.HierarchyTreeStructure;
+import consulo.language.editor.hierarchy.HierarchyNodeDescriptor;
+import consulo.language.editor.hierarchy.HierarchyTreeStructure;
 import consulo.project.Project;
 import consulo.language.psi.PsiElement;
 import consulo.util.collection.ArrayUtil;
