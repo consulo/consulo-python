@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.refactoring.changeSignature;
 
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyParameterList;
 import consulo.document.Document;
 import consulo.document.event.DocumentListener;
-import consulo.language.editor.refactoring.RefactoringBundle;
 import consulo.language.editor.refactoring.changeSignature.ParameterInfo;
 import consulo.language.editor.refactoring.changeSignature.ParameterTableModelBase;
 import consulo.language.editor.refactoring.changeSignature.ParameterTableModelItemBase;
+import consulo.language.editor.refactoring.localize.RefactoringLocalize;
 import consulo.language.editor.refactoring.ui.CodeFragmentTableCellRenderer;
 import consulo.language.editor.ui.awt.EditorTextField;
 import consulo.language.psi.PsiCodeFragment;
@@ -49,22 +48,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * User : ktisha
+ * @author ktisha
  */
-
 public class PyParameterTableModel extends ParameterTableModelBase<PyParameterInfo, PyParameterTableModelItem> {
-
     private final Project myProject;
 
-    public PyParameterTableModel(PyParameterList typeContext,
-                                 PsiElement defaultValueContext,
-                                 Project project) {
+    public PyParameterTableModel(PyParameterList typeContext, PsiElement defaultValueContext, Project project) {
         super(typeContext, defaultValueContext, getColumns(project));
         myProject = project;
     }
 
     private static ColumnInfo[] getColumns(Project project) {
-        Collection<ColumnInfo> result = new ArrayList<ColumnInfo>();
+        Collection<ColumnInfo> result = new ArrayList<>();
         result.add(new PyParameterColumn(project));
         result.add(new PyDefaultValueColumn(project));
         return result.toArray(new ColumnInfo[result.size()]);
@@ -77,7 +72,8 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
         }
         String defaultValue = parameterInfo.getDefaultValue();
         PsiCodeFragment defaultValueFragment = new PyExpressionCodeFragment(myProject, StringUtil.notNullize(defaultValue),
-            StringUtil.notNullize(defaultValue));
+            StringUtil.notNullize(defaultValue)
+        );
         boolean defaultInSignature = parameterInfo.getDefaultInSignature();
         return new PyParameterTableModelItem(parameterInfo, defaultValueFragment, defaultValueFragment, defaultInSignature);
     }
@@ -93,7 +89,7 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
         private final Project myProject;
 
         public PyDefaultValueColumn(Project project) {
-            super(RefactoringBundle.message("column.name.default.value"));
+            super(RefactoringLocalize.columnNameDefaultValue());
             myProject = project;
         }
 
@@ -104,7 +100,10 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
 
         @Override
         public Pair<PsiCodeFragment, Boolean> valueOf(TableItem item) {
-            return new Pair<PsiCodeFragment, Boolean>(item.defaultValueCodeFragment, ((PyParameterTableModelItem) item).isDefaultInSignature());
+            return new Pair<>(
+                item.defaultValueCodeFragment,
+                ((PyParameterTableModelItem) item).isDefaultInSignature()
+            );
         }
 
         @Override
@@ -126,19 +125,32 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
     }
 
     private static class MyCodeFragmentTableCellRenderer extends CodeFragmentTableCellRenderer {
-
         public MyCodeFragmentTableCellRenderer(Project project) {
             super(project);
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(
+            JTable table,
+            Object value,
+            boolean isSelected,
+            boolean hasFocus,
+            int row,
+            int column
+        ) {
             JPanel panel = new JPanel();
             Component component = super.getTableCellRendererComponent(table, ((Pair) value).getFirst(), isSelected, hasFocus, row, column);
             panel.add(component);
 
             Component component1 =
-                new BooleanTableCellRenderer().getTableCellRendererComponent(table, ((Pair) value).getSecond(), isSelected, hasFocus, row, column);
+                new BooleanTableCellRenderer().getTableCellRendererComponent(
+                    table,
+                    ((Pair) value).getSecond(),
+                    isSelected,
+                    hasFocus,
+                    row,
+                    column
+                );
             panel.add(component1);
             return panel;
         }
@@ -150,7 +162,7 @@ public class PyParameterTableModel extends ParameterTableModelBase<PyParameterIn
         private final Project myProject;
         private final FileType myFileType;
         protected EditorTextField myEditorTextField;
-        private Set<DocumentListener> myListeners = new HashSet<DocumentListener>();
+        private Set<DocumentListener> myListeners = new HashSet<>();
 
         public MyCodeFragmentTableCellEditor(Project project) {
             myProject = project;
