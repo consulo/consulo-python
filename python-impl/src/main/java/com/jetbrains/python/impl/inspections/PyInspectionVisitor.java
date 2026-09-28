@@ -16,6 +16,7 @@
 package com.jetbrains.python.impl.inspections;
 
 import consulo.annotation.access.RequiredReadAction;
+import consulo.language.editor.impl.inspection.ProblemDescriptorImpl;
 import consulo.localize.LocalizeValue;
 import org.jspecify.annotations.Nullable;
 import consulo.language.editor.intention.HintAction;
@@ -24,7 +25,6 @@ import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.editor.inspection.ProblemHighlightType;
 import consulo.language.editor.inspection.ProblemsHolder;
-import consulo.ide.impl.idea.codeInspection.ex.ProblemDescriptorImpl;
 import consulo.util.dataholder.Key;
 import consulo.document.util.TextRange;
 import consulo.language.psi.PsiElement;
