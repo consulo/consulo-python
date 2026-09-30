@@ -15,115 +15,111 @@
  */
 package com.jetbrains.python.impl.run;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import consulo.configurable.ConfigurationException;
-import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.disposer.Disposer;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.layout.VerticalLayout;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Alexander Koshevoy
  */
-public class PythonExtendedConfigurationEditor<T extends AbstractPythonRunConfiguration<T>> extends SettingsEditor<T>
-{
-	private final SettingsEditor<T> myMainSettingsEditor;
+public class PythonExtendedConfigurationEditor<T extends AbstractPythonRunConfiguration<T>> extends SettingsEditor<T> {
+    private final SettingsEditor<T> myMainSettingsEditor;
 
-	private PyRunConfigurationEditorExtension myCurrentEditor;
-	private SettingsEditor<AbstractPythonRunConfiguration> myCurrentSettingsEditor;
-	private JComponent myCurrentSettingsEditorComponent;
+    private @Nullable PyRunConfigurationEditorExtension myCurrentEditor;
+    private @Nullable SettingsEditor<AbstractPythonRunConfiguration> myCurrentSettingsEditor;
+    private @Nullable Component myCurrentSettingsEditorComponent;
 
-	private JPanel mySettingsPlaceholder;
+    private @Nullable VerticalLayout mySettingsPlaceholder;
 
-	public PythonExtendedConfigurationEditor(SettingsEditor<T> editor)
-	{
-		myMainSettingsEditor = editor;
+    public PythonExtendedConfigurationEditor(SettingsEditor<T> editor) {
+        myMainSettingsEditor = editor;
 
-		Disposer.register(this, myMainSettingsEditor);
-	}
+        Disposer.register(this, myMainSettingsEditor);
+    }
 
-	@Override
-	protected void resetEditorFrom(T s)
-	{
-		myMainSettingsEditor.resetFrom(s);
-		updateCurrentEditor(s);
-		if(myCurrentSettingsEditor != null)
-		{
-			myCurrentSettingsEditor.resetFrom(s);
-		}
-	}
+    @RequiredUIAccess
+    @Override
+    protected void resetEditorFrom(T s) {
+        myMainSettingsEditor.resetFrom(s);
+        updateCurrentEditor(s);
+        SettingsEditor<AbstractPythonRunConfiguration> currentSettingsEditor = myCurrentSettingsEditor;
+        if (currentSettingsEditor != null) {
+            currentSettingsEditor.resetFrom(s);
+        }
+    }
 
-	@Override
-	protected void applyEditorTo(T s) throws ConfigurationException
-	{
-		myMainSettingsEditor.applyTo(s);
-		boolean updated = updateCurrentEditor(s);
-		if(myCurrentSettingsEditor != null)
-		{
-			if(updated)
-			{
-				myCurrentSettingsEditor.resetFrom(s);
-			}
-			else
-			{
-				myCurrentSettingsEditor.applyTo(s);
-			}
-		}
-	}
+    @RequiredUIAccess
+    @Override
+    protected void applyEditorTo(T s) throws ConfigurationException {
+        myMainSettingsEditor.applyTo(s);
+        boolean updated = updateCurrentEditor(s);
+        SettingsEditor<AbstractPythonRunConfiguration> currentSettingsEditor = myCurrentSettingsEditor;
+        if (currentSettingsEditor != null) {
+            if (updated) {
+                currentSettingsEditor.resetFrom(s);
+            }
+            else {
+                currentSettingsEditor.applyTo(s);
+            }
+        }
+    }
 
-	private boolean updateCurrentEditor(T s)
-	{
-		PyRunConfigurationEditorExtension newEditor = PyRunConfigurationEditorExtension.Factory.getExtension(s);
-		if(myCurrentEditor != newEditor)
-		{
-			// discard previous
-			if(myCurrentSettingsEditorComponent != null)
-			{
-				mySettingsPlaceholder.remove(myCurrentSettingsEditorComponent);
-			}
-			if(myCurrentSettingsEditor != null)
-			{
-				Disposer.dispose(myCurrentSettingsEditor);
-			}
-			// set current editor
-			myCurrentEditor = newEditor;
-			myCurrentSettingsEditor = null;
-			// add new
-			if(newEditor != null)
-			{
-				myCurrentSettingsEditor = newEditor.createEditor(s);
-				myCurrentSettingsEditorComponent = myCurrentSettingsEditor.getComponent();
-				GridBagConstraints constraints = new GridBagConstraints();
-				constraints.gridy = 1;
-				constraints.fill = GridBagConstraints.BOTH;
-				constraints.weightx = 1.0;
-				constraints.insets.top = 10;
-				mySettingsPlaceholder.add(myCurrentSettingsEditorComponent, constraints);
+    @RequiredUIAccess
+    private boolean updateCurrentEditor(T s) {
+        PyRunConfigurationEditorExtension newEditor = PyRunConfigurationEditorExtension.Factory.getExtension(s);
+        if (myCurrentEditor == newEditor) {
+            return false;
+        }
 
-				Disposer.register(this, myCurrentSettingsEditor);
-			}
-			return true;
-		}
-		return false;
-	}
+        VerticalLayout settingsPlaceholder = mySettingsPlaceholder;
+        Component currentComponent = myCurrentSettingsEditorComponent;
+        if (settingsPlaceholder != null && currentComponent != null) {
+            settingsPlaceholder.remove(currentComponent);
+        }
+        myCurrentSettingsEditorComponent = null;
 
-	@Override
-	protected JComponent createEditor()
-	{
-		JComponent mainEditorComponent = myMainSettingsEditor.getComponent();
-		mySettingsPlaceholder = new JPanel(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = GridBagConstraints.BOTH;
-		constraints.weightx = 1.0;
-		mySettingsPlaceholder.add(mainEditorComponent, constraints);
-		return mySettingsPlaceholder;
-	}
+        SettingsEditor<AbstractPythonRunConfiguration> currentSettingsEditor = myCurrentSettingsEditor;
+        if (currentSettingsEditor != null) {
+            Disposer.dispose(currentSettingsEditor);
+        }
 
-	public static <T extends AbstractPythonRunConfiguration<T>> PythonExtendedConfigurationEditor<T> create(SettingsEditor<T> editor)
-	{
-		return new PythonExtendedConfigurationEditor<>(editor);
-	}
+        myCurrentEditor = newEditor;
+        myCurrentSettingsEditor = null;
+
+        if (newEditor != null) {
+            SettingsEditor<AbstractPythonRunConfiguration> settingsEditor = newEditor.createEditor(s);
+            myCurrentSettingsEditor = settingsEditor;
+            Disposer.register(this, settingsEditor);
+
+            Component component = settingsEditor.getUIComponent();
+            myCurrentSettingsEditorComponent = component;
+            if (settingsPlaceholder != null) {
+                settingsPlaceholder.add(component);
+            }
+        }
+        return true;
+    }
+
+    @RequiredUIAccess
+    @Override
+    protected Component createUIComponent() {
+        VerticalLayout settingsPlaceholder = VerticalLayout.create();
+        settingsPlaceholder.add(myMainSettingsEditor.getUIComponent());
+
+        Component currentComponent = myCurrentSettingsEditorComponent;
+        if (currentComponent != null) {
+            settingsPlaceholder.add(currentComponent);
+        }
+
+        mySettingsPlaceholder = settingsPlaceholder;
+        return settingsPlaceholder;
+    }
+
+    public static <T extends AbstractPythonRunConfiguration<T>> PythonExtendedConfigurationEditor<T> create(SettingsEditor<T> editor) {
+        return new PythonExtendedConfigurationEditor<>(editor);
+    }
 }

@@ -16,125 +16,169 @@
 
 package com.jetbrains.python.impl.testing.pytest;
 
-import consulo.fileChooser.FileChooserDescriptor;
-import consulo.fileChooser.FileChooserDescriptorFactory;
-import consulo.configurable.ConfigurationException;
-import consulo.execution.configuration.ui.SettingsEditor;
-import consulo.project.Project;
-import consulo.ui.ex.awt.TextFieldWithBrowseButton;
-import consulo.ui.ex.awt.PanelWithAnchor;
-import consulo.ui.ex.awt.JBLabel;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import consulo.configurable.ConfigurationException;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.fileChooser.FileChooserTextBoxBuilder;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.CheckBox;
+import consulo.ui.Component;
+import consulo.ui.TextBox;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.layout.LabeledLayout;
+import consulo.ui.layout.VerticalLayout;
+import consulo.ui.util.FormBuilder;
+import consulo.util.lang.StringUtil;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
  */
-public class PyTestConfigurationEditor extends SettingsEditor<PyTestRunConfiguration> implements PanelWithAnchor, PyTestRunConfigurationParams {
-  private JPanel myMainPanel;
-  private JPanel myCommonOptionsPlaceholder;
-  private JTextField myKeywordsTextField;
-  private TextFieldWithBrowseButton myTestScriptTextField;
-  private JTextField myParamsTextField;
-  private JBLabel myTargetLabel;
-  private JCheckBox myParametersCheckBox;
-  private JCheckBox myKeywordsCheckBox;
-  private JPanel myRootPanel;
-  private final AbstractPyCommonOptionsForm myCommonOptionsForm;
-  private final Project myProject;
-  private JComponent anchor;
+public class PyTestConfigurationEditor extends SettingsEditor<PyTestRunConfiguration> implements PyTestRunConfigurationParams {
+    private final Project myProject;
+    private final PyTestRunConfiguration myConfiguration;
+    private @Nullable Form myForm;
 
-  public PyTestConfigurationEditor(Project project, PyTestRunConfiguration configuration) {
-    myProject = project;
-    myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());
-    myCommonOptionsPlaceholder.add(myCommonOptionsForm.getMainPanel());
+    public PyTestConfigurationEditor(Project project, PyTestRunConfiguration configuration) {
+        myProject = project;
+        myConfiguration = configuration;
+    }
 
-    String title = PyBundle.message("runcfg.unittest.dlg.select.script.path");
-    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory
-      .createSingleFileOrFolderDescriptor();
-    fileChooserDescriptor.setTitle(title);
-    myTestScriptTextField.addBrowseFolderListener(title, null, myProject, fileChooserDescriptor);
+    @RequiredUIAccess
+    @Override
+    protected Component createUIComponent() {
+        Form form = new Form();
+        myForm = form;
+        return form.myRootPanel;
+    }
 
-    myTargetLabel.setLabelFor(myTestScriptTextField);
+    @RequiredUIAccess
+    @Override
+    protected void resetEditorFrom(PyTestRunConfiguration s) {
+        Form form = myForm;
+        if (form == null) {
+            return;
+        }
 
-    myParametersCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        myParamsTextField.setEnabled(myParametersCheckBox.isSelected());
-      }
-    });
+        AbstractPythonRunConfiguration.copyParams(s, form.myCommonOptionsForm);
+        form.myKeywordsTextField.setValue(StringUtil.notNullize(s.getKeywords()));
+        form.myTestScriptTextField.setValue(StringUtil.notNullize(s.getTestToRun()));
+        form.setUseKeyword(s.useKeyword());
+        form.setUseParam(s.useParam());
+        form.myParamsTextField.setValue(StringUtil.notNullize(s.getParams()));
+    }
 
-    myKeywordsCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        myKeywordsTextField.setEnabled(myKeywordsCheckBox.isSelected());
-      }
-    });
+    @RequiredUIAccess
+    @Override
+    protected void applyEditorTo(PyTestRunConfiguration s) throws ConfigurationException {
+        Form form = myForm;
+        if (form == null) {
+            return;
+        }
 
-    myParametersCheckBox.setSelected(configuration.useParam());
-    myKeywordsCheckBox.setSelected(configuration.useKeyword());
+        AbstractPythonRunConfiguration.copyParams(form.myCommonOptionsForm, s);
+        s.setTestToRun(form.myTestScriptTextField.getValue().trim());
+        s.setKeywords(StringUtil.notNullize(form.myKeywordsTextField.getValue()).trim());
+        s.setParams(StringUtil.notNullize(form.myParamsTextField.getValue()).trim());
+        s.useKeyword(form.myKeywordsCheckBox.getValueOrError());
+        s.useParam(form.myParametersCheckBox.getValueOrError());
+    }
 
-    myParamsTextField.setEnabled(configuration.useParam());
-    myKeywordsTextField.setEnabled(configuration.useKeyword());
+    @Override
+    protected void disposeEditor() {
+        myForm = null;
+    }
 
-    setAnchor(myCommonOptionsForm.getAnchor());
-  }
+    @Override
+    public boolean useParam() {
+        Form form = myForm;
+        return form != null && form.myParametersCheckBox.getValueOrError();
+    }
 
-  protected void resetEditorFrom(PyTestRunConfiguration s) {
-    AbstractPythonRunConfiguration.copyParams(s, myCommonOptionsForm);
-    myKeywordsTextField.setText(s.getKeywords());
-    myTestScriptTextField.setText(s.getTestToRun());
-    myKeywordsCheckBox.setSelected(s.useKeyword());
-    myParametersCheckBox.setSelected(s.useParam());
-    myParamsTextField.setText(s.getParams());
-  }
+    @RequiredUIAccess
+    @Override
+    public void useParam(boolean useParam) {
+        Form form = myForm;
+        if (form != null) {
+            form.setUseParam(useParam);
+        }
+    }
 
-  protected void applyEditorTo(PyTestRunConfiguration s) throws ConfigurationException {
-    AbstractPythonRunConfiguration.copyParams(myCommonOptionsForm, s);
-    s.setTestToRun(myTestScriptTextField.getText().trim());
-    s.setKeywords(myKeywordsTextField.getText().trim());
-    s.setParams(myParamsTextField.getText().trim());
-    s.useKeyword(myKeywordsCheckBox.isSelected());
-    s.useParam(myParametersCheckBox.isSelected());
-  }
+    @Override
+    public boolean useKeyword() {
+        Form form = myForm;
+        return form != null && form.myKeywordsCheckBox.getValueOrError();
+    }
 
-  protected JComponent createEditor() {
-    return myRootPanel;
-  }
+    @RequiredUIAccess
+    @Override
+    public void useKeyword(boolean useKeyword) {
+        Form form = myForm;
+        if (form != null) {
+            form.setUseKeyword(useKeyword);
+        }
+    }
 
-  @Override
-  public JComponent getAnchor() {
-    return anchor;
-  }
+    private final class Form {
+        private final AbstractPyCommonOptionsForm myCommonOptionsForm;
+        private final FileChooserTextBoxBuilder.Controller myTestScriptTextField;
+        private final CheckBox myKeywordsCheckBox;
+        private final TextBox myKeywordsTextField;
+        private final CheckBox myParametersCheckBox;
+        private final TextBox myParamsTextField;
+        private final VerticalLayout myRootPanel;
 
-  @Override
-  public void setAnchor(JComponent anchor) {
-    this.anchor = anchor;
-    myTargetLabel.setAnchor(anchor);
-    myCommonOptionsForm.setAnchor(anchor);
-  }
+        @RequiredUIAccess
+        private Form() {
+            myCommonOptionsForm = myProject.getApplication()
+                .getInstance(PyCommonOptionsFormFactory.class)
+                .createForm(myConfiguration.getCommonOptionsFormData(), PyTestConfigurationEditor.this);
 
-  @Override
-  public boolean useParam() {
-    return myParametersCheckBox.isSelected();
-  }
+            myTestScriptTextField = FileChooserTextBoxBuilder.create(myProject)
+                .uiDisposable(PyTestConfigurationEditor.this)
+                .fileChooserDescriptor(FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor())
+                .dialogTitle(PyLocalize.runcfgUnittestDlgSelectScriptPath())
+                .build();
+            myTestScriptTextField.getComponent().setToolTipText(PyLocalize.runcfgPytestTargetTooltip());
 
-  @Override
-  public void useParam(boolean useParam) {
-    myParametersCheckBox.setSelected(useParam);
-  }
+            myKeywordsCheckBox = CheckBox.create(PyLocalize.runcfgPytestKeywords());
+            myKeywordsTextField = TextBox.create();
+            myKeywordsTextField.setToolTipText(PyLocalize.runcfgPytestKeywordsTooltip());
 
-  @Override
-  public boolean useKeyword() {
-    return myKeywordsCheckBox.isSelected();
-  }
+            myParametersCheckBox = CheckBox.create(PyLocalize.runcfgPytestParameters());
+            myParamsTextField = TextBox.create();
+            myParamsTextField.setToolTipText(PyLocalize.runcfgPytestParametersTooltip());
 
-  @Override
-  public void useKeyword(boolean useKeyword) {
-    myKeywordsCheckBox.setSelected(useKeyword);
-  }
+            FormBuilder builder = FormBuilder.create();
+            builder.addLabeled(PyLocalize.runcfgPytestTarget(), myTestScriptTextField.getComponent());
+            builder.addLabeled(myKeywordsCheckBox, myKeywordsTextField);
+            builder.addLabeled(myParametersCheckBox, myParamsTextField);
+
+            myRootPanel = VerticalLayout.create();
+            myRootPanel.add(LabeledLayout.create(PyLocalize.runcfgPytestTestsTitle(), builder.build()));
+            myRootPanel.add(myCommonOptionsForm.getMainPanel());
+
+            myKeywordsCheckBox.addValueListener(event -> myKeywordsTextField.setEnabled(Boolean.TRUE.equals(event.getValue())));
+            myParametersCheckBox.addValueListener(event -> myParamsTextField.setEnabled(Boolean.TRUE.equals(event.getValue())));
+
+            setUseParam(myConfiguration.useParam());
+            setUseKeyword(myConfiguration.useKeyword());
+        }
+
+        @RequiredUIAccess
+        private void setUseParam(boolean useParam) {
+            myParametersCheckBox.setValue(useParam);
+            myParamsTextField.setEnabled(useParam);
+        }
+
+        @RequiredUIAccess
+        private void setUseKeyword(boolean useKeyword) {
+            myKeywordsCheckBox.setValue(useKeyword);
+            myKeywordsTextField.setEnabled(useKeyword);
+        }
+    }
 }

@@ -16,19 +16,24 @@
 
 package com.jetbrains.python.impl.console;
 
+import consulo.disposer.Disposable;
+import consulo.disposer.Disposer;
 import consulo.document.Document;
 import consulo.codeEditor.EditorEx;
 import consulo.module.Module;
 import consulo.project.Project;
 import consulo.language.psi.PsiDocumentManager;
 import consulo.language.editor.ui.awt.EditorTextField;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.UIUtil;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.impl.psi.impl.PyExpressionCodeFragmentImpl;
 import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormData;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,22 +50,40 @@ public class PyConsoleSpecificOptionsPanel {
   private PyConsoleOptions.PyConsoleSettings myConsoleSettings;
   private EditorTextField myEditorTextField;
   private AbstractPyCommonOptionsForm myCommonOptionsForm;
+  private @Nullable Disposable myUiDisposable;
 
   public PyConsoleSpecificOptionsPanel(Project project) {
     myProject = project;
   }
 
+  @RequiredUIAccess
   public JPanel createPanel(PyConsoleOptions.PyConsoleSettings optionsProvider) {
+    disposeUIResources();
+
+    Disposable uiDisposable = Disposable.newDisposable();
+    myUiDisposable = uiDisposable;
+
+    myInterpreterPanel.removeAll();
     myInterpreterPanel.setLayout(new BorderLayout());
-    myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(createCommonOptionsFormData());
+    myCommonOptionsForm = myProject.getApplication()
+      .getInstance(PyCommonOptionsFormFactory.class)
+      .createForm(createCommonOptionsFormData(), uiDisposable);
     myCommonOptionsForm.subscribe();
 
-    myInterpreterPanel.add(myCommonOptionsForm.getMainPanel(),
+    myInterpreterPanel.add(TargetAWT.to(myCommonOptionsForm.getMainPanel()),
                            BorderLayout.CENTER);
 
     configureStartingScriptPanel(optionsProvider);
 
     return myWholePanel;
+  }
+
+  public void disposeUIResources() {
+    Disposable uiDisposable = myUiDisposable;
+    if (uiDisposable != null) {
+      myUiDisposable = null;
+      Disposer.dispose(uiDisposable);
+    }
   }
 
   public void apply() {

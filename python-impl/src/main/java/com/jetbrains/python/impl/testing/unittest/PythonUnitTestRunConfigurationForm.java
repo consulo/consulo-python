@@ -16,92 +16,83 @@
 
 package com.jetbrains.python.impl.testing.unittest;
 
-import consulo.project.Project;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfigurationParams;
 import com.jetbrains.python.impl.testing.PythonTestRunConfigurationForm;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import consulo.disposer.Disposable;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.CheckBox;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * @author Leonid Shalupov
  */
 public class PythonUnitTestRunConfigurationForm implements PythonUnitTestRunConfigurationParams {
-  private JPanel myRootPanel;
-  private JCheckBox myIsPureUnittest;
+    private final CheckBox myIsPureUnittest;
 
-  private PythonTestRunConfigurationForm myTestRunConfigurationForm;
+    private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
 
+    @RequiredUIAccess
+    public PythonUnitTestRunConfigurationForm(Project project, PythonUnitTestRunConfiguration configuration, Disposable uiDisposable) {
+        myTestRunConfigurationForm =
+            new PythonTestRunConfigurationForm(project, configuration, uiDisposable, PyLocalize.runcfgUnittestDisplay_name());
+        myIsPureUnittest = CheckBox.create(PyLocalize.runcfgUnittestDlgPureUnittest(), configuration.isPureUnittest());
 
-  public PythonUnitTestRunConfigurationForm(Project project, final PythonUnitTestRunConfiguration configuration) {
-    myRootPanel = new JPanel(new BorderLayout());
-    myTestRunConfigurationForm = new PythonTestRunConfigurationForm(project, configuration);
-    myIsPureUnittest = new JCheckBox("Inspect only subclasses of unittest.TestCase");
-    myIsPureUnittest.setSelected(configuration.isPureUnittest());
+        myTestRunConfigurationForm.addTestTypeListener(this::updatePureUnittestVisibility);
+        myTestRunConfigurationForm.getAdditionalPanel().add(myIsPureUnittest);
+        myTestRunConfigurationForm.setParamsVisible();
+        myTestRunConfigurationForm.getParamCheckBox().setValue(configuration.useParam());
 
-    ActionListener testTypeListener = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        myIsPureUnittest.setVisible(myTestRunConfigurationForm.getTestType() != AbstractPythonTestRunConfiguration.TestType.TEST_FUNCTION);
-      }
-    };
-    myTestRunConfigurationForm.addTestTypeListener(testTypeListener);
+        updatePureUnittestVisibility(myTestRunConfigurationForm.getTestType());
+    }
 
-    myIsPureUnittest.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        configuration.setPureUnittest(myIsPureUnittest.isSelected());
-      }
-    });
-    myTestRunConfigurationForm.getAdditionalPanel().add(myIsPureUnittest);
-    TitledBorder border = (TitledBorder)myTestRunConfigurationForm.getTestsPanel().getBorder();
-    border.setTitle(PyBundle.message("runcfg.unittest.display_name"));
-    myTestRunConfigurationForm.setParamsVisible();
-    myTestRunConfigurationForm.getParamCheckBox().setSelected(configuration.useParam());
+    @RequiredUIAccess
+    private void updatePureUnittestVisibility(AbstractPythonTestRunConfiguration.TestType testType) {
+        myIsPureUnittest.setVisible(testType != AbstractPythonTestRunConfiguration.TestType.TEST_FUNCTION);
+    }
 
-    myRootPanel.add(myTestRunConfigurationForm.getPanel(), BorderLayout.CENTER);
-  }
+    @Override
+    public AbstractPythonTestRunConfigurationParams getTestRunConfigurationParams() {
+        return myTestRunConfigurationForm;
+    }
 
-  @Override
-  public AbstractPythonTestRunConfigurationParams getTestRunConfigurationParams() {
-    return myTestRunConfigurationForm;
-  }
+    @Override
+    public boolean isPureUnittest() {
+        return myIsPureUnittest.getValueOrError();
+    }
 
-  @Override
-  public boolean isPureUnittest() {
-    return myIsPureUnittest.isSelected();
-  }
+    @RequiredUIAccess
+    @Override
+    public void setPureUnittest(boolean isPureUnittest) {
+        myIsPureUnittest.setValue(isPureUnittest);
+    }
 
-  @Override
-  public void setPureUnittest(boolean isPureUnittest) {
-    myIsPureUnittest.setSelected(isPureUnittest);
-  }
+    @RequiredUIAccess
+    @Override
+    public String getParams() {
+        return myTestRunConfigurationForm.getParams();
+    }
 
-  public String getParams() {
-    return myTestRunConfigurationForm.getParams();
-  }
+    @RequiredUIAccess
+    @Override
+    public void setParams(String params) {
+        myTestRunConfigurationForm.setParams(params);
+    }
 
-  public void setParams(String params) {
-    myTestRunConfigurationForm.setParams(params);
-  }
+    @Override
+    public boolean useParam() {
+        return myTestRunConfigurationForm.getParamCheckBox().getValueOrError();
+    }
 
-  @Override
-  public boolean useParam() {
-    return myTestRunConfigurationForm.getParamCheckBox().isSelected();
-  }
+    @RequiredUIAccess
+    @Override
+    public void useParam(boolean useParam) {
+        myTestRunConfigurationForm.getParamCheckBox().setValue(useParam);
+    }
 
-  @Override
-  public void useParam(boolean useParam) {
-    myTestRunConfigurationForm.getParamCheckBox().setSelected(useParam);
-  }
-
-  public JComponent getPanel() {
-    return myRootPanel;
-  }
+    public Component getPanel() {
+        return myTestRunConfigurationForm.getPanel();
+    }
 }
-
-

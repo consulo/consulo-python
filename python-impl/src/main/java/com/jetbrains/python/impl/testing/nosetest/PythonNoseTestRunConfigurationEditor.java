@@ -19,32 +19,51 @@ package com.jetbrains.python.impl.testing.nosetest;
 import consulo.configurable.ConfigurationException;
 import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.project.Project;
-
-import javax.swing.*;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User: catherine
  */
 public class PythonNoseTestRunConfigurationEditor extends SettingsEditor<PythonNoseTestRunConfiguration> {
-  private PythonNoseTestRunConfigurationForm myForm;
+    private final Project myProject;
+    private final PythonNoseTestRunConfiguration myConfiguration;
+    private @Nullable PythonNoseTestRunConfigurationForm myForm;
 
-  public PythonNoseTestRunConfigurationEditor(Project project, PythonNoseTestRunConfiguration configuration) {
-    myForm = new PythonNoseTestRunConfigurationForm(project, configuration);
-  }
+    public PythonNoseTestRunConfigurationEditor(Project project, PythonNoseTestRunConfiguration configuration) {
+        myProject = project;
+        myConfiguration = configuration;
+    }
 
-  protected void resetEditorFrom(PythonNoseTestRunConfiguration config) {
-    PythonNoseTestRunConfiguration.copyParams(config, myForm);
-  }
+    @RequiredUIAccess
+    @Override
+    protected Component createUIComponent() {
+        PythonNoseTestRunConfigurationForm form = new PythonNoseTestRunConfigurationForm(myProject, myConfiguration, this);
+        myForm = form;
+        return form.getPanel();
+    }
 
-  protected void applyEditorTo(PythonNoseTestRunConfiguration config) throws ConfigurationException {
-    PythonNoseTestRunConfiguration.copyParams(myForm, config);
-  }
+    @RequiredUIAccess
+    @Override
+    protected void resetEditorFrom(PythonNoseTestRunConfiguration config) {
+        PythonNoseTestRunConfigurationForm form = myForm;
+        if (form != null) {
+            PythonNoseTestRunConfiguration.copyParams(config, form);
+        }
+    }
 
-  protected JComponent createEditor() {
-    return myForm.getPanel();
-  }
+    @RequiredUIAccess
+    @Override
+    protected void applyEditorTo(PythonNoseTestRunConfiguration config) throws ConfigurationException {
+        PythonNoseTestRunConfigurationForm form = myForm;
+        if (form != null) {
+            PythonNoseTestRunConfiguration.copyParams(form, config);
+        }
+    }
 
-  protected void disposeEditor() {
-    myForm = null;
-  }
+    @Override
+    protected void disposeEditor() {
+        myForm = null;
+    }
 }

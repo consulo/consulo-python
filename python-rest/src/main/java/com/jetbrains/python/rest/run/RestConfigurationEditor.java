@@ -16,126 +16,189 @@
 
 package com.jetbrains.python.rest.run;
 
-import consulo.fileChooser.FileChooserDescriptor;
-import consulo.configurable.ConfigurationException;
-import consulo.execution.configuration.ui.SettingsEditor;
-import consulo.project.Project;
-import consulo.ui.ex.awt.TextFieldWithBrowseButton;
-import consulo.ui.ex.awt.CollectionComboBoxModel;
-import consulo.ui.ex.awt.PanelWithAnchor;
-import consulo.ui.ex.awt.JBLabel;
 import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
-import com.jetbrains.rest.RestBundle;
-
+import consulo.configurable.ConfigurationException;
+import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.fileChooser.FileChooserDescriptor;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.fileChooser.FileChooserTextBoxBuilder;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.reStructuredText.localize.RestLocalize;
+import consulo.ui.CheckBox;
+import consulo.ui.ComboBox;
+import consulo.ui.Component;
+import consulo.ui.TextBox;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.layout.LabeledLayout;
+import consulo.ui.model.FlatDataModel;
+import consulo.ui.model.MutableFlatDataModel;
+import consulo.ui.util.FormBuilder;
+import consulo.util.lang.StringUtil;
 import org.jspecify.annotations.Nullable;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Users : catherine
  */
-public class RestConfigurationEditor extends SettingsEditor<RestRunConfiguration> implements PanelWithAnchor {
-  private JPanel myMainPanel;
-  private JPanel myCommonOptionsPlaceholder;
-  private TextFieldWithBrowseButton myInputFileField;
-  private JTextField myParamsTextField;
-  private JCheckBox myOpenInBrowser;
-  private TextFieldWithBrowseButton myOutputFileField;
-  private JComboBox myTasks;
-  private JBLabel myCommandLabel;
-  private JLabel myConfigurationName;
-  private final AbstractPyCommonOptionsForm myCommonOptionsForm;
-  private Project myProject;
-  private JComponent anchor;
+public class RestConfigurationEditor extends SettingsEditor<RestRunConfiguration> {
+    private static final Set<String> TASKS_WITHOUT_BROWSER = Set.of("rst2latex", "rst2odt");
 
-  public RestConfigurationEditor(Project project,
-                                 AbstractPythonRunConfiguration configuration,
-                                 CollectionComboBoxModel model) {
-    myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());
-    myCommonOptionsPlaceholder.add(myCommonOptionsForm.getMainPanel());
-    myProject = project;
-    myTasks.setModel(model);
-    myTasks.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        Object task = myTasks.getSelectedItem();
-        if (task != null &&
-            (task.toString().equals("rst2latex") ||
-             task.toString().equals("rst2odt")))
-          myOpenInBrowser.setEnabled(false);
-        else
-          myOpenInBrowser.setEnabled(true);
-      }
-    });
-    myOpenInBrowser.setSelected(false);
+    private final Project myProject;
+    private final AbstractPythonRunConfiguration myConfiguration;
+    private final List<String> myTaskNames;
+    private final String myDefaultTask;
 
-    setAnchor(myCommonOptionsForm.getAnchor());
-  }
+    private LocalizeValue myConfigurationName = LocalizeValue.empty();
+    private boolean myOpenInBrowserVisible = true;
+    private FileChooserDescriptor myInputDescriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
+    private FileChooserDescriptor myOutputDescriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
 
-  protected void resetEditorFrom(RestRunConfiguration configuration) {
-    AbstractPythonRunConfiguration.copyParams(configuration,
-                                              myCommonOptionsForm);
-    myInputFileField.setText(configuration.getInputFile());
-    myOutputFileField.setText(configuration.getOutputFile());
-    myParamsTextField.setText(configuration.getParams());
-    myTasks.setSelectedItem(configuration.getTask());
-    myOpenInBrowser.setSelected(configuration.openInBrowser());
-    if (configuration.getTask().equals("rst2latex")
-        || configuration.getTask().equals("rst2odt"))
-      myOpenInBrowser.setEnabled(false);
-    else
-      myOpenInBrowser.setEnabled(true);
-  }
+    private @Nullable Form myForm;
 
-  protected void applyEditorTo(RestRunConfiguration configuration) throws ConfigurationException {
-    AbstractPythonRunConfiguration.copyParams(myCommonOptionsForm, configuration);
-    configuration.setInputFile(myInputFileField.getText().trim());
-    configuration.setOutputFile(myOutputFileField.getText().trim());
-    configuration.setParams(myParamsTextField.getText().trim());
-    Object task = myTasks.getSelectedItem();
-    if (task != null)
-      configuration.setTask(task.toString());
+    public RestConfigurationEditor(Project project, AbstractPythonRunConfiguration configuration, List<String> tasks, String defaultTask) {
+        myProject = project;
+        myConfiguration = configuration;
+        myTaskNames = tasks;
+        myDefaultTask = defaultTask;
+    }
 
+    @RequiredUIAccess
+    @Override
+    protected Component createUIComponent() {
+        Form form = new Form();
+        myForm = form;
+        return form.myRootPanel;
+    }
 
-    configuration.setOpenInBrowser(myOpenInBrowser.isSelected());
-    if (!myOpenInBrowser.isEnabled())
-      configuration.setOpenInBrowser(false);
-  }
+    @RequiredUIAccess
+    @Override
+    protected void resetEditorFrom(RestRunConfiguration configuration) {
+        Form form = myForm;
+        if (form == null) {
+            return;
+        }
 
-  protected JComponent createEditor() {
-    return myMainPanel;
-  }
+        AbstractPythonRunConfiguration.copyParams(configuration, form.myCommonOptionsForm);
+        form.myInputFileField.setValue(StringUtil.notNullize(configuration.getInputFile()));
+        form.myOutputFileField.setValue(StringUtil.notNullize(configuration.getOutputFile()));
+        form.myParamsTextField.setValue(StringUtil.notNullize(configuration.getParams()));
+        form.selectTask(configuration.getTask());
+        form.myOpenInBrowser.setValue(configuration.openInBrowser());
+    }
 
-  public void setOpenInBrowserVisible(boolean visible) {
-    myOpenInBrowser.setVisible(visible);
-  }
+    @RequiredUIAccess
+    @Override
+    protected void applyEditorTo(RestRunConfiguration configuration) throws ConfigurationException {
+        Form form = myForm;
+        if (form == null) {
+            return;
+        }
 
-  public void setInputDescriptor(FileChooserDescriptor descriptor) {
-    String title = RestBundle.message("runcfg.dlg.select.script.path");
-    myInputFileField.addBrowseFolderListener(title, null, myProject, descriptor);
-  }
+        AbstractPythonRunConfiguration.copyParams(form.myCommonOptionsForm, configuration);
+        configuration.setInputFile(form.myInputFileField.getValue().trim());
+        configuration.setOutputFile(form.myOutputFileField.getValue().trim());
+        configuration.setParams(StringUtil.notNullize(form.myParamsTextField.getValue()).trim());
+        String task = form.myTasks.getValue();
+        if (task != null) {
+            configuration.setTask(task);
+        }
 
-  public void setOutputDescriptor(FileChooserDescriptor descriptor) {
-    String title = RestBundle.message("runcfg.dlg.select.script.path");
-    myOutputFileField.addBrowseFolderListener(title, null, myProject, descriptor);
-  }
+        configuration.setOpenInBrowser(form.myOpenInBrowser.getValueOrError() && form.myOpenInBrowser.isEnabled());
+    }
 
-  @Override
-  public JComponent getAnchor() {
-    return anchor;
-  }
+    @Override
+    protected void disposeEditor() {
+        myForm = null;
+    }
 
-  @Override
-  public void setAnchor(@Nullable JComponent anchor) {
-    this.anchor = anchor;
-    myCommandLabel.setAnchor(anchor);
-    myCommonOptionsForm.setAnchor(anchor);
-  }
+    public void setOpenInBrowserVisible(boolean visible) {
+        myOpenInBrowserVisible = visible;
+    }
 
-  public void setConfigurationName(String name) {
-    myConfigurationName.setText(name);
-  }
+    public void setInputDescriptor(FileChooserDescriptor descriptor) {
+        myInputDescriptor = descriptor;
+    }
+
+    public void setOutputDescriptor(FileChooserDescriptor descriptor) {
+        myOutputDescriptor = descriptor;
+    }
+
+    public void setConfigurationName(LocalizeValue name) {
+        myConfigurationName = name;
+    }
+
+    private final class Form {
+        private final AbstractPyCommonOptionsForm myCommonOptionsForm;
+        private final MutableFlatDataModel<String> myTaskModel;
+        private final ComboBox<String> myTasks;
+        private final FileChooserTextBoxBuilder.Controller myInputFileField;
+        private final FileChooserTextBoxBuilder.Controller myOutputFileField;
+        private final TextBox myParamsTextField;
+        private final CheckBox myOpenInBrowser;
+        private final Component myRootPanel;
+
+        @RequiredUIAccess
+        private Form() {
+            myCommonOptionsForm = myProject.getApplication()
+                .getInstance(PyCommonOptionsFormFactory.class)
+                .createForm(myConfiguration.getCommonOptionsFormData(), RestConfigurationEditor.this);
+
+            myTaskModel = FlatDataModel.of(myTaskNames);
+            myTasks = ComboBox.create(myTaskModel);
+            myTasks.setTextRenderer(task -> task == null ? LocalizeValue.empty() : LocalizeValue.of(task));
+
+            myInputFileField = FileChooserTextBoxBuilder.create(myProject)
+                .uiDisposable(RestConfigurationEditor.this)
+                .fileChooserDescriptor(myInputDescriptor)
+                .dialogTitle(RestLocalize.runcfgDlgSelectScriptPath())
+                .build();
+
+            myOutputFileField = FileChooserTextBoxBuilder.create(myProject)
+                .uiDisposable(RestConfigurationEditor.this)
+                .fileChooserDescriptor(myOutputDescriptor)
+                .dialogTitle(RestLocalize.runcfgDlgSelectScriptPath())
+                .build();
+
+            myParamsTextField = TextBox.create();
+
+            myOpenInBrowser = CheckBox.create(PyLocalize.runcfgRestOpenInBrowser());
+            myOpenInBrowser.setVisible(myOpenInBrowserVisible);
+
+            FormBuilder builder = FormBuilder.create();
+            builder.addLabeled(RestLocalize.runcfgDocutilsCommand(), myTasks);
+            builder.addLabeled(RestLocalize.runcfgDocutilsInput(), myInputFileField.getComponent());
+            builder.addLabeled(RestLocalize.runcfgDocutilsOutput(), myOutputFileField.getComponent());
+            builder.addLabeled(RestLocalize.runcfgDocutilsOptions(), myParamsTextField);
+            builder.addBottom(myOpenInBrowser);
+            builder.addBottom(myCommonOptionsForm.getMainPanel());
+
+            Component content = builder.build();
+            myRootPanel = myConfigurationName.isEmpty() ? content : LabeledLayout.create(myConfigurationName, content);
+
+            myTasks.addValueListener(event -> updateOpenInBrowser(event.getValue()));
+
+            selectTask(myDefaultTask);
+        }
+
+        @RequiredUIAccess
+        private void selectTask(@Nullable String task) {
+            String value = StringUtil.isEmptyOrSpaces(task) ? myDefaultTask : task;
+            if (myTaskModel.indexOf(value) < 0) {
+                myTaskModel.add(value);
+            }
+            myTasks.setValue(value);
+            updateOpenInBrowser(value);
+        }
+
+        @RequiredUIAccess
+        private void updateOpenInBrowser(@Nullable String task) {
+            myOpenInBrowser.setEnabled(task == null || !TASKS_WITHOUT_BROWSER.contains(task));
+        }
+    }
 }

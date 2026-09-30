@@ -29,6 +29,7 @@ import consulo.execution.runner.ExecutionEnvironment;
 import consulo.fileChooser.FileChooserDescriptorFactory;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.util.lang.StringUtil;
 
 
@@ -43,8 +44,9 @@ public class SphinxRunConfiguration extends RestRunConfiguration {
 
   @Override
   protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor() {
-    RestConfigurationEditor editor = new RestConfigurationEditor(getProject(), this, new SphinxTasksModel());
-    editor.setConfigurationName("Sphinx task");
+    RestConfigurationEditor editor =
+      new RestConfigurationEditor(getProject(), this, SphinxTasksModel.getTasks(), SphinxTasksModel.DEFAULT_TASK);
+    editor.setConfigurationName(PyLocalize.runcfgRestSphinxTask());
     editor.setOpenInBrowserVisible(false);
     editor.setInputDescriptor(FileChooserDescriptorFactory.createSingleFolderDescriptor());
     editor.setOutputDescriptor(FileChooserDescriptorFactory.createSingleFolderDescriptor());

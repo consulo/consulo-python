@@ -18,7 +18,9 @@ package com.jetbrains.python.impl.run;
 
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
+import consulo.disposer.Disposable;
 import consulo.ide.ServiceManager;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * @author yole
@@ -29,5 +31,6 @@ public abstract class PyCommonOptionsFormFactory {
     return ServiceManager.getService(PyCommonOptionsFormFactory.class);
   }
 
-  public abstract AbstractPyCommonOptionsForm createForm(PyCommonOptionsFormData data);
+  @RequiredUIAccess
+  public abstract AbstractPyCommonOptionsForm createForm(PyCommonOptionsFormData data, Disposable uiDisposable);
 }

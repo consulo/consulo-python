@@ -19,32 +19,51 @@ package com.jetbrains.python.impl.testing.attest;
 import consulo.configurable.ConfigurationException;
 import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.project.Project;
-
-import javax.swing.*;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
+import org.jspecify.annotations.Nullable;
 
 /**
  * User: catherine
  */
 public class PythonAtTestRunConfigurationEditor extends SettingsEditor<PythonAtTestRunConfiguration> {
-  private PythonAtTestRunConfigurationForm myForm;
+    private final Project myProject;
+    private final PythonAtTestRunConfiguration myConfiguration;
+    private @Nullable PythonAtTestRunConfigurationForm myForm;
 
-  public PythonAtTestRunConfigurationEditor(Project project, PythonAtTestRunConfiguration configuration) {
-    myForm = new PythonAtTestRunConfigurationForm(project, configuration);
-  }
+    public PythonAtTestRunConfigurationEditor(Project project, PythonAtTestRunConfiguration configuration) {
+        myProject = project;
+        myConfiguration = configuration;
+    }
 
-  protected void resetEditorFrom(PythonAtTestRunConfiguration config) {
-    PythonAtTestRunConfiguration.copyParams(config, myForm);
-  }
+    @RequiredUIAccess
+    @Override
+    protected Component createUIComponent() {
+        PythonAtTestRunConfigurationForm form = new PythonAtTestRunConfigurationForm(myProject, myConfiguration, this);
+        myForm = form;
+        return form.getPanel();
+    }
 
-  protected void applyEditorTo(PythonAtTestRunConfiguration config) throws ConfigurationException {
-    PythonAtTestRunConfiguration.copyParams(myForm, config);
-  }
+    @RequiredUIAccess
+    @Override
+    protected void resetEditorFrom(PythonAtTestRunConfiguration config) {
+        PythonAtTestRunConfigurationForm form = myForm;
+        if (form != null) {
+            PythonAtTestRunConfiguration.copyParams(config, form);
+        }
+    }
 
-  protected JComponent createEditor() {
-    return myForm.getPanel();
-  }
+    @RequiredUIAccess
+    @Override
+    protected void applyEditorTo(PythonAtTestRunConfiguration config) throws ConfigurationException {
+        PythonAtTestRunConfigurationForm form = myForm;
+        if (form != null) {
+            PythonAtTestRunConfiguration.copyParams(form, config);
+        }
+    }
 
-  protected void disposeEditor() {
-    myForm = null;
-  }
+    @Override
+    protected void disposeEditor() {
+        myForm = null;
+    }
 }

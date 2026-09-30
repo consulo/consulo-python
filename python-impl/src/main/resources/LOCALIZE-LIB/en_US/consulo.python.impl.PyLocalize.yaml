@@ -1093,16 +1093,30 @@ runcfg.doctest.description:
     text: Python's doctests run configuration
 runcfg.doctest.display_name:
     text: Doctests
+runcfg.labels.add.content.roots:
+    text: Add content roots to PYTHONPATH
+runcfg.labels.add.source.roots:
+    text: Add source roots to PYTHONPATH
+runcfg.labels.environment:
+    text: Environment
 runcfg.labels.environment_variables:
     text: '&Environment variables:'
 runcfg.labels.interpreter:
     text: '&Use specified interpreter:'
 runcfg.labels.interpreter_options:
     text: 'Interpreter &options:'
+runcfg.labels.python.interpreter:
+    text: 'Python interpreter:'
 runcfg.labels.script:
     text: '&Script:'
 runcfg.labels.script_parameters:
     text: 'Script &parameters:'
+runcfg.labels.select.script:
+    text: Select Script
+runcfg.labels.show.command.line:
+    text: Show command line afterwards
+runcfg.labels.use.module.sdk:
+    text: 'Use SDK of module:'
 runcfg.labels.working_directory:
     text: '&Working directory:'
 runcfg.nosetests.description:
@@ -1115,10 +1129,24 @@ runcfg.pytest.display_name:
     text: py.test
 runcfg.pytest.keywords:
     text: '&Keywords:'
+runcfg.pytest.keywords.tooltip:
+    text: Specify the keywords to search for the required tests. -k command line option in py.tests
 runcfg.pytest.parameters:
     text: '&Options:'
+runcfg.pytest.parameters.tooltip:
+    text: Specify py.tests command line options
 runcfg.pytest.target:
     text: '&Target:'
+runcfg.pytest.target.tooltip:
+    text: Path to a file or directory that contains the tests to be executed
+runcfg.pytest.tests.title:
+    text: py.tests
+runcfg.rest.docutils.task:
+    text: Docutils task
+runcfg.rest.open.in.browser:
+    text: Open output file in browser
+runcfg.rest.sphinx.task:
+    text: Sphinx task
 runcfg.test.description:
     text: Python frameworks supported by IDE
 runcfg.test.display_name:
@@ -1151,8 +1179,16 @@ runcfg.unittest.dlg.messages.working.dir:
     text: 'Working directory:'
 runcfg.unittest.dlg.method_label:
     text: 'Method:'
+runcfg.unittest.dlg.params:
+    text: 'Params:'
+runcfg.unittest.dlg.params.tooltip:
+    text: Specify nosetests command line options
 runcfg.unittest.dlg.pattern:
     text: 'Pattern:'
+runcfg.unittest.dlg.pattern.tooltip:
+    text: One or more patterns the file names should match for the files to be considered tests. Use comma as the delimiter. The patterns should be Python regular expressions.
+runcfg.unittest.dlg.pure.unittest:
+    text: Inspect only subclasses of unittest.TestCase
 runcfg.unittest.dlg.select.folder.path:
     text: 'Select folder path:'
 runcfg.unittest.dlg.select.script.path:

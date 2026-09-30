@@ -125,6 +125,7 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
 
             @Override
             public void disposeUIResources() {
+                panel.disposeUIResources();
             }
         };
     }

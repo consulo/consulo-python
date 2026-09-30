@@ -16,45 +16,42 @@
 
 package com.jetbrains.python.rest.run.sphinx;
 
-import com.google.common.collect.Lists;
-import consulo.ui.ex.awt.CollectionComboBoxModel;
-
 import java.util.List;
 
 /**
  * User : catherine
  */
-public class SphinxTasksModel extends CollectionComboBoxModel {
-  private static List<String> targets = Lists.newArrayList();
-  static {
-    targets.add("changes");
-    targets.add("coverage");
-    targets.add("devhelp");
-    targets.add("dirhtml");
-    targets.add("doctest");
-    targets.add("epub");
-    targets.add("gettext");
-    targets.add("html");
-    targets.add("htmlhelp");
-    targets.add("json");
-    targets.add("latex");
-    targets.add("latexpdf");
-    targets.add("linkcheck");
-    targets.add("man");
-    targets.add("pickle");
-    targets.add("qthelp");
-    targets.add("singlehtml");
-    targets.add("text");
-    targets.add("texinfo");
-    targets.add("web");
-    targets.add("websupport");
-  }
+public final class SphinxTasksModel {
+    public static final String DEFAULT_TASK = "html";
 
-  public SphinxTasksModel() {
-    super(getTasks(), "html");
-  }
+    private static final List<String> TASKS = List.of(
+        "changes",
+        "coverage",
+        "devhelp",
+        "dirhtml",
+        "doctest",
+        "epub",
+        "gettext",
+        "html",
+        "htmlhelp",
+        "json",
+        "latex",
+        "latexpdf",
+        "linkcheck",
+        "man",
+        "pickle",
+        "qthelp",
+        "singlehtml",
+        "text",
+        "texinfo",
+        "web",
+        "websupport"
+    );
 
-  private static List<String> getTasks() {
-    return targets;
-  }
+    private SphinxTasksModel() {
+    }
+
+    public static List<String> getTasks() {
+        return TASKS;
+    }
 }

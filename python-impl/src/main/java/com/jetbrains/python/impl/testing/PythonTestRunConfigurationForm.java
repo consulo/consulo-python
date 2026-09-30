@@ -15,325 +15,335 @@
  */
 package com.jetbrains.python.impl.testing;
 
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.run.AbstractPyCommonOptionsForm;
 import com.jetbrains.python.impl.run.PyCommonOptionsFormFactory;
+import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration.TestType;
 import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;
+import consulo.disposer.Disposable;
 import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.fileChooser.FileChooserTextBoxBuilder;
+import consulo.localize.LocalizeValue;
 import consulo.project.Project;
-import consulo.ui.ex.awt.LabeledComponent;
-import consulo.ui.ex.awt.PanelWithAnchor;
-import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.CheckBox;
+import consulo.ui.Component;
+import consulo.ui.Label;
+import consulo.ui.RadioGroup;
+import consulo.ui.TextBox;
+import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.layout.LabeledLayout;
+import consulo.ui.layout.VerticalLayout;
+import consulo.ui.util.FormBuilder;
+import consulo.util.collection.Lists;
 import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
+import org.jspecify.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import static com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration.TestType;
-import static consulo.util.io.FileUtil.toSystemIndependentName;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author Leonid Shalupov
  */
-public class PythonTestRunConfigurationForm implements AbstractPythonTestRunConfigurationParams, PanelWithAnchor
-{
-	private JPanel myRootPanel;
-	private LabeledComponent myTestClassComponent;
-	private LabeledComponent myTestMethodComponent;
-	private LabeledComponent myTestFolderComponent;
-	private LabeledComponent myTestScriptComponent;
-	private JRadioButton myAllInFolderRB;
-	private JRadioButton myTestScriptRB;
-	private JRadioButton myTestClassRB;
-	private JRadioButton myTestMethodRB;
-	private JRadioButton myTestFunctionRB;
-	private JPanel myAdditionalPanel;
-	private JPanel myCommonOptionsPlaceholder;
-	private JPanel myTestsPanel;
-	private JCheckBox myPatternCheckBox;
+public class PythonTestRunConfigurationForm implements AbstractPythonTestRunConfigurationParams {
+    private final AbstractPyCommonOptionsForm myCommonOptionsForm;
 
-	private TextFieldWithBrowseButton myTestFolderTextField;
-	private TextFieldWithBrowseButton myTestScriptTextField;
-	private JTextField myTestMethodTextField;
-	private JTextField myTestClassTextField;
-	private JTextField myPatternTextField;
-	private JTextField myParamTextField;
-	private JCheckBox myParamCheckBox;
+    private final RadioGroup<TestType> myTestTypeGroup;
+    private final FileChooserTextBoxBuilder.Controller myTestFolderTextField;
+    private final CheckBox myPatternCheckBox;
+    private final TextBox myPatternTextField;
+    private final FileChooserTextBoxBuilder.Controller myTestScriptTextField;
+    private final TextBox myTestClassTextField;
+    private final Label myTestMethodLabel;
+    private final TextBox myTestMethodTextField;
+    private final CheckBox myParamCheckBox;
+    private final TextBox myParamTextField;
 
-	private final Project myProject;
-	private final AbstractPyCommonOptionsForm myCommonOptionsForm;
-	private JComponent anchor;
+    private final Row myTestFolderRow;
+    private final Row myPatternRow;
+    private final Row myTestScriptRow;
+    private final Row myTestClassRow;
+    private final Row myTestMethodRow;
+    private final Row myParamRow;
 
-	private boolean myPatternIsVisible = true;
+    private final VerticalLayout myAdditionalPanel;
+    private final LabeledLayout myTestsPanel;
+    private final VerticalLayout myRootPanel;
 
-	public PythonTestRunConfigurationForm(Project project, AbstractPythonTestRunConfiguration configuration)
-	{
-		myProject = project;
-		myCommonOptionsForm = PyCommonOptionsFormFactory.getInstance().createForm(configuration.getCommonOptionsFormData());
-		myCommonOptionsPlaceholder.add(myCommonOptionsForm.getMainPanel(), BorderLayout.CENTER);
-		initComponents();
+    private final List<Consumer<TestType>> myTestTypeListeners = Lists.newLockFreeCopyOnWriteList();
 
-		setAnchor(myTestMethodComponent.getLabel());
+    private boolean myPatternIsVisible = true;
 
-		myTestFolderTextField.addBrowseFolderListener(PyBundle.message("runcfg.unittest.dlg.select.folder.path"), null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
-		myTestScriptTextField.addBrowseFolderListener(PyBundle.message("runcfg.unittest.dlg.select.script.path"), null, myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
+    @RequiredUIAccess
+    public PythonTestRunConfigurationForm(
+        Project project,
+        AbstractPythonTestRunConfiguration configuration,
+        Disposable uiDisposable,
+        LocalizeValue title
+    ) {
+        myCommonOptionsForm = project.getApplication()
+            .getInstance(PyCommonOptionsFormFactory.class)
+            .createForm(configuration.getCommonOptionsFormData(), uiDisposable);
 
-		myPatternCheckBox.setSelected(configuration.usePattern());
+        myTestTypeGroup = RadioGroup.create();
+        Component testTypes = myTestTypeGroup.fillHorizontal(List.of(TestType.values()), PythonTestRunConfigurationForm::getTestTypeName);
 
-		myParamTextField.setVisible(false);
-		myParamCheckBox.setVisible(false);
-	}
+        myTestFolderTextField = FileChooserTextBoxBuilder.create(project)
+            .uiDisposable(uiDisposable)
+            .fileChooserDescriptor(FileChooserDescriptorFactory.createSingleFolderDescriptor())
+            .dialogTitle(PyLocalize.runcfgUnittestDlgSelectFolderPath())
+            .build();
 
-	public AbstractPythonRunConfigurationParams getBaseParams()
-	{
-		return myCommonOptionsForm;
-	}
+        myPatternCheckBox = CheckBox.create(PyLocalize.runcfgUnittestDlgPattern());
+        myPatternTextField = TextBox.create();
+        myPatternTextField.setToolTipText(PyLocalize.runcfgUnittestDlgPatternTooltip());
 
-	private void initComponents()
-	{
+        myTestScriptTextField = FileChooserTextBoxBuilder.create(project)
+            .uiDisposable(uiDisposable)
+            .fileChooserDescriptor(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
+            .dialogTitle(PyLocalize.runcfgUnittestDlgSelectScriptPath())
+            .build();
 
-		ActionListener testTypeListener = new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				setTestType(getTestType());
-			}
-		};
-		addTestTypeListener(testTypeListener);
+        myTestClassTextField = TextBox.create();
 
-		myPatternCheckBox.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				myPatternTextField.setEnabled(myPatternCheckBox.isSelected());
-			}
-		});
+        myTestMethodLabel = Label.create(PyLocalize.runcfgUnittestDlgMethod_label());
+        myTestMethodTextField = TextBox.create();
 
-		myParamCheckBox.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				myParamTextField.setEnabled(myParamCheckBox.isSelected());
-			}
-		});
-	}
+        myParamCheckBox = CheckBox.create(PyLocalize.runcfgUnittestDlgParams());
+        myParamTextField = TextBox.create();
+        myParamTextField.setToolTipText(PyLocalize.runcfgUnittestDlgParamsTooltip());
 
-	public void addTestTypeListener(ActionListener testTypeListener)
-	{
-		myAllInFolderRB.addActionListener(testTypeListener);
-		myTestScriptRB.addActionListener(testTypeListener);
-		myTestClassRB.addActionListener(testTypeListener);
-		myTestMethodRB.addActionListener(testTypeListener);
-		myTestFunctionRB.addActionListener(testTypeListener);
-	}
+        FormBuilder builder = FormBuilder.create();
+        builder.addLabeled(PyLocalize.runcfgUnittestDlgTest_type_title(), testTypes);
+        myTestFolderRow = addRow(builder, Label.create(PyLocalize.runcfgUnittestDlgFolder_path()), myTestFolderTextField.getComponent());
+        myPatternRow = addRow(builder, myPatternCheckBox, myPatternTextField);
+        myTestScriptRow = addRow(builder, Label.create(PyLocalize.runcfgUnittestDlgTest_script_label()), myTestScriptTextField.getComponent());
+        myTestClassRow = addRow(builder, Label.create(PyLocalize.runcfgUnittestDlgClass_label()), myTestClassTextField);
+        myTestMethodRow = addRow(builder, myTestMethodLabel, myTestMethodTextField);
+        myParamRow = addRow(builder, myParamCheckBox, myParamTextField);
 
-	public String getClassName()
-	{
-		return myTestClassTextField.getText().trim();
-	}
+        myAdditionalPanel = VerticalLayout.create();
+        myAdditionalPanel.add(builder.build());
+        myTestsPanel = LabeledLayout.create(title, myAdditionalPanel);
 
-	public void setClassName(String className)
-	{
-		myTestClassTextField.setText(className);
-	}
+        myRootPanel = VerticalLayout.create();
+        myRootPanel.add(myTestsPanel);
+        myRootPanel.add(myCommonOptionsForm.getMainPanel());
 
+        myParamRow.setVisible(false);
+        myParamTextField.setEnabled(false);
 
-	public String getPattern()
-	{
-		return myPatternTextField.getText().trim();
-	}
+        myTestTypeGroup.addValueListener(testType -> {
+            if (testType != null) {
+                onTestTypeChanged(testType);
+            }
+        });
+        myPatternCheckBox.addValueListener(event -> myPatternTextField.setEnabled(Boolean.TRUE.equals(event.getValue())));
+        myParamCheckBox.addValueListener(event -> myParamTextField.setEnabled(Boolean.TRUE.equals(event.getValue())));
 
-	public void setPattern(String pattern)
-	{
-		myPatternTextField.setText(pattern);
-	}
+        usePattern(configuration.usePattern());
+        setTestType(configuration.getTestType());
+    }
 
-	@Override
-	public boolean shouldAddContentRoots()
-	{
-		return myCommonOptionsForm.shouldAddContentRoots();
-	}
+    private static LocalizeValue getTestTypeName(TestType testType) {
+        return switch (testType) {
+            case TEST_FOLDER -> PyLocalize.runcfgUnittestDlgAll_in_folder_title();
+            case TEST_SCRIPT -> PyLocalize.runcfgUnittestDlgAll_in_script_title();
+            case TEST_CLASS -> PyLocalize.runcfgUnittestDlgTest_class_title();
+            case TEST_METHOD -> PyLocalize.runcfgUnittestDlgTest_method_title();
+            case TEST_FUNCTION -> PyLocalize.runcfgUnittestDlgTest_function_title();
+        };
+    }
 
-	@Override
-	public boolean shouldAddSourceRoots()
-	{
-		return myCommonOptionsForm.shouldAddSourceRoots();
-	}
+    @RequiredUIAccess
+    private static Row addRow(FormBuilder builder, Component label, Component field) {
+        builder.addLabeled(label, field);
+        return new Row(label, field);
+    }
 
-	@Override
-	public void setAddContentRoots(boolean addContentRoots)
-	{
-		myCommonOptionsForm.setAddContentRoots(addContentRoots);
-	}
+    @Override
+    public AbstractPythonRunConfigurationParams getBaseParams() {
+        return myCommonOptionsForm;
+    }
 
-	@Override
-	public void setAddSourceRoots(boolean addSourceRoots)
-	{
-		myCommonOptionsForm.setAddSourceRoots(addSourceRoots);
-	}
+    public Disposable addTestTypeListener(Consumer<TestType> listener) {
+        myTestTypeListeners.add(listener);
+        return () -> myTestTypeListeners.remove(listener);
+    }
 
-	public String getFolderName()
-	{
-		return toSystemIndependentName(myTestFolderTextField.getText().trim());
-	}
+    @RequiredUIAccess
+    @Override
+    public String getClassName() {
+        return StringUtil.notNullize(myTestClassTextField.getValue()).trim();
+    }
 
-	public void setFolderName(String folderName)
-	{
-		myTestFolderTextField.setText(FileUtil.toSystemDependentName(folderName));
-	}
+    @RequiredUIAccess
+    @Override
+    public void setClassName(@Nullable String className) {
+        myTestClassTextField.setValue(StringUtil.notNullize(className));
+    }
 
-	public String getScriptName()
-	{
-		return toSystemIndependentName(myTestScriptTextField.getText().trim());
-	}
+    @RequiredUIAccess
+    @Override
+    public String getPattern() {
+        return StringUtil.notNullize(myPatternTextField.getValue()).trim();
+    }
 
-	public void setScriptName(String scriptName)
-	{
-		myTestScriptTextField.setText(FileUtil.toSystemDependentName(scriptName));
-	}
+    @RequiredUIAccess
+    @Override
+    public void setPattern(@Nullable String pattern) {
+        myPatternTextField.setValue(StringUtil.notNullize(pattern));
+    }
 
-	public String getMethodName()
-	{
-		return myTestMethodTextField.getText().trim();
-	}
+    @Override
+    public boolean shouldAddContentRoots() {
+        return myCommonOptionsForm.shouldAddContentRoots();
+    }
 
-	public void setMethodName(String methodName)
-	{
-		myTestMethodTextField.setText(methodName);
-	}
+    @Override
+    public boolean shouldAddSourceRoots() {
+        return myCommonOptionsForm.shouldAddSourceRoots();
+    }
 
-	public TestType getTestType()
-	{
-		if(myAllInFolderRB.isSelected())
-		{
-			return TestType.TEST_FOLDER;
-		}
-		else if(myTestScriptRB.isSelected())
-		{
-			return TestType.TEST_SCRIPT;
-		}
-		else if(myTestClassRB.isSelected())
-		{
-			return TestType.TEST_CLASS;
-		}
-		else if(myTestMethodRB.isSelected())
-		{
-			return TestType.TEST_METHOD;
-		}
-		else
-		{
-			return TestType.TEST_FUNCTION;
-		}
-	}
+    @RequiredUIAccess
+    @Override
+    public void setAddContentRoots(boolean addContentRoots) {
+        myCommonOptionsForm.setAddContentRoots(addContentRoots);
+    }
 
-	@Override
-	public JComponent getAnchor()
-	{
-		return anchor;
-	}
+    @RequiredUIAccess
+    @Override
+    public void setAddSourceRoots(boolean addSourceRoots) {
+        myCommonOptionsForm.setAddSourceRoots(addSourceRoots);
+    }
 
-	@Override
-	public void setAnchor(JComponent anchor)
-	{
-		this.anchor = anchor;
-	}
+    @RequiredUIAccess
+    @Override
+    public String getFolderName() {
+        return FileUtil.toSystemIndependentName(myTestFolderTextField.getValue().trim());
+    }
 
-	public void setPatternVisible(boolean b)
-	{
-		myPatternIsVisible = b;
-		myPatternTextField.setVisible(b);
-		myPatternCheckBox.setVisible(b);
-	}
+    @RequiredUIAccess
+    @Override
+    public void setFolderName(@Nullable String folderName) {
+        myTestFolderTextField.setValue(FileUtil.toSystemDependentName(StringUtil.notNullize(folderName)));
+    }
 
-	private static void setSelectedIfNeeded(boolean condition, JRadioButton rb)
-	{
-		if(condition)
-		{
-			rb.setSelected(true);
-		}
-	}
+    @RequiredUIAccess
+    @Override
+    public String getScriptName() {
+        return FileUtil.toSystemIndependentName(myTestScriptTextField.getValue().trim());
+    }
 
-	public void setTestType(TestType testType)
-	{
-		setSelectedIfNeeded(testType == TestType.TEST_FOLDER, myAllInFolderRB);
-		setSelectedIfNeeded(testType == TestType.TEST_SCRIPT, myTestScriptRB);
-		setSelectedIfNeeded(testType == TestType.TEST_CLASS, myTestClassRB);
-		setSelectedIfNeeded(testType == TestType.TEST_METHOD, myTestMethodRB);
-		setSelectedIfNeeded(testType == TestType.TEST_FUNCTION, myTestFunctionRB);
+    @RequiredUIAccess
+    @Override
+    public void setScriptName(@Nullable String scriptName) {
+        myTestScriptTextField.setValue(FileUtil.toSystemDependentName(StringUtil.notNullize(scriptName)));
+    }
 
+    @RequiredUIAccess
+    @Override
+    public String getMethodName() {
+        return StringUtil.notNullize(myTestMethodTextField.getValue()).trim();
+    }
 
-		myTestFolderComponent.setVisible(testType == TestType.TEST_FOLDER);
-		myTestFolderTextField.setVisible(testType == TestType.TEST_FOLDER);
-		myTestScriptComponent.setVisible(testType != TestType.TEST_FOLDER);
-		myTestScriptTextField.setVisible(testType != TestType.TEST_FOLDER);
-		myTestClassComponent.setVisible(testType == TestType.TEST_CLASS || testType == TestType.TEST_METHOD);
-		myTestClassTextField.setVisible(testType == TestType.TEST_CLASS || testType == TestType.TEST_METHOD);
-		myTestMethodComponent.setVisible(testType == TestType.TEST_METHOD || testType == TestType.TEST_FUNCTION);
-		myTestMethodTextField.setVisible(testType == TestType.TEST_METHOD || testType == TestType.TEST_FUNCTION);
-		myPatternTextField.setEnabled(myPatternCheckBox.isSelected());
-		myParamTextField.setEnabled(myParamCheckBox.isSelected());
-		myTestMethodComponent.getLabel().setText(testType == TestType.TEST_METHOD ? PyBundle.message("runcfg.unittest.dlg.method_label") : PyBundle.message("runcfg.unittest.dlg.function_label"));
-		if(myPatternIsVisible)
-		{
-			myPatternTextField.setVisible(getTestType() == AbstractPythonTestRunConfiguration.TestType.TEST_FOLDER);
-			myPatternCheckBox.setVisible(getTestType() == AbstractPythonTestRunConfiguration.TestType.TEST_FOLDER);
-		}
-	}
+    @RequiredUIAccess
+    @Override
+    public void setMethodName(@Nullable String methodName) {
+        myTestMethodTextField.setValue(StringUtil.notNullize(methodName));
+    }
 
-	public JComponent getPanel()
-	{
-		return myRootPanel;
-	}
+    @Override
+    public TestType getTestType() {
+        TestType testType = myTestTypeGroup.getValue();
+        return testType != null ? testType : TestType.TEST_FUNCTION;
+    }
 
-	public JPanel getAdditionalPanel()
-	{
-		return myAdditionalPanel;
-	}
+    @RequiredUIAccess
+    @Override
+    public void setTestType(TestType testType) {
+        myTestTypeGroup.setValue(testType, false);
+        onTestTypeChanged(testType);
+    }
 
-	public JPanel getTestsPanel()
-	{
-		return myTestsPanel;
-	}
+    @RequiredUIAccess
+    private void onTestTypeChanged(TestType testType) {
+        myTestFolderRow.setVisible(testType == TestType.TEST_FOLDER);
+        myTestScriptRow.setVisible(testType != TestType.TEST_FOLDER);
+        myTestClassRow.setVisible(testType == TestType.TEST_CLASS || testType == TestType.TEST_METHOD);
+        myTestMethodRow.setVisible(testType == TestType.TEST_METHOD || testType == TestType.TEST_FUNCTION);
+        myTestMethodLabel.setText(
+            testType == TestType.TEST_METHOD ? PyLocalize.runcfgUnittestDlgMethod_label() : PyLocalize.runcfgUnittestDlgFunction_label()
+        );
+        myPatternTextField.setEnabled(myPatternCheckBox.getValueOrError());
+        myParamTextField.setEnabled(myParamCheckBox.getValueOrError());
+        if (myPatternIsVisible) {
+            myPatternRow.setVisible(testType == TestType.TEST_FOLDER);
+        }
 
-	public JTextField getPatternComponent()
-	{
-		return myPatternTextField;
-	}
+        for (Consumer<TestType> listener : myTestTypeListeners) {
+            listener.accept(testType);
+        }
+    }
 
-	@Override
-	public boolean usePattern()
-	{
-		return myPatternCheckBox.isSelected();
-	}
+    @RequiredUIAccess
+    public void setPatternVisible(boolean visible) {
+        myPatternIsVisible = visible;
+        myPatternRow.setVisible(visible && getTestType() == TestType.TEST_FOLDER);
+    }
 
-	@Override
-	public void usePattern(boolean usePattern)
-	{
-		myPatternCheckBox.setSelected(usePattern);
-	}
+    public Component getPanel() {
+        return myRootPanel;
+    }
 
-	public String getParams()
-	{
-		return myParamTextField.getText().trim();
-	}
+    public VerticalLayout getAdditionalPanel() {
+        return myAdditionalPanel;
+    }
 
-	public JCheckBox getParamCheckBox()
-	{
-		return myParamCheckBox;
-	}
+    public LabeledLayout getTestsPanel() {
+        return myTestsPanel;
+    }
 
-	public void setParams(String params)
-	{
-		myParamTextField.setText(params);
-	}
+    public TextBox getPatternComponent() {
+        return myPatternTextField;
+    }
 
-	public void setParamsVisible()
-	{
-		myParamTextField.setVisible(true);
-		myParamCheckBox.setVisible(true);
-	}
+    @Override
+    public boolean usePattern() {
+        return myPatternCheckBox.getValueOrError();
+    }
+
+    @RequiredUIAccess
+    @Override
+    public void usePattern(boolean usePattern) {
+        myPatternCheckBox.setValue(usePattern);
+        myPatternTextField.setEnabled(usePattern);
+    }
+
+    @RequiredUIAccess
+    public String getParams() {
+        return StringUtil.notNullize(myParamTextField.getValue()).trim();
+    }
+
+    public CheckBox getParamCheckBox() {
+        return myParamCheckBox;
+    }
+
+    @RequiredUIAccess
+    public void setParams(@Nullable String params) {
+        myParamTextField.setValue(StringUtil.notNullize(params));
+    }
+
+    @RequiredUIAccess
+    public void setParamsVisible() {
+        myParamRow.setVisible(true);
+    }
+
+    private record Row(Component label, Component field) {
+        @RequiredUIAccess
+        void setVisible(boolean visible) {
+            label.setVisible(visible);
+            field.setVisible(visible);
+        }
+    }
 }
-
-

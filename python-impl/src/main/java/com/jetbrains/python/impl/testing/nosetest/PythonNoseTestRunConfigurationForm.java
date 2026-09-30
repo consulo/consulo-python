@@ -16,64 +16,58 @@
 
 package com.jetbrains.python.impl.testing.nosetest;
 
-import consulo.project.Project;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfigurationParams;
 import com.jetbrains.python.impl.testing.PythonTestRunConfigurationForm;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
+import consulo.disposer.Disposable;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * User: catherine
  */
 public class PythonNoseTestRunConfigurationForm implements PythonNoseTestRunConfigurationParams {
-  private JPanel myRootPanel;
+    private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
 
-  private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
+    @RequiredUIAccess
+    public PythonNoseTestRunConfigurationForm(Project project, PythonNoseTestRunConfiguration configuration, Disposable uiDisposable) {
+        myTestRunConfigurationForm =
+            new PythonTestRunConfigurationForm(project, configuration, uiDisposable, PyLocalize.runcfgNosetestsDisplay_name());
+        myTestRunConfigurationForm.setParamsVisible();
+        myTestRunConfigurationForm.getParamCheckBox().setValue(configuration.useParam());
+        myTestRunConfigurationForm.setPatternVisible(false);
+    }
 
-  public PythonNoseTestRunConfigurationForm(Project project, PythonNoseTestRunConfiguration configuration) {
-    myRootPanel = new JPanel(new BorderLayout());
-    myTestRunConfigurationForm = new PythonTestRunConfigurationForm(project, configuration);
-    myRootPanel.add(myTestRunConfigurationForm.getPanel(), BorderLayout.CENTER);
-    myTestRunConfigurationForm.getPatternComponent().setVisible(false);
-    TitledBorder border = (TitledBorder)myTestRunConfigurationForm.getTestsPanel().getBorder();
-    border.setTitle(PyBundle.message("runcfg.nosetests.display_name"));
-    myTestRunConfigurationForm.setParamsVisible();
+    @RequiredUIAccess
+    @Override
+    public String getParams() {
+        return myTestRunConfigurationForm.getParams();
+    }
 
-    myTestRunConfigurationForm.getParamCheckBox().setSelected(configuration.useParam());
-    myTestRunConfigurationForm.setPatternVisible(false);
+    @RequiredUIAccess
+    @Override
+    public void setParams(String params) {
+        myTestRunConfigurationForm.setParams(params);
+    }
 
-  }
+    @Override
+    public boolean useParam() {
+        return myTestRunConfigurationForm.getParamCheckBox().getValueOrError();
+    }
 
-  public String getParams() {
-    return myTestRunConfigurationForm.getParams();
-  }
+    @RequiredUIAccess
+    @Override
+    public void useParam(boolean useParam) {
+        myTestRunConfigurationForm.getParamCheckBox().setValue(useParam);
+    }
 
-  public void setParams(String params) {
-    myTestRunConfigurationForm.setParams(params);
-  }
+    @Override
+    public AbstractPythonTestRunConfigurationParams getTestRunConfigurationParams() {
+        return myTestRunConfigurationForm;
+    }
 
-  @Override
-  public boolean useParam() {
-    return myTestRunConfigurationForm.getParamCheckBox().isSelected();
-  }
-
-  @Override
-  public void useParam(boolean useParam) {
-    myTestRunConfigurationForm.getParamCheckBox().setSelected(useParam);
-  }
-
-  @Override
-  public AbstractPythonTestRunConfigurationParams getTestRunConfigurationParams() {
-    return myTestRunConfigurationForm;
-  }
-
-  public JComponent getPanel() {
-    return myRootPanel;
-  }
-
+    public Component getPanel() {
+        return myTestRunConfigurationForm.getPanel();
+    }
 }
-
-

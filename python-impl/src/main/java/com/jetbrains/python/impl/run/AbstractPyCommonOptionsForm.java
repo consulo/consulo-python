@@ -16,23 +16,20 @@
 package com.jetbrains.python.impl.run;
 
 import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;
-import consulo.ui.ex.awt.PanelWithAnchor;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import consulo.disposer.Disposable;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * @author yole
  */
-public interface AbstractPyCommonOptionsForm extends AbstractPythonRunConfigurationParams, PanelWithAnchor
-{
-	String EXPAND_PROPERTY_KEY = "ExpandEnvironmentPanel";
+public interface AbstractPyCommonOptionsForm extends AbstractPythonRunConfigurationParams {
+    String EXPAND_PROPERTY_KEY = "ExpandEnvironmentPanel";
 
-	JComponent getMainPanel();
+    @RequiredUIAccess
+    Component getMainPanel();
 
-	void subscribe();
+    void subscribe();
 
-	void addInterpreterComboBoxActionListener(ActionListener listener);
-
-	void removeInterpreterComboBoxActionListener(ActionListener listener);
+    Disposable addInterpreterListener(Runnable listener);
 }

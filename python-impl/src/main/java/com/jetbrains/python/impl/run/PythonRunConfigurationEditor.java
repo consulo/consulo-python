@@ -18,32 +18,49 @@ package com.jetbrains.python.impl.run;
 
 import consulo.configurable.ConfigurationException;
 import consulo.execution.configuration.ui.SettingsEditor;
-
-import javax.swing.*;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Leonid Shalupov
  */
-public class PythonRunConfigurationEditor  extends SettingsEditor<PythonRunConfiguration> {
-  private PythonRunConfigurationForm myForm;
+public class PythonRunConfigurationEditor extends SettingsEditor<PythonRunConfiguration> {
+    private final PythonRunConfiguration myConfiguration;
+    private @Nullable PythonRunConfigurationForm myForm;
 
-  public PythonRunConfigurationEditor(PythonRunConfiguration configuration) {
-    myForm = new PythonRunConfigurationForm(configuration);
-  }
+    public PythonRunConfigurationEditor(PythonRunConfiguration configuration) {
+        myConfiguration = configuration;
+    }
 
-  protected void resetEditorFrom(PythonRunConfiguration config) {
-    PythonRunConfiguration.copyParams(config, myForm);
-  }
+    @RequiredUIAccess
+    @Override
+    protected Component createUIComponent() {
+        PythonRunConfigurationForm form = new PythonRunConfigurationForm(myConfiguration, this);
+        myForm = form;
+        return form.getPanel();
+    }
 
-  protected void applyEditorTo(PythonRunConfiguration config) throws ConfigurationException {
-    PythonRunConfiguration.copyParams(myForm, config);
-  }
+    @RequiredUIAccess
+    @Override
+    protected void resetEditorFrom(PythonRunConfiguration config) {
+        PythonRunConfigurationForm form = myForm;
+        if (form != null) {
+            PythonRunConfiguration.copyParams(config, form);
+        }
+    }
 
-  protected JComponent createEditor() {
-    return myForm.getPanel();
-  }
+    @RequiredUIAccess
+    @Override
+    protected void applyEditorTo(PythonRunConfiguration config) throws ConfigurationException {
+        PythonRunConfigurationForm form = myForm;
+        if (form != null) {
+            PythonRunConfiguration.copyParams(form, config);
+        }
+    }
 
-  protected void disposeEditor() {
-    myForm = null;
-  }
+    @Override
+    protected void disposeEditor() {
+        myForm = null;
+    }
 }

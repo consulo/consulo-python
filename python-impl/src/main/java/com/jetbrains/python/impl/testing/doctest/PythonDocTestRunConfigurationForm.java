@@ -16,41 +16,32 @@
 
 package com.jetbrains.python.impl.testing.doctest;
 
-import consulo.project.Project;
-import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfigurationParams;
 import com.jetbrains.python.impl.testing.PythonTestRunConfigurationForm;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
+import consulo.disposer.Disposable;
+import consulo.project.Project;
+import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.Component;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * User: catherine
  */
 public class PythonDocTestRunConfigurationForm implements PythonDocTestRunConfigurationParams {
-  private JPanel myRootPanel;
+    private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
 
-  private final PythonTestRunConfigurationForm myTestRunConfigurationForm;
+    @RequiredUIAccess
+    public PythonDocTestRunConfigurationForm(Project project, PythonDocTestRunConfiguration configuration, Disposable uiDisposable) {
+        myTestRunConfigurationForm =
+            new PythonTestRunConfigurationForm(project, configuration, uiDisposable, PyLocalize.runcfgDoctestDisplay_name());
+    }
 
+    @Override
+    public AbstractPythonTestRunConfigurationParams getTestRunConfigurationParams() {
+        return myTestRunConfigurationForm;
+    }
 
-  public PythonDocTestRunConfigurationForm(Project project, PythonDocTestRunConfiguration configuration) {
-    myRootPanel = new JPanel(new BorderLayout());
-    myTestRunConfigurationForm = new PythonTestRunConfigurationForm(project, configuration);
-    TitledBorder border = (TitledBorder)myTestRunConfigurationForm.getTestsPanel().getBorder();
-    border.setTitle(PyBundle.message("runcfg.doctest.display_name"));
-
-    myRootPanel.add(myTestRunConfigurationForm.getPanel(), BorderLayout.CENTER);
-  }
-
-  @Override
-  public AbstractPythonTestRunConfigurationParams getTestRunConfigurationParams() {
-    return myTestRunConfigurationForm;
-  }
-
-  public JComponent getPanel() {
-    return myRootPanel;
-  }
+    public Component getPanel() {
+        return myTestRunConfigurationForm.getPanel();
+    }
 }
-
-

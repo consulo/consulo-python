@@ -17,6 +17,8 @@
 package com.jetbrains.python.impl.run;
 
 import consulo.annotation.component.ServiceImpl;
+import consulo.disposer.Disposable;
+import consulo.ui.annotation.RequiredUIAccess;
 import jakarta.inject.Singleton;
 
 /**
@@ -25,8 +27,9 @@ import jakarta.inject.Singleton;
 @ServiceImpl
 @Singleton
 public class PyPluginCommonOptionsFormFactory extends PyCommonOptionsFormFactory {
+  @RequiredUIAccess
   @Override
-  public AbstractPyCommonOptionsForm createForm(PyCommonOptionsFormData data) {
-    return new PyPluginCommonOptionsForm(data);
+  public AbstractPyCommonOptionsForm createForm(PyCommonOptionsFormData data, Disposable uiDisposable) {
+    return new PyPluginCommonOptionsForm(data, uiDisposable);
   }
 }
