@@ -554,7 +554,7 @@ public class PyUnresolvedReferencesInspection extends PyInspection {
                 }
             }
             if (reference instanceof PsiReferenceEx referenceEx && description.isEmpty()) {
-                description = LocalizeValue.localizeTODO(referenceEx.getUnresolvedDescription());
+                description = LocalizeValue.ofNullable(referenceEx.getUnresolvedDescription());
             }
             if (description.isEmpty()) {
                 boolean markedQualified = false;
