@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
 public class RenamePyVariableProcessor extends RenamePyElementProcessor {
   @Override
   public boolean canProcessElement(PsiElement element) {
-    // extension ordering in python-plugin-common.xml ensures that classes and functions are handled by their own processors
+    // @ExtensionImpl ordering (pyFunc/pyClass are "before pyVar") ensures that classes and functions are handled by their own processors
     return element instanceof PyElement && !(element instanceof PyReferenceExpression);
   }
 

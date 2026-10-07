@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author yole
  */
-@ExtensionImpl(id = "pyClass", order = "before pyVar, after pyClass")
+@ExtensionImpl(id = "pyClass", order = "before pyVar")
 public class RenamePyClassProcessor extends RenamePyElementProcessor
 {
 	@Override
