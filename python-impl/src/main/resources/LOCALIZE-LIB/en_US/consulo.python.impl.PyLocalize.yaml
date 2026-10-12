@@ -760,6 +760,12 @@ active.sdk.dialog.show.all.item:
     text: Show All
 buildout:
     text: Buildout
+buildout.script.chooser.description:
+    text: Select the target script that will invoke your code
+buildout.script.chooser.title:
+    text: Choose a buildout script
+buildout.script.label:
+    text: 'Use paths from &script:'
 buildout.unresolved.part.inspection:
     text: Buildout config unresolved part inspection
 buildout.unresolved.part.inspection.msg:

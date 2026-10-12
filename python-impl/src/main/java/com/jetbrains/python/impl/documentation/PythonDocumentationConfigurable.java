@@ -19,11 +19,14 @@ package com.jetbrains.python.impl.documentation;
 import com.google.common.collect.Sets;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
+import consulo.disposer.Disposable;
 import consulo.localize.LocalizeValue;
+import consulo.ui.Component;
 import consulo.ui.ex.SimpleTextAttributes;
 import consulo.ui.ex.awt.AddEditRemovePanel;
 import consulo.ui.ex.awt.ColoredTableCellRenderer;
 import consulo.ui.ex.awt.DialogWrapper;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 
 import org.jspecify.annotations.Nullable;
 import javax.swing.*;
@@ -62,8 +65,8 @@ public class PythonDocumentationConfigurable implements SearchableConfigurable, 
   }
 
   @Override
-  public JComponent createComponent() {
-    return myPanel;
+  public Component createUIComponent(Disposable parentDisposable) {
+    return TargetAWT.wrap(myPanel);
   }
 
   @Override

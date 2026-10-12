@@ -18,9 +18,12 @@ package com.jetbrains.python.impl.console;
 import com.google.common.collect.Lists;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
+import consulo.disposer.Disposable;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.ui.Component;
 import consulo.ui.ex.awt.JBCheckBox;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import org.jspecify.annotations.Nullable;
 import jakarta.inject.Inject;
 
@@ -104,8 +107,8 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
             }
 
             @Override
-            public JComponent createComponent() {
-                return panel.createPanel(settings);
+            public Component createUIComponent(Disposable parentDisposable) {
+                return TargetAWT.wrap(panel.createPanel(settings));
             }
 
             @Override
@@ -141,10 +144,10 @@ public class PyConsoleOptionsConfigurable extends SearchableConfigurable.Parent.
     }
 
     @Override
-    public JComponent createComponent() {
+    public Component createUIComponent(Disposable parentDisposable) {
         myPanel = new PyConsoleOptionsPanel();
 
-        return myPanel.createPanel(myOptionsProvider);
+        return TargetAWT.wrap(myPanel.createPanel(myOptionsProvider));
     }
 
     @Override

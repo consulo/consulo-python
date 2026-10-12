@@ -20,9 +20,12 @@ import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.ApplicationConfigurable;
 import consulo.configurable.ConfigurationException;
+import consulo.disposer.Disposable;
 import consulo.localize.LocalizeValue;
 import consulo.python.impl.localize.PyLocalize;
+import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 
 import org.jspecify.annotations.Nullable;
 import javax.swing.*;
@@ -50,8 +53,8 @@ public class PyAutoImportConfigurable implements ApplicationConfigurable {
 
   @RequiredUIAccess
   @Override
-  public JComponent createComponent() {
-    return myMainPanel;
+  public Component createUIComponent(Disposable parentDisposable) {
+    return TargetAWT.wrap(myMainPanel);
   }
 
   @RequiredUIAccess

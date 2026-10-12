@@ -19,16 +19,19 @@ import consulo.configurable.Configurable;
 import consulo.configurable.ConfigurationException;
 import consulo.configurable.SearchableConfigurable;
 import consulo.configurable.UnnamedConfigurable;
+import consulo.disposer.Disposable;
 import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.module.ui.awt.ModuleListCellRenderer;
 import consulo.project.Project;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.CollectionListModel;
 import consulo.ui.ex.awt.JBList;
 import consulo.ui.ex.awt.JBScrollPane;
 import consulo.ui.ex.awt.Splitter;
 import consulo.ui.ex.awt.speedSearch.ListSpeedSearch;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.lang.function.Condition;
 
@@ -72,13 +75,14 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     return true;
   }
 
+  @RequiredUIAccess
   @Override
-  public JComponent createComponent() {
+  public consulo.ui.@Nullable Component createUIComponent(Disposable parentDisposable) {
     if (myProject.isDefault()) {
       T configurable = createDefaultProjectConfigurable();
       if (configurable != null) {
         myModuleConfigurables.put(null, configurable);
-        return configurable.createComponent();
+        return configurable.createUIComponent(parentDisposable);
       }
     }
     List<Module> modules = ContainerUtil.filter(ModuleManager.getInstance(myProject).getSortedModules(), new Condition<Module>() {
@@ -91,7 +95,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
       Module module = modules.get(0);
       T configurable = createModuleConfigurable(module);
       myModuleConfigurables.put(module, configurable);
-      return configurable.createComponent();
+      return configurable.createUIComponent(parentDisposable);
     }
     Splitter splitter = new Splitter(false, 0.25f);
     final JBList moduleList = new JBList(new CollectionListModel<Module>(modules));
@@ -110,7 +114,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
     for (Module module : modules) {
       T configurable = createModuleConfigurable(module);
       myModuleConfigurables.put(module, configurable);
-      JComponent component = new JBScrollPane(configurable.createComponent());
+      JComponent component = new JBScrollPane(TargetAWT.to(configurable.createUIComponent(parentDisposable)));
       component.setBorder(new EmptyBorder(0, 0, 0, 0));
       cardPanel.add(component, module.getName());
     }
@@ -125,7 +129,7 @@ public abstract class ModuleAwareProjectConfigurable<T extends UnnamedConfigurab
       moduleList.setSelectedIndex(0);
       layout.show(cardPanel, modules.get(0).getName());
     }
-    return splitter;
+    return TargetAWT.wrap(splitter);
   }
 
   @Nullable

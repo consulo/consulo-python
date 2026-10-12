@@ -17,9 +17,12 @@ package com.jetbrains.python.impl.debugger;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.*;
+import consulo.disposer.Disposable;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
+import consulo.ui.Component;
 import consulo.ui.annotation.RequiredUIAccess;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import jakarta.inject.Inject;
 import org.jspecify.annotations.Nullable;
 
@@ -63,9 +66,9 @@ public class PyDebuggerConfigurable implements SearchableConfigurable, Configura
 
   @Override
   @RequiredUIAccess
-  public JComponent createComponent() {
+  public Component createUIComponent(Disposable parentDisposable) {
     myClearCacheButton.addActionListener(event -> PySignatureCacheManager.getInstance(myProject).clearCache());
-    return myMainPanel;
+    return TargetAWT.wrap(myMainPanel);
   }
 
   @Override

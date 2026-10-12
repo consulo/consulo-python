@@ -16,26 +16,25 @@
 
 package consulo.python.buildout.module.extension;
 
-import com.jetbrains.python.impl.buildout.BuildoutConfigPanel;
 import consulo.disposer.Disposable;
+import consulo.fileChooser.FileChooserDescriptorFactory;
+import consulo.fileChooser.FileChooserTextBoxBuilder;
 import consulo.module.content.layer.ModuleRootLayer;
 import consulo.module.extension.MutableModuleExtension;
-import consulo.module.extension.swing.SwingMutableModuleExtension;
+import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.Component;
-import consulo.ui.Label;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.awt.VerticalFlowLayout;
-import consulo.ui.layout.VerticalLayout;
+import consulo.ui.util.FormBuilder;
 import consulo.util.lang.Comparing;
+import consulo.util.lang.StringUtil;
 
 import org.jspecify.annotations.Nullable;
-import javax.swing.*;
 
 /**
  * @author VISTALL
  * @since 20.10.13.
  */
-public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>, SwingMutableModuleExtension
+public class BuildoutMutableModuleExtension extends BuildoutModuleExtension implements MutableModuleExtension<BuildoutModuleExtension>
 {
 	public BuildoutMutableModuleExtension(String id, ModuleRootLayer module)
 	{
@@ -47,17 +46,18 @@ public class BuildoutMutableModuleExtension extends BuildoutModuleExtension impl
 	@Override
 	public Component createConfigurationComponent(Disposable disposable, Runnable runnable)
 	{
-		return VerticalLayout.create().add(Label.create("Unsupported platform"));
-	}
+		FileChooserTextBoxBuilder.Controller scriptBox = FileChooserTextBoxBuilder.create(getProject())
+				.fileChooserDescriptor(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor())
+				.dialogTitle(PyLocalize.buildoutScriptChooserTitle())
+				.dialogDescription(PyLocalize.buildoutScriptChooserDescription())
+				.uiDisposable(disposable)
+				.build();
+		scriptBox.setValue(StringUtil.notNullize(getScriptName()), false);
+		scriptBox.getComponent().addValueListener(event -> setScriptName(scriptBox.getValue()));
 
-	@RequiredUIAccess
-	@Nullable
-	@Override
-	public JComponent createConfigurablePanel(Disposable disposable, Runnable runnable)
-	{
-		JPanel panel = new JPanel(new VerticalFlowLayout(true, false));
-		panel.add(new BuildoutConfigPanel(this));
-		return panel;
+		FormBuilder formBuilder = FormBuilder.create();
+		formBuilder.addLabeled(PyLocalize.buildoutScriptLabel(), scriptBox.getComponent());
+		return formBuilder.build();
 	}
 
 	@Override

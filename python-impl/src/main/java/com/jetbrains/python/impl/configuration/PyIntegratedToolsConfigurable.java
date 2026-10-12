@@ -28,6 +28,7 @@ import com.jetbrains.python.impl.testing.TestRunnerService;
 import consulo.configurable.ConfigurationException;
 import consulo.configurable.SearchableConfigurable;
 import consulo.content.ContentIterator;
+import consulo.disposer.Disposable;
 import consulo.document.util.FileContentUtilCore;
 import consulo.fileChooser.FileChooserDescriptor;
 import consulo.fileChooser.FileChooserDescriptorFactory;
@@ -38,10 +39,12 @@ import consulo.localize.LocalizeValue;
 import consulo.module.Module;
 import consulo.module.content.ProjectRootManager;
 import consulo.project.Project;
+import consulo.ui.Component;
 import consulo.ui.ex.awt.CollectionComboBoxModel;
 import consulo.ui.ex.awt.IdeBorderFactory;
 import consulo.ui.ex.awt.ListCellRendererWrapper;
 import consulo.ui.ex.awt.TextFieldWithBrowseButton;
+import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.virtualFileSystem.VirtualFile;
 
 import javax.swing.*;
@@ -191,14 +194,14 @@ public class PyIntegratedToolsConfigurable implements SearchableConfigurable {
   }
 
   @Override
-  public JComponent createComponent() {
+  public Component createUIComponent(Disposable parentDisposable) {
     List<String> configurations = TestRunnerService.getInstance(myModule).getConfigurations();
     myModel =
       new PythonTestConfigurationsModel(configurations, TestRunnerService.getInstance(myModule).getProjectConfiguration(), myModule);
 
     updateConfigurations();
     initErrorValidation();
-    return myMainPanel;
+    return TargetAWT.wrap(myMainPanel);
   }
 
   private void updateConfigurations() {
