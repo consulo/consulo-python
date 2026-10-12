@@ -27,6 +27,7 @@ import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
 import consulo.language.psi.*;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
@@ -35,10 +36,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PyStringLiteralExpressionImpl extends PyElementImpl implements PyStringLiteralExpression {
-
     private enum EscapeRegexGroup {
         WHOLE_MATCH,
         ESCAPED_SUBSTRING,
@@ -304,11 +303,10 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     @Override
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
-            @Nullable
             @Override
             @RequiredReadAction
-            public String getPresentableText() {
-                return getStringValue();
+            public LocalizeValue getPresentableText() {
+                return LocalizeValue.of(getStringValue());
             }
 
             @Override
@@ -316,7 +314,6 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
                 return "(" + PyElementPresentation.getPackageForFile(getContainingFile()) + ")";
             }
 
-            @Nullable
             @Override
             public Image getIcon() {
                 return PlatformIconGroup.nodesVariable();
@@ -414,4 +411,5 @@ public class PyStringLiteralExpressionImpl extends PyElementImpl implements PySt
     @RequiredReadAction
     public int valueOffsetToTextOffset(int valueOffset) {
         return createLiteralTextEscaper().getOffsetInHost(valueOffset, getStringValueTextRange());
-    }}
+    }
+}

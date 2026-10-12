@@ -18,6 +18,7 @@ package com.jetbrains.python;
 import com.google.common.collect.ImmutableMap;
 import com.jetbrains.python.psi.LanguageLevel;
 
+import consulo.localize.LocalizeValue;
 import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -205,7 +206,7 @@ public class PyNames {
 
   public static final String UNKNOWN_TYPE = "Any";
 
-  public static final String UNNAMED_ELEMENT = "<unnamed>";
+  public static final LocalizeValue UNNAMED_ELEMENT = LocalizeValue.localizeTODO("<unnamed>");
 
   /**
    * Contains all known predefined names of "__foo__" form.

@@ -57,11 +57,13 @@ import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.ItemPresentation;
 import consulo.util.collection.ArrayFactory;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.collection.SmartList;
 import consulo.util.lang.Comparing;
+import consulo.util.lang.StringUtil;
 import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
@@ -69,7 +71,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static consulo.util.lang.StringUtil.join;
 import static consulo.util.lang.StringUtil.notNullize;
 
 /**
@@ -370,22 +371,26 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
   @Override
   public ItemPresentation getPresentation() {
     return new PyElementPresentation(this) {
-      @Nullable
       @Override
       @RequiredReadAction
-      public String getPresentableText() {
+      public LocalizeValue getPresentableText() {
         PyPsiUtils.assertValid(PyClassImpl.this);
-        StringBuilder result = new StringBuilder(notNullize(getName(), PyNames.UNNAMED_ELEMENT));
+        StringBuilder result = new StringBuilder(notNullize(getName(), PyNames.UNNAMED_ELEMENT.get()));
         PyExpression[] superClassExpressions = getSuperClassExpressions();
         if (superClassExpressions.length > 0) {
           result.append("(");
-          result.append(join(Arrays.asList(superClassExpressions), expr -> {
-            String name = expr.getText();
-            return notNullize(name, PyNames.UNNAMED_ELEMENT);
-          }, ", "));
+          StringUtil.join(
+            superClassExpressions,
+            expr -> {
+              String name = expr.getText();
+              return notNullize(name, PyNames.UNNAMED_ELEMENT.get());
+            },
+            ", ",
+            result
+          );
           result.append(")");
         }
-        return result.toString();
+        return LocalizeValue.of(result.toString());
       }
     };
   }

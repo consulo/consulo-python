@@ -13,51 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
-
 
 import consulo.language.psi.StubBasedPsiElement;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
 
+import consulo.localize.LocalizeValue;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Represents function parameter list.
- * Date: 29.05.2005
+ * @since 2005-05-29
  */
 public interface PyParameterList extends PyElement, StubBasedPsiElement<PyParameterListStub> {
+    /**
+     * Extracts the individual parameters.
+     * Note that tuple parameters are flattened by this method.
+     *
+     * @return a possibly empty array of named parameters.
+     */
+    PyParameter[] getParameters();
 
-  /**
-   * Extracts the individual parameters.
-   * Note that tuple parameters are flattened by this method.
-   * @return a possibly empty array of named paramaters.
-   */
-  PyParameter[] getParameters();
+    @Nullable
+    PyNamedParameter findParameterByName(String name);
 
-  @Nullable
-  PyNamedParameter findParameterByName(String name);
+    /**
+     * Adds a parameter to list, after all other parameters.
+     *
+     * @param param what to add
+     */
+    void addParameter(PyNamedParameter param);
 
+    /**
+     * @return true iff this list contains an '*args'-type parameter.
+     */
+    boolean hasPositionalContainer();
 
-  /**
-   * Adds a paramter to list, after all other parameters.
-   * @param param what to add
-   */
-  void addParameter(PyNamedParameter param);
+    /**
+     * @return true iff this list contains a '**kwargs'-type parameter.
+     */
+    boolean hasKeywordContainer();
 
+    LocalizeValue getPresentableText(boolean includeDefaultValue);
 
-  /**
-   * @return true iff this list contains an '*args'-type parameter.
-   */
-  boolean hasPositionalContainer();
-  
-  /**
-   * @return true iff this list contains a '**kwargs'-type parameter.
-   */
-  boolean hasKeywordContainer();
-
-  String getPresentableText(boolean includeDefaultValue);
-
-  @Nullable
-  PyFunction getContainingFunction();
+    @Nullable
+    PyFunction getContainingFunction();
 }

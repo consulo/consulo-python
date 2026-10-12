@@ -22,180 +22,171 @@ import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.stubs.PyParameterListStub;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IStubElementType;
+import consulo.localize.LocalizeValue;
 import consulo.util.collection.ArrayUtil;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
 /**
  * @author yole
  */
-public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> implements PyParameterList
-{
-	public PyParameterListImpl(ASTNode astNode)
-	{
-		super(astNode);
-	}
+public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> implements PyParameterList {
+    public PyParameterListImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-	public PyParameterListImpl(PyParameterListStub stub)
-	{
-		this(stub, PyElementTypes.PARAMETER_LIST);
-	}
+    public PyParameterListImpl(PyParameterListStub stub) {
+        this(stub, PyElementTypes.PARAMETER_LIST);
+    }
 
-	public PyParameterListImpl(PyParameterListStub stub, IStubElementType nodeType)
-	{
-		super(stub, nodeType);
-	}
+    public PyParameterListImpl(PyParameterListStub stub, IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
 
-	@Override
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
-	{
-		pyVisitor.visitPyParameterList(this);
-	}
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyParameterList(this);
+    }
 
-	public PyParameter[] getParameters()
-	{
-		return getStubOrPsiChildren(PythonDialectsTokenSetProvider.INSTANCE.getParameterTokens(), new PyParameter[0]);
-	}
+    @Override
+    @RequiredReadAction
+    public PyParameter[] getParameters() {
+        return getStubOrPsiChildren(PythonDialectsTokenSetProvider.INSTANCE.getParameterTokens(), new PyParameter[0]);
+    }
 
-	public void addParameter(PyNamedParameter param)
-	{
-		PsiElement paren = getLastChild();
-		if(paren != null && ")".equals(paren.getText()))
-		{
-			ASTNode beforeWhat = paren.getNode(); // the closing paren will be this
-			PyParameter[] params = getParameters();
-			boolean hasDefaultValue = param.hasDefaultValue();
-			boolean isLast = true;
-			for(PyParameter p : params)
-			{
-				if(!hasDefaultValue && p.hasDefaultValue())
-				{
-					beforeWhat = p.getNode();
-					isLast = false;
-					break;
-				}
-				if(p instanceof PyNamedParameter)
-				{
-					PyNamedParameter named = (PyNamedParameter) p;
-					if(named.isKeywordContainer() || named.isPositionalContainer())
-					{
-						beforeWhat = p.getNode();
-						isLast = false;
-						break;
-					}
-				}
-			}
-			ASTNode previous = PyPsiUtils.getPrevNonWhitespaceSibling(beforeWhat);
-			PyUtil.addListNode(this, param, beforeWhat, !isLast || params.length == 0 ||
-					previous.getElementType() == PyTokenTypes.COMMA, isLast, beforeWhat.getElementType() != PyTokenTypes.RPAR);
-		}
-	}
+    @Override
+    public void addParameter(PyNamedParameter param) {
+        PsiElement paren = getLastChild();
+        if (paren != null && ")".equals(paren.getText())) {
+            ASTNode beforeWhat = paren.getNode(); // the closing paren will be this
+            PyParameter[] params = getParameters();
+            boolean hasDefaultValue = param.hasDefaultValue();
+            boolean isLast = true;
+            for (PyParameter p : params) {
+                if (!hasDefaultValue && p.hasDefaultValue()) {
+                    beforeWhat = p.getNode();
+                    isLast = false;
+                    break;
+                }
+                if (p instanceof PyNamedParameter named) {
+                    if (named.isKeywordContainer() || named.isPositionalContainer()) {
+                        beforeWhat = p.getNode();
+                        isLast = false;
+                        break;
+                    }
+                }
+            }
+            ASTNode previous = PyPsiUtils.getPrevNonWhitespaceSibling(beforeWhat);
+            PyUtil.addListNode(
+                this,
+                param,
+                beforeWhat,
+                !isLast || params.length == 0 || previous.getElementType() == PyTokenTypes.COMMA,
+                isLast,
+                beforeWhat.getElementType() != PyTokenTypes.RPAR
+            );
+        }
+    }
 
-	public boolean hasPositionalContainer()
-	{
-		for(PyParameter parameter : getParameters())
-		{
-			if(parameter instanceof PyNamedParameter && ((PyNamedParameter) parameter).isPositionalContainer())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    @RequiredReadAction
+    public boolean hasPositionalContainer() {
+        for (PyParameter parameter : getParameters()) {
+            if (parameter instanceof PyNamedParameter named && named.isPositionalContainer()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public boolean hasKeywordContainer()
-	{
-		for(PyParameter parameter : getParameters())
-		{
-			if(parameter instanceof PyNamedParameter && ((PyNamedParameter) parameter).isKeywordContainer())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    @RequiredReadAction
+    public boolean hasKeywordContainer() {
+        for (PyParameter parameter : getParameters()) {
+            if (parameter instanceof PyNamedParameter named && named.isKeywordContainer()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	@Nullable
-	public PyNamedParameter findParameterByName(final String name)
-	{
-		final Ref<PyNamedParameter> result = new Ref<>();
-		ParamHelper.walkDownParamArray(getParameters(), new ParamHelper.ParamVisitor()
-		{
-			@Override
-			public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last)
-			{
-				if(name.equals(param.getName()))
-				{
-					result.set(param);
-				}
-			}
-		});
-		return result.get();
-	}
+    @Override
+    @Nullable
+    @RequiredReadAction
+    public PyNamedParameter findParameterByName(final String name) {
+        SimpleReference<PyNamedParameter> result = new SimpleReference<>();
+        ParamHelper.walkDownParamArray(
+            getParameters(),
+            new ParamHelper.ParamVisitor() {
+                @Override
+                public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) {
+                    if (name.equals(param.getName())) {
+                        result.set(param);
+                    }
+                }
+            }
+        );
+        return result.get();
+    }
 
-	public String getPresentableText(final boolean includeDefaultValue)
-	{
-		final StringBuilder target = new StringBuilder();
-		final String COMMA = ", ";
-		target.append("(");
-		ParamHelper.walkDownParamArray(getParameters(), new ParamHelper.ParamWalker()
-		{
-			public void enterTupleParameter(PyTupleParameter param, boolean first, boolean last)
-			{
-				target.append("(");
-			}
+    @Override
+    @RequiredReadAction
+    public LocalizeValue getPresentableText(final boolean includeDefaultValue) {
+        final StringBuilder target = new StringBuilder();
+        final String COMMA = ", ";
+        target.append("(");
+        ParamHelper.walkDownParamArray(getParameters(), new ParamHelper.ParamWalker() {
+            @Override
+            public void enterTupleParameter(PyTupleParameter param, boolean first, boolean last) {
+                target.append("(");
+            }
 
-			public void leaveTupleParameter(PyTupleParameter param, boolean first, boolean last)
-			{
-				target.append(")");
-				if(!last)
-				{
-					target.append(COMMA);
-				}
-			}
+            @Override
+            public void leaveTupleParameter(PyTupleParameter param, boolean first, boolean last) {
+                target.append(")");
+                if (!last) {
+                    target.append(COMMA);
+                }
+            }
 
-			public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last)
-			{
-				target.append(param.getRepr(includeDefaultValue));
-				if(!last)
-				{
-					target.append(COMMA);
-				}
-			}
+            @Override
+            public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) {
+                target.append(param.getRepr(includeDefaultValue));
+                if (!last) {
+                    target.append(COMMA);
+                }
+            }
 
-			public void visitSingleStarParameter(PySingleStarParameter param, boolean first, boolean last)
-			{
-				target.append('*');
-				if(!last)
-				{
-					target.append(COMMA);
-				}
-			}
-		});
-		target.append(")");
-		return target.toString();
-	}
+            @Override
+            public void visitSingleStarParameter(PySingleStarParameter param, boolean first, boolean last) {
+                target.append('*');
+                if (!last) {
+                    target.append(COMMA);
+                }
+            }
+        });
+        target.append(")");
+        return LocalizeValue.of(target.toString());
+    }
 
-	@Nullable
-	@Override
-	public PyFunction getContainingFunction()
-	{
-		PsiElement parent = getParentByStub();
-		return parent instanceof PyFunction ? (PyFunction) parent : null;
-	}
+    @Nullable
+    @Override
+    @RequiredReadAction
+    public PyFunction getContainingFunction() {
+        return getParentByStub() instanceof PyFunction f ? f : null;
+    }
 
-	@Override
-	public void deleteChildInternal(ASTNode node)
-	{
-		if(ArrayUtil.contains(node.getPsi(), getParameters()))
-		{
-			PyPsiUtils.deleteAdjacentCommaWithWhitespaces(this, node.getPsi());
-		}
-		super.deleteChildInternal(node);
-	}
+    @Override
+    @RequiredWriteAction
+    public void deleteChildInternal(ASTNode node) {
+        if (ArrayUtil.contains(node.getPsi(), getParameters())) {
+            PyPsiUtils.deleteAdjacentCommaWithWhitespaces(this, node.getPsi());
+        }
+        super.deleteChildInternal(node);
+    }
 }
