@@ -22,6 +22,7 @@ import consulo.language.psi.ElementDescriptionLocation;
 import consulo.language.psi.ElementDescriptionProvider;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiNamedElement;
+import consulo.localize.LocalizeValue;
 import consulo.usage.UsageViewLongNameLocation;
 
 /**
@@ -31,8 +32,11 @@ import consulo.usage.UsageViewLongNameLocation;
 public class PyElementDescriptionProvider implements ElementDescriptionProvider {
     @Override
     @RequiredReadAction
-    public String getElementDescription(PsiElement element, ElementDescriptionLocation location) {
-        return location instanceof UsageViewLongNameLocation && element instanceof PsiNamedElement namedElem && namedElem instanceof PyElement
-            ? namedElem.getName() : null;
+    public LocalizeValue getElementDescription(PsiElement element, ElementDescriptionLocation location) {
+        return location instanceof UsageViewLongNameLocation
+            && element instanceof PsiNamedElement namedElem
+            && namedElem instanceof PyElement
+            ? LocalizeValue.ofNullable(namedElem.getName())
+            : LocalizeValue.empty();
     }
 }

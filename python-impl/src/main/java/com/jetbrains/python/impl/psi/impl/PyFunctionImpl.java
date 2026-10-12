@@ -54,6 +54,7 @@ import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.util.LanguageCachedValueUtil;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.python.impl.icon.PythonImplIconGroup;
@@ -288,11 +289,13 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     @Override
     public ItemPresentation getPresentation() {
         return new PyElementPresentation(this) {
-            @Nullable
             @Override
             @RequiredReadAction
-            public String getPresentableText() {
-                return notNullize(getName(), PyNames.UNNAMED_ELEMENT) + getParameterList().getPresentableText(true);
+            public LocalizeValue getPresentableText() {
+                return LocalizeValue.join(
+                    LocalizeValue.ofNullable(getName()).orIfEmpty(PyNames.UNNAMED_ELEMENT),
+                    getParameterList().getPresentableText(true)
+                );
             }
 
             @Nullable

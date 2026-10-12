@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
+import consulo.localize.LocalizeValue;
 import org.jspecify.annotations.Nullable;
 
 import consulo.ui.ex.ColoredItemPresentation;
@@ -30,56 +32,43 @@ import consulo.ui.image.Image;
 /**
  * @author vlan
  */
-public class PyElementPresentation implements ColoredItemPresentation
-{
-	private final PyElement myElement;
+public class PyElementPresentation implements ColoredItemPresentation {
+    private final PyElement myElement;
 
-	public PyElementPresentation(PyElement element)
-	{
-		myElement = element;
-	}
+    public PyElementPresentation(PyElement element) {
+        myElement = element;
+    }
 
-	@Nullable
-	@Override
-	public TextAttributesKey getTextAttributesKey()
-	{
-		return null;
-	}
+    @Override
+    public @Nullable TextAttributesKey getTextAttributesKey() {
+        return null;
+    }
 
-	@Nullable
-	@Override
-	public String getPresentableText()
-	{
-		String name = myElement.getName();
-		return name != null ? name : PyNames.UNNAMED_ELEMENT;
-	}
+    @Override
+    public LocalizeValue getPresentableText() {
+        return LocalizeValue.ofNullable(myElement.getName()).orIfEmpty(PyNames.UNNAMED_ELEMENT);
+    }
 
-	@Nullable
-	@Override
-	public String getLocationString()
-	{
-		return "(" + getPackageForFile(myElement.getContainingFile()) + ")";
-	}
+    @Override
+    public @Nullable String getLocationString() {
+        return "(" + getPackageForFile(myElement.getContainingFile()) + ")";
+    }
 
-	@Nullable
-	@Override
-	public Image getIcon()
-	{
-		return IconDescriptorUpdaters.getIcon(myElement, 0);
-	}
+    @Override
+    @RequiredReadAction
+    public @Nullable Image getIcon() {
+        return IconDescriptorUpdaters.getIcon(myElement, 0);
+    }
 
-	public static String getPackageForFile(PsiFile containingFile)
-	{
-		VirtualFile vFile = containingFile.getVirtualFile();
+    public static String getPackageForFile(PsiFile containingFile) {
+        VirtualFile vFile = containingFile.getVirtualFile();
 
-		if(vFile != null)
-		{
-			String importableName = QualifiedNameFinder.findShortestImportableName(containingFile, vFile);
-			if(importableName != null)
-			{
-				return importableName;
-			}
-		}
-		return "";
-	}
+        if (vFile != null) {
+            String importableName = QualifiedNameFinder.findShortestImportableName(containingFile, vFile);
+            if (importableName != null) {
+                return importableName;
+            }
+        }
+        return "";
+    }
 }

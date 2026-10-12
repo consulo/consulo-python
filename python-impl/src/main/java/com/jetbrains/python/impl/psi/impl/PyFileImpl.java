@@ -50,6 +50,7 @@ import consulo.language.psi.stub.IndexingDataKeys;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import consulo.language.util.IncorrectOperationException;
+import consulo.localize.LocalizeValue;
 import consulo.module.content.ProjectFileIndex;
 import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
@@ -773,8 +774,8 @@ public class PyFileImpl extends PsiFileBase implements PyFile, PyExpression {
         return new ItemPresentation() {
             @Override
             @RequiredReadAction
-            public String getPresentableText() {
-                return getModuleName(PyFileImpl.this);
+            public LocalizeValue getPresentableText() {
+                return LocalizeValue.of(getModuleName(PyFileImpl.this));
             }
 
             @Override
