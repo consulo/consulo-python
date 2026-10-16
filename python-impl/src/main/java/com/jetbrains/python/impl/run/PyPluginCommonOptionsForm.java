@@ -83,7 +83,7 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         myModules = FlatDataModel.of(validModules);
 
         myModuleComboBox = ComboBox.create(myModules);
-        myModuleComboBox.setRender((presentation, item) -> {
+        myModuleComboBox.setRenderer((presentation, item) -> {
             Module module = item.getValue();
             if (module != null) {
                 presentation.withIcon(PlatformIconGroup.nodesModule());
@@ -201,35 +201,37 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
     }
 
     @Override
+    @RequiredUIAccess
     public Disposable addInterpreterListener(Runnable listener) {
         return myInterpreterComboBox.getComponent().addValueListener(event -> listener.run());
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public String getInterpreterOptions() {
         return StringUtil.notNullize(myInterpreterOptionsTextField.getValue()).trim();
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setInterpreterOptions(@Nullable String interpreterOptions) {
         myInterpreterOptionsTextField.setValue(StringUtil.notNullize(interpreterOptions));
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public String getWorkingDirectory() {
         return FileUtil.toSystemIndependentName(myWorkingDirectoryTextField.getValue().trim());
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setWorkingDirectory(@Nullable String workingDirectory) {
         myWorkingDirectoryTextField.setValue(workingDirectory == null ? "" : FileUtil.toSystemDependentName(workingDirectory));
     }
 
     @Override
+    @RequiredUIAccess
     public @Nullable String getSdkHome() {
         BundleBox.BundleBoxItem item = myInterpreterComboBox.getComponent().getValue();
         if (item == null) {
@@ -239,8 +241,8 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         return sdk != null ? sdk.getHomePath() : item.getBundleName();
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setSdkHome(@Nullable String sdkHome) {
         if (StringUtil.isEmptyOrSpaces(sdkHome)) {
             myInterpreterComboBox.setSelectedNoneBundle();
@@ -269,8 +271,8 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         return module != null ? module.getName() : null;
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setModule(@Nullable Module module) {
         if (module != null && myModules.indexOf(module) < 0) {
             myModules.add(module);
@@ -283,8 +285,8 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         return Boolean.TRUE.equals(myUseModuleSdkGroup.getValue());
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setUseModuleSdk(boolean useModuleSdk) {
         myUseModuleSdkGroup.setValue(useModuleSdk, false);
         updateControls();
@@ -295,8 +297,8 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         return myEnvsComponent.isPassParentEnvs();
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setPassParentEnvs(boolean passParentEnvs) {
         myEnvsComponent.setPassParentEnvs(passParentEnvs);
     }
@@ -339,14 +341,14 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         return myAddSourceRootsCheckbox.getValueOrError();
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setAddContentRoots(boolean flag) {
         myAddContentRootsCheckbox.setValue(flag);
     }
 
-    @RequiredUIAccess
     @Override
+    @RequiredUIAccess
     public void setAddSourceRoots(boolean flag) {
         myAddSourceRootsCheckbox.setValue(flag);
     }
