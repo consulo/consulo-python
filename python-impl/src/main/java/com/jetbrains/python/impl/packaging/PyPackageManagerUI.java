@@ -26,14 +26,15 @@ import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
 import consulo.content.bundle.Sdk;
 import consulo.execution.RunCanceledByUserException;
+import consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel;
+import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
 import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationGroup;
-import consulo.project.ui.notification.NotificationType;
-import consulo.project.ui.notification.NotificationsManager;
+import consulo.project.ui.notification.NotificationService;
 import consulo.project.ui.notification.event.NotificationListener;
 import consulo.repository.ui.PackageManagementService;
 import consulo.ui.annotation.RequiredUIAccess;
@@ -174,8 +175,8 @@ public class PyPackageManagerUI {
 
         protected void taskStarted(ProgressIndicator indicator) {
             Project project = (Project) getProject();
-            PackagingNotification[] notifications =
-                NotificationsManager.getNotificationsManager().getNotificationsOfType(PackagingNotification.class, project);
+            List<PackagingNotification> notifications =
+                NotificationService.getInstance().getNotificationsOfType(PackagingNotification.class, project);
             for (PackagingNotification notification : notifications) {
                 notification.expire();
             }
@@ -188,13 +189,11 @@ public class PyPackageManagerUI {
         protected void taskFinished(List<ExecutionException> exceptions) {
             SimpleReference<Notification> notificationRef = new SimpleReference<>(null);
             if (exceptions.isEmpty()) {
-                notificationRef.set(new PackagingNotification(
-                    PACKAGING_GROUP_ID,
-                    getSuccessTitle(),
-                    getSuccessDescription(),
-                    NotificationType.INFORMATION,
-                    null
-                ));
+                Notification.Builder builder = NotificationService.getInstance().newInfo(PACKAGING_GROUP_ID)
+                    .title(LocalizeValue.localizeTODO(getSuccessTitle()))
+                    .content(LocalizeValue.localizeTODO(getSuccessDescription()));
+
+                notificationRef.set(new PackagingNotification(builder));
             }
             else {
                 PackageManagementService.ErrorDescription description = PyPackageManagementService.toErrorDescription(exceptions, mySdk);
@@ -203,39 +202,31 @@ public class PyPackageManagerUI {
                     NotificationListener listener = (notification, event) -> {
                         assert myProject != null;
                         String title = StringUtil.capitalizeWords(getFailureTitle(), true);
-                        consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel.showError(title, description);
+                        PackagesNotificationPanel.showError(title, description);
                     };
-                    notificationRef.set(new PackagingNotification(
-                        PACKAGING_GROUP_ID,
-                        getFailureTitle(),
-                        firstLine + " <a href=\"xxx\">Details...</a>",
-                        consulo.project.ui.notification.NotificationType.ERROR,
-                        listener
-                    ));
+
+                    Notification.Builder builder = NotificationService.getInstance().newError(PACKAGING_GROUP_ID)
+                        .title(LocalizeValue.localizeTODO(getFailureTitle()))
+                        .content(LocalizeValue.localizeTODO(firstLine + " <a href=\"xxx\">Details...</a>"))
+                        .hyperlinkListener(listener);
+
+                    notificationRef.set(new PackagingNotification(builder));
                 }
             }
+
             Project project = (Project) myProject;
-            project.getApplication().invokeLater(() -> {
-                if (myListener != null) {
-                    myListener.finished(exceptions);
-                }
-                Notification notification = notificationRef.get();
-                if (notification != null) {
-                    notification.notify(project);
-                }
-            });
+            if (myListener != null) {
+                myListener.finished(exceptions);
+            }
+            Notification notification = notificationRef.get();
+            if (notification != null) {
+                notification.notify(project);
+            }
         }
 
         private static class PackagingNotification extends Notification {
-
-            public PackagingNotification(
-                NotificationGroup groupDisplayId,
-                String title,
-                String content,
-                consulo.project.ui.notification.NotificationType type,
-                @Nullable NotificationListener listener
-            ) {
-                super(groupDisplayId, title, content, type, listener);
+            private PackagingNotification(Builder notificationBuilder) {
+                super(notificationBuilder);
             }
         }
     }
