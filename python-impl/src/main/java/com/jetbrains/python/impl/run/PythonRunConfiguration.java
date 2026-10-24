@@ -20,9 +20,12 @@ import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;
 import com.jetbrains.python.run.PythonRunConfigurationParams;
 import consulo.execution.RuntimeConfigurationException;
 import consulo.execution.configuration.ConfigurationFactory;
-import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
+import consulo.execution.configuration.ProgramParametersAware;
+import consulo.execution.configuration.RunConfigurationOptions;
 import consulo.execution.configuration.RunProfileState;
-import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.configuration.fragment.ProgramParametersFragmentState;
+import consulo.execution.configuration.fragment.RunConfigurationFragment;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.language.editor.refactoring.event.RefactoringElementAdapter;
@@ -35,25 +38,17 @@ import consulo.project.Project;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
-import consulo.util.xml.serializer.JDOMExternalizerUtil;
-import consulo.util.xml.serializer.WriteExternalException;
 import consulo.virtualFileSystem.VirtualFile;
-import org.jdom.Element;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author yole
  */
-public class PythonRunConfiguration extends AbstractPythonRunConfiguration implements AbstractPythonRunConfigurationParams, PythonRunConfigurationParams, RefactoringListenerProvider
+public class PythonRunConfiguration extends AbstractPythonRunConfiguration implements AbstractPythonRunConfigurationParams, PythonRunConfigurationParams, RefactoringListenerProvider,
+		ProgramParametersAware
 {
-	public static final String SCRIPT_NAME = "SCRIPT_NAME";
-	public static final String PARAMETERS = "PARAMETERS";
-	public static final String MULTIPROCESS = "MULTIPROCESS";
-	public static final String SHOW_COMMAND_LINE = "SHOW_COMMAND_LINE";
-	private String myScriptName;
-	private String myScriptParameters;
-	private boolean myShowCommandLineAfterwards = false;
 
 	protected PythonRunConfiguration(Project project, ConfigurationFactory configurationFactory)
 	{
@@ -62,9 +57,44 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 	}
 
 	@Override
-	protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor()
+	protected Class<? extends RunConfigurationOptions> getOptionsClass()
 	{
-		return new PythonRunConfigurationEditor(this);
+		return PythonRunConfigurationOptions.class;
+	}
+
+	@Override
+	public PythonRunConfigurationOptions getOptions()
+	{
+		return (PythonRunConfigurationOptions) super.getOptions();
+	}
+
+	@Override
+	protected void convertLegacyState(LegacyRunConfigurationConverter converter)
+	{
+		super.convertLegacyState(converter);
+
+		PythonRunConfigurationOptions options = new PythonRunConfigurationOptions();
+		convertLegacyCommonState(converter, options);
+
+		PythonRunConfigurationLegacyState old = converter.readXml(PythonRunConfigurationLegacyState.class);
+		options.setScriptName(old.SCRIPT_NAME);
+		options.setShowCommandLineAfterwards(old.SHOW_COMMAND_LINE);
+		converter.setOptions(options);
+
+		converter.addFragment(new ProgramParametersFragmentState(old.PARAMETERS));
+	}
+
+	@Override
+	public List<RunConfigurationFragment<?>> createFragments()
+	{
+		return List.of(
+			new PythonScriptFragment(),
+			new PythonInterpreterFragment<>(),
+			new PythonInterpreterOptionsFragment<>(),
+			new PythonAddContentRootsFragment<>(),
+			new PythonAddSourceRootsFragment<>(),
+			new PythonShowCommandLineFragment()
+		);
 	}
 
 	public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException
@@ -76,7 +106,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 	{
 		super.checkConfiguration();
 
-		if(StringUtil.isEmptyOrSpaces(myScriptName))
+		if(StringUtil.isEmptyOrSpaces(getScriptName()))
 		{
 			throw new RuntimeConfigurationException(PyBundle.message("runcfg.unittest.no_script_name"));
 		}
@@ -97,50 +127,40 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 		return name;
 	}
 
+	@Override
 	public String getScriptName()
 	{
-		return myScriptName;
+		return getOptions().getScriptName();
 	}
 
+	@Override
 	public void setScriptName(String scriptName)
 	{
-		myScriptName = scriptName;
+		getOptions().setScriptName(scriptName);
 	}
 
+	@Override
 	public String getScriptParameters()
 	{
-		return myScriptParameters;
+		return getProgramParameters();
 	}
 
+	@Override
 	public void setScriptParameters(String scriptParameters)
 	{
-		myScriptParameters = scriptParameters;
+		setProgramParameters(scriptParameters);
 	}
 
+	@Override
 	public boolean showCommandLineAfterwards()
 	{
-		return myShowCommandLineAfterwards;
+		return getOptions().isShowCommandLineAfterwards();
 	}
 
+	@Override
 	public void setShowCommandLineAfterwards(boolean showCommandLineAfterwards)
 	{
-		myShowCommandLineAfterwards = showCommandLineAfterwards;
-	}
-
-	public void readExternal(Element element)
-	{
-		super.readExternal(element);
-		myScriptName = JDOMExternalizerUtil.readField(element, SCRIPT_NAME);
-		myScriptParameters = JDOMExternalizerUtil.readField(element, PARAMETERS);
-		myShowCommandLineAfterwards = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, SHOW_COMMAND_LINE, "false"));
-	}
-
-	public void writeExternal(Element element) throws WriteExternalException
-	{
-		super.writeExternal(element);
-		JDOMExternalizerUtil.writeField(element, SCRIPT_NAME, myScriptName);
-		JDOMExternalizerUtil.writeField(element, PARAMETERS, myScriptParameters);
-		JDOMExternalizerUtil.writeField(element, SHOW_COMMAND_LINE, Boolean.toString(myShowCommandLineAfterwards));
+		getOptions().setShowCommandLineAfterwards(showCommandLineAfterwards);
 	}
 
 	public AbstractPythonRunConfigurationParams getBaseParams()
@@ -162,7 +182,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 		if(element instanceof PsiFile)
 		{
 			VirtualFile virtualFile = ((PsiFile) element).getVirtualFile();
-			if(virtualFile != null && Comparing.equal(new File(virtualFile.getPath()).getAbsolutePath(), new File(myScriptName).getAbsolutePath()))
+			if(virtualFile != null && Comparing.equal(new File(virtualFile.getPath()).getAbsolutePath(), new File(StringUtil.notNullize(getScriptName())).getAbsolutePath()))
 			{
 				return new RefactoringElementAdapter()
 				{
@@ -184,7 +204,7 @@ public class PythonRunConfiguration extends AbstractPythonRunConfiguration imple
 
 					private void updateScriptName(String path)
 					{
-						myScriptName = FileUtil.toSystemDependentName(path);
+						setScriptName(FileUtil.toSystemDependentName(path));
 					}
 				};
 			}

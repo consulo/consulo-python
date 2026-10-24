@@ -1081,6 +1081,22 @@ remove.elif:
     text: Remove elif...
 remove.else:
     text: Remove else...
+run.configuration.fragment.interpreter:
+    text: Python interpreter
+run.configuration.fragment.interpreter.options:
+    text: Interpreter options
+run.configuration.fragment.pytest.keywords:
+    text: Keywords
+run.configuration.fragment.pytest.target:
+    text: Target
+run.configuration.fragment.rest.task:
+    text: Task
+run.configuration.fragment.script:
+    text: Script
+run.configuration.fragment.test.params:
+    text: Additional arguments
+run.configuration.fragment.test.target:
+    text: Test target
 run.configuration.remote.debug.name:
     text: Python Remote Debug
 run.configuration.show.command.line.action.name:

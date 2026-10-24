@@ -18,18 +18,18 @@ package com.jetbrains.python.impl.testing.unittest;
 
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
 import consulo.execution.configuration.ConfigurationFactory;
-import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
+import consulo.execution.configuration.RunConfigurationOptions;
 import consulo.execution.configuration.RunProfileState;
-import consulo.execution.configuration.ui.SettingsEditor;
+import consulo.execution.configuration.fragment.RunConfigurationFragment;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
-import consulo.project.macro.ProjectPathMacroManager;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.JDOMExternalizerUtil;
-import consulo.util.xml.serializer.WriteExternalException;
-import org.jdom.Element;
+import consulo.util.lang.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -38,12 +38,9 @@ import org.jdom.Element;
 public class PythonUnitTestRunConfiguration extends
                                             AbstractPythonTestRunConfiguration
                                               implements PythonUnitTestRunConfigurationParams {
-  private boolean myIsPureUnittest = true;
   protected String myTitle = "Unittest";
   protected String myPluralTitle = "Unittests";
 
-  private String myParams = "";
-  private boolean useParam = false;
 
   public PythonUnitTestRunConfiguration(Project project,
                                         ConfigurationFactory configurationFactory) {
@@ -51,32 +48,43 @@ public class PythonUnitTestRunConfiguration extends
   }
 
   @Override
-  protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor() {
-    return new PythonUnitTestRunConfigurationEditor(getProject(), this);
+  protected Class<? extends RunConfigurationOptions> getOptionsClass() {
+    return PythonUnitTestRunConfigurationOptions.class;
   }
+
+  @Override
+  public PythonUnitTestRunConfigurationOptions getOptions() {
+    return (PythonUnitTestRunConfigurationOptions) super.getOptions();
+  }
+
+  @Override
+  protected void convertLegacyState(LegacyRunConfigurationConverter converter) {
+    super.convertLegacyState(converter);
+
+    PythonUnitTestRunConfigurationOptions options = new PythonUnitTestRunConfigurationOptions();
+    convertLegacyTestState(converter, options);
+
+    PythonUnitTestRunConfigurationLegacyState old = converter.readXml(PythonUnitTestRunConfigurationLegacyState.class);
+    options.setPureUnittest(old.PUREUNITTEST);
+    options.setParams(old.PARAMS);
+    options.setUseParam(old.USE_PARAM);
+    converter.setOptions(options);
+  }
+
+  @Override
+  public List<RunConfigurationFragment<?>> createFragments() {
+    List<RunConfigurationFragment<?>> fragments = new ArrayList<>(super.createFragments());
+    fragments.add(new PythonPureUnittestFragment());
+    return fragments;
+  }
+
 
   @Override
   public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException {
     return new PythonUnitTestCommandLineState(this, env);
   }
 
-  @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    ProjectPathMacroManager.getInstance(getProject()).expandPaths(element);
-    super.readExternal(element);
-    myIsPureUnittest = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "PUREUNITTEST"));
-    myParams = JDOMExternalizerUtil.readField(element, "PARAMS");
-    useParam = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "USE_PARAM"));
-  }
 
-  @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    super.writeExternal(element);
-    JDOMExternalizerUtil.writeField(element, "PUREUNITTEST", String.valueOf(myIsPureUnittest));
-    JDOMExternalizerUtil.writeField(element, "PARAMS", myParams);
-    JDOMExternalizerUtil.writeField(element, "USE_PARAM", String.valueOf(useParam));
-	  ProjectPathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
-  }
 
   @Override
   protected String getTitle() {
@@ -97,26 +105,26 @@ public class PythonUnitTestRunConfiguration extends
 
   @Override
   public boolean isPureUnittest() {
-    return myIsPureUnittest;
+    return getOptions().isPureUnittest();
   }
 
   public void setPureUnittest(boolean isPureUnittest) {
-    myIsPureUnittest = isPureUnittest;
+    getOptions().setPureUnittest(isPureUnittest);
   }
 
   public String getParams() {
-    return myParams;
+    return StringUtil.notNullize(getOptions().getParams());
   }
 
   public void setParams(String pattern) {
-    myParams = pattern;
+    getOptions().setParams(pattern);
   }
 
   public boolean useParam() {
-    return useParam;
+    return getOptions().isUseParam();
   }
 
   public void useParam(boolean useParam) {
-    this.useParam = useParam;
+    getOptions().setUseParam(useParam);
   }
 }

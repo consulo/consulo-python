@@ -42,4 +42,6 @@ module consulo.python.rest {
   // TODO remove in future - for PathMappingSettings
   requires consulo.ide.impl;
   requires consulo.repository.ui.api;
+
+  opens com.jetbrains.python.rest.run to consulo.util.xml.serializer, consulo.execution.api;
 }

@@ -27,16 +27,17 @@ import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkType;
 import consulo.execution.RuntimeConfigurationException;
 import consulo.execution.action.Location;
-import consulo.execution.configuration.AbstractRunConfiguration;
 import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.EnvironmentAware;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
 import consulo.execution.configuration.LocatableConfiguration;
+import consulo.execution.configuration.ModuleBasedConfiguration;
+import consulo.execution.configuration.RunConfigurationModule;
 import consulo.execution.configuration.RuntimeConfigurationError;
-import consulo.execution.configuration.log.ui.LogConfigurationPanel;
-import consulo.execution.configuration.ui.SettingsEditor;
-import consulo.execution.configuration.ui.SettingsEditorGroup;
-import consulo.execution.localize.ExecutionLocalize;
+import consulo.execution.configuration.WorkingDirectoryAware;
+import consulo.execution.configuration.fragment.EnvironmentFragmentState;
+import consulo.execution.configuration.fragment.WorkingDirectoryFragmentState;
 import consulo.execution.test.AbstractTestProxy;
-import consulo.execution.ui.awt.EnvironmentVariablesComponent;
 import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -50,11 +51,7 @@ import consulo.project.Project;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.python.module.extension.PyModuleExtension;
 import consulo.util.lang.StringUtil;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.JDOMExternalizerUtil;
-import consulo.util.xml.serializer.WriteExternalException;
 import consulo.virtualFileSystem.VirtualFile;
-import org.jdom.Element;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -65,33 +62,45 @@ import java.util.Map;
 /**
  * @author Leonid Shalupov
  */
-public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRunConfiguration> extends AbstractRunConfiguration implements LocatableConfiguration,
-		AbstractPythonRunConfigurationParams, CommandLinePatcher
+public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRunConfiguration> extends ModuleBasedConfiguration<RunConfigurationModule>
+		implements LocatableConfiguration, AbstractPythonRunConfigurationParams, CommandLinePatcher, WorkingDirectoryAware, EnvironmentAware
 {
 	/**
 	 * When passing path to test to runners, you should join parts with this char.
 	 * I.e.: file.py::PyClassTest::test_method
 	 */
 	public static final String TEST_NAME_PARTS_SPLITTER = "::";
-	private String myInterpreterOptions = "";
-	private String myWorkingDirectory = "";
-	private String mySdkHome = "";
-	private boolean myUseModuleSdk;
-	private boolean myAddContentRoots = true;
-	private boolean myAddSourceRoots = true;
 
-	protected PathMappingSettings myMappingSettings;
-	/**
-	 * To prevent "double module saving" child may enable this flag
-	 * and no module info would be saved
-	 */
-	protected boolean mySkipModuleSerialization;
+	@Nullable
+	private PathMappingSettings myMappingSettings;
 
 	@RequiredReadAction
     public AbstractPythonRunConfiguration(Project project, ConfigurationFactory factory)
 	{
-		super(project, factory);
+		super(new RunConfigurationModule(project), factory);
 		getConfigurationModule().init();
+	}
+
+	@Override
+	public AbstractPythonRunConfigurationOptions getOptions()
+	{
+		return (AbstractPythonRunConfigurationOptions) super.getOptions();
+	}
+
+	/**
+	 * Converts the interpreter, working directory and environment of an old configuration element.
+	 */
+	protected static void convertLegacyCommonState(LegacyRunConfigurationConverter converter, AbstractPythonRunConfigurationOptions options)
+	{
+		AbstractPythonRunConfigurationLegacyState old = converter.readXml(AbstractPythonRunConfigurationLegacyState.class);
+		options.setInterpreterOptions(old.INTERPRETER_OPTIONS);
+		options.setSdkHome(old.SDK_HOME);
+		options.setUseModuleSdk(old.IS_MODULE_SDK);
+		options.setAddContentRoots(old.ADD_CONTENT_ROOTS);
+		options.setAddSourceRoots(old.ADD_SOURCE_ROOTS);
+
+		converter.addFragment(new WorkingDirectoryFragmentState(old.WORKING_DIRECTORY));
+		converter.addFragment(new EnvironmentFragmentState(converter.readEnvs(), old.PARENT_ENVS));
 	}
 
 	@Override
@@ -126,50 +135,6 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 		return result;
 	}
 
-	public PyCommonOptionsFormData getCommonOptionsFormData()
-	{
-		return new PyCommonOptionsFormData()
-		{
-			@Override
-			public Project getProject()
-			{
-				return AbstractPythonRunConfiguration.this.getProject();
-			}
-
-			@Override
-			public List<Module> getValidModules()
-			{
-				return AbstractPythonRunConfiguration.this.getValidModules();
-			}
-
-			@Override
-			public boolean showConfigureInterpretersLink()
-			{
-				return false;
-			}
-		};
-	}
-
-	@Override
-	public final SettingsEditor<T> getConfigurationEditor()
-	{
-		SettingsEditor<T> runConfigurationEditor = PythonExtendedConfigurationEditor.create(createConfigurationEditor());
-
-		SettingsEditorGroup<T> group = new SettingsEditorGroup<>();
-
-		// run configuration settings tab:
-		group.addEditor(ExecutionLocalize.runConfigurationConfigurationTabTitle(), runConfigurationEditor);
-
-		// tabs provided by extensions:
-		//noinspection unchecked
-		PythonRunConfigurationExtensionsManager.getInstance().appendEditors(this, (SettingsEditorGroup) group);
-		group.addEditor(ExecutionLocalize.logsTabTitle(), new LogConfigurationPanel<>());
-
-		return group;
-	}
-
-	protected abstract SettingsEditor<T> createConfigurationEditor();
-
 	@Override
 	public void checkConfiguration() throws RuntimeConfigurationException
 	{
@@ -198,7 +163,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 
 	private void checkSdk() throws RuntimeConfigurationError
 	{
-		if(!myUseModuleSdk)
+		if(!isUseModuleSdk())
 		{
 			if(StringUtil.isEmptyOrSpaces(getSdkHome()))
 			{
@@ -222,8 +187,8 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	@Override
     public String getSdkHome()
 	{
-		String sdkHome = mySdkHome;
-		if(StringUtil.isEmptyOrSpaces(mySdkHome))
+		String sdkHome = getOptions().getSdkHome();
+		if(StringUtil.isEmptyOrSpaces(sdkHome))
 		{
 			Sdk projectJdk = PythonSdkType.findPythonSdk(getModule());
 			if(projectJdk != null)
@@ -238,7 +203,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	public String getInterpreterPath()
 	{
 		String sdkHome;
-		if(myUseModuleSdk)
+		if(isUseModuleSdk())
 		{
 			Sdk sdk = PythonSdkType.findPythonSdk(getModule());
 			if(sdk == null)
@@ -256,7 +221,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 
 	public Sdk getSdk()
 	{
-		if(myUseModuleSdk)
+		if(isUseModuleSdk())
 		{
 			return PythonSdkType.findPythonSdk(getModule());
 		}
@@ -267,94 +232,57 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	}
 
 	@Override
-    public void readExternal(Element element) throws InvalidDataException
-	{
-		super.readExternal(element);
-		myInterpreterOptions = JDOMExternalizerUtil.readField(element, "INTERPRETER_OPTIONS");
-		readEnvs(element);
-		mySdkHome = JDOMExternalizerUtil.readField(element, "SDK_HOME");
-		myWorkingDirectory = JDOMExternalizerUtil.readField(element, "WORKING_DIRECTORY");
-		myUseModuleSdk = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "IS_MODULE_SDK"));
-		String addContentRoots = JDOMExternalizerUtil.readField(element, "ADD_CONTENT_ROOTS");
-		myAddContentRoots = addContentRoots == null || Boolean.parseBoolean(addContentRoots);
-		String addSourceRoots = JDOMExternalizerUtil.readField(element, "ADD_SOURCE_ROOTS");
-		myAddSourceRoots = addSourceRoots == null || Boolean.parseBoolean(addSourceRoots);
-		if(!mySkipModuleSerialization)
-		{
-			getConfigurationModule().readExternal(element);
-		}
-
-		setMappingSettings(PathMappingSettings.readExternal(element));
-		// extension settings:
-		PythonRunConfigurationExtensionsManager.getInstance().readExternal(this, element);
-	}
-
-	protected void readEnvs(Element element)
-	{
-		String parentEnvs = JDOMExternalizerUtil.readField(element, "PARENT_ENVS");
-		if(parentEnvs != null)
-		{
-			setPassParentEnvs(Boolean.parseBoolean(parentEnvs));
-		}
-		EnvironmentVariablesComponent.readExternal(element, getEnvs());
-	}
-
-	@Override
-    public void writeExternal(Element element) throws WriteExternalException
-	{
-		super.writeExternal(element);
-		JDOMExternalizerUtil.writeField(element, "INTERPRETER_OPTIONS", myInterpreterOptions);
-		writeEnvs(element);
-		JDOMExternalizerUtil.writeField(element, "SDK_HOME", mySdkHome);
-		JDOMExternalizerUtil.writeField(element, "WORKING_DIRECTORY", myWorkingDirectory);
-		JDOMExternalizerUtil.writeField(element, "IS_MODULE_SDK", Boolean.toString(myUseModuleSdk));
-		JDOMExternalizerUtil.writeField(element, "ADD_CONTENT_ROOTS", Boolean.toString(myAddContentRoots));
-		JDOMExternalizerUtil.writeField(element, "ADD_SOURCE_ROOTS", Boolean.toString(myAddSourceRoots));
-		if(!mySkipModuleSerialization)
-		{
-			getConfigurationModule().writeExternal(element);
-		}
-
-		// extension settings:
-		PythonRunConfigurationExtensionsManager.getInstance().writeExternal(this, element);
-
-		PathMappingSettings.writeExternal(element, getMappingSettings());
-	}
-
-	protected void writeEnvs(Element element)
-	{
-		JDOMExternalizerUtil.writeField(element, "PARENT_ENVS", Boolean.toString(isPassParentEnvs()));
-		EnvironmentVariablesComponent.writeExternal(element, getEnvs());
-	}
-
-	@Override
     public String getInterpreterOptions()
 	{
-		return myInterpreterOptions;
+		return StringUtil.notNullize(getOptions().getInterpreterOptions());
 	}
 
 	@Override
     public void setInterpreterOptions(String interpreterOptions)
 	{
-		myInterpreterOptions = interpreterOptions;
+		getOptions().setInterpreterOptions(interpreterOptions);
 	}
 
 	@Override
     public String getWorkingDirectory()
 	{
-		return myWorkingDirectory;
+		return StringUtil.notNullize(WorkingDirectoryAware.super.getWorkingDirectory());
 	}
 
 	@Override
-    public void setWorkingDirectory(String workingDirectory)
+    public void setWorkingDirectory(@Nullable String workingDirectory)
 	{
-		myWorkingDirectory = workingDirectory;
+		WorkingDirectoryAware.super.setWorkingDirectory(workingDirectory);
+	}
+
+	@Override
+	public Map<String, String> getEnvs()
+	{
+		return EnvironmentAware.super.getEnvs();
+	}
+
+	@Override
+	public void setEnvs(Map<String, String> envs)
+	{
+		EnvironmentAware.super.setEnvs(envs);
+	}
+
+	@Override
+	public boolean isPassParentEnvs()
+	{
+		return EnvironmentAware.super.isPassParentEnvs();
+	}
+
+	@Override
+	public void setPassParentEnvs(boolean passParentEnvs)
+	{
+		EnvironmentAware.super.setPassParentEnvs(passParentEnvs);
 	}
 
 	@Override
     public void setSdkHome(String sdkHome)
 	{
-		mySdkHome = sdkHome;
+		getOptions().setSdkHome(sdkHome);
 	}
 
 	@Nullable
@@ -367,37 +295,37 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	@Override
     public boolean isUseModuleSdk()
 	{
-		return myUseModuleSdk;
+		return getOptions().isUseModuleSdk();
 	}
 
 	@Override
     public void setUseModuleSdk(boolean useModuleSdk)
 	{
-		myUseModuleSdk = useModuleSdk;
+		getOptions().setUseModuleSdk(useModuleSdk);
 	}
 
 	@Override
 	public boolean shouldAddContentRoots()
 	{
-		return myAddContentRoots;
+		return getOptions().isAddContentRoots();
 	}
 
 	@Override
 	public boolean shouldAddSourceRoots()
 	{
-		return myAddSourceRoots;
+		return getOptions().isAddSourceRoots();
 	}
 
 	@Override
 	public void setAddSourceRoots(boolean flag)
 	{
-		myAddSourceRoots = flag;
+		getOptions().setAddSourceRoots(flag);
 	}
 
 	@Override
 	public void setAddContentRoots(boolean flag)
 	{
-		myAddContentRoots = flag;
+		getOptions().setAddContentRoots(flag);
 	}
 
 	public static void copyParams(AbstractPythonRunConfigurationParams source, AbstractPythonRunConfigurationParams target)
@@ -543,7 +471,8 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	 */
 	public String getWorkingDirectorySafe()
 	{
-		String result = StringUtil.isEmpty(myWorkingDirectory) ? getProject().getBasePath() : myWorkingDirectory;
+		String workingDirectory = getWorkingDirectory();
+		String result = StringUtil.isEmpty(workingDirectory) ? getProject().getBasePath() : workingDirectory;
 		if(result != null)
 		{
 			return result;

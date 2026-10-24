@@ -16,94 +16,86 @@
 
 package com.jetbrains.python.rest.run;
 
-import consulo.execution.configuration.ConfigurationFactory;
-import consulo.project.Project;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.JDOMExternalizerUtil;
-import consulo.util.xml.serializer.WriteExternalException;
 import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
-import org.jdom.Element;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
+import consulo.execution.configuration.RunConfigurationOptions;
+import consulo.project.Project;
+import consulo.util.lang.StringUtil;
 
 /**
  * User : catherine
  */
 public abstract class RestRunConfiguration extends AbstractPythonRunConfiguration {
-  private String myInputFile = "";
-  private String myOutputFile = "";
-  private String myParams = "";
-  private String myTask = "";
-  private boolean openInBrowser = false;
-
-  private static final String INPUT_FILE_FIELD = "docutils_input_file";
-  private static final String OUTPUT_FILE_FIELD = "docutils_output_file";
-  private static final String PARAMS_FIELD = "docutils_params";
-  private static final String TASK = "docutils_task";
-  private static final String OPEN_IN_BROWSER = "docutils_open_in_browser";
-
   public RestRunConfiguration(Project project,
                               ConfigurationFactory factory) {
     super(project, factory);
   }
 
+  @Override
+  protected Class<? extends RunConfigurationOptions> getOptionsClass() {
+    return RestRunConfigurationOptions.class;
+  }
+
+  @Override
+  public RestRunConfigurationOptions getOptions() {
+    return (RestRunConfigurationOptions) super.getOptions();
+  }
+
+  @Override
+  protected void convertLegacyState(LegacyRunConfigurationConverter converter) {
+    super.convertLegacyState(converter);
+
+    RestRunConfigurationOptions options = new RestRunConfigurationOptions();
+    convertLegacyCommonState(converter, options);
+
+    RestRunConfigurationLegacyState old = converter.readXml(RestRunConfigurationLegacyState.class);
+    options.setInputFile(old.docutils_input_file);
+    options.setOutputFile(old.docutils_output_file);
+    options.setParams(old.docutils_params);
+    options.setTask(old.docutils_task);
+    options.setOpenInBrowser(old.docutils_open_in_browser);
+    converter.setOptions(options);
+  }
+
   public String getInputFile() {
-    return myInputFile;
+    return StringUtil.notNullize(getOptions().getInputFile());
   }
 
   public void setInputFile(String inputFile) {
-    myInputFile = inputFile;
+    getOptions().setInputFile(inputFile);
   }
 
   public String getOutputFile() {
-    return myOutputFile;
+    return StringUtil.notNullize(getOptions().getOutputFile());
   }
 
   public void setOutputFile(String file) {
-    myOutputFile = file;
+    getOptions().setOutputFile(file);
   }
 
   public void setParams(String params) {
-    myParams = params;
+    getOptions().setParams(params);
   }
 
   public String getParams() {
-    return myParams;
+    return StringUtil.notNullize(getOptions().getParams());
   }
 
   public String getTask() {
-    return myTask;
+    return StringUtil.notNullize(getOptions().getTask());
   }
 
   public void setTask(Object task) {
-    if (task != null) myTask = task.toString();
-    else myTask = "rst2html";
+    getOptions().setTask(task != null ? task.toString() : "rst2html");
   }
 
   public void setOpenInBrowser(boolean open) {
-    openInBrowser = open;
+    getOptions().setOpenInBrowser(open);
   }
 
   public boolean openInBrowser() {
-    return openInBrowser;
-  }
-
-  @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    super.readExternal(element);
-    myInputFile = JDOMExternalizerUtil.readField(element, INPUT_FILE_FIELD);
-    myOutputFile = JDOMExternalizerUtil.readField(element, OUTPUT_FILE_FIELD);
-    myParams = JDOMExternalizerUtil.readField(element, PARAMS_FIELD);
-    myTask = JDOMExternalizerUtil.readField(element, TASK);
-    openInBrowser = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, OPEN_IN_BROWSER));
-  }
-
-  @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    super.writeExternal(element);
-    JDOMExternalizerUtil.writeField(element, INPUT_FILE_FIELD, myInputFile);
-    JDOMExternalizerUtil.writeField(element, OUTPUT_FILE_FIELD, myOutputFile);
-    JDOMExternalizerUtil.writeField(element, PARAMS_FIELD, myParams);
-    JDOMExternalizerUtil.writeField(element, TASK, myTask);
-    JDOMExternalizerUtil.writeField(element, OPEN_IN_BROWSER, String.valueOf(openInBrowser));
+    return getOptions().isOpenInBrowser();
   }
 
   @Override

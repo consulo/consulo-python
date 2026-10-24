@@ -16,7 +16,7 @@
 package com.jetbrains.python.impl.testing;
 
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
+import com.jetbrains.python.impl.run.*;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFunction;
@@ -24,7 +24,9 @@ import com.jetbrains.python.run.AbstractPythonRunConfigurationParams;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.execution.RuntimeConfigurationException;
 import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
 import consulo.execution.configuration.RuntimeConfigurationError;
+import consulo.execution.configuration.fragment.RunConfigurationFragment;
 import consulo.language.editor.refactoring.event.RefactoringElementAdapter;
 import consulo.language.editor.refactoring.event.RefactoringElementListener;
 import consulo.language.editor.refactoring.event.RefactoringListenerProvider;
@@ -37,33 +39,64 @@ import consulo.python.impl.localize.PyLocalize;
 import consulo.util.io.FileUtil;
 import consulo.util.lang.Comparing;
 import consulo.util.lang.StringUtil;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.JDOMExternalizerUtil;
-import consulo.util.xml.serializer.WriteExternalException;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
-import org.jdom.Element;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author catherine
  */
 public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonRunConfiguration implements AbstractPythonRunConfigurationParams, AbstractPythonTestRunConfigurationParams,
   RefactoringListenerProvider {
-  protected String myClassName = "";
-  protected String myScriptName = "";
-  protected String myMethodName = "";
-  protected String myFolderName = "";
-  protected TestType myTestType = TestType.TEST_SCRIPT;
-
-  private String myPattern = ""; // pattern for modules in folder to match against
-  private boolean usePattern = false;
-
   @RequiredReadAction
   protected AbstractPythonTestRunConfiguration(Project project, ConfigurationFactory configurationFactory) {
     super(project, configurationFactory);
+  }
+
+  @Override
+  public PythonTestRunConfigurationOptions getOptions() {
+    return (PythonTestRunConfigurationOptions) super.getOptions();
+  }
+
+  /**
+   * Converts the common settings and the test target of an old configuration element.
+   */
+  protected static void convertLegacyTestState(LegacyRunConfigurationConverter converter, PythonTestRunConfigurationOptions options) {
+    convertLegacyCommonState(converter, options);
+
+    PythonTestRunConfigurationLegacyState old = converter.readXml(PythonTestRunConfigurationLegacyState.class);
+    options.setScriptName(old.SCRIPT_NAME);
+    options.setClassName(old.CLASS_NAME);
+    options.setMethodName(old.METHOD_NAME);
+    options.setFolderName(old.FOLDER_NAME);
+    options.setPattern(old.PATTERN);
+    options.setUsePattern(old.USE_PATTERN);
+    options.setTestType(old.TEST_TYPE);
+  }
+
+  @Override
+  public List<RunConfigurationFragment<?>> createFragments() {
+    List<RunConfigurationFragment<?>> fragments = new ArrayList<>();
+    fragments.add(new PythonTestTargetFragment<>(isPatternSupported()));
+    fragments.add(new PythonInterpreterFragment<>());
+    fragments.add(new PythonInterpreterOptionsFragment<>());
+    fragments.add(new PythonAddContentRootsFragment<>());
+    fragments.add(new PythonAddSourceRootsFragment<>());
+    if (getOptions() instanceof PythonTestParamsOptions) {
+      fragments.add(new PythonTestParamsFragment<>());
+    }
+    return fragments;
+  }
+
+  /**
+   * Whether a folder target can filter its modules by a pattern.
+   */
+  protected boolean isPatternSupported() {
+    return true;
   }
 
   @Override
@@ -73,11 +106,11 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
       return workingDirectoryFromConfig;
     }
 
-    String folderName = myFolderName;
+    String folderName = getFolderName();
     if (!StringUtil.isEmptyOrSpaces(folderName)) {
       return folderName;
     }
-    String scriptName = myScriptName;
+    String scriptName = getScriptName();
     if (!StringUtil.isEmptyOrSpaces(scriptName)) {
       VirtualFile script = LocalFileSystem.getInstance().findFileByPath(scriptName);
       if (script != null) {
@@ -88,111 +121,87 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    super.readExternal(element);
-    myScriptName = JDOMExternalizerUtil.readField(element, "SCRIPT_NAME");
-    myClassName = JDOMExternalizerUtil.readField(element, "CLASS_NAME");
-    myMethodName = JDOMExternalizerUtil.readField(element, "METHOD_NAME");
-    myFolderName = JDOMExternalizerUtil.readField(element, "FOLDER_NAME");
-
-    myPattern = JDOMExternalizerUtil.readField(element, "PATTERN");
-    usePattern = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "USE_PATTERN"));
-
-    try {
-      String testType = JDOMExternalizerUtil.readField(element, "TEST_TYPE");
-      myTestType = testType != null ? TestType.valueOf(testType) : TestType.TEST_SCRIPT;
-    }
-    catch (IllegalArgumentException e) {
-      myTestType = TestType.TEST_SCRIPT; // safe default
-    }
-  }
-
-  @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    super.writeExternal(element);
-
-    JDOMExternalizerUtil.writeField(element, "SCRIPT_NAME", myScriptName);
-    JDOMExternalizerUtil.writeField(element, "CLASS_NAME", myClassName);
-    JDOMExternalizerUtil.writeField(element, "METHOD_NAME", myMethodName);
-    JDOMExternalizerUtil.writeField(element, "FOLDER_NAME", myFolderName);
-    JDOMExternalizerUtil.writeField(element, "TEST_TYPE", myTestType.toString());
-    JDOMExternalizerUtil.writeField(element, "PATTERN", myPattern);
-    JDOMExternalizerUtil.writeField(element, "USE_PATTERN", String.valueOf(usePattern));
-  }
-
-  @Override
   public AbstractPythonRunConfigurationParams getBaseParams() {
     return this;
   }
 
   @Override
   public String getClassName() {
-    return myClassName;
+    return StringUtil.notNullize(getOptions().getClassName());
   }
 
   @Override
   public void setClassName(String className) {
-    myClassName = className;
+    getOptions().setClassName(className);
   }
 
   @Override
   public String getFolderName() {
-    return myFolderName;
+    return StringUtil.notNullize(getOptions().getFolderName());
   }
 
   @Override
   public void setFolderName(String folderName) {
-    myFolderName = folderName;
+    getOptions().setFolderName(folderName);
   }
 
   @Override
   public String getScriptName() {
-    return myScriptName;
+    return StringUtil.notNullize(getOptions().getScriptName());
   }
 
   @Override
   public void setScriptName(String scriptName) {
-    myScriptName = scriptName;
+    getOptions().setScriptName(scriptName);
   }
 
   @Override
   public String getMethodName() {
-    return myMethodName;
+    return StringUtil.notNullize(getOptions().getMethodName());
   }
 
   @Override
   public void setMethodName(String methodName) {
-    myMethodName = methodName;
+    getOptions().setMethodName(methodName);
   }
 
   @Override
   public TestType getTestType() {
-    return myTestType;
+    String testType = getOptions().getTestType();
+    if (testType == null) {
+      return TestType.TEST_SCRIPT;
+    }
+    try {
+      return TestType.valueOf(testType);
+    }
+    catch (IllegalArgumentException e) {
+      return TestType.TEST_SCRIPT;
+    }
   }
 
   @Override
   public void setTestType(TestType testType) {
-    myTestType = testType;
+    getOptions().setTestType(testType == TestType.TEST_SCRIPT ? null : testType.name());
   }
 
   @Override
   public String getPattern() {
-    return myPattern;
+    return StringUtil.notNullize(getOptions().getPattern());
   }
 
   @Override
   public void setPattern(String pattern) {
-    myPattern = pattern;
+    getOptions().setPattern(pattern);
   }
 
   @Override
   public boolean usePattern() {
-    return usePattern;
+    return getOptions().isUsePattern();
   }
 
   @Override
   public void usePattern(boolean usePattern) {
-    this.usePattern = usePattern;
+    getOptions().setUsePattern(usePattern);
   }
 
   public enum TestType {
@@ -207,19 +216,19 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
   public void checkConfiguration() throws RuntimeConfigurationException {
     super.checkConfiguration();
 
-    if (StringUtil.isEmptyOrSpaces(myFolderName) && myTestType == TestType.TEST_FOLDER) {
+    if (StringUtil.isEmptyOrSpaces(getFolderName()) && getTestType() == TestType.TEST_FOLDER) {
       throw new RuntimeConfigurationError(PyLocalize.runcfgUnittestNo_folder_name());
     }
 
-    if (StringUtil.isEmptyOrSpaces(getScriptName()) && myTestType != TestType.TEST_FOLDER) {
+    if (StringUtil.isEmptyOrSpaces(getScriptName()) && getTestType() != TestType.TEST_FOLDER) {
       throw new RuntimeConfigurationError(PyLocalize.runcfgUnittestNo_script_name());
     }
 
-    if (StringUtil.isEmptyOrSpaces(myClassName) && (myTestType == TestType.TEST_METHOD || myTestType == TestType.TEST_CLASS)) {
+    if (StringUtil.isEmptyOrSpaces(getClassName()) && (getTestType() == TestType.TEST_METHOD || getTestType() == TestType.TEST_CLASS)) {
       throw new RuntimeConfigurationError(PyLocalize.runcfgUnittestNo_class_name());
     }
 
-    if (StringUtil.isEmptyOrSpaces(myMethodName) && (myTestType == TestType.TEST_METHOD || myTestType == TestType.TEST_FUNCTION)) {
+    if (StringUtil.isEmptyOrSpaces(getMethodName()) && (getTestType() == TestType.TEST_METHOD || getTestType() == TestType.TEST_FUNCTION)) {
       throw new RuntimeConfigurationError(PyLocalize.runcfgUnittestNo_method_name());
     }
   }
@@ -275,30 +284,30 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
 
   @Override
   public String suggestedName() {
-    switch (myTestType) {
+    switch (getTestType()) {
       case TEST_CLASS:
-        return getPluralTitle() + " in " + myClassName;
+        return getPluralTitle() + " in " + getClassName();
       case TEST_METHOD:
-        return getTitle() + " " + myClassName + "." + myMethodName;
+        return getTitle() + " " + getClassName() + "." + getMethodName();
       case TEST_SCRIPT:
         String name = new File(getScriptName()).getName();
         name = StringUtil.trimEnd(name, ".py");
         return getPluralTitle() + " in " + name;
       case TEST_FOLDER:
-        String folderName = new File(myFolderName).getName();
+        String folderName = new File(getFolderName()).getName();
         return getPluralTitle() + " in " + folderName;
       case TEST_FUNCTION:
-        return getTitle() + " " + myMethodName;
+        return getTitle() + " " + getMethodName();
       default:
-        throw new IllegalStateException("Unknown test type: " + myTestType);
+        throw new IllegalStateException("Unknown test type: " + getTestType());
     }
   }
 
   @Nullable
   @Override
   public String getActionName() {
-    if (TestType.TEST_METHOD.equals(myTestType)) {
-      return getTitle() + " " + myMethodName;
+    if (TestType.TEST_METHOD.equals(getTestType())) {
+      return getTitle() + " " + getMethodName();
     }
     return suggestedName();
   }
@@ -312,14 +321,14 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
   public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
     if (element instanceof PsiDirectory) {
       VirtualFile vFile = ((PsiDirectory)element).getVirtualFile();
-      if ((myTestType == TestType.TEST_FOLDER && pathsEqual(vFile, myFolderName)) || pathsEqual(vFile, getWorkingDirectory())) {
+      if ((getTestType() == TestType.TEST_FOLDER && pathsEqual(vFile, getFolderName())) || pathsEqual(vFile, getWorkingDirectory())) {
         return new RefactoringElementAdapter() {
           @Override
           protected void elementRenamedOrMoved(PsiElement newElement) {
             String newPath = FileUtil.toSystemDependentName(((PsiDirectory)newElement).getVirtualFile().getPath());
             setWorkingDirectory(newPath);
-            if (myTestType == TestType.TEST_FOLDER) {
-              myFolderName = newPath;
+            if (getTestType() == TestType.TEST_FOLDER) {
+              setFolderName(newPath);
             }
           }
 
@@ -327,20 +336,20 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
           public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
             String systemDependant = FileUtil.toSystemDependentName(oldQualifiedName);
             setWorkingDirectory(systemDependant);
-            if (myTestType == TestType.TEST_FOLDER) {
-              myFolderName = systemDependant;
+            if (getTestType() == TestType.TEST_FOLDER) {
+              setFolderName(systemDependant);
             }
           }
         };
       }
       return null;
     }
-    if (myTestType == TestType.TEST_FOLDER) {
+    if (getTestType() == TestType.TEST_FOLDER) {
       return null;
     }
-    File scriptFile = new File(myScriptName);
+    File scriptFile = new File(getScriptName());
     if (!scriptFile.isAbsolute()) {
-      scriptFile = new File(getWorkingDirectory(), myScriptName);
+      scriptFile = new File(getWorkingDirectory(), getScriptName());
     }
     PsiFile containingFile = element.getContainingFile();
     VirtualFile vFile = containingFile == null ? null : containingFile.getVirtualFile();
@@ -351,47 +360,47 @@ public abstract class AbstractPythonTestRunConfiguration extends AbstractPythonR
           protected void elementRenamedOrMoved(PsiElement newElement) {
             VirtualFile virtualFile = ((PsiFile)newElement).getVirtualFile();
             if (virtualFile != null) {
-              myScriptName = FileUtil.toSystemDependentName(virtualFile.getPath());
+              setScriptName(FileUtil.toSystemDependentName(virtualFile.getPath()));
             }
           }
 
           @Override
           public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
-            myScriptName = FileUtil.toSystemDependentName(oldQualifiedName);
+            setScriptName(FileUtil.toSystemDependentName(oldQualifiedName));
           }
         };
       }
-      if (element instanceof PyClass pyClass && (myTestType == TestType.TEST_CLASS || myTestType == TestType.TEST_METHOD) &&
-        Comparing.equal(pyClass.getName(), myClassName)) {
+      if (element instanceof PyClass pyClass && (getTestType() == TestType.TEST_CLASS || getTestType() == TestType.TEST_METHOD) &&
+        Comparing.equal(pyClass.getName(), getClassName())) {
         return new RefactoringElementAdapter() {
           @Override
           @RequiredReadAction
           protected void elementRenamedOrMoved(PsiElement newElement) {
-            myClassName = ((PyClass) newElement).getName();
+            setClassName(((PyClass) newElement).getName());
           }
 
           @Override
           public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
-            myClassName = oldQualifiedName;
+            setClassName(oldQualifiedName);
           }
         };
       }
-      if (element instanceof PyFunction function && Comparing.equal(function.getName(), myMethodName)) {
+      if (element instanceof PyFunction function && Comparing.equal(function.getName(), getMethodName())) {
         ScopeOwner scopeOwner = PsiTreeUtil.getParentOfType(function, ScopeOwner.class);
-        if ((myTestType == TestType.TEST_FUNCTION && scopeOwner instanceof PyFile)
-            || (myTestType == TestType.TEST_METHOD && scopeOwner instanceof PyClass && Comparing.equal(scopeOwner.getName(), myClassName))) {
+        if ((getTestType() == TestType.TEST_FUNCTION && scopeOwner instanceof PyFile)
+            || (getTestType() == TestType.TEST_METHOD && scopeOwner instanceof PyClass && Comparing.equal(scopeOwner.getName(), getClassName()))) {
           return new RefactoringElementAdapter() {
             @Override
             @RequiredReadAction
             protected void elementRenamedOrMoved(PsiElement newElement) {
-              myMethodName = ((PyFunction)newElement).getName();
+              setMethodName(((PyFunction)newElement).getName());
             }
 
             @Override
             public void undoElementMovedOrRenamed(PsiElement newElement, String oldQualifiedName) {
               int methodIdx = oldQualifiedName.indexOf("#") + 1;
               if (methodIdx > 0 && methodIdx < oldQualifiedName.length()) {
-                myMethodName = oldQualifiedName.substring(methodIdx);
+                setMethodName(oldQualifiedName.substring(methodIdx));
               }
             }
           };

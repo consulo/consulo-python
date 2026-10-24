@@ -15,24 +15,22 @@
  */
 package com.jetbrains.python.impl.testing.attest;
 
-import org.jdom.Element;
-import consulo.process.ExecutionException;
-import consulo.execution.executor.Executor;
-import consulo.execution.configuration.ConfigurationFactory;
-import consulo.execution.configuration.RunConfiguration;
-import consulo.execution.configuration.RunProfileState;
-import consulo.execution.RuntimeConfigurationException;
-import consulo.execution.RuntimeConfigurationWarning;
-import consulo.execution.runner.ExecutionEnvironment;
-import consulo.execution.configuration.ui.SettingsEditor;
-import consulo.project.Project;
-import consulo.content.bundle.Sdk;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.WriteExternalException;
 import com.jetbrains.python.impl.PyBundle;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
+import com.jetbrains.python.impl.testing.PythonTestRunConfigurationOptions;
 import com.jetbrains.python.impl.testing.VFSTestFrameworkListener;
+import consulo.content.bundle.Sdk;
+import consulo.execution.RuntimeConfigurationException;
+import consulo.execution.RuntimeConfigurationWarning;
+import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
+import consulo.execution.configuration.RunConfigurationOptions;
+import consulo.execution.configuration.RunProfileState;
+import consulo.execution.executor.Executor;
+import consulo.execution.runner.ExecutionEnvironment;
+import consulo.process.ExecutionException;
+import consulo.project.Project;
 
 /**
  * User: catherine
@@ -48,10 +46,24 @@ public class PythonAtTestRunConfiguration extends AbstractPythonTestRunConfigura
 	}
 
 	@Override
-	protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor()
-	{
-		return new PythonAtTestRunConfigurationEditor(getProject(), this);
+	protected Class<? extends RunConfigurationOptions> getOptionsClass() {
+		return PythonTestRunConfigurationOptions.class;
 	}
+
+	@Override
+	public PythonTestRunConfigurationOptions getOptions() {
+		return (PythonTestRunConfigurationOptions) super.getOptions();
+	}
+
+	@Override
+	protected void convertLegacyState(LegacyRunConfigurationConverter converter) {
+		super.convertLegacyState(converter);
+
+		PythonTestRunConfigurationOptions options = new PythonTestRunConfigurationOptions();
+		convertLegacyTestState(converter, options);
+		converter.setOptions(options);
+	}
+
 
 	@Override
 	public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException
@@ -59,17 +71,7 @@ public class PythonAtTestRunConfiguration extends AbstractPythonTestRunConfigura
 		return new PythonAtTestCommandLineState(this, env);
 	}
 
-	@Override
-	public void readExternal(Element element) throws InvalidDataException
-	{
-		super.readExternal(element);
-	}
 
-	@Override
-	public void writeExternal(Element element) throws WriteExternalException
-	{
-		super.writeExternal(element);
-	}
 
 	@Override
 	protected String getTitle()

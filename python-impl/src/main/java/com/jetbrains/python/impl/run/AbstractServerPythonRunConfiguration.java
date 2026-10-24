@@ -15,47 +15,51 @@
  */
 package com.jetbrains.python.impl.run;
 
-import org.jdom.Element;
 import consulo.execution.configuration.ConfigurationFactory;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
+import consulo.execution.configuration.RunConfigurationOptions;
 import consulo.project.Project;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.JDOMExternalizerUtil;
-import consulo.util.xml.serializer.WriteExternalException;
 
 /**
  * @author traff
  */
 abstract public class AbstractServerPythonRunConfiguration<T extends AbstractServerPythonRunConfiguration> extends AbstractPythonRunConfiguration<T>
 {
-	private static final String LAUNCH_JAVASCRIPT_DEBUGGER = "launchJavascriptDebuger";
-	private boolean myLaunchJavascriptDebugger;
-
 	public AbstractServerPythonRunConfiguration(Project project, ConfigurationFactory factory)
 	{
 		super(project, factory);
 	}
 
 	@Override
-	public void readExternal(Element element) throws InvalidDataException
+	protected Class<? extends RunConfigurationOptions> getOptionsClass()
 	{
-		super.readExternal(element);
-		setLaunchJavascriptDebugger(Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, LAUNCH_JAVASCRIPT_DEBUGGER)));
+		return PythonServerRunConfigurationOptions.class;
 	}
 
 	@Override
-	public void writeExternal(Element element) throws WriteExternalException
+	public PythonServerRunConfigurationOptions getOptions()
 	{
-		super.writeExternal(element);
-		JDOMExternalizerUtil.writeField(element, LAUNCH_JAVASCRIPT_DEBUGGER, Boolean.toString(isLaunchJavascriptDebugger()));
+		return (PythonServerRunConfigurationOptions) super.getOptions();
+	}
+
+	@Override
+	protected void convertLegacyState(LegacyRunConfigurationConverter converter)
+	{
+		super.convertLegacyState(converter);
+
+		PythonServerRunConfigurationOptions options = new PythonServerRunConfigurationOptions();
+		convertLegacyCommonState(converter, options);
+		options.setLaunchJavascriptDebugger(converter.readXml(PythonServerRunConfigurationLegacyState.class).launchJavascriptDebuger);
+		converter.setOptions(options);
 	}
 
 	public boolean isLaunchJavascriptDebugger()
 	{
-		return myLaunchJavascriptDebugger;
+		return getOptions().isLaunchJavascriptDebugger();
 	}
 
 	public void setLaunchJavascriptDebugger(boolean launchJavascriptDebugger)
 	{
-		myLaunchJavascriptDebugger = launchJavascriptDebugger;
+		getOptions().setLaunchJavascriptDebugger(launchJavascriptDebugger);
 	}
 }

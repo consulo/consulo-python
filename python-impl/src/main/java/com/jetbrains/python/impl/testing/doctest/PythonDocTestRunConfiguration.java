@@ -17,17 +17,15 @@
 package com.jetbrains.python.impl.testing.doctest;
 
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
+import com.jetbrains.python.impl.testing.PythonTestRunConfigurationOptions;
 import consulo.execution.configuration.ConfigurationFactory;
-import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
+import consulo.execution.configuration.RunConfigurationOptions;
 import consulo.execution.configuration.RunProfileState;
-import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.WriteExternalException;
-import org.jdom.Element;
 
 
 /**
@@ -44,24 +42,31 @@ public class PythonDocTestRunConfiguration extends AbstractPythonTestRunConfigur
   }
 
   @Override
-  protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor() {
-    return new PythonDocTestRunConfigurationEditor(getProject(), this);
+  protected Class<? extends RunConfigurationOptions> getOptionsClass() {
+    return PythonTestRunConfigurationOptions.class;
   }
+
+  @Override
+  public PythonTestRunConfigurationOptions getOptions() {
+    return (PythonTestRunConfigurationOptions) super.getOptions();
+  }
+
+  @Override
+  protected void convertLegacyState(LegacyRunConfigurationConverter converter) {
+    super.convertLegacyState(converter);
+
+    PythonTestRunConfigurationOptions options = new PythonTestRunConfigurationOptions();
+    convertLegacyTestState(converter, options);
+    converter.setOptions(options);
+  }
+
 
   @Override
   public RunProfileState getState(Executor executor, ExecutionEnvironment env) throws ExecutionException {
     return new PythonDocTestCommandLineState(this, env);
   }
 
-  @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    super.readExternal(element);
-  }
 
-  @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    super.writeExternal(element);
-  }
 
   @Override
   protected String getTitle() {

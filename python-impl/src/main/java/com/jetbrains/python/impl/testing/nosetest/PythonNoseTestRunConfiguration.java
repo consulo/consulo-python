@@ -24,18 +24,14 @@ import consulo.content.bundle.Sdk;
 import consulo.execution.RuntimeConfigurationException;
 import consulo.execution.RuntimeConfigurationWarning;
 import consulo.execution.configuration.ConfigurationFactory;
-import consulo.execution.configuration.RunConfiguration;
+import consulo.execution.configuration.LegacyRunConfigurationConverter;
+import consulo.execution.configuration.RunConfigurationOptions;
 import consulo.execution.configuration.RunProfileState;
-import consulo.execution.configuration.ui.SettingsEditor;
 import consulo.execution.executor.Executor;
 import consulo.execution.runner.ExecutionEnvironment;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
-import consulo.project.macro.ProjectPathMacroManager;
-import consulo.util.xml.serializer.InvalidDataException;
-import consulo.util.xml.serializer.JDOMExternalizerUtil;
-import consulo.util.xml.serializer.WriteExternalException;
-import org.jdom.Element;
+import consulo.util.lang.StringUtil;
 
 
 /**
@@ -43,10 +39,8 @@ import org.jdom.Element;
  */
 public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfiguration
                                           implements PythonNoseTestRunConfigurationParams {
-  private String myParams = ""; // parameters for nosetests
   protected String myTitle = "Nosetest";
   protected String myPluralTitle = "Nosetests";
-  private boolean useParam = false;
 
   public PythonNoseTestRunConfiguration(Project project,
                                         ConfigurationFactory configurationFactory) {
@@ -54,25 +48,35 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
   }
 
   @Override
-  protected SettingsEditor<? extends RunConfiguration> createConfigurationEditor() {
-    return new PythonNoseTestRunConfigurationEditor(getProject(), this);
+  protected Class<? extends RunConfigurationOptions> getOptionsClass() {
+    return PythonNoseTestRunConfigurationOptions.class;
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
-    ProjectPathMacroManager.getInstance(getProject()).expandPaths(element);
-    super.readExternal(element);
-    myParams = JDOMExternalizerUtil.readField(element, "PARAMS");
-    useParam = Boolean.parseBoolean(JDOMExternalizerUtil.readField(element, "USE_PARAM"));
+  public PythonNoseTestRunConfigurationOptions getOptions() {
+    return (PythonNoseTestRunConfigurationOptions) super.getOptions();
   }
 
   @Override
-  public void writeExternal(Element element) throws WriteExternalException {
-    super.writeExternal(element);
-    JDOMExternalizerUtil.writeField(element, "PARAMS", myParams);
-    JDOMExternalizerUtil.writeField(element, "USE_PARAM", String.valueOf(useParam));
-    ProjectPathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
+  protected void convertLegacyState(LegacyRunConfigurationConverter converter) {
+    super.convertLegacyState(converter);
+
+    PythonNoseTestRunConfigurationOptions options = new PythonNoseTestRunConfigurationOptions();
+    convertLegacyTestState(converter, options);
+
+    PythonNoseTestRunConfigurationLegacyState old = converter.readXml(PythonNoseTestRunConfigurationLegacyState.class);
+    options.setParams(old.PARAMS);
+    options.setUseParam(old.USE_PARAM);
+    converter.setOptions(options);
   }
+
+  @Override
+  protected boolean isPatternSupported() {
+    return false;
+  }
+
+
+
 
   @Override
   protected String getTitle() {
@@ -95,11 +99,11 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
   }
 
   public String getParams() {
-    return myParams;
+    return StringUtil.notNullize(getOptions().getParams());
   }
 
   public void setParams(String pattern) {
-    myParams = pattern;
+    getOptions().setParams(pattern);
   }
 
   @Override
@@ -112,10 +116,10 @@ public class PythonNoseTestRunConfiguration extends AbstractPythonTestRunConfigu
   }
 
   public boolean useParam() {
-    return useParam;
+    return getOptions().isUseParam();
   }
 
   public void useParam(boolean useParam) {
-    this.useParam = useParam;
+    getOptions().setUseParam(useParam);
   }
 }
