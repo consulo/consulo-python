@@ -20,6 +20,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Logic for updating 2 fields: name for new directory and it's base location
@@ -59,17 +60,19 @@ public class LocationNameFieldsBinding {
                 TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
             ) {
                 @Override
-                protected void onFileChosen(VirtualFile chosenFile) {
-                    myBaseDir = chosenFile.getPath();
-                    if (isProjectNameChanged(nameField.getText()) && !nameField.getText().equals(chosenFile.getName())) {
+                protected void onFileChosen(Path chosenFile) {
+                    String chosenPath = FileUtil.toSystemIndependentName(chosenFile.toString());
+                    String chosenName = String.valueOf(chosenFile.getFileName());
+                    myBaseDir = chosenPath;
+                    if (isProjectNameChanged(nameField.getText()) && !nameField.getText().equals(chosenName)) {
                         myExternalModify = true;
-                        locationField.setText(new File(chosenFile.getPath(), nameField.getText()).toString());
+                        locationField.setText(new File(chosenPath, nameField.getText()).toString());
                         myExternalModify = false;
                     }
                     else {
                         myExternalModify = true;
-                        locationField.setText(chosenFile.getPath());
-                        nameField.setText(chosenFile.getName());
+                        locationField.setText(chosenPath);
+                        nameField.setText(chosenName);
                         myExternalModify = false;
                     }
                 }

@@ -228,10 +228,11 @@ public final class PythonSdkType extends SdkType {
         boolean isWindows = Platform.current().os().isWindows();
         return new FileChooserDescriptor(true, false, false, false, false, false) {
             @Override
-            public void validateSelectedFiles(VirtualFile[] files) throws Exception {
-                if (files.length != 0) {
-                    if (!isValidSdkHome(files[0].getPath())) {
-                        throw new Exception(PyLocalize.sdkErrorInvalidInterpreterName$0(files[0].getName()).get());
+            public void validateSelectedPaths(List<Path> paths) throws Exception {
+                if (!paths.isEmpty()) {
+                    Path path = paths.get(0);
+                    if (!isValidSdkHome(FileUtil.toSystemIndependentName(path.toString()))) {
+                        throw new Exception(PyLocalize.sdkErrorInvalidInterpreterName$0(String.valueOf(path.getFileName())).get());
                     }
                 }
             }

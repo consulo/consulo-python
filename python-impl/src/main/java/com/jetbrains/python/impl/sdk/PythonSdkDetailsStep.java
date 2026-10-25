@@ -19,7 +19,7 @@ import com.jetbrains.python.impl.PyBundle;
 import consulo.content.bundle.*;
 import consulo.disposer.Disposer;
 import consulo.fileChooser.FileChooserDescriptor;
-import consulo.fileChooser.IdeaFileChooser;
+import consulo.fileChooser.FileChooserFactory;
 import consulo.localize.LocalizeValue;
 import consulo.project.Project;
 import consulo.project.localize.ProjectLocalize;
@@ -29,8 +29,8 @@ import consulo.ui.ex.awt.Messages;
 import consulo.ui.ex.popup.*;
 import consulo.util.collection.ContainerUtil;
 import consulo.util.io.FileUtil;
-import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.util.io.NioFiles;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.*;
@@ -40,6 +40,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     @Nullable
@@ -150,43 +152,38 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
         }
 
         FileChooserDescriptor descriptor = createCompositeDescriptor(sdkTypes);
-        VirtualFile suggestedDir = getSuggestedSdkRoot(sdkTypes[0]);
-        IdeaFileChooser.chooseFiles(
-            descriptor,
-            project,
-            suggestedDir,
-            new IdeaFileChooser.FileChooserConsumer() {
-                @Override
-                @RequiredUIAccess
-                public void accept(List<VirtualFile> selectedFiles) {
-                    for (SdkType sdkType : sdkTypes) {
-                        String path = selectedFiles.get(0).getPath();
-                        if (sdkType.isValidSdkHome(path)) {
-                            Sdk newSdk = null;
-                            if (!createIfExists) {
-                                for (Sdk sdk : existingSdks) {
-                                    if (path.equals(sdk.getHomePath())) {
-                                        newSdk = sdk;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (newSdk == null) {
-                                newSdk = setupSdk(existingSdks, selectedFiles.get(0), sdkType, false, null, null);
-                            }
-                            onSdkCreatedCallBack.accept(newSdk);
-                            return;
-                        }
-                    }
+        FileChooserFactory.getInstance()
+            .newBuilder(descriptor)
+            .project(project)
+            .toSelect(getSuggestedSdkRoot(sdkTypes[0]))
+            .showSingleAsVirtualFile()
+            .whenComplete((selectedFile, error) -> {
+                if (error != null) {
                     onSdkCreatedCallBack.accept(null);
+                    return;
                 }
 
-                @Override
-                public void cancelled() {
-                    onSdkCreatedCallBack.accept(null);
+                for (SdkType sdkType : sdkTypes) {
+                    String path = selectedFile.getPath();
+                    if (sdkType.isValidSdkHome(path)) {
+                        Sdk newSdk = null;
+                        if (!createIfExists) {
+                            for (Sdk sdk : existingSdks) {
+                                if (path.equals(sdk.getHomePath())) {
+                                    newSdk = sdk;
+                                    break;
+                                }
+                            }
+                        }
+                        if (newSdk == null) {
+                            newSdk = setupSdk(existingSdks, selectedFile, sdkType, false, null, null);
+                        }
+                        onSdkCreatedCallBack.accept(newSdk);
+                        return;
+                    }
                 }
-            }
-        );
+                onSdkCreatedCallBack.accept(null);
+            });
     }
 
     @Nullable
@@ -255,16 +252,17 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     private static FileChooserDescriptor createCompositeDescriptor(SdkType... sdkTypes) {
         return new FileChooserDescriptor(sdkTypes[0].getHomeChooserDescriptor()) {
             @Override
-            public void validateSelectedFiles(VirtualFile[] files) throws Exception {
-                if (files.length > 0) {
+            public void validateSelectedPaths(List<Path> paths) throws Exception {
+                if (!paths.isEmpty()) {
+                    String selectedPath = FileUtil.toSystemIndependentName(paths.get(0).toString());
                     for (SdkType type : sdkTypes) {
-                        if (type.isValidSdkHome(files[0].getPath())) {
+                        if (type.isValidSdkHome(selectedPath)) {
                             return;
                         }
                     }
                 }
                 LocalizeValue displayName = sdkTypes[0].getDisplayName();
-                LocalizeValue message = files.length > 0 && files[0].isDirectory()
+                LocalizeValue message = !paths.isEmpty() && Files.isDirectory(paths.get(0))
                     ? ProjectLocalize.sdkConfigureHomeInvalidError(displayName)
                     : ProjectLocalize.sdkConfigureHomeFileInvalidError(displayName);
                 throw new Exception(message.get());
@@ -273,9 +271,9 @@ public class PythonSdkDetailsStep extends BaseListPopupStep<String> {
     }
 
     @Nullable
-    public static VirtualFile getSuggestedSdkRoot(SdkType sdkType) {
+    public static Path getSuggestedSdkRoot(SdkType sdkType) {
         String homePath = ContainerUtil.getFirstItem(sdkType.suggestHomePaths());
-        return homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);
+        return homePath == null ? null : NioFiles.toPath(FileUtil.toSystemDependentName(homePath));
     }
 
     public static List<String> filterExistingPaths(SdkType sdkType, Collection<String> sdkHomes, Sdk[] sdks) {
