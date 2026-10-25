@@ -17,6 +17,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import java.util.Arrays;
 
+import consulo.annotation.access.RequiredReadAction;
 import org.jspecify.annotations.Nullable;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -36,7 +37,9 @@ public class PyKeyValueExpressionImpl extends PyElementImpl implements PyKeyValu
 		super(astNode);
 	}
 
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
+	@Override
+    @RequiredReadAction
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		PyType keyType = context.getType(getKey());
 		PyExpression value = getValue();
@@ -48,12 +51,16 @@ public class PyKeyValueExpressionImpl extends PyElementImpl implements PyKeyValu
 		return PyTupleType.create(this, Arrays.asList(keyType, valueType));
 	}
 
-	public PyExpression getKey()
+	@Override
+    @RequiredReadAction
+    public PyExpression getKey()
 	{
 		return (PyExpression) getNode().getFirstChildNode().getPsi();
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PyExpression getValue()
 	{
 		return PsiTreeUtil.getNextSiblingOfType(getKey(), PyExpression.class);

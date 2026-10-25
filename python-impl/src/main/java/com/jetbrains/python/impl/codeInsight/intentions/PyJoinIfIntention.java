@@ -17,6 +17,8 @@ package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.language.editor.intention.BaseIntentionAction;
 import consulo.language.psi.PsiComment;
@@ -51,6 +53,8 @@ public class PyJoinIfIntention extends BaseIntentionAction {
         return PyLocalize.intnJoinIfText();
     }
 
+    @Override
+    @RequiredReadAction
     public boolean isAvailable(Project project, Editor editor, PsiFile file) {
         if (!(file instanceof PyFile)) {
             return false;
@@ -69,33 +73,31 @@ public class PyJoinIfIntention extends BaseIntentionAction {
             if (outerStList != null && outerStList.getStatements().length != 1) {
                 return false;
             }
-            if (firstStatement instanceof PyIfStatement) {
-                PyIfStatement inner = (PyIfStatement) firstStatement;
+            if (firstStatement instanceof PyIfStatement inner) {
                 if (inner.getElsePart() != null || inner.getElifParts().length > 0) {
                     return false;
                 }
                 PyStatementList stList = inner.getIfPart().getStatementList();
-                if (stList != null) {
-                    if (stList.getStatements().length != 0) {
-                        return true;
-                    }
+                if (stList != null && stList.getStatements().length != 0) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
+    @Override
+    @RequiredWriteAction
     public void invoke(Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         PyIfStatement expression =
             PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), PyIfStatement.class);
         PyIfStatement ifStatement = getIfStatement(expression);
 
-        PyStatement firstStatement = getFirstStatement(ifStatement);
         if (ifStatement == null) {
             return;
         }
-        if (firstStatement != null && firstStatement instanceof PyIfStatement) {
-            PyExpression condition = ((PyIfStatement) firstStatement).getIfPart().getCondition();
+        if (getFirstStatement(ifStatement) instanceof PyIfStatement firstIfStmt) {
+            PyExpression condition = firstIfStmt.getIfPart().getCondition();
             PyElementGenerator elementGenerator = PyElementGenerator.getInstance(project);
             PyExpression ifCondition = ifStatement.getIfPart().getCondition();
             if (ifCondition == null || condition == null) {
@@ -112,13 +114,13 @@ public class PyJoinIfIntention extends BaseIntentionAction {
             PyExpression newCondition = elementGenerator.createExpressionFromText(replacementText.toString());
             ifCondition.replace(newCondition);
 
-            PyStatementList stList = ((PyIfStatement) firstStatement).getIfPart().getStatementList();
+            PyStatementList stList = firstIfStmt.getIfPart().getStatementList();
             PyStatementList ifStatementList = ifStatement.getIfPart().getStatementList();
             if (ifStatementList == null || stList == null) {
                 return;
             }
             List<PsiComment> comments = PsiTreeUtil.getChildrenOfTypeAsList(ifStatement.getIfPart(), PsiComment.class);
-            comments.addAll(PsiTreeUtil.getChildrenOfTypeAsList(((PyIfStatement) firstStatement).getIfPart(), PsiComment.class));
+            comments.addAll(PsiTreeUtil.getChildrenOfTypeAsList(firstIfStmt.getIfPart(), PsiComment.class));
             comments.addAll(PsiTreeUtil.getChildrenOfTypeAsList(ifStatementList, PsiComment.class));
             comments.addAll(PsiTreeUtil.getChildrenOfTypeAsList(stList, PsiComment.class));
 

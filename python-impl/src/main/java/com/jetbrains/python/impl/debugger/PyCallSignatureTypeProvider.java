@@ -24,9 +24,9 @@ import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.util.lang.ref.Ref;
-
+import consulo.util.lang.ref.SimpleReference;
 
 /**
  * @author traff
@@ -34,16 +34,15 @@ import consulo.util.lang.ref.Ref;
 @ExtensionImpl
 public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
   @Override
-  public Ref<PyType> getParameterType(PyNamedParameter param,
-                                      PyFunction func,
-                                      TypeEvalContext context) {
+  @RequiredReadAction
+  public SimpleReference<PyType> getParameterType(PyNamedParameter param, PyFunction func, TypeEvalContext context) {
     String name = param.getName();
     if (name != null) {
       String typeName = PySignatureCacheManager.getInstance(param.getProject()).findParameterType(func, name);
       if (typeName != null) {
         PyType type = PyTypeParser.getTypeByName(param, typeName);
         if (type != null) {
-          return Ref.create(PyDynamicallyEvaluatedType.create(type));
+          return SimpleReference.create(PyDynamicallyEvaluatedType.create(type));
         }
       }
     }
@@ -51,16 +50,16 @@ public class PyCallSignatureTypeProvider extends PyTypeProviderBase {
   }
 
   @Override
-  public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
-    if (callable instanceof PyFunction) {
-      PyFunction function = (PyFunction)callable;
+  @RequiredReadAction
+  public SimpleReference<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
+    if (callable instanceof PyFunction function) {
       PySignature signature = PySignatureCacheManager.getInstance(function.getProject()).findSignature(function);
       if (signature != null && signature.getReturnType() != null) {
         String typeName = signature.getReturnType().getTypeQualifiedName();
         if (typeName != null) {
           PyType type = PyTypeParser.getTypeByName(function, typeName);
           if (type != null) {
-            return Ref.create(PyDynamicallyEvaluatedType.create(type));
+            return SimpleReference.create(PyDynamicallyEvaluatedType.create(type));
           }
         }
       }

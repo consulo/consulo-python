@@ -33,15 +33,13 @@ import consulo.util.lang.Pair;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Alexey.Ivanov
- * Date: Aug 19, 2009
- * Time: 4:20:13 PM
+ * @author Alexey.Ivanov
+ * @since 2009-08-19
  */
 public abstract class IntroduceValidator {
-  private final NamesValidator myNamesValidator = NamesValidator.forLanguage(PythonLanguage.getInstance());
+  private final NamesValidator myNamesValidator = NamesValidator.forLanguage(PythonLanguage.INSTANCE);
 
-  public boolean isNameValid(String name, Project project) {
+    public boolean isNameValid(String name, Project project) {
     return (name != null) &&
            (myNamesValidator.isIdentifier(name, project)) &&
            !(myNamesValidator.isKeyword(name, project));

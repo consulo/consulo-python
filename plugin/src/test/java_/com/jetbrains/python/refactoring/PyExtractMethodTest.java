@@ -31,7 +31,7 @@ public abstract class PyExtractMethodTest extends LightMarkedTestCase {
     String dir = "refactoring/extractmethod/";
 
     myFixture.configureByFile(dir + beforeName);
-    RefactoringSupportProvider provider = LanguageRefactoringSupport.INSTANCE.forLanguage(PythonLanguage.getInstance());
+      RefactoringSupportProvider provider = LanguageRefactoringSupport.INSTANCE.forLanguage(PythonLanguage.INSTANCE);
     assertNotNull(provider);
     RefactoringActionHandler handler = provider.getExtractMethodHandler();
     assertNotNull(handler);

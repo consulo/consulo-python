@@ -29,7 +29,6 @@ import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.impl.refactoring.classes.membersManager.PyMemberInfo;
 import com.jetbrains.python.impl.refactoring.move.moduleMembers.PyDependentModuleMembersCollector;
 
-
 /**
  * @author Dennis.Ushakov
  */
@@ -47,7 +46,8 @@ public class PyMembersRefactoringSupport implements ClassMembersRefactoringSuppo
 		return infoStorage;
 	}
 
-	public DependentMembersCollectorBase createDependentMembersCollector(Object clazz, Object superClass)
+	@Override
+    public DependentMembersCollectorBase createDependentMembersCollector(Object clazz, Object superClass)
 	{
 		if(clazz instanceof PyClass)
 		{
@@ -60,7 +60,8 @@ public class PyMembersRefactoringSupport implements ClassMembersRefactoringSuppo
 		return null;
 	}
 
-	public boolean isProperMember(MemberInfoBase member)
+	@Override
+    public boolean isProperMember(MemberInfoBase member)
 	{
 		return true;
 	}

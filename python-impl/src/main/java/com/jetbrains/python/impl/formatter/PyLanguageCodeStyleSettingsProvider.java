@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.formatter;
 
 import com.jetbrains.python.PythonLanguage;
@@ -118,7 +117,7 @@ public class PyLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettin
 
   @Override
   public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings defaultSettings = new CommonCodeStyleSettings(PythonLanguage.getInstance());
+    CommonCodeStyleSettings defaultSettings = new CommonCodeStyleSettings(PythonLanguage.INSTANCE);
     CommonCodeStyleSettings.IndentOptions indentOptions = defaultSettings.initIndentOptions();
     indentOptions.INDENT_SIZE = 4;
     defaultSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = true;

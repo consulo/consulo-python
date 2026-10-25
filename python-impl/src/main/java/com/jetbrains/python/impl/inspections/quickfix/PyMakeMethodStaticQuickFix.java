@@ -17,6 +17,7 @@ package com.jetbrains.python.impl.inspections.quickfix;
 
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
 import com.jetbrains.python.psi.*;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.editor.inspection.LocalQuickFix;
 import consulo.language.editor.inspection.ProblemDescriptor;
 import consulo.language.psi.PsiElement;
@@ -39,6 +40,8 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix {
         return PyLocalize.qfixNameMakeStatic();
     }
 
+    @Override
+    @RequiredWriteAction
     public void applyFix(Project project, ProblemDescriptor descriptor) {
         PsiElement element = descriptor.getPsiElement();
         PyFunction problemFunction = PsiTreeUtil.getParentOfType(element, PyFunction.class);
@@ -72,13 +75,13 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix {
         }
 
         for (UsageInfo usage : usages) {
-            PsiElement usageElement = usage.getElement();
-            if (usageElement instanceof PyReferenceExpression) {
-                updateUsage((PyReferenceExpression) usageElement);
+            if (usage.getElement() instanceof PyReferenceExpression usageRef) {
+                updateUsage(usageRef);
             }
         }
     }
 
+    @RequiredWriteAction
     private static void updateUsage(PyReferenceExpression element) {
         PyExpression qualifier = element.getQualifier();
         if (qualifier == null) {
@@ -88,12 +91,12 @@ public class PyMakeMethodStaticQuickFix implements LocalQuickFix {
         if (reference == null) {
             return;
         }
-        PsiElement resolved = reference.resolve();
-        if (resolved instanceof PyClass) {     //call with first instance argument A.m(A())
+        if (reference.resolve() instanceof PyClass) {     //call with first instance argument A.m(A())
             updateArgumentList(element);
         }
     }
 
+    @RequiredWriteAction
     private static void updateArgumentList(PyReferenceExpression element) {
         PyCallExpression callExpression = PsiTreeUtil.getParentOfType(element, PyCallExpression.class);
         if (callExpression == null) {

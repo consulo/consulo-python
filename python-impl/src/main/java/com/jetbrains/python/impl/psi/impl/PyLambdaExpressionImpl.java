@@ -22,6 +22,7 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyTypeProvider;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
 
@@ -38,12 +39,14 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 		super(astNode);
 	}
 
-	protected void acceptPyVisitor(PyElementVisitor pyVisitor)
+	@Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor)
 	{
 		pyVisitor.visitPyLambdaExpression(this);
 	}
 
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
+	@Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		for(PyTypeProvider provider : PyTypeProvider.EP_NAME.getExtensionList())
 		{
@@ -56,7 +59,9 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 		return new PyFunctionTypeImpl(this);
 	}
 
-	public PyParameterList getParameterList()
+	@Override
+    @RequiredReadAction
+    public PyParameterList getParameterList()
 	{
 		PyElement child = childToPsi(PyElementTypes.PARAMETER_LIST_SET, 0);
 		if(child == null)
@@ -69,6 +74,7 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 
 	@Nullable
 	@Override
+    @RequiredReadAction
 	public PyType getReturnType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		PyExpression body = getBody();
@@ -90,12 +96,15 @@ public class PyLambdaExpressionImpl extends PyElementImpl implements PyLambdaExp
 	}
 
 	@Nullable
+    @Override
+    @RequiredReadAction
 	public PyExpression getBody()
 	{
 		return PsiTreeUtil.getChildOfType(this, PyExpression.class);
 	}
 
-	public PyFunction asMethod()
+	@Override
+    public PyFunction asMethod()
 	{
 		return null; // we're never a method
 	}

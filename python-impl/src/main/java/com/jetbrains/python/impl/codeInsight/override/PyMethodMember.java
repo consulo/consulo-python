@@ -19,6 +19,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.editor.generation.ClassMember;
 import consulo.language.editor.generation.MemberChooserObject;
 import consulo.language.editor.generation.PsiElementMemberChooserObject;
@@ -52,7 +53,8 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 		return element.getName();
 	}
 
-	public PyMethodMember(PyElement element)
+	@RequiredReadAction
+    public PyMethodMember(PyElement element)
 	{
 		super(element, trimUnderscores(buildNameFor(element)), IconDescriptorUpdaters.getIcon(element, 0));
 		myFullName = buildNameFor(element);
@@ -63,7 +65,9 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 		return StringUtil.trimStart(StringUtil.trimStart(s, "_"), "_");
 	}
 
-	public MemberChooserObject getParentNodeDelegate()
+	@Override
+    @RequiredReadAction
+    public MemberChooserObject getParentNodeDelegate()
 	{
 		PyElement element = (PyElement) getPsiElement();
 		PyClass parent = PsiTreeUtil.getParentOfType(element, PyClass.class, false);
@@ -72,6 +76,7 @@ public class PyMethodMember extends PsiElementMemberChooserObject implements Cla
 	}
 
 	@Override
+    @RequiredReadAction
 	public void renderTreeNode(ColoredTextContainer component, JTree tree)
 	{
 		component.append(myFullName, getTextAttributes(tree));

@@ -46,7 +46,7 @@ public class PyImportedModule extends LightElement
 	 */
 	public PyImportedModule(@Nullable PyImportElement importElement, PyFile containingFile, QualifiedName importedPrefix)
 	{
-		super(containingFile.getManager(), PythonLanguage.getInstance());
+        super(containingFile.getManager(), PythonLanguage.INSTANCE);
 		myImportElement = importElement;
 		myContainingFile = containingFile;
 		myImportedPrefix = importedPrefix;

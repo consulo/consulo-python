@@ -31,16 +31,15 @@ import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import com.jetbrains.python.toolbox.Substring;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ApplicationManager;
 import consulo.language.psi.PsiDirectory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.QualifiedName;
-import consulo.language.util.ModuleUtilCore;
 import consulo.module.Module;
 import consulo.util.lang.StringUtil;
-import consulo.util.lang.ref.Ref;
+import consulo.util.lang.ref.SimpleReference;
 import consulo.virtualFileSystem.VirtualFile;
 
 import org.jspecify.annotations.Nullable;
@@ -104,6 +103,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
+  @RequiredReadAction
   private static NumpyDocString forFunction(PyFunction function, @Nullable PsiElement reference, @Nullable String knownSignature) {
     String docString = function.getDocStringValue();
     if (docString == null && PyNames.INIT.equals(function.getName())) {
@@ -141,6 +141,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
    * @return Numpy docstring wrapper object for specified function.
    */
   @Nullable
+  @RequiredReadAction
   public static NumpyDocString forFunction(PyFunction function, @Nullable PsiElement reference) {
     return forFunction(function, reference, null);
   }
@@ -170,14 +171,11 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
     PyPsiFacade facade = PyPsiFacade.getInstance(reference.getProject());
     List<PsiElement> items = facade.qualifiedNameResolver(qualifiedName.removeLastComponent()).fromElement(reference).resultsAsList();
     for (PsiElement item : items) {
-      if (item instanceof PsiDirectory) {
-        item = ((PsiDirectory)item).findFile(PyNames.INIT_DOT_PY);
+      if (item instanceof PsiDirectory dir) {
+        item = dir.findFile(PyNames.INIT_DOT_PY);
       }
-      if (item instanceof PyFile) {
-        PsiElement element = ((PyFile)item).getElementNamed(functionName);
-        if (element instanceof PyFunction) {
-          return (PyFunction)element;
-        }
+      if (item instanceof PyFile file && file.getElementNamed(functionName) instanceof PyFunction function) {
+        return function;
       }
     }
     return null;
@@ -206,9 +204,10 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
 
   @Nullable
   @Override
-  public Ref<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context) {
+  @RequiredReadAction
+  public SimpleReference<PyType> getCallType(PyFunction function, @Nullable PyCallSiteExpression callSite, TypeEvalContext context) {
     if (isApplicable(function)) {
-      PyExpression callee = callSite instanceof PyCallExpression ? ((PyCallExpression)callSite).getCallee() : null;
+      PyExpression callee = callSite instanceof PyCallExpression callExpr ? callExpr.getCallee() : null;
       NumpyDocString docString = forFunction(function, callee);
       if (docString != null) {
         List<SectionField> returns = docString.getReturnFields();
@@ -220,13 +219,14 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
           case 1:
             // Function returns single value
             return Optional.ofNullable(returns.get(0).getType())
-                           .filter(StringUtil::isNotEmpty)
-                           .map(typeName -> isUfuncType(function, typeName) ? facade.parseTypeAnnotation("T",
-                                                                                                         function) : parseNumpyDocType(
-                             function,
-                             typeName))
-                           .map(Ref::create)
-                           .orElse(null);
+                .filter(StringUtil::isNotEmpty)
+                .map(
+                    typeName -> isUfuncType(function, typeName)
+                        ? facade.parseTypeAnnotation("T", function)
+                        : parseNumpyDocType(function, typeName)
+                )
+                .map(SimpleReference::create)
+                .orElse(null);
           default:
             // Function returns a tuple
             List<PyType> unionMembers = new ArrayList<>();
@@ -253,7 +253,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
             }
 
             PyType type = unionMembers.isEmpty() ? facade.createTupleType(members, function) : facade.createUnionType(unionMembers);
-            return Ref.create(type);
+            return SimpleReference.create(type);
         }
       }
     }
@@ -263,13 +263,14 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
 
   @Nullable
   @Override
-  public Ref<PyType> getParameterType(PyNamedParameter parameter, PyFunction function, TypeEvalContext context) {
+  @RequiredReadAction
+  public SimpleReference<PyType> getParameterType(PyNamedParameter parameter, PyFunction function, TypeEvalContext context) {
     if (isApplicable(function)) {
       String name = parameter.getName();
       if (name != null) {
         PyType type = getParameterType(function, name);
         if (type != null) {
-          return Ref.create(type);
+          return SimpleReference.create(type);
         }
       }
     }
@@ -277,7 +278,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
   }
 
   public static boolean isInsideNumPy(PsiElement element) {
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
+    if (element.getApplication().isUnitTestMode()) {
       return true;
     }
     PsiFile file = element.getContainingFile();
@@ -293,8 +294,9 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
     return false;
   }
 
+  @RequiredReadAction
   private static boolean isApplicable(PsiElement element) {
-    Module module = ModuleUtilCore.findModuleForPsiElement(element);
+    Module module = element.getModule();
     if (module != null) {
       if (PyDocumentationSettings.getInstance(module).isNumpyFormat(element.getContainingFile())) {
         return true;
@@ -309,6 +311,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
+  @RequiredReadAction
   private static PyType parseSingleNumpyDocType(PsiElement anchor, String typeString) {
     PyPsiFacade facade = getPsiFacade(anchor);
     String realTypeName = getNumpyRealTypeName(typeString);
@@ -343,11 +346,11 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
    * Converts literal into type, e.g. -1 -> int, 'fro' -> str
    */
   @Nullable
+  @RequiredReadAction
   private static PyType getNominalType(PsiElement anchor, String typeString) {
     PyExpressionCodeFragmentImpl codeFragment = new PyExpressionCodeFragmentImpl(anchor.getProject(), "dummy.py", typeString, false);
-    PsiElement element = codeFragment.getFirstChild();
-    if (element instanceof PyExpressionStatement) {
-      PyExpression expression = ((PyExpressionStatement)element).getExpression();
+    if (codeFragment.getFirstChild() instanceof PyExpressionStatement expressionStmt) {
+      PyExpression expression = expressionStmt.getExpression();
       PyBuiltinCache builtinCache = PyBuiltinCache.getInstance(anchor);
       if (expression instanceof PyStringLiteralExpression) {
         return builtinCache.getStrType();
@@ -360,6 +363,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
+  @RequiredReadAction
   private static PyType parseNumpyDocType(PsiElement anchor, String typeString) {
     String withoutOptional = cleanupOptional(typeString);
     Set<PyType> types = new LinkedHashSet<>();
@@ -378,10 +382,13 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
     return getPsiFacade(anchor).createUnionType(types);
   }
 
+  @RequiredReadAction
   public static boolean isUfuncType(PsiElement anchor, String typeString) {
     for (String typeName : getNumpyUnionType(typeString)) {
-      if (anchor instanceof PyFunction && isInsideNumPy(anchor) && NumpyUfuncs.isUFunc(((PyFunction)anchor).getName()) &&
-        ("array_like".equals(typeName) || "ndarray".equals(typeName))) {
+      if (anchor instanceof PyFunction function
+          && isInsideNumPy(anchor)
+          && NumpyUfuncs.isUFunc(function.getName())
+          && ("array_like".equals(typeName) || "ndarray".equals(typeName))) {
         return true;
       }
     }
@@ -389,6 +396,7 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
   }
 
   @Nullable
+  @RequiredReadAction
   private static PyType getParameterType(PyFunction function, String parameterName) {
     NumpyDocString docString = forFunction(function, function);
     if (docString != null) {
@@ -401,13 +409,13 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
       }
       if (paramType != null) {
         if (isUfuncType(function, paramType)) {
-          return getPsiFacade(function).parseTypeAnnotation("numbers.Number or numpy.core.multiarray.ndarray or collections.Iterable",
-                                                            function);
+          return getPsiFacade(function)
+            .parseTypeAnnotation("numbers.Number or numpy.core.multiarray.ndarray or collections.Iterable", function);
         }
         PyType numpyDocType = parseNumpyDocType(function, paramType);
         if ("size".equals(parameterName)) {
-          return getPsiFacade(function).createUnionType(Lists.newArrayList(numpyDocType,
-                                                                           PyBuiltinCache.getInstance(function).getIntType()));
+          return getPsiFacade(function)
+            .createUnionType(Lists.newArrayList(numpyDocType, PyBuiltinCache.getInstance(function).getIntType()));
         }
         return numpyDocType;
       }
@@ -417,7 +425,10 @@ public class NumpyDocStringTypeProvider extends PyTypeProviderBase {
 
   @Nullable
   @Override
-  public Ref<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
-    return Optional.ofNullable(PyUtil.as(callable, PyFunction.class)).map(function -> getCallType(function, null, context)).orElse(null);
+  @RequiredReadAction
+  public SimpleReference<PyType> getReturnType(PyCallable callable, TypeEvalContext context) {
+    return Optional.ofNullable(PyUtil.as(callable, PyFunction.class))
+      .map(function -> getCallType(function, null, context))
+      .orElse(null);
   }
 }

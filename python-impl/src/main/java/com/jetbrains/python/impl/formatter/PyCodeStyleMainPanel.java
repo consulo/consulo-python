@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.formatter;
 
 import consulo.language.codeStyle.CodeStyleSettings;
@@ -25,8 +24,7 @@ import com.jetbrains.python.PythonLanguage;
  */
 public class PyCodeStyleMainPanel extends TabbedLanguageCodeStylePanel
 {
-  protected PyCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
-    super(PythonLanguage.getInstance(), currentSettings, settings);
-  }
-
+    protected PyCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
+        super(PythonLanguage.INSTANCE, currentSettings, settings);
+    }
 }

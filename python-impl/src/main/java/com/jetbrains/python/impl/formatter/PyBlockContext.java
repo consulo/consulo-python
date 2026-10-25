@@ -32,7 +32,7 @@ public class PyBlockContext {
   private final FormattingMode myMode;
 
   public PyBlockContext(CodeStyleSettings settings, SpacingBuilder builder, FormattingMode mode) {
-    mySettings = settings.getCommonSettings(PythonLanguage.getInstance());
+      mySettings = settings.getCommonSettings(PythonLanguage.INSTANCE);
     myPySettings = settings.getCustomSettings(PyCodeStyleSettings.class);
     mySpacingBuilder = builder;
     myMode = mode;

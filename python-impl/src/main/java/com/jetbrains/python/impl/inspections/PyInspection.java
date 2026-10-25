@@ -40,7 +40,7 @@ public abstract class PyInspection extends LocalInspectionTool {
     @Nullable
     @Override
     public Language getLanguage() {
-        return PythonLanguage.getInstance();
+        return PythonLanguage.INSTANCE;
     }
 
     @Override

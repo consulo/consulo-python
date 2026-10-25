@@ -134,7 +134,7 @@ public abstract class PyFormatterTest extends PyTestCase {
   }
 
   public void testNoAlignForMethodArguments() {  // PY-3995
-    settings().getCommonSettings(PythonLanguage.getInstance()).ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
+      settings().getCommonSettings(PythonLanguage.INSTANCE).ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
     doTest();
   }
 

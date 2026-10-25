@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.codeInsight;
 
+import consulo.annotation.access.RequiredReadAction;
+import consulo.codeEditor.CodeInsightColors;
+import consulo.codeEditor.markup.SeparatorPlacement;
+import consulo.colorScheme.EditorColorsManager;
 import consulo.language.editor.Pass;
 import consulo.language.editor.gutter.LineMarkerInfo;
-import consulo.application.ApplicationManager;
-import consulo.codeEditor.CodeInsightColors;
-import consulo.colorScheme.EditorColorsManager;
-import consulo.codeEditor.markup.SeparatorPlacement;
-import consulo.util.lang.ref.Ref;
 import consulo.language.psi.PsiElement;
-
+import consulo.util.lang.ref.SimpleReference;
 import org.jspecify.annotations.Nullable;
 
 /**
  * @author oleg
  */
 public class PyLineSeparatorUtil {
-
   private PyLineSeparatorUtil() {
   }
 
@@ -40,42 +37,39 @@ public class PyLineSeparatorUtil {
   }
 
   @Nullable
-  public static LineMarkerInfo addLineSeparatorIfNeeded(final Provider provider,
-                                                        final PsiElement element) {
-    final Ref<LineMarkerInfo> info = new Ref<LineMarkerInfo>(null);
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      public void run() {
-        if (!provider.isSeparatorAllowed(element)) {
-          return;
-        }
-        boolean hasSeparableBefore = false;
-        PsiElement parent = element.getParent();
-        if (parent == null) {
-          return;
-        }
-        for (PsiElement child : parent.getChildren()) {
-          if (child == element){
-            break;
-          }
-          if (provider.isSeparatorAllowed(child)) {
-            hasSeparableBefore = true;
-            break;
-          }
-        }
-        if (!hasSeparableBefore) {
-          return;
-        }
-        info.set(createLineSeparatorByElement(element));
+  public static LineMarkerInfo addLineSeparatorIfNeeded(Provider provider, PsiElement element) {
+    SimpleReference<LineMarkerInfo> info = new SimpleReference<>(null);
+    element.getApplication().runReadAction(() -> {
+      if (!provider.isSeparatorAllowed(element)) {
+        return;
       }
+      boolean hasSeparableBefore = false;
+      PsiElement parent = element.getParent();
+      if (parent == null) {
+        return;
+      }
+      for (PsiElement child : parent.getChildren()) {
+        if (child == element){
+          break;
+        }
+        if (provider.isSeparatorAllowed(child)) {
+          hasSeparableBefore = true;
+          break;
+        }
+      }
+      if (!hasSeparableBefore) {
+        return;
+      }
+      info.set(createLineSeparatorByElement(element));
     });
     return info.get();
   }
 
+  @RequiredReadAction
   private static LineMarkerInfo<PsiElement> createLineSeparatorByElement(PsiElement element) {
-    LineMarkerInfo<PsiElement> info = new LineMarkerInfo<PsiElement>(element, element.getTextRange().getStartOffset(), null, Pass.UPDATE_ALL, null, null);
+    LineMarkerInfo<PsiElement> info = new LineMarkerInfo<>(element, element.getTextRange().getStartOffset(), null, Pass.UPDATE_ALL, null, null);
     info.separatorColor = EditorColorsManager.getInstance().getGlobalScheme().getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR);
     info.separatorPlacement = SeparatorPlacement.TOP;
     return info;
   }
-
 }

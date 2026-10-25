@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.debugger;
 
 import com.jetbrains.python.debugger.PyPositionConverter;
 import com.jetbrains.python.debugger.PySignature;
 import com.jetbrains.python.debugger.PySourcePosition;
-import consulo.application.ApplicationManager;
+import consulo.application.Application;
 import consulo.application.ReadAction;
-import consulo.application.util.SystemInfo;
-import consulo.application.util.function.Computable;
 import consulo.document.Document;
 import consulo.document.FileDocumentManager;
 import consulo.execution.debug.XDebuggerUtil;
 import consulo.execution.debug.XSourcePosition;
+import consulo.platform.Platform;
 import consulo.virtualFileSystem.LocalFileSystem;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileSystem;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
-
 import org.jspecify.annotations.Nullable;
+
 import java.io.File;
+import java.util.function.Supplier;
 
 public class PyLocalPositionConverter implements PyPositionConverter {
   private final static String[] EGG_EXTENSIONS = new String[]{
@@ -51,7 +50,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
       if (file == null) {
         return null;
       }
-      if (SystemInfo.isWindows) {
+      if (Platform.current().os().isWindows()) {
         file = file.toLowerCase();
       }
       return super.normalize(file);
@@ -68,13 +67,14 @@ public class PyLocalPositionConverter implements PyPositionConverter {
       if (file == null) {
         return null;
       }
-      if (SystemInfo.isWindows && isWindowsPath(file)) {
+      if (Platform.current().os().isWindows() && isWindowsPath(file)) {
         file = file.toLowerCase();
       }
       return super.normalize(file);
     }
   }
 
+  @Override
   final public PySourcePosition create(String filePath, int line) {
     File file = new File(filePath);
 
@@ -86,6 +86,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
     }
   }
 
+  @Override
   public final PySourcePosition convertToPython(XSourcePosition position) {
     return convertToPython(convertFilePath(position.getFile().getPath()), convertLocalLineToRemote(position.getFile(), position.getLine()));
   }
@@ -108,6 +109,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   @Nullable
+  @Override
   public XSourcePosition convertFromPython(PySourcePosition position) {
     return createXSourcePosition(getVirtualFile(position.getFile()), position.getLine());
   }
@@ -178,13 +180,8 @@ public class PyLocalPositionConverter implements PyPositionConverter {
     }
   }
 
-  private static int convertRemoteLineToLocal(final VirtualFile vFile, int line) {
-    Document document = ApplicationManager.getApplication().runReadAction(new Computable<Document>() {
-      @Override
-      public Document compute() {
-        return FileDocumentManager.getInstance().getDocument(vFile);
-      }
-    });
+  private static int convertRemoteLineToLocal(VirtualFile vFile, int line) {
+    Document document = Application.get().runReadAction((Supplier<Document>) () -> FileDocumentManager.getInstance().getDocument(vFile));
     line--;
     if (document != null) {
       while (PyDebugSupportUtils.isContinuationLine(document, line - 1)) {

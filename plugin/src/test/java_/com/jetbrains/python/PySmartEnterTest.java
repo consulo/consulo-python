@@ -13,6 +13,7 @@ import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
 import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringFormat;
 import com.jetbrains.python.fixtures.PyTestCase;
+import consulo.ui.annotation.RequiredUIAccess;
 
 /**
  * @author Alexey.Ivanov
@@ -22,9 +23,10 @@ public abstract class PySmartEnterTest extends PyTestCase {
     return SmartEnterProcessors.INSTANCE.forKey(language);
   }
 
+  @RequiredUIAccess
   public void doTest() {
     myFixture.configureByFile("codeInsight/smartEnter/" + getTestName(true) + ".py");
-    final List<SmartEnterProcessor> processors = getSmartProcessors(PythonLanguage.getInstance());
+    final List<SmartEnterProcessor> processors = getSmartProcessors(PythonLanguage.INSTANCE);
     new WriteCommandAction(myFixture.getProject()) {
       @Override
       protected void run(Result result) throws Throwable {

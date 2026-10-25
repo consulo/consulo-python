@@ -35,6 +35,7 @@ import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationProperties;
 import consulo.codeEditor.Editor;
@@ -59,7 +60,6 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.util.IncorrectOperationException;
-import consulo.language.util.ModuleUtilCore;
 import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.process.cmd.GeneralCommandLine;
@@ -152,12 +152,13 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
 
     @Nullable
     @Override
+    @RequiredReadAction
     public State collectInformation(PsiFile file) {
         VirtualFile vFile = file.getVirtualFile();
         if (vFile == null || vFile.getFileType() != PythonFileType.INSTANCE) {
             return null;
         }
-        Sdk sdk = PythonSdkType.findLocalCPython(ModuleUtilCore.findModuleForPsiElement(file));
+        Sdk sdk = PythonSdkType.findLocalCPython(file.getModule());
         if (sdk == null) {
             if (!myReportedMissingInterpreter) {
                 myReportedMissingInterpreter = true;
@@ -204,8 +205,11 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         List<Sdk> allSdks = PythonSdkType.getAllSdks();
         Collections.sort(allSdks, PreferredSdkComparator.INSTANCE);
         for (Sdk sdk : allSdks) {
-            LOG.info("  Path: " + sdk.getHomePath() + "; Flavor: " + PythonSdkFlavor.getFlavor(sdk) + "; Remote: " + PythonSdkType.isRemote(
-                sdk));
+            LOG.info(
+                "  Path: " + sdk.getHomePath() +
+                    "; Flavor: " + PythonSdkFlavor.getFlavor(sdk) +
+                    "; Remote: " + PythonSdkType.isRemote(sdk)
+            );
         }
         LOG.info("]");
     }
@@ -254,6 +258,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
     }
 
     @Override
+    @RequiredReadAction
     public void apply(PsiFile file, Results annotationResult, AnnotationHolder holder) {
         if (annotationResult == null || !file.isValid()) {
             return;
@@ -345,8 +350,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
                 }
                 annotation.registerFix(new IgnoreErrorFix(problem.myCode));
                 annotation.registerFix(new consulo.ide.impl.idea.codeInspection.ex.CustomEditInspectionToolsSettingsAction(
-                    HighlightDisplayKey.find(
-                        PyPep8Inspection.INSPECTION_SHORT_NAME),
+                    HighlightDisplayKey.find(PyPep8Inspection.INSPECTION_SHORT_NAME),
                     LocalizeValue.localizeTODO("Edit inspection profile setting")
                 ));
             }
@@ -372,6 +376,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         return StringUtil.offsetToLineNumber(text, start) != StringUtil.offsetToLineNumber(text, end);
     }
 
+    @RequiredReadAction
     private static boolean ignoreDueToSettings(Project project, Problem problem, @Nullable PsiElement element) {
         PersistentEditorSettings editorSettings = PersistentEditorSettings.getInstance();
         if (!editorSettings.getStripTrailingSpaces().equals("None")) {
@@ -382,7 +387,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         }
 
         CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
-        CommonCodeStyleSettings commonSettings = codeStyleSettings.getCommonSettings(PythonLanguage.getInstance());
+        CommonCodeStyleSettings commonSettings = codeStyleSettings.getCommonSettings(PythonLanguage.INSTANCE);
         PyCodeStyleSettings pySettings = codeStyleSettings.getCustomSettings(PyCodeStyleSettings.class);
 
         if (element instanceof PsiWhiteSpace) {

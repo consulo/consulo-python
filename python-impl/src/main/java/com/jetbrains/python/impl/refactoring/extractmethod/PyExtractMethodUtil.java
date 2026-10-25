@@ -856,7 +856,7 @@ public class PyExtractMethodUtil
 		@Override
         public boolean isValidName(String name)
 		{
-			NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.getInstance());
+            NamesValidator validator = NamesValidator.forLanguage(PythonLanguage.INSTANCE);
 			assert validator != null;
 			return validator.isIdentifier(name, myProject);
 		}

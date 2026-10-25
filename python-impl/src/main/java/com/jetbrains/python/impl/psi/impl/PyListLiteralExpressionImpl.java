@@ -21,10 +21,10 @@ import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyListLiteralExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.util.IncorrectOperationException;
-
 
 public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implements PyListLiteralExpression
 {
@@ -39,7 +39,9 @@ public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		pyVisitor.visitPyListLiteralExpression(this);
 	}
 
-	public PsiElement add(PsiElement psiElement) throws IncorrectOperationException
+	@Override
+    @RequiredWriteAction
+    public PsiElement add(PsiElement psiElement) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		PyExpression element = (PyExpression) psiElement;
@@ -56,20 +58,25 @@ public class PyListLiteralExpressionImpl extends PySequenceExpressionImpl implem
 		}
 	}
 
-	public PsiElement addAfter(PsiElement psiElement, PsiElement afterThis) throws IncorrectOperationException
+	@Override
+    @RequiredWriteAction
+    public PsiElement addAfter(PsiElement psiElement, PsiElement afterThis) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		checkPyExpression(afterThis);
 		return PyElementGenerator.getInstance(getProject()).insertItemIntoList(this, (PyExpression) afterThis, (PyExpression) psiElement);
 	}
 
-	public PsiElement addBefore(PsiElement psiElement, PsiElement beforeThis) throws IncorrectOperationException
+	@Override
+    @RequiredWriteAction
+    public PsiElement addBefore(PsiElement psiElement, PsiElement beforeThis) throws IncorrectOperationException
 	{
 		checkPyExpression(psiElement);
 		return PyElementGenerator.getInstance(getProject()).insertItemIntoList(this, null, (PyExpression) psiElement);
 	}
 
-	public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
+	@Override
+    public PyType getType(TypeEvalContext context, TypeEvalContext.Key key)
 	{
 		return PyBuiltinCache.getInstance(this).createLiteralCollectionType(this, "list", context);
 	}
