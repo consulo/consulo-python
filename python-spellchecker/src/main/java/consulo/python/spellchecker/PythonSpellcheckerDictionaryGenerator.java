@@ -15,17 +15,18 @@
  */
 package consulo.python.spellchecker;
 
-import com.intellij.spellchecker.generator.SpellCheckerDictionaryGenerator;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.Language;
+import consulo.language.editor.refactoring.NamesValidator;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.PsiManager;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.spellcheker.tokenizer.splitter.IdentifierTokenSplitter;
 import consulo.language.spellcheker.tokenizer.splitter.SplitContext;
+import consulo.language.spellchecker.editor.dictionary.SpellCheckerDictionaryGenerator;
 import consulo.project.Project;
 import consulo.virtualFileSystem.VirtualFile;
 
@@ -83,5 +84,11 @@ public class PythonSpellcheckerDictionaryGenerator extends SpellCheckerDictionar
                 }
             }
         });
+    }
+
+    @Override
+    protected boolean isKeyword(String word, Language language) {
+        NamesValidator namesValidator = NamesValidator.forLanguage(language);
+        return namesValidator != null && namesValidator.isKeyword(word, myProject);
     }
 }

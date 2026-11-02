@@ -3,7 +3,6 @@
   <name>Python</name>
   <description>Smart editing for Python scripts</description>
   <version>SNAPSHOT</version>
-  <depends optional="true">com.intellij.spellchecker</depends>
   <depends optional="true">org.jetbrains.plugins.rest</depends>
   <depends optional="true">com.intellij.xml</depends>
   <depends optional="true">com.intellij.regexp</depends>

@@ -7,6 +7,8 @@ open module consulo.python.spellchecker {
     requires consulo.document.api;
     requires consulo.language.api;
     requires consulo.language.spellchecker.api;
+    requires consulo.language.spellchecker.editor.api;
+    requires consulo.language.editor.refactoring.api;
     requires consulo.localize.api;
     requires consulo.module.api;
     requires consulo.module.content.api;
@@ -15,7 +17,6 @@ open module consulo.python.spellchecker {
     requires consulo.ui.ex.api;
     requires consulo.virtual.file.system.api;
 
-    requires com.intellij.spellchecker;
     requires consulo.python.language.api;
     requires consulo.python.impl;
 }
