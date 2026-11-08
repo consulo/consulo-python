@@ -15,6 +15,9 @@
  */
 package com.jetbrains.python.impl.sdk;
 
+import com.jetbrains.python.impl.packaging.PyPackageManagerUI;
+import consulo.localize.LocalizeValue;
+import consulo.project.ui.notification.NotificationService;
 import com.jetbrains.python.impl.packaging.PyPackageService;
 import com.jetbrains.python.impl.packaging.ui.PyPackageManagementService;
 import com.jetbrains.python.impl.sdk.flavors.VirtualEnvSdkFlavor;
@@ -25,7 +28,6 @@ import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
 import consulo.content.bundle.Sdk;
 import consulo.content.bundle.SdkUtil;
-import consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel;
 import consulo.process.ExecutionException;
 import consulo.project.DumbModePermission;
 import consulo.project.DumbService;
@@ -244,10 +246,13 @@ public abstract class AbstractCreateVirtualEnvDialog extends IdeaDialog {
                             PackageManagementService.ErrorDescription description =
                                 PyPackageManagementService.toErrorDescription(Collections.singletonList(e), basicSdk);
                             if (description != null) {
-                                PackagesNotificationPanel.showError(
-                                    PyLocalize.sdkCreateVenvDialogErrorFailedToCreateVenv().get(),
-                                    description
-                                );
+                                NotificationService.getInstance().newError(PyPackageManagerUI.NOTIFICATION_GROUP)
+                                    .title(PyLocalize.sdkCreateVenvDialogErrorFailedToCreateVenv())
+                                    .content(LocalizeValue.localizeTODO(PyPackageManagementService.toNotificationHtml(
+                                        PyLocalize.sdkCreateVenvDialogErrorFailedToCreateVenv().get(),
+                                        description
+                                    )))
+                                    .notify(AbstractCreateVirtualEnvDialog.this.myProject);
                             }
                         },
                         Application.get().getAnyModalityState()

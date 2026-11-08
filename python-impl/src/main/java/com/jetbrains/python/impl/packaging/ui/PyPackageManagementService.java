@@ -15,10 +15,12 @@
  */
 package com.jetbrains.python.impl.packaging.ui;
 
+import com.jetbrains.python.impl.packaging.PyCondaPackageManagerImpl;
 import com.jetbrains.python.impl.packaging.PyExecutionException;
 import com.jetbrains.python.impl.packaging.PyPIPackageUtil;
 import com.jetbrains.python.impl.packaging.PyPackageManagerUI;
 import com.jetbrains.python.impl.packaging.PyPackageService;
+import com.jetbrains.python.impl.packaging.PyPackageUtil;
 import com.jetbrains.python.packaging.*;
 import com.jetbrains.python.impl.packaging.PyPIPackageUtil.PackageDetails;
 import com.jetbrains.python.packaging.requirement.PyRequirementRelation;
@@ -31,7 +33,10 @@ import consulo.content.bundle.Sdk;
 import consulo.execution.RunCanceledByUserException;
 import consulo.process.ExecutionException;
 import consulo.project.Project;
+import consulo.localize.LocalizeValue;
 import consulo.repository.ui.InstalledPackage;
+import consulo.repository.ui.PackageManagementFix;
+import consulo.repository.ui.PackageManagementProblem;
 import consulo.repository.ui.PackageManagementServiceEx;
 import consulo.repository.ui.RepoPackage;
 import consulo.util.concurrent.AsyncResult;
@@ -61,6 +66,8 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   private final Project myProject;
   protected final Sdk mySdk;
   protected final ExecutorService myExecutorService;
+  // whether the interpreter has the packaging tools, as the last look for a problem found
+  private volatile boolean myHasManagement = true;
 
   public PyPackageManagementService(Project project, Sdk sdk) {
     myProject = project;
@@ -71,6 +78,81 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
 
   public Sdk getSdk() {
     return mySdk;
+  }
+
+  @Override
+  public boolean canUseExtraOptions() {
+    return true;
+  }
+
+  @Override
+  public boolean canInstall() {
+    return myHasManagement && PyPackageUtil.packageManagementEnabled(mySdk);
+  }
+
+  @Override
+  public boolean canUninstallPackage(InstalledPackage pkg) {
+    if (!canInstall()) {
+      return false;
+    }
+    if (PythonSdkType.isVirtualEnv(mySdk) && pkg instanceof PyPackage pyPackage) {
+      String location = pyPackage.getLocation();
+      if (location != null && location.startsWith(PySdkUtil.getUserSite())) {
+        return false;
+      }
+    }
+    String name = pkg.getName();
+    return !PyPackageUtil.PIP.equals(name) &&
+           !PyPackageUtil.SETUPTOOLS.equals(name) &&
+           !PyPackageUtil.DISTRIBUTE.equals(name) &&
+           !PyCondaPackageManagerImpl.PYTHON.equals(name);
+  }
+
+  @Override
+  public boolean canUpdatePackage(InstalledPackage pkg) {
+    return canInstall() && !PyCondaPackageManagerImpl.PYTHON.equals(pkg.getName());
+  }
+
+  @Override
+  public @Nullable PackageManagementProblem findProblem() {
+    if (PythonSdkType.isInvalid(mySdk)) {
+      myHasManagement = false;
+      return new PackageManagementProblem(LocalizeValue.localizeTODO("Invalid Python interpreter"));
+    }
+    try {
+      myHasManagement = PyPackageManager.getInstance(mySdk).hasManagement();
+    }
+    catch (ExecutionException e) {
+      return null;
+    }
+    if (myHasManagement) {
+      return null;
+    }
+    return new PackageManagementProblem(LocalizeValue.localizeTODO("Python packaging tools not found"), List.of(new InstallManagementFix()));
+  }
+
+  private class InstallManagementFix implements PackageManagementFix {
+    @Override
+    public LocalizeValue getName() {
+      return LocalizeValue.localizeTODO("Install packaging tools");
+    }
+
+    @Override
+    public void run(Listener listener) {
+      PyPackageManagerUI ui = new PyPackageManagerUI(myProject, mySdk, new PyPackageManagerUI.Listener() {
+        @Override
+        public void started() {
+          listener.operationStarted(null);
+        }
+
+        @Override
+        public void finished(List<ExecutionException> exceptions) {
+          PyPackageManager.getInstance(mySdk).refresh();
+          listener.operationFinished(null, toErrorDescription(exceptions, mySdk));
+        }
+      });
+      ui.installManagement();
+    }
   }
 
   @Nullable
@@ -210,6 +292,29 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
   }
 
   @Nullable
+  /**
+   * The error as the content of a notification: the message, the command and the end of its output.
+   */
+  public static String toNotificationHtml(String firstLine, ErrorDescription description) {
+    StringBuilder html = new StringBuilder(StringUtil.escapeXmlEntities(firstLine));
+    html.append("<br/>").append(StringUtil.escapeXmlEntities(description.getMessage()));
+    String command = description.getCommand();
+    if (command != null) {
+      html.append("<br/><code>").append(StringUtil.escapeXmlEntities(command)).append("</code>");
+    }
+    String output = description.getOutput();
+    if (output != null) {
+      List<String> lines = StringUtil.split(output, "\n");
+      List<String> tail = lines.subList(Math.max(0, lines.size() - 10), lines.size());
+      html.append("<pre>").append(StringUtil.escapeXmlEntities(StringUtil.join(tail, "\n"))).append("</pre>");
+    }
+    String solution = description.getSolution();
+    if (solution != null) {
+      html.append(StringUtil.escapeXmlEntities(solution));
+    }
+    return html.toString();
+  }
+
   public static ErrorDescription toErrorDescription(@Nullable List<ExecutionException> exceptions, @Nullable Sdk sdk) {
     if (exceptions != null && !exceptions.isEmpty() && !isCancelled(exceptions)) {
       return createDescription(exceptions.get(0), sdk);

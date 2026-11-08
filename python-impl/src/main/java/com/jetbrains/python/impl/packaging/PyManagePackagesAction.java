@@ -15,6 +15,8 @@
  */
 package com.jetbrains.python.impl.packaging;
 
+import com.jetbrains.python.impl.packaging.ui.PyPackageManagementServiceProvider;
+import consulo.repository.ui.PackagesEditorManager;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.action.AnAction;
 import consulo.ui.ex.action.AnActionEvent;
@@ -33,7 +35,7 @@ public class PyManagePackagesAction extends AnAction implements AnActionWithSync
         Module module = e.getRequiredData(Module.KEY);
         Sdk sdk = PythonSdkType.findPythonSdk(module);
         if (sdk != null) {
-            new PyManagePackagesDialog(module.getProject(), sdk).show();
+            PackagesEditorManager.getInstance(module.getProject()).open(PyPackageManagementServiceProvider.class, sdk.getName());
         }
     }
 

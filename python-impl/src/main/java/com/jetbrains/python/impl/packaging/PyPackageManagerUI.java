@@ -26,7 +26,6 @@ import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
 import consulo.content.bundle.Sdk;
 import consulo.execution.RunCanceledByUserException;
-import consulo.ide.impl.idea.webcore.packaging.PackagesNotificationPanel;
 import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.platform.base.icon.PlatformIconGroup;
@@ -35,7 +34,6 @@ import consulo.project.Project;
 import consulo.project.ui.notification.Notification;
 import consulo.project.ui.notification.NotificationGroup;
 import consulo.project.ui.notification.NotificationService;
-import consulo.project.ui.notification.event.NotificationListener;
 import consulo.repository.ui.PackageManagementService;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.Messages;
@@ -52,6 +50,8 @@ public class PyPackageManagerUI {
     private static final Logger LOG = Logger.getInstance(PyPackageManagerUI.class);
 
     @Nullable
+    public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Python Packaging");
+
     private Listener myListener;
     private Project myProject;
     private Sdk mySdk;
@@ -147,7 +147,7 @@ public class PyPackageManagerUI {
     }
 
     private abstract static class PackagingTask extends Task.Backgroundable {
-        private static final NotificationGroup PACKAGING_GROUP_ID = NotificationGroup.balloonGroup("Python Packaging");
+        private static final NotificationGroup PACKAGING_GROUP_ID = NOTIFICATION_GROUP;
 
         protected final Sdk mySdk;
         @Nullable
@@ -199,16 +199,9 @@ public class PyPackageManagerUI {
                 PackageManagementService.ErrorDescription description = PyPackageManagementService.toErrorDescription(exceptions, mySdk);
                 if (description != null) {
                     String firstLine = getTitle() + ": error occurred.";
-                    NotificationListener listener = (notification, event) -> {
-                        assert myProject != null;
-                        String title = StringUtil.capitalizeWords(getFailureTitle(), true);
-                        PackagesNotificationPanel.showError(title, description);
-                    };
-
                     Notification.Builder builder = NotificationService.getInstance().newError(PACKAGING_GROUP_ID)
                         .title(LocalizeValue.localizeTODO(getFailureTitle()))
-                        .content(LocalizeValue.localizeTODO(firstLine + " <a href=\"xxx\">Details...</a>"))
-                        .hyperlinkListener(listener);
+                        .content(LocalizeValue.localizeTODO(PyPackageManagementService.toNotificationHtml(firstLine, description)));
 
                     notificationRef.set(new PackagingNotification(builder));
                 }
