@@ -17,10 +17,14 @@
 package com.jetbrains.python.impl.refactoring.rename;
 
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ApplicationManager;
 import consulo.codeEditor.Editor;
-import consulo.ui.ex.awt.Messages;
+import consulo.language.editor.refactoring.rename.PsiElementRenameHandler;
 import consulo.language.psi.PsiElement;
+import consulo.localize.LocalizeValue;
+import consulo.project.Project;
+import consulo.ui.MessageBoxBuilder;
+import consulo.ui.MessageButtonRole;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.application.util.function.Processor;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.codeInsight.PyCodeInsightSettings;
@@ -28,8 +32,11 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.search.PyOverridingMethodsSearch;
 import com.jetbrains.python.impl.psi.search.PySuperMethodsSearch;
 import com.jetbrains.python.toolbox.Maybe;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * @author yole
@@ -67,46 +74,64 @@ public class RenamePyFunctionProcessor extends RenamePyElementProcessor {
   }
 
   @Override
-  public PsiElement substituteElementToRename(PsiElement element, Editor editor) {
+  @RequiredUIAccess
+  public @Nullable PsiElement substituteElementToRename(PsiElement element, Editor editor) {
+    return substitute(element).getNow(null);
+  }
+
+  @Override
+  @RequiredUIAccess
+  public void substituteElementToRename(PsiElement element, Editor editor, Consumer<PsiElement> renameCallback) {
+    substitute(element).thenAccept(substituted -> {
+      if (substituted != null && PsiElementRenameHandler.canRename(substituted.getProject(), editor, substituted)) {
+        renameCallback.accept(substituted);
+      }
+    });
+  }
+
+  @RequiredUIAccess
+  private static CompletableFuture<@Nullable PsiElement> substitute(PsiElement element) {
     PyFunction function = (PyFunction) element;
     PyClass containingClass = function.getContainingClass();
     if (containingClass == null) {
-      return function;
+      return CompletableFuture.completedFuture(function);
     }
     if (PyNames.INIT.equals(function.getName())) {
-      return containingClass; 
+      return CompletableFuture.completedFuture(containingClass);
     }
     PyFunction deepestSuperMethod = PySuperMethodsSearch.findDeepestSuperMethod(function);
     if (!deepestSuperMethod.equals(function)) {
       String message = "Method " + function.getName() + " of class " + containingClass.getQualifiedName() + "\noverrides method of class "
                        + deepestSuperMethod.getContainingClass().getQualifiedName() + ".\nDo you want to rename the base method?";
-      int rc = Messages.showYesNoCancelDialog(element.getProject(), message, "Rename", Messages.getQuestionIcon());
-      if (rc == 0) {
-        return deepestSuperMethod;
-      }
-      if (rc == 1) {
-        return function;
-      }
-      return null;
+      return ask(element.getProject(), message, deepestSuperMethod, function);
     }
     Property property = containingClass.findPropertyByCallable(function);
     if (property != null) {
       PyTargetExpression site = property.getDefinitionSite();
       if (site != null) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          return site;
-        }
         String message = String.format("Do you want to rename the property '%s' instead of its accessor function '%s'?",
-                                             property.getName(), function.getName());
-        int rc = Messages.showYesNoCancelDialog(element.getProject(), message, "Rename", Messages.getQuestionIcon());
-        switch (rc) {
-          case 0: return site;
-          case 1: return function;
-          default: return null;
-        }
+                                       property.getName(), function.getName());
+        return ask(element.getProject(), message, site, function);
       }
     }
-    return function;
+    return CompletableFuture.completedFuture(function);
+  }
+
+  @RequiredUIAccess
+  private static CompletableFuture<@Nullable PsiElement> ask(Project project, String message, PsiElement yes, PsiElement no) {
+    if (project.getApplication().isUnitTestMode()) {
+      return CompletableFuture.completedFuture(yes);
+    }
+    return MessageBoxBuilder.<@Nullable PsiElement>create()
+      .asQuestion()
+      .title(LocalizeValue.of("Rename"))
+      .text(LocalizeValue.of(message))
+      .button(MessageButtonRole.YES, yes)
+      .asDefaultButton()
+      .button(MessageButtonRole.NO, no)
+      .button(MessageButtonRole.CANCEL, (PsiElement) null)
+      .asExitButton()
+      .showAsync(project);
   }
 
   @Override

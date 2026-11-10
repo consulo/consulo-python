@@ -25,12 +25,17 @@ import consulo.find.FindUsagesHandler;
 import consulo.find.FindUsagesHandlerFactory;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFileSystemItem;
+import consulo.localize.LocalizeValue;
+import consulo.ui.MessageBoxBuilder;
+import consulo.ui.MessageButtonRole;
+import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.Messages;
 
 import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author yole
@@ -93,6 +98,35 @@ public class PyFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       return new PyTargetExpressionFindUsagesHandler(((PyTargetExpression)element));
     }
     return null;
+  }
+
+  @Override
+  @RequiredUIAccess
+  public CompletableFuture<@Nullable FindUsagesHandler> createFindUsagesHandlerAsync(PsiElement element, boolean forHighlightUsages) {
+    if (forHighlightUsages || !(element instanceof PyFunction function)) {
+      return CompletableFuture.completedFuture(createFindUsagesHandler(element, forHighlightUsages));
+    }
+    TypeEvalContext context = TypeEvalContext.userInitiated(element.getProject(), null);
+    Collection<PsiElement> superMethods = PySuperMethodsSearch.search(function, true, context).findAll();
+    if (superMethods.isEmpty()
+      || !(superMethods.iterator().next() instanceof PyFunction next)
+      || isInObject(next)) {
+      return CompletableFuture.completedFuture(new PyFunctionFindUsagesHandler(element));
+    }
+
+    List<PsiElement> allMethods = new ArrayList<>();
+    allMethods.add(element);
+    allMethods.addAll(superMethods);
+    return MessageBoxBuilder.<@Nullable FindUsagesHandler>create()
+      .asQuestion()
+      .title(LocalizeValue.localizeTODO("Find Usages"))
+      .text(LocalizeValue.localizeTODO("Method " + function.getName() + " overrides method of class " +
+        next.getContainingClass().getName() + ".\nDo you want to find usages of the base method?"))
+      .button(MessageButtonRole.YES, new PyFunctionFindUsagesHandler(element, allMethods))
+      .asDefaultButton()
+      .button(MessageButtonRole.NO, new PyFunctionFindUsagesHandler(element))
+      .asExitButton()
+      .showAsync(element.getProject());
   }
 
   private static boolean isInObject(PyFunction fun) {
