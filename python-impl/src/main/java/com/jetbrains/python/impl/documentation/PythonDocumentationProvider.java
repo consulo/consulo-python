@@ -39,6 +39,8 @@ import consulo.application.ApplicationManager;
 import consulo.codeEditor.Editor;
 import consulo.component.extension.Extensions;
 import consulo.content.bundle.Sdk;
+import consulo.http.HttpMethod;
+import consulo.http.HttpRequestBuilderFactory;
 import consulo.ide.setting.ShowSettingsUtil;
 import consulo.language.Language;
 import consulo.language.editor.documentation.AbstractDocumentationProvider;
@@ -52,10 +54,6 @@ import consulo.project.Project;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
 import org.jspecify.annotations.Nullable;
 import java.io.File;
@@ -396,9 +394,13 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
       return true;
     }
 
-    RequestConfig build = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(5000).build();
-    try (CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(build).build()) {
-      return client.execute(new HttpHead(url), httpResponse -> httpResponse.getStatusLine().getStatusCode() != 404);
+    try {
+      return Application.get().getInstance(HttpRequestBuilderFactory.class)
+        .newBuilder(url, HttpMethod.HEAD)
+        .connectTimeout(5000)
+        .readTimeout(5000)
+        .allowErrorCodes(true)
+        .connect(request -> request.statusCode() != 404);
     }
     catch (IOException ignored) {
     }
