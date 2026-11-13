@@ -106,6 +106,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
@@ -554,7 +555,7 @@ public class PyUtil {
                     return FileUtil.getNameWithoutExtension(nameWithMagic).equals(shortName);
                 }));
             }
-            Application.get().getInstance(AsyncFileService.class).asyncDelete(filesToDelete);
+            Application.get().getInstance(AsyncFileService.class).asyncDelete(filesToDelete.stream().map(File::toPath).toArray(Path[]::new));
         }
     }
 

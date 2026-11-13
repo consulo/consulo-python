@@ -18,7 +18,7 @@ package com.jetbrains.python.rest.run.sphinx;
 import java.util.Collections;
 
 import consulo.execution.runner.ExecutionEnvironment;
-import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.RefreshQueue;
 import consulo.virtualFileSystem.VirtualFile;
 import com.jetbrains.python.impl.HelperPackage;
 import com.jetbrains.python.impl.PythonHelper;
@@ -42,7 +42,7 @@ public class SphinxCommandLineState extends RestCommandLineState
 			VirtualFile virtualFile = findOutput();
 			if(virtualFile != null)
 			{
-				LocalFileSystem.getInstance().refreshFiles(Collections.singleton(virtualFile), false, true, null);
+				RefreshQueue.getInstance().refresh(false, true, null, Collections.singleton(virtualFile));
 			}
 		};
 	}

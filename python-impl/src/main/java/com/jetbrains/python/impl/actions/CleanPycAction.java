@@ -30,6 +30,7 @@ import consulo.util.io.FileUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class CleanPycAction extends AnAction implements AnActionWithSyncUpdate {
                     PsiDirectory dir = (PsiDirectory) element;
                     collectPycFiles(new File(dir.getVirtualFile().getPath()), pycFiles);
                 }
-                Application.get().getInstance(AsyncFileService.class).asyncDelete(pycFiles);
+                Application.get().getInstance(AsyncFileService.class).asyncDelete(pycFiles.stream().map(File::toPath).toArray(Path[]::new));
             },
             "Cleaning up .py files...",
             false,
