@@ -21,7 +21,11 @@ def save_main_module(file, module_name):
     # convince the file to be debugged that it was loaded as main
     sys.modules[module_name] = sys.modules['__main__']
     sys.modules[module_name].__name__ = module_name
-    from imp import new_module
+    try:
+        from imp import new_module
+    except ImportError:
+        # Python 3.12 has no imp module
+        from types import ModuleType as new_module
 
     m = new_module('__main__')
     sys.modules['__main__'] = m

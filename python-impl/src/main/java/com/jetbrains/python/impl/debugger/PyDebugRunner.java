@@ -27,6 +27,9 @@ import com.jetbrains.python.impl.run.AbstractPythonRunConfiguration;
 import com.jetbrains.python.impl.run.CommandLinePatcher;
 import com.jetbrains.python.impl.run.DebugAwareConfiguration;
 import com.jetbrains.python.impl.run.PythonCommandLineState;
+import com.jetbrains.python.impl.sdk.PySdkUtil;
+import com.jetbrains.python.impl.sdk.PythonSdkType;
+import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ApplicationManager;
@@ -49,17 +52,22 @@ import consulo.execution.runner.GenericProgramRunner;
 import consulo.execution.ui.ExecutionConsole;
 import consulo.execution.ui.RunContentDescriptor;
 import consulo.module.content.ProjectRootManager;
+import consulo.platform.ForwardedPort;
+import consulo.platform.Platform;
 import consulo.process.ExecutionException;
 import consulo.process.ProcessHandler;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParametersList;
 import consulo.process.cmd.ParamsGroup;
+import consulo.process.event.ProcessAdapter;
+import consulo.process.event.ProcessEvent;
 import consulo.project.Project;
 import consulo.util.lang.StringUtil;
 import consulo.virtualFileSystem.VirtualFile;
 
 import org.jspecify.annotations.Nullable;
 import java.io.File;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.Map;
@@ -148,13 +156,51 @@ public class PyDebugRunner extends GenericProgramRunner
 
 		ServerSocket serverSocket = PythonCommandLineState.createServerSocket();
 		int serverLocalPort = serverSocket.getLocalPort();
+
+		// a process of another machine connects to the port of the IDE published on that machine
+		Platform platform = sdk == null ? Platform.current() : sdk.getPlatform();
+		if(!platform.equals(Platform.current()))
+		{
+			// the debuggers of the subprocesses would connect to ports of the IDE which are not published there
+			pyState.setMultiprocessDebug(false);
+		}
+		ForwardedPort publishedPort;
+		try
+		{
+			publishedPort = platform.net().publish(serverLocalPort);
+		}
+		catch(IOException e)
+		{
+			throw new ExecutionException("Cannot publish the port of the debugger on " + platform.getName(), e);
+		}
+
 		RunProfile profile = environment.getRunProfile();
-		ExecutionResult result =
-				pyState.execute(environment.getExecutor(), createCommandLinePatchers(environment.getProject(), pyState, profile, serverLocalPort));
+		ExecutionResult result;
+		try
+		{
+			result = pyState.execute(environment.getExecutor(), createCommandLinePatchers(environment.getProject(), pyState, profile, publishedPort.port()));
+		}
+		catch(ExecutionException | RuntimeException e)
+		{
+			publishedPort.close();
+			throw e;
+		}
+		result.getProcessHandler().addProcessListener(new ProcessAdapter()
+		{
+			@Override
+			public void processTerminated(ProcessEvent event)
+			{
+				publishedPort.close();
+			}
+		});
 
 		return XDebuggerManager.getInstance(environment.getProject()).startSession(environment, session ->
 		{
 			PyDebugProcess pyDebugProcess = createDebugProcess(session, serverSocket, result, pyState);
+			if(!platform.equals(Platform.current()))
+			{
+				pyDebugProcess.setPositionConverter(new PyLocalPositionConverter(platform));
+			}
 
 			createConsoleCommunicationAndSetupActions(environment.getProject(), result, pyDebugProcess, session);
 			return pyDebugProcess;
@@ -327,6 +373,14 @@ public class PyDebugRunner extends GenericProgramRunner
 					}
 				}
 
+				Sdk sdk = pyState.getSdk();
+				if(sdk != null && PythonSdkType.getLanguageLevelForSdk(sdk).isAtLeast(LanguageLevel.PYTHON311))
+				{
+					// the frozen modules of the standard library have no files - the debugger cannot place their frames
+					assert exeParams != null;
+					exeParams.addParameter("-Xfrozen_modules=off");
+				}
+
 				assert debugParams != null;
 				fillDebugParameters(project, debugParams, serverLocalPort, pyState, commandLine);
 			}
@@ -430,7 +484,7 @@ public class PyDebugRunner extends GenericProgramRunner
 		List<String> roots = Lists.newArrayList();
 		for(VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots())
 		{
-			roots.add(contentRoot.getPath());
+			roots.add(PySdkUtil.toTargetPath(contentRoot));
 		}
 
 		environment.put(IDE_PROJECT_ROOTS, StringUtil.join(roots, File.pathSeparator));
@@ -452,7 +506,7 @@ public class PyDebugRunner extends GenericProgramRunner
 					List<String> roots = Lists.newArrayList();
 					for(VirtualFile contentRoot : sdk.getSdkModificator().getRoots(BinariesOrderRootType.ID))
 					{
-						roots.add(contentRoot.getPath());
+						roots.add(PySdkUtil.toTargetPath(contentRoot));
 					}
 					environment.put(LIBRARY_ROOTS, StringUtil.join(roots, File.pathSeparator));
 				}

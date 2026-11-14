@@ -16,6 +16,9 @@
 package com.jetbrains.python.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +27,9 @@ import com.google.common.collect.Lists;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.cmd.ParamsGroup;
 import consulo.content.bundle.Sdk;
+import consulo.platform.Platform;
 import consulo.util.io.FileUtil;
+import consulo.util.lang.StringUtil;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
@@ -130,8 +135,40 @@ public enum PythonHelper implements HelperPackage
 		@Override
 		public void addToGroup(ParamsGroup group, GeneralCommandLine cmd)
 		{
-			addToPythonPath(cmd.getEnvironment());
-			group.addParameter(asParamString());
+			Platform platform = cmd.getPlatform();
+			if(platform.equals(Platform.current()))
+			{
+				addToPythonPath(cmd.getEnvironment());
+				group.addParameter(asParamString());
+				return;
+			}
+
+			// the helpers of the machine of the interpreter
+			try
+			{
+				Map<String, String> localEnvironment = new HashMap<>();
+				addToPythonPath(localEnvironment);
+				for(Map.Entry<String, String> entry : localEnvironment.entrySet())
+				{
+					if(PythonEnvUtil.PYTHONPATH.equals(entry.getKey()))
+					{
+						for(String localEntry : StringUtil.split(entry.getValue(), File.pathSeparator))
+						{
+							PythonEnvUtil.addToPythonPath(cmd.getEnvironment(), PythonHelpersLocator.toPlatformPath(localEntry, platform));
+						}
+					}
+					else
+					{
+						cmd.getEnvironment().put(entry.getKey(), entry.getValue());
+					}
+				}
+				String param = asParamString();
+				group.addParameter(param.startsWith("-m") ? param : PythonHelpersLocator.toPlatformPath(param, platform));
+			}
+			catch(IOException e)
+			{
+				throw new UncheckedIOException("Cannot copy the helpers of Python to " + platform.getName(), e);
+			}
 		}
 
 		@Override

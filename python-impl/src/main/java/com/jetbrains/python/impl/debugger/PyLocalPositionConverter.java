@@ -27,7 +27,10 @@ import consulo.document.Document;
 import consulo.document.FileDocumentManager;
 import consulo.execution.debug.XDebuggerUtil;
 import consulo.execution.debug.XSourcePosition;
+import com.jetbrains.python.impl.sdk.PySdkUtil;
+import consulo.platform.Platform;
 import consulo.virtualFileSystem.LocalFileSystem;
+import consulo.virtualFileSystem.VirtualFileManager;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.virtualFileSystem.VirtualFileSystem;
 import consulo.virtualFileSystem.archive.ArchiveVfsUtil;
@@ -40,6 +43,17 @@ public class PyLocalPositionConverter implements PyPositionConverter {
     ".egg",
     ".zip"
   };
+
+  // the machine the debugged process runs on - its paths name the files
+  private final Platform myPlatform;
+
+  public PyLocalPositionConverter() {
+    this(Platform.current());
+  }
+
+  public PyLocalPositionConverter(Platform platform) {
+    myPlatform = platform;
+  }
 
   protected static class PyLocalSourcePosition extends PySourcePosition {
     public PyLocalSourcePosition(String file, int line) {
@@ -87,7 +101,7 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   public final PySourcePosition convertToPython(XSourcePosition position) {
-    return convertToPython(convertFilePath(position.getFile().getPath()), convertLocalLineToRemote(position.getFile(), position.getLine()));
+    return convertToPython(convertFilePath(PySdkUtil.toTargetPath(position.getFile())), convertLocalLineToRemote(position.getFile(), position.getLine()));
   }
 
   protected PySourcePosition convertToPython(String filePath, int line) {
@@ -118,7 +132,9 @@ public class PyLocalPositionConverter implements PyPositionConverter {
   }
 
   public VirtualFile getVirtualFile(String path) {
-    VirtualFile vFile = getLocalFileSystem().findFileByPath(path);
+    VirtualFile vFile = myPlatform.equals(Platform.current())
+      ? getLocalFileSystem().findFileByPath(path)
+      : VirtualFileManager.getInstance().findFileByNioPath(myPlatform.fs().getPath(path));
 
     if (vFile == null) {
       vFile = findEggEntry(path);
