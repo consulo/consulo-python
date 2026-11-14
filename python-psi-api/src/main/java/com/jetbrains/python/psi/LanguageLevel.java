@@ -193,9 +193,26 @@ public enum LanguageLevel {
       if (pythonVersion.startsWith("3.12")) {
         return PYTHON312;
       }
+      // a version newer than the known ones is closest to the latest one, not to the default
+      if (isNewerThanLatest(pythonVersion)) {
+        return getLatest();
+      }
       return DEFAULT3;
     }
     return getDefault();
+  }
+
+  private static boolean isNewerThanLatest(String pythonVersion) {
+    String[] parts = pythonVersion.split("\\.");
+    if (parts.length < 2) {
+      return false;
+    }
+    try {
+      return Integer.parseInt(parts[0]) * 100 + Integer.parseInt(parts[1]) > getLatest().myVersion;
+    }
+    catch (NumberFormatException e) {
+      return false;
+    }
   }
 
   public static final Key<LanguageLevel> KEY = Key.create("python.language.level");

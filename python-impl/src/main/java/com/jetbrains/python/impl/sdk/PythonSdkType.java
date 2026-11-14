@@ -93,6 +93,7 @@ import java.util.stream.Collectors;
 public final class PythonSdkType extends PlatformAwareSdkType {
     private static final Logger LOG = Logger.getInstance(PythonSdkType.class);
     private static final Pattern VERSION_PATTERN = Pattern.compile("((?:Python|PyPy) \\S+)");
+    private static final Pattern VERSION_NUMBER_PATTERN = Pattern.compile("(\\d+\\.\\d+)");
     private static final String[] WINDOWS_EXECUTABLE_SUFFIXES = new String[]{
         "cmd",
         "exe",
@@ -165,9 +166,29 @@ public final class PythonSdkType extends PlatformAwareSdkType {
                 directories.add(platform.fs().getPath(directory));
             }
         }
+        else {
+            // the installers of python.org: C:\Python314, C:\Program Files\Python314, per user in AppData
+            for (Path root : getWindowsInstallRoots(platform)) {
+                try (DirectoryStream<Path> children = Files.newDirectoryStream(root)) {
+                    for (Path child : children) {
+                        Path name = child.getFileName();
+                        if (name != null && StringUtil.startsWithIgnoreCase(name.toString(), "Python")) {
+                            directories.add(child);
+                        }
+                    }
+                }
+                catch (IOException | DirectoryIteratorException e) {
+                    LOG.debug(e);
+                }
+            }
+        }
         String path = platform.os().getEnvironmentVariable("PATH");
         if (path != null) {
             for (String entry : StringUtil.split(path, platform.fs().getPathListSeparator())) {
+                // the Microsoft Store aliases are not interpreters - they open the store
+                if (windows && StringUtil.containsIgnoreCase(entry, "\\WindowsApps")) {
+                    continue;
+                }
                 directories.add(platform.fs().getPath(entry));
             }
         }
@@ -195,6 +216,27 @@ public final class PythonSdkType extends PlatformAwareSdkType {
                 }
             }
         }
+    }
+
+    private static List<Path> getWindowsInstallRoots(Platform platform) {
+        List<Path> roots = new ArrayList<>();
+        String localAppData = platform.os().getEnvironmentVariable("LOCALAPPDATA");
+        roots.add(StringUtil.isEmpty(localAppData)
+            ? platform.user().homePath().resolve("AppData").resolve("Local").resolve("Programs").resolve("Python")
+            : platform.fs().getPath(localAppData).resolve("Programs").resolve("Python"));
+        for (String variable : new String[]{"ProgramFiles", "ProgramFiles(x86)", "SystemDrive"}) {
+            String value = platform.os().getEnvironmentVariable(variable);
+            if (!StringUtil.isEmpty(value)) {
+                roots.add(platform.fs().getPath(variable.equals("SystemDrive") ? value + "\\" : value));
+            }
+        }
+        List<Path> existing = new ArrayList<>();
+        for (Path root : roots) {
+            if (Files.isDirectory(root)) {
+                existing.add(root);
+            }
+        }
+        return existing;
     }
 
     /**
@@ -684,6 +726,14 @@ public final class PythonSdkType extends PlatformAwareSdkType {
             PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(sdk);
             if (flavor != null) {
                 return flavor.getLanguageLevel(sdk);
+            }
+            // an interpreter of another machine has no flavor of this one - its version tells the level
+            String versionString = sdk.getVersionString();
+            if (versionString != null) {
+                Matcher matcher = VERSION_NUMBER_PATTERN.matcher(versionString);
+                if (matcher.find()) {
+                    return LanguageLevel.fromPythonVersion(matcher.group(1));
+                }
             }
         }
         return LanguageLevel.getDefault();
