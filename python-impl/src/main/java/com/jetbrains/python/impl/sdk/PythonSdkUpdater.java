@@ -147,8 +147,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
                 public void run(ProgressIndicator indicator) {
                     Project project1 = (Project)getProject();
                     Sdk sdkInsideTask = PythonSdkType.findSdkByKey(key);
-                    // skeletons and packages are asked only of a local interpreter so far
-                    if (sdkInsideTask != null && sdkInsideTask.getPlatform().equals(Platform.current())) {
+                    if (sdkInsideTask != null) {
                         ourUnderRefresh.add(key);
                         try {
                             String skeletonsPath = getBinarySkeletonsPath(sdk);

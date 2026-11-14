@@ -56,6 +56,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -215,7 +216,8 @@ public class PyPackageManagerImpl extends PyPackageManager
 		{
 			throw new ExecutionException("Cannot create temporary build directory");
 		}
-		if(!extraArgs.contains(BUILD_DIR_OPTION))
+		// the build directory is a local one - the pip of another machine uses its own
+		if(!extraArgs.contains(BUILD_DIR_OPTION) && !isOnOtherMachine())
 		{
 			args.addAll(Arrays.asList(BUILD_DIR_OPTION, buildDir.getAbsolutePath()));
 		}
@@ -482,7 +484,27 @@ public class PyPackageManagerImpl extends PyPackageManager
 	@Nullable
 	protected String getHelperPath(String helper) throws ExecutionException
 	{
-		return PythonHelpersLocator.getHelperPath(helper);
+		String localPath = PythonHelpersLocator.getHelperPath(helper);
+		if(!isOnOtherMachine())
+		{
+			return localPath;
+		}
+		try
+		{
+			return PythonHelpersLocator.toPlatformPath(localPath, mySdk.getPlatform());
+		}
+		catch(IOException e)
+		{
+			throw new ExecutionException("Cannot copy the helpers of Python to " + mySdk.getPlatform().getName(), e);
+		}
+	}
+
+	/**
+	 * The interpreter is of another machine - the packaging tool runs there.
+	 */
+	private boolean isOnOtherMachine()
+	{
+		return !mySdk.getPlatform().equals(Platform.current());
 	}
 
 	private String getPythonProcessResult(String path,
@@ -515,9 +537,12 @@ public class PyPackageManagerImpl extends PyPackageManager
 		{
 			throw new ExecutionException("Cannot find Python interpreter for SDK " + mySdk.getName());
 		}
+		Platform platform = mySdk.getPlatform();
+		boolean onOtherMachine = isOnOtherMachine();
 		if(workingDir == null)
 		{
-			workingDir = new File(homePath).getParent();
+			Path parent = platform.fs().getPath(homePath).getParent();
+			workingDir = parent == null ? null : parent.toString();
 		}
 		List<String> cmdline = new ArrayList<>();
 		cmdline.add(homePath);
@@ -525,12 +550,28 @@ public class PyPackageManagerImpl extends PyPackageManager
 		cmdline.addAll(args);
 		LOG.info("Running packaging tool: " + StringUtil.join(cmdline, " "));
 
-		boolean canCreate = FileUtil.ensureCanCreateFile(new File(homePath));
+		// sudo is asked of the local user only
+		boolean canCreate = onOtherMachine || FileUtil.ensureCanCreateFile(new File(homePath));
 		boolean useSudo = !canCreate && !Platform.current().os().isWindows() && askForSudo;
 
 		try
 		{
-			 GeneralCommandLine commandLine = new GeneralCommandLine(cmdline).withWorkDirectory(workingDir);
+			GeneralCommandLine commandLine;
+			if(onOtherMachine)
+			{
+				commandLine = new GeneralCommandLine();
+				commandLine.withPlatform(platform);
+				commandLine.withExecutablePath(platform.fs().getPath(homePath));
+				commandLine.addParameters(cmdline.subList(1, cmdline.size()));
+				if(workingDir != null)
+				{
+					commandLine.withWorkingDirectory(platform.fs().getPath(workingDir));
+				}
+			}
+			else
+			{
+				commandLine = new GeneralCommandLine(cmdline).withWorkDirectory(workingDir);
+			}
 			Map<String, String> environment = commandLine.getEnvironment();
 			PythonEnvUtil.setPythonUnbuffered(environment);
 			PythonEnvUtil.setPythonDontWriteBytecode(environment);

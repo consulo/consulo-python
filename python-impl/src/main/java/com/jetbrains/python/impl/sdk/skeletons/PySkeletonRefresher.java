@@ -203,7 +203,9 @@ public class PySkeletonRefresher {
         myIndicator = indicator;
         mySdk = sdk;
         mySkeletonsPath = skeletonsPath;
-        mySkeletonsGenerator = new PySkeletonGenerator(getSkeletonsPath(), mySdk, folder);
+        mySkeletonsGenerator = mySdk.getPlatform().equals(Platform.current())
+            ? new PySkeletonGenerator(getSkeletonsPath(), mySdk, folder)
+            : new PyPlatformSkeletonGenerator(getSkeletonsPath(), mySdk, folder);
     }
 
     private void indicate(LocalizeValue msg) {
@@ -797,6 +799,11 @@ public class PySkeletonRefresher {
         LOG.info("Pregenerated skeletons root is " + root);
         String versionString = mySdk.getVersionString();
         if (versionString == null) {
+            return null;
+        }
+
+        if (!mySdk.getPlatform().equals(Platform.current())) {
+            // the pregenerated skeletons are the ones of the local operating system
             return null;
         }
 
