@@ -23,6 +23,7 @@ import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.search.PyProjectScopeBuilder;
 import com.jetbrains.python.impl.sdk.flavors.CPythonSdkFlavor;
 import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;
+import com.jetbrains.python.impl.sdk.flavors.VirtualEnvSdkFlavor;
 import com.jetbrains.python.psi.LanguageLevel;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
@@ -71,6 +72,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -168,6 +171,20 @@ public final class PythonSdkType extends PlatformAwareSdkType {
                 directories.add(platform.fs().getPath(entry));
             }
         }
+        // virtualenvs, pyenv versions and conda environments: one interpreter in each child
+        for (Path root : getEnvironmentRoots(platform)) {
+            try (DirectoryStream<Path> children = Files.newDirectoryStream(root)) {
+                for (Path child : children) {
+                    directories.add(windows ? child.resolve("Scripts") : child.resolve("bin"));
+                    if (windows) {
+                        directories.add(child);
+                    }
+                }
+            }
+            catch (IOException | DirectoryIteratorException e) {
+                LOG.debug(e);
+            }
+        }
         // one home for one interpreter - python and python3, /bin and /usr/bin are often the same one
         Set<String> interpreters = new HashSet<>();
         for (Path directory : directories) {
@@ -181,14 +198,39 @@ public final class PythonSdkType extends PlatformAwareSdkType {
     }
 
     /**
-     * The interpreter behind the links - told by the interpreter itself, the file system of another machine does not
-     * resolve links.
+     * The directories whose children are environments - as {@link VirtualEnvSdkFlavor} looks for them on the local machine.
+     */
+    private static List<Path> getEnvironmentRoots(Platform platform) {
+        List<Path> roots = new ArrayList<>();
+        Path home = platform.user().homePath();
+        String workOnHome = platform.os().getEnvironmentVariable("WORKON_HOME");
+        roots.add(StringUtil.isEmpty(workOnHome) ? home.resolve(".virtualenvs") : platform.fs().getPath(workOnHome));
+        String pyEnvRoot = platform.os().getEnvironmentVariable("PYENV_ROOT");
+        roots.add((StringUtil.isEmpty(pyEnvRoot) ? home.resolve(".pyenv") : platform.fs().getPath(pyEnvRoot)).resolve("versions"));
+        for (String condaRoot : VirtualEnvSdkFlavor.CONDA_DEFAULT_ROOTS) {
+            roots.add(home.resolve(condaRoot).resolve("envs"));
+        }
+        if (!platform.os().isWindows()) {
+            roots.add(platform.fs().getPath("/opt/anaconda/envs"));
+        }
+        List<Path> existing = new ArrayList<>();
+        for (Path root : roots) {
+            if (Files.isDirectory(root)) {
+                existing.add(root);
+            }
+        }
+        return existing;
+    }
+
+    /**
+     * The interpreter behind the links with its environment - told by the interpreter itself, the file system of another
+     * machine does not resolve links. A virtualenv links the interpreter it was made from, its prefix tells them apart.
      */
     private static String getRealExecutable(Platform platform, Path interpreter) {
         GeneralCommandLine commandLine = new GeneralCommandLine();
         commandLine.withPlatform(platform);
         commandLine.withExecutablePath(interpreter);
-        commandLine.addParameters("-c", "import os, sys; print(os.path.realpath(sys.executable))");
+        commandLine.addParameters("-c", "import os, sys; print(os.path.realpath(sys.executable) + os.pathsep + sys.prefix)");
         try {
             ProcessOutput output = CapturingProcessUtil.execAndGetOutput(commandLine, MINUTE);
             List<String> lines = output.getStdoutLines();
