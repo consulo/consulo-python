@@ -18,20 +18,34 @@ public class AddExceptionBreakpointCommand extends ExceptionBreakpointCommand
 	protected void buildPayload(Payload payload)
 	{
 		super.buildPayload(payload);
-		payload.add(myNotifyPolicy.isNotifyOnlyOnFirst() ? 2 : 0).add(myNotifyPolicy.isNotifyOnTerminate()).add(myNotifyPolicy.isIgnoreLibraries());
+		// pydevd: 1 - on each raise, 2 - only on the first raise, 0 - not on raise
+		int notifyOnRaise = myNotifyPolicy.isNotifyOnlyOnFirst() ? 2 : myNotifyPolicy.isNotifyAlways() ? 1 : 0;
+		payload.add(notifyOnRaise).add(myNotifyPolicy.isNotifyOnTerminate()).add(myNotifyPolicy.isIgnoreLibraries());
 	}
 
 	public static class ExceptionBreakpointNotifyPolicy
 	{
+		private final boolean myNotifyAlways;
 		private final boolean myNotifyOnTerminate;
 		private final boolean myNotifyOnlyOnFirst;
 		private final boolean myIgnoreLibraries;
 
-		public ExceptionBreakpointNotifyPolicy(boolean notifyOnTerminate, boolean notifyOnlyOnFirst, boolean ignoreLibraries)
+		public ExceptionBreakpointNotifyPolicy(boolean notifyAlways, boolean notifyOnTerminate, boolean notifyOnlyOnFirst)
 		{
+			this(notifyAlways, notifyOnTerminate, notifyOnlyOnFirst, false);
+		}
+
+		public ExceptionBreakpointNotifyPolicy(boolean notifyAlways, boolean notifyOnTerminate, boolean notifyOnlyOnFirst, boolean ignoreLibraries)
+		{
+			myNotifyAlways = notifyAlways;
 			myNotifyOnTerminate = notifyOnTerminate;
 			myNotifyOnlyOnFirst = notifyOnlyOnFirst;
 			myIgnoreLibraries = ignoreLibraries;
+		}
+
+		public boolean isNotifyAlways()
+		{
+			return myNotifyAlways;
 		}
 
 		public boolean isNotifyOnTerminate()
