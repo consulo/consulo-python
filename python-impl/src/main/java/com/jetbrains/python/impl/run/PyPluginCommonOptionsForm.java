@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author yole
@@ -85,8 +86,11 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
             myModuleComboBox.setValue(validModules.get(0));
         }
 
+        // only the interpreters of the machine the project lives on can run its scripts
+        String platformTargetId = project.getPlatformTargetId();
         myInterpreterComboBox = BundleBox.builder(uiDisposable)
             .withSdkTypeFilterByClass(PythonSdkType.class)
+            .withBundleFilter(sdk -> Objects.equals(sdk.getPlatformTargetId(), platformTargetId))
             .withNoneItem()
             .build();
 
