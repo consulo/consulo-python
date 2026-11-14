@@ -258,7 +258,7 @@ public class PySkeletonRefresher {
      */
     public String getSkeletonsPath() throws InvalidSdkException {
         if (mySkeletonsPath == null) {
-            mySkeletonsPath = PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), mySdk.getHomePath());
+            mySkeletonsPath = PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), mySdk);
             File skeletonsDir = new File(mySkeletonsPath);
             if (!skeletonsDir.exists() && !skeletonsDir.mkdirs()) {
                 throw new InvalidSdkException("Can't create skeleton dir " + String.valueOf(mySkeletonsPath));
@@ -368,7 +368,7 @@ public class PySkeletonRefresher {
         Sdk base = PythonSdkType.getInstance().getVirtualEnvBaseSdk(mySdk);
         if (base != null) {
             indicate(LocalizeValue.localizeTODO("Copying base SDK skeletons for virtualenv..."));
-            String baseSkeletonsPath = PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), base.getHomePath());
+            String baseSkeletonsPath = PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), base);
             PySkeletonGenerator.ListBinariesResult baseBinaries =
                 mySkeletonsGenerator.listBinaries(base, calculateExtraSysPath(base, baseSkeletonsPath));
             for (Map.Entry<String, PyBinaryItem> entry : binaries.modules.entrySet()) {

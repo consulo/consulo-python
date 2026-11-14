@@ -45,8 +45,10 @@ import consulo.ui.UIAccess;
 import consulo.ui.annotation.RequiredUIAccess;
 import consulo.ui.ex.awt.Messages;
 import consulo.util.io.FileUtil;
+import consulo.platform.Platform;
 import consulo.virtualFileSystem.StandardFileSystems;
 import consulo.virtualFileSystem.VirtualFile;
+import consulo.virtualFileSystem.VirtualFileManager;
 import org.jspecify.annotations.Nullable;
 
 import java.awt.*;
@@ -145,10 +147,11 @@ public class PythonSdkUpdater implements PostStartupActivity {
                 public void run(ProgressIndicator indicator) {
                     Project project1 = (Project)getProject();
                     Sdk sdkInsideTask = PythonSdkType.findSdkByKey(key);
-                    if (sdkInsideTask != null) {
+                    // skeletons and packages are asked only of a local interpreter so far
+                    if (sdkInsideTask != null && sdkInsideTask.getPlatform().equals(Platform.current())) {
                         ourUnderRefresh.add(key);
                         try {
-                            String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
+                            String skeletonsPath = getBinarySkeletonsPath(sdk);
                             try {
                                 String sdkPresentableName = getSdkPresentableName(sdk);
                                 LOG.info("Performing background update of skeletons for SDK " + sdkPresentableName);
@@ -237,7 +240,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
     }
 
     private static boolean ensureBinarySkeletonsDirectoryExists(Sdk sdk) {
-        String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
+        String skeletonsPath = getBinarySkeletonsPath(sdk);
         if (skeletonsPath != null) {
             if (new File(skeletonsPath).mkdirs()) {
                 return true;
@@ -284,7 +287,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
         List<VirtualFile> results = Lists.newArrayList();
         for (String path : paths) {
             if (path != null && !FileUtil.extensionEquals(path, "egg-info")) {
-                VirtualFile virtualFile = StandardFileSystems.local().refreshAndFindFileByPath(path);
+                VirtualFile virtualFile = findRootPath(sdk, path);
                 if (virtualFile != null) {
                     VirtualFile rootFile = PythonSdkType.getSdkRootVirtualFile(virtualFile);
                     if (!excludedPaths.contains(rootFile) && !moduleRoots.contains(rootFile)) {
@@ -299,11 +302,23 @@ public class PythonSdkUpdater implements PostStartupActivity {
     }
 
     /**
+     * A path of sys.path - a path of the machine of the interpreter.
+     */
+    @Nullable
+    private static VirtualFile findRootPath(Sdk sdk, String path) {
+        Platform platform = sdk.getPlatform();
+        if (platform.equals(Platform.current())) {
+            return StandardFileSystems.local().refreshAndFindFileByPath(path);
+        }
+        return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(platform.fs().getPath(path));
+    }
+
+    /**
      * Returns the paths of the binary skeletons and user skeletons for an SDK.
      */
     private static List<VirtualFile> getSkeletonsPaths(Sdk sdk) {
         List<VirtualFile> results = Lists.newArrayList();
-        String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
+        String skeletonsPath = getBinarySkeletonsPath(sdk);
         if (skeletonsPath != null) {
             VirtualFile skeletonsDir = StandardFileSystems.local().refreshAndFindFileByPath(skeletonsPath);
             if (skeletonsDir != null) {
@@ -326,8 +341,8 @@ public class PythonSdkUpdater implements PostStartupActivity {
     }
 
     @Nullable
-    private static String getBinarySkeletonsPath(@Nullable String path) {
-        return path != null ? PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), path) : null;
+    private static String getBinarySkeletonsPath(Sdk sdk) {
+        return sdk.getHomePath() != null ? PythonSdkType.getSkeletonsPath(ContainerPathManager.get().getSystemPath(), sdk) : null;
     }
 
     /**
@@ -337,7 +352,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
      */
     private static List<String> evaluateSysPath(Sdk sdk) throws InvalidSdkException {
         long startTime = System.currentTimeMillis();
-        List<String> sysPath = PythonSdkType.getSysPath(sdk.getHomePath());
+        List<String> sysPath = PythonSdkType.getSysPath(sdk);
         LOG.info("Updating sys.path took " + (System.currentTimeMillis() - startTime) + " ms");
         return sysPath;
     }

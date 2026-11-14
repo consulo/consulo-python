@@ -147,6 +147,19 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 		}
 	}
 
+	/**
+	 * The home of an SDK is checked on the machine of that SDK - an unknown one on the local machine.
+	 */
+	private static boolean isValidSdkHome(String sdkHome)
+	{
+		Sdk sdk = PythonSdkType.findSdkByPath(sdkHome);
+		if(sdk == null)
+		{
+			return PythonSdkType.isValidLocalSdkHome(sdkHome);
+		}
+		return PythonSdkType.getInstance().isValidSdkHome(sdk.getPlatform(), sdk.getHomeNioPath());
+	}
+
 	private void checkSdk() throws RuntimeConfigurationError
 	{
 		if(!isUseModuleSdk())
@@ -155,7 +168,7 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 			{
 				throw new RuntimeConfigurationError(PyLocalize.runcfgUnittestNo_sdk());
 			}
-			else if(!PythonSdkType.getInstance().isValidSdkHome(getSdkHome()))
+			else if(!isValidSdkHome(getSdkHome()))
 			{
 				throw new RuntimeConfigurationError(PyLocalize.runcfgUnittestNo_valid_sdk());
 			}

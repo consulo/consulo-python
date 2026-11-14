@@ -16,6 +16,7 @@
 package com.jetbrains.python.impl.run;
 
 import com.jetbrains.python.PythonFileType;
+import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
@@ -63,10 +64,11 @@ public class PythonRunConfigurationProducer extends RunConfigurationProducer<Pyt
         if (vFile == null) {
             return false;
         }
-        configuration.setScriptName(vFile.getPath());
+        // the paths on the machine of the file - it is run there
+        configuration.setScriptName(PySdkUtil.toTargetPath(vFile));
         VirtualFile parent = vFile.getParent();
         if (parent != null) {
-            configuration.setWorkingDirectory(parent.getPath());
+            configuration.setWorkingDirectory(PySdkUtil.toTargetPath(parent));
         }
         Module module = script.getModule();
         if (module != null) {
@@ -96,7 +98,7 @@ public class PythonRunConfigurationProducer extends RunConfigurationProducer<Pyt
         }
         String workingDirectory = configuration.getWorkingDirectory();
         String scriptName = configuration.getScriptName();
-        String path = virtualFile.getPath();
+        String path = PySdkUtil.toTargetPath(virtualFile);
         return scriptName.equals(path) || path.equals(new File(workingDirectory, scriptName).getAbsolutePath());
     }
 

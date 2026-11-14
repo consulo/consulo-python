@@ -108,7 +108,7 @@ public class PythonScriptCommandLineState extends PythonCommandLineState {
     }
 
     if (!StringUtil.isEmptyOrSpaces(myConfig.getWorkingDirectory())) {
-      commandLine.setWorkDirectory(myConfig.getWorkingDirectory());
+      setWorkingDirectory(commandLine, myConfig.getWorkingDirectory());
     }
   }
 

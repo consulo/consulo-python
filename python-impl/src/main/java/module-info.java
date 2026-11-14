@@ -42,6 +42,7 @@ open module consulo.python.impl {
   requires consulo.logging.api;
   requires consulo.module.api;
   requires consulo.module.content.api;
+  requires consulo.module.creation.api;
   requires consulo.module.ui.api;
   requires consulo.navigation.api;
   requires consulo.platform.api;
@@ -201,4 +202,5 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.packaging.pip;
   exports consulo.python.impl.localize;
   exports consulo.python.module.extension;
+  exports consulo.python.module.newProject;
 }

@@ -17,6 +17,7 @@ package com.jetbrains.python.impl.sdk;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.impl.PythonHelper;
+import com.jetbrains.python.impl.PythonHelpersLocator;
 import com.jetbrains.python.impl.packaging.PyCondaPackageManagerImpl;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.search.PyProjectScopeBuilder;
@@ -27,6 +28,8 @@ import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
+import consulo.application.platform.PlatformTarget;
+import consulo.application.platform.PlatformTargetManager;
 import consulo.application.util.UserHomeFileUtil;
 import consulo.content.OrderRootType;
 import consulo.content.base.BinariesOrderRootType;
@@ -39,7 +42,9 @@ import consulo.logging.Logger;
 import consulo.module.Module;
 import consulo.platform.Platform;
 import consulo.platform.PlatformOperatingSystem;
+import consulo.process.ExecutionException;
 import consulo.process.cmd.GeneralCommandLine;
+import consulo.process.util.CapturingProcessUtil;
 import consulo.process.util.ProcessOutput;
 import consulo.project.Project;
 import consulo.project.ui.notification.NotificationGroup;
@@ -72,6 +77,8 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -80,8 +87,9 @@ import java.util.stream.Collectors;
  * @author yole
  */
 @ExtensionImpl
-public final class PythonSdkType extends SdkType {
+public final class PythonSdkType extends PlatformAwareSdkType {
     private static final Logger LOG = Logger.getInstance(PythonSdkType.class);
+    private static final Pattern VERSION_PATTERN = Pattern.compile("((?:Python|PyPy) \\S+)");
     private static final String[] WINDOWS_EXECUTABLE_SUFFIXES = new String[]{
         "cmd",
         "exe",
@@ -108,8 +116,6 @@ public final class PythonSdkType extends SdkType {
         "python.exe"
     };
 
-    private static final Key<WeakReference<Component>> SDK_CREATOR_COMPONENT_KEY = Key.create("#com.jetbrains.python.sdk.creatorComponent");
-
     public static PythonSdkType getInstance() {
         return Application.get().getExtensionPoint(SdkType.class).findExtensionOrFail(PythonSdkType.class);
     }
@@ -132,60 +138,77 @@ public final class PythonSdkType extends SdkType {
         return level.isOlderThan(LanguageLevel.PYTHON30) ? PyBuiltinCache.BUILTIN_FILE : PyBuiltinCache.BUILTIN_FILE_3K;
     }
 
-    @Nullable
-    public String suggestHomePath() {
-        String pythonFromPath = findPythonInPath();
-        if (pythonFromPath != null) {
-            return pythonFromPath;
-        }
-        for (PythonSdkFlavor flavor : PythonSdkFlavor.getApplicableFlavors()) {
-            TreeSet<String> candidates = createVersionSet();
-            candidates.addAll(flavor.suggestHomePaths());
-            if (!candidates.isEmpty()) {
-                // return latest version
-                String[] candidateArray = ArrayUtil.toStringArray(candidates);
-                return candidateArray[candidateArray.length - 1];
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private static String findPythonInPath() {
-        String defaultCommand = Platform.current().os().isWindows() ? "python.exe" : "python";
-        String path = System.getenv("PATH");
-        for (String root : path.split(File.pathSeparator)) {
-            File file = new File(root, defaultCommand);
-            if (file.exists()) {
-                try {
-                    return file.getCanonicalPath();
-                }
-                catch (IOException ignored) {
-                }
-            }
-        }
-        return null;
-    }
-
+    /**
+     * The interpreters of the machine. The home of an SDK is the interpreter itself: {@code /usr/bin/python3}.
+     * <p>
+     * The local machine is asked through the flavors (they also know virtualenvs, pyenv, conda); another machine through
+     * the usual directories and its {@code PATH}.
+     */
     @Override
-    public Collection<String> suggestHomePaths() {
-        List<String> candidates = new ArrayList<>();
-        for (PythonSdkFlavor flavor : PythonSdkFlavor.getApplicableFlavors()) {
-            candidates.addAll(flavor.suggestHomePaths());
+    public void collectHomePaths(Platform platform, Consumer<Path> pathConsumer) {
+        if (platform.equals(Platform.current())) {
+            for (PythonSdkFlavor flavor : PythonSdkFlavor.getApplicableFlavors()) {
+                for (String home : flavor.suggestHomePaths()) {
+                    pathConsumer.accept(Path.of(home));
+                }
+            }
+            return;
         }
-        return candidates;
+
+        Set<Path> directories = new LinkedHashSet<>();
+        boolean windows = platform.os().isWindows();
+        if (!windows) {
+            for (String directory : new String[]{"/usr/bin", "/usr/local/bin", "/opt/homebrew/bin"}) {
+                directories.add(platform.fs().getPath(directory));
+            }
+        }
+        String path = platform.os().getEnvironmentVariable("PATH");
+        if (path != null) {
+            for (String entry : StringUtil.split(path, platform.fs().getPathListSeparator())) {
+                directories.add(platform.fs().getPath(entry));
+            }
+        }
+        // one home for one interpreter - python and python3, /bin and /usr/bin are often the same one
+        Set<String> interpreters = new HashSet<>();
+        for (Path directory : directories) {
+            for (String name : windows ? new String[]{"python.exe"} : new String[]{"python3", "python"}) {
+                Path interpreter = directory.resolve(name);
+                if (Files.isRegularFile(interpreter) && interpreters.add(getRealExecutable(platform, interpreter))) {
+                    pathConsumer.accept(interpreter);
+                }
+            }
+        }
     }
 
-    private static TreeSet<String> createVersionSet() {
-        return new TreeSet<>((o1, o2) -> findDigits(o1).compareTo(findDigits(o2)));
+    /**
+     * The interpreter behind the links - told by the interpreter itself, the file system of another machine does not
+     * resolve links.
+     */
+    private static String getRealExecutable(Platform platform, Path interpreter) {
+        GeneralCommandLine commandLine = new GeneralCommandLine();
+        commandLine.withPlatform(platform);
+        commandLine.withExecutablePath(interpreter);
+        commandLine.addParameters("-c", "import os, sys; print(os.path.realpath(sys.executable))");
+        try {
+            ProcessOutput output = CapturingProcessUtil.execAndGetOutput(commandLine, MINUTE);
+            List<String> lines = output.getStdoutLines();
+            if (output.getExitCode() == 0 && !lines.isEmpty()) {
+                return lines.get(0);
+            }
+        }
+        catch (ExecutionException e) {
+            LOG.debug(e);
+        }
+        return interpreter.toString();
     }
 
-    private static String findDigits(String s) {
-        int pos = StringUtil.findFirst(s, Character::isDigit);
-        if (pos >= 0) {
-            return s.substring(pos);
-        }
-        return s;
+    /**
+     * Every interpreter of another machine becomes an SDK, so a project there always has one - the local machine keeps
+     * its interpreters for the user to add, it may have many virtualenvs.
+     */
+    @Override
+    public boolean canCreatePredefinedSdks(Platform platform) {
+        return !platform.equals(Platform.current());
     }
 
     public static boolean hasValidSdk() {
@@ -198,7 +221,18 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Override
-    public boolean isValidSdkHome(@Nullable String path) {
+    public boolean isValidSdkHome(Platform platform, Path path) {
+        if (platform.equals(Platform.current())) {
+            return isValidLocalSdkHome(path.toString());
+        }
+        String name = String.valueOf(path.getFileName()).toLowerCase(Locale.ROOT);
+        return Files.isRegularFile(path) && (name.startsWith("python") || name.startsWith("pypy"));
+    }
+
+    /**
+     * Whether the path is a home of an SDK of the local machine.
+     */
+    public static boolean isValidLocalSdkHome(@Nullable String path) {
         return PythonSdkFlavor.getFlavor(path) != null;
     }
 
@@ -208,14 +242,14 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Override
-    public FileChooserDescriptor getHomeChooserDescriptor() {
-        boolean isWindows = Platform.current().os().isWindows();
+    public FileChooserDescriptor getHomeChooserDescriptor(Platform platform) {
+        boolean isWindows = platform.os().isWindows();
         return new FileChooserDescriptor(true, false, false, false, false, false) {
             @Override
             public void validateSelectedPaths(List<Path> paths) throws Exception {
                 if (!paths.isEmpty()) {
                     Path path = paths.get(0);
-                    if (!isValidSdkHome(FileUtil.toSystemIndependentName(path.toString()))) {
+                    if (!isValidSdkHome(platformOf(path, platform), path)) {
                         throw new Exception(PyLocalize.sdkErrorInvalidInterpreterName$0(String.valueOf(path.getFileName())).get());
                     }
                 }
@@ -239,37 +273,16 @@ public final class PythonSdkType extends SdkType {
                 }
                 return super.isFileVisible(file, showHiddenFiles);
             }
-        }.withTitle(PyLocalize.sdkSelectPath()).withShowHiddenFiles(Platform.current().os().isUnix());
+        }.withTitle(PyLocalize.sdkSelectPath()).withShowHiddenFiles(!isWindows).withPlatform(platform);
     }
 
-    public boolean supportsCustomCreateUI() {
-        return true;
-    }
-
-    public void showCustomCreateUI(
-        SdkModel sdkModel,
-        JComponent parentComponent,
-        Consumer<Sdk> sdkCreatedCallback
-    ) {
-        Project project = DataManager.getInstance().getDataContext(parentComponent).getData(Project.KEY);
-        PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-        if (pointerInfo == null) {
-            return;
-        }
-        Point point = pointerInfo.getLocation();
-        PythonSdkDetailsStep.show(
-            project,
-            sdkModel.getSdks(),
-            null,
-            parentComponent,
-            point,
-            sdk -> {
-                if (sdk != null) {
-                    sdk.putUserData(SDK_CREATOR_COMPONENT_KEY, new WeakReference<>(parentComponent));
-                    sdkCreatedCallback.accept(sdk);
-                }
-            }
-        );
+    /**
+     * The machine a chosen path is on - the chooser may offer several of them.
+     */
+    private static Platform platformOf(Path path, Platform fallback) {
+        PlatformTarget target = Application.get().getInstance(PlatformTargetManager.class).findTargetOf(path);
+        Platform platform = target == null ? null : target.getPlatform();
+        return platform == null ? fallback : platform;
     }
 
     public static boolean isVirtualEnv(Sdk sdk) {
@@ -395,9 +408,12 @@ public final class PythonSdkType extends SdkType {
     }
 
     @Override
-    public String suggestSdkName(String currentSdkName, String sdkHome) {
-        String name = getVersionString(sdkHome);
-        return suggestSdkNameFromVersion(sdkHome, name);
+    public String suggestSdkName(Platform platform, @Nullable String currentSdkName, Path path) {
+        String version = getVersionString(platform, path);
+        if (platform.equals(Platform.current())) {
+            return suggestSdkNameFromVersion(path.toString(), version);
+        }
+        return (version == null ? "Unknown" : version) + " (" + path + ")";
     }
 
     private static String suggestSdkNameFromVersion(String sdkHome, String version) {
@@ -443,19 +459,6 @@ public final class PythonSdkType extends SdkType {
         return path.contains(SKELETON_DIR_NAME);
     }
 
-    @Override
-    public String sdkPath(VirtualFile homePath) {
-        String path = super.sdkPath(homePath);
-        PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(path);
-        if (flavor != null) {
-            VirtualFile sdkPath = flavor.getSdkPath(homePath);
-            if (sdkPath != null) {
-                return FileUtil.toSystemDependentName(sdkPath.getPath());
-            }
-        }
-        return FileUtil.toSystemDependentName(path);
-    }
-
 
     @Override
     public void setupSdkPaths(Sdk sdk) {
@@ -480,6 +483,15 @@ public final class PythonSdkType extends SdkType {
     /**
      * Returns skeletons location on the local machine. Independent of SDK credentials type (e.g. ssh, Vagrant, Docker or else).
      */
+    /**
+     * The skeletons of an SDK - an interpreter of another machine has its own, also when its path is a path of the local one.
+     */
+    public static String getSkeletonsPath(String basePath, Sdk sdk) {
+        Platform platform = sdk.getPlatform();
+        String sdkHome = StringUtil.notNullize(sdk.getHomePath());
+        return getSkeletonsPath(basePath, platform.equals(Platform.current()) ? sdkHome : platform.getId() + "/" + sdkHome);
+    }
+
     public static String getSkeletonsPath(String basePath, String sdkHome) {
         String sep = File.separator;
         return getSkeletonsRootPath(basePath) + sep + FileUtil.toSystemIndependentName(sdkHome).hashCode() + sep;
@@ -499,6 +511,37 @@ public final class PythonSdkType extends SdkType {
             List<String> ret = new ArrayList<>(1);
             ret.add(working_dir);
             return ret;
+        }
+    }
+
+    /**
+     * The sys.path of the interpreter - asked on its machine.
+     */
+    public static List<String> getSysPath(Sdk sdk) throws InvalidSdkException {
+        Platform platform = sdk.getPlatform();
+        if (platform.equals(Platform.current())) {
+            return getSysPath(sdk.getHomePath());
+        }
+        try {
+            String script = PythonHelpersLocator.toPlatformPath(PythonHelper.SYSPATH.asParamString(), platform);
+            GeneralCommandLine commandLine = new GeneralCommandLine();
+            commandLine.withPlatform(platform);
+            commandLine.withExecutablePath(sdk.getHomeNioPath());
+            commandLine.addParameter(script);
+            // the directory of the script - a '.' of PYTHONPATH must not add the directory of the interpreter
+            commandLine.withWorkingDirectory(platform.fs().getPath(script).getParent());
+            ProcessOutput output = CapturingProcessUtil.execAndGetOutput(commandLine, MINUTE);
+            if (!output.checkSuccess(LOG)) {
+                throw new InvalidSdkException(String.format(
+                    "Failed to determine Python's sys.path value:\nSTDOUT: %s\nSTDERR: %s",
+                    output.getStdout(),
+                    output.getStderr()
+                ));
+            }
+            return output.getStdoutLines();
+        }
+        catch (IOException | ExecutionException e) {
+            throw new InvalidSdkException("Failed to determine Python's sys.path value of " + sdk.getHomePath(), e);
         }
     }
 
@@ -530,11 +573,36 @@ public final class PythonSdkType extends SdkType {
         return null;
     }
 
+    /**
+     * {@code Python 3.12.3} - of {@code python -V}, run on the machine of the interpreter.
+     */
     @Override
     @Nullable
-    public String getVersionString(String sdkHome) {
-        PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(sdkHome);
-        return flavor != null ? flavor.getVersionString(sdkHome) : null;
+    public String getVersionString(Platform platform, Path path) {
+        if (platform.equals(Platform.current())) {
+            String sdkHome = path.toString();
+            PythonSdkFlavor flavor = PythonSdkFlavor.getFlavor(sdkHome);
+            return flavor != null ? flavor.getVersionString(sdkHome) : null;
+        }
+
+        GeneralCommandLine commandLine = new GeneralCommandLine();
+        commandLine.withPlatform(platform);
+        commandLine.withExecutablePath(path);
+        commandLine.addParameter("-V");
+        try {
+            ProcessOutput output = CapturingProcessUtil.execAndGetOutput(commandLine);
+            // python 2 prints its version to stderr
+            for (String line : ContainerUtil.concat(output.getStdoutLines(), output.getStderrLines())) {
+                Matcher matcher = VERSION_PATTERN.matcher(line);
+                if (matcher.find()) {
+                    return matcher.group(1);
+                }
+            }
+        }
+        catch (ExecutionException e) {
+            LOG.warn("Cannot ask the version of " + path, e);
+        }
+        return null;
     }
 
     public static List<Sdk> getAllSdks() {

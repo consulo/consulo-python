@@ -16,12 +16,16 @@
 
 package com.jetbrains.python.impl;
 
+import consulo.application.platform.PlatformTransfer;
 import consulo.container.boot.ContainerPathManager;
 import consulo.container.plugin.PluginManager;
 import consulo.logging.Logger;
+import consulo.platform.Platform;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class PythonHelpersLocator {
   private static final Logger LOG = Logger.getInstance(PythonHelpersLocator.class);
@@ -35,6 +39,32 @@ public class PythonHelpersLocator {
   public static File getHelpersRoot() {
     File pluginPath = PluginManager.getPluginPath(PythonHelpersLocator.class);
     return new File(pluginPath, "helpers");
+  }
+
+  /**
+   * The helpers on the machine of an interpreter - the local directory, or its copy on another machine, copied once per
+   * version of the helpers. Blocking - not on the UI thread.
+   */
+  public static Path getHelpersRoot(Platform platform) throws IOException {
+    Path localRoot = getHelpersRoot().toPath();
+    return platform.equals(Platform.current()) ? localRoot : PlatformTransfer.getInstance().transfer(localRoot, platform);
+  }
+
+  /**
+   * A path under the local helper root as the same path on the machine of an interpreter.
+   */
+  public static String toPlatformPath(String localPath, Platform platform) throws IOException {
+    if (platform.equals(Platform.current())) {
+      return localPath;
+    }
+    Path localRoot = getHelpersRoot().toPath();
+    Path relative = localRoot.relativize(Path.of(localPath));
+    Path result = getHelpersRoot(platform);
+    // name by name - the separators of that machine may differ
+    for (Path name : relative) {
+      result = result.resolve(name.toString());
+    }
+    return result.toString();
   }
 
   /**

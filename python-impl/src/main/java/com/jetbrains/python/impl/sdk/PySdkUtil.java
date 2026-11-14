@@ -29,6 +29,7 @@ import consulo.process.ProcessHandlerBuilder;
 import consulo.process.cmd.GeneralCommandLine;
 import consulo.process.util.CapturingProcessAdapter;
 import consulo.process.util.ProcessOutput;
+import consulo.util.io.FileUtil;
 import consulo.util.lang.StringUtil;
 import consulo.util.lang.SystemProperties;
 import consulo.virtualFileSystem.VirtualFile;
@@ -38,6 +39,7 @@ import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -189,6 +191,18 @@ public class PySdkUtil {
             }
         }
         return result;
+    }
+
+    /**
+     * The path of the file on its machine - what a process running there gets. A file of another machine is not named
+     * by its path in the IDE, which names that machine too.
+     */
+    public static String toTargetPath(VirtualFile file) {
+        if (file.isInLocalFileSystem() || !file.isInLocalLikeFileSystem()) {
+            return file.getPath();
+        }
+        Path path = file.getFileSystem().getNioPath(file);
+        return path == null ? file.getPath() : FileUtil.toSystemIndependentName(path.toString());
     }
 
     public static String getUserSite() {

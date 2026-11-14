@@ -23,6 +23,7 @@ import com.jetbrains.python.impl.debugger.PyDebugRunner;
 import com.jetbrains.python.impl.debugger.PyDebuggerOptionsProvider;
 import com.jetbrains.python.impl.facet.LibraryContributingFacet;
 import com.jetbrains.python.impl.facet.PythonPathContributingFacet;
+import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.impl.sdk.PythonEnvUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkAdditionalData;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
@@ -55,6 +56,7 @@ import consulo.module.content.ModuleRootManager;
 import consulo.module.content.layer.orderEntry.LibraryOrderEntry;
 import consulo.module.content.layer.orderEntry.OrderEntry;
 import consulo.module.extension.ModuleExtension;
+import consulo.platform.Platform;
 import consulo.process.ExecutionException;
 import consulo.process.ProcessHandler;
 import consulo.process.cmd.GeneralCommandLine;
@@ -223,6 +225,9 @@ public abstract class PythonCommandLineState extends CommandLineState {
 
   public static GeneralCommandLine createPythonCommandLine(Project project, PythonRunParams config, boolean isDebug) {
     GeneralCommandLine commandLine = new GeneralCommandLine();
+    // the process runs on the machine of the interpreter
+    Sdk sdk = findSdk(project, config);
+    commandLine.withPlatform(sdk == null ? Platform.current() : sdk.getPlatform());
 
     commandLine.withCharset(EncodingProjectManager.getInstance(project).getDefaultCharset());
 
@@ -348,7 +353,7 @@ public abstract class PythonCommandLineState extends CommandLineState {
   }
 
   private static void addIfNeeded(VirtualFile file, Collection<String> pathList) {
-    addIfNeeded(pathList, file.getPath());
+    addIfNeeded(pathList, PySdkUtil.toTargetPath(file));
   }
 
   protected static void addIfNeeded(Collection<String> pathList, String path) {
@@ -464,7 +469,38 @@ public abstract class PythonCommandLineState extends CommandLineState {
   protected static void setRunnerPath(Project project, GeneralCommandLine commandLine, PythonRunParams config) {
     String interpreterPath = getInterpreterPath(project, config);
     if (StringUtil.isNotEmpty(interpreterPath)) {
-      commandLine.setExePath(FileUtil.toSystemDependentName(interpreterPath));
+      Platform platform = commandLine.getPlatform();
+      if (platform.equals(Platform.current())) {
+        commandLine.setExePath(FileUtil.toSystemDependentName(interpreterPath));
+      }
+      else {
+        commandLine.withExecutablePath(platform.fs().getPath(interpreterPath));
+      }
+    }
+  }
+
+  /**
+   * The SDK the configuration runs with.
+   */
+  @Nullable
+  public static Sdk findSdk(Project project, PythonRunParams config) {
+    String sdkHome = config.getSdkHome();
+    if (config.isUseModuleSdk() || StringUtil.isEmpty(sdkHome)) {
+      return PythonSdkType.findPythonSdk(getModule(project, config));
+    }
+    return PythonSdkType.findSdkByPath(sdkHome);
+  }
+
+  /**
+   * A directory of the machine of the command line.
+   */
+  public static void setWorkingDirectory(GeneralCommandLine commandLine, String directory) {
+    Platform platform = commandLine.getPlatform();
+    if (platform.equals(Platform.current())) {
+      commandLine.setWorkDirectory(directory);
+    }
+    else {
+      commandLine.withWorkingDirectory(platform.fs().getPath(directory));
     }
   }
 
