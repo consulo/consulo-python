@@ -213,11 +213,7 @@ public class PyPackageManagementService extends PackageManagementServiceEx {
 
   @Override
   public String getInstallToUserText() {
-    String userSiteText = "Install to user's site packages directory";
-    if (!PythonSdkType.isRemote(mySdk)) {
-      userSiteText += " (" + PySdkUtil.getUserSite() + ")";
-    }
-    return userSiteText;
+    return "Install to user's site packages directory (" + PySdkUtil.getUserSite() + ")";
   }
 
   @Override

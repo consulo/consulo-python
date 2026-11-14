@@ -38,7 +38,6 @@ import consulo.execution.configuration.WorkingDirectoryAware;
 import consulo.execution.configuration.fragment.EnvironmentFragmentState;
 import consulo.execution.configuration.fragment.WorkingDirectoryFragmentState;
 import consulo.execution.test.AbstractTestProxy;
-import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.ModuleUtilCore;
@@ -72,7 +71,6 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 	public static final String TEST_NAME_PARTS_SPLITTER = "::";
 
 	@Nullable
-	private PathMappingSettings myMappingSettings;
 
 	@RequiredReadAction
     public AbstractPythonRunConfiguration(Project project, ConfigurationFactory factory)
@@ -107,18 +105,6 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
     public List<Module> getValidModules()
 	{
 		return getValidModules(getProject());
-	}
-
-	@Override
-    public PathMappingSettings getMappingSettings()
-	{
-		return myMappingSettings;
-	}
-
-	@Override
-    public void setMappingSettings(@Nullable PathMappingSettings mappingSettings)
-	{
-		myMappingSettings = mappingSettings;
 	}
 
 	public static List<Module> getValidModules(Project project)
@@ -337,7 +323,6 @@ public abstract class AbstractPythonRunConfiguration<T extends AbstractPythonRun
 		target.setWorkingDirectory(source.getWorkingDirectory());
 		target.setModule(source.getModule());
 		target.setUseModuleSdk(source.isUseModuleSdk());
-		target.setMappingSettings(source.getMappingSettings());
 		target.setAddContentRoots(source.shouldAddContentRoots());
 		target.setAddSourceRoots(source.shouldAddSourceRoots());
 	}

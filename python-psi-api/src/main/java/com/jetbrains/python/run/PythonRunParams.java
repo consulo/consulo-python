@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.run;
 
-import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.module.Module;
 
 import org.jspecify.annotations.Nullable;
@@ -53,11 +52,6 @@ public interface PythonRunParams {
   Map<String, String> getEnvs();
 
   void setEnvs(Map<String, String> envs);
-
-  @Nullable
-  PathMappingSettings getMappingSettings();
-
-  void setMappingSettings(@Nullable PathMappingSettings mappingSettings);
 
   boolean shouldAddContentRoots();
 

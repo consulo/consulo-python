@@ -150,12 +150,6 @@ public class PythonSdkUpdater implements PostStartupActivity {
                         try {
                             String skeletonsPath = getBinarySkeletonsPath(sdk.getHomePath());
                             try {
-                                if (PythonSdkType.isRemote(sdkInsideTask) && project1 == null && ownerComponent == null) {
-                                    LOG.error(
-                                        "For refreshing skeletons of remote SDK, " +
-                                            "either project or owner component must be specified"
-                                    );
-                                }
                                 String sdkPresentableName = getSdkPresentableName(sdk);
                                 LOG.info("Performing background update of skeletons for SDK " + sdkPresentableName);
                                 indicator.setText(LocalizeValue.localizeTODO("Updating skeletons..."));
@@ -227,20 +221,18 @@ public class PythonSdkUpdater implements PostStartupActivity {
      */
     @RequiredReadAction
     public static boolean updateLocalSdkPaths(Sdk sdk, @Nullable SdkModificator sdkModificator, @Nullable Project project) {
-        if (!PythonSdkType.isRemote(sdk)) {
-            List<VirtualFile> localSdkPaths;
-            boolean forceCommit = ensureBinarySkeletonsDirectoryExists(sdk);
-            try {
-                localSdkPaths = getLocalSdkPaths(sdk, project);
-            }
-            catch (InvalidSdkException e) {
-                if (!PythonSdkType.isInvalid(sdk)) {
-                    LOG.error(e);
-                }
-                return false;
-            }
-            commitSdkPathsIfChanged(sdk, sdkModificator, localSdkPaths, forceCommit);
+        List<VirtualFile> localSdkPaths;
+        boolean forceCommit = ensureBinarySkeletonsDirectoryExists(sdk);
+        try {
+            localSdkPaths = getLocalSdkPaths(sdk, project);
         }
+        catch (InvalidSdkException e) {
+            if (!PythonSdkType.isInvalid(sdk)) {
+                LOG.error(e);
+            }
+            return false;
+        }
+        commitSdkPathsIfChanged(sdk, sdkModificator, localSdkPaths, forceCommit);
         return true;
     }
 
@@ -344,9 +336,6 @@ public class PythonSdkUpdater implements PostStartupActivity {
      * Returns all the existing paths except those manually excluded by the user.
      */
     private static List<String> evaluateSysPath(Sdk sdk) throws InvalidSdkException {
-        if (PythonSdkType.isRemote(sdk)) {
-            throw new IllegalArgumentException("Cannot evaluate sys.path for remote Python interpreter " + sdk);
-        }
         long startTime = System.currentTimeMillis();
         List<String> sysPath = PythonSdkType.getSysPath(sdk.getHomePath());
         LOG.info("Updating sys.path took " + (System.currentTimeMillis() - startTime) + " ms");

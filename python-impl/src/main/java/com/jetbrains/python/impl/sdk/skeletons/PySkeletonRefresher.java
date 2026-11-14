@@ -232,9 +232,6 @@ public class PySkeletonRefresher {
         VirtualFile userSkeletonsDir = PyUserSkeletonsUtil.getUserSkeletonsDirectory();
         File userSkeletons = userSkeletonsDir != null ? new File(userSkeletonsDir.getPath()) : null;
 
-        VirtualFile remoteSourcesDir = PySdkUtil.findAnyRemoteLibrary(sdk);
-        File remoteSources = remoteSourcesDir != null ? new File(remoteSourcesDir.getPath()) : null;
-
         List<VirtualFile> paths = new ArrayList<>();
 
         paths.addAll(Arrays.asList(sdk.getRootProvider().getFiles(BinariesOrderRootType.ID)));
@@ -246,8 +243,7 @@ public class PySkeletonRefresher {
                 File canonicalFile = new File(file.getPath());
                 if (canonicalFile.exists()
                     && !FileUtil.filesEqual(canonicalFile, skeletons)
-                    && !FileUtil.filesEqual(canonicalFile, userSkeletons)
-                    && !FileUtil.filesEqual(canonicalFile, remoteSources)) {
+                    && !FileUtil.filesEqual(canonicalFile, userSkeletons)) {
                     return file.getPath();
                 }
             }
@@ -344,7 +340,7 @@ public class PySkeletonRefresher {
             cleanUpSkeletons(skeletonsDir);
         }
 
-        if ((builtinsUpdated || PySdkUtil.isRemote(mySdk)) && myProject != null) {
+        if (builtinsUpdated && myProject != null) {
             Application.get().invokeLater(() -> DaemonCodeAnalyzer.getInstance(myProject).restart(), myProject.getDisposed());
         }
 
@@ -801,10 +797,6 @@ public class PySkeletonRefresher {
         LOG.info("Pregenerated skeletons root is " + root);
         String versionString = mySdk.getVersionString();
         if (versionString == null) {
-            return null;
-        }
-
-        if (PySdkUtil.isRemote(mySdk)) {
             return null;
         }
 

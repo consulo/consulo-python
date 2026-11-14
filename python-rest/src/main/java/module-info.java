@@ -39,8 +39,6 @@ module consulo.python.rest {
   requires java.desktop;
   requires org.jdom;
 
-  // TODO remove in future - for PathMappingSettings
-  requires consulo.ide.impl;
   requires consulo.repository.ui.api;
 
   opens com.jetbrains.python.rest.run to consulo.util.xml.serializer, consulo.execution.api;

@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.run;
 
-import com.jetbrains.python.impl.sdk.PySdkUtil;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import consulo.application.ApplicationPropertiesComponent;
 import consulo.content.bundle.Sdk;
@@ -24,8 +23,6 @@ import consulo.execution.localize.ExecutionLocalize;
 import consulo.execution.ui.awt.EnvironmentVariablesTextFieldWithBrowseButton;
 import consulo.fileChooser.FileChooserDescriptorFactory;
 import consulo.fileChooser.FileChooserTextBoxBuilder;
-import consulo.ide.impl.idea.execution.util.PathMappingsComponent;
-import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.module.Module;
 import consulo.module.ModulesAlphaComparator;
 import consulo.module.ui.BundleBox;
@@ -39,7 +36,6 @@ import consulo.ui.Component;
 import consulo.ui.RadioGroup;
 import consulo.ui.TextBoxWithExpandAction;
 import consulo.ui.annotation.RequiredUIAccess;
-import consulo.ui.ex.awtUnsafe.TargetAWT;
 import consulo.ui.layout.FoldoutLayout;
 import consulo.ui.model.FlatDataModel;
 import consulo.ui.model.MutableFlatDataModel;
@@ -59,7 +55,6 @@ import java.util.Map;
  */
 public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
     private final MutableFlatDataModel<Module> myModules;
-    private final Map<Module, Sdk> myModuleSdks = new HashMap<>();
     private final EnvironmentVariablesTextFieldWithBrowseButton myEnvsComponent;
     private final RadioGroup<Boolean> myUseModuleSdkGroup;
     private final ComboBox<Module> myModuleComboBox;
@@ -68,11 +63,7 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
     private final FileChooserTextBoxBuilder.Controller myWorkingDirectoryTextField;
     private final CheckBox myAddContentRootsCheckbox;
     private final CheckBox myAddSourceRootsCheckbox;
-    private final @Nullable PathMappingsComponent myPathMappingsComponent;
-    private final @Nullable Component myPathMappingsPanel;
     private final FoldoutLayout myMainPanel;
-
-    private PathMappingSettings myMappingSettings = new PathMappingSettings();
 
     @RequiredUIAccess
     public PyPluginCommonOptionsForm(PyCommonOptionsFormData data, Disposable uiDisposable) {
@@ -132,25 +123,6 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         builder.addLabeled(PyLocalize.runcfgLabelsInterpreter_options(), myInterpreterOptionsTextField);
         builder.addLabeled(PyLocalize.runcfgLabelsWorking_directory(), myWorkingDirectoryTextField.getComponent());
 
-        if (project.getApplication().isUnifiedApplication()) {
-            myPathMappingsComponent = null;
-            myPathMappingsPanel = null;
-        }
-        else {
-            for (Module module : validModules) {
-                Sdk sdk = PythonSdkType.findPythonSdk(module);
-                if (sdk != null) {
-                    myModuleSdks.put(module, sdk);
-                }
-            }
-
-            PathMappingsComponent pathMappingsComponent = new PathMappingsComponent();
-            Component pathMappingsPanel = TargetAWT.wrap(pathMappingsComponent);
-            builder.addBottom(pathMappingsPanel);
-            myPathMappingsComponent = pathMappingsComponent;
-            myPathMappingsPanel = pathMappingsPanel;
-        }
-
         builder.addBottom(myAddContentRootsCheckbox);
         builder.addBottom(myAddSourceRootsCheckbox);
 
@@ -174,20 +146,6 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
         boolean useModuleSdk = isUseModuleSdk();
         myModuleComboBox.setEnabled(useModuleSdk);
         myInterpreterComboBox.getComponent().setEnabled(!useModuleSdk);
-
-        Component pathMappingsPanel = myPathMappingsPanel;
-        if (pathMappingsPanel != null) {
-            pathMappingsPanel.setVisible(PySdkUtil.isRemote(getSelectedSdk()));
-        }
-    }
-
-    private @Nullable Sdk getSelectedSdk() {
-        if (isUseModuleSdk()) {
-            Module module = getModule();
-            return module == null ? null : myModuleSdks.get(module);
-        }
-        BundleBox.BundleBoxItem item = myInterpreterComboBox.getComponent().getValue();
-        return item == null ? null : item.getBundle();
     }
 
     @RequiredUIAccess
@@ -312,23 +270,6 @@ public class PyPluginCommonOptionsForm implements AbstractPyCommonOptionsForm {
     @Override
     public void setEnvs(Map<String, String> envs) {
         myEnvsComponent.setEnvs(envs);
-    }
-
-    @Override
-    public PathMappingSettings getMappingSettings() {
-        PathMappingsComponent pathMappingsComponent = myPathMappingsComponent;
-        return pathMappingsComponent != null ? pathMappingsComponent.getMappingSettings() : myMappingSettings;
-    }
-
-    @Override
-    public void setMappingSettings(@Nullable PathMappingSettings mappingSettings) {
-        PathMappingsComponent pathMappingsComponent = myPathMappingsComponent;
-        if (pathMappingsComponent != null) {
-            pathMappingsComponent.setMappingSettings(mappingSettings);
-        }
-        else {
-            myMappingSettings = mappingSettings == null ? new PathMappingSettings() : mappingSettings;
-        }
     }
 
     @Override

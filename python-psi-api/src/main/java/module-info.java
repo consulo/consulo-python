@@ -31,8 +31,6 @@ module consulo.python.language.api {
 
   requires com.google.common;
 
-  // TODO remove in future
-  requires consulo.ide.impl;
 
   exports com.jetbrains.python;
   exports com.jetbrains.python.codeInsight;

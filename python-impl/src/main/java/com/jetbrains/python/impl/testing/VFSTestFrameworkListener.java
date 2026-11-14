@@ -85,9 +85,6 @@ public class VFSTestFrameworkListener implements BulkFileListener {
             continue;
           }
           for (Sdk sdk : PythonSdkType.getAllSdks()) {
-            if (PySdkUtil.isRemote(sdk)) {
-              continue;
-            }
             for (VirtualFile virtualFile : sdk.getRootProvider().getFiles(BinariesOrderRootType.ID)) {
               String root = virtualFile.getCanonicalPath();
               if (root != null && path.contains(root)) {

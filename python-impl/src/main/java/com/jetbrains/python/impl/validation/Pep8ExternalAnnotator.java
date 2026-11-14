@@ -204,8 +204,7 @@ public class Pep8ExternalAnnotator extends ExternalAnnotator<Pep8ExternalAnnotat
         List<Sdk> allSdks = PythonSdkType.getAllSdks();
         Collections.sort(allSdks, PreferredSdkComparator.INSTANCE);
         for (Sdk sdk : allSdks) {
-            LOG.info("  Path: " + sdk.getHomePath() + "; Flavor: " + PythonSdkFlavor.getFlavor(sdk) + "; Remote: " + PythonSdkType.isRemote(
-                sdk));
+            LOG.info("  Path: " + sdk.getHomePath() + "; Flavor: " + PythonSdkFlavor.getFlavor(sdk));
         }
         LOG.info("]");
     }

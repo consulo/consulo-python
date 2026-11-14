@@ -27,7 +27,6 @@ import consulo.component.persist.State;
 import consulo.component.persist.Storage;
 import consulo.component.persist.StoragePathMacros;
 import consulo.ide.ServiceManager;
-import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.module.Module;
 import consulo.module.ModuleManager;
 import consulo.project.Project;
@@ -107,7 +106,6 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
     public String myWorkingDirectory = "";
     public boolean myAddContentRoots = true;
     public boolean myAddSourceRoots;
-    private PathMappingSettings myMappings = new PathMappingSettings();
 
     public PyConsoleSettings() {
     }
@@ -127,7 +125,6 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
 
       myAddContentRoots = form.shouldAddContentRoots();
       myAddSourceRoots = form.shouldAddSourceRoots();
-      myMappings = form.getMappingSettings() == null ? new PathMappingSettings() : form.getMappingSettings();
     }
 
     public boolean isModified(AbstractPyCommonOptionsForm form) {
@@ -140,7 +137,7 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
         myAddSourceRoots != form.shouldAddSourceRoots() || !ComparatorUtil.equalsNullable(myModuleName,
                                                                                           form.getModule() == null ? null : form.getModule()
                                                                                                                                 .getName()) ||
-        !myWorkingDirectory.equals(form.getWorkingDirectory()) || !myMappings.equals(form.getMappingSettings());
+        !myWorkingDirectory.equals(form.getWorkingDirectory());
     }
 
     public void reset(Project project, AbstractPythonRunConfigurationParams form) {
@@ -167,8 +164,6 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
       }
 
       form.setWorkingDirectory(myWorkingDirectory);
-
-      form.setMappingSettings(myMappings);
     }
 
     @Attribute("custom-start-script")
@@ -227,11 +222,6 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
       return myInterpreterOptions;
     }
 
-    @AbstractCollection(surroundWithTag = false)
-    public PathMappingSettings getMappings() {
-      return myMappings;
-    }
-
     public void setCustomStartScript(String customStartScript) {
       myCustomStartScript = customStartScript;
     }
@@ -276,17 +266,6 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
       myEnvs = envs;
     }
 
-    @Nullable
-    @Override
-    public PathMappingSettings getMappingSettings() {
-      return getMappings();
-    }
-
-    @Override
-    public void setMappingSettings(@Nullable PathMappingSettings mappingSettings) {
-
-    }
-
     @Override
     public void setWorkingDirectory(String workingDirectory) {
       myWorkingDirectory = workingDirectory;
@@ -300,10 +279,6 @@ public class PyConsoleOptions implements PersistentStateComponent<PyConsoleOptio
     @Override
     public void setAddSourceRoots(boolean addSourceRoots) {
       myAddSourceRoots = addSourceRoots;
-    }
-
-    public void setMappings(@Nullable PathMappingSettings mappings) {
-      myMappings = mappings != null ? mappings : new PathMappingSettings();
     }
   }
 }

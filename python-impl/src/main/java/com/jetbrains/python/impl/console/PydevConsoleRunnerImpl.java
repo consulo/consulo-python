@@ -57,7 +57,6 @@ import consulo.execution.ui.console.language.LanguageConsoleView;
 import consulo.execution.util.ConsoleTitleGen;
 import consulo.ide.impl.idea.execution.configurations.EncodingEnvironmentUtil;
 import consulo.ide.impl.idea.execution.console.ConsoleHistoryControllerImpl;
-import consulo.ide.impl.idea.util.PathMappingSettings;
 import consulo.language.editor.completion.lookup.LookupManager;
 import consulo.language.file.light.LightVirtualFile;
 import consulo.language.psi.PsiFile;
@@ -1037,17 +1036,6 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
 
         @Override
         public void setEnvs(Map<String, String> envs) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Nullable
-        @Override
-        public PathMappingSettings getMappingSettings() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setMappingSettings(@Nullable PathMappingSettings mappingSettings) {
             throw new UnsupportedOperationException();
         }
 

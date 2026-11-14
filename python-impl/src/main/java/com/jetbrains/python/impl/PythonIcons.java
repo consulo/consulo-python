@@ -55,7 +55,6 @@ public class PythonIcons {
         public static final Image Python = PythonPsiIconGroup.python();
         public static final Image PythonConsole = PythonImplIconGroup.pythonPythonconsole();
         public static final Image PythonTests = PythonImplIconGroup.pythonPythontests();
-        public static final Image RemoteInterpreter = PythonImplIconGroup.pythonRemoteinterpreter();
         public static final Image Virtualenv = PythonImplIconGroup.pythonVirtualenv();
     }
 }

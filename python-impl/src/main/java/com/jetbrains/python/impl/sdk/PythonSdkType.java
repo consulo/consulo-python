@@ -81,7 +81,6 @@ import java.util.stream.Collectors;
  */
 @ExtensionImpl
 public final class PythonSdkType extends SdkType {
-    public static final String REMOTE_SOURCES_DIR_NAME = "remote_sources";
     private static final Logger LOG = Logger.getInstance(PythonSdkType.class);
     private static final String[] WINDOWS_EXECUTABLE_SUFFIXES = new String[]{
         "cmd",
@@ -110,7 +109,6 @@ public final class PythonSdkType extends SdkType {
     };
 
     private static final Key<WeakReference<Component>> SDK_CREATOR_COMPONENT_KEY = Key.create("#com.jetbrains.python.sdk.creatorComponent");
-    public static final Predicate<Sdk> REMOTE_SDK_PREDICATE = sdk -> isRemote(sdk);
 
     public static PythonSdkType getInstance() {
         return Application.get().getExtensionPoint(SdkType.class).findExtensionOrFail(PythonSdkType.class);
@@ -209,20 +207,6 @@ public final class PythonSdkType extends SdkType {
         return interpreter == null || !interpreter.exists();
     }
 
-    @Deprecated
-    public static boolean isRemote(@Nullable Sdk sdk) {
-        return false;
-    }
-
-    @Deprecated
-    public static boolean isVagrant(@Nullable Sdk sdk) {
-        return false;
-    }
-
-    public static boolean isRemote(@Nullable String sdkPath) {
-        return isRemote(findSdkByPath(sdkPath));
-    }
-
     @Override
     public FileChooserDescriptor getHomeChooserDescriptor() {
         boolean isWindows = Platform.current().os().isWindows();
@@ -309,11 +293,9 @@ public final class PythonSdkType extends SdkType {
             String version = getVersionString(sdk);
             if (flavor != null && version != null) {
                 for (Sdk baseSdk : getAllSdks()) {
-                    if (!isRemote(baseSdk)) {
-                        PythonSdkFlavor baseFlavor = PythonSdkFlavor.getFlavor(baseSdk);
-                        if (!isVirtualEnv(baseSdk) && flavor.equals(baseFlavor) && version.equals(getVersionString(baseSdk))) {
-                            return baseSdk;
-                        }
+                    PythonSdkFlavor baseFlavor = PythonSdkFlavor.getFlavor(baseSdk);
+                    if (!isVirtualEnv(baseSdk) && flavor.equals(baseFlavor) && version.equals(getVersionString(baseSdk))) {
+                        return baseSdk;
                     }
                 }
             }
@@ -604,9 +586,6 @@ public final class PythonSdkType extends SdkType {
 
     @Override
     public boolean sdkHasValidPath(Sdk sdk) {
-        if (PySdkUtil.isRemote(sdk)) {
-            return true;
-        }
         VirtualFile homeDir = sdk.getHomeDirectory();
         return homeDir != null && homeDir.isValid();
     }
@@ -657,19 +636,14 @@ public final class PythonSdkType extends SdkType {
     @Nullable
     public static Sdk findLocalCPython(@Nullable Module module) {
         Sdk moduleSDK = findPythonSdk(module);
-        if (moduleSDK != null && !isRemote(moduleSDK) && PythonSdkFlavor.getFlavor(moduleSDK) instanceof CPythonSdkFlavor) {
+        if (moduleSDK != null && PythonSdkFlavor.getFlavor(moduleSDK) instanceof CPythonSdkFlavor) {
             return moduleSDK;
         }
-        for (Sdk sdk : ContainerUtil.sorted(getAllSdks(), PreferredSdkComparator.INSTANCE)) {
-            if (!isRemote(sdk)) {
-                return sdk;
-            }
-        }
-        return null;
+        return ContainerUtil.getFirstItem(ContainerUtil.sorted(getAllSdks(), PreferredSdkComparator.INSTANCE));
     }
 
     public static List<Sdk> getAllLocalCPythons() {
-        return getAllSdks().stream().filter(REMOTE_SDK_PREDICATE.negate()).collect(Collectors.toList());
+        return getAllSdks();
     }
 
     @Nullable

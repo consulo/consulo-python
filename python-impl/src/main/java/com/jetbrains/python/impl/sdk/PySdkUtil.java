@@ -191,11 +191,6 @@ public class PySdkUtil {
         return result;
     }
 
-    @Deprecated
-    public static boolean isRemote(@Nullable Sdk sdk) {
-        return false;
-    }
-
     public static String getUserSite() {
         if (Platform.current().os().isWindows()) {
             String appdata = System.getenv("APPDATA");
@@ -228,11 +223,6 @@ public class PySdkUtil {
     @Nullable
     public static VirtualFile findSkeletonsDir(Sdk sdk) {
         return findLibraryDir(sdk, PythonSdkType.SKELETON_DIR_NAME, BinariesOrderRootType.ID);
-    }
-
-    @Nullable
-    public static VirtualFile findAnyRemoteLibrary(Sdk sdk) {
-        return findLibraryDir(sdk, PythonSdkType.REMOTE_SOURCES_DIR_NAME, BinariesOrderRootType.ID);
     }
 
     private static VirtualFile findLibraryDir(Sdk sdk, String dirName, String rootType) {

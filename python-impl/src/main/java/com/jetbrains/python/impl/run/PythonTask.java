@@ -169,7 +169,7 @@ public class PythonTask {
         assert scriptParams != null;
 
         Map<String, String> env = cmd.getEnvironment();
-        if (!SystemInfo.isWindows && !PySdkUtil.isRemote(mySdk)) {
+        if (!SystemInfo.isWindows) {
             cmd.setExePath("bash");
             ParamsGroup bashParams = cmd.getParametersList().addParamsGroupAt(0, "Bash");
             bashParams.addParameter("-cl");
