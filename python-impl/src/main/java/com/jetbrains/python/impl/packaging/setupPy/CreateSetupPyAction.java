@@ -68,6 +68,9 @@ public class CreateSetupPyAction extends CreateFromTemplateAction implements AnA
     @Override
     public Coroutine<?, ?> updateAsync(AnActionEvent e) {
         return ActionSafeReadLock.run(e, presentation -> {
+            // nothing to decide without the lock: the module is computed lazily (the visibility is never changed)
+            presentation.setEnabled(true);
+        }, presentation -> {
             Module module = e.getData(Module.KEY);
             e.getPresentation().setEnabled(module != null && PyPackageUtil.findSetupPy(module) == null);
         }).toCoroutine();

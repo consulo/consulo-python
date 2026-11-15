@@ -42,6 +42,9 @@ public class RunSphinxQuickStartAction extends AnAction implements DumbAware, An
     @Override
     public Coroutine<?, ?> updateAsync(AnActionEvent e) {
         return ActionSafeReadLock.run(e, presentation -> {
+            // nothing to decide without the lock: only the python sdk of the lazily computed module can disable the action
+            presentation.setEnabled(true);
+        }, presentation -> {
             RestPythonUtil.updateSphinxQuickStartRequiredAction(e);
         }).toCoroutine();
     }
