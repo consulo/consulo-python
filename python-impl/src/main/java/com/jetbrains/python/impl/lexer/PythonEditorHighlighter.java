@@ -16,6 +16,7 @@
 
 package com.jetbrains.python.impl.lexer;
 
+import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import consulo.codeEditor.HighlighterClient;

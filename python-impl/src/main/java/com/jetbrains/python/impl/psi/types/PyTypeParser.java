@@ -49,8 +49,8 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.jetbrains.python.impl.psi.PyUtil.as;
-import static com.jetbrains.python.impl.psi.types.PyTypeTokenTypes.IDENTIFIER;
-import static com.jetbrains.python.impl.psi.types.PyTypeTokenTypes.PARAMETER;
+import static com.jetbrains.python.psi.types.PyTypeTokenTypes.IDENTIFIER;
+import static com.jetbrains.python.psi.types.PyTypeTokenTypes.PARAMETER;
 import static com.jetbrains.python.impl.psi.types.functionalParser.FunctionalParserBase.*;
 
 /**

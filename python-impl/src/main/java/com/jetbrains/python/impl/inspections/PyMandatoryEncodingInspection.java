@@ -72,7 +72,7 @@ public class PyMandatoryEncodingInspection extends PyInspection {
 
         @Override
         public void visitPyFile(PyFile node) {
-            String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(node.getText());
+            String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(node);
             if (charsetString == null) {
                 TextRange tr = new TextRange(0, 0);
                 ProblemsHolder holder = getHolder();

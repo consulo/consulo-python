@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.psi.PyStatementPart;
 import com.jetbrains.python.psi.PyStatementList;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import consulo.language.ast.ASTNode;
 
 /**

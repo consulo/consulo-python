@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyAssertStatement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
@@ -39,6 +39,6 @@ public class PyAssertStatementImpl extends PyElementImpl implements PyAssertStat
   @Override
   @RequiredReadAction
   public PyExpression[] getArguments() {
-    return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);
+    return childrenToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), PyExpression.EMPTY_ARRAY);
   }
 }

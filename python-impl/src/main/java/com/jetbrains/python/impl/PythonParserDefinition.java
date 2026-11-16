@@ -18,8 +18,8 @@ package com.jetbrains.python.impl;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
-import com.jetbrains.python.impl.parsing.PyParser;
+import com.jetbrains.python.lexer.PythonIndentingLexer;
+import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.impl.psi.PyFileElementType;
 import com.jetbrains.python.psi.PyStubElementType;
@@ -53,7 +53,7 @@ public class PythonParserDefinition implements ParserDefinition {
   public PythonParserDefinition() {
     myWhitespaceTokens = TokenSet.create(PyTokenTypes.LINE_BREAK, PyTokenTypes.SPACE, PyTokenTypes.TAB, PyTokenTypes.FORMFEED);
     myCommentTokens = TokenSet.create(PyTokenTypes.END_OF_LINE_COMMENT);
-    myStringLiteralTokens = TokenSet.orSet(PyTokenTypes.STRING_NODES, TokenSet.create(PyElementTypes.STRING_LITERAL_EXPRESSION));
+    myStringLiteralTokens = TokenSet.orSet(PyTokenTypes.STRING_NODES, PyTokenTypes.FSTRING_TOKENS);
   }
 
   @Override

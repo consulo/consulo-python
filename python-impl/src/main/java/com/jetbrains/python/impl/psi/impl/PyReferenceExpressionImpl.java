@@ -19,7 +19,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.codeInsight.controlflow.ReadWriteInstruction;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.console.PydevConsoleRunner;
@@ -117,7 +117,7 @@ public class PyReferenceExpressionImpl extends PyElementImpl implements PyRefere
 	@Nullable
 	public PyExpression getQualifier()
 	{
-		ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
+		ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
 		return (PyExpression) (nodes.length == 1 ? nodes[0].getPsi() : null);
 	}
 

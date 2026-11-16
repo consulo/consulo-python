@@ -16,9 +16,10 @@
 
 package com.jetbrains.python.impl.psi.impl.stubs;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PySingleStarParameter;
 import com.jetbrains.python.psi.stubs.PySingleStarParameterStub;
 
@@ -27,6 +28,6 @@ import com.jetbrains.python.psi.stubs.PySingleStarParameterStub;
  */
 public class PySingleStarParameterStubImpl extends StubBase<PySingleStarParameter> implements PySingleStarParameterStub {
   protected PySingleStarParameterStubImpl(StubElement parent) {
-    super(parent, PyElementTypes.SINGLE_STAR_PARAMETER);
+    super(parent, PyStubElementTypes.SINGLE_STAR_PARAMETER);
   }
 }

@@ -16,7 +16,6 @@
 package com.jetbrains.python.impl.codeInsight.intentions;
 
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
 import com.jetbrains.python.impl.psi.types.PyClassTypeImpl;
 import com.jetbrains.python.impl.psi.types.PyTypeChecker;
@@ -156,7 +155,7 @@ public class PyStringConcatenationToFormatIntention extends PyBaseIntentionActio
                     isUnicode = true;
                 }
                 if (!quotesDetected) {
-                    quotes = PyStringLiteralUtil.getQuotes(expression.getText());
+                    quotes = PyStringLiteralCoreUtil.getQuotes(expression.getText());
                     quotesDetected = true;
                 }
                 String value = stringLiteral1.getStringValue();

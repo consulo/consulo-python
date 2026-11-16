@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.documentation.doctest;
 import consulo.language.ast.IElementType;
 import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
+import com.jetbrains.python.lexer.PythonIndentingLexer;
 
 /**
  * @author ktisha

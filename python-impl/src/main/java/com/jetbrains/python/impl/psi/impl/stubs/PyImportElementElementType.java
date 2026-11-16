@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.IStubElementType;
@@ -22,7 +23,7 @@ import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.stub.StubInputStream;
 import consulo.language.psi.stub.StubOutputStream;
 import consulo.index.io.StringRef;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyImportElement;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.psi.PyTargetExpression;
@@ -74,6 +75,6 @@ public class PyImportElementElementType extends PyStubElementType<PyImportElemen
   }
 
   protected IStubElementType getStubElementType() {
-    return PyElementTypes.IMPORT_ELEMENT;
+    return PyStubElementTypes.IMPORT_ELEMENT;
   }
 }

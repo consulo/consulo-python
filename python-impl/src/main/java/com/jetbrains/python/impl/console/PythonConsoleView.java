@@ -20,7 +20,7 @@ import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.console.pydev.ConsoleCommunicationListener;
 import com.jetbrains.python.debugger.PyStackFrameInfo;
 import com.jetbrains.python.impl.console.completion.PythonConsoleAutopopupBlockingHandler;
-import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
+import com.jetbrains.python.parsing.console.PythonConsoleData;
 import com.jetbrains.python.impl.debugger.PyDebuggerEditorsProvider;
 import com.jetbrains.python.impl.debugger.PyStackFrame;
 import com.jetbrains.python.impl.highlighting.PyHighlighter;

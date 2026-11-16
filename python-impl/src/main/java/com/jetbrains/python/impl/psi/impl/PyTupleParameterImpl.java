@@ -15,10 +15,11 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.ast.ASTNode;
 import consulo.navigation.ItemPresentation;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyNamedParameter;
@@ -39,7 +40,7 @@ public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub
 
 	public PyTupleParameterImpl(PyTupleParameterStub stub)
 	{
-		super(stub, PyElementTypes.TUPLE_PARAMETER);
+		super(stub, PyStubElementTypes.TUPLE_PARAMETER);
 	}
 
 	public PyNamedParameter getAsNamed()
@@ -54,7 +55,7 @@ public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub
 
 	public PyExpression getDefaultValue()
 	{
-		ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
+		ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
 		if(nodes.length > 0)
 		{
 			return (PyExpression) nodes[0].getPsi();
@@ -80,7 +81,7 @@ public class PyTupleParameterImpl extends PyBaseElementImpl<PyTupleParameterStub
 
 	public PyParameter[] getContents()
 	{
-		return getStubOrPsiChildren(PythonDialectsTokenSetProvider.INSTANCE.getParameterTokens(), new PyParameter[0]);
+		return getStubOrPsiChildren(PythonDialectsTokenSetProvider.getInstance().getParameterTokens(), new PyParameter[0]);
 	}
 
 	@Override

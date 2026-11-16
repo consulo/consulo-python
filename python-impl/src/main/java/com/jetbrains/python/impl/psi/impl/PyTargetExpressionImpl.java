@@ -15,11 +15,12 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.codeInsight.PyTypingTypeProvider;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.Scope;
@@ -82,7 +83,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
     }
 
     public PyTargetExpressionImpl(PyTargetExpressionStub stub) {
-        super(stub, PyElementTypes.TARGET_EXPRESSION);
+        super(stub, PyStubElementTypes.TARGET_EXPRESSION);
     }
 
     public PyTargetExpressionImpl(PyTargetExpressionStub stub, IStubElementType nodeType) {
@@ -447,7 +448,7 @@ public class PyTargetExpressionImpl extends PyBaseElementImpl<PyTargetExpression
     @Override
     @RequiredReadAction
     public PyExpression getQualifier() {
-        ASTNode qualifier = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
+        ASTNode qualifier = getNode().findChildByType(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
         return qualifier != null ? (PyExpression) qualifier.getPsi() : null;
     }
 

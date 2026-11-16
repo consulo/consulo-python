@@ -21,18 +21,17 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.documentation.docstrings.SphinxDocString;
 import com.jetbrains.python.impl.documentation.docstrings.SphinxReferences;
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralDecoder;
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.inspections.PyStringFormatParser;
 import com.jetbrains.python.inspections.PyStringFormatParser.ConstantChunk;
 import com.jetbrains.python.psi.PyBinaryExpression;
+import com.jetbrains.python.psi.PyFormattedStringElement;
+import com.jetbrains.python.psi.PyStringElement;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.psi.impl.PyStringLiteralDecoder;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.Language;
-import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
 import consulo.language.impl.psi.PsiCoreCommentImpl;
 import consulo.language.psi.PsiElement;
@@ -82,14 +81,14 @@ public class PythonTextExtractor extends TextExtractor {
                 return texts;
             }
 
-            for (ASTNode node : stringLiteral.getStringNodes()) {
-                PsiElement element = node.getPsi();
-                String prefix = PyStringLiteralUtil.getPrefix(node.getText());
-                List<TextRange> ranges = List.of(PyStringLiteralExpressionImpl.getNodeTextRange(node.getText()));
-                PyStringLiteralDecoder decoder = new PyStringLiteralDecoder(node);
+            for (PyStringElement element : stringLiteral.getStringElements()) {
+                List<TextRange> ranges = element.isFormatted()
+                    ? ((PyFormattedStringElement) element).getLiteralPartRanges()
+                    : List.of(element.getContentRange());
+                PyStringLiteralDecoder decoder = new PyStringLiteralDecoder(element);
                 boolean containsEscapes = element.textContains('\\');
                 for (TextRange range : ranges) {
-                    List<TextRange> escapeAwareRanges = PyStringLiteralUtil.isRawPrefix(prefix) || !containsEscapes
+                    List<TextRange> escapeAwareRanges = element.isRaw() || !containsEscapes
                         ? List.of(range)
                         : ContainerUtil.map(decoder.decodeRange(range), it -> it.getFirst());
                     for (TextRange escapeAwareRange : escapeAwareRanges) {

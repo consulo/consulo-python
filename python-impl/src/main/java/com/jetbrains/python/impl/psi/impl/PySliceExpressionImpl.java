@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PySliceExpression;
 import com.jetbrains.python.psi.PySliceItem;
@@ -48,7 +48,7 @@ public class PySliceExpressionImpl extends PyElementImpl implements PySliceExpre
 
   @Override
   public PyExpression getOperand() {
-    return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+    return childToPsiNotNull(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
   }
 
   @Nullable

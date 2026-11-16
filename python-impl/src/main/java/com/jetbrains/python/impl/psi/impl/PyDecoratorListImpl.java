@@ -15,10 +15,11 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.QualifiedName;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyDecorator;
 import com.jetbrains.python.psi.PyDecoratorList;
 import com.jetbrains.python.psi.PyElementVisitor;
@@ -38,14 +39,14 @@ public class PyDecoratorListImpl extends PyBaseElementImpl<PyDecoratorListStub> 
     }
 
     public PyDecoratorListImpl(PyDecoratorListStub stub) {
-        super(stub, PyElementTypes.DECORATOR_LIST);
+        super(stub, PyStubElementTypes.DECORATOR_LIST);
     }
 
     @Override
     @RequiredReadAction
     public PyDecorator[] getDecorators() {
         PyDecorator[] decoArray = new PyDecorator[0];
-        return getStubOrPsiChildren(PyElementTypes.DECORATOR_CALL, decoArray);
+        return getStubOrPsiChildren(PyStubElementTypes.DECORATOR_CALL, decoArray);
         //return decoArray;
     }
 

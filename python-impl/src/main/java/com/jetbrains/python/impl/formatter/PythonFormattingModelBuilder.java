@@ -16,7 +16,7 @@
 package com.jetbrains.python.impl.formatter;
 
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.ast.ASTNode;
@@ -27,7 +27,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 
 import static com.jetbrains.python.PyTokenTypes.*;
-import static com.jetbrains.python.impl.PyElementTypes.*;
+import static com.jetbrains.python.PyElementTypes.*;
 
 /**
  * @author yole
@@ -35,7 +35,7 @@ import static com.jetbrains.python.impl.PyElementTypes.*;
 @ExtensionImpl
 public class PythonFormattingModelBuilder implements FormattingModelBuilder, CustomFormattingModelBuilder
 {
-	public static final TokenSet STATEMENT_OR_DECLARATION = PythonDialectsTokenSetProvider.INSTANCE.getStatementTokens();
+	public static final TokenSet STATEMENT_OR_DECLARATION = PythonDialectsTokenSetProvider.getInstance().getStatementTokens();
 
 	@Override
 	public FormattingModel createModel(FormattingContext formattingContext)

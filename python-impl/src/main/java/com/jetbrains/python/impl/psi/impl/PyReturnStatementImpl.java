@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.psi.impl;
 import org.jspecify.annotations.Nullable;
 
 import consulo.language.ast.ASTNode;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyReturnStatement;
@@ -38,6 +38,6 @@ public class PyReturnStatementImpl extends PyElementImpl implements PyReturnStat
 
   @Nullable
   public PyExpression getExpression() {
-    return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+    return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
   }
 }

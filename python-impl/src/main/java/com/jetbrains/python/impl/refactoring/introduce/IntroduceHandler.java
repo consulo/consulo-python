@@ -18,7 +18,6 @@ package com.jetbrains.python.impl.refactoring.introduce;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
 import com.jetbrains.python.impl.psi.types.PyNoneType;
 import com.jetbrains.python.impl.refactoring.NameSuggesterUtil;
 import com.jetbrains.python.impl.refactoring.PyRefactoringUtil;
@@ -578,7 +577,7 @@ abstract public class IntroduceHandler implements RefactoringActionHandler {
       if (data != null) {
         PsiElement parent = data.getFirst();
         String text = parent.getText();
-        Pair<String, String> detectedQuotes = PyStringLiteralUtil.getQuotes(text);
+        Pair<String, String> detectedQuotes = PyStringLiteralCoreUtil.getQuotes(text);
         Pair<String, String> quotes = detectedQuotes != null ? detectedQuotes : Couple.of("'", "'");
         TextRange range = data.getSecond();
         String substring = range.substring(text);

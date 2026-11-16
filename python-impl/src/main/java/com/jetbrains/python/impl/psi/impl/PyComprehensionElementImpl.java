@@ -26,7 +26,7 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyComprehensionComponent;
 import com.jetbrains.python.psi.PyComprehensionElement;
 import com.jetbrains.python.psi.PyComprehensionForComponent;
@@ -56,7 +56,7 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
     @RequiredReadAction
 	public PyExpression getResultExpression()
 	{
-		ASTNode[] exprs = getNode().getChildren(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
+		ASTNode[] exprs = getNode().getChildren(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
 		return exprs.length == 0 ? null : (PyExpression) exprs[0].getPsi();
 	}
 
@@ -180,7 +180,7 @@ public abstract class PyComprehensionElementImpl extends PyElementImpl implement
 		{
 			node = node.getTreeNext();
 		}
-		while(node != null && !PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens().contains(node.getElementType()));
+		while(node != null && !PythonDialectsTokenSetProvider.getInstance().getExpressionTokens().contains(node.getElementType()));
 		return node;
 	}
 

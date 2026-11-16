@@ -17,6 +17,7 @@ package com.jetbrains.python.impl.psi;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
@@ -53,6 +54,7 @@ import consulo.application.progress.ProgressManager;
 import consulo.application.progress.Task;
 import consulo.application.util.AsyncFileService;
 import consulo.application.util.CachedValueProvider;
+import consulo.application.util.CachedValuesManager;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.EditorEx;
 import consulo.codeEditor.EditorFactory;
@@ -63,6 +65,7 @@ import consulo.document.util.TextRange;
 import consulo.fileTemplate.FileTemplate;
 import consulo.fileTemplate.FileTemplateManager;
 import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementType;
 import consulo.language.codeStyle.CodeStyleSettingsManager;
 import consulo.language.editor.FileModificationService;
 import consulo.language.editor.completion.lookup.LookupElement;
@@ -919,6 +922,31 @@ public class PyUtil {
             cache.put(param, result);
         }
         return result;
+    }
+
+    /**
+     * Same as {@link #getParameterizedCachedValue(PsiElement, Object, Function)} but allows nulls.
+     */
+    public static <T, P> @Nullable T getNullableParameterizedCachedValue(
+        PsiElement element,
+        @Nullable P param,
+        Function<P, @Nullable T> f
+    ) {
+        CachedValuesManager manager = CachedValuesManager.getManager(element.getProject());
+        Map<Optional<P>, Optional<T>> cache =
+            LanguageCachedValueUtil.getCachedValue(element, manager.getKeyForClass(f.getClass()), () -> {
+                // concurrent hash map is a null-hostile collection
+                return CachedValueProvider.Result.create(Maps.newConcurrentMap(), PsiModificationTracker.MODIFICATION_COUNT);
+            });
+        // Don't use ConcurrentHashMap#computeIfAbsent(), it blocks if the function tries to update the cache recursively for the same key
+        // during computation. We can accept here that some values will be computed several times due to non-atomic updates.
+        Optional<P> wrappedParam = Optional.ofNullable(param);
+        Optional<T> value = cache.get(wrappedParam);
+        if (value == null) {
+            value = Optional.ofNullable(f.apply(param));
+            cache.put(wrappedParam, value);
+        }
+        return value.orElse(null);
     }
 
     /**
@@ -1966,8 +1994,10 @@ public class PyUtil {
         private final TextRange myContentRange;
 
         public StringNodeInfo(ASTNode node) {
-            if (!PyTokenTypes.STRING_NODES.contains(node.getElementType())) {
-                throw new IllegalArgumentException("Node must be valid Python string literal token, but " + node.getElementType() + " was given");
+            final IElementType nodeType = node.getElementType();
+            // TODO Migrate to newer PyStringElement API
+            if (!PyTokenTypes.STRING_NODES.contains(nodeType) && nodeType != PyElementTypes.FSTRING_NODE) {
+                throw new IllegalArgumentException("Node must be valid Python string literal token, but " + nodeType + " was given");
             }
             myNode = node;
             String nodeText = node.getText();

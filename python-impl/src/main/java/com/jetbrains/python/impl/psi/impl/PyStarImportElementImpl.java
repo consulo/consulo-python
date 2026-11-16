@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.google.common.collect.Iterables;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.types.PyModuleType;
 import com.jetbrains.python.impl.toolbox.ChainIterable;
@@ -48,7 +49,7 @@ public class PyStarImportElementImpl extends PyBaseElementImpl<PyStarImportEleme
     }
 
     public PyStarImportElementImpl(PyStarImportElementStub stub) {
-        super(stub, PyElementTypes.STAR_IMPORT_ELEMENT);
+        super(stub, PyStubElementTypes.STAR_IMPORT_ELEMENT);
     }
 
     @Override

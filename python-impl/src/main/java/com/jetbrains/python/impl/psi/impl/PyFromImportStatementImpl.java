@@ -15,11 +15,12 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.google.common.collect.ImmutableList;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
 import com.jetbrains.python.psi.*;
@@ -57,7 +58,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
 
 	public PyFromImportStatementImpl(PyFromImportStatementStub stub)
 	{
-		this(stub, PyElementTypes.FROM_IMPORT_STATEMENT);
+		this(stub, PyStubElementTypes.FROM_IMPORT_STATEMENT);
 	}
 
 	public PyFromImportStatementImpl(PyFromImportStatementStub stub, IStubElementType nodeType)
@@ -88,7 +89,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
     @RequiredReadAction
 	public PyReferenceExpression getImportSource()
 	{
-		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens(), 0);
+		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getReferenceExpressionTokens(), 0);
 	}
 
 	@Override
@@ -143,7 +144,7 @@ public class PyFromImportStatementImpl extends PyBaseElementImpl<PyFromImportSta
     @RequiredReadAction
 	public PyStarImportElement getStarImportElement()
 	{
-		return getStubOrPsiChild(PyElementTypes.STAR_IMPORT_ELEMENT);
+		return getStubOrPsiChild(PyStubElementTypes.STAR_IMPORT_ELEMENT);
 	}
 
 	@Override

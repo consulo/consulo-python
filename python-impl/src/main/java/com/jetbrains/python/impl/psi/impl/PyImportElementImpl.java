@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.impl.PyStubElementTypes;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
@@ -50,7 +51,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
     }
 
     public PyImportElementImpl(PyImportElementStub stub) {
-        this(stub, PyElementTypes.IMPORT_ELEMENT);
+        this(stub, PyStubElementTypes.IMPORT_ELEMENT);
     }
 
     public PyImportElementImpl(PyImportElementStub stub, IStubElementType nodeType) {
@@ -61,7 +62,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
     @Override
     @RequiredReadAction
     public PyReferenceExpression getImportReferenceExpression() {
-        ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens());
+        ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.getInstance().getReferenceExpressionTokens());
         return node == null ? null : (PyReferenceExpression) node.getPsi();
     }
 
@@ -79,7 +80,7 @@ public class PyImportElementImpl extends PyBaseElementImpl<PyImportElementStub> 
     @Override
     @RequiredReadAction
     public PyTargetExpression getAsNameElement() {
-        return getStubOrPsiChild(PyElementTypes.TARGET_EXPRESSION);
+        return getStubOrPsiChild(PyStubElementTypes.TARGET_EXPRESSION);
     }
 
     @Override

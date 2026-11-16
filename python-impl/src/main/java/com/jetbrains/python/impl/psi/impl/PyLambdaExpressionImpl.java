@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.psi.types.PyFunctionTypeImpl;
 import com.jetbrains.python.psi.*;

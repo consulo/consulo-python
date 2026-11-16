@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.util.dataholder.Key;
 import consulo.util.lang.Pair;
@@ -32,7 +31,7 @@ import consulo.document.util.TextRange;
 import consulo.util.lang.StringUtil;
 import consulo.language.psi.PsiElement;
 import consulo.language.ast.IElementType;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.inspections.PyStringFormatParser;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyBuiltinCache;
@@ -141,7 +140,7 @@ public class PyReplaceExpressionUtil implements PyElementTypes
 	private static PsiElement replaceSubstringInStringLiteral(PyStringLiteralExpression oldExpression, PsiElement newExpression, TextRange textRange)
 	{
 		String fullText = oldExpression.getText();
-		Pair<String, String> detectedQuotes = PyStringLiteralUtil.getQuotes(fullText);
+		Pair<String, String> detectedQuotes = PyStringLiteralCoreUtil.getQuotes(fullText);
 		Pair<String, String> quotes = detectedQuotes != null ? detectedQuotes : Pair.create("'", "'");
 		String prefix = fullText.substring(0, textRange.getStartOffset());
 		String suffix = fullText.substring(textRange.getEndOffset(), oldExpression.getTextLength());

@@ -19,7 +19,7 @@ import com.jetbrains.python.console.pydev.*;
 import com.jetbrains.python.debugger.*;
 import com.jetbrains.python.debugger.pydev.GetVariableCommand;
 import com.jetbrains.python.debugger.pydev.ProtocolParser;
-import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
+import com.jetbrains.python.parsing.console.PythonConsoleData;
 import consulo.application.Application;
 import consulo.application.ApplicationManager;
 import consulo.application.progress.ProgressIndicator;

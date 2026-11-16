@@ -46,7 +46,7 @@ public class PyElementPresentation implements ColoredItemPresentation {
 
     @Override
     public LocalizeValue getPresentableText() {
-        return LocalizeValue.ofNullable(myElement.getName()).orIfEmpty(PyNames.UNNAMED_ELEMENT);
+        return LocalizeValue.ofNullable(myElement.getName()).orIfEmpty(LocalizeValue.of(PyNames.UNNAMED_ELEMENT));
     }
 
     @Override

@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.documentation.doctest;
 import com.jetbrains.python.impl.documentation.PyDocumentationSettings;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
+import com.jetbrains.python.psi.PyStringLiteralCoreUtil;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.inject.InjectedLanguagePlaces;
@@ -54,7 +54,7 @@ public class PyDocstringLanguageInjector implements LanguageInjector {
             int end = host.getTextLength() - 1;
             String text = host.getText();
 
-            Pair<String, String> quotes = PyStringLiteralUtil.getQuotes(text);
+            Pair<String, String> quotes = PyStringLiteralCoreUtil.getQuotes(text);
             List<String> strings = StringUtil.split(text, "\n", false);
 
             boolean gotExample = false;

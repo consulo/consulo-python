@@ -23,7 +23,7 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.impl.psi.CodeEditUtil;
 import consulo.language.util.IncorrectOperationException;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.impl.psi.impl.PyIfPartIfImpl;
 import consulo.localize.LocalizeValue;

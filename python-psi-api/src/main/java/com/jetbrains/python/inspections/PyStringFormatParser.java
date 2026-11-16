@@ -22,6 +22,7 @@ import consulo.language.psi.PsiElement;
 import java.util.HashMap;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
+import com.jetbrains.python.psi.impl.PyStringLiteralDecoder;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -375,7 +376,7 @@ public class PyStringFormatParser {
 
   public static List<TextRange> getEscapeRanges(String s) {
     List<TextRange> ranges = new ArrayList<TextRange>();
-    Matcher matcher = PyStringLiteralExpression.PATTERN_ESCAPE.matcher(s);
+    Matcher matcher = PyStringLiteralDecoder.PATTERN_ESCAPE.matcher(s);
     while (matcher.find()) {
       ranges.add(TextRange.create(matcher.start(), matcher.end()));
     }

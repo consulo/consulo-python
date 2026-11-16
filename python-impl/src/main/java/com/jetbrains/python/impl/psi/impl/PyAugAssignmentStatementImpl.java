@@ -16,7 +16,7 @@
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyAugAssignmentStatement;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
@@ -47,7 +47,7 @@ public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAug
     @RequiredReadAction
     public PyExpression getTarget()
 	{
-		PyExpression target = childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+		PyExpression target = childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
 		if(target == null)
 		{
 			throw new RuntimeException("Target missing in augmented assignment statement");
@@ -60,7 +60,7 @@ public class PyAugAssignmentStatementImpl extends PyElementImpl implements PyAug
     @RequiredReadAction
 	public PyExpression getValue()
 	{
-		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 1);
+		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 1);
 	}
 
 	@Nullable

@@ -17,7 +17,7 @@
 package com.jetbrains.python.impl.editor.selectWord;
 
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.lexer.PyStringLiteralLexer;
+import com.jetbrains.python.lexer.PyStringLiteralLexer;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.codeEditor.Editor;

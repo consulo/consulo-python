@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.findUsages;
 import consulo.language.cacheBuilder.DefaultWordsScanner;
 import consulo.language.ast.TokenSet;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.lexer.PythonLexer;
+import com.jetbrains.python.lexer.PythonLexer;
 
 /**
  * @author yole

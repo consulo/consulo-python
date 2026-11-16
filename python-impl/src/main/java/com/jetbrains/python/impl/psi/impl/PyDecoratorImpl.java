@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.impl.psi.stub.StubBasedPsiElementBase;
@@ -27,9 +28,9 @@ import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.FunctionParameter;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.nameResolver.FQNamesProvider;
 import com.jetbrains.python.psi.PyArgumentList;
 import com.jetbrains.python.psi.PyCallable;
@@ -56,7 +57,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
 
 	public PyDecoratorImpl(PyDecoratorStub stub)
 	{
-		super(stub, PyElementTypes.DECORATOR_CALL);
+		super(stub, PyStubElementTypes.DECORATOR_CALL);
 	}
 
 	/**
@@ -81,7 +82,7 @@ public class PyDecoratorImpl extends StubBasedPsiElementBase<PyDecoratorStub> im
     @RequiredReadAction
     public boolean isBuiltin()
 	{
-		ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getReferenceExpressionTokens());
+		ASTNode node = getNode().findChildByType(PythonDialectsTokenSetProvider.getInstance().getReferenceExpressionTokens());
 		if(node != null)
 		{
 			PyReferenceExpression ref = (PyReferenceExpression) node.getPsi();

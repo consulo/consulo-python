@@ -56,9 +56,9 @@ import consulo.language.ast.IElementType;
 import consulo.language.ast.TokenSet;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.util.collection.ArrayUtil;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 
@@ -69,7 +69,7 @@ public class PyBlock implements ASTBlock
 {
 	private static final TokenSet ourListElementTypes = TokenSet.create(PyElementTypes.LIST_LITERAL_EXPRESSION, PyElementTypes.LIST_COMP_EXPRESSION, PyElementTypes.DICT_COMP_EXPRESSION,
 			PyElementTypes.SET_COMP_EXPRESSION, PyElementTypes.DICT_LITERAL_EXPRESSION, PyElementTypes.SET_LITERAL_EXPRESSION, PyElementTypes.ARGUMENT_LIST, PyElementTypes.PARAMETER_LIST,
-			PyElementTypes.TUPLE_EXPRESSION, PyElementTypes.PARENTHESIZED_EXPRESSION, PyElementTypes.SLICE_EXPRESSION, PyElementTypes.SUBSCRIPTION_EXPRESSION, PyElementTypes.GENERATOR_EXPRESSION);
+			PyElementTypes.TUPLE_EXPRESSION, PyElementTypes.PARENTHESIZED_EXPRESSION, PyElementTypes.SUBSCRIPTION_EXPRESSION, PyElementTypes.GENERATOR_EXPRESSION);
 
 	private static final TokenSet ourBrackets = TokenSet.create(PyTokenTypes.LPAR, PyTokenTypes.RPAR, PyTokenTypes.LBRACE, PyTokenTypes.RBRACE, PyTokenTypes.LBRACKET, PyTokenTypes.RBRACKET);
 
@@ -261,7 +261,7 @@ public class PyBlock implements ASTBlock
 				childIndent = Indent.getNormalIndent();
 			}
 		}
-		else if(parentType == PyElementTypes.BINARY_EXPRESSION && (PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens().contains(childType) || PyTokenTypes.OPERATIONS.contains(childType)))
+		else if(parentType == PyElementTypes.BINARY_EXPRESSION && (PythonDialectsTokenSetProvider.getInstance().getExpressionTokens().contains(childType) || PyTokenTypes.OPERATIONS.contains(childType)))
 		{
 			if(isInControlStatement())
 			{
@@ -1097,7 +1097,7 @@ public class PyBlock implements ASTBlock
 				return Indent.getNormalIndent();
 			}
 		}
-		else if(lastChild != null && PyElementTypes.LIST_LIKE_EXPRESSIONS.contains(lastChild.getElementType()))
+		else if(lastChild != null && TokenSet.create(PyElementTypes.LIST_LITERAL_EXPRESSION, PyElementTypes.LIST_COMP_EXPRESSION, PyElementTypes.TUPLE_EXPRESSION).contains(lastChild.getElementType()))
 		{
 			// handle pressing enter at the end of a list literal when there's no closing paren or bracket
 			ASTNode lastLastChild = lastChild.getLastChildNode();

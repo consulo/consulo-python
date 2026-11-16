@@ -54,6 +54,11 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 {
 	public static final Pattern TYPE_COMMENT_PATTERN = Pattern.compile("# *type: *(.*)");
 
+	public static final String TYPE_VAR = "typing.TypeVar";
+	public static final String TYPE_VAR_TUPLE = "typing.TypeVarTuple";
+	public static final String PARAM_SPEC = "typing.ParamSpec";
+	public static final String TYPE_ALIAS_TYPE = "typing.TypeAliasType";
+
 	private static ImmutableMap<String, String> COLLECTION_CLASSES = ImmutableMap.<String, String>builder().put("typing.List", "list").put("typing.Dict", "dict").put("typing.Set", PyNames.SET).put
 			("typing.FrozenSet", "frozenset").put("typing.Tuple", PyNames.TUPLE).put("typing.Iterable", PyNames.COLLECTIONS + "." + PyNames.ITERABLE).put("typing.Iterator", PyNames.COLLECTIONS + "."
 			+ PyNames.ITERATOR).put("typing.Container", PyNames.COLLECTIONS + "." + PyNames.CONTAINER).put("typing.Sequence", PyNames.COLLECTIONS + "." + PyNames.SEQUENCE).put("typing" +
@@ -594,7 +599,7 @@ public class PyTypingTypeProvider extends PyTypeProviderBase
 
 	private static boolean isEllipsis(PyExpression parametersExpr)
 	{
-		return parametersExpr instanceof PyNoneLiteralExpression && ((PyNoneLiteralExpression) parametersExpr).isEllipsis();
+		return parametersExpr instanceof PyEllipsisLiteralExpression;
 	}
 
 	@Nullable

@@ -24,7 +24,7 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;
 import consulo.language.ast.TokenSet;
 import consulo.language.psi.util.PsiTreeUtil;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyStatementList;

@@ -17,7 +17,7 @@
 package com.jetbrains.python.impl.psi.impl;
 
 import consulo.language.ast.ASTNode;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PySliceItem;
 import org.jspecify.annotations.Nullable;
@@ -32,16 +32,16 @@ public class PySliceItemImpl extends PyElementImpl implements PySliceItem {
 
   @Nullable
   public PyExpression getLowerBound() {
-    return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+    return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
   }
 
   @Nullable
   public PyExpression getUpperBound() {
-    return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 1);
+    return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 1);
   }
 
   @Nullable
   public PyExpression getStride() {
-    return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 2);
+    return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 2);
   }
 }

@@ -17,9 +17,8 @@
 package com.jetbrains.python.impl.documentation.doctest;
 
 import consulo.language.parser.PsiBuilder;
-import com.jetbrains.python.impl.parsing.ParsingContext;
-import com.jetbrains.python.impl.parsing.PyParser;
-import com.jetbrains.python.impl.parsing.StatementParsing;
+import com.jetbrains.python.parsing.ParsingContext;
+import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.psi.LanguageLevel;
 
 /**
@@ -27,7 +26,7 @@ import com.jetbrains.python.psi.LanguageLevel;
  */
 public class PyDocstringParser extends PyParser {
   @Override
-  protected ParsingContext createParsingContext(PsiBuilder builder, LanguageLevel languageLevel, StatementParsing.FUTURE futureFlag) {
-    return new PyDocstringParsingContext(builder, languageLevel, futureFlag);
+  protected ParsingContext createParsingContext(PsiBuilder builder, LanguageLevel languageLevel) {
+    return new PyDocstringParsingContext(builder, languageLevel);
   }
 }

@@ -86,6 +86,24 @@ public class PyPsiUtils {
     }
 
     /**
+     * Returns the first non-whitespace sibling preceding the given element but within its line boundaries.
+     */
+    @RequiredReadAction
+    public static @Nullable PsiElement getPrevNonWhitespaceSiblingOnSameLine(PsiElement element) {
+        PsiElement cur = element.getPrevSibling();
+        while (cur != null) {
+            if (!(cur instanceof PsiWhiteSpace)) {
+                return cur;
+            }
+            else if (cur.textContains('\n')) {
+                break;
+            }
+            cur = cur.getPrevSibling();
+        }
+        return null;
+    }
+
+    /**
      * Finds first sibling that is neither comment, nor whitespace before given element.
      *
      * @param strict prohibit returning element itself

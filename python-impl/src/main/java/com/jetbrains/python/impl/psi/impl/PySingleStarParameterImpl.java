@@ -15,9 +15,10 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.ast.ASTNode;
 import consulo.navigation.ItemPresentation;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyNamedParameter;
 import com.jetbrains.python.psi.PySingleStarParameter;
@@ -36,7 +37,7 @@ public class PySingleStarParameterImpl extends PyBaseElementImpl<PySingleStarPar
 
 	public PySingleStarParameterImpl(PySingleStarParameterStub stub)
 	{
-		super(stub, PyElementTypes.SINGLE_STAR_PARAMETER);
+		super(stub, PyStubElementTypes.SINGLE_STAR_PARAMETER);
 	}
 
 	@Override

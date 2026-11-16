@@ -15,6 +15,7 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import java.util.List;
 
 import consulo.annotation.access.RequiredReadAction;
@@ -22,8 +23,8 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.Lists;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiNamedElement;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExceptPart;
 import com.jetbrains.python.psi.PyExpression;
@@ -43,7 +44,7 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
 
 	public PyExceptPartImpl(PyExceptPartStub stub)
 	{
-		super(stub, PyElementTypes.EXCEPT_PART);
+		super(stub, PyStubElementTypes.EXCEPT_PART);
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
     @RequiredReadAction
 	public PyExpression getExceptClass()
 	{
-		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
 	}
 
 	@Nullable
@@ -65,7 +66,7 @@ public class PyExceptPartImpl extends PyBaseElementImpl<PyExceptPartStub> implem
     @RequiredReadAction
 	public PyExpression getTarget()
 	{
-		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 1);
+		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 1);
 	}
 
     @Override

@@ -1,0 +1,138 @@
+custom.type.mimic.name:
+    text: 'Dynamic class based on {0}'
+PARSE.expected.expression:
+    text: Expression expected
+PARSE.expected.rbracket:
+    text: ''']'' expected'
+PARSE.expected.expr.or.comma.or.bracket:
+    text: 'Expected expression, '','' or '']'''
+PARSE.expected.in:
+    text: '''in'' expected'
+PARSE.expected.for.or.bracket:
+    text: ''']'' or ''for'' expected'
+PARSE.expected.comma:
+    text: ''','' expected'
+PARSE.expected.colon:
+    text: ''':'' expected'
+PARSE.expected.rpar:
+    text: ''')'' expected'
+PARSE.expected.lpar:
+    text: '''('' expected'
+PARSE.expected.rbrace:
+    text: '''}'' expected'
+PARSE.expected.tick:
+    text: '''`'' (backtick) expected'
+PARSE.expected.name:
+    text: Name expected
+PARSE.expected.colon.or.rbracket:
+    text: ''':'' or '']'' expected'
+PARSE.expected.comma.or.rpar:
+    text: ''','' or '')'' expected'
+PARSE.expected.else:
+    text: '''else'' expected'
+PARSE.expected.identifier:
+    text: Identifier expected
+PARSE.expected.comma.lpar.rpar:
+    text: ''','' or ''('' or '')'' expected'
+PARSE.expected.statement.break:
+    text: Statement break expected
+PARSE.expected.at.or.def:
+    text: '''@'' or ''def'' expected'
+PARSE.expected.formal.param.name:
+    text: Formal parameter name expected
+PARSE.0.expected:
+    text: '''''{0}'''' expected'
+PARSE.expected.ellipsis:
+    text: '''...'' expected'
+PARSE.string.literal.expected:
+    text: string literal expected
+PARSE.expected.symbols:
+    text: '''''{0}'''' or ''''{1}'''' expected'
+PARSE.expected.symbols.first.quotation:
+    text: '''''{0}'''' or {1} expected'
+PARSE.expected.symbols.second.quotation:
+    text: '{0} or ''''{1}'''' expected'
+PARSE.declarator.should.be.empty:
+    text: declarator should be empty
+PARSE.string.literal:
+    text: string literal
+PARSE.newline.expected:
+    text: newline expected
+PARSE.eq.expected:
+    text: '''='' expected'
+PARSE.from.expected:
+    text: '''from'' expected'
+PARSE.gt.expected:
+    text: '''>'' expected'
+PARSE.expected.fstring.quote:
+    text: '{0} expected'
+PARSE.expected.fstring.rbrace:
+    text: '''}'' expected'
+PARSE.expected.fstring.colon.or.rbrace:
+    text: ': or ''}'' expected'
+PARSE.expected.fstring.type.conversion.or.colon.or.rbrace:
+    text: 'Type conversion, '':'' or ''}'' expected'
+PARSE.single.star.parameter.not.supported.py2:
+    text: Single star parameter is not supported in Python 2
+PARSE.async.keyword.not.expected.here:
+    text: '''async'' keyword is not expected here'
+PARSE.keyword.cannot.be.used.as.identifier.py2:
+    text: '''''{0}'''' keyword can''''t be used as an identifier in Python 2'
+PARSE.expected.number:
+    text: Number expected
+PARSE.expected.case.clause:
+    text: Case clause expected
+PARSE.expected.pattern:
+    text: Pattern expected
+PARSE.expected.name.or.wildcard:
+    text: 'Name or ''_'' expected'
+PARSE.expected.type.parameter:
+    text: Type parameter expected
+statement.expected.found.0:
+    text: 'Statement expected, found {0}'
+unexpected.indent:
+    text: Unexpected indent
+unindent.does.not.match.any.outer.indent:
+    text: Unindent does not match any outer indentation level
+except.or.finally.expected:
+    text: '''except'' or ''finally'' expected'
+expected.statement:
+    text: Statement expected
+indent.expected:
+    text: Indent expected
+cannot.assign.to.yield.expression:
+    text: 'Cannot assign to ''yield'' expression'
+end.of.statement.expected:
+    text: End of statement expected
+import.expected:
+    text: '''import'' expected'
+def.or.with.or.for.expected:
+    text: '''def'' or ''with'' or ''for'' expected'
+rbracket.or.comma.expected:
+    text: ''']'' or '','' expected'
+unexpected.expression.syntax:
+    text: Unexpected expression syntax
+tuple.expression.expected:
+    text: Tuple expression expected
+value.expression.expected:
+    text: Value expression expected
+unexpected.expression.part:
+    text: Unexpected expression part
+unexpected.f.string.token:
+    text: Unexpected f-string token
+for.expected:
+    text: '''for'' expected'
+rarrow.expected:
+    text: '''->'' expected'
+unexpected.tokens:
+    text: Unexpected tokens
+PARSE.function.type.annotations.py2:
+    text: Type annotations are unsupported in Python 2
+PARSE.function.return.type.annotations.py2:
+    text: Return type annotations are unsupported in Python 2
+PARSE.console.multiline.magic.warn:
+    text: Multiline magic cannot be used as an expression
+PARSE.console.help.request.warn:
+    text: IPython introspection syntax error
+filetype.python.stub.description:
+    text: Python stub

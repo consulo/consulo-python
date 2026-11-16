@@ -15,9 +15,10 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyStarImportElement;
 import com.jetbrains.python.psi.stubs.PyStarImportElementStub;
 
@@ -28,6 +29,6 @@ public class PyStarImportElementStubImpl extends StubBase<PyStarImportElement> i
 {
 	protected PyStarImportElementStubImpl(StubElement parent)
 	{
-		super(parent, PyElementTypes.STAR_IMPORT_ELEMENT);
+		super(parent, PyStubElementTypes.STAR_IMPORT_ELEMENT);
 	}
 }

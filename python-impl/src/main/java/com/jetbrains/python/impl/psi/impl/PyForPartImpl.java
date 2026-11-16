@@ -20,7 +20,7 @@ import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiWhiteSpace;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementType;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyForPart;
@@ -67,7 +67,7 @@ public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
   @Override
   @RequiredReadAction
   public PyExpression getTarget() {
-    ASTNode n = getNode().findChildByType(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
+    ASTNode n = getNode().findChildByType(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
     if (followsNodeOfType(n, PyTokenTypes.FOR_KEYWORD)) {
       return (PyExpression)n.getPsi(); // can't be null, 'if' would fail
     }
@@ -77,7 +77,7 @@ public class PyForPartImpl extends PyStatementPartImpl implements PyForPart {
   @Override
   @RequiredReadAction
   public PyExpression getSource() {
-    List<PsiElement> exprs = findChildrenByType(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
+    List<PsiElement> exprs = findChildrenByType(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
     // normally there are 2 exprs, the second is the source.
     if (exprs.size() != 2) return null; // could be a parsing error
     PyExpression ret = (PyExpression)exprs.get(1);

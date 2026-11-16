@@ -16,6 +16,7 @@
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.psi.*;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,27 +36,27 @@ public class ParamHelper {
    * @param walker the walker with callbacks.
    */
   public static void walkDownParamArray(PyParameter[] params, ParamWalker walker) {
-    int last = params.length-1;
     int i = 0;
-    for (PyParameter param : params) {
-      PyTupleParameter t_param = param.getAsTuple();
-      if (t_param != null) {
-        PyParameter[] nested_params = t_param.getContents();
-        PyTupleParameter tpar = (PyTupleParameter)param;
-        walker.enterTupleParameter(tpar, (i==0), (i == last));
-        walkDownParamArray(nested_params, walker);
-        walker.leaveTupleParameter(tpar, (i==0), (i == last));
+    for (PyParameter psi : params) {
+      final boolean first = i == 0;
+      final boolean last = i == params.length - 1;
+
+      if (psi instanceof PyTupleParameter tupleParameter) {
+        walker.enterTupleParameter(tupleParameter, first, last);
+        walkDownParamArray(tupleParameter.getContents(), walker);
+        walker.leaveTupleParameter(tupleParameter, first, last);
       }
-      else {
-        PyNamedParameter namedParameter = param.getAsNamed();
-        if (namedParameter != null) {
-          walker.visitNamedParameter(namedParameter, (i==0), (i == last));
-        }
-        else {
-          walker.visitSingleStarParameter((PySingleStarParameter) param, (i == 0), (i == last));
-        }
+      else if (psi instanceof PyNamedParameter) {
+        walker.visitNamedParameter((PyNamedParameter)psi, first, last);
       }
-      i += 1;
+      else if (psi instanceof PySlashParameter) {
+        walker.visitSlashParameter((PySlashParameter)psi, first, last);
+      }
+      else if (psi instanceof PySingleStarParameter) {
+        walker.visitSingleStarParameter((PySingleStarParameter)psi, first, last);
+      }
+      // TODO consulo: JB walks PyCallableParameter (walkDownParameters) and also visits the non-PSI separators / visitNonPsiParameter; PyCallableParameter is not ported yet
+      i++;
     }
   }
 
@@ -84,7 +85,19 @@ public class ParamHelper {
      */
     void visitNamedParameter(PyNamedParameter param, boolean first, boolean last);
 
-    void visitSingleStarParameter(PySingleStarParameter param, boolean first, boolean last);
+    /**
+     * Is called when a positional-only separator ({@code /}) is encountered.
+     *
+     * @param param the underlying PSI element, or {@code null} if the separator is synthetic
+     */
+    void visitSlashParameter(@Nullable PySlashParameter param, boolean first, boolean last);
+
+    /**
+     * Is called when a keyword-only separator ({@code *}) is encountered.
+     *
+     * @param param the underlying PSI element, or {@code null} if the separator is synthetic
+     */
+    void visitSingleStarParameter(@Nullable PySingleStarParameter param, boolean first, boolean last);
   }
 
   public static abstract class ParamVisitor implements ParamWalker {
@@ -98,7 +111,10 @@ public class ParamHelper {
     public void visitNamedParameter(PyNamedParameter param, boolean first, boolean last) { }
 
     @Override
-    public void visitSingleStarParameter(PySingleStarParameter param, boolean first, boolean last) { }
+    public void visitSlashParameter(@Nullable PySlashParameter param, boolean first, boolean last) { }
+
+    @Override
+    public void visitSingleStarParameter(@Nullable PySingleStarParameter param, boolean first, boolean last) { }
   }
 
   public static List<PyNamedParameter> collectNamedParameters(PyParameterList plist) {

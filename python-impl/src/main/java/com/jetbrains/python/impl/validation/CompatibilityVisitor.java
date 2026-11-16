@@ -20,7 +20,6 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.inspections.quickfix.*;
 import com.jetbrains.python.impl.psi.PyUtil;
-import com.jetbrains.python.impl.psi.impl.PyStringLiteralExpressionImpl;
 import com.jetbrains.python.psi.*;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
@@ -48,25 +47,17 @@ import java.util.stream.Stream;
 public abstract class CompatibilityVisitor extends PyAnnotator
 {
 
-	private static final Map<LanguageLevel, Set<String>> AVAILABLE_PREFIXES = new HashMap<>();
+	private static final Set<String> PYTHON2_PREFIXES = Set.of("R", "U", "UR", "B", "BR");
 
-	private static final Set<String> DEFAULT_PREFIXES = Set.of("R", "U", "B", "BR", "RB");
+	private static final Set<String> PYTHON34_PREFIXES = Set.of("R", "U", "B", "BR", "RB");
+
+	private static final Set<String> PYTHON36_PREFIXES = Set.of("R", "U", "B", "BR", "RB", "F", "FR", "RF");
+
+	private static final Set<String> PYTHON314_PREFIXES = Set.of("R", "U", "B", "BR", "RB", "F", "FR", "RF", "T", "TR", "RT");
 
 	protected static final String COMMON_MESSAGE = "Python version ";
 
 	protected List<LanguageLevel> myVersionsToProcess;
-
-	static
-	{
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON24, Set.of("R", "U", "UR"));
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON25, Set.of("R", "U", "UR"));
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON26, Set.of("R", "U", "UR", "B", "BR"));
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON27, Set.of("R", "U", "UR", "B", "BR"));
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON30, Set.of("R", "B"));
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON31, Set.of("R", "B", "BR"));
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON32, Set.of("R", "B", "BR"));
-		AVAILABLE_PREFIXES.put(LanguageLevel.PYTHON36, Set.of("R", "U", "B", "BR", "RB", "F", "FR", "RF"));
-	}
 
 	public CompatibilityVisitor(List<LanguageLevel> versionsToProcess)
 	{
@@ -269,24 +260,56 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 	{
 		super.visitPyStringLiteralExpression(node);
 
-		for(ASTNode stringNode : node.getStringNodes())
+		boolean seenBytes = false;
+		boolean seenNonBytes = false;
+		for(PyStringElement element : node.getStringElements())
 		{
-			String text = stringNode.getText();
-			int prefixLength = PyStringLiteralExpressionImpl.getPrefixLength(text);
-			String prefix = text.substring(0, prefixLength).toUpperCase();
+			final String prefix = StringUtil.toUpperCase(element.getPrefix());
 			if(prefix.isEmpty())
 			{
 				continue;
 			}
 
-			TextRange range = TextRange.create(stringNode.getStartOffset(), stringNode.getStartOffset() + prefixLength);
-			registerForAllMatchingVersions(level -> !AVAILABLE_PREFIXES.getOrDefault(level, DEFAULT_PREFIXES).contains(prefix),
+			final boolean bytes = element.isBytes();
+			seenBytes |= bytes;
+			seenNonBytes |= !bytes;
+
+			final int elementStart = element.getTextOffset();
+			registerForAllMatchingVersions(level -> !getSupportedStringPrefixes(level).contains(prefix),
 					" not support a '" + prefix + "' prefix",
 					node,
-					range,
-					new
-							RemovePrefixQuickFix(prefix),
+					TextRange.create(elementStart, elementStart + element.getPrefixLength()),
+					new RemovePrefixQuickFix(prefix),
 					true);
+		}
+
+		if(seenBytes && seenNonBytes)
+		{
+			registerForAllMatchingVersions(level -> level.isPy3K(),
+					" not allow to mix bytes and non-bytes literals",
+					node,
+					null,
+					true);
+		}
+	}
+
+	private static Set<String> getSupportedStringPrefixes(LanguageLevel level)
+	{
+		if(level.isPython2())
+		{
+			return PYTHON2_PREFIXES;
+		}
+		else if(level.isOlderThan(LanguageLevel.PYTHON36))
+		{
+			return PYTHON34_PREFIXES;
+		}
+		else if(level.isOlderThan(LanguageLevel.PYTHON314))
+		{
+			return PYTHON36_PREFIXES;
+		}
+		else
+		{
+			return PYTHON314_PREFIXES;
 		}
 	}
 
@@ -557,24 +580,21 @@ public abstract class CompatibilityVisitor extends PyAnnotator
 	}
 
 	@Override
-	public void visitPyNoneLiteralExpression(PyNoneLiteralExpression node)
+	public void visitPyEllipsisLiteralExpression(PyEllipsisLiteralExpression node)
 	{
-		if(node.isEllipsis())
+		PySubscriptionExpression subscription = PsiTreeUtil.getParentOfType(node, PySubscriptionExpression.class);
+		if(subscription != null && PsiTreeUtil.isAncestor(subscription.getIndexExpression(), node, false))
 		{
-			PySubscriptionExpression subscription = PsiTreeUtil.getParentOfType(node, PySubscriptionExpression.class);
-			if(subscription != null && PsiTreeUtil.isAncestor(subscription.getIndexExpression(), node, false))
-			{
-				return;
-			}
-			PySliceItem sliceItem = PsiTreeUtil.getParentOfType(node, PySliceItem.class);
-			if(sliceItem != null)
-			{
-				return;
-			}
-			registerOnFirstMatchingVersion(level -> level.isOlderThan(LanguageLevel.PYTHON30),
-					"Python versions < 3.0 do not support '...' outside of sequence slicings.",
-					node);
+			return;
 		}
+		PySliceItem sliceItem = PsiTreeUtil.getParentOfType(node, PySliceItem.class);
+		if(sliceItem != null)
+		{
+			return;
+		}
+		registerOnFirstMatchingVersion(level -> level.isOlderThan(LanguageLevel.PYTHON30),
+				"Python versions < 3.0 do not support '...' outside of sequence slicings.",
+				node);
 	}
 
 	@Override

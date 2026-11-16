@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python;
-
 
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ExtensionAPI;
@@ -25,49 +23,43 @@ import consulo.language.ast.TokenSet;
 /**
  * Contributes element types of various kinds specific for a particular Python dialect.
  *
- * @author vlan
  */
 @ExtensionAPI(ComponentScope.APPLICATION)
 public interface PythonDialectsTokenSetContributor {
-  ExtensionPointName<PythonDialectsTokenSetContributor> EP_NAME = ExtensionPointName.create(PythonDialectsTokenSetContributor.class);
+    ExtensionPointName<PythonDialectsTokenSetContributor> EP_NAME = ExtensionPointName.create(PythonDialectsTokenSetContributor.class);
 
-  /**
-   * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyStatement}.
-   */
-  TokenSet getStatementTokens();
+    /**
+     * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyStatement}.
+     */
+    TokenSet getStatementTokens();
 
-  /**
-   * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyExpression}.
-   */
-  TokenSet getExpressionTokens();
+    /**
+     * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyExpression}.
+     */
+    TokenSet getExpressionTokens();
 
-  /**
-   * Returns element types that are subclasses of {@link com.jetbrains.python.psi.NameDefiner}.
-   */
-  TokenSet getNameDefinerTokens();
+    /**
+     * Returns element types that are language keywords.
+     */
+    TokenSet getKeywordTokens();
 
-  /**
-   * Returns element types that are language keywords.
-   */
-  TokenSet getKeywordTokens();
+    /**
+     * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyParameter}.
+     */
+    TokenSet getParameterTokens();
 
-  /**
-   * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyParameter}.
-   */
-  TokenSet getParameterTokens();
+    /**
+     * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyFunction}.
+     */
+    TokenSet getFunctionDeclarationTokens();
 
-  /**
-   * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyFunction}.
-   */
-  TokenSet getFunctionDeclarationTokens();
+    /**
+     * Returns element types that can be used as unbalanced braces recovery tokens in the lexer.
+     */
+    TokenSet getUnbalancedBracesRecoveryTokens();
 
-  /**
-   * Returns element types that can be used as unbalanced braces recovery tokens in the lexer.
-   */
-  TokenSet getUnbalancedBracesRecoveryTokens();
-
-  /**
-   * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyReferenceExpression}.
-   */
-  TokenSet getReferenceExpressionTokens();
+    /**
+     * Returns element types that are subclasses of {@link com.jetbrains.python.psi.PyReferenceExpression}.
+     */
+    TokenSet getReferenceExpressionTokens();
 }

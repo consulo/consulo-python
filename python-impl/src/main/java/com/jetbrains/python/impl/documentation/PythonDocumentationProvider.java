@@ -19,7 +19,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.documentation.PythonDocumentationLinkProvider;
 import com.jetbrains.python.documentation.PythonDocumentationQuickInfoProvider;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.console.PydevConsoleRunner;
 import com.jetbrains.python.impl.console.PydevDocumentationProvider;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
@@ -473,7 +473,7 @@ public class PythonDocumentationProvider extends AbstractDocumentationProvider i
   @Nullable
   @Override
   public PsiElement getCustomDocumentationElement(Editor editor, PsiFile file, @Nullable PsiElement contextElement) {
-    if (contextElement != null && PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens()
+    if (contextElement != null && PythonDialectsTokenSetProvider.getInstance().getKeywordTokens()
                                                                          .contains(contextElement.getNode().getElementType())) {
       return contextElement;
     }

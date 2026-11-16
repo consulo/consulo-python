@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.inspections;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.inspections.quickfix.ConvertIndentsFix;
-import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
+import com.jetbrains.python.lexer.PythonIndentingLexer;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.ast.IElementType;

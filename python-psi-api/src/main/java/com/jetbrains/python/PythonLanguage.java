@@ -1,5 +1,6 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python;
 
 import com.jetbrains.python.psi.LanguageLevel;
@@ -21,40 +21,37 @@ import consulo.language.Language;
 import consulo.language.version.LanguageVersion;
 import consulo.python.language.PythonLanguageVersion;
 
-/**
- * @author yole
- */
-public class PythonLanguage extends Language {
-  public static final PythonLanguage INSTANCE = new PythonLanguage();
+public final class PythonLanguage extends Language {
 
-  @Deprecated
-  public static PythonLanguage getInstance() {
-    return INSTANCE;
-  }
+    public static final PythonLanguage INSTANCE = new PythonLanguage();
 
-  private final LanguageVersion[] myVersions;
-
-  private PythonLanguage() {
-    super("Python");
-    LanguageLevel[] levels = LanguageLevel.values();
-    myVersions = new LanguageVersion[levels.length];
-    for (int i = 0; i < levels.length; i++) {
-      LanguageLevel level = levels[i];
-      myVersions[i] = new PythonLanguageVersion(level, this);
+    public static PythonLanguage getInstance() {
+        return INSTANCE;
     }
-  }
 
-  @Override
-  public boolean isCaseSensitive() {
-    return true;
-  }
+    private final LanguageVersion[] myVersions;
 
-  @Override
-  protected LanguageVersion[] findVersions() {
-    return myVersions;
-  }
+    private PythonLanguage() {
+        super("Python");
+        LanguageLevel[] levels = LanguageLevel.values();
+        myVersions = new LanguageVersion[levels.length];
+        for (int i = 0; i < levels.length; i++) {
+            LanguageLevel level = levels[i];
+            myVersions[i] = new PythonLanguageVersion(level, this);
+        }
+    }
 
-  public LanguageVersion getVersion(LanguageLevel languageLevel) {
-    return myVersions[languageLevel.ordinal()];
-  }
+    @Override
+    public boolean isCaseSensitive() {
+        return true; // http://jetbrains-feed.appspot.com/message/372001
+    }
+
+    @Override
+    protected LanguageVersion[] findVersions() {
+        return myVersions;
+    }
+
+    public LanguageVersion getVersion(LanguageLevel languageLevel) {
+        return myVersions[languageLevel.ordinal()];
+    }
 }

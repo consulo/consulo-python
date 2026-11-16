@@ -78,7 +78,7 @@ public class PyByteLiteralInspection extends PyInspection {
                 );
             }
 
-            String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file.getText());
+            String charsetString = PythonFileType.getCharsetFromEncodingDeclaration(file);
             try {
                 if (charsetString != null && !Charset.forName(charsetString).equals(Charset.forName("US-ASCII"))) {
                     default_bytes = false;

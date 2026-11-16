@@ -18,7 +18,7 @@ package com.jetbrains.python.impl;
 
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.lexer.PythonIndentingLexer;
+import com.jetbrains.python.lexer.PythonIndentingLexer;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStatement;
 import com.jetbrains.python.psi.impl.PyPsiUtils;

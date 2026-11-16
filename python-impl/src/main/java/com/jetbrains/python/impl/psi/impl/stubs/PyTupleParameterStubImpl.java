@@ -16,9 +16,10 @@
 
 package com.jetbrains.python.impl.psi.impl.stubs;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyTupleParameter;
 import com.jetbrains.python.psi.stubs.PyTupleParameterStub;
 
@@ -31,7 +32,7 @@ public class PyTupleParameterStubImpl extends StubBase<PyTupleParameter>  implem
   private final boolean myHasDefaultValue;
 
   protected PyTupleParameterStubImpl(boolean hasDefaultValue, StubElement parent) {
-    super(parent, PyElementTypes.TUPLE_PARAMETER);
+    super(parent, PyStubElementTypes.TUPLE_PARAMETER);
     myHasDefaultValue = hasDefaultValue;
   }
 

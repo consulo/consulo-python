@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.impl.PyStubElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.impl.psi.PyFileElementType;
 import com.jetbrains.python.impl.psi.impl.PyClassImpl;
 import com.jetbrains.python.impl.psi.resolve.PyResolveUtil;
@@ -179,6 +180,6 @@ public class PyClassElementType extends PyStubElementType<PyClassStub, PyClass>
 
 	protected IStubElementType getStubElementType()
 	{
-		return PyElementTypes.CLASS_DECLARATION;
+		return PyStubElementTypes.CLASS_DECLARATION;
 	}
 }

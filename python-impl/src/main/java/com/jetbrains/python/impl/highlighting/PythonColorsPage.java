@@ -59,6 +59,17 @@ public class PythonColorsPage implements ColorSettingsPage {
     new AttributesDescriptor("Keyword argument", PyHighlighter.PY_KEYWORD_ARGUMENT),
     new AttributesDescriptor("Valid escape sequence", PyHighlighter.PY_VALID_STRING_ESCAPE),
     new AttributesDescriptor("Invalid escape sequence", PyHighlighter.PY_INVALID_STRING_ESCAPE),
+    new AttributesDescriptor("String//f-string//Expression braces", PyHighlighter.PY_FSTRING_FRAGMENT_BRACES),
+    new AttributesDescriptor("String//f-string//Type conversion", PyHighlighter.PY_FSTRING_FRAGMENT_TYPE_CONVERSION),
+    new AttributesDescriptor("String//f-string//Format specifier start", PyHighlighter.PY_FSTRING_FRAGMENT_COLON),
+    new AttributesDescriptor("String//f-string//Format spec special character", PyHighlighter.PY_FSTRING_FORMAT_SPEC_SPECIAL_CHAR),
+    new AttributesDescriptor("String//f-string//Format spec number", PyHighlighter.PY_FSTRING_FORMAT_SPEC_NUMBER),
+    new AttributesDescriptor("Functions//Nested function definition", PyHighlighter.PY_NESTED_FUNC_DEFINITION),
+    new AttributesDescriptor("Functions//Function call", PyHighlighter.PY_FUNCTION_CALL),
+    new AttributesDescriptor("Functions//Method call", PyHighlighter.PY_METHOD_CALL),
+    new AttributesDescriptor("Type annotation", PyHighlighter.PY_ANNOTATION),
+    new AttributesDescriptor("Local variables", PyHighlighter.PY_LOCAL_VARIABLE),
+    new AttributesDescriptor("Type parameters", PyHighlighter.PY_TYPE_PARAMETER),
   };
 
   private static final Map<String, TextAttributesKey> ourTagToDescriptorMap = ImmutableMap.<String, TextAttributesKey>builder()

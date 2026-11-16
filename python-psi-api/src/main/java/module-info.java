@@ -33,23 +33,29 @@ module consulo.python.language.api {
 
 
   exports com.jetbrains.python;
+  exports com.jetbrains.python.ast;
   exports com.jetbrains.python.codeInsight;
   exports com.jetbrains.python.codeInsight.controlflow;
   exports com.jetbrains.python.documentation;
   exports com.jetbrains.python.inspections;
+  exports com.jetbrains.python.lexer;
   exports com.jetbrains.python.nameResolver;
   exports com.jetbrains.python.newProject;
   exports com.jetbrains.python.packaging;
   exports com.jetbrains.python.packaging.requirement;
+  exports com.jetbrains.python.parsing;
+  exports com.jetbrains.python.parsing.console;
   exports com.jetbrains.python.psi;
   exports com.jetbrains.python.psi.impl;
   exports com.jetbrains.python.psi.impl.stubs;
   exports com.jetbrains.python.psi.resolve;
   exports com.jetbrains.python.psi.stubs;
   exports com.jetbrains.python.psi.types;
+  exports com.jetbrains.python.pyi;
   exports com.jetbrains.python.run;
   exports com.jetbrains.python.templateLanguages;
   exports com.jetbrains.python.templateLanguages.psi;
   exports com.jetbrains.python.toolbox;
   exports consulo.python.psi.icon;
+  exports consulo.python.psi.localize;
 }

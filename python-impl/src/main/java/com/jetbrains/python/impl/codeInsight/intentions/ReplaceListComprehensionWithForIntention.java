@@ -15,7 +15,6 @@
  */
 package com.jetbrains.python.impl.codeInsight.intentions;
 
-import com.jetbrains.python.impl.psi.impl.PyStatementListImpl;
 import com.jetbrains.python.psi.*;
 import consulo.codeEditor.Editor;
 import consulo.language.psi.PsiElement;
@@ -83,12 +82,8 @@ public class ReplaceListComprehensionWithForIntention extends PyBaseIntentionAct
                 leftExpr.getText() + ".append(" + expression.getResultExpression().getText() + ")"
             );
 
-            PyStatementList stList = new PyStatementListImpl(initAssignment.getNode());
-            stList.add(initAssignment);
-            stList.add(forStatement);
-            stList.getStatements()[0].delete();
-            parent.replace(stList);
-
+            parent.getParent().addBefore(initAssignment, parent);
+            parent.replace(forStatement);
         }
         else if (parent instanceof PyPrintStatement) {
             PyForStatement forStatement =

@@ -15,11 +15,12 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
@@ -152,7 +153,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
   }
 
   public PyClassImpl(PyClassStub stub) {
-    this(stub, PyElementTypes.CLASS_DECLARATION);
+    this(stub, PyStubElementTypes.CLASS_DECLARATION);
   }
 
   public PyClassImpl(PyClassStub stub, IStubElementType nodeType) {
@@ -309,7 +310,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
   @Override
   @RequiredReadAction
   public PyDecoratorList getDecoratorList() {
-    return getStubOrPsiChild(PyElementTypes.DECORATOR_LIST);
+    return getStubOrPsiChild(PyStubElementTypes.DECORATOR_LIST);
   }
 
   @Nullable
@@ -375,7 +376,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
       @RequiredReadAction
       public LocalizeValue getPresentableText() {
         PyPsiUtils.assertValid(PyClassImpl.this);
-        StringBuilder result = new StringBuilder(notNullize(getName(), PyNames.UNNAMED_ELEMENT.get()));
+        StringBuilder result = new StringBuilder(notNullize(getName(), PyNames.UNNAMED_ELEMENT));
         PyExpression[] superClassExpressions = getSuperClassExpressions();
         if (superClassExpressions.length > 0) {
           result.append("(");
@@ -383,7 +384,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
             superClassExpressions,
             expr -> {
               String name = expr.getText();
-              return notNullize(name, PyNames.UNNAMED_ELEMENT.get());
+              return notNullize(name, PyNames.UNNAMED_ELEMENT);
             },
             ", ",
             result
@@ -508,7 +509,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
   @Override
   @RequiredReadAction
   public PyFunction[] getMethods() {
-    return getClassChildren(PythonDialectsTokenSetProvider.INSTANCE.getFunctionDeclarationTokens(), PyFunction.ARRAY_FACTORY);
+    return getClassChildren(PythonDialectsTokenSetProvider.getInstance().getFunctionDeclarationTokens(), PyFunction.ARRAY_FACTORY);
   }
 
   @Override

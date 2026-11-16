@@ -15,9 +15,10 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.impl.codeInsight.PyTypingTypeProvider;
 import com.jetbrains.python.impl.codeInsight.controlflow.ControlFlowCache;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
@@ -87,7 +88,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     }
 
     public PyFunctionImpl(PyFunctionStub stub) {
-        this(stub, PyElementTypes.FUNCTION_DECLARATION);
+        this(stub, PyStubElementTypes.FUNCTION_DECLARATION);
     }
 
     public PyFunctionImpl(PyFunctionStub stub, IStubElementType nodeType) {
@@ -167,7 +168,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     @Override
     @RequiredReadAction
     public PyParameterList getParameterList() {
-        return getRequiredStubOrPsiChild(PyElementTypes.PARAMETER_LIST);
+        return getRequiredStubOrPsiChild(PyStubElementTypes.PARAMETER_LIST);
     }
 
     @Override
@@ -195,7 +196,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     @Override
     @RequiredReadAction
     public PyDecoratorList getDecoratorList() {
-        return getStubOrPsiChild(PyElementTypes.DECORATOR_LIST); // PsiTreeUtil.getChildOfType(this, PyDecoratorList.class);
+        return getStubOrPsiChild(PyStubElementTypes.DECORATOR_LIST); // PsiTreeUtil.getChildOfType(this, PyDecoratorList.class);
     }
 
     @Nullable
@@ -293,7 +294,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
             @RequiredReadAction
             public LocalizeValue getPresentableText() {
                 return LocalizeValue.join(
-                    LocalizeValue.ofNullable(getName()).orIfEmpty(PyNames.UNNAMED_ELEMENT),
+                    LocalizeValue.ofNullable(getName()).orIfEmpty(LocalizeValue.of(PyNames.UNNAMED_ELEMENT)),
                     getParameterList().getPresentableText(true)
                 );
             }
@@ -606,7 +607,7 @@ public class PyFunctionImpl extends PyBaseElementImpl<PyFunctionStub> implements
     @Override
     @RequiredReadAction
     public PyAnnotation getAnnotation() {
-        return getStubOrPsiChild(PyElementTypes.ANNOTATION);
+        return getStubOrPsiChild(PyStubElementTypes.ANNOTATION);
     }
 
     @Nullable

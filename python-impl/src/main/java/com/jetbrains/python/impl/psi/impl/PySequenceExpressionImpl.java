@@ -1,6 +1,6 @@
 package com.jetbrains.python.impl.psi.impl;
 
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PySequenceExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
@@ -30,12 +30,12 @@ public abstract class PySequenceExpressionImpl extends PyElementImpl implements 
 
 	public PyExpression[] getElements()
 	{
-		return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);
+		return childrenToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), PyExpression.EMPTY_ARRAY);
 	}
 
 	@Override
 	public boolean isEmpty()
 	{
-		return childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens()) == null;
+		return childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens()) == null;
 	}
 }

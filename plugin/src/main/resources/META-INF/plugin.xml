@@ -142,7 +142,6 @@
     </intentionAction>
 
 
-    <stubElementTypeHolder class="com.jetbrains.python.impl.PyElementTypes"/>
 
 
     <editorActionHandler action="EditorCopy" implementationClass="com.jetbrains.python.impl.console.PyConsoleCopyHandler"/>

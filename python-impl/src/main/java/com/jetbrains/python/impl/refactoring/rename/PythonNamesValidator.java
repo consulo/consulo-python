@@ -17,9 +17,9 @@
 package com.jetbrains.python.impl.refactoring.rename;
 
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.lexer.PythonLexer;
+import com.jetbrains.python.lexer.PythonLexer;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.editor.refactoring.NamesValidator;
@@ -37,7 +37,7 @@ public class PythonNamesValidator implements NamesValidator {
     try {
       PythonLexer lexer = new PythonLexer();
       lexer.start(name);
-      if (!PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens().contains(lexer.getTokenType())) {
+      if (!PythonDialectsTokenSetProvider.getInstance().getKeywordTokens().contains(lexer.getTokenType())) {
         return false;
       }
       lexer.advance();

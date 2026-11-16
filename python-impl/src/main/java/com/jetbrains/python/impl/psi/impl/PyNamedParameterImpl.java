@@ -15,14 +15,14 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.codeInsight.controlflow.ScopeOwner;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.codeInsight.PyTypingTypeProvider;
 import com.jetbrains.python.impl.codeInsight.dataflow.scope.ScopeUtil;
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.types.*;
 import com.jetbrains.python.psi.*;
@@ -60,7 +60,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
     }
 
     public PyNamedParameterImpl(PyNamedParameterStub stub) {
-        this(stub, PyElementTypes.NAMED_PARAMETER);
+        this(stub, PyStubElementTypes.NAMED_PARAMETER);
     }
 
     public PyNamedParameterImpl(PyNamedParameterStub stub, IStubElementType nodeType) {
@@ -169,7 +169,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
         if (stub != null && !stub.hasDefaultValue()) {
             return null;
         }
-        ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens());
+        ASTNode[] nodes = getNode().getChildren(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens());
         if (nodes.length > 0) {
             return (PyExpression) nodes[0].getPsi();
         }
@@ -201,9 +201,9 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
         if (includeDefaultValue && defaultValue != null) {
             String representation = PyUtil.getReadableRepr(defaultValue, true);
             if (defaultValue instanceof PyStringLiteralExpression) {
-                Pair<String, String> quotes = PyStringLiteralUtil.getQuotes(defaultValue.getText());
+                Pair<String, String> quotes = PyStringLiteralCoreUtil.getQuotes(defaultValue.getText());
                 if (quotes != null) {
-                    representation = quotes.getFirst() + PyStringLiteralUtil.getStringValue(defaultValue) + quotes.getSecond();
+                    representation = quotes.getFirst() + ((PyStringLiteralExpression)defaultValue).getStringValue() + quotes.getSecond();
                 }
             }
             sb.append("=").append(representation);
@@ -214,7 +214,7 @@ public class PyNamedParameterImpl extends PyBaseElementImpl<PyNamedParameterStub
     @Override
     @RequiredReadAction
     public PyAnnotation getAnnotation() {
-        return getStubOrPsiChild(PyElementTypes.ANNOTATION);
+        return getStubOrPsiChild(PyStubElementTypes.ANNOTATION);
     }
 
     public Icon getIcon(int flags) {

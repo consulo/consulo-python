@@ -15,9 +15,10 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.psi.stub.StubBase;
 import consulo.language.psi.stub.StubElement;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import consulo.language.psi.util.QualifiedName;
 import com.jetbrains.python.psi.stubs.PyDecoratorStub;
 import com.jetbrains.python.psi.PyDecorator;
@@ -32,7 +33,7 @@ public class PyDecoratorStubImpl extends StubBase<PyDecorator> implements PyDeco
     private final QualifiedName myQualifiedName;
 
     protected PyDecoratorStubImpl(QualifiedName qualifiedName, StubElement parent) {
-        super(parent, PyElementTypes.DECORATOR_CALL);
+        super(parent, PyStubElementTypes.DECORATOR_CALL);
         myQualifiedName = qualifiedName;
     }
 

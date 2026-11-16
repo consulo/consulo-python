@@ -15,9 +15,10 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
@@ -41,7 +42,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
     }
 
     public PyParameterListImpl(PyParameterListStub stub) {
-        this(stub, PyElementTypes.PARAMETER_LIST);
+        this(stub, PyStubElementTypes.PARAMETER_LIST);
     }
 
     public PyParameterListImpl(PyParameterListStub stub, IStubElementType nodeType) {
@@ -56,7 +57,7 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
     @Override
     @RequiredReadAction
     public PyParameter[] getParameters() {
-        return getStubOrPsiChildren(PythonDialectsTokenSetProvider.INSTANCE.getParameterTokens(), new PyParameter[0]);
+        return getStubOrPsiChildren(PythonDialectsTokenSetProvider.getInstance().getParameterTokens(), new PyParameter[0]);
     }
 
     @Override
@@ -163,7 +164,15 @@ public class PyParameterListImpl extends PyBaseElementImpl<PyParameterListStub> 
             }
 
             @Override
-            public void visitSingleStarParameter(PySingleStarParameter param, boolean first, boolean last) {
+            public void visitSlashParameter(@Nullable PySlashParameter param, boolean first, boolean last) {
+                target.append(PySlashParameter.TEXT);
+                if (!last) {
+                    target.append(COMMA);
+                }
+            }
+
+            @Override
+            public void visitSingleStarParameter(@Nullable PySingleStarParameter param, boolean first, boolean last) {
                 target.append('*');
                 if (!last) {
                     target.append(COMMA);

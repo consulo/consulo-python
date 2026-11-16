@@ -27,7 +27,7 @@ import consulo.project.Project;
 import consulo.util.lang.Comparing;
 import consulo.virtualFileSystem.VirtualFile;
 import consulo.ui.ex.awt.UIUtil;
-import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
+import com.jetbrains.python.parsing.console.PythonConsoleData;
 import consulo.ui.color.ColorValue;
 
 import org.jspecify.annotations.Nullable;

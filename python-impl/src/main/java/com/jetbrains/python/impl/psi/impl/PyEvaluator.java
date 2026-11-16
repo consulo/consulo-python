@@ -22,6 +22,12 @@ import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 
+import com.jetbrains.python.impl.psi.PyUtil;
+import com.jetbrains.python.psi.impl.PyPsiUtils;
+import consulo.language.psi.util.QualifiedName;
+import org.jspecify.annotations.Nullable;
+
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -32,12 +38,21 @@ public class PyEvaluator {
   private Map<String, Object> myNamespace;
   private boolean myEvaluateCollectionItems = true;
 
+  /**
+   * if true, references will be resolved
+   */
+  private boolean myEnableResolve = true;
+
   public void setNamespace(Map<String, Object> namespace) {
     myNamespace = namespace;
   }
 
   public void setEvaluateCollectionItems(boolean evaluateCollectionItems) {
     myEvaluateCollectionItems = evaluateCollectionItems;
+  }
+
+  public void enableResolve(boolean enableResolve) {
+    myEnableResolve = enableResolve;
   }
 
   public Object evaluate(PyExpression expr) {
@@ -78,6 +93,9 @@ public class PyEvaluator {
     else if (expr instanceof PyStringLiteralExpression) {
       return ((PyStringLiteralExpression)expr).getStringValue();
     }
+    else if (expr instanceof PyNumericLiteralExpression numericLiteralExpression) {
+      return evaluateNumeric(numericLiteralExpression);
+    }
     else if (expr instanceof PyBinaryExpression) {
       PyBinaryExpression binaryExpr = (PyBinaryExpression)expr;
       PyElementType op = binaryExpr.getOperator();
@@ -110,6 +128,9 @@ public class PyEvaluator {
       if (myNamespace != null) {
         return myNamespace.get(expr.getReferencedName());
       }
+      if (!myEnableResolve) {
+        return null;
+      }
       PsiElement result = expr.getReference(PyResolveContext.noImplicits()).resolve();
       if (result instanceof PyTargetExpression) {
         result = ((PyTargetExpression)result).findAssignedValue();
@@ -137,5 +158,65 @@ public class PyEvaluator {
       }
     }
     return null;
+  }
+
+  private static final QualifiedName SYS_VERSION_INFO = QualifiedName.fromDottedString("sys.version_info");
+
+  private static @Nullable Object evaluateNumeric(PyNumericLiteralExpression expression) {
+    if (expression.isIntegerLiteral()) {
+      return fromBigInteger(expression.getBigIntegerValue());
+    }
+    return null;
+  }
+
+  public static int @Nullable [] evaluateAsVersion(@Nullable PyExpression expression) {
+    if (!(PyPsiUtils.flattenParens(expression) instanceof PyTupleExpression tupleExpression)) {
+      return null;
+    }
+    PyExpression[] elements = tupleExpression.getElements();
+    int[] result = new int[elements.length];
+    for (int i = 0; i < elements.length; i++) {
+      Integer value = evaluateNoResolve(elements[i], Integer.class);
+      if (value == null) {
+        return null;
+      }
+      result[i] = value;
+    }
+    return result;
+  }
+
+  private static Number fromBigInteger(BigInteger value) {
+    int intValue = value.intValue();
+    if (BigInteger.valueOf(intValue).equals(value)) {
+      return intValue;
+    }
+
+    long longValue = value.longValue();
+    if (BigInteger.valueOf(longValue).equals(value)) {
+      return longValue;
+    }
+
+    return value;
+  }
+
+  /**
+   * Shortcut that evaluates expression with default params and disabled resolve and casts it to particular type (if possible)
+   *
+   * @param <T>        expected type
+   * @param expression expression to evaluate
+   * @param resultType expected type
+   * @return value if expression is evaluated to this type, null otherwise
+   */
+  public static <T> @Nullable T evaluateNoResolve(@Nullable PyExpression expression, Class<T> resultType) {
+    PyEvaluator evaluator = new PyEvaluator();
+    evaluator.enableResolve(false);
+    return PyUtil.as(evaluator.evaluate(expression), resultType);
+  }
+
+  public static boolean isSysVersionInfoExpression(@Nullable PyExpression expression) {
+    if (!(PyPsiUtils.flattenParens(expression) instanceof PyReferenceExpression referenceExpression)) {
+      return false;
+    }
+    return SYS_VERSION_INFO.equals(referenceExpression.asQualifiedName());
   }
 }

@@ -20,7 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.jetbrains.python.console.pydev.ConsoleCommunication;
 import com.jetbrains.python.impl.console.completion.PydevConsoleElement;
-import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
+import com.jetbrains.python.parsing.console.PythonConsoleData;
 import com.jetbrains.python.impl.run.PythonCommandLineState;
 import com.jetbrains.python.impl.sdk.PythonSdkType;
 import com.jetbrains.python.impl.sdk.flavors.PythonSdkFlavor;

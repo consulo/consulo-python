@@ -15,8 +15,9 @@
  */
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import com.google.common.collect.ImmutableList;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.psi.resolve.ResolveImportUtil;
 import com.jetbrains.python.psi.PyElement;
@@ -55,7 +56,7 @@ public class PyImportStatementImpl extends PyBaseElementImpl<PyImportStatementSt
 
 	public PyImportStatementImpl(PyImportStatementStub stub)
 	{
-		this(stub, PyElementTypes.IMPORT_STATEMENT);
+		this(stub, PyStubElementTypes.IMPORT_STATEMENT);
 	}
 
 	public PyImportStatementImpl(PyImportStatementStub stub, IStubElementType nodeType)

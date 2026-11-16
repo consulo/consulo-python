@@ -17,11 +17,10 @@ package com.jetbrains.python.impl.psi;
 
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.console.PydevConsoleRunner;
-import com.jetbrains.python.impl.console.parsing.PyConsoleParser;
-import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
-import com.jetbrains.python.impl.console.parsing.PythonConsoleLexer;
-import com.jetbrains.python.impl.parsing.PyParser;
-import com.jetbrains.python.impl.parsing.StatementParsing;
+import com.jetbrains.python.parsing.console.PyConsoleParser;
+import com.jetbrains.python.parsing.console.PythonConsoleData;
+import com.jetbrains.python.parsing.console.PythonConsoleLexer;
+import com.jetbrains.python.parsing.PyParser;
 import com.jetbrains.python.impl.psi.impl.stubs.PyFileStubBuilder;
 import com.jetbrains.python.impl.psi.impl.stubs.PyFileStubImpl;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -66,7 +65,7 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
   @Override
   public int getStubVersion() {
     // Don't forget to update versions of indexes that use the updated stub-based elements
-    return 58;
+    return 123;
   }
 
   @Nullable
@@ -90,12 +89,8 @@ public class PyFileElementType extends IStubFileElementType<PyFileStub> {
         Lexer lexer = parserDefinition.createLexer(defaultVersion);
         PsiParser parser = parserDefinition.createParser(defaultVersion);
         PsiBuilder builder = factory.createBuilder(project, node, lexer, language, defaultVersion, node.getChars());
-        if (parser instanceof PyParser) {
-          PyParser pythonParser = (PyParser)parser;
+        if (parser instanceof PyParser pythonParser) {
           pythonParser.setLanguageLevel(languageLevel);
-          if (languageLevel == LanguageLevel.PYTHON26 && psi.getContainingFile().getName().equals("__builtin__.py")) {
-            pythonParser.setFutureFlag(StatementParsing.FUTURE.PRINT_FUNCTION);
-          }
         }
         return parser.parse(this, builder, defaultVersion).getFirstChildNode();
       }

@@ -1,70 +1,45 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.psi;
 
-import consulo.language.ast.ASTNode;
-import consulo.language.psi.PsiElement;
-import consulo.language.ast.IElementType;
 import com.jetbrains.python.PythonFileType;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementType;
+import consulo.language.psi.PsiElement;
 import org.jspecify.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
+import java.util.function.Function;
 
 public class PyElementType extends IElementType {
-  protected Class<? extends PsiElement> myPsiElementClass;
-  private static final Class[] PARAMETER_TYPES = new Class[]{ASTNode.class};
-  private Constructor<? extends PsiElement> myConstructor;
+  private final Function<? super ASTNode, ? extends PsiElement> myPsiCreator;
 
-  private String mySpecialMethodName;
+  private final @Nullable String mySpecialMethodName;
 
   public PyElementType(String debugName) {
     super(debugName, PythonFileType.INSTANCE.getLanguage());
+    myPsiCreator = node -> { throw new IllegalStateException("Cannot create an element for " + node.getElementType() + " without element class");};
+    mySpecialMethodName = null;
   }
 
-  public PyElementType(String debugName, Class<? extends PsiElement> psiElementClass) {
-    this(debugName);
-    myPsiElementClass = psiElementClass;
+  public PyElementType(String debugName, Function<? super ASTNode, ? extends PsiElement> creator) {
+    super(debugName, PythonFileType.INSTANCE.getLanguage());
+    myPsiCreator = creator;
+    mySpecialMethodName = null;
   }
 
   public PyElementType(String debugName, String specialMethodName) {
-    this(debugName);
+    super(debugName, PythonFileType.INSTANCE.getLanguage());
+    myPsiCreator = node -> { throw new IllegalStateException("Cannot create an element for " + node.getElementType() + " without element class");};
     mySpecialMethodName = specialMethodName;
   }
 
   public PsiElement createElement(ASTNode node) {
-    if (myPsiElementClass == null) {
-      throw new IllegalStateException("Cannot create an element for " + node.getElementType() + " without element class");
-    }
-    try {
-      if (myConstructor == null) {
-        myConstructor = myPsiElementClass.getConstructor(PARAMETER_TYPES);
-      }
-      return myConstructor.newInstance(node);
-    }
-    catch (Exception e) {
-      throw new IllegalStateException("No necessary constructor for " + node.getElementType(), e);
-    }
+    return myPsiCreator.apply(node);
   }
 
   /**
    * @return name of special method for operation marked by this token; e.g. "__add__" for "+".
    */
-  @Nullable
-  public String getSpecialMethodName() {
+  public @Nullable String getSpecialMethodName() {
     return mySpecialMethodName;
   }
 

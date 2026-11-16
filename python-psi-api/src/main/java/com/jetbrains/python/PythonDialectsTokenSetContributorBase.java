@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,53 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python;
 
 import consulo.language.ast.TokenSet;
 
-
-/**
- * @author vlan
- */
 public abstract class PythonDialectsTokenSetContributorBase implements PythonDialectsTokenSetContributor {
-  @Override
-  public TokenSet getStatementTokens() {
-    return TokenSet.EMPTY;
-  }
+    @Override
+    public TokenSet getStatementTokens() {
+        return TokenSet.EMPTY;
+    }
 
-  @Override
-  public TokenSet getExpressionTokens() {
-    return TokenSet.EMPTY;
-  }
+    @Override
+    public TokenSet getExpressionTokens() {
+        return TokenSet.EMPTY;
+    }
 
-  @Override
-  public TokenSet getNameDefinerTokens() {
-    return TokenSet.EMPTY;
-  }
+    @Override
+    public TokenSet getKeywordTokens() {
+        return TokenSet.EMPTY;
+    }
 
-  @Override
-  public TokenSet getKeywordTokens() {
-    return TokenSet.EMPTY;
-  }
+    @Override
+    public TokenSet getParameterTokens() {
+        return TokenSet.EMPTY;
+    }
 
-  @Override
-  public TokenSet getParameterTokens() {
-    return TokenSet.EMPTY;
-  }
+    @Override
+    public TokenSet getFunctionDeclarationTokens() {
+        return TokenSet.EMPTY;
+    }
 
-  @Override
-  public TokenSet getFunctionDeclarationTokens() {
-    return TokenSet.EMPTY;
-  }
+    @Override
+    public TokenSet getUnbalancedBracesRecoveryTokens() {
+        return TokenSet.EMPTY;
+    }
 
-  @Override
-  public TokenSet getUnbalancedBracesRecoveryTokens() {
-    return TokenSet.EMPTY;
-  }
-
-  @Override
-  public TokenSet getReferenceExpressionTokens() {
-    return TokenSet.EMPTY;
-  }
+    @Override
+    public TokenSet getReferenceExpressionTokens() {
+        return TokenSet.EMPTY;
+    }
 }

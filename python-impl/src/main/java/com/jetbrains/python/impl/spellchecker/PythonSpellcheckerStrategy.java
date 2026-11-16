@@ -20,7 +20,7 @@ import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.inspections.PyStringFormatParser;
 import com.jetbrains.python.psi.PyBinaryExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
+import com.jetbrains.python.psi.PyStringLiteralUtil;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.Language;

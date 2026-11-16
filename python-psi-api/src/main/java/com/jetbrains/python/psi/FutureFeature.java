@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,37 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.psi;
-
 
 /**
  * Lists interesting features importable from __future__.
- * <code>.toString()</code> returns the Python name of the feature.
+ * {@code .toString()} returns the Python name of the feature.
  * <br/>
- * User: dcheryasov
  */
 public enum FutureFeature {
-  GENERATORS("generators", 22, 23), // historical
-  DIVISION("division", 22, 30),
-  ABSOLUTE_IMPORT("absolute_import", 25, 27),
-  WITH_STATEMENT("with_statement", 25, 26),
-  PRINT_FUNCTION("print_function", 26, 30),
-  UNICODE_LITERALS("unicode_literals", 26, 30),
-  BARRY_AS_FLUFL("barry_as_FLUFL", 31, 39), // last as of CPython 3.2
+  DIVISION("division", LanguageLevel.PYTHON24, LanguageLevel.PYTHON30), // actually since 2.2
+  ABSOLUTE_IMPORT("absolute_import", LanguageLevel.PYTHON25, LanguageLevel.PYTHON30),
+  PRINT_FUNCTION("print_function", LanguageLevel.PYTHON26, LanguageLevel.PYTHON30),
+  UNICODE_LITERALS("unicode_literals", LanguageLevel.PYTHON26, LanguageLevel.PYTHON30),
+  ANNOTATIONS("annotations", LanguageLevel.PYTHON37, LanguageLevel.PYTHON314)
   // NOTE: only add new features to the end unless you want to break existing stubs that rely on ordinal
   ;
-  // TODO: link it to LanguageLevel
+
   private final String myName;
-  private final int myOptionalVersion;
-  private final int myRequiredVersion;
+
+  private final LanguageLevel myOptionalVersion;
+
+  private final LanguageLevel myRequiredVersion;
 
   /**
-   * @param name what is imported from __future__
+   * @param name     what is imported from __future__
    * @param proposed version in which the feature has become importable
    * @param included version in which the feature is included by default
    */
-  FutureFeature(String name, int proposed, int included) {
+  FutureFeature(String name, LanguageLevel proposed, LanguageLevel included) {
     myName = name;
     myOptionalVersion = proposed;
     myRequiredVersion = included;
@@ -58,36 +55,16 @@ public enum FutureFeature {
   }
 
   /**
-   * @return Version since which it is possible to import the feature from __future__
-   */
-  public int getOptionalVersion() {
-    return myOptionalVersion;
-  }
-
-  /**
-   * @return Version since which the feature is built into the language (required from the language).
-   */
-  public int getRequiredVersion() {
-    return myRequiredVersion;
-  }
-
-  /**
-   * @param level
    * @return true iff the feature can either be imported from __future__ at given level, or is already built-in.
    */
   public boolean availableAt(LanguageLevel level) {
-    return level.getVersion() >= myOptionalVersion;
+    return level.isAtLeast(myOptionalVersion);
   }
 
   /**
-   * @param level
    * @return true iff the feature is already present (required) at given level, and there's no need to import it.
    */
   public boolean requiredAt(LanguageLevel level) {
-    return level.getVersion() >= myRequiredVersion;
+    return level.isAtLeast(myRequiredVersion);
   }
-
-  public static final FutureFeature[] ALL = {
-    GENERATORS, DIVISION, ABSOLUTE_IMPORT, WITH_STATEMENT, PRINT_FUNCTION, UNICODE_LITERALS, BARRY_AS_FLUFL
-  };
 }

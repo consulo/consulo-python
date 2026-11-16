@@ -16,7 +16,7 @@
 
 package com.jetbrains.python.impl.editor;
 
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import consulo.annotation.component.ExtensionImpl;

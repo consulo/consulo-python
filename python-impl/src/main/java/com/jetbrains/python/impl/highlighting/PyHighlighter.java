@@ -1,43 +1,51 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.python.impl.highlighting;
 
-import consulo.language.ast.StringEscapesTokenTypes;
 import consulo.language.lexer.LayeredLexer;
 import consulo.language.lexer.Lexer;
 import consulo.codeEditor.HighlighterColors;
 import consulo.colorScheme.TextAttributesKey;
 import consulo.language.editor.highlight.SyntaxHighlighterBase;
+import consulo.language.ast.StringEscapesTokenTypes;
 import consulo.language.ast.IElementType;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
-import com.jetbrains.python.impl.lexer.PyStringLiteralLexer;
-import com.jetbrains.python.impl.lexer.PythonHighlightingLexer;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.lexer.PyFStringLiteralLexer;
+import com.jetbrains.python.lexer.PyStringLiteralLexer;
+import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static consulo.codeEditor.DefaultLanguageHighlighterColors.*;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.BRACES;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.BRACKETS;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.CLASS_NAME;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.COMMA;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.DOC_COMMENT;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.DOC_COMMENT_TAG;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.DOT;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.FUNCTION_CALL;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.FUNCTION_DECLARATION;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.IDENTIFIER;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.KEYWORD;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.LINE_COMMENT;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.LOCAL_VARIABLE;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.METADATA;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.NUMBER;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.OPERATION_SIGN;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.PARAMETER;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.PARENTHESES;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.PREDEFINED_SYMBOL;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.STRING;
+import static consulo.codeEditor.DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE;
 
 /**
  * Colors and lexer(s) needed for highlighting.
  */
 public class PyHighlighter extends SyntaxHighlighterBase {
-  private Map<IElementType, TextAttributesKey> keys;
+  private final Map<IElementType, TextAttributesKey> keys;
   private final LanguageLevel myLanguageLevel;
 
   @Override
@@ -59,6 +67,14 @@ public class PyHighlighter extends SyntaxHighlighterBase {
       new PyStringLiteralLexer(PyTokenTypes.TRIPLE_QUOTED_UNICODE),
       PyTokenTypes.TRIPLE_QUOTED_UNICODE
     );
+    ret.registerLayer(
+      new PyFStringLiteralLexer(PyTokenTypes.FSTRING_TEXT),
+      PyTokenTypes.FSTRING_TEXT
+    );
+    ret.registerLayer(
+      new PyFStringLiteralLexer(PyTokenTypes.FSTRING_RAW_TEXT),
+      PyTokenTypes.FSTRING_RAW_TEXT
+    );
 
     return ret;
   }
@@ -73,17 +89,17 @@ public class PyHighlighter extends SyntaxHighlighterBase {
   public static final TextAttributesKey PY_UNICODE_STRING = TextAttributesKey.of("PY.STRING.U", STRING);
   public static final TextAttributesKey PY_NUMBER = TextAttributesKey.of("PY.NUMBER", NUMBER);
 
-  static final TextAttributesKey PY_OPERATION_SIGN = TextAttributesKey.of("PY.OPERATION_SIGN", OPERATION_SIGN);
+  public static final TextAttributesKey PY_OPERATION_SIGN = TextAttributesKey.of("PY.OPERATION_SIGN", OPERATION_SIGN);
 
-  static final TextAttributesKey PY_PARENTHS = TextAttributesKey.of("PY.PARENTHS", PARENTHESES);
+  public static final TextAttributesKey PY_PARENTHS = TextAttributesKey.of("PY.PARENTHS", PARENTHESES);
 
-  static final TextAttributesKey PY_BRACKETS = TextAttributesKey.of("PY.BRACKETS", BRACKETS);
+  public static final TextAttributesKey PY_BRACKETS = TextAttributesKey.of("PY.BRACKETS", BRACKETS);
 
-  static final TextAttributesKey PY_BRACES = TextAttributesKey.of("PY.BRACES", BRACES);
+  public static final TextAttributesKey PY_BRACES = TextAttributesKey.of("PY.BRACES", BRACES);
 
-  static final TextAttributesKey PY_COMMA = TextAttributesKey.of("PY.COMMA", COMMA);
+  public static final TextAttributesKey PY_COMMA = TextAttributesKey.of("PY.COMMA", COMMA);
 
-  static final TextAttributesKey PY_DOT = TextAttributesKey.of("PY.DOT", DOT);
+  public static final TextAttributesKey PY_DOT = TextAttributesKey.of("PY.DOT", DOT);
 
   public static final TextAttributesKey PY_LINE_COMMENT = TextAttributesKey.of("PY.LINE_COMMENT", LINE_COMMENT);
 
@@ -91,11 +107,13 @@ public class PyHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey PY_DOC_COMMENT_TAG = TextAttributesKey.of("PY.DOC_COMMENT_TAG", DOC_COMMENT_TAG);
 
-  public static final TextAttributesKey PY_DECORATOR = TextAttributesKey.of("PY.DECORATOR", IDENTIFIER);
+  public static final TextAttributesKey PY_DECORATOR = TextAttributesKey.of("PY.DECORATOR", METADATA);
 
   public static final TextAttributesKey PY_CLASS_DEFINITION = TextAttributesKey.of("PY.CLASS_DEFINITION", CLASS_NAME);
 
   public static final TextAttributesKey PY_FUNC_DEFINITION = TextAttributesKey.of("PY.FUNC_DEFINITION", FUNCTION_DECLARATION);
+
+  public static final TextAttributesKey PY_NESTED_FUNC_DEFINITION = TextAttributesKey.of("PY.NESTED_FUNC_DEFINITION", PY_FUNC_DEFINITION);
 
   public static final TextAttributesKey PY_PREDEFINED_DEFINITION = TextAttributesKey.of("PY.PREDEFINED_DEFINITION", PREDEFINED_SYMBOL);
 
@@ -108,19 +126,31 @@ public class PyHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey PY_KEYWORD_ARGUMENT = TextAttributesKey.of("PY.KEYWORD_ARGUMENT", PARAMETER);
 
+  public static final TextAttributesKey PY_FUNCTION_CALL = TextAttributesKey.of("PY.FUNCTION_CALL", FUNCTION_CALL);
+  public static final TextAttributesKey PY_METHOD_CALL = TextAttributesKey.of("PY.METHOD_CALL", PY_FUNCTION_CALL);
+
+  public static final TextAttributesKey PY_ANNOTATION = TextAttributesKey.of("PY.ANNOTATION", IDENTIFIER);
+
   public static final TextAttributesKey PY_VALID_STRING_ESCAPE = TextAttributesKey.of("PY.VALID_STRING_ESCAPE", VALID_STRING_ESCAPE);
 
   public static final TextAttributesKey PY_INVALID_STRING_ESCAPE = TextAttributesKey.of("PY.INVALID_STRING_ESCAPE", INVALID_STRING_ESCAPE);
   
+  public static final TextAttributesKey PY_FSTRING_FRAGMENT_BRACES = TextAttributesKey.of("PY.FSTRING_FRAGMENT_BRACES", VALID_STRING_ESCAPE);
+  public static final TextAttributesKey PY_FSTRING_FRAGMENT_COLON = TextAttributesKey.of("PY.FSTRING_FRAGMENT_COLON", VALID_STRING_ESCAPE);
+  public static final TextAttributesKey PY_FSTRING_FRAGMENT_TYPE_CONVERSION = TextAttributesKey.of("PY.FSTRING_FRAGMENT_TYPE_CONVERSION", VALID_STRING_ESCAPE);
+  public static final TextAttributesKey PY_FSTRING_FORMAT_SPEC_SPECIAL_CHAR = TextAttributesKey.of("PY.FSTRING_FORMAT_SPEC_SPECIAL_CHAR", VALID_STRING_ESCAPE);
+  public static final TextAttributesKey PY_FSTRING_FORMAT_SPEC_NUMBER = TextAttributesKey.of("PY.FSTRING_FORMAT_SPEC_NUMBER", NUMBER);
+  public static final TextAttributesKey PY_LOCAL_VARIABLE = TextAttributesKey.of("PY.LOCAL_VARIABLE", LOCAL_VARIABLE);
+  public static final TextAttributesKey PY_TYPE_PARAMETER = TextAttributesKey.of("PY.TYPE_PARAMETER", PARAMETER);
+
   /**
    * The 'heavy' constructor that initializes everything. PySyntaxHighlighterFactory caches such instances per level.
-   * @param languageLevel
    */
   public PyHighlighter(LanguageLevel languageLevel) {
     myLanguageLevel = languageLevel;
     keys = new HashMap<>();
 
-    fillMap(keys, PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens(), PY_KEYWORD);
+    fillMap(keys, PythonDialectsTokenSetProvider.getInstance().getKeywordTokens(), PY_KEYWORD);
     fillMap(keys, PyTokenTypes.OPERATIONS, PY_OPERATION_SIGN);
 
     keys.put(PyTokenTypes.INTEGER_LITERAL, PY_NUMBER);
@@ -130,6 +160,16 @@ public class PyHighlighter extends SyntaxHighlighterBase {
     keys.put(PyTokenTypes.TRIPLE_QUOTED_STRING, PY_BYTE_STRING);
     keys.put(PyTokenTypes.SINGLE_QUOTED_UNICODE, PY_UNICODE_STRING);
     keys.put(PyTokenTypes.TRIPLE_QUOTED_UNICODE, PY_UNICODE_STRING);
+
+    keys.put(PyTokenTypes.FSTRING_START, PY_UNICODE_STRING);
+    keys.put(PyTokenTypes.FSTRING_END, PY_UNICODE_STRING);
+    keys.put(PyTokenTypes.FSTRING_TEXT, PY_UNICODE_STRING);
+    keys.put(PyTokenTypes.FSTRING_RAW_TEXT, PY_UNICODE_STRING);
+
+    keys.put(PyTokenTypes.FSTRING_FRAGMENT_TYPE_CONVERSION, PY_FSTRING_FRAGMENT_TYPE_CONVERSION);
+    keys.put(PyTokenTypes.FSTRING_FRAGMENT_FORMAT_START, PY_FSTRING_FRAGMENT_COLON);
+    keys.put(PyTokenTypes.FSTRING_FRAGMENT_START, PY_FSTRING_FRAGMENT_BRACES);
+    keys.put(PyTokenTypes.FSTRING_FRAGMENT_END, PY_FSTRING_FRAGMENT_BRACES);
 
     keys.put(PyTokenTypes.DOCSTRING, PY_DOC_COMMENT);
 

@@ -173,13 +173,19 @@ public class PyBaseElementImpl<T extends StubElement> extends StubBasedPsiElemen
     @RequiredReadAction
 	public PsiReference findReferenceAt(int offset)
 	{
+		return findReferenceAt(this, offset);
+	}
+
+	@RequiredReadAction
+	static @Nullable PsiReference findReferenceAt(PsiElement target, int offset)
+	{
 		// copy/paste from SharedPsiElementImplUtil
-		PsiElement element = findElementAt(offset);
+		PsiElement element = target.findElementAt(offset);
 		if(element == null || element instanceof OuterLanguageElement)
 		{
 			return null;
 		}
-		offset = getTextRange().getStartOffset() + offset - element.getTextRange().getStartOffset();
+		offset = target.getTextRange().getStartOffset() + offset - element.getTextRange().getStartOffset();
 
 		List<PsiReference> referencesList = new ArrayList<>();
 		PsiFile file = element.getContainingFile();

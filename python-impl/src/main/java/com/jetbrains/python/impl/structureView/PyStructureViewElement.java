@@ -206,7 +206,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
     private static Visibility getVisibilityByName(@Nullable String name) {
         if (name != null) {
             if (name.startsWith("__")) {
-                if (PyNames.UnderscoredAttributes.contains(name)) {
+                if (PyNames.UNDERSCORED_ATTRIBUTES.contains(name)) {
                     return Visibility.PREDEFINED;
                 }
                 else {
@@ -245,7 +245,7 @@ public class PyStructureViewElement implements StructureViewTreeElement {
                 if (myElement instanceof PyFile) {
                     return LocalizeValue.ofNullable(myElement.getName());
                 }
-                return presentation != null ? presentation.getPresentableText() : PyNames.UNNAMED_ELEMENT;
+                return presentation != null ? presentation.getPresentableText() : LocalizeValue.of(PyNames.UNNAMED_ELEMENT);
             }
 
             @Nullable

@@ -1,5 +1,6 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +22,15 @@ import consulo.language.version.LanguageVersion;
 import consulo.python.language.PythonLanguageVersion;
 import consulo.util.collection.ArrayUtil;
 import consulo.util.dataholder.Key;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 
-/**
- * @author yole
- */
 public enum LanguageLevel {
 
   /**
@@ -75,15 +80,34 @@ public enum LanguageLevel {
   PYTHON39(309),
   PYTHON310(310),
   PYTHON311(311),
-  PYTHON312(312);
+  PYTHON312(312),
+  PYTHON313(313),
+  PYTHON314(314),
+  PYTHON315(315);
+
+  public static final Comparator<LanguageLevel> VERSION_COMPARATOR = (first, second) -> {
+    return first == second ? 0 : first.isOlderThan(second) ? -1 : 1;
+  };
+
+  /**
+   * This value is mostly bound to the compatibility of our debugger and helpers.
+   * You're free to gradually drop support of versions not mentioned here if they present too much hassle to maintain.
+   */
+  public static final List<LanguageLevel> SUPPORTED_LEVELS =
+    Stream
+      .of(values())
+      .filter(v -> v.isAtLeast(PYTHON36) || v == PYTHON27)
+      .toList();
 
   private static final LanguageLevel DEFAULT2 = PYTHON27;
-  private static final LanguageLevel DEFAULT3 = PYTHON35;
+  private static final LanguageLevel DEFAULT3 = PYTHON310;
 
-  public static LanguageLevel FORCE_LANGUAGE_LEVEL = null;
+  public static final Pattern VERSION_RE = Pattern.compile("((Python|GraalPy) (\\S+)).*", Pattern.DOTALL);
+
+  public static @Nullable LanguageLevel FORCE_LANGUAGE_LEVEL = null;
 
   public static LanguageLevel getDefault() {
-    return DEFAULT2;
+    return getLatest();
   }
 
   private final int myVersion;
@@ -95,20 +119,31 @@ public enum LanguageLevel {
   /**
    * @return an int where major and minor version are represented decimally: "version 2.5" is 25.
    */
+  // Consulo: removed in JB, still used by Consulo code (PythonLanguageVersion and others)
   public int getVersion() {
     return myVersion;
   }
 
+  // Consulo: removed in JB, still used by Consulo code
   public boolean hasWithStatement() {
     return isAtLeast(PYTHON26);
   }
 
-  public boolean hasPrintStatement() {
-    return isPython2();
-  }
-
+  // Consulo: removed in JB, still used by Consulo code
   public boolean supportsSetLiterals() {
     return this == PYTHON27 || isAtLeast(PYTHON31);
+  }
+
+  public int getMajorVersion() {
+    return myVersion / 100;
+  }
+
+  public int getMinorVersion() {
+    return myVersion % 100;
+  }
+
+  public boolean hasPrintStatement() {
+    return isPython2();
   }
 
   public boolean isPython2() {
@@ -119,14 +154,6 @@ public enum LanguageLevel {
     return getMajorVersion() == 3;
   }
 
-  public int getMajorVersion() {
-    return myVersion / 100;
-  }
-
-  public int getMinorVersion() {
-    return myVersion % 100;
-  }
-  
   public boolean isOlderThan(LanguageLevel other) {
     return myVersion < other.myVersion;
   }
@@ -135,71 +162,92 @@ public enum LanguageLevel {
     return myVersion >= other.myVersion;
   }
 
-  public static LanguageLevel fromPythonVersion(String pythonVersion) {
+  /**
+   * This function returns default value if argument can't be parsed, consider using {@link #fromPythonVersionSafe(String)}
+   */
+  public static @Nullable LanguageLevel fromPythonVersion(@Nullable String pythonVersion) {
     if (pythonVersion == null) return null;
+    var version = fromPythonVersionSafe(pythonVersion);
+    return (version != null) ? version : getDefault();
+  }
 
-    if (pythonVersion.startsWith("2")) {
-      if (pythonVersion.startsWith("2.4")) {
+  /**
+   * Provide version as string (i.e "3.12") to get language level
+   *
+   * @return language level or null if can't be parsed
+   */
+  public static @Nullable LanguageLevel fromPythonVersionSafe(String pythonVersionOutput) {
+    if (pythonVersionOutput.startsWith("2")) {
+      if (pythonVersionOutput.startsWith("2.4")) {
         return PYTHON24;
       }
-      if (pythonVersion.startsWith("2.5")) {
+      if (pythonVersionOutput.startsWith("2.5")) {
         return PYTHON25;
       }
-      if (pythonVersion.startsWith("2.6")) {
+      if (pythonVersionOutput.startsWith("2.6")) {
         return PYTHON26;
       }
-      if (pythonVersion.startsWith("2.7")) {
+      if (pythonVersionOutput.startsWith("2.7")) {
         return PYTHON27;
       }
       return DEFAULT2;
     }
-    if (pythonVersion.startsWith("3")) {
-      if (pythonVersion.startsWith("3.0")) {
+    if (pythonVersionOutput.startsWith("3")) {
+      if (pythonVersionOutput.startsWith("3.0")) {
         return PYTHON30;
       }
-      if (pythonVersion.startsWith("3.1.") || pythonVersion.equals("3.1")) {
+      if (pythonVersionOutput.startsWith("3.1.") || pythonVersionOutput.equals("3.1")) {
         return PYTHON31;
       }
-      if (pythonVersion.startsWith("3.2")) {
+      if (pythonVersionOutput.startsWith("3.2")) {
         return PYTHON32;
       }
-      if (pythonVersion.startsWith("3.3")) {
+      if (pythonVersionOutput.startsWith("3.3")) {
         return PYTHON33;
       }
-      if (pythonVersion.startsWith("3.4")) {
+      if (pythonVersionOutput.startsWith("3.4")) {
         return PYTHON34;
       }
-      if (pythonVersion.startsWith("3.5")) {
+      if (pythonVersionOutput.startsWith("3.5")) {
         return PYTHON35;
       }
-      if (pythonVersion.startsWith("3.6")) {
+      if (pythonVersionOutput.startsWith("3.6")) {
         return PYTHON36;
       }
-      if (pythonVersion.startsWith("3.7")) {
+      if (pythonVersionOutput.startsWith("3.7")) {
         return PYTHON37;
       }
-      if (pythonVersion.startsWith("3.8")) {
+      if (pythonVersionOutput.startsWith("3.8")) {
         return PYTHON38;
       }
-      if (pythonVersion.startsWith("3.9")) {
+      if (pythonVersionOutput.startsWith("3.9")) {
         return PYTHON39;
       }
-      if (pythonVersion.startsWith("3.10")) {
+      if (pythonVersionOutput.startsWith("3.10")) {
         return PYTHON310;
       }
-      if (pythonVersion.startsWith("3.11")) {
+      if (pythonVersionOutput.startsWith("3.11")) {
         return PYTHON311;
       }
-      if (pythonVersion.startsWith("3.12")) {
+      if (pythonVersionOutput.startsWith("3.12")) {
         return PYTHON312;
       }
-      // a version newer than the known ones is closest to the latest one, not to the default
-      if (isNewerThanLatest(pythonVersion)) {
+      if (pythonVersionOutput.startsWith("3.13")) {
+        return PYTHON313;
+      }
+      if (pythonVersionOutput.startsWith("3.14")) {
+        return PYTHON314;
+      }
+      if (pythonVersionOutput.startsWith("3.15")) {
+        return PYTHON315;
+      }
+      // Consulo: a version newer than the known ones is closest to the latest one, not to the default
+      if (isNewerThanLatest(pythonVersionOutput)) {
         return getLatest();
       }
       return DEFAULT3;
     }
-    return getDefault();
+    return null;
   }
 
   private static boolean isNewerThanLatest(String pythonVersion) {
@@ -215,9 +263,15 @@ public enum LanguageLevel {
     }
   }
 
+  // Consulo: removed in JB, still used by Consulo code
   public static final Key<LanguageLevel> KEY = Key.create("python.language.level");
 
+  public String toPythonVersion() {
+    return getMajorVersion() + "." + getMinorVersion();
+  }
+
   public static LanguageLevel forElement(PsiElement element) {
+    // TODO consulo: com.jetbrains.python.PyLanguageFacade missing, Consulo resolves the level through the file language version
     PsiFile containingFile = element.getContainingFile();
     if (containingFile instanceof PyFile) {
       LanguageVersion languageVersion = containingFile.getLanguageVersion();
@@ -229,13 +283,23 @@ public enum LanguageLevel {
     return getDefault();
   }
 
-  public String toPythonVersion() {
-    return getMajorVersion() + "." + getMinorVersion();
+  public static LanguageLevel getLatest() {
+    return ArrayUtil.getLastElement(values());
   }
 
-  public static LanguageLevel getLatest() {
-    //noinspection ConstantConditions
-    return ArrayUtil.getLastElement(values());
+    /**
+   * For <code>python --version</code> output (i.e <code>Python 3.12</code>) returns {@link LanguageLevel}.
+   * Typical usage: call `python --version`, trim, and provide here.
+   *
+   * @param versionString output to look language level for
+   * @return level or null if no parsable output was found
+   */
+  public static @Nullable LanguageLevel getLanguageLevelFromVersionStringStaticSafe(String versionString) {
+    final Matcher m = VERSION_RE.matcher(versionString);
+    if (m.matches()) {
+      return fromPythonVersionSafe(m.group(3));
+    }
+    return null;
   }
 
   @Override

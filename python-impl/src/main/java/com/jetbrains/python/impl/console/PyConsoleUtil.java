@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.impl.console;
 
-import com.jetbrains.python.impl.console.parsing.PythonConsoleData;
+import com.jetbrains.python.parsing.console.PythonConsoleData;
 import consulo.application.ApplicationManager;
 import consulo.codeEditor.Editor;
 import consulo.execution.ui.console.ConsoleViewContentType;

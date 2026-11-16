@@ -18,7 +18,7 @@ package com.jetbrains.python.impl.documentation;
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonFileType;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.PythonHelpersLocator;
 import com.jetbrains.python.impl.console.PyConsoleUtil;
 import com.jetbrains.python.impl.documentation.docstrings.DocStringUtil;
@@ -120,7 +120,7 @@ public class PyDocumentationBuilder {
 
     if (elementDefinition != null) {
       ASTNode node = elementDefinition.getNode();
-      if (node != null && PythonDialectsTokenSetProvider.INSTANCE.getKeywordTokens().contains(node.getElementType())) {
+      if (node != null && PythonDialectsTokenSetProvider.getInstance().getKeywordTokens().contains(node.getElementType())) {
         String documentationName = elementDefinition.getText();
         if (node.getElementType() == PyTokenTypes.AS_KEYWORD || node.getElementType() == PyTokenTypes.ELSE_KEYWORD) {
           PyTryExceptStatement statement = PsiTreeUtil.getParentOfType(elementDefinition, PyTryExceptStatement.class);
@@ -417,7 +417,7 @@ public class PyDocumentationBuilder {
       // above could have not worked because inheritance is not searched down to 'object'.
       // for well-known methods, copy built-in doc string.
       // TODO: also handle predefined __xxx__ that are not part of 'object'.
-      if (PyNames.UnderscoredAttributes.contains(methodName)) {
+      if (PyNames.UNDERSCORED_ATTRIBUTES.contains(methodName)) {
         addPredefinedMethodDoc(pyFunction, methodName);
       }
     }

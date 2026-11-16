@@ -16,15 +16,13 @@
 
 package com.jetbrains.python.impl.documentation.doctest;
 
-import org.jspecify.annotations.Nullable;
-
 import consulo.language.parser.PsiBuilder;
 import consulo.language.ast.IElementType;
 import consulo.util.lang.CharArrayUtil;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.parsing.ExpressionParsing;
-import com.jetbrains.python.impl.parsing.ParsingContext;
-import com.jetbrains.python.impl.parsing.StatementParsing;
+import com.jetbrains.python.parsing.ExpressionParsing;
+import com.jetbrains.python.parsing.ParsingContext;
+import com.jetbrains.python.parsing.StatementParsing;
 import com.jetbrains.python.psi.LanguageLevel;
 
 /**
@@ -34,11 +32,9 @@ public class PyDocstringParsingContext extends ParsingContext {
   private final StatementParsing myStatementParser;
   private final ExpressionParsing myExpressionParser;
 
-  public PyDocstringParsingContext(PsiBuilder builder,
-                                   LanguageLevel languageLevel,
-                                   StatementParsing.FUTURE futureFlag) {
-    super(builder, languageLevel, futureFlag);
-    myStatementParser = new PyDocstringStatementParsing(this, futureFlag);
+  public PyDocstringParsingContext(PsiBuilder builder, LanguageLevel languageLevel) {
+    super(builder, languageLevel);
+    myStatementParser = new PyDocstringStatementParsing(this);
     myExpressionParser = new PyDocstringExpressionParsing(this);
   }
 
@@ -65,9 +61,8 @@ public class PyDocstringParsingContext extends ParsingContext {
 
   private static class PyDocstringStatementParsing extends StatementParsing {
 
-    protected PyDocstringStatementParsing(ParsingContext context,
-                                          @Nullable FUTURE futureFlag) {
-      super(context, futureFlag);
+    protected PyDocstringStatementParsing(ParsingContext context) {
+      super(context);
     }
 
     @Override

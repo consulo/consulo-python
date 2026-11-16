@@ -15,10 +15,10 @@
  */
 package com.jetbrains.python.impl;
 
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.impl.psi.PyFileElementType;
-import com.jetbrains.python.impl.psi.PyStringLiteralUtil;
 import com.jetbrains.python.psi.*;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.dumb.DumbAware;
@@ -231,7 +231,7 @@ public class PythonFoldingBuilder extends CustomFoldingBuilder implements DumbAw
 
   private static String getLanguagePlaceholderForString(PyStringLiteralExpression stringLiteralExpression) {
     String stringText = stringLiteralExpression.getText();
-    Pair<String, String> quotes = PyStringLiteralUtil.getQuotes(stringText);
+    Pair<String, String> quotes = PyStringLiteralCoreUtil.getQuotes(stringText);
     if (quotes != null) {
       return quotes.second + "..." + quotes.second;
     }

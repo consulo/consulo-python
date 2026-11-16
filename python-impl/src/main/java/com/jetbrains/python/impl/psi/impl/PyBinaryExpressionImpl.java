@@ -16,7 +16,8 @@
 package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PyNames;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
 import com.jetbrains.python.impl.psi.types.PyGenericType;
 import com.jetbrains.python.impl.psi.types.PyNoneType;
@@ -82,7 +83,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
   @RequiredReadAction
   public PsiElement getPsiOperator() {
     ASTNode node = getNode();
-    ASTNode child = node.findChildByType(PyElementTypes.BINARY_OPS);
+    ASTNode child = node.findChildByType(PyTokenTypes.BINARY_OPS);
     if (child != null) {
       return child.getPsi();
     }
@@ -96,7 +97,7 @@ public class PyBinaryExpressionImpl extends PyElementImpl implements PyBinaryExp
     StringBuilder buf = new StringBuilder();
     while (child != null) {
       IElementType elType = child.getElementType();
-      if (elType instanceof PyElementType && PyElementTypes.BINARY_OPS.contains(elType)) {
+      if (elType instanceof PyElementType && PyTokenTypes.BINARY_OPS.contains(elType)) {
         buf.append(child.getText());
       }
       child = child.getTreeNext();

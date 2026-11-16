@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.psi.PyElsePart;
 import com.jetbrains.python.psi.PyStatementList;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 

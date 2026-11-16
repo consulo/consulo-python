@@ -23,6 +23,7 @@ import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import org.jspecify.annotations.Nullable;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
@@ -387,7 +388,16 @@ public class PyParameterInfoHandler implements ParameterInfoHandler<PyArgumentLi
             }
 
             @Override
-            public void visitSingleStarParameter(PySingleStarParameter param, boolean first, boolean last) {
+            public void visitSlashParameter(@Nullable PySlashParameter param, boolean first, boolean last) {
+                hintFlags.put(hintsList.size(), EnumSet.noneOf(SignatureStyle.class));
+                if (!last) {
+                    separatorAfter.add(hintsList.size());
+                }
+                hintsList.add(PySlashParameter.TEXT);
+            }
+
+            @Override
+            public void visitSingleStarParameter(@Nullable PySingleStarParameter param, boolean first, boolean last) {
                 hintFlags.put(hintsList.size(), EnumSet.noneOf(SignatureStyle.class));
                 if (!last) {
                     separatorAfter.add(hintsList.size());

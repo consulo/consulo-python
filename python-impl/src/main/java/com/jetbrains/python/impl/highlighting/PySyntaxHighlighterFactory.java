@@ -16,8 +16,8 @@
 package com.jetbrains.python.impl.highlighting;
 
 import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.impl.console.parsing.PyConsoleHighlightingLexer;
-import com.jetbrains.python.impl.lexer.PythonHighlightingLexer;
+import com.jetbrains.python.parsing.console.PyConsoleHighlightingLexer;
+import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.impl.psi.PyUtil;
 import consulo.annotation.component.ExtensionImpl;

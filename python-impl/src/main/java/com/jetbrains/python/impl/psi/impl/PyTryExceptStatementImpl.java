@@ -19,7 +19,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenSet;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.*;
 
 /**

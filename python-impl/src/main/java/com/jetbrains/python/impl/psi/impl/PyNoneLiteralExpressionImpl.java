@@ -1,5 +1,7 @@
+// Copyright 2000-2026 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2013-2026 consulo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,37 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jetbrains.python.impl.psi.impl;
 
-
-import consulo.language.ast.ASTNode;
-import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.psi.PyElementVisitor;
-import com.jetbrains.python.psi.PyNoneLiteralExpression;
 import com.jetbrains.python.impl.psi.types.PyNoneType;
+import com.jetbrains.python.psi.PyElementVisitor;
+import com.jetbrains.python.psi.PyInstantTypeProvider;
+import com.jetbrains.python.psi.PyNoneLiteralExpression;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.TypeEvalContext;
+import consulo.language.ast.ASTNode;
+import org.jspecify.annotations.Nullable;
 
-/**
- * @author yole
- */
-public class PyNoneLiteralExpressionImpl extends PyElementImpl implements PyNoneLiteralExpression {
-  public PyNoneLiteralExpressionImpl(ASTNode astNode) {
-    super(astNode);
-  }
+public class PyNoneLiteralExpressionImpl extends PyElementImpl implements PyNoneLiteralExpression, PyInstantTypeProvider {
+    public PyNoneLiteralExpressionImpl(ASTNode astNode) {
+        super(astNode);
+    }
 
-  public PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
-    return PyNoneType.INSTANCE;
-  }
+    @Override
+    public @Nullable PyType getType(TypeEvalContext context, TypeEvalContext.Key key) {
+        // TODO consulo: JB returns PyBuiltinCache.getInstance(this).getNoneType() ?: PyAnyType.getUnknown(),
+        //  PyBuiltinCache#getNoneType and PyAnyType are not ported yet, keep Consulo's PyNoneType
+        return PyNoneType.INSTANCE;
+    }
 
-  @Override
-  protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
-    pyVisitor.visitPyNoneLiteralExpression(this);
-  }
-
-  @Override
-  public boolean isEllipsis() {
-    return getNode().findChildByType(PyTokenTypes.DOT) != null;
-  }
+    @Override
+    protected void acceptPyVisitor(PyElementVisitor pyVisitor) {
+        pyVisitor.visitPyNoneLiteralExpression(this);
+    }
 }

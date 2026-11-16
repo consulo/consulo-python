@@ -15,7 +15,7 @@
  */
 package com.jetbrains.python.rest;
 
-import com.jetbrains.python.impl.lexer.PythonHighlightingLexer;
+import com.jetbrains.python.lexer.PythonHighlightingLexer;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.rest.RestElementType;
 import com.jetbrains.rest.RestLanguage;

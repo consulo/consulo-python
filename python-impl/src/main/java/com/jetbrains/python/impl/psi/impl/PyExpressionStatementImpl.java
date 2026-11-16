@@ -17,7 +17,7 @@ package com.jetbrains.python.impl.psi.impl;
 
 import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.PyElementVisitor;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyExpressionStatement;
@@ -33,7 +33,7 @@ public class PyExpressionStatementImpl extends PyElementImpl implements PyExpres
     @Override
     @RequiredReadAction
     public PyExpression getExpression() {
-        return childToPsiNotNull(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+        return childToPsiNotNull(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
     }
 
     @Override

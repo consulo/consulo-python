@@ -82,7 +82,7 @@ public class PyBuiltinAnnotator extends PyAnnotator
 	private boolean highlightAsAttribute(PyQualifiedExpression node, String name)
 	{
 		LanguageLevel languageLevel = LanguageLevel.forElement(node);
-		if(PyNames.UnderscoredAttributes.contains(name) || PyNames.getBuiltinMethods(languageLevel).containsKey(name))
+		if(PyNames.UNDERSCORED_ATTRIBUTES.contains(name) || PyNames.getBuiltinMethods(languageLevel).containsKey(name))
 		{
 			// things like __len__: foo.__len__ or class Foo: ... __len__ = my_len_impl
 			if(node.isQualified() || ScopeUtil.getScopeOwner(node) instanceof PyClass)

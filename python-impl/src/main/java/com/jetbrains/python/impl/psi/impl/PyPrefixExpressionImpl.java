@@ -17,8 +17,8 @@ package com.jetbrains.python.impl.psi.impl;
 
 import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PyTokenTypes;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.impl.psi.impl.references.PyOperatorReference;
 import com.jetbrains.python.impl.psi.types.PyCollectionType;
 import com.jetbrains.python.impl.psi.types.PyUnionType;
@@ -52,14 +52,14 @@ public class PyPrefixExpressionImpl extends PyElementImpl implements PyPrefixExp
 
     @Override
     public PyExpression getOperand() {
-        return (PyExpression) childToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), 0);
+        return (PyExpression) childToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), 0);
     }
 
     @Nullable
     @RequiredReadAction
     public PsiElement getPsiOperator() {
         ASTNode node = getNode();
-        ASTNode child = node.findChildByType(PyElementTypes.UNARY_OPS);
+        ASTNode child = node.findChildByType(PyTokenTypes.UNARY_OPS);
         return child != null ? child.getPsi() : null;
     }
 

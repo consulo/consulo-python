@@ -20,8 +20,8 @@ import com.google.common.collect.Queues;
 import com.jetbrains.python.FunctionParameter;
 import com.jetbrains.python.PyTokenTypes;
 import com.jetbrains.python.impl.NotNullPredicate;
-import com.jetbrains.python.impl.PyElementTypes;
-import com.jetbrains.python.impl.PythonDialectsTokenSetProvider;
+import com.jetbrains.python.PyElementTypes;
+import com.jetbrains.python.PythonDialectsTokenSetProvider;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import consulo.annotation.access.RequiredReadAction;
@@ -76,7 +76,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 	@Override
     public PyExpression[] getArguments()
 	{
-		return childrenToPsi(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens(), PyExpression.EMPTY_ARRAY);
+		return childrenToPsi(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens(), PyExpression.EMPTY_ARRAY);
 	}
 
     @Nullable
@@ -182,7 +182,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 		{
 			ASTNode before = PyPsiUtils.getNextNonWhitespaceSibling(pars[0]);
 			ASTNode anchorBefore;
-			if(before != null && elementPrecedesElementsOfType(before, PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens()))
+			if(before != null && elementPrecedesElementsOfType(before, PythonDialectsTokenSetProvider.getInstance().getExpressionTokens()))
 			{
 				ASTNode comma = createComma();
 				node.addChild(comma, before);
@@ -312,7 +312,7 @@ public class PyArgumentListImpl extends PyElementImpl implements PyArgumentList
 				addArgumentNode(argument, node, true);
 				break;
 			}
-			else if(PythonDialectsTokenSetProvider.INSTANCE.getExpressionTokens().contains(type))
+			else if(PythonDialectsTokenSetProvider.getInstance().getExpressionTokens().contains(type))
 			{
 				// 2: After some argument followed by comma: after comma, add element, add comma
 				// 3: After some argument not followed by comma: add comma, add element

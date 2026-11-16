@@ -15,7 +15,8 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.impl.PyStubElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyTargetExpression;
 import com.jetbrains.python.psi.impl.stubs.CustomTargetExpressionStub;
 import com.jetbrains.python.psi.stubs.PyTargetExpressionStub;
@@ -42,7 +43,7 @@ public class PyTargetExpressionStubImpl extends StubBase<PyTargetExpression> imp
 
 	public PyTargetExpressionStubImpl(String name, @Nullable String docString, @Nullable String typeComment, CustomTargetExpressionStub customStub, StubElement parent)
 	{
-		super(parent, PyElementTypes.TARGET_EXPRESSION);
+		super(parent, PyStubElementTypes.TARGET_EXPRESSION);
 		myName = name;
 		myTypeComment = typeComment;
 		myInitializerType = InitializerType.Custom;
@@ -60,7 +61,7 @@ public class PyTargetExpressionStubImpl extends StubBase<PyTargetExpression> imp
                                       @Nullable String typeComment,
                                       StubElement parentStub)
 	{
-		super(parentStub, PyElementTypes.TARGET_EXPRESSION);
+		super(parentStub, PyStubElementTypes.TARGET_EXPRESSION);
 		myName = name;
 		myTypeComment = typeComment;
 		assert initializerType != InitializerType.Custom;

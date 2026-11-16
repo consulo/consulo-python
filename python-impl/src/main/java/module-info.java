@@ -116,7 +116,6 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.console;
   exports com.jetbrains.python.impl.console.actions;
   exports com.jetbrains.python.impl.console.completion;
-  exports com.jetbrains.python.impl.console.parsing;
   exports com.jetbrains.python.impl.debugger;
   exports com.jetbrains.python.impl.debugger.array;
   exports com.jetbrains.python.impl.debugger.containerview;
@@ -141,7 +140,6 @@ open module consulo.python.impl {
   exports com.jetbrains.python.impl.packaging;
   exports com.jetbrains.python.impl.packaging.setupPy;
   exports com.jetbrains.python.impl.packaging.ui;
-  exports com.jetbrains.python.impl.parsing;
   exports com.jetbrains.python.impl.patterns;
   exports com.jetbrains.python.impl.projectView;
   exports com.jetbrains.python.impl.psi;

@@ -19,6 +19,7 @@ import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.Property;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
+import com.jetbrains.python.psi.PyTypeAliasStatement;
 import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.icon.IconDescriptor;
@@ -52,6 +53,10 @@ public class PyIconDescriptorUpdater implements IconDescriptorUpdater {
         }
         else if (element instanceof PyClass) {
             iconDescriptor.setMainIcon(PlatformIconGroup.nodesClass());
+        }
+        else if (element instanceof PyTypeAliasStatement) {
+            // JB: PyTypeAliasStatementImpl#getIcon
+            iconDescriptor.setMainIcon(PlatformIconGroup.nodesType());
         }
         else if (element instanceof PyFunction function) {
             Image icon = null;

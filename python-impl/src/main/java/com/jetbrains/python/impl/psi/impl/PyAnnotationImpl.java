@@ -16,10 +16,11 @@
 
 package com.jetbrains.python.impl.psi.impl;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiPolyVariantReference;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyExpression;
@@ -35,7 +36,7 @@ public class PyAnnotationImpl extends PyBaseElementImpl<PyAnnotationStub> implem
   }
 
   public PyAnnotationImpl(PyAnnotationStub stub) {
-    super(stub, PyElementTypes.ANNOTATION);
+    super(stub, PyStubElementTypes.ANNOTATION);
   }
 
   @Override

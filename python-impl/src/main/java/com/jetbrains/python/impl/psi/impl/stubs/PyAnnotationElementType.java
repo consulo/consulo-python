@@ -19,12 +19,13 @@
  */
 package com.jetbrains.python.impl.psi.impl.stubs;
 
+import com.jetbrains.python.impl.PyStubElementTypes;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.stub.StubElement;
 import consulo.language.psi.stub.StubInputStream;
 import consulo.language.psi.stub.StubOutputStream;
-import com.jetbrains.python.impl.PyElementTypes;
+import com.jetbrains.python.PyElementTypes;
 import com.jetbrains.python.psi.PyAnnotation;
 import com.jetbrains.python.psi.PyStubElementType;
 import com.jetbrains.python.impl.psi.impl.PyAnnotationImpl;
@@ -48,7 +49,7 @@ public class PyAnnotationElementType extends PyStubElementType<PyAnnotationStub,
 
   @Override
   public PyAnnotationStub createStub(PyAnnotation psi, StubElement parentStub) {
-    return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
+    return new PyAnnotationStubImpl(parentStub, PyStubElementTypes.ANNOTATION);
   }
 
   @Override
@@ -62,6 +63,6 @@ public class PyAnnotationElementType extends PyStubElementType<PyAnnotationStub,
 
   @Override
   public PyAnnotationStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-    return new PyAnnotationStubImpl(parentStub, PyElementTypes.ANNOTATION);
+    return new PyAnnotationStubImpl(parentStub, PyStubElementTypes.ANNOTATION);
   }
 }
