@@ -63,6 +63,8 @@ import consulo.language.psi.PsiFile;
 import consulo.localize.LocalizeValue;
 import consulo.logging.Logger;
 import consulo.module.Module;
+import consulo.platform.ForwardedPort;
+import consulo.platform.Platform;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.process.ExecutionException;
 import consulo.process.KillableProcessHandler;
@@ -108,6 +110,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -133,6 +136,8 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
     private Sdk mySdk;
     private GeneralCommandLine myGeneralCommandLine;
     protected int[] myPorts;
+    /** The ports leading between the IDE and the machine of a remote interpreter - closed with the console's process. */
+    private final List<ForwardedPort> myForwardedPorts = new CopyOnWriteArrayList<>();
     private PydevConsoleCommunication myPydevConsoleCommunication;
     private ProcessHandler myProcessHandler;
     protected PydevConsoleExecuteActionHandler myConsoleExecuteActionHandler;
@@ -372,11 +377,34 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
         ParamsGroup group = cmd.getParametersList().getParamsGroup(PythonCommandLineState.GROUP_SCRIPT);
         helper.addToGroup(group, cmd);
 
-        for (int port : ports) {
+        for (int port : portsOnMachine(sdk, ports)) {
             group.addParameter(String.valueOf(port));
         }
 
         return cmd;
+    }
+
+    /**
+     * The ports the console process is given: its own server port, and the client port it calls the IDE back on. On
+     * another machine the client port is one published there, leading to the IDE's port; the server port is the
+     * machine's own - the IDE reaches it through a forwarded one, see {@link #createProcess()}.
+     */
+    private int[] portsOnMachine(Sdk sdk, int[] ports) {
+        Platform platform = sdk.getPlatform();
+        if (platform.equals(Platform.current()) || ports.length < 2) {
+            return ports;
+        }
+        try {
+            ForwardedPort published = platform.net().publish(ports[1]);
+            myForwardedPorts.add(published);
+            int[] machinePorts = ports.clone();
+            machinePorts[1] = published.port();
+            return machinePorts;
+        }
+        catch (IOException e) {
+            LOG.warn("Cannot publish the console port " + ports[1] + " on " + platform, e);
+            return ports;
+        }
     }
 
     private PythonConsoleView createConsoleView() {
@@ -392,13 +420,38 @@ public class PydevConsoleRunnerImpl implements PydevConsoleRunner {
         EncodingEnvironmentUtil.setLocaleEnvironmentIfMac(envs, myGeneralCommandLine.getCharset());
 
         ProcessHandler handler = PythonProcessHandler.createProcessHandler(myGeneralCommandLine);
+        handler.addProcessListener(new ProcessAdapter() {
+            @Override
+            public void processTerminated(ProcessEvent event) {
+                closeForwardedPorts();
+            }
+        });
         try {
-            myPydevConsoleCommunication = new PydevConsoleCommunication(myProject, myPorts[0], handler, myPorts[1]);
+            myPydevConsoleCommunication = new PydevConsoleCommunication(myProject, serverPortOnIde(), handler, myPorts[1]);
         }
         catch (Exception e) {
+            closeForwardedPorts();
             throw new ExecutionException(e.getMessage());
         }
         return handler;
+    }
+
+    /** The port the IDE reaches the console's server on - forwarded to the machine of a remote interpreter. */
+    private int serverPortOnIde() throws IOException {
+        Platform platform = mySdk.getPlatform();
+        if (platform.equals(Platform.current())) {
+            return myPorts[0];
+        }
+        ForwardedPort forwarded = platform.net().forward("127.0.0.1", myPorts[0]);
+        myForwardedPorts.add(forwarded);
+        return forwarded.port();
+    }
+
+    private void closeForwardedPorts() {
+        for (ForwardedPort port : myForwardedPorts) {
+            port.close();
+        }
+        myForwardedPorts.clear();
     }
 
     private ProcessHandler createProcessHandler(ProcessHandler process) {
