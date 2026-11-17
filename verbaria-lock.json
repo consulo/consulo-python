@@ -3,7 +3,7 @@
   "project" : "consulo-python",
   "projectVersion" : "master",
   "sourceLocale" : "en-US",
-  "generatedAt" : "2026-11-17T12:15:37.637284468Z",
+  "generatedAt" : "2026-11-17T12:46:38.293009416Z",
   "documents" : {
     "consulo.python.impl.PyCodeInsightLocalize" : {
       "source" : {
@@ -12,7 +12,7 @@
     },
     "consulo.python.impl.PyLocalize" : {
       "source" : {
-        "sig" : "cea2800c0afa35a2fede463bdbde894a"
+        "sig" : "0cd645375f2e28532460d7ea24c27b58"
       }
     },
     "consulo.python.impl.PyNavigationLocalize" : {
@@ -38,6 +38,11 @@
     "consulo.python.psi.PySyntaxCoreLocalize" : {
       "source" : {
         "sig" : "bca34525af67a2002d7005c6e00d7c20"
+      }
+    },
+    "consulo.python.requirements.PyRequirementsLocalize" : {
+      "source" : {
+        "sig" : "3aaf39d581340488c694b840c4e89897"
       }
     },
     "consulo.python.rest.PythonRestLocalize" : {
