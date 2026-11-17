@@ -18,6 +18,7 @@ package com.jetbrains.python.impl.sdk;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.jetbrains.python.impl.codeInsight.typing.PyTypeShed;
 import com.jetbrains.python.impl.psi.PyUtil;
 import com.jetbrains.python.impl.sdk.skeletons.PySkeletonRefresher;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -255,6 +256,7 @@ public class PythonSdkUpdater implements PostStartupActivity {
         return ImmutableList.<VirtualFile>builder().addAll(filterRootPaths(sdk, evaluateSysPath(sdk), project))
             .addAll(getSkeletonsPaths(sdk))
             .addAll(getUserAddedPaths(sdk))
+            .addAll(PyTypeShed.INSTANCE.findStdlibRootsForSdk(sdk))
             .build();
     }
 
