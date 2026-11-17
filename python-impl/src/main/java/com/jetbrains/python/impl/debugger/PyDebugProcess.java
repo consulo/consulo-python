@@ -16,7 +16,6 @@ import com.jetbrains.python.debugger.PySourcePosition;
 import com.jetbrains.python.debugger.PyStackFrameInfo;
 import com.jetbrains.python.debugger.PyThreadInfo;
 import com.jetbrains.python.debugger.PyUserTypeRenderer;
-
 import com.google.common.collect.Maps;
 import consulo.execution.configuration.RunProfile;
 import consulo.process.event.ProcessEvent;
@@ -101,7 +100,14 @@ import com.jetbrains.python.tables.TableCommandParameters;
 import com.jetbrains.python.tables.TableCommandType;
 import com.jetbrains.python.impl.testing.AbstractPythonTestRunConfiguration;
 import org.jspecify.annotations.Nullable;
+import com.jetbrains.python.debugger.PyDebugUtilsKt;
+import com.jetbrains.python.debugger.PyFullValueEvaluator;
+import com.jetbrains.python.debugger.QuotingPolicy;
+import consulo.execution.debug.frame.HasCopyValue;
+import consulo.execution.debug.frame.XFullValueEvaluator;
+import consulo.execution.debug.frame.XValue;
 
+import java.awt.Font;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -120,7 +126,7 @@ import static com.jetbrains.python.impl.debugger.variablesview.usertyperenderers
 import static com.jetbrains.python.impl.debugger.variablesview.usertyperenderers.ConfigureTypeRenderersActionKt.loadTypeRendererChildren;
 
 public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, ProcessListener, PyDebugProcessWithConsole, PyStepIntoSupport,
-    HasRunToPosition, HasSmartStepInto, HasStepIntoMyCode, HasSetNextStatement {
+    HasRunToPosition, HasSmartStepInto, HasStepIntoMyCode, HasSetNextStatement, HasCopyValue {
     private static final Logger LOG = Logger.getInstance(PyDebugProcess.class);
     private static final int CONNECTION_TIMEOUT = 60000;
 
@@ -600,6 +606,36 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     @Override
     public void performStepIntoMyCode() {
         startStepIntoMyCode(getSession().getSuspendContext());
+    }
+
+    /**
+     * The full value of a python value, quoted as the debugger settings say - a truncated value is evaluated again.
+     */
+    @Override
+    public @Nullable CompletableFuture<String> computeCopyValue(XValue value) {
+        if (!(value instanceof PyDebugValue debugValue)) {
+            return null;
+        }
+        QuotingPolicy quotingPolicy = PyDebuggerSettings.getInstance().getQuotingPolicy();
+        CompletableFuture<String> result = new CompletableFuture<>();
+        new PyFullValueEvaluator(debugValue.getFrameAccessor(), debugValue.getEvaluationExpression()) {
+        }.startEvaluation(new XFullValueEvaluator.XFullValueEvaluationCallback() {
+                @Override
+                public void evaluated(String fullValue) {
+                    result.complete(PyDebugUtilsKt.getQuotingString(quotingPolicy, fullValue));
+                }
+
+                @Override
+                public void evaluated(String fullValue, @Nullable Font font) {
+                    evaluated(fullValue);
+                }
+
+                @Override
+                public void errorOccurred(LocalizeValue errorMessage) {
+                    result.completeExceptionally(new PyDebuggerException(errorMessage.get()));
+                }
+            });
+        return result;
     }
 
     @Override
