@@ -16,6 +16,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.document.util.DocumentUtil;
 import consulo.execution.debug.XDebugSession;
 import consulo.execution.debug.XSourcePosition;
+import consulo.execution.debug.frame.XSuspendContext;
 import consulo.execution.debug.step.XSmartStepIntoHandler;
 import consulo.python.impl.localize.PyLocalize;
 import com.jetbrains.python.impl.debugger.PyDebugProcess;
@@ -38,7 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class PySmartStepIntoHandler extends XSmartStepIntoHandler<PySmartStepIntoVariant> {
+public class PySmartStepIntoHandler implements XSmartStepIntoHandler<PySmartStepIntoVariant> {
     private final XDebugSession mySession;
     private final PyDebugProcess myProcess;
 
@@ -48,7 +49,7 @@ public class PySmartStepIntoHandler extends XSmartStepIntoHandler<PySmartStepInt
     }
 
     @Override
-    public void startStepInto(PySmartStepIntoVariant smartStepIntoVariant) {
+    public void startStepInto(PySmartStepIntoVariant smartStepIntoVariant, @Nullable XSuspendContext context) {
         myProcess.startSmartStepInto(smartStepIntoVariant);
     }
 

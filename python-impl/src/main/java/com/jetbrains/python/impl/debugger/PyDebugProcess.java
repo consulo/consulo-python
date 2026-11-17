@@ -68,6 +68,10 @@ import consulo.execution.debug.frame.XStackFrame;
 import consulo.execution.debug.frame.XSuspendContext;
 import consulo.execution.debug.frame.XValueChildrenList;
 import consulo.execution.debug.frame.XValueNode;
+import consulo.execution.debug.step.HasRunToPosition;
+import consulo.execution.debug.step.HasSetNextStatement;
+import consulo.execution.debug.step.HasSmartStepInto;
+import consulo.execution.debug.step.HasStepIntoMyCode;
 import consulo.execution.debug.step.XSmartStepIntoHandler;
 import consulo.execution.debug.ui.XDebugTabLayouter;
 import consulo.python.impl.localize.PyLocalize;
@@ -108,13 +112,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jetbrains.python.impl.debugger.variablesview.usertyperenderers.ConfigureTypeRenderersActionKt.getTypeRenderer;
 import static com.jetbrains.python.impl.debugger.variablesview.usertyperenderers.ConfigureTypeRenderersActionKt.loadTypeRendererChildren;
 
-public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, ProcessListener, PyDebugProcessWithConsole, PyStepIntoSupport {
+public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, ProcessListener, PyDebugProcessWithConsole, PyStepIntoSupport,
+    HasRunToPosition, HasSmartStepInto, HasStepIntoMyCode, HasSetNextStatement {
     private static final Logger LOG = Logger.getInstance(PyDebugProcess.class);
     private static final int CONNECTION_TIMEOUT = 60000;
 
@@ -572,6 +578,7 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
         passToCurrentThread(context, ResumeOrStepCommand.Mode.STEP_INTO);
     }
 
+    @Override
     public void startStepIntoMyCode(@Nullable XSuspendContext context) {
         if (!checkCanPerformCommands()) {
             return;
@@ -593,6 +600,24 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
     @Override
     public void performStepIntoMyCode() {
         startStepIntoMyCode(getSession().getSuspendContext());
+    }
+
+    @Override
+    public CompletableFuture<LocalizeValue> startSetNextStatement(XSuspendContext context, XSourcePosition position) {
+        // the command is started on a pooled thread
+        CompletableFuture<LocalizeValue> result = new CompletableFuture<>();
+        Application.get().executeOnPooledThread(() -> startSetNextStatement(context, position, new PyDebugCallback<>() {
+            @Override
+            public void ok(Pair<Boolean, String> response) {
+                result.complete(response.first ? LocalizeValue.empty() : LocalizeValue.of(response.second));
+            }
+
+            @Override
+            public void error(PyDebuggerException e) {
+                result.completeExceptionally(e);
+            }
+        }));
+        return result;
     }
 
     public void startSetNextStatement(@Nullable XSuspendContext context,
