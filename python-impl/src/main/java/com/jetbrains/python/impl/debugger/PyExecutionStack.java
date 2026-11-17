@@ -3,8 +3,8 @@ package com.jetbrains.python.impl.debugger;
 
 import com.jetbrains.python.debugger.PyStackFrameInfo;
 import com.jetbrains.python.debugger.PyThreadInfo;
-
 import consulo.application.Application;
+import consulo.execution.debug.frame.HasThreadSuspend;
 import consulo.execution.debug.frame.XExecutionStack;
 import consulo.python.impl.localize.PyLocalize;
 import consulo.ui.image.Image;
@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class PyExecutionStack extends XExecutionStack {
+public class PyExecutionStack extends XExecutionStack implements HasThreadSuspend {
 
     private final PyDebugProcess myDebugProcess;
     private final PyThreadInfo myThreadInfo;
@@ -31,6 +31,21 @@ public class PyExecutionStack extends XExecutionStack {
         super(threadInfo.getName(), icon); //NON-NLS
         myDebugProcess = debugProcess;
         myThreadInfo = threadInfo;
+    }
+
+    @Override
+    public boolean isSuspended() {
+        return myThreadInfo.getState() == PyThreadInfo.State.SUSPENDED;
+    }
+
+    @Override
+    public void suspendThread() {
+        myDebugProcess.suspendThread(myThreadInfo);
+    }
+
+    @Override
+    public void resumeThread() {
+        myDebugProcess.resumeThread(myThreadInfo);
     }
 
     @Override

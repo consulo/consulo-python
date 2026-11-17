@@ -106,6 +106,9 @@ import com.jetbrains.python.debugger.QuotingPolicy;
 import consulo.execution.debug.frame.HasCopyValue;
 import consulo.execution.debug.frame.XFullValueEvaluator;
 import consulo.execution.debug.frame.XValue;
+import consulo.execution.debug.frame.HasRunningExecutionStacks;
+import consulo.execution.debug.icon.ExecutionDebugIconGroup;
+import consulo.ui.image.Image;
 
 import java.awt.Font;
 import java.io.IOException;
@@ -126,7 +129,8 @@ import static com.jetbrains.python.impl.debugger.variablesview.usertyperenderers
 import static com.jetbrains.python.impl.debugger.variablesview.usertyperenderers.ConfigureTypeRenderersActionKt.loadTypeRendererChildren;
 
 public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, ProcessListener, PyDebugProcessWithConsole, PyStepIntoSupport,
-    HasRunToPosition, HasSmartStepInto, HasStepIntoMyCode, HasSetNextStatement, HasCopyValue {
+    HasRunToPosition, HasSmartStepInto, HasStepIntoMyCode, HasSetNextStatement, HasCopyValue,
+    HasRunningExecutionStacks {
     private static final Logger LOG = Logger.getInstance(PyDebugProcess.class);
     private static final int CONNECTION_TIMEOUT = 60000;
 
@@ -1228,6 +1232,34 @@ public class PyDebugProcess extends XDebugProcess implements IPyDebugProcess, Pr
 
     public Collection<PyThreadInfo> getThreads() {
         return myDebugger.getThreads();
+    }
+
+    /**
+     * All the threads pydevd knows about, also while the process is running.
+     */
+    @Override
+    public void computeRunningExecutionStacks(XSuspendContext.XExecutionStackGroupContainer container, @Nullable XSuspendContext suspendContext) {
+        List<XExecutionStack> stacks = new ArrayList<>();
+        for (PyThreadInfo thread : getThreads()) {
+            Image icon = thread.getState() == PyThreadInfo.State.SUSPENDED
+                ? ExecutionDebugIconGroup.threadThreadsuspended()
+                : ExecutionDebugIconGroup.threadThreadrunning();
+            stacks.add(new PyExecutionStack(this, thread, icon));
+        }
+        container.addExecutionStack(stacks, true);
+    }
+
+    public void suspendThread(PyThreadInfo thread) {
+        if (isConnected()) {
+            myDebugger.suspendThread(thread.getId());
+        }
+    }
+
+    public void resumeThread(PyThreadInfo thread) {
+        dropFrameCaches();
+        if (isConnected()) {
+            myDebugger.resumeOrStep(thread.getId(), ResumeOrStepCommand.Mode.RESUME);
+        }
     }
 
     @Override
