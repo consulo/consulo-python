@@ -132,7 +132,8 @@ public class PyReferenceExpressionImpl extends PyElementImpl implements PyRefere
 
     @Override
     public PsiPolyVariantReference getReference() {
-        assert !(this instanceof StubBasedPsiElement);
+        // Consulo: every StubBasedPsiElementBase is a StubBasedPsiElement here, see PyPsiUtils.isStubBasedElement
+        assert !PyPsiUtils.isStubBasedElement(this);
         TypeEvalContext context = TypeEvalContext.codeAnalysis(getProject(), getContainingFile());
         return getReference(PyResolveContext.defaultContext(context));
     }

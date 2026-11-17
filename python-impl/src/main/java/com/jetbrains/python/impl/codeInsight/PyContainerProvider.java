@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.python.impl.codeInsight;
 
+import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.PyElement;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.psi.PsiElement;
@@ -13,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 public final class PyContainerProvider implements ContainerProvider {
     @Override
     public @Nullable PsiElement getContainer(PsiElement item) {
-        if (item instanceof PyElement && item instanceof StubBasedPsiElement) {
+        if (item instanceof PyElement && PyPsiUtils.isStubBasedElement(item) /* Consulo: see PyPsiUtils.isStubBasedElement */) {
             return getContainerByStub((StubBasedPsiElement) item);
         }
         return null;

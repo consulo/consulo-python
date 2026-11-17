@@ -1096,7 +1096,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
             PyCallable callable = myGetter.value();
             if (callable != null) {
                 // Ignore return types of non stub-based elements if we are not allowed to use AST
-                if (!(callable instanceof StubBasedPsiElement) && !context.maySwitchToAST(callable)) {
+                if (!PyPsiUtils.isStubBasedElement(callable) && !context.maySwitchToAST(callable)) { // Consulo: see PyPsiUtils.isStubBasedElement
                     return PyAnyType.getAny();
                 }
                 RatedResolveResult resolvedCallable = new RatedResolveResult(RatedResolveResult.RATE_NORMAL, callable);
@@ -1127,7 +1127,7 @@ public class PyClassImpl extends PyBaseElementImpl<PyClassStub> implements PyCla
         private static Maybe<PyCallable> filterNonStubExpression(Maybe<PyCallable> maybeCallable) {
             PyCallable callable = maybeCallable.valueOrNull();
             if (callable != null) {
-                if (!(callable instanceof StubBasedPsiElement)) {
+                if (!PyPsiUtils.isStubBasedElement(callable)) { // Consulo: see PyPsiUtils.isStubBasedElement
                     return UNKNOWN_CALL;
                 }
             }

@@ -27,6 +27,7 @@ import consulo.annotation.access.RequiredWriteAction;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenSet;
+import consulo.language.impl.psi.stub.StubBasedPsiElementBase;
 import consulo.language.inject.InjectedLanguageManager;
 import consulo.language.psi.PsiComment;
 import consulo.language.psi.PsiElement;
@@ -36,6 +37,7 @@ import consulo.language.psi.PsiNamedElement;
 import consulo.language.psi.PsiWhiteSpace;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.psi.util.QualifiedName;
+import consulo.language.psi.stub.IStubElementType;
 import consulo.logging.Logger;
 import consulo.module.Module;
 import consulo.util.collection.ContainerUtil;
@@ -646,5 +648,21 @@ public final class PyPsiUtils {
         }
         while (next != null);
         return null;
+    }
+
+    /**
+     * Consulo: JB checks {@code element instanceof StubBasedPsiElement} to tell stub-backed PSI (classes, functions, targets...) from
+     * plain AST PSI. In Consulo every {@code StubBasedPsiElementBase} implements {@code StubBasedPsiElement}, and all Python PSI
+     * extends it, so that check is always true here. An element is stub-backed when it has a stub, or when its element type is a
+     * stub element type.
+     */
+    public static boolean isStubBasedElement(@Nullable PsiElement element) {
+        if (!(element instanceof StubBasedPsiElementBase<?> stubBased)) {
+            return false;
+        }
+        if (stubBased.getStub() != null) {
+            return true;
+        }
+        return stubBased.getNode().getElementType() instanceof IStubElementType;
     }
 }
